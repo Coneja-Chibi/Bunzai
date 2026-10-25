@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fast staged structural checks, relevant catalog validation, and staged UI TSX linting.
+# Full type and test proof runs at pre-push; see scripts/hooks/README.md.
+exec bun run scripts/hooks/pre-commit.ts

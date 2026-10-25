@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-007-renderer-policy",
+  "sourcePath": "docs/decisions/ADR-007-renderer-policy.md",
+  "sourceHash": "sha256:f19afde74a76dbb37129472199165ab4feb044bae9c8831beccdc78fdf6842b7",
+  "semanticSummaryHash": "sha256:770c5ebb4aa96892aa6b95af79de933f73581b700bd393a1de2a3523cd9c7f76",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text is accurate against the current sources; summary fresh, scans clean.",
+  "reviewedAt": "2026-10-24T21:56:33.662Z"
+}

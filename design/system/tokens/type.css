@@ -1,0 +1,62 @@
+/*
+ * Bunraku design system: typography tokens, contract v1 (G3 base).
+ * Four families, four jobs:
+ *   display: Cinzel, page and section titles, the wordmark
+ *   name:    Fraunces with its SOFT/WONK axes at 0 (level, not wonky), the names of things
+ *   body:    Atkinson Hyperlegible, everything a person reads
+ *   mono:    IBM Plex Mono, every HUD numeral, label, tag, key cap and timestamp
+ * 12px is the floor: --bk-fs-xs is the smallest size anything may use. No italic display type.
+ */
+:root {
+  --bk-font-display: "Cinzel", serif;
+  --bk-font-name: "Fraunces", serif;
+  --bk-font-body: "Atkinson Hyperlegible", sans-serif;
+  --bk-font-mono: "IBM Plex Mono", monospace;
+  --bk-font-axes: "SOFT" 0, "WONK" 0;   /* font-variation-settings for the name face */
+
+  /* scale: rem, so it follows the person's own font size */
+  --bk-fs-xs: 0.75rem;    /* 12px, the floor: labels, tags, key caps, meta */
+  --bk-fs-sm: 0.875rem;   /* 14px: secondary lines, dense rows */
+  --bk-fs-md: 1rem;       /* 16px: body */
+  --bk-fs-lg: 1.125rem;   /* 18px: readouts, lead text */
+  --bk-fs-xl: 1.375rem;   /* 22px: section titles */
+  --bk-fs-2xl: 1.75rem;   /* 28px */
+  --bk-fs-3xl: 2.25rem;   /* 36px */
+  --bk-fs-4xl: 3rem;      /* 48px: hero initials */
+  --bk-fs-5xl: 4rem;      /* 64px: the attract wordmark */
+  --bk-fs-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.4rem);  /* page titles, fluid */
+
+  /* weights. Atkinson ships 400 and 700 only; Plex Mono ships 500 only (heavier is synthesized). */
+  --bk-fw-body: 400;
+  --bk-fw-strong: 700;
+  --bk-fw-name: 600;
+  --bk-fw-display: 700;
+  --bk-fw-mono: 500;
+  --bk-fw-mono-strong: 700;
+
+  --bk-lh-tight: 1.1;
+  --bk-lh-snug: 1.3;
+  --bk-lh-body: 1.6;
+  --bk-lh-prose: 1.7;    /* scene messages and long reading */
+
+  --bk-track-title: 0.02em;
+  --bk-track-label: 0.08em;
+  --bk-track-kicker: 0.14em;
+
+  /* letter case per role, so a theme can shout (C3) without touching markup */
+  --bk-case-title: none;
+  --bk-case-name: none;
+  --bk-case-label: uppercase;
+  --bk-case-action: none;
+
+  /* role composites for the font shorthand: font: var(--bk-type-label) */
+  --bk-type-title: var(--bk-fw-display) var(--bk-fs-title)/var(--bk-lh-tight) var(--bk-font-display);
+  --bk-type-heading: var(--bk-fw-display) var(--bk-fs-xl)/var(--bk-lh-snug) var(--bk-font-display);
+  --bk-type-name: var(--bk-fw-name) var(--bk-fs-md)/var(--bk-lh-snug) var(--bk-font-name);
+  --bk-type-body: var(--bk-fw-body) var(--bk-fs-md)/var(--bk-lh-body) var(--bk-font-body);
+  --bk-type-small: var(--bk-fw-body) var(--bk-fs-sm)/var(--bk-lh-body) var(--bk-font-body);
+  --bk-type-action: var(--bk-fw-strong) var(--bk-fs-sm)/1 var(--bk-font-body);
+  --bk-type-label: var(--bk-fw-mono) var(--bk-fs-xs)/1.2 var(--bk-font-mono);
+  --bk-type-readout: var(--bk-fw-mono-strong) var(--bk-fs-lg)/1.1 var(--bk-font-mono);
+  --bk-type-meta: var(--bk-fw-mono) var(--bk-fs-xs)/1.4 var(--bk-font-mono);
+}

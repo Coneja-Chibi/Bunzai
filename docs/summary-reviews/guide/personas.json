@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/personas",
+  "sourcePath": "docs/guide/personas.md",
+  "sourceHash": "sha256:03adca0026c2ad1bd7eae1368ee91a5c902df5b7a8052aa6ded77e0bcce3fd8b",
+  "semanticSummaryHash": "sha256:bb2d69eaf23fbe02786e71b7ba15800bc50abbf3e874873a1af32779e10acb67",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:45.241Z"
+}

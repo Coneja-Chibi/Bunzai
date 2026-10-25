@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bunraku | The foyer</title>
+  <link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="theater">
+  <header class="header">
+    <a class="logo" href="#home" aria-label="Bunraku home">Bun<span>raku</span></a>
+    <nav aria-label="Main rooms">
+      <a href="#home" aria-current="page">Theater</a><a href="#scenes">Scenes</a><a href="#library">Library</a><a href="#workbench">Workbench</a><a href="#press">Press</a>
+    </nav>
+    <div class="utilities"><a href="#help">Help</a><a href="#settings">Settings</a></div>
+  </header>
+  <main class="stage">
+    <div class="art" aria-hidden="true"></div>
+    <canvas class="atmosphere" aria-hidden="true"></canvas>
+    <div class="stage-content">
+      <div class="arrival"><span class="eyebrow">The foyer</span><span>Your stories, waiting in the wings.</span></div>
+      <div class="home-grid">
+        <aside class="playbill panel" aria-label="Most recent story">
+          <div class="eyebrow gilt">On the playbill</div>
+          <div class="ticket-rule"></div>
+          <span class="small-label">Last opened story</span>
+          <h2>The Paper Moon</h2>
+          <p>A city of borrowed names. A letter that should never have arrived.</p>
+          <div class="chapter"><span class="diamond" aria-hidden="true"></span>Act II · The last letter</div>
+          <div class="story-meta"><span>Scene 07</span><span>3 cast members</span></div>
+          <a class="button small" href="#resume">Return to scene <span aria-hidden="true">↗</span></a>
+          <a class="text-link" href="#scenes">Browse all stories <span aria-hidden="true">→</span></a>
+        </aside>
+        <section class="hero" aria-labelledby="welcome">
+          <div class="hero-kicker"><span></span>Your next act awaits<span></span></div>
+          <h1 id="welcome">Bun<em>raku</em></h1>
+          <p class="tagline">Every story deserves a stage.</p>
+          <p class="intro">Gather your cast. Build a world.<br>Give the next scene somewhere to begin.</p>
+          <div class="hero-actions"><a class="button primary" href="#new-story">New story</a><a class="button" href="#scenes">Continue story</a></div>
+          <a class="hero-link" href="#library">Or start with your library <span aria-hidden="true">→</span></a>
+        </section>
+        <aside class="backstage panel" aria-label="Quick actions">
+          <div class="eyebrow gilt">Behind the curtain</div>
+          <div class="ticket-rule"></div>
+          <a class="quick-link" href="#cast"><span class="ordinal">01</span><span><strong>Meet your cast</strong><small>Characters & personas</small></span><span aria-hidden="true">↗</span></a>
+          <a class="quick-link" href="#worlds"><span class="ordinal">02</span><span><strong>Build the world</strong><small>Lorebooks & knowledge</small></span><span aria-hidden="true">↗</span></a>
+          <a class="quick-link" href="#import"><span class="ordinal">03</span><span><strong>Bring something in</strong><small>Import an existing piece</small></span><span aria-hidden="true">↗</span></a>
+          <div class="backstage-note"><span class="small-label">First time here?</span><a class="text-link" href="#help">Take a look backstage <span aria-hidden="true">→</span></a></div>
+        </aside>
+      </div>
+      <section class="rooms" aria-labelledby="rooms-title">
+        <div class="rooms-heading"><span></span><h2 id="rooms-title">Make yourself at home</h2><span></span></div>
+        <div class="room-grid">
+          <a class="room-card" href="#library"><span class="room-number">I</span><div><span class="eyebrow">Keep your stories close</span><h3>The Library</h3><p>Browse your characters, worlds, and presets.</p><span class="room-meta">Characters · Lorebooks · Personas</span></div><span class="room-arrow" aria-hidden="true">↗</span></a>
+          <a class="room-card" href="#workbench"><span class="room-number">II</span><div><span class="eyebrow">Get the details right</span><h3>The Workbench</h3><p>Edit a piece and refine what makes it yours.</p><span class="room-meta">Fields · Prompts · Test benches</span></div><span class="room-arrow" aria-hidden="true">↗</span></a>
+          <a class="room-card" href="#press"><span class="room-number">III</span><div><span class="eyebrow">Ready for another stage</span><h3>The Press</h3><p>Convert and export the pieces you've staged.</p><span class="room-meta">Staged queue · Formats · Export</span></div><span class="room-arrow" aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer><span>Scenes make bolder people.</span><span class="gilt">The velvet premiere</span><span class="preview-label">Design preview · sample stories</span></footer>
+</div>
+<dialog id="destination" aria-labelledby="destination-title">
+  <div class="dialog-heading"><span class="eyebrow gilt">Backstage</span><button class="close" aria-label="Close preview">×</button></div>
+  <h2 id="destination-title"></h2><div id="destination-body"></div>
+  <div class="dialog-footer"><a href="#home">← Back to the theater</a><span>Interactive wireframe</span></div>
+</dialog>
+<script src="navigation.js"></script>
+<script src="effects.js"></script>
+</body>
+</html>

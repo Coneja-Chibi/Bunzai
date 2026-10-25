@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene port compare</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--stage-black); color: var(--stage-soft); font-family: var(--font-big); padding: 20px; }
+  h1 { font-family: var(--font-fancy); font-weight: 900; font-size: 22px; color: var(--stage-card); letter-spacing: .06em; text-transform: uppercase; }
+  .lede { margin: 6px 0 22px; font-size: 13px; color: var(--stage-text-dim); max-width: 70rem; line-height: 1.5; }
+  .row { margin-bottom: 34px; }
+  .row h2 { font-family: var(--font-mono); font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .side small { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--stage-mute); margin-bottom: 4px; letter-spacing: .1em; text-transform: uppercase; }
+  .side img { width: 100%; display: block; border: 1px solid var(--stage-seam); }
+  .frame { position: relative; width: 100%; aspect-ratio: 1920 / 945; overflow: hidden; border: 1px solid var(--stage-seam); }
+  .frame iframe { position: absolute; left: 0; top: 0; width: 1920px; height: 945px; border: 0; transform-origin: 0 0; }
+  .phone .pair { grid-template-columns: 390px 390px; justify-content: start; }
+  .phone .frame { aspect-ratio: 390 / 844; }
+  .phone .frame iframe { width: 390px; height: 844px; }
+</style>
+</head>
+<body>
+  <h1>Scene page and Scenes: RoleCall, then the Bunraku port</h1>
+  <p class="lede">Left: the real RoleCall scene, captured live on a throwaway scene on 2026-09-24. Right: the port, same layout and measurements, recolored with Bunraku's tokens (accent rose, the character in its deck gold, you in persona teal). The port needs a Bunraku dock on the far left, so its stage is 67px narrower. Open chat.html directly to click through it.</p>
+  <div id="rows"></div>
+<script>
+  var ROWS = [
+    ["opening", "Opening: greeting picker above the first message"],
+    ["conversation", "Conversation: a user turn, action bar on hover"],
+    ["streaming", "Streaming: starting and reasoning, stop in the capsule"],
+    ["error", "Failed turn: the interrupted-draft card"],
+    ["labels", "Rail hover: every wing labels itself"],
+    ["cast", "A left wing open (Cast): the scene pauses and blurs"],
+    ["context", "A right wing open (Context)"]
+  ];
+  var host = document.getElementById("rows");
+  function row(key, label, phone, src) {
+    var el = document.createElement("section");
+    el.className = "row" + (phone ? " phone" : "");
+    el.innerHTML = '<h2>' + label + '</h2><div class="pair"><div class="side"><small>RoleCall</small><img src="ref/' + key + '.png" alt="RoleCall ' + key + '"></div>' +
+      '<div class="side"><small>Bunraku port</small><div class="frame"><iframe loading="lazy" src="' + (src || ("chat.html?embed=1&state=" + (phone ? "conversation" : key))) + '" title="Port ' + key + '"></iframe></div></div></div>';
+    host.appendChild(el);
+  }
+  ROWS.forEach(function (r) { row(r[0], r[1], false); });
+  row("phone", "Phone (390 wide): rails become edge handles", true);
+  row("scenes", "Scenes: On Stage sidebar, the Your Stage box, filters, scene cards", false, "scenes.html?embed=1&state=scenes");
+  row("scene-card", "A scene card with alternate takes (RoleCall close-up)", false, "scenes.html?embed=1&state=select");
+  row("library-start", "The Library card and its Start Scene button (RoleCall close-up)", false, "scenes.html?embed=1&state=library");
+  function fit() {
+    document.querySelectorAll(".frame").forEach(function (f) {
+      var ifr = f.querySelector("iframe"); var w = parseFloat(getComputedStyle(ifr).width);
+      ifr.style.transform = "scale(" + (f.clientWidth / w) + ")";
+    });
+  }
+  window.addEventListener("resize", fit); fit();
+</script>
+</body>
+</html>

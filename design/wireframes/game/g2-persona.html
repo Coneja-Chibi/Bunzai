@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G2: Persona identity</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-g2.css">
+<link rel="stylesheet" href="../soft/soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * G2: PERSONA - Persona 5 / Persona 3 Reload menu energy, built ONLY from tokens.css + tokens-g2.css
+ * (same token names as tokens-soft.css, meanings pushed gamier) + soft-parts.css's shared atoms
+ * (s-btn/s-card/s-dock/s-app/s-input/s-switch/s-tabs), which this file overrides for the louder read:
+ * solid ink blocks instead of soft cards, a thick contrasting line instead of a thin plum hairline, a
+ * hard offset block-shadow instead of a soft lean-on-hover, strong pastel color slabs behind whatever
+ * is selected, and a calendar-style stamp. Angle/skew is confined to .g2bg's decorative layers, which
+ * sit behind content at z-index 0 with pointer-events:none - every clickable target and every line of
+ * text stays perfectly horizontal, same doctrine as home-persona.html. Square corners, dark only, no
+ * emoji/em dash, 12px text floor, tokens only for color.
+ *
+ * Content is the same as the approved soft screens for a fair side-by-side: the Dock is
+ * workbench-shell.html's markup unchanged; Scenes is scenes-game.html's cast rail + Fan Favorites +
+ * This Week/Earlier + Folders + Continue hero/preview + equal 200x300 grid; the Library section is
+ * library-shelves.html's Lorebooks shelf row; the confirm dialog is scenes-game.html's "Cut this
+ * story?"; the form row and buttons are new (soft-parts.css has no <select> demo).
+ */
+* { -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { overflow-x: hidden; }
+.wf-bar, .wf-bar button, .wf-bar a, .wf-note { font-size: 12px; }
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+
+/* ================= layout shell ================= */
+.app { display: flex; min-height: 100vh; align-items: flex-start; position: relative; }
+
+/* ---- Dock: G2 override - flat ink slab, solid pastel behind the active app, thick seam ---- */
+.s-dock { width: 232px; flex: none; position: sticky; top: 0; height: 100vh; background: var(--chrome); box-shadow: inset -3px 0 0 var(--edge); padding: 20px 14px; gap: 6px; }
+.s-dock .brand { font: 900 1.35rem var(--font-fancy); text-transform: uppercase; letter-spacing: .05em; color: var(--text); padding: 2px 6px 16px; margin-bottom: 8px; box-shadow: inset 0 -3px 0 var(--edge); }
+.s-app { grid-template-columns: 32px 1fr; border: 3px solid transparent; box-shadow: none; padding: 9px 9px; transition: background .08s steps(1), border-color .08s steps(1); }
+.s-app i { width: 32px; height: 32px; background: var(--stage-ink); box-shadow: inset 0 0 0 2px var(--c); color: var(--c); }
+.s-app b { text-transform: uppercase; font-size: .85rem; letter-spacing: .02em; }
+.s-app small { text-transform: uppercase; letter-spacing: .08em; }
+.s-app:hover:not(.on) { background: var(--shell-panel-2); border-color: var(--edge); }
+.s-app.on { background: var(--c); border-color: var(--stage-ink); box-shadow: 4px 4px 0 0 var(--stage-black); }
+.s-app.on i { background: var(--stage-ink); color: var(--c); box-shadow: none; }
+.s-app.on b, .s-app.on small { color: var(--stage-ink); }
+
+/* ---- side columns: cast rail + Fan Favorites/This Week/Folders (Scenes+Dialog), or hidden ---- */
+.scn-side { display: none; flex: none; position: sticky; top: 0; height: 100vh; }
+body[data-state="scenes"] .scn-side, body[data-state="dialog"] .scn-side { display: flex; }
+
+.char-rail { width: 68px; flex: none; background: var(--chrome); box-shadow: inset -3px 0 0 var(--edge); display: flex; flex-direction: column; align-items: center; padding: 16px 0 12px; gap: 10px; height: 100vh; }
+.cr-mark { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: none; border: 0; cursor: pointer; padding: 0; }
+.cr-div { width: 30px; height: 3px; flex: none; background: var(--edge); }
+.cr-all { width: 42px; height: 42px; flex: none; display: grid; place-items: center; background: var(--stage-ink); box-shadow: inset 0 0 0 3px var(--edge); border: 0; color: var(--text-dim); cursor: pointer; }
+.cr-all.on { background: var(--accent); color: var(--stage-ink); box-shadow: inset 0 0 0 3px var(--stage-ink); }
+.cr-list { display: flex; flex-direction: column; gap: 10px; align-items: center; flex: 1; min-height: 0; padding: 2px 0; }
+.cr-tile { position: relative; width: 42px; height: 42px; flex: none; display: block; background: none; border: 0; cursor: pointer; padding: 0; }
+.cr-art { width: 42px; height: 42px; display: grid; place-items: center; font: 800 15px var(--font-fancy); color: var(--stage-ink); background: var(--t, var(--accent)); box-shadow: 0 0 0 0 var(--stage-ink); transition: box-shadow .08s steps(1); }
+.cr-tile.on .cr-art { box-shadow: 0 0 0 3px var(--stage-ink), 0 0 0 6px var(--t, var(--accent)); }
+.cr-tile .cr-playing { position: absolute; bottom: -4px; right: -4px; width: 15px; height: 15px; display: grid; place-items: center; background: var(--stage-ok); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--chrome); z-index: 2; }
+.cr-tile.group .cr-art { background: none; }
+.cr-faces { position: relative; display: block; width: 42px; height: 42px; }
+.cr-faces span { position: absolute; top: 6px; width: 23px; height: 23px; display: grid; place-items: center; font: 800 12px var(--font-fancy); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--chrome); }
+
+.stage-panel { width: 284px; flex: none; background: var(--chrome); box-shadow: inset -3px 0 0 var(--edge); display: flex; flex-direction: column; height: 100vh; }
+.sp-top { padding: 18px 16px 10px; flex: none; }
+.sp-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 14px 24px; }
+
+.fav-card-g2 { display: block; text-decoration: none; color: var(--text); background: var(--face); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--t), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); }
+.fav-art { position: relative; height: 118px; overflow: hidden; background: var(--t); box-shadow: inset 0 -3px 0 var(--stage-ink); }
+.fav-art .ini { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); font: 900 30px var(--font-fancy); color: var(--stage-ink); opacity: .55; }
+.fav-ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 9px 10px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 90%, transparent) 55%); }
+.fav-who { display: flex; align-items: center; gap: 6px; font: 700 12px var(--font-body); }
+.fav-av { width: 20px; height: 20px; flex: none; display: grid; place-items: center; font: 800 11px var(--font-fancy); color: var(--stage-ink); background: var(--stage-card); }
+.fav-who b { color: var(--stage-card); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-who i { margin-left: auto; font-style: normal; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+.fav-title { margin-top: 4px; font: 700 14px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--stage-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-body { padding: 10px 12px 12px; }
+.fav-takepips { display: flex; gap: 4px; }
+.fav-takepips span { width: 15px; height: 6px; background: var(--stage-line); }
+.fav-takepips span.on { background: var(--t); }
+.fav-stat { margin-top: 6px; font: 600 12px var(--font-mono); color: var(--text-dim); }
+.fav-continue { display: block; width: 100%; margin-top: 8px; padding: 9px 0; text-align: center; font: 800 12px var(--font-body); text-transform: uppercase; letter-spacing: .04em; color: var(--stage-ink); background: var(--t); border: 0; cursor: pointer; }
+.fav-nav { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; }
+.fav-dots { display: flex; gap: 5px; }
+.fav-dots span { width: 7px; height: 7px; background: var(--stage-line); }
+.fav-dots span.on { background: var(--accent); }
+
+.sp-sec { margin-top: 18px; padding-top: 14px; box-shadow: inset 0 3px 0 var(--seam); }
+.sp-sec.fav-sec { margin-top: 4px; padding-top: 0; box-shadow: none; }
+.lab { display: flex; align-items: center; gap: 8px; padding: 0 6px 8px; font: 700 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); }
+.lab .sq { width: 8px; height: 8px; background: var(--accent); }
+.rec { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 6px; background: none; border: 3px solid transparent; text-align: left; cursor: pointer; }
+.rec:hover { background: var(--shell-panel-2); border-color: var(--edge); }
+.rec .rec-av { width: 27px; height: 27px; flex: none; display: grid; place-items: center; font: 800 12px var(--font-fancy); color: var(--stage-ink); background: var(--t, var(--accent)); }
+.rec .rec-tx { flex: 1; min-width: 0; }
+.rec .rec-tx b { display: block; font: 700 12.5px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .rec-tx small { display: block; margin-top: 1px; font: 400 12px var(--font-body); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec time { flex: none; font: 600 12px var(--font-mono); color: var(--text-faint); }
+
+.chapter { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 8px; background: none; border: 3px solid transparent; color: var(--text-soft); font: 600 13px var(--font-body); cursor: pointer; text-align: left; }
+.chapter:hover { color: var(--text); background: var(--shell-panel-2); border-color: var(--edge); }
+.chapter.on { color: var(--stage-ink); background: var(--c, var(--accent)); border-color: var(--stage-ink); }
+.chapter .ch-dot { width: 9px; height: 9px; flex: none; background: var(--c, var(--accent)); }
+.chapter.on .ch-dot { background: var(--stage-ink); }
+.chapter .ch-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chapter .ch-count { flex: none; font: 700 12px var(--font-mono); color: var(--text-dim); }
+.chapter.on .ch-count { color: var(--stage-ink); }
+.chapter.smart svg { color: var(--stage-warn); flex: none; }
+.newchapter { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 6px; padding: 8px 8px; background: none; border: 3px dashed var(--edge); color: var(--text-dim); font: 600 13px var(--font-body); cursor: pointer; }
+.newchapter:hover { color: var(--text-soft); border-color: var(--accent); }
+
+/* ---- the stage ---- */
+.stage { flex: 1; min-width: 0; min-height: 100vh; position: relative; background: var(--stage-well); }
+.g2bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+.g2bg i { position: absolute; display: block; }
+.g2bg .b1 { width: 150%; height: 46%; left: -25%; top: -8%; background: color-mix(in srgb, var(--deck-pack) 13%, transparent); transform: skewY(-7deg); }
+.g2bg .b2 { width: 130%; height: 34%; left: -15%; bottom: -10%; background: color-mix(in srgb, var(--deck-preset) 10%, transparent); transform: skewY(6deg); }
+.g2bg .b3 { width: 46%; height: 150%; right: -14%; top: -25%; background: color-mix(in srgb, var(--deck-lorebook) 8%, transparent); transform: skewX(-11deg); }
+.stagewrap { position: relative; z-index: 1; padding: 26px 34px 60px; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.topbar .brandkick { font: 700 12px var(--font-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--text-dim); }
+.g2cal { display: inline-flex; align-items: stretch; background: var(--stage-ink); box-shadow: 0 0 0 3px var(--edge), 4px 4px 0 0 var(--stage-black); }
+.g2cal .pip { width: 36px; flex: none; display: grid; place-items: center; background: var(--accent); color: var(--stage-ink); }
+.g2cal .txt { padding: 6px 14px; }
+.g2cal .day { display: block; font: 900 1.05rem var(--font-fancy); color: var(--accent); line-height: 1; }
+.g2cal .of { display: block; margin-top: 3px; font: 700 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); }
+
+/* ---- G2 title block: big heavy stacked type + a solid slab behind the second word ---- */
+.g2-title { margin-bottom: 24px; }
+.g2-title .kick { display: inline-block; font: 700 11px var(--font-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--text-dim); background: var(--stage-ink); padding: 5px 10px; box-shadow: 0 0 0 2px var(--edge); }
+.g2-title h1.stack { margin: 12px 0 0; font: 900 clamp(2rem, 4.6vw, 3.6rem)/.92 var(--font-fancy); text-transform: uppercase; letter-spacing: .01em; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; color: var(--text); }
+.g2-title h1.stack span.hi { color: var(--stage-ink); background: var(--accent); padding: 3px 16px 6px; box-shadow: 6px 6px 0 0 var(--stage-black); }
+.g2-title .sub { margin-top: 16px; max-width: 34rem; color: var(--text-soft); font-size: .95rem; }
+
+/* ---- tabs: solid slab on the active one instead of an underline ---- */
+.scn-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+.scn-tabs button { display: flex; align-items: center; gap: 8px; background: var(--stage-ink); border: 3px solid var(--edge); padding: 9px 16px; font: 800 .85rem var(--font-big); font-variation-settings: var(--soft-axes); text-transform: uppercase; letter-spacing: .02em; color: var(--text-dim); cursor: pointer; }
+.scn-tabs button.on { color: var(--stage-ink); background: var(--accent); border-color: var(--stage-ink); box-shadow: 3px 3px 0 0 var(--stage-black); }
+.scn-tabs .cnt { padding: 1px 7px; font: 700 12px var(--font-mono); background: var(--shell-panel-2); color: var(--text-dim); }
+.scn-tabs button.on .cnt { background: var(--stage-ink); color: var(--accent); }
+
+/* ---- hero + message preview ---- */
+.stagerow { display: flex; align-items: flex-start; gap: 20px; margin-bottom: 30px; flex-wrap: wrap; }
+.hero { position: relative; flex: none; width: 320px; height: 460px; background: var(--t); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--stage-card, var(--edge)), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); text-decoration: none; color: var(--text); overflow: hidden; display: block; cursor: pointer; }
+.hero .ini { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%); font: 900 84px var(--font-fancy); color: var(--stage-ink); opacity: .3; }
+.hero .badge { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 5px; padding: 4px 9px; background: var(--stage-ink); color: var(--stage-ok); font: 800 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; z-index: 2; box-shadow: 0 0 0 2px var(--stage-ok); }
+.hero .badge .dot { width: 6px; height: 6px; background: currentColor; }
+.hero-ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 20px 20px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 92%, transparent) 42%); z-index: 1; }
+.hero-ov .kick { display: inline-block; font: 800 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--stage-ink); background: var(--stage-card); padding: 3px 8px; }
+.hero-ov h2 { margin: 8px 0 0; font: 800 1.35rem var(--font-fancy); text-transform: uppercase; color: var(--stage-card); }
+.hero-ov .subw { margin-top: 4px; color: var(--text-soft); font-size: .9rem; }
+.hero-stats { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; font: 700 12px var(--font-mono); color: var(--text-dim); }
+.hero-stats b { color: var(--stage-card); font-weight: 700; }
+.hero-pips { display: flex; gap: 4px; margin-top: 12px; }
+.hero-pips span { width: 16px; height: 6px; background: var(--stage-line); }
+.hero-pips span.on { background: var(--stage-card); }
+.hero-ov .s-btn { margin-top: 14px; }
+
+.preview { position: relative; flex: 1; min-width: 260px; height: 460px; background: var(--face); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--t), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); overflow: hidden; display: block; text-decoration: none; color: var(--text); cursor: pointer; }
+.preview .fill { position: absolute; inset: 0; background: var(--t); opacity: .16; }
+.pv-slide { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 30px 34px; }
+.pv-msg { display: flex; align-items: flex-end; gap: 14px; }
+.pv-msg + .pv-msg { margin-top: 14px; }
+.pv-msg .av { width: 42px; height: 42px; flex: none; display: grid; place-items: center; font: 800 18px var(--font-fancy); color: var(--stage-ink); background: var(--t); box-shadow: 0 0 0 2px var(--stage-ink); }
+.pv-msg .av.you { background: var(--text-dim); }
+.pv-msg-tx b { display: block; font: 800 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--t); margin-bottom: 4px; }
+.pv-msg-tx p { margin: 0; font: 600 1.15rem/1.4 var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.pv-pips { display: flex; gap: 6px; margin-top: 20px; }
+.pv-pips span { width: 8px; height: 8px; background: var(--stage-line); }
+.pv-pips span.on { background: var(--t); }
+
+/* ---- equal portrait scene cards ---- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, 200px); grid-auto-rows: 300px; gap: 20px; justify-content: start; }
+.sc { position: relative; width: 200px; height: 300px; background: var(--t); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--stage-card, var(--edge)), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); cursor: pointer; overflow: hidden; transition: transform .08s steps(1); }
+.sc:hover, .sc.demo-hover { transform: translate(-2px, -2px); }
+.sc .ini { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%); font: 900 40px var(--font-fancy); color: var(--stage-ink); opacity: .32; }
+.sc .badge { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; background: var(--stage-ink); color: var(--stage-ok); font: 800 11px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; z-index: 2; box-shadow: 0 0 0 2px var(--stage-ok); }
+.sc .badge .dot { width: 5px; height: 5px; background: currentColor; }
+.sc .cont { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--stage-black) 68%, transparent); opacity: 0; transition: opacity .1s steps(1); }
+.sc:hover .cont, .sc.demo-hover .cont { opacity: 1; }
+.sc .cont span { padding: 8px 18px; background: var(--accent); color: var(--stage-ink); font: 800 .82rem var(--font-body); text-transform: uppercase; letter-spacing: .03em; box-shadow: 0 0 0 2px var(--stage-ink); }
+.sc .ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 92%, transparent) 45%); z-index: 1; transition: bottom .1s steps(1); }
+.sc.hastakes .ov { bottom: 32px; }
+.sc .who { font: 700 12px var(--font-body); color: var(--stage-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc h3 { margin-top: 3px; font: 800 14px/1.25 var(--font-big); font-variation-settings: var(--soft-axes); color: var(--stage-card); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc .meta { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; font: 700 12px var(--font-mono); color: var(--stage-card); opacity: .85; }
+.sc .takestrip { position: absolute; left: 0; right: 0; bottom: 0; height: 32px; padding: 0 12px; display: flex; align-items: center; z-index: 2; background: var(--stage-ink); box-shadow: inset 0 2px 0 var(--edge); }
+.takestrip .pips { display: flex; gap: 3px; flex: none; }
+.takestrip .pips span { width: 8px; height: 8px; background: var(--stage-line); }
+.takestrip .pips span.on { background: var(--t); }
+.takestrip .active { margin-left: 8px; font: 800 12px var(--font-mono); color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc.grp .facegrid { display: flex; gap: 6px; margin-bottom: 6px; }
+.sc.grp .facegrid span { width: 30px; height: 30px; display: grid; place-items: center; font: 800 12px var(--font-fancy); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--stage-ink); }
+
+#scenesRoot { display: none; }
+body[data-state="scenes"] #scenesRoot, body[data-state="dialog"] #scenesRoot { display: block; }
+
+/* ================= Library ================= */
+#libraryRoot { display: none; }
+body[data-state="library"] #libraryRoot { display: block; }
+.lsec { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+.lsec .ssub { color: var(--text-dim); font-size: .88rem; margin-top: 4px; }
+.sside { display: flex; align-items: center; gap: 12px; margin-left: auto; flex-wrap: wrap; }
+.scount { font: 700 12px var(--font-mono); color: var(--text-soft); background: var(--stage-ink); box-shadow: 0 0 0 2px var(--edge); padding: 4px 10px; }
+.scount em { font-style: normal; color: var(--text-dim); margin-left: 4px; text-transform: lowercase; }
+.viewseg { display: flex; gap: 4px; }
+.viewseg button { display: flex; align-items: center; gap: 5px; padding: 7px 11px; background: var(--stage-ink); border: 3px solid var(--edge); font: 700 .75rem var(--font-body); text-transform: uppercase; color: var(--text-dim); cursor: pointer; }
+.viewseg button.on { background: var(--c, var(--accent)); color: var(--stage-ink); border-color: var(--stage-ink); }
+.shelf-find { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--stage-ink); box-shadow: 0 0 0 3px var(--edge); margin: 16px 0 14px; }
+.shelf-find .sk { font: 700 11px var(--font-mono); text-transform: uppercase; color: var(--text-dim); }
+.shelf-find input { flex: 1; border: 0; background: none; color: var(--text); font: 400 .9rem var(--font-body); }
+.shelf-find input::placeholder { color: var(--text-faint); }
+.shelf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 16px; }
+.spine { position: relative; padding-left: .9rem; display: flex; flex-direction: column; min-height: 9rem; background: var(--face); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--c), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); }
+.spine::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .9rem; background: var(--c); box-shadow: inset -3px 0 0 var(--stage-ink); }
+.spine .body { padding: 12px 12px 8px 12px; }
+.spine .nm { display: block; width: 100%; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font: 800 .95rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); text-transform: uppercase; }
+.spine .meta { font: 700 .75rem var(--font-mono); text-transform: uppercase; color: var(--text-dim); margin-top: 4px; }
+.spine .facts { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.spine .fact { font: 600 .72rem var(--font-mono); box-shadow: inset 0 0 0 2px var(--edge); padding: 2px 7px; color: var(--text-dim); }
+.spine .foot { display: flex; flex-wrap: wrap; row-gap: 8px; gap: 8px; align-items: center; padding: 8px 12px 10px 12px; margin-top: auto; box-shadow: inset 0 3px 0 var(--edge); }
+.spine .foot .rswl { flex: 1 1 auto; min-width: 6rem; }
+.spine .rswl { font: 700 .75rem var(--font-body); color: var(--text-dim); }
+.spine .ract { font: 700 .7rem var(--font-body); background: var(--stage-ink); box-shadow: 0 0 0 2px var(--edge); color: var(--text); padding: 5px 10px; cursor: pointer; border: 0; text-transform: uppercase; }
+.dragnote { text-align: center; font: 600 .78rem var(--font-mono); color: var(--text-faint); padding: 14px; }
+
+/* ================= Controls: form row + buttons ================= */
+#controlsRoot { display: none; }
+body[data-state="controls"] #controlsRoot { display: block; }
+.g2-slab { background: var(--face); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); padding: 24px 26px; margin-bottom: 26px; }
+.g2-slab h2 { margin: 0 0 4px; font: 800 1.1rem var(--font-fancy); text-transform: uppercase; letter-spacing: .03em; color: var(--text); }
+.g2-slab .lede { margin: 0 0 20px; color: var(--text-dim); font-size: .88rem; }
+.formrow { display: flex; gap: 22px; flex-wrap: wrap; }
+.g2-field { display: flex; flex-direction: column; gap: 8px; min-width: 14rem; flex: 1; }
+.g2-field .fl { font: 700 11px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.s-input { background: var(--stage-ink); box-shadow: inset 0 0 0 3px var(--edge); padding: 11px 14px; font-size: .95rem; }
+.s-input:focus { box-shadow: inset 0 0 0 3px var(--accent); }
+select.s-input { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; cursor: pointer; }
+.switch-field { flex-direction: row; align-items: center; justify-content: space-between; min-width: 14rem; }
+.switch-field .fl { margin: 0; }
+.s-switch { width: 44px; height: 24px; background: var(--stage-ink); box-shadow: inset 0 0 0 3px var(--edge); }
+.s-switch::after { content: ""; position: absolute; top: 4px; left: 4px; width: 14px; height: 14px; background: var(--text-dim); transition: left .1s steps(2); }
+.s-switch.on { background: var(--accent); box-shadow: inset 0 0 0 3px var(--stage-ink); }
+.s-switch.on::after { left: 24px; background: var(--stage-ink); }
+.btnrow { display: flex; gap: 16px; flex-wrap: wrap; }
+
+/* ---- buttons: G2 override - a heavy ink outline, a hard offset block-shadow, a snap not a lean ---- */
+.s-btn { padding: 12px 20px; background: var(--stamp-bg); color: var(--stamp-fg); border: 3px solid var(--stage-ink); box-shadow: 5px 5px 0 0 var(--stage-black); font: 800 .88rem var(--font-body); text-transform: uppercase; letter-spacing: .03em; cursor: pointer; transition: transform .08s steps(1), box-shadow .08s steps(1); }
+.s-btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 0 var(--stage-black); background: var(--deck-pack); }
+.s-btn:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 0 var(--stage-black); }
+.s-btn.ghost { background: var(--stage-ink); color: var(--text); border-color: var(--edge); }
+.s-btn.ghost:hover { border-color: var(--accent); background: var(--stage-ink); }
+.s-btn.quiet { background: var(--stage-ink); color: var(--c, var(--accent)); border-color: var(--c, var(--accent)); box-shadow: 4px 4px 0 0 var(--stage-black); }
+.s-btn.danger { background: var(--stage-danger-bg); color: var(--stage-danger-text); border-color: var(--stage-danger-edge); }
+.s-btn svg { width: 15px; height: 15px; }
+
+/* ================= confirm dialog ================= */
+.scrim { position: fixed; inset: 0; z-index: 80; display: none; place-items: center; background: var(--scrim); }
+body[data-state="dialog"] .scrim { display: grid; }
+.dlg { width: 440px; max-width: calc(100vw - 32px); padding: 26px 28px; background: var(--face); box-shadow: inset 0 0 0 3px var(--stage-ink), 0 0 0 3px var(--stage-danger-edge), 8px 8px 0 0 var(--stage-black); }
+.dlg .kick { display: inline-block; font: 800 11px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--stage-ink); background: var(--stage-danger-text); padding: 4px 9px; }
+.dlg h3 { margin: 10px 0 0; font: 800 1.3rem var(--font-fancy); text-transform: uppercase; color: var(--text); }
+.dlg p { margin-top: 12px; color: var(--text-soft); font-size: .92rem; line-height: 1.55; }
+.dlg .row { margin-top: 20px; display: flex; justify-content: flex-end; gap: 12px; }
+
+/* ================= wireframe-only phone toggle ================= */
+/* Same technique scenes-game.html documents and proves out: the Dock becomes a normal-flow row
+   pinned to the bottom of a HEIGHT-CAPPED .app (not position:fixed - position:fixed's containing
+   block is the true browser viewport, not the 390px column the maxWidth trick below draws, so a
+   fixed Dock renders at the wrong place entirely). align-items:stretch is load-bearing too: the
+   base .app rule's flex-start is a CROSS-axis (width) rule once flex-direction flips to column,
+   and would collapse .stage to near-zero width otherwise. */
+body.phone .app { flex-direction: column; align-items: stretch; height: calc(100vh - 190px); min-height: 0; }
+/* min-height is the actual culprit worth documenting: soft-parts.css's OWN .s-dock rule (a
+   different, generic base rule this file never touches directly) sets min-height:100vh, and
+   min-height always wins over height in the used-value calc regardless of specificity or
+   !important on height alone - so min-height must be overridden here too, or the Dock stays
+   viewport-tall no matter what height/flex-basis says. */
+body.phone .s-dock { order: 2; flex: 0 0 66px; position: static; width: 100%; height: 66px; min-height: 0; flex-direction: row; align-items: stretch; padding: 6px 2px; gap: 0; box-shadow: inset 0 3px 0 var(--edge); }
+body.phone .s-dock .brand { display: none; }
+body.phone .s-app { display: flex; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 6px 2px; }
+body.phone .s-app b { display: block; font-size: 11px !important; text-align: center; }
+body.phone .s-app small { display: none; }
+body.phone .scn-side { display: none !important; }
+body.phone .stage { order: 1; flex: 1; min-height: 0; overflow-y: auto; width: 100%; }
+body.phone .stagewrap { padding: 20px 18px 40px; }
+body.phone .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+body.phone .stagerow { flex-direction: column; }
+body.phone .hero, body.phone .preview { width: 100%; }
+body.phone .hero { height: 380px; }
+body.phone .preview { height: 220px; }
+body.phone .grid { grid-template-columns: repeat(auto-fill, 150px); grid-auto-rows: 225px; gap: 12px; }
+body.phone .sc { width: 150px; height: 225px; }
+body.phone .g2-title h1.stack { font-size: 1.9rem; }
+body.phone .formrow { flex-direction: column; }
+
+.wf-note { max-width: min(32rem, calc(100vw - 24px)); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-cast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 20c.3-2.9 2-4.5 4.5-4.6"/></symbol>
+<symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="5" width="16" height="15"/><path d="M4 10h16M8 3v4M16 3v4"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-takes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+<symbol id="i-find" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav>
+
+  <div class="scn-side" id="scnSide">
+    <aside class="char-rail">
+      <button type="button" class="cr-mark" title="Scenes"><svg width="22" height="22" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg></button>
+      <div class="cr-div"></div>
+      <button type="button" class="cr-all on" title="All Scenes"><svg width="18" height="18"><use href="#i-cast"/></svg></button>
+      <div class="cr-list">
+        <button type="button" class="cr-tile on" style="--t: var(--deck-character)"><span class="cr-art">V</span><span class="cr-playing" title="Now playing"><svg width="8" height="8"><use href="#i-play"/></svg></span></button>
+        <button type="button" class="cr-tile" style="--t: var(--deck-persona)"><span class="cr-art">N</span></button>
+        <button type="button" class="cr-tile" style="--t: var(--deck-lorebook)"><span class="cr-art">M</span></button>
+        <button type="button" class="cr-tile" style="--t: var(--deck-regex)"><span class="cr-art">M</span></button>
+        <button type="button" class="cr-tile" style="--t: var(--deck-preset)"><span class="cr-art">C</span></button>
+        <button type="button" class="cr-tile group" title="Heist Crew"><span class="cr-faces"><span style="left:0; background:var(--deck-character)">V</span><span style="left:15px; background:var(--deck-preset)">C</span></span></button>
+      </div>
+    </aside>
+
+    <aside class="stage-panel">
+      <div class="sp-top"><div class="s-act"><b>Fan Favorites</b></div></div>
+      <div class="sp-scroll">
+        <div class="sp-sec fav-sec">
+          <a class="fav-card-g2" href="#" style="--t: var(--deck-character)">
+            <div class="fav-art"><span class="ini">V</span>
+              <div class="fav-ov"><div class="fav-who"><span class="fav-av">V</span><b>Vera Lune</b><i>2h ago</i></div><div class="fav-title">The long storm</div></div>
+            </div>
+            <div class="fav-body">
+              <div class="fav-takepips"><span class="on"></span><span class="on"></span><span></span></div>
+              <div class="fav-stat">42 msgs &middot; 3 takes</div>
+            </div>
+          </a>
+          <button type="button" class="fav-continue">Continue Story</button>
+          <div class="fav-nav"><div class="fav-dots"><span class="on"></span><span></span></div></div>
+        </div>
+
+        <div class="sp-sec">
+          <div class="lab"><span class="sq"></span>This Week</div>
+          <button type="button" class="rec" style="--t: var(--deck-persona)"><span class="rec-av">N</span><span class="rec-tx"><b>Cut the deck</b><small>Nuit pulled her hand back.</small></span><time>3d</time></button>
+          <button type="button" class="rec" style="--t: var(--deck-lorebook)"><span class="rec-av">M</span><span class="rec-tx"><b>The lock gave on the third try</b><small>It clicked open at last.</small></span><time>6d</time></button>
+          <div class="lab"><span class="sq"></span>Earlier</div>
+          <button type="button" class="rec" style="--t: var(--deck-character)"><span class="rec-av">V</span><span class="rec-tx"><b>Who did you let up the stairs?</b><small>Vera didn't answer right away.</small></span><time>23d</time></button>
+          <button type="button" class="rec" style="--t: var(--deck-preset)"><span class="rec-av">C</span><span class="rec-tx"><b>The debt comes due</b><small>Corvin counted the coins twice.</small></span><time>30d</time></button>
+        </div>
+
+        <div class="sp-sec">
+          <div class="lab"><span class="sq"></span>Smart Folders</div>
+          <button type="button" class="chapter smart"><svg width="14" height="14"><use href="#i-takes"/></svg><span class="ch-name">Longest Stories</span><span class="ch-count">6</span></button>
+        </div>
+
+        <div class="sp-sec">
+          <div class="lab"><span class="sq"></span>Folders</div>
+          <button type="button" class="chapter on" style="--c: var(--deck-pack)"><span class="ch-dot"></span><span class="ch-name">Main Plot</span><span class="ch-count">4</span></button>
+          <button type="button" class="chapter" style="--c: var(--deck-preset)"><span class="ch-dot"></span><span class="ch-name">Side Quests</span><span class="ch-count">2</span></button>
+          <button type="button" class="newchapter"><svg width="14" height="14"><use href="#i-plus"/></svg>New Folder&hellip;</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <main class="stage">
+    <div class="g2bg" aria-hidden="true"><i class="b1"></i><i class="b2"></i><i class="b3"></i></div>
+    <div class="stagewrap">
+
+      <div class="topbar">
+        <span class="brandkick">Bunraku &middot; a little theater for your characters</span>
+        <div class="g2cal"><span class="pip"><svg><use href="#i-calendar"/></svg></span><span class="txt"><span class="day">Day 14</span><span class="of">of your story</span></span></div>
+      </div>
+
+      <!-- ================= SCENES ================= -->
+      <div id="scenesRoot">
+        <div class="g2-title">
+          <span class="kick">Act I &middot; Your Stage</span>
+          <h1 class="stack"><span>Your</span><span class="hi">Stage</span></h1>
+          <p class="sub">6 stories across 5 characters. Continue where you left off, or start something new.</p>
+        </div>
+
+        <div class="scn-tabs">
+          <button type="button" class="on">One-on-One <span class="cnt">6</span></button>
+          <button type="button">Group Performances <span class="cnt">1</span></button>
+          <button type="button">All <span class="cnt">7</span></button>
+        </div>
+
+        <div class="stagerow">
+          <a class="hero" href="#" style="--t: var(--deck-character)">
+            <span class="ini">V</span>
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="hero-ov">
+              <span class="kick">Continue your story</span>
+              <h2>The long storm</h2>
+              <p class="subw">Vera Lune &middot; picks up on Take 2</p>
+              <div class="hero-pips"><span class="on"></span><span class="on"></span><span></span></div>
+              <div class="hero-stats"><b>42 msgs</b><span>&middot;</span><span>2 hours ago</span><span>&middot;</span><b>3 takes</b></div>
+              <span class="s-btn">Continue Story</span>
+            </div>
+          </a>
+
+          <a class="preview" href="#" style="--t: var(--deck-character)">
+            <div class="fill"></div>
+            <div class="pv-slide">
+              <div class="pv-msg"><span class="av you">Y</span><div class="pv-msg-tx"><b>You</b><p>Deal. Just don't let it go out this time.</p></div></div>
+              <div class="pv-msg"><span class="av">V</span><div class="pv-msg-tx"><b>Vera Lune</b><p>*She strikes the match, cupping the flame against the wind.*</p></div></div>
+              <div class="pv-pips"><span class="on"></span><span></span></div>
+            </div>
+          </a>
+        </div>
+
+        <div class="grid">
+          <article class="sc hastakes demo-hover" style="--t: var(--deck-character)">
+            <span class="ini">V</span>
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>The long storm</h3><div class="meta"><b>42 msgs</b><span>&middot;</span><span>2h ago</span></div></div>
+            <div class="takestrip"><span class="pips"><span class="on"></span><span class="on"></span><span></span></span><span class="active">Take 2</span></div>
+          </article>
+          <article class="sc" style="--t: var(--deck-persona)">
+            <span class="ini">N</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Nuit</div><h3>Cut the deck</h3><div class="meta"><b>18 msgs</b><span>&middot;</span><span>3 days</span></div></div>
+          </article>
+          <article class="sc" style="--t: var(--deck-lorebook)">
+            <span class="ini">M</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">The Magpie</div><h3>The lock gave on the third try</h3><div class="meta"><b>7 msgs</b><span>&middot;</span><span>10 days</span></div></div>
+          </article>
+          <article class="sc" style="--t: var(--deck-regex)">
+            <span class="ini">M</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Marguerite</div><h3>Untitled Scene</h3><div class="meta"><b>1 msg</b><span>&middot;</span><span>21 days</span></div></div>
+          </article>
+          <article class="sc hastakes" style="--t: var(--deck-character)">
+            <span class="ini">V</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>Who did you let up the stairs?</h3><div class="meta"><b>64 msgs</b><span>&middot;</span><span>23 days</span></div></div>
+            <div class="takestrip"><span class="pips"><span class="on"></span><span></span></span><span class="active">Original</span></div>
+          </article>
+          <article class="sc" style="--t: var(--deck-preset)">
+            <span class="ini">C</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Corvin Ashe</div><h3>The debt comes due</h3><div class="meta"><b>9 msgs</b><span>&middot;</span><span>30 days</span></div></div>
+          </article>
+          <article class="sc grp" style="--t: var(--deck-pack)">
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov">
+              <span class="facegrid"><span style="background:var(--deck-character)">V</span><span style="background:var(--deck-preset)">C</span><span style="background:var(--deck-regex)">M</span></span>
+              <div class="who">Ensemble &middot; 3 cast</div><h3>Heist Crew</h3><div class="meta"><b>118 msgs</b><span>&middot;</span><span>12 min ago</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ================= LIBRARY ================= -->
+      <div id="libraryRoot">
+        <div class="g2-title">
+          <span class="kick">Act II &middot; Your Collection</span>
+          <h1 class="stack"><span>The</span><span class="hi">Library</span></h1>
+          <p class="sub">World knowledge, kept and ready to bring into any scene.</p>
+        </div>
+
+        <section>
+          <div class="lsec">
+            <div><div class="s-act"><b>Act II</b></div><h2 class="s-h2" style="margin-top:6px">Lorebooks</h2><div class="ssub">World knowledge</div></div>
+            <div class="sside">
+              <span class="scount">18<em>lorebooks</em></span>
+              <div class="viewseg"><button style="--c:var(--deck-lorebook)">Cards</button><button style="--c:var(--deck-lorebook)">Tiles</button><button style="--c:var(--deck-lorebook)">Show</button><button style="--c:var(--deck-lorebook)">List</button><button class="on" style="--c:var(--deck-lorebook)">Shelf</button></div>
+              <button type="button" class="s-btn quiet" style="--c:var(--deck-lorebook)">+ New</button>
+            </div>
+          </div>
+          <label class="shelf-find"><span class="sk">find</span><input placeholder="Name, key, or tag&hellip;" aria-label="Search by name, key, or tag"></label>
+          <div class="shelf-grid">
+            <div class="spine" style="--c:var(--deck-lorebook)">
+              <div class="body"><button type="button" class="nm">Harbor Town</button><div class="meta">213 entries</div>
+                <div class="facts"><span class="fact">SillyTavern</span><span class="fact">~92.6K tok</span><span class="fact">tide</span><span class="fact">smuggling</span></div></div>
+              <div class="foot"><span class="s-switch on" style="--c:var(--deck-lorebook)"></span><span class="rswl">On</span><span style="flex:1"></span><button class="ract">Split</button><button class="ract">Copy</button></div>
+            </div>
+            <div class="spine" style="--c:var(--deck-lorebook)">
+              <div class="body"><button type="button" class="nm">The Lighthouse</button><div class="meta">12 entries</div>
+                <div class="facts"><span class="fact">Risu</span><span class="fact">~3.4K tok</span></div></div>
+              <div class="foot"><span class="s-switch" style="--c:var(--deck-lorebook)"></span><span class="rswl">Off, skipped on export</span><span style="flex:1"></span><button class="ract">Split</button><button class="ract">Copy</button></div>
+            </div>
+            <div class="spine" style="--c:var(--deck-lorebook)">
+              <div class="body"><button type="button" class="nm">Velvet Quill's Ledger</button><div class="meta">54 entries</div>
+                <div class="facts"><span class="fact">RoleCall</span><span class="fact">~11K tok</span><span class="fact">debts</span></div></div>
+              <div class="foot"><span class="s-switch on" style="--c:var(--deck-lorebook)"></span><span class="rswl">On</span><span style="flex:1"></span><button class="ract">Split</button><button class="ract">Copy</button></div>
+            </div>
+          </div>
+          <p class="dragnote">Drag a book onto another book to merge</p>
+        </section>
+      </div>
+
+      <!-- ================= CONTROLS: form row + buttons ================= -->
+      <div id="controlsRoot">
+        <div class="g2-title">
+          <span class="kick">Controls &middot; Reference</span>
+          <h1 class="stack"><span>Form &amp;</span><span class="hi">Buttons</span></h1>
+          <p class="sub">Input, switch, and select next to the three button kinds: primary, ghost, danger.</p>
+        </div>
+
+        <div class="g2-slab">
+          <h2>Session</h2>
+          <p class="lede">A form row: text input, a toggle switch, and a select, in the same ink-block language as everything else.</p>
+          <div class="formrow">
+            <label class="g2-field"><span class="fl">Scene title</span><input class="s-input" type="text" value="The long storm"></label>
+            <label class="g2-field switch-field"><span class="fl">Autoplay music</span><span class="s-switch on"></span></label>
+            <label class="g2-field"><span class="fl">Sort by</span>
+              <select class="s-input">
+                <option>Recent</option>
+                <option>A&ndash;Z</option>
+                <option>Messages</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="g2-slab">
+          <h2>Actions</h2>
+          <p class="lede">Primary, ghost, and danger, the three button kinds used everywhere in the app.</p>
+          <div class="btnrow">
+            <button type="button" class="s-btn">Continue Story</button>
+            <button type="button" class="s-btn ghost">Cancel</button>
+            <button type="button" class="s-btn danger"><svg><use href="#i-trash"/></svg>Delete Story</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ================= confirm dialog (state=dialog, overlays Scenes) ================= -->
+<div class="scrim">
+  <div class="dlg">
+    <span class="kick">Cut this story?</span>
+    <h3>Cut the deck</h3>
+    <p>&ldquo;Cut the deck&rdquo; and every message in it, permanently. There is no undo.</p>
+    <div class="row"><button type="button" class="s-btn ghost">Cancel</button><button type="button" class="s-btn danger">Delete</button></div>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>G2: Persona.</b> Solid ink blocks, a thick contrasting line, a hard offset shadow instead of a
+  soft lean, solid pastel slabs behind whatever is selected (Dock, tabs, folders, view segments), a
+  calendar-style stamp, and heavy stacked Cinzel titles with a color slab behind the second word.
+  Angle/skew lives only in the faint decorative bands behind the stage (.g2bg) - every clickable
+  target and every line of text stays horizontal. Content matches the approved soft screens: the Dock
+  (workbench-shell.html), Scenes (scenes-game.html's cast rail, Fan Favorites, This Week/Earlier,
+  Folders, Continue hero + message preview, the equal 200x300 grid), a Library shelf row
+  (library-shelves.html's Lorebooks section), the "Cut this story?" confirm, and a form row plus the
+  three button kinds.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button type="button" data-s="scenes" class="on">Scenes</button>
+  <button type="button" data-s="library">Library</button>
+  <button type="button" data-s="dialog">Dialog</button>
+  <button type="button" data-s="controls">Controls</button>
+  <button type="button" data-s="phone">Phone</button>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  function set(s) {
+    var isPhone = s === 'phone';
+    body.classList.toggle('phone', isPhone);
+    document.documentElement.style.maxWidth = isPhone ? '390px' : '';
+    body.setAttribute('data-state', isPhone ? 'scenes' : s);
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('wfbar').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b) set(b.getAttribute('data-s'));
+  });
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'scenes');
+})();
+</script>
+</body>
+</html>

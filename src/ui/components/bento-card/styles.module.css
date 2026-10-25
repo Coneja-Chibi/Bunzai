@@ -1,0 +1,119 @@
+/* transcribed from vs-editor-2's .card / .h / .t / .aff / .dot / .fold. The accent line wears the
+   ENTITY's own accent (--a, art-derived signature color), falling back to the user's house accent
+   (--accent), and only then to brand rose - entities wear their own color, the brand does not. */
+.card {
+  background: var(--stage-panel);
+  border: 3px solid var(--stage-black);
+  border-top: 3px solid var(--a, var(--accent));
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.off {
+  opacity: 0.42;
+  filter: grayscale(0.5);
+}
+.head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--stage-seam);
+}
+.mark {
+  display: flex;
+  flex: none;
+  color: var(--a, var(--accent));
+}
+.mark :global(svg) {
+  display: block;
+}
+.title {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-paper);
+}
+.aff {
+  display: flex;
+  gap: 0.3rem;
+  margin-left: 0.2rem;
+}
+.aff :global(span) {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--stage-mute);
+  border: 2px solid var(--stage-seam);
+  background: transparent;
+  padding: 0.05rem 0.3rem;
+}
+.aff :global(button) {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--stage-mute);
+  border: 2px solid var(--stage-seam);
+  background: transparent;
+  padding: 0.05rem 0.3rem;
+  cursor: pointer;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border: 2px solid var(--stage-black);
+  background: var(--stage-seam);
+}
+.full {
+  background: var(--stage-ok);
+}
+.carry {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rose);
+  border: 2px solid var(--rose);
+  padding: 0.1rem 0.35rem;
+  margin-left: 0.35rem;
+}
+.move {
+  margin-left: auto;
+  display: flex;
+  gap: 0.25rem;
+}
+.move button {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--stage-mute);
+  background: transparent;
+  border: 2px solid var(--stage-seam);
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+}
+.move button:hover {
+  color: var(--stage-paper);
+  border-color: var(--stage-mute);
+}
+.fold {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--stage-line);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 0.2rem;
+}
+.move + .fold {
+  margin-left: 0.2rem;
+}
+.body {
+  padding: 0.7rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}

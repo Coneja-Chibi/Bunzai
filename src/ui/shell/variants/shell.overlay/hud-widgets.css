@@ -1,0 +1,2 @@
+/* HUD widgets: mono headings and crisp shadows, without moving the floating panels. */
+html[data-surface-shell-overlay="hud-widgets"] [data-part="shell.overlay"] { --overlay-heading: var(--bk-font-mono); --overlay-case: uppercase; --overlay-shadow: 4px 4px 0 var(--bk-surface-ink); }

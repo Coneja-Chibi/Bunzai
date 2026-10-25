@@ -1,0 +1,126 @@
+/*
+ * Encore styles. Each block restyles something no built-in variant touches, and names it with a stable data-part
+ * (docs/generated/theme-parts.md) or a class the host has always used. url(asset:<id>) names a package file.
+ */
+
+/* Font: the package's own pixel face, used for headings only so body text stays readable. */
+@font-face {
+  font-family: "Silkscreen";
+  src: url(asset:silkscreen) format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 1. A slow starfield behind the Library and Scenes (a PNG tile, drifting only when motion is allowed). */
+[data-part="shell.canvas"],
+[data-part="library.main"],
+[data-part="scenes.main"] {
+  background-image: url(asset:starfield);
+  background-size: 192px 192px;
+  image-rendering: pixelated;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-part="shell.canvas"],
+  [data-part="library.main"],
+  [data-part="scenes.main"] { animation: encore-drift 120s linear infinite; }
+}
+@keyframes encore-drift {
+  from { background-position: 0 0; }
+  to { background-position: -192px 192px; }
+}
+
+/* 2. An XP strip riding the top edge of the status line. */
+[data-part="shell.status"] { position: relative; }
+[data-part="shell.status"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, var(--bk-role-action) 0 14px, transparent 14px 18px);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* 3. Library cards: stepped pixel corners and a gold lock-on ring when targeted. */
+[data-part="library.card"] > * {
+  clip-path: polygon(0 6px, 6px 6px, 6px 0, calc(100% - 6px) 0, calc(100% - 6px) 6px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 6px calc(100% - 6px), 0 calc(100% - 6px));
+}
+[data-part="library.card"]:hover > *,
+[data-part="library.card"]:focus-within > * {
+  outline: 2px solid var(--bk-role-warn);
+  outline-offset: -2px;
+}
+
+/* 4. Section headers: the bundled pixel face and a dotted rule. */
+[data-part="library.section.header"] h2.stitle,
+[data-part="library.section.header"] h2.stitle em,
+[data-part="scenes.header"] h1,
+[data-part="slot.library.header"] .mod-banner {
+  font-family: "Silkscreen", var(--bk-font-display);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+[data-part="library.section.header"] {
+  border-bottom: 2px dotted var(--bk-line-strong);
+}
+
+/* 5. Scenes: pixel-cornered save cards. */
+[data-part="scenes.card"] .sc {
+  clip-path: polygon(0 5px, 5px 5px, 5px 0, calc(100% - 5px) 0, calc(100% - 5px) 5px, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 5px calc(100% - 5px), 0 calc(100% - 5px));
+}
+
+/* 6. The scene gets a faint CRT scanline sheet over the stage, and a watermark slot behind the messages. */
+[data-part="scene.root"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(0, 0, 0, 0.1) 3px 4px);
+  pointer-events: none;
+  z-index: 1;
+}
+[data-part="slot.scene.backdrop"] {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0.1;
+  pointer-events: none;
+}
+[data-part="slot.scene.backdrop"] img {
+  width: 12rem;
+  height: 12rem;
+  image-rendering: pixelated;
+}
+
+/* 7. The message composer blinks its prompt glyph like a terminal cursor, when motion is allowed. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-part="scene.composer"] .cap::before { animation: encore-blink 1.1s steps(2, start) infinite; }
+}
+@keyframes encore-blink {
+  to { visibility: hidden; }
+}
+
+/* Slot items: classes the manifest names on its text items. */
+.mod-banner {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--bk-role-warn);
+  background: var(--bk-surface-ink);
+  color: var(--bk-role-warn-text);
+  font-size: 0.8125rem;
+}
+.mod-tip {
+  display: block;
+  padding: 0.25rem 0.5rem;
+  color: var(--bk-text-dim);
+  font-family: "Silkscreen", var(--bk-font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+[data-part="slot.library.header"] { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
+[data-part="slot.library.header"] img { width: 3rem; height: 3rem; image-rendering: pixelated; }

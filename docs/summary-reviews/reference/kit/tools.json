@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/kit/tools",
+  "sourcePath": "docs/reference/kit/tools.md",
+  "sourceHash": "sha256:2f3989ddf182678b12f339e5d9dd98961d08e77d9a4650b638c2139580cf379a",
+  "semanticSummaryHash": "sha256:25e9174b64c46e4b846c7788992d705fe1219279e12736069c56021f72d7d7f1",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Line no longer names the deleted workbench generated.ts; src/generated/capabilities.ts exists and is checked by capabilities:check (current), Kit imports it.",
+  "reviewedAt": "2026-10-13T14:49:12.705Z"
+}

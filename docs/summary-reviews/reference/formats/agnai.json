@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/agnai",
+  "sourcePath": "docs/reference/formats/agnai.md",
+  "sourceHash": "sha256:272cee1ce269b9a61c0bdc7fdd46d2c0e511f6e5789cf5250ae9bc1032dc077b",
+  "semanticSummaryHash": "sha256:207d6b5851f9650e7220b9f741db6a2b13bdfdfda0ce2d5459e3d4fca0392654",
+  "verdict": "APPROVE",
+  "reviewer": "gpt-6.1-sol:/root/implementation_review",
+  "notes": "Markdown and sidecar correctly distinguish unconditional character writes/persona rebuilding from lorebook twin-diff overlays. Multi-element text-persona collapse is disclosed; JSON fidelity is field-level and duplicate-id residue stays attached to its twin. Source-only review.",
+  "reviewedAt": "2026-10-02T01:04:44.791Z"
+}

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Press</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * The Press, soft identity. Ported from src/ui/apps/press/index.tsx, press-core.ts,
+ * press-bundles.ts, readiness-core.ts, and docs/reference/ui.md "The Press room" plus
+ * docs/guide/exporting.md and converting.md. The staging grammar applied to export: the room
+ * works only its staged queue, grouped as bundles (a character's linked lorebooks ride along).
+ */
+.page { container-type: inline-size; display: flex; min-height: 100vh; background: var(--canvas); }
+.room { flex: 1; min-width: 0; display: flex; gap: 20px; padding: 22px 26px 90px; align-items: flex-start; }
+/* the room here IS the window (a top-level app, not a split pane), so @media is the honest match */
+@media (max-width: 52rem) { .room { flex-direction: column; } .rail { position: static; max-height: none; width: 100%; } }
+
+/* the left rail: unstaged library pieces as stamps */
+.rail { width: 16rem; flex: none; position: sticky; top: 22px; max-height: calc(100vh - 3rem); overflow-y: auto; }
+.rail .s-act { margin-bottom: 10px; }
+.offerlist { display: flex; flex-direction: column; gap: 6px; }
+.offer { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; text-align: left; padding: 8px 10px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); cursor: pointer; border: 0; font: 400 .85rem var(--font-body); color: var(--text-soft); }
+.offer:hover { color: var(--text); transform: translateY(-1px); }
+.offer .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.offer .kd { font: 500 .75rem var(--font-mono); text-transform: uppercase; color: var(--text-faint); flex: none; }
+.railempty { color: var(--text-faint); font-size: .82rem; padding: 10px 0; }
+
+/* the queue column */
+.queue { flex: 1; min-width: 0; }
+.sheethead { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; box-shadow: inset 0 -1px 0 var(--seam); padding-bottom: 12px; margin-bottom: 14px; }
+.sheethead .s-act { margin-right: auto; }
+.targets { display: flex; gap: 6px; flex-wrap: wrap; }
+.tchip { font: 600 .76rem var(--font-body); padding: 6px 12px; background: none; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-soft); cursor: pointer; border: 0; }
+.tchip.on { background: var(--accent-deep); color: var(--stage-white); box-shadow: none; }
+
+.emptyq { padding: 20px; color: var(--text-dim); font-size: .9rem; max-width: 34rem; }
+
+.bundle { box-shadow: inset 0 0 0 1px var(--seam); margin-bottom: 16px; }
+.bundlemarq { display: flex; align-items: center; gap: 10px; padding: 9px 14px; box-shadow: inset 0 -1px 0 var(--seam); font: 600 .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-soft); }
+.bundlemarq i { font-style: normal; color: var(--text-dim); margin-right: auto; }
+.unstage { font: 500 .7rem var(--font-mono); text-transform: uppercase; color: var(--text-faint); background: none; border: 0; cursor: pointer; }
+.unstage:hover { color: var(--stage-danger-text); }
+
+.kcard { display: grid; grid-template-columns: .9rem minmax(0,1fr) auto; gap: 5px 10px; align-items: center; padding: 12px 14px; margin: 10px 12px; box-shadow: inset 0 0 0 1px var(--seam); background: var(--stage-row); }
+.kcard.dropped { opacity: .5; }
+.dot { width: 9px; height: 9px; box-shadow: inset 0 0 0 1px var(--edge); background: var(--stage-faint); }
+.dot.ok { background: var(--stage-ok); }
+.dot.warn { background: var(--stage-warn); }
+.dot.fail { background: var(--stage-danger-edge); }
+.kname { color: var(--text); font: 600 .88rem var(--font-big); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.jkind { font: 500 .75rem var(--font-mono); text-transform: uppercase; color: var(--text-dim); }
+.riderdrop { font: 500 .75rem var(--font-mono); text-transform: uppercase; color: var(--text-faint); background: none; box-shadow: inset 0 0 0 1px dashed var(--seam); padding: 3px 8px; cursor: pointer; border: 0; }
+.jnote, .jinfo, .jfile { grid-column: 2 / -1; font-size: .76rem; }
+.jnote { color: var(--stage-warn); font-family: var(--font-mono); }
+.jnote.fail { color: var(--stage-danger-text); }
+.jinfo { color: var(--text-dim); font-family: var(--font-mono); }
+.jinfo .fixlink { color: var(--accent); text-decoration: underline; background: none; border: 0; cursor: pointer; font: inherit; padding: 0; }
+.jfile { color: var(--text-faint); font-family: var(--font-mono); }
+.fileedit { grid-column: 2 / -1; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.filein { font: 500 .75rem var(--font-mono); color: var(--text); background: var(--stage-sunken); box-shadow: inset 0 0 0 1px var(--seam); padding: 5px 8px; min-width: 11rem; border: 0; }
+.flavor { font: 500 .75rem var(--font-mono); text-transform: uppercase; box-shadow: inset 0 0 0 1px var(--seam); padding: 4px 8px; color: var(--text-dim); background: none; cursor: pointer; border: 0; }
+.flavor.on { background: var(--accent-deep); color: var(--stage-white); box-shadow: none; }
+
+.foot { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; box-shadow: inset 0 1px 0 var(--seam); padding-top: 16px; }
+.sum { font: 500 .78rem var(--font-mono); color: var(--text-dim); margin-right: auto; }
+.foot .s-btn.run:disabled { opacity: .5; cursor: default; }
+.foot .s-btn.run:disabled:hover { transform: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+</defs></svg>
+
+<div class="page">
+  <nav class="s-dock">
+    <div class="brand" style="--pink: var(--deck-pack); --ink: var(--stage-ink)"><svg width="26" height="26"><use href="#bun"/></svg>bunraku</div>
+    <a class="s-app c-workbench" href="#"><i>Wb</i><b>Workbench</b><small>home</small></a>
+    <a class="s-app c-scenes" href="#"><i>Sc</i><b>Scenes</b></a>
+    <a class="s-app c-library" href="#"><i>Lb</i><b>Library</b></a>
+    <a class="s-app c-press on" href="#"><i>Pr</i><b>Press</b></a>
+    <a class="s-app c-agent" href="#"><i>Ag</i><b>Agent</b></a>
+    <a class="s-app c-kit" href="#"><i>Kt</i><b>Kit</b></a>
+    <a class="s-app c-settings" href="#"><i>St</i><b>Settings</b></a>
+  </nav>
+
+  <div class="room">
+    <aside class="rail">
+      <div class="s-act">from the library · click to stage</div>
+      <div class="offerlist">
+        <button type="button" class="offer"><span class="nm">Nuit</span><span class="kd">character</span></button>
+        <button type="button" class="offer"><span class="nm">Wren</span><span class="kd">persona</span></button>
+        <button type="button" class="offer"><span class="nm">The Lighthouse</span><span class="kd">lorebook</span></button>
+        <button type="button" class="offer"><span class="nm">Chibi Gram Pacer</span><span class="kd">preset</span></button>
+        <button type="button" class="offer"><span class="nm">Tidy asterisks</span><span class="kd">regex</span></button>
+      </div>
+    </aside>
+
+    <section class="queue">
+      <!-- empty queue -->
+      <div data-view="empty">
+        <div class="sheethead"><span class="s-act">the queue · 0 staged</span></div>
+        <p class="emptyq">Nothing staged. Stage pieces from the Library, right-click any piece, or
+        use the rail on the left. A staged character brings his linked lorebooks as a bundle.</p>
+      </div>
+
+      <!-- staged queue: bundle with a rider (dropped + riding), a solo lorebook (red), a solo
+           character (readiness), no target picked yet -->
+      <div data-view="staged">
+        <div class="sheethead">
+          <span class="s-act">the queue · 4 staged · 1 dropped</span>
+          <div class="targets">
+            <button type="button" class="tchip">SillyTavern</button>
+            <button type="button" class="tchip">Risu</button>
+            <button type="button" class="tchip">Agnai</button>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>bundle · Marguerite Vane</span><i>character + 1 linked</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot"></span><b class="kname">Marguerite Vane</b><span class="jkind">character</span>
+            <span class="jinfo">no target picked yet</span>
+          </div>
+          <div class="kcard dropped">
+            <span class="dot"></span><b class="kname">Keeper's Log</b><span class="jkind">lorebook · rides with Marguerite Vane</span>
+            <button type="button" class="riderdrop">ride again</button>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · The Lighthouse</span><i>lorebook</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot fail"></span><b class="kname">The Lighthouse</b><span class="jkind">lorebook</span>
+            <span class="jnote fail">no entry has keywords - it will never fire</span>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · Harbor Town</span><i>lorebook</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot warn"></span><b class="kname">Harbor Town</b><span class="jkind">lorebook</span>
+            <span class="jnote">14 entries of 213 without keywords</span>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span class="sum">4 in the run · pick a platform</span>
+          <button type="button" class="s-btn ghost">clear the queue</button>
+          <button type="button" class="s-btn run" disabled title="Pick a target platform first">run the press</button>
+        </div>
+      </div>
+
+      <!-- target picked: character readiness with a fix link, filename + flavor editing -->
+      <div data-view="target">
+        <div class="sheethead">
+          <span class="s-act">the queue · 4 staged · 1 dropped</span>
+          <div class="targets">
+            <button type="button" class="tchip on">SillyTavern</button>
+            <button type="button" class="tchip">Risu</button>
+            <button type="button" class="tchip">Agnai</button>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>bundle · Marguerite Vane</span><i>character + 1 linked</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot warn"></span><b class="kname">Marguerite Vane</b><span class="jkind">character</span>
+            <span class="jinfo">11 of 16 filled - empty: nickname, personality, +3 more · <button type="button" class="fixlink">open in the editor</button></span>
+            <div class="fileedit"><input class="filein" value="Marguerite Vane"><button type="button" class="flavor on">.json</button><button type="button" class="flavor">.txt</button><button type="button" class="flavor">.md</button></div>
+          </div>
+          <div class="kcard dropped">
+            <span class="dot"></span><b class="kname">Keeper's Log</b><span class="jkind">lorebook · rides with Marguerite Vane</span>
+            <button type="button" class="riderdrop">ride again</button>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · The Lighthouse</span><i>lorebook</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot fail"></span><b class="kname">The Lighthouse</b><span class="jkind">lorebook</span>
+            <span class="jnote fail">no entry has keywords - it will never fire</span>
+            <div class="fileedit"><input class="filein" value="The Lighthouse"><button type="button" class="flavor on">.json</button><button type="button" class="flavor">.txt</button><button type="button" class="flavor">.md</button></div>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · Harbor Town</span><i>lorebook</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot warn"></span><b class="kname">Harbor Town</b><span class="jkind">lorebook</span>
+            <span class="jnote">14 entries of 213 without keywords</span>
+            <div class="fileedit"><input class="filein" value="Harbor Town"><button type="button" class="flavor on">.json</button><button type="button" class="flavor">.txt</button><button type="button" class="flavor">.md</button></div>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span class="sum">4 on the sheet</span>
+          <button type="button" class="s-btn ghost">clear the queue</button>
+          <button type="button" class="s-btn run">run the press</button>
+        </div>
+      </div>
+
+      <!-- run results: printed with a carries note, printed with a dropped-fields warning, failed,
+           skipped, and the download button (single vs zip covered in the note) -->
+      <div data-view="results">
+        <div class="sheethead">
+          <span class="s-act">the queue · 4 staged · 1 dropped</span>
+          <div class="targets"><button type="button" class="tchip on">SillyTavern</button><button type="button" class="tchip">Risu</button><button type="button" class="tchip">Agnai</button></div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>bundle · Marguerite Vane</span><i>character + 1 linked</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot ok"></span><b class="kname">Marguerite Vane</b><span class="jkind">character</span>
+            <span class="jinfo">carries: portrait · expression pack</span>
+            <span class="jfile">marguerite-vane.json</span>
+          </div>
+          <div class="kcard">
+            <span class="dot ok"></span><b class="kname">Keeper's Log</b><span class="jkind">lorebook · rides with Marguerite Vane</span>
+            <span class="jfile">keepers-log.json</span>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · The Lighthouse</span><i>lorebook</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot fail"></span><b class="kname">The Lighthouse</b><span class="jkind">lorebook</span>
+            <span class="jnote fail">no entry has keywords - it will never fire</span>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · Harbor Town</span><i>lorebook</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot warn"></span><b class="kname">Harbor Town</b><span class="jkind">lorebook</span>
+            <span class="jnote">3 fields not carried</span>
+            <span class="jfile">harbor-town.json</span>
+          </div>
+        </div>
+
+        <div class="bundle">
+          <div class="bundlemarq"><span>solo · Tidy asterisks</span><i>regex</i>
+            <button type="button" class="unstage">unstage &times;</button></div>
+          <div class="kcard">
+            <span class="dot fail"></span><b class="kname">Tidy asterisks</b><span class="jkind">regex</span>
+            <span class="jnote fail">SillyTavern has no regex format</span>
+          </div>
+        </div>
+
+        <div class="foot">
+          <span class="sum">3 printed · 1 with notes · 2 failed</span>
+          <button type="button" class="s-btn ghost">clear the results</button>
+          <button type="button" class="s-btn ghost">clear the queue</button>
+          <button type="button" class="s-btn">download the bundle</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="wf-bar" id="wfBar">
+  <button data-s="empty">Empty queue</button>
+  <button data-s="staged">Staged, no target</button>
+  <button data-s="target">Target picked</button>
+  <button data-s="results">Run results + download</button>
+</div>
+<div class="wf-note" id="wfNote">
+  <b>The Press, soft identity.</b> Ported from press/index.tsx, press-core.ts, press-bundles.ts,
+  readiness-core.ts. The left rail lists unstaged studio pieces as stamps (click to stage); the
+  queue groups staged pieces into bundles (a character's linked lorebooks ride along, "ride again" /
+  "drop from this run" per rider) and solos. Readiness shows before a run: a lorebook's own keyword
+  check (red = will never fire, amber = some missing, no target needed), a character against the
+  picked platform's coverage with an "open in the editor" fix link, and "no target picked yet" when
+  none is chosen. Once a target is picked, each waiting row gets its filename and flavor pick
+  (.json/.txt/.md). Run the press settles every row as printed (with a carries note), printed with a
+  dropped-fields warning, skipped (target has no format for that kind), or failed (with the reason);
+  download the bundle appears once at least one row prints (source hands over one bare file for a
+  single print, a zip for more than one - not drawn separately here since it is the same button).
+</div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.body.classList.add("embed");
+  function apply(s) {
+    document.querySelectorAll("#wfBar button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+    document.querySelectorAll("[data-view]").forEach(function (el) { el.style.display = el.getAttribute("data-view") === s ? "" : "none"; });
+  }
+  apply(q.get("state") || "staged");
+  document.getElementById("wfBar").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-s")); });
+})();
+</script>
+</body>
+</html>

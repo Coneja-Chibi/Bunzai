@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku Foundations</title>
+<link rel="stylesheet" href="system.css">
+<link rel="stylesheet" href="page.css">
+<script src="page.js"></script>
+<style>
+/* foundations-only layout: swatch grids, scale rows, demo boxes. Tokens only. */
+.f-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: var(--bk-space-4); }
+.f-swatch { display: flex; flex-direction: column; background: var(--bk-surface-panel); box-shadow: 0 0 0 1px var(--bk-line); }
+.f-chip { height: 4.5rem; display: flex; align-items: flex-end; padding: var(--bk-space-2); font: var(--bk-type-label); box-shadow: inset 0 -1px 0 var(--bk-line); }
+.f-swatch .f-info { padding: var(--bk-space-2) var(--bk-space-3) var(--bk-space-3); display: flex; flex-direction: column; gap: var(--bk-space-1); }
+.f-swatch code, .f-row code { font: var(--bk-type-meta); color: var(--bk-text); }
+.f-ratios { display: flex; flex-wrap: wrap; gap: var(--bk-space-1); }
+.f-ratio { font: var(--bk-type-meta); padding: 0 var(--bk-space-1); color: var(--bk-text-dim); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.f-ratio[data-fail] { color: var(--bk-danger); box-shadow: inset 0 0 0 1px var(--bk-danger-line); }
+.f-deck { display: grid; grid-template-columns: repeat(3, 1fr); }
+.f-deck > div { height: 4.5rem; display: flex; align-items: flex-end; padding: var(--bk-space-2); font: var(--bk-type-label); }
+.f-row { display: grid; grid-template-columns: 12rem 1fr; align-items: center; gap: var(--bk-space-4); padding: var(--bk-space-2) 0; box-shadow: inset 0 -1px 0 var(--bk-line); }
+.f-bar { height: var(--bk-space-3); background: var(--bk-accent); }
+.f-demo { padding: var(--bk-space-6); background: var(--bk-surface-well); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.f-row-demos { display: flex; flex-wrap: wrap; gap: var(--bk-space-8); align-items: flex-start; }
+.f-card { width: var(--bk-card-w-sm); aspect-ratio: var(--bk-card-ratio); display: flex; flex-direction: column; }
+.f-card .f-art { flex: 1; display: grid; place-items: center; background: var(--bk-art-hatch), var(--bk-tint); font: var(--bk-fw-display) var(--bk-fs-4xl)/1 var(--bk-font-display); color: var(--bk-text-on-tint); }
+.f-card .f-plate { display: flex; flex-direction: column; gap: var(--bk-space-1); padding: var(--bk-space-2) var(--bk-space-3) var(--bk-space-3); background: var(--bk-surface-panel); box-shadow: inset 0 var(--bk-frame-w) 0 0 var(--bk-tint-text); }
+.f-card .f-slot { position: absolute; top: var(--bk-space-2); right: var(--bk-space-2); }
+.f-list { width: 17rem; padding: var(--bk-space-2); }
+.f-motion-track { position: relative; height: var(--bk-space-6); background: var(--bk-surface-sunken); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.f-motion-dot { position: absolute; top: 0; left: 0; width: var(--bk-space-6); height: var(--bk-space-6); background: var(--bk-accent); }
+.f-motion-track[data-go] .f-motion-dot { left: calc(100% - var(--bk-space-6)); }
+.f-pulse { animation: f-pulse var(--bk-dur-pulse) var(--bk-ease-in-out) infinite; }
+@keyframes f-pulse { 50% { opacity: var(--bk-pulse-min); } }
+.f-z { display: flex; flex-wrap: wrap; gap: var(--bk-space-2); }
+.f-btn { min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-4); font: var(--bk-type-action); text-transform: var(--bk-case-action); color: var(--bk-action-text); background: var(--bk-action-bg); border: 0; cursor: pointer; }
+.f-btn[data-ghost] { color: var(--bk-text); background: none; box-shadow: inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control); }
+.f-table { width: 100%; border-collapse: collapse; font: var(--bk-type-small); }
+.f-table th, .f-table td { text-align: left; padding: var(--bk-space-1) var(--bk-space-2); box-shadow: inset 0 -1px 0 var(--bk-line); }
+.f-table th { font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label); color: var(--bk-text-dim); }
+.f-table td:nth-child(3) { font-family: var(--bk-font-mono); }
+.f-specimen { display: flex; align-items: baseline; gap: var(--bk-space-4); padding: var(--bk-space-2) 0; box-shadow: inset 0 -1px 0 var(--bk-line); }
+.f-specimen code { flex: none; width: 9rem; font: var(--bk-type-meta); color: var(--bk-text-dim); }
+@container (max-width: 30rem) { .f-row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>contract v1</b></p>
+    <h1 class="bk-title">Foundations</h1>
+    <p>Every token, drawn live from the CSS in <code>tokens/</code> and <code>themes/</code>. Switch the theme in the bar above: G3 is the default, C1 and C3 ship as example mods, paper is G3 in daylight. Contrast numbers are measured from the computed colors each time the theme changes.</p>
+  </header>
+
+  <section class="spec-section" id="contrast">
+    <h2 class="bk-heading">Contrast check</h2>
+    <p>Primary text needs 7:1 and every other text role 4.5:1 on every surface it sits on. Control boundaries, focus and meter fills need 3:1. A failing pair says <b>fail</b> in the last column; color is never the only signal.<span id="sum"></span></p>
+    <details class="bk-panel bk-frame"><summary class="bk-panel__head bk-label" style="cursor:pointer">Every pair, measured</summary><div class="bk-panel__body" style="overflow:auto"><table class="f-table" id="checks"><thead><tr><th>Foreground</th><th>On</th><th>Ratio</th><th>Needs</th><th>Result</th></tr></thead><tbody></tbody></table></div></details>
+  </section>
+
+  <section class="spec-section" id="color">
+    <h2 class="bk-heading">Color</h2>
+    <p>Semantic roles only. A part never names a hex or a deck token; it reads a role, or the item's tint.</p>
+    <h3 class="bk-label"><span class="bk-bullet"></span>Surfaces</h3>
+    <div class="f-grid" data-swatches="surface-well surface-base surface-sunken surface-field surface-panel surface-raised surface-ink shadow"></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Lines</h3>
+    <div class="f-grid" data-swatches="line-strong line line-track line-control"></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Text (ratio on well, base, panel, field)</h3>
+    <div class="f-grid" data-swatches="text text-soft text-dim text-faint text-disabled text-link" data-text></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Semantic roles: one jewel, one meaning</h3>
+    <p class="bk-meta">Every UI color that means something reads one of these seven roles, never a bare hex. <b>brand</b> is rose: the logo and title moments only, never a UI state. <b>action</b> is sapphire: primary buttons, links, focus. <b>select</b> is amethyst: selected, current, active, clearly apart from action. <b>ok</b> emerald, <b>warn</b> topaz, <b>danger</b> ruby are status. <b>info</b> aquamarine is HUD readouts, meters and data, and the default tint. Each has a fill (under dark ink), a text/mark shade, and a deep fill (under white).</p>
+    <div class="f-grid" id="roles"></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Accent alias and focus</h3>
+    <p class="bk-meta"><code>--bk-accent</code> is kept as the v1 contract name, aliased to the brand role only.</p>
+    <div class="f-grid" data-swatches="accent accent-text accent-deep focus-color action-bg action-bg-hover action-text text-on-tint"></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Status washes and console</h3>
+    <div class="f-grid" data-swatches="ok ok-bg warn warn-bg danger danger-bg danger-line danger-strong info info-bg code-macro code-var"></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Decks: fill, text, deep</h3>
+    <div class="f-grid" id="decks"></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Data-viz series and fixed host marks</h3>
+    <div class="f-grid" data-swatches="viz-1 viz-2 viz-3 viz-4 viz-5 viz-6 viz-track host-st host-rc host-nai host-risu prop-hare"></div>
+  </section>
+
+  <section class="spec-section" id="type">
+    <h2 class="bk-heading">Typography</h2>
+    <p>Cinzel for titles, Fraunces (level, axes at 0) for the names of things, Atkinson Hyperlegible for reading, IBM Plex Mono for every HUD number and label. 12px is the floor.</p>
+    <div class="f-specimen"><code>--bk-type-title</code><span class="bk-title">The Long Storm</span></div>
+    <div class="f-specimen"><code>--bk-type-heading</code><span class="bk-heading">Scene settings</span></div>
+    <div class="f-specimen"><code>--bk-type-name</code><span class="bk-name">Vera Lune</span></div>
+    <div class="f-specimen"><code>--bk-type-body</code><span style="font:var(--bk-type-body)">She strikes the match, cupping the flame against the wind.</span></div>
+    <div class="f-specimen"><code>--bk-type-small</code><span style="font:var(--bk-type-small)">Picks up on Take 2. Nothing is saved until you press Save.</span></div>
+    <div class="f-specimen"><code>--bk-type-action</code><span style="font:var(--bk-type-action);text-transform:var(--bk-case-action)">Continue Story</span></div>
+    <div class="f-specimen"><code>--bk-type-label</code><span class="bk-label">Lore budget</span></div>
+    <div class="f-specimen"><code>--bk-type-readout</code><span class="bk-readout"><span class="bk-readout__value">0142</span><span class="bk-readout__label">Takes</span></span></div>
+    <div class="f-specimen"><code>--bk-type-meta</code><span class="bk-meta">42 msgs &middot; 2h ago &middot; ~92.6K tok</span></div>
+    <h3 class="bk-label" style="margin-top:var(--bk-space-6)"><span class="bk-bullet"></span>Scale</h3>
+    <div id="scale"></div>
+  </section>
+
+  <section class="spec-section" id="space">
+    <h2 class="bk-heading">Spacing</h2>
+    <p>A 4px grid in rem. The number is the count of 4px steps.</p>
+    <div id="spacing"></div>
+  </section>
+
+  <section class="spec-section" id="size">
+    <h2 class="bk-heading">Sizing</h2>
+    <p>Hit targets never go under 24px. Cards are portrait 2:3, always.</p>
+    <div class="f-demo f-row-demos">
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)">
+        <span class="bk-label">Controls sm, md, lg</span>
+        <button class="f-btn" style="min-height:var(--bk-control-h-sm)">Small</button>
+        <button class="f-btn">Medium</button>
+        <button class="f-btn" style="min-height:var(--bk-control-h-lg)">Large</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)">
+        <span class="bk-label">Avatars xs, sm, md, lg</span>
+        <div style="display:flex;align-items:flex-end;gap:var(--bk-space-2)" data-deck="character">
+          <span style="width:var(--bk-avatar-xs);height:var(--bk-avatar-xs);background:var(--bk-tint)"></span>
+          <span style="width:var(--bk-avatar-sm);height:var(--bk-avatar-sm);background:var(--bk-tint)"></span>
+          <span style="width:var(--bk-avatar-md);height:var(--bk-avatar-md);background:var(--bk-tint)"></span>
+          <span style="width:var(--bk-avatar-lg);height:var(--bk-avatar-lg);background:var(--bk-tint)"></span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)">
+        <span class="bk-label">Portrait cards, 2:3: resting, selected</span>
+        <div style="display:flex;gap:var(--bk-space-4)"><article class="f-card bk-frame" data-deck="persona"><span class="bk-tag f-slot">Slot <b>03</b></span><div class="f-art" aria-hidden="true">N</div><div class="f-plate"><span class="bk-name">Nuit</span><span class="bk-meta">18 msgs &middot; 3d</span></div></article>
+        <article class="f-card bk-frame" data-deck="character" aria-selected="true"><span class="bk-tag f-slot" data-mark>Slot <b>02</b></span><div class="f-art" aria-hidden="true">V</div><div class="f-plate"><span class="bk-name">Vera Lune</span><span class="bk-meta">42 msgs &middot; 2h</span></div></article></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec-section" id="frames">
+    <h2 class="bk-heading">Frames and HUD primitives</h2>
+    <p>The same markup under every theme. G3 draws a flush edge with brackets when marked; C1 a double-line window with two ticks; C3 a thick edge with a hard offset shadow and brackets everywhere; paper is G3 on blush.</p>
+    <div class="f-demo f-row-demos">
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)"><span class="bk-label">Resting</span><div class="bk-frame" style="width:10rem;height:6rem"></div></div>
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)"><span class="bk-label">Crowned (deck)</span><div class="bk-frame" data-crown data-deck="lorebook" style="width:10rem;height:6rem"></div></div>
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)"><span class="bk-label">Marked</span><div class="bk-frame" data-mark style="width:10rem;height:6rem"></div></div>
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-2)"><span class="bk-label">Selected (hover me)</span><div class="bk-frame" data-lift aria-selected="true" data-deck="character" tabindex="0" style="width:10rem;height:6rem"></div></div>
+    </div>
+    <div class="f-demo f-row-demos" style="margin-top:var(--bk-space-4)">
+      <section class="bk-panel bk-frame" data-deck="preset" style="width:20rem">
+        <header class="bk-panel__head"><h3 class="bk-label"><span class="bk-bullet"></span>Panel head</h3><span class="bk-tag" style="margin-left:auto">Slot <b>01</b> &middot; Lv <b>12</b></span></header>
+        <div class="bk-panel__body" style="display:flex;flex-direction:column;gap:var(--bk-space-3)">
+          <div class="bk-meter" role="meter" aria-label="Scene length" aria-valuemin="0" aria-valuemax="60" aria-valuenow="42"><span class="bk-meter__label">Length</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:70%"></span></span><span class="bk-meter__value">42</span></div>
+          <div class="bk-meter" data-stacked data-deck="lorebook" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__row"><span class="bk-meter__label">Lore budget</span><span class="bk-meter__value">64%</span></span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:64%"></span></span></div>
+          <div class="bk-meter" data-tone="danger" role="meter" aria-label="Context" aria-valuemin="0" aria-valuemax="100" aria-valuenow="96"><span class="bk-meter__label">Context</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:96%"></span></span><span class="bk-meter__value">96%</span></div>
+          <div style="display:flex;align-items:center;gap:var(--bk-space-3)"><span class="bk-pips" data-tone="ok" aria-label="2 of 5 cast online"><i data-on></i><i data-on></i><i></i><i></i><i></i></span><span class="bk-meta">2 of 5 online</span></div>
+        </div>
+        <footer class="bk-panel__foot"><span class="bk-meta" data-tone="ok" style="display:flex;align-items:center;gap:var(--bk-space-1);color:var(--bk-tint-text)"><span class="bk-dot"></span>Live</span></footer>
+      </section>
+      <div style="display:flex;flex-direction:column;gap:var(--bk-space-4)">
+        <span class="bk-label">Readouts and a vertical divider</span>
+        <div style="display:flex;align-items:center;gap:var(--bk-space-5)">
+          <span class="bk-readout"><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></span>
+          <span class="bk-readout"><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></span>
+          <hr class="bk-divider" aria-orientation="vertical">
+          <span class="bk-readout"><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></span>
+        </div>
+        <span class="bk-label">Horizontal divider</span>
+        <hr class="bk-divider">
+        <span class="bk-label">Tags</span>
+        <div style="display:flex;gap:var(--bk-space-2);flex-wrap:wrap"><span class="bk-tag">Slot 04</span><span class="bk-tag" data-mark data-deck="character">Slot 02</span><span class="bk-tag" data-deck="lorebook">213 entries &middot; <b>Lv 9</b></span></div>
+      </div>
+      <div class="bk-panel f-list" data-deck="pack" role="listbox" aria-label="Folders">
+        <span class="bk-label" style="padding:var(--bk-space-2) var(--bk-space-3)"><span class="bk-bullet"></span>Selection grammar</span>
+        <div class="bk-item" role="option" aria-selected="false" tabindex="0"><span class="bk-cursor"></span>Main Plot<span class="bk-meta" style="margin-left:auto">4</span></div>
+        <div class="bk-item" role="option" aria-selected="true" tabindex="0"><span class="bk-cursor"></span>Side Quests<span class="bk-meta" style="margin-left:auto;color:inherit">2</span></div>
+        <div class="bk-item" role="option" aria-selected="false" tabindex="0"><span class="bk-cursor"></span>Longest Stories<span class="bk-meta" style="margin-left:auto">6</span></div>
+        <div class="bk-item" role="option" aria-disabled="true"><span class="bk-cursor"></span>Archived (disabled)</div>
+      </div>
+    </div>
+    <div class="bk-stage" style="margin-top:var(--bk-space-4);height:10rem;box-shadow:inset 0 0 0 1px var(--bk-line);padding:var(--bk-space-4)"><span class="bk-label">.bk-stage: the well, with the theme's backdrop (C3 draws its bands here)</span></div>
+  </section>
+
+  <section class="spec-section" id="layers">
+    <h2 class="bk-heading">Elevation and layers</h2>
+    <p>Flat by default: framed, scrimmed or dropped by a hard edge, never a blurred glow. Every z-index comes from this list; 1000 and up is the host's protected layer.</p>
+    <div class="f-demo f-row-demos">
+      <div class="bk-frame" style="width:10rem;height:5rem;padding:var(--bk-space-3)"><span class="bk-label">elev-flat</span></div>
+      <div class="bk-frame" style="width:10rem;height:5rem;padding:var(--bk-space-3);box-shadow:0 0 0 var(--bk-frame-w) var(--bk-frame-color), var(--bk-elev-float)"><span class="bk-label">elev-float</span></div>
+      <div class="bk-frame" style="width:10rem;height:5rem;padding:var(--bk-space-3);box-shadow:0 0 0 var(--bk-frame-w) var(--bk-frame-color), var(--bk-elev-modal)"><span class="bk-label">elev-modal</span></div>
+    </div>
+    <div class="f-z" id="zlist" style="margin-top:var(--bk-space-4)"></div>
+  </section>
+
+  <section class="spec-section" id="motion">
+    <h2 class="bk-heading">Motion</h2>
+    <p>Motion says something changed or something is waiting. No shake, jitter, glitch or flicker. Reduced motion is <b id="rm">checking</b>; under it every duration drops to zero and nothing lifts.</p>
+    <div class="f-demo" style="display:flex;flex-direction:column;gap:var(--bk-space-3)">
+      <button class="f-btn" id="play" style="align-self:flex-start">Play durations</button>
+      <div id="tracks" style="display:flex;flex-direction:column;gap:var(--bk-space-2)"></div>
+      <div style="display:flex;align-items:center;gap:var(--bk-space-4);margin-top:var(--bk-space-3)">
+        <span class="bk-tag f-pulse" data-mark>Waiting on you</span><span class="bk-meta">--bk-dur-pulse, never below --bk-pulse-min</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="spec-section" id="focus">
+    <h2 class="bk-heading">Focus and accessibility</h2>
+    <p>Press Tab. The ring is an outline in <code>--bk-focus-color</code>, offset from the edge, so a frame, a bracket or an offset shadow can never cover it.</p>
+    <div class="f-demo f-row-demos">
+      <button class="f-btn">Primary</button>
+      <button class="f-btn" data-ghost>Ghost</button>
+      <div class="bk-frame" data-lift tabindex="0" style="width:8rem;height:4rem"></div>
+      <input style="min-height:var(--bk-control-h-md);padding:0 var(--bk-space-3);font:var(--bk-type-body);color:var(--bk-text);background:var(--bk-surface-field);border:0;box-shadow:inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control)" placeholder="Search scenes" aria-label="Search scenes">
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  var rootStyle = function () { return getComputedStyle(document.documentElement); };
+  function tok(name) { return rootStyle().getPropertyValue("--bk-" + name).trim(); }
+  function rgb(v) {
+    var m = v.match(/^#([0-9a-f]{6})$/i);
+    if (m) return [0, 2, 4].map(function (i) { return parseInt(m[1].slice(i, i + 2), 16); });
+    m = v.match(/rgba?\(([^)]+)\)/);
+    if (m) return m[1].split(/[ ,/]+/).slice(0, 3).map(Number);
+    return null;
+  }
+  function lum(c) { return c.map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }).reduce(function (a, x, i) { return a + x * [0.2126, 0.7152, 0.0722][i]; }, 0); }
+  function ratio(a, b) { var A = rgb(a), B = rgb(b); if (!A || !B) return null; var x = lum(A), y = lum(B); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+  function chip(r, min) {
+    var s = document.createElement("span");
+    s.className = "f-ratio";
+    s.textContent = r === null ? "n/a" : r.toFixed(2) + ":1";
+    if (r !== null && r < min) s.setAttribute("data-fail", "");
+    return s;
+  }
+  var TEXT_ON = ["surface-well", "surface-base", "surface-panel", "surface-field"];
+  var DECKS = ["character", "lorebook", "persona", "pack", "preset", "regex", "fog"];
+  var ROLES = ["brand", "action", "select", "ok", "warn", "danger", "info"];
+  var ROLE_NOTE = {
+    brand: "logo, title moments, one highlight", action: "primary buttons, links, focus",
+    select: "selected, current, active", ok: "saved, connected, on", warn: "warning, cost, pending",
+    danger: "delete, errors", info: "HUD readouts, meters, data"
+  };
+
+  function swatches() {
+    document.querySelectorAll("[data-swatches]").forEach(function (grid) {
+      grid.innerHTML = "";
+      var isText = grid.hasAttribute("data-text");
+      grid.getAttribute("data-swatches").split(" ").forEach(function (name) {
+        var v = tok(name);
+        var card = document.createElement("div"); card.className = "f-swatch";
+        var c = document.createElement("div"); c.className = "f-chip";
+        if (isText) { c.style.background = "var(--bk-surface-panel)"; c.style.color = "var(--bk-" + name + ")"; c.style.font = "var(--bk-type-body)"; c.textContent = "Readable text"; }
+        else { c.style.background = "var(--bk-" + name + ")"; }
+        var info = document.createElement("div"); info.className = "f-info";
+        info.innerHTML = "<code>--bk-" + name + "</code><span class='bk-meta'>" + v + "</span>";
+        if (isText) {
+          var rs = document.createElement("div"); rs.className = "f-ratios";
+          TEXT_ON.forEach(function (s) { rs.appendChild(chip(ratio(v, tok(s)), name === "text-disabled" ? 0 : 4.5)); });
+          info.appendChild(rs);
+        }
+        card.appendChild(c); card.appendChild(info); grid.appendChild(card);
+      });
+    });
+    var decks = document.getElementById("decks"); decks.innerHTML = "";
+    DECKS.forEach(function (d) {
+      var card = document.createElement("div"); card.className = "f-swatch"; card.setAttribute("data-deck", d);
+      card.innerHTML = "<div class='f-deck'><div style='background:var(--bk-tint);color:var(--bk-text-on-tint)'>fill</div><div style='background:var(--bk-surface-panel);color:var(--bk-tint-text)'>text</div><div style='background:var(--bk-tint-deep);color:var(--bk-text-on-deep)'>deep</div></div><div class='f-info'><code>--bk-deck-" + d + "</code></div>";
+      var rs = document.createElement("div"); rs.className = "f-ratios";
+      rs.appendChild(chip(ratio(tok("text-on-tint"), tok("deck-" + d)), 4.5));
+      rs.appendChild(chip(ratio(tok("deck-" + d + "-text"), tok("surface-panel")), 4.5));
+      rs.appendChild(chip(ratio(tok("text-on-deep"), tok("deck-" + d + "-deep")), 4.5));
+      card.querySelector(".f-info").appendChild(rs);
+      decks.appendChild(card);
+    });
+    var roles = document.getElementById("roles"); roles.innerHTML = "";
+    ROLES.forEach(function (r) {
+      var card = document.createElement("div"); card.className = "f-swatch";
+      card.innerHTML = "<div class='f-deck'><div style='background:var(--bk-role-" + r + ");color:var(--bk-text-on-tint)'>fill</div><div style='background:var(--bk-surface-panel);color:var(--bk-role-" + r + "-text)'>text</div><div style='background:var(--bk-role-" + r + "-deep);color:var(--bk-text-on-deep)'>deep</div></div><div class='f-info'><code>--bk-role-" + r + "</code><span class='bk-meta'>" + ROLE_NOTE[r] + "</span></div>";
+      var rs = document.createElement("div"); rs.className = "f-ratios";
+      rs.appendChild(chip(ratio(tok("text-on-tint"), tok("role-" + r)), 4.5));
+      rs.appendChild(chip(ratio(tok("role-" + r + "-text"), tok("surface-panel")), 4.5));
+      rs.appendChild(chip(ratio(tok("text-on-deep"), tok("role-" + r + "-deep")), 4.5));
+      card.querySelector(".f-info").appendChild(rs);
+      roles.appendChild(card);
+    });
+  }
+
+  function checks() {
+    var pairs = [];
+    TEXT_ON.concat(["surface-raised"]).forEach(function (s) {
+      pairs.push(["text", s, 7]);
+      ["text-soft", "text-dim", "text-faint", "accent-text", "text-link", "ok", "warn", "danger", "info", "code-macro", "code-var"].forEach(function (t) { pairs.push([t, s, 4.5]); });
+      DECKS.forEach(function (d) { pairs.push(["deck-" + d + "-text", s, 4.5]); });
+      ROLES.forEach(function (r) { pairs.push(["role-" + r + "-text", s, 4.5]); });
+      pairs.push(["line-control", s, 3], ["focus-color", s, 3]);
+    });
+    ["text", "text-dim", "accent-text"].forEach(function (t) { pairs.push([t, "surface-ink", 4.5]); });
+    [["ok", "ok-bg"], ["warn", "warn-bg"], ["danger", "danger-bg"], ["info", "info-bg"], ["action-text", "action-bg"], ["action-text", "action-bg-hover"], ["text-on-tint", "accent"], ["text-on-deep", "accent-deep"]].forEach(function (p) { pairs.push([p[0], p[1], 4.5]); });
+    DECKS.forEach(function (d) { pairs.push(["text-on-tint", "deck-" + d, 4.5], ["text-on-deep", "deck-" + d + "-deep", 4.5], ["deck-" + d + "-text", "line-track", 3]); });
+    ROLES.forEach(function (r) { pairs.push(["text-on-tint", "role-" + r, 4.5], ["text-on-deep", "role-" + r + "-deep", 4.5], ["role-" + r + "-text", "line-track", 3]); });
+    pairs.push(["accent-text", "line-track", 3]);
+    var body = document.querySelector("#checks tbody"); body.innerHTML = "";
+    var fails = 0;
+    pairs.forEach(function (p) {
+      var r = ratio(tok(p[0]), tok(p[1])); var ok = r !== null && r >= p[2];
+      if (!ok) fails++;
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>--bk-" + p[0] + "</td><td>--bk-" + p[1] + "</td><td>" + (r === null ? "n/a" : r.toFixed(2)) + "</td><td>" + p[2] + ":1</td><td>" + (ok ? "pass" : "<b style='color:var(--bk-danger)'>fail</b>") + "</td>";
+      body.appendChild(tr);
+    });
+
+
+    document.getElementById("sum").textContent = " " + pairs.length + " pairs checked in this theme, " + fails + " failing.";
+  }
+
+  function scales() {
+    var scale = document.getElementById("scale"); scale.innerHTML = "";
+    ["xs", "sm", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl"].forEach(function (s) {
+      var row = document.createElement("div"); row.className = "f-specimen";
+      var px = parseFloat(tok("fs-" + s)) * 16;
+      row.innerHTML = "<code>--bk-fs-" + s + " " + px + "px</code><span style='font:var(--bk-fw-name) var(--bk-fs-" + s + ")/1.1 var(--bk-font-name);font-variation-settings:var(--bk-font-axes);white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>Velvet Quill</span>";
+      scale.appendChild(row);
+    });
+    var sp = document.getElementById("spacing"); sp.innerHTML = "";
+    ["half", "1", "2", "3", "4", "5", "6", "8", "10", "12", "16"].forEach(function (s) {
+      var row = document.createElement("div"); row.className = "f-row";
+      row.innerHTML = "<code>--bk-space-" + s + " " + parseFloat(tok("space-" + s)) * 16 + "px</code><div class='f-bar' style='width:var(--bk-space-" + s + ")'></div>";
+      sp.appendChild(row);
+    });
+    var z = document.getElementById("zlist"); z.innerHTML = "";
+    ["base", "raised", "mark", "sticky", "dock", "hud", "popover", "menu", "sheet", "dialog", "toast", "title", "protected"].forEach(function (n) {
+      var t = document.createElement("span"); t.className = "bk-tag"; t.innerHTML = "z-" + n + " <b>" + tok("z-" + n) + "</b>"; z.appendChild(t);
+    });
+    var tracks = document.getElementById("tracks"); tracks.innerHTML = "";
+    [["instant", "ease-out"], ["fast", "ease-out"], ["base", "ease-out"], ["slow", "ease-in-out"], ["fast", "ease-move"]].forEach(function (d) {
+      var row = document.createElement("div"); row.className = "f-row";
+      row.innerHTML = "<code>dur-" + d[0] + " " + tok("dur-" + d[0]) + " / " + d[1] + "</code><div class='f-motion-track'><div class='f-motion-dot' style='transition:left var(--bk-dur-" + d[0] + ") var(--bk-" + d[1] + ")'></div></div>";
+      tracks.appendChild(row);
+    });
+    document.getElementById("rm").textContent = matchMedia("(prefers-reduced-motion: reduce)").matches ? "on" : "off";
+  }
+
+  document.getElementById("play").addEventListener("click", function () {
+    document.querySelectorAll(".f-motion-track").forEach(function (t) { t.toggleAttribute("data-go"); });
+  });
+  function all() { swatches(); checks(); scales(); }
+  document.addEventListener("bk:theme", function () { requestAnimationFrame(all); });
+  document.addEventListener("DOMContentLoaded", all);
+})();
+</script>
+</body>
+</html>

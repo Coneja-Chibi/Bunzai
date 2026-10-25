@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/token-meter",
+  "sourcePath": "docs/reference/token-meter.md",
+  "sourceHash": "sha256:b568cca726398c3d40c47ca2859493d95553cc943fc29b4e3e2b1b8e425b6642",
+  "summary": "The token meter in src/core/tokens is a pure counter that learns each model from the usage its replies report. It counts every prompt with gpt-tokenizer's o200k base and fits, per model, how that count maps onto the provider's reported prompt total, cache reads and writes included. It gives a midpoint for display and an upper bound for budgeting. It reads every major usage shape without inventing zeros, predicts provider caching and prices it, and trims history in cache-friendly steps. Nothing feeds it yet; the turn loop will. Its learned numbers are stored as the StateStore's meter document, numbers only.",
+  "topics": [
+    "self-calibrating token counts",
+    "usage reader for every provider",
+    "cache planning and cost",
+    "stepped history trimming",
+    "numbers-only meter document"
+  ],
+  "sections": [
+    {
+      "slug": "why-it-learns",
+      "title": "Why it learns",
+      "level": 2,
+      "sourceHash": "sha256:0408e9b84892176c5706bd78245dd871c31c9552541560ef580e410def060ef5",
+      "summary": "No local tokenizer is exact for most models: Anthropic's current tokenizer has no open-source build, Gemini counts exactly only over the network, and each open-weight family has its own vocabulary. Every reply reports what its whole prompt cost, though. So the meter counts each prompt one cheap, consistent way and learns per model how that count maps onto the reported one, getting closer the more you generate, for any model on any provider.",
+      "topics": [
+        "no exact local tokenizer",
+        "whole-prompt reports as truth",
+        "learns per model"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-pieces",
+      "title": "The pieces",
+      "level": 2,
+      "sourceHash": "sha256:9277d27e79c102012250df3619a2dbd1aa4b09871a6414b4f06108a13eaff998",
+      "summary": "The base counter runs o200k on each message's exact text, split into prose, code, JSON and CJK, treats special-token text as text, and adds 4 tokens of framing per message. countText, the raw total, owns one bounded content-hash cache every caller shares (lore, prompt trace, editor badges), so unchanged text is never re-encoded; countMessage layers its own exact-text LRU on top for the class split. The usage reader maps every major provider shape into one record whose total counts cached tokens once. The fits use recursive least squares from a family prior, with a bound for report wander and fit uncertainty. A cached slice is learned as a second measurement. Reports under half the base are refused, early high reports wait for repeats, and a tokenizer change is re-learned. The meter document holds numbers only. Both token caches empty when the library locks, and a gate keeps them from being read or filled while it stays locked, so a turn that finishes after a lock never caches decrypted text.",
+      "topics": [
+        "o200k base counter",
+        "shared content-hash token cache",
+        "canonical usage record",
+        "rls fits with priors",
+        "meter document",
+        "cache planner",
+        "stepped trimming",
+        "caches cleared on lock"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-is-tested",
+      "title": "What is tested",
+      "level": 2,
+      "sourceHash": "sha256:660230a71d7b16cd1d5efcac54978008c8f9c156058082ce352c76e2ead7486a",
+      "summary": "Usage fixtures are built from provider documentation and say so. Synthetic models with a known tokenizer and seeded noise, across 200 seeds, prove the bound covers the truth on at least 97 percent of fresh prompts from zero replies on, including models above their prior, small prompts, normal noise, many short messages, and noisier models checked seed by seed. The bound never overcounts past a sendable multiple of its midpoint. Cached parts, breakpoint or automatic, with hits on older entries, never push a bound under the truth. Each smaller rule has its own test.",
+      "topics": [
+        "doc-derived usage fixtures",
+        "synthetic model tests",
+        "mutation-checked"
+      ],
+      "children": []
+    }
+  ]
+}

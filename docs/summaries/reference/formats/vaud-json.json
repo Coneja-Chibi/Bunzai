@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/vaud-json",
+  "sourcePath": "docs/reference/formats/vaud-json.md",
+  "sourceHash": "sha256:390cbe4de7c9d1d27dd92a03dbd578979533513c4faaaf814b1151d22f74c3c0",
+  "summary": "vaud-json is Bunraku's native character format: the canonical entity written directly to plain JSON with no wire translation. It serializes schemaVersion, kind, id, body, profiles, and original unchanged, making it the lossless local save and interchange format. The codec is native, so import and conversion use it while publish surfaces omit it. Detection parses through the exhaustive canonical runtime schema and scores 1.0 only for a valid character; invalid JSON, unsupported versions, malformed bodies, and other entity kinds score 0. Import uses the same parser and kind narrowing, eliminating a second partial validator. The field map is one-to-one, and export pretty-prints the whole entity. Existing escrow entries pass through untouched because vaud-json does not create its own twin. Quirks cover bounded parse errors, pure JSON media, and native exclusion from coverage. Source of truth lists the adapter, its tests, the shared runtime schema, registry, canonical wrapper, adapter contract, and UI publish filters.",
+  "topics": [
+    "vaud-json native character",
+    "no wire translation",
+    "detect 1.0 exhaustive character",
+    "shared runtime schema",
+    "original pass-through",
+    "native skip publish",
+    "pretty JSON export",
+    "complete canonical validation"
+  ],
+  "sections": [
+    {
+      "slug": "detection",
+      "title": "Detection",
+      "level": 2,
+      "sourceHash": "sha256:473d9090fb83274770a2d4a10cb81a519cc90a98a49ad06e2697283fda64c59c",
+      "summary": "detect parses input through parseCanonicalEntity and returns 1.0 only when the complete result is a character. Missing text, invalid JSON, unsupported schema versions, malformed required or optional fields, unknown authored keys, and other entity kinds return 0. toCanonical uses the same exhaustive parser and then narrows to character, so detection and import no longer maintain separate validation rules or accept a fixture-shaped partial body.",
+      "topics": [
+        "kind character 1.0",
+        "schemaVersion exact",
+        "complete runtime validation",
+        "shared detect import authority",
+        "malformed score zero"
+      ],
+      "children": []
+    },
+    {
+      "slug": "field-map",
+      "title": "Field map",
+      "level": 2,
+      "sourceHash": "sha256:8075d8aa8cf534330de5084aa661b385de64a8e61b982d8fb40dd60fb596ea0d",
+      "summary": "There is no wire translation to tabulate. On-disk JSON is the canonical entity one to one: schemaVersion kind id body profiles and original map to themselves. Every CharacterBody field the eight always-present sub-objects identity persona prompts greetings examples media attribution discovery plus optional presentation settings bias worldName knowledgeRefs behavior behaviorRefs variants is written verbatim under body. The adapter has no opinion on field meanings; see entities character for semantics. fromCanonical is JSON.stringify entity null 2 with suggested extension json. It writes the whole entity including any original and profiles the entity carries with no filtering or re-projection.",
+      "topics": [
+        "one-to-one identity map",
+        "body CharacterBody full",
+        "profiles original pass",
+        "JSON.stringify pretty",
+        "no re-projection"
+      ],
+      "children": []
+    },
+    {
+      "slug": "escrow-and-round-trip",
+      "title": "Escrow and round-trip",
+      "level": 2,
+      "sourceHash": "sha256:acee691178f838d8bab620e9255a369db5f3e7e4cf0fe39110776d3377df384c",
+      "summary": "vaud-json is the one format where same-format round-trip is lossless exact and unconditional rather than reconstructed from an escrowed twin. Because it serializes the canonical entity directly, vaud-json to canonical to vaud-json returns the identical entity same body original and profiles untouched, proven by the adapter round-trip test and the registry-level round-trip test. Relationship to escrow differs from app adapters: those fill an original entry keyed by their own id on import so private fields survive same-format round-trip. vaud-json neither reads nor writes an original entry keyed to itself; it carries whatever original the entity already holds straight through because toCanonical and fromCanonical never inspect that field. A card imported from SillyTavern then saved as vaud-json keeps original.sillytavern.raw intact in the file ready to re-project if later exported back to SillyTavern.",
+      "topics": [
+        "unconditional lossless RT",
+        "entity serialize direct",
+        "no self original key",
+        "prior app original keep",
+        "sillytavern raw survive"
+      ],
+      "children": []
+    },
+    {
+      "slug": "quirks",
+      "title": "Quirks",
+      "level": 2,
+      "sourceHash": "sha256:d0675d8ac4ddc876c52dc6578023001dff495e5e2e952e9490e2ce82bc2914bd",
+      "summary": "Detection and import both use the exhaustive canonical parser. Hand-edited files with unsupported schema versions, missing required sections, invalid optional fields, unknown authored keys, or another entity kind fail at the adapter boundary. Invalid JSON and invalid canonical character failures use separate bounded messages. Exports remain two-space pretty JSON. The format has no PNG or ZIP container; media stays in canonical refs or data URIs. native keeps the adapter off Press, export publish lists, and the platform coverage API while conversion and Workbench editing still use it.",
+      "topics": [
+        "shared exhaustive parser",
+        "bounded parse errors",
+        "pretty print export",
+        "native hide publish",
+        "coverage API skip"
+      ],
+      "children": []
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:d28f83bb14b2f983856160b7f171461aa6b4dc4ad970d789a89864c1aa1417c7",
+      "summary": "Source of truth maps the adapter to formats vaud-json index.ts, its regressions to vaud-json.test.ts, and exhaustive parsing to entities/runtime-schema.ts. Registry selection lives in core/registry.ts; canonical wrapper and escrow in core/canonical.ts; adapter flags in core/adapter.ts; and character fields in entities/character/schema.ts. Press, export dialog, and setup publish filters exclude native adapters. FORMAT-SUPPORT.md carries the generated matrix row.",
+      "topics": [
+        "vaud-json index.ts",
+        "runtime schema registry",
+        "canonical adapter contract",
+        "native UI filters",
+        "FORMAT-SUPPORT matrix"
+      ],
+      "children": []
+    }
+  ]
+}

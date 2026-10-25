@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cache-friendly lore layout: preset + scene</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Decision: "Cache-friendly layout (lore lower): OPT-IN per
+ * preset, off by default; existing prompts stay as authored." That default is settled - only the
+ * toggle's home and wording are proposed here, in two variations.
+ *
+ * Two surfaces, stacked in one file so the same setting can be seen from both sides at once:
+ *  1. The preset editor (src/ui/apps/workbench/preset/settings-bar.tsx, the "Identity & Settings"
+ *     fold) - this is where the preset's own structural setting is actually set.
+ *  2. The scene's Prompting wing, Preset tab (src/ui/apps/scenes/scene-preset-wing.tsx +
+ *     scene-preset-parts.tsx) - read-only here, same rule as prompt text: it belongs to the preset,
+ *     an edit changes it for every scene that uses it, so the scene only shows what it inherited.
+ * Chrome (dock, phead, block list, wing panel) is trimmed from the approved workbench-preset.html and
+ * scenes-wings.html - enough rows to read as real, not the full editors.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+html, body { overflow-x: hidden; }
+body { padding-bottom: 190px; background: var(--canvas); }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+h2.surface { max-width: 74rem; margin: 30px auto 0; padding: 0 22px; font: 600 1rem var(--font-fancy); letter-spacing: .02em; color: var(--text-dim); }
+h2.surface:first-of-type { margin-top: 22px; }
+
+/* --- surface 1: preset editor (workbench-preset.html, trimmed) --- */
+.pe-wrap { max-width: 74rem; margin: 10px auto 0; padding: 0 22px; }
+.pe-shell { display: flex; background: var(--stage-well); box-shadow: 0 0 0 1px var(--seam); }
+.s-dock { flex: none; }
+.pe-stage { flex: 1; min-width: 0; }
+.phead2 { display: flex; align-items: center; gap: 12px; padding: 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.phead2 .s-h3 { font-size: 1.3rem; }
+.settingsbar { display: flex; gap: 10px; padding: 12px 20px; flex-wrap: wrap; align-items: flex-end; box-shadow: inset 0 -1px 0 var(--seam); }
+.samp { display: flex; flex-direction: column; gap: 3px; }
+.samp label { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.samp input { width: 5rem; }
+.blockrow { display: flex; align-items: center; gap: 8px; padding: 8px 20px; box-shadow: inset 0 -1px 0 var(--seam); }
+.blockrow .grip { color: var(--text-faint); }
+.blockrow .name { flex: 1; font-size: .92rem; color: var(--text-soft); }
+.blockrow .role { font: 500 12px var(--font-mono); color: var(--text-dim); }
+
+/* variation A: a switch chip tucked at the end of the settingsbar strip */
+.layoutchip { display: flex; align-items: center; gap: 8px; padding: 8px 12px; box-shadow: inset 0 0 0 1px var(--seam); }
+.layoutchip .lbl { font: 600 .85rem var(--font-body); color: var(--text); }
+.layoutchip .tip { position: relative; }
+.layoutchip .tip .pop { display: none; position: absolute; top: 26px; left: 0; width: 17rem; padding: 10px 12px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 6px 6px 0 0 var(--stage-black); font-size: .78rem; color: var(--text-dim); line-height: 1.5; z-index: 5; }
+.layoutchip .tip:hover .pop, .layoutchip .tip:focus .pop { display: block; }
+
+/* variation B: its own row under the settingsbar, same shape as shell-settings.html's .srow */
+.advrow { display: flex; justify-content: space-between; gap: 24px; padding: 16px 20px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.advrow .tx { max-width: 30rem; }
+.advrow .label { font: 600 .92rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.advrow .hint { font-size: .8rem; color: var(--text-dim); margin-top: 3px; line-height: 1.5; }
+.advrow .ctrl { flex: none; display: flex; align-items: center; }
+
+/* --- surface 2: scene Prompting wing (scenes-wings.html, trimmed) --- */
+.sc-wrap { max-width: 74rem; margin: 10px auto 0; padding: 0 22px; }
+.sc-shell { position: relative; display: flex; min-height: 420px; background: var(--stage-well); box-shadow: 0 0 0 1px var(--seam); overflow: hidden; }
+.rail { flex: none; width: 60px; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0; background: var(--chrome); box-shadow: inset -1px 0 0 var(--seam); }
+.wi { position: relative; width: 38px; height: 38px; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); box-shadow: inset 3px 0 0 transparent; }
+.wi.on { color: var(--deck-preset); background: color-mix(in srgb, var(--deck-preset) 16%, transparent); box-shadow: inset 3px 0 0 var(--deck-preset); }
+.wi svg { width: 19px; height: 19px; }
+.wing-panel { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fold { padding: 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); }
+.crumb { display: flex; gap: 8px; font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.crumb b { color: var(--text); font-weight: 600; } .crumb i { font-style: normal; color: var(--text-faint); }
+.wbody { flex: 1; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+.hero { background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--deck-preset); padding: 18px; }
+.hero h2 { font: 600 20px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); margin: 4px 0 0; }
+.hero h2 em { font-style: normal; color: var(--deck-preset); }
+.hero p { margin-top: 8px; max-width: 42rem; font: 400 13px/1.6 var(--font-body); color: var(--text-soft); }
+.sbar { background: var(--face); box-shadow: 0 0 0 1px var(--edge); display: flex; align-items: center; gap: 10px; padding: 10px 14px; flex-wrap: wrap; }
+.lbl { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.qv { font: 500 12px var(--font-body); color: var(--c); display: flex; align-items: center; gap: 4px; }
+.qv b { font-weight: 700; }
+.ed-note { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; background: color-mix(in srgb, var(--deck-preset) 8%, transparent); box-shadow: inset 3px 0 0 var(--deck-preset); font: 400 12px/1.5 var(--font-body); color: var(--text-soft); }
+.ed-note svg { width: 14px; height: 14px; flex: none; margin-top: 1px; color: var(--deck-preset); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--deck-preset); font: 600 12px var(--font-body); cursor: pointer; text-decoration: underline; }
+
+[data-only] { display: none; }
+[data-only].show { display: flex; }
+.settingsbar[data-only].show { display: flex; }
+.advrow[data-only].show { display: flex; }
+.ed-note[data-only].show { display: flex; }
+.sbar[data-only].show { display: flex; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3V4z"/></symbol>
+<symbol id="i-cast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-4 3-6 7-6s7 2 7 6"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M12 16v-5M12 8h.01"/></symbol>
+</defs></svg>
+
+<h2 class="surface">1. Preset editor &mdash; Workbench &rsaquo; Preset &rsaquo; Velvet Quill</h2>
+<div class="pe-wrap">
+  <div class="pe-shell">
+    <nav class="s-dock" style="min-height:auto">
+      <div class="brand"><svg width="24" height="24" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg></div>
+      <div class="s-app c-workbench on"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    </nav>
+    <div class="pe-stage">
+      <header class="phead2">
+        <span class="s-chip" style="--c:var(--deck-preset)">PSET</span>
+        <span class="s-h3">Velvet Quill</span>
+        <button type="button" class="s-btn" style="padding:8px 16px; margin-left:auto">Save</button>
+      </header>
+
+      <!-- VARIATION A: chip at the end of the sampler strip -->
+      <div class="settingsbar" data-only="a">
+        <div class="samp"><label>Temperature</label><input class="s-input" value="0.9"></div>
+        <div class="samp"><label>Top P</label><input class="s-input" value="0.95"></div>
+        <div class="samp" style="flex:1"><label>Description</label><input class="s-input" value="A slow, literary preset for gothic scenes"></div>
+        <div class="layoutchip">
+          <span class="s-switch"></span>
+          <span class="lbl">Cache-friendly layout</span>
+          <span class="tip" tabindex="0"><svg width="14" height="14" style="color:var(--text-dim)"><use href="#i-info"/></svg>
+            <span class="pop">Moves shifting lore out from the very top of the prompt so more of it repeats turn to turn. Trades exact SillyTavern placement for a cheaper, faster reply. Off by default; this preset only.</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- VARIATION B: its own row below the samplers, full hint always visible -->
+      <div class="settingsbar" data-only="b">
+        <div class="samp"><label>Temperature</label><input class="s-input" value="0.9"></div>
+        <div class="samp"><label>Top P</label><input class="s-input" value="0.95"></div>
+        <div class="samp" style="flex:1"><label>Description</label><input class="s-input" value="A slow, literary preset for gothic scenes"></div>
+      </div>
+      <div class="advrow" data-only="b">
+        <div class="tx">
+          <div class="label">Cache-friendly lore layout</div>
+          <div class="hint">Moves shifting lore lower in the prompt instead of pinning it at the very top, so the provider can reuse more of the prompt between turns. Cheaper and faster, but not the exact spot SillyTavern would put it. Off by default. This applies to this preset only, everywhere it's used.</div>
+        </div>
+        <div class="ctrl"><span class="s-switch"></span></div>
+      </div>
+
+      <div class="blockrow"><span class="grip">&#8942;&#8942;</span><span class="s-switch on"></span><span class="name">Grim tone</span><span class="role">system</span></div>
+      <div class="blockrow"><span class="grip">&#8942;&#8942;</span><span class="s-switch on"></span><span class="name">Scene pacing</span><span class="role">system</span></div>
+    </div>
+  </div>
+</div>
+
+<h2 class="surface">2. Scene &rsaquo; Prompting wing &rsaquo; Preset tab (read-only here, same rule as prompt text)</h2>
+<div class="sc-wrap">
+  <div class="sc-shell">
+    <nav class="rail">
+      <button type="button" class="wi"><svg><use href="#i-cast"/></svg></button>
+      <button type="button" class="wi on"><svg><use href="#i-wand"/></svg></button>
+      <button type="button" class="wi"><svg><use href="#i-book"/></svg></button>
+    </nav>
+    <section class="wing-panel">
+      <nav class="fold"><div class="crumb">Prompting <i>/</i> <b>Preset</b></div></nav>
+      <div class="wbody">
+        <header class="hero">
+          <div class="eb" style="font:500 12px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--deck-preset)">Edit Preset</div>
+          <h2>Velvet <em>Quill</em></h2>
+          <p>Tune prompts, samplers, and post-processing for this scene. Switches and sampler values here are this scene's own; prompt text and layout settings belong to the preset.</p>
+        </header>
+
+        <!-- VARIATION A: a quiet chip in the sampler row, same family as Temp/Top P/Response -->
+        <div class="sbar" data-only="a">
+          <span class="lbl">Samplers:</span>
+          <span class="qv" style="--c: var(--deck-regex)">Temp <b>0.85</b></span>
+          <span class="qv" style="--c: var(--deck-persona)">Top P <b>0.95</b></span>
+          <span class="qv" style="--c: var(--deck-lorebook)">Cache layout <b>Friendly</b></span>
+        </div>
+        <div class="ed-note" data-only="a"><svg><use href="#i-info"/></svg>Lore sits lower in the prompt so more of it repeats between turns, cheaper and faster than exact placement. Set on the preset in <button type="button" class="linkbtn">Workbench</button>, not per scene.</div>
+
+        <!-- VARIATION B: its own labeled row, separate from the sampler strip -->
+        <div class="sbar" data-only="b">
+          <span class="lbl">Samplers:</span>
+          <span class="qv" style="--c: var(--deck-regex)">Temp <b>0.85</b></span>
+          <span class="qv" style="--c: var(--deck-persona)">Top P <b>0.95</b></span>
+        </div>
+        <div class="ed-note" data-only="b"><svg><use href="#i-info"/></svg><b style="color:var(--text)">Cache-friendly layout: off.</b>&nbsp;Lore stays exactly where SillyTavern puts it for this preset. Turn it on in <button type="button" class="linkbtn">Workbench</button> to trade that placement for a cheaper, faster reply.</div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="a" class="on">A: inline chip + tooltip</button>
+  <button data-s="b">B: own labeled row</button>
+</div>
+<div class="wf-note" id="note"></div>
+<script>
+(function () {
+  var NOTES = {
+    a: "Variation A. Preset editor: a compact switch+label chip at the end of the sampler strip, with the full explanation in a hover/focus tooltip - keeps the strip from growing. Scene wing: folded into the existing sampler-value row as one more quiet value (\"Cache layout: Friendly\"), plus one note line below explaining it's preset-owned.",
+    b: "Variation B. Preset editor: its own full-width row below the samplers, same shape as a Settings .srow, so the hint is always visible without a hover. Scene wing: its own line below the sampler row rather than folded in, stating the current value (on/off) up front before the one-line explanation."
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      el.classList.toggle("show", el.getAttribute("data-only") === s);
+    });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s.toUpperCase() + ".</b> " + NOTES[s];
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "a");
+})();
+</script>
+</body>
+</html>

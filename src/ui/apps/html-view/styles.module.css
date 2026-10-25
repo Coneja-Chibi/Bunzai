@@ -1,0 +1,108 @@
+/**
+ * HTML View: a framed drawing at tab size. House flat-ink chrome around it; inside the frame the
+ * page is the agent's own, sealed in its iframe and styled by nothing here.
+ */
+.room {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.9rem, 2.4vw, 1.8rem);
+}
+
+.head { max-width: 54rem; flex: none; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.title {
+  margin: 0.25rem 0 0.4rem;
+  font-family: var(--font-big);
+  font-size: var(--text-title);
+  line-height: 1;
+  color: var(--text);
+}
+
+.lede {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.quiet {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+/* The drawing takes the rest of the tab: this is the point of opening it here rather than inline. */
+.frame {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  position: relative;
+  background: var(--face);
+  border: 3px solid var(--edge);
+  box-shadow: 5px 5px 0 0 var(--a);
+}
+
+.frame > * { flex: 1; min-height: 0; }
+
+/*
+ * Fullscreen, plus the fallback for a shell that refuses it. Fixed to the viewport rather than the
+ * tab, so the drawing covers the app rather than the column it sat in; when the engine does grant
+ * real fullscreen this is the fullscreen element anyway and the fixed box is the whole screen.
+ */
+.big {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  border-width: 0;
+  box-shadow: none;
+  background: var(--face);
+}
+
+.expand {
+  position: absolute;
+  z-index: 1;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--face);
+  border: 2px solid var(--edge);
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+}
+
+.expand:hover { color: var(--text); }
+
+:global(html[data-surface-ui-panel="gilt-frame"]) .frame {
+  border-color: var(--chrome-structure);
+  box-shadow: 0 0 0 2px var(--chrome-structure);
+}
+:global(html[data-surface-ui-panel="gilt-frame"]) .expand {
+  color: var(--text);
+  border-color: var(--control-boundary);
+}
+
+/* The room's one child: the drawing's page, or, when there is none, the message the ui.empty variant frames. */
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.body[data-empty] { flex: none; }

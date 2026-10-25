@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "docId": "03-CONVENTIONS",
+  "sourcePath": "docs/03-CONVENTIONS.md",
+  "sourceHash": "sha256:23771c08bd83fdf229fe88553159db51bac2719c042d22ba6c3028fa45fce61a",
+  "summary": "This page states Bunraku's binding current implementation rules. Code requires strict TypeScript boundary narrowing, exact per-kind runtime decoders for handwritten canonical interfaces, explicitly declared open escrow bags, UI-independent core logic, typed errors, consistent naming, and the scoped TS/TSX pictograph gate. defineExhaustiveShape<T>() rejects missing and extra keys, narrowed unions, coercion, any at any nesting depth, and never during typecheck. Tests use Bun across authored src and scripts, begin bug fixes at a failing public boundary, prove semantic same-format round trips, remain deterministic, and do not treat synchronization warnings as clean proof. CLI defines the unfinished automation target for convert, inspect, validate, label, formats, and version. Repository requires useful release-history subjects and behavioral evidence while forbidding gate bypasses. Documentation separates built reference behavior from labeled plans and moves with source. Working method requires inspecting the owning system and Git state, fixing the real owner, reporting verification limits, and obtaining independent review without self-approval. The runtime pin and shared virtualization boundary are explicit repository conventions.",
+  "topics": [
+    "strict TypeScript boundaries",
+    "exhaustive runtime decoders",
+    "public-boundary regression tests",
+    "CLI JSON contract",
+    "repository evidence",
+    "truthful documentation",
+    "authority-led working method",
+    "independent review"
+  ],
+  "sections": [
+    {
+      "slug": "code",
+      "title": "Code",
+      "level": 2,
+      "sourceHash": "sha256:9a7b4f0339a1061ed4be3ee5bc2a8b7e8c396ee384892fd33a55d1c26a5650c7",
+      "summary": "TypeScript runs in strict mode, and untrusted values are narrowed at entry. Handwritten domain interfaces may remain rich internal contracts, but separate fail-closed runtime schemas must exhaust their canonical types. defineExhaustiveShape<T>() infers concrete schemas before demanding exact input and output parity, rejecting missing and extra keys, narrowed unions, coercion, any at any nesting depth, and never during typecheck. src/entities/runtime-schema.ts composes the strict per-kind decoders used by storage, HTTP, format-corpus verification, and Kit draft validation. Unknown keys are accepted only inside extension or escrow bags whose contracts explicitly declare openness. Core logic cannot depend on UI, perform effects at import, or conceal authority in a singleton. Code throws Error objects or typed errors, and user-facing boundaries translate failures plainly.",
+      "topics": [
+        "strict TypeScript",
+        "exhaustive runtime decoders",
+        "ExhaustiveShape",
+        "shared canonical boundary",
+        "pure injectable core",
+        "typed errors",
+        "naming and emoji scan"
+      ],
+      "children": []
+    },
+    {
+      "slug": "tests",
+      "title": "Tests",
+      "level": 2,
+      "sourceHash": "sha256:846b487c9ffb80a68342b1033bf179a680b25734c51f359c6340d497fc55b127",
+      "summary": "Bun is the test runner, and bun run test discovers every authored test under src and scripts. Bug fixes begin with a regression at the public boundary that reproduces the reported behavior before the repair. Same-format adapter fixtures must parse, serialize, and reparse without semantic loss, protecting the Round-Trip Law at the format boundary. Tests remain deterministic by avoiding live network access, uncontrolled clocks, and unseeded randomness. A nominally green result that still prints framework synchronization warnings is not clean verification and must not be represented as such.",
+      "topics": [
+        "Bun test coverage",
+        "red-green public boundary",
+        "same-format round trip",
+        "deterministic tests",
+        "synchronization warnings"
+      ],
+      "children": []
+    },
+    {
+      "slug": "cli",
+      "title": "CLI",
+      "level": 2,
+      "sourceHash": "sha256:a312c44120c93d83005f2255cacf813a4c25e6f54f2ce101398effb1954bf3ed",
+      "summary": "The target automation contract covers the non-interactive data commands convert, inspect, validate, label, formats, and version. JSON mode must emit exactly one JSON value to stdout, while human diagnostics go to stderr. Exit code 0 means success, 1 means invalid user input or invalid content, and 2 means an unexpected internal failure. help and the long-running ui server are outside this JSON contract. The section explicitly says implementation is incomplete: until all commands comply and command-matrix tests land, docs/reference/cli.md remains the authority for current syntax and behavior rather than this target being treated as shipped proof.",
+      "topics": [
+        "data command contract",
+        "single JSON stdout",
+        "stderr diagnostics",
+        "exit codes",
+        "incomplete implementation",
+        "current CLI reference"
+      ],
+      "children": []
+    },
+    {
+      "slug": "repository",
+      "title": "Repository",
+      "level": 2,
+      "sourceHash": "sha256:3596a1a87a41667888b0012caf31ecc5dccb31dcc753919d0cca2a8e3f9a8f38",
+      "summary": "Development requires Bun 1.3.14 or later; CI reads the exact .bun-version. Commit subjects describe the change, Mainstage history stays meaningful, and skip release is the only machine-read marker. Changes carry proof and never bypass hooks. Studio virtualization imports use the shared owner, and host code never keys on a built-in theme id (scan:virtualizers, scan:theme-keys). Every data-part is a dotted id-keyed name, and every scenes wing, tab and pop-out carries one (scan:parts).",
+      "topics": [
+        "release-history commits",
+        "optional Conventional Commits",
+        "skip release marker",
+        "changes carry proof",
+        "do not bypass gates",
+        "part names"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "documentation",
+      "title": "Documentation",
+      "level": 2,
+      "sourceHash": "sha256:86d343acffa7d5fc1fb7ce07b737f5e2f69a6779a0337322b3d0faf0e9e4af46",
+      "summary": "Reference pages state built behavior only. Planned work belongs under specs or in a roadmap section that labels it as planned, preventing intent from masquerading as a shipped surface. Documentation changes in the same change as its source so contracts and user guidance stay aligned. Generated indexes and semantic summaries are navigation aids, not authority: they cannot transform an inaccurate source page into truth.",
+      "topics": [
+        "built reference truth",
+        "planned specifications",
+        "docs move with code",
+        "indexes are not authority"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "working-method",
+      "title": "Working method",
+      "level": 2,
+      "sourceHash": "sha256:47365aab3948ae110f62966083cb0bf2e125b1e6a01b3e2d69c31db531505eb1",
+      "summary": "Before editing, inspect the implementation, its callers and tests, release configuration, documentation, and Git state, then name both the governing authority and user-visible outcome. Bugs and known contracts begin with an honest failing test at the nearest public boundary. A genuinely novel design may use a bounded spike until its contract is understood, but completion still requires behavioral proof. Repair the owning boundary rather than creating a parallel schema, registry, state authority, or compatibility path. When code and docs disagree, classify the claim as IMPLEMENT, REWRITE, DELETE, or RETAIN. Verification progresses through focused, adjacent, and complete supported checks, with warnings and skips reported rather than counted as clean. Substantial or high-risk work receives independent adversarial review; authors cannot approve their own semantic summaries, security claims, migrations, or release evidence.",
+      "topics": [
+        "inspect owning system",
+        "observable outcome",
+        "red test or bounded spike",
+        "fix owning boundary",
+        "mismatch classification",
+        "proportionate verification",
+        "independent adversarial review",
+        "no self-approval"
+      ],
+      "children": []
+    }
+  ]
+}

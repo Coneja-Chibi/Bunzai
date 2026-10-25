@@ -1,0 +1,8 @@
+/** ui.empty doodle: an empty space as a dashed sticker card with a hard shadow, friendly and a little cheeky. */
+html[data-surface-ui-empty="doodle"] :is(.scn .emptyroot, .ltrash-empty, [data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { max-width: 30rem; margin-inline: auto; padding: 2.5rem 1.5rem; background: var(--bk-surface-panel); border: var(--bk-frame-w) dashed var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+html[data-surface-ui-empty="doodle"] .ghost-shelf:not(.host-protected, .host-protected *) { border: var(--bk-frame-w) dashed var(--bk-line); background: var(--bk-surface-panel); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+html[data-surface-ui-empty="doodle"] .scn .emptyroot .mark { background: var(--bk-role-warn); color: var(--bk-text-on-tint); box-shadow: none; border: var(--bk-frame-w) solid var(--bk-line); }
+/* A whole-room empty is a big dashed sticker card set a little down the page. */
+html[data-surface-ui-empty="doodle"] :is([data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { min-height: 18rem; margin-top: 3rem; border-width: 3px; }
+/* A whole-room empty: a polka scrapbook page. */
+html[data-surface-ui-empty="doodle"] :is([data-empty="room"], [data-part="editor.root"] > div:has(> [data-empty="editor"]), .scn .main:has(> .emptyroot)):not(.host-protected, .host-protected *) { background-image: radial-gradient(var(--bk-line) 2.5px, transparent 3px); background-size: 1.6rem 1.6rem; }

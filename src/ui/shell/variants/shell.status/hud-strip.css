@@ -1,0 +1,14 @@
+/** shell.status hud-strip: the footer becomes a row of HUD readouts, each a boxed cell with its label above its value. */
+html[data-surface-shell-status="hud-strip"] {
+  --bk-status-reserve: 3rem; /* keeps the replay ? clear of the bar */
+  & #status { gap: 0; padding: 0; align-items: stretch; border-top: 1px solid var(--bk-line-strong); background: var(--bk-surface-ink); font-variant-numeric: tabular-nums; }
+  & #status .sep, & #status .seg:empty { display: none; }
+  & #status .seg { position: relative; flex-direction: column; align-items: flex-start; justify-content: center; gap: .1rem; padding: .3rem 1rem; border-right: 1px solid var(--bk-line-track); }
+  & #status .seg .k { font-size: .75rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--bk-text-dim); }
+  & #status .seg .b { font-size: .8125rem; font-weight: 700; color: var(--bk-text); }
+  & #status .seg:first-child { flex-direction: row; align-items: center; gap: .5rem; }
+  & #status .appdot { width: .6rem; height: .6rem; border-radius: 0; background: var(--adot, var(--bk-text-dim)); }
+  & #status .seg.note .k { color: var(--bk-role-warn-text); }
+  & #status .spacer { border-right: 1px solid var(--bk-line-track); }
+  & #status .vaude { align-self: center; padding: 0 1rem; font-weight: 700; letter-spacing: .1em; }
+}

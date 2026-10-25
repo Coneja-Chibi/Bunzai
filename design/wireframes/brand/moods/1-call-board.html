@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Call Board mood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600&family=Reenie+Beanie&family=Special+Elite&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="board.css">
+<style>
+:root {
+  --bg: #0d0c0b; --fg: #efe8dc; --fg2: #b9b0a3; --dim: #7a7166; --rule: #26221e; --accent: #ffe14d;
+  --body: Archivo, sans-serif; --mono: "IBM Plex Mono", monospace;
+  --display: 400 clamp(3.4rem, 8vw, 7.4rem) "Archivo Black", sans-serif;
+  --h3: 400 1.2rem "Archivo Black", sans-serif; --quote: 400 2rem/1.15 "Reenie Beanie", cursive;
+  --cork: #6e4c2e; --paper: #efe9dc; --yel: #ffe14d; --pink: #ff6fae; --mint: #6ff0bd; --blue: #7fc4ff; --red: #e0302b;
+}
+/* the black-painted backstage wall with one clip light over the board */
+.hero { background: radial-gradient(ellipse 60% 70% at 50% -5%, #ffe7b21f, transparent 70%), #0d0c0b; display: grid; place-items: center; padding: 70px 16px 40px; }
+.lamp { position: absolute; top: 0; left: 50%; width: 120px; height: 34px; margin-left: -60px; background: #1b1a18; border-bottom: 3px solid #333; }
+.lamp::after { content: ""; position: absolute; left: 50%; top: 34px; width: 900px; height: 90vh; margin-left: -450px; background: linear-gradient(#ffe8b814, transparent 80%); clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%); pointer-events: none; }
+.board { position: relative; width: min(1180px, 100%); height: min(760px, 84vh); min-height: 620px; border: 16px solid #2c2016; box-shadow: 0 30px 60px #000c;
+  background: radial-gradient(#0000 1px, #5a3d24 1.6px) 0 0/7px 7px, radial-gradient(#8a6440 1px, transparent 1.5px) 3px 2px/11px 11px, var(--cork); }
+.p { position: absolute; cursor: grab; user-select: none; box-shadow: 3px 8px 14px #0008; transition: box-shadow .15s; touch-action: none; }
+.p:active { cursor: grabbing; box-shadow: 8px 18px 26px #000a; z-index: 30; }
+.staple::before { content: ""; position: absolute; top: 6px; left: 50%; width: 22px; height: 3px; margin-left: -11px; background: linear-gradient(#ddd, #888); box-shadow: 0 1px 0 #0006; }
+.tape::before { content: ""; position: absolute; top: -10px; left: 50%; width: 76px; height: 22px; margin-left: -38px; background: #e9dfc0c4; transform: rotate(-3deg); }
+.head { left: 34%; top: 3%; width: 32%; background: var(--paper); color: #111; text-align: center; padding: 14px 10px 12px; font: 400 1.6rem "Archivo Black"; letter-spacing: .04em; }
+.head small { display: block; font: 400 .85rem "Special Elite"; letter-spacing: .12em; }
+.cast { left: 4%; top: 7%; width: 27%; background: var(--paper); color: #151515; padding: 26px 20px 20px; font: 400 .95rem/1.9 "Special Elite"; transform: rotate(-1.2deg); }
+.cast h4 { font: 400 1.2rem "Special Elite"; border-bottom: 2px solid #151515; margin-bottom: 8px; letter-spacing: .1em; }
+.cast div { display: flex; gap: 6px; } .cast i { flex: 1; border-bottom: 1px dotted #555; margin-bottom: 8px; }
+.sign { right: 4%; top: 6%; width: 29%; background: var(--paper); color: #151515; padding: 26px 18px 16px; transform: rotate(1deg); font: 400 .8rem "Special Elite"; }
+.sign h4 { font: 400 1.15rem "Special Elite"; letter-spacing: .1em; margin-bottom: 6px; }
+.sign table { width: 100%; border-collapse: collapse; } .sign td { border: 1px solid #333; padding: 4px 6px; height: 28px; }
+.sign td.h { font: 400 1.4rem/1 "Reenie Beanie"; color: #1a2fa0; }
+.note { width: 188px; min-height: 176px; padding: 24px 16px 14px; font: 400 1.75rem/1.05 "Reenie Beanie"; color: #1b1b1b; }
+.report { left: 36%; top: 30%; width: 30%; background: #f6f3ec; color: #1a1a1a; padding: 28px 22px 18px; font: 400 .85rem/1.55 "Special Elite"; transform: rotate(.6deg); }
+.report h4 { font: 400 1.1rem "Archivo Black"; margin-bottom: 8px; } .report s { color: #a22; }
+.quiet { left: 5%; bottom: 7%; width: 24%; background: var(--red); color: #fff; padding: 20px 12px; text-align: center; font: 400 1.5rem/1.05 "Archivo Black"; letter-spacing: .06em; }
+.quiet small { display: block; font: 600 .75rem Archivo; letter-spacing: .3em; margin-top: 6px; }
+.stub { right: 30%; bottom: 7%; width: 210px; height: 86px; background: #c9b58a; color: #3a2a12; display: grid; place-items: center; font: 400 1.2rem "Archivo Black"; letter-spacing: .1em; transform: rotate(-5deg);
+  clip-path: polygon(0 0, 100% 0, 100% 38%, 96% 50%, 100% 62%, 100% 100%, 0 100%, 0 62%, 4% 50%, 0 38%); }
+.stub small { font: 400 .7rem "Special Elite"; display: block; text-align: center; }
+.hint { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font: 500 12px/1 var(--mono); letter-spacing: .2em; color: var(--dim); }
+
+/* pieces */
+.k-nav { display: flex; gap: 0; }
+.k-nav span { background: var(--paper); color: #151515; padding: 10px 14px 8px; font: 400 .95rem "Special Elite"; border-right: 1px solid #0004; border-top: 5px solid var(--c); }
+.k-btn { display: inline-block; position: relative; background: var(--yel); color: #111; width: 190px; padding: 28px 14px 16px; font: 400 2.1rem/1 "Reenie Beanie"; box-shadow: 3px 7px 0 #000; }
+.k-btn.alt { background: none; color: var(--fg); box-shadow: none; border: 1px dashed #5a524a; }
+.k-card { background: #f4f1e8; color: #1a1a1a; padding: 0 18px 18px; border-top: 30px solid #f4f1e8; box-shadow: 4px 8px 0 #000;
+  background-image: linear-gradient(#e0302b 0 0), repeating-linear-gradient(#0000 0 25px, #8fb3e0 25px 26px); background-size: 100% 2px, 100% 100%; background-repeat: no-repeat, repeat; background-position: 0 0, 0 2px; }
+.k-card h4 { font: 400 1.1rem "Archivo Black"; line-height: 26px; } .k-card p { font: 400 1.5rem/26px "Reenie Beanie"; }
+.k-in { border-bottom: 1px solid #8a8176; padding: 6px 2px; font: 400 1.8rem/1 "Reenie Beanie"; color: #9fc4ff; }
+.k-in small { display: block; font: 500 12px var(--mono); color: var(--dim); letter-spacing: .14em; }
+.dymo { display: inline-block; background: #111; color: #eee; padding: 5px 10px; font: 700 13px/1 "IBM Plex Mono"; letter-spacing: .24em; border-top: 2px solid #2a2a2a; border-bottom: 2px solid #000; text-shadow: 0 1px 0 #555; margin: 0 8px 8px 0; }
+.dymo.r { background: #b3201c; } .dymo.b { background: #1d3fa8; }
+.k-toast { background: var(--pink); color: #111; width: 260px; padding: 18px 16px; font: 400 1.7rem/1.05 "Reenie Beanie"; transform: rotate(-2deg); animation: slap 3s ease-out infinite; }
+@keyframes slap { 0% { transform: rotate(-12deg) scale(1.3); opacity: 0; } 8% { transform: rotate(-2deg) scale(1); opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; } }
+</style>
+</head>
+<body>
+<nav class="top"><a href="index.html">Bunraku moods</a><span>1 / 6 &middot; The Call Board</span><a href="2-ghost-light.html">next</a></nav>
+
+<header class="hero">
+  <div class="lamp"></div>
+  <div class="board" id="board">
+    <div class="p head staple">CALL BOARD<small>BUNRAKU COMPANY &middot; STAGE DOOR</small></div>
+    <div class="p cast tape"><h4>CAST LIST</h4>
+      <div>Scenes<i></i>play</div><div>Workbench<i></i>make</div><div>Library<i></i>keep</div><div>Press<i></i>share</div><div>Agent<i></i>help out</div><div>You<i></i>lead</div></div>
+    <div class="p sign staple"><h4>SIGN IN BY HALF HOUR</h4>
+      <table><tr><td>Windows</td><td class="h">you?</td></tr><tr><td>Mac</td><td class="h"></td></tr><tr><td>Linux</td><td class="h">vera</td></tr><tr><td>v0.1.42</td><td class="h">the archivist</td></tr></table></div>
+    <div class="p note staple" style="left:6%;top:52%;background:var(--yel);transform:rotate(-4deg)">guides are in the binder by the door</div>
+    <div class="p note staple" style="left:23%;top:48%;background:var(--mint);transform:rotate(3deg)">try it in your browser. no install!!</div>
+    <div class="p report tape"><h4>REHEARSAL REPORT #42</h4>Presets landed. Every scene follows its library preset now.<br><s>Lorebooks</s> Lorebooks next week.<br>Props: a lamp is missing again.<br><br>Next call: whenever you open it.</div>
+    <div class="p note staple" style="right:6%;top:48%;background:var(--pink);transform:rotate(4deg)">what's new? read the rehearsal reports</div>
+    <div class="p note staple" style="right:21%;top:56%;background:var(--blue);transform:rotate(-3deg)">tour the cast. left side.</div>
+    <div class="p quiet staple">QUIET PLEASE<small>SHOW IN PROGRESS</small></div>
+    <div class="p stub"><span>ADMIT ONE<small>BUNRAKU &middot; ANY NIGHT</small></span></div>
+  </div>
+  <div class="hint">drag anything on the board</div>
+</header>
+
+<main class="wrap">
+  <section class="b"><div class="label"><b>01</b>The idea</div>
+    <div class="pitch"><div><h1>The Call Board</h1><div class="line">sign in, you're in the show</div></div>
+      <div><p>Every theater has one: the corkboard by the stage door. It holds the cast list, the sign-in sheet, rehearsal reports, a dozen sticky notes and at least one sign nobody reads. It is the most honest object in the building: <b>the real show, before the polish.</b></p>
+      <p>RoleCall is the house: velvet, gold and a curtain. Bunraku is the wall behind it, painted black, with a clip light and a board full of paper. <b>The whole site is that board.</b> You pull things off it to read them and pin them back when you're done.</p>
+      <p>It feels like a company, not a product: people wrote on this, it changes every week, and your name can go on the sheet.</p></div></div>
+  </section>
+
+  <section class="b"><div class="label"><b>02</b>Palette: black paint, cork, paper, highlighters</div>
+    <div class="sw">
+      <div style="background:#0d0c0b;color:#b9b0a3;outline:1px solid #26221e"><b>Wall black</b>#0D0C0B</div>
+      <div style="background:#2c2016;color:#e7d6c0"><b>Frame</b>#2C2016</div>
+      <div style="background:#6e4c2e;color:#f4e3cc"><b>Cork</b>#6E4C2E</div>
+      <div style="background:#efe9dc;color:#111"><b>Paper</b>#EFE9DC</div>
+      <div style="background:#ffe14d;color:#111"><b>Post-it</b>#FFE14D</div>
+      <div style="background:#ff6fae;color:#111"><b>Pink note</b>#FF6FAE</div>
+      <div style="background:#6ff0bd;color:#111"><b>Mint note</b>#6FF0BD</div>
+      <div style="background:#e0302b;color:#fff"><b>Quiet red</b>#E0302B</div>
+      <div style="background:#1a2fa0;color:#fff"><b>Ballpoint</b>#1A2FA0</div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>03</b>Type: stencil-weight headers, a typewriter, a marker</div>
+    <div class="type">
+      <div class="row"><small>ARCHIVO BLACK<br>headers, signs</small><div style="font:400 clamp(2.4rem,6vw,5rem)/1 'Archivo Black'">QUIET PLEASE</div></div>
+      <div class="row"><small>SPECIAL ELITE<br>lists, reports, sheets</small><div style="font:400 1.6rem/1.5 'Special Elite'">Rehearsal report #42. Presets landed. Lorebooks next week.</div></div>
+      <div class="row"><small>REENIE BEANIE<br>anything written by a person</small><div style="font:400 3rem/1 'Reenie Beanie'">guides are in the binder by the door</div></div>
+      <div class="row"><small>IBM PLEX MONO<br>small labels, versions</small><div style="font:500 1rem 'IBM Plex Mono';letter-spacing:.2em">V0.1.42 &middot; WINDOWS &middot; MAC &middot; LINUX</div></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>04</b>Materials</div>
+    <div class="mats">
+      <div style="background:radial-gradient(#0000 1px,#5a3d24 1.6px) 0 0/7px 7px,radial-gradient(#8a6440 1px,transparent 1.5px) 3px 2px/11px 11px,#6e4c2e"><span>Cork</span></div>
+      <div style="background:#0d0c0b;background-image:repeating-linear-gradient(95deg,#ffffff05 0 2px,#0000 2px 9px)"><span>Painted black wall</span></div>
+      <div style="background:#e9dfc0;background-image:repeating-linear-gradient(90deg,#0000 0 3px,#0000000d 3px 4px)"><span>Masking tape</span></div>
+      <div style="background:#f4f1e8;background-image:linear-gradient(#e0302b 0 0),repeating-linear-gradient(#0000 0 25px,#8fb3e0 25px 26px);background-size:100% 2px,100% 100%;background-repeat:no-repeat,repeat;background-position:0 30px,0 0"><span>Index card</span></div>
+      <div style="background:#111;display:grid;place-items:center"><span class="dymo" style="position:static">LABEL TAPE</span><span>Label maker</span></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>05</b>Pieces: what the interface is made of</div>
+    <div class="kit">
+      <figure><div class="k-nav"><span style="--c:var(--yel)">Scenes</span><span style="--c:var(--pink)">Guides</span><span style="--c:var(--mint)">Download</span><span style="--c:var(--blue)">Try</span></div><figcaption>Nav: index-card tabs</figcaption></figure>
+      <figure><div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap"><span class="k-btn staple">sign in &amp; download</span><span class="k-btn alt">read the guides</span></div><figcaption>Buttons: a stapled post-it, a dashed outline</figcaption></figure>
+      <figure><div class="k-card"><h4>Lorebooks</h4><p>keep your world straight. every fact pinned where the story can find it.</p></div><figcaption>Card: ruled index card</figcaption></figure>
+      <figure><div class="k-in"><small>YOUR NAME FOR THE SHEET</small>chi</div><figcaption>Input: a line on the sign-in sheet</figcaption></figure>
+      <figure><div><span class="dymo">NEW</span><span class="dymo r">BETA</span><span class="dymo b">WINDOWS</span><span class="dymo">V0.1.42</span></div><figcaption>Tags: label-maker tape</figcaption></figure>
+      <figure><div class="k-toast">saved to your library!</div><figcaption>Toast: a note slapped on the board</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>06</b>How the site is built</div>
+    <div class="map">
+      <div><h3>Home</h3><strong>The board</strong><p>One huge board you can pan across. Every section is a piece of paper on it.</p></div>
+      <div><h3>Feature tour</h3><strong>The cast list</strong><p>Each role opens a full page: what it does, a screenshot taped in, notes in the margin.</p></div>
+      <div><h3>Guides and help</h3><strong>The binder by the door</strong><p>Tabbed binder pages. A "questions" envelope for help: drop a note in.</p></div>
+      <div><h3>Download</h3><strong>The sign-in sheet</strong><p>Your platform is a row. Sign it and the download starts.</p></div>
+      <div><h3>What's new</h3><strong>Rehearsal reports</strong><p>Pulled live from GitHub releases, typed up as dated reports, newest on top of the stack.</p></div>
+      <div><h3>Try it</h3><strong>Understudy run</strong><p>A notebook opens on the board with a real scene you can play.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>07</b>Signature moves</div>
+    <div class="moves">
+      <div><h3>Everything is paper <span class="live">LIVE ABOVE</span></h3><p>Drag any note. It remembers where you left it, so your board becomes yours.</p></div>
+      <div><h3>New release, new staple</h3><p>When a version ships, a fresh report lands on the stack with a staple thunk and pushes the old one down.</p></div>
+      <div><h3>The clip light</h3><p>The only light on the page. As you scroll, it swings to whatever you're reading.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>08</b>Voice</div>
+    <div class="voice">
+      <div><h3>Say it like this</h3><ul><li>Call is whenever you open it.</li><li>Sign in, you're in the show.</li><li>Presets landed. Lorebooks next week.</li><li>Guides are in the binder by the door.</li></ul></div>
+      <div class="no"><h3>Never this</h3><ul><li>Unlock your creativity</li><li>AI-powered storytelling platform</li><li>Seamless, all-in-one</li><li>Get started for free today</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Not this: rounded cards, button gradients, glass panels, emoji, pushpins drawn as blobs. Staples and tape only.</span><a href="2-ghost-light.html">Next: The Ghost Light</a></footer>
+</main>
+
+<script>
+// Every piece on the board drags; positions persist per viewer (a wireframe convenience only).
+const board = document.getElementById("board");
+const key = "bunraku-callboard";
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem(key) || "{}"); } catch {}
+[...board.querySelectorAll(".p")].forEach((el, i) => {
+  if (saved[i]) { el.style.left = saved[i][0]; el.style.top = saved[i][1]; el.style.right = "auto"; el.style.bottom = "auto"; }
+  el.addEventListener("pointerdown", (e) => {
+    const b = board.getBoundingClientRect(), r = el.getBoundingClientRect();
+    const dx = e.clientX - r.left, dy = e.clientY - r.top;
+    el.setPointerCapture(e.pointerId);
+    board.append(el);
+    const move = (m) => {
+      el.style.right = "auto"; el.style.bottom = "auto";
+      el.style.left = ((m.clientX - dx - b.left) / b.width * 100) + "%";
+      el.style.top = ((m.clientY - dy - b.top) / b.height * 100) + "%";
+    };
+    const up = () => {
+      el.removeEventListener("pointermove", move); el.removeEventListener("pointerup", up);
+      saved[i] = [el.style.left, el.style.top];
+      try { localStorage.setItem(key, JSON.stringify(saved)); } catch {}
+    };
+    el.addEventListener("pointermove", move); el.addEventListener("pointerup", up);
+  });
+});
+</script>
+</body>
+</html>

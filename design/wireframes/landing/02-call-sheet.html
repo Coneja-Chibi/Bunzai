@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Call Sheet landing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .head .marquee { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+  .tabs { display: flex; border: 3px solid var(--edge); width: max-content; margin-bottom: 1rem; }
+  .tabs button { font-family: var(--font-mono); font-weight: 800; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.5rem 0.9rem; background: var(--face); color: var(--text-soft); border: none; border-left: 3px solid var(--edge); cursor: pointer; }
+  .tabs button:first-child { border-left: none; }
+  .tabs button.on { background: var(--stamp-bg); color: var(--stamp-fg); }
+  .tabs .n { opacity: 0.7; margin-left: 0.3rem; }
+  table { width: 100%; border-collapse: collapse; background: var(--face); border: 3px solid var(--edge); }
+  th { text-align: left; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); padding: 0.6rem 0.8rem; border-bottom: 3px solid var(--edge); background: var(--panel); }
+  td { padding: 0.75rem 0.8rem; border-bottom: 2px solid var(--seam); font-family: var(--font-mono); font-size: 0.8rem; vertical-align: middle; }
+  tr.row { cursor: pointer; }
+  tr.row:hover td { background: var(--panel); }
+  tr.row.sel td { background: var(--canvas); }
+  tr.row.sel td:first-child { box-shadow: inset 5px 0 0 var(--accent); }
+  .scene { font-family: var(--font-big); font-weight: 900; text-transform: uppercase; font-size: 0.86rem; }
+  .left { color: var(--text-soft); font-style: italic; font-family: var(--font-body); font-weight: 600; font-size: 0.98rem; }
+  .avs { display: flex; }
+  .avs .avatar { width: 1.9rem; height: 1.9rem; font-size: 0.75rem; margin-right: -0.4rem; }
+  .detail { margin-top: 1.2rem; padding: 1.2rem 1.4rem; display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: end; }
+  .detail .ex { font-family: var(--font-mono); font-size: 0.84rem; line-height: 1.7; }
+  .detail .ex b { font-family: var(--font-big); text-transform: uppercase; font-size: 0.78rem; margin-right: 0.5rem; }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>02 The Call Sheet</span><button data-theme-switch>Theme</button><a href="index.html">All ten</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Hm</div><div class="app-btn">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+  <header class="topbar"><div class="crumb"><b>Home</b> / call sheet</div><div class="search">Filter scenes...</div></header>
+  <main class="main">
+    <div class="head">
+      <div><div class="kicker">Tonight's call sheet</div><h1 class="marquee">Five scenes, <em>two</em> waiting on you</h1></div>
+      <button class="btn">+ New scene</button>
+    </div>
+    <div class="tabs"><button class="on">Waiting on you<span class="n">2</span></button><button>All<span class="n">5</span></button><button>Group<span class="n">1</span></button><button>Resting<span class="n">1</span></button></div>
+    <table>
+      <thead><tr><th>Scene</th><th>Cast</th><th>Where you left it</th><th>Turn</th><th>Last</th></tr></thead>
+      <tbody id="rows">
+        <tr class="row sel"><td class="scene">The Drowned Lamp</td><td><div class="avs"><div class="avatar" style="--tone: var(--deck-character)">V</div></div></td><td class="left">who did you let up the stairs?</td><td><span class="chip wait">yours</span></td><td>4 min</td></tr>
+        <tr class="row"><td class="scene">Salt &amp; Ledger</td><td><div class="avs"><div class="avatar" style="--tone: var(--deck-lorebook)">O</div><div class="avatar" style="--tone: var(--deck-preset)">M</div></div></td><td class="left">it'll still be short one page</td><td><span class="chip wait">yours</span></td><td>1 day</td></tr>
+        <tr class="row"><td class="scene">A Card for Nuit</td><td><div class="avs"><div class="avatar" style="--tone: var(--deck-persona)">N</div></div></td><td class="left">you turned the Tower over</td><td><span class="chip">Nuit's</span></td><td>2 days</td></tr>
+        <tr class="row"><td class="scene">The Magpie's Errand</td><td><div class="avs"><div class="avatar" style="--tone: var(--deck-preset)">M</div></div></td><td class="left">the lock gave on the third try</td><td><span class="chip">Magpie's</span></td><td>5 days</td></tr>
+        <tr class="row"><td class="scene">The Duel at Dawn</td><td><div class="avs"><div class="avatar" style="--tone: var(--deck-regex)">I</div></div></td><td class="left">you're late</td><td><span class="chip cold">resting</span></td><td>4 mo</td></tr>
+      </tbody>
+    </table>
+    <section class="panel detail">
+      <div class="ex"><div class="kicker" style="margin-bottom: 0.4rem;">The Drowned Lamp, last exchange</div><div><b>Wren</b>I kept the door shut. Mostly.</div><div><b>Vera</b>Tell me, Wren, who did you let up the stairs?</div></div>
+      <button class="btn">Continue &rarr;</button>
+    </section>
+  </main>
+</div>
+
+<div class="wf-note"><b>The idea:</b> a dense, calm scene list for people with many stories going. The tabs do the work (what's waiting on you comes first); each row shows cast, where you left it, whose turn it is, and when. Selecting a row fills the strip below with the last exchange and one Continue button. Keyboard friendly: arrows move, Enter continues.</div>
+
+<script>
+  document.getElementById("rows").addEventListener("click", (e) => {
+    const r = e.target.closest("tr.row"); if (!r) return;
+    document.querySelectorAll("tr.row.sel").forEach((x) => x.classList.remove("sel")); r.classList.add("sel");
+  });
+</script>
+</body>
+</html>

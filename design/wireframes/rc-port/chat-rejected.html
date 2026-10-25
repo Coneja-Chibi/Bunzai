@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene, ported from RoleCall</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+  /* RC StandardLayout: background + vignette, wing rails on both edges, a header, the message stream, the capsule */
+  .app { grid-template-columns: 4.2rem 1fr; }
+  .scene { position: relative; height: 100vh; overflow: hidden; display: flex; }
+  .bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, color-mix(in srgb, var(--deck-character) 22%, transparent), transparent 55%), radial-gradient(ellipse at 80% 90%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%), var(--stage-well); }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, color-mix(in srgb, var(--stage-black) 70%, transparent)); pointer-events: none; }
+
+  /* WingRail: a thin icon rail on each edge; a click opens its panel */
+  .rail { position: relative; z-index: 3; width: 3.25rem; flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 72px 0 12px; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border-right: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); }
+  .rail.right { border-right: none; border-left: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); }
+  .rail .grp { width: 60%; height: 1px; background: var(--stage-seam); margin: 6px 0; }
+  .wing { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; border: 1px solid transparent; color: var(--stage-mute); font-size: 15px; cursor: pointer; position: relative; background: none; }
+  .wing:hover, .wing.on { color: var(--stage-card); border-color: color-mix(in srgb, var(--accent) 50%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .wing .tip { position: absolute; left: 115%; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; background: var(--stage-sunken); color: var(--stage-card); border: 1px solid var(--stage-seam); padding: 3px 7px; opacity: 0; pointer-events: none; }
+  .rail.right .wing .tip { left: auto; right: 115%; }
+  .wing:hover .tip { opacity: 1; }
+
+  /* WingPanelContainer: the open panel slides in beside its rail */
+  .panel { position: relative; z-index: 3; width: 22rem; flex: none; background: color-mix(in srgb, var(--stage-panel) 94%, transparent); border-right: 2px solid var(--stage-black); display: flex; flex-direction: column; }
+  .panel.right { border-right: none; border-left: 2px solid var(--stage-black); }
+  .panel[hidden] { display: none; }
+  .phead { padding: 18px 18px 12px; border-bottom: 1px solid var(--stage-seam); }
+  .phead .k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent); }
+  .phead .t { font-family: var(--font-fancy); font-weight: 700; font-size: 18px; color: var(--stage-card); margin-top: 4px; }
+  .tabs { display: flex; gap: 4px; padding: 10px 18px 0; flex-wrap: wrap; }
+  .tabs span { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border: 1px solid var(--stage-seam); color: var(--stage-soft); }
+  .tabs span.on { border-color: var(--accent); color: var(--stage-card); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  .pbody { padding: 16px 18px; overflow: auto; font-family: var(--font-big); font-size: 13px; line-height: 1.6; color: var(--stage-soft); display: flex; flex-direction: column; gap: 12px; }
+  .field .l { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--stage-text-dim); margin-bottom: 4px; }
+  .field .v { background: var(--stage-sunken); border: 1px solid var(--stage-seam); padding: 8px 10px; color: var(--stage-card); }
+  .chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chiprow span { font-size: 11px; padding: 3px 8px; border: 1px solid var(--stage-line); color: var(--stage-card); }
+  .chiprow span.on { border-color: var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 18%, transparent); }
+
+  /* the stage between the rails */
+  .stage { position: relative; z-index: 2; flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  /* SceneHeader: back + nav, centered title with branch pill and tagline, tools right */
+  .head { position: relative; z-index: 4; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px; padding: 10px 18px; background: linear-gradient(180deg, color-mix(in srgb, var(--stage-black) 92%, transparent), transparent); }
+  .back { display: flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--stage-mute); border: 1px solid var(--stage-seam); padding: 6px 9px; background: color-mix(in srgb, var(--stage-black) 50%, transparent); }
+  .title { text-align: center; min-width: 0; }
+  .title .row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: nowrap; }
+  .title .dot { width: 7px; height: 7px; flex: none; border-radius: 50%; background: var(--stage-ok); }
+  .title .nm { font-family: var(--font-fancy); font-weight: 700; font-size: 17px; letter-spacing: .12em; text-transform: uppercase; color: var(--stage-card); }
+  .title .branch { flex: none; white-space: nowrap; font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; padding: 2px 8px; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); color: var(--stage-card); border-radius: 999px; }
+  .title .tag { font-family: var(--font-body); font-style: italic; font-size: 14px; color: var(--stage-soft); margin-top: 2px; }
+  .tools { display: flex; gap: 6px; }
+  .tools span { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--stage-seam); color: var(--stage-mute); background: color-mix(in srgb, var(--stage-black) 50%, transparent); font-size: 13px; }
+
+  /* the message stream: an 880px column */
+  .stream { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 24px 140px; }
+  .col { max-width: 55rem; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
+  .msg { display: flex; gap: 0; }
+  .msg.you { flex-direction: row-reverse; }
+  /* the tall sticky portrait (RC medium: 260x380) */
+  .por { position: sticky; top: 8px; flex: none; width: 11rem; aspect-ratio: 260 / 380; border-radius: 16px 0 0 16px; overflow: hidden; display: grid; place-items: center; font-family: var(--font-fancy); font-size: 3.4rem;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--t) 45%, var(--stage-well)), var(--stage-well)); color: color-mix(in srgb, var(--t) 70%, var(--stage-card)); box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 8%, transparent); }
+  .msg.you .por { border-radius: 0 16px 16px 0; width: 8rem; }
+  .body { flex: 1; min-width: 0; padding: 0 12px; }
+  .spk { font-family: var(--font-fancy); font-weight: 600; font-size: 19px; letter-spacing: 3px; text-transform: uppercase; color: color-mix(in srgb, var(--t) 70%, var(--stage-card)); margin-bottom: 6px; }
+  .msg.you .spk { text-align: right; }
+  .think { max-width: 75%; margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--stage-text-dim); border: 1px dashed var(--stage-seam); padding: 6px 10px; display: inline-block; }
+  /* the bubble: dark, translucent, a thin light edge, a soft inner glow */
+  .bub { position: relative; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border: 1px solid color-mix(in srgb, var(--stage-white) 8%, transparent); border-radius: 4px; padding: 14px 18px; font-family: var(--font-big); font-size: 15px; line-height: 1.65; color: var(--stage-card); box-shadow: 0 0 30px color-mix(in srgb, var(--stage-black) 35%, transparent), inset 0 1px 0 color-mix(in srgb, var(--stage-white) 6%, transparent); }
+  .msg.you .bub { padding: 12px 16px; box-shadow: 0 0 28px color-mix(in srgb, var(--accent) 12%, transparent); color: var(--stage-soft); }
+  .bub em { font-style: italic; color: var(--stage-soft); }
+  .bub q { color: color-mix(in srgb, var(--t) 60%, var(--stage-card)); quotes: "\201C" "\201D"; }
+  /* the floating action bar and swipe counter under the bubble */
+  .meta { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 6px; font-family: var(--font-mono); font-size: 11px; color: var(--stage-text-dim); }
+  .acts { display: inline-flex; gap: 2px; border: 1px solid var(--stage-seam); background: color-mix(in srgb, var(--stage-black) 70%, transparent); padding: 2px; }
+  .acts span { padding: 3px 7px; color: var(--stage-soft); cursor: pointer; }
+  .acts span:hover { color: var(--stage-card); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .acts .del { color: var(--stage-danger-text); }
+  .swipe { display: inline-flex; align-items: center; gap: 6px; }
+  .swipe b { color: var(--stage-card); }
+  .greet { border: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent); padding: 10px 14px; display: flex; gap: 10px; align-items: center; font-family: var(--font-mono); font-size: 11px; color: var(--stage-soft); }
+  .greet span.on { color: var(--stage-card); border-bottom: 2px solid var(--accent); }
+
+  /* jump to latest */
+  .jump { position: absolute; left: 50%; bottom: 124px; transform: translateX(-50%); z-index: 5; font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--stage-seam); background: var(--stage-sunken); color: var(--stage-card); }
+  /* ImmersiveInputBar: the glass capsule, centered at 880px */
+  .inbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; padding: 12px 24px 16px; background: linear-gradient(0deg, color-mix(in srgb, var(--stage-black) 92%, transparent), transparent); }
+  .cap { max-width: 55rem; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; background: color-mix(in srgb, var(--stage-black) 50%, transparent); border: 2px solid var(--stage-black); box-shadow: 0 0 0 1px color-mix(in srgb, var(--stage-white) 8%, transparent), 4px 4px 0 var(--stage-black); padding: 8px; backdrop-filter: blur(8px); }
+  .cap .ta { flex: 1; min-height: 44px; padding: 10px 12px; font-family: var(--font-big); font-size: 15px; color: var(--stage-text-dim); }
+  .cap .b { height: 36px; min-width: 36px; display: grid; place-items: center; padding: 0 10px; border: 1px solid var(--stage-seam); color: var(--stage-soft); font-family: var(--font-mono); font-size: 11px; }
+  .cap .send { background: var(--accent-deep); color: var(--stage-white); border-color: var(--stage-black); font-family: var(--font-fancy); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+  .hint { max-width: 55rem; margin: 6px auto 0; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--stage-text-dim); letter-spacing: .06em; }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>RC port: Scene (chat)</span><button data-theme-switch>Theme</button><a href="scenes.html">Scenes list</a><a href="library-combined.html">Library</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Sc</div><div class="app-btn">Lb</div><div class="app-btn">Wb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+
+  <div class="scene">
+    <div class="bg"></div><div class="vignette"></div>
+
+    <!-- LEFT wing rail: the scene's cast and its instructions (RC's left wing groups) -->
+    <div class="rail left">
+      <button class="wing on" data-panel="p-char">&#9786;<span class="tip">Character</span></button>
+      <button class="wing" data-panel="p-persona">&#9787;<span class="tip">Persona</span></button>
+      <div class="grp"></div>
+      <button class="wing" data-panel="p-lore">&#9636;<span class="tip">Lorebooks</span></button>
+      <div class="grp"></div>
+      <button class="wing" data-panel="p-preset">&#9881;<span class="tip">Preset</span></button>
+      <button class="wing" data-panel="p-note">&#9998;<span class="tip">Scene note</span></button>
+      <button class="wing" data-panel="p-regex">&#8651;<span class="tip">Regex</span></button>
+    </div>
+    <aside class="panel" id="p-char">
+      <div class="phead"><div class="k">Character</div><div class="t">Vera Lune</div></div>
+      <div class="tabs"><span class="on">Card</span><span>Greetings</span><span>Examples</span></div>
+      <div class="pbody">
+        <div class="field"><div class="l">Frozen for this scene</div><div class="v">The card as it was when the scene began. Edits in the Library never change a running scene; moving it to the newer card is a button, not an accident.</div></div>
+        <div class="field"><div class="l">Description</div><div class="v">Keeper of the lamp at Harbor Point. Has not slept since the storm.</div></div>
+        <div class="field"><div class="l">Personality</div><div class="v">Watchful, dry, loyal.</div></div>
+      </div>
+    </aside>
+    <aside class="panel" id="p-lore" hidden>
+      <div class="phead"><div class="k">Lorebooks</div><div class="t">What the scene knows</div></div>
+      <div class="pbody"><div class="chiprow"><span class="on">Harbor Town</span><span>The Lighthouse</span><span>+ link a book</span></div>
+        <div class="field"><div class="l">Fired last turn</div><div class="v">The docks (keys: docks, pier), The lamp (key: lamp)</div></div></div>
+    </aside>
+
+    <section class="stage">
+      <header class="head">
+        <div class="back">&larr; Scenes &#9662;</div>
+        <div class="title">
+          <div class="row"><span class="dot"></span><span class="nm">The Drowned Lamp</span><span class="branch">main &middot; 3 branches</span></div>
+          <div class="tag">"Who did you let up the stairs?"</div>
+        </div>
+        <div class="tools"><span title="Encrypted">&#128274;</span><span title="Screenshot">&#9635;</span><span title="Settings">&#9881;</span></div>
+      </header>
+
+      <div class="stream">
+        <div class="col">
+          <div class="greet">Opening line <span class="on">1</span><span>2</span><span>3</span> &middot; pick which greeting starts the scene</div>
+
+          <div class="msg" style="--t: var(--deck-character)">
+            <div class="por">V</div>
+            <div class="body">
+              <div class="spk">Vera Lune</div>
+              <div class="bub">The storm had taken the last ferry and most of the power. <em>She met you at the foot of the tower with the lamp already lit.</em> <q>You came back. I had started to think the sea had kept you.</q></div>
+              <div class="meta"><span class="swipe">&lsaquo; <b>1</b>/1 &rsaquo;</span></div>
+            </div>
+          </div>
+
+          <div class="msg you" style="--t: var(--deck-persona)">
+            <div class="por">W</div>
+            <div class="body">
+              <div class="spk">Wren</div>
+              <div class="bub">I kept the door shut. Mostly.</div>
+            </div>
+          </div>
+
+          <div class="msg" style="--t: var(--deck-character)">
+            <div class="por">V</div>
+            <div class="body">
+              <div class="spk">Vera Lune</div>
+              <div class="think">&#9656; Backstage (reasoning)</div>
+              <div class="bub"><q>Mostly.</q> <em>She sets the lamp down between you, and the flame leans toward the stairwell.</em> <q>Tell me, Wren, who did you let up the stairs?</q></div>
+              <div class="meta">
+                <span class="acts"><span>Edit</span><span>Copy</span><span>Regenerate</span><span>Continue</span><span>Branch</span><span>&middot;&middot;&middot;</span><span class="del">Delete</span></span>
+                <span class="swipe">&lsaquo; <b>2</b>/3 &rsaquo;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="jump">&darr; Jump to latest</div>
+      <div class="inbar">
+        <div class="cap"><div class="ta">Reply as Wren...</div><span class="b" title="Continue">&raquo;</span><span class="b" title="Regenerate">&#8635;</span><span class="b send">Send</span></div>
+        <div class="hint"><span>Enter sends &middot; Shift+Enter for a new line</span><span>model &middot; your connection</span></div>
+      </div>
+    </section>
+
+    <aside class="panel right" id="p-model" hidden>
+      <div class="phead"><div class="k">Model</div><div class="t">Your connection</div></div>
+      <div class="pbody"><div class="field"><div class="l">Provider</div><div class="v">An OpenAI-compatible endpoint you set in Settings</div></div><div class="field"><div class="l">Model</div><div class="v">chosen here, per scene</div></div></div>
+    </aside>
+    <aside class="panel right" id="p-preview" hidden>
+      <div class="phead"><div class="k">Prompt preview</div><div class="t">What the next send carries</div></div>
+      <div class="pbody"><div class="field"><div class="l">System</div><div class="v">Main Prompt, then the character card, then the persona...</div></div><div class="field"><div class="l">Lore</div><div class="v">2 entries fired</div></div><div class="field"><div class="l">Tokens</div><div class="v">~2,140 of 32,000</div></div></div>
+    </aside>
+    <!-- RIGHT wing rail: how the scene runs (RC's right wing groups) -->
+    <div class="rail right">
+      <button class="wing" data-panel="p-model">&#9673;<span class="tip">Model</span></button>
+      <button class="wing" data-panel="p-gen">&#8801;<span class="tip">Generation</span></button>
+      <div class="grp"></div>
+      <button class="wing" data-panel="p-look">&#9680;<span class="tip">Appearance</span></button>
+      <div class="grp"></div>
+      <button class="wing" data-panel="p-preview">&#9641;<span class="tip">Prompt preview</span></button>
+      <button class="wing" data-panel="p-summary">&#9776;<span class="tip">Summary</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="wf-note"><b>Ported from RoleCall's scene page</b> (StandardLayout): background with vignette; a wing rail on each edge that opens its panel (left: Character, Persona, Lorebooks, Preset, Scene note, Regex; right: Model, Generation, Appearance, Prompt preview, Summary); the header (back and scene nav, centered title with branch pill and tagline, tools); the message stream in an 880px column with RC's tall sticky portraits (260 by 380), Cinzel speaker names, dark translucent bubbles, the reasoning ("Backstage") fold, the action bar (Edit, Copy, Regenerate, Continue, Branch, more, Delete) and swipe counter; the opening-line picker before the first reply; Jump to latest; the glass capsule input. <b>Left out for a later pass:</b> visual-novel mode, music and Spotify, Minds and the Director, TunnelVision, props and trackers, image generation, satellites, group scenes. <b>Needs underneath it:</b> the chat loop (build the prompt from the frozen cast, preset, and lore; stream the reply from your connection; save it), which is its own design pass.</div>
+
+<script>
+  document.querySelectorAll(".wing").forEach((w) => w.addEventListener("click", () => {
+    const side = w.closest(".rail").classList.contains("right") ? "right" : "left";
+    const target = document.getElementById(w.dataset.panel);
+    const wasOn = w.classList.contains("on");
+    document.querySelectorAll(`.rail.${side} .wing`).forEach((x) => x.classList.remove("on"));
+    document.querySelectorAll(side === "right" ? ".panel.right" : ".panel:not(.right)").forEach((p) => (p.hidden = true));
+    if (!wasOn && target) { w.classList.add("on"); target.hidden = false; }
+  }));
+</script>
+</body>
+</html>

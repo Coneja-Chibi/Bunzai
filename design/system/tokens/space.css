@@ -1,0 +1,28 @@
+/*
+ * Bunraku design system: spacing tokens, contract v1. A 4px grid in rem. The number is the count of
+ * 4px steps (space-4 = 16px), so the name says the size. Layout aliases name the common jobs.
+ */
+:root {
+  --bk-space-0: 0;
+  --bk-space-half: 0.125rem;  /* 2px */
+  --bk-space-1: 0.25rem;      /* 4px */
+  --bk-space-2: 0.5rem;       /* 8px */
+  --bk-space-3: 0.75rem;      /* 12px */
+  --bk-space-4: 1rem;         /* 16px */
+  --bk-space-5: 1.25rem;      /* 20px */
+  --bk-space-6: 1.5rem;       /* 24px */
+  --bk-space-8: 2rem;         /* 32px */
+  --bk-space-10: 2.5rem;      /* 40px */
+  --bk-space-12: 3rem;        /* 48px */
+  --bk-space-16: 4rem;        /* 64px */
+
+  /* jobs */
+  --bk-pad-page: var(--bk-space-8);       /* the stage's own padding; space-4 at phone width */
+  --bk-pad-panel: var(--bk-space-5);      /* inside a panel or dialog */
+  --bk-pad-row: var(--bk-space-2);        /* a list row's vertical padding */
+  --bk-pad-chip: var(--bk-space-1) var(--bk-space-2);
+  --bk-gap-stack: var(--bk-space-4);      /* between stacked blocks */
+  --bk-gap-inline: var(--bk-space-2);     /* between inline items (icon and label, chips) */
+  --bk-gap-cards: var(--bk-space-4);      /* between cards in a grid */
+  --bk-gap-section: var(--bk-space-8);    /* between page sections */
+}

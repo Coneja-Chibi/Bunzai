@@ -1,0 +1,313 @@
+/** Canonical lorebook entity shape shared by adapters, storage, and editors. */
+import type { CanonicalEntity } from "../../core/canonical";
+
+/**
+ * CanonicalLorebook - the world-info / knowledge-base entity. Adopts the RoleCall LorebookEntry as
+ * the canonical baseline (it is a practical superset of SillyTavern World Info, Risu, Agnai, Chub,
+ * Lumiverse, and NovelAI's portable surface). Field map + cross-format coverage in
+ * design/LOREBOOK-FORMATS.md.
+ *
+ * Only PORTABLE format content is first-classed here. RC's DB/platform baggage (creator, stats,
+ * publishing status, fork lineage, versioning, timestamps, token counts, per-session runtime state)
+ * is NOT part of the canonical body - it rides in original or on the Entity wrapper, exactly as the
+ * character body strips its DB fields. A character references lorebooks by id via
+ * CharacterBody.knowledgeRefs (ordered); a format that must embed the book resolves those on export.
+ *
+ * The wire gate still holds: a field earns a first-class slot only if some real WIRE format SERIALIZES
+ * it. RC in-memory-only fields with no serializer producer (allowRecursion, scanPreset, probabilityMode -
+ * verified absent from RoleCall's lorebook package serializeEntryToRoleCallV1 + the ST serializer) ride original:
+ * first-classing a field nothing serializes is dead surface. The exception is boostIds/boostAmount: no
+ * wire carries them either, but the activation engine reads them (engine/boosting.ts) and the World wing
+ * authors them, so they are Bunraku-authored slots (RoleCall's own export drops them). But under the
+ * schema-is-editor doctrine, an AUTHORED field a real format DOES serialize gets a slot even if only one
+ * format produces it (single-platform is not a reason to original). So ST's extra scan sources
+ * (matchCharacterDepthPrompt, matchCreatorNotes), the vectorized/group-override/group-scoring toggles,
+ * the automation binding, and the distinct displayIndex axis are first-classed below - they are ST wire
+ * fields a creator sets, not in-memory residue.
+ */
+
+/**
+ * A keyword/regex trigger. "Advanced" triggers carry their own `probability` (overriding the entry
+ * fallback); "simple" triggers omit it and use the entry-level probability. `frequency` is config
+ * (min messages between activations); per-session runtime counters are not part of portable content.
+ */
+export interface Trigger {
+  keyword: string;
+  isRegex: boolean;
+  /** regex flags: g, i, m, s, u, y */
+  flags?: string;
+  /** min messages that must pass before this trigger can re-activate its entry */
+  frequency?: number;
+  /** advanced mode only: per-trigger activation chance 0-100, overrides the entry fallback */
+  probability?: number;
+}
+
+/** How primary + secondary keywords combine. */
+export type SelectiveLogic = "and_any" | "and_all" | "not_any" | "not_all";
+
+/**
+ * Where the entry content is injected. `world`/`character` are the portable floor (ST before/after
+ * char); the rest are richer positions that degrade to the floor on downcast to CCv2 character_book.
+ */
+export type InjectionPosition =
+  | "world"
+  | "character"
+  | "before_example"
+  | "after_example"
+  | "depth"
+  | "append"
+  | "append_bottom"
+  | "prepend_top"
+  | "scene";
+
+export type MessageRole = "system" | "user" | "assistant";
+
+/** Whitelist (isExclude:false) or blacklist (isExclude:true) an entry to specific characters. */
+export interface CharacterFilter {
+  names: string[];
+  tags: string[];
+  isExclude: boolean;
+}
+
+export type SideEffectType = "setvar" | "addvar" | "incvar" | "decvar" | "delvar";
+
+/** A variable mutation performed when an entry activates (declarative data, never executed by vaud). */
+export interface EntrySideEffect {
+  type: SideEffectType;
+  variable: string;
+  /** for setvar */
+  value?: string;
+  /** for addvar/incvar/decvar */
+  amount?: number;
+  scope: "local" | "global";
+}
+
+export interface EntrySideEffects {
+  effects: EntrySideEffect[];
+  onlyOnFirstTrigger: boolean;
+  clearOnDeactivate: boolean;
+}
+
+/**
+ * NovelAI per-entry context-assembly config: authored prompt-shaping dials a creator sets in the NAI
+ * lorebook UI (prefix/suffix are authored TEXT, e.g. "[ Mal: " / " ]\n"). All optional; formats without
+ * an assembly layer omit the whole block. NAI's `budgetPriority` is deliberately NOT here - it is the
+ * placement axis and lives in `sortOrder` (one home per axis, see the sortOrder/priority split below).
+ */
+export interface EntryContextConfig {
+  /** text prepended to the entry when inserted */
+  prefix?: string;
+  /** text appended to the entry when inserted */
+  suffix?: string;
+  /** per-entry token budget cap */
+  tokenBudget?: number;
+  /** tokens reserved so the entry is not trimmed away */
+  reservedTokens?: number;
+  /** trim strategy: "doNotTrim" | "trimBottom" | "trimTop" (open: NAI may add values) */
+  trimDirection?: string;
+  /** join strategy: "newline" | "space" | "token" */
+  insertionType?: string;
+  /** trim granularity: "sentence" | "newline" | "token" */
+  maximumTrimType?: string;
+  /** signed offset within the target context section (NOT canonical depth - a different axis) */
+  insertionPosition?: number;
+}
+
+/**
+ * One phrase inside a NovelAI loreBiasGroups row. Wire uses `sequence` and/or `sequences` plus a
+ * numeric `type` (NAI's phrase-type enum). Authored content - first-class so the editor can edit bias.
+ */
+export interface LoreBiasPhrase {
+  sequence?: string;
+  sequences?: string[];
+  /** NAI phrase type (int on wire; open enum) */
+  type?: number;
+}
+
+/**
+ * NovelAI phrase-bias group: signed bias applied when the entry is active (or when inactive if
+ * `whenInactive`). Ported from real v3/v6 exports (loreBiasGroups).
+ */
+export interface LoreBiasGroup {
+  enabled: boolean;
+  /** signed strength (e.g. -0.5, 0.2) */
+  bias: number;
+  phrases: LoreBiasPhrase[];
+  whenInactive?: boolean;
+  generateOnce?: boolean;
+  ensureSequenceFinish?: boolean;
+}
+
+export interface LorebookEntry {
+  /** stable entry id, preserved across round-trips (categories reference it) */
+  id: string;
+  /** entry label (maps to ST `comment`) */
+  title: string;
+  content: string;
+  /** internal creator note; distinct from title, has no ST home (RC-only) */
+  comment?: string | null;
+  enabled: boolean;
+  /** always inject regardless of keyword match */
+  constant: boolean;
+
+  triggerMode: "simple" | "advanced";
+  triggers: Trigger[];
+  secondaryTriggers: Trigger[];
+  selectiveLogic: SelectiveLogic;
+
+  /** null = inherit the lorebook global */
+  caseSensitive: boolean | null;
+  matchWholeWords: boolean | null;
+  scanDepth: number | null;
+
+  position: InjectionPosition;
+  /** used when position is "depth" or "append" */
+  depth: number;
+  role: MessageRole;
+
+  /**
+   * Placement / insertion order: where the entry lands relative to its siblings in the assembled
+   * prompt. The universal ordering axis - ST `order`, Risu `insertorder`, CCv3 `insertion_order`,
+   * Agnai `weight`, RC `sortOrder`. ST's `displayIndex` is a distinct authored display axis with its own
+   * canonical slot; it does not replace or derive from this assembly-order axis.
+   */
+  sortOrder: number;
+  /**
+   * Eviction / budget priority: which entries survive when the token budget is exceeded (higher
+   * survives). A separate axis from placement - CCv3 `priority`, Agnai `priority`, RC `priority`.
+   * Formats with no eviction field (ST, Risu) default this to 100.
+   */
+  priority: number;
+
+  sticky: number;
+  cooldown: number;
+  delay: number;
+
+  groupName: string | null;
+  /** references a LorebookCategory.id */
+  categoryId: string | null;
+  groupWeight: number;
+
+  /** entry-level activation chance 0-100 (fallback for simple triggers) */
+  probability: number;
+
+  useMemo: boolean;
+
+  /** will NOT be found during recursion (direct matches only) */
+  excludeRecursion: boolean;
+  /** this entry's content will NOT trigger other entries */
+  preventRecursion: boolean;
+  /** only activate at recursion level N (0 = first pass) */
+  delayUntilRecursion: number;
+
+  characterFilter: CharacterFilter | null;
+
+  scanCharacterDescription: boolean;
+  scanCharacterPersonality: boolean;
+  scanUserPersona: boolean;
+  scanScenario: boolean;
+  /** extra ST worldinfo scan sources (undefined = not produced by this format / off) */
+  scanCharacterDepthPrompt?: boolean;
+  scanCreatorNotes?: boolean;
+
+  /** bypass token budget - always inject */
+  ignoreBudget: boolean;
+
+  /**
+   * Authored ST-lineage entry toggles that only some formats carry (optional: undefined = the format has
+   * no such field, distinct from an explicit false a producer set). First-classed per the schema-is-editor
+   * doctrine, not original. `vectorized` is the RAG toggle (the SETTING, not the vectors, which stay original);
+   * `groupOverride`/`useGroupScoring` extend the groupName/groupWeight mutual-exclusion axis; `automationId`
+   * binds an entry to a Quick-Reply automation by id (the id only, the automation set stays original).
+   */
+  vectorized?: boolean;
+  groupOverride?: boolean;
+  useGroupScoring?: boolean;
+  automationId?: string | null;
+  /** NovelAI: keys match relative to the entry's own insertion point, not the story tail */
+  keyRelative?: boolean;
+  /** NovelAI: entry can activate outside story text (e.g. from a UI action) */
+  nonStoryActivatable?: boolean;
+  /** NovelAI authored per-entry assembly config (prefix/suffix/trim/budget dials) */
+  contextConfig?: EntryContextConfig;
+  /** NovelAI phrase bias groups (loreBiasGroups on wire) */
+  loreBiasGroups?: LoreBiasGroup[];
+  /**
+   * Creator's manual display order in the editor list - a DISTINCT authored axis from `sortOrder`
+   * (placement in the assembled prompt). Real ST cards prove they diverge (Seraphina: sortOrder all 100,
+   * displayIndex 0-3), so it is NOT regenerable from sortOrder. null/undefined = follow sortOrder.
+   */
+  displayIndex?: number | null;
+
+  sideEffects: EntrySideEffects | null;
+
+  /**
+   * Cross-entry boosting (RoleCall's boostIds/boostAmount; no wire format carries them, so they are
+   * Bunraku-authored and RoleCall's own export drops them). When this entry fires, `boostAmount` (0 to 1,
+   * default none) is added to the chance of each entry of the SAME book named in `boostIds` that also
+   * matched this turn (engine/boosting.ts). Absent or empty means no boost.
+   */
+  boostIds?: string[];
+  boostAmount?: number;
+
+  /** extensible bag for format-specific data with no first-class home */
+  metadata?: Record<string, unknown>;
+}
+
+/** A folder grouping entries within a lorebook. */
+export interface LorebookCategory {
+  id: string;
+  name: string;
+  sortOrder: number;
+  enabled?: boolean;
+}
+
+export type LorebookType = "world" | "character" | "scenario" | "rules" | "utility" | "other";
+
+/**
+ * House default for `globalScanDepth`, shared by the "New lorebook" factory, heal, and every
+ * importer whose source format leaves scan depth unstated. It is NOT zero on purpose: the
+ * activation engine reads a depth of zero as "scan no lines at all", so a book that lands on
+ * zero matches nothing and reports every entry as no-key-match. A format that genuinely omits
+ * the field means "use the host default", which is this.
+ */
+export const DEFAULT_SCAN_DEPTH = 4;
+
+export interface LorebookBody {
+  name: string;
+  description?: string | null;
+  lorebookType?: LorebookType | null;
+  genre?: string | null;
+  fandom?: string | null;
+  tags: string[];
+
+  /**
+   * Book-level on/off for the shelf + Press export filter. Default true when absent (older books).
+   * RC can round-trip it; other formats ignore (deny by absence).
+   */
+  enabled?: boolean;
+
+  /** global matching defaults; entries with null matching options inherit these */
+  globalCaseSensitive: boolean;
+  globalMatchWholeWords: boolean;
+  globalScanDepth: number;
+  globalRecursion: boolean;
+  /**
+   * Whether a `vectorized` entry takes part in recursion, as a source or a target (bug 6, owner
+   * decision 2026-09-30). Undefined/absent means true, today's engine behavior, unchanged for
+   * every book saved before this existed. No known format (checked: SillyTavern's docs describe
+   * no such setting, global or per-book) has an equivalent to round-trip; this is Bunraku-native,
+   * beside `globalRecursion` because that is where Bunraku already keeps its own recursion
+   * defaults. The engine (`recursion.ts`) and the Workbench's wake map (`wake.ts`) both read this
+   * single field so they can never disagree (`vectorizedRecursionOk` in `engine/types.ts`).
+   */
+  vectorizedRecursion?: boolean;
+  tokenBudget: number;
+  budgetMode: "token" | "entry";
+  entryBudget: number;
+
+  entries: LorebookEntry[];
+  categories?: LorebookCategory[];
+}
+
+export type CanonicalLorebook = CanonicalEntity<"lorebook", LorebookBody>;

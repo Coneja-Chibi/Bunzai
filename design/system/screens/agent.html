@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Agent window</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="agent.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Agent window</h1>
+    <p>The Agent window: one conversation, one Gate. The Gate takes over the bottom when a write is proposed.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="agent.window">
+    <header>
+      <h2 class="bk-heading">Agent window</h2>
+      <span class="bk-tag">Agent window, GateCard</span>
+      <p class="bk-meta">Parts: agent.window, agent.screen-brief, agent.transcript, agent.message, agent.composer, agent.slash, agent.queue, agent.trace, protected.gate</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="agent.window.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Docked room</h3>
+          <p>The agent as a room; the screen brief is a HUD header.</p></header>
+        <div class="spec-screen ag-screen" data-state="loaded">
+<div class="ag-app" data-part="shell.app">
+  <header class="ag-hud" data-part="shell.hud">
+    <div class="ag-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="ag-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="ag-hud-mid">
+      <div class="ag-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ag-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Enter</b> <span data-part="ui.key-chip.label">Send</span></span>
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+/</b> <span data-part="ui.key-chip.label">Hide</span></span>
+    </div>
+  </header>
+  <div class="ag-body">
+    <nav class="ag-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="ag-dock-brand" data-part="shell.dock.brand">
+        <svg class="ag-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="ag-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="ag-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="ag-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="ag-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="ag-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="agent" aria-current="true">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="ag-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="ag-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ag-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="ag-dock-app ag-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="ag-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="ag-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="ag-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="ag-stage bk-stage" data-part="shell.stage">
+
+        <div class="ag-wrap" data-part="agent.window">
+          <div class="ag-band">
+            <button type="button" class="bk-item ag-foldbtn" aria-label="Fold this band away" aria-expanded="true">&#9662;</button>
+            <span class="ag-kick bk-meta"><span class="bk-dot" data-tone="ok"></span>Anthropic &middot; claude-sonnet &middot; watching the studio folder</span>
+          </div>
+          <div class="ag-headblock" data-part="agent.screen-brief">
+            <h2 class="bk-heading">The Agent</h2>
+            <p class="bk-meta">Standing on Keeper's Log.</p>
+          </div>
+
+          <div class="ag-meterbar">
+            <div class="bk-meter" data-part="ui.meter" role="meter" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100" aria-label="Context used">
+              <span class="bk-meter__label">CTX</span>
+              <span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:42%"></span></span>
+              <span class="bk-meter__value">42% &middot; 1.2K / 4K</span>
+            </div>
+            <span class="ag-metergap"></span>
+            <span class="bk-meta">turn 640 &middot; session 3.1K</span>
+          </div>
+          <p class="ag-nomodel bk-meta" data-tone="warn">No model is connected. Add one in Settings; this window uses the same vault and providers as Kit, so anything set up there works here.</p>
+
+          <div class="ag-talk" data-part="agent.transcript">
+            <p class="ag-aempty bk-meta">Ask about what is on the screen behind this window.</p>
+
+            <div class="ag-turn ag-turn-user" data-part="agent.message"><span class="bk-label">You</span><p class="bk-meta">Can you check whether any entry in this book never fires?</p></div>
+            <div class="ag-turn ag-turn-agent" data-part="agent.message"><span class="bk-label">Agent</span><p class="bk-meta">Three entries never fire. "The Old Keeper" is off and has no keywords. Want me to open the full check?</p></div>
+            <div class="ag-turn ag-turn-user" data-part="agent.message"><span class="bk-label">You</span><p class="bk-meta">Yes, and fix the duplicate keys while you're in there.</p></div>
+            <div class="ag-turn ag-turn-agent ag-extra" data-part="agent.message">
+              <span class="bk-label">Agent</span><p class="bk-meta">Here's the patch to "The Fog Bell" so its own text stops re-triggering itself:</p>
+              <pre class="ag-diffblock"><span class="ag-del">- text: "the bell over the storm door"</span>
+<span class="ag-add">+ text: "the old bell by the door"</span></pre>
+            </div>
+            <div class="ag-turn ag-turn-agent ag-extra" data-part="agent.message">
+              <span class="bk-label">Agent</span><p class="bk-meta">I also drew a quick map of how your entries wake each other:</p>
+              <div class="ag-htmlblock"><span class="bk-meta">wake-map.html &middot; a drawing</span><button type="button" class="bk-item ag-btn-ghost">Open as tab</button></div>
+            </div>
+            <div class="ag-turn ag-turn-err ag-extra" data-tone="danger" data-part="agent.message"><span class="bk-label">Failed</span><p class="bk-meta">The provider stopped mid-reply. Nothing was saved.</p></div>
+          </div>
+
+          <div class="ag-stagehand"><span class="bk-dot" data-tone="ok"></span><span class="bk-meta">reading the book</span><span class="bk-tag">0:03</span></div>
+          <div class="ag-rehearsal">
+            <div class="ag-rhead"><span class="bk-label">Rehearsal</span><span class="bk-tag">0:07</span></div>
+            <p class="bk-meta">...so the duplicate is really just the same word used on purpose in two nearby entries, which the health check already treats as worth a look rather than a problem...</p>
+          </div>
+          <div class="ag-rtrace"><button type="button" class="ag-link">&middot; rehearsed for 7s, 412 characters</button></div>
+          <div class="ag-watchnote" data-tone="warn">
+            <span class="bk-label">Noticed</span>
+            <p class="bk-meta">lorebook changed on disk, outside this window.</p>
+          </div>
+
+          <div class="ag-gate bk-protected-root" role="alertdialog" data-part="protected.gate" aria-label="Review change">
+            <p class="ag-gkick">saveEditedEntity &middot; review</p>
+            <strong class="ag-gtitle">Keeper's Log</strong>
+            <p class="ag-gwhy">Two entries change: a text edit on The Fog Bell, and a duplicate key removed from The Long Storm.</p>
+            <ul class="ag-gwarn"><li>The Fog Bell no longer wakes itself through its own text.</li></ul>
+            <pre class="ag-gdetail">The Fog Bell.text: "the bell over the storm door" -&gt; "the old bell by the door"
+The Long Storm.keys: removes "stairs" (kept on The Third Stair)</pre>
+            <div class="ag-grow">
+              <button type="button" class="ag-gbtn ag-gbtn-primary">Allow once</button>
+              <button type="button" class="ag-gbtn">Allow for this session</button>
+              <button type="button" class="ag-gbtn">No</button>
+              <button type="button" class="ag-gbtn">Wait, tell me more</button>
+              <button type="button" class="ag-gbtn ag-gbtn-danger">Stop the whole turn</button>
+            </div>
+          </div>
+
+          <div class="ag-chips">
+            <button type="button" class="bk-item ag-chipbtn">Run the full health check</button>
+            <button type="button" class="bk-item ag-chipbtn">Open Rehearsal with a sample line</button>
+            <button type="button" class="bk-item ag-chipbtn">Show the wake map</button>
+          </div>
+
+          <div class="ag-queue">
+            <div class="ag-qrow"><span class="bk-label">waiting</span><span class="bk-meta ag-qt">also rename "The Old Keeper" while you're there</span><button type="button" class="ag-link">send now</button><button type="button" class="ag-link">drop</button></div>
+          </div>
+
+          <div class="ag-popup ag-slashmenu" role="listbox" aria-label="Slash commands">
+            <div class="bk-item ag-prow" aria-selected="true">/rail &nbsp; keep a preset's block list open</div>
+            <div class="bk-item ag-prow">/gallery &nbsp; lay out card art in a row</div>
+            <div class="bk-item ag-prow">/model &nbsp; open provider settings</div>
+          </div>
+          <div class="ag-popup ag-mentionmenu" role="listbox" aria-label="Mentions">
+            <div class="bk-item ag-prow" aria-selected="true">@lorebook:keepers-log</div>
+            <div class="bk-item ag-prow">@character:marguerite-vane</div>
+          </div>
+
+          <div class="ag-shots"><div class="ag-sh" data-deck="preset"></div><div class="ag-sh" data-deck="preset"></div></div>
+
+          <form class="ag-composer" data-part="agent.composer">
+            <textarea class="ag-textarea" placeholder="Ask about this screen, or type / for a command" rows="2"></textarea>
+            <button type="button" class="bk-item ag-sendbtn">Ask</button>
+          </form>
+
+          <div class="ag-keyhints">
+            <span class="bk-tag"><b>Enter</b> send</span><span class="bk-tag"><b>Shift+Enter</b> newline</span><span class="bk-tag"><b>/</b> commands</span><span class="bk-tag"><b>Ctrl+/</b> hide</span>
+          </div>
+
+          <details class="ag-seebox" data-part="agent.trace">
+            <summary class="bk-meta">What it can see</summary>
+            <pre class="ag-seepre">Keeper's Log is open. 40 entries, 39 enabled, 118 keys. Focused entry: The Long Storm.
+Actions: run the full health check; open Rehearsal; show the wake map.</pre>
+          </details>
+        </div>
+
+        <div class="ag-floatwrap">
+          <section class="bk-panel bk-frame ag-floatpanel" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">The Agent</h4><button type="button" class="bk-item ag-ficon" aria-label="Minimise the agent" title="Minimise the agent; nothing is lost">&#9866;</button><button type="button" class="bk-item ag-ficon" aria-label="Close the agent">&times;</button></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Standing on Keeper's Log.</p>
+              <p class="bk-meta">The floating panel is the same room, docked over whichever app is open, sized down. Opened with the app-corner control or Ctrl+/.</p>
+            </div>
+          </section>
+        </div>    </main>
+  </div>
+  <footer class="ag-status" data-part="shell.status">
+    <span class="ag-status-item" data-part="shell.status.item">Standing on Keeper’s Log</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Docked room">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Conversation</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty conversation</button>
+          <button type="button" class="spec-chip" data-set-state="nomodel">No model connected</button>
+          <button type="button" class="spec-chip" data-set-state="busy">Working (Stagehand)</button>
+          <button type="button" class="spec-chip" data-set-state="rehearsing">Working (Rehearsal)</button>
+          <button type="button" class="spec-chip" data-set-state="watch">Disk changed</button>
+          <button type="button" class="spec-chip" data-set-state="gate">Gate</button>
+          <button type="button" class="spec-chip" data-set-state="queued">Queued message</button>
+          <button type="button" class="spec-chip" data-set-state="slash">Slash menu</button>
+          <button type="button" class="spec-chip" data-set-state="mentions">@ mentions</button>
+          <button type="button" class="spec-chip" data-set-state="shots">Attached image</button>
+          <button type="button" class="spec-chip" data-set-state="folded">Band folded</button>
+          <button type="button" class="spec-chip" data-set-state="floating">Floating panel</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="agent.window.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Floating window</h3>
+          <p>A framed window over the screen you came from, minimizable to a HUD chip.</p></header>
+        <div class="spec-screen ag-screen" data-state="loaded">
+<div class="ag-app" data-part="shell.app">
+  <header class="ag-hud" data-part="shell.hud">
+    <div class="ag-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="ag-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="ag-hud-mid">
+      <div class="ag-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ag-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Enter</b> <span data-part="ui.key-chip.label">Send</span></span>
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+/</b> <span data-part="ui.key-chip.label">Hide</span></span>
+    </div>
+  </header>
+  <div class="ag-body">
+    <nav class="ag-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="ag-dock-brand" data-part="shell.dock.brand">
+        <svg class="ag-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="ag-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="ag-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="ag-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="ag-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="ag-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="agent" aria-current="true">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="ag-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="ag-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="ag-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="ag-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ag-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="ag-dock-app ag-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="ag-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="ag-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="ag-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="ag-stage bk-stage" data-part="shell.stage">
+
+        <div class="ag-wrap" data-part="agent.window">
+          <div class="ag-band">
+            <button type="button" class="bk-item ag-foldbtn" aria-label="Fold this band away" aria-expanded="true">&#9662;</button>
+            <span class="ag-kick bk-meta"><span class="bk-dot" data-tone="ok"></span>Anthropic &middot; claude-sonnet &middot; watching the studio folder</span>
+          </div>
+          <div class="ag-headblock" data-part="agent.screen-brief">
+            <h2 class="bk-heading">The Agent</h2>
+            <p class="bk-meta">Standing on Keeper's Log.</p>
+          </div>
+
+          <div class="ag-meterbar">
+            <div class="bk-meter" data-part="ui.meter" role="meter" aria-valuenow="42" aria-valuemin="0" aria-valuemax="100" aria-label="Context used">
+              <span class="bk-meter__label">CTX</span>
+              <span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:42%"></span></span>
+              <span class="bk-meter__value">42% &middot; 1.2K / 4K</span>
+            </div>
+            <span class="ag-metergap"></span>
+            <span class="bk-meta">turn 640 &middot; session 3.1K</span>
+          </div>
+          <p class="ag-nomodel bk-meta" data-tone="warn">No model is connected. Add one in Settings; this window uses the same vault and providers as Kit, so anything set up there works here.</p>
+
+          <div class="ag-talk" data-part="agent.transcript">
+            <p class="ag-aempty bk-meta">Ask about what is on the screen behind this window.</p>
+
+            <div class="ag-turn ag-turn-user" data-part="agent.message"><span class="bk-label">You</span><p class="bk-meta">Can you check whether any entry in this book never fires?</p></div>
+            <div class="ag-turn ag-turn-agent" data-part="agent.message"><span class="bk-label">Agent</span><p class="bk-meta">Three entries never fire. "The Old Keeper" is off and has no keywords. Want me to open the full check?</p></div>
+            <div class="ag-turn ag-turn-user" data-part="agent.message"><span class="bk-label">You</span><p class="bk-meta">Yes, and fix the duplicate keys while you're in there.</p></div>
+            <div class="ag-turn ag-turn-agent ag-extra" data-part="agent.message">
+              <span class="bk-label">Agent</span><p class="bk-meta">Here's the patch to "The Fog Bell" so its own text stops re-triggering itself:</p>
+              <pre class="ag-diffblock"><span class="ag-del">- text: "the bell over the storm door"</span>
+<span class="ag-add">+ text: "the old bell by the door"</span></pre>
+            </div>
+            <div class="ag-turn ag-turn-agent ag-extra" data-part="agent.message">
+              <span class="bk-label">Agent</span><p class="bk-meta">I also drew a quick map of how your entries wake each other:</p>
+              <div class="ag-htmlblock"><span class="bk-meta">wake-map.html &middot; a drawing</span><button type="button" class="bk-item ag-btn-ghost">Open as tab</button></div>
+            </div>
+            <div class="ag-turn ag-turn-err ag-extra" data-tone="danger" data-part="agent.message"><span class="bk-label">Failed</span><p class="bk-meta">The provider stopped mid-reply. Nothing was saved.</p></div>
+          </div>
+
+          <div class="ag-stagehand"><span class="bk-dot" data-tone="ok"></span><span class="bk-meta">reading the book</span><span class="bk-tag">0:03</span></div>
+          <div class="ag-rehearsal">
+            <div class="ag-rhead"><span class="bk-label">Rehearsal</span><span class="bk-tag">0:07</span></div>
+            <p class="bk-meta">...so the duplicate is really just the same word used on purpose in two nearby entries, which the health check already treats as worth a look rather than a problem...</p>
+          </div>
+          <div class="ag-rtrace"><button type="button" class="ag-link">&middot; rehearsed for 7s, 412 characters</button></div>
+          <div class="ag-watchnote" data-tone="warn">
+            <span class="bk-label">Noticed</span>
+            <p class="bk-meta">lorebook changed on disk, outside this window.</p>
+          </div>
+
+          <div class="ag-gate bk-protected-root" role="alertdialog" data-part="protected.gate" aria-label="Review change">
+            <p class="ag-gkick">saveEditedEntity &middot; review</p>
+            <strong class="ag-gtitle">Keeper's Log</strong>
+            <p class="ag-gwhy">Two entries change: a text edit on The Fog Bell, and a duplicate key removed from The Long Storm.</p>
+            <ul class="ag-gwarn"><li>The Fog Bell no longer wakes itself through its own text.</li></ul>
+            <pre class="ag-gdetail">The Fog Bell.text: "the bell over the storm door" -&gt; "the old bell by the door"
+The Long Storm.keys: removes "stairs" (kept on The Third Stair)</pre>
+            <div class="ag-grow">
+              <button type="button" class="ag-gbtn ag-gbtn-primary">Allow once</button>
+              <button type="button" class="ag-gbtn">Allow for this session</button>
+              <button type="button" class="ag-gbtn">No</button>
+              <button type="button" class="ag-gbtn">Wait, tell me more</button>
+              <button type="button" class="ag-gbtn ag-gbtn-danger">Stop the whole turn</button>
+            </div>
+          </div>
+
+          <div class="ag-chips">
+            <button type="button" class="bk-item ag-chipbtn">Run the full health check</button>
+            <button type="button" class="bk-item ag-chipbtn">Open Rehearsal with a sample line</button>
+            <button type="button" class="bk-item ag-chipbtn">Show the wake map</button>
+          </div>
+
+          <div class="ag-queue">
+            <div class="ag-qrow"><span class="bk-label">waiting</span><span class="bk-meta ag-qt">also rename "The Old Keeper" while you're there</span><button type="button" class="ag-link">send now</button><button type="button" class="ag-link">drop</button></div>
+          </div>
+
+          <div class="ag-popup ag-slashmenu" role="listbox" aria-label="Slash commands">
+            <div class="bk-item ag-prow" aria-selected="true">/rail &nbsp; keep a preset's block list open</div>
+            <div class="bk-item ag-prow">/gallery &nbsp; lay out card art in a row</div>
+            <div class="bk-item ag-prow">/model &nbsp; open provider settings</div>
+          </div>
+          <div class="ag-popup ag-mentionmenu" role="listbox" aria-label="Mentions">
+            <div class="bk-item ag-prow" aria-selected="true">@lorebook:keepers-log</div>
+            <div class="bk-item ag-prow">@character:marguerite-vane</div>
+          </div>
+
+          <div class="ag-shots"><div class="ag-sh" data-deck="preset"></div><div class="ag-sh" data-deck="preset"></div></div>
+
+          <form class="ag-composer" data-part="agent.composer">
+            <textarea class="ag-textarea" placeholder="Ask about this screen, or type / for a command" rows="2"></textarea>
+            <button type="button" class="bk-item ag-sendbtn">Ask</button>
+          </form>
+
+          <div class="ag-keyhints">
+            <span class="bk-tag"><b>Enter</b> send</span><span class="bk-tag"><b>Shift+Enter</b> newline</span><span class="bk-tag"><b>/</b> commands</span><span class="bk-tag"><b>Ctrl+/</b> hide</span>
+          </div>
+
+          <details class="ag-seebox" data-part="agent.trace">
+            <summary class="bk-meta">What it can see</summary>
+            <pre class="ag-seepre">Keeper's Log is open. 40 entries, 39 enabled, 118 keys. Focused entry: The Long Storm.
+Actions: run the full health check; open Rehearsal; show the wake map.</pre>
+          </details>
+        </div>
+
+        <div class="ag-floatwrap">
+          <section class="bk-panel bk-frame ag-floatpanel" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">The Agent</h4><button type="button" class="bk-item ag-ficon" aria-label="Minimise the agent" title="Minimise the agent; nothing is lost">&#9866;</button><button type="button" class="bk-item ag-ficon" aria-label="Close the agent">&times;</button></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Standing on Keeper's Log.</p>
+              <p class="bk-meta">The floating panel is the same room, docked over whichever app is open, sized down. Opened with the app-corner control or Ctrl+/.</p>
+            </div>
+          </section>
+        </div>    </main>
+  </div>
+  <footer class="ag-status" data-part="shell.status">
+    <span class="ag-status-item" data-part="shell.status.item">Standing on Keeper’s Log</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Floating window">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Conversation</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty conversation</button>
+          <button type="button" class="spec-chip" data-set-state="nomodel">No model connected</button>
+          <button type="button" class="spec-chip" data-set-state="busy">Working (Stagehand)</button>
+          <button type="button" class="spec-chip" data-set-state="rehearsing">Working (Rehearsal)</button>
+          <button type="button" class="spec-chip" data-set-state="watch">Disk changed</button>
+          <button type="button" class="spec-chip" data-set-state="gate">Gate</button>
+          <button type="button" class="spec-chip" data-set-state="queued">Queued message</button>
+          <button type="button" class="spec-chip" data-set-state="slash">Slash menu</button>
+          <button type="button" class="spec-chip" data-set-state="mentions">@ mentions</button>
+          <button type="button" class="spec-chip" data-set-state="shots">Attached image</button>
+          <button type="button" class="spec-chip" data-set-state="folded">Band folded</button>
+          <button type="button" class="spec-chip" data-set-state="floating">Floating panel</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the status band with fold, the screen-brief header, the context meter and turn/session readouts, the no-model notice, the transcript (user/agent/error turns, a diff block, an HTML-drawing block), the Stagehand busy line and Rehearsal trace, the disk-changed notice, the Gate card (protected tokens only, five answers), suggestion chips, the queued-message row, slash and mention popups, attached-image thumbnails, the composer with key hints, the "what it can see" trace fold, and the floating/minimised panel. The Gate is drawn with --bk-protected-* custom properties directly on a .bk-protected-root element in page markup; the real host additionally isolates it in a shadow root, which a static design-system page cannot reproduce. Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

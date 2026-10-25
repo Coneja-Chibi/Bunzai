@@ -1,0 +1,45 @@
+{
+  "kind": "promptformat",
+  "source": "src/entities/promptformat/schema.ts",
+  "shapes": [
+    {
+      "name": "PromptFormatBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "instruct",
+          "optional": true,
+          "type": "PromptFormatPart",
+          "meaning": "SillyTavern instruct template (input_sequence, output_sequence, stop_sequence, ...).",
+          "producers": [
+            "SillyTavern"
+          ]
+        },
+        {
+          "name": "context",
+          "optional": true,
+          "type": "PromptFormatPart",
+          "meaning": "SillyTavern context template (story_string, example_separator, chat_start, ...).",
+          "producers": [
+            "SillyTavern"
+          ]
+        },
+        {
+          "name": "notes",
+          "optional": true,
+          "type": "string",
+          "meaning": "The author's own notes.",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

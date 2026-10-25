@@ -1,0 +1,9 @@
+/** ui.section-header engraved-title (Theater): a section is an engraved title over one gold hairline. The Library's section bars and the Scenes page header. */
+html[data-surface-ui-section-header="engraved-title"] {
+  & .lib.rc .lsec { background: transparent; border: 0; border-bottom: 1px solid var(--bk-line-control); box-shadow: none; padding: .5rem 0; }
+  & .lib.rc .lsec::before, & .lib.rc .lsec .num { display: none; }
+  & .lib.rc .lsec .stitle { text-transform: none; font-size: 1.3rem; text-shadow: none; }
+  & .lib.rc .lsec .scount { background: transparent; border: 1px solid var(--bk-line-control); box-shadow: none; }
+  & .scn .plaque .s-title { font-family: var(--font-big); font-weight: 600; letter-spacing: .06em; }
+  & .scn .plaque .s-act { letter-spacing: .24em; }
+}

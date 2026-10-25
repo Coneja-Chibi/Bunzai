@@ -1,0 +1,74 @@
+/*
+ * Bunraku design system: gate.html ("gate.door"). The library gate: the stage door (password,
+ * wrong password, recovery words, not-this-computer), load-in (carrying, no room), all aboard,
+ * and failed. This whole screen is a PROTECTED surface: color and font come only from
+ * tokens/protected.css, never a theme; no .bk-frame (it reads theme frame tokens). Spacing and
+ * type size come from the ordinary --bk-space- and --bk-fs- tokens, which no theme overrides.
+ * Prefix: gt-.
+ */
+.gt-root { position: relative; min-height: 100%; display: grid; place-items: center; padding: var(--bk-space-8) var(--bk-space-4);
+  background: var(--bk-protected-surface); font-family: var(--bk-protected-font); color: var(--bk-protected-text); }
+.gt-dossier { width: min(26rem, 100%); padding: var(--bk-space-6) var(--bk-space-6) var(--bk-space-5);
+  background: var(--bk-protected-panel); box-shadow: 0 0 0 1px var(--bk-protected-line); box-sizing: border-box; }
+.gt-dossier[data-hero] { text-align: center; }
+.gt-act { display: flex; align-items: center; gap: var(--bk-space-2); font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); letter-spacing: var(--bk-track-kicker); text-transform: uppercase; color: var(--bk-protected-text-dim); }
+.gt-act::after { content: "\2726"; color: var(--bk-protected-accent); margin-left: auto; }
+.gt-marquee { font-size: var(--bk-fs-2xl); font-weight: var(--bk-fw-strong); margin: var(--bk-space-2) 0 var(--bk-space-4); }
+.gt-marquee em { font-style: normal; color: var(--bk-protected-accent); }
+.gt-direction { font-style: italic; color: var(--bk-protected-text-dim); line-height: var(--bk-lh-body); margin: 0 0 var(--bk-space-4); }
+.gt-direction b { font-style: normal; color: var(--bk-protected-text); }
+.gt-field { margin-bottom: var(--bk-space-4); }
+.gt-field label { display: block; font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); letter-spacing: var(--bk-track-label); text-transform: uppercase; color: var(--bk-protected-text-dim); margin-bottom: var(--bk-space-2); }
+.gt-input { display: block; width: 100%; box-sizing: border-box; padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-protected-surface); box-shadow: inset 0 0 0 1px var(--bk-protected-line); color: var(--bk-protected-text); border: 0; font: inherit; font-size: var(--bk-fs-md); }
+.gt-input[data-invalid] { box-shadow: inset 0 0 0 1px var(--bk-protected-danger); }
+.gt-note { padding: var(--bk-space-2) var(--bk-space-3); margin-bottom: var(--bk-space-4); box-shadow: inset 0 0 0 1px var(--bk-protected-danger); }
+.gt-note[data-tone="warn"] { box-shadow: inset 0 0 0 1px var(--bk-protected-accent); }
+.gt-note-head { font-size: var(--bk-fs-sm); font-weight: var(--bk-fw-strong); color: var(--bk-protected-danger); }
+.gt-note[data-tone="warn"] .gt-note-head { color: var(--bk-protected-accent); }
+.gt-note p { margin: var(--bk-space-1) 0 0; font-size: var(--bk-fs-sm); color: var(--bk-protected-danger); }
+.gt-note[data-tone="warn"] p { color: var(--bk-protected-text); }
+.gt-lines-head { font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); letter-spacing: var(--bk-track-label); text-transform: uppercase; color: var(--bk-protected-text-dim); margin-bottom: var(--bk-space-2); }
+.gt-line-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--bk-space-2); margin-bottom: var(--bk-space-2); }
+.gt-cue { display: flex; align-items: center; gap: var(--bk-space-1); box-shadow: inset 0 0 0 1px var(--bk-protected-line); padding: var(--bk-space-1) var(--bk-space-2); }
+.gt-cue i { font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); font-style: normal; color: var(--bk-protected-text-dim); width: 1.2em; }
+.gt-cue input { flex: 1; min-width: 0; background: none; border: 0; color: var(--bk-protected-text); font: inherit; }
+.gt-count { font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); color: var(--bk-protected-text-dim); margin-bottom: var(--bk-space-4); }
+.gt-row { display: flex; align-items: center; justify-content: space-between; gap: var(--bk-space-3); margin-bottom: var(--bk-space-4); }
+.gt-row .gt-label { font-weight: var(--bk-fw-strong); }
+.gt-row .gt-hint { font-size: var(--bk-fs-xs); color: var(--bk-protected-text-dim); margin-top: var(--bk-space-1); max-width: 19rem; }
+.gt-switch { flex: none; width: 2rem; height: 1.125rem; position: relative; background: var(--bk-protected-line); border: 0; cursor: pointer; }
+.gt-switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 0.875rem; height: 0.875rem; background: var(--bk-protected-panel); }
+.gt-switch[aria-checked="true"] { background: var(--bk-protected-accent); }
+.gt-switch[aria-checked="true"]::after { left: calc(100% - 0.9375rem); }
+.gt-cta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--bk-space-2); margin-top: var(--bk-space-1); }
+.gt-btn { min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-4); background: var(--bk-protected-accent); color: var(--bk-protected-surface); border: 0; font: inherit; font-weight: var(--bk-fw-strong); cursor: pointer; }
+.gt-btn[data-ghost] { background: none; color: var(--bk-protected-text); box-shadow: inset 0 0 0 1px var(--bk-protected-line); }
+.gt-subtle { font-size: var(--bk-fs-sm); color: var(--bk-protected-text-dim); margin-top: var(--bk-space-4); }
+.gt-proof { font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); line-height: var(--bk-lh-body); color: var(--bk-protected-text); box-shadow: inset 0 0 0 1px var(--bk-protected-line); background: var(--bk-protected-surface); padding: var(--bk-space-2) var(--bk-space-3); margin: 0 0 var(--bk-space-2); white-space: pre-wrap; }
+.gt-voice { font-size: var(--bk-fs-lg); font-weight: var(--bk-fw-strong); text-align: center; margin: 0 0 var(--bk-space-4); }
+.gt-list { font-size: var(--bk-fs-sm); color: var(--bk-protected-text); padding-left: 1.1rem; margin: 0 0 var(--bk-space-3); }
+.gt-meter-track { height: 0.5625rem; background: var(--bk-protected-line); position: relative; overflow: hidden; margin-bottom: var(--bk-space-4); }
+.gt-meter-fill { display: block; height: 100%; background: var(--bk-protected-accent); }
+
+.gt-panel { display: none; }
+.gt-root[data-state="door"] .gt-panel-door,
+.gt-root[data-state="door-wrong"] .gt-panel-door-wrong,
+.gt-root[data-state="door-lines"] .gt-panel-door-lines,
+.gt-root[data-state="door-notthis"] .gt-panel-door-notthis,
+.gt-root[data-state="loadin"] .gt-panel-loadin,
+.gt-root[data-state="loadin-noroom"] .gt-panel-loadin-noroom,
+.gt-root[data-state="allaboard"] .gt-panel-allaboard,
+.gt-root[data-state="allaboard-renamed"] .gt-panel-allaboard-renamed,
+.gt-root[data-state="failed"] .gt-panel-failed { display: block; }
+
+/* ---------- variant b: load screen, two columns ---------- */
+.gt-root[data-variant="b"] .gt-wrap { display: flex; gap: var(--bk-space-6); align-items: flex-start; width: min(46rem, 100%); }
+.gt-facts { display: none; flex: none; width: 14rem; padding-top: var(--bk-space-6); flex-direction: column; gap: var(--bk-space-3); }
+.gt-root[data-variant="b"] .gt-facts { display: flex; }
+.gt-root[data-variant="b"] .gt-dossier { flex: 1; min-width: 0; }
+.gt-fact-label { font-family: var(--bk-protected-font-mono); font-size: var(--bk-fs-xs); letter-spacing: var(--bk-track-label); text-transform: uppercase; color: var(--bk-protected-text-dim); }
+.gt-fact-value { font-size: var(--bk-fs-xl); font-weight: var(--bk-fw-strong); color: var(--bk-protected-text); }
+@container (max-width: 30rem) {
+  .gt-root[data-variant="b"] .gt-wrap { flex-direction: column; }
+  .gt-line-grid { grid-template-columns: repeat(2, 1fr); }
+}

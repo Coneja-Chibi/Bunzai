@@ -1,0 +1,307 @@
+/*
+ * The stage dossier: RoleCall's encryption-flow grammar on Bunraku's tokens (the approved in-between
+ * wireframes, design/wireframes/rc-bridge.css): the act label, the Cinzel marquee with one colored
+ * word, the flourish, the parenthesised stage direction, the lines box with its accent spine, the
+ * cue grid, and the STAGE DIRECTION and LINE FLUB plates. Tokens only.
+ */
+.dossier {
+  background: var(--face);
+  border: var(--ink-border);
+  border-color: var(--edge);
+  box-shadow: 8px 8px 0 0 var(--edge);
+  padding: clamp(1.4rem, 4vw, 2.4rem);
+  max-width: 34rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  position: relative;
+  text-align: left;
+}
+.hero {
+  box-shadow: 8px 8px 0 0 var(--accent-deep);
+}
+/* the thin accent line along the top edge, drawn flat: no gradient on chrome */
+.dossier::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: var(--accent);
+}
+
+.head {
+  text-align: center;
+  padding-bottom: 1.3rem;
+  border-bottom: 2px solid var(--seam);
+  position: relative;
+}
+.act {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 0.6rem;
+}
+.marquee {
+  font-family: var(--font-fancy);
+  font-weight: 900;
+  font-size: clamp(1.7rem, 1.2rem + 1.8vw, 2.4rem);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--text);
+  margin: 0;
+}
+.marquee em {
+  font-style: normal;
+  color: var(--accent-deep);
+}
+.flourish {
+  position: absolute;
+  left: 50%;
+  bottom: -0.85rem;
+  transform: translateX(-50%);
+  background: var(--face);
+  padding: 0 0.8rem;
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+/* the parenthesised stage direction: mono italic, the one theatrical aside */
+.direction {
+  font-family: var(--font-mono);
+  font-style: italic;
+  font-size: var(--text-meta);
+  line-height: 1.7;
+  color: var(--text-soft);
+  text-align: center;
+  margin: 0;
+}
+.paren {
+  color: var(--text-faint);
+  font-style: normal;
+}
+.direction b {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--accent-deep);
+}
+
+.voice {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text);
+  text-align: center;
+  margin: 0;
+}
+
+/* "Your lines" / "Your cues": the box with the accent spine */
+.lines {
+  background: var(--paper-2);
+  border: 2px solid var(--seam);
+  border-left: 4px solid var(--accent);
+  padding: 1.1rem 1.2rem;
+}
+.linesHead {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 0.9rem;
+}
+.lineGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.6rem 1.1rem;
+}
+.line {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.35rem 0;
+  border-bottom: 2px dotted var(--seam);
+  font-family: var(--font-mono);
+}
+.line i,
+.cue i {
+  font-style: normal;
+  font-size: var(--text-meta);
+  color: var(--text-dim);
+  min-width: 1.3rem;
+}
+.line span {
+  font-size: 1rem;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+.cue {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 2px solid var(--edge);
+  background: var(--panel);
+  padding: 0.45rem 0.55rem;
+  font-family: var(--font-mono);
+}
+.cue input {
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-control);
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+  outline: none;
+}
+.cue:focus-within {
+  border-color: var(--accent);
+}
+.flubbed {
+  border-color: var(--stage-danger-edge);
+}
+.flubbed i,
+.flubbed input {
+  color: var(--stage-danger-text);
+}
+.cuesCount {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--text-soft);
+  text-align: center;
+  margin-top: 0.8rem;
+}
+
+/* STAGE DIRECTION (warning) and LINE FLUB (error): RoleCall's plates, squared and hard-edged */
+.note {
+  border: 2px solid var(--stage-danger-edge);
+  background: var(--stage-danger-bg);
+  padding: 0.8rem 1rem;
+  text-align: center;
+}
+.gilt {
+  border-color: var(--stage-warn);
+  background: var(--stage-warn-ink);
+}
+.noteLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--stage-danger-text);
+  margin-bottom: 0.35rem;
+}
+.gilt .noteLabel {
+  color: var(--stage-warn);
+}
+.note p {
+  font-family: var(--font-mono);
+  font-style: italic;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0;
+}
+
+/* a labelled field inside a dossier (the password) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.field label {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.input {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--text);
+  background: var(--panel);
+  border: 2px solid var(--edge);
+  padding: 0.55rem 0.7rem;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.bad {
+  border-color: var(--stage-danger-edge);
+}
+
+/* the pledge checkbox */
+.pledge {
+  display: flex;
+  gap: 0.8rem;
+  align-items: flex-start;
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-soft);
+  line-height: 1.5;
+  cursor: pointer;
+}
+.pledge input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.2rem;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+/* the big call to action: a full-width Stamp; the quiet way out beside it */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.cta > button {
+  /* white on the deep accent in both themes, as the wireframe draws it (the stamp would take its paper ink) */
+  color: var(--stage-white);
+  width: 100%;
+  justify-content: center;
+  font-size: var(--text-control);
+  padding: 0.85rem 1rem;
+}
+.ghost {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-meta);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: transparent;
+  border: 2px dashed var(--text-faint);
+  padding: 0.42rem 0.7rem;
+  cursor: pointer;
+}
+.ghost:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* The stage theme: the marquee's hard punch, and the accent brightened on dark (PAPER.md drops both on paper). */
+:global(:root[data-surface-ui-panel="slab-frame"]) .marquee {
+  text-shadow: 3px 3px 0 var(--stage-black);
+}
+:global(:root[data-surface-ui-panel="slab-frame"]) .marquee em,
+:global(:root[data-surface-ui-panel="slab-frame"]) .act,
+:global(:root[data-surface-ui-panel="slab-frame"]) .linesHead,
+:global(:root[data-surface-ui-panel="slab-frame"]) .direction b {
+  color: var(--accent);
+}
+
+@media print {
+  .noPrint {
+    display: none;
+  }
+}

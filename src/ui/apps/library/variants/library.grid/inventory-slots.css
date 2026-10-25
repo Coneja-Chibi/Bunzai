@@ -1,0 +1,11 @@
+/**
+ * library.grid inventory-slots: tight rows of equal slots. (Carousel or Grid is still the person's choice; the first run
+ * opens on Grid. The rail, section headers, toolbar and tabs belong to their own surfaces.)
+ */
+html[data-surface-library-grid="inventory-slots"] {
+  & .lib.rc { --cw: min(calc(6.5rem + (var(--card-w, 8.5rem) - 4rem) * 1.5), 85cqi); }
+  & .lib.rc .lrow-cards { gap: .6rem; padding-bottom: 1rem; }
+  & .lib.rc .rgrid-row { gap: .6rem; grid-template-columns: repeat(auto-fill, minmax(min(max(7rem, calc(var(--cw) * .7)), 100%), 1fr)); }
+  & .lib.rc .rgrid-row.presets { grid-template-columns: repeat(auto-fill, minmax(min(calc(var(--cw) * .9), 100%), 1fr)); }
+  & .lib.rc .rnewtile { border: 1px dashed var(--bk-line-control); }
+}

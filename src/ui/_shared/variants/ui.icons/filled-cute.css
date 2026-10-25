@@ -1,0 +1,5 @@
+/** ui.icons filled-cute: a fat round stroke with a soft duotone offset behind it, like a sticker. */
+html[data-surface-ui-icons="filled-cute"] :is(svg[data-ic], .ico svg, .mk svg):not(.host-protected, .host-protected *) {
+  stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(1.5px 1.5px 0 color-mix(in srgb, currentColor 38%, transparent));
+}

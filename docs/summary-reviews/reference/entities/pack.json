@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/pack",
+  "sourcePath": "docs/reference/entities/pack.md",
+  "sourceHash": "sha256:5c95ea1fbae4dae66e176cb25a53bc4f64326962a6f78e2e1265c5d7c8cf1329",
+  "semanticSummaryHash": "sha256:1e017282d354ec58cc4a2c3c2a8c2341ed33ad582e74272b5c1aa2127079fc14",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Checked every section summary against pack.md; per-character groups wording matches line 57; no unsupported claims.",
+  "reviewedAt": "2026-10-25T19:26:22.351Z"
+}

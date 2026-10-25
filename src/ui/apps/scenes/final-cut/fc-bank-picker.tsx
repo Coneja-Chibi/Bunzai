@@ -1,0 +1,199 @@
+/**
+ * Anti-Slop's attached sets (RoleCall's AttachedSetsPicker, PostProductionPanel.tsx:864-1471): a search across the attached banks'
+ * names, rules and banned entries (pin an entry to always send it), each attached set as a card that opens to its banks (switch a bank,
+ * see what it catches and what depth sends of it, pick a depth for it alone), Enable all and Disable all, reorder, Detach, and
+ * "+ Attach another set". Copy is RoleCall's; its arrows and ticks are icons here.
+ */
+import { useMemo, useState, type JSX } from "react";
+import { BANKS, BANK_DEPTH, SETS, bankIdsInSet, depthFor, getBank, getSet, resolveBankId, resolveSetId, stripMd, type Bank, type BankDepth } from "../../../../core/final-cut/banks";
+import type { FinalCutPass } from "../../../../core/final-cut/pass";
+import { Ic } from "../../../_shared/ic";
+import { searchBanks } from "./fc-core";
+import type { Change } from "./fc-pass-chrome";
+
+type Edit = (change: (current: FinalCutPass) => Partial<FinalCutPass>) => void;
+
+/** Switches one bank; switching it off also drops its pins. */
+const toggleBank = (bankId: string) => (c: FinalCutPass): Partial<FinalCutPass> => {
+  const on = (c.enabledBanks ?? []).some((b) => resolveBankId(b) === bankId);
+  const pins = { ...c.pinnedBankExamples };
+  if (on) delete pins[bankId];
+  return { enabledBanks: on ? (c.enabledBanks ?? []).filter((b) => resolveBankId(b) !== bankId) : [...(c.enabledBanks ?? []), bankId], pinnedBankExamples: pins };
+};
+
+/** Pins or unpins one catalog entry; pinning switches its bank on. */
+const togglePin = (bankId: string, entry: string) => (c: FinalCutPass): Partial<FinalCutPass> => {
+  const pins = { ...c.pinnedBankExamples };
+  const have = pins[bankId] ?? [];
+  if (have.includes(entry)) {
+    const rest = have.filter((e) => e !== entry);
+    if (rest.length > 0) pins[bankId] = rest;
+    else delete pins[bankId];
+  } else pins[bankId] = [...have, entry];
+  const on = (c.enabledBanks ?? []).some((b) => resolveBankId(b) === bankId);
+  return { pinnedBankExamples: pins, enabledBanks: on ? c.enabledBanks ?? [] : [...(c.enabledBanks ?? []), bankId] };
+};
+
+const swap = (list: readonly string[], a: number, b: number): string[] => { const out = [...list]; [out[a], out[b]] = [out[b]!, out[a]!]; return out; };
+
+function BankRow({ bankId, bank, pass, open, onOpen, edit }: { bankId: string; bank: Bank; pass: FinalCutPass; open: boolean; onOpen(): void; edit: Edit }): JSX.Element {
+  const enabled = new Set((pass.enabledBanks ?? []).map(resolveBankId));
+  const on = enabled.has(bankId);
+  const overrides = pass.bankDepthOverrides ?? {};
+  const defaultDepth = pass.defaultDepth ?? "standard";
+  const depth = depthFor(bankId, defaultDepth, overrides);
+  const cap = BANK_DEPTH[depth];
+  const sent = Math.min(bank.examples.length, cap.examples === Number.POSITIVE_INFINITY ? bank.examples.length : cap.examples);
+  const conflicts = on ? (bank.conflictsWith ?? []).filter((c) => enabled.has(c)) : [];
+  const setDepth = (d: BankDepth | null): void => edit((c) => { const next = { ...c.bankDepthOverrides }; if (d) next[bankId] = d; else delete next[bankId]; return { bankDepthOverrides: next }; });
+  return (
+    <div className={`fc-bank${on ? " on" : ""}${open ? " open" : ""}`}>
+      <div className="head">
+        <button type="button" className="main" aria-pressed={on} onClick={() => edit(toggleBank(bankId))}>
+          <span className="fc-tick" aria-hidden="true">{on && <Ic name="lucide:check" size={12} />}</span>
+          <span className="fc-bank-body">
+            <span className="row">
+              <b>{bank.label}</b><span className={`fc-kind k-${bank.kind}`}>{bank.kind}</span>
+              {bank.family && <span className="fc-tag" title={`Part of the "${bank.family}" family: sibling banks guarding the same failure.`}>{bank.family}</span>}
+              {bank.extends && <span className="fc-tag" title={`Layers on ${getBank(bank.extends)?.label ?? bank.extends}. Shared entries dedupe automatically when both are enabled.`}>extends {getBank(bank.extends)?.label ?? bank.extends}</span>}
+              {conflicts.length > 0 && <span className="fc-tag warn" title={`Gives opposing rewrite guidance to: ${conflicts.map((c) => getBank(c)?.label ?? c).join(", ")}. Both still run; the rewriter follows whichever fits the sentence.`}><Ic name="lucide:circle-alert" size={12} />conflicting</span>}
+            </span>
+            <span className="why">{stripMd(bank.why ?? bank.pattern)}</span>
+            {bank.examples.length > 0 && (
+              <span className="bans">
+                <i>{bank.kind === "wordbank" || bank.kind === "lexical" ? "Bans" : "Catches"}:</i>
+                {bank.examples.slice(0, 6).map((e, i) => <em key={i}>{stripMd(e)}</em>)}
+                {bank.examples.length > 6 && <em>+{bank.examples.length - 6}</em>}
+                <small>{on ? `sends ${sent}/${bank.examples.length} · ${cap.label}` : "off"}</small>
+              </span>
+            )}
+          </span>
+        </button>
+        <button type="button" className="more" aria-expanded={open} title={open ? "Hide examples" : "Show examples & replacement guidance"} onClick={onOpen}>{open ? "-" : "?"}</button>
+      </div>
+      {open && (
+        <div className="detail">
+          <div className="fc-depth">
+            <b>Depth in prompt</b>
+            <div className="opts">
+              <button type="button" className={overrides[bankId] ? undefined : "on"} onClick={() => setDepth(null)}><b>Use default</b><span>({BANK_DEPTH[defaultDepth].label.toLowerCase()})</span></button>
+              {(Object.keys(BANK_DEPTH) as BankDepth[]).map((k) => <button type="button" key={k} className={overrides[bankId] === k ? "on" : undefined} onClick={() => setDepth(k)}><b>{BANK_DEPTH[k].label}</b><span>{BANK_DEPTH[k].hint}</span></button>)}
+            </div>
+            <small>In prompt at this depth: pattern{cap.action ? " + action" : ""}, {sent}/{bank.examples.length} examples{cap.replace ? ", replacement guidance" : ", no replacement"}</small>
+          </div>
+          {bank.examples.length > 0 && (
+            <div className="block">
+              <div className="bh"><span>{bank.kind === "wordbank" ? `Banned entries · ${bank.examples.length} total` : "Examples · what the agent watches for"}</span><span>{sent}/{bank.examples.length} in prompt</span></div>
+              {bank.kind === "wordbank"
+                ? <div className="words">{bank.examples.map((e, i) => <span key={i} className={i < sent ? "in" : "out"} title={i < sent ? "In prompt at current depth" : "Skipped at current depth"}>{e}</span>)}</div>
+                : <ul>{bank.examples.map((e, i) => <li key={i} className={i < sent ? "in" : "out"}>{e}</li>)}</ul>}
+            </div>
+          )}
+          {bank.replace && (
+            <div className={`block${cap.replace ? "" : " skipped"}`}>
+              <div className="bh"><span>Replacement guidance · what the agent rewrites toward</span><span>{cap.replace ? "in prompt" : "skipped at current depth"}</span></div>
+              <p>{bank.replace}</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Results({ pass, query, onOpen, edit }: { pass: FinalCutPass; query: string; onOpen(setId: string, bankId: string): void; edit: Edit }): JSX.Element {
+  const found = useMemo(() => searchBanks(pass.attachedSets ?? [], query), [pass.attachedSets, query]);
+  if (found.length === 0) return <div className="fc-note" role="status">No attached Slopism banks or banned entries match "{query.trim()}".</div>;
+  const entries = found.reduce((n, r) => n + r.matching.length, 0);
+  const enabled = new Set((pass.enabledBanks ?? []).map(resolveBankId));
+  return (
+    <div className="fc-results">
+      <div className="sum" role="status">{found.length} matching {found.length === 1 ? "bank" : "banks"} · {entries} matching {entries === 1 ? "entry" : "entries"}</div>
+      {found.map((r) => {
+        const bank = BANKS[r.bankId]!;
+        const pins = pass.pinnedBankExamples?.[r.bankId] ?? [];
+        const on = enabled.has(r.bankId);
+        return (
+          <article key={r.bankId} className={on ? "on" : undefined}>
+            <div className="head"><div><b>{bank.label}</b><small>{r.setLabel} · {bank.kind}</small></div>
+              <button type="button" className={`fc-btn${on ? " go" : ""}`} aria-pressed={on} onClick={() => edit(toggleBank(r.bankId))}>{on ? "Enabled" : "Enable bank"}</button></div>
+            <p>{stripMd(bank.why ?? bank.pattern)}</p>
+            {r.matching.length > 0
+              ? <div className="hits" aria-label={`Matching entries in ${bank.label}`}>{r.matching.map((e, i) => (
+                <div key={i}><span>{e}</span>
+                  <button type="button" className={`fc-btn${pins.includes(e) ? " go" : ""}`} aria-pressed={pins.includes(e)} aria-label={`${pins.includes(e) ? "Unpin" : "Pin"} "${stripMd(e)}" ${pins.includes(e) ? "from" : "to"} the prompt`} onClick={() => edit(togglePin(r.bankId, e))}>{pins.includes(e) ? "Pinned" : "Pin entry"}</button></div>))}</div>
+              : <small>The bank's name, rule, or replacement guidance matches this search.</small>}
+            <button type="button" className="fc-link" onClick={() => onOpen(r.setId, r.bankId)}>Open full bank</button>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: Change }): JSX.Element {
+  const attached = pass.attachedSets ?? [];
+  const [openSets, setOpenSets] = useState<ReadonlySet<string>>(() => new Set(attached.slice(0, 1)));
+  const [openBanks, setOpenBanks] = useState<ReadonlySet<string>>(new Set());
+  const [query, setQuery] = useState("");
+  const edit: Edit = (change) => onChange(change(pass));
+  const resolved = attached.map(resolveSetId);
+  const unattached = SETS.filter((s) => !resolved.includes(s.id));
+  const enabled = new Set((pass.enabledBanks ?? []).map(resolveBankId));
+  const flip = (set: ReadonlySet<string>, id: string): Set<string> => { const next = new Set(set); if (!next.delete(id)) next.add(id); return next; };
+  return (
+    <div className="fc-sets" data-part="scene.finalcut.sets">
+      <div className="fc-sec"><h4>Attached slopism sets</h4><span>Click a set to expand and pick which banks run.</span></div>
+      <label className="fc-search"><span>Find a bank, rule, or banned phrase</span>
+        <span className="box">
+          <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try &ldquo;breath hitched&rdquo;, &ldquo;filter words&rdquo;, or a bank name..." aria-label="Search slopism banks and banned entries" autoComplete="off" />
+          {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear Slopism search">Clear</button>}
+        </span>
+      </label>
+      {query.trim() ? (
+        <Results pass={pass} query={query} edit={edit} onOpen={(setId, bankId) => { setQuery(""); setOpenSets((s) => new Set(s).add(setId)); setOpenBanks((b) => new Set(b).add(bankId)); }} />
+      ) : attached.length === 0 ? (
+        <div className="fc-note">No sets attached. Pick one below to start filtering.</div>
+      ) : (
+        <div className="fc-setlist">
+          {attached.map((raw, idx) => {
+            const set = getSet(raw);
+            if (!set) return null;
+            const ids = bankIdsInSet(raw);
+            const on = ids.filter((id) => enabled.has(id)).length;
+            const open = openSets.has(raw);
+            const drop = (c: FinalCutPass): Partial<FinalCutPass> => { const pins = { ...c.pinnedBankExamples }; for (const id of ids) delete pins[id]; return { enabledBanks: (c.enabledBanks ?? []).filter((b) => !ids.includes(resolveBankId(b))), pinnedBankExamples: pins }; };
+            return (
+              <div key={raw} className={`fc-set${open ? " open" : ""}`}>
+                <button type="button" className="head" aria-expanded={open} onClick={() => setOpenSets(flip(openSets, raw))}>
+                  <Ic name={open ? "lucide:chevron-down" : "lucide:chevron-right"} size={14} />
+                  <span className="id"><b>{set.label}</b><small>{set.description}</small></span>
+                  <span className={`count${on === 0 ? " zero" : on === ids.length ? " full" : ""}`}>{on}/{ids.length} on</span>
+                </button>
+                <div className="acts">
+                  <button type="button" className="fc-btn" onClick={() => edit((c) => ({ enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...ids])] }))}>Enable all</button>
+                  <button type="button" className="fc-btn" onClick={() => edit(drop)}>Disable all</button>
+                  {idx > 0 && <button type="button" className="fc-btn" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx - 1, idx) }))}><Ic name="lucide:chevron-up" size={12} />up</button>}
+                  {idx < attached.length - 1 && <button type="button" className="fc-btn" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx, idx + 1) }))}><Ic name="lucide:chevron-down" size={12} />down</button>}
+                  <button type="button" className="fc-btn red" onClick={() => edit((c) => ({ ...drop(c), attachedSets: (c.attachedSets ?? []).filter((s) => s !== raw) }))}>Detach</button>
+                </div>
+                {open && <div className="banks">{ids.map((id) => <BankRow key={id} bankId={id} bank={BANKS[id]!} pass={pass} open={openBanks.has(id)} onOpen={() => setOpenBanks(flip(openBanks, id))} edit={edit} />)}</div>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {unattached.length > 0 ? (
+        <select className="fc-select attach" value="" aria-label="Attach another set" onChange={(e) => {
+          const id = e.target.value;
+          if (!id) return;
+          setOpenSets((s) => new Set(s).add(id));
+          edit((c) => ({ attachedSets: [...(c.attachedSets ?? []), id], enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...bankIdsInSet(id).slice(0, 3)])] }));
+        }}>
+          <option value="">+ Attach another set...</option>
+          {unattached.map((s) => <option key={s.id} value={s.id}>{s.label} ({s.banks.length} banks)</option>)}
+        </select>
+      ) : <div className="fc-note">All available sets are attached.</div>}
+    </div>
+  );
+}

@@ -1,0 +1,11 @@
+/* A palette adjustment to the existing Dock, retaining its tile and shortcut grammar. */
+#dock { background: var(--premiere-panel); border-right-color: var(--premiere-hard); }
+#dockhome { border-bottom-color: var(--premiere-hard); }
+#dockhome .hk { color: var(--premiere-text); }
+#dock .docklabel { color: var(--premiere-gold); }
+#dock .apptile .mk { background: var(--premiere-panel); }
+#dock .apptile .nm { color: var(--premiere-text); }
+#dock .apptile .kd { font-size: 10px; letter-spacing: .02em; }
+#dock .apptile:hover .nm { color: var(--premiere-gold); }
+#dock .dockslot:hover { border-color: var(--premiere-gold); }
+#dockfoot, #dockToggle { border-top-color: var(--premiere-hard); }

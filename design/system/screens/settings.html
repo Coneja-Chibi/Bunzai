@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Settings</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="settings.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Settings</h1>
+    <p>Settings as drop-in sections: Appearance, Models, Connections, Studio, Security, Workbench, Remote access, Updates and About.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="settings.room">
+    <header>
+      <h2 class="bk-heading">Settings room</h2>
+      <span class="bk-tag">Settings section registry (sections/registry.ts)</span>
+      <p class="bk-meta">Parts: settings.room, settings.nav, settings.nav.item, settings.section, settings.row, settings.row.label, settings.row.control</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="settings.room.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Options menu</h3>
+          <p>A game options screen: section list left with the theme’s selection grammar, rows right.</p></header>
+        <div class="spec-screen st-screen" data-state="appearance">
+<div class="st-app" data-part="shell.app">
+  <header class="st-hud" data-part="shell.hud">
+    <div class="st-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="st-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="st-hud-mid">
+      <div class="st-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="st-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close Settings</span></span>
+    </div>
+  </header>
+  <div class="st-body">
+    <nav class="st-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="st-dock-brand" data-part="shell.dock.brand">
+        <svg class="st-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="st-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="st-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="st-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="st-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="st-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="st-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="st-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="settings" aria-current="true">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="st-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="st-dock-app st-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="st-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="st-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="st-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="st-stage bk-stage" data-part="shell.stage">
+
+        <div class="st-shell" data-part="settings.room">
+          <nav class="st-nav" data-part="settings.nav" aria-label="Settings sections">
+          <button type="button" class="bk-item st-navitem" data-nav="appearance" aria-selected="true" data-part="settings.nav.item">Appearance</button>
+          <button type="button" class="bk-item st-navitem" data-nav="models" data-part="settings.nav.item">Models</button>
+          <button type="button" class="bk-item st-navitem" data-nav="connections" data-part="settings.nav.item">Connections</button>
+          <button type="button" class="bk-item st-navitem" data-nav="studio" data-part="settings.nav.item">Studio</button>
+          <button type="button" class="bk-item st-navitem" data-nav="security" data-part="settings.nav.item">Security</button>
+          <button type="button" class="bk-item st-navitem" data-nav="workbench" data-part="settings.nav.item">Workbench</button>
+          <button type="button" class="bk-item st-navitem" data-nav="remote" data-part="settings.nav.item">Remote access</button>
+          <button type="button" class="bk-item st-navitem" data-nav="updates" data-part="settings.nav.item">Updates</button>
+          <button type="button" class="bk-item st-navitem" data-nav="about" data-part="settings.nav.item">About</button>
+          </nav>
+          <div class="st-content">
+          <div class="st-panel" data-panel="appearance" data-part="settings.section">
+            <h2 class="bk-heading">Appearance</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Theme</span><p class="bk-meta">Light paper or the dark forge. Flips instantly.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate">Light</button><button type="button" class="bk-item st-plate" aria-selected="true">Dark</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your color</span><p class="bk-meta">The workspace accent. The brand rose never changes.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-swrow" data-part="ui.swatches"><button type="button" class="bk-item st-swatch" data-deck="accent" aria-selected="true" aria-label="Rose"><span class="st-swatchfill" data-deck="accent"></span><span class="bk-meta">Rose</span></button><button type="button" class="bk-item st-swatch" data-deck="character" aria-label="Amber"><span class="st-swatchfill" data-deck="character"></span><span class="bk-meta">Amber</span></button><button type="button" class="bk-item st-swatch" data-deck="persona" aria-label="Emerald"><span class="st-swatchfill" data-deck="persona"></span><span class="bk-meta">Emerald</span></button><button type="button" class="bk-item st-swatch" data-deck="lorebook" aria-label="Violet"><span class="st-swatchfill" data-deck="lorebook"></span><span class="bk-meta">Violet</span></button><button type="button" class="bk-item st-swatch" data-deck="preset" aria-label="Blue"><span class="st-swatchfill" data-deck="preset"></span><span class="bk-meta">Blue</span></button><button type="button" class="bk-item st-swatch st-swatch-custom">+ custom</button></div></div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="models" hidden data-part="settings.section">
+            <h2 class="bk-heading">Models</h2>
+
+          <p class="bk-meta">Shared with Kit in the terminal. A key goes in and never comes back; the field is always blank, even when editing a saved provider.</p>
+          <div class="st-list">          <div class="bk-item st-rowcard" aria-selected="true" data-part="settings.row">
+            <span class="bk-dot" data-tone="ok"></span>
+            <span class="bk-name">Claude (personal)</span><span class="bk-num st-grow">claude-sonnet-5</span><span class="bk-meta">key saved</span>
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn" data-set-state="models-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          <div class="bk-item st-rowcard" data-part="settings.row">
+            <span class="bk-dot"></span>
+            <span class="bk-name">Local (LM Studio)</span><span class="bk-num st-grow">llama-3.1-8b</span><span class="bk-meta">no key</span>
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn" data-set-state="models-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          </div>
+          <button type="button" class="bk-item st-btn-ghost" data-set-state="models">+ Add a model</button>
+          </div>
+          <div class="st-panel" data-panel="connections" hidden data-part="settings.section">
+            <h2 class="bk-heading">Connections</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">MCP servers</span><p class="bk-meta">Programs this machine runs so their tools join Kit's belt. Every external tool asks at the Gate before it runs.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"></div>
+          </div>
+          <p class="bk-meta" data-tone="danger">"weather-tools" was rejected: command must be an absolute path or a known launcher.</p>
+          <div class="st-list">          <div class="bk-item st-rowcard" data-part="settings.row">
+            <span class="bk-name">relay-tools</span><span class="bk-num st-grow">uvx --from git+https... relay-server</span>
+            <span class="bk-meta" data-tone="ok">6 tool(s)</span>
+            <span class="bk-meta">env: RELAY_TOKEN</span>
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn">Disable</button><button type="button" class="bk-item st-actbtn" data-set-state="connections-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          <div class="bk-item st-rowcard" data-part="settings.row">
+            <span class="bk-name">local-fs</span><span class="bk-num st-grow">C:\tools\fs-mcp.exe</span>
+            <span class="bk-meta" data-tone="danger">not connected</span>
+            
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn">Enable</button><button type="button" class="bk-item st-actbtn" data-set-state="connections-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          </div>
+          <button type="button" class="bk-item st-btn-ghost" data-set-state="connections">+ Add a server</button>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Bunraku as a server</span><p class="bk-meta">Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><code class="st-code">claude mcp add bunraku -- bunraku mcp "C:\Users\you\Bunraku"</code></div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="studio" hidden data-part="settings.section">
+            <h2 class="bk-heading">Studio</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Home</span><p class="bk-meta">The room Bunraku opens in when you start it.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Workbench</button><button type="button" class="bk-item st-plate">Library</button><button type="button" class="bk-item st-plate">Scenes</button><button type="button" class="bk-item st-plate">Press</button><button type="button" class="bk-item st-plate">Agent</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Library opens on</span><p class="bk-meta">The deck you see first when you visit the shelves.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Characters</button><button type="button" class="bk-item st-plate">Lorebooks</button><button type="button" class="bk-item st-plate">Personas</button><button type="button" class="bk-item st-plate">Sprite packs</button><button type="button" class="bk-item st-plate">Presets</button><button type="button" class="bk-item st-plate">Regex sets</button><button type="button" class="bk-item st-plate">Quick replies</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">You publish to</span><p class="bk-meta">Pick any that fit. Every format stays ready either way.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">SillyTavern</button><button type="button" class="bk-item st-plate" aria-selected="true">RoleCall</button><button type="button" class="bk-item st-plate">RisuAI</button><button type="button" class="bk-item st-plate">Agnaistic</button><button type="button" class="bk-item st-plate">NovelAI</button><button type="button" class="bk-item st-plate">Pygmalion</button></div></div>
+          </div>
+          <p class="bk-label st-sectiontitle">Engine checkouts on this machine</p>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">SillyTavern</span><p class="bk-meta">The folder holding SillyTavern's public/ tree. Kit uses it too.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-pathctrl"><input class="st-input" value="C:\Users\you\SillyTavern"><span class="st-formrow"><button type="button" class="bk-item st-actbtn">Save</button><button type="button" class="bk-item st-actbtn">Clear</button></span><span class="bk-meta" data-tone="ok">found, engine answers</span></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Marinara</span><p class="bk-meta">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-pathctrl"><input class="st-input" disabled placeholder="paste the folder's path"><span class="bk-meta">env: BUNRAKU_MARINARA_ROOT=C:\tools\marinara</span></div></div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="security" hidden data-part="settings.section">
+            <h2 class="bk-heading">Security</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Password</span><p class="bk-meta">On. Each time the app opens.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Change it</button><button type="button" class="bk-item st-btn-ghost" data-tone="danger">Remove</button></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your lines (recovery words)</span><p class="bk-meta">Written Sep 2, 2026. Last rehearsed Sep 2, 2026.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Rehearse</button><button type="button" class="bk-item st-btn-ghost">Write new lines</button></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Lock now</span><p class="bk-meta">Closes the stage door until the password or your lines are given.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Lock now</button></div>
+          </div>
+          <section class="bk-panel bk-frame st-formcard">
+            <div class="bk-panel__head"><h4 class="bk-name">Other computers</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">This library has also been opened on another computer, from a copied folder or a restored backup. Each one below can still open it by itself.</p>
+              <div class="st-pc"><span class="bk-name">My laptop</span><span class="bk-meta">Since Aug 14, 2026 &middot; A key file</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Forget</button></div>
+              <div class="st-pc"><span class="bk-name">Studio PC</span><span class="bk-meta">Since Jul 2, 2026 &middot; Windows Credential Manager</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Forget</button></div>
+            </div>
+          </section>
+          </div>
+          <div class="st-panel" data-panel="workbench" hidden data-part="settings.section">
+            <h2 class="bk-heading">Workbench</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Autosave</span><p class="bk-meta">Save half a second after you stop typing. Ctrl+S still works, and still saves at once.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Off</button><button type="button" class="bk-item st-plate">On</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Reopen where you left off</span><p class="bk-meta">Restore the pieces you had open, and which one you were editing, after a restart or a crash.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate">Off</button><button type="button" class="bk-item st-plate" aria-selected="true">On</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Editor layout</span><p class="bk-meta">Bento shows every field at once; Playbill turns them into acts you page through.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Bento</button><button type="button" class="bk-item st-plate">Playbill</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">How you fill it in</span><p class="bk-meta">Grid shows every field to edit directly; Steps walks you through like a quiz.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Grid</button><button type="button" class="bk-item st-plate">Steps</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">After sending a piece</span><p class="bk-meta">Follow it to the Workbench, stay where you are, or ask every time.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Ask me</button><button type="button" class="bk-item st-plate">Always follow</button><button type="button" class="bk-item st-plate">Stay</button></div></div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="remote" hidden data-part="settings.section">
+            <h2 class="bk-heading">Remote access</h2>
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Turn on remote access</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Bunraku stays on your machine. A private, encrypted link lets your own devices reach it, with no router changes and no ports opened. You sign in to Tailscale once (free); we open that page for you.</p>
+              <button type="button" class="bk-item st-btn">Enable remote access</button>
+            </div>
+          </section>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Local network access</span><p class="bk-meta">A no-account option: reach this studio from devices on the same network, with no Tailscale sign-in. Each device enters a connect code, and you approve it here before it gets in.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Enable local access</button></div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="updates" hidden data-part="settings.section">
+            <h2 class="bk-heading">Updates</h2>
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Your version</h4></div>
+            <div class="bk-panel__body st-behind">
+              <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value">3</span><span class="bk-readout__label">behind</span></span>
+              <p class="bk-meta">you are on <b>0.14.2</b> &middot; newest is <b>0.15.0</b></p>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame st-formcard">
+            <div class="bk-panel__head"><h4 class="bk-name">All releases</h4></div>
+            <div class="bk-panel__body st-tl">
+              <div class="st-ver" aria-current="true"><span class="bk-tag">0.14.2</span><span class="bk-name">Reasoning-turn observability</span><span class="bk-meta">Sep 20, 2026 &middot; 6 commits</span><span class="bk-meta">you are here</span></div>
+              <div class="st-ver"><span class="bk-tag">0.15.0</span><span class="bk-name">Scene Props and the trace viewer</span><span class="bk-meta">1 release ahead &middot; Sep 26, 2026 &middot; 11 commits</span><button type="button" class="bk-item st-actbtn" data-set-state="updates-progress">Update to this</button></div>
+              <div class="st-ver"><span class="bk-tag">0.13.0</span><span class="bk-name">Group chats and shared keys</span><span class="bk-meta">1 release behind &middot; Aug 30, 2026 &middot; 4 commits</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Roll back to this</button></div>
+            </div>
+          </section>
+          </div>
+          <div class="st-panel" data-panel="about" hidden data-part="settings.section">
+            <h2 class="bk-heading">About</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Updates</span><p class="bk-meta">Version 0.14.2, installed app. Checks GitHub only when you press the button; nothing runs on its own.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Check for updates</button><span class="bk-meta">You are on the newest release.</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your studio folder</span><p class="bk-meta">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="bk-num">C:\Users\you\Bunraku</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Project</span><p class="bk-meta">Open source under AGPL-3.0. Bugs and wishes welcome.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">GitHub</button><button type="button" class="bk-item st-btn-ghost">Releases</button></div>
+          </div>
+          <p class="bk-label st-sectiontitle">Shortcuts (Windows desktop app only)</p>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Start menu</span><p class="bk-meta">Bunraku is in your Start menu, so searching "Bunraku" finds it.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Desktop</span><p class="bk-meta">A Bunraku shortcut is on your desktop.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <section class="bk-panel bk-frame st-formcard" data-tone="">
+            <div class="bk-panel__head"><h4 class="bk-name">The app</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Restart relaunches the studio in place; Quit stops it fully. Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers.</p>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn-ghost" data-set-state="about-armed">Restart Bunraku</button>
+                <button type="button" class="bk-item st-btn-ghost" data-tone="">Quit Bunraku</button>
+                <button type="button" class="bk-item st-btn-ghost">Reset this window</button>
+              </div>
+            </div>
+          </section>
+          </div>
+          <div class="st-panel" data-panel="models-edit" hidden data-part="settings.section">
+            <h2 class="bk-heading">Models</h2>
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__body st-form">
+              <label class="st-field"><span class="bk-label">Provider</span><div class="st-selwrap"><select class="st-input"><option>Anthropic (Claude)</option><option>OpenAI</option><option>OpenRouter</option><option>Local (OpenAI-compatible)</option></select></div></label>
+              <label class="st-field"><span class="bk-label">Model</span><div class="st-selwrap"><select class="st-input"><option>claude-sonnet-5</option><option>claude-opus-5</option><option>Type an id...</option></select></div></label>
+              <label class="st-field"><span class="bk-label">Let Kit make changes this session</span><div class="st-selwrap"><select class="st-input"><option>Ask each time</option><option>Always this session</option><option>Never</option></select></div></label>
+              <label class="st-field"><span class="bk-label">Name (optional)</span><input class="st-input" placeholder="Personal, Work"></label>
+              <label class="st-field"><span class="bk-label">API key</span><input class="st-input" type="password" placeholder="paste your key"></label>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn" data-set-state="models">Save</button>
+                <button type="button" class="bk-item st-btn-ghost" data-set-state="models">Cancel</button>
+              </div>
+            </div>
+          </section>
+          </div>
+          <div class="st-panel" data-panel="connections-edit" hidden data-part="settings.section">
+            <h2 class="bk-heading">Connections</h2>
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__body st-form">
+              <label class="st-field"><span class="bk-label">Name</span><input class="st-input" value="relay-tools" disabled></label>
+              <label class="st-field"><span class="bk-label">Command</span><input class="st-input" value="uvx"></label>
+              <label class="st-field"><span class="bk-label">Arguments</span><input class="st-input" value="--from git+https://... server-cmd"></label>
+              <label class="st-field"><span class="bk-label">Environment (KEY=VALUE per line)</span><textarea class="st-input st-textarea" placeholder="leave blank to keep the saved values"></textarea></label>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn" data-set-state="connections">Save</button>
+                <button type="button" class="bk-item st-btn-ghost" data-set-state="connections">Cancel</button>
+              </div>
+            </div>
+          </section>
+          </div>
+          <div class="st-panel" data-panel="security-off" hidden data-part="settings.section">
+            <h2 class="bk-heading">Security</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Password</span><p class="bk-meta">Off. Anyone with this computer can open the library.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Set a password</button></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your lines (recovery words)</span><p class="bk-meta">Not written yet.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Write my lines</button></div>
+          </div>
+          <p class="bk-meta" data-tone="warn">Weak lock: no password, no recovery words. Anyone with this folder can open it.</p>
+          </div>
+          <div class="st-panel" data-panel="remote-connected" hidden data-part="settings.section">
+            <h2 class="bk-heading">Remote access</h2>
+
+          <section class="bk-panel bk-frame st-formcard" data-crown data-tone="ok">
+            <div class="bk-panel__head"><span class="bk-dot" data-tone="ok"></span><h4 class="bk-name">On, reachable</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Open this link on any device signed into the same Tailscale account: your phone, another computer. It is a real, trusted https link with no certificate warnings.</p>
+              <p class="bk-num">https://vera-studio.tailXXXXX.ts.net</p>
+              <div class="st-formrow"><button type="button" class="bk-item st-btn-ghost">Copy link</button><button type="button" class="bk-item st-btn-ghost" data-tone="danger">Turn off</button></div>
+              <p class="bk-label">Connected devices</p>
+              <div class="st-pc"><span class="bk-name">My phone</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Remove</button></div>
+            </div>
+          </section>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Local network access</span><p class="bk-meta">A no-account option: reach this studio from devices on the same network, with no Tailscale sign-in.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Enable local access</button></div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="updates-progress" hidden data-part="settings.section">
+            <h2 class="bk-heading">Updates</h2>
+
+          <div class="st-scrim">
+            <div class="bk-frame st-dlg" data-crown>
+              <h3 class="bk-heading">Switching version</h3>
+              <p class="bk-meta" data-tone="info">Restarting Bunraku...</p>
+              <p class="bk-meta">Do not close Bunraku. It restarts itself when the switch is ready.</p>
+            </div>
+          </div>
+          </div>
+          <div class="st-panel" data-panel="about-armed" hidden data-part="settings.section">
+            <h2 class="bk-heading">About</h2>
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Updates</span><p class="bk-meta">Version 0.14.2, installed app. Checks GitHub only when you press the button; nothing runs on its own.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Check for updates</button><span class="bk-meta">You are on the newest release.</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your studio folder</span><p class="bk-meta">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="bk-num">C:\Users\you\Bunraku</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Project</span><p class="bk-meta">Open source under AGPL-3.0. Bugs and wishes welcome.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">GitHub</button><button type="button" class="bk-item st-btn-ghost">Releases</button></div>
+          </div>
+          <p class="bk-label st-sectiontitle">Shortcuts (Windows desktop app only)</p>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Start menu</span><p class="bk-meta">Bunraku is in your Start menu, so searching "Bunraku" finds it.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Desktop</span><p class="bk-meta">A Bunraku shortcut is on your desktop.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <section class="bk-panel bk-frame st-formcard" data-tone="danger">
+            <div class="bk-panel__head"><h4 class="bk-name">The app</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Restart relaunches the studio in place; Quit stops it fully. Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers.</p>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn-ghost" aria-pressed="true" data-set-state="about-armed">Really restart?</button>
+                <button type="button" class="bk-item st-btn-ghost" data-tone="danger">Really quit?</button>
+                <button type="button" class="bk-item st-btn-ghost">Reset this window</button>
+              </div>
+            </div>
+          </section>
+          </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="st-status" data-part="shell.status">
+    <span class="st-status-item" data-part="shell.status.item">Settings</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Options menu">
+          <button type="button" class="spec-chip" data-set-state="appearance" aria-pressed="true">Appearance</button>
+          <button type="button" class="spec-chip" data-set-state="models">Models: list</button>
+          <button type="button" class="spec-chip" data-set-state="models-edit">Models: add/edit form</button>
+          <button type="button" class="spec-chip" data-set-state="connections">Connections: list</button>
+          <button type="button" class="spec-chip" data-set-state="connections-edit">Connections: edit form</button>
+          <button type="button" class="spec-chip" data-set-state="studio">Studio</button>
+          <button type="button" class="spec-chip" data-set-state="security">Security: on</button>
+          <button type="button" class="spec-chip" data-set-state="security-off">Security: off</button>
+          <button type="button" class="spec-chip" data-set-state="workbench">Workbench</button>
+          <button type="button" class="spec-chip" data-set-state="remote">Remote: off</button>
+          <button type="button" class="spec-chip" data-set-state="remote-connected">Remote: connected</button>
+          <button type="button" class="spec-chip" data-set-state="updates">Updates: ready</button>
+          <button type="button" class="spec-chip" data-set-state="updates-progress">Updates: progress</button>
+          <button type="button" class="spec-chip" data-set-state="about">About</button>
+          <button type="button" class="spec-chip" data-set-state="about-armed">About: restart/quit armed</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="settings.room.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Tabbed panels</h3>
+          <p>Sections as tabs across the top, each a stack of framed panels.</p></header>
+        <div class="spec-screen st-screen" data-state="appearance">
+<div class="st-app" data-part="shell.app">
+  <header class="st-hud" data-part="shell.hud">
+    <div class="st-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="st-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="st-hud-mid">
+      <div class="st-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="st-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close Settings</span></span>
+    </div>
+  </header>
+  <div class="st-body">
+    <nav class="st-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="st-dock-brand" data-part="shell.dock.brand">
+        <svg class="st-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="st-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="st-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="st-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="st-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="st-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="st-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="st-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="st-dock-app bk-item" data-part="shell.dock.app" data-app="settings" aria-current="true">
+        <svg class="st-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="st-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="st-dock-app st-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="st-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="st-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="st-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="st-stage bk-stage" data-part="shell.stage">
+
+        <div class="st-shell st-shell-tabs" data-part="settings.room">
+          <nav class="st-tabs" role="tablist" aria-label="Settings sections">
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="appearance" aria-selected="true">Appearance</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="models">Models</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="connections">Connections</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="studio">Studio</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="security">Security</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="workbench">Workbench</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="remote">Remote access</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="updates">Updates</button>
+          <button type="button" class="bk-item st-tabitem" role="tab" data-nav="about">About</button>
+          </nav>
+          <div class="st-content">
+          <div class="st-panel st-panel-framed" data-panel="appearance" data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Appearance</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Theme</span><p class="bk-meta">Light paper or the dark forge. Flips instantly.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate">Light</button><button type="button" class="bk-item st-plate" aria-selected="true">Dark</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your color</span><p class="bk-meta">The workspace accent. The brand rose never changes.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-swrow" data-part="ui.swatches"><button type="button" class="bk-item st-swatch" data-deck="accent" aria-selected="true" aria-label="Rose"><span class="st-swatchfill" data-deck="accent"></span><span class="bk-meta">Rose</span></button><button type="button" class="bk-item st-swatch" data-deck="character" aria-label="Amber"><span class="st-swatchfill" data-deck="character"></span><span class="bk-meta">Amber</span></button><button type="button" class="bk-item st-swatch" data-deck="persona" aria-label="Emerald"><span class="st-swatchfill" data-deck="persona"></span><span class="bk-meta">Emerald</span></button><button type="button" class="bk-item st-swatch" data-deck="lorebook" aria-label="Violet"><span class="st-swatchfill" data-deck="lorebook"></span><span class="bk-meta">Violet</span></button><button type="button" class="bk-item st-swatch" data-deck="preset" aria-label="Blue"><span class="st-swatchfill" data-deck="preset"></span><span class="bk-meta">Blue</span></button><button type="button" class="bk-item st-swatch st-swatch-custom">+ custom</button></div></div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="models" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Models</h2></div><div class="bk-panel__body">
+
+          <p class="bk-meta">Shared with Kit in the terminal. A key goes in and never comes back; the field is always blank, even when editing a saved provider.</p>
+          <div class="st-list">          <div class="bk-item st-rowcard" aria-selected="true" data-part="settings.row">
+            <span class="bk-dot" data-tone="ok"></span>
+            <span class="bk-name">Claude (personal)</span><span class="bk-num st-grow">claude-sonnet-5</span><span class="bk-meta">key saved</span>
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn" data-set-state="models-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          <div class="bk-item st-rowcard" data-part="settings.row">
+            <span class="bk-dot"></span>
+            <span class="bk-name">Local (LM Studio)</span><span class="bk-num st-grow">llama-3.1-8b</span><span class="bk-meta">no key</span>
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn" data-set-state="models-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          </div>
+          <button type="button" class="bk-item st-btn-ghost" data-set-state="models">+ Add a model</button>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="connections" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Connections</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">MCP servers</span><p class="bk-meta">Programs this machine runs so their tools join Kit's belt. Every external tool asks at the Gate before it runs.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"></div>
+          </div>
+          <p class="bk-meta" data-tone="danger">"weather-tools" was rejected: command must be an absolute path or a known launcher.</p>
+          <div class="st-list">          <div class="bk-item st-rowcard" data-part="settings.row">
+            <span class="bk-name">relay-tools</span><span class="bk-num st-grow">uvx --from git+https... relay-server</span>
+            <span class="bk-meta" data-tone="ok">6 tool(s)</span>
+            <span class="bk-meta">env: RELAY_TOKEN</span>
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn">Disable</button><button type="button" class="bk-item st-actbtn" data-set-state="connections-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          <div class="bk-item st-rowcard" data-part="settings.row">
+            <span class="bk-name">local-fs</span><span class="bk-num st-grow">C:\tools\fs-mcp.exe</span>
+            <span class="bk-meta" data-tone="danger">not connected</span>
+            
+            <span class="st-acts"><button type="button" class="bk-item st-actbtn">Test</button><button type="button" class="bk-item st-actbtn">Enable</button><button type="button" class="bk-item st-actbtn" data-set-state="connections-edit">Edit</button><button type="button" class="bk-item st-actbtn">Remove</button></span>
+          </div>
+          </div>
+          <button type="button" class="bk-item st-btn-ghost" data-set-state="connections">+ Add a server</button>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Bunraku as a server</span><p class="bk-meta">Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><code class="st-code">claude mcp add bunraku -- bunraku mcp "C:\Users\you\Bunraku"</code></div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="studio" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Studio</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Home</span><p class="bk-meta">The room Bunraku opens in when you start it.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Workbench</button><button type="button" class="bk-item st-plate">Library</button><button type="button" class="bk-item st-plate">Scenes</button><button type="button" class="bk-item st-plate">Press</button><button type="button" class="bk-item st-plate">Agent</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Library opens on</span><p class="bk-meta">The deck you see first when you visit the shelves.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Characters</button><button type="button" class="bk-item st-plate">Lorebooks</button><button type="button" class="bk-item st-plate">Personas</button><button type="button" class="bk-item st-plate">Sprite packs</button><button type="button" class="bk-item st-plate">Presets</button><button type="button" class="bk-item st-plate">Regex sets</button><button type="button" class="bk-item st-plate">Quick replies</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">You publish to</span><p class="bk-meta">Pick any that fit. Every format stays ready either way.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">SillyTavern</button><button type="button" class="bk-item st-plate" aria-selected="true">RoleCall</button><button type="button" class="bk-item st-plate">RisuAI</button><button type="button" class="bk-item st-plate">Agnaistic</button><button type="button" class="bk-item st-plate">NovelAI</button><button type="button" class="bk-item st-plate">Pygmalion</button></div></div>
+          </div>
+          <p class="bk-label st-sectiontitle">Engine checkouts on this machine</p>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">SillyTavern</span><p class="bk-meta">The folder holding SillyTavern's public/ tree. Kit uses it too.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-pathctrl"><input class="st-input" value="C:\Users\you\SillyTavern"><span class="st-formrow"><button type="button" class="bk-item st-actbtn">Save</button><button type="button" class="bk-item st-actbtn">Clear</button></span><span class="bk-meta" data-tone="ok">found, engine answers</span></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Marinara</span><p class="bk-meta">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-pathctrl"><input class="st-input" disabled placeholder="paste the folder's path"><span class="bk-meta">env: BUNRAKU_MARINARA_ROOT=C:\tools\marinara</span></div></div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="security" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Security</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Password</span><p class="bk-meta">On. Each time the app opens.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Change it</button><button type="button" class="bk-item st-btn-ghost" data-tone="danger">Remove</button></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your lines (recovery words)</span><p class="bk-meta">Written Sep 2, 2026. Last rehearsed Sep 2, 2026.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Rehearse</button><button type="button" class="bk-item st-btn-ghost">Write new lines</button></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Lock now</span><p class="bk-meta">Closes the stage door until the password or your lines are given.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Lock now</button></div>
+          </div>
+          <section class="bk-panel bk-frame st-formcard">
+            <div class="bk-panel__head"><h4 class="bk-name">Other computers</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">This library has also been opened on another computer, from a copied folder or a restored backup. Each one below can still open it by itself.</p>
+              <div class="st-pc"><span class="bk-name">My laptop</span><span class="bk-meta">Since Aug 14, 2026 &middot; A key file</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Forget</button></div>
+              <div class="st-pc"><span class="bk-name">Studio PC</span><span class="bk-meta">Since Jul 2, 2026 &middot; Windows Credential Manager</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Forget</button></div>
+            </div>
+          </section>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="workbench" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Workbench</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Autosave</span><p class="bk-meta">Save half a second after you stop typing. Ctrl+S still works, and still saves at once.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Off</button><button type="button" class="bk-item st-plate">On</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Reopen where you left off</span><p class="bk-meta">Restore the pieces you had open, and which one you were editing, after a restart or a crash.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate">Off</button><button type="button" class="bk-item st-plate" aria-selected="true">On</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Editor layout</span><p class="bk-meta">Bento shows every field at once; Playbill turns them into acts you page through.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Bento</button><button type="button" class="bk-item st-plate">Playbill</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">How you fill it in</span><p class="bk-meta">Grid shows every field to edit directly; Steps walks you through like a quiz.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Grid</button><button type="button" class="bk-item st-plate">Steps</button></div></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">After sending a piece</span><p class="bk-meta">Follow it to the Workbench, stay where you are, or ask every time.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><div class="st-plates"><button type="button" class="bk-item st-plate" aria-selected="true">Ask me</button><button type="button" class="bk-item st-plate">Always follow</button><button type="button" class="bk-item st-plate">Stay</button></div></div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="remote" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Remote access</h2></div><div class="bk-panel__body">
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Turn on remote access</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Bunraku stays on your machine. A private, encrypted link lets your own devices reach it, with no router changes and no ports opened. You sign in to Tailscale once (free); we open that page for you.</p>
+              <button type="button" class="bk-item st-btn">Enable remote access</button>
+            </div>
+          </section>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Local network access</span><p class="bk-meta">A no-account option: reach this studio from devices on the same network, with no Tailscale sign-in. Each device enters a connect code, and you approve it here before it gets in.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Enable local access</button></div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="updates" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Updates</h2></div><div class="bk-panel__body">
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Your version</h4></div>
+            <div class="bk-panel__body st-behind">
+              <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value">3</span><span class="bk-readout__label">behind</span></span>
+              <p class="bk-meta">you are on <b>0.14.2</b> &middot; newest is <b>0.15.0</b></p>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame st-formcard">
+            <div class="bk-panel__head"><h4 class="bk-name">All releases</h4></div>
+            <div class="bk-panel__body st-tl">
+              <div class="st-ver" aria-current="true"><span class="bk-tag">0.14.2</span><span class="bk-name">Reasoning-turn observability</span><span class="bk-meta">Sep 20, 2026 &middot; 6 commits</span><span class="bk-meta">you are here</span></div>
+              <div class="st-ver"><span class="bk-tag">0.15.0</span><span class="bk-name">Scene Props and the trace viewer</span><span class="bk-meta">1 release ahead &middot; Sep 26, 2026 &middot; 11 commits</span><button type="button" class="bk-item st-actbtn" data-set-state="updates-progress">Update to this</button></div>
+              <div class="st-ver"><span class="bk-tag">0.13.0</span><span class="bk-name">Group chats and shared keys</span><span class="bk-meta">1 release behind &middot; Aug 30, 2026 &middot; 4 commits</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Roll back to this</button></div>
+            </div>
+          </section>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="about" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">About</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Updates</span><p class="bk-meta">Version 0.14.2, installed app. Checks GitHub only when you press the button; nothing runs on its own.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Check for updates</button><span class="bk-meta">You are on the newest release.</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your studio folder</span><p class="bk-meta">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="bk-num">C:\Users\you\Bunraku</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Project</span><p class="bk-meta">Open source under AGPL-3.0. Bugs and wishes welcome.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">GitHub</button><button type="button" class="bk-item st-btn-ghost">Releases</button></div>
+          </div>
+          <p class="bk-label st-sectiontitle">Shortcuts (Windows desktop app only)</p>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Start menu</span><p class="bk-meta">Bunraku is in your Start menu, so searching "Bunraku" finds it.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Desktop</span><p class="bk-meta">A Bunraku shortcut is on your desktop.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <section class="bk-panel bk-frame st-formcard" data-tone="">
+            <div class="bk-panel__head"><h4 class="bk-name">The app</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Restart relaunches the studio in place; Quit stops it fully. Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers.</p>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn-ghost" data-set-state="about-armed">Restart Bunraku</button>
+                <button type="button" class="bk-item st-btn-ghost" data-tone="">Quit Bunraku</button>
+                <button type="button" class="bk-item st-btn-ghost">Reset this window</button>
+              </div>
+            </div>
+          </section>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="models-edit" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Models</h2></div><div class="bk-panel__body">
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__body st-form">
+              <label class="st-field"><span class="bk-label">Provider</span><div class="st-selwrap"><select class="st-input"><option>Anthropic (Claude)</option><option>OpenAI</option><option>OpenRouter</option><option>Local (OpenAI-compatible)</option></select></div></label>
+              <label class="st-field"><span class="bk-label">Model</span><div class="st-selwrap"><select class="st-input"><option>claude-sonnet-5</option><option>claude-opus-5</option><option>Type an id...</option></select></div></label>
+              <label class="st-field"><span class="bk-label">Let Kit make changes this session</span><div class="st-selwrap"><select class="st-input"><option>Ask each time</option><option>Always this session</option><option>Never</option></select></div></label>
+              <label class="st-field"><span class="bk-label">Name (optional)</span><input class="st-input" placeholder="Personal, Work"></label>
+              <label class="st-field"><span class="bk-label">API key</span><input class="st-input" type="password" placeholder="paste your key"></label>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn" data-set-state="models">Save</button>
+                <button type="button" class="bk-item st-btn-ghost" data-set-state="models">Cancel</button>
+              </div>
+            </div>
+          </section>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="connections-edit" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Connections</h2></div><div class="bk-panel__body">
+
+          <section class="bk-panel bk-frame st-formcard" data-crown>
+            <div class="bk-panel__body st-form">
+              <label class="st-field"><span class="bk-label">Name</span><input class="st-input" value="relay-tools" disabled></label>
+              <label class="st-field"><span class="bk-label">Command</span><input class="st-input" value="uvx"></label>
+              <label class="st-field"><span class="bk-label">Arguments</span><input class="st-input" value="--from git+https://... server-cmd"></label>
+              <label class="st-field"><span class="bk-label">Environment (KEY=VALUE per line)</span><textarea class="st-input st-textarea" placeholder="leave blank to keep the saved values"></textarea></label>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn" data-set-state="connections">Save</button>
+                <button type="button" class="bk-item st-btn-ghost" data-set-state="connections">Cancel</button>
+              </div>
+            </div>
+          </section>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="security-off" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Security</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Password</span><p class="bk-meta">Off. Anyone with this computer can open the library.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Set a password</button></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your lines (recovery words)</span><p class="bk-meta">Not written yet.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Write my lines</button></div>
+          </div>
+          <p class="bk-meta" data-tone="warn">Weak lock: no password, no recovery words. Anyone with this folder can open it.</p>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="remote-connected" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Remote access</h2></div><div class="bk-panel__body">
+
+          <section class="bk-panel bk-frame st-formcard" data-crown data-tone="ok">
+            <div class="bk-panel__head"><span class="bk-dot" data-tone="ok"></span><h4 class="bk-name">On, reachable</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Open this link on any device signed into the same Tailscale account: your phone, another computer. It is a real, trusted https link with no certificate warnings.</p>
+              <p class="bk-num">https://vera-studio.tailXXXXX.ts.net</p>
+              <div class="st-formrow"><button type="button" class="bk-item st-btn-ghost">Copy link</button><button type="button" class="bk-item st-btn-ghost" data-tone="danger">Turn off</button></div>
+              <p class="bk-label">Connected devices</p>
+              <div class="st-pc"><span class="bk-name">My phone</span><button type="button" class="bk-item st-actbtn" data-tone="danger">Remove</button></div>
+            </div>
+          </section>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Local network access</span><p class="bk-meta">A no-account option: reach this studio from devices on the same network, with no Tailscale sign-in.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn">Enable local access</button></div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="updates-progress" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">Updates</h2></div><div class="bk-panel__body">
+
+          <div class="st-scrim">
+            <div class="bk-frame st-dlg" data-crown>
+              <h3 class="bk-heading">Switching version</h3>
+              <p class="bk-meta" data-tone="info">Restarting Bunraku...</p>
+              <p class="bk-meta">Do not close Bunraku. It restarts itself when the switch is ready.</p>
+            </div>
+          </div>
+            </div></section>
+          </div>
+          <div class="st-panel st-panel-framed" data-panel="about-armed" hidden data-part="settings.section">
+            <section class="bk-panel bk-frame st-tabcard" data-crown><div class="bk-panel__head"><h2 class="bk-heading">About</h2></div><div class="bk-panel__body">
+
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Updates</span><p class="bk-meta">Version 0.14.2, installed app. Checks GitHub only when you press the button; nothing runs on its own.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">Check for updates</button><span class="bk-meta">You are on the newest release.</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Your studio folder</span><p class="bk-meta">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="bk-num">C:\Users\you\Bunraku</span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Project</span><p class="bk-meta">Open source under AGPL-3.0. Bugs and wishes welcome.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><button type="button" class="bk-item st-btn-ghost">GitHub</button><button type="button" class="bk-item st-btn-ghost">Releases</button></div>
+          </div>
+          <p class="bk-label st-sectiontitle">Shortcuts (Windows desktop app only)</p>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Start menu</span><p class="bk-meta">Bunraku is in your Start menu, so searching "Bunraku" finds it.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <div class="st-row" data-part="settings.row">
+            <div class="st-rowtx" data-part="settings.row.label"><span class="bk-name">Desktop</span><p class="bk-meta">A Bunraku shortcut is on your desktop.</p></div>
+            <div class="st-rowctrl" data-part="settings.row.control"><span class="st-switch"><input type="checkbox" checked></span></div>
+          </div>
+          <section class="bk-panel bk-frame st-formcard" data-tone="danger">
+            <div class="bk-panel__head"><h4 class="bk-name">The app</h4></div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">Restart relaunches the studio in place; Quit stops it fully. Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers.</p>
+              <div class="st-formrow">
+                <button type="button" class="bk-item st-btn-ghost" aria-pressed="true" data-set-state="about-armed">Really restart?</button>
+                <button type="button" class="bk-item st-btn-ghost" data-tone="danger">Really quit?</button>
+                <button type="button" class="bk-item st-btn-ghost">Reset this window</button>
+              </div>
+            </div>
+          </section>
+            </div></section>
+          </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="st-status" data-part="shell.status">
+    <span class="st-status-item" data-part="shell.status.item">Settings</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Tabbed panels">
+          <button type="button" class="spec-chip" data-set-state="appearance" aria-pressed="true">Appearance</button>
+          <button type="button" class="spec-chip" data-set-state="models">Models: list</button>
+          <button type="button" class="spec-chip" data-set-state="models-edit">Models: add/edit form</button>
+          <button type="button" class="spec-chip" data-set-state="connections">Connections: list</button>
+          <button type="button" class="spec-chip" data-set-state="connections-edit">Connections: edit form</button>
+          <button type="button" class="spec-chip" data-set-state="studio">Studio</button>
+          <button type="button" class="spec-chip" data-set-state="security">Security: on</button>
+          <button type="button" class="spec-chip" data-set-state="security-off">Security: off</button>
+          <button type="button" class="spec-chip" data-set-state="workbench">Workbench</button>
+          <button type="button" class="spec-chip" data-set-state="remote">Remote: off</button>
+          <button type="button" class="spec-chip" data-set-state="remote-connected">Remote: connected</button>
+          <button type="button" class="spec-chip" data-set-state="updates">Updates: ready</button>
+          <button type="button" class="spec-chip" data-set-state="updates-progress">Updates: progress</button>
+          <button type="button" class="spec-chip" data-set-state="about">About</button>
+          <button type="button" class="spec-chip" data-set-state="about-armed">About: restart/quit armed</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried in full: Appearance (theme and house-accent swatches), Models (list, add/edit form, key-never-returned note), Connections (MCP list with a rejected-server message, add/edit form, the Bunraku-as-server snippet), Studio (home app, Library first deck, publish targets, engine checkouts), Workbench (autosave, reopen, editor layout and mode, follow behavior), About (update check, studio folder, project links, Windows shortcuts, Restart/Quit/Reset with the armed confirm state). Security, Remote access and Updates each have many more states in their own soft wireframes (10, 11 and 14 respectively, mostly dialogs and connection phases) than BUILD-BRIEF’s row names individually; this page carries one representative pair of states per area (Security: on/off; Remote: off/connected; Updates: ready/progress) rather than the full dialog set, to keep the page buildable in this pass. Every remaining Security/Remote/Updates state (the recovery-word dialogs, Tailscale phases, rollback confirms, etc.) is NOT yet drawn here; flagging this gap rather than silently shipping partial coverage. Secrets and recovery words are protected.* and are not drawn on this page (none of the carried Security states reach a secret-revealing dialog). Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

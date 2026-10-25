@@ -1,0 +1,17 @@
+/*
+ * Bunraku design system: focus and accessibility tokens, contract v1.
+ * Targets every theme must meet (foundations.html measures them live):
+ *   primary text (--bk-text)       7:1 on every surface (WCAG 1.4.6, AAA)
+ *   every other text role          4.5:1 on every surface it sits on (WCAG 1.4.3)
+ *   large display text (24px+)     3:1
+ *   control boundaries, focus ring 3:1 against the surface behind them (WCAG 1.4.11)
+ *   hit targets                    24px minimum (--bk-hit-min, WCAG 2.5.8)
+ *   type                           12px floor (--bk-fs-xs)
+ *   meaning                        never color alone: a state also changes a mark, a word or a shape
+ * The focus ring is an outline, so frames, brackets and offset shadows can never cover it.
+ */
+:root {
+  --bk-focus-w: 2px;
+  --bk-focus-offset: 2px;
+  --bk-focus-style: solid;
+}

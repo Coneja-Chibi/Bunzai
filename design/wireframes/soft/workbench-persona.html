@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench: persona editor</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Shared skeleton for every workbench-/agent- soft wireframe: the Dock (fluid, marks only under
+ * 46rem of window width - kept exactly as approved, reused unchanged on every page in this set) and
+ * the wf-bar/wf-note pattern. Page content sits in .stage.
+ * Known gap: soft-parts.css sets .s-app small/.s-app kbd and .wf-bar text at 11px,
+ * under this brief's 12px floor - overridden here and on every other page in this set.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+/* The Dock's mark-only collapse answers the WHOLE WINDOW, same as the app's real locked
+   narrow-screen mode and the user-driven slim-dock strip - so this one rule is @media, not
+   @container. Every pane-level fold below it (.pane, .stage) uses @container instead. */
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; container-type: inline-size; background: var(--canvas); }
+/* Fixed wf-bar/wf-note sit over the last ~170px of the page on purpose (wireframe-only chrome);
+   real content gets that much breathing room at the foot so nothing genuine hides under them. */
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+/* wf-bar/wf-note are fixed-position wireframe-only chrome; at phone width they must not float over
+   the content or each other, so they drop into normal flow and stack full width. */
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+
+.phead2 { display: flex; align-items: center; gap: 12px; padding: 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.phead2 .s-h3 { font-size: 1.3rem; }
+.writefor { display: flex; box-shadow: inset 0 0 0 1px var(--seam); overflow-x: auto; }
+.writefor button { background: none; border: 0; padding: 7px 12px; color: var(--text-dim); font: 600 .85rem var(--font-body); cursor: pointer; white-space: nowrap; }
+.writefor button.on { background: var(--shell-panel-2); color: var(--text); }
+.plgrid { display: grid; grid-template-columns: 1fr 320px; gap: 16px; padding: 20px; container-type: inline-size; }
+@container (max-width: 55rem) { .plgrid { grid-template-columns: 1fr; } }
+@container (max-width: 30rem) { .identrow { grid-template-columns: 1fr; } }
+.pcard { --c: var(--deck-persona); }
+.pcard .ph { display: flex; align-items: center; gap: 8px; padding: 10px 14px; box-shadow: inset 0 -1px 0 var(--seam); }
+.pcard .pb { padding: 14px; }
+.identrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.sectiontabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+.sectiontabs button { padding: 6px 12px; box-shadow: inset 0 0 0 1px var(--seam); background: none; color: var(--text-dim); cursor: pointer; font-size: .82rem; }
+.sectiontabs button.on { box-shadow: inset 0 0 0 1px var(--deck-persona); color: var(--deck-persona); }
+.right-cards { display: flex; flex-direction: column; gap: 16px; }
+.injstops { display: flex; flex-direction: column; gap: 6px; }
+.injstop { display: flex; align-items: center; gap: 8px; padding: 8px 10px; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-soft); font-size: .88rem; }
+.injstop.on { box-shadow: inset 0 0 0 1px var(--deck-persona); color: var(--deck-persona); }
+.injstop.foreign { box-shadow: inset 0 0 0 1px var(--stage-warn); color: var(--stage-warn); opacity: .8; border-style: dashed; }
+.star { color: var(--stage-warn); }
+.livepreview { font-family: var(--font-big); font-variation-settings: var(--soft-axes); font-size: .95rem; line-height: 1.6; color: var(--text-soft); }
+.livepreview b { color: var(--deck-persona); font-weight: 600; }
+.colorrow { display: flex; gap: 8px; flex-wrap: wrap; }
+.swatch { display: flex; align-items: center; gap: 6px; padding: 4px 8px; box-shadow: inset 0 0 0 1px var(--seam); font-size: .8rem; }
+.swatchdot { width: 12px; height: 12px; background: var(--c2); }
+[data-state="agnai"] .injcard { display: none; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench on"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav><div class="stage">
+
+    <header class="phead2">
+      <span class="s-chip" style="--c:var(--deck-persona)">PERS</span>
+      <span class="s-h3">Vera Lune <span class="s-meta" style="margin-left:6px">Set as default <span class="star">&#9733;</span></span></span>
+      <span class="writefor" id="writeforRow" role="group" aria-label="Write for">
+        <button class="on" data-w="loaded">Bunraku</button><button data-w="loaded">SillyTavern</button><button data-w="loaded">RoleCall</button>
+        <button data-w="agnai">Lumiverse</button><button data-w="agnai">Agnai</button>
+      </span>
+      <button type="button" class="s-btn" style="padding:8px 16px; margin-left:auto">Save</button>
+    </header>
+
+    <div class="plgrid">
+      <div>
+        <div class="s-card pcard" style="margin-bottom:16px">
+          <div class="ph"><span class="s-h3" style="font-size:1rem">Identity</span></div>
+          <div class="pb">
+            <div class="identrow">
+              <input class="s-input" value="Vera Lune" aria-label="Name">
+              <input class="s-input" value="Reads the cards, keeps the counsel" aria-label="Tagline">
+              <input class="s-input" value="she/her" aria-label="Pronouns">
+              <input class="s-input" value="5'6&quot;" aria-label="Height">
+              <input class="s-input" value="ageless" aria-label="Age">
+            </div>
+            <span class="s-meta">Identity always compiles first, ahead of section order.</span>
+          </div>
+        </div>
+
+        <div class="s-card pcard">
+          <div class="ph">
+            <span class="s-h3" style="font-size:1rem">Sections</span>
+            <span class="sectiontabs" style="margin-left:auto; margin-bottom:0">
+              <button class="on">Appearance</button><button>Body</button><button>Personality</button><button>Quirks</button><button>History</button>
+            </span>
+          </div>
+          <div class="pb">
+            <textarea class="s-input" style="min-height:7rem">Dark hair pinned with a silver comb, a shawl of playing cards sewn into the hem. Her eyes never quite focus on the room.</textarea>
+            <p class="s-meta" style="margin-top:10px">Fill even one section and Identity Text below goes inert, not deleted.</p>
+          </div>
+        </div>
+
+        <details class="foldwrap2" style="margin-top:16px">
+          <summary class="s-btn ghost" style="cursor:pointer; display:inline-flex">Identity Text (used only when every section is empty)</summary>
+          <div class="s-card pcard" style="margin-top:8px"><div class="pb"><textarea class="s-input" style="min-height:5rem">I am Vera. I read what the cards already know.</textarea></div></div>
+        </details>
+      </div>
+
+      <div class="right-cards">
+        <div class="s-card pcard injcard">
+          <div class="ph"><span class="s-h3" style="font-size:1rem">Prompt Injection</span></div>
+          <div class="pb">
+            <div class="injstops">
+              <div class="injstop on">World</div>
+              <div class="injstop">Character</div>
+              <div class="injstop">Scene</div>
+              <div class="injstop">Depth <input class="s-input" style="width:4rem; display:inline-block; margin-left:6px" value="4"></div>
+              <div class="injstop foreign" title="Kept, not carried here">In chat &middot; kept, not carried here</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="s-card pcard">
+          <div class="ph"><span class="s-h3" style="font-size:1rem">Knowledge</span></div>
+          <div class="pb">
+            <div class="s-leader"><span>The Tarot Primer</span><i></i><span class="s-meta">18 entries</span></div>
+            <button type="button" class="s-btn ghost" style="margin-top:10px; width:100%">Attach lorebook</button>
+            <p class="s-meta" style="margin-top:8px">Only the first linked book crosses on export to ST, RC or Lumiverse.</p>
+          </div>
+        </div>
+
+        <div class="s-card pcard">
+          <div class="ph"><span class="s-h3" style="font-size:1rem">Color Palette</span></div>
+          <div class="pb colorrow">
+            <span class="swatch"><span class="swatchdot" style="--c2:var(--deck-character-deep)"></span>Hair</span>
+            <span class="swatch"><span class="swatchdot" style="--c2:var(--deck-preset-deep)"></span>Shawl</span>
+            <button type="button" class="s-btn ghost" style="padding:4px 10px">+ color</button>
+          </div>
+        </div>
+
+        <div class="s-card pcard">
+          <div class="ph"><span class="s-h3" style="font-size:1rem">Live Preview</span><span class="s-meta" style="margin-left:auto">the real compiler</span></div>
+          <div class="pb livepreview">
+            <b>&lt;pronouns&gt;</b>she/her<b>&lt;/pronouns&gt;</b> <b>&lt;tagline&gt;</b>Reads the cards, keeps the counsel<b>&lt;/tagline&gt;</b><br>
+            <b>&lt;appearance&gt;</b>Dark hair pinned with a silver comb...<b>&lt;/appearance&gt;</b><br>
+            <b>&lt;hair&gt;</b>chestnut<b>&lt;/hair&gt;</b>
+          </div>
+        </div>
+
+        <div class="s-card pcard flat">
+          <div class="pb">
+            <p class="s-meta">Brief lives on the Personas shelf only; it never enters this block.</p>
+            <input class="s-input" style="margin-top:8px" value="The reader who never lies to you">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>Persona editor.</b> Identity is fixed and always compiles first; Sections beat Identity Text the
+  moment one has text in it. Write for narrows the form to one host's wire. Prompt Injection and
+  Knowledge sit on the right, with the real compiled output in Live Preview underneath them.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="loaded" class="on">Loaded</button>
+  <button data-s="agnai">Write for: Agnai (no injection wire)</button>
+  <button data-s="phone">Phone width</button>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  function setState(s) {
+    var real = s === 'phone' ? 'loaded' : s;
+    body.setAttribute('data-state', real);
+    document.querySelectorAll('#writeforRow button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-w') === real); });
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  setState(q.get('state') || 'loaded');
+  document.getElementById('wfbar').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setState(b.getAttribute('data-s')); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: Settings, Updates</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-settings 4/4: Updates (src/ui/apps/settings/sections/updates.tsx + updates-dialogs.tsx).
+ * The version timeline (loading / rate-limited / error / three BehindCard variants), one release
+ * row expanded with its commit log, and every modal: confirm (update + a rollback-with-no-receipt
+ * warning), progress, result (success + failed), could-not-switch, and download-ready (packaged).
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--canvas); }
+.room { max-width: 60rem; margin: 0 auto; padding: 26px 22px 90px; }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+.stabs { display: flex; flex-wrap: wrap; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 22px; }
+.stabs a { font: 600 .88rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); text-decoration: none; padding: 10px 14px; box-shadow: inset 0 -2px 0 transparent; }
+.stabs a.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--text-dim); }
+.title { font: 700 1.3rem var(--font-big); font-variation-settings: var(--soft-axes); margin: 4px 4px 4px; }
+.blurb { color: var(--text-soft); font-size: .9rem; margin: 0 4px 20px; max-width: 36rem; }
+.card { background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); margin: 0 4px 14px; padding: 16px 18px; }
+.card.hero { box-shadow: inset 0 0 0 1px var(--accent); }
+.card .ct { font: 700 1rem var(--font-big); margin-bottom: 6px; }
+.card .cb { color: var(--text-soft); font-size: .88rem; line-height: 1.55; }
+.card .acts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.status { display: inline-flex; align-items: center; gap: 7px; font: 500 .82rem var(--font-mono); color: var(--text-soft); }
+.dot { width: 8px; height: 8px; background: var(--text-faint); flex: none; }
+.dot.on { background: var(--stage-ok); }
+.dot.busy { background: var(--stage-warn); }
+.behind { display: flex; align-items: baseline; gap: 16px; }
+.behindnum { font: 700 3rem var(--font-big); color: var(--accent); line-height: 1; }
+.behindtext { color: var(--text-soft); font-size: .88rem; }
+.behindpair .cur { color: var(--text); font-weight: 700; }
+.behindpair .lat { color: var(--accent); font-weight: 700; }
+.tl { display: flex; flex-direction: column; }
+.ver { display: flex; gap: 14px; padding: 14px 4px; box-shadow: inset 0 -1px 0 var(--seam); }
+.ver.here { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.ver .vtag { font: 700 .9rem var(--font-mono); color: var(--text-dim); flex: none; width: 4.2rem; }
+.ver .vbody { flex: 1; min-width: 0; }
+.ver .vname { display: flex; gap: 8px; align-items: center; }
+.chip { font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; background: var(--accent); color: var(--stamp-fg); }
+.cm { font: 600 .92rem var(--font-big); }
+.vmeta { font: 500 12px var(--font-mono); color: var(--text-dim); margin-top: 3px; display: flex; gap: 6px; }
+.rel.ahead { color: var(--stage-ok); }
+.rel.behind { color: var(--stage-warn); }
+.caret { margin-top: 6px; background: none; border: 0; color: var(--accent); font: 500 .78rem var(--font-mono); cursor: pointer; padding: 0; }
+.log { margin-top: 8px; background: var(--stage-well); box-shadow: inset 0 0 0 1px var(--seam); padding: 8px 10px; font: 12px var(--font-mono); color: var(--text-soft); display: flex; flex-direction: column; gap: 3px; }
+.log .h { color: var(--text-faint); margin-right: 8px; }
+.ver .vact { flex: none; align-self: center; }
+.herelabel { font: 500 12px var(--font-mono); color: var(--text-dim); text-transform: uppercase; }
+
+.overlay { position: fixed; inset: 0; background: color-mix(in srgb, var(--stage-black) 78%, transparent); display: grid; place-items: center; z-index: 40; padding: 1rem; }
+/* width uses calc(100vw - Npx), NOT 100%: .popup is centered by a `display:grid;place-items:center`
+   ancestor (.overlay), whose grid track is size-to-content (indefinite) - a percentage against that
+   resolves as unconstrained, so min(26rem, 100%) silently ignored the 100% and overflowed narrow
+   viewports. vw is always definite, so it actually caps the width. */
+.popup { width: min(26rem, calc(100vw - 2rem)); background: var(--face); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); padding: 1.8rem 1.9rem; text-align: center; box-sizing: border-box; }
+.popup .ct { font: 700 1.05rem var(--font-big); margin-bottom: 8px; }
+.popup .jump { font: 700 1.1rem var(--font-mono); margin: 8px 0; }
+.popup .arrow { color: var(--accent); }
+.popup .warnnote { text-align: left; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--stage-warn); font-size: .84rem; color: var(--text); margin: 10px 0; }
+.popup .cb { color: var(--text-soft); font-size: .86rem; text-align: left; margin: 10px 0; }
+.popup .actionscenter { display: flex; gap: 10px; justify-content: center; margin-top: 14px; }
+.badge { width: 50px; height: 50px; margin: 0 auto 10px; display: grid; place-items: center; box-shadow: inset 0 0 0 2px var(--stage-ok); color: var(--stage-ok); }
+.badge.bad { box-shadow: inset 0 0 0 2px var(--stage-danger-hot); color: var(--stage-danger-hot); }
+.big { font: 700 1.15rem var(--font-big); }
+.sub { color: var(--text-soft); font-size: .88rem; margin-top: 4px; }
+[data-only] { display: none; }
+[data-only].show { display: block; }
+.overlay[data-only].show { display: grid; }
+.overlay[data-only].show { display: grid; }
+</style>
+</head>
+<body>
+<div class="room">
+  <nav class="stabs">
+    <a href="shell-settings.html">Appearance</a>
+    <a href="shell-settings.html?state=models">Models</a>
+    <a href="shell-settings.html?state=connections">Connections</a>
+    <a href="shell-settings.html?state=studio">Studio</a>
+    <a href="shell-settings-security.html">Security</a>
+    <a href="shell-settings.html?state=workbench">Workbench</a>
+    <a href="shell-settings-remote.html">Remote access</a>
+    <a href="#" class="on">Updates</a>
+    <a href="shell-settings.html?state=about">About</a>
+  </nav>
+
+  <div class="title">Updates</div>
+  <p class="blurb">Every release, newest first, with what changed in each. See how far behind you are and read the full commit log for any version. Checks GitHub only when you open this page.</p>
+
+  <div class="card" data-only="loading"><span class="status"><span class="dot busy"></span>Asking GitHub for the release history...</span></div>
+  <div class="card" data-only="rate-limited"><div class="ct">Checked too often</div><div class="cb">GitHub limits how often the release history can be fetched. Try again in about 12 minute(s).</div></div>
+  <div class="card" data-only="error"><div class="ct">Could not load the release history</div><div class="cb">GitHub could not be reached. Nothing else is affected.</div><div class="acts"><button class="s-btn ghost">Open releases on GitHub</button></div></div>
+
+  <div data-only="ready ready-current ready-unreleased" id="behindwrap">
+    <div class="card hero" data-only="ready">
+      <div class="ct">Your version</div>
+      <div class="behind"><div class="behindnum">3</div><div class="behindtext"><div>releases behind the newest</div><div class="behindpair">you are on <span class="cur">0.14.2</span> &middot; newest is <span class="lat">0.15.0</span></div></div></div>
+    </div>
+    <div class="card" data-only="ready-current"><div class="ct"><span class="status"><span class="dot on"></span>Up to date</span></div><div class="cb">You are on 0.15.0, the newest release. The timeline below still lets you look back.</div></div>
+    <div class="card" data-only="ready-unreleased"><div class="ct">You are on an unreleased build</div><div class="cb">Your version (0.14.2-7-gabc1234) is not one of the published releases, it sits between them (a source build). The timeline below still shows every release you can move to.</div></div>
+
+    <div class="card">
+      <div class="ct">All releases</div>
+      <div class="tl">
+        <div class="ver here">
+          <span class="vtag">0.14.2</span>
+          <div class="vbody"><div class="vname"><span class="chip">you are here</span><span class="cm">Reasoning-turn observability</span></div><div class="vmeta"><span>Sep 20, 2026</span><span>&middot; 6 commits</span></div></div>
+          <div class="vact"><span class="herelabel">current</span></div>
+        </div>
+        <div class="ver">
+          <span class="vtag">0.15.0</span>
+          <div class="vbody"><div class="vname"><span class="cm">Scene Props and the trace viewer</span></div><div class="vmeta"><span class="rel ahead">1 release ahead of you</span><span>&middot; Sep 26, 2026</span><span>&middot; 11 commits</span></div>
+            <button class="caret" id="caret">Show the 11 commits</button>
+            <div class="log" id="commitlog" style="display:none">
+              <div><span class="h">a1b2c3d</span><span>add TrackHare prop and Tokens trace view</span></div>
+              <div><span class="h">e4f5061</span><span>fix: scene prop panel width on phone</span></div>
+              <div><span class="h">9d8c7b6</span><span>docs: prop authoring guide</span></div>
+            </div>
+          </div>
+          <div class="vact"><button class="s-btn ghost" data-open="confirm-update" style="padding:7px 12px">Update to this</button></div>
+        </div>
+        <div class="ver">
+          <span class="vtag">0.13.0</span>
+          <div class="vbody"><div class="vname"><span class="cm">Group chats and shared keys</span></div><div class="vmeta"><span class="rel behind">1 release behind you</span><span>&middot; Aug 30, 2026</span><span>&middot; 4 commits</span></div></div>
+          <div class="vact"><button class="s-btn ghost" data-open="confirm-rollback" style="padding:7px 12px">Roll back to this</button></div>
+        </div>
+        <div class="ver">
+          <span class="vtag">0.08.0</span>
+          <div class="vbody"><div class="vname"><span class="cm">First packaged build</span></div><div class="vmeta"><span class="rel behind">6 releases behind you</span></div><div class="log" style="display:block">commit log unavailable for this release</div></div>
+          <div class="vact"><button class="s-btn ghost" data-open="confirm-rollback-old" style="padding:7px 12px">Roll back to this</button></div>
+        </div>
+      </div>
+      <div class="acts"><button class="s-btn ghost">Open releases on GitHub</button></div>
+    </div>
+  </div>
+
+  <div class="overlay" data-only="confirm-update">
+    <div class="popup"><div class="ct">Update to 0.15.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.15.0</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn">Update</button><button class="s-btn ghost">Cancel</button></div></div>
+  </div>
+  <div class="overlay" data-only="confirm-rollback">
+    <div class="popup"><div class="ct">Roll back to 0.13.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.13.0</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn danger">Roll back</button><button class="s-btn ghost">Cancel</button></div></div>
+  </div>
+  <div class="overlay" data-only="confirm-rollback-old">
+    <div class="popup"><div class="ct">Roll back to 0.08.0?</div><div class="jump">0.14.2 <span class="arrow">&rarr;</span> 0.08.0</div><div class="warnnote">0.08.0 is older than this Updates screen. After the restart it will not show a confirmation or an Undo button, so <b>this screen is your receipt</b>.</div><div class="cb">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</div><div class="actionscenter"><button class="s-btn danger">Roll back</button><button class="s-btn ghost">Cancel</button></div></div>
+  </div>
+  <div class="overlay" data-only="progress">
+    <div class="popup"><div class="ct">Switching version</div><span class="status"><span class="dot busy"></span>Restarting Bunraku...</span><div class="cb">Do not close Bunraku. It restarts itself when the switch is ready.</div></div>
+  </div>
+  <div class="overlay" data-only="result-success">
+    <div class="popup"><div class="badge">&#10003;</div><div class="big">You are now on 0.15.0</div><div class="sub">Done. Everything is ready.</div><div class="actionscenter"><button class="s-btn">Done</button><button class="s-btn ghost">Undo, back to 0.14.2</button></div></div>
+  </div>
+  <div class="overlay" data-only="result-failed">
+    <div class="popup"><div class="badge bad">&times;</div><div class="big">Still on 0.14.2</div><div class="sub">The switch to 0.15.0 did not complete, so nothing changed. Your app is exactly as it was.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
+  </div>
+  <div class="overlay" data-only="could-not-switch">
+    <div class="popup"><div class="ct">Could not switch</div><div class="sub">Bunraku did not come back on its own. Start it again from your shortcut.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
+  </div>
+  <div class="overlay" data-only="download-ready">
+    <div class="popup"><div class="ct">Download ready</div><div class="sub">0.15.0 was downloaded and verified. Close Bunraku and run the installer to finish.</div><div class="actionscenter"><button class="s-btn">OK</button></div></div>
+  </div>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="loading">Loading</button>
+  <button data-s="rate-limited">Rate limited</button>
+  <button data-s="error">Load error</button>
+  <button data-s="ready" class="on">Ready: N behind</button>
+  <button data-s="ready-current">Ready: up to date</button>
+  <button data-s="ready-unreleased">Ready: unreleased build</button>
+  <button data-s="confirm-update">Confirm: update</button>
+  <button data-s="confirm-rollback">Confirm: rollback</button>
+  <button data-s="confirm-rollback-old">Confirm: rollback, no receipt after</button>
+  <button data-s="progress">Progress</button>
+  <button data-s="result-success">Result: success</button>
+  <button data-s="result-failed">Result: failed</button>
+  <button data-s="could-not-switch">Could not switch</button>
+  <button data-s="download-ready">Download ready (packaged, manual)</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var READY = ["ready", "ready-current", "ready-unreleased"];
+  var OVERLAY = ["confirm-update", "confirm-rollback", "confirm-rollback-old", "progress", "result-success", "result-failed", "could-not-switch", "download-ready"];
+  var NOTES = {
+    loading: "phase loading: the only fetch this room ever makes without a button press is this ONE page-open GitHub call.",
+    "rate-limited": "httpStatus 403/429 from GitHub; retryAfterSec formats to whole minutes.",
+    error: "any other non-200 or a thrown fetch.",
+    ready: "BehindCard, tl.behind>0: the big number, current vs latest.",
+    "ready-current": "BehindCard, tl.behind===0: still shows the timeline below for looking back.",
+    "ready-unreleased": "BehindCard, !tl.installedInList: a source checkout between tags.",
+    "confirm-update": "ConfirmSwitch, kind=update: plain confirm.",
+    "confirm-rollback": "ConfirmSwitch, kind=rollback, target IS feature-aware: danger-styled Roll back.",
+    "confirm-rollback-old": "ConfirmSwitch, rollback to a version OLDER than this Updates screen existed: the extra warning note, since no result popup will appear after that restart.",
+    progress: "SwitchProgress while switchStatus() polls; message updates live (shown here at \"restarting\").",
+    "result-success": "SwitchResult success, from the post-restart pending-switch marker; Undo re-runs the switch backward.",
+    "result-failed": "SwitchResult failed: the switch did not complete, nothing changed.",
+    "could-not-switch": "A pre-restart failure (switchStatus phase 'failed', or the 60s reconnect timeout) - shown as a plain OK popup, separate from the post-restart SwitchResult above.",
+    "download-ready": "packaged mode, switchStatus phase 'manual': the exe was downloaded+verified but does not self-restart; the person runs the installer themselves.",
+  };
+  function set(s) {
+    document.getElementById("behindwrap").classList.toggle("show", READY.indexOf(s) !== -1);
+    READY.forEach(function (r) {
+      var el = document.querySelector('[data-only="' + r + '"]');
+      if (el) el.classList.toggle("show", r === s);
+    });
+    document.querySelectorAll('[data-only="loading"],[data-only="rate-limited"],[data-only="error"]').forEach(function (el) {
+      el.classList.toggle("show", el.dataset.only === s);
+    });
+    OVERLAY.forEach(function (o) {
+      var el = document.querySelector('[data-only="' + o + '"]');
+      if (el) el.classList.toggle("show", o === s);
+    });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + (NOTES[s] || "");
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (b) { set(b.dataset.s); return; }
+  });
+  document.getElementById("caret").addEventListener("click", function () {
+    var log = document.getElementById("commitlog");
+    var open = log.style.display !== "none";
+    log.style.display = open ? "none" : "flex";
+    this.textContent = open ? "Show the 11 commits" : "Hide the 11 commits";
+  });
+  document.querySelectorAll("[data-open]").forEach(function (b) {
+    b.addEventListener("click", function () { set(b.dataset.open); });
+  });
+  set(new URLSearchParams(location.search).get("state") || "ready");
+})();
+</script>
+</body>
+</html>

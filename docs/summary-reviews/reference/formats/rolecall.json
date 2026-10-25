@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/rolecall",
+  "sourcePath": "docs/reference/formats/rolecall.md",
+  "sourceHash": "sha256:4618d38e949354be7daf29ffd8277b6a0cf84a57a0736b611adc1a72b6764cea",
+  "semanticSummaryHash": "sha256:6d856a523597e9696ca83309cf71bff48d3c8e2128689f603477738d5bdbbead",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:13.673Z"
+}

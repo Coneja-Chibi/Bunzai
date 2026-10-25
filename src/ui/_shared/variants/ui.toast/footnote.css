@@ -1,0 +1,5 @@
+/** ui.toast footnote: a new status note stays in the footer line, where a footnote lives, and is marked with a dagger and set in ink. It never leaves the line, so it cannot cover the page or the index rail. */
+html[data-surface-ui-toast="footnote"] #status .seg.note[data-toast="live"] { text-decoration: underline; text-underline-offset: .2em; }
+html[data-surface-ui-toast="footnote"] #status .seg.note[data-toast="live"]::before { content: "\2020"; margin-right: .4rem; }
+html[data-surface-ui-toast="footnote"] #status .seg.note[data-toast="live"] .sep { display: none; }
+html[data-surface-ui-toast="footnote"] #status .seg.note[data-toast="live"] .k { color: var(--bk-text); font-weight: 600; font-style: italic; }

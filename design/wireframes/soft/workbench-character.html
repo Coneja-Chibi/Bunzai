@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench: character editor</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Shared skeleton for every workbench-/agent- soft wireframe: the Dock (fluid, marks only under
+ * 46rem of window width - kept exactly as approved, reused unchanged on every page in this set) and
+ * the wf-bar/wf-note pattern. Page content sits in .stage.
+ * Known gap: soft-parts.css sets .s-app small/.s-app kbd and .wf-bar text at 11px,
+ * under this brief's 12px floor - overridden here and on every other page in this set.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+/* The Dock's mark-only collapse answers the WHOLE WINDOW, same as the app's real locked
+   narrow-screen mode and the user-driven slim-dock strip - so this one rule is @media, not
+   @container. Every pane-level fold below it (.pane, .stage) uses @container instead. */
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; container-type: inline-size; background: var(--canvas); }
+/* Fixed wf-bar/wf-note sit over the last ~170px of the page on purpose (wireframe-only chrome);
+   real content gets that much breathing room at the foot so nothing genuine hides under them. */
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+/* wf-bar/wf-note are fixed-position wireframe-only chrome; at phone width they must not float over
+   the content or each other, so they drop into normal flow and stack full width. */
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+
+/* ---- lens strip ---- */
+.lens { display: flex; align-items: center; gap: 4px; padding: 10px 20px; box-shadow: inset 0 -1px 0 var(--seam); overflow-x: auto; }
+.lens button { background: none; border: 0; padding: 6px 10px; color: var(--text-dim); font: 500 .85rem var(--font-body); white-space: nowrap; cursor: pointer; }
+.lens button.on { color: var(--text); box-shadow: inset 0 -2px 0 var(--deck-character); font-weight: 700; }
+.lens .full { color: var(--text-dim); font: 500 12px var(--font-mono); margin-left: 2px; }
+.lens .grow { flex: 1; }
+.lens .count { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.lens .toggles { display: flex; gap: 6px; }
+.lens .toggles button { box-shadow: inset 0 0 0 1px var(--seam); }
+.lens .toggles button.on { box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent); }
+
+/* ---- editor head ---- */
+.ehead { display: flex; align-items: center; gap: 14px; padding: 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.ehead .name { flex: 1; min-width: 12rem; }
+.ehead .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip-ok { box-shadow: inset 0 0 0 1px var(--stage-ok); color: var(--stage-ok); }
+.chip-need { box-shadow: inset 0 0 0 1px var(--stage-warn); color: var(--stage-warn); }
+.scale { display: flex; align-items: center; gap: 4px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.scale button { background: none; border: 0; color: inherit; cursor: pointer; padding: 2px 6px; box-shadow: inset 0 0 0 1px var(--seam); }
+
+/* ---- mode bar ---- */
+.modebar { display: flex; align-items: center; gap: 10px; padding: 10px 20px; flex-wrap: wrap; }
+.seg { display: flex; box-shadow: inset 0 0 0 1px var(--seam); }
+.seg button { background: none; border: 0; padding: 6px 12px; color: var(--text-dim); font: 600 .85rem var(--font-body); cursor: pointer; }
+.seg button.on { background: var(--shell-panel-2); color: var(--text); }
+
+/* ---- bento grid ---- */
+.bento { display: grid; grid-template-columns: 220px 1fr 1fr; gap: 14px; padding: 0 20px 24px; container-type: inline-size; }
+@container (max-width: 62rem) { .bento { grid-template-columns: 200px 1fr; } .bento .span2 { grid-column: span 2; } }
+@container (max-width: 34rem) { .bento { grid-template-columns: 1fr; } .bento .span2 { grid-column: span 1; } }
+.left { display: flex; flex-direction: column; gap: 12px; }
+.portrait { aspect-ratio: 2/3; background: linear-gradient(180deg, color-mix(in srgb, var(--deck-character) 45%, var(--stage-well)), var(--stage-well) 85%); display: grid; place-items: center; box-shadow: 0 0 0 1px var(--edge); }
+.portrait span { font-family: var(--font-fancy); font-size: 2.4rem; color: color-mix(in srgb, var(--stage-card) 35%, transparent); }
+.portlinks { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.bcard { --c: var(--deck-character); }
+.bcard .bh { display: flex; align-items: center; gap: 8px; padding: 10px 14px; box-shadow: inset 0 -1px 0 var(--seam); }
+.bcard .bb { padding: 12px 14px; }
+.bcard textarea, .bcard input { min-height: 5rem; resize: vertical; }
+.rail { display: flex; flex-direction: column; gap: 8px; }
+.rail button { display: flex; align-items: center; gap: 6px; justify-content: center; }
+.dragh { cursor: grab; color: var(--text-faint); }
+.tail { padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-dim); font-size: .85rem; }
+.tail b { color: var(--text-soft); display: block; margin-bottom: 4px; font-weight: 600; }
+.advanced { margin: 0 20px 24px; }
+.advanced summary { cursor: pointer; padding: 10px 14px; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-soft); font: 600 .88rem var(--font-body); list-style: none; }
+.advanced summary::-webkit-details-marker { display: none; }
+.advanced summary::before { content: "\25B8  "; color: var(--text-dim); }
+.advanced[open] summary::before { content: "\25BE  "; }
+.advbody { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-top: 10px; }
+.advbody .tail { grid-column: span 2; }
+@container (max-width: 40rem) { .advbody { grid-template-columns: 1fr; } .advbody .tail { grid-column: span 1; } }
+[data-state="steps"] .advanced, [data-state="workshop"] .advanced, [data-state="playbill"] .advanced { display: none; }
+
+/* ---- playbill (acts you page through) ---- */
+.playbill { display: none; padding: 0 20px 24px; }
+[data-state="playbill"] .playbill { display: block; }
+[data-state="playbill"] .bento { display: none; }
+.acts { display: flex; gap: 6px; margin-bottom: 14px; }
+.acts button { padding: 6px 12px; box-shadow: inset 0 0 0 1px var(--seam); background: none; color: var(--text-dim); cursor: pointer; }
+.acts button.on { color: var(--text); box-shadow: inset 0 0 0 1px var(--accent); }
+
+/* ---- steps / casting quiz ---- */
+.steps { display: none; padding: 30px 20px 40px; }
+[data-state="steps"] .steps, [data-state="phone"] { }
+[data-state="steps"] .steps { display: grid; grid-template-columns: 1fr 340px; gap: 24px; max-width: 74rem; margin: 0 auto; }
+[data-state="steps"] .lens, [data-state="steps"] .modebar, [data-state="steps"] .bento { display: none; }
+.qcard { padding: 26px; }
+.qcard .act { margin-bottom: 6px; }
+.dots { display: flex; gap: 3px; margin: 10px 0 4px; flex-wrap: wrap; }
+.dots i { width: 6px; height: 6px; background: var(--seam); display: inline-block; }
+.dots i.done { background: var(--deck-character); }
+.qn { font: 500 12px var(--font-mono); color: var(--text-dim); margin-bottom: 14px; }
+.qcard h2 { margin: 10px 0 6px; }
+.qcard .hint { color: var(--text-soft); font-style: italic; font-size: .92rem; margin-bottom: 16px; }
+.qrow { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
+.qside { padding: 20px; }
+.qside .art { aspect-ratio: 2/3; background: linear-gradient(180deg, color-mix(in srgb, var(--deck-character) 45%, var(--stage-well)), var(--stage-well) 85%); margin-bottom: 12px; }
+.qside .name { font-size: 1.2rem; }
+.qside .meta { margin-top: 8px; color: var(--text-dim); font-size: .85rem; }
+
+/* ---- workshop switch ---- */
+.workshop { display: none; padding: 20px; }
+[data-state="workshop"] .workshop { display: grid; grid-template-columns: 200px 1fr; gap: 1px; background: var(--seam); }
+[data-state="workshop"] .bento { display: none; }
+.wtriggers, .wcode { background: var(--canvas); padding: 14px; }
+.wcode pre { background: var(--stage-row); padding: 12px; font: 12px var(--font-mono); color: var(--text-soft); overflow: auto; }
+
+/* ---- export dialog ---- */
+.exportdlg { width: 480px; }
+.platgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0; }
+.platgrid button { padding: 8px; box-shadow: inset 0 0 0 1px var(--seam); background: none; color: var(--text-soft); cursor: pointer; }
+.platgrid button.on { box-shadow: inset 0 0 0 1px var(--accent); color: var(--text); }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench on"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav><div class="stage">
+
+    <nav class="lens">
+      <button class="on">Bunraku<span class="full">FULL CARD</span></button>
+      <button>SillyTavern</button><button>RoleCall</button><button>RisuAI</button><button>Lumiverse</button>
+      <button>Backyard</button><button>Agnai</button><button>Marinara</button><button>Chub</button><button>Default</button>
+      <span class="grow"></span>
+      <span class="count">6 of 6 fields kept</span>
+      <span class="toggles"><button class="on" title="Off-target fields drop out">Hide</button><button title="Not built yet - same as Hide today">Dim</button></span>
+    </nav>
+
+    <header class="ehead">
+      <button type="button" class="s-btn ghost ico" title="Back to the Library" style="padding:8px 10px">&larr;</button>
+      <span class="s-h3 name" style="font-size:1.4rem">Marguerite Vane <span class="s-meta">1.0.0</span></span>
+      <span class="chips">
+        <span class="s-chip chip-ok">Portrait</span><span class="s-chip chip-ok">Name</span>
+        <span class="s-chip chip-need">Core Prompts</span><span class="s-chip chip-ok">Greeting</span>
+        <span class="s-chip chip-need">Tags</span><span class="s-chip chip-need">Lens Check</span>
+      </span>
+      <span class="scale"><button aria-label="Smaller">-</button>100%<button aria-label="Bigger">+</button></span>
+      <button type="button" class="s-btn ghost" style="padding:8px 14px">Saved locally</button>
+      <button type="button" class="s-btn" style="padding:8px 14px" onclick="setState('export')">Export</button>
+    </header>
+
+    <div class="modebar">
+      <span class="seg"><button class="on">Bento</button><button>Playbill</button></span>
+      <span class="seg"><button class="on">Grid</button><button onclick="setState('steps')">Steps</button></span>
+      <span class="seg"><button class="on">Fields</button><button onclick="setState('workshop')">Workshop</button></span>
+    </div>
+
+    <div class="bento">
+      <div class="left">
+        <div class="portrait"><span>M</span></div>
+        <div class="portlinks">
+          <button type="button" class="s-btn ghost">Manage sprites &middot; 4</button>
+          <button type="button" class="s-btn ghost">Named assets &middot; 1</button>
+        </div>
+        <div class="s-card bcard flat" style="--c: var(--deck-lorebook)">
+          <div class="bh"><span class="s-h3">Knowledge</span></div>
+          <div class="bb">
+            <p class="s-meta" style="margin-bottom:8px">Attached lorebooks</p>
+            <div class="s-leader"><span>Keeper's Log</span><i></i><span class="s-meta">40 entries</span></div>
+            <button type="button" class="s-btn ghost" style="margin-top:10px; width:100%">Attach lorebook</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="s-card bcard span2" style="--c: var(--deck-character)">
+        <div class="bh"><span class="s-h3">Identity</span><span class="s-meta">fixed &middot; always first</span></div>
+        <div class="bb" style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+          <input class="s-input" value="Marguerite Vane" aria-label="Name">
+          <input class="s-input" value="Keeper of the lighthouse" aria-label="Tagline">
+          <input class="s-input" value="Marguerite Elodie Vane" aria-label="Full name">
+          <input class="s-input" value="The Lighthouse's Keeper" aria-label="Title">
+          <input class="s-input" value="34" aria-label="Age">
+          <input class="s-input" value="she/her" aria-label="Pronouns">
+        </div>
+      </div>
+
+      <div class="s-card bcard span2" style="--c: var(--deck-character)">
+        <div class="bh"><span class="dragh">&#8942;&#8942;</span><span class="s-h3">Description</span></div>
+        <div class="bb"><textarea class="s-input">Tall, sea-worn, hands stained with lamp oil. She keeps the light burning and asks no one why they came up the stairs.</textarea></div>
+      </div>
+      <div class="s-card bcard" style="--c: var(--deck-character)">
+        <div class="bh"><span class="dragh">&#8942;&#8942;</span><span class="s-h3">Personality</span></div>
+        <div class="bb"><textarea class="s-input">Patient, watchful, dry-humored. Trusts the sea more than most people.</textarea></div>
+      </div>
+      <div class="s-card bcard" style="--c: var(--deck-character)">
+        <div class="bh"><span class="dragh">&#8942;&#8942;</span><span class="s-h3">Scenario</span></div>
+        <div class="bb"><textarea class="s-input">A storm has grounded every boat but yours.</textarea></div>
+      </div>
+      <div class="s-card bcard span2" style="--c: var(--deck-character)">
+        <div class="bh"><span class="dragh">&#8942;&#8942;</span><span class="s-h3">First message</span></div>
+        <div class="bb"><textarea class="s-input">You came up the stairs without a lantern. Brave, or a little foolish?</textarea></div>
+      </div>
+      <div class="s-card bcard span2" style="--c: var(--deck-character)">
+        <div class="bh"><span class="dragh">&#8942;&#8942;</span><span class="s-h3">Example messages</span></div>
+        <div class="bb"><textarea class="s-input">{{user}}: Who lit the lamp before you?
+{{char}}: My mother. And hers before that.</textarea></div>
+      </div>
+
+    </div>
+
+    <details class="advanced">
+      <summary>Advanced: Variables, Sealed Cargo, and fields not shown above</summary>
+      <div class="advbody">
+        <div class="s-card bcard flat" style="--c: var(--deck-regex)">
+          <div class="bh"><span class="s-h3">Variables &middot; Macro Inventory</span></div>
+          <div class="bb"><p class="s-meta">{{user}} &middot; 4 uses<br>{{char}} &middot; 6 uses<br>{{random}} &middot; 1 use</p></div>
+        </div>
+        <div class="s-card bcard flat" style="--c: var(--deck-fog, var(--text-dim))">
+          <div class="bh"><span class="s-h3">Sealed Cargo</span><span class="s-meta">read only</span></div>
+          <div class="bb"><p class="s-meta">The original SillyTavern V3 file, whole and untouched, so a round-trip export loses nothing it carried in.</p></div>
+        </div>
+        <div class="tail"><b>Fields this editor does not write yet</b>creatorNotes, extensions.regen_prompt - visible here, read only, so nothing you imported quietly disappears.</div>
+      </div>
+    </details>
+
+    <div class="playbill">
+      <div class="acts"><button class="on">Act I &middot; Identity</button><button>Act II &middot; Voice</button><button>Act III &middot; Opening</button></div>
+      <div class="s-card bcard" style="--c: var(--deck-character); max-width: 40rem">
+        <div class="bh"><span class="s-h3">Identity</span></div>
+        <div class="bb" style="display:grid; gap:10px">
+          <input class="s-input" value="Marguerite Vane" aria-label="Name">
+          <input class="s-input" value="Keeper of the lighthouse" aria-label="Tagline">
+        </div>
+      </div>
+      <p class="s-meta" style="margin-top:10px">Playbill turns the same fields into acts you page through, one card at a time, instead of Bento's everything-at-once grid.</p>
+    </div>
+
+    <div class="steps">
+      <div class="qcard s-card flat">
+        <span class="s-act"><b>Casting</b></span>
+        <div class="dots"><i class="done"></i><i class="done"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="qn">2 of 49</p>
+        <h2 class="s-h2">What do we call them?</h2>
+        <p class="hint">The name people see first. You can change it anytime.</p>
+        <input class="s-input" value="Marguerite Vane" style="font-size:1.1rem; padding:12px 14px">
+        <div class="qrow"><button type="button" class="s-btn ghost">Back</button><button type="button" class="s-btn">Next</button></div>
+      </div>
+      <aside class="qside s-card flat">
+        <span class="s-act"><b>Your character</b> taking shape</span>
+        <div class="art"><span></span></div>
+        <p class="name s-h3">Marguerite Vane</p>
+        <p class="meta">~909 tokens &middot; 7 of 49 answered</p>
+      </aside>
+    </div>
+
+    <div class="workshop">
+      <div class="wtriggers">
+        <p class="s-h3">Triggers</p>
+        <p class="s-meta" style="margin-top:8px">on greeting &middot; on user turn &middot; on tool call</p>
+      </div>
+      <div class="wcode">
+        <p class="s-h3">Behavior script</p>
+        <pre>on("greeting", function(ctx)
+  ctx.setVar("mood", "watchful")
+end)</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrimExport"><div class="dlg exportdlg">
+  <p class="s-h3">Export Marguerite Vane</p>
+  <p class="msg" style="margin-top:8px">Pick a target platform. Fields it cannot carry are named, not silently dropped.</p>
+  <div class="platgrid">
+    <button class="on">SillyTavern</button><button>RoleCall</button><button>RisuAI</button>
+    <button>Lumiverse</button><button>Chub</button><button>PNG card</button>
+  </div>
+  <div class="row"><button type="button" class="s-btn ghost" onclick="setState('loaded')">Cancel</button><button type="button" class="s-btn">Export</button></div>
+</div></div>
+
+<div class="wf-note">
+  <b>Character editor.</b> Grid shows every field at once (Bento) or paged (Playbill); Steps asks one
+  question at a time. Save and Export sit at the top right. Variables, Sealed Cargo, and fields this
+  editor cannot write yet are grouped under Advanced, below the fields.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="loaded" class="on">Grid: Bento</button>
+  <button data-s="playbill">Grid: Playbill</button>
+  <button data-s="steps">Steps</button>
+  <button data-s="workshop">Workshop</button>
+  <button data-s="export">Export dialog</button>
+  <button data-s="phone">Phone width</button>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  function setState(s) {
+    var real = (s === 'phone') ? 'loaded' : s;
+    body.setAttribute('data-state', real);
+    document.getElementById('scrimExport').classList.toggle('show', s === 'export');
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+  }
+  window.setState = setState;
+  var q = new URLSearchParams(location.search);
+  setState(q.get('state') || 'loaded');
+  document.getElementById('wfbar').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setState(b.getAttribute('data-s')); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+/**
+ * Bunraku design tokens - THE single CSS source of truth, transcribed from design/DECISIONS.md.
+ * Apps consume tokens only; hardcoding a color or layout pixel in an app is a review rejection.
+ * Pixels appear ONLY for ornament (ink borders, stamp offsets) per the fluid law.
+ */
+/* The house fonts ship with the app (src/ui/theme/fonts, each under the SIL Open Font License,
+   its OFL-<font>.txt beside it): variable woff2, Latin and Latin Extended. They are served from the
+   app itself, so it stays usable offline and the CSP still grants no remote font or stylesheet. The
+   urls are relative to this file, so the wireframes (design/) load the same files from disk. */
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/archivo-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Archivo"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/archivo-latin-ext-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Cinzel"; font-style: normal; font-weight: 400 900; font-display: swap; src: url("fonts/cinzel-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Cinzel"; font-style: normal; font-weight: 400 900; font-display: swap; src: url("fonts/cinzel-latin-ext-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/fraunces-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/fraunces-latin-ext-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url("fonts/fraunces-latin-italic.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url("fonts/fraunces-latin-ext-italic.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/atkinson-hyperlegible-latin-normal-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/atkinson-hyperlegible-latin-ext-normal-400.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/atkinson-hyperlegible-latin-normal-700.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Atkinson Hyperlegible"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/atkinson-hyperlegible-latin-ext-normal-700.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "IBM Plex Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/ibm-plex-mono-latin-normal-500.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "IBM Plex Mono"; font-style: normal; font-weight: 500; font-display: swap; src: url("fonts/ibm-plex-mono-latin-ext-normal-500.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/inter-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Inter"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/inter-latin-ext-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Fredoka"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("fonts/fredoka-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Fredoka"; font-style: normal; font-weight: 300 700; font-display: swap; src: url("fonts/fredoka-latin-ext-normal.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Courier Prime"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/courier-prime-latin-normal-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Courier Prime"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/courier-prime-latin-ext-normal-400.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Courier Prime"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/courier-prime-latin-normal-700.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Courier Prime"; font-style: normal; font-weight: 700; font-display: swap; src: url("fonts/courier-prime-latin-ext-normal-700.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Lexend"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("fonts/lexend-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "OpenDyslexic"; font-style: normal; font-weight: 400; font-display: swap; src: url("fonts/opendyslexic-latin-normal-400.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Crimson Pro"; font-style: normal; font-weight: 200 900; font-display: swap; src: url("fonts/crimson-pro-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Playfair Display"; font-style: normal; font-weight: 400 900; font-display: swap; src: url("fonts/playfair-display-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 800; font-display: swap; src: url("fonts/jetbrains-mono-latin-normal.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root {
+  /* Immutable host-only palette for password, recovery, package approval, and write confirmation. */
+  --host-ink:#f3f1ee; --host-canvas:#111113; --host-panel:#1b1b1e; --host-row:#19191b;
+  --host-edge:#4b4842; --host-seam:#343230; --host-text-soft:#d4d1cc; --host-text-dim:#b8b4ad;
+  --host-gold:#bca56d; --host-rose:#ff9ebb; --host-rose-deep:#854256;
+  --host-action:#075b8e; --host-selection:#6942a7; --host-success:#17613c; --host-warning:#765000; --host-danger:#a51c36;
+  --host-boundary:#77736c; --host-focus:#dfc982; --host-disabled:#29262d; --host-disabled-fg:#d0cbd3;
+  --host-danger-bg:#3a1d2a; --host-danger-edge:#7a3a52; --host-danger-text:#ff9fb1; --host-ok:#76e3a8;
+  --host-warn:#ffe08a; --host-warn-ink:#3a2f12; --host-link:#bcd7ff;
+  /* Velvet premiere landing: theme-stable Vaudeville stage roles. */
+  --premiere-canvas: #0a0a0b;
+  --premiere-panel: #141216;
+  --premiere-hard: #000000;
+  --premiere-text: #fafaf9;
+  --premiere-rose: #e11d48;
+  --premiere-violet: #9c72ff;
+  --premiere-gold: #c59a46;
+  --premiere-sapphire: #086eae;
+
+  /* THE PALETTE, one source. Theme v2: the painter (src/ui/shell/theme.ts) writes these --bk-* names on the
+     root from the verified theme package, and everything below aliases them. This block is the neutral core
+     fallback shown while no package is approved; a unit test holds it to the same contrast floors a theme meets.
+     Names follow design/system/tokens/color.css. */
+  /* Native RoleCall dock paint; registered shell.nav variants may replace its cosmetic roles. */
+  --bk-dock-top: rgb(18 18 24 / .95); --bk-dock-bottom: rgb(12 12 16 / .98);
+  --bk-dock-pill-top: rgb(18 18 24 / .92); --bk-dock-pill-bottom: rgb(12 12 16 / .96);
+  --bk-dock-muted: #666666; --bk-dock-light: #ffffff; --bk-dock-shadow: #000000;
+  --bk-dock-toggle: #52525b; --bk-dock-toggle-hover: #d4d4d8;
+  --bk-dock-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --bk-surface-well: #09090a;  --bk-surface-base: #111113;   --bk-surface-sunken: #19191b;
+  --bk-surface-field: #131315; --bk-surface-panel: #1b1b1e;  --bk-surface-raised: #222225; --bk-surface-ink: #09090a;
+  --bk-line-strong: #bca56d;   --bk-line: #4b4842;           --bk-line-track: #343230;
+  --bk-line-control: #77736c;  --bk-focus-color: #dfc982;
+  --bk-text: #f3f1ee;          --bk-text-soft: #d4d1cc;      --bk-text-dim: #b8b4ad;
+  --bk-text-faint: #a29e97;    --bk-text-on-tint: #111113;   --bk-text-on-deep: #ffffff;
+  --bk-role-brand: #c5b99d;    --bk-role-brand-text: #c5b99d;   --bk-role-brand-deep: #665b46;
+  --bk-role-action: #4aa3e8;   --bk-role-action-text: #a9d8ff;  --bk-role-action-deep: #075b8e;
+  --bk-role-select: #b79bff;   --bk-role-select-text: #d9c8ff;  --bk-role-select-deep: #6942a7;
+  --bk-role-ok: #5fe3a1;       --bk-role-ok-text: #76e3a8;      --bk-role-ok-deep: #17613c;
+  --bk-role-warn: #ffc65a;     --bk-role-warn-text: #ffe08a;    --bk-role-warn-deep: #765000;
+  --bk-role-danger: #ff7a8c;   --bk-role-danger-text: #ff9fb1;  --bk-role-danger-deep: #a51c36;
+  --bk-role-info: #2fd9cf;     --bk-role-info-text: #5fe6dd;    --bk-role-info-deep: #006963;
+  /* shape, type and motion defaults; a theme's shape, type and motion fields replace them */
+  --bk-frame-w: 1px; --bk-frame-gap: 0px; --bk-frame-inner-w: 0px; --bk-frame-shadow-x: 0px; --bk-frame-shadow-y: 0px; --bk-bracket-rest: 0;
+  --bk-density: 1; --bk-type-scale: 1;
+  --bk-font-display: "Cinzel", serif; --bk-font-name: "Fraunces", serif; --bk-font-ui: "Fraunces", serif;
+  --bk-font-body: "Atkinson Hyperlegible", sans-serif; --bk-font-mono: "IBM Plex Mono", monospace;
+  --bk-dur-instant: 80ms; --bk-dur-fast: 120ms; --bk-dur-base: 200ms; --bk-dur-slow: 320ms;
+  --bk-ease-move: cubic-bezier(0.2, 0.8, 0.2, 1); --bk-lift-y: -2px;
+
+  --preview-paper-canvas: #f8f2f5;
+  --preview-paper-panel: #fffafc;
+  --preview-paper-ink: #2a2230;
+  --preview-paper-edge: #d9cbd6;
+  --preview-stage-canvas: #1a1620;
+  --preview-stage-panel: #26202f;
+  --preview-stage-ink: #f5ecf0;
+  --preview-stage-edge: #4a3f55;
+  --preview-theater-canvas: #0a0a0b;
+  --preview-theater-panel: #141216;
+  --preview-theater-ink: #fafaf9;
+  --preview-theater-edge: #e3bd65;
+  --preview-greenroom-canvas: #0a0a0b;
+  --preview-greenroom-panel: #1c1a22;
+  --preview-greenroom-ink: #fafaf9;
+  --preview-greenroom-edge: #e11d48;
+
+  /* lore platform host accents (logos / press kits; minor use only: rail, dot, on-state). Fixed
+     external brand marks - NOT reskinned by the soft retheme, unlike the app's own --rose. */
+  --host-st: #c62828;   /* SillyTavern logo crimson, UI-lifted for dark stage */
+  --host-rc: #e11d48;   /* RoleCall / Bunraku house rose (fixed logo mark; --rose is the softer brand pink now) */
+  --host-nai: #9773ff;  /* NovelAI press-kit purple */
+  --host-risu: #6ea8ff; /* Risu: calm stage-var blue until a stronger mark is locked */
+
+  /* deck identity accents (per entity-kind signature hues, one pastel per kind - the site's five,
+     plus lilac, soft identity 2026-09-28). Theme-stable; consumed through decks.ts
+     -> the --a custom property on cards/chips/tabs. */
+  --deck-character: #ffc9ae;  /* peach */
+  --deck-lorebook: #d9c8ff;   /* lilac */
+  --deck-persona: #bfead7;    /* mint */
+  --deck-pack: #ffb3c7;       /* pink */
+  --deck-preset: #bcd7ff;     /* sky */
+  --deck-regex: #ffeaa8;      /* butter */
+  --deck-fog: #a898ab; /* unknown kind fallback */
+  /* deep companions for TEXT-BEARING deck fills (white labels clear the deep-companion target,
+     ~6.5-7.2:1); bright originals keep borders/spines/marks. Values = deepAccent(hue) in
+     _shared/color-math.ts. */
+  --deck-character-deep: #735241;
+  --deck-lorebook-deep: #63587c;
+  --deck-persona-deep: #476356;
+  --deck-pack-deep: #7c4958;
+  --deck-preset-deep: #495973;
+  --deck-regex-deep: #645632;
+  --deck-fog-deep: #645967;
+}
+
+/* Aliases and derived plates: ONE declaration list for the page and the protected layer, so each resolves against its own --bk-* values. */
+:root, .host-protected {
+  /* derived plates and marks: washes of a role over a surface, so they follow any palette */
+  --bk-accent: var(--bk-role-brand); --bk-accent-deep: var(--bk-role-brand-deep);
+  --bk-ok-bg: color-mix(in srgb, var(--bk-role-ok) 16%, var(--bk-surface-base));
+  --bk-warn-bg: color-mix(in srgb, var(--bk-role-warn) 16%, var(--bk-surface-base));
+  --bk-danger-bg: color-mix(in srgb, var(--bk-role-danger) 16%, var(--bk-surface-base));
+  --bk-danger-line: color-mix(in srgb, var(--bk-role-danger) 60%, var(--bk-surface-base));
+
+  /* brand, and the user-pickable house accent (chrome, empty states). The default accent is the brand
+     role of the active palette, never a fixed pink; a user pick replaces the brand and action roles. */
+  --rose: var(--bk-role-brand);
+  --rose-deep: var(--bk-role-brand-deep);
+  --accent: var(--bk-accent);
+  --accent-deep: var(--bk-accent-deep);
+
+  /* legacy shell tokens, aliased to the palette */
+  --ink: var(--bk-text); --paper: var(--bk-surface-base); --paper-2: var(--bk-surface-sunken); --panel: var(--bk-surface-panel);
+  --stage: var(--bk-surface-well); --stage-2: var(--bk-surface-field); --muted: var(--bk-text-dim); --ghost: var(--bk-line-track);
+  --canvas: var(--bk-surface-base); --chrome: var(--bk-surface-well); --shell-panel: var(--bk-surface-sunken); --shell-panel-2: var(--bk-surface-raised);
+  --face: var(--bk-surface-panel); --edge: var(--bk-line); --seam: var(--bk-line-track);
+  --text: var(--bk-text); --text-soft: var(--bk-text-soft); --text-dim: var(--bk-text-dim); --text-faint: var(--bk-text-faint);
+  --link: var(--bk-role-action-text);
+  accent-color: var(--accent);
+  --stamp-bg: var(--bk-surface-raised); --stamp-fg: var(--bk-text);
+  --status-bg: var(--bk-surface-ink); --status-fg: var(--bk-text-soft); --status-dim: var(--bk-text-faint);
+  --tooth: color-mix(in srgb, var(--bk-text) 2%, transparent);
+  --q-stage: var(--bk-surface-well); --q-stage-deck: var(--bk-surface-sunken);
+  --chrome-structure: var(--bk-line-strong);
+  --action-primary: var(--bk-role-action-deep); --action-primary-fg: var(--bk-text-on-deep);
+  --selection: var(--bk-role-select-deep); --selection-fg: var(--bk-text-on-deep);
+  --success: var(--bk-role-ok-deep); --success-fg: var(--bk-text-on-deep);
+  --warning: var(--bk-role-warn-deep); --warning-fg: var(--bk-text-on-deep);
+  --danger: var(--bk-role-danger-deep); --danger-fg: var(--bk-text-on-deep);
+  --control-boundary: var(--bk-line-control); --focus-ring: var(--bk-focus-color);
+  --disabled-bg: var(--bk-surface-raised); --disabled-fg: var(--bk-text-dim);
+  --overlay: color-mix(in srgb, var(--bk-surface-ink) 82%, transparent);
+  --scrim: color-mix(in srgb, var(--bk-surface-ink) 90%, transparent);
+  --shadow-ink: color-mix(in srgb, var(--bk-surface-ink) 60%, transparent);
+  --shadow-ink-deep: color-mix(in srgb, var(--bk-surface-ink) 85%, transparent);
+
+  /* stage chrome tokens, aliased to the palette: they follow the theme in every theme */
+  --stage-floor: var(--bk-surface-base); --stage-deck: var(--bk-surface-panel); --stage-dim: var(--bk-text-faint);
+  --stage-faint: var(--bk-line-track); --stage-paper: var(--bk-text); --stage-black: var(--bk-surface-ink); --stage-white: var(--bk-text-on-deep);
+  --stage-panel: var(--bk-surface-panel); --stage-row: var(--bk-surface-sunken); --stage-sunken: var(--bk-surface-well);
+  --stage-ink: var(--bk-text-on-tint); --stage-well: var(--bk-surface-well); --stage-seam: var(--bk-line-track);
+  --stage-line: var(--bk-line-control); --stage-mute: var(--bk-text-dim); --stage-soft: var(--bk-text-soft);
+  --stage-text-dim: var(--bk-text-dim); --stage-card: var(--bk-text); --stage-kicker: var(--bk-line-strong);
+  --stage-ok: var(--bk-role-ok-text); --stage-ok-bg: var(--bk-ok-bg);
+  --stage-macro: var(--bk-role-select-text); --stage-var: var(--bk-role-action-text);
+  --stage-warn: var(--bk-role-warn-text); --stage-warn-ink: var(--bk-warn-bg);
+  --stage-danger-bg: var(--bk-danger-bg); --stage-danger-edge: var(--bk-danger-line); --stage-danger-text: var(--bk-role-danger-text);
+  --stage-danger-hot: var(--bk-role-danger-text); --stage-danger-deep: color-mix(in srgb, var(--bk-role-danger) 8%, var(--bk-surface-ink));
+  --stage-link: var(--bk-role-action-text); --stage-rose-well: color-mix(in srgb, var(--bk-role-brand) 10%, var(--bk-surface-well));
+  /* TrackHare's own orange (2026-09-28), pulled toward the text color so it reads on light and dark */
+  --prop-hare: color-mix(in srgb, #ff6b35 70%, var(--bk-text));
+
+  /* type roles: the theme's type field picks the faces */
+  --font-ui: var(--bk-font-ui);  /* UI chrome: labels, tabs, buttons, body text of a wing */
+  --font-big: var(--font-ui);  /* legacy name of --font-ui */
+  --font-fancy: var(--bk-font-display);
+  --font-body: var(--bk-font-body);
+  --font-mono: var(--bk-font-mono);
+  --soft-axes: "SOFT" 100, "WONK" 1;
+
+  /* fluid type scale (16px body floor; the theme's type scale step only enlarges) */
+  --text-body: calc(clamp(1rem, 0.95rem + 0.2vw, 1.125rem) * var(--bk-type-scale));
+  --text-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.4rem);
+  --text-control: 0.875rem;
+  --text-meta: 0.75rem;
+  /* ornament: a thin line and one soft plum shadow, not 3px ink and a black stamp */
+  --ink-border: var(--bk-frame-w) solid var(--edge);
+  --stamp-x: 10px;
+  --stamp-y: 10px;
+  --stamp-shadow: var(--stage-black);
+
+  /* spacing rhythm: the theme's density scales it */
+  --gap-s: calc(0.5rem * var(--bk-density));
+  --gap-m: calc(1rem * var(--bk-density));
+  --gap-l: calc(1.75rem * var(--bk-density));
+
+}
+
+/* RoleCall chrome tokens. The names every scene surface uses for RoleCall's sizes, corners, zinc steps and wing colors.
+   Defaults resolve to the theme's own values (square corners, the house sizes, its palette), so a theme with shape.chrome
+   "bunraku" is unchanged by a surface that reads them; shape.chrome "rolecall" (painted as html[data-chrome]) swaps in RoleCall's
+   exact values, taken from RoleCall's global styles, Tailwind v4 zinc and RoleCall's standard layout (wing colors). */
+:root {
+  --rc-text-micro: var(--text-meta); --rc-text-xs: var(--text-meta); --rc-text-sm: var(--text-control);
+  --rc-text-wing: var(--text-control); --rc-text-ctl: var(--text-control);
+  --rc-radius-sm: 0; --rc-radius: 0; --rc-radius-md: 0; --rc-radius-lg: 0; --rc-radius-full: 0;
+  --rc-zinc-50: var(--bk-text); --rc-zinc-100: var(--bk-text); --rc-zinc-200: var(--bk-text-soft); --rc-zinc-300: var(--bk-text-soft);
+  --rc-zinc-400: var(--bk-text-dim); --rc-zinc-500: var(--bk-text-faint); --rc-zinc-600: var(--bk-line-control); --rc-zinc-700: var(--bk-line);
+  --rc-zinc-800: var(--bk-surface-raised); --rc-zinc-900: var(--bk-surface-panel); --rc-zinc-950: var(--bk-surface-base);
+  --rc-wing-booth: var(--accent); --rc-wing-cast: var(--deck-character); --rc-wing-prompting: var(--deck-preset);
+  --rc-wing-world: var(--deck-lorebook); --rc-wing-finalcut: var(--deck-regex); --rc-wing-props: var(--deck-regex);
+  --rc-wing-ai: var(--stage-var); --rc-wing-stage: var(--stage-macro); --rc-wing-context: var(--stage-warn);
+  --scrollbar-thumb: var(--edge);
+  --rc-tip: var(--bk-surface-panel); --rc-tip-detail: var(--bk-surface-sunken); --rc-hero-from: var(--bk-surface-field);
+  --rc-canvas: var(--bk-surface-base); --rc-violet-500: var(--bk-role-select);
+  --rc-sampler-temp: var(--bk-role-warn-text); --rc-sampler-topp: var(--bk-role-action-text); --rc-sampler-topk: var(--bk-role-ok-text);
+  --rc-sampler-response: var(--bk-role-select-text); --rc-sampler-context: var(--bk-role-info-text); --rc-sampler-penalty: var(--bk-role-brand-text);
+  --rc-font-inter: var(--bk-font-body);  /* the places RoleCall asks for Inter by name (WingShell, tooltips) */
+}
+:root[data-chrome="rolecall"] {
+  color-scheme: dark;
+  --text-body: calc(1rem * var(--bk-type-scale));
+  --rc-font-inter: "Inter", system-ui, sans-serif;
+  /* tooltip, tooltip detail card, hero gradient start, page canvas (WingShell, neo-ui); violet-500 as Tailwind v4 compiles it */
+  --rc-tip: #1c1a22; --rc-tip-detail: #111014; --rc-hero-from: #141318; --rc-canvas: #0a0a0b; --rc-violet-500: #8d54ff;
+  /* readout text classes in PresetPanel.tsx:2606-2710 (orange, blue, green, purple, yellow -400), compiled; penalty is pink-400, the
+     sixth readout color QuickPlayPanel's slider declares, since no RoleCall panel assigns a penalty hue */
+  --rc-sampler-temp: #ff8b1a; --rc-sampler-topp: #54a2ff; --rc-sampler-topk: #05df72;
+  --rc-sampler-response: #c07eff; --rc-sampler-context: #fac800; --rc-sampler-penalty: #fb64b6;
+  --rc-text-micro: 0.66rem; --rc-text-xs: 0.75rem; --rc-text-sm: 0.875rem; --rc-text-wing: 0.82rem; --rc-text-ctl: 0.78rem;
+  /* rounded-sm and rounded-md are 0 in RoleCall (the NEOBRUT override), a bare rounded is 4px, rounded-lg and -xl are 2px */
+  --rc-radius-sm: 0; --rc-radius: 4px; --rc-radius-md: 0; --rc-radius-lg: 2px; --rc-radius-full: 9999px;
+  --rc-zinc-50: #fafafa; --rc-zinc-100: #f4f4f5; --rc-zinc-200: #e4e4e7; --rc-zinc-300: #d4d4d8; --rc-zinc-400: #9f9fa9; --rc-zinc-500: #71717b;
+  --rc-zinc-600: #52525c; --rc-zinc-700: #3f3f46; --rc-zinc-800: #27272a; --rc-zinc-900: #18181b; --rc-zinc-950: #09090b;
+  --rc-wing-booth: #38bdf8; --rc-wing-cast: #ec4899; --rc-wing-world: #f59e0b; --rc-wing-prompting: #a78bfa; --rc-wing-finalcut: #a5b4fc;
+  --rc-wing-props: #06b6d4; --rc-wing-ai: #8b5cf6; --rc-wing-stage: #a855f7; --rc-wing-context: #8b5cf6;
+  /* globals.css:119-121: zinc-700 at 60% on a transparent track */
+  --scrollbar-thumb: color-mix(in srgb, var(--rc-zinc-700) 60%, transparent);
+}
+/* The Messenger layout's palette (plan 20; RoleCall apps/rc/src/components/scene/discord/discord.css). Like RoleCall's, it is the layout's own fixed set and ignores the theme.
+   Rail #1e1f22 :11, sidebar #2b2d31 :19, chat #313338 :1, user bar #232428 :36, hover #35373c :22, active #404249 :28, blurple #5865f2 :9, text #dbdee1 :1, bright #f2f3f5 :43,
+   muted #b5bac1 :23, faint #a0a4ac :69, input #383a40 :79, divider #35363c :18, header edge #26272b :41, pill #383b45 and #c9ceff :35, modal edge #44464d :95, close ring #767b87 :108,
+   focus #aab1ff :7, program field edge #494b53 :116, link #8cc8ff :75, settings scrim #14151bbf :91, modal shadow #0008 :95, drawer shadow #0007 :157, nav backdrop #0008 (the 640px step). */
+:root {
+  --msg-rail: #1e1f22; --msg-side: #2b2d31; --msg-chat: #313338; --msg-bar: #232428; --msg-hover: #35373c; --msg-active: #404249;
+  --msg-brand: #5865f2; --msg-text: #dbdee1; --msg-bright: #f2f3f5; --msg-mute: #b5bac1; --msg-faint: #a0a4ac; --msg-input: #383a40;
+  --msg-divider: #35363c; --msg-edge: #26272b; --msg-pill: #383b45; --msg-pill-text: #c9ceff; --msg-modal-edge: #44464d;
+  --msg-close-ring: #767b87; --msg-focus: #aab1ff; --msg-field-edge: #494b53; --msg-link: #8cc8ff; --msg-white: #fff;
+  --msg-scrim: #14151bbf; --msg-dim: #0008; --msg-shadow: #0008; --msg-drawer-shadow: #0007;
+  --msg-rail-w: 72px; --msg-side-w: 240px;
+}
+:root[data-chrome="rolecall"] body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* Reduced motion wins over every theme: the painter writes its durations inline, so this is !important. */
+@media (prefers-reduced-motion: reduce) {
+  :root, .host-protected { --bk-dur-instant: 0ms !important; --bk-dur-fast: 0ms !important; --bk-dur-base: 0ms !important; --bk-dur-slow: 0ms !important; --bk-lift-y: 0px !important; }
+}
+
+/* Explicitly restore real token consumers inside protected host-owned dialogs/permission surfaces. The aliases
+   above also apply here (the shared selector), so they resolve against THESE host values, never a theme's:
+   every --bk-* the theme painter can write is redeclared from the immutable --host-* palette
+   (tokens.test.ts holds the shared block's reads to this block). */
+/* The protected layer wins over mod styles by layer order: a layered !important beats every unlayered one, and
+   mod styles are injected unlayered (shell/theme-mod.ts). It holds the tokens, plus the two properties a mod could
+   otherwise inherit into a protected surface from an ancestor (visibility, pointer-events). Motion and the type
+   line stay below, unlayered, so the reduced-motion rule and component rules keep their meaning. */
+@layer protected {
+  .host-protected {
+    --bk-surface-well:var(--host-canvas) !important; --bk-surface-base:var(--host-canvas) !important; --bk-surface-sunken:var(--host-row) !important;
+    --bk-surface-field:var(--host-row) !important; --bk-surface-panel:var(--host-panel) !important; --bk-surface-raised:var(--host-panel) !important; --bk-surface-ink:var(--host-canvas) !important;
+    --bk-line-strong:var(--host-gold) !important; --bk-line:var(--host-edge) !important; --bk-line-track:var(--host-seam) !important;
+    --bk-line-control:var(--host-boundary) !important; --bk-focus-color:var(--host-focus) !important;
+    --bk-text:var(--host-ink) !important; --bk-text-soft:var(--host-text-soft) !important; --bk-text-dim:var(--host-text-dim) !important;
+    --bk-text-faint:var(--host-text-dim) !important; --bk-text-on-tint:var(--host-canvas) !important; --bk-text-on-deep:#ffffff !important;
+    --bk-role-brand:var(--host-rose) !important; --bk-role-brand-text:var(--host-rose) !important; --bk-role-brand-deep:var(--host-rose-deep) !important;
+    --bk-role-action:var(--host-link) !important; --bk-role-action-text:var(--host-link) !important; --bk-role-action-deep:var(--host-action) !important;
+    --bk-role-select:var(--host-link) !important; --bk-role-select-text:var(--host-link) !important; --bk-role-select-deep:var(--host-selection) !important;
+    --bk-role-ok:var(--host-ok) !important; --bk-role-ok-text:var(--host-ok) !important; --bk-role-ok-deep:var(--host-success) !important;
+    --bk-role-warn:var(--host-warn) !important; --bk-role-warn-text:var(--host-warn) !important; --bk-role-warn-deep:var(--host-warning) !important;
+    --bk-role-danger:var(--host-danger-text) !important; --bk-role-danger-text:var(--host-danger-text) !important; --bk-role-danger-deep:var(--host-danger) !important;
+    --bk-role-info:var(--host-link) !important; --bk-role-info-text:var(--host-link) !important; --bk-role-info-deep:var(--host-action) !important;
+    --bk-font-display:"Cinzel",serif !important; --bk-font-name:"Fraunces",serif !important; --bk-font-ui:"Fraunces",serif !important; --bk-font-body:"Atkinson Hyperlegible",sans-serif !important; --bk-font-mono:"IBM Plex Mono",monospace !important;
+    --bk-type-scale:1 !important; --bk-density:1 !important; --bk-frame-w:1px !important; --bk-frame-gap:0px !important; --bk-frame-inner-w:0px !important; --bk-frame-shadow-x:0px !important; --bk-frame-shadow-y:0px !important; --bk-bracket-rest:0 !important;
+    /* a piece's scoped accent (accent-role.ts) never reaches a protected surface, even one mounted inside a scene */
+    --bk-character-accent:initial !important; --bk-character-accent-text:initial !important; --bk-character-accent-deep:initial !important;
+    --bk-persona-accent:initial !important; --bk-persona-accent-text:initial !important; --bk-persona-accent-deep:initial !important;
+    --bk-scene-accent:initial !important; --bk-scene-accent-text:initial !important; --bk-scene-accent-deep:initial !important;
+    visibility: visible !important; pointer-events: auto !important;
+    /* Mod CSS can scale html (a font size, a zoom) and every rem and px under a protected surface follows. theme-mod.ts measures that
+       and writes the inverse here, so protected text keeps the size an unmodded page gets in the user's browser. */
+    zoom: var(--host-type-zoom, 1) !important;
+  }
+}
+.host-protected {
+  --bk-dur-instant:80ms; --bk-dur-fast:120ms; --bk-dur-base:200ms; --bk-dur-slow:320ms; --bk-ease-move:cubic-bezier(0.2,0.8,0.2,1); --bk-lift-y:-2px;
+  font-family:"Atkinson Hyperlegible",sans-serif; font-size:1rem; color:var(--host-ink);
+  /* inherited text properties a mod could set on html or body to blank or smear protected text */
+  -webkit-text-fill-color:currentcolor; text-shadow:none; letter-spacing:normal; word-spacing:normal;
+}
+}
+/* the stamp becomes the soft lift: a thin line, one plum shadow, a gentle rise on hover */
+.stamp {
+  border: var(--ink-border);
+  box-shadow: var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow);
+  transition: transform var(--bk-dur-base) var(--bk-ease-move), box-shadow var(--bk-dur-base) var(--bk-ease-move);
+}
+.stamp:hover { transform: translateY(var(--bk-lift-y)); box-shadow: var(--stamp-x) calc(var(--stamp-y) + 2px) 0 0 var(--stamp-shadow); }
+.stamp:active, .stamp.pressed { transform: translateY(1px); box-shadow: calc(var(--stamp-x) - 4px) calc(var(--stamp-y) - 4px) 0 0 var(--stamp-shadow); }
+
+.scrollThin, .scrollThin * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--stage-seam) transparent;
+}
+.scrollThin::-webkit-scrollbar, .scrollThin *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollThin::-webkit-scrollbar-thumb, .scrollThin *::-webkit-scrollbar-thumb { background: var(--stage-seam); }
+.scrollThin::-webkit-scrollbar-track, .scrollThin *::-webkit-scrollbar-track { background: transparent; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Global because Bun scopes CSS-module keyframes without rewriting their animation-name references. */
+@keyframes premiereFloorFog {
+  from { transform: translate3d(-14%, 8%, 0) scaleY(.8); }
+  to { transform: translate3d(14%, -10%, 0) scaleY(1.2); }
+}
+
+/* the seam: a thin inset line on the sunk canvas */
+.seam { background: var(--stage); box-shadow: inset 0 0 0 1px var(--seam); }
+
+/* display type wears the soft axes wherever the display family is used */
+h1, h2, h3, [class*="title"], [class*="marquee"] { font-variation-settings: var(--soft-axes); }
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp, .stamp:hover, .stamp:active { transition: none; }
+}

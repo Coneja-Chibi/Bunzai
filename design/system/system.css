@@ -1,0 +1,31 @@
+/*
+ * Bunraku design system, contract v1: the one stylesheet a page links.
+ * Cascade layers fix who wins, whatever the selector:
+ *   bk.access     the person's own settings (reduced motion, more contrast, forced colors)
+ *   bk.protected  lock screen, Kit Gate, secrets, mod manager tokens
+ *   bk.tokens     the G3 base values
+ *   bk.theme      c1 / c3 / paper overrides, picked by <html data-theme="...">
+ *   bk.parts      the HUD primitives
+ *   mod           a UI mod's CSS (the host imports it into this layer)
+ * Normal declarations: the later layer wins, so themes beat tokens and mods beat parts.
+ * bk.access and bk.protected declare everything !important, and for important declarations the
+ * EARLIEST layer wins, so nothing after them (a mod's !important included) can override them.
+ */
+@layer bk.access, bk.protected, bk.tokens, bk.theme, bk.parts, mod;
+
+@import url("tokens/fonts.css") layer(bk.tokens);
+@import url("tokens/color.css") layer(bk.tokens);
+@import url("tokens/type.css") layer(bk.tokens);
+@import url("tokens/space.css") layer(bk.tokens);
+@import url("tokens/size.css") layer(bk.tokens);
+@import url("tokens/frame.css") layer(bk.tokens);
+@import url("tokens/layer.css") layer(bk.tokens);
+@import url("tokens/motion.css") layer(bk.tokens);
+@import url("tokens/focus.css") layer(bk.tokens);
+@import url("themes/g3.css") layer(bk.theme);
+@import url("themes/c1.css") layer(bk.theme);
+@import url("themes/c3.css") layer(bk.theme);
+@import url("themes/paper.css") layer(bk.theme);
+@import url("parts.css") layer(bk.parts);
+@import url("tokens/access.css") layer(bk.access);
+@import url("tokens/protected.css") layer(bk.protected);

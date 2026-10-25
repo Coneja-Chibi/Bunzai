@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/README",
+  "sourcePath": "docs/reference/entities/README.md",
+  "sourceHash": "sha256:e0f06ba327937f7fd0ea27c1b072c28a9eb34b4c06352fa0f574c537c2b192e6",
+  "semanticSummaryHash": "sha256:8a69eff380b71a3cebfc35760fb9f01591f671bc81967ca0d014f07fb0bfe31e",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:51.645Z"
+}

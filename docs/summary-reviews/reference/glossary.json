@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/glossary",
+  "sourcePath": "docs/reference/glossary.md",
+  "sourceHash": "sha256:2845bdcbdb3c18569b4a13273be5eaec4e3d5d84454d53524efe029c3b81b6d8",
+  "semanticSummaryHash": "sha256:5d194b5ed33127a4836b696d7badd0a2cca5bd06a4f45ddd0296d3af707a494a",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:13.988Z"
+}

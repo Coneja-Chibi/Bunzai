@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: the setup wizard</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-setup: the first-run wizard (src/ui/setup/wizard.tsx + steps/*). Content and step order are
+ * exact: theme(10) -> first-deck(20) -> publish(30) -> accent(40) -> a proposed fifth step,
+ * shortcuts (Windows desktop app only, order 50, content from design/wireframes/settings/
+ * shortcuts.html state 0) -> the closing "You're set" screen. Publish's platform list is normally
+ * data-driven from the live format registry; friendly names could not be confirmed by grep here, so
+ * the plates below use plausible names from src/formats/* folder ids and are flagged unsure.
+ *
+ * The wizard sets document theme = paper for the WHOLE setup surface (App.tsx), but a step's own
+ * pageTheme() can flip it live the instant Light/Dark is answered - shown as its own state (t1-light).
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--paper); color: var(--ink); }
+:root[data-theme="stage"] body { background: var(--paper); }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+.wrap { max-width: 74rem; margin: 0 auto; padding: clamp(1.5rem,4vw,2.75rem) clamp(1rem,3vw,1.6rem) 4rem; }
+.screen { display: grid; grid-template-columns: minmax(0,27rem) minmax(0,1fr); gap: clamp(1.5rem,4vw,2.4rem); align-items: start; }
+.qcard { background: var(--face); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); padding: clamp(1.25rem,3vw,1.9rem); }
+.top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding-bottom: .9rem; box-shadow: inset 0 -1px 0 var(--seam); }
+.lock { display: inline-flex; align-items: center; gap: 8px; }
+.lock svg { width: 22px; height: 22px; }
+.lock b { font: 700 1.15rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.prog { display: flex; align-items: center; gap: .6rem; }
+.dots { display: flex; gap: 5px; }
+.dots i { width: 8px; height: 8px; background: var(--seam); display: block; }
+.dots i.done { background: var(--text-dim); }
+.dots i.now { background: var(--c, var(--accent)); }
+.step-n { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.q { font: 700 clamp(1.7rem,1.1rem+2.2vw,2.2rem)/1.08 var(--font-big); font-variation-settings: var(--soft-axes); margin: 1.2rem 0 .3rem; }
+.q-say { font-style: italic; color: var(--text-soft); margin: 0 0 1.2rem; }
+.stack { display: flex; flex-direction: column; gap: .6rem; }
+.pair, .swatches { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; }
+.opt { display: block; width: 100%; text-align: left; background: var(--face); color: var(--text); box-shadow: inset 0 0 0 1px var(--edge), 4px 4px 0 0 var(--stage-black); padding: .85rem 1rem; position: relative; cursor: pointer; border: 0; transition: transform .1s, box-shadow .1s; }
+.opt:hover { transform: translate(-1px,-1px); }
+.opt.on { box-shadow: inset 0 0 0 1px var(--c, var(--accent)), 2px 2px 0 0 var(--c, var(--accent)); transform: translate(2px,2px); }
+.opt .on-mark { position: absolute; top: -2px; right: -2px; background: var(--c, var(--accent)); color: var(--stage-white); font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 2px 6px; display: none; }
+.opt.on .on-mark { display: block; }
+.opt-title { font: 600 1rem var(--font-big); font-variation-settings: var(--soft-axes); display: flex; align-items: center; gap: 8px; }
+.opt-sub { font-size: .9rem; color: var(--text-dim); margin-top: 2px; }
+.default-tag { font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); }
+.controls { display: flex; align-items: center; justify-content: space-between; margin-top: 1.4rem; }
+.back { font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); background: none; border: 0; cursor: pointer; }
+.back.ghost { visibility: hidden; }
+.skip { text-align: center; margin-top: .9rem; }
+.skip a { font: 500 12px var(--font-mono); letter-spacing: .04em; color: var(--text-dim); text-decoration: underline; cursor: pointer; }
+
+.house { position: sticky; top: 1.5rem; }
+.house-cap { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: .6rem; }
+.hc-k { font: 500 12px var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--text); }
+.hc-s { font: 500 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--text-dim); }
+.proscenium { background: var(--paper); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); padding: 1rem; }
+.stage { background: var(--stage-well); min-height: 24rem; display: flex; flex-direction: column; color: var(--stage-card, var(--text)); }
+
+/* theme step's backwall */
+.backwall { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 1.7rem 1.4rem; text-align: center; }
+.wall-note { font: 500 12px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--stage-soft); }
+.preview { width: min(12rem,90%); box-shadow: 0 0 0 2px var(--stage-black), 5px 6px 0 0 var(--shadow-ink); }
+.preview.dark { background: var(--stage-row); }
+.preview.light { background: var(--stage-paper); }
+.pv-top { height: 14px; background: var(--stage-sunken); display: flex; align-items: center; gap: 3px; padding: 0 5px; }
+.pv-top i { width: 5px; height: 5px; background: var(--stage-line); display: block; }
+.pv-main { display: flex; min-height: 5.6rem; }
+.pv-side { width: 34%; box-shadow: inset -1px 0 0 var(--stage-line); padding: 7px 5px; display: flex; flex-direction: column; gap: 5px; }
+.pv-side span { height: 4px; background: var(--stage-line); display: block; }
+.pv-side .lit { background: var(--accent); width: 82%; }
+.pv-body { flex: 1; padding: 8px 7px; display: flex; flex-direction: column; gap: 5px; }
+.pv-body span { height: 5px; background: var(--stage-line); display: block; }
+.pv-body span:nth-child(1) { width: 60%; }
+.pv-body .btn { height: 10px; width: 40%; background: var(--accent); margin-top: 2px; }
+.pv-cap { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--stage-soft); }
+
+/* first-deck floor */
+.floor { box-shadow: inset 0 1px 0 var(--accent); position: relative; padding: 0 1rem 1rem; min-height: 8rem; display: flex; flex-direction: column; justify-content: flex-end; }
+.fl-k { align-self: flex-end; font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--stage-soft); margin: 10px 0 auto; }
+.troupe { display: flex; gap: 6px; align-items: flex-end; justify-content: center; min-height: 9rem; padding-top: 10px; }
+.dcard { width: 6rem; background: var(--stage-deck); box-shadow: 3px 4px 0 0 var(--shadow-ink); position: relative; }
+.dcard .cov { aspect-ratio: 3/4; background: var(--stage-row); box-shadow: inset 0 -1px 0 var(--stage-black); display: flex; align-items: flex-end; padding: 6px; position: relative; }
+.dcard .cov b { font: 700 1.8rem var(--font-big); color: var(--stage-paper); opacity: .9; }
+.dcard .ct { position: absolute; top: 0; left: 0; background: var(--accent); color: var(--stage-white); font: 500 12px var(--font-mono); padding: 2px 5px; text-transform: uppercase; }
+.dcard .first-mk { position: absolute; bottom: 5px; right: 5px; background: var(--accent); color: var(--stage-white); font: 600 12px var(--font-mono); padding: 2px 4px; text-transform: uppercase; }
+.dcard .dn { font: 600 12px var(--font-big); text-align: center; text-transform: uppercase; color: var(--stage-paper); padding: 5px 6px 6px; }
+.ghost-deck { width: 6rem; aspect-ratio: 3/4; box-shadow: 0 0 0 1px dashed var(--stage-faint); outline: 2px dashed var(--stage-faint); display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; font: 500 12px var(--font-mono); text-transform: uppercase; color: var(--stage-soft); }
+
+/* publish apron */
+.apron { box-shadow: inset 0 1px 0 var(--stage-faint); background: var(--stage-well); padding: .9rem 1rem 1rem; margin-top: auto; }
+.ap-k { font: 500 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--stage-soft); display: block; margin-bottom: .5rem; }
+.plates { display: flex; gap: .45rem; flex-wrap: wrap; }
+.plate { flex: 1; min-width: 4.6rem; height: 2.6rem; box-shadow: 0 0 0 1px dashed var(--stage-faint); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font: 500 12px var(--font-mono); color: var(--stage-soft); text-transform: uppercase; text-align: center; }
+.plate.landed { box-shadow: 0 0 0 2px var(--accent); background: var(--stage-row); color: var(--stage-paper); }
+.plate .pl-mk { color: inherit; opacity: .8; font-size: 12px; }
+.ap-note { font: 500 12px var(--font-mono); color: var(--stage-soft); margin: .6rem 0 0; }
+
+/* accent stage: just the same preview reused, recolored */
+.accentwall { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 1.7rem 1.4rem; }
+
+/* shortcuts stage: desktop preview */
+.desk { flex: 1; position: relative; background: var(--stage-row); margin: 1rem; }
+.desk .ico { position: absolute; left: 20px; top: 20px; width: 64px; text-align: center; font: 500 12px var(--font-big); color: var(--stage-card, var(--text)); }
+.desk .ico i { display: block; width: 40px; height: 40px; margin: 0 auto 5px; background: var(--accent); }
+.desk .taskbar { position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: var(--stage-black); display: flex; align-items: center; gap: 10px; padding: 0 10px; font: 500 12px var(--font-mono); color: var(--stage-soft); }
+.desk .taskbar b { color: var(--stage-card, var(--text)); }
+.desk-note { padding: .8rem 1rem 1rem; font: 500 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--stage-soft); }
+
+/* final screen */
+.final-card { text-align: center; }
+.final-card .q { font-size: clamp(1.9rem,1.3rem+2vw,2.5rem); margin-top: 1.1rem; }
+.summary { font-style: italic; color: var(--text-soft); max-width: 24rem; margin: 2px auto .5rem; line-height: 1.5; }
+.summary b { font-style: normal; font-weight: 700; color: var(--text); }
+.recap { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin: 1.3rem 0 1.6rem; }
+.recap span { font: 500 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--text-dim); box-shadow: 0 0 0 1px var(--seam); padding: .35rem .65rem; }
+.recap span b { color: var(--text); text-decoration: underline; text-decoration-color: var(--c, var(--accent)); text-underline-offset: 3px; }
+.open { font: 700 1rem var(--font-big); font-variation-settings: var(--soft-axes); padding: 1rem 2.4rem; background: var(--stamp-bg); color: var(--stamp-fg); box-shadow: 6px 6px 0 0 var(--stage-black); border: 0; cursor: pointer; }
+.change { font-style: italic; color: var(--text-dim); margin-top: 1rem; font-size: .9rem; }
+
+[data-only] { display: none; }
+[data-only].show { display: block; }
+.screen[data-only].show { display: grid; }
+
+@media (max-width: 57.5rem) { .screen { grid-template-columns: 1fr; } .house { position: static; } }
+@media (max-width: 32.5rem) { .controls { flex-direction: column-reverse; gap: .7rem; align-items: stretch; } .pair, .swatches { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- STEP 1: theme -->
+  <section class="screen" data-only="t1 t1-light" id="screen-t1">
+    <div class="qcard" style="--c:var(--deck-pack)">
+      <div class="top">
+        <span class="lock"><svg viewBox="0 0 184 171"><g fill="var(--rose)"><path d="M0 12 51 0 117 171 82 136Z"/><path d="M135 0 184 12 101 136 67 171Z"/></g><g fill="var(--stage-white)"><path d="m34 33 11-4 34 82-8-10Z"/><path d="m140 29 11 4-38 68-8 10Z"/></g></svg><b>Bunraku</b></span>
+        <span class="prog"><span class="dots"><i class="now"></i><i></i><i></i><i></i><i></i></span><span class="step-n">1 of 5</span></span>
+      </div>
+      <h1 class="q">Light or dark?</h1>
+      <p class="q-say">However you like your workspace. You can flip it any time.</p>
+      <div class="pair">
+        <button class="opt" id="optLight"><span class="on-mark">Picked</span><div class="opt-title">Light</div></button>
+        <button class="opt on" id="optDark"><span class="on-mark">Picked</span><div class="opt-title">Dark<span class="default-tag">default</span></div></button>
+      </div>
+      <div class="controls"><button class="back ghost">&larr; Back</button><button class="s-btn">Next &rarr;</button></div>
+      <div class="skip"><a>Skip all &middot; you can change everything later</a></div>
+    </div>
+    <div class="house">
+      <div class="house-cap"><span class="hc-k">Your Stage</span><span class="hc-s">it lights as you answer</span></div>
+      <div class="proscenium"><div class="stage">
+        <div class="backwall">
+          <div class="wall-note">your workspace, as you set it</div>
+          <div class="preview dark" id="prev"><div class="pv-top"><i></i><i></i><i></i></div><div class="pv-main"><div class="pv-side"><span class="lit"></span><span></span><span></span></div><div class="pv-body"><span></span><span></span><span class="btn"></span></div></div></div>
+          <div class="pv-cap" id="prevcap">dark workspace</div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- STEP 2: first-deck -->
+  <section class="screen" data-only="t2" id="screen-t2">
+    <div class="qcard" style="--c:var(--deck-character)">
+      <div class="top">
+        <span class="lock"><svg viewBox="0 0 184 171"><g fill="var(--rose)"><path d="M0 12 51 0 117 171 82 136Z"/><path d="M135 0 184 12 101 136 67 171Z"/></g><g fill="var(--stage-white)"><path d="m34 33 11-4 34 82-8-10Z"/><path d="m140 29 11 4-38 68-8 10Z"/></g></svg><b>Bunraku</b></span>
+        <span class="prog"><span class="dots"><i class="done"></i><i class="now" style="background:var(--deck-character)"></i><i></i><i></i><i></i></span><span class="step-n">2 of 5</span></span>
+      </div>
+      <h1 class="q">What do<br>you want to make?</h1>
+      <p class="q-say">Pick as many as you like. The first pick is where the Library opens.</p>
+      <div class="stack">
+        <button class="opt on" style="--c:var(--deck-character)"><span class="on-mark">Picked</span><div class="opt-title">Characters<span class="default-tag">default</span></div><div class="opt-sub">The people you create.</div></button>
+        <button class="opt on" style="--c:var(--deck-character)"><span class="on-mark">Picked</span><div class="opt-title">Lorebooks</div><div class="opt-sub">The world facts they remember.</div></button>
+        <button class="opt" style="--c:var(--deck-character)"><div class="opt-title">Personas</div><div class="opt-sub">Who you are when you talk to them.</div></button>
+        <button class="opt" style="--c:var(--deck-character)"><div class="opt-title">Sprite packs</div><div class="opt-sub">Reusable face packs you open like folders.</div></button>
+        <button class="opt on" style="--c:var(--deck-character)"><span class="on-mark">Picked</span><div class="opt-title">Presets</div><div class="opt-sub">Saved settings that shape the writing.</div></button>
+      </div>
+      <div class="controls"><button class="back">&larr; Back</button><button class="s-btn">Next &rarr;</button></div>
+      <div class="skip"><a>Skip all &middot; you can change everything later</a></div>
+    </div>
+    <div class="house">
+      <div class="house-cap"><span class="hc-k">Your Stage</span><span class="hc-s">decks standing up</span></div>
+      <div class="proscenium"><div class="stage">
+        <div class="floor" style="box-shadow:inset 0 1px 0 var(--deck-character)">
+          <span class="fl-k">the floor</span>
+          <div class="troupe">
+            <div class="dcard" style="transform:rotate(-6deg)"><div class="cov"><b>C</b><span class="ct" style="background:var(--deck-character)">character</span><span class="first-mk" style="background:var(--deck-character)">opens first</span></div><div class="dn">Characters</div></div>
+            <div class="dcard" style="transform:translateY(-4px)"><div class="cov"><b>L</b><span class="ct" style="background:var(--deck-character)">lorebook</span></div><div class="dn">Lorebooks</div></div>
+            <div class="dcard" style="transform:rotate(6deg)"><div class="cov"><b>P</b><span class="ct" style="background:var(--deck-character)">preset</span></div><div class="dn">Presets</div></div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- STEP 3: publish -->
+  <section class="screen" data-only="t3" id="screen-t3">
+    <div class="qcard" style="--c:var(--deck-preset)">
+      <div class="top">
+        <span class="lock"><svg viewBox="0 0 184 171"><g fill="var(--rose)"><path d="M0 12 51 0 117 171 82 136Z"/><path d="M135 0 184 12 101 136 67 171Z"/></g><g fill="var(--stage-white)"><path d="m34 33 11-4 34 82-8-10Z"/><path d="m140 29 11 4-38 68-8 10Z"/></g></svg><b>Bunraku</b></span>
+        <span class="prog"><span class="dots"><i class="done"></i><i class="done"></i><i class="now" style="background:var(--deck-preset)"></i><i></i><i></i></span><span class="step-n">3 of 5</span></span>
+      </div>
+      <h1 class="q">Where do<br>you publish?</h1>
+      <p class="q-say">Pick any that fit. We keep your work ready in each one.</p>
+      <div class="stack">
+        <button class="opt on" style="--c:var(--deck-preset)"><span class="on-mark">Picked</span><div class="opt-title">SillyTavern</div></button>
+        <button class="opt on" style="--c:var(--deck-preset)"><span class="on-mark">Picked</span><div class="opt-title">RoleCall</div></button>
+        <button class="opt" style="--c:var(--deck-preset)"><div class="opt-title">RisuAI</div></button>
+        <button class="opt" style="--c:var(--deck-preset)"><div class="opt-title">Not sure yet<span class="default-tag">default</span></div><div class="opt-sub">Totally fine. We keep every format ready either way.</div></button>
+      </div>
+      <div class="controls"><button class="back">&larr; Back</button><button class="s-btn">Next &rarr;</button></div>
+      <div class="skip"><a>Skip all &middot; you can change everything later</a></div>
+    </div>
+    <div class="house">
+      <div class="house-cap"><span class="hc-k">Your Stage</span><span class="hc-s">plates land as you pick</span></div>
+      <div class="proscenium"><div class="stage" style="justify-content:flex-end">
+        <div class="apron">
+          <span class="ap-k">Publish to</span>
+          <div class="plates">
+            <div class="plate landed"><span class="pl-mk">landed</span>SillyTavern</div>
+            <div class="plate landed"><span class="pl-mk">landed</span>RoleCall</div>
+            <div class="plate"><span class="pl-mk">await</span>RisuAI</div>
+            <div class="plate"><span class="pl-mk">await</span>Agnaistic</div>
+            <div class="plate"><span class="pl-mk">await</span>NovelAI</div>
+            <div class="plate"><span class="pl-mk">await</span>Pygmalion</div>
+          </div>
+          <p class="ap-note">2 set. Every empty slot stays ready if you want it.</p>
+        </div>
+      </div></div>
+      <p class="wf-note" style="position:static;max-width:none;margin-top:10px">Platform names (SillyTavern, RoleCall, RisuAI, Agnaistic, NovelAI, Pygmalion) come from the src/formats/* adapter folder ids; the exact `friendly:` label strings could not be confirmed by grep and should be checked against src/formats/*/index.ts before build.</p>
+    </div>
+  </section>
+
+  <!-- STEP 4: accent -->
+  <section class="screen" data-only="t4 t4-mac" id="screen-t4">
+    <div class="qcard" style="--c:var(--deck-lorebook)">
+      <div class="top">
+        <span class="lock"><svg viewBox="0 0 184 171"><g fill="var(--rose)"><path d="M0 12 51 0 117 171 82 136Z"/><path d="M135 0 184 12 101 136 67 171Z"/></g><g fill="var(--stage-white)"><path d="m34 33 11-4 34 82-8-10Z"/><path d="m140 29 11 4-38 68-8 10Z"/></g></svg><b>Bunraku</b></span>
+        <span class="prog" id="t4prog"><span class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now" style="background:var(--deck-lorebook)"></i><i></i></span><span class="step-n">4 of 5</span></span>
+      </div>
+      <h1 class="q">Pick your color.</h1>
+      <p class="q-say">One accent for your workspace. Rose is a good place to start.</p>
+      <div class="swatches">
+        <button class="opt" style="--c:var(--deck-lorebook)"><div class="opt-title"><i style="width:14px;height:14px;background:var(--rose);display:inline-block"></i>rose<span class="default-tag">default</span></div></button>
+        <button class="opt" style="--c:var(--deck-lorebook)"><div class="opt-title"><i style="width:14px;height:14px;background:var(--deck-character);display:inline-block"></i>amber</div></button>
+        <button class="opt" style="--c:var(--deck-lorebook)"><div class="opt-title"><i style="width:14px;height:14px;background:var(--deck-persona);display:inline-block"></i>emerald</div></button>
+        <button class="opt on" style="--c:var(--deck-lorebook)"><span class="on-mark">Picked</span><div class="opt-title"><i style="width:14px;height:14px;background:var(--deck-lorebook);display:inline-block"></i>violet</div></button>
+        <button class="opt" style="--c:var(--deck-lorebook)"><div class="opt-title"><i style="width:14px;height:14px;background:var(--deck-preset);display:inline-block"></i>blue</div></button>
+        <button class="opt" style="--c:var(--deck-lorebook)"><div class="opt-title">custom&hellip;</div></button>
+      </div>
+      <div class="controls"><button class="back">&larr; Back</button><button class="s-btn" id="t4next">Next &rarr;</button></div>
+      <div class="skip"><a>Skip all &middot; you can change everything later</a></div>
+    </div>
+    <div class="house">
+      <div class="house-cap"><span class="hc-k">Your Stage</span><span class="hc-s">accent pieces repaint</span></div>
+      <div class="proscenium"><div class="stage">
+        <div class="accentwall">
+          <div class="wall-note">accent pieces repaint live (--wiz-a); the brand mark and Next button stay rose</div>
+          <div class="preview dark"><div class="pv-top"><i></i><i></i><i></i></div><div class="pv-main"><div class="pv-side" style="box-shadow:inset -1px 0 0 var(--deck-lorebook)"><span class="lit" style="background:var(--deck-lorebook)"></span><span></span><span></span></div><div class="pv-body"><span></span><span></span><span class="btn" style="background:var(--deck-lorebook)"></span></div></div></div>
+        </div>
+      </div></div>
+      <p class="wf-note" style="position:static;max-width:none;margin-top:10px" id="t4note">Palette hexes are the setup wizard's own authored palette (src/ui/components/swatch-row: rose/amber/emerald/violet/blue), not deck tokens - stood in here with --rose and --deck-* swatches since the soft token set has no matching hexes; labelled with the real palette names.</p>
+    </div>
+  </section>
+
+  <!-- STEP 5: shortcuts (Windows only, proposed) -->
+  <section class="screen" data-only="t5" id="screen-t5">
+    <div class="qcard" style="--c:var(--deck-regex)">
+      <div class="top">
+        <span class="lock"><svg viewBox="0 0 184 171"><g fill="var(--rose)"><path d="M0 12 51 0 117 171 82 136Z"/><path d="M135 0 184 12 101 136 67 171Z"/></g><g fill="var(--stage-white)"><path d="m34 33 11-4 34 82-8-10Z"/><path d="m140 29 11 4-38 68-8 10Z"/></g></svg><b>Bunraku</b></span>
+        <span class="prog"><span class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="done"></i><i class="now" style="background:var(--deck-regex)"></i></span><span class="step-n">5 of 5</span></span>
+      </div>
+      <h1 class="q">Put Bunraku on your computer?</h1>
+      <p class="q-say">A Start menu entry and a desktop shortcut, so it is always one click away.</p>
+      <div class="pair">
+        <button class="opt on" style="--c:var(--deck-regex)"><span class="on-mark">Picked</span><div class="opt-title">Yes, add both<span class="default-tag">default</span></div></button>
+        <button class="opt" style="--c:var(--deck-regex)"><div class="opt-title">Not now</div><div class="opt-sub">change it in Settings</div></button>
+      </div>
+      <div class="controls"><button class="back">&larr; Back</button><button class="s-btn">Next &rarr;</button></div>
+      <div class="skip"><a>Skip all &middot; you can change everything later</a></div>
+    </div>
+    <div class="house">
+      <div class="house-cap"><span class="hc-k">Your Stage</span><span class="hc-s">your desktop</span></div>
+      <div class="proscenium"><div class="stage">
+        <div class="desk"><div class="ico"><i></i>Bunraku</div><div class="taskbar"><b>Start</b> Bunraku &middot; Recently added</div></div>
+        <div class="desk-note">picked: in the Start menu and on the desktop</div>
+      </div></div>
+      <p class="wf-note" style="position:static;max-width:none;margin-top:10px">Windows desktop app only (design/wireframes/settings/shortcuts.html). The browser Studio, Mac and Linux have no fifth step and the wizard ends at 4 of 4 after Accent (see the "4 of 5" dots on the Accent step, state t4-mac).</p>
+    </div>
+  </section>
+
+  <!-- FINAL: you're set -->
+  <section class="screen" data-only="final" id="screen-final">
+    <div class="qcard final-card">
+      <span class="lock" style="justify-content:center;width:100%"><svg viewBox="0 0 184 171" style="width:26px;height:26px"><g fill="var(--rose)"><path d="M0 12 51 0 117 171 82 136Z"/><path d="M135 0 184 12 101 136 67 171Z"/></g><g fill="var(--stage-white)"><path d="m34 33 11-4 34 82-8-10Z"/><path d="m140 29 11 4-38 68-8 10Z"/></g></svg><b>Bunraku</b></span>
+      <h1 class="q">You&apos;re set.</h1>
+      <p class="summary">A <b>dark</b> workspace, making <b>Characters</b> (+2 more), publishing to <b>SillyTavern and RoleCall</b>, in <b>violet</b>, with a <b>desktop shortcut</b>.</p>
+      <div class="recap">
+        <span>theme <b>dark</b></span>
+        <span>making <b>character &middot; lorebook &middot; preset</b></span>
+        <span>publish <b>sillytavern, rolecall</b></span>
+        <span>color <b>violet</b></span>
+        <span>shortcut <b>added</b></span>
+      </div>
+      <button class="open">Open Bunraku<span style="display:inline-block;width:.16em;height:.16em;background:var(--stamp-fg);margin-left:.1em"></span></button>
+      <p class="change">Everything here can change later, whenever you want.</p>
+    </div>
+    <div class="house">
+      <div class="house-cap"><span class="hc-k">Your Stage</span><span class="hc-s">fully set</span></div>
+      <div class="proscenium"><div class="stage">
+        <div class="floor" style="box-shadow:inset 0 1px 0 var(--deck-lorebook)">
+          <span class="fl-k">the floor</span>
+          <div class="troupe">
+            <div class="dcard"><div class="cov"><b>C</b><span class="ct" style="background:var(--deck-lorebook)">character</span></div><div class="dn">Characters</div></div>
+            <div class="dcard"><div class="cov"><b>L</b><span class="ct" style="background:var(--deck-lorebook)">lorebook</span></div><div class="dn">Lorebooks</div></div>
+            <div class="dcard"><div class="cov"><b>P</b><span class="ct" style="background:var(--deck-lorebook)">preset</span></div><div class="dn">Presets</div></div>
+          </div>
+        </div>
+      </div></div>
+      <p class="wf-note" style="position:static;max-width:none;margin-top:10px">The "shortcut added" chip and its phrase fragment are proposed (no phrase()/recap() exists yet for a shortcuts step); every other chip and the sentence order match wizard-core.ts's sentencePlan exactly (fragment order = step order, joined with ", ", capitalized once, closed with a period).</p>
+    </div>
+  </section>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="t1" class="on">1 Theme (dark)</button>
+  <button data-s="t1-light">1 Theme (Light, live paper)</button>
+  <button data-s="t2">2 What you make</button>
+  <button data-s="t3">3 Publish</button>
+  <button data-s="t4">4 Color (5-step dots)</button>
+  <button data-s="t4-mac">4 Color (4-step dots, non-Windows)</button>
+  <button data-s="t5">5 Shortcuts (Windows)</button>
+  <button data-s="final">You're set</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var NOTES = {
+    t1: "Step 1/5, theme (order 10). Dark is isDefault, pre-pressed. The right stage's backwall zone previews the tiny app, dark.",
+    "t1-light": "Same step, Light pressed: pageTheme() flips the WHOLE wizard surface to paper live (the code's own behavior, not just the stage preview) - shown here as the page background flipping to the paper token set.",
+    t2: "Step 2/5, first-deck (order 20), multi-select. Characters/Lorebooks/Presets picked; the FIRST pick (Characters) gets the \"opens first\" mark and becomes settings.firstDeck. Unpicked options (Personas, Sprite packs) still list, unpressed.",
+    t3: "Step 3/5, publish (order 30), multi-select, data-driven from the live format registry (native formats excluded). \"Not sure yet\" clears the group and is the default.",
+    t4: "Step 4/5, accent (order 40), the shared SwatchRow (Settings > Appearance reuses the same component). Violet picked; repaints --wiz-a (selection marks) and the stage's --accent live. The brand mark and Next stay rose (DECISIONS #3).",
+    "t4-mac": "The SAME accent step, but on a build with no shortcuts step (browser Studio, Mac, Linux): dots read 4 of 4, and Next on this screen goes straight to \"You're set.\"",
+    t5: "Step 5/5, PROPOSED new step: \"Put Bunraku on your computer?\", Windows desktop app only, content from design/wireframes/settings/shortcuts.html state 0. Yes/add both is default.",
+    final: "The closing screen: sentencePlan() joins each step's phrase() into one sentence in step order, capitalized once; chips are each step's recap(). The shortcut phrase/chip are proposed pending a real phrase()/recap() on the new step.",
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      var list = (el.dataset.only || "").split(" ");
+      el.classList.toggle("show", list.indexOf(s) !== -1);
+    });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + NOTES[s];
+    var light = s === "t1-light";
+    document.documentElement.setAttribute("data-theme", light ? "paper" : "stage");
+    if (document.getElementById("optLight")) {
+      document.getElementById("optLight").classList.toggle("on", light);
+      document.getElementById("optDark").classList.toggle("on", !light);
+    }
+    if (document.getElementById("t4prog")) {
+      document.getElementById("t4prog").innerHTML = s === "t4-mac"
+        ? '<span class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now" style="background:var(--deck-lorebook)"></i></span><span class="step-n">4 of 4</span>'
+        : '<span class="dots"><i class="done"></i><i class="done"></i><i class="done"></i><i class="now" style="background:var(--deck-lorebook)"></i><i></i></span><span class="step-n">4 of 5</span>';
+    }
+    if (document.getElementById("t4next")) document.getElementById("t4next").textContent = s === "t4-mac" ? "Next →" : "Next →";
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "t1");
+})();
+</script>
+</body>
+</html>

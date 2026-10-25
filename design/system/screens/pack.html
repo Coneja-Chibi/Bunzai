@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Pack editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="pack.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Pack editor</h1>
+    <p>The pack editor: a name and brief, then the sprite grid, each image labeled by the expression it stands for.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="pack.editor">
+    <header>
+      <h2 class="bk-heading">Pack editor</h2>
+      <span class="bk-tag">PackEditor</span>
+      <p class="bk-meta">Parts: pack.editor, pack.sprite, editor.save</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="pack.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Sheet</h3>
+          <p>As the source: name and brief on top, a label under each sprite.</p></header>
+        <div class="spec-screen pk-screen" data-state="loaded">
+<div class="pk-app" data-part="shell.app">
+  <header class="pk-hud" data-part="shell.hud">
+    <div class="pk-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="pk-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="pk-hud-mid">
+      <div class="pk-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="pk-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="pk-body">
+    <nav class="pk-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="pk-dock-brand" data-part="shell.dock.brand">
+        <svg class="pk-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="pk-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="pk-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="pk-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="pk-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="pk-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="pk-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="pk-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="pk-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="pk-dock-app pk-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="pk-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="pk-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="pk-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="pk-stage bk-stage" data-part="shell.stage">
+
+        <header class="pk-phead" data-part="editor.header">
+          <span class="bk-tag" data-deck="pack"><b>PACK</b></span>
+          <h3 class="bk-name pk-htitle-loaded">Marguerite: sprites</h3>
+          <h3 class="bk-name pk-htitle-empty">Untitled pack</h3>
+          <button type="button" class="bk-item pk-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="pk-editorbody pk-editorbody-loaded" data-part="pack.editor">
+        <section class="bk-panel bk-frame pk-card" data-deck="pack" data-crown>
+          <div class="bk-panel__head"><h4 class="bk-name">Pack name and brief</h4></div>
+          <div class="bk-panel__body pk-namegrid">
+            <input class="pk-input" value="Marguerite: sprites" placeholder="Pack name" aria-label="Pack name">
+            <input class="pk-input" value="Expression sprites for the lighthouse scene" placeholder="Optional shelf blurb" aria-label="Optional shelf blurb">
+            <p class="bk-meta">A pack with no name saves as "Untitled pack" rather than blocking Save.</p>
+          </div>
+        </section>
+        <section class="bk-panel bk-frame pk-card" data-deck="pack">
+          <div class="bk-panel__head"><h4 class="bk-name">Sprites</h4><span class="bk-meta">5 images</span></div>
+          <div class="bk-panel__body pk-spritegrid">
+            <div class="pk-spritecell" data-part="pack.sprite">
+              <div class="pk-sprart" data-deck="pack">neutral</div>
+              <input class="pk-input" value="neutral">
+            </div>
+            <div class="pk-spritecell" data-part="pack.sprite">
+              <div class="pk-sprart" data-deck="pack">smiling</div>
+              <input class="pk-input" value="smiling">
+            </div>
+            <div class="pk-spritecell" data-part="pack.sprite">
+              <div class="pk-sprart" data-deck="pack">worried</div>
+              <input class="pk-input" value="worried">
+            </div>
+            <div class="pk-spritecell" data-part="pack.sprite">
+              <div class="pk-sprart" data-deck="pack">storm-lit</div>
+              <input class="pk-input" value="storm-lit">
+            </div>
+            <div class="pk-spritecell" data-part="pack.sprite">
+              <div class="pk-sprart" data-deck="pack">turned away</div>
+              <input class="pk-input" value="turned away">
+            </div>
+            <button type="button" class="pk-addcell">+ Add sprite</button>
+          </div>
+        </section>
+        </div>
+        <div class="pk-editorbody pk-editorbody-empty" data-part="pack.editor">
+        <section class="bk-panel bk-frame pk-card" data-deck="pack" data-crown>
+          <div class="bk-panel__head"><h4 class="bk-name">Pack name and brief</h4></div>
+          <div class="bk-panel__body pk-namegrid">
+            <input class="pk-input pk-input-empty" value="" placeholder="Pack name" aria-label="Pack name">
+            <input class="pk-input" value="" placeholder="Optional shelf blurb" aria-label="Optional shelf blurb">
+            <p class="bk-meta">A pack with no name saves as "Untitled pack" rather than blocking Save.</p>
+          </div>
+        </section>
+        <section class="bk-panel bk-frame pk-card" data-deck="pack">
+          <div class="bk-panel__head"><h4 class="bk-name">Sprites</h4><span class="bk-meta">0 images</span></div>
+          <div class="bk-panel__body pk-spritegrid">
+
+            <button type="button" class="pk-addcell">+ Add sprite</button>
+          </div>
+        </section>
+        </div>    </main>
+  </div>
+  <footer class="pk-status" data-part="shell.status">
+    <span class="pk-status-item" data-part="shell.status.item">Marguerite: sprites · pack</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Sheet">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Loaded</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty (no name)</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="pack.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Gallery</h3>
+          <p>Sprites as a grid of portrait tiles with expression tags instead of labeled cells.</p></header>
+        <div class="spec-screen pk-screen" data-state="loaded">
+<div class="pk-app" data-part="shell.app">
+  <header class="pk-hud" data-part="shell.hud">
+    <div class="pk-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="pk-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="pk-hud-mid">
+      <div class="pk-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="pk-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="pk-body">
+    <nav class="pk-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="pk-dock-brand" data-part="shell.dock.brand">
+        <svg class="pk-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="pk-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="pk-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="pk-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="pk-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="pk-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="pk-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="pk-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="pk-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="pk-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="pk-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="pk-dock-app pk-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="pk-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="pk-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="pk-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="pk-stage bk-stage" data-part="shell.stage">
+
+        <header class="pk-phead" data-part="editor.header">
+          <span class="bk-tag" data-deck="pack"><b>PACK</b></span>
+          <h3 class="bk-name pk-htitle-loaded">Marguerite: sprites</h3>
+          <h3 class="bk-name pk-htitle-empty">Untitled pack</h3>
+          <button type="button" class="bk-item pk-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="pk-editorbody pk-editorbody-loaded" data-part="pack.editor">
+        <section class="bk-panel bk-frame pk-card" data-deck="pack" data-crown>
+          <div class="bk-panel__head"><h4 class="bk-name">Pack name and brief</h4></div>
+          <div class="bk-panel__body pk-namegrid">
+            <input class="pk-input" value="Marguerite: sprites" placeholder="Pack name" aria-label="Pack name">
+            <input class="pk-input" value="Expression sprites for the lighthouse scene" placeholder="Optional shelf blurb" aria-label="Optional shelf blurb">
+            <p class="bk-meta">A pack with no name saves as "Untitled pack" rather than blocking Save.</p>
+          </div>
+        </section>
+        <section class="bk-panel bk-frame pk-card" data-deck="pack">
+          <div class="bk-panel__head"><h4 class="bk-name">Sprites</h4><span class="bk-meta">5 images</span></div>
+          <div class="bk-panel__body pk-gallery">
+            <article class="bk-panel bk-frame pk-tile" data-deck="pack" data-part="ui.card">
+              <div class="pk-sprart" data-deck="pack">neutral</div>
+              <span class="bk-tag">neutral</span>
+            </article>
+            <article class="bk-panel bk-frame pk-tile" data-deck="pack" data-part="ui.card">
+              <div class="pk-sprart" data-deck="pack">smiling</div>
+              <span class="bk-tag">smiling</span>
+            </article>
+            <article class="bk-panel bk-frame pk-tile" data-deck="pack" data-part="ui.card">
+              <div class="pk-sprart" data-deck="pack">worried</div>
+              <span class="bk-tag">worried</span>
+            </article>
+            <article class="bk-panel bk-frame pk-tile" data-deck="pack" data-part="ui.card">
+              <div class="pk-sprart" data-deck="pack">storm-lit</div>
+              <span class="bk-tag">storm-lit</span>
+            </article>
+            <article class="bk-panel bk-frame pk-tile" data-deck="pack" data-part="ui.card">
+              <div class="pk-sprart" data-deck="pack">turned away</div>
+              <span class="bk-tag">turned away</span>
+            </article>
+            <button type="button" class="bk-item pk-addtile" data-deck="pack">+ Add sprite</button>
+          </div>
+        </section>
+        </div>
+        <div class="pk-editorbody pk-editorbody-empty" data-part="pack.editor">
+        <section class="bk-panel bk-frame pk-card" data-deck="pack" data-crown>
+          <div class="bk-panel__head"><h4 class="bk-name">Pack name and brief</h4></div>
+          <div class="bk-panel__body pk-namegrid">
+            <input class="pk-input pk-input-empty" value="" placeholder="Pack name" aria-label="Pack name">
+            <input class="pk-input" value="" placeholder="Optional shelf blurb" aria-label="Optional shelf blurb">
+            <p class="bk-meta">A pack with no name saves as "Untitled pack" rather than blocking Save.</p>
+          </div>
+        </section>
+        <section class="bk-panel bk-frame pk-card" data-deck="pack">
+          <div class="bk-panel__head"><h4 class="bk-name">Sprites</h4><span class="bk-meta">0 images</span></div>
+          <div class="bk-panel__body pk-gallery">
+
+            <button type="button" class="bk-item pk-addtile" data-deck="pack">+ Add sprite</button>
+          </div>
+        </section>
+        </div>    </main>
+  </div>
+  <footer class="pk-status" data-part="shell.status">
+    <span class="pk-status-item" data-part="shell.status.item">Marguerite: sprites · pack</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Gallery">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Loaded</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty (no name)</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the pack name and brief card (with the untitled-pack fallback note), the sprite grid with per-sprite expression labels, and Add sprite. Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,16 @@
+/** The full-width workspace and premiere canvas under the temporary navigation overlay. */
+.shellContainer { container-type: size; }
+.shell :global(#canvas) { padding: 0; background: var(--premiere-canvas); container-type: size; }
+.appContents:not([hidden]) { display: contents; }
+.appContents > * { flex: 1; }
+:global(.studio-app-surface:not([hidden])) { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; height: 100%; }
+:global(.studio-app-surface) > * { flex: 1; min-height: 0; }
+:global(.studio-app-room:not([hidden])) { display: contents; }
+:global(.studio-app-room) > * { flex: 1; min-height: 0; }
+/* The bottom dock owns a layout row; legacy nav variants cannot move the workspace into a rail. */
+:global(html) :global(#shell[data-navigation="dock"]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) var(--bk-dock-reserve, 0px); }
+:global(html) :global(#shell[data-navigation="dock"] #main) { grid-column: 1; grid-row: 1; }
+:global(html) :global(#shell[data-navigation="dock"] #status) { flex: none; }
+:global(html) :global(#shell[data-navigation="dock"] #status:empty) { display: none; }
+:global(html) :global(#shell[data-navigation="dock"] .tourHelp) { bottom: calc(.6rem + var(--bk-dock-reserve, 0px)); }
+:global(html:has(#shell[data-navigation="dock"])) { --bk-nav-reserve: 0rem; }

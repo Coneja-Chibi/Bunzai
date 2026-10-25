@@ -1,0 +1,24 @@
+/*
+ * Bunraku design system: the protected layer, contract v1.
+ * The lock screen, the Kit Gate (approve or deny a write), secrets, recovery words and the mod
+ * manager are drawn by the host from these tokens ONLY. Two guards:
+ *   1. Every declaration is !important in bk.protected, a layer declared before every other one,
+ *      so in the document no theme, mod or unlayered rule can override them, !important or not.
+ *   2. The host renders protected parts in a shadow root that receives tokens + this file and never
+ *      theme or mod CSS. :root does not match inside a shadow root, so the tokens are declared on
+ *      .bk-protected-root, the wrapper inside it, which document CSS cannot select.
+ * A broken or hostile mod therefore cannot hide, recolor or fake an approval prompt. Values are
+ * fixed to G3 on purpose.
+ */
+:root, :root[data-theme], .bk-protected-root {
+  --bk-protected-surface: #150f1c !important;
+  --bk-protected-panel: #241d2d !important;
+  --bk-protected-line: #8a7a96 !important;
+  --bk-protected-text: #f5ecf0 !important;
+  --bk-protected-text-dim: #b6a7b8 !important;
+  --bk-protected-accent: #ff5fa0 !important;
+  --bk-protected-ok: #7fe6ae !important;
+  --bk-protected-danger: #ff8fa8 !important;
+  --bk-protected-font: "Atkinson Hyperlegible", sans-serif !important;
+  --bk-protected-font-mono: "IBM Plex Mono", monospace !important;
+}

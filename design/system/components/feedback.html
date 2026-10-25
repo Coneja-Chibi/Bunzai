@@ -1,0 +1,668 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Feedback and protected</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="feedback.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>feedback and protected</b></p>
+    <h1 class="bk-title">Feedback and protected surfaces</h1>
+    <p>Dialogs, sheets, toasts, notices, empty states, progress and errors, then the two protected
+    surfaces (the Gate and secrets), which read only the fixed <code>--bk-protected-*</code> tokens
+    so no theme or mod can touch them.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="feedback.dialog">
+    <header>
+      <h2 class="bk-heading">Dialogs</h2>
+      <span class="bk-tag">InkDialog, CutSceneDialog, ForkDialog, FollowDialog, ClosePieceDialog, MoveToFolderDialog</span>
+      <p class="bk-meta">Parts: ui.dialog, ui.dialog.title, ui.dialog.body, ui.dialog.actions</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.dialog.a" data-taste-title="Framed window">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Framed window</h3><p>G3's dialog: a framed sheet with a tone crown.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" data-crown role="alertdialog" aria-labelledby="fd-a-confirm-t" data-part="ui.dialog">
+              <strong id="fd-a-confirm-t" class="bk-heading" data-part="ui.dialog.title">Fork this scene?</strong>
+              <div data-part="ui.dialog.body"><p>A new scene starts from this point, and the original keeps going untouched.</p></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-part="ui.button">Fork</button></div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Confirm</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" data-crown data-tone="danger" role="alertdialog" aria-labelledby="fd-a-danger-t" data-part="ui.dialog">
+              <span class="bk-label">Cut this story?</span>
+              <strong id="fd-a-danger-t" class="bk-heading" data-part="ui.dialog.title" style="display:block;margin-top:var(--bk-space-1)">Cut the deck</strong>
+              <div data-part="ui.dialog.body"><p>&ldquo;Cut the deck&rdquo; and every message in it, permanently. There is no undo.</p></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-danger data-part="ui.button">Delete</button></div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Danger confirm</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" data-crown role="dialog" aria-labelledby="fd-a-form-t" data-part="ui.dialog">
+              <strong id="fd-a-form-t" class="bk-heading" data-part="ui.dialog.title">Fork this scene</strong>
+              <div data-part="ui.dialog.body">
+                <div class="fb-dlg-field"><label class="bk-label" for="fd-a-form-name">Name</label><input id="fd-a-form-name" class="fb-dlg-input" type="text" value="The long storm (fork)"></div>
+              </div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-part="ui.button">Create</button></div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Form (with a name)</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" data-crown role="dialog" aria-labelledby="fd-a-pick-t" data-part="ui.dialog">
+              <strong id="fd-a-pick-t" class="bk-heading" data-part="ui.dialog.title">Move to folder</strong>
+              <div role="listbox" aria-labelledby="fd-a-pick-t" data-part="ui.dialog.body" style="margin-top:var(--bk-space-3)">
+                <div class="bk-item" role="option" aria-selected="true" tabindex="0" data-deck="pack"><span class="bk-cursor"></span>Main Plot<span class="bk-meta" style="margin-left:auto">4</span></div>
+                <div class="bk-item" role="option" aria-selected="false" tabindex="0" data-deck="preset"><span class="bk-cursor"></span>Side Quests<span class="bk-meta" style="margin-left:auto">2</span></div>
+              </div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-part="ui.button">Move</button></div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Picker (move to folder)</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" data-crown role="dialog" aria-labelledby="fd-a-follow-t" data-part="ui.dialog">
+              <strong id="fd-a-follow-t" class="bk-heading" data-part="ui.dialog.title">Follow Vera Lune's lead?</strong>
+              <div data-part="ui.dialog.body"><p>The scene continues from the character's own next move.</p><label class="fb-dlg-check"><input type="checkbox">Never ask me this again</label></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Not now</button><button type="button" class="fb-btn" data-part="ui.button">Follow</button></div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Follow, with &quot;never ask me this again&quot;</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.dialog.b" data-taste-title="Choice menu">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Choice menu</h3><p>The answers are a vertical menu of rows, each with a Y or N key cap.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" role="alertdialog" aria-labelledby="fd-b-confirm-t" data-part="ui.dialog">
+              <strong id="fd-b-confirm-t" class="bk-heading" data-part="ui.dialog.title">Fork this scene?</strong>
+              <div data-part="ui.dialog.body"><p>A new scene starts from this point, and the original keeps going untouched.</p></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions">
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Fork</span><span class="bk-tag" data-part="ui.menu.key"><kbd>Y</kbd></span></button>
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Cancel</span><span class="bk-tag" data-part="ui.menu.key"><kbd>N</kbd></span></button>
+              </div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Confirm</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" data-tone="danger" role="alertdialog" aria-labelledby="fd-b-danger-t" data-part="ui.dialog">
+              <span class="bk-label">Cut this story?</span>
+              <strong id="fd-b-danger-t" class="bk-heading" data-part="ui.dialog.title" style="display:block;margin-top:var(--bk-space-1)">Cut the deck</strong>
+              <div data-part="ui.dialog.body"><p>&ldquo;Cut the deck&rdquo; and every message in it, permanently. There is no undo.</p></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions">
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Delete</span><span class="bk-tag" data-mark data-part="ui.menu.key"><kbd>Y</kbd></span></button>
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Cancel</span><span class="bk-tag" data-part="ui.menu.key"><kbd>N</kbd></span></button>
+              </div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Danger confirm</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" role="dialog" aria-labelledby="fd-b-form-t" data-part="ui.dialog">
+              <strong id="fd-b-form-t" class="bk-heading" data-part="ui.dialog.title">Fork this scene</strong>
+              <div data-part="ui.dialog.body"><div class="fb-dlg-field"><label class="bk-label" for="fd-b-form-name">Name</label><input id="fd-b-form-name" class="fb-dlg-input" type="text" value="The long storm (fork)"></div></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions">
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Create</span><span class="bk-tag" data-part="ui.menu.key"><kbd>Enter</kbd></span></button>
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Cancel</span><span class="bk-tag" data-part="ui.menu.key"><kbd>Esc</kbd></span></button>
+              </div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Form (with a name)</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" role="dialog" aria-labelledby="fd-b-pick-t" data-part="ui.dialog">
+              <strong id="fd-b-pick-t" class="bk-heading" data-part="ui.dialog.title">Move to folder</strong>
+              <div role="listbox" aria-labelledby="fd-b-pick-t" data-part="ui.dialog.body" style="margin-top:var(--bk-space-3)">
+                <div class="bk-item" role="option" aria-selected="true" tabindex="0" data-deck="pack"><span class="bk-cursor"></span>Main Plot<span class="bk-meta" style="margin-left:auto">4</span></div>
+                <div class="bk-item" role="option" aria-selected="false" tabindex="0" data-deck="preset"><span class="bk-cursor"></span>Side Quests<span class="bk-meta" style="margin-left:auto">2</span></div>
+              </div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Cancel</span><span class="bk-tag" data-part="ui.menu.key"><kbd>Esc</kbd></span></button></div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Picker (move to folder)</span>
+          <div class="fb-pane"><div class="fb-scrim">
+            <div class="fb-dlg bk-frame" role="dialog" aria-labelledby="fd-b-follow-t" data-part="ui.dialog">
+              <strong id="fd-b-follow-t" class="bk-heading" data-part="ui.dialog.title">Follow Vera Lune's lead?</strong>
+              <div data-part="ui.dialog.body"><p>The scene continues from the character's own next move.</p><label class="fb-dlg-check"><input type="checkbox">Never ask me this again</label></div>
+              <div class="fb-dlg-actions" data-part="ui.dialog.actions">
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Follow</span><span class="bk-tag" data-part="ui.menu.key"><kbd>Y</kbd></span></button>
+                <button type="button" class="bk-item fb-dlg-choice" data-part="ui.menu.item"><span>Not now</span><span class="bk-tag" data-part="ui.menu.key"><kbd>N</kbd></span></button>
+              </div>
+            </div>
+          </div></div>
+          <span class="bk-meta">Follow, with &quot;never ask me this again&quot;</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.dialog.c" data-taste-title="Prompt bar">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Prompt bar</h3><p>The dialog docks to the bottom of the pane, like a game's dialogue box; the content above stays visible, dimmed.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-pane">
+            <div class="fb-stage-behind"><span class="bk-name">The long storm</span><p class="bk-meta">Vera Lune &middot; Take 2</p></div>
+            <div class="fb-scrim" data-dock="bottom" style="background:none">
+              <div class="fb-dlg fb-dlg-bar bk-frame" role="alertdialog" aria-labelledby="fd-c-confirm-t" data-part="ui.dialog">
+                <strong id="fd-c-confirm-t" class="bk-heading" data-part="ui.dialog.title">Fork this scene?</strong>
+                <div data-part="ui.dialog.body"><p>A new scene starts from this point, and the original keeps going untouched.</p></div>
+                <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-part="ui.button">Fork</button></div>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Confirm</span>
+          <div class="fb-pane">
+            <div class="fb-stage-behind"><span class="bk-name">Cut the deck</span></div>
+            <div class="fb-scrim" data-dock="bottom" style="background:none">
+              <div class="fb-dlg fb-dlg-bar bk-frame" data-tone="danger" role="alertdialog" aria-labelledby="fd-c-danger-t" data-part="ui.dialog">
+                <span class="bk-label">Cut this story?</span>
+                <strong id="fd-c-danger-t" class="bk-heading" data-part="ui.dialog.title" style="display:block;margin-top:var(--bk-space-1)">Cut the deck</strong>
+                <div data-part="ui.dialog.body"><p>&ldquo;Cut the deck&rdquo; and every message in it, permanently. There is no undo.</p></div>
+                <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-danger data-part="ui.button">Delete</button></div>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Danger confirm</span>
+          <div class="fb-pane">
+            <div class="fb-scrim" data-dock="bottom" style="background:none">
+              <div class="fb-dlg fb-dlg-bar bk-frame" role="dialog" aria-labelledby="fd-c-form-t" data-part="ui.dialog">
+                <strong id="fd-c-form-t" class="bk-heading" data-part="ui.dialog.title">Fork this scene</strong>
+                <div data-part="ui.dialog.body"><div class="fb-dlg-field"><label class="bk-label" for="fd-c-form-name">Name</label><input id="fd-c-form-name" class="fb-dlg-input" type="text" value="The long storm (fork)"></div></div>
+                <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-part="ui.button">Create</button></div>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Form (with a name)</span>
+          <div class="fb-pane">
+            <div class="fb-scrim" data-dock="bottom" style="background:none">
+              <div class="fb-dlg fb-dlg-bar bk-frame" role="dialog" aria-labelledby="fd-c-pick-t" data-part="ui.dialog">
+                <strong id="fd-c-pick-t" class="bk-heading" data-part="ui.dialog.title">Move to folder</strong>
+                <div role="listbox" aria-labelledby="fd-c-pick-t" data-part="ui.dialog.body" style="margin-top:var(--bk-space-3)">
+                  <div class="bk-item" role="option" aria-selected="true" tabindex="0" data-deck="pack"><span class="bk-cursor"></span>Main Plot<span class="bk-meta" style="margin-left:auto">4</span></div>
+                  <div class="bk-item" role="option" aria-selected="false" tabindex="0" data-deck="preset"><span class="bk-cursor"></span>Side Quests<span class="bk-meta" style="margin-left:auto">2</span></div>
+                </div>
+                <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Cancel</button><button type="button" class="fb-btn" data-part="ui.button">Move</button></div>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Picker (move to folder)</span>
+          <div class="fb-pane">
+            <div class="fb-scrim" data-dock="bottom" style="background:none">
+              <div class="fb-dlg fb-dlg-bar bk-frame" role="dialog" aria-labelledby="fd-c-follow-t" data-part="ui.dialog">
+                <strong id="fd-c-follow-t" class="bk-heading" data-part="ui.dialog.title">Follow Vera Lune's lead?</strong>
+                <div data-part="ui.dialog.body"><p>The scene continues from the character's own next move.</p><label class="fb-dlg-check"><input type="checkbox">Never ask me this again</label></div>
+                <div class="fb-dlg-actions" data-part="ui.dialog.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Not now</button><button type="button" class="fb-btn" data-part="ui.button">Follow</button></div>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Follow, with &quot;never ask me this again&quot;</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="feedback.sheet">
+    <header>
+      <h2 class="bk-heading">Sheets</h2>
+      <span class="bk-tag">BottomSheet, drawers (Scenes side panel below 700px)</span>
+      <p class="bk-meta">Parts: ui.sheet, ui.sheet.grab, ui.sheet.title, ui.sheet.body, ui.sheet.foot</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.sheet.a" data-taste-title="Bottom sheet">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Bottom sheet</h3><p>A grab handle, a title row, and a close action.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-pane">
+            <div class="fb-sheet" data-part="ui.sheet"><span class="fb-sheet-grab" data-part="ui.sheet.grab" aria-hidden="true"></span>
+              <div class="fb-sheet-title" data-part="ui.sheet.title"><h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Split Harbor Town</h3><button type="button" class="fb-btn" data-ghost aria-label="Close" style="margin-left:auto;padding:0 var(--bk-space-2)">&times;</button></div>
+              <div class="fb-sheet-body" data-part="ui.sheet.body"><p class="bk-meta">Choose which entries move to the new lorebook.</p></div>
+            </div>
+          </div>
+          <span class="bk-meta">Open</span>
+          <div class="fb-pane">
+            <div class="fb-sheet" data-part="ui.sheet"><span class="fb-sheet-grab" data-part="ui.sheet.grab" aria-hidden="true"></span>
+              <div class="fb-sheet-title" data-part="ui.sheet.title"><h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Move to folder</h3></div>
+              <div class="fb-sheet-body" data-part="ui.sheet.body">
+                <div class="bk-item" role="option" aria-selected="true" tabindex="0" data-deck="pack"><span class="bk-cursor"></span>Main Plot</div>
+                <div class="bk-item" role="option" aria-selected="false" tabindex="0" data-deck="preset"><span class="bk-cursor"></span>Side Quests</div>
+              </div>
+              <div class="fb-sheet-foot" data-part="ui.sheet.foot"><button type="button" class="fb-btn" data-part="ui.button">Move</button></div>
+            </div>
+          </div>
+          <span class="bk-meta">With a footer action</span>
+          <div class="fb-pane">
+            <div class="fb-sheet" data-part="ui.sheet"><span class="fb-sheet-grab" data-part="ui.sheet.grab" aria-hidden="true"></span>
+              <div class="fb-sheet-title" data-part="ui.sheet.title"><h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Carried in</h3></div>
+              <div class="fb-sheet-body" data-part="ui.sheet.body" style="max-height:6rem">
+                <p class="bk-meta">checked &nbsp;character/vera.json</p><p class="bk-meta">checked &nbsp;character/the-lighthouse-keeper.json</p><p class="bk-meta">checked &nbsp;lorebook/harbor-town.json</p><p class="bk-meta">carrying &nbsp;preset/moonlit.json</p><p class="bk-meta">checked &nbsp;regex/narration-cleanup.json</p><p class="bk-meta">checked &nbsp;persona/wren.json</p>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Long, scrolling body</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.sheet.b" data-taste-title="Side drawer">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Side drawer</h3><p>Slides in from the left edge with a title bar and a readout.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-pane">
+            <div class="fb-drawer" data-part="ui.sheet">
+              <div class="fb-drawer-title" data-part="ui.sheet.title"><h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Split Harbor Town</h3><button type="button" class="fb-btn" data-ghost aria-label="Close" style="padding:0 var(--bk-space-2)">&times;</button></div>
+              <div class="fb-drawer-body" data-part="ui.sheet.body"><p class="bk-meta">Choose which entries move to the new lorebook.</p></div>
+            </div>
+          </div>
+          <span class="bk-meta">Open</span>
+          <div class="fb-pane">
+            <div class="fb-drawer" data-part="ui.sheet">
+              <div class="fb-drawer-title" data-part="ui.sheet.title"><h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Move to folder</h3><span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value">2</span><span class="bk-readout__label">folders</span></span></div>
+              <div class="fb-drawer-body" data-part="ui.sheet.body">
+                <div class="bk-item" role="option" aria-selected="true" tabindex="0" data-deck="pack"><span class="bk-cursor"></span>Main Plot</div>
+                <div class="bk-item" role="option" aria-selected="false" tabindex="0" data-deck="preset"><span class="bk-cursor"></span>Side Quests</div>
+              </div>
+              <div class="fb-sheet-foot" data-part="ui.sheet.foot"><button type="button" class="fb-btn" data-part="ui.button">Move</button></div>
+            </div>
+          </div>
+          <span class="bk-meta">With a footer action</span>
+          <div class="fb-pane">
+            <div class="fb-drawer" data-part="ui.sheet">
+              <div class="fb-drawer-title" data-part="ui.sheet.title"><h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Carried in</h3><span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value">214/412</span></span></div>
+              <div class="fb-drawer-body" data-part="ui.sheet.body">
+                <p class="bk-meta">checked &nbsp;character/vera.json</p><p class="bk-meta">checked &nbsp;character/the-lighthouse-keeper.json</p><p class="bk-meta">checked &nbsp;lorebook/harbor-town.json</p><p class="bk-meta">carrying &nbsp;preset/moonlit.json</p><p class="bk-meta">checked &nbsp;regex/narration-cleanup.json</p><p class="bk-meta">checked &nbsp;persona/wren.json</p>
+              </div>
+            </div>
+          </div>
+          <span class="bk-meta">Long, scrolling body</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="feedback.toast">
+    <header>
+      <h2 class="bk-heading">Toasts</h2>
+      <span class="bk-tag">StatusToast, status-bar notes</span>
+      <p class="bk-meta">Parts: ui.toast, ui.toast.body, ui.toast.action</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.toast.a" data-taste-title="Corner readout">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Corner readout</h3><p>A small framed plate at the bottom right, with a tone pip.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-pane" role="status"><div class="fb-toast-corner" data-tone="info" data-part="ui.toast"><span class="bk-dot" aria-hidden="true"></span><span data-part="ui.toast.body">Autosaved.</span></div></div>
+          <span class="bk-meta">Info</span>
+          <div class="fb-pane" role="status"><div class="fb-toast-corner" data-tone="ok" data-part="ui.toast"><span class="bk-dot" aria-hidden="true"></span><span data-part="ui.toast.body">Preset saved.</span></div></div>
+          <span class="bk-meta">Ok</span>
+          <div class="fb-pane" role="status"><div class="fb-toast-corner" data-tone="warn" data-part="ui.toast"><span class="bk-dot" aria-hidden="true"></span><span data-part="ui.toast.body">Running low on lore budget.</span></div></div>
+          <span class="bk-meta">Warn</span>
+          <div class="fb-pane" role="alert"><div class="fb-toast-corner" data-tone="danger" data-part="ui.toast"><span class="bk-dot" aria-hidden="true"></span><span data-part="ui.toast.body">Could not reach the server.</span></div></div>
+          <span class="bk-meta">Danger</span>
+          <div class="fb-pane" role="status"><div class="fb-toast-corner" data-tone="danger" data-part="ui.toast"><span class="bk-dot" aria-hidden="true"></span><span data-part="ui.toast.body">Entry deleted.</span><button type="button" class="fb-btn fb-toast-action" data-text data-part="ui.toast.action">Undo</button></div></div>
+          <span class="bk-meta">With action (Undo)</span>
+          <div class="fb-pane" role="status" aria-live="polite"><div class="fb-toast-corner" data-tone="warn" data-part="ui.toast"><span class="bk-dot" aria-hidden="true"></span><span data-part="ui.toast.body">The studio connection dropped. Retrying&hellip;</span></div></div>
+          <span class="bk-meta">Sticky (the boot retry note)</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.toast.b" data-taste-title="Status ticker">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Status ticker</h3><p>The message appears in the status bar with a tone tag, and stays until read.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-status-ticker" role="status" data-part="ui.toast"><span class="bk-tag" data-tone="info" data-part="ui.badge"><span class="bk-dot"></span>Info</span><span class="bk-meta" data-part="ui.toast.body">Autosaved.</span></div>
+          <div class="fb-status-ticker" role="status" data-part="ui.toast"><span class="bk-tag" data-tone="ok" data-part="ui.badge"><span class="bk-dot"></span>Ok</span><span class="bk-meta" data-part="ui.toast.body">Preset saved.</span></div>
+          <div class="fb-status-ticker" role="status" data-part="ui.toast"><span class="bk-tag" data-tone="warn" data-part="ui.badge"><span class="bk-dot"></span>Warn</span><span class="bk-meta" data-part="ui.toast.body">Running low on lore budget.</span></div>
+          <div class="fb-status-ticker" role="alert" data-part="ui.toast"><span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot"></span>Error</span><span class="bk-meta" data-part="ui.toast.body">Could not reach the server.</span></div>
+          <div class="fb-status-ticker" role="status" data-part="ui.toast"><span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot"></span>Deleted</span><span class="bk-meta" data-part="ui.toast.body">Entry deleted.</span><button type="button" class="fb-btn fb-toast-action" data-text data-part="ui.toast.action">Undo</button></div>
+          <div class="fb-status-ticker" role="status" aria-live="polite" data-part="ui.toast"><span class="bk-tag" data-tone="warn" data-part="ui.badge"><span class="bk-dot"></span>Retrying</span><span class="bk-meta" data-part="ui.toast.body">The studio connection dropped. Retrying&hellip;</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="feedback.notice">
+    <header>
+      <h2 class="bk-heading">Notices</h2>
+      <span class="bk-tag">DamageNotice, WorkshopNotice, StageNote, CardNotice, weak-lock notice, Update available card</span>
+      <p class="bk-meta">Parts: ui.notice, ui.notice.title, ui.notice.body, ui.notice.actions</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.notice.a" data-taste-title="Tone panel">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Tone panel</h3><p>A panel with a tone crown and a tone tag.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-notice-panel" data-tone="info" data-part="ui.notice"><div class="fb-notice-head"><span class="bk-tag" data-tone="info" data-part="ui.badge"><span class="bk-dot"></span>Info</span><strong data-part="ui.notice.title">Update available</strong></div><div class="fb-notice-body" data-part="ui.notice.body">0.15.0 is ready. Your studio folder is never touched.</div></div>
+          <div class="fb-notice-panel" data-tone="warn" data-part="ui.notice"><div class="fb-notice-head"><span class="bk-tag" data-tone="warn" data-part="ui.badge"><span class="bk-dot"></span>Warn</span><strong data-part="ui.notice.title">A weak lock</strong></div><div class="fb-notice-body" data-part="ui.notice.body">No system keychain was available, so this computer's key sits in a file beside your library.</div><div class="fb-notice-actions" data-part="ui.notice.actions"><button type="button" class="fb-btn" data-part="ui.button">Move to the stronger lock</button></div></div>
+          <div class="fb-notice-panel" data-tone="danger" data-part="ui.notice"><div class="fb-notice-head"><span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot"></span>Danger</span><strong data-part="ui.notice.title">3 pieces damaged</strong></div><div class="fb-notice-body" data-part="ui.notice.body">These pieces could not be read and were skipped.</div><div class="fb-notice-detail" data-part="ui.notice.body"><p>character/marguerite-vane.json: invalid JSON</p><p>lorebook/the-fog-bell.json: missing entries array</p></div><div class="fb-notice-actions" data-part="ui.notice.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">View studio folder</button></div></div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.notice.b" data-taste-title="Inline strip">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Inline strip</h3><p>One line with a tone pip, the sentence, and the action at right; detail expands below.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-notice-strip" data-tone="info" data-part="ui.notice"><span class="bk-dot" aria-hidden="true"></span><span class="fb-notice-strip-text" data-part="ui.notice.body">Update available: 0.15.0 is ready.</span></div>
+          <div class="fb-notice-strip" data-tone="warn" data-part="ui.notice"><span class="bk-dot" aria-hidden="true"></span><span class="fb-notice-strip-text" data-part="ui.notice.body">A weak lock: this computer's key sits in a plain file.</span><button type="button" class="fb-btn" data-text data-part="ui.notice.actions">Fix it</button></div>
+          <div class="fb-kind">
+            <div class="fb-notice-strip" data-tone="danger" data-part="ui.notice"><span class="bk-dot" aria-hidden="true"></span><span class="fb-notice-strip-text" data-part="ui.notice.body">3 pieces damaged and were skipped.</span><button type="button" class="fb-btn" data-text data-part="ui.notice.actions">Details</button></div>
+            <div class="fb-notice-detail" data-part="ui.notice.body"><p>character/marguerite-vane.json: invalid JSON</p><p>lorebook/the-fog-bell.json: missing entries array</p></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="feedback.empty">
+    <header>
+      <h2 class="bk-heading">Empty states</h2>
+      <span class="bk-tag">LoreEmpty, &quot;Trash is empty&quot;, &quot;No props yet&quot;, NoMatchNotice, first-run doors</span>
+      <p class="bk-meta">Parts: ui.empty, ui.empty.title, ui.empty.body, ui.empty.actions</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.empty.a" data-taste-title="Empty slot">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Empty slot</h3><p>An outlined slot, a short line, and one action.</p></header>
+        <div class="spec-demo fb-row">
+          <div class="fb-empty-slot" data-part="ui.empty"><strong class="bk-name" data-part="ui.empty.title">Nothing here yet</strong><p data-part="ui.empty.body">Add a lorebook entry to get started.</p><div data-part="ui.empty.actions"><button type="button" class="fb-btn" data-part="ui.button">Add entry</button></div></div>
+          <div class="fb-empty-slot" data-part="ui.empty"><strong class="bk-name" data-part="ui.empty.title">No match for &quot;velvet&quot;</strong><p data-part="ui.empty.body">Nothing on this shelf matches. All 12 presets are still in the studio; this shelf is filtered, not bare.</p><div data-part="ui.empty.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Clear search</button></div></div>
+          <div class="fb-empty-slot" data-part="ui.empty"><strong class="bk-name" data-part="ui.empty.title">Trash is empty</strong><p data-part="ui.empty.body">Deleted pieces and scenes show up here for 30 days.</p></div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.empty.b" data-taste-title="Prompt">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Prompt</h3><p>A centered line with a key-chip prompt and the button.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-empty-prompt" data-part="ui.empty"><strong class="bk-name" data-part="ui.empty.title">Nothing here yet</strong><p data-part="ui.empty.body" class="bk-meta">Press <kbd class="bk-tag"><b>N</b></kbd> for a new lorebook</p><div data-part="ui.empty.actions"><button type="button" class="fb-btn" data-part="ui.button">New lorebook</button></div></div>
+          <div class="fb-empty-prompt" data-part="ui.empty"><strong class="bk-name" data-part="ui.empty.title">No match for &quot;velvet&quot;</strong><p data-part="ui.empty.body" class="bk-meta">All 12 presets are still in the studio; this shelf is filtered, not bare.</p><div data-part="ui.empty.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Clear search</button></div></div>
+          <div class="fb-empty-prompt" data-part="ui.empty">
+            <strong class="bk-name" data-part="ui.empty.title">Welcome to the stage</strong>
+            <div class="fb-empty-doors" data-part="ui.empty.actions">
+              <button type="button" class="fb-empty-door" data-part="ui.button"><span class="bk-name">Start fresh</span><span class="bk-meta">A new, empty studio</span></button>
+              <button type="button" class="fb-empty-door" data-part="ui.button"><span class="bk-name">Load a folder</span><span class="bk-meta">Carry in an existing studio</span></button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="feedback.progress">
+    <header>
+      <h2 class="bk-heading">Progress</h2>
+      <span class="bk-tag">ProgressChecklist, load-in, Starting chip, SwitchProgress, streaming reply</span>
+      <p class="bk-meta">Parts: ui.progress, ui.progress.step, ui.progress.bar</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.progress.a" data-taste-title="Meter and steps">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Meter and steps</h3><p>A segmented meter over a step list.</p></header>
+        <div class="spec-demo fb-col">
+          <div data-part="ui.progress">
+            <div class="bk-meter" role="meter" aria-label="Pieces carried in" aria-valuemin="0" aria-valuemax="412" aria-valuenow="214" data-part="ui.progress.bar"><span class="bk-meter__label">Load-in</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:52%"></span></span><span class="bk-meter__value">214 / 412</span></div>
+          </div>
+          <div data-part="ui.progress" style="max-width:20rem">
+            <div class="bk-meter" data-continuous role="meter" aria-label="Switching version" aria-busy="true" data-part="ui.progress.bar"><span class="bk-meter__label">Restarting Bunraku</span><span class="bk-meter__track"><span class="bk-meter__fill fb-progress-pulse" style="--bk-value:100%"></span></span></div>
+          </div>
+          <div data-part="ui.progress" style="max-width:20rem">
+            <div class="bk-meter" role="meter" aria-label="Health check" aria-valuemin="0" aria-valuemax="3" aria-valuenow="3" data-part="ui.progress.bar"><span class="bk-meter__label">Health check</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:100%"></span></span></div>
+            <div class="fb-progress-steps">
+              <span class="fb-progress-step" data-done data-part="ui.progress.step">&check; Checked 213 entries</span>
+              <span class="fb-progress-step" data-done data-part="ui.progress.step">&check; Checked 118 keys</span>
+              <span class="fb-progress-step" data-done data-part="ui.progress.step">&check; No duplicates found</span>
+            </div>
+          </div>
+          <span class="bk-meta">Done</span>
+          <div data-part="ui.progress" style="max-width:20rem">
+            <div class="bk-meter" data-tone="danger" role="meter" aria-label="Import" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2" data-part="ui.progress.bar"><span class="bk-meter__label">Import</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:66%"></span></span></div>
+            <div class="fb-progress-steps">
+              <span class="fb-progress-step" data-done data-part="ui.progress.step">&check; Read the folder</span>
+              <span class="fb-progress-step" data-failed data-part="ui.progress.step">&times; Could not write marguerite-vane.json</span>
+            </div>
+          </div>
+          <span class="bk-meta">Failed step</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.progress.b" data-taste-title="Checklist">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Checklist</h3><p>Steps as rows with pips; the current one is marked.</p></header>
+        <div class="spec-demo fb-col">
+          <div data-part="ui.progress">
+            <span class="bk-pips" aria-label="214 of 412 pieces" data-part="ui.progress.bar"><i data-on></i><i data-on></i><i data-on></i><i data-on></i><i></i></span>
+            <div class="fb-progress-steps"><span class="fb-progress-step" data-current data-part="ui.progress.step">Carrying preset/moonlit.json&hellip;</span></div>
+          </div>
+          <span class="bk-meta">Determinate (load-in)</span>
+          <div data-part="ui.progress">
+            <span class="bk-pips" aria-label="switching, indeterminate" aria-busy="true" data-part="ui.progress.bar"><i data-on class="fb-progress-pulse"></i><i data-on class="fb-progress-pulse"></i><i></i><i></i><i></i></span>
+            <div class="fb-progress-steps"><span class="fb-progress-step" data-current data-part="ui.progress.step">Restarting Bunraku&hellip;</span></div>
+          </div>
+          <span class="bk-meta">Indeterminate (a pulsing segment, no spinner)</span>
+          <div data-part="ui.progress">
+            <div class="fb-progress-steps">
+              <span class="fb-progress-step" data-done data-part="ui.progress.step"><span class="bk-dot" data-tone="ok"></span>Checked 213 entries</span>
+              <span class="fb-progress-step" data-done data-part="ui.progress.step"><span class="bk-dot" data-tone="ok"></span>Checked 118 keys</span>
+              <span class="fb-progress-step" data-current data-part="ui.progress.step"><span class="bk-dot"></span>Looking for duplicates&hellip;</span>
+            </div>
+          </div>
+          <span class="bk-meta">Multi-step checklist</span>
+          <div data-part="ui.progress">
+            <div class="fb-progress-steps">
+              <span class="fb-progress-step" data-done data-part="ui.progress.step"><span class="bk-dot" data-tone="ok"></span>Read the folder</span>
+              <span class="fb-progress-step" data-failed data-part="ui.progress.step"><span class="bk-dot" data-tone="danger"></span>Could not write marguerite-vane.json</span>
+            </div>
+          </div>
+          <span class="bk-meta">Failed step</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="feedback.error">
+    <header>
+      <h2 class="bk-heading">Errors</h2>
+      <span class="bk-tag">FailCard, BootErrorScreen card, ErrorRow</span>
+      <p class="bk-meta">Parts: ui.error-card, ui.error-card.title, ui.error-card.body, ui.error-card.actions</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="feedback.error.a" data-taste-title="Danger window">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Danger window</h3><p>Framed, with a danger crown; Retry is the primary action.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-error-win bk-frame" data-tone="danger" role="alert" data-part="ui.error-card">
+            <strong class="bk-heading" style="font-size:var(--bk-fs-lg)" data-part="ui.error-card.title">The reply failed</strong>
+            <p class="bk-meta" style="margin-top:var(--bk-space-2)" data-part="ui.error-card.body">The provider did not answer in time.</p>
+            <div class="fb-error-draft">Your draft: &quot;Deal. Just don't let it go out this time.&quot;</div>
+            <div class="fb-dlg-actions" data-part="ui.error-card.actions"><button type="button" class="fb-btn" data-ghost data-part="ui.button">Dismiss</button><button type="button" class="fb-btn" data-part="ui.button">Retry</button></div>
+          </div>
+          <div class="fb-error-win bk-frame" data-tone="danger" role="alert" data-part="ui.error-card">
+            <strong class="bk-heading" style="font-size:var(--bk-fs-lg)" data-part="ui.error-card.title">The house is dark</strong>
+            <p class="bk-meta" style="margin-top:var(--bk-space-2)" data-part="ui.error-card.body">The studio server did not answer. Your studio folder was not changed.</p>
+            <div class="fb-dlg-actions" data-part="ui.error-card.actions"><button type="button" class="fb-btn" data-part="ui.button">Try again</button></div>
+          </div>
+          <div class="fb-error-win bk-frame" data-tone="danger" role="alert" data-part="ui.error-card">
+            <strong class="bk-heading" style="font-size:var(--bk-fs-lg)" data-part="ui.error-card.title">Could not save</strong>
+            <p class="bk-meta" style="margin-top:var(--bk-space-2)" data-part="ui.error-card.body">The entry's keys were empty. Add at least one key.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="feedback.error.b" data-taste-title="Inline line">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Inline line</h3><p>A danger tag, the sentence, and Retry as a text action.</p></header>
+        <div class="spec-demo fb-col">
+          <div class="fb-kind">
+            <div class="fb-error-line" role="alert" data-part="ui.error-card"><span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot"></span>Failed</span><span class="bk-meta" data-part="ui.error-card.body">The reply failed: the provider did not answer in time.</span><button type="button" class="fb-btn" data-text data-part="ui.button">Retry</button></div>
+            <div class="fb-error-draft">Your draft: &quot;Deal. Just don't let it go out this time.&quot;</div>
+          </div>
+          <div class="fb-error-line" role="alert" data-part="ui.error-card"><span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot"></span>Error</span><span class="bk-meta" data-part="ui.error-card.body">The house is dark: the studio server did not answer.</span><button type="button" class="fb-btn" data-text data-part="ui.button">Try again</button></div>
+          <div class="fb-error-line" role="alert" data-part="ui.error-card"><span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot"></span>Error</span><span class="bk-meta" data-part="ui.error-card.body">Could not save: the entry's keys were empty.</span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="protected.gate">
+    <header>
+      <h2 class="bk-heading">The Gate</h2>
+      <span class="bk-tag">GateCard (Kit write approval), REVIEW CHANGE / REVIEW CROSSING</span>
+      <p class="bk-meta">Part: protected.gate. Protected tokens only (<code>--bk-protected-*</code>), drawn in <code>.bk-protected-root</code>; no theme or mod reaches it. Both variants carry the same five answers the window's Gate offers (see the report for the README/brief wording this corrects).</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="protected.gate.a" data-taste-title="Docked card">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Docked card</h3><p>The Gate takes over the bottom of the window.</p></header>
+        <div class="spec-demo fb-col fb-protected-root">
+          <div class="fb-gate" role="alertdialog" aria-labelledby="pg-a-change-t" data-part="protected.gate">
+            <p class="fb-gate-kick">saveEditedEntity &middot; review</p>
+            <strong id="pg-a-change-t" class="fb-gate-title">Keeper's Log</strong>
+            <p class="fb-gate-why">Two entries change: a text edit on The Fog Bell, and a duplicate key removed from The Long Storm.</p>
+            <ul class="fb-gate-warn"><li>The Fog Bell no longer wakes itself through its own text.</li></ul>
+            <pre class="fb-gate-detail">The Fog Bell.text: &quot;the bell over the storm door&quot; -&gt; &quot;the old bell by the door&quot;
+The Long Storm.keys: removes &quot;stairs&quot; (kept on The Third Stair)</pre>
+            <div class="fb-gate-row"><button type="button" class="fb-pbtn">Allow once</button><button type="button" class="fb-pbtn" data-ghost>Allow for this session</button><button type="button" class="fb-pbtn" data-ghost>No</button><button type="button" class="fb-pbtn" data-ghost>Wait, tell me more</button><button type="button" class="fb-pbtn" data-danger>Stop the whole turn</button></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Change review</span>
+          <div class="fb-gate" role="alertdialog" aria-labelledby="pg-a-cross-t" data-part="protected.gate">
+            <p class="fb-gate-kick">crossPlatform &middot; review</p>
+            <strong id="pg-a-cross-t" class="fb-gate-title">Keeper's Log, to SillyTavern</strong>
+            <p class="fb-gate-why">Each thing meets an engine that may not have it, banded worst first.</p>
+            <div class="fb-gate-crossing">
+              <div class="fb-gate-crossing-row" data-sev="danger"><span>Lore budget share</span><span>not supported, dropped</span></div>
+              <div class="fb-gate-crossing-row" data-sev="accent"><span>12 macro respellings</span><span>rewritten as text</span></div>
+              <div class="fb-gate-crossing-row" data-sev="ok"><span>Entry escrow</span><span>kept, not exported</span></div>
+            </div>
+            <div class="fb-gate-row"><button type="button" class="fb-pbtn">Allow once</button><button type="button" class="fb-pbtn" data-ghost>Allow for this session</button><button type="button" class="fb-pbtn" data-ghost>No</button><button type="button" class="fb-pbtn" data-ghost>Wait, tell me more</button><button type="button" class="fb-pbtn" data-danger>Stop the whole turn</button></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Crossing review, severity bands</span>
+          <div class="fb-gate" data-part="protected.gate"><p class="fb-gate-kick">saveEditedEntity</p><strong class="fb-gate-title">Keeper's Log</strong><p class="fb-gate-receipt">Held: waiting on your answer. The draft is kept.</p></div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Held</span>
+          <div class="fb-gate" data-part="protected.gate"><p class="fb-gate-kick">saveEditedEntity</p><strong class="fb-gate-title">Keeper's Log</strong><p class="fb-gate-receipt">Applied: saved once, revision 42.</p></div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Applied</span>
+          <div class="fb-gate" data-part="protected.gate"><p class="fb-gate-kick">saveEditedEntity</p><strong class="fb-gate-title">Keeper's Log</strong><p class="fb-gate-receipt">Stale: the piece changed elsewhere first. Nothing was written.</p></div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Stale</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="protected.gate.b" data-taste-title="Full panel">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Full panel</h3><p>Covers the pane with the ledger and the same five answers.</p></header>
+        <div class="spec-demo fb-col fb-protected-root">
+          <div class="fb-gate" role="alertdialog" aria-labelledby="pg-b-change-t" data-part="protected.gate">
+            <p class="fb-gate-kick">saveEditedEntity &middot; review</p>
+            <strong id="pg-b-change-t" class="fb-gate-title">Keeper's Log</strong>
+            <p class="fb-gate-why">Two entries change: a text edit on The Fog Bell, and a duplicate key removed from The Long Storm.</p>
+            <ul class="fb-gate-warn"><li>The Fog Bell no longer wakes itself through its own text.</li></ul>
+            <pre class="fb-gate-detail">The Fog Bell.text: &quot;the bell over the storm door&quot; -&gt; &quot;the old bell by the door&quot;
+The Long Storm.keys: removes &quot;stairs&quot; (kept on The Third Stair)</pre>
+            <div class="fb-gate-row"><button type="button" class="fb-pbtn">Allow once</button><button type="button" class="fb-pbtn" data-ghost>Allow for this session</button><button type="button" class="fb-pbtn" data-ghost>No</button><button type="button" class="fb-pbtn" data-ghost>Wait, tell me more</button><button type="button" class="fb-pbtn" data-danger>Stop the whole turn</button></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Change review</span>
+          <div class="fb-gate" role="alertdialog" aria-labelledby="pg-b-cross-t" data-part="protected.gate">
+            <p class="fb-gate-kick">crossPlatform &middot; review</p>
+            <strong id="pg-b-cross-t" class="fb-gate-title">Keeper's Log, to SillyTavern</strong>
+            <p class="fb-gate-why">Each thing meets an engine that may not have it, banded worst first.</p>
+            <div class="fb-gate-crossing">
+              <div class="fb-gate-crossing-row" data-sev="danger"><span>Lore budget share</span><span>not supported, dropped</span></div>
+              <div class="fb-gate-crossing-row" data-sev="accent"><span>12 macro respellings</span><span>rewritten as text</span></div>
+              <div class="fb-gate-crossing-row" data-sev="ok"><span>Entry escrow</span><span>kept, not exported</span></div>
+            </div>
+            <div class="fb-gate-row"><button type="button" class="fb-pbtn">Allow once</button><button type="button" class="fb-pbtn" data-ghost>Allow for this session</button><button type="button" class="fb-pbtn" data-ghost>No</button><button type="button" class="fb-pbtn" data-ghost>Wait, tell me more</button><button type="button" class="fb-pbtn" data-danger>Stop the whole turn</button></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Crossing review, severity bands</span>
+          <div class="fb-gate" data-part="protected.gate"><p class="fb-gate-kick">saveEditedEntity</p><strong class="fb-gate-title">Keeper's Log</strong><p class="fb-gate-receipt">Held: waiting on your answer. The draft is kept.</p></div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Held</span>
+          <div class="fb-gate" data-part="protected.gate"><p class="fb-gate-kick">saveEditedEntity</p><strong class="fb-gate-title">Keeper's Log</strong><p class="fb-gate-receipt">Applied: saved once, revision 42.</p></div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Applied</span>
+          <div class="fb-gate" data-part="protected.gate"><p class="fb-gate-kick">saveEditedEntity</p><strong class="fb-gate-title">Keeper's Log</strong><p class="fb-gate-receipt">Stale: the piece changed elsewhere first. Nothing was written.</p></div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Stale</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="protected.secret">
+    <header>
+      <h2 class="bk-heading">Secrets</h2>
+      <span class="bk-tag">SecretField, WordList (recovery words), Rehearsal</span>
+      <p class="bk-meta">Parts: protected.secret, protected.words. Protected tokens only.</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="protected.secret.a" data-taste-title="Plain">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Plain</h3><p>Fields, and a numbered word grid.</p></header>
+        <div class="spec-demo fb-col fb-protected-root">
+          <div class="fb-gate" data-part="protected.secret">
+            <div class="fb-secret-field"><label class="fb-secret-label" for="ps-a-masked">Password</label><input id="ps-a-masked" class="fb-secret-input" type="password" value="moonlit harbor"></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Masked</span>
+          <div class="fb-gate" data-part="protected.secret">
+            <div class="fb-secret-field"><label class="fb-secret-label" for="ps-a-revealed">Password</label><input id="ps-a-revealed" class="fb-secret-input" type="text" value="moonlit harbor"></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Revealed</span>
+          <div class="fb-gate" data-part="protected.words">
+            <p class="fb-gate-why">Your lines, shown once. Lose them and the show cannot go on.</p>
+            <div class="fb-secret-words">
+              <span class="fb-secret-word"><i>1.</i>velvet</span><span class="fb-secret-word"><i>2.</i>harbor</span><span class="fb-secret-word"><i>3.</i>lantern</span>
+              <span class="fb-secret-word"><i>4.</i>orchard</span><span class="fb-secret-word"><i>5.</i>salt</span><span class="fb-secret-word"><i>6.</i>quiet</span>
+              <span class="fb-secret-word"><i>7.</i>ferry</span><span class="fb-secret-word"><i>8.</i>cinder</span><span class="fb-secret-word"><i>9.</i>willow</span>
+              <span class="fb-secret-word"><i>10.</i>drift</span><span class="fb-secret-word"><i>11.</i>amber</span><span class="fb-secret-word"><i>12.</i>hush</span>
+            </div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Words shown once</span>
+          <div class="fb-gate" data-part="protected.words">
+            <p class="fb-gate-why">Recite your lines. Cue 6 is off; check your script.</p>
+            <div class="fb-secret-words">
+              <span class="fb-secret-word"><i>1.</i>velvet</span><span class="fb-secret-word"><i>2.</i>harbor</span><span class="fb-secret-word"><i>3.</i>lantern</span>
+              <span class="fb-secret-word"><i>4.</i>orchard</span><span class="fb-secret-word"><i>5.</i>salt</span><span class="fb-secret-word" data-bad><i>6.</i>quite</span>
+            </div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Words typed back, one wrong cue</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="protected.secret.b" data-taste-title="Ledger">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Ledger</h3><p>Words as a mono ledger with leaders.</p></header>
+        <div class="spec-demo fb-col fb-protected-root">
+          <div class="fb-gate" data-part="protected.secret">
+            <div class="fb-secret-field"><label class="fb-secret-label" for="ps-b-masked">Password</label><input id="ps-b-masked" class="fb-secret-input" type="password" value="moonlit harbor"></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Masked</span>
+          <div class="fb-gate" data-part="protected.secret">
+            <div class="fb-secret-field"><label class="fb-secret-label" for="ps-b-revealed">Password</label><input id="ps-b-revealed" class="fb-secret-input" type="text" value="moonlit harbor"></div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Revealed</span>
+          <div class="fb-gate" data-part="protected.words">
+            <p class="fb-gate-why">Your lines, shown once.</p>
+            <div class="fb-secret-ledger">
+              <span class="fb-secret-ledger-row"><span>1. velvet</span><span>7. ferry</span></span>
+              <span class="fb-secret-ledger-row"><span>2. harbor</span><span>8. cinder</span></span>
+              <span class="fb-secret-ledger-row"><span>3. lantern</span><span>9. willow</span></span>
+              <span class="fb-secret-ledger-row"><span>4. orchard</span><span>10. drift</span></span>
+              <span class="fb-secret-ledger-row"><span>5. salt</span><span>11. amber</span></span>
+              <span class="fb-secret-ledger-row"><span>6. quiet</span><span>12. hush</span></span>
+            </div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Words shown once</span>
+          <div class="fb-gate" data-part="protected.words">
+            <p class="fb-gate-why">Recite your lines. Cue 6 is off; check your script.</p>
+            <div class="fb-secret-ledger">
+              <span class="fb-secret-ledger-row"><span>1. velvet</span></span>
+              <span class="fb-secret-ledger-row"><span>5. salt</span></span>
+              <span class="fb-secret-ledger-row" style="color:var(--bk-protected-danger)"><span>6. quite</span></span>
+            </div>
+          </div>
+          <span class="bk-meta" style="color:var(--bk-text-faint)">Words typed back, one wrong cue</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

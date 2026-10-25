@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home: your cast</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Shared skeleton for every workbench-/agent- soft wireframe: the Dock (fluid, marks only under
+ * 46rem of window width - kept exactly as approved, reused unchanged on every page in this set) and
+ * the wf-bar/wf-note pattern. Page content sits in .stage.
+ * Known gap: soft-parts.css sets .s-app small/.s-app kbd and .wf-bar text at 11px,
+ * under this brief's 12px floor - overridden here and on every other page in this set.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+/* The Dock's mark-only collapse answers the WHOLE WINDOW, same as the app's real locked
+   narrow-screen mode and the user-driven slim-dock strip - so this one rule is @media, not
+   @container. Every pane-level fold below it (.pane, .stage) uses @container instead. */
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; container-type: inline-size; background: var(--canvas); }
+/* Fixed wf-bar/wf-note sit over the last ~170px of the page on purpose (wireframe-only chrome);
+   real content gets that much breathing room at the foot so nothing genuine hides under them. */
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+/* wf-bar/wf-note are fixed-position wireframe-only chrome; at phone width they must not float over
+   the content or each other, so they drop into normal flow and stack full width. */
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+/*
+ * home-cast: the picture-led front door beside the Dock. A "Continue" strip of the last three
+ * scenes, then Your cast as large 3:4 portrait cards (search + filter row above it), Group scenes,
+ * and a From your Library shelf. Placeholder art is a pastel gradient with an initial, per the
+ * brief - no internet images. States (?state=): home, hover (one cast card forced), search (grid
+ * filtered), empty (new studio), phone (390px, Dock becomes a bottom tab bar - simulated the same
+ * way workbench-shell.html and landing-game-d.html do it: constrain <html> to 390px and key the
+ * bottom-bar CSS off [data-state], since the actual screenshot window stays wide).
+ */
+
+/* ---- page head ---- */
+.phead { padding: 26px 28px 6px; }
+.phead .s-lede { margin-top: 6px; }
+body:not([data-state="empty"]) .phead .empty-copy { display: none; }
+body[data-state="empty"] .phead .default-copy { display: none; }
+
+.sect { padding: 0 28px; margin-top: 30px; }
+.sect:first-of-type { margin-top: 22px; }
+.sect-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+.sect-head .s-act { margin-right: auto; }
+.sect-link { font: 600 .82rem var(--font-body); color: var(--accent); background: none; border: 0; cursor: pointer; text-decoration: underline; padding: 0; }
+
+/* ---- Continue strip ---- */
+.continue-strip { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 6px; }
+.continue-card { flex: 1 1 320px; min-width: 270px; max-width: 440px; height: 176px; position: relative; overflow: hidden; display: flex; align-items: flex-end; }
+.cont-art { position: absolute; inset: 0; }
+.cont-faces { position: absolute; top: 10px; left: 12px; z-index: 2; display: flex; }
+.cont-faces .facelet { margin-left: -8px; }
+.cont-faces .facelet:first-child { margin-left: 0; }
+.cont-body { position: relative; z-index: 2; width: 100%; padding: 34px 16px 14px; background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--stage-ink) 84%, transparent) 58%); }
+.cont-name { display: block; font: 700 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--stage-card); }
+.cont-line { font: italic 400 .85rem var(--font-body); color: var(--stage-card); opacity: .82; margin: 4px 0 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cont-foot { display: flex; align-items: center; gap: 10px; }
+.cont-when { font: 500 12px var(--font-mono); color: var(--stage-card); opacity: .72; }
+.cont-go { margin-left: auto; }
+
+.facelet { width: 24px; height: 24px; flex: none; display: grid; place-items: center; background: var(--c); color: var(--stage-ink); font: 700 12px var(--font-fancy); box-shadow: 0 0 0 2px var(--stage-ink); }
+
+/* ---- Your cast: search + filters ---- */
+.cast-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.findbox { flex: 1; min-width: 14rem; display: flex; align-items: center; gap: 10px; padding: 9px 14px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); }
+.findbox svg { width: 15px; height: 15px; color: var(--text-dim); flex: none; }
+.findbox input { flex: 1; border: 0; background: none; color: var(--text); font: 400 .92rem var(--font-body); }
+.findbox input::placeholder { color: var(--text-faint); }
+.filter-tabs { margin-top: 12px; }
+.search-note { display: none; margin: 12px 0 0; font: 500 .82rem var(--font-mono); color: var(--text-dim); }
+body[data-state="search"] .search-note { display: block; }
+
+.cast-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 18px; margin-top: 16px; }
+.cast-card { position: relative; display: flex; flex-direction: column; overflow: hidden; cursor: pointer; transition: transform .18s; }
+.cast-card:hover, .cast-card.force-hover { transform: translateY(-4px); }
+.cc-fav { position: absolute; top: 8px; left: 8px; z-index: 3; width: 24px; height: 24px; display: grid; place-items: center; background: color-mix(in srgb, var(--stage-ink) 58%, transparent); color: var(--deck-regex); }
+.cc-fav svg { width: 13px; height: 13px; }
+.cc-art { aspect-ratio: 3 / 4; position: relative; display: grid; place-items: center; }
+.cc-art span { font: 700 3.2rem var(--font-fancy); color: var(--stage-ink); opacity: .5; }
+/* the actions overlay is a child of cc-art (inset 0 there), so it covers only the portrait art -
+   the name/tagline/count below stay fully legible while a card is hovered */
+.cc-actions { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: color-mix(in srgb, var(--stage-ink) 74%, transparent); opacity: 0; pointer-events: none; transition: opacity .15s; }
+.cast-card:hover .cc-actions, .cast-card.force-hover .cc-actions { opacity: 1; pointer-events: auto; }
+.cc-actions .s-btn { padding: 8px 18px; }
+.cc-body { padding: 10px 12px 12px; }
+.cc-name { display: block; font: 700 .95rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.cc-tag { font: italic 400 .82rem var(--font-body); color: var(--text-soft); margin: 3px 0 7px; }
+.cc-count { font: 500 .75rem var(--font-mono); color: var(--text-dim); }
+
+.cast-add { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: inset 0 0 0 2px dashed var(--seam); color: var(--text-dim); padding: 20px; text-align: center; }
+.cast-add:hover { box-shadow: inset 0 0 0 2px dashed var(--accent); color: var(--text); }
+.cast-add .glyph { width: 36px; height: 36px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+.cast-add .lbl { font: 700 .95rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.cast-add .sub { font: 500 .75rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--text-dim); }
+.cast-add .two { display: flex; gap: 8px; margin-top: 2px; }
+.cast-add .two button { font: 600 .75rem var(--font-body); padding: 6px 11px; background: none; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); cursor: pointer; border: 0; }
+
+body[data-state="search"] .cast-grid > *:not(.sr-match) { display: none; }
+
+/* ---- hover state: force one card's actions open ---- */
+body[data-state="hover"] .cast-grid > :nth-child(2) { transform: translateY(-4px); }
+body[data-state="hover"] .cast-grid > :nth-child(2) .cc-actions { opacity: 1; pointer-events: auto; }
+
+/* ---- Group scenes ---- */
+.groups-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.group-card { width: 15rem; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.group-faces { display: flex; }
+.group-faces .facelet { margin-left: -9px; width: 30px; height: 30px; font-size: 13px; }
+.group-faces .facelet:first-child { margin-left: 0; }
+.group-name { font: 700 .95rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.group-meta { font: 500 .75rem var(--font-mono); color: var(--text-dim); }
+
+/* ---- From your Library shelf ---- */
+.shelf-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.shelf-card { width: 11rem; display: flex; flex-direction: column; overflow: hidden; }
+.shelf-cov { aspect-ratio: 4 / 3; display: grid; place-items: center; }
+.shelf-cov svg { width: 26px; height: 26px; color: var(--c); }
+.shelf-body { padding: 8px 10px 10px; }
+.shelf-name { display: block; font: 700 .85rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.shelf-kind { font: 500 .75rem var(--font-mono); text-transform: uppercase; color: var(--text-dim); margin-top: 2px; }
+
+/* ---- empty state ---- */
+.empty-state { display: none; padding: 50px 28px 20px; text-align: center; }
+body[data-state="empty"] .empty-state { display: flex; flex-direction: column; align-items: center; }
+body[data-state="empty"] .continue-wrap, body[data-state="empty"] .cast-wrap, body[data-state="empty"] .groups-wrap, body[data-state="empty"] .shelf-wrap { display: none; }
+.empty-art { width: 84px; height: 84px; display: grid; place-items: center; background: color-mix(in srgb, var(--deck-character) 22%, var(--stage-panel)); color: var(--stage-ink); font: 700 2.2rem var(--font-fancy); opacity: .7; }
+.empty-state .s-h2 { margin-top: 18px; }
+.empty-state .s-lede { max-width: 26rem; }
+.empty-acts { display: flex; gap: 12px; margin-top: 18px; }
+.empty-sample { margin-top: 34px; width: 13rem; text-align: left; }
+.empty-sample-label { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
+
+/* section narrowing: continue cards and cast cards keep their look, only the count changes via the
+   grid's own auto-fill - nothing here needs a @container rule beyond what auto-fill already gives */
+
+/* ---- phone: Dock becomes a fixed bottom tab bar, same icons/labels/colors, keyed to [data-state]
+   (not @media) since the screenshot window stays wide and only <html>'s max-width is constrained,
+   the same simulation workbench-shell.html and landing-game-d.html use for their phone state. ---- */
+body[data-state="phone"] .s-dock {
+  position: fixed; left: 0; bottom: 0; top: auto; width: 390px; height: auto; min-height: 0; z-index: 80;
+  flex-direction: row; align-items: stretch; padding: 6px 2px; gap: 0;
+  box-shadow: inset 0 1px 0 var(--seam);
+}
+body[data-state="phone"] .s-dock .brand { display: none; }
+body[data-state="phone"] .s-app {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1; gap: 3px; padding: 5px 2px; box-shadow: none;
+}
+body[data-state="phone"] .s-app.on { background: color-mix(in srgb, var(--c) 16%, transparent); box-shadow: none; }
+body[data-state="phone"] .s-app i { width: 24px; height: 24px; }
+body[data-state="phone"] .s-app b { font-size: 12px; line-height: 1.1; text-align: center; }
+body[data-state="phone"] .s-app small, body[data-state="phone"] .s-app kbd { display: none; }
+/* the phone Dock is a fixed bottom bar, same corner the wf-note already claims - lift the note (and
+   bar, for the same reason) clear of it so neither the Dock nor the note is ever hidden */
+body[data-state="phone"] .wf-note, body[data-state="phone"] .wf-bar { bottom: 66px; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+<symbol id="i-talk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H10l-5 4z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6 6.1.6-4.6 4.1 1.3 6-5.5-3.1-5.5 3.1 1.3-6L3.2 9.2l6.1-.6z"/></symbol>
+<symbol id="i-lorebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M9 7h7"/></symbol>
+<symbol id="i-preset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h4"/><path d="M12 12h8"/><circle cx="10" cy="12" r="2"/><path d="M4 18h12"/><circle cx="18" cy="18" r="2"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav>
+
+  <div class="stage">
+    <header class="phead">
+      <h1 class="s-title default-copy">Welcome back to <em>Bunraku</em></h1>
+      <p class="s-lede default-copy">Pick up where a scene left off, or say hello to someone in your cast.</p>
+      <h1 class="s-title empty-copy">Welcome to <em>Bunraku</em></h1>
+      <p class="s-lede empty-copy">Nothing in the studio yet. Bring someone in, make a character, or try a sample below.</p>
+    </header>
+
+    <section class="sect continue-wrap">
+      <div class="sect-head"><div class="s-act">Continue</div></div>
+      <div class="continue-strip">
+        <article class="continue-card s-card flat" style="--c:var(--deck-character)">
+          <div class="cont-art" style="background-image:linear-gradient(155deg, color-mix(in srgb, var(--deck-character) 60%, var(--stage-panel)), var(--stage-panel))"></div>
+          <div class="cont-faces"><span class="facelet" style="--c:var(--deck-character)">V</span></div>
+          <div class="cont-body">
+            <span class="cont-name">Vera Lune &middot; The tide comes in</span>
+            <p class="cont-line">"Who did you let up the stairs?"</p>
+            <div class="cont-foot"><span class="cont-when">2 hours ago</span><button type="button" class="s-btn cont-go"><svg width="13" height="13"><use href="#i-play"/></svg>Continue</button></div>
+          </div>
+        </article>
+        <article class="continue-card s-card flat" style="--c:var(--deck-preset)">
+          <div class="cont-art" style="background-image:linear-gradient(155deg, color-mix(in srgb, var(--deck-preset) 60%, var(--stage-panel)), var(--stage-panel))"></div>
+          <div class="cont-faces"><span class="facelet" style="--c:var(--deck-preset)">M</span></div>
+          <div class="cont-body">
+            <span class="cont-name">Marguerite Vane &middot; The storm room</span>
+            <p class="cont-line">"Sit, if you like. The storm will not care either way."</p>
+            <div class="cont-foot"><span class="cont-when">yesterday</span></div>
+          </div>
+        </article>
+        <article class="continue-card s-card flat" style="--c:var(--deck-regex)">
+          <div class="cont-art" style="background-image:linear-gradient(155deg, color-mix(in srgb, var(--deck-regex) 60%, var(--stage-panel)), var(--stage-panel))"></div>
+          <div class="cont-faces">
+            <span class="facelet" style="--c:var(--deck-character)">V</span>
+            <span class="facelet" style="--c:var(--deck-preset)">M</span>
+            <span class="facelet" style="--c:var(--deck-regex)">R</span>
+          </div>
+          <div class="cont-body">
+            <span class="cont-name">The Harbor Watch</span>
+            <p class="cont-line">Rook: "Keep your voice down, it carries out here."</p>
+            <div class="cont-foot"><span class="cont-when">3 days ago</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="sect cast-wrap">
+      <div class="sect-head cast-head">
+        <div class="s-act">Your cast</div>
+        <label class="findbox"><svg><use href="#i-search"/></svg><input type="text" id="castSearch" placeholder="Search your cast..." aria-label="Search your cast"></label>
+      </div>
+      <div class="s-tabs filter-tabs" role="group" aria-label="Filter">
+        <button type="button" class="on">All</button>
+        <button type="button">Favorites</button>
+        <button type="button">Recent</button>
+        <button type="button">Groups</button>
+      </div>
+
+      <p class="search-note">2 of 6 characters match &ldquo;<span id="searchTerm">ve</span>&rdquo;</p>
+      <div class="cast-grid" id="castGrid">
+        <article class="cast-card s-card sr-match" style="--c:var(--deck-character)">
+          <span class="cc-fav"><svg><use href="#i-star"/></svg></span>
+          <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-character) 55%, var(--stage-panel)), var(--stage-panel))">
+            <span>V</span>
+            <div class="cc-actions">
+              <button type="button" class="s-btn" style="--c:var(--deck-character)"><svg width="14" height="14"><use href="#i-talk"/></svg>Talk</button>
+              <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-make"/></svg>Edit</button>
+            </div>
+          </div>
+          <div class="cc-body">
+            <b class="cc-name">Vera Lune</b>
+            <p class="cc-tag">A retired locksmith who talks to the tide.</p>
+            <span class="cc-count">3 scenes</span>
+          </div>
+        </article>
+
+        <article class="cast-card s-card sr-match" style="--c:var(--deck-preset)">
+          <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-preset) 55%, var(--stage-panel)), var(--stage-panel))">
+            <span>M</span>
+            <div class="cc-actions">
+              <button type="button" class="s-btn" style="--c:var(--deck-preset)"><svg width="14" height="14"><use href="#i-talk"/></svg>Talk</button>
+              <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-make"/></svg>Edit</button>
+            </div>
+          </div>
+          <div class="cc-body">
+            <b class="cc-name">Marguerite Vane</b>
+            <p class="cc-tag">Keeps a storm room open for anyone who knocks.</p>
+            <span class="cc-count">1 scene</span>
+          </div>
+        </article>
+
+        <article class="cast-card s-card" style="--c:var(--deck-lorebook)">
+          <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-lorebook) 55%, var(--stage-panel)), var(--stage-panel))">
+            <span>K</span>
+            <div class="cc-actions">
+              <button type="button" class="s-btn" style="--c:var(--deck-lorebook)"><svg width="14" height="14"><use href="#i-talk"/></svg>Talk</button>
+              <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-make"/></svg>Edit</button>
+            </div>
+          </div>
+          <div class="cc-body">
+            <b class="cc-name">Keeper's Log</b>
+            <p class="cc-tag">"The lock gave on the third try."</p>
+            <span class="cc-count">0 scenes</span>
+          </div>
+        </article>
+
+        <article class="cast-card s-card" style="--c:var(--deck-regex)">
+          <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-regex) 55%, var(--stage-panel)), var(--stage-panel))">
+            <span>R</span>
+            <div class="cc-actions">
+              <button type="button" class="s-btn" style="--c:var(--deck-regex)"><svg width="14" height="14"><use href="#i-talk"/></svg>Talk</button>
+              <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-make"/></svg>Edit</button>
+            </div>
+          </div>
+          <div class="cc-body">
+            <b class="cc-name">Rook</b>
+            <p class="cc-tag">Runs the night watch and trusts no one twice.</p>
+            <span class="cc-count">2 scenes</span>
+          </div>
+        </article>
+
+        <article class="cast-card s-card" style="--c:var(--deck-persona)">
+          <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-persona) 55%, var(--stage-panel)), var(--stage-panel))">
+            <span>T</span>
+            <div class="cc-actions">
+              <button type="button" class="s-btn" style="--c:var(--deck-persona)"><svg width="14" height="14"><use href="#i-talk"/></svg>Talk</button>
+              <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-make"/></svg>Edit</button>
+            </div>
+          </div>
+          <div class="cc-body">
+            <b class="cc-name">Thistle</b>
+            <p class="cc-tag">Small, sharp, and always somewhere she shouldn't be.</p>
+            <span class="cc-count">1 scene</span>
+          </div>
+        </article>
+
+        <article class="cast-card s-card" style="--c:var(--deck-pack)">
+          <span class="cc-fav"><svg><use href="#i-star"/></svg></span>
+          <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-pack) 55%, var(--stage-panel)), var(--stage-panel))">
+            <span>I</span>
+            <div class="cc-actions">
+              <button type="button" class="s-btn" style="--c:var(--deck-pack)"><svg width="14" height="14"><use href="#i-talk"/></svg>Talk</button>
+              <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-make"/></svg>Edit</button>
+            </div>
+          </div>
+          <div class="cc-body">
+            <b class="cc-name">Imogen Vale</b>
+            <p class="cc-tag">"I only lie when it is kinder than the truth."</p>
+            <span class="cc-count">4 scenes</span>
+          </div>
+        </article>
+
+        <div class="cast-add">
+          <span class="glyph"><svg width="18" height="18"><use href="#i-plus"/></svg></span>
+          <span class="lbl">Add a character</span>
+          <span class="two">
+            <button type="button"><svg width="12" height="12" style="vertical-align:-2px;margin-right:4px"><use href="#i-import"/></svg>Import a card</button>
+            <button type="button">Make one</button>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="sect groups-wrap">
+      <div class="sect-head"><div class="s-act">Group scenes</div></div>
+      <div class="groups-row">
+        <article class="group-card s-card flat">
+          <div class="group-faces">
+            <span class="facelet" style="--c:var(--deck-character)">V</span>
+            <span class="facelet" style="--c:var(--deck-preset)">M</span>
+            <span class="facelet" style="--c:var(--deck-regex)">R</span>
+          </div>
+          <span class="group-name">The Harbor Watch</span>
+          <span class="group-meta">3 in the cast &middot; 3 days ago</span>
+        </article>
+        <article class="group-card s-card flat">
+          <div class="group-faces">
+            <span class="facelet" style="--c:var(--deck-persona)">T</span>
+            <span class="facelet" style="--c:var(--deck-pack)">I</span>
+          </div>
+          <span class="group-name">Night Errands</span>
+          <span class="group-meta">2 in the cast &middot; 1 week ago</span>
+        </article>
+      </div>
+    </section>
+
+    <section class="sect shelf-wrap">
+      <div class="sect-head"><div class="s-act">From your Library</div><button type="button" class="sect-link">Open the Library &rarr;</button></div>
+      <div class="shelf-row">
+        <article class="shelf-card s-card flat">
+          <div class="shelf-cov" style="--c:var(--deck-lorebook); background:color-mix(in srgb, var(--deck-lorebook) 22%, var(--stage-row))"><svg><use href="#i-lorebook"/></svg></div>
+          <div class="shelf-body"><span class="shelf-name">Harbor Town</span><span class="shelf-kind">lorebook</span></div>
+        </article>
+        <article class="shelf-card s-card flat">
+          <div class="shelf-cov" style="--c:var(--deck-lorebook); background:color-mix(in srgb, var(--deck-lorebook) 22%, var(--stage-row))"><svg><use href="#i-lorebook"/></svg></div>
+          <div class="shelf-body"><span class="shelf-name">Velvet Quill's Ledger</span><span class="shelf-kind">lorebook</span></div>
+        </article>
+        <article class="shelf-card s-card flat">
+          <div class="shelf-cov" style="--c:var(--deck-preset); background:color-mix(in srgb, var(--deck-preset) 22%, var(--stage-row))"><svg><use href="#i-preset"/></svg></div>
+          <div class="shelf-body"><span class="shelf-name">Chibi Gram Pacer</span><span class="shelf-kind">preset</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="empty-state">
+      <div class="empty-art"><span>?</span></div>
+      <h2 class="s-h2">Your cast is empty</h2>
+      <p class="s-lede">Bring in a character card from another app, make one from scratch, or try a
+        sample to see how a scene feels before you commit to your own.</p>
+      <div class="empty-acts">
+        <button type="button" class="s-btn"><svg width="14" height="14"><use href="#i-import"/></svg>Import a card</button>
+        <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-plus"/></svg>Make a character</button>
+      </div>
+      <div class="empty-sample-label">or try a sample</div>
+      <article class="cast-card empty-sample s-card" style="--c:var(--deck-character)">
+        <div class="cc-art" style="background-image:linear-gradient(160deg, color-mix(in srgb, var(--deck-character) 55%, var(--stage-panel)), var(--stage-panel))"><span>V</span></div>
+        <div class="cc-body">
+          <b class="cc-name">Vera Lune</b>
+          <p class="cc-tag">A retired locksmith who talks to the tide.</p>
+          <span class="cc-count">sample character</span>
+        </div>
+      </article>
+    </section>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>Home, the cast.</b> Continue (last 3 scenes, peach Continue on the first), Your cast (search +
+  filter row, 3:4 portrait cards - recent first, two favorited - hover reveals Talk/Edit, ending
+  with Add a character), Group scenes, and a From your Library shelf. The Dock beside it is the
+  approved workbench-shell markup unchanged, Scenes marked current since this page is the front
+  door into starting and continuing scenes. States: Hover forces Marguerite Vane's actions open;
+  Search filters the grid to two matches; Empty is a brand-new studio with Import / Make / a sample
+  card; Phone turns the Dock into a fixed bottom tab bar with the same icons, labels and colors.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button type="button" data-s="home" class="on">Home</button>
+  <button type="button" data-s="hover">Card hovered</button>
+  <button type="button" data-s="search">Searching</button>
+  <button type="button" data-s="empty">Empty studio</button>
+  <button type="button" data-s="phone">Phone width</button>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  function set(s) {
+    body.setAttribute('data-state', s);
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    var search = document.getElementById('castSearch');
+    if (search) search.value = s === 'search' ? 've' : '';
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+    window.scrollTo(0, 0);
+  }
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'home');
+  document.getElementById('wfbar').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) set(b.getAttribute('data-s')); });
+})();
+</script>
+</body>
+</html>

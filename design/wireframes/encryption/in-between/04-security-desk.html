@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security settings wireframe (in-between)</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../../rc-bridge.css">
+<script src="../../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">04 Settings, Security (in-between)</div>
+      <p class="wf-lede">The Security section with the design system's hero (eyebrow, marquee with one colored word, one line of voice), its stat tiles, and its mono proof block, over Bunraku's settings rows.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="stack">
+    <div class="marquee-hero">
+      <div class="eyebrow">Settings &middot; Security</div>
+      <div class="marquee">The stage <em>door</em></div>
+      <div class="voice">Who gets in, and how.</div>
+    </div>
+
+    <div class="tiles">
+      <div class="card">
+        <div class="kicker">The lock on this computer</div>
+        <div class="label">Windows protection</div>
+      </div>
+      <div class="card">
+        <div class="kicker">Password</div>
+        <div class="label">Off</div>
+      </div>
+      <div class="card">
+        <div class="kicker">Your lines</div>
+        <div class="label">Written 23 Sep 2026</div>
+      </div>
+    </div>
+
+    <div class="proof">
+      + Everything you make is stored encrypted.<br>
+      + This computer opens it by itself, through Windows protection.<br>
+      + A stolen disk shows nothing without this computer or your lines.<br>
+      - Anyone using this computer as you can open it. Add a password to stop that.
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="tx"><div class="label">Password</div><div class="hint">Off. This computer opens your library by itself.</div></div>
+        <button class="stamp stamp-btn">Set a password</button>
+      </div>
+      <div class="row">
+        <div class="tx"><div class="label">Your lines (recovery words)</div><div class="hint">Written 23 September 2026. Last rehearsed 23 September 2026.</div></div>
+        <div class="actions"><button class="btn-ghost">Rehearse</button><button class="btn-ghost">Write new lines</button></div>
+      </div>
+    </div>
+    <p class="wf-comp">The usual case: one computer, so no list of computers at all.</p>
+  </div>
+
+  <div class="stack">
+    <div class="wf-state">Only when this library has also been opened on another computer</div>
+    <div class="card">
+      <div class="card-title">Other computers</div>
+      <p class="card-body">This library has also been opened on another computer, from a copied folder or a restored backup. Each one below can still open it by itself.</p>
+      <div class="pc">
+        <div><div class="pc-name">studio-laptop</div><div class="pc-meta">Since 20 September 2026 / macOS Keychain</div></div>
+        <button class="btn-ghost btn-danger">Forget</button>
+      </div>
+    </div>
+    <div class="wf-state">Right after a backup is restored on this computer</div>
+    <div class="stage-note gilt">
+      <div class="stage-note-label">Stage direction</div>
+      <p>This backup was made on OLD-DESKTOP and still lists it. That entry is not needed on this computer. Forget it?</p>
+    </div>
+    <div class="actions after-note">
+      <button class="stamp stamp-btn primary">Forget OLD-DESKTOP</button>
+      <button class="btn-ghost">Keep it</button>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>The proof block</b> is the design system's "mono proves" pattern: plain, checkable lines about what the encryption actually does, including the one thing it does not do.</p>
+  <p class="wf-note"><b>Question for you:</b> RoleCall calls settings "The Final Cut Desk". Should Bunraku's Settings get a theatrical name too, or stay "Settings" with only the Security section dressed up?</p>
+</div>
+</body>
+</html>

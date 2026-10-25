@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings: warm the cache on open</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Decision: "Warm the provider cache on scene open: YES,
+ * behind a Settings switch (default to be decided in the wireframe; spends a little money without a
+ * click)." This wireframe proposes the row's home, wording and two default proposals.
+ *
+ * Base skeleton and .srow/.section-title pattern copied from the approved shell-settings.html (that
+ * file's own base, not restyled here) so the row reads as a real Settings row, not a one-off card.
+ * Only the Models tab is built out; the tab bar shows the others for orientation but they are not
+ * live in this file - see shell-settings.html for the full tab set.
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--canvas); }
+.room { max-width: 60rem; margin: 0 auto; padding: 26px 22px 90px; }
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+.stabs { display: flex; flex-wrap: wrap; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 22px; }
+.stabs a { font: 600 .88rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); text-decoration: none; padding: 10px 14px; box-shadow: inset 0 -2px 0 transparent; }
+.stabs a.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--text-dim); }
+.srow { display: flex; justify-content: space-between; gap: 24px; padding: 18px 4px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.srow .tx { max-width: 26rem; }
+.srow .label { font: 600 .95rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.srow .hint { font-size: .82rem; color: var(--text-dim); margin-top: 3px; line-height: 1.5; }
+.srow .ctrl { flex: none; display: flex; align-items: center; gap: 8px; }
+.section-title { font: 500 12px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint); margin: 30px 4px 4px; }
+.list { display: flex; flex-direction: column; gap: 10px; margin: 12px 4px; }
+.rowcard { display: flex; align-items: center; gap: 14px; padding: 12px 14px; background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); flex-wrap: wrap; }
+.rowcard.active { box-shadow: inset 0 0 0 1px var(--accent); }
+.rowcard .name { font: 600 .92rem var(--font-big); min-width: 8rem; }
+.rowcard .mono { font: 12px var(--font-mono); color: var(--text-dim); }
+.rowcard .grow { flex: 1; min-width: 8rem; }
+.cost { font: 500 12px var(--font-mono); }
+.cost.a { color: var(--text-faint); }
+.cost.b { color: var(--stage-warn); }
+.dot { width: 16px; height: 16px; box-shadow: inset 0 0 0 2px var(--seam); border-radius: 50%; flex: none; }
+.dot.on { box-shadow: inset 0 0 0 2px var(--accent); }
+[data-only] { display: none; }
+[data-only].show { display: flex; }
+@media (max-width: 30rem) { .srow { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+<div class="room">
+  <nav class="stabs">
+    <a href="shell-settings.html">Appearance</a>
+    <a href="#" class="on">Models</a>
+    <a href="shell-settings.html">Connections</a>
+    <a href="shell-settings.html">Studio</a>
+    <a href="shell-settings-security.html">Security</a>
+    <a href="shell-settings.html">Workbench</a>
+    <a href="shell-settings-remote.html">Remote access</a>
+    <a href="shell-settings-updates.html">Updates</a>
+    <a href="shell-settings.html">About</a>
+  </nav>
+
+  <section>
+    <p class="wf-note" style="position:static;max-width:none;margin-bottom:16px">Shared with Kit in the terminal (src/ui/apps/settings/sections/models.tsx). A key goes in and never comes back.</p>
+    <div class="list">
+      <div class="rowcard active"><span class="dot on"></span><span class="name">Claude (personal)</span><span class="mono grow">claude-sonnet-5</span><span class="mono">key saved</span></div>
+      <div class="rowcard"><span class="dot"></span><span class="name">Local (LM Studio)</span><span class="mono grow">llama-3.1-8b</span><span class="mono">no key</span></div>
+    </div>
+
+    <div class="section-title">When you open a scene</div>
+
+    <!-- VARIATION A: off by default -->
+    <div class="srow" data-only="a">
+      <div class="tx">
+        <div class="label">Warm the cache on open</div>
+        <div class="hint">Sends a tiny empty request the moment you open a scene, so the model's prompt cache is already warm before your first message. It spends a small amount of real money every time you open a scene this applies to. Off by default: turn it on if faster first replies are worth the spend.</div>
+      </div>
+      <div class="ctrl"><span class="s-switch"></span></div>
+    </div>
+
+    <!-- VARIATION B: on by default, idle condition and per-open cost shown -->
+    <div class="srow" data-only="b">
+      <div class="tx">
+        <div class="label">Warm the cache on open</div>
+        <div class="hint">Only fires when you've been away from a scene for 5 minutes or more: sends a tiny empty request so the reply after that gap starts faster. It spends a small amount of real money each time it fires. On by default, since the amount is small and it only fires on real idle gaps; turn it off if you'd rather not spend anything without asking.</div>
+      </div>
+      <div class="ctrl" style="flex-direction:column; align-items:flex-end; gap:5px">
+        <span class="s-switch on"></span>
+        <span class="cost b">about $0.001 per warm, when it fires</span>
+      </div>
+    </div>
+
+    <p class="wf-note" style="position:static;max-width:none;margin-top:10px" data-only="a">Off means never: nothing is sent until you switch this on, on any scene.</p>
+    <p class="wf-note" style="position:static;max-width:none;margin-top:10px" data-only="b">Depends on P1 (native Claude caching) and P4's stable layout landing first; the switch does nothing on a provider or preset that has neither yet, and says so once those exist.</p>
+  </section>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="a" class="on">A: off by default</button>
+  <button data-s="b">B: on by default, cost shown</button>
+</div>
+<div class="wf-note" id="note"></div>
+<script>
+(function () {
+  var NOTES = {
+    a: "Variation A. Plain switch, off by default, no dollar figure - the safer default for a spend-without-a-click setting; the hint alone carries the honesty requirement.",
+    b: "Variation B. On by default with the idle condition spelled out and a rough per-fire cost shown next to the switch, so turning it off is an informed choice rather than a guess."
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      el.classList.toggle("show", el.getAttribute("data-only") === s);
+    });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s.toUpperCase() + ".</b> " + NOTES[s];
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "a");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/marinara/maps-and-game-content",
+  "sourcePath": "docs/reference/platforms/marinara/maps-and-game-content.md",
+  "sourceHash": "sha256:bae5a9d700d38bf09656a3de72c94852ef646484ee67377ffef556e640918c9e",
+  "semanticSummaryHash": "sha256:661bc5684aa4cbf18cb30a37608336480e2f42ff0bd4b3219289eb0d9ac86120",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:57.028Z"
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/README",
+  "sourcePath": "docs/reference/formats/README.md",
+  "sourceHash": "sha256:d1761224912889b54076a223567ede87e88e5040f5ef3023b5a04fc45218642c",
+  "semanticSummaryHash": "sha256:d5a86aaf87ce7d8e90b8c0ca73cf6740b71222cda56dc211eb7cb4258266d959",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Lorebook interop text matches current behavior (Risu and CCv3 files, no native lorebook export, .lvbak backups out of scope); links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-24T21:57:19.125Z"
+}

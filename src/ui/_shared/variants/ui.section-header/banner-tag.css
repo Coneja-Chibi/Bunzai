@@ -1,0 +1,10 @@
+/** ui.section-header banner-tag (GirliePop): a section is a label sticker, the deck tint as a band along its top, a numbered tag, a thick edge. */
+html[data-surface-ui-section-header="banner-tag"] {
+  & .lib.rc .lsec { margin: 1.6rem 0 1rem; padding: 1rem 1rem .5rem; background: var(--bk-surface-panel); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+  & .lib.rc .lsec::before { width: 100%; height: .55rem; bottom: auto; background: var(--accent); }
+  & .lib.rc .lsec .num { display: grid; place-items: center; min-width: 2.2rem; height: 2.2rem; background: var(--accent); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); text-shadow: none; font-size: 1.1rem; }
+  & .lib.rc .lsec .stitle { font-size: 1.6rem; text-transform: none; letter-spacing: 0; text-shadow: none; }
+  & .lib.rc .lsec .scount { border: var(--bk-frame-w) solid var(--bk-line); background: var(--bk-role-warn); color: var(--bk-text-on-tint); }
+  & .lib.rc .lsec .scount em { color: var(--bk-text-on-tint); }
+  & .scn .plaque .s-title { display: inline-block; padding: .1rem .7rem; background: var(--bk-role-brand); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+}

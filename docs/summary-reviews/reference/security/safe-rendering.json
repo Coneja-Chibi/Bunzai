@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/safe-rendering",
+  "sourcePath": "docs/reference/security/safe-rendering.md",
+  "sourceHash": "sha256:20dc19a0817d673ee223d07c20b417875980a3fee4ebe05d6fd8bbb378f49acd",
+  "semanticSummaryHash": "sha256:6cc53579bc7e53a318a7882e6c818fccd52455189c085eaee7d6b7bd4d561b59",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page now correctly refuses //host, /\\host and \\host while allowing single-slash paths, matching isSafeHref.",
+  "reviewedAt": "2026-10-09T16:16:58.388Z"
+}

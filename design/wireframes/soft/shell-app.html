@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: Dock, tabs, status bar, menus</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-app: the always-on chrome (src/ui/shell/**). Dock (roster + collapse + catalog-only apps
+ * behind Add app), the tab strip (open pieces, import, theme toggle), the status bar, the one
+ * right-click menu (app / entity / shell targets), the shell-owned dialogs (Follow, Close piece,
+ * DropVeil, boot error), and the floating Agent panel + its minimised tab.
+ *
+ * App roster read from src/ui/apps/*\/index.tsx manifests (2026-09-28): Workbench(10, home),
+ * Library(20), Scenes(25), Press(30), Agent(40) are the numbered dock body; Settings(100) is the
+ * foot (ctrl+,). Catalog-only, behind "add app": Apps(itself), CSS Workshop, Help/Docs, HTML View,
+ * Macro Lab. Company is comingSoon+catalogOnly, so it does not appear on today's dock at all - shown
+ * here only as a labelled hypothetical (state "future"), matching src/ui/shell/dock-core.ts exactly.
+ * Chords from app-keys.ts: ctrl+1..5 for the numbered five, ctrl+, for Settings, alt+left/right to
+ * step, ctrl+/ (cmd+/) opens the floating Agent.
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--canvas); }
+.shell { display: grid; grid-template-columns: auto 1fr; grid-template-rows: 1fr auto; min-height: 100vh; }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+
+/* GAP IN soft-parts.css: .s-app (a <button>) has no background/border reset, so the OS's native
+   button face (white/cream) shows through under the label text instead of the dock's dark chrome.
+   Not editing the shared file per the brief; resetting it here instead. */
+.s-app, .dockslot { background: none; border: 0; font: inherit; text-align: left; width: 100%; }
+
+/* ---- dock (s-dock from soft-parts, app-specific bits added here) ---- */
+.s-dock { width: 15rem; transition: width .15s; }
+.s-dock.slim { width: 4.6rem; padding: 16px 8px; }
+.s-dock .brand svg { width: 26px; height: 26px; }
+.s-dock .home { display: flex; align-items: center; gap: 10px; padding: 8px; margin-bottom: 10px; box-shadow: inset 0 -1px 0 var(--seam); cursor: pointer; background: none; border: 0; width: 100%; text-align: left; }
+.s-dock .home b { font: 700 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.s-dock.slim .home span.lbl, .s-dock.slim .s-app .tx, .s-dock.slim .docklabel, .s-dock.slim .s-app kbd, .s-dock.slim .dockslot .sl { display: none; }
+.s-dock.slim .home, .s-dock.slim .s-app { justify-content: center; }
+.docklabel { font: 500 12px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint); margin: 6px 8px 4px; }
+.dockdiv { height: 1px; background: var(--seam); margin: 8px 6px; }
+.s-app.future { opacity: .5; cursor: default; }
+.s-app.future small { font-style: italic; }
+.dockslot { display: flex; align-items: center; gap: 10px; padding: 9px 8px; color: var(--text-dim); background: none; border: 1px dashed var(--seam); width: calc(100% - 4px); margin: 6px 2px 0; cursor: pointer; }
+.dockslot .plus { width: 30px; height: 30px; display: grid; place-items: center; border: 1px dashed var(--seam); flex: none; }
+.dockslot .sl { font: 600 .8rem var(--font-big); }
+.dockfoot { margin-top: auto; padding-top: 8px; box-shadow: inset 0 1px 0 var(--seam); }
+.docktoggle { width: 100%; padding: 8px; margin-top: 8px; background: none; border: 0; box-shadow: inset 0 1px 0 var(--seam); font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; }
+.s-dock.slim .docktoggle .col { display: none; }
+.docktoggle .exp { display: none; }
+.s-dock.slim .docktoggle .exp { display: inline; }
+
+/* ---- main column ---- */
+.main { display: flex; flex-direction: column; min-width: 0; }
+.tabstrip { display: flex; align-items: stretch; background: var(--chrome); box-shadow: inset 0 -1px 0 var(--seam); overflow-x: auto; flex: none; }
+.tab { display: flex; align-items: center; gap: 8px; flex: none; font: 600 .82rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); background: var(--shell-panel); box-shadow: inset -1px 0 0 var(--seam); padding: 10px 14px; cursor: pointer; border: 0; border-top: 3px solid transparent; }
+.tab .pip { width: 8px; height: 8px; flex: none; background: var(--c, var(--text-dim)); }
+.tab .kind { font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+.tab.active { color: var(--text); border-top-color: var(--c, var(--accent)); background: var(--face); }
+.tab .dirty { color: var(--c, var(--rose)); font-size: .8rem; }
+.tab .x { color: var(--text-dim); font: 700 .9rem monospace; }
+.tab .x:hover { color: var(--text); }
+#tabadd { flex: none; width: 34px; border: 0; background: none; color: var(--text-dim); font: 700 1.1rem var(--font-big); cursor: pointer; }
+.tabfill { flex: 1; }
+.topact { display: flex; align-items: center; gap: 8px; padding: 0 10px; flex: none; }
+.canvas { flex: 1; min-height: 0; overflow: auto; position: relative; display: grid; place-items: center; background: var(--stage-well); }
+.canvas .ghost { font: italic 1.1rem var(--font-fancy, var(--font-big)); color: var(--text-dim); }
+
+/* ---- status bar (s-status from soft-parts) ---- */
+.s-status .spacer { flex: 1; }
+.s-status .vaude { font-weight: 700; color: var(--text-dim); }
+.s-status .vaude i { color: var(--accent); font-style: normal; }
+.s-status .appdot { width: 7px; height: 7px; background: var(--adot, var(--text-dim)); flex: none; }
+
+/* grid rows: dock spans both, main row 1, status row 2 */
+.shell { grid-template-areas: "dock main" "dock status"; }
+.s-dock { grid-area: dock; }
+.main { grid-area: main; }
+.s-status { grid-area: status; }
+
+/* ---- right-click menu ---- */
+.vmenu { position: absolute; z-index: 40; min-width: 220px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 6px 6px 0 0 var(--stage-black); font: 400 .9rem var(--font-body); }
+.vmenu .hd { padding: 10px 14px; font: 700 .78rem var(--font-mono); letter-spacing: .06em; color: var(--text-dim); box-shadow: inset 0 -1px 0 var(--seam); }
+.vmenu .sep { height: 1px; background: var(--seam); margin: 4px 0; }
+.vmenu button.it { display: block; width: 100%; text-align: left; padding: 9px 14px; background: none; border: 0; color: var(--text); cursor: pointer; }
+.vmenu button.it:hover { background: var(--shell-panel); }
+.vmenu button.it[disabled] { color: var(--text-faint); cursor: default; }
+.vmenu button.it.danger { color: var(--rose-deep); }
+
+/* ---- overlays: follow / close / boot-error / drop veil ---- */
+.scrim { position: fixed; inset: 0; z-index: 60; background: color-mix(in srgb, var(--stage-black) 70%, transparent); display: grid; place-items: center; }
+.vdialog { width: min(30rem, 92vw); background: var(--face); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); padding: 26px 26px 22px; }
+.vdialog .msg { margin: 0; font-size: 1rem; color: var(--text); }
+.vdialog .remember { display: flex; align-items: center; gap: 8px; margin-top: 14px; font: 500 .85rem var(--font-body); color: var(--text-soft); }
+.vdialog .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+#dropveil { position: fixed; inset: 0; z-index: 70; background: color-mix(in srgb, var(--stage-black) 82%, transparent); }
+#dropveil[data-only].show { display: grid; place-items: center; }
+.veilbox { padding: 22px 36px; background: var(--face); box-shadow: 0 0 0 2px var(--accent); font: 700 1.3rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.bootscreen { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 2rem; background: var(--paper); }
+.bootscreen .box { width: min(34rem, calc(100vw - 4rem)); text-align: center; box-sizing: border-box; }
+.bootscreen h1 { font: 700 1.4rem var(--font-big); font-variation-settings: var(--soft-axes); margin: 0 0 .6rem; }
+.bootscreen p { color: var(--text-soft); margin: 0; }
+.bootscreen .links { display: flex; gap: 10px; justify-content: center; margin-top: 1.2rem; flex-wrap: wrap; }
+.bootscreen code { display: block; margin-top: 1rem; padding: 10px 12px; background: var(--shell-panel); box-shadow: inset 0 0 0 1px var(--seam); font: 12px var(--font-mono); text-align: left; overflow-wrap: anywhere; }
+
+/* ---- floating agent ---- */
+.agent-tab { position: fixed; right: 18px; bottom: 46px; z-index: 30; display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 4px 4px 0 0 var(--stage-black); font: 700 .78rem var(--font-mono); letter-spacing: .1em; color: var(--text); cursor: pointer; border: 0; }
+.agent-tab .grip { width: 8px; height: 8px; background: var(--deck-preset); }
+.agent-panel { position: fixed; right: 18px; bottom: 46px; z-index: 30; width: 22rem; height: 24rem; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); display: flex; flex-direction: column; }
+.agent-panel .bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; box-shadow: inset 0 -1px 0 var(--seam); cursor: grab; }
+.agent-panel .grip { width: 10px; height: 10px; background: var(--deck-preset); flex: none; }
+.agent-panel .title { flex: 1; font: 700 .78rem var(--font-mono); letter-spacing: .1em; color: var(--text); }
+.agent-panel .x { width: 22px; height: 22px; background: none; border: 0; color: var(--text-dim); cursor: pointer; font: 700 .9rem monospace; }
+.agent-panel .body { flex: 1; padding: 14px; overflow: auto; font: .9rem var(--font-body); color: var(--text-soft); }
+.agent-panel .body .ghostmsg { font-style: italic; }
+.agent-panel .handle { position: absolute; }
+
+/* the Add app catalog room (app-catalog/index.tsx), shown filling the canvas */
+.catalogroom { width: 100%; height: 100%; overflow: auto; padding: 30px 36px; }
+.catalogroom .eyebrow { font: 500 12px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--text-dim); }
+.catalogroom h1 { font: 700 1.7rem var(--font-big); font-variation-settings: var(--soft-axes); margin: 6px 0 6px; }
+.catalogroom .lede { color: var(--text-soft); max-width: 36rem; margin: 0 0 24px; }
+.cgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.ccard { padding: 16px; }
+.ccard .chead { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.ccard .mk { width: 26px; height: 26px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 18%, transparent); color: var(--c); flex: none; }
+.ccard h2 { font: 600 1rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.ccard p { font-size: .82rem; color: var(--text-dim); margin: 0 0 12px; line-height: 1.5; }
+.ccard .cfoot { display: flex; align-items: center; justify-content: space-between; }
+.ccard .status { font: 500 12px var(--font-mono); letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); }
+
+/* ---- states ---- */
+[data-only] { display: none; }
+[data-only].show { display: block; }
+/* elements whose own rule sets a non-block display: repeat it at higher specificity so
+   [data-only].show (equal-or-higher specificity, later in source) cannot flatten it to block */
+.scrim[data-only].show { display: grid; }
+.bootscreen[data-only].show { display: grid; }
+.agent-tab[data-only].show { display: flex; }
+.agent-panel[data-only].show { display: flex; }
+.s-app[data-only].show { display: grid; }
+
+/* Locked behavior (src/ui/index.html's #dock CSS comment): "narrow: the dock COLLAPSES to
+   marks-only, never disappears." This is unconditional - unlike the user's own slim toggle, a
+   narrow window overrides even the "full dock" demo state, so every state reads correctly at
+   phone width. */
+@media (max-width: 46rem) {
+  .s-dock { width: 4.6rem; padding: 16px 8px; }
+  .s-dock .home span.lbl, .s-dock .s-app .tx, .s-dock .docklabel, .s-dock .dockslot .sl { display: none; }
+  .s-dock .home, .s-dock .s-app { justify-content: center; }
+  .agent-panel { width: calc(100vw - 24px); right: 12px; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="ic-workbench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="ic-library" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></symbol>
+  <symbol id="ic-scenes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="ic-press" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8"/><path d="M6 17h12v4H6z"/></symbol>
+  <symbol id="ic-agent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 5.5h16v10H12l-5 4v-4H4z"/></symbol>
+  <symbol id="ic-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+</defs></svg>
+
+<div class="shell" id="shell">
+  <nav class="s-dock" id="dock">
+    <button class="home" id="home"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--rose)" stroke-width="2.4"><path d="M4 5.5h16v10H12l-5 4v-4H4z"/></svg><b class="lbl">bunraku<i style="color:var(--rose)">.</i></b></button>
+    <div class="docklabel">Apps</div>
+    <button class="s-app c-scenes on" id="wb"><i><svg width="16" height="16"><use href="#ic-workbench"/></svg></i><span class="tx"><b>The Workbench</b><small>app &middot; home</small></span><kbd>1</kbd></button>
+    <button class="s-app c-library" style="--c:var(--deck-regex)"><i><svg width="16" height="16"><use href="#ic-library"/></svg></i><span class="tx"><b>The Library</b><small>app</small></span><kbd>2</kbd></button>
+    <button class="s-app" style="--c:var(--deck-lorebook)"><i><svg width="16" height="16"><use href="#ic-scenes"/></svg></i><span class="tx"><b>Scenes</b><small>app</small></span><kbd>3</kbd></button>
+    <button class="s-app" style="--c:var(--deck-persona)"><i><svg width="16" height="16"><use href="#ic-press"/></svg></i><span class="tx"><b>The Press</b><small>app &middot; convert</small></span><kbd>4</kbd></button>
+    <button class="s-app" style="--c:var(--deck-preset)"><i><svg width="16" height="16"><use href="#ic-agent"/></svg></i><span class="tx"><b>The Agent</b><small>app &middot; agent</small></span><kbd>5</kbd></button>
+    <div class="dockdiv" data-only="future" id="futuredivider"></div>
+    <button class="s-app future" style="--c:var(--text-dim)" data-only="future"><i>&#9673;</i><span class="tx"><b>The Company</b><small>installs later</small></span></button>
+    <button class="dockslot" id="addapp"><span class="plus">+</span><span class="sl">add app</span></button>
+    <div class="dockfoot">
+      <button class="s-app" style="--c:var(--text-dim)"><i><svg width="16" height="16"><use href="#ic-settings"/></svg></i><span class="tx"><b>Settings</b><small>app</small></span><kbd>,</kbd></button>
+      <button class="docktoggle" id="slimtoggle"><span class="col">&laquo; collapse</span><span class="exp">&raquo;</span></button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <nav class="tabstrip">
+      <button class="tab active" style="--c:var(--deck-character)"><span class="pip"></span>Vera Lune<span class="dirty">&#9679;</span><span class="kind">char</span><span class="x">&times;</span></button>
+      <button class="tab" style="--c:var(--deck-lorebook)"><span class="pip"></span>Gull Point lore<span class="kind">lore</span><span class="x">&times;</span></button>
+      <button id="tabadd">+</button>
+      <span class="tabfill"></span>
+      <span class="topact">
+        <span class="s-btn ghost" style="padding:8px 12px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></svg>Import</span>
+        <span class="s-btn quiet" style="padding:8px 10px">&#9789;</span>
+      </span>
+    </nav>
+
+    <main class="canvas" id="canvasArea">
+      <span class="ghost" data-only="full boot-error follow close dropveil agent-min agent-open menu-app menu-entity menu-shell future" id="canvasGhost">Velvet Quill is open on the Workbench</span>
+
+      <div class="vmenu" id="menuApp" style="left:230px;top:120px;" data-only="menu-app">
+        <div class="hd">The Agent</div>
+        <button class="it">Open The Agent</button>
+      </div>
+      <div class="vmenu" id="menuAppSoon" style="left:230px;top:340px;" data-only="future">
+        <div class="hd">The Company</div>
+        <button class="it" disabled>Installs later</button>
+      </div>
+      <div class="vmenu" id="menuEntity" style="left:70px;top:60px;" data-only="menu-entity">
+        <div class="hd">Vera Lune</div>
+        <button class="it">Show on the Workbench</button>
+        <button class="it">Open beside</button>
+        <button class="it">Stage for the Press</button>
+        <button class="it">Remove from the Workbench</button>
+      </div>
+      <div class="vmenu" id="menuShell" style="left:520px;top:260px;" data-only="menu-shell">
+        <div class="hd">Bunraku.</div>
+        <button class="it">Go home</button>
+        <button class="it">Import files</button>
+        <button class="it">Switch theme</button>
+        <button class="it">Replay tutorials</button>
+      </div>
+
+      <div class="scrim" data-only="follow">
+        <div class="vdialog">
+          <p class="msg">3 items were sent to the Workbench. Follow?</p>
+          <label class="remember"><input type="checkbox">Never ask me this again</label>
+          <div class="actions"><button class="s-btn">Yes</button><button class="s-btn ghost">No</button></div>
+        </div>
+      </div>
+      <div class="scrim" data-only="close">
+        <div class="vdialog">
+          <p class="msg">Vera Lune has unsaved changes. Close this tab and discard them?</p>
+          <div class="actions"><button class="s-btn danger">Discard changes</button><button class="s-btn ghost">Keep editing</button></div>
+        </div>
+      </div>
+
+      <div class="catalogroom" data-only="catalog">
+        <div class="eyebrow">Apps in this build</div>
+        <h1>Official Bunraku apps</h1>
+        <p class="lede">Everything here shipped with this copy of Bunraku. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock.</p>
+        <div class="cgrid">
+          <div class="s-card ccard" style="--c:var(--deck-character)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-workbench"/></svg></span><h2>The Workbench</h2></div><p>Where every piece is edited.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-regex)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-library"/></svg></span><h2>The Library</h2></div><p>Every piece you have, on shelves by kind.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-lorebook)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-scenes"/></svg></span><h2>Scenes</h2></div><p>Play a scene with anyone in your cast.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-persona)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-press"/></svg></span><h2>The Press</h2></div><p>Convert and export pieces to any format.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-preset)"><div class="chead"><span class="mk"><svg width="15" height="15"><use href="#ic-agent"/></svg></span><h2>The Agent</h2></div><p>A conversation with whatever model your vault has configured.</p><div class="cfoot"><span class="status">On your Dock</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-lorebook)"><div class="chead"><span class="mk">&#9635;</span><h2>CSS Workshop</h2></div><p>Assisted CSS authoring for a card or a host, with a sealed preview.</p><div class="cfoot"><span class="status">Included app</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-preset)"><div class="chead"><span class="mk">&#9776;</span><h2>Help / Docs</h2></div><p>The committed documentation corpus, read from the same source GitHub serves.</p><div class="cfoot"><span class="status">Included app</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-character)"><div class="chead"><span class="mk">&#9673;</span><h2>HTML View</h2></div><p>A sealed preview for an html block a reply offered as a drawing.</p><div class="cfoot"><span class="status">Included app</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+          <div class="s-card ccard" style="--c:var(--deck-regex)"><div class="chead"><span class="mk">&#9670;</span><h2>Macro Lab</h2></div><p>A scratch pad for macro text: what a token reads as, and what it resolves to.</p><div class="cfoot"><span class="status">Included app</span><button class="s-btn ghost" style="padding:6px 12px">Open</button></div></div>
+        </div>
+      </div>
+
+      <div id="dropveil" data-only="dropveil"><div class="veilbox">Drop to import</div></div>
+
+      <div class="bootscreen" data-only="boot-error">
+        <div class="box">
+          <h1>Studio could not start</h1>
+          <p>Settings are unreadable. Fix or restore settings.json, then reload.</p>
+          <p style="margin-top:1rem">Open the forwarded address on <b>this computer</b>, not the server or container address:</p>
+          <div class="links"><span class="s-btn ghost">Open Studio</span><span class="s-btn ghost">Open Remote Access setup</span></div>
+          <p style="margin-top:1rem">Start the tunnel first, replacing the last two placeholders:</p>
+          <code>ssh -L 4173:localhost:4173 you@host</code>
+          <div class="links"><span class="s-btn quiet">Copy SSH command</span></div>
+        </div>
+      </div>
+
+      <button class="agent-tab" data-only="agent-min"><span class="grip"></span>THE AGENT</button>
+      <section class="agent-panel" data-only="agent-open">
+        <header class="bar"><span class="grip"></span><span class="title">THE AGENT</span><button class="x">&ndash;</button><button class="x">&times;</button></header>
+        <div class="body">
+          <p class="ghostmsg">Standing on The Workbench, editing Vera Lune. Ask about this character, or anything else in the studio.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="s-status">
+    <span class="seg"><span class="appdot" style="--adot:var(--deck-character)"></span><span class="k">app</span><b>Workbench</b></span>
+    <span class="sep">&middot;</span>
+    <span class="seg"><span class="k">theme</span><b>dark</b></span>
+    <span class="sep">&middot;</span>
+    <span class="seg"><span class="k">pieces</span><b>214</b></span>
+    <span class="spacer"></span>
+    <span class="vaude">$ bunraku<i>.</i></span>
+  </footer>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="full" class="on">Full dock</button>
+  <button data-s="slim">Slim (collapsed)</button>
+  <button data-s="future">+ Company (hypothetical)</button>
+  <button data-s="catalog">Add app catalog</button>
+  <button data-s="menu-app">Menu: app tile</button>
+  <button data-s="menu-entity">Menu: entity (open)</button>
+  <button data-s="menu-shell">Menu: shell (empty canvas)</button>
+  <button data-s="follow">Dialog: Follow?</button>
+  <button data-s="close">Dialog: unsaved close</button>
+  <button data-s="dropveil">Drop to import</button>
+  <button data-s="boot-error">Boot error</button>
+  <button data-s="agent-min">Agent: minimised tab</button>
+  <button data-s="agent-open">Agent: panel open</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var NOTES = {
+    full: "Dock, full: Workbench/Library/Scenes/Press/Agent numbered 1-5 (ctrl+1..5, app-keys.ts), Settings pinned in the foot (ctrl+,). Add app opens the catalog. Tab strip: one dirty tab (Vera, unsaved dot), one clean; +, Import, theme toggle. Status bar: app, theme, piece count, the bunraku. wordmark.",
+    slim: "Marks-only collapse (the dock's own toggle, persisted as shell.dockSlim) - same visual rule the code uses when a piece is open for editing (Discord rule, src/ui/shell/Dock.tsx): tile labels and kbd hints hide, icons stay, tooltips still carry the whole chord.",
+    future: "A comingSoon + catalogOnly app (The Company) shown for reference only: today's real dock has NO divider or dimmed tile, because dock-core.ts's `future` group is currently empty. This state is a labelled hypothetical, not current behavior.",
+    catalog: "The Add app destination (app-catalog room, catalog-core.ts's officialCatalogApps): every app that is not comingSoon/dockFoot/appCatalog, so it lists the 5 dock apps again (\"On your Dock\") plus CSS Workshop, Help/Docs, HTML View and Macro Lab (\"Included app\"). Company (comingSoon) and Settings (dockFoot) are excluded, same as the real filter.",
+    "menu-app": "Right-click on a dock tile: shell's app provider gives one item, \"Open <title>\".",
+    "menu-entity": "Right-click on an open tab: entity provider - Show on the Workbench, Open beside (or Close the split if this IS the pinned split piece), Stage for the Press, Remove from the Workbench.",
+    "menu-shell": "Right-click on empty canvas: the always-there shell fallback - Go home, Import files, Switch theme, Replay tutorials.",
+    follow: "FollowDialog: shown after sending pieces to the Workbench per the ask/always/never setting (Settings > Workbench).",
+    close: "ClosePieceDialog: closing a dirty tab always confirms, regardless of the follow setting.",
+    dropveil: "DropVeil: any file drag over the window, from any room.",
+    "boot-error": "BootErrorScreen: settings.json unreadable or a remote tunnel needed; shown instead of the whole shell.",
+    "agent-min": "FloatingAgent minimised (its own corner tab, remembered across reload).",
+    "agent-open": "FloatingAgent open: drag bar, minimise (the small dash button), close (the small x button), the same AgentRoom as the dock's Agent tile. Not modal - the canvas underneath stays live and clickable.",
+  };
+  function apply(s) {
+    var dock = document.getElementById("dock");
+    dock.classList.toggle("slim", s === "slim");
+    dock.classList.toggle("forced-full", s !== "slim");
+    document.querySelectorAll("#canvasArea [data-only]").forEach(function (el) {
+      var list = (el.getAttribute("data-only") || "").split(" ");
+      el.classList.toggle("show", list.indexOf(s) !== -1);
+    });
+    document.getElementById("futuredivider").classList.toggle("show", s === "future");
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + NOTES[s];
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    apply(b.dataset.s);
+  });
+  document.getElementById("slimtoggle").addEventListener("click", function () {
+    var on = document.getElementById("dock").classList.toggle("slim");
+    document.getElementById("dock").classList.toggle("forced-full", !on);
+  });
+  apply(new URLSearchParams(location.search).get("state") || "full");
+})();
+</script>
+</body>
+</html>

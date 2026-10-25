@@ -1,0 +1,64 @@
+/*
+ * Theme "c3": Persona + Arcade HUD (ships as an example UI mod).
+ * From design/wireframes/game/tokens-c3.css and c3-persona-hud.html. G2's thick edge and hard offset
+ * block shadow are the frame's structure, G3's corner brackets its caps, on every frame. Selection
+ * is a solid pastel slab with dark ink. Titles and actions go uppercase. Angled bands sit behind the
+ * stage as a flat background (no transform, nothing tilted that you read or click). Dark only.
+ * Overrides tokens only.
+ */
+:root[data-theme="c3"] {
+  color-scheme: dark;
+
+  /* color: G2's flatter near-ink chrome, G3's saturated rose */
+  --bk-surface-well: #100d15;
+  --bk-surface-base: #120f17;
+  --bk-surface-sunken: #15111b;
+  --bk-surface-field: #15111b;
+  --bk-surface-panel: #1c1722;
+  --bk-surface-raised: #221d29;
+  --bk-surface-ink: #0b090f;
+  --bk-scrim: rgb(11 9 15 / 0.92);
+  --bk-shadow: #0b090f;
+  --bk-line-strong: #806d98;
+  --bk-line: #4a3f55;
+  --bk-line-track: #4a3f55;
+  --bk-line-control: #8f7f9b;
+  --bk-text-soft: #d9cedb;
+  --bk-text-dim: #b9abbb;
+  --bk-text-faint: #a094a3;
+  --bk-text-disabled: #6c5d79;
+  --bk-stage-backdrop:
+    linear-gradient(174deg, transparent 0 4%, color-mix(in srgb, var(--bk-deck-pack) 11%, transparent) 4% 34%, transparent 34%),
+    linear-gradient(185deg, transparent 0 74%, color-mix(in srgb, var(--bk-deck-preset) 9%, transparent) 74% 96%, transparent 96%),
+    linear-gradient(100deg, transparent 0 78%, color-mix(in srgb, var(--bk-deck-lorebook) 7%, transparent) 78%);
+
+  /* type: shouting titles and actions, the same families */
+  --bk-case-title: uppercase;
+  --bk-case-action: uppercase;
+  --bk-fw-display: 800;
+
+  /* frame: thick edge, hard offset shadow, brackets on every frame */
+  --bk-frame-w: 3px;
+  --bk-frame-shadow-x: 7px;
+  --bk-frame-shadow-y: 7px;
+  --bk-crown-w: 0px;
+  --bk-bracket-rest: 1;
+  --bk-divider-w: 3px;
+  --bk-divider-color: var(--bk-line-strong);
+  --bk-dot-radius: 0;
+  --bk-control-frame-w: 3px;
+  --bk-control-shadow-x: 5px;
+  --bk-control-shadow-y: 5px;
+
+  /* selection: the solid pastel slab */
+  --bk-select-ring-w: 0px;
+  --bk-select-fill-mix: 100%;
+  --bk-select-ink: var(--bk-text-on-tint);
+
+  /* motion: a snap, not a drift */
+  --bk-ease-move: steps(2);
+  --bk-lift-x: -2px;
+  --bk-lift-y: -2px;
+  --bk-press-x: 3px;
+  --bk-press-y: 3px;
+}

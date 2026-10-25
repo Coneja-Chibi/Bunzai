@@ -1,0 +1,15 @@
+/** app.room manuscript-column, Agent (the docked room; the floating panel keeps the base arrangement): one narrow ruled page down the middle. The status is a running head, the prompt a single typewriter line under a rule. */
+html[data-surface-app-room="manuscript-column"] .agent-room[data-room="docked"] {
+  width: 100%;
+  max-width: 46rem;
+  margin-inline: auto;
+  border-inline: 1px solid var(--bk-line);
+  & .agent-room__head { text-align: center; background: transparent; border-bottom: 1px solid var(--bk-line-strong); padding-block: 1rem; }
+  & .agent-room__kick { justify-content: center; }
+  & .agent-room__head h1 { font-weight: 600; letter-spacing: .02em; }
+  & .agent-room__line { border-left-width: 0; padding-left: 2.2rem; }
+  & .agent-room__composer { background: transparent; border-top: 0; padding-inline: 0; }
+  & .agent-room__composer::before { display: none; }
+  & .agent-room__composer textarea { background: transparent; border: 0; border-bottom: 2px solid var(--bk-line-strong); }
+  & .agent-room__composer button { border: 0; background: transparent; }
+}

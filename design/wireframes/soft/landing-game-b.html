@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku: Scenes (save select)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Landing, Concept B: a JRPG save-file-select screen. Ported ideas: RC's "continue last scene" and
+ * recents rail (Chat cohesion audit), reworked as numbered save slots. Shared skeleton (Dock sizing,
+ * wf-bar/wf-note) copied from workbench-shell.html per the brief so the Dock stays byte-identical.
+ * Known gap: soft-parts.css sets .s-app small/.s-app kbd and .wf-bar text at 11px,
+ * under this brief's 12px floor - overridden here, same as every other page in this set.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; container-type: inline-size; background: var(--canvas); display: flex; flex-direction: column; }
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+/* ---- page head ---- */
+.phead { padding: 22px 24px 6px; }
+.phead .s-lede { margin-top: 6px; }
+
+/* ---- the two-column board: slot list + detail panel ---- */
+.board { display: flex; gap: 22px; padding: 10px 24px 24px; flex: 1; min-height: 0; }
+.slotcol { flex: 0 0 27rem; min-width: 0; max-height: calc(100vh - 330px); overflow-y: auto; padding: 2px 4px 2px 0; }
+@container (max-width: 46rem) {
+  .board { flex-direction: column; }
+  .slotcol { flex: none; width: 100%; max-height: 45vh; }
+  .detail { max-height: none; }
+}
+
+/* ---- save slot list ---- */
+.slotlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.slot { display: flex; gap: 14px; align-items: flex-start; padding: 12px 14px; background: var(--face); box-shadow: inset 4px 0 0 var(--c, var(--edge)), 0 0 0 1px var(--edge); cursor: pointer; outline: none; transition: transform .15s, box-shadow .15s; }
+.slot:hover { transform: translateY(-2px); }
+.slot:focus-visible { box-shadow: inset 4px 0 0 var(--c, var(--edge)), 0 0 0 2px var(--accent); }
+.slot.on { background: var(--shell-panel-2); box-shadow: inset 4px 0 0 var(--c, var(--accent)), 0 0 0 2px var(--c, var(--accent)); }
+.slot.newslot { outline: 2px dashed var(--seam); outline-offset: -2px; box-shadow: none; background: none; }
+.slot.newslot.on { outline-color: var(--accent); background: var(--shell-panel); box-shadow: none; }
+.sleft { flex: none; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.snum { font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); text-align: center; }
+.thumb { width: 64px; height: 46px; display: grid; place-items: center; background-image: linear-gradient(160deg, color-mix(in srgb, var(--c, var(--text-dim)) 55%, var(--stage-panel)), var(--stage-panel)); }
+.thumb span { font: 700 1.15rem var(--font-fancy); color: var(--stage-ink); opacity: .55; }
+.newthumb { background-image: none; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-dim); }
+.sbody { flex: 1; min-width: 0; padding-top: 1px; }
+.stitle-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.stitle-row .s-h3 { line-height: 1.25; }
+.chip-continue { flex: none; font: 700 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; background: var(--c); color: var(--stage-ink); padding: 2px 8px; }
+.scast { display: flex; gap: 6px; margin-top: 7px; }
+.portrait { width: 24px; height: 24px; display: grid; place-items: center; font: 700 12px var(--font-fancy); color: var(--stage-ink); background: var(--pc, var(--text-dim)); }
+.sstats { display: flex; gap: 10px; margin-top: 7px; font: 500 12px var(--font-mono); color: var(--text-dim); flex-wrap: wrap; }
+.squote { margin: 7px 0 0; font: italic 400 .85rem var(--font-body); color: var(--text-soft); }
+.newslot .s-meta { margin-top: 4px; display: block; }
+
+/* ---- detail panel: the selected slot, bigger ---- */
+.detail { flex: 1; min-width: 0; max-height: calc(100vh - 330px); overflow-y: auto; padding: 22px 24px; display: flex; flex-direction: column; }
+.dhead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.dhead .s-chip { --c: var(--c); }
+.dthumb { margin-top: 16px; height: 180px; display: grid; place-items: center; background-image: linear-gradient(160deg, color-mix(in srgb, var(--c) 55%, var(--stage-panel)), var(--stage-panel)); }
+.dthumb span { font: 700 3rem var(--font-fancy); color: var(--stage-ink); opacity: .5; }
+.dcast { display: flex; gap: 18px; margin-top: 16px; flex-wrap: wrap; }
+.dportrait { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.dportrait span { width: 40px; height: 40px; display: grid; place-items: center; background: var(--pc, var(--text-dim)); color: var(--stage-ink); font: 700 14px var(--font-fancy); }
+.dportrait b { font: 600 12px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.dstats { display: block; margin-top: 16px; }
+.dlines { margin-top: 16px; padding: 14px 16px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); }
+.dlines p { margin: 0 0 8px; font-size: .9rem; color: var(--text-soft); }
+.dlines p:last-child { margin-bottom: 0; }
+.dlines b { color: var(--text); font-family: var(--font-big); font-variation-settings: var(--soft-axes); }
+.dacts { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.demptybox { display: none; flex: 1; align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 8px; padding: 40px 20px; }
+.demptybox .s-lede { max-width: 24rem; }
+[data-emptydetail="1"] .scenepart { display: none; }
+[data-emptydetail="1"] .demptybox { display: flex; }
+
+/* ---- delete confirm dialog ---- */
+.scrim { position: fixed; inset: 0; z-index: 40; display: none; place-items: center; background: var(--scrim); padding: 20px; }
+.scrim.show { display: grid; }
+.dlg { width: 420px; max-width: 100%; padding: 24px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); }
+.dlg .msg { color: var(--text-soft); font-size: .95rem; line-height: 1.5; margin-top: 8px; }
+.dlg .row { margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav>
+
+  <div class="stage">
+    <header class="phead">
+      <div class="s-act">Scenes &middot; load</div>
+      <h1 class="s-title">Pick up the <em>scene</em></h1>
+      <p class="s-lede">Up and down move the highlight, Enter continues. The mouse works the list too.
+        New game and Import a card sit at the foot, ready any time.</p>
+    </header>
+
+    <div class="board">
+      <div class="slotcol">
+        <ul class="slotlist" id="slotlist" role="listbox" aria-label="Recent scenes">
+          <li class="slot scene" tabindex="0" role="option" style="--c: var(--deck-character)"
+              data-title="Harbor Town, after the storm" data-slot="SLOT 01" data-thumb="H"
+              data-cast="Vera Lune:var(--deck-character)|Nuit:var(--deck-persona)"
+              data-stats="Take 2 of 3 &middot; 142 lines &middot; last played 2 minutes ago"
+              data-lines="Nuit:You didn&#39;t lock the door again.||Vera:I never do. Waste of a good lock.||Nuit:Who did you let up the stairs?">
+            <div class="sleft"><span class="snum">Slot 01</span><div class="thumb"><span>H</span></div></div>
+            <div class="sbody">
+              <div class="stitle-row"><span class="s-h3">Harbor Town, after the storm</span><span class="chip-continue">Continue</span></div>
+              <div class="scast">
+                <span class="portrait" style="--pc: var(--deck-character)">V</span>
+                <span class="portrait" style="--pc: var(--deck-persona)">N</span>
+              </div>
+              <div class="sstats"><span>Take 2 of 3</span><span>142 lines</span><span>2 minutes ago</span></div>
+              <p class="squote">&ldquo;Who did you let up the stairs?&rdquo;</p>
+            </div>
+          </li>
+
+          <li class="slot scene" tabindex="0" role="option" style="--c: var(--deck-preset)"
+              data-title="The Lighthouse Keeper&#39;s Watch" data-slot="SLOT 02" data-thumb="L"
+              data-cast="Marguerite Vane:var(--deck-preset)"
+              data-stats="Take 1 of 1 &middot; 58 lines &middot; last played yesterday"
+              data-lines="Marguerite:Sit, if you like.||Marguerite:The storm will not care either way.||You:Then I&#39;ll wait it out with you.">
+            <div class="sleft"><span class="snum">Slot 02</span><div class="thumb"><span>L</span></div></div>
+            <div class="sbody">
+              <div class="stitle-row"><span class="s-h3">The Lighthouse Keeper&#39;s Watch</span></div>
+              <div class="scast"><span class="portrait" style="--pc: var(--deck-preset)">M</span></div>
+              <div class="sstats"><span>Take 1 of 1</span><span>58 lines</span><span>yesterday</span></div>
+              <p class="squote">&ldquo;Sit, if you like. The storm will not care either way.&rdquo;</p>
+            </div>
+          </li>
+
+          <li class="slot scene" tabindex="0" role="option" style="--c: var(--deck-regex)"
+              data-title="Velvet Quill&#39;s Ledger, closing time" data-slot="SLOT 03" data-thumb="V"
+              data-cast="Nuit:var(--deck-persona)|Wren:var(--deck-lorebook)"
+              data-stats="Take 3 of 3 &middot; 210 lines &middot; last played 3 days ago"
+              data-lines="Wren:The books don&#39;t balance themselves.||Nuit:Debts do not forget, even when people do.||Wren:Neither do I, as it happens.">
+            <div class="sleft"><span class="snum">Slot 03</span><div class="thumb"><span>V</span></div></div>
+            <div class="sbody">
+              <div class="stitle-row"><span class="s-h3">Velvet Quill&#39;s Ledger, closing time</span></div>
+              <div class="scast">
+                <span class="portrait" style="--pc: var(--deck-persona)">N</span>
+                <span class="portrait" style="--pc: var(--deck-lorebook)">W</span>
+              </div>
+              <div class="sstats"><span>Take 3 of 3</span><span>210 lines</span><span>3 days ago</span></div>
+              <p class="squote">&ldquo;Debts do not forget, even when people do.&rdquo;</p>
+            </div>
+          </li>
+
+          <li class="slot scene" tabindex="0" role="option" style="--c: var(--deck-lorebook)"
+              data-title="Harbor Watch, the long shift" data-slot="SLOT 04" data-thumb="W"
+              data-cast="Wren:var(--deck-lorebook)"
+              data-stats="Take 1 of 2 &middot; 76 lines &middot; last played 1 week ago"
+              data-lines="Wren:Nobody is coming.||Wren:Might as well talk to me, then.">
+            <div class="sleft"><span class="snum">Slot 04</span><div class="thumb"><span>W</span></div></div>
+            <div class="sbody">
+              <div class="stitle-row"><span class="s-h3">Harbor Watch, the long shift</span></div>
+              <div class="scast"><span class="portrait" style="--pc: var(--deck-lorebook)">W</span></div>
+              <div class="sstats"><span>Take 1 of 2</span><span>76 lines</span><span>1 week ago</span></div>
+              <p class="squote">&ldquo;Nobody is coming. Might as well talk to me.&rdquo;</p>
+            </div>
+          </li>
+
+          <li class="slot scene" tabindex="0" role="option" style="--c: var(--deck-pack)"
+              data-title="Tarot at Midnight" data-slot="SLOT 05" data-thumb="T"
+              data-cast="Velvet Quill:var(--deck-regex)|Vera Lune:var(--deck-character)"
+              data-stats="Take 1 of 1 &middot; 34 lines &middot; last played 2 weeks ago"
+              data-lines="Velvet:Cut the deck before you ask twice.||Vera:I never learned to shuffle properly.||Velvet:Neither did I. It never seemed to matter.">
+            <div class="sleft"><span class="snum">Slot 05</span><div class="thumb"><span>T</span></div></div>
+            <div class="sbody">
+              <div class="stitle-row"><span class="s-h3">Tarot at Midnight</span></div>
+              <div class="scast">
+                <span class="portrait" style="--pc: var(--deck-regex)">V</span>
+                <span class="portrait" style="--pc: var(--deck-character)">V</span>
+              </div>
+              <div class="sstats"><span>Take 1 of 1</span><span>34 lines</span><span>2 weeks ago</span></div>
+              <p class="squote">&ldquo;Cut the deck before you ask twice.&rdquo;</p>
+            </div>
+          </li>
+
+          <li class="slot newslot" tabindex="0" role="option">
+            <div class="sleft"><span class="snum">New</span><div class="thumb newthumb"><svg width="20" height="20"><use href="#i-plus"/></svg></div></div>
+            <div class="sbody"><span class="s-h3">New game</span><span class="s-meta">Start fresh from a character in your Library.</span></div>
+          </li>
+
+          <li class="slot newslot" tabindex="0" role="option">
+            <div class="sleft"><span class="snum">Import</span><div class="thumb newthumb"><svg width="20" height="20"><use href="#i-import"/></svg></div></div>
+            <div class="sbody"><span class="s-h3">Import a card</span><span class="s-meta">Drop a character card, or paste a share link.</span></div>
+          </li>
+        </ul>
+      </div>
+
+      <aside class="detail s-card" id="detail" style="--c: var(--deck-character)">
+        <div class="dhead scenepart">
+          <span class="s-chip" id="dSlotChip" style="--c: var(--deck-character)">SLOT 01</span>
+          <span class="s-h2" id="dTitle">Harbor Town, after the storm</span>
+        </div>
+        <div class="dthumb scenepart"><span id="dThumbLetter">H</span></div>
+        <div class="dcast scenepart" id="dCast"></div>
+        <div class="dstats s-meta scenepart" id="dStats"></div>
+        <div class="dlines scenepart" id="dLines"></div>
+        <div class="dacts scenepart">
+          <button type="button" class="s-btn" id="continueBtn"><svg width="14" height="14"><use href="#i-play"/></svg>Continue</button>
+          <button type="button" class="s-btn ghost">Pick a take</button>
+          <button type="button" class="s-btn ghost">Duplicate</button>
+          <button type="button" class="s-btn danger" id="deleteBtn">Delete</button>
+        </div>
+        <div class="demptybox">
+          <p class="s-h3" id="eTitle">New game</p>
+          <p class="s-lede" id="eBody">Start fresh from a character in your Library.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrimDelete">
+  <div class="dlg">
+    <p class="s-h3">Delete this scene?</p>
+    <p class="msg"><span id="scrimDeleteTitle">This scene</span> moves to Trash. You can restore it for 3 days before it is gone for good.</p>
+    <div class="row"><button type="button" class="s-btn ghost" id="scrimCancel">Keep it</button><button type="button" class="s-btn danger">Delete, move to Trash</button></div>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>Landing, Concept B: save select.</b> Each recent scene is a numbered save slot (thumbnail, cast,
+  current take, line/take stats, last played, a last-line quote); the top slot is Continue. The right
+  panel is the selected slot, bigger, with Continue / Pick a take / Duplicate / Delete. New game and
+  Import a card are slots at the foot of the same list, not a separate control.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="slots" class="on">Slots (slot 1)</button>
+  <button data-s="selected">Slot 3 selected</button>
+  <button data-s="delete">Delete confirm</button>
+  <button data-s="empty">Empty studio</button>
+  <button data-s="phone">Phone width</button>
+</div>
+
+<script>
+(function () {
+  var list = document.getElementById('slotlist');
+  var allSlots = Array.prototype.slice.call(list.querySelectorAll('.slot'));
+  var sceneCount = list.querySelectorAll('.slot.scene').length;
+  var detail = document.getElementById('detail');
+  var idx = 0;
+
+  function showScene(slot) {
+    detail.removeAttribute('data-emptydetail');
+    var c = slot.style.getPropertyValue('--c') || 'var(--deck-character)';
+    detail.style.setProperty('--c', c);
+    document.getElementById('dSlotChip').textContent = slot.getAttribute('data-slot');
+    document.getElementById('dTitle').textContent = slot.getAttribute('data-title');
+    document.getElementById('dThumbLetter').textContent = slot.getAttribute('data-thumb');
+    document.getElementById('dStats').textContent = slot.getAttribute('data-stats').replace(/&middot;/g, '·');
+    var cast = slot.getAttribute('data-cast').split('|').map(function (s) {
+      var p = s.split(':'); return { name: p[0], c: p[1] };
+    });
+    document.getElementById('dCast').innerHTML = cast.map(function (p) {
+      return '<div class="dportrait"><span style="--pc: ' + p.c + '">' + p.name.charAt(0) + '</span><b>' + p.name + '</b></div>';
+    }).join('');
+    var lines = slot.getAttribute('data-lines').split('||').map(function (s) {
+      var p = s.split(':'); return { who: p[0], line: p[1] };
+    });
+    document.getElementById('dLines').innerHTML = lines.map(function (l) {
+      return '<p><b>' + l.who + '</b> &ldquo;' + l.line + '&rdquo;</p>';
+    }).join('');
+  }
+
+  function showEmpty(title, body) {
+    detail.setAttribute('data-emptydetail', '1');
+    document.getElementById('eTitle').textContent = title;
+    document.getElementById('eBody').textContent = body;
+  }
+
+  function select(i) {
+    idx = Math.max(0, Math.min(i, allSlots.length - 1));
+    allSlots.forEach(function (s) { s.classList.remove('on'); s.setAttribute('aria-selected', 'false'); });
+    var s = allSlots[idx];
+    s.classList.add('on');
+    s.setAttribute('aria-selected', 'true');
+    if (s.classList.contains('scene')) {
+      showScene(s);
+    } else if (s.querySelector('.s-h3').textContent === 'New game') {
+      showEmpty('New game', 'Start fresh from a character in your Library.');
+    } else {
+      showEmpty('Import a card', 'Drop a character card, or paste a share link.');
+    }
+  }
+
+  function openDelete() {
+    var s = allSlots[idx];
+    var title = s.classList.contains('scene') ? s.getAttribute('data-title') : 'This scene';
+    document.getElementById('scrimDeleteTitle').textContent = title;
+    document.getElementById('scrimDelete').classList.add('show');
+  }
+
+  list.addEventListener('click', function (e) {
+    var li = e.target.closest('.slot');
+    if (li) select(allSlots.indexOf(li));
+  });
+  list.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); select(idx + 1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); select(idx - 1); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (allSlots[idx].classList.contains('scene')) document.getElementById('continueBtn').focus(); }
+  });
+  document.getElementById('deleteBtn').addEventListener('click', openDelete);
+  document.getElementById('scrimCancel').addEventListener('click', function () {
+    document.getElementById('scrimDelete').classList.remove('show');
+  });
+
+  function applyState(s) {
+    document.body.setAttribute('data-state', s);
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    list.classList.toggle('is-empty', s === 'empty');
+    document.querySelectorAll('#slotlist .slot.scene').forEach(function (el) { el.style.display = s === 'empty' ? 'none' : ''; });
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+    document.getElementById('scrimDelete').classList.remove('show');
+    if (s === 'empty') {
+      select(sceneCount);
+    } else if (s === 'selected') {
+      select(2);
+    } else if (s === 'delete') {
+      select(1);
+      openDelete();
+    } else {
+      select(0);
+    }
+    window.scrollTo(0, 0);
+  }
+
+  var q = new URLSearchParams(location.search);
+  applyState(q.get('state') || 'slots');
+  document.getElementById('wfbar').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b) applyState(b.getAttribute('data-s'));
+  });
+})();
+</script>
+</body>
+</html>

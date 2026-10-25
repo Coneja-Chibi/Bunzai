@@ -1,0 +1,2 @@
+/* shell.nav tab-bar: raised panel on the shared bottom dock. */
+html[data-surface-shell-nav="tab-bar"] [data-part="shell.nav"] > nav { background: var(--bk-surface-raised); }

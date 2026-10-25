@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenes port</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * RoleCall's /scenes page and the Library card's Start Scene button, ported to Bunraku. Sizes were
+ * read off the running pages on 2026-09-24 (computed styles at 1920x945). RC's "font-cinzel" titles
+ * render as a black-weight system sans there, so the port uses --font-big 900 (what users see).
+ * Colors are Bunraku tokens: RC's user accent -> --accent; a character's color -> its deck tone.
+ * Left out on purpose (nothing in Bunraku backs them yet): Group Performances and its tabs, Smart
+ * Folders, Folders, Show Full Branching Tree, Export to JSONL.
+ */
+.app { grid-template-columns: 4.2rem 1fr; }
+.dock .app-btn { cursor: default; }
+.page { container-type: inline-size; display: flex; min-height: 100vh; background: var(--stage-well); }
+
+/* ---- the On Stage sidebar: w-72, zinc-900/50 glass, a right edge ---- */
+.side { width: 288px; flex: none; display: flex; flex-direction: column; background: color-mix(in srgb, var(--stage-panel) 50%, transparent); border-right: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.side .top { padding: 20px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.eb { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: .32em; text-transform: uppercase; color: var(--accent); }
+.eb .sq { width: 8px; height: 8px; background: var(--accent); }
+.eb .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.side h2 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 16px; letter-spacing: .06em; text-transform: uppercase; color: var(--stage-card); }
+.now { margin: 16px 16px 0; border: 2px solid var(--t); box-shadow: 4px 4px 0 color-mix(in srgb, var(--t) 30%, transparent); position: relative; height: 185px; overflow: hidden; cursor: pointer;
+  background: linear-gradient(170deg, color-mix(in srgb, var(--t) 55%, var(--stage-panel)), var(--stage-panel) 90%); }
+.now .ini { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-fancy); font-size: 38px; color: color-mix(in srgb, var(--stage-card) 45%, transparent); }
+.now .ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 85%, transparent) 45%); }
+.now .who { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.av { width: 24px; height: 24px; flex: none; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-big); font-weight: 700; font-size: 11px; color: var(--stage-ink); background: var(--t); }
+.now .who b { color: var(--t); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now .who i { margin-left: auto; font-style: normal; font-size: 10px; color: var(--stage-soft); white-space: nowrap; }
+.now .tt { margin-top: 8px; font-family: var(--font-big); font-weight: 700; font-size: 14px; color: var(--stage-card); }
+.cont { display: block; margin: 12px 0 0; text-align: center; font-family: var(--font-big); font-size: 12px; font-weight: 500; color: var(--accent); }
+.list { padding: 0 16px 16px; overflow-y: auto; flex: 1; }
+.lab { margin-top: 20px; padding: 14px 8px 0; border-top: 2px solid color-mix(in srgb, var(--stage-card) 6%, transparent); display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--stage-soft); }
+.lab .sq { width: 8px; height: 8px; background: var(--accent); }
+.rec { display: flex; align-items: center; gap: 12px; padding: 8px; border-left: 3px solid transparent; cursor: pointer; }
+.rec:first-of-type { margin-top: 10px; }
+.rec:hover { background: color-mix(in srgb, var(--stage-card) 4%, transparent); border-left-color: var(--t); }
+.rec .av { width: 36px; height: 36px; font-size: 14px; }
+.rec .tx { flex: 1; min-width: 0; }
+.rec .nm { font-family: var(--font-big); font-size: 14px; font-weight: 500; color: var(--stage-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .sub { font-family: var(--font-big); font-size: 12px; color: var(--stage-mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec time { font-family: var(--font-big); font-size: 10px; color: var(--stage-mute); }
+
+/* ---- the main column ---- */
+.main { flex: 1; min-width: 0; padding: 24px 44px 60px 24px; }
+/* the YOUR STAGE box: an accent frame with two corner brackets */
+.hero { position: relative; margin-top: 24px; padding: 26px 26px 24px; border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 6%, var(--stage-well)), var(--stage-well) 60%); display: flex; align-items: center; gap: 16px; }
+.hero::before, .hero::after { content: ""; position: absolute; width: 26px; height: 26px; border: 0 solid var(--accent); }
+.hero::before { left: -2px; top: -2px; border-left-width: 4px; border-top-width: 4px; }
+.hero::after { right: -2px; bottom: -2px; border-right-width: 4px; border-bottom-width: 4px; }
+.hero .eb .rule { width: 32px; height: 2px; background: var(--accent); }
+.hero h1 { margin-top: 12px; font-family: var(--font-big); font-weight: 900; font-size: 36px; line-height: 1; letter-spacing: .06em; text-transform: uppercase; color: var(--stage-card); }
+.hero p { margin-top: 10px; font-family: var(--font-big); font-style: italic; font-size: 13px; color: var(--stage-soft); }
+.hero .grow { flex: 1; }
+.btn { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); background: color-mix(in srgb, var(--stage-card) 5%, transparent); border: 0; cursor: pointer; }
+.btn.on { color: var(--stage-ink); background: var(--accent); }
+.search { width: 192px; display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-family: var(--font-big); font-size: 14px; color: var(--stage-mute); border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 30%, transparent); }
+.btn svg, .search svg { width: 15px; height: 15px; }
+/* filter segments, then the size dial */
+.filters { margin-top: 16px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.segs { display: flex; gap: 6px; padding: 4px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-card) 5%, transparent); }
+.segs button { padding: 6px 12px; font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); background: none; border: 0; cursor: pointer; }
+.segs button.on { background: var(--stage-faint); color: var(--stage-card); font-weight: 500; }
+.dial { margin-left: auto; display: flex; align-items: center; gap: 12px; color: var(--stage-mute); font-size: 11px; }
+.dial .track { width: 112px; height: 4px; border-radius: 999px; background: var(--stage-seam); position: relative; }
+.dial .track i { position: absolute; left: 48%; top: 50%; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); }
+.selbar { margin-top: 12px; display: none; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); font-family: var(--font-big); font-size: 13px; color: var(--stage-card); }
+.selbar .del { margin-left: auto; padding: 6px 12px; background: var(--stage-danger-bg); border: 1px solid var(--stage-danger-edge); color: var(--stage-danger-text); }
+.selecting .selbar { display: flex; }
+
+/* the scene grid: ChatCard, a 4/5 portrait with corner brackets and a bottom overlay */
+.grid { margin-top: 26px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); align-items: start; }
+.sc { position: relative; background: color-mix(in srgb, var(--stage-panel) 50%, transparent); border: 2px solid color-mix(in srgb, var(--t) 30%, transparent); box-shadow: 4px 4px 0 color-mix(in srgb, var(--t) 22%, transparent); cursor: pointer; }
+.sc:hover { border-color: color-mix(in srgb, var(--t) 60%, transparent); }
+.sc .art { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: linear-gradient(180deg, color-mix(in srgb, var(--t) 80%, var(--stage-panel)), color-mix(in srgb, var(--t) 15%, var(--stage-well)) 90%); }
+.sc .ini { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-fancy); font-size: 40px; color: color-mix(in srgb, var(--stage-card) 30%, transparent); }
+.sc .art::before, .sc .art::after { content: ""; position: absolute; width: 22px; height: 22px; border: 0 solid var(--t); z-index: 2; }
+.sc .art::before { left: 10px; top: 10px; border-left-width: 3px; border-top-width: 3px; }
+.sc .art::after { right: 10px; bottom: 10px; border-right-width: 3px; border-bottom-width: 3px; }
+.sc .ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 88%, transparent) 40%); }
+.sc .who { font-family: var(--font-big); font-size: 12px; color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc h3 { margin-top: 6px; font-family: var(--font-big); font-weight: 500; font-size: 16px; line-height: 1.25; color: var(--stage-card); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc .meta { margin-top: 10px; display: flex; gap: 8px; font-family: var(--font-big); font-size: 10px; color: var(--stage-soft); }
+.sc .meta b { font-weight: 400; color: var(--t); }
+.sc .takes { padding: 10px 14px 12px; border-top: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.sc .takes .k { display: flex; align-items: center; gap: 6px; font-family: var(--font-big); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--t); }
+.sc .takes .chips { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+.sc .takes .chips span { font-family: var(--font-big); font-size: 11px; padding: 3px 8px; background: var(--stage-row); color: var(--stage-soft); border-radius: 2px; }
+.sc .takes .chips span.on { background: var(--t); color: var(--stage-ink); font-weight: 700; }
+.sc .tick { display: none; position: absolute; top: 10px; right: 10px; z-index: 3; width: 22px; height: 22px; border: 2px solid var(--stage-card); background: color-mix(in srgb, var(--stage-black) 50%, transparent); }
+.selecting .sc .tick { display: block; }
+.sc.picked .tick { background: var(--accent); border-color: var(--accent); }
+.sc.picked { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* the card menu (right-click or long-press) */
+.menu { position: absolute; z-index: 20; left: 240px; top: 250px; width: 220px; background: var(--stage-panel); border: 1px solid var(--stage-seam); box-shadow: 0 10px 30px var(--shadow-ink); font-family: var(--font-big); font-size: 14px; display: none; }
+.menu.show { display: block; }
+.menu div { display: flex; align-items: center; gap: 10px; padding: 10px 12px; color: var(--stage-card); }
+.menu div:hover { background: color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.menu .danger { color: var(--stage-danger-text); border-top: 1px solid var(--stage-seam); }
+/* the cutting-room confirm */
+.scrim { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: color-mix(in srgb, var(--stage-black) 70%, transparent); }
+.scrim.show { display: grid; }
+.cut { width: 440px; padding: 28px 24px 24px; background: var(--stage-panel); border: 1px solid var(--stage-seam); box-shadow: 8px 8px 0 var(--stage-black); }
+.cut .eb { color: var(--stage-danger-hot); }
+.cut h3 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 24px; letter-spacing: .02em; text-transform: uppercase; color: var(--stage-card); }
+.cut p { margin-top: 12px; font-family: var(--font-big); font-size: 14px; line-height: 1.55; color: var(--stage-soft); }
+.cut .row { margin-top: 22px; display: flex; justify-content: flex-end; gap: 12px; }
+.cut .row button { padding: 10px 20px; border: 3px solid var(--stage-black); box-shadow: 3px 3px 0 var(--stage-black); font-family: var(--font-big); font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; }
+.cut .row .no { background: var(--stage-row); color: var(--stage-card); }
+.cut .row .yes { background: var(--rose); color: var(--stage-white); }
+/* no scenes yet */
+.empty { margin-top: 60px; text-align: center; font-family: var(--font-big); color: var(--stage-soft); display: none; }
+.empty b { display: block; font-weight: 900; font-size: 20px; text-transform: uppercase; letter-spacing: .06em; color: var(--stage-card); }
+.empty p { margin-top: 10px; font-size: 14px; }
+.none .grid, .none .filters, .none .now, .none .cont, .none .list { display: none; }
+.none .empty { display: block; }
+
+/* ---- the Library card with RC's Start Scene button under it ---- */
+.libdemo { display: none; padding: 40px; gap: 20px; background: var(--stage-well); min-height: 100vh; }
+.show-lib .page { display: none; } .show-lib .libdemo { display: flex; }
+.cell { width: 23.75rem; display: flex; flex-direction: column; }
+.card { position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--stage-panel); border: 3px solid var(--t); box-shadow: 6px 6px 0 color-mix(in srgb, var(--t) 67%, transparent); color: var(--stage-soft); min-height: 36rem; }
+.card::after { content: ""; position: absolute; inset: 4px; border: 1px solid var(--t); opacity: .4; pointer-events: none; }
+.card .art { flex: 1; min-height: 24rem; display: grid; place-items: center; font-family: var(--font-fancy); font-size: 4rem; color: var(--t); background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--t) 40%, transparent), transparent 60%), var(--stage-well);
+  -webkit-mask-image: linear-gradient(to bottom, black 67%, transparent); mask-image: linear-gradient(to bottom, black 67%, transparent); }
+.card .body { padding: 14px 16px 0; }
+.genre { background: var(--t); color: var(--stage-ink); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; font-family: var(--font-big); }
+.cname { margin-top: 8px; font-family: var(--font-fancy); font-weight: 700; font-size: 15px; letter-spacing: .03em; color: var(--stage-card); }
+.cline { font-family: var(--font-body); font-style: italic; font-size: 15px; color: var(--stage-soft); margin: 4px 0 8px; }
+.foot { margin-top: auto; padding: 12px 18px; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--stage-seam); font-size: 12px; color: var(--stage-text-dim); font-family: var(--font-big); }
+.foot .grow { flex: 1; }
+.start { margin-top: 8px; height: 32px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 2px; cursor: pointer;
+  background: linear-gradient(135deg, var(--t), color-mix(in srgb, var(--t) 80%, transparent)); box-shadow: 0 4px 12px color-mix(in srgb, var(--t) 25%, transparent);
+  font-family: var(--font-big); font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-ink); }
+.start:hover { filter: brightness(1.1); }
+.start svg { width: 14px; height: 14px; }
+.note { max-width: 22rem; font-family: var(--font-big); font-size: 13px; line-height: 1.6; color: var(--stage-soft); border: 1px dashed var(--stage-line); padding: 14px 16px; align-self: flex-start; }
+.note b { color: var(--stage-card); }
+
+/* ---- narrow panes: the sidebar folds away (RC: hidden below lg), the header stacks ---- */
+@container (max-width: 1000px) {
+  .side { display: none; }
+  .main { padding: 16px 14px 60px; }
+  .hero { flex-wrap: wrap; } .hero .grow { display: none; }
+  .search { width: 100%; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+  .dial { display: none; }
+}
+
+/* wireframe-only control strip */
+.wf { position: fixed; right: 12px; bottom: 12px; z-index: 999; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--stage-black); border: 1px dashed var(--stage-line); font-family: var(--font-mono); font-size: 10px; }
+.wf button { background: none; border: 1px solid var(--stage-seam); color: var(--stage-mute); padding: 3px 7px; cursor: pointer; font: inherit; }
+.wf button.on { color: var(--stage-card); border-color: var(--accent); }
+body.embed .wf { display: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-sel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-find" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-takes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="m6 3 14 9-14 9V3z"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn" id="lbtile">Lb</div><div class="app-btn on" id="sctile">Sc</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn" data-theme-switch title="Paper or stage">St</div></nav>
+
+  <div id="root">
+    <div class="page" id="page">
+      <aside class="side">
+        <div class="top"><div class="eb"><span class="sq"></span><span class="dot"></span>Now playing</div><h2>On Stage</h2></div>
+        <div class="now" style="--t: var(--deck-character)">
+          <span class="ini">M</span>
+          <div class="ov"><div class="who"><span class="av">M</span><b>Marguerite Vane</b><i>about 2 hours</i></div><div class="tt">The long storm</div></div>
+        </div>
+        <a class="cont">Continue Story</a>
+        <div class="list">
+          <div class="lab"><span class="sq"></span>Earlier</div>
+          <div class="rec" style="--t: var(--deck-persona)"><span class="av">N</span><div class="tx"><div class="nm">Nuit</div><div class="sub">Cut the deck</div></div><time>3d</time></div>
+          <div class="rec" style="--t: var(--deck-lorebook)"><span class="av">T</span><div class="tx"><div class="nm">The Magpie</div><div class="sub">The lock gave on the third try</div></div><time>10d</time></div>
+          <div class="rec" style="--t: var(--deck-character)"><span class="av">M</span><div class="tx"><div class="nm">Marguerite Vane</div><div class="sub">Untitled Story</div></div><time>21d</time></div>
+          <div class="rec" style="--t: var(--deck-regex)"><span class="av">V</span><div class="tx"><div class="nm">Vera Lune</div><div class="sub">Who did you let up the stairs?</div></div><time>23d</time></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="hero">
+          <div><div class="eb"><span class="rule"></span>Your stage<span class="rule"></span></div><h1>Scenes</h1><p>6 stories across 4 characters</p></div>
+          <span class="grow"></span>
+          <button class="btn" id="selbtn"><svg><use href="#i-sel"/></svg>Select</button>
+          <span class="search"><svg><use href="#i-find"/></svg>Search...</span>
+        </header>
+        <div class="selbar">2 scenes selected <button class="del">Delete 2</button><button class="btn" id="selcancel">Cancel</button></div>
+        <div class="filters">
+          <div class="segs"><button class="on">All Time</button><button>Week</button><button>Month</button><button>Year</button></div>
+          <div class="segs"><button class="on">Recent</button><button>Messages</button></div>
+          <div class="dial"><span>&#9679;</span><span class="track"><i></i></span><span>&#9638;</span></div>
+        </div>
+
+        <div class="grid" id="grid">
+          <article class="sc" style="--t: var(--deck-character)"><div class="art"><span class="ini">M</span><div class="ov"><div class="who">Marguerite Vane &bull; Gothic, Mystery</div><h3>The long storm</h3><div class="meta"><span>42 msgs</span><span>&bull;</span><span>about 2 hours</span><span>&bull;</span><b>3 takes</b></div></div></div>
+            <div class="takes"><div class="k"><svg width="13" height="13"><use href="#i-takes"/></svg>Alternate takes</div><div class="chips"><span class="on">Original</span><span>Take 2</span><span>Take 3</span></div></div><span class="tick"></span></article>
+          <article class="sc" style="--t: var(--deck-persona)"><div class="art"><span class="ini">N</span><div class="ov"><div class="who">Nuit &bull; Tarot, Oracle</div><h3>Cut the deck</h3><div class="meta"><span>18 msgs</span><span>&bull;</span><span>3 days</span></div></div></div><span class="tick"></span></article>
+          <article class="sc" style="--t: var(--deck-lorebook)"><div class="art"><span class="ini">T</span><div class="ov"><div class="who">The Magpie &bull; Heist</div><h3>The lock gave on the third try</h3><div class="meta"><span>7 msgs</span><span>&bull;</span><span>10 days</span></div></div></div><span class="tick"></span></article>
+          <article class="sc" style="--t: var(--deck-character)"><div class="art"><span class="ini">M</span><div class="ov"><div class="who">Marguerite Vane &bull; Gothic, Mystery</div><h3>Untitled Story</h3><div class="meta"><span>1 msg</span><span>&bull;</span><span>21 days</span></div></div></div><span class="tick"></span></article>
+          <article class="sc" style="--t: var(--deck-regex)"><div class="art"><span class="ini">V</span><div class="ov"><div class="who">Vera Lune</div><h3>Who did you let up the stairs?</h3><div class="meta"><span>64 msgs</span><span>&bull;</span><span>23 days</span><span>&bull;</span><b>2 takes</b></div></div></div>
+            <div class="takes"><div class="k"><svg width="13" height="13"><use href="#i-takes"/></svg>Alternate takes</div><div class="chips"><span class="on">Original</span><span>Take 2</span></div></div><span class="tick"></span></article>
+          <article class="sc" style="--t: var(--deck-persona)"><div class="art"><span class="ini">N</span><div class="ov"><div class="who">Nuit &bull; Tarot, Oracle</div><h3>Untitled Story</h3><div class="meta"><span>3 msgs</span><span>&bull;</span><span>30 days</span></div></div></div><span class="tick"></span></article>
+        </div>
+        <div class="empty"><b>No scenes yet</b><p>Start one from a character's card in the Library: its Start Scene button opens a new scene here.</p></div>
+        <div class="menu" id="menu"><div><svg width="15" height="15"><use href="#i-pen"/></svg>Rename Scene</div><div class="danger" id="cutopen"><svg width="15" height="15"><use href="#i-trash"/></svg>Delete Story</div></div>
+      </main>
+    </div>
+
+    <div class="libdemo">
+      <div class="cell" style="--t: var(--deck-character)">
+        <article class="card"><div class="art">M</div><div class="body"><span class="genre">SillyTavern V3</span><div class="cname">Marguerite Vane</div><div class="cline">"Sit, if you like. The storm will not care either way."</div></div><div class="foot"><span>9/9 fields</span><span>~2.4K tok</span><span class="grow"></span><span>&middot;&middot;&middot;</span></div></article>
+        <button class="start"><svg><use href="#i-play"/></svg>Start Scene</button>
+      </div>
+      <div class="cell" style="--t: var(--deck-regex)">
+        <article class="card"><div class="art">V</div><div class="body"><span class="genre">CC V2</span><div class="cname">Vera Lune</div><div class="cline">"Who did you let up the stairs?"</div></div><div class="foot"><span>7/9 fields</span><span>~1.8K tok</span><span class="grow"></span><span>&middot;&middot;&middot;</span></div></article>
+        <button class="start"><svg><use href="#i-play"/></svg>Start Scene</button>
+      </div>
+      <div class="note"><b>Start Scene</b> sits under every character card in the Library (not personas, presets, or books), as RoleCall has it. It starts a new scene with that character, your default persona, and no preset (the built-in default prompt set), then opens it on the scene page, where the opening message picker comes first. The card itself still stages on a tap, as now.</div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"><div class="cut"><div class="eb">The cutting room</div><h3>Cut this story?</h3><p>"The long storm" and every message in it, all of its takes included. It goes to the scene trash, and nothing in Bunraku can bring it back yet.</p><div class="row"><button class="no" id="cutno">Cancel</button><button class="yes" id="cutyes">Delete</button></div></div></div>
+
+<div class="wf" id="wf">
+  <button data-s="scenes">Scenes</button><button data-s="menu">Card menu</button><button data-s="cut">Delete confirm</button><button data-s="select">Select mode</button><button data-s="empty">No scenes yet</button><button data-s="library">Library: Start Scene</button>
+</div>
+<script>
+(function () {
+  var root = document.getElementById("root"), page = document.getElementById("page");
+  function set(s) {
+    root.className = s === "library" ? "show-lib" : "";
+    page.classList.toggle("selecting", s === "select");
+    page.classList.toggle("none", s === "empty");
+    document.getElementById("menu").classList.toggle("show", s === "menu");
+    document.getElementById("scrim").classList.toggle("show", s === "cut");
+    var cards = document.querySelectorAll(".sc");
+    cards.forEach(function (c, i) { c.classList.toggle("picked", s === "select" && i < 2); });
+    document.getElementById("lbtile").classList.toggle("on", s === "library");
+    document.getElementById("sctile").classList.toggle("on", s !== "library");
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.body.classList.add("embed");
+  set(q.get("state") || "scenes");
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) set(b.getAttribute("data-s")); });
+  document.getElementById("selbtn").onclick = function () { set("select"); };
+  document.getElementById("selcancel").onclick = function () { set("scenes"); };
+  document.getElementById("cutopen").onclick = function () { set("cut"); };
+  document.getElementById("cutno").onclick = document.getElementById("cutyes").onclick = function () { set("scenes"); };
+  document.getElementById("grid").addEventListener("contextmenu", function (e) { e.preventDefault(); set("menu"); });
+})();
+</script>
+</body>
+</html>

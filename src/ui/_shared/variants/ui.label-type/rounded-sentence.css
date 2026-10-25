@@ -1,0 +1,4 @@
+/** ui.label-type rounded-sentence (GirliePop): the lettering of buttons, tabs, kickers and counts in the rounded display face, sentence case, no tracking. */
+html[data-surface-ui-label-type="rounded-sentence"] {
+  & :is(.lib.rc, .scn) :is(.ltb, .lfilter button, .viewseg button, .lrail-toggle button, .lrail-add button, .rstart, .findx, .s-btn, .segs button, .selbar button, .nmjump, .nmclear, .colchip, .crumbsel, .rnewtile, .sk, .ey, .ssub, .lrail-div, .scount, .s-act, .nmk, .lrow .n) { font-family: var(--font-big); font-weight: 600; font-style: normal; letter-spacing: 0; text-transform: none; }
+}

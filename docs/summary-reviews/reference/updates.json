@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/updates",
+  "sourcePath": "docs/reference/updates.md",
+  "sourceHash": "sha256:3caf2c50b40106d69d7802f4eb627d91e20403877bee8c9682883b22121919f0",
+  "semanticSummaryHash": "sha256:771d0996768f0ab7b055e42b1237b3edccac079f76c2ef23e5e435b9550a81a8",
+  "verdict": "APPROVE",
+  "reviewer": "gpt-6.1-sol:/root/implementation_review",
+  "notes": "Markdown and sidecar match shared capped request parsing, GitHub fetch policy, staged verified downloads and storage rollback refusal. Historical proof labels and the absence of full live/packaged apply proof remain distinguished; no fresh verification is granted. Source-only review.",
+  "reviewedAt": "2026-10-02T01:04:45.911Z"
+}

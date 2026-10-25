@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku themes</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Permanent+Marker&family=Space+Grotesk:wght@500;700&family=Fraunces:opsz,wght,SOFT@9..144,700..900,100&family=Special+Elite&family=Rubik+Mono+One&family=Nunito:wght@600;800&display=swap">
+<style>
+/*
+ * Theme mood board for Bunraku's site. RoleCall is the polished theater out front; each theme here
+ * is somewhere backstage, and each changes how the site is built (its structure and interactions),
+ * not only its colors. Every tile is a small live sketch of that theme. Wireframe-only colors.
+ */
+* { box-sizing: border-box; margin: 0; }
+body { background: #efe9df; color: #221a1c; font-family: "Space Grotesk", sans-serif; padding: 40px clamp(16px, 4vw, 56px) 80px; }
+header { max-width: 1300px; margin: 0 auto 30px; }
+header h1 { font: 900 clamp(2.4rem, 5vw, 4rem)/1 Fraunces, serif; font-variation-settings: "SOFT" 100; }
+header p { margin-top: 10px; font-size: 1.1rem; max-width: 52rem; line-height: 1.5; color: #4a3d40; }
+.grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(560px, 1fr)); gap: 34px; }
+.theme { background: #fff; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 0 #0001, 0 12px 30px #0000001a; display: flex; flex-direction: column; }
+.sample { height: 330px; position: relative; overflow: hidden; }
+.info { padding: 22px 24px 26px; }
+.info .no { font: 700 .8rem "Space Grotesk"; letter-spacing: .2em; color: #b0335e; }
+.info h2 { font: 900 1.9rem Fraunces, serif; margin: 4px 0 8px; font-variation-settings: "SOFT" 100; }
+.info .feel { font-size: 1.05rem; color: #4a3d40; line-height: 1.5; }
+.info h3 { margin: 16px 0 6px; font: 700 .78rem "Space Grotesk"; letter-spacing: .16em; text-transform: uppercase; color: #8a7a7d; }
+.info ul { padding-left: 18px; line-height: 1.55; font-size: .98rem; }
+.info .rc { margin-top: 14px; padding: 10px 12px; background: #f6f1ea; border-left: 4px solid #b0335e; font-size: .92rem; line-height: 1.45; }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } .sample { height: 280px; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ---------- 1. the call board ---------- */
+.t1 { background: #b88a5a; background-image: radial-gradient(#0000 1px, #a0774b 1.5px), radial-gradient(#c89a68 1px, transparent 1.5px); background-size: 7px 7px, 11px 11px; }
+.note { position: absolute; padding: 14px 14px 18px; font: 700 1.25rem/1.2 Caveat, cursive; box-shadow: 2px 6px 10px #0004; transition: transform .2s; cursor: grab; }
+.note:hover { transform: rotate(0) scale(1.06) !important; z-index: 5; }
+.note::before { content: ""; position: absolute; top: -8px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ff8fb1, #c2185b); box-shadow: 1px 2px 3px #0005; }
+.note small { display: block; font: 600 .95rem Caveat; opacity: .75; margin-top: 4px; }
+.cast { position: absolute; left: 34%; top: 12%; width: 200px; background: #fffdf6; padding: 12px 14px; box-shadow: 2px 6px 10px #0004; transform: rotate(-1.5deg); font: 600 .78rem "Special Elite", monospace; }
+.cast b { display: block; font: 700 1rem "Special Elite"; margin-bottom: 6px; border-bottom: 1px solid #222; }
+.tape { position: absolute; width: 70px; height: 20px; background: #f1e6c4cc; }
+
+/* ---------- 2. the dressing room mirror ---------- */
+.t2 { background: #3a2230; display: grid; place-items: center; }
+.mirror { width: 78%; height: 84%; border-radius: 16px; background: linear-gradient(160deg, #cfd9de, #9fb0ba 55%, #c9d4da); border: 14px solid #e9d7b9; position: relative; box-shadow: inset 0 0 40px #fff8; }
+.bulb { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle, #fff7d6 30%, #ffd36b 70%); box-shadow: 0 0 16px 4px #ffd36b99; animation: glow 3s ease-in-out infinite; }
+@keyframes glow { 50% { box-shadow: 0 0 22px 7px #ffd36bcc; } }
+.tuck { position: absolute; background: #fff; padding: 6px 6px 18px; box-shadow: 2px 4px 8px #0004; font: 700 1rem Caveat; text-align: center; }
+.tuck i { display: block; width: 84px; height: 66px; background: linear-gradient(135deg, #f7b2c8, #9b7fd1); }
+.lip { position: absolute; font: 700 2rem "Permanent Marker"; color: #d0265d; transform: rotate(-6deg); opacity: .85; }
+
+/* ---------- 3. the scrapbook ---------- */
+.t3 { background: #f7f0e3; background-image: linear-gradient(#e7dccb 1px, transparent 1px); background-size: 100% 28px; }
+.page-l, .page-r { position: absolute; top: 6%; bottom: 6%; width: 44%; background: #fffaf1; box-shadow: 0 3px 10px #0002; }
+.page-l { left: 5%; transform: rotate(-1deg); } .page-r { right: 5%; transform: rotate(.8deg); }
+.polar { position: absolute; background: #fff; padding: 8px 8px 26px; box-shadow: 1px 3px 8px #0003; }
+.polar i { display: block; width: 120px; height: 96px; background: linear-gradient(135deg, #ffd1dc, #b5e3d8); }
+.polar span { position: absolute; bottom: 4px; left: 0; right: 0; text-align: center; font: 700 1.05rem Caveat; }
+.scrawl { position: absolute; font: 700 1.35rem/1.15 Caveat, cursive; color: #4a2a3a; }
+.sticker { position: absolute; padding: 6px 10px; border-radius: 999px; border: 3px solid #fff; box-shadow: 0 2px 6px #0003; font: 800 .8rem Nunito; }
+.washi { position: absolute; height: 22px; background: repeating-linear-gradient(45deg, #ffb6c8cc 0 8px, #ffe3eacc 8px 16px); }
+
+/* ---------- 4. the riso program ---------- */
+.t4 { background: #f4efe4; }
+.t4::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .35; background-image: radial-gradient(#0003 .6px, transparent .8px); background-size: 3px 3px; }
+.riso-h { position: absolute; left: 7%; top: 12%; font: 400 4.2rem/.9 "Rubik Mono One", sans-serif; color: #ff48b0; mix-blend-mode: multiply; }
+.riso-h.b { color: #0078bf; transform: translate(4px, 3px); }
+.riso-blob { position: absolute; border-radius: 50%; mix-blend-mode: multiply; }
+.riso-fold { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: #0002; }
+.riso-p { position: absolute; right: 6%; bottom: 12%; width: 40%; font: 500 .95rem/1.4 "Space Grotesk"; color: #0078bf; }
+.riso-p b { color: #ff48b0; font-weight: 700; }
+
+/* ---------- 5. the sticker sheet ---------- */
+.t5 { background: #fff; background-image: linear-gradient(#f0f0f0 1px, transparent 1px), linear-gradient(90deg, #f0f0f0 1px, transparent 1px); background-size: 22px 22px; }
+.stk { position: absolute; display: grid; place-items: center; text-align: center; border: 4px solid #fff; box-shadow: 0 0 0 2px #22222222, 0 6px 12px #0002; font: 800 1rem Nunito; cursor: pointer; transition: transform .2s; }
+.stk:hover { transform: rotate(-4deg) translateY(-4px) scale(1.04); }
+.stk.peel::after { content: ""; position: absolute; right: -4px; bottom: -4px; width: 34px; height: 34px; background: linear-gradient(135deg, transparent 50%, #e8e8e8 50%); border-radius: 0 0 12px 0; }
+
+/* ---------- 6. the prop table ---------- */
+.t6 { background: #5b4030; background-image: repeating-linear-gradient(90deg, #0000 0 60px, #0000000f 60px 62px); }
+.prop { position: absolute; cursor: pointer; transition: transform .2s; }
+.prop:hover { transform: translateY(-6px) rotate(-2deg); }
+.mask { position: absolute; padding: 4px 10px; background: #efe2b6; font: 700 1rem "Permanent Marker"; color: #3a2a20; transform: rotate(-3deg); box-shadow: 0 2px 3px #0003; white-space: nowrap; }
+.script { width: 130px; height: 170px; background: #fffdf5; box-shadow: 4px 6px 0 #0003; padding: 14px 12px; font: 600 .7rem "Special Elite"; line-height: 1.5; }
+.lamp { width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, #fff3c4, #f0b44a 60%, #8a5a20); box-shadow: 0 0 40px 10px #f0b44a66; }
+.tk { width: 150px; height: 70px; background: #e0306a; border-radius: 6px; -webkit-mask: radial-gradient(circle 10px at 0 50%, #0000 97%, #000), radial-gradient(circle 10px at 100% 50%, #0000 97%, #000); -webkit-mask-composite: source-in; mask-composite: intersect; display: grid; place-items: center; font: 900 1.2rem Fraunces; color: #fff; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Backstage themes for Bunraku</h1>
+  <p>RoleCall is the polished theater out front. Bunraku lives backstage: handmade, a bit messy, personal, cute. Each theme below changes how the site is <b>built</b> (what the home page is, how you move around, what things are), not only its colors. The tile on top is a small live sketch; hover things.</p>
+</header>
+
+<main class="grid">
+
+  <!-- 1 -->
+  <section class="theme">
+    <div class="sample t1">
+      <div class="note" style="left:5%;top:14%;width:150px;background:#fff59d;transform:rotate(-5deg)">Download me!<small>Windows, Mac, Linux</small></div>
+      <div class="note" style="left:8%;top:58%;width:140px;background:#ffc1d9;transform:rotate(4deg)">What&apos;s new?<small>v0.1.42 posted</small></div>
+      <div class="cast"><b>CAST LIST</b>SCENES ........ play<br>WORKBENCH .... make<br>LIBRARY ...... keep<br>PRESS ........ share<br>AGENT ........ help</div>
+      <div class="note" style="right:6%;top:10%;width:150px;background:#b9f3d6;transform:rotate(3deg)">Guides, read before rehearsal<small>7 pages</small></div>
+      <div class="note" style="right:10%;top:56%;width:150px;background:#cfe1ff;transform:rotate(-3deg)">Try it in your browser<small>no install</small></div>
+      <div class="tape" style="left:40%;bottom:10%;transform:rotate(8deg)"></div>
+    </div>
+    <div class="info"><span class="no">THEME 1 &middot; YOUR IDEA</span><h2>The Call Board</h2>
+      <p class="feel">The corkboard by the stage door where everything gets pinned: sticky notes, the cast list, the sign-in sheet, flyers.</p>
+      <h3>How the site works</h3><ul><li>The home page IS the board. Every section is a note you can pick up.</li><li>The cast list is the feature tour; the sign-in sheet is the download.</li><li>Guides are a rehearsal-report binder hanging on a nail. Releases are dated call sheets.</li></ul>
+      <h3>Signature moves</h3><ul><li>Drag notes around; they stay where you left them.</li><li>Click a note to unpin it and it opens full-size.</li><li>New releases appear as a fresh note with a pin dropping in.</li></ul>
+      <div class="rc"><b>RoleCall DNA:</b> the theater world and the cast list. <b>Its own:</b> cork, paper, handwriting, pins.</div></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="theme">
+    <div class="sample t2"><div class="mirror">
+      <span class="bulb" style="left:-17px;top:10%"></span><span class="bulb" style="left:-17px;top:40%;animation-delay:.6s"></span><span class="bulb" style="left:-17px;top:70%;animation-delay:1.2s"></span>
+      <span class="bulb" style="right:-17px;top:10%;animation-delay:.3s"></span><span class="bulb" style="right:-17px;top:40%;animation-delay:.9s"></span><span class="bulb" style="right:-17px;top:70%;animation-delay:1.5s"></span>
+      <span class="bulb" style="top:-17px;left:20%;animation-delay:.2s"></span><span class="bulb" style="top:-17px;left:50%;animation-delay:.8s"></span><span class="bulb" style="top:-17px;left:80%;animation-delay:1.4s"></span>
+      <div class="tuck" style="left:6%;top:8%;transform:rotate(-8deg)"><i></i>Scenes</div>
+      <div class="tuck" style="right:6%;top:10%;transform:rotate(7deg)"><i style="background:linear-gradient(135deg,#ffd36b,#f7b2c8)"></i>Download</div>
+      <div class="lip" style="left:28%;top:48%">break a leg, bun</div>
+      <div class="tuck" style="left:40%;bottom:6%;transform:rotate(-3deg)"><i style="background:linear-gradient(135deg,#9bd7c7,#9b7fd1)"></i>Guides</div>
+    </div></div>
+    <div class="info"><span class="no">THEME 2</span><h2>The Dressing Room Mirror</h2>
+      <p class="feel">A vanity mirror ringed with warm bulbs, with photos, tickets and notes tucked into the frame. Old Hollywood, but make it cute.</p>
+      <h3>How the site works</h3><ul><li>The home page is the mirror. Things tucked in the frame are the sections.</li><li>The mirror itself shows the live chat demo, like the bunny practicing lines.</li><li>Each page is a different drawer of the vanity (makeup box = presets, script = guides).</li></ul>
+      <h3>Signature moves</h3><ul><li>The bulbs warm up as the page loads.</li><li>Pull a photo out of the frame to open it.</li><li>Lipstick notes written on the glass as headings.</li></ul>
+      <div class="rc"><b>RoleCall DNA:</b> marquee bulbs, the stage. <b>Its own:</b> intimate and personal instead of grand.</div></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="theme">
+    <div class="sample t3">
+      <div class="page-l"></div><div class="page-r"></div>
+      <div class="washi" style="left:9%;top:9%;width:110px;transform:rotate(-8deg)"></div>
+      <div class="polar" style="left:10%;top:14%;transform:rotate(-4deg)"><i></i><span>my first scene!!</span></div>
+      <div class="scrawl" style="left:9%;top:66%;width:34%">she said the storm holds till midnight &lt;3</div>
+      <div class="sticker" style="left:36%;top:12%;background:#ffe16b">NEW v0.1.42</div>
+      <div class="scrawl" style="left:55%;top:12%;width:36%;font-size:1.6rem">things I made this week:</div>
+      <div class="polar" style="right:9%;top:36%;transform:rotate(5deg)"><i style="background:linear-gradient(135deg,#cfc2ff,#ffd1dc)"></i><span>a lorebook</span></div>
+      <div class="sticker" style="left:58%;bottom:14%;background:#ff9cc6;color:#fff">download &hearts;</div>
+    </div>
+    <div class="info"><span class="no">THEME 3</span><h2>The Scrapbook</h2>
+      <p class="feel">Someone&apos;s personal theater scrapbook: polaroids, washi tape, stickers, and handwriting in the margins. The "notes app chic" and scrapbook trends of 2026.</p>
+      <h3>How the site works</h3><ul><li>The site is a book. Pages turn left and right instead of scrolling.</li><li>Features are spreads, guides are how-to pages with doodled arrows, releases are dated diary entries.</li><li>The table of contents is the first spread.</li></ul>
+      <h3>Signature moves</h3><ul><li>Page-turn transitions.</li><li>Stickers you can peel and restick.</li><li>Handwritten notes animate as if being written.</li></ul>
+      <div class="rc"><b>RoleCall DNA:</b> keepsakes of shows. <b>Its own:</b> diary-personal, soft, scribbly.</div></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="theme">
+    <div class="sample t4">
+      <div class="riso-fold"></div>
+      <div class="riso-blob" style="width:220px;height:220px;right:10%;top:-40px;background:#ffe800"></div>
+      <div class="riso-blob" style="width:160px;height:160px;right:26%;top:50px;background:#ff48b0"></div>
+      <div class="riso-h b">BUN<br>RAKU</div><div class="riso-h">BUN<br>RAKU</div>
+      <div class="riso-p"><b>TONIGHT&apos;S PROGRAMME.</b> Act I, Scenes. Act II, the Workbench. Act III, the Library. Printed on your own computer, in two inks.</div>
+    </div>
+    <div class="info"><span class="no">THEME 4</span><h2>The Riso Program</h2>
+      <p class="feel">A risograph-printed show program: two or three bright inks (fluoro pink, blue, yellow), slightly misregistered, with a grainy print texture.</p>
+      <h3>How the site works</h3><ul><li>The site is a folded program; each page is a numbered spread.</li><li>A running order (Act I, II, III) is the navigation, like a program&apos;s contents.</li><li>Guides are the "notes from the director" pages; releases are the "cast changes" insert.</li></ul>
+      <h3>Signature moves</h3><ul><li>Ink layers slide into register as you scroll.</li><li>Every page uses only its two inks.</li><li>A tear-off coupon for the download.</li></ul>
+      <div class="rc"><b>RoleCall DNA:</b> the playbill. <b>Its own:</b> indie, loud, printed-by-hand color.</div></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="theme">
+    <div class="sample t5">
+      <div class="stk peel" style="left:6%;top:12%;width:170px;height:170px;border-radius:50%;background:#ff5fa2;color:#fff;font-size:1.3rem">GET<br>BUNRAKU</div>
+      <div class="stk" style="left:42%;top:10%;width:150px;height:80px;border-radius:18px;background:#ffe16b">Scenes</div>
+      <div class="stk" style="left:44%;top:46%;width:130px;height:70px;border-radius:40px;background:#9ee7c8;transform:rotate(-6deg)">Library</div>
+      <div class="stk" style="right:6%;top:16%;width:120px;height:120px;border-radius:30px;background:#b9a4ff;color:#fff;transform:rotate(8deg)">Work<br>bench</div>
+      <div class="stk" style="right:10%;bottom:10%;width:150px;height:60px;border-radius:12px;background:#ffb27d;transform:rotate(-3deg)">what&apos;s new?</div>
+      <div class="stk" style="left:10%;bottom:8%;width:120px;height:60px;border-radius:30px;background:#fff;color:#ff5fa2">&hearts; guides</div>
+    </div>
+    <div class="info"><span class="no">THEME 5</span><h2>The Sticker Sheet</h2>
+      <p class="feel">"Cute-alism": plain, raw layout, but everything clickable is a glossy die-cut sticker with a white border. Stationery shop meets app.</p>
+      <h3>How the site works</h3><ul><li>Each page is a sticker sheet; the stickers are the content.</li><li>Peeling a sticker (click and drag) opens it; the backing paper underneath shows the details.</li><li>Your peeled stickers collect in a little tray, like a history.</li></ul>
+      <h3>Signature moves</h3><ul><li>Real peel animation with a curling corner.</li><li>Stickers wobble on hover.</li><li>The download is the big round sticker you peel off.</li></ul>
+      <div class="rc"><b>RoleCall DNA:</b> the bold outline and rose. <b>Its own:</b> glossy, bouncy, toy-like.</div></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="theme">
+    <div class="sample t6">
+      <div class="prop" style="left:6%;top:14%"><div class="script">SCENE ONE<br><br>VERA: You came up the stairs without a lantern.<br><br>YOU: A little of both.</div><span class="mask" style="left:10px;top:-16px">GUIDES</span></div>
+      <div class="prop" style="left:40%;top:30%"><div class="lamp"></div><span class="mask" style="left:14px;top:-14px">DEMO</span></div>
+      <div class="prop" style="right:8%;top:12%;transform:rotate(-8deg)"><div class="tk">ADMIT ONE</div><span class="mask" style="left:20px;top:-18px">DOWNLOAD</span></div>
+      <div class="prop" style="right:14%;bottom:12%"><div style="width:110px;height:80px;background:#9b7fd1;border-radius:8px;box-shadow:4px 6px 0 #0003"></div><span class="mask" style="left:6px;top:-16px">PRESETS</span></div>
+    </div>
+    <div class="info"><span class="no">THEME 6</span><h2>The Prop Table</h2>
+      <p class="feel">The backstage prop table, seen from above: every prop sits on its taped outline with a masking-tape label.</p>
+      <h3>How the site works</h3><ul><li>The home page is the table. Each prop is a section: the script is Guides, the ticket is Download, the lamp lights up the live demo.</li><li>Picking up a prop zooms into it; putting it down goes back.</li><li>Missing props (not built yet) leave just the taped outline, "coming soon".</li></ul>
+      <h3>Signature moves</h3><ul><li>Props lift and cast a shadow when hovered.</li><li>Masking-tape labels as all the navigation.</li><li>The lamp is a real toggle: switch it on to start the demo scene.</li></ul>
+      <div class="rc"><b>RoleCall DNA:</b> stagecraft. <b>Its own:</b> tactile, object-based, playful.</div></div>
+  </section>
+
+</main>
+</body>
+</html>

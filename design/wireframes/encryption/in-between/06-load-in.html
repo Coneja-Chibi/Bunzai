@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Load-in wireframe</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../../rc-bridge.css">
+<script src="../../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">06 Load-in (in-between)</div>
+      <p class="wf-lede">Shown once, when Bunraku opens a studio folder that already holds pieces as plain files: it carries them into the encrypted library, checking each one as it goes. Only pieces move; pictures and other files stay in the folder, and nothing stops the load-in except a full disk. An empty folder never sees this screen.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">Carrying the pieces in</div>
+      <div class="lockstage">
+        <div class="dossier">
+          <div class="dossier-head">
+            <div class="act">Load-in</div>
+            <div class="marquee">Moving <em>in</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <p class="direction"><span class="p">(</span>The company carries every piece into the locked library and checks each one on arrival. The folder is only read.<span class="p">)</span></p>
+          <div class="lines">
+            <div class="lines-head">&#9656; On the loading dock</div>
+            <div class="proof">checked  character/vera.json<br>checked  character/the-lighthouse-keeper.json<br>checked  lorebook/harbor-town.json<br>carrying preset/moonlit.json</div>
+            <div class="cues-count">214 / 412 pieces carried in</div>
+          </div>
+          <p class="subtle">Closing Bunraku now is safe: nothing is kept half done, and it starts over next time.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Not enough room on the disk</div>
+      <div class="lockstage">
+        <div class="dossier">
+          <div class="dossier-head">
+            <div class="act">Load-in</div>
+            <div class="marquee">No room <em>backstage</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <div class="stage-note gilt">
+            <div class="stage-note-label">Stage direction</div>
+            <p>This folder is 156 MB. Carrying it in needs about 312 MB free, and this disk has 90 MB. Nothing was changed.</p>
+          </div>
+          <p class="direction"><span class="p">(</span>Until then, Bunraku opens the folder as it is, unencrypted.<span class="p">)</span></p>
+          <div class="cta-row after-note">
+            <button class="stamp stamp-btn primary cta">Try again &rarr;</button>
+            <button class="btn-ghost">Open the folder as it is</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Done</div>
+      <div class="lockstage">
+        <div class="dossier hero">
+          <div class="dossier-head">
+            <div class="act">Load-in</div>
+            <div class="marquee">All <em>aboard</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <p class="voice">412 pieces carried in and checked.</p>
+          <p class="direction"><span class="p">(</span>Pictures, exports, and other files, 37 in all, stay in the folder as they were. The library keeps each piece's picture inside the piece.<span class="p">)</span></p>
+          <button class="stamp stamp-btn primary cta">Take the stage &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Done, with a renamed piece</div>
+      <div class="lockstage">
+        <div class="dossier hero">
+          <div class="dossier-head">
+            <div class="act">Load-in</div>
+            <div class="marquee">All <em>aboard</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <p class="voice">412 pieces carried in and checked.</p>
+          <div class="lines">
+            <div class="lines-head">&#9656; Renamed to keep both</div>
+            <div class="line"><i>1.</i><span>Vera.json kept as vera-2.json</span></div>
+          </div>
+          <p class="subtle">Two names that differ only in capitals are one name in the library, so the second got a number.</p>
+          <button class="stamp stamp-btn primary cta">Take the stage &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>From RoleCall:</b> the act label, the marquee, the flourish, the stage direction, the lines box with its accent spine, the cues count ("214 / 412 pieces carried in"), STAGE DIRECTION. <b>From the design system:</b> the mono proof block as the running list of checked pieces. <b>No new component:</b> no progress bar; the count and the proof block carry it. <b>For the build:</b> today the copy runs before the window opens, so nothing could show this screen; the build moves the copy to after the window is up. "Renamed" is rare, and shown only when it happens. Every piece the Studio showed comes across; nothing is skipped.</p>
+</div>
+</body>
+</html>

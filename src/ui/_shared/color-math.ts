@@ -1,0 +1,121 @@
+/**
+ * The house color math - pure, unit-tested, framework-free. Extracted out of the old
+ * _shared/color-picker.ts (CONTRACT V2/ADR-008: the DOM half moved to
+ * src/ui/components/color-picker, a React component; only the math stays a plain module so
+ * src/ui/_shared/paint.ts - and anything else that needs hex handling without a picker - can import
+ * it without pulling in react). Functional core: normalizeHex/hexToHsv/hsvToHex convert between hex
+ * and HSV (fail-closed on garbage); dragFraction is the pointer-drag fraction math shared by the
+ * SV square, the hue strip, and the gradient stop rail.
+ */
+
+import { hexToRgb, parseHex, rgbHex, rgbToHsv } from "../../color";
+
+export interface Hsv {
+  /** hue 0-360 */
+  h: number;
+  /** saturation 0-1 */
+  s: number;
+  /** value 0-1 */
+  v: number;
+}
+
+export const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
+
+/** Coerce user hex (3, 6 or 8 digits; alpha dropped) into "#rrggbb" lowercase, or null when it is not a color (fail closed). */
+export function normalizeHex(input: string): string | null {
+  const rgb = parseHex(input);
+  return rgb && rgbHex(...rgb);
+}
+
+/** WCAG relative luminance of a "#rrggbb" hex. Tolerant: garbage reads as black. */
+export function relativeLuminance(hex: string): number {
+  const norm = normalizeHex(hex) ?? "#000000";
+  const lin = (pair: string): number => {
+    const s = parseInt(pair, 16) / 255;
+    return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * lin(norm.slice(1, 3)) + 0.7152 * lin(norm.slice(3, 5)) + 0.0722 * lin(norm.slice(5, 7));
+}
+
+/** WCAG contrast ratio (1..21) between two hex colors. */
+export function contrastRatio(a: string, b: string): number {
+  const la = relativeLuminance(a);
+  const lb = relativeLuminance(b);
+  const [hi, lo] = la >= lb ? [la, lb] : [lb, la];
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+/**
+ * Pick a legible ink (near-black or cream) to sit ON a solid hex fill, by WCAG relative luminance.
+ * Used for monogram badges: the tile wears a brand color, the letter must stay readable on it. Tolerant:
+ * an unparseable fill reads as dark, so it gets cream ink.
+ */
+export const readableInk = (fill: string): string =>
+  relativeLuminance(fill) > 0.42 ? "#0a0a0b" : "#faf8f3";
+
+/** White text needs 4.5:1; aim well past it so the companion reads as a designed shade family
+ * (a near-miss darken looks like a rendering glitch beside the original) and no accent pick can
+ * land near the line. */
+const DEEP_TARGET = 6.5;
+
+/**
+ * Darken an accent until WHITE text on it clears WCAG AA (with margin). Bright accents (the house
+ * rose, amber, spring green) cannot carry small text; their deepened companion can, while the
+ * original keeps wearing borders, spines, and marks. Already-deep colors return unchanged.
+ * Tolerant: garbage reads as black, which is already past the target.
+ */
+export function deepAccent(fill: string): string {
+  let hex = normalizeHex(fill) ?? "#000000";
+  for (let i = 0; i < 32 && contrastRatio(hex, "#ffffff") < DEEP_TARGET; i++) {
+    const { h, s, v } = hexToHsv(hex);
+    hex = hsvToHex({ h, s: Math.min(1, s * 1.03), v: v * 0.93 });
+  }
+  return hex;
+}
+
+/** Hex -> HSV. Tolerant: an unparseable value reads as black (never throws). */
+export function hexToHsv(hex: string): Hsv {
+  const [h, s, v] = rgbToHsv(...hexToRgb(hex));
+  return { h, s, v };
+}
+
+/** HSV -> "#rrggbb". Clamps every axis; the inverse of hexToHsv within rounding. */
+export function hsvToHex({ h, s, v }: Hsv): string {
+  const hue = ((h % 360) + 360) % 360;
+  const sat = clamp01(s);
+  const val = clamp01(v);
+  const c = val * sat;
+  const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
+  const m = val - c;
+  const [r, g, b] =
+    hue < 60
+      ? [c, x, 0]
+      : hue < 120
+        ? [x, c, 0]
+        : hue < 180
+          ? [0, c, x]
+          : hue < 240
+            ? [0, x, c]
+            : hue < 300
+              ? [x, 0, c]
+              : [c, 0, x];
+  const to = (n: number): string =>
+    Math.round((n + m) * 255)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${to(r)}${to(g)}${to(b)}`;
+}
+
+/** Linear interpolation between two hex colors in RGB (good enough for a stop sampled off a bar). An unparseable color reads as black. */
+export function lerpHex(a: string, b: string, t: number): string {
+  const [ar, ag, ab] = hexToRgb(a);
+  const [br, bg, bb] = hexToRgb(b);
+  return rgbHex(ar + (br - ar) * t, ag + (bg - ag) * t, ab + (bb - ab) * t);
+}
+
+/** Pure horizontal-drag fraction math: how far along [origin, origin+size) a pointer at `pos`
+ * sits, clamped 0-1. Shared by the SV square (both axes), the hue strip, and the gradient stop
+ * rail - each just feeds its own axis's clientX/clientY and rect origin/size. */
+export function dragFraction(pos: number, origin: number, size: number): number {
+  return size === 0 ? 0 : clamp01((pos - origin) / size);
+}

@@ -1,0 +1,12 @@
+/** library.card playbill-cover: an art-forward cover under a thin gold rule; the book drops its detail rows. */
+html[data-surface-library-card="playbill-cover"] {
+  & .lib.rc .rcard { border: 1px solid var(--bk-line-control); box-shadow: none; background: var(--bk-surface-panel); }
+  & .lib.rc .rcard::before, & .lib.rc .rcard::after { display: none; }
+  & .lib.rc .rcard:hover { transform: translateY(-2px); border-color: var(--bk-line-strong); box-shadow: 0 0 0 1px var(--bk-line-strong); }
+  & .lib.rc .rcard.pick { outline: 2px solid var(--bk-line-strong); box-shadow: none; }
+  & .lib.rc .rasset.book { aspect-ratio: auto; }
+  & .lib.rc .rasset.book > .rart { padding: 0; aspect-ratio: 2 / 3; flex-shrink: 0; }
+  & .lib.rc .rasset.book .rart::before { display: none; }
+  & .lib.rc .rasset.book :is(.rameta, .rabody, .rstats) { display: none; }
+  & .lib.rc .rstart { background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); box-shadow: none; }
+}

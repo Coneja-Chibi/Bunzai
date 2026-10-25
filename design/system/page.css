@@ -1,0 +1,48 @@
+/*
+ * Spec-page chrome for pages under design/system (foundations, builder pages, taste.html).
+ * Wireframe furniture only: the preview bar, item and variant blocks, the screen-mock box.
+ * Tokens only, like everything else here. Load after system.css.
+ */
+.spec-page { max-width: var(--bk-content-max); margin: 0 auto; padding: var(--bk-space-16) var(--bk-pad-page) var(--bk-space-16); }
+.spec-page > header { margin-bottom: var(--bk-gap-section); }
+.spec-page > header p { max-width: var(--bk-measure); color: var(--bk-text-soft); }
+.spec-section { margin-top: var(--bk-gap-section); }
+.spec-section > h2 { margin-bottom: var(--bk-space-2); }
+.spec-section > p { max-width: var(--bk-measure); margin: 0 0 var(--bk-gap-stack); color: var(--bk-text-soft); }
+
+/* the preview bar */
+.spec-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: var(--bk-z-toast);
+  display: flex; align-items: center; flex-wrap: wrap; gap: var(--bk-space-2);
+  padding: var(--bk-space-2) var(--bk-space-4);
+  background: var(--bk-surface-ink); box-shadow: inset 0 -1px 0 var(--bk-line);
+}
+.spec-chip {
+  min-height: var(--bk-hit-min); padding: var(--bk-space-1) var(--bk-space-3);
+  font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label);
+  color: var(--bk-text-soft); background: none; border: 0; box-shadow: inset 0 0 0 1px var(--bk-line-control); cursor: pointer;
+}
+.spec-chip[aria-pressed="true"] { color: var(--bk-text-on-tint); background: var(--bk-accent); box-shadow: none; }
+
+/* an item (one component or screen) and its variants */
+.spec-item { margin-top: var(--bk-gap-section); }
+.spec-item > header { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--bk-space-3); margin-bottom: var(--bk-space-4); }
+.spec-item > header .bk-meta { flex-basis: 100%; }
+.spec-variants { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--bk-space-6); align-items: start; }
+.spec-variant { display: flex; flex-direction: column; gap: var(--bk-space-3); min-width: 0; }
+.spec-variant > header { display: flex; flex-direction: column; gap: var(--bk-space-1); }
+.spec-variant > header p { margin: 0; color: var(--bk-text-soft); font: var(--bk-type-small); }
+.spec-demo { padding: var(--bk-space-6); background: var(--bk-surface-well); box-shadow: inset 0 0 0 1px var(--bk-line); overflow: auto; }
+
+/* a screen mock: a pane-sized container the screen's own @container rules answer */
+.spec-screen { container-type: inline-size; width: 100%; max-width: 80rem; height: 50rem; overflow: auto; background: var(--bk-surface-base); box-shadow: 0 0 0 1px var(--bk-line); }
+:root[data-spec-width="narrow"] .spec-screen { max-width: 46rem; }
+:root[data-spec-width="phone"] .spec-screen { max-width: 24.375rem; height: 52.75rem; }
+.spec-variants:has(.spec-screen) { grid-template-columns: 1fr; }
+
+/* taste picks */
+.spec-pick { display: flex; flex-direction: column; gap: var(--bk-space-2); }
+.spec-note { width: 100%; padding: var(--bk-space-2); font: var(--bk-type-small); color: var(--bk-text); background: var(--bk-surface-field); border: 0; box-shadow: inset 0 0 0 1px var(--bk-line-control); resize: vertical; }
+
+/* a variant's state strip (buttons with data-set-state) */
+.spec-states { display: flex; flex-wrap: wrap; gap: var(--bk-space-1); }

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/untrusted-content",
+  "sourcePath": "docs/reference/security/untrusted-content.md",
+  "sourceHash": "sha256:b35da0efe61721625835e923344afabf863445976747a74c6f01be993e3b29f5",
+  "semanticSummaryHash": "sha256:aed623af81fb38462139aa7771b825b146d0e4504d178253477d972917d67c82",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:48:02.634Z"
+}

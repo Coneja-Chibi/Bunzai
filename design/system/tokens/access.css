@@ -1,0 +1,38 @@
+/*
+ * Bunraku design system: the person's own settings win. Every declaration is !important in the
+ * bk.access layer, which is declared FIRST: for important declarations the earliest layer wins, so
+ * no theme, mod (even with !important) or unlayered CSS can switch motion back on or lower contrast.
+ */
+@media (prefers-reduced-motion: reduce) {
+  :root, :root[data-theme] {
+    --bk-dur-instant: 0.01ms !important;
+    --bk-dur-fast: 0.01ms !important;
+    --bk-dur-base: 0.01ms !important;
+    --bk-dur-slow: 0.01ms !important;
+    --bk-dur-pulse: 0s !important;
+    --bk-dur-ambient: 0s !important;
+    --bk-lift-x: 0px !important;
+    --bk-lift-y: 0px !important;
+    --bk-press-x: 0px !important;
+    --bk-press-y: 0px !important;
+    --bk-pulse-min: 1 !important;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root, :root[data-theme] {
+    --bk-text-dim: var(--bk-text-soft) !important;
+    --bk-text-faint: var(--bk-text-soft) !important;
+    --bk-line-strong: var(--bk-line-control) !important;
+    --bk-line: var(--bk-line-control) !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :root, :root[data-theme] {
+    --bk-frame-color: CanvasText !important;
+    --bk-line-control: CanvasText !important;
+    --bk-focus-color: Highlight !important;
+    --bk-bracket-rest: 1 !important;
+  }
+}

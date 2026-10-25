@@ -1,0 +1,172 @@
+/*
+ * Bunraku design system: the HUD primitives, contract v1. Built only from tokens: no literal color,
+ * font or spacing lives here (pixels appear only as hairlines and the cursor glyph). Every component
+ * and screen composes these.
+ *
+ * Primitives:  .bk-frame  .bk-panel  .bk-readout  .bk-tag  .bk-divider  .bk-label  .bk-meter
+ *              .bk-pips  .bk-item (selection)  .bk-stage  + type roles and small marks
+ * Variant API: data attributes (data-crown, data-mark, data-lift, data-stacked, data-continuous)
+ * State API:   ARIA first (aria-selected, aria-current, aria-pressed, aria-disabled, aria-invalid),
+ *              data-selected only where no ARIA state fits
+ * Tint API:    data-deck / data-app / data-tone on the element or any ancestor (see tokens/color.css)
+ * Pseudo-elements: primitives own ::after. ::before is left free for components.
+ * Private helpers start with --_ and are not part of the contract.
+ */
+
+*, *::before, *::after { box-sizing: border-box; border-radius: var(--bk-radius); }
+html { background: var(--bk-surface-base); color: var(--bk-text); font: var(--bk-type-body); -webkit-font-smoothing: antialiased; }
+body { margin: 0; }
+:focus-visible { outline: var(--bk-focus-w) var(--bk-focus-style) var(--bk-focus-color); outline-offset: var(--bk-focus-offset); }
+::placeholder { color: var(--bk-text-faint); opacity: 1; }
+
+/* ---------- type roles ---------- */
+.bk-title { margin: 0; font: var(--bk-type-title); letter-spacing: var(--bk-track-title); text-transform: var(--bk-case-title); }
+.bk-heading { margin: 0; font: var(--bk-type-heading); letter-spacing: var(--bk-track-title); text-transform: var(--bk-case-title); }
+.bk-name { margin: 0; font: var(--bk-type-name); font-variation-settings: var(--bk-font-axes); text-transform: var(--bk-case-name); }
+.bk-meta { font: var(--bk-type-meta); color: var(--bk-text-dim); }
+.bk-num { font-family: var(--bk-font-mono); font-variant-numeric: tabular-nums; }
+
+/* ---------- frame: the HUD chrome. Outer line, optional double line, optional hard offset
+   shadow, optional tint crown, corner brackets in the item's tint. ---------- */
+.bk-frame {
+  --_line: var(--bk-frame-color);
+  --_crown: 0px;
+  --_ox: var(--bk-frame-shadow-x);
+  --_oy: var(--bk-frame-shadow-y);
+  position: relative;
+  background: var(--bk-surface-panel);
+  box-shadow:
+    inset 0 var(--_crown) 0 0 var(--bk-tint-text),
+    inset 0 0 0 var(--bk-frame-gap) var(--bk-surface-panel),
+    inset 0 0 0 calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)) var(--bk-frame-inner-color),
+    0 0 0 var(--bk-frame-w) var(--_line),
+    var(--_ox) var(--_oy) 0 var(--bk-frame-w) var(--bk-shadow);
+  transition: transform var(--bk-dur-fast) var(--bk-ease-move), box-shadow var(--bk-dur-fast) var(--bk-ease-move);
+}
+.bk-frame[data-crown] { --_crown: var(--bk-crown-w); }
+.bk-frame::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--bk-frame-w));
+  z-index: var(--bk-z-mark);
+  pointer-events: none;
+  opacity: var(--bk-bracket-rest);
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--bk-tint-text), var(--bk-tint-text)), linear-gradient(var(--bk-tint-text), var(--bk-tint-text)),
+    linear-gradient(var(--bk-tint-text), var(--bk-tint-text)), linear-gradient(var(--bk-tint-text), var(--bk-tint-text)),
+    linear-gradient(var(--bk-tint-text), var(--bk-tint-text)), linear-gradient(var(--bk-tint-text), var(--bk-tint-text)),
+    linear-gradient(var(--bk-tint-text), var(--bk-tint-text)), linear-gradient(var(--bk-tint-text), var(--bk-tint-text));
+  background-size:
+    var(--bk-bracket-len) var(--bk-bracket-w), var(--bk-bracket-w) var(--bk-bracket-len),
+    var(--bk-bracket-len-alt) var(--bk-bracket-w), var(--bk-bracket-w) var(--bk-bracket-len-alt),
+    var(--bk-bracket-len-alt) var(--bk-bracket-w), var(--bk-bracket-w) var(--bk-bracket-len-alt),
+    var(--bk-bracket-len) var(--bk-bracket-w), var(--bk-bracket-w) var(--bk-bracket-len);
+  background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+}
+/* marked: brackets on. Selected or current: the outer line takes the tint too. */
+.bk-frame:is([data-mark], [aria-selected="true"], [aria-current]:not([aria-current="false"]), [data-selected])::after { opacity: 1; }
+.bk-frame:is([aria-selected="true"], [aria-current]:not([aria-current="false"]), [data-selected]) { --_line: var(--bk-tint-text); }
+/* lift: only on frames you can click */
+.bk-frame[data-lift] { cursor: pointer; }
+.bk-frame[data-lift]:hover {
+  transform: translate(var(--bk-lift-x), var(--bk-lift-y));
+  --_ox: max(0px, calc(var(--bk-frame-shadow-x) - var(--bk-lift-x)));
+  --_oy: max(0px, calc(var(--bk-frame-shadow-y) - var(--bk-lift-y)));
+}
+.bk-frame[data-lift]:active {
+  transform: translate(var(--bk-press-x), var(--bk-press-y));
+  --_ox: max(0px, calc(var(--bk-frame-shadow-x) - var(--bk-press-x)));
+  --_oy: max(0px, calc(var(--bk-frame-shadow-y) - var(--bk-press-y)));
+}
+
+/* ---------- panel: a surface with an optional head bar. Add .bk-frame to frame it; chrome
+   panels (sidebars, rails) stay frameless. ---------- */
+.bk-panel { display: flex; flex-direction: column; min-width: 0; background: var(--bk-surface-panel); }
+.bk-panel__head {
+  display: flex; align-items: center; gap: var(--bk-gap-inline); flex-wrap: wrap;
+  padding: var(--bk-space-3) var(--bk-pad-panel);
+  background: color-mix(in srgb, var(--bk-tint) var(--bk-head-fill-mix), transparent);
+  box-shadow: inset 0 calc(-1 * var(--bk-head-rule-w)) 0 0 var(--bk-tint-text);
+}
+.bk-panel__body { flex: 1; min-width: 0; padding: var(--bk-pad-panel); }
+.bk-panel__foot { display: flex; align-items: center; gap: var(--bk-gap-inline); padding: var(--bk-space-3) var(--bk-pad-panel); box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-divider-color); }
+
+/* ---------- readout: a HUD number with its label (scoreboards, counts, budgets) ---------- */
+.bk-readout { display: inline-flex; flex-direction: column; align-items: center; gap: var(--bk-space-half); line-height: 1; }
+.bk-readout__value { font: var(--bk-type-readout); font-variant-numeric: tabular-nums; color: var(--bk-text); }
+.bk-readout__label { font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label); color: var(--bk-text-dim); }
+.bk-readout[data-inline] { flex-direction: row; align-items: baseline; gap: var(--bk-space-2); }
+
+/* ---------- tag: a hairline-boxed mono readout (SLOT 02, LV 12, ~92.6K tok) ---------- */
+.bk-tag {
+  display: inline-flex; align-items: center; gap: var(--bk-space-1);
+  padding: var(--bk-space-half) var(--bk-space-2);
+  font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label); white-space: nowrap;
+  color: var(--bk-text-dim); background: var(--bk-surface-ink);
+  box-shadow: inset 0 0 0 1px var(--bk-line);
+}
+.bk-tag b { font-weight: var(--bk-fw-mono-strong); color: var(--bk-tint-text); }
+.bk-tag:is([data-mark], [aria-selected="true"], [data-selected]) { color: var(--bk-tint-text); box-shadow: inset 0 0 0 1px var(--bk-tint-text); }
+
+/* ---------- divider ---------- */
+.bk-divider { flex: none; align-self: stretch; height: var(--bk-divider-w); margin: 0; border: 0; background: var(--bk-divider-color); }
+.bk-divider[aria-orientation="vertical"] { width: var(--bk-divider-w); height: auto; }
+
+/* ---------- label: the mono kicker over a section or a field ---------- */
+.bk-label {
+  display: flex; align-items: center; gap: var(--bk-space-2);
+  margin: 0; font: var(--bk-type-label); letter-spacing: var(--bk-track-kicker); text-transform: var(--bk-case-label);
+  color: var(--bk-text-dim);
+}
+.bk-label b { font-weight: inherit; color: var(--bk-tint-text); }
+.bk-bullet { flex: none; width: var(--bk-dot); height: var(--bk-dot); background: var(--bk-tint-text); }
+.bk-dot { flex: none; display: inline-block; width: var(--bk-dot); height: var(--bk-dot); border-radius: var(--bk-dot-radius); background: currentColor; }
+
+/* ---------- meter: a segmented track, always labeled and valued. Set --bk-value (0% to 100%)
+   on the fill; the element carries role="meter" and the aria-value* trio. ---------- */
+.bk-meter { display: flex; align-items: center; gap: var(--bk-space-2); min-width: 0; }
+.bk-meter__label { font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label); color: var(--bk-text-dim); white-space: nowrap; }
+.bk-meter__value { font: var(--bk-type-label); font-weight: var(--bk-fw-mono-strong); font-variant-numeric: tabular-nums; color: var(--bk-tint-text); white-space: nowrap; }
+.bk-meter__track { position: relative; flex: 1; min-width: 4rem; height: var(--bk-meter-h); overflow: hidden; background: var(--bk-viz-track); }
+.bk-meter__track::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(to right, transparent 0 var(--bk-meter-seg), var(--bk-viz-gap) var(--bk-meter-seg) calc(var(--bk-meter-seg) + var(--bk-meter-cut)));
+}
+.bk-meter__fill { display: block; width: var(--bk-value, 0%); height: 100%; background: var(--bk-tint-text); transition: width var(--bk-dur-base) var(--bk-ease-out); }
+.bk-meter[data-continuous] .bk-meter__track::after { content: none; }
+.bk-meter[data-stacked] { flex-direction: column; align-items: stretch; gap: var(--bk-space-1); }
+.bk-meter[data-stacked] .bk-meter__track { flex: none; }
+.bk-meter[data-stacked] .bk-meter__row { display: flex; justify-content: space-between; gap: var(--bk-space-2); }
+.bk-meter[data-size="lg"] .bk-meter__track { height: var(--bk-meter-h-lg); }
+
+/* pips: discrete counts (takes, cast online). Mark the lit ones with data-on. */
+.bk-pips { display: inline-flex; align-items: center; gap: var(--bk-space-1); }
+.bk-pips > * { flex: none; width: var(--bk-pip); height: var(--bk-pip); background: var(--bk-viz-track); }
+.bk-pips > [data-on] { background: var(--bk-tint-text); }
+
+/* ---------- item: anything chosen from a list (menu rows, Dock apps, tabs, segments, folders).
+   Selection grammar comes from tokens: solid slab (G3, C3), wash + ring + cursor (C1). ---------- */
+.bk-item {
+  display: flex; align-items: center; gap: var(--bk-gap-inline); width: 100%; min-height: var(--bk-hit-min);
+  padding: var(--bk-pad-row) var(--bk-space-3);
+  font: inherit; text-align: left; color: var(--bk-text-soft); background: none; border: 0; cursor: pointer;
+  transition: background-color var(--bk-dur-fast) var(--bk-ease-out), color var(--bk-dur-fast) var(--bk-ease-out);
+}
+.bk-item:hover { background: var(--bk-wash-hover); color: var(--bk-text); }
+.bk-item:is([aria-selected="true"], [aria-current]:not([aria-current="false"]), [aria-pressed="true"], [data-selected]) {
+  color: var(--bk-select-ink);
+  font-weight: var(--bk-fw-strong);
+  background: color-mix(in srgb, var(--bk-tint) var(--bk-select-fill-mix), transparent);
+  box-shadow: inset 0 0 0 var(--bk-select-ring-w) var(--bk-tint-text);
+}
+.bk-item:is([aria-disabled="true"], :disabled) { color: var(--bk-text-disabled); cursor: not-allowed; background: none; }
+.bk-cursor {
+  display: var(--bk-cursor-display); flex: none; width: 0; height: 0; visibility: hidden;
+  border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-left: 9px solid var(--bk-tint-text);
+}
+.bk-item:is(:hover, :focus-visible, [aria-selected="true"], [aria-current]:not([aria-current="false"]), [aria-pressed="true"], [data-selected]) .bk-cursor { visibility: visible; }
+
+/* ---------- stage: the well content sits in, with the theme's backdrop ---------- */
+.bk-stage { position: relative; min-width: 0; background-color: var(--bk-surface-well); background-image: var(--bk-stage-backdrop); background-attachment: local; container-type: inline-size; }
+.bk-chrome { background: var(--bk-surface-well); }

@@ -1,0 +1,130 @@
+/*
+ * Bunraku's G2 "Persona" identity: same token NAMES as design/wireframes/soft/tokens-soft.css
+ * (load it in place of tokens-soft.css, after tokens.css), meanings pushed gamier
+ * 2026-09-29 note ("a bit less soft and a bit more video-game'y, done legible"). Persona 5 / Persona 3
+ * Reload menu energy: solid ink blocks instead of soft cards, a thick contrasting line instead of a
+ * thin plum hairline, a hard offset block-shadow instead of a soft lean, sharp (non-wonky) display
+ * type. Dark only - no [data-theme="paper"] block. Every deck keeps its exact pastel hex; only the
+ * chrome around them gets louder.
+ */
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../../../src/site/fonts/fraunces-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url("../../../src/site/fonts/fraunces-latin-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 400 900; font-display: swap; src: url("../../../src/ui/theme/fonts/cinzel-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-400.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-700.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("../../../src/site/fonts/ibm-plex-mono-latin-normal-500.woff2") format("woff2"); }
+
+:root {
+  /* brand: the same ticket-bun pink, undiluted - G2 wants it LOUDER, not recolored */
+  --rose: #ff9ebb;
+  --rose-deep: #a8385e;
+  --accent: var(--rose);
+  --accent-deep: var(--rose-deep);
+
+  /* type roles: Cinzel keeps the title seat; Fraunces loses its soft wonk
+     below so names/labels read as solid game text instead of a hand-lettered curl */
+  --font-big: "Fraunces", serif;
+  --font-fancy: "Cinzel", serif;
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --soft-axes: "SOFT" 0, "WONK" 0;
+
+  /* ornament: a THICK line (was 1px) and a hard, tight block shadow (was a soft lean) */
+  --ink-border: 3px solid var(--edge);
+  --stamp-x: 7px;
+  --stamp-y: 7px;
+  --stamp-shadow: var(--stage-black);
+
+  /* the stage well: dusky plum pushed toward true ink for a flatter, blockier fill */
+  --stage-floor: #1a1620;
+  --stage-deck: #211c29;
+  --stage-dim: #6d6172;
+  --stage-faint: #3d3347;
+  --stage-paper: #f5ecf0;
+  --stage-black: #0b090f;    /* near-true ink: the hard shadow color everything snaps to */
+  --stage-white: #ffffff;
+  --stage-panel: #221d29;    /* flatter than soft's panel - one flat fill, no gradient read */
+  --stage-row: #1c1722;
+  --stage-sunken: #15111b;
+  --stage-ink: #120f17;
+  --stage-well: #100d15;
+  --stage-seam: #5a4d67;     /* brighter, thicker-reading than soft's dim #352d40 */
+  --stage-line: #6c5d79;
+  --stage-mute: #8f8292;
+  --stage-soft: #d9cedb;
+  --stage-text-dim: #b9abbb;
+  --stage-card: #fbf6f9;
+  --stage-kicker: #a094a3;
+  --stage-ok: #8fe0b8;
+  --stage-macro: #d9c8ff;
+  --stage-var: #bcd7ff;
+  --stage-warn: #ffe08a;
+  --stage-warn-ink: #3a2f12;
+  --stage-danger-bg: #3a1420;
+  --stage-danger-edge: #ff6b8a;
+  --stage-danger-text: #ff9fb1;
+  --stage-danger-hot: #ff8f9f;
+  --stage-danger-deep: #1c0a14;
+  --stage-link: #bcd7ff;
+  --stage-rose-well: #2e1b2a;
+  --stage-ok-bg: #173026;
+  --shadow-ink: rgba(11, 9, 15, 0.75);
+  --shadow-ink-deep: rgba(11, 9, 15, 0.94);
+  --scrim: rgba(11, 9, 15, 0.92);
+
+  /* deck identity: KEPT byte-identical - the six pastels, untouched */
+  --deck-character: #ffc9ae;
+  --deck-lorebook: #d9c8ff;
+  --deck-persona: #bfead7;
+  --deck-pack: #ffb3c7;
+  --deck-preset: #bcd7ff;
+  --deck-regex: #ffeaa8;
+  --deck-fog: #a898ab;
+  --deck-character-deep: #8a4a2c;
+  --deck-lorebook-deep: #5b4596;
+  --deck-persona-deep: #2c6e55;
+  --deck-pack-deep: #a8385e;
+  --deck-preset-deep: #33588f;
+  --deck-regex-deep: #7a6214;
+  --deck-fog-deep: #5e5263;
+}
+
+/* DARK ONLY: dusky-plum-toward-ink, chrome flattened to true near-black slabs */
+:root[data-theme="stage"] {
+  --ink: #f5ecf0;
+  --paper: #120f17;
+  --paper-2: #1a1620;
+  --panel: #221d29;
+  --stage: #100d15;
+  --stage-2: #15111b;
+  --muted: #a094a3;
+  --ghost: #4a3f55;
+  --canvas: #100d15;
+  --chrome: #0b090f;         /* the Dock/rail slab: near-true ink, flatter than soft's chrome */
+  --shell-panel: #17131d;
+  --shell-panel-2: #221d29;
+  --face: #1c1722;
+  --edge: #5a4d67;           /* thick + bright enough to actually read as an outline */
+  --seam: #4a3f55;
+  --text: #f5ecf0;
+  --text-soft: #d9cedb;
+  --text-dim: #b9abbb;
+  --text-faint: #6c5d79;
+  --link: #ffb3c7;
+  --stamp-bg: #ffc9ae;
+  --stamp-fg: #120f17;
+  --status-bg: #0b090f;
+  --status-fg: #d9cedb;
+  --status-dim: #a094a3;
+  --tooth: rgba(255, 255, 255, 0.02);
+  --q-stage: #100d15;
+  --q-stage-deck: #1a1620;
+}
+
+/* the stamp: a thick line, one hard ink block-shadow (no blur, no soft lean-back), a snap not a drift */
+.stamp { border: var(--ink-border); box-shadow: var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); transition: transform .1s steps(2), box-shadow .1s steps(2); }
+.stamp:hover { transform: translate(-2px, -2px); box-shadow: calc(var(--stamp-x) + 2px) calc(var(--stamp-y) + 2px) 0 0 var(--stamp-shadow); }
+.stamp:active, .stamp.pressed { transform: translate(3px, 3px); box-shadow: calc(var(--stamp-x) - 6px) calc(var(--stamp-y) - 6px) 0 0 var(--stamp-shadow); }
+.seam { background: var(--stage); box-shadow: inset 0 0 0 1px var(--seam); }
+/* display type: sharp, unwonky - a solid menu-word instead of a soft hand-lettered curl */
+h1, h2, h3, [class*="title"], [class*="marquee"] { font-variation-settings: var(--soft-axes); }

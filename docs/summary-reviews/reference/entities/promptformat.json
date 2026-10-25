@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/promptformat",
+  "sourcePath": "docs/reference/entities/promptformat.md",
+  "sourceHash": "sha256:75fae3274d2eca943bc8c924e39126270e0755eda7525649019cbc18f9553138",
+  "semanticSummaryHash": "sha256:6fbbbef8df79a56d78e5ca83a500977c224b2b0d2f310d6bf570dec94cc9b2ee",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:12.842Z"
+}

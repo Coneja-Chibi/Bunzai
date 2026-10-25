@@ -1,0 +1,37 @@
+/**
+ * library.card index-card: a catalog index card. Cream stock, a hairline frame, a ruled body and a red head line;
+ * type is the book serif. In a one-per-line Grid the card lays out as an entry: art at the left, the card text beside it.
+ */
+html[data-surface-library-card="index-card"] {
+  & .lib.rc .rcard { --stage-seam: var(--bk-line-control); background: var(--bk-surface-panel); color: var(--bk-text); border: 1px solid var(--bk-line-control); box-shadow: 0 1px 0 var(--bk-line-track); font-family: var(--font-big); }
+  & .lib.rc .rcard:hover { transform: none; border-color: var(--bk-text); box-shadow: 0 2px 0 var(--bk-text); }
+  & .lib.rc .rcard.pick { outline: 2px solid var(--bk-text); outline-offset: 1px; transform: none; box-shadow: none; }
+  & .lib.rc .rcard.cast { transform: none; box-shadow: none; opacity: .75; }
+  & .lib.rc .rcard::before, & .lib.rc .rcard::after { display: none; }
+  & .lib.rc .rcard.rchar { aspect-ratio: 380 / 660; border: 1px solid var(--bk-line-control); box-shadow: 0 1px 0 var(--bk-line-track); background: var(--bk-surface-panel); }
+  & .lib.rc .rcard.rchar:hover { transform: none; box-shadow: 0 2px 0 var(--bk-text); border-color: var(--bk-text); }
+  & .lib.rc .rcard.rchar .rcimg { color: var(--bk-text-soft); -webkit-mask-image: none; mask-image: none; border-bottom: 2px solid var(--bk-role-brand); }
+  & .lib.rc .rcard.rasset.book { aspect-ratio: 380 / 800; }
+  & .lib.rc .rcard.rasset.book > .rart { aspect-ratio: 2 / 3; }
+  & .lib.rc .rart { background-image: none; background-color: var(--bk-surface-sunken); }
+  & .lib.rc .rart.has::after { display: none; }
+  /* the head line and the ruled body */
+  & .lib.rc .rahead, & .lib.rc .rcbody .rctitle, & .lib.rc .rpbody .rphead, & .lib.rc .rrhead { border-bottom: 2px solid var(--bk-role-brand); }
+  & .lib.rc .rcbody, & .lib.rc .rabody, & .lib.rc .rpdesc, & .lib.rc .rrdesc, & .lib.rc .rcline { background-image: repeating-linear-gradient(transparent 0 1.45rem, var(--bk-line-track) 1.45rem 1.5rem); }
+  & .lib.rc .rcard :is(.ratitle, .rptitle, .rctitle, .rrtitle) { font-family: var(--font-big); font-weight: 600; letter-spacing: 0; text-shadow: none; }
+  & .lib.rc .rcline { font-family: var(--font-big); font-style: italic; }
+  & .lib.rc .rstats, & .lib.rc .rstrip { background: transparent; border-bottom: 1px solid var(--bk-line-track); font-family: var(--font-big); font-style: italic; }
+  & .lib.rc .rfoot, & .lib.rc .rtools { background: var(--bk-surface-sunken); border-top: 1px solid var(--bk-line-control); }
+  & .lib.rc .raicon, & .lib.rc .rpicon { border-radius: 0; background: transparent; border: 1px solid var(--bk-line-control); color: var(--bk-text); }
+  & .lib.rc .rcgenre { background: transparent; color: var(--bk-text); box-shadow: inset 0 0 0 1px var(--bk-text); letter-spacing: .1em; }
+  & .lib.rc .rtag { border-radius: 0; background: transparent; box-shadow: inset 0 0 0 1px var(--bk-line-control); color: var(--bk-text-soft); font-style: italic; }
+  & .lib.rc .rstart { border-radius: 0; background: var(--bk-text); color: var(--bk-surface-base); box-shadow: none; }
+  & .lib.rc .rmore { background: transparent; border: 1px solid var(--bk-line-control); }
+  /* one per line (Grid in the catalog-list shelf): art at the left, text beside it */
+  & .lib.rc .rgrid-row .rcard.rchar { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); aspect-ratio: auto; }
+  & .lib.rc .rgrid-row .rcard.rchar .rcart { aspect-ratio: 2 / 3; min-height: 0; }
+  & .lib.rc .rgrid-row .rcard.rchar .rcbody { align-self: center; padding: .6rem 1rem; }
+  & .lib.rc .rgrid-row .rcard.rasset { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); aspect-ratio: auto; align-items: start; }
+  & .lib.rc .rgrid-row .rcard.rasset > * { grid-column: 2; }
+  & .lib.rc .rgrid-row .rcard.rasset > .rart { grid-column: 1; grid-row: 1 / span 4; aspect-ratio: 2 / 3; min-height: 0; flex-shrink: 1; }
+}

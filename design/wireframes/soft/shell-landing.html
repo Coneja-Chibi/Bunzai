@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing: the stage</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * The landing, after LenAnderson's SillyTavern Landing Page: before any scene is open, the stage is
+ * the room, and your recent characters stand along the bottom of it; click one to step back into its
+ * last scene. Bunraku's version: the approved Dock on the left, the last scene's backdrop (or a plain
+ * plum stage), portrait cutouts that lift on hover, group scenes as a cluster of faces, favorites that
+ * always stand, and three arrangements (bottom row, centered, wall) set in Settings.
+ */
+:root { --pink: var(--deck-pack); --ink: var(--stage-ink); }
+.app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.stage { position: relative; overflow: hidden; min-height: 100vh; background:
+  radial-gradient(ellipse 60% 55% at 50% 38%, color-mix(in srgb, var(--deck-lorebook) 10%, transparent), transparent 70%),
+  linear-gradient(180deg, var(--stage-deck) 0%, var(--stage-floor) 62%, var(--stage-well) 100%); }
+/* the last scene's backdrop, softened; a plain stage when there is none */
+.backdrop { position: absolute; inset: 0; background:
+  linear-gradient(160deg, color-mix(in srgb, var(--deck-preset) 22%, transparent), transparent 45%),
+  linear-gradient(20deg, color-mix(in srgb, var(--deck-pack) 14%, transparent), transparent 50%);
+  opacity: .9; }
+.floor { position: absolute; left: 0; right: 0; bottom: 0; height: 34%; background: linear-gradient(180deg, transparent, var(--stage-well) 70%); }
+.plain .backdrop { display: none; }
+/* the greeting, quiet, top left */
+.hello { position: absolute; left: 40px; top: 34px; z-index: 3; max-width: 520px; }
+.hello .s-lede { color: var(--text-soft); }
+.quick { position: absolute; right: 36px; top: 34px; z-index: 3; display: flex; gap: 10px; }
+/* the cast standing on the stage */
+.cast { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; display: flex; justify-content: center; align-items: flex-end; gap: 22px; padding: 0 40px 0; }
+.centered .cast { bottom: 50%; transform: translateY(50%); }
+.actor { position: relative; width: 150px; height: 300px; cursor: pointer; transition: transform .25s; transform-origin: bottom center; }
+.actor .fig { position: absolute; inset: 0; background: var(--a);
+  -webkit-mask: radial-gradient(ellipse 32% 15% at 50% 16%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000, #000) bottom/78% 72% no-repeat;
+  mask: radial-gradient(ellipse 32% 15% at 50% 16%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000, #000) bottom/78% 72% no-repeat;
+  opacity: .92; }
+.actor .ini { position: absolute; left: 0; right: 0; top: 13%; text-align: center; font: 700 1.6rem var(--font-fancy); color: var(--stage-ink); }
+.actor .name { position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); white-space: nowrap; font: 600 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); opacity: 0; transition: opacity .2s; }
+.actor .fav { position: absolute; right: 10px; bottom: 12px; width: 20px; height: 20px; background: var(--deck-regex); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.actor:hover, .actor.hover { transform: translateY(-14px) scale(1.04); }
+.actor:hover .name, .actor.hover .name { opacity: 1; }
+.actor.small { width: 120px; height: 240px; }
+/* a group scene: a cluster of faces */
+.group { position: relative; width: 190px; height: 250px; cursor: pointer; }
+.group .face { position: absolute; bottom: 0; width: 96px; height: 200px; background: var(--a);
+  -webkit-mask: radial-gradient(ellipse 34% 16% at 50% 18%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000, #000) bottom/78% 70% no-repeat;
+  mask: radial-gradient(ellipse 34% 16% at 50% 18%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000, #000) bottom/78% 70% no-repeat; }
+.group .face:nth-child(1) { left: 0; } .group .face:nth-child(2) { left: 46px; bottom: 16px; } .group .face:nth-child(3) { left: 92px; }
+.group .more { position: absolute; right: -4px; bottom: 30px; padding: 2px 7px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); font: 500 12px var(--font-mono); color: var(--text-soft); }
+.group .name { position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); white-space: nowrap; font: 600 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+/* the hover card: where it takes you */
+.card-hover { position: absolute; z-index: 5; width: 290px; padding: 14px 16px; }
+.card-hover .s-h3 { margin-top: 4px; }
+.card-hover p { margin: 6px 0 10px; color: var(--text-soft); font-size: .92rem; font-style: italic; }
+.card-hover .row { display: flex; gap: 8px; align-items: center; }
+/* the wall: every character, portrait grid */
+.wall { position: absolute; inset: 120px 40px 40px; z-index: 2; overflow: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; align-content: start; }
+.tile { position: relative; aspect-ratio: 3 / 4; background: linear-gradient(170deg, color-mix(in srgb, var(--a) 70%, var(--stage-panel)), var(--stage-panel) 85%); box-shadow: 0 0 0 1px var(--edge); cursor: pointer; transition: transform .2s; }
+.tile:hover { transform: translateY(-4px); box-shadow: 0 0 0 1px var(--a), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); }
+.tile .ini { position: absolute; inset: 0; display: grid; place-items: center; font: 700 2.2rem var(--font-fancy); color: color-mix(in srgb, var(--stage-card) 70%, transparent); }
+.tile b { position: absolute; left: 10px; right: 10px; bottom: 8px; font: 600 .95rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.tile small { position: absolute; left: 10px; top: 8px; font: 500 11px var(--font-mono); color: var(--text-dim); }
+/* empty stage */
+.empty { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; text-align: center; }
+.empty .s-lede { margin: 10px auto 22px; }
+.doors { display: flex; gap: 14px; justify-content: center; }
+/* settings panel (Settings, Studio: Landing) */
+.settings { max-width: 640px; margin: 60px auto; padding: 24px; }
+.settings .r { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid var(--seam); }
+.settings .r small { display: block; color: var(--text-dim); font-size: .85rem; }
+.seg { display: inline-flex; box-shadow: inset 0 0 0 1px var(--seam); }
+.seg span { padding: 6px 12px; font-size: .88rem; color: var(--text-dim); cursor: pointer; }
+.seg span.on { background: var(--shell-panel-2); color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.num { width: 64px; text-align: center; }
+[data-only]:not(.show) { display: none !important; }
+@container (max-width: 700px) { .actor { width: 96px; height: 200px; } .actor.small { display: none; } .cast { gap: 10px; } }
+.main { container-type: inline-size; }
+@media (max-width: 760px) { .app { grid-template-columns: 1fr; } .s-dock { display: none; } .hello { left: 16px; right: 16px; } .quick { top: auto; bottom: 250px; right: 16px; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol></defs></svg>
+
+<div class="app">
+  <nav class="s-dock" aria-label="Apps">
+    <div class="brand"><svg width="30" height="30"><use href="#bun"/></svg>bunraku</div>
+    <div class="s-app c-scenes"><i>&#9655;</i><b>Scenes</b><kbd>play</kbd></div>
+    <div class="s-app c-workbench"><i>&#9998;</i><b>Workbench</b><kbd>make</kbd></div>
+    <div class="s-app c-library"><i>&#9636;</i><b>Library</b><kbd>keep</kbd></div>
+    <div class="s-app c-press"><i>&#8679;</i><b>Press</b><kbd>share</kbd></div>
+    <div class="s-app c-agent"><i>?</i><b>Agent</b><kbd>help</kbd></div>
+    <div class="s-app c-kit"><i>&gt;</i><b>Kit</b><kbd>terminal</kbd></div>
+    <div class="s-app c-settings"><i>&#9673;</i><b>Settings</b></div>
+  </nav>
+
+  <main class="main">
+    <section class="stage" id="stage">
+      <div class="backdrop"></div><div class="floor"></div>
+
+      <div class="hello" data-only="row centered hover group">
+        <div class="s-act"><b>Tonight</b> &middot; your stage</div>
+        <h1 class="s-title" style="margin-top:10px">Who's on <em>tonight</em>?</h1>
+        <p class="s-lede">Pick a face to step back into their last scene.</p>
+      </div>
+      <div class="quick" data-only="row centered hover group wall">
+        <span class="s-btn ghost">Import</span><span class="s-btn">New scene</span>
+      </div>
+
+      <!-- bottom row (default), centered, hover, and group all share the cast line -->
+      <div class="cast" data-only="row centered hover group">
+        <div class="actor" style="--a: var(--deck-character)"><span class="fig"></span><span class="ini">M</span><span class="name">Marguerite Vane</span><span class="fav"></span></div>
+        <div class="actor hover-target" style="--a: var(--deck-pack)"><span class="fig"></span><span class="ini">V</span><span class="name">Vera Lune</span></div>
+        <div class="group" data-only="group"><span class="name">The Heist (group)</span><span class="face" style="--a: var(--deck-lorebook)"></span><span class="face" style="--a: var(--deck-persona)"></span><span class="face" style="--a: var(--deck-preset)"></span><span class="more">+2</span></div>
+        <div class="actor" style="--a: var(--deck-persona)"><span class="fig"></span><span class="ini">N</span><span class="name">Nuit</span></div>
+        <div class="actor" style="--a: var(--deck-lorebook)"><span class="fig"></span><span class="ini">T</span><span class="name">The Magpie</span><span class="fav"></span></div>
+        <div class="actor small" style="--a: var(--deck-preset)"><span class="fig"></span><span class="ini">K</span><span class="name">Keeper</span></div>
+      </div>
+
+      <!-- hover: where the click takes you -->
+      <div class="card-hover s-card" data-only="hover" style="--c: var(--deck-pack); left: calc(50% - 250px); bottom: 360px">
+        <div class="s-act"><b>Continue</b> &middot; 2 hours ago</div>
+        <h3 class="s-h3">The long storm</h3>
+        <p>"You came up the stairs without a lantern."</p>
+        <div class="row"><span class="s-chip" style="--c: var(--deck-pack)">Take 2</span><span class="s-meta">42 messages</span><span style="flex:1"></span><span class="s-btn">Continue</span></div>
+      </div>
+
+      <!-- the wall: every character -->
+      <div class="hello" data-only="wall">
+        <div class="s-act"><b>Tonight</b> &middot; the whole company</div>
+        <h1 class="s-title" style="margin-top:10px">Your <em>cast</em></h1>
+      </div>
+      <div class="wall" data-only="wall">
+        <div class="tile" style="--a: var(--deck-character)"><small>2h</small><span class="ini">M</span><b>Marguerite Vane</b></div>
+        <div class="tile" style="--a: var(--deck-pack)"><small>1d</small><span class="ini">V</span><b>Vera Lune</b></div>
+        <div class="tile" style="--a: var(--deck-persona)"><small>3d</small><span class="ini">N</span><b>Nuit</b></div>
+        <div class="tile" style="--a: var(--deck-lorebook)"><small>10d</small><span class="ini">T</span><b>The Magpie</b></div>
+        <div class="tile" style="--a: var(--deck-preset)"><small>2w</small><span class="ini">K</span><b>Keeper</b></div>
+        <div class="tile" style="--a: var(--deck-regex)"><small>new</small><span class="ini">O</span><b>Orla of the Pier</b></div>
+        <div class="tile" style="--a: var(--deck-character)"><small>new</small><span class="ini">S</span><b>Saltmarsh Twins</b></div>
+        <div class="tile" style="--a: var(--deck-pack)"><small>1mo</small><span class="ini">E</span><b>Edda</b></div>
+      </div>
+
+      <!-- empty studio -->
+      <div class="empty" data-only="empty"><div>
+        <div class="s-act" style="justify-content:center"><b>Curtain up</b></div>
+        <h1 class="s-title" style="margin-top:10px">The stage is <em>empty</em></h1>
+        <p class="s-lede">Bring a character in, or make one, and they'll wait for you here.</p>
+        <div class="doors"><span class="s-btn">Import a card</span><span class="s-btn ghost">Start fresh</span></div>
+      </div></div>
+
+      <!-- settings: Settings, Studio, Landing -->
+      <div class="empty" data-only="settings"><div class="settings s-card" style="--c: var(--text-dim); text-align:left">
+        <div class="s-act"><b>Settings</b> &middot; Studio</div>
+        <h2 class="s-h2" style="margin-top:8px">The landing stage</h2>
+        <div class="r"><div>Show the stage when no scene is open</div><span class="s-switch on"></span></div>
+        <div class="r"><div>Arrangement<small>Where the cast stands</small></div><span class="seg"><span class="on">Bottom row</span><span>Centered</span><span>Wall</span></span></div>
+        <div class="r"><div>Characters on stage</div><input class="s-input num" value="5"></div>
+        <div class="r"><div>Always show favorites<small>Starred characters stand even when they're not recent</small></div><span class="s-switch on"></span></div>
+        <div class="r"><div>Faces shown for a group scene</div><input class="s-input num" value="3"></div>
+        <div class="r"><div>Backdrop<small>The last scene's art, or a plain stage</small></div><span class="seg"><span class="on">Last scene</span><span>Plain</span></span></div>
+      </div></div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="row">Bottom row</button><button data-s="hover">Hover</button><button data-s="group">Group scene</button><button data-s="centered">Centered</button><button data-s="wall">Wall</button><button data-s="empty">Empty studio</button><button data-s="settings">Settings</button><button data-plain>Plain backdrop</button><button data-theme-switch>Theme</button><a href="index.html">All</a>
+</div>
+<div class="wf-note"><b>The landing, after the ST Landing Page.</b> When no scene is open, the stage is the landing: your most recent characters (and favorites, starred) stand along the bottom of the last scene's backdrop. Hover lifts one and shows its name and where it takes you; click continues its last scene on its last take. A group scene stands as a cluster of faces. Settings, Studio: on/off, arrangement (bottom row, centered, wall), how many, favorites, faces per group, backdrop. The Dock is the approved one; every app stays one click away.</div>
+
+<script>
+(function () {
+  var stage = document.getElementById("stage");
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.classList.toggle("show", el.getAttribute("data-only").split(" ").indexOf(s) >= 0); });
+    stage.classList.toggle("centered", s === "centered");
+    document.querySelectorAll(".hover-target").forEach(function (el) { el.classList.toggle("hover", s === "hover"); });
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s"));
+    if (e.target.closest("[data-plain]")) stage.classList.toggle("plain");
+  });
+  set(new URLSearchParams(location.search).get("state") || "row");
+})();
+</script>
+</body>
+</html>

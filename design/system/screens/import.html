@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Import</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="import.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Import</h1>
+    <p>The Library's import overlay: reading, shelving, the clean and mixed receipts, the
+    brand-new empty studio, drop-anywhere, the damage notice, and the SillyTavern backup wizard,
+    redone in G3.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="import.flow">
+    <header>
+      <h2 class="bk-heading">Import</h2>
+      <span class="bk-tag">src/ui/apps/library/import-sheet.tsx</span>
+      <p class="bk-meta">Parts: import.veil, import.reading, import.receipt (.line), import.choose,
+      import.duplicates, import.options, import.result</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="import.flow.a" data-taste-title="Receipt ledger">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Receipt ledger</h3>
+          <p>A mono scan log with meters, the plain-words receipt as a ledger.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen imp-root" data-part="import.veil" data-variant="a" data-state="clean">
+
+            <div class="imp-view imp-view-reading">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-part="import.reading">
+                <p class="bk-label">The Library &middot; Import</p>
+                <h2 class="imp-title">Reading your files&hellip;</h2>
+                <div class="bk-meter" role="meter" aria-label="Files read" aria-valuemin="0" aria-valuemax="14" aria-valuenow="9" style="margin-top:var(--bk-space-4)"><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:64%"></span></span></div>
+                <p class="imp-prog bk-num">Read 9 of 14</p>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-saving">
+              <div class="imp-sheet bk-panel bk-frame" data-crown>
+                <p class="bk-label">The Library &middot; Import</p>
+                <h2 class="imp-title">Shelving&hellip;</h2>
+                <div class="bk-meter" role="meter" aria-label="Pieces shelved" aria-valuemin="0" aria-valuemax="11" aria-valuenow="7" style="margin-top:var(--bk-space-4)"><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:64%"></span></span></div>
+                <p class="imp-prog bk-num">Shelving 7 of 11&hellip;</p>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-clean">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-part="import.receipt">
+                <p class="bk-label">The Library &middot; Import</p>
+                <h2 class="imp-title">Pick what to keep.</h2>
+                <p class="imp-sub">3 readable. Uncheck anything you do not want. Import only writes the checked ones.</p>
+                <div class="imp-rows">
+                  <label class="bk-item imp-row" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Vera Lune</span><p class="imp-kind">A character card, made for SillyTavern.</p></span></label>
+                  <label class="bk-item imp-row" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Harbor Town</span><p class="imp-kind">A lorebook, made for SillyTavern.</p><p class="imp-meta">213 entries</p></span></label>
+                  <label class="bk-item imp-row" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Velvet Quill</span><p class="imp-kind">A persona, made for RoleCall.</p></span></label>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Select all</button><button type="button" class="bk-tag" data-part="ui.button">Add more files</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Import 3</button><button type="button" class="bk-tag" data-part="ui.button">Not now</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-mixed">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-part="import.receipt">
+                <p class="bk-label">The Library &middot; Import</p>
+                <h2 class="imp-title">Here is what we read.</h2>
+                <p class="imp-sub">4 readable &middot; 1 already on your shelf &middot; 1 identical copy &middot; 2 skipped.</p>
+                <div class="imp-rows">
+                  <div class="imp-report"><b class="imp-name">Backup report: harbor-town-backup.lvbak</b><p class="imp-kind">3 character cards, 2 lorebooks imported.</p><p class="imp-meta">3 chats, 12 messages did not come along.</p></div>
+                  <label class="bk-item imp-row" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Marguerite Vane</span><p class="imp-kind">A character card, made for RoleCall V3.</p><p class="imp-meta" data-tone="warn">Healed: entries missing a name, +1 more</p></span></label>
+                  <label class="bk-item imp-row" data-part="import.receipt.line"><input type="checkbox"><span class="imp-row-body"><span class="imp-name">Velvet Quill</span><p class="imp-kind">A persona, made for SillyTavern.</p><p class="imp-meta">Already on your shelf as Velvet Quill. Importing keeps both.</p></span></label>
+                  <div class="imp-row" data-part="import.receipt.line"><span class="imp-row-body"><span class="imp-name">Vera Lune</span><p class="imp-meta">Identical to vera-lune.png in this drop. We keep one.</p></span></div>
+                  <div class="imp-row" data-tone="danger" data-part="import.receipt.line"><span class="imp-row-body"><span class="bk-tag" data-tone="danger">Could not read</span> <span class="imp-name">notes.txt</span><p class="imp-meta" data-tone="danger">not a file type Bunraku reads (.txt)</p></span></div>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Select all</button><button type="button" class="bk-tag" data-part="ui.button">Add more files</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Import 4</button><button type="button" class="bk-tag" data-part="ui.button">Not now</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-empty">
+              <div class="imp-sheet bk-panel bk-frame" data-crown style="text-align:center">
+                <p class="bk-label">The Library</p>
+                <h2 class="imp-title">Nothing here yet</h2>
+                <p class="imp-sub" style="max-width:24rem;margin-inline:auto">Drag a file onto the shelves, or click below. On a brand-new studio, this is the one place Import opens a real file browser.</p>
+                <div class="imp-acts" style="justify-content:center"><button type="button" class="bk-tag" data-mark data-part="ui.button">Click here to import</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-damage">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-tone="danger">
+                <p class="bk-name" style="font-size:var(--bk-fs-sm);color:var(--bk-danger)">2 files in your studio folder could not be read</p>
+                <p class="imp-sub">The files are still on disk and Bunraku did not change them.</p>
+                <details open style="margin-top:var(--bk-space-2)"><summary class="bk-meta">Show files and recovery details</summary>
+                  <p class="bk-num" style="margin-top:var(--bk-space-2)">character/9f2a-old-vera.json is not readable JSON.</p>
+                  <p class="bk-num">lorebook/harbor-town-2.json holds a different piece id than its filename.</p>
+                </details>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-drop">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-part="import.veil">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Bring in a whole SillyTavern backup.</h2>
+                <p class="imp-sub">Drop a SillyTavern backup <code class="bk-num">.zip</code>, or point at your <code class="bk-num">SillyTavern/data/default-user</code> folder. We read it right here on this computer.</p>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-mark data-part="ui.button">Choose a folder</button><button type="button" class="bk-tag" data-part="ui.button">Not now</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-scanning">
+              <div class="imp-sheet bk-panel bk-frame" data-crown>
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Reading your backup&hellip;</h2>
+                <div class="bk-meter" role="meter" aria-label="Scan progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="58" style="margin-top:var(--bk-space-4)"><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:58%"></span></span></div>
+                <p class="imp-prog bk-num">549 items found so far&hellip;</p>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-choose">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-part="import.choose">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Choose what comes in.</h2>
+                <p class="imp-sub">We read your backup at <code class="bk-num">SillyTavern/data/default-user</code>. Uncheck anything you do not want.</p>
+                <p class="imp-stksum">549 items checked across 8 kinds &middot; about 963 MB</p>
+                <div class="imp-stkgroups">
+                  <div class="imp-stkgroup" data-deck="character"><label class="bk-item imp-stkhead"><input type="checkbox" checked><span class="imp-stktile" aria-hidden="true">C</span><span class="imp-stkname"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Characters</b><span>character cards</span></span><span class="bk-tag">84</span><span class="bk-meta">612 MB</span></label></div>
+                  <div class="imp-stkgroup" data-deck="pack"><label class="bk-item imp-stkhead"><input type="checkbox" checked><span class="imp-stktile" aria-hidden="true">Ch</span><span class="imp-stkname"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Chats</b><span>come in as Scenes, with swipes</span></span><span class="bk-tag">75 folders</span><span class="bk-meta">89 MB</span></label></div>
+                  <div class="imp-stkgroup" data-deck="lorebook"><label class="bk-item imp-stkhead"><input type="checkbox" checked><span class="imp-stktile" aria-hidden="true">L</span><span class="imp-stkname"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Lorebooks</b><span>SillyTavern worlds</span></span><span class="bk-tag">155</span><span class="bk-meta">41 MB</span></label></div>
+                  <div class="imp-stkgroup" data-off data-deck="fog"><label class="bk-item imp-stkhead"><input type="checkbox" aria-disabled="true" disabled><span class="imp-stktile" aria-hidden="true">G</span><span class="imp-stkname"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Group chats</b></span><span class="bk-tag">5</span></label><p class="imp-stkreason">Waiting for group scenes; kept in the backup, not imported yet.</p></div>
+                </div>
+                <p class="imp-neverhead">Bunraku cannot take these yet</p>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Select all</button><button type="button" class="bk-tag" data-part="ui.button">Back</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Continue</button><button type="button" class="bk-tag" data-part="ui.button">Not now</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-needs-character">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-part="import.choose">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Some chats need a character.</h2>
+                <p class="imp-sub">These chat folders' character was not found in this backup or your Library. Pick one, make a stub, or skip the chat.</p>
+                <div class="imp-rows">
+                  <div class="imp-row" data-part="import.receipt.line"><span class="imp-row-body"><span class="imp-name">chat-2026-03-12</span><p class="imp-kind">character id "velvet-quill-old" not found</p></span></div>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Back</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Continue</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-duplicates">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-part="import.duplicates">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Already in your Library.</h2>
+                <p class="imp-sub">These pieces match something you already have by name. Chats you have already imported before are always skipped automatically.</p>
+                <div class="imp-rows">
+                  <label class="bk-item imp-row" data-part="import.receipt.line"><input type="checkbox"><span class="imp-row-body"><span class="imp-name">Velvet Quill</span><p class="imp-meta">Matches an existing persona. Importing keeps both.</p></span></label>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Back</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Continue</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-options">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-part="import.options">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Set your import options.</h2>
+                <p class="imp-sub">Every one of these is real and does what it says.</p>
+                <div class="imp-opt-row bk-item"><span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Bring embedded lorebooks</b><p>Character-carried world info comes in as its own lorebook.</p></span><span class="bk-tag" data-mark>On</span></div>
+                <div class="imp-opt-row bk-item"><span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keep trigger scripts as text</b><p>Scripts never run; they are saved for reference only.</p></span><span class="bk-tag" data-mark>On</span></div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Back</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Continue</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-importing">
+              <div class="imp-sheet bk-panel bk-frame" data-crown>
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Bringing it in&hellip;</h2>
+                <div class="bk-meter" role="meter" aria-label="Import progress" aria-valuemin="0" aria-valuemax="549" aria-valuenow="402" style="margin-top:var(--bk-space-4)"><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:73%"></span></span></div>
+                <p class="imp-prog bk-num">402 of 549 saved&hellip;</p>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-partial">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-tone="warn" data-part="import.result">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Most of it came in.</h2>
+                <p class="imp-sub">546 of 549 checked items were saved. The rest of your import was kept: nothing already written was thrown away.</p>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-mark data-part="ui.button">Open the Library</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-receipt">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-tone="ok" data-part="import.result">
+                <p class="bk-label">The Library &middot; Import from SillyTavern</p>
+                <h2 class="imp-title">Your SillyTavern backup is home.</h2>
+                <p class="imp-sub">Everything you checked was read on this computer and saved to your Library.</p>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-mark data-part="ui.button">Open the Library</button></div>
+              </div>
+            </div>
+
+            <div class="imp-view imp-view-wizard">
+              <div class="imp-sheet bk-panel bk-frame" data-crown data-crown data-deck="pack" style="width:min(28rem,100%)">
+                <p class="bk-label">Setup &middot; First deck</p>
+                <h2 class="imp-title">Where do your characters live today?</h2>
+                <p class="imp-sub">Pick one now. You can always import more later from the Library.</p>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">SillyTavern</button><button type="button" class="bk-tag" data-part="ui.button">A folder of cards</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Start fresh</button></div>
+              </div>
+            </div>
+
+            <div class="imp-dropveil"><div class="bk-panel bk-frame imp-dropveil-box" data-mark data-crown><span class="bk-heading" style="font-size:var(--bk-fs-lg)">Drop your files on the shelves</span></div></div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="clean" aria-pressed="true">Clean</button>
+          <button type="button" class="spec-chip" data-set-state="mixed">Mixed</button>
+          <button type="button" class="spec-chip" data-set-state="reading">Reading</button>
+          <button type="button" class="spec-chip" data-set-state="saving">Shelving</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Brand-new studio</button>
+          <button type="button" class="spec-chip" data-set-state="dropover">Drop anywhere</button>
+          <button type="button" class="spec-chip" data-set-state="damage">Damaged files</button>
+          <button type="button" class="spec-chip" data-set-state="drop">ST: drop</button>
+          <button type="button" class="spec-chip" data-set-state="scanning">ST: scanning</button>
+          <button type="button" class="spec-chip" data-set-state="choose">ST: choose</button>
+          <button type="button" class="spec-chip" data-set-state="needs-character">ST: needs a character</button>
+          <button type="button" class="spec-chip" data-set-state="duplicates">ST: duplicates</button>
+          <button type="button" class="spec-chip" data-set-state="options">ST: options</button>
+          <button type="button" class="spec-chip" data-set-state="importing">ST: importing</button>
+          <button type="button" class="spec-chip" data-set-state="partial">ST: partial</button>
+          <button type="button" class="spec-chip" data-set-state="receipt">ST: receipt</button>
+          <button type="button" class="spec-chip" data-set-state="wizard">ST: first-run wizard line</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="import.flow.b" data-taste-title="Found items">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Found items</h3>
+          <p>What was read appears as cards to keep or skip, with the receipt sentence above.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen imp-root" data-part="import.veil" data-variant="b" data-state="clean">
+            <div class="imp-view imp-view-clean">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-part="import.receipt">
+                <p class="bk-label">The Library &middot; Import</p>
+                <h2 class="imp-title">Pick what to keep.</h2>
+                <p class="imp-sub">3 readable. Uncheck anything you do not want. Import only writes the checked ones.</p>
+                <div class="imp-rows">
+                  <label class="bk-panel bk-frame imp-row" data-lift data-crown data-deck="character" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Vera Lune</span><p class="imp-kind">character, SillyTavern</p></span></label>
+                  <label class="bk-panel bk-frame imp-row" data-lift data-crown data-deck="lorebook" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Harbor Town</span><p class="imp-kind">lorebook, 213 entries</p></span></label>
+                  <label class="bk-panel bk-frame imp-row" data-lift data-crown data-deck="persona" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Velvet Quill</span><p class="imp-kind">persona, RoleCall</p></span></label>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-part="ui.button">Select all</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Import 3</button><button type="button" class="bk-tag" data-part="ui.button">Not now</button></div>
+              </div>
+            </div>
+            <div class="imp-view imp-view-mixed">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-part="import.receipt">
+                <p class="bk-label">The Library &middot; Import</p>
+                <h2 class="imp-title">Here is what we read.</h2>
+                <p class="imp-sub">4 readable &middot; 1 already on your shelf &middot; 1 identical copy &middot; 2 skipped.</p>
+                <div class="imp-rows">
+                  <label class="bk-panel bk-frame imp-row" data-lift data-crown data-deck="character" data-part="import.receipt.line"><input type="checkbox" checked><span class="imp-row-body"><span class="imp-name">Marguerite Vane</span><p class="imp-kind" data-tone="warn">healed</p></span></label>
+                  <label class="bk-panel bk-frame imp-row" data-lift data-crown data-deck="persona" data-part="import.receipt.line"><input type="checkbox"><span class="imp-row-body"><span class="imp-name">Velvet Quill</span><p class="imp-kind">already on shelf</p></span></label>
+                  <div class="bk-panel bk-frame imp-row" data-crown data-tone="danger" data-part="import.receipt.line"><span class="imp-row-body"><span class="imp-name">notes.txt</span><p class="imp-kind" data-tone="danger">could not read</p></span></div>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-mark data-part="ui.button">Import 4</button><button type="button" class="bk-tag" data-part="ui.button">Not now</button></div>
+              </div>
+            </div>
+            <div class="imp-view imp-view-reading"><div class="imp-sheet bk-panel bk-frame" data-crown><p class="bk-label">The Library &middot; Import</p><h2 class="imp-title">Reading your files&hellip;</h2><div class="bk-meter" role="meter" aria-valuemin="0" aria-valuemax="14" aria-valuenow="9" style="margin-top:var(--bk-space-4)"><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:64%"></span></span></div><p class="imp-prog bk-num">Read 9 of 14</p></div></div>
+            <div class="imp-view imp-view-saving"><div class="imp-sheet bk-panel bk-frame" data-crown><p class="bk-label">The Library &middot; Import</p><h2 class="imp-title">Shelving&hellip;</h2></div></div>
+            <div class="imp-view imp-view-empty"><div class="imp-sheet bk-panel bk-frame" data-crown style="text-align:center"><p class="bk-label">The Library</p><h2 class="imp-title">Nothing here yet</h2><div class="imp-acts" style="justify-content:center"><button type="button" class="bk-tag" data-mark data-part="ui.button">Click here to import</button></div></div></div>
+            <div class="imp-view imp-view-damage"><div class="imp-sheet bk-panel bk-frame" data-crown data-tone="danger"><p class="bk-name" style="color:var(--bk-danger)">2 files could not be read</p></div></div>
+            <div class="imp-view imp-view-drop"><div class="imp-sheet bk-panel bk-frame" data-crown><p class="bk-label">Import from SillyTavern</p><h2 class="imp-title">Bring in a whole backup.</h2><div class="imp-acts"><button type="button" class="bk-tag" data-mark data-part="ui.button">Choose a folder</button></div></div></div>
+            <div class="imp-view imp-view-scanning"><div class="imp-sheet bk-panel bk-frame" data-crown><h2 class="imp-title">Reading your backup&hellip;</h2></div></div>
+            <div class="imp-view imp-view-choose">
+              <div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-part="import.choose">
+                <p class="imp-title">Choose what comes in.</p>
+                <div class="imp-rows">
+                  <div class="bk-panel bk-frame imp-row" data-crown data-deck="character"><span class="imp-row-body"><span class="imp-name">Characters</span><p class="imp-kind">84 &middot; 612 MB</p></span></div>
+                  <div class="bk-panel bk-frame imp-row" data-crown data-deck="lorebook"><span class="imp-row-body"><span class="imp-name">Lorebooks</span><p class="imp-kind">155 &middot; 41 MB</p></span></div>
+                  <div class="bk-panel bk-frame imp-row" data-crown data-deck="fog" data-tone="danger"><span class="imp-row-body"><span class="imp-name">Group chats</span><p class="imp-kind" data-tone="danger">not yet supported</p></span></div>
+                </div>
+                <div class="imp-acts"><button type="button" class="bk-tag" data-mark data-part="ui.button">Continue</button></div>
+              </div>
+            </div>
+            <div class="imp-view imp-view-needs-character"><div class="imp-sheet bk-panel bk-frame" data-wide data-crown><h2 class="imp-title">Some chats need a character.</h2></div></div>
+            <div class="imp-view imp-view-duplicates"><div class="imp-sheet bk-panel bk-frame" data-wide data-crown><h2 class="imp-title">Already in your Library.</h2></div></div>
+            <div class="imp-view imp-view-options"><div class="imp-sheet bk-panel bk-frame" data-crown><h2 class="imp-title">Set your import options.</h2></div></div>
+            <div class="imp-view imp-view-importing"><div class="imp-sheet bk-panel bk-frame" data-crown><h2 class="imp-title">Bringing it in&hellip;</h2></div></div>
+            <div class="imp-view imp-view-partial"><div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-tone="warn"><h2 class="imp-title">Most of it came in.</h2></div></div>
+            <div class="imp-view imp-view-receipt"><div class="imp-sheet bk-panel bk-frame" data-wide data-crown data-tone="ok"><h2 class="imp-title">Your SillyTavern backup is home.</h2></div></div>
+            <div class="imp-view imp-view-wizard"><div class="imp-sheet bk-panel bk-frame" data-crown data-deck="pack"><h2 class="imp-title">Where do your characters live today?</h2></div></div>
+            <div class="imp-dropveil"><div class="bk-panel bk-frame imp-dropveil-box" data-mark data-crown><span class="bk-heading" style="font-size:var(--bk-fs-lg)">Drop your files on the shelves</span></div></div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="clean" aria-pressed="true">Clean</button>
+          <button type="button" class="spec-chip" data-set-state="mixed">Mixed</button>
+          <button type="button" class="spec-chip" data-set-state="reading">Reading</button>
+          <button type="button" class="spec-chip" data-set-state="saving">Shelving</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Brand-new studio</button>
+          <button type="button" class="spec-chip" data-set-state="dropover">Drop anywhere</button>
+          <button type="button" class="spec-chip" data-set-state="damage">Damaged files</button>
+          <button type="button" class="spec-chip" data-set-state="drop">ST: drop</button>
+          <button type="button" class="spec-chip" data-set-state="scanning">ST: scanning</button>
+          <button type="button" class="spec-chip" data-set-state="choose">ST: choose</button>
+          <button type="button" class="spec-chip" data-set-state="needs-character">ST: needs a character</button>
+          <button type="button" class="spec-chip" data-set-state="duplicates">ST: duplicates</button>
+          <button type="button" class="spec-chip" data-set-state="options">ST: options</button>
+          <button type="button" class="spec-chip" data-set-state="importing">ST: importing</button>
+          <button type="button" class="spec-chip" data-set-state="partial">ST: partial</button>
+          <button type="button" class="spec-chip" data-set-state="receipt">ST: receipt</button>
+          <button type="button" class="spec-chip" data-set-state="wizard">ST: first-run wizard line</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> every receipt state
+    (reading, shelving, clean, mixed with its archive report/healed notes/shelf and batch
+    duplicates/grouped unreadable files), the brand-new empty studio's real file browser entry, the
+    drop-anywhere overlay, the damaged-file notice, and the full SillyTavern backup wizard (drop,
+    scanning, the choose screen's kind groups plus its "cannot take these yet" group, needs-a-
+    character, duplicates, real options, importing, partial, the closing receipt, and the proposed
+    first-run wizard line). <b>Simplified:</b> the ST "choose" screen shows 3 of 8 real kinds plus
+    one "cannot take yet" kind rather than the full 8+4 list, and needs-character/duplicates/options
+    show one representative row each, to keep the page a reasonable size; every kind name and count
+    is carried from library-st-import.html verbatim where shown.</p>
+  </section>
+</main>
+</body>
+</html>

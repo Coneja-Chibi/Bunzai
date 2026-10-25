@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing: game title screen + Dock (A4, press start)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Variation A4, "press start": a merge of landing-game-a's title screen and the approved Dock from
+ * workbench-shell.html. Attract is landing-game-a's screen verbatim (wordmark, bun, drifting backdrop,
+ * motes, Press any key), with its off-canvas handle/menu removed - here the Dock arrives on its own.
+ * On any key or click, one ~400ms transition (ease, no bounce): the wordmark shrinks to a small header,
+ * the Dock (byte-identical items/icons/colors/order to workbench-shell.html; only a hover-preview
+ * flyout is appended per item, a new affordance this variation asks for) slides in from the left, and
+ * the stage fills with a picture-led "tonight" view: a big Continue card, the cast standing in a row of
+ * full-body silhouettes on the floor, and a slim row of three picture shortcuts. The stage keeps
+ * landing-game-a's fixed, non-scrolling game-screen feel (height: 100vh, overflow hidden) in every
+ * state, tonight view included.
+ */
+* { -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: hidden; }
+body { margin: 0; background: var(--stage-well); }
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+:root { --dockw: 220px; --ease: cubic-bezier(.4, 0, .2, 1); }
+
+/* the shell: one container-query context for BOTH the fixed Dock and the stage, so the "phone" test
+   (which only narrows html's max-width via JS, never the real window - see workbench-shell.html's own
+   note on why its Dock fold is @media, everything reacting to the simulated width must be @container)
+   can turn the Dock into a bottom tab bar. container-type makes .shell the containing block for its
+   fixed-position children too, which is exactly what lets the simulated width move them. */
+.shell { position: relative; min-height: 100vh; container-type: inline-size; }
+
+/* ---- the stage: fills the viewport, the last scene's backdrop softened behind everything ---- */
+.stage { position: relative; width: 100%; height: 100vh; min-height: 560px; overflow: hidden; background:
+  radial-gradient(ellipse 70% 60% at 50% 30%, color-mix(in srgb, var(--deck-lorebook) 12%, transparent), transparent 70%),
+  linear-gradient(180deg, var(--stage-deck) 0%, var(--stage-floor) 58%, var(--stage-well) 100%); }
+.backdrop { position: absolute; inset: -6%; background:
+  linear-gradient(155deg, color-mix(in srgb, var(--deck-preset) 24%, transparent), transparent 46%),
+  linear-gradient(25deg, color-mix(in srgb, var(--deck-pack) 16%, transparent), transparent 52%),
+  linear-gradient(200deg, color-mix(in srgb, var(--deck-persona) 12%, transparent), transparent 40%);
+  animation: drift 46s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.06) translate(-1.5%, 1%); } }
+[data-state="empty"] .backdrop { opacity: .4; filter: saturate(.55); }
+.floor { position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: linear-gradient(180deg, transparent, var(--stage-well) 78%); }
+.vignette { position: absolute; inset: 0; box-shadow: inset 0 0 min(22cqw, 260px) min(9cqw, 110px) var(--stage-black); pointer-events: none; }
+
+.motes { position: absolute; inset: 0; pointer-events: none; }
+.mote { position: absolute; width: 4px; height: 4px; background: var(--stage-card); border-radius: 50%; opacity: 0; box-shadow: 0 0 6px 1px color-mix(in srgb, var(--stage-card) 60%, transparent); animation: mote 22s ease-in-out infinite; }
+@keyframes mote { 0% { opacity: 0; transform: translateY(0) translateX(0); } 12% { opacity: .55; } 88% { opacity: .35; } 100% { opacity: 0; transform: translateY(-46vh) translateX(var(--dx, 18px)); } }
+@media (prefers-reduced-motion: reduce) { .backdrop, .mote { animation: none !important; } }
+
+/* ---- the marque: big on attract, shrinks and moves to a small header once the Dock is in ---- */
+.marquee { position: absolute; left: 0; right: 0; top: 9%; z-index: 3; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 20px; box-sizing: border-box; transition: left .4s var(--ease), top .4s var(--ease); }
+.marquee svg { width: clamp(56px, 9cqw, 96px); height: clamp(56px, 9cqw, 96px); filter: drop-shadow(0 6px 0 var(--stage-black)); transition: width .4s var(--ease), height .4s var(--ease); }
+.marquee .word { margin-top: 6px; font: 800 clamp(2rem, 7cqw, 5rem) var(--font-fancy); letter-spacing: .06em; color: var(--text); text-shadow: 0 4px 0 var(--stage-black); transition: font-size .4s var(--ease), margin .4s var(--ease); }
+.marquee .word em { font-style: normal; color: var(--accent); }
+.marquee .tag { margin-top: 4px; font: 500 12px var(--font-mono); letter-spacing: .3em; text-transform: uppercase; color: var(--text-dim); transition: opacity .25s var(--ease); }
+
+[data-state="transition"] .marquee { top: 4%; left: 90px; }
+[data-state="transition"] .marquee svg { width: 40px; height: 40px; }
+[data-state="transition"] .marquee .word { font-size: 1.7rem; margin-top: 3px; }
+[data-state="transition"] .marquee .tag { opacity: .4; }
+
+[data-state="tonight"] .marquee, [data-state="hover-cast"] .marquee, [data-state="dock-peek"] .marquee, [data-state="empty"] .marquee { top: 14px; left: var(--dockw); }
+[data-state="tonight"] .marquee svg, [data-state="hover-cast"] .marquee svg, [data-state="dock-peek"] .marquee svg, [data-state="empty"] .marquee svg { width: 28px; height: 28px; }
+[data-state="tonight"] .marquee .word, [data-state="hover-cast"] .marquee .word, [data-state="dock-peek"] .marquee .word, [data-state="empty"] .marquee .word { font-size: 1.15rem; margin-top: 2px; }
+[data-state="tonight"] .marquee .tag, [data-state="hover-cast"] .marquee .tag, [data-state="dock-peek"] .marquee .tag, [data-state="empty"] .marquee .tag { opacity: 0; height: 0; margin: 0; overflow: hidden; }
+
+/* ---- attract: press any key (fades away once the transition starts) ---- */
+.attractwrap { position: absolute; left: 0; right: 0; top: 62%; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 1; transition: opacity .3s var(--ease); }
+.pressprompt { font: 600 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); letter-spacing: .12em; text-transform: uppercase; color: var(--text); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .pressprompt { animation: none; } }
+.pressprompt kbd { font: 500 12px var(--font-mono); color: var(--text-dim); background: color-mix(in srgb, var(--text) 10%, transparent); box-shadow: inset 0 0 0 1px var(--edge); padding: 2px 8px; margin-left: 8px; text-transform: none; letter-spacing: 0; vertical-align: 2px; }
+[data-state="transition"] .attractwrap { opacity: .25; }
+[data-state="tonight"] .attractwrap, [data-state="hover-cast"] .attractwrap, [data-state="dock-peek"] .attractwrap, [data-state="empty"] .attractwrap { opacity: 0; pointer-events: none; }
+
+/* ---- the Dock: fixed left rail, byte-identical items to workbench-shell.html plus an appended
+   hover-preview flyout per item. Hidden off-canvas on attract; slides in with the transition. ---- */
+#dock { position: fixed; left: 0; top: 0; bottom: 0; z-index: 20; width: var(--dockw); transform: translateX(-100%); transition: transform .4s var(--ease); box-shadow: 1px 0 0 var(--seam), 12px 0 30px -10px var(--shadow-ink-deep); }
+[data-state="transition"] #dock { transform: translateX(-46%); }
+[data-state="tonight"] #dock, [data-state="hover-cast"] #dock, [data-state="dock-peek"] #dock, [data-state="empty"] #dock { transform: translateX(0); }
+.s-app { position: relative; }
+.dockflyout { position: absolute; left: 100%; top: 50%; transform: translateY(-50%) translateX(-6px); margin-left: 10px; width: 208px; z-index: 30; display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); opacity: 0; pointer-events: none; transition: opacity .15s var(--ease), transform .15s var(--ease); }
+.s-app:hover .dockflyout, .s-app:focus-within .dockflyout { opacity: 1; transform: translateY(-50%) translateX(0); pointer-events: auto; }
+.dockflyout .pic { flex: none; width: 34px; height: 34px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 30%, var(--face)); color: var(--c); }
+.dockflyout .pic svg { width: 16px; height: 16px; }
+.dockflyout p { margin: 0; font-size: 12px; line-height: 1.4; color: var(--text-soft); }
+[data-state="dock-peek"] .s-app.c-library { background: var(--shell-panel); box-shadow: inset 3px 0 0 var(--c); }
+[data-state="dock-peek"] .s-app.c-library .dockflyout { opacity: 1; transform: translateY(-50%) translateX(0); pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { #dock, .marquee, .marquee svg, .marquee .word, .attractwrap, .tonightwrap, .emptywrap { transition: none; } }
+
+/* ---- the tonight view: Continue card, cast row, three shortcuts ---- */
+.tonightwrap { position: absolute; left: 0; right: 0; top: 64px; bottom: 190px; z-index: 4; display: flex; flex-direction: column; gap: 16px; padding: 0 28px; box-sizing: border-box; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .4s var(--ease), transform .4s var(--ease), left .4s var(--ease); overflow: hidden; }
+[data-state="transition"] .tonightwrap { left: 90px; opacity: .5; transform: translateY(8px); }
+[data-state="tonight"] .tonightwrap, [data-state="hover-cast"] .tonightwrap, [data-state="dock-peek"] .tonightwrap { left: var(--dockw); opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+.continuecard { display: flex; gap: 16px; align-items: stretch; padding: 0; overflow: hidden; }
+.ccart { flex: none; width: 190px; background:
+  linear-gradient(155deg, color-mix(in srgb, var(--deck-pack) 45%, var(--stage-floor)), transparent 65%),
+  linear-gradient(20deg, color-mix(in srgb, var(--deck-preset) 30%, transparent), transparent 60%),
+  var(--stage-deck); }
+.ccbody { flex: 1; min-width: 0; padding: 14px 18px 14px 4px; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+.cchead { display: flex; align-items: center; gap: 10px; }
+.ccline { margin: 0; font: italic 400 .92rem var(--font-body); color: var(--text-soft); }
+.cccast { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+.cccast .portrait { width: 22px; height: 22px; display: grid; place-items: center; font: 700 11px var(--font-big); color: var(--stage-ink); background: var(--pc, var(--text-dim)); }
+.ccbtn { align-self: flex-start; margin-top: 4px; }
+
+.castkicker { display: flex; align-items: center; gap: 8px; font: 500 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); }
+.castrow { display: flex; align-items: flex-end; gap: 22px; overflow-x: auto; padding: 6px 2px 10px; }
+.castfig { flex: none; position: relative; width: 58px; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform .18s var(--ease); }
+.castfig .head { width: 20px; height: 20px; background: var(--c); margin-bottom: 2px; }
+.castfig .torso { width: 38px; height: 66px; background: linear-gradient(180deg, var(--c), color-mix(in srgb, var(--c) 55%, var(--stage-black))); display: grid; place-items: start center; padding-top: 8px; }
+.castfig .torso b { font: 700 1rem var(--font-big); color: var(--stage-ink); }
+.castfig .star { position: absolute; top: -6px; right: 6px; color: var(--stage-warn); font-size: 13px; }
+.castfig .nameplate { position: absolute; bottom: 100%; margin-bottom: 8px; left: 50%; transform: translateX(-50%) translateY(4px); width: max-content; max-width: 140px; text-align: center; padding: 6px 10px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); opacity: 0; pointer-events: none; transition: opacity .15s var(--ease), transform .15s var(--ease); }
+.castfig .nameplate b { display: block; font: 600 .82rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.castfig .nameplate span { display: block; margin-top: 2px; font: 700 11px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.castfig:hover, .castfig.simhover, [data-state="hover-cast"] #castDemo { transform: translateY(-14px); }
+.castfig:hover .nameplate, .castfig.simhover .nameplate, [data-state="hover-cast"] #castDemo .nameplate { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+
+.shortcutrow { display: flex; gap: 12px; }
+.shortcut { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); cursor: pointer; transition: transform .15s var(--ease); }
+.shortcut:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px var(--c); }
+.shortcut .pic { flex: none; width: 42px; height: 42px; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 26%, var(--face)); color: var(--c); }
+.shortcut .pic svg { width: 18px; height: 18px; }
+.shortcut .txt { min-width: 0; }
+.shortcut .txt b { display: block; font: 600 .92rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.shortcut .txt span { display: block; margin-top: 2px; font-size: 12px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ---- empty studio: a spotlight where the cast would stand ---- */
+.emptywrap { position: absolute; inset: 0; z-index: 4; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 0 20px; opacity: 0; pointer-events: none; transition: opacity .4s var(--ease); }
+[data-state="empty"] .emptywrap { display: flex; opacity: 1; pointer-events: auto; }
+[data-state="empty"] .tonightwrap { display: none; }
+.spotlight { position: absolute; inset: 0; background: radial-gradient(ellipse 34cqw 40cqh at 50% 46%, color-mix(in srgb, var(--stage-card) 10%, transparent), transparent 70%); pointer-events: none; }
+.blankfig { position: relative; display: flex; flex-direction: column; align-items: center; }
+.blankfig .head { width: 24px; height: 24px; border: 1px dashed var(--stage-line); }
+.blankfig .torso { width: 46px; height: 80px; margin-top: 3px; border: 1px dashed var(--stage-line); }
+.emptyacts { display: flex; gap: 10px; margin-top: 6px; }
+
+.wf-note { max-width: 460px; }
+
+/* ---- phone (container query, not media - see .shell above): the Dock becomes a bottom tab bar ---- */
+@container (max-width: 46rem) {
+  .marquee .tag, [data-state="transition"] .marquee .tag { display: none; }
+  /* soft-parts.css's .s-dock sets min-height: 100vh for the desktop rail - it floors any smaller
+     height we set here unless explicitly cancelled, so min-height must be reset too. width uses
+     min(390px, 100vw): a fixed element's containing block is the true viewport, not this
+     container-query ancestor, so at the simulated phone width (html's max-width shrunk by the
+     "Phone width" button, the real window staying 1920/1440) 100vw alone would still span the
+     whole real window; 390px caps it to that simulated column, while 100vw keeps it correct for a
+     genuinely narrow real browser window. */
+  /* bottom: 190px (not 0) clears the reserved wf-bar/wf-note band at the true viewport's real
+     bottom edge - same reserved-footer contract as body's own padding-bottom - so the tab bar,
+     real content, never sits under that wireframe-only chrome. */
+  #dock { left: 0; right: auto; top: auto; bottom: 190px; width: min(390px, 100vw); height: 64px; min-height: 0; display: flex; flex-direction: row; justify-content: space-around; align-items: stretch; padding: 6px 4px; transform: translateY(320px); box-shadow: 0 -1px 0 var(--seam), 0 -12px 30px -10px var(--shadow-ink-deep); }
+  [data-state="transition"] #dock { transform: translateY(140px); }
+  [data-state="tonight"] #dock, [data-state="hover-cast"] #dock, [data-state="dock-peek"] #dock, [data-state="empty"] #dock { transform: translateY(0); }
+  .s-dock .brand { display: none; }
+  .s-app { grid-template-columns: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px 2px; flex: 1; text-align: center; }
+  .s-app small { display: none; }
+  .s-app b { font-size: .72rem; }
+  .dockflyout { display: none !important; }
+  [data-state="tonight"] .marquee, [data-state="hover-cast"] .marquee, [data-state="dock-peek"] .marquee, [data-state="empty"] .marquee,
+  [data-state="tonight"] .tonightwrap, [data-state="hover-cast"] .tonightwrap, [data-state="dock-peek"] .tonightwrap { left: 0; }
+  [data-state="transition"] .marquee, [data-state="transition"] .tonightwrap { left: 0; }
+  .tonightwrap { bottom: 270px; padding: 0 16px; }
+  .continuecard { flex-direction: column; }
+  .ccart { width: 100%; height: 84px; }
+  .ccbody { padding: 12px; }
+  .shortcutrow { flex-direction: column; }
+  .castrow { gap: 16px; }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+
+<div class="shell">
+  <nav class="s-dock" id="dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--deck-pack)"><svg><use href="#i-play"/></svg></span><p>Where every scene plays, tonight and always.</p></div>
+    </div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--deck-character)"><svg><use href="#i-make"/></svg></span><p>Write and edit cards, side by side.</p></div>
+    </div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--deck-regex)"><svg><use href="#i-keep"/></svg></span><p>Everything you keep, all in one place.</p></div>
+    </div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--deck-persona)"><svg><use href="#i-share"/></svg></span><p>Share a card or page with the world.</p></div>
+    </div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--deck-preset)"><svg><use href="#i-help"/></svg></span><p>Ask for help, in plain language.</p></div>
+    </div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--deck-lorebook)"><svg><use href="#i-kit"/></svg></span><p>The terminal, for macros and scripts.</p></div>
+    </div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small>
+      <div class="dockflyout"><span class="pic" style="--c: var(--text-dim)"><svg><use href="#i-gear"/></svg></span><p>Preferences for the whole studio.</p></div>
+    </div>
+  </nav>
+
+  <main class="stage" id="stage">
+    <div class="backdrop"></div>
+    <div class="floor"></div>
+    <div class="motes" aria-hidden="true">
+      <span class="mote" style="left:14%; top:70%; --dx:22px; animation-delay:0s"></span>
+      <span class="mote" style="left:26%; top:82%; --dx:-14px; animation-delay:3s"></span>
+      <span class="mote" style="left:38%; top:60%; --dx:18px; animation-delay:7s"></span>
+      <span class="mote" style="left:58%; top:78%; --dx:-20px; animation-delay:2s"></span>
+      <span class="mote" style="left:70%; top:65%; --dx:16px; animation-delay:9s"></span>
+      <span class="mote" style="left:82%; top:74%; --dx:-12px; animation-delay:5s"></span>
+      <span class="mote" style="left:47%; top:88%; --dx:10px; animation-delay:11s"></span>
+    </div>
+    <div class="vignette"></div>
+
+    <div class="marquee" id="marquee">
+      <svg viewBox="0 0 100 100" style="--pink: var(--deck-pack); --ink: var(--stage-ink)"><use href="#bun"/></svg>
+      <div class="word">bun<em>raku</em></div>
+      <div class="tag">a little theater for your characters</div>
+    </div>
+
+    <div class="attractwrap">
+      <div class="pressprompt">Press any key <kbd>or click</kbd></div>
+    </div>
+
+    <div class="tonightwrap" id="tonightwrap">
+      <section class="s-card continuecard" style="--c: var(--deck-pack)">
+        <div class="ccart"></div>
+        <div class="ccbody">
+          <div class="cchead"><span class="s-chip" style="--c: var(--deck-pack)">CONTINUE</span><span class="s-meta">2 hours ago</span></div>
+          <h2 class="s-h2">The long storm</h2>
+          <p class="ccline">&ldquo;You don't have to say it back. I just needed you to hear it.&rdquo;</p>
+          <div class="cccast"><span class="portrait" style="--pc: var(--deck-character)">V</span><span class="s-meta">Vera Lune</span></div>
+          <button type="button" class="s-btn ccbtn"><svg width="14" height="14"><use href="#i-play"/></svg>Continue</button>
+        </div>
+      </section>
+
+      <div class="castkicker">Your cast &middot; recent first</div>
+      <div class="castrow" id="castRow">
+        <div class="castfig" style="--c: var(--deck-character)"><span class="star">&#9733;</span><span class="head"></span><span class="torso"><b>V</b></span><div class="nameplate"><b>Vera Lune</b><span>Talk</span></div></div>
+        <div class="castfig" id="castDemo" style="--c: var(--deck-preset)"><span class="head"></span><span class="torso"><b>M</b></span><div class="nameplate"><b>Marguerite Vane</b><span>Talk</span></div></div>
+        <div class="castfig" style="--c: var(--deck-persona)"><span class="star">&#9733;</span><span class="head"></span><span class="torso"><b>N</b></span><div class="nameplate"><b>Nuit</b><span>Talk</span></div></div>
+        <div class="castfig" style="--c: var(--deck-lorebook)"><span class="head"></span><span class="torso"><b>K</b></span><div class="nameplate"><b>The Keeper</b><span>Talk</span></div></div>
+        <div class="castfig" style="--c: var(--deck-regex)"><span class="head"></span><span class="torso"><b>T</b></span><div class="nameplate"><b>The Magpie</b><span>Talk</span></div></div>
+      </div>
+
+      <div class="shortcutrow">
+        <div class="shortcut" style="--c: var(--deck-character)"><span class="pic"><svg><use href="#i-plus"/></svg></span><span class="txt"><b>New scene</b><span>Start fresh with anyone in your cast</span></span></div>
+        <div class="shortcut" style="--c: var(--deck-preset)"><span class="pic"><svg><use href="#i-import"/></svg></span><span class="txt"><b>Import a card</b><span>SillyTavern, RoleCall, and more</span></span></div>
+        <div class="shortcut" style="--c: var(--deck-regex)"><span class="pic"><svg><use href="#i-keep"/></svg></span><span class="txt"><b>Open the Library</b><span>Everything you keep, in one place</span></span></div>
+      </div>
+    </div>
+
+    <div class="emptywrap">
+      <div class="spotlight"></div>
+      <div class="blankfig"><span class="head"></span><span class="torso"></span></div>
+      <h2 class="s-h2">Your first character stands here</h2>
+      <p class="s-lede">Bring someone in from another app, or start from a blank page.</p>
+      <div class="emptyacts">
+        <button type="button" class="s-btn ghost"><svg width="14" height="14"><use href="#i-import"/></svg>Import a card</button>
+        <button type="button" class="s-btn"><svg width="14" height="14"><use href="#i-plus"/></svg>Make one</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="wf-note">
+  <b>Concept A4: press start.</b> Attract is Concept A's title screen, unchanged. Any key or click plays
+  one ~400ms transition: the wordmark shrinks to a header, the Dock slides in from the left, and the
+  stage fills with tonight's picture-led view - a Continue card, the cast standing on the floor as
+  full-body silhouettes (hover lifts one), and three picture shortcuts. Every Dock item gets a small
+  hover flyout so a new user learns what it is for. Replay re-runs the transition live; the other
+  buttons jump straight to a state, including a frozen mid-transition frame.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="attract" class="on">Attract</button>
+  <button data-s="transition">Transition</button>
+  <button data-s="tonight">Tonight</button>
+  <button data-s="hover-cast">Hover cast</button>
+  <button data-s="dock-peek">Dock peek</button>
+  <button data-s="empty">Empty studio</button>
+  <button data-s="phone">Phone width</button>
+  <button type="button" id="replayBtn">Replay</button>
+  <button type="button" data-theme-switch>Theme</button>
+  <a href="index.html">All</a>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+
+  function set(s) {
+    var real = (s === 'phone') ? 'tonight' : s;
+    body.setAttribute('data-state', real);
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    document.querySelectorAll('#wfbar button[data-s]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+  }
+
+  document.getElementById('wfbar').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-s]');
+    if (b) set(b.getAttribute('data-s'));
+  });
+
+  function pressStart() {
+    if (body.getAttribute('data-state') !== 'attract') return;
+    set('tonight');
+  }
+  document.addEventListener('keydown', pressStart);
+  document.getElementById('stage').addEventListener('click', pressStart);
+
+  document.getElementById('replayBtn').addEventListener('click', function () {
+    set('attract');
+    document.querySelectorAll('#wfbar button[data-s]').forEach(function (b) { b.classList.remove('on'); });
+    document.querySelector('#wfbar button[data-s="attract"]').classList.add('on');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { pressStart(); });
+    });
+  });
+
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'attract');
+})();
+</script>
+</body>
+</html>

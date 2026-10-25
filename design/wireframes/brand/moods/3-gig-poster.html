@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gig Poster mood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Mono:wght@400;700&family=Libre+Franklin:wght@400;600&display=swap">
+<link rel="stylesheet" href="board.css">
+<style>
+:root {
+  --bg: #0b0b0d; --fg: #f4f1ea; --fg2: #a9a6a0; --dim: #625f5a; --rule: #1f1e22; --accent: #ff3ea5;
+  --body: "Libre Franklin", sans-serif; --mono: "Space Mono", monospace;
+  --display: 400 clamp(3.6rem, 9vw, 8.4rem) "Dela Gothic One", sans-serif;
+  --h3: 400 1.35rem "Dela Gothic One", sans-serif; --quote: 700 1.45rem/1.3 "Space Mono", monospace;
+  --pink: #ff3ea5; --blue: #3d7bff; --yel: #ffe600; --mx: 6px; --my: 4px;
+}
+/* a two-ink screenprint on black stock, pasted to a wall */
+.hero { background: #0b0b0d; display: grid; place-items: center; padding: 60px 16px 30px; }
+.poster { position: relative; width: min(1100px, 100%); min-height: 86vh; padding: clamp(24px, 4vw, 54px); background: #121114; border: 1px solid #222; display: grid; grid-template-rows: auto 1fr auto auto; gap: 18px; overflow: hidden; }
+.dots { position: absolute; right: -8%; top: -10%; width: 70%; height: 80%; background: radial-gradient(circle, var(--pink) 34%, transparent 36%) 0 0/14px 14px; mask: radial-gradient(ellipse at 70% 30%, #000 10%, transparent 68%); -webkit-mask: radial-gradient(ellipse at 70% 30%, #000 10%, transparent 68%); opacity: .75; mix-blend-mode: screen; }
+.dots.b { background-image: radial-gradient(circle, var(--blue) 34%, transparent 36%); left: -12%; right: auto; top: 40%; mask: radial-gradient(ellipse at 30% 60%, #000 5%, transparent 62%); -webkit-mask: radial-gradient(ellipse at 30% 60%, #000 5%, transparent 62%); }
+.billtop { position: relative; display: flex; justify-content: space-between; font: 700 13px/1.3 var(--mono); letter-spacing: .2em; color: var(--yel); text-transform: uppercase; flex-wrap: wrap; gap: 8px; }
+.name { position: relative; align-self: center; font: 400 clamp(4.5rem, 16vw, 14rem)/.82 "Dela Gothic One"; letter-spacing: -.02em; }
+.name span { display: block; mix-blend-mode: screen; }
+.name .pk { color: var(--pink); }
+.name .bl { color: var(--blue); position: absolute; inset: 0; transform: translate(var(--mx), var(--my)); transition: transform .12s linear; }
+.lineup { position: relative; font: 400 clamp(1.3rem, 3vw, 2.3rem)/1.2 "Dela Gothic One"; color: var(--fg); text-transform: uppercase; }
+.lineup i { font-style: normal; color: var(--yel); padding: 0 .3em; }
+.tabs { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); border-top: 2px dashed #555; margin: 0 calc(-1 * clamp(24px, 4vw, 54px)) calc(-1 * clamp(24px, 4vw, 54px)); }
+.tabs div { writing-mode: vertical-rl; transform: rotate(180deg); padding: 14px 0; text-align: center; font: 700 12px/1 var(--mono); letter-spacing: .12em; border-left: 2px dashed #555; color: var(--fg2); cursor: pointer; transition: transform .25s, opacity .25s; min-height: 118px; display: grid; place-items: center; }
+.tabs div:hover { color: var(--yel); }
+.tabs div.torn { transform: rotate(180deg) translateY(-40px) rotate(-8deg); opacity: 0; }
+.hint { text-align: center; font: 700 12px/1 var(--mono); letter-spacing: .2em; color: var(--dim); padding: 12px; }
+
+/* pieces */
+.k-nav { counter-reset: s; font: 400 1.3rem/1.6 "Dela Gothic One"; text-transform: uppercase; }
+.k-nav div::before { counter-increment: s; content: counter(s, decimal-leading-zero) "  "; font: 700 13px var(--mono); color: var(--pink); }
+.k-btn { position: relative; display: inline-block; padding: 16px 26px; font: 400 1.3rem/1 "Dela Gothic One"; color: #0b0b0d; background: var(--yel); box-shadow: 5px 4px 0 var(--pink); text-transform: uppercase; }
+.k-btn.alt { background: none; color: var(--fg); outline: 2px solid var(--blue); outline-offset: -2px; box-shadow: 5px 4px 0 var(--pink); }
+.k-card { position: relative; overflow: hidden; background: #141316; padding: 24px; border-left: 8px solid var(--pink); }
+.k-card::after { content: ""; position: absolute; right: -30px; top: -30px; width: 160px; height: 160px; background: radial-gradient(circle, var(--blue) 30%, transparent 33%) 0 0/10px 10px; opacity: .7; }
+.k-card h4 { position: relative; font: var(--h3); text-transform: uppercase; } .k-card p { position: relative; color: var(--fg2); margin-top: 6px; max-width: 80%; }
+.k-in { border: 2px solid var(--fg); padding: 12px 14px; font: 700 1rem var(--mono); }
+.k-in small { display: block; font: 700 12px var(--mono); color: var(--pink); letter-spacing: .16em; margin-bottom: 4px; }
+.stamp { display: inline-block; padding: 6px 10px; border: 3px solid var(--c); color: var(--c); font: 400 .95rem/1 "Dela Gothic One"; text-transform: uppercase; transform: rotate(-4deg); margin: 0 10px 10px 0; }
+.k-toast { background: var(--pink); color: #0b0b0d; padding: 14px 18px; font: 400 1.1rem "Dela Gothic One"; text-transform: uppercase; box-shadow: 6px 5px 0 var(--blue); display: inline-block; }
+</style>
+</head>
+<body>
+<nav class="top"><a href="2-ghost-light.html">prev</a><span>3 / 6 &middot; The Gig Poster</span><a href="4-the-booth.html">next</a></nav>
+
+<header class="hero grain" id="hero">
+  <div class="poster">
+    <div class="dots"></div><div class="dots b"></div>
+    <div class="billtop"><span>One night only</span><span>Every night</span><span>No cover</span></div>
+    <div class="name"><span class="pk">BUN<br>RAKU</span><span class="bl">BUN<br>RAKU</span></div>
+    <div class="lineup">Scenes<i>/</i>Workbench<i>/</i>Library<i>/</i>Press<i>/</i>Agent<br><span style="color:var(--fg2);font-size:.6em">Live on your own computer. All ages. Bring your own characters.</span></div>
+    <div class="tabs" id="tabs"><div>WINDOWS v0.1.42</div><div>MAC v0.1.42</div><div>LINUX v0.1.42</div><div>GUIDES</div><div>WHAT'S NEW</div><div>TRY IT NOW</div></div>
+  </div>
+  <div class="hint">move to misregister the inks / tear a tab</div>
+</header>
+
+<main class="wrap">
+  <section class="b"><div class="label"><b>01</b>The idea</div>
+    <div class="pitch"><div><h1>The Gig Poster</h1><div class="line">one night only. every night.</div></div>
+      <div><p>Before the big venue there's the basement show: a screenprinted poster wheatpasted to a wall, two inks that don't quite line up, a lineup in huge letters, <b>tear-off tabs at the bottom</b> so you can take the details home.</p>
+      <p>RoleCall is the opera house with a season brochure. Bunraku is <b>the DIY show flyer</b>: loud, cheap-looking on purpose, made by people who care more about the show than the venue.</p>
+      <p>Every page is a poster. The lineup is the feature list. Releases are tour dates. The download is a tab you literally tear off.</p></div></div>
+  </section>
+
+  <section class="b"><div class="label"><b>02</b>Palette: black stock, fluorescent inks</div>
+    <div class="sw">
+      <div style="background:#0b0b0d;color:#a9a6a0;outline:1px solid #1f1e22"><b>Wall</b>#0B0B0D</div>
+      <div style="background:#121114;color:#a9a6a0"><b>Black stock</b>#121114</div>
+      <div style="background:#ff3ea5;color:#111"><b>Fluoro pink</b>#FF3EA5</div>
+      <div style="background:#3d7bff;color:#111"><b>Medium blue</b>#3D7BFF</div>
+      <div style="background:#ffe600;color:#111"><b>Yellow</b>#FFE600</div>
+      <div style="background:#f4f1ea;color:#111"><b>Opaque white</b>#F4F1EA</div>
+      <div style="background:#b026ff;color:#111"><b>Overprint</b>pink + blue</div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>03</b>Type: fat display, a typewriter mono</div>
+    <div class="type">
+      <div class="row"><small>DELA GOTHIC ONE<br>headliners</small><div style="font:400 clamp(2.8rem,7vw,6rem)/.9 'Dela Gothic One'">NO COVER</div></div>
+      <div class="row"><small>SPACE MONO BOLD<br>dates, tabs, fine print</small><div style="font:700 1.2rem 'Space Mono';letter-spacing:.14em">SEP 28 / v0.1.42 / PRESETS TOUR</div></div>
+      <div class="row"><small>LIBRE FRANKLIN<br>reading text</small><div style="font:400 1.15rem/1.6 'Libre Franklin';max-width:40rem;color:var(--fg2)">Presets decide how a scene talks to the model. Pick one for the library, tweak it per scene.</div></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>04</b>Materials</div>
+    <div class="mats">
+      <div style="background:radial-gradient(circle,#ff3ea5 34%,transparent 36%) 0 0/12px 12px,#121114"><span>Halftone</span></div>
+      <div style="background:#121114;display:grid;place-items:center;font:400 5rem 'Dela Gothic One'"><b style="color:#ff3ea5;mix-blend-mode:screen;position:absolute">B</b><b style="color:#3d7bff;mix-blend-mode:screen;position:absolute;transform:translate(7px,5px)">B</b><span>Misregistration</span></div>
+      <div style="background:#1a191c;background-image:repeating-linear-gradient(0deg,#0000 0 40px,#ffffff08 40px 42px),repeating-linear-gradient(90deg,#0000 0 70px,#ffffff06 70px 72px)"><span>Wheatpasted wall</span></div>
+      <div style="background:#121114;border-top:3px dashed #666"><span>Tear-off tabs</span></div>
+      <div class="grain" style="background:#ffe600"><span>Ink grain</span></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>05</b>Pieces</div>
+    <div class="kit">
+      <figure><div class="k-nav"><div>Scenes</div><div>Workbench</div><div>Library</div><div>Guides</div></div><figcaption>Nav: the setlist</figcaption></figure>
+      <figure><div style="display:flex;gap:18px;flex-wrap:wrap"><span class="k-btn">Get tickets</span><span class="k-btn alt">The guides</span></div><figcaption>Buttons: printed off-register</figcaption></figure>
+      <figure><div class="k-card"><h4>Lorebooks</h4><p>Every fact about your world, pinned where the story finds it.</p></div><figcaption>Card: a small flyer</figcaption></figure>
+      <figure><div class="k-in"><small>NAME ON THE LIST</small>chi +1</div><figcaption>Input: the guest list</figcaption></figure>
+      <figure><div><span class="stamp" style="--c:var(--pink)">New</span><span class="stamp" style="--c:var(--yel)">Beta</span><span class="stamp" style="--c:var(--blue)">All ages</span></div><figcaption>Tags: hand stamps</figcaption></figure>
+      <figure><div class="k-toast">Added to the bill</div><figcaption>Toast: a sticker slapped on</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>06</b>How the site is built</div>
+    <div class="map">
+      <div><h3>Home</h3><strong>The poster</strong><p>One giant poster. Scrolling pulls you down the bill from headliner to fine print.</p></div>
+      <div><h3>Feature tour</h3><strong>The lineup</strong><p>Every act gets its own poster in a new ink pair, pasted edge to edge like a wall.</p></div>
+      <div><h3>Guides and help</h3><strong>The zine</strong><p>Photocopied, stapled, two inks. Pages you actually want to read.</p></div>
+      <div><h3>Download</h3><strong>Tear-off tabs</strong><p>Tear your platform's tab. It flutters off and the download starts.</p></div>
+      <div><h3>What's new</h3><strong>Tour dates</strong><p>Every release is a date on the tour, live from GitHub, with the setlist of changes.</p></div>
+      <div><h3>Try it</h3><strong>The support act</strong><p>Opening act, right now, in your browser. No ticket needed.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>07</b>Signature moves</div>
+    <div class="moves">
+      <div><h3>Ink drift <span class="live">LIVE ABOVE</span></h3><p>The second ink slides with your pointer, then snaps into register when you stop.</p></div>
+      <div><h3>Tear a tab <span class="live">LIVE ABOVE</span></h3><p>Click a tab: it rips off the poster. That's the download button.</p></div>
+      <div><h3>Pasted wall</h3><p>Scroll sideways between posters that overlap like layers of wheatpaste.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>08</b>Voice</div>
+    <div class="voice">
+      <div><h3>Say it like this</h3><ul><li>ONE NIGHT ONLY. EVERY NIGHT.</li><li>Doors: whenever you open it.</li><li>No cover. No account. No catch.</li><li>Bring your own characters.</li></ul></div>
+      <div class="no"><h3>Never this</h3><ul><li>Experience the future of fiction</li><li>Trusted by creators worldwide</li><li>Start your free trial</li><li>Your AI storytelling companion</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Not this: clean corporate gradients, soft shadows, rounded pills. Hard offsets, flat inks, loud type.</span><a href="4-the-booth.html">Next: The Booth</a></footer>
+</main>
+
+<script>
+// Ink drift follows the pointer; each tab tears off once.
+const hero = document.getElementById("hero");
+hero.addEventListener("pointermove", (e) => {
+  const r = hero.getBoundingClientRect();
+  hero.style.setProperty("--mx", ((e.clientX - r.left) / r.width - .5) * 22 + "px");
+  hero.style.setProperty("--my", ((e.clientY - r.top) / r.height - .5) * 16 + "px");
+});
+document.querySelectorAll("#tabs div").forEach((t) => t.addEventListener("click", () => t.classList.add("torn")));
+</script>
+</body>
+</html>

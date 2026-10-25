@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: Settings, Security</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-settings 2/4: Security (src/ui/apps/settings/sections/security.tsx + security-flows.tsx).
+ * The main page's own hero/tiles/proof (already an approved in-between wireframe,
+ * design/wireframes/encryption/in-between/04-security-desk.html), plus every dialog it can open:
+ * the opening lines (act 0 + act 1), the key (lines-first branch + the real form), rehearsal, the
+ * "Is it you?" fresh-proof screen, and Recast (forget a computer).
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--canvas); }
+.room { max-width: 60rem; margin: 0 auto; padding: 26px 22px 90px; }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+.stabs { display: flex; flex-wrap: wrap; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 22px; }
+.stabs a { font: 600 .88rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); text-decoration: none; padding: 10px 14px; box-shadow: inset 0 -2px 0 transparent; }
+.stabs a.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--text-dim); }
+
+.hero { padding: 6px 4px 18px; }
+.hero .s-act { justify-content: flex-start; }
+.hero h2 { font: 700 1.9rem var(--font-big); font-variation-settings: var(--soft-axes); margin: 6px 0 2px; }
+.hero h2 em { font-style: normal; color: var(--accent); }
+.hero p { color: var(--text-soft); font-style: italic; margin: 0; }
+.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 4px 16px; }
+.tile { padding: 14px 16px; background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); }
+.tile .tl { font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+.tile .tv { font: 700 1.05rem var(--font-big); margin-top: 4px; }
+.proof { font: 12px/1.8 var(--font-mono); color: var(--text-soft); background: var(--stage-well); box-shadow: inset 0 0 0 1px var(--seam); padding: 12px 14px; margin: 0 4px 16px; }
+.proof .not { color: var(--stage-danger-text); }
+.card { background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); margin: 0 4px 14px; padding: 14px 16px; }
+.card .ct { font: 700 .98rem var(--font-big); margin-bottom: 4px; }
+.card .cb { color: var(--text-soft); font-size: .88rem; line-height: 1.5; }
+.card .acts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.srow { display: flex; justify-content: space-between; gap: 20px; padding: 14px 2px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.srow:last-child { box-shadow: none; }
+.srow .label { font: 600 .92rem var(--font-big); }
+.srow .hint { font-size: .82rem; color: var(--text-dim); margin-top: 3px; }
+.srow .ctrl { flex: none; display: flex; gap: 8px; }
+.pc { display: flex; align-items: center; justify-content: space-between; padding: 10px 4px; box-shadow: inset 0 -1px 0 var(--seam); }
+.pc:last-child { box-shadow: none; }
+.pc .pn { font: 600 .9rem var(--font-big); }
+.pc .pm { font: 12px var(--font-mono); color: var(--text-dim); }
+
+/* dialog sheet */
+.scrim { position: fixed; inset: 0; background: color-mix(in srgb, var(--stage-black) 78%, transparent); display: grid; place-items: center; z-index: 40; padding: 1rem; }
+/* width uses calc(100vw - Npx), NOT 100%: .dossier is centered by a `display:grid;place-items:center`
+   ancestor (.scrim), whose grid track is size-to-content (indefinite) - a percentage against that
+   resolves as unconstrained, so min(28rem, 100%) silently ignored the 100% and overflowed narrow
+   viewports. vw is always definite, so it actually caps the width. */
+.dossier { width: min(28rem, calc(100vw - 2rem)); background: var(--face); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); padding: 1.8rem 1.9rem 1.6rem; box-sizing: border-box; }
+.act { font: 500 12px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--text-dim); display: flex; gap: 8px; align-items: center; }
+.act::after { content: "\2726"; color: var(--accent); margin-left: auto; }
+.marquee { font: 700 1.7rem var(--font-big); font-variation-settings: var(--soft-axes); margin: .4rem 0 1rem; }
+.marquee em { font-style: normal; color: var(--accent); }
+.direction { font-style: italic; color: var(--text-soft); line-height: 1.55; margin: 0 0 1rem; }
+.direction b { font-style: normal; color: var(--text); }
+.lines-head { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.wordlist { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+.wordlist span { box-shadow: inset 0 0 0 1px var(--seam); padding: 6px 8px; font: 12px var(--font-mono); color: var(--text); }
+.line-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.cue { display: flex; align-items: center; gap: 6px; box-shadow: inset 0 0 0 1px var(--seam); padding: 6px 8px; }
+.cue.bad { box-shadow: inset 0 0 0 1px var(--stage-danger-edge); }
+.cue i { font: 500 12px var(--font-mono); color: var(--text-faint); font-style: normal; width: 1.1em; }
+.cue input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: .9rem var(--font-body); }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+.meter { display: flex; gap: 4px; margin: -6px 0 10px; }
+.meter span { flex: 1; height: 4px; background: var(--seam); }
+.meter span.weak { background: var(--stage-danger-hot); }
+.meter span.strong { background: var(--stage-ok); }
+.meterwords { font-size: .78rem; color: var(--text-dim); margin: 2px 0 12px; }
+.pledge { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0; font-size: .85rem; color: var(--text-soft); font-style: italic; }
+.snote { padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--stage-warn); margin-bottom: 1rem; }
+.snote.flub { box-shadow: inset 0 0 0 1px var(--stage-danger-edge); }
+.snote .lbl { font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--stage-warn); }
+.snote.flub .lbl { color: var(--stage-danger-text); }
+.snote p { margin: 4px 0 0; font-size: .85rem; color: var(--text); }
+.cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 4px; }
+.seg { display: flex; box-shadow: inset 0 0 0 1px var(--seam); width: max-content; margin-bottom: 4px; }
+.seg button { font: 500 .8rem var(--font-body); padding: 7px 12px; background: none; border: 0; color: var(--text-dim); cursor: pointer; }
+.seg button.on { background: var(--shell-panel); color: var(--text); }
+
+[data-only] { display: none; }
+[data-only].show { display: block; }
+.scrim[data-only].show { display: grid; }
+.scrim[data-only].show { display: grid; }
+@media (max-width: 30rem) { .tiles { grid-template-columns: 1fr; } .line-grid, .wordlist { grid-template-columns: repeat(2,1fr); } }
+</style>
+</head>
+<body>
+<div class="room">
+  <nav class="stabs">
+    <a href="shell-settings.html">Appearance</a>
+    <a href="shell-settings.html?state=models">Models</a>
+    <a href="shell-settings.html?state=connections">Connections</a>
+    <a href="shell-settings.html?state=studio">Studio</a>
+    <a href="#" class="on">Security</a>
+    <a href="shell-settings.html?state=workbench">Workbench</a>
+    <a href="shell-settings-remote.html">Remote access</a>
+    <a href="shell-settings-updates.html">Updates</a>
+    <a href="shell-settings.html?state=about">About</a>
+  </nav>
+
+  <div class="hero">
+    <div class="s-act">Settings &middot; Security</div>
+    <h2>The stage <em>door</em></h2>
+    <p>Who gets in, and how.</p>
+  </div>
+
+  <div data-only="on off" class="show" id="mainbody">
+    <div class="tiles">
+      <div class="tile"><div class="tl">The lock on this computer</div><div class="tv" id="tv1">Your password</div></div>
+      <div class="tile"><div class="tl">Password</div><div class="tv" id="tv2">On</div></div>
+      <div class="tile"><div class="tl">Your lines</div><div class="tv" id="tv3">Written Sep 2, 2026</div></div>
+    </div>
+    <pre class="proof" id="proof">+ Everything you make is stored encrypted.
++ The library asks for your password before it opens.
++ A stolen disk shows nothing without the password or your lines.</pre>
+
+    <div class="card" data-only="off">
+      <div class="ct">Stage direction: a weak lock</div>
+      <div class="cb">No system keychain was available, so this computer's key sits in a file beside your library. Someone who copies both can open it. A stronger lock is available now.</div>
+      <div class="acts"><button class="s-btn">Move to the stronger lock</button><button class="s-btn ghost">Set a password instead</button></div>
+    </div>
+    <div class="card" data-only="off">
+      <div class="ct">Striking the set</div>
+      <div class="cb">The old key is still being cleared from the library file (removing password). Bunraku will try again in the background.</div>
+      <div class="acts"><button class="s-btn ghost">Try again now</button></div>
+    </div>
+    <div class="card" data-only="off">
+      <div class="ct">Still know your lines?</div>
+      <div class="cb">Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.</div>
+      <div class="acts"><button class="s-btn">Run my lines</button><button class="s-btn ghost">Write new lines</button></div>
+    </div>
+
+    <div class="card">
+      <div class="srow"><div><div class="label">Password</div><div class="hint" id="pwhint">On. Each time the app opens.</div></div><div class="ctrl"><button class="s-btn" id="pwbtn">Change it</button><button class="s-btn ghost" id="pwrm" style="color:var(--stage-danger-text)">Remove</button></div></div>
+      <div class="srow"><div><div class="label">Your lines (recovery words)</div><div class="hint" id="lineshint">Written Sep 2, 2026. Last rehearsed Sep 2, 2026.</div></div><div class="ctrl" id="linesctrl"><button class="s-btn">Rehearse</button><button class="s-btn ghost">Write new lines</button></div></div>
+      <div class="srow" id="locknowrow"><div><div class="label">Lock now</div><div class="hint">Closes the stage door until the password or your lines are given.</div></div><div class="ctrl"><button class="s-btn ghost">Lock now</button></div></div>
+    </div>
+
+    <div class="card">
+      <div class="ct">Other computers</div>
+      <div class="cb">This library has also been opened on another computer, from a copied folder or a restored backup. Each one below can still open it by itself.</div>
+      <div class="pc"><div><div class="pn">My laptop</div><div class="pm">Since Aug 14, 2026 &middot; A key file</div></div><button class="s-btn ghost" style="color:var(--stage-danger-text)">Forget</button></div>
+      <div class="pc"><div><div class="pn">Studio PC</div><div class="pm">Since Jul 2, 2026 &middot; Windows Credential Manager</div></div><button class="s-btn ghost" style="color:var(--stage-danger-text)">Forget</button></div>
+    </div>
+  </div>
+
+  <!-- dialogs -->
+  <div class="scrim" data-only="dlg-lines0">
+    <div class="dossier">
+      <div class="act">Act 0, Prologue</div><div class="marquee">Your opening <em>lines</em></div>
+      <p class="direction">The <b>PLAYER</b> is presented with twelve words. Spoken in order, they open this library on any computer, even when every other key is lost.</p>
+      <div class="lines-head">&#9656; Your lines</div>
+      <div class="wordlist"><span>velvet</span><span>harbor</span><span>lantern</span><span>orchard</span><span>salt</span><span>quiet</span><span>ferry</span><span>cinder</span><span>willow</span><span>drift</span><span>amber</span><span>hush</span></div>
+      <div class="snote"><div class="lbl">Stage direction</div><p>Lose these lines, and the show cannot go on. Bunraku keeps no copy it can show you again, and nobody can prompt you.</p></div>
+      <button class="s-btn ghost" style="margin:10px 0">Print the script</button>
+      <label class="pledge"><input type="checkbox" checked style="margin-top:3px">"I have written down my lines and stored them somewhere safe, lest they be forgotten."</label>
+      <div class="cta-row"><button class="s-btn">On to the audition</button><button class="s-btn ghost">Not tonight</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-lines1">
+    <div class="dossier">
+      <div class="act">Act 1, The Audition</div><div class="marquee">Recite your <em>lines</em></div>
+      <p class="direction">Your old lines, if you had any, keep working until these are confirmed.</p>
+      <div class="line-grid">
+        <div class="cue"><i>1.</i><input value="velvet"></div><div class="cue"><i>2.</i><input value="harbor"></div><div class="cue"><i>3.</i><input value="lantern"></div>
+        <div class="cue"><i>4.</i><input value="orchard"></div><div class="cue"><i>5.</i><input value="salt"></div><div class="cue"><i>6.</i><input value="quiet"></div>
+        <div class="cue"><i>7.</i><input value="ferry"></div><div class="cue"><i>8.</i><input value="cinder"></div><div class="cue"><i>9.</i><input value="willow"></div>
+        <div class="cue"><i>10.</i><input value="drift"></div><div class="cue"><i>11.</i><input value="amber"></div><div class="cue"><i>12.</i><input value="hush"></div>
+      </div>
+      <div class="cta-row"><button class="s-btn">Take the stage</button><button class="s-btn ghost">Not tonight</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-lines1-flub">
+    <div class="dossier">
+      <div class="act">Act 1, The Audition</div><div class="marquee">Recite your <em>lines</em></div>
+      <p class="direction">Your old lines, if you had any, keep working until these are confirmed.</p>
+      <div class="line-grid">
+        <div class="cue"><i>1.</i><input value="velvet"></div><div class="cue bad"><i>2.</i><input value="harbour"></div><div class="cue"><i>3.</i><input value="lantern"></div>
+        <div class="cue"><i>4.</i><input value="orchard"></div><div class="cue"><i>5.</i><input value="salt"></div><div class="cue bad"><i>6.</i><input value="quite"></div>
+        <div class="cue"><i>7.</i><input value="ferry"></div><div class="cue"><i>8.</i><input value="cinder"></div><div class="cue"><i>9.</i><input value="willow"></div>
+        <div class="cue"><i>10.</i><input value="drift"></div><div class="cue"><i>11.</i><input value="amber"></div><div class="cue"><i>12.</i><input value="hush"></div>
+      </div>
+      <div class="snote flub"><div class="lbl">Line flub</div><p>Cues 2, 6 are off. Check your script.</p></div>
+      <div class="cta-row"><button class="s-btn">Take the stage</button><button class="s-btn ghost">Not tonight</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-key-lines-first">
+    <div class="dossier">
+      <div class="act">Before the key</div><div class="marquee">Lines <em>first</em></div>
+      <div class="snote"><div class="lbl">Stage direction</div><p>A password you forget would lock the stage door for good. Your twelve lines are the way back in, so they are written first. It takes about a minute.</p></div>
+      <div class="cta-row"><button class="s-btn">Write my opening lines</button><button class="s-btn ghost">Not tonight</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-key">
+    <div class="dossier">
+      <div class="act">Act II, The Key</div><div class="marquee">A key for the <em>door</em></div>
+      <p class="direction">Once set, every computer forgets its own key and the door asks for this one.</p>
+      <div class="field"><label>New password</label><input class="s-input" type="password" value="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+      <div class="meter"><span class="strong"></span><span class="strong"></span><span class="strong"></span><span></span></div>
+      <div class="meterwords">Strong. A few unrelated words make a good key.</div>
+      <div class="field"><label>Say it again</label><input class="s-input" type="password" value="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"></div>
+      <div class="field"><label>When the door asks</label><div class="hint" style="font-size:.8rem;color:var(--text-dim);margin-bottom:6px">Each time the app opens, and also after you step away if you choose.</div>
+        <div class="seg"><button class="on">Each open</button><button>Also after 15 min idle</button></div>
+      </div>
+      <div class="cta-row"><button class="s-btn">Lock the door</button><button class="s-btn ghost">Not tonight</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-rehearse">
+    <div class="dossier">
+      <div class="act">Rehearsal</div><div class="marquee">Still know your <em>lines?</em></div>
+      <p class="direction">Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.</p>
+      <div class="line-grid">
+        <div class="cue"><i>1.</i><input></div><div class="cue"><i>2.</i><input></div><div class="cue"><i>3.</i><input></div>
+        <div class="cue"><i>4.</i><input></div><div class="cue"><i>5.</i><input></div><div class="cue"><i>6.</i><input></div>
+        <div class="cue"><i>7.</i><input></div><div class="cue"><i>8.</i><input></div><div class="cue"><i>9.</i><input></div>
+        <div class="cue"><i>10.</i><input></div><div class="cue"><i>11.</i><input></div><div class="cue"><i>12.</i><input></div>
+      </div>
+      <div class="cta-row"><button class="s-btn">Run my lines</button><button class="s-btn ghost">Not tonight</button><button class="s-btn ghost">Write new lines</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-proveit">
+    <div class="dossier">
+      <div class="act">Stage manager</div><div class="marquee">Is it <em>you?</em></div>
+      <p class="direction">Changing the password, the lines, or the remembered computers needs the password or your lines. You will not be asked again for five minutes.</p>
+      <div class="field"><label>Current password</label><input class="s-input" type="password"></div>
+      <div class="cta-row"><button class="s-btn">It is me</button><button class="s-btn ghost">Use my lines instead</button></div>
+    </div>
+  </div>
+  <div class="scrim" data-only="dlg-recast">
+    <div class="dossier">
+      <div class="act">Recast</div><div class="marquee">Forget <em>My laptop?</em></div>
+      <p class="direction">It will no longer open the library by itself. To open it there again, you will need your lines.</p>
+      <div class="cta-row"><button class="s-btn danger">Forget it</button><button class="s-btn ghost">Keep it</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="on" class="on">Page: password + lines set</button>
+  <button data-s="off">Page: no password (weak lock, cleanup, rehearsal due)</button>
+  <button data-s="dlg-lines0">Dialog: opening lines, act 0</button>
+  <button data-s="dlg-lines1">Dialog: opening lines, act 1</button>
+  <button data-s="dlg-lines1-flub">Dialog: act 1, flubbed cues</button>
+  <button data-s="dlg-key-lines-first">Dialog: key, lines-first</button>
+  <button data-s="dlg-key">Dialog: the key (password + meter)</button>
+  <button data-s="dlg-rehearse">Dialog: rehearsal</button>
+  <button data-s="dlg-proveit">Dialog: is it you?</button>
+  <button data-s="dlg-recast">Dialog: forget a computer</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var NOTES = {
+    on: "hasPassword=true, hasWords=true, others.length>0, no weak-lock/cleanup/rehearsal cards (their conditions do not apply here). proofLines(): the \"+\" lines only, no \"-\" line, since a password is set.",
+    off: "hasPassword=false, hasWords=true, deviceLock weak+upgradeable, cleanupPending set, rehearsal overdue - every conditional card shown at once for reference (in the real room these overlap less often). proofLines() adds the \"-\" line about anyone using this computer.",
+    "dlg-lines0": "OpeningLines act 0: the twelve words shown ONCE, Print the script, the written-it-down pledge gates the CTA.",
+    "dlg-lines1": "OpeningLines act 1 (the audition): typed back to confirm, all correct.",
+    "dlg-lines1-flub": "Same audition with two cues wrong: those cells mark invalid and the Line flub note names them by number.",
+    "dlg-key-lines-first": "TheKey when hasWords=false: the password form is withheld until lines are written first.",
+    "dlg-key": "TheKey's real form: two password fields, live strength meter (loads /vendor/strength.js on demand), when-the-door-asks segmented control.",
+    "dlg-rehearse": "Rehearsal: all twelve cues blank, asked in full since no single word is ever stored.",
+    "dlg-proveit": "The \"Is it you?\" fresh-proof screen any change asks for when 5 minutes have passed; \"Use my lines instead\" toggles to the cue grid when a password exists.",
+    "dlg-recast": "Recast: forgetting a computer asks first, THEN runs the same fresh-proof flow (dlg-proveit) before it actually forgets.",
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      var list = (el.getAttribute("data-only") || "").split(" ");
+      el.classList.toggle("show", list.indexOf(s) !== -1);
+    });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + NOTES[s];
+    var off = s === "off";
+    document.getElementById("tv1").textContent = off ? "A key file" : "Your password";
+    document.getElementById("tv2").textContent = off ? "Off" : "On";
+    document.getElementById("proof").innerHTML = off
+      ? "+ Everything you make is stored encrypted.\n+ This computer opens it by itself, through a key file in your home folder.\n+ A stolen disk shows nothing without this computer or your lines.\n<span class=\"not\">- Anyone using this computer as you can open it. Add a password to stop that.</span>\n<span class=\"not\">- The key file protects a copied library, not a whole stolen disk.</span>"
+      : "+ Everything you make is stored encrypted.\n+ The library asks for your password before it opens.\n+ A stolen disk shows nothing without the password or your lines.";
+    document.getElementById("pwhint").textContent = off ? "Off. This computer opens your library by itself." : "On. Each time the app opens.";
+    document.getElementById("pwbtn").textContent = off ? "Set a password" : "Change it";
+    document.getElementById("pwrm").style.display = off ? "none" : "";
+    document.getElementById("locknowrow").style.display = off ? "none" : "";
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "on");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Scene</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="scene.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Scene</h1>
+    <p>The scene page: header, messages, composer, the wing rails, and every wing (Cast, Context,
+    Control Booth, Stage, AI, Prompting, World, Props/TrackHare).</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="scene.page">
+    <header>
+      <h2 class="bk-heading">Scene page</h2>
+      <span class="bk-tag">src/ui/apps/scenes/scene-page.tsx</span>
+      <p class="bk-meta">Parts: scene.header, scene.take-pill, scene.messages, scene.message
+      (.name .body .tools), scene.cut-line, scene.composer (.send), scene.starting,
+      scene.reply-counter, scene.fail, scene.update-badge, scene.wings, scene.wing (.tab)</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="scene.page.a" data-taste-title="Side wings">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Side wings</h3>
+          <p>Wings open as a panel beside the messages with a tab rail, the scene paused behind.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen sp-root" data-part="scene.page" data-variant="a" data-state="conversation">
+            <div class="sp-shell">
+                <nav class="sp-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="sp-dock-brand" data-part="shell.dock.brand">
+                    <svg class="sp-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="sp-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" aria-current="page">
+                    <span class="sp-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Scenes</b><small class="sp-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Workbench</b><small class="sp-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="library" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Library</b><small class="sp-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="press" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Press</b><small class="sp-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Agent</b><small class="sp-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Kit</b><small class="sp-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Settings</b></span>
+                  </button>
+                  <div class="sp-dock-foot">
+                    <button type="button" class="sp-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="sp-dock-tx"><b class="sp-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="sp-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="sp-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <main class="bk-stage sp-stage">
+                <div class="sp-play">
+                  <header class="sp-header" data-part="scene.header">
+                    <button type="button" class="sp-back" aria-label="Back to Scenes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7M19 12H5"/></svg></button>
+                    <b class="bk-name sp-hd-name">Marguerite Vane</b>
+                    <span class="sp-hd-tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+                    <span class="sp-hold">
+                      <button type="button" class="bk-tag" data-mark data-part="scene.take-pill" aria-expanded="false">Director's Cut &#9662;</button>
+                      <div class="sp-takes bk-panel bk-frame" data-mark data-part="ui.menu" role="menu">
+                        <div class="sp-wing-fold"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Scene Takes</b><p class="bk-meta">Switch between alternate versions</p></div>
+                        <div class="bk-item" aria-selected="true">Original Take<span class="bk-tag" data-mark style="margin-left:var(--bk-space-2)">Main</span></div>
+                        <p class="sp-take-sep bk-label">Alternate Takes</p>
+                        <div class="bk-item" aria-selected="true">Take 2<span class="bk-meta" style="margin-left:auto">Sep 27 &middot; 5 msgs</span></div>
+                        <div class="bk-item">The quiet version<span class="bk-meta" style="margin-left:auto">Sep 26 &middot; 3 msgs</span></div>
+                        <div class="sp-take-foot bk-meta">Create new takes with Branch from here on any message</div>
+                      </div>
+                    </span>
+                    <button type="button" class="bk-tag sp-update-badge" data-part="scene.update-badge" data-tone="warn" data-mark>Update available</button>
+                    <span class="sp-grow"></span>
+                  </header>
+
+                  <div class="sp-scroll" data-part="scene.messages">
+                    <div class="sp-greet">
+                      <div class="sp-greet-box">
+                        <p class="bk-label" data-tone="warn">Opening Message <span class="bk-meta">(1 of 4)</span></p>
+                        <div class="sp-greet-dots">
+                          <button type="button" aria-current="true" aria-label="Greeting 1"></button>
+                          <button type="button" aria-label="Greeting 2"></button>
+                          <button type="button" aria-label="Greeting 3"></button>
+                          <button type="button" aria-label="Greeting 4"></button>
+                        </div>
+                        <p class="bk-meta">This will be the first message in your conversation</p>
+                      </div>
+                      <article class="sp-msg" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#1</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-bub bk-panel"><div class="sp-prose" data-part="scene.message.body">
+                            <p><em>The lamp room smells of kerosene and wet wool. Marguerite is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back.</em></p>
+                            <p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em> <q>Sit, if you like. The storm will not care either way.</q></p>
+                          </div></div>
+                        </div>
+                      </article>
+                    </div>
+
+                    <div class="sp-thread">
+                      <div class="sp-cutline" data-part="scene.cut-line"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg><span class="bk-meta">2 messages were cut here, restorable for 3 days</span><span class="sp-grow"></span><button type="button" class="bk-tag" data-part="ui.button">Restore</button></div>
+
+                      <article class="sp-msg" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#1</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-bub bk-panel sp-viewbub"><div class="sp-prose" data-part="scene.message.body">
+                            <p><em>The lamp room smells of kerosene and wet wool. Marguerite is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back.</em></p>
+                            <p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em> <q>Sit, if you like. The storm will not care either way.</q></p>
+                          </div>
+                            <div class="sp-acts" data-part="scene.message.tools" data-forced>
+                              <button type="button" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                              <button type="button" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="14" height="14"/></svg></button>
+                              <span class="sp-sep"></span>
+                              <span class="sp-hold"><button type="button" title="More">&middot;&middot;&middot;</button>
+                                <div class="sp-menu2 bk-panel bk-frame" data-mark role="menu"><div class="bk-item">Branch from here</div></div>
+                              </span>
+                              <span class="sp-sep"></span>
+                              <span class="sp-hold"><button type="button" class="sp-del" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+                                <div class="sp-dd bk-panel bk-frame" data-mark role="menu"><div class="bk-item">Delete this message</div><div class="bk-item" data-tone="danger">Delete this &amp; all after</div></div>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="sp-msg" data-who="user" data-deck="persona" data-part="scene.message">
+                        <div class="sp-por"><span>Y</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#2</span><p class="bk-name sp-spk">You</p>
+                          <div class="sp-bub bk-panel sp-viewbub"><div class="sp-prose" data-part="scene.message.body"><p>I set the lantern I did not bring on the chart table. <q>Is the relief boat still coming?</q></p></div>
+                            <div class="sp-acts" data-part="scene.message.tools"><button type="button" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button type="button" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="14" height="14"/></svg></button><span class="sp-sep"></span><button type="button" class="sp-del" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>
+                          </div>
+                          <div class="sp-bub bk-panel sp-editbub">
+                            <textarea class="sp-editbox">I set the lantern I did not bring on the chart table. "Is the relief boat still coming?"</textarea>
+                            <div class="sp-editrow"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Save</button></div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="sp-msg" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#3</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-bub bk-panel"><div class="sp-prose" data-part="scene.message.body"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q> <em>She says it to the glass, not to you.</em> <q>I watched it go. I did not wave.</q></p></div>
+                            <div class="sp-acts" data-part="scene.message.tools" data-forced>
+                              <button type="button" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                              <button type="button" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="14" height="14"/></svg></button>
+                              <span class="sp-sep"></span>
+                              <button type="button" title="Regenerate as a new version"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9M21 3v5h-5M21 12a9 9 0 0 1-9 9"/></svg></button>
+                              <span class="sp-sep"></span>
+                              <button type="button" title="More">&middot;&middot;&middot;</button>
+                              <span class="sp-sep"></span>
+                              <button type="button" class="sp-del" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+                            </div>
+                          </div>
+                          <div class="sp-meta" data-part="scene.reply-counter">
+                            <span class="bk-meta">claude-opus-5-5 &middot; 6.2s</span>
+                            <span class="sp-swc bk-tag" data-show="default"><button type="button" disabled title="No previous version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">1</span>/<span>1</span></span><button type="button" title="Regenerate">&#8635;</button></span>
+                            <span class="sp-swc bk-tag" data-show="regen"><button type="button" title="Back to saved version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">2</span>/<span>2</span></span><button type="button" disabled title="Generation in progress">&#8635;</button></span>
+                            <span class="sp-swc bk-tag" data-show="newswipe"><button type="button" title="Previous version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">2</span>/<span>2</span><span class="sp-nw">new</span></span><button type="button" title="Regenerate">&#8635;</button></span>
+                            <span class="sp-swc bk-tag" data-show="browse"><button type="button" disabled title="No previous version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">1</span>/<span>3</span></span><button type="button" title="Next version">&rsaquo;</button></span>
+                          </div>
+                        </div>
+                      </article>
+
+                      <div class="sp-starting" data-part="scene.starting"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span class="bk-meta">Starting...</span></div>
+
+                      <article class="sp-msg sp-msg4" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta">#4</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-msg4-streaming sp-bub bk-panel" data-live><div class="sp-prose"><p><em>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench</em><span class="sp-caret"></span></p></div></div>
+                          <div class="sp-msg4-settled">
+                            <div class="sp-bub bk-panel"><div class="sp-prose"><p><em>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench.</em></p></div></div>
+                            <div class="sp-cutoff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span class="bk-meta">Cut off when Bunraku closed. What arrived is kept.</span><button type="button" class="bk-tag" data-part="ui.button" style="margin-left:auto">Regenerate</button></div>
+                            <div class="sp-meta"><span class="bk-meta">claude-opus-5-5 &middot; 2.9s</span></div>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+
+                    <div class="sp-error">
+                      <p class="bk-meta" style="text-align:center;margin-top:3rem">Scenes are unavailable<br><span style="color:var(--bk-text-dim)">the studio could not be reached</span></p>
+                      <div style="display:flex;gap:var(--bk-space-2);justify-content:center;margin-top:var(--bk-space-3)"><button type="button" class="bk-tag" data-part="ui.button">Try again</button><button type="button" class="bk-tag" data-part="ui.button">Back to Scenes</button></div>
+                    </div>
+                  </div>
+
+                  <div class="sp-fail bk-panel bk-frame" data-crown data-tone="danger">
+                    <div class="sp-fail-top">
+                      <span class="sp-fail-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+                      <div style="flex:1"><p class="bk-name" style="font-size:var(--bk-fs-sm)">Generation Failed</p><p class="bk-meta"><code class="bk-num">upstream_stream_read_error</code> Upstream response stream was interrupted</p></div>
+                      <button type="button" class="bk-tag" data-part="ui.button">Dismiss</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Retry</button>
+                    </div>
+                    <div class="sp-fail-draft" data-part="scene.fail">
+                      <p class="bk-meta">Interrupted draft (not saved)</p>
+                      <textarea readonly>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make</textarea>
+                      <p class="bk-meta">Copy any text you want to keep before dismissing or retrying. This text is only in this tab and is not saved to the scene.</p>
+                    </div>
+                  </div>
+
+                  <div class="sp-dockbar">
+                    <form class="sp-cap bk-panel bk-frame" data-mark data-cap="ready" data-part="scene.composer">
+                      <textarea rows="1" placeholder="Message Marguerite Vane..."></textarea>
+                      <button type="submit" class="sp-send" data-part="scene.composer.send" aria-label="Send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></svg></button>
+                    </form>
+                    <form class="sp-cap bk-panel bk-frame" data-mark data-cap="busy" data-part="scene.composer">
+                      <textarea rows="1" placeholder="Message Marguerite Vane..."></textarea>
+                      <button type="button" class="sp-stop" aria-label="Stop"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg></button>
+                    </form>
+                    <form class="sp-cap bk-panel bk-frame" data-cap="noconn" data-part="scene.composer">
+                      <textarea rows="1" placeholder="Pick a connection to start the scene." disabled></textarea>
+                      <button type="button" class="sp-hint">Open AI wing</button>
+                      <button type="submit" class="sp-send" aria-label="Send" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></svg></button>
+                    </form>
+                  </div>
+                  <div class="sp-wing-hudline bk-meta" data-deck="character">Take 2 &middot; 4 messages &middot; claude-opus-5-5</div>
+                </div>
+
+                <nav class="sp-rail sp-l" data-part="scene.wings" aria-label="Scene wings">
+                  <button type="button" class="sp-wi" data-deck="accent" id="spRailTip" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg><span class="sp-tip bk-panel bk-frame" data-mark data-deck="accent"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Control Booth</b><p class="bk-meta">Scene setup and automation</p></span></button>
+                  <button type="button" class="sp-wi" data-deck="character" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2"/></svg></button>
+                  <button type="button" class="sp-wi" data-deck="preset" aria-pressed="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64"/></svg></button>
+                  <button type="button" class="sp-wi" data-deck="lorebook" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg></button>
+                  <button type="button" class="sp-wi" data-deck="regex" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.4 7.9c0 .3.1.6.3.9"/></svg></button>
+                </nav>
+                <nav class="sp-rail sp-r" data-part="scene.wings" aria-label="Tool wings">
+                  <button type="button" class="sp-wi" data-tone="info" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><rect x="9" y="9" width="6" height="6"/></svg></button>
+                  <button type="button" class="sp-wi" data-tone="info" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14"/></svg></button>
+                  <button type="button" class="sp-wi" data-tone="warn" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </nav>
+                <button type="button" class="sp-paused-mark"><span class="sp-paused-sq"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></span><span class="bk-label" data-mark>Scene paused</span></button>
+
+                <!-- Control Booth: empty on purpose -->
+                <section class="sp-wing sp-l sp-wing-booth" data-deck="accent">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Scene / <b>Control Booth</b></p></div>
+                  <div class="sp-wbody"><div class="sp-quiet"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg><p class="bk-meta">Control Booth is not built yet.</p><p class="bk-meta" style="color:var(--bk-text-faint)">Scene setup and automation</p></div></div></div>
+                </section>
+
+                <!-- Cast -->
+                <section class="sp-wing sp-l sp-wing-cast" data-deck="character">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Scene / <b>Cast</b></p></div>
+                  <div class="sp-wbody">
+                    <header class="sp-whero bk-panel bk-frame" data-crown>
+                      <span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5"/></svg></span>
+                      <div><p class="bk-label">This scene's cast</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Cast</h2><p class="bk-meta">The character and persona as they were when this scene started. Edits in the Library reach a scene only when you update it here.</p></div>
+                    </header>
+                    <p class="sp-cast-notice bk-meta" data-tone="warn" style="display:none;padding:var(--bk-space-2) var(--bk-space-3);box-shadow:inset 3px 0 0 var(--bk-warn)">This scene plays version 3 of Marguerite Vane. The Library has version 5.</p>
+                    <p class="sp-cast-notice-gone bk-meta" data-tone="danger" style="display:none;padding:var(--bk-space-2) var(--bk-space-3);box-shadow:inset 3px 0 0 var(--bk-danger)">Marguerite Vane's card is in the Trash. This scene keeps playing its own copy, version 3.</p>
+                    <p class="bk-panel sp-dcard" data-crown data-deck="character"><span class="sp-cast-upd bk-tag" data-tone="warn" data-mark style="display:none;margin-bottom:var(--bk-space-2)">Update available</span><br><span class="bk-label">Now playing</span><br><b class="bk-name">Marguerite Vane</b><br><span class="bk-meta">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span></p>
+                    <p class="bk-panel sp-dcard" data-crown data-deck="persona"><span class="bk-label">You</span><br><b class="bk-name">User</b><br><span class="bk-meta">No default persona is set, so you play as User.</span></p>
+                  </div>
+                </section>
+
+                <!-- Prompting / Preset -->
+                <section class="sp-wing sp-l sp-wing-prompting" data-deck="preset">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Prompting / <b>Preset</b></p><div class="bk-tag" data-mark>Preset &middot; 14 of 22 on</div></div>
+                  <div class="sp-wbody" style="padding-bottom:0">
+                    <header class="sp-whero bk-panel bk-frame" data-crown>
+                      <span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28"/></svg></span>
+                      <div><p class="bk-label">Edit Preset</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Velvet Quill</h2><p class="bk-meta">Tune prompts, samplers, and post-processing for this scene. Switches and sampler values here are this scene's own; prompt text edits change the preset everywhere.</p></div>
+                      <div class="sp-whero-tools"><button type="button" class="bk-tag" data-part="ui.button">Open in Workbench</button><button type="button" class="bk-tag" data-part="ui.button" data-tone="danger">Run without</button></div>
+                    </header>
+                    <div class="bk-panel" style="padding:var(--bk-space-3) var(--bk-space-4);display:flex;gap:var(--bk-space-3);flex-wrap:wrap">
+                      <span class="bk-meta">Samplers:</span>
+                      <span class="bk-tag" data-deck="regex">Temp <b>0.85</b></span><span class="bk-tag" data-deck="persona">Top P <b>0.95</b></span><span class="bk-tag" data-tone="ok">Top K <b>40</b></span><span class="bk-tag" data-deck="lorebook">Response <b>1,200</b></span>
+                    </div>
+                  </div>
+                  <div class="sp-split">
+                    <aside class="sp-side2 bk-panel">
+                      <div class="sp-wing-fold" style="display:flex;justify-content:space-between"><span class="bk-label">Prompts</span><span class="bk-meta">14/22</span></div>
+                      <div class="sp-side-list">
+                        <div class="bk-item" aria-selected="true"><span style="flex:1">Prose: literary</span><span class="bk-meta">~210 tok</span><span class="bk-tag">SYS</span></div>
+                        <div class="bk-item" aria-disabled="true"><span style="flex:1">Prose: punchy</span><span class="bk-meta">~150 tok</span></div>
+                        <div class="bk-item"><span style="flex:1">Dialogue in quotes</span><span class="bk-meta">~40 tok</span><span class="bk-tag">USR</span></div>
+                      </div>
+                      <div class="sp-wing-fold bk-meta">Active prompts <b class="bk-num">~3,420 tok</b></div>
+                    </aside>
+                    <section class="sp-ed">
+                      <div class="sp-wing-fold" style="display:flex;align-items:center;gap:var(--bk-space-2)"><span class="bk-name" style="flex:1;font-size:var(--bk-fs-sm)">Prose: literary</span><span class="bk-meta">~210 tok</span></div>
+                      <div class="sp-wbody">
+                        <div style="display:flex;gap:var(--bk-space-1)"><span class="bk-tag">System</span><span class="bk-tag">Before the history</span><span class="bk-tag">Order 100</span></div>
+                        <textarea class="sp-editbox" style="min-height:8rem">Write in a literary register. Favor concrete sensory detail over summary, let silences carry weight, and keep {{char}}'s voice consistent with the examples.</textarea>
+                        <p class="bk-meta">Prompt text belongs to Velvet Quill: an edit here changes it for every scene that uses it. The switch beside it is this scene's alone.</p>
+                      </div>
+                    </section>
+                  </div>
+                </section>
+
+                <!-- World / Lorebook -->
+                <section class="sp-wing sp-l sp-wing-world" data-deck="lorebook">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">World / <b>Lorebook</b></p><div class="bk-tag" data-mark>Lorebook &middot; 3 books on</div></div>
+                  <div class="sp-split">
+                    <aside class="sp-side2 bk-panel">
+                      <div class="sp-wing-fold" style="display:flex;justify-content:space-between"><span class="bk-label">Active lorebooks</span><span class="bk-meta">3</span></div>
+                      <div class="sp-side-list">
+                        <div class="bk-item" aria-selected="true"><span class="bk-dot" data-tone="ok" style="margin-right:var(--bk-space-2)"></span><span style="flex:1">Keeper's Log<br><span class="bk-meta">18 entries &middot; From Marguerite</span></span></div>
+                        <div class="bk-item"><span class="bk-dot" data-tone="ok" style="margin-right:var(--bk-space-2)"></span><span style="flex:1">The Drowned Coast<br><span class="bk-meta">21 entries &middot; Added here</span></span></div>
+                        <div class="bk-item" aria-disabled="true"><span class="bk-dot" style="margin-right:var(--bk-space-2)"></span><span style="flex:1">My quirks<br><span class="bk-meta">3 entries &middot; From your persona</span></span></div>
+                        <button type="button" class="bk-tag" data-part="ui.button" style="margin:var(--bk-space-2)">+ Add Lorebook</button>
+                      </div>
+                      <div class="sp-wing-fold bk-meta">Last turn <b class="bk-num">5 fired &middot; ~740 tok</b></div>
+                    </aside>
+                    <section class="sp-ed">
+                      <div class="sp-wing-fold" style="display:flex;align-items:center;gap:var(--bk-space-2)"><span class="bk-tag" data-tone="ok" data-mark style="margin-right:auto">saved</span><button type="button" class="bk-tag" data-part="ui.button">+ New entry</button></div>
+                      <div class="sp-wbody">
+                        <p class="bk-label">Constant &middot; 3</p>
+                        <div class="bk-item"><span style="flex:1">The lighthouse<br><span class="bk-meta">~120 tok</span></span><span class="bk-tag" data-tone="ok">always</span></div>
+                        <div class="bk-item"><span style="flex:1">Marguerite's rules<br><span class="bk-meta">~210 tok</span></span><span class="bk-tag" data-tone="ok">always</span></div>
+                        <p class="bk-label" style="margin-top:var(--bk-space-2)">Selective &middot; 15</p>
+                        <div class="bk-item" aria-selected="true"><span style="flex:1">The storm of '09<br><span class="bk-meta">~180 tok</span></span><span class="bk-tag" data-mark>"storm"</span></div>
+                        <div class="bk-item"><span style="flex:1">Her brother<br><span class="bk-meta">~140 tok</span></span><span class="bk-tag" data-tone="danger">sticky</span></div>
+                        <div class="bk-item"><span style="flex:1">Shipwrecks<br><span class="bk-meta">~200 tok</span></span><span class="bk-tag" data-tone="warn">matched, over budget</span></div>
+                      </div>
+                    </section>
+                  </div>
+                </section>
+
+                <!-- World: entry editor -->
+                <section class="sp-wing sp-l sp-wing-entry" data-deck="lorebook">
+                  <div class="sp-wing-fold" style="display:flex;align-items:center;gap:var(--bk-space-2)"><button type="button" class="bk-tag" data-part="ui.button">&lsaquo; Back</button><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keeper's Log</b><span class="bk-meta">18 entries &middot; ~2.4k tok</span></div>
+                  <div class="sp-wbody">
+                    <div style="display:flex;align-items:center;gap:var(--bk-space-2)"><span class="bk-tag" data-mark>On</span><b class="bk-name" style="flex:1">The storm of '09</b><button type="button" class="bk-tag" data-part="ui.button">Advanced</button></div>
+                    <div style="display:flex;gap:var(--bk-space-3);flex-wrap:wrap"><span class="bk-meta">Type <b class="bk-num">Selective</b></span><span class="bk-meta">Order <b class="bk-num">120</b></span><span class="bk-meta">Scan <b class="bk-num">4</b></span><span class="bk-meta">~180 tok</span></div>
+                    <div><p class="bk-label">Triggers</p><div style="display:flex;gap:var(--bk-space-1);flex-wrap:wrap"><span class="bk-tag">storm</span><span class="bk-tag">'09</span><span class="bk-tag">the flood</span><button type="button" class="bk-tag" data-part="ui.button">+ key</button></div></div>
+                    <div><p class="bk-label">Placement</p><div style="display:flex;gap:var(--bk-space-1);flex-wrap:wrap"><span class="bk-tag">World</span><span class="bk-tag" data-mark>Character</span><span class="bk-tag">Scene</span><span class="bk-tag">@ Depth</span></div></div>
+                    <textarea class="sp-editbox" style="min-height:7rem">In the autumn of '09 a storm took the supply boat and both men aboard. Marguerite kept the light burning three nights without sleep. She does not speak of it unless {{user}} earns it.</textarea>
+                    <p class="bk-meta">Saved to Keeper's Log. Every scene reading this book uses the new text from its next turn.</p>
+                  </div>
+                </section>
+
+                <!-- Props -->
+                <section class="sp-wing sp-l sp-wing-props" data-deck="regex">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Scene / <b>Props</b></p><div class="bk-tag">Props &middot; 0 on</div></div>
+                  <div class="sp-wbody">
+                    <div class="sp-prop-row bk-panel bk-frame" data-crown style="--bk-tint:var(--bk-prop-hare)">
+                      <span class="sp-prop-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.44 7.85c-.05.32.06.65.29.88"/></svg></span>
+                      <div><b class="bk-name" style="font-size:var(--bk-fs-sm)">TrackHare</b><p class="bk-meta">See which lorebook entries went into each reply and why, which ones did not and why not, how the prompt's tokens were spent, and which entries woke which.</p></div>
+                      <span class="bk-tag" style="margin-left:auto">Off</span>
+                    </div>
+                    <p class="bk-meta">Props are optional. With none registered the wing says "No props yet."</p>
+                  </div>
+                </section>
+
+                <!-- AI / Model -->
+                <section class="sp-wing sp-r sp-wing-ai" data-tone="info">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>AI</b></p><div class="bk-tag" data-mark>Model &middot; This scene</div></div>
+                  <div class="sp-wbody">
+                    <header class="sp-whero bk-panel bk-frame" data-crown>
+                      <span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span>
+                      <div><p class="bk-label">AI Brain</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Select AI Model</h2><p class="bk-meta">Pick which model writes the scene. Switch any time mid-scene; the new model picks up where the last one left off.</p></div>
+                    </header>
+                    <div class="sp-pills">
+                      <span class="bk-tag" style="color:var(--bk-accent-text)">+ Connect a provider</span>
+                      <span class="bk-tag" data-mark>All connections</span>
+                      <span class="bk-tag" data-deck="preset">OpenRouter &middot; Personal</span>
+                      <span class="bk-tag" data-deck="lorebook">NanoGPT</span>
+                    </div>
+                    <p class="bk-label" data-tone="ok">Currently Selected</p>
+                    <div class="sp-mrow bk-panel bk-frame" data-crown data-deck="preset" data-cur><span style="flex:1"><b class="bk-name" style="font-size:var(--bk-fs-sm)">anthropic/claude-opus-5-5</b><br><span class="bk-meta">OpenRouter &middot; Personal &middot; 1M context</span></span><span class="bk-tag" data-tone="ok">Active</span></div>
+                    <p class="bk-label">Favorites</p>
+                    <div class="sp-mrow bk-panel" data-deck="lorebook"><span style="flex:1"><b class="bk-name" style="font-size:var(--bk-fs-sm)">deepseek-v4-pro</b><br><span class="bk-meta">NanoGPT &middot; 256k context</span></span></div>
+                  </div>
+                </section>
+
+                <!-- AI: no connections -->
+                <section class="sp-wing sp-r sp-wing-ai-noconn" data-tone="info">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>AI</b></p></div>
+                  <div class="sp-wbody">
+                    <header class="sp-whero bk-panel bk-frame" data-crown><span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span><div><p class="bk-label">AI Brain</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Select AI Model</h2></div></header>
+                    <div class="bk-panel" style="padding:var(--bk-space-4)"><p class="bk-meta">Bunraku talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.</p><button type="button" class="bk-tag" data-part="ui.button" style="margin-top:var(--bk-space-2)">Open Kit connections</button></div>
+                  </div>
+                </section>
+
+                <!-- Stage: empty -->
+                <section class="sp-wing sp-r sp-wing-stage" data-tone="info">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>Stage</b></p></div>
+                  <div class="sp-wbody"><div class="sp-quiet"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14"/></svg><p class="bk-meta">Stage is not built yet.</p><p class="bk-meta" style="color:var(--bk-text-faint)">Appearance, gallery, and music</p></div></div></div>
+                </section>
+
+                <!-- Context: quiet placeholder -->
+                <section class="sp-wing sp-r sp-wing-context" data-tone="warn">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>Context</b></p></div>
+                  <div class="sp-wbody"><div class="sp-quiet"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></svg><p class="bk-meta">What the AI sees will show here</p><p class="bk-meta" style="color:var(--bk-text-faint)">The prompt viewer arrives in a later step</p></div></div></div>
+                </section>
+              </main>
+            </div>
+
+            <div class="sp-scrim sp-scrim-cutfrom">
+              <div class="bk-panel bk-frame sp-sheet" data-crown role="alertdialog" aria-label="Cut from here">
+                <p class="bk-label">The cutting room</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Cut from here?</h2>
+                <p class="bk-meta">This cuts this message and every one after it. A restore line stays in their place for 3 days.</p>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-tone="danger" data-part="ui.button">Delete from here</button></div>
+              </div>
+            </div>
+            <div class="sp-scrim sp-scrim-fork">
+              <div class="bk-panel bk-frame sp-sheet" data-crown data-deck="preset" role="dialog" aria-label="Fork this scene">
+                <p class="bk-label" data-deck="preset">Scene takes</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Fork this scene</h2>
+                <p class="bk-meta">Create a new take from message 1. Your current scene will not change.</p>
+                <label class="bk-label">Fork name<input type="text" value="Take 3"></label>
+                <div class="sp-sheet-box"><p class="bk-label">This fork includes</p><ul><li>Every message up to and including message 1</li><li>The scene's cast, as it is in this scene</li></ul></div>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Create fork</button></div>
+              </div>
+            </div>
+            <div class="sp-scrim sp-scrim-deltake">
+              <div class="bk-panel bk-frame sp-sheet" data-crown data-tone="danger" role="alertdialog" aria-label="Delete this take">
+                <p class="bk-label">Scene takes</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Delete this take</h2>
+                <p class="bk-name" style="font-size:var(--bk-fs-sm)">Take 2</p>
+                <p class="bk-meta">This take and its 5 messages go to the Trash. You can restore it for 3 days.</p>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Keep take</button><button type="button" class="bk-tag" data-mark data-tone="danger" data-part="ui.button">Delete take</button></div>
+              </div>
+            </div>
+            <div class="sp-scrim sp-scrim-update">
+              <div class="bk-panel bk-frame sp-sheet" data-crown data-tone="warn" role="dialog" aria-label="Update to the latest card">
+                <p class="bk-label" data-tone="warn">Scene cast</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Update to the latest card</h2>
+                <p class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane, version 3 to version 5.</p>
+                <div class="sp-sheet-box"><p class="bk-label">This update changes</p><ul><li>Name, art, description, and prompts, from version 5</li><li>Only this scene; other scenes keep their own version</li></ul></div>
+                <div class="sp-sheet-box"><p class="bk-label">It keeps</p><ul><li>Every message already in the scene, exactly as written</li><li>Version 3, so you can go back from the Cast wing</li></ul></div>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Keep version 3</button><button type="button" class="bk-tag" data-mark data-tone="warn" data-part="ui.button">Update</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="opening">Opening</button>
+          <button type="button" class="spec-chip" data-set-state="conversation" aria-pressed="true">Conversation</button>
+          <button type="button" class="spec-chip" data-set-state="editing">Editing</button>
+          <button type="button" class="spec-chip" data-set-state="delmenu">Delete menu</button>
+          <button type="button" class="spec-chip" data-set-state="cutfrom">Cut-from dialog</button>
+          <button type="button" class="spec-chip" data-set-state="cutline">Restore line</button>
+          <button type="button" class="spec-chip" data-set-state="fork">Branch/Fork dialog</button>
+          <button type="button" class="spec-chip" data-set-state="takes">Scene Takes</button>
+          <button type="button" class="spec-chip" data-set-state="deltake">Delete take</button>
+          <button type="button" class="spec-chip" data-set-state="update">Update available</button>
+          <button type="button" class="spec-chip" data-set-state="error">Scenes unavailable</button>
+          <button type="button" class="spec-chip" data-set-state="railtip">Rail tooltip</button>
+          <button type="button" class="spec-chip" data-set-state="sending">Sending</button>
+          <button type="button" class="spec-chip" data-set-state="streaming">Streaming</button>
+          <button type="button" class="spec-chip" data-set-state="stopped">Stopped</button>
+          <button type="button" class="spec-chip" data-set-state="failed">Failed</button>
+          <button type="button" class="spec-chip" data-set-state="held">Scene changed</button>
+          <button type="button" class="spec-chip" data-set-state="resumed">Reopened after crash</button>
+          <button type="button" class="spec-chip" data-set-state="noconn">No connection</button>
+          <button type="button" class="spec-chip" data-set-state="regen">Regenerating</button>
+          <button type="button" class="spec-chip" data-set-state="newswipe">New version landed</button>
+          <button type="button" class="spec-chip" data-set-state="browse">Browsing versions</button>
+          <button type="button" class="spec-chip" data-set-state="booth">Wing: Control Booth</button>
+          <button type="button" class="spec-chip" data-set-state="cast">Wing: Cast</button>
+          <button type="button" class="spec-chip" data-set-state="cast-newer">Wing: Cast, update available</button>
+          <button type="button" class="spec-chip" data-set-state="cast-gone">Wing: Cast, card in Trash</button>
+          <button type="button" class="spec-chip" data-set-state="prompting">Wing: Prompting</button>
+          <button type="button" class="spec-chip" data-set-state="world">Wing: World</button>
+          <button type="button" class="spec-chip" data-set-state="entry">Wing: World entry</button>
+          <button type="button" class="spec-chip" data-set-state="props">Wing: Props</button>
+          <button type="button" class="spec-chip" data-set-state="ai">Wing: AI</button>
+          <button type="button" class="spec-chip" data-set-state="ai-noconn">Wing: AI, no connections</button>
+          <button type="button" class="spec-chip" data-set-state="stage-wing">Wing: Stage</button>
+          <button type="button" class="spec-chip" data-set-state="context">Wing: Context</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="scene.page.b" data-taste-title="HUD overlay">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">HUD overlay</h3>
+          <p>Wings open as framed panels over the scene, which stays visible and dimmed; a HUD readout line (take, messages, model) sits above the composer.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen sp-root" data-part="scene.page" data-variant="b" data-state="conversation">
+            <div class="sp-shell">
+                <nav class="sp-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="sp-dock-brand" data-part="shell.dock.brand">
+                    <svg class="sp-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="sp-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" aria-current="page">
+                    <span class="sp-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Scenes</b><small class="sp-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Workbench</b><small class="sp-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="library" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Library</b><small class="sp-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="press" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Press</b><small class="sp-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Agent</b><small class="sp-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Kit</b><small class="sp-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="sp-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sp-dock-tx"><b class="sp-dock-label">Settings</b></span>
+                  </button>
+                  <div class="sp-dock-foot">
+                    <button type="button" class="sp-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="sp-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="sp-dock-tx"><b class="sp-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="sp-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="sp-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <main class="bk-stage sp-stage">
+                <div class="sp-play">
+                  <header class="sp-header" data-part="scene.header">
+                    <button type="button" class="sp-back" aria-label="Back to Scenes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 19-7-7 7-7M19 12H5"/></svg></button>
+                    <b class="bk-name sp-hd-name">Marguerite Vane</b>
+                    <span class="sp-hd-tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+                    <span class="sp-hold">
+                      <button type="button" class="bk-tag" data-mark data-part="scene.take-pill" aria-expanded="false">Director's Cut &#9662;</button>
+                      <div class="sp-takes bk-panel bk-frame" data-mark data-part="ui.menu" role="menu">
+                        <div class="sp-wing-fold"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Scene Takes</b><p class="bk-meta">Switch between alternate versions</p></div>
+                        <div class="bk-item" aria-selected="true">Original Take<span class="bk-tag" data-mark style="margin-left:var(--bk-space-2)">Main</span></div>
+                        <p class="sp-take-sep bk-label">Alternate Takes</p>
+                        <div class="bk-item" aria-selected="true">Take 2<span class="bk-meta" style="margin-left:auto">Sep 27 &middot; 5 msgs</span></div>
+                        <div class="bk-item">The quiet version<span class="bk-meta" style="margin-left:auto">Sep 26 &middot; 3 msgs</span></div>
+                        <div class="sp-take-foot bk-meta">Create new takes with Branch from here on any message</div>
+                      </div>
+                    </span>
+                    <button type="button" class="bk-tag sp-update-badge" data-part="scene.update-badge" data-tone="warn" data-mark>Update available</button>
+                    <span class="sp-grow"></span>
+                  </header>
+
+                  <div class="sp-scroll" data-part="scene.messages">
+                    <div class="sp-greet">
+                      <div class="sp-greet-box">
+                        <p class="bk-label" data-tone="warn">Opening Message <span class="bk-meta">(1 of 4)</span></p>
+                        <div class="sp-greet-dots">
+                          <button type="button" aria-current="true" aria-label="Greeting 1"></button>
+                          <button type="button" aria-label="Greeting 2"></button>
+                          <button type="button" aria-label="Greeting 3"></button>
+                          <button type="button" aria-label="Greeting 4"></button>
+                        </div>
+                        <p class="bk-meta">This will be the first message in your conversation</p>
+                      </div>
+                      <article class="sp-msg" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#1</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-bub bk-panel"><div class="sp-prose" data-part="scene.message.body">
+                            <p><em>The lamp room smells of kerosene and wet wool. Marguerite is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back.</em></p>
+                            <p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em> <q>Sit, if you like. The storm will not care either way.</q></p>
+                          </div></div>
+                        </div>
+                      </article>
+                    </div>
+
+                    <div class="sp-thread">
+                      <div class="sp-cutline" data-part="scene.cut-line"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg><span class="bk-meta">2 messages were cut here, restorable for 3 days</span><span class="sp-grow"></span><button type="button" class="bk-tag" data-part="ui.button">Restore</button></div>
+
+                      <article class="sp-msg" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#1</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-bub bk-panel sp-viewbub"><div class="sp-prose" data-part="scene.message.body">
+                            <p><em>The lamp room smells of kerosene and wet wool. Marguerite is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back.</em></p>
+                            <p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em> <q>Sit, if you like. The storm will not care either way.</q></p>
+                          </div>
+                            <div class="sp-acts" data-part="scene.message.tools" data-forced>
+                              <button type="button" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                              <button type="button" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="14" height="14"/></svg></button>
+                              <span class="sp-sep"></span>
+                              <span class="sp-hold"><button type="button" title="More">&middot;&middot;&middot;</button>
+                                <div class="sp-menu2 bk-panel bk-frame" data-mark role="menu"><div class="bk-item">Branch from here</div></div>
+                              </span>
+                              <span class="sp-sep"></span>
+                              <span class="sp-hold"><button type="button" class="sp-del" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+                                <div class="sp-dd bk-panel bk-frame" data-mark role="menu"><div class="bk-item">Delete this message</div><div class="bk-item" data-tone="danger">Delete this &amp; all after</div></div>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="sp-msg" data-who="user" data-deck="persona" data-part="scene.message">
+                        <div class="sp-por"><span>Y</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#2</span><p class="bk-name sp-spk">You</p>
+                          <div class="sp-bub bk-panel sp-viewbub"><div class="sp-prose" data-part="scene.message.body"><p>I set the lantern I did not bring on the chart table. <q>Is the relief boat still coming?</q></p></div>
+                            <div class="sp-acts" data-part="scene.message.tools"><button type="button" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button type="button" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="14" height="14"/></svg></button><span class="sp-sep"></span><button type="button" class="sp-del" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button></div>
+                          </div>
+                          <div class="sp-bub bk-panel sp-editbub">
+                            <textarea class="sp-editbox">I set the lantern I did not bring on the chart table. "Is the relief boat still coming?"</textarea>
+                            <div class="sp-editrow"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Save</button></div>
+                          </div>
+                        </div>
+                      </article>
+
+                      <article class="sp-msg" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta" data-part="scene.message.name">#3</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-bub bk-panel"><div class="sp-prose" data-part="scene.message.body"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q> <em>She says it to the glass, not to you.</em> <q>I watched it go. I did not wave.</q></p></div>
+                            <div class="sp-acts" data-part="scene.message.tools" data-forced>
+                              <button type="button" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+                              <button type="button" title="Copy"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="8" width="14" height="14"/></svg></button>
+                              <span class="sp-sep"></span>
+                              <button type="button" title="Regenerate as a new version"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 9-9M21 3v5h-5M21 12a9 9 0 0 1-9 9"/></svg></button>
+                              <span class="sp-sep"></span>
+                              <button type="button" title="More">&middot;&middot;&middot;</button>
+                              <span class="sp-sep"></span>
+                              <button type="button" class="sp-del" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></button>
+                            </div>
+                          </div>
+                          <div class="sp-meta" data-part="scene.reply-counter">
+                            <span class="bk-meta">claude-opus-5-5 &middot; 6.2s</span>
+                            <span class="sp-swc bk-tag" data-show="default"><button type="button" disabled title="No previous version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">1</span>/<span>1</span></span><button type="button" title="Regenerate">&#8635;</button></span>
+                            <span class="sp-swc bk-tag" data-show="regen"><button type="button" title="Back to saved version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">2</span>/<span>2</span></span><button type="button" disabled title="Generation in progress">&#8635;</button></span>
+                            <span class="sp-swc bk-tag" data-show="newswipe"><button type="button" title="Previous version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">2</span>/<span>2</span><span class="sp-nw">new</span></span><button type="button" title="Regenerate">&#8635;</button></span>
+                            <span class="sp-swc bk-tag" data-show="browse"><button type="button" disabled title="No previous version">&lsaquo;</button><span class="sp-ct"><span class="sp-n">1</span>/<span>3</span></span><button type="button" title="Next version">&rsaquo;</button></span>
+                          </div>
+                        </div>
+                      </article>
+
+                      <div class="sp-starting" data-part="scene.starting"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg><span class="bk-meta">Starting...</span></div>
+
+                      <article class="sp-msg sp-msg4" data-who="char" data-deck="character" data-part="scene.message">
+                        <div class="sp-por"><span>M</span></div>
+                        <div class="sp-mbody"><span class="bk-meta">#4</span><p class="bk-name sp-spk">Marguerite Vane</p>
+                          <div class="sp-msg4-streaming sp-bub bk-panel" data-live><div class="sp-prose"><p><em>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench</em><span class="sp-caret"></span></p></div></div>
+                          <div class="sp-msg4-settled">
+                            <div class="sp-bub bk-panel"><div class="sp-prose"><p><em>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench.</em></p></div></div>
+                            <div class="sp-cutoff"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg><span class="bk-meta">Cut off when Bunraku closed. What arrived is kept.</span><button type="button" class="bk-tag" data-part="ui.button" style="margin-left:auto">Regenerate</button></div>
+                            <div class="sp-meta"><span class="bk-meta">claude-opus-5-5 &middot; 2.9s</span></div>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+
+                    <div class="sp-error">
+                      <p class="bk-meta" style="text-align:center;margin-top:3rem">Scenes are unavailable<br><span style="color:var(--bk-text-dim)">the studio could not be reached</span></p>
+                      <div style="display:flex;gap:var(--bk-space-2);justify-content:center;margin-top:var(--bk-space-3)"><button type="button" class="bk-tag" data-part="ui.button">Try again</button><button type="button" class="bk-tag" data-part="ui.button">Back to Scenes</button></div>
+                    </div>
+                  </div>
+
+                  <div class="sp-fail bk-panel bk-frame" data-crown data-tone="danger">
+                    <div class="sp-fail-top">
+                      <span class="sp-fail-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg></span>
+                      <div style="flex:1"><p class="bk-name" style="font-size:var(--bk-fs-sm)">Generation Failed</p><p class="bk-meta"><code class="bk-num">upstream_stream_read_error</code> Upstream response stream was interrupted</p></div>
+                      <button type="button" class="bk-tag" data-part="ui.button">Dismiss</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Retry</button>
+                    </div>
+                    <div class="sp-fail-draft" data-part="scene.fail">
+                      <p class="bk-meta">Interrupted draft (not saved)</p>
+                      <textarea readonly>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make</textarea>
+                      <p class="bk-meta">Copy any text you want to keep before dismissing or retrying. This text is only in this tab and is not saved to the scene.</p>
+                    </div>
+                  </div>
+
+                  <div class="sp-dockbar">
+                    <form class="sp-cap bk-panel bk-frame" data-mark data-cap="ready" data-part="scene.composer">
+                      <textarea rows="1" placeholder="Message Marguerite Vane..."></textarea>
+                      <button type="submit" class="sp-send" data-part="scene.composer.send" aria-label="Send"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></svg></button>
+                    </form>
+                    <form class="sp-cap bk-panel bk-frame" data-mark data-cap="busy" data-part="scene.composer">
+                      <textarea rows="1" placeholder="Message Marguerite Vane..."></textarea>
+                      <button type="button" class="sp-stop" aria-label="Stop"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12"/></svg></button>
+                    </form>
+                    <form class="sp-cap bk-panel bk-frame" data-cap="noconn" data-part="scene.composer">
+                      <textarea rows="1" placeholder="Pick a connection to start the scene." disabled></textarea>
+                      <button type="button" class="sp-hint">Open AI wing</button>
+                      <button type="submit" class="sp-send" aria-label="Send" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></svg></button>
+                    </form>
+                  </div>
+                  <div class="sp-wing-hudline bk-meta" data-deck="character">Take 2 &middot; 4 messages &middot; claude-opus-5-5</div>
+                </div>
+
+                <nav class="sp-rail sp-l" data-part="scene.wings" aria-label="Scene wings">
+                  <button type="button" class="sp-wi" data-deck="accent" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg><span class="sp-tip bk-panel bk-frame" data-mark data-deck="accent"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Control Booth</b><p class="bk-meta">Scene setup and automation</p></span></button>
+                  <button type="button" class="sp-wi" data-deck="character" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2"/></svg></button>
+                  <button type="button" class="sp-wi" data-deck="preset" aria-pressed="true"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64"/></svg></button>
+                  <button type="button" class="sp-wi" data-deck="lorebook" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg></button>
+                  <button type="button" class="sp-wi" data-deck="regex" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.4 7.9c0 .3.1.6.3.9"/></svg></button>
+                </nav>
+                <nav class="sp-rail sp-r" data-part="scene.wings" aria-label="Tool wings">
+                  <button type="button" class="sp-wi" data-tone="info" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><rect x="9" y="9" width="6" height="6"/></svg></button>
+                  <button type="button" class="sp-wi" data-tone="info" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14"/></svg></button>
+                  <button type="button" class="sp-wi" data-tone="warn" aria-pressed="false"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </nav>
+                <button type="button" class="sp-paused-mark"><span class="sp-paused-sq"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></span><span class="bk-label" data-mark>Scene paused</span></button>
+
+                <!-- Control Booth: empty on purpose -->
+                <section class="sp-wing sp-l sp-wing-booth" data-deck="accent">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Scene / <b>Control Booth</b></p></div>
+                  <div class="sp-wbody"><div class="sp-quiet"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg><p class="bk-meta">Control Booth is not built yet.</p><p class="bk-meta" style="color:var(--bk-text-faint)">Scene setup and automation</p></div></div></div>
+                </section>
+
+                <!-- Cast -->
+                <section class="sp-wing sp-l sp-wing-cast" data-deck="character">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Scene / <b>Cast</b></p></div>
+                  <div class="sp-wbody">
+                    <header class="sp-whero bk-panel bk-frame" data-crown>
+                      <span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5"/></svg></span>
+                      <div><p class="bk-label">This scene's cast</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Cast</h2><p class="bk-meta">The character and persona as they were when this scene started. Edits in the Library reach a scene only when you update it here.</p></div>
+                    </header>
+                    <p class="sp-cast-notice bk-meta" data-tone="warn" style="display:none;padding:var(--bk-space-2) var(--bk-space-3);box-shadow:inset 3px 0 0 var(--bk-warn)">This scene plays version 3 of Marguerite Vane. The Library has version 5.</p>
+                    <p class="sp-cast-notice-gone bk-meta" data-tone="danger" style="display:none;padding:var(--bk-space-2) var(--bk-space-3);box-shadow:inset 3px 0 0 var(--bk-danger)">Marguerite Vane's card is in the Trash. This scene keeps playing its own copy, version 3.</p>
+                    <p class="bk-panel sp-dcard" data-crown data-deck="character"><span class="sp-cast-upd bk-tag" data-tone="warn" data-mark style="display:none;margin-bottom:var(--bk-space-2)">Update available</span><br><span class="bk-label">Now playing</span><br><b class="bk-name">Marguerite Vane</b><br><span class="bk-meta">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span></p>
+                    <p class="bk-panel sp-dcard" data-crown data-deck="persona"><span class="bk-label">You</span><br><b class="bk-name">User</b><br><span class="bk-meta">No default persona is set, so you play as User.</span></p>
+                  </div>
+                </section>
+
+                <!-- Prompting / Preset -->
+                <section class="sp-wing sp-l sp-wing-prompting" data-deck="preset">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Prompting / <b>Preset</b></p><div class="bk-tag" data-mark>Preset &middot; 14 of 22 on</div></div>
+                  <div class="sp-wbody" style="padding-bottom:0">
+                    <header class="sp-whero bk-panel bk-frame" data-crown>
+                      <span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.64 3.64-1.28-1.28"/></svg></span>
+                      <div><p class="bk-label">Edit Preset</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Velvet Quill</h2><p class="bk-meta">Tune prompts, samplers, and post-processing for this scene. Switches and sampler values here are this scene's own; prompt text edits change the preset everywhere.</p></div>
+                      <div class="sp-whero-tools"><button type="button" class="bk-tag" data-part="ui.button">Open in Workbench</button><button type="button" class="bk-tag" data-part="ui.button" data-tone="danger">Run without</button></div>
+                    </header>
+                    <div class="bk-panel" style="padding:var(--bk-space-3) var(--bk-space-4);display:flex;gap:var(--bk-space-3);flex-wrap:wrap">
+                      <span class="bk-meta">Samplers:</span>
+                      <span class="bk-tag" data-deck="regex">Temp <b>0.85</b></span><span class="bk-tag" data-deck="persona">Top P <b>0.95</b></span><span class="bk-tag" data-tone="ok">Top K <b>40</b></span><span class="bk-tag" data-deck="lorebook">Response <b>1,200</b></span>
+                    </div>
+                  </div>
+                  <div class="sp-split">
+                    <aside class="sp-side2 bk-panel">
+                      <div class="sp-wing-fold" style="display:flex;justify-content:space-between"><span class="bk-label">Prompts</span><span class="bk-meta">14/22</span></div>
+                      <div class="sp-side-list">
+                        <div class="bk-item" aria-selected="true"><span style="flex:1">Prose: literary</span><span class="bk-meta">~210 tok</span><span class="bk-tag">SYS</span></div>
+                        <div class="bk-item" aria-disabled="true"><span style="flex:1">Prose: punchy</span><span class="bk-meta">~150 tok</span></div>
+                        <div class="bk-item"><span style="flex:1">Dialogue in quotes</span><span class="bk-meta">~40 tok</span><span class="bk-tag">USR</span></div>
+                      </div>
+                      <div class="sp-wing-fold bk-meta">Active prompts <b class="bk-num">~3,420 tok</b></div>
+                    </aside>
+                    <section class="sp-ed">
+                      <div class="sp-wing-fold" style="display:flex;align-items:center;gap:var(--bk-space-2)"><span class="bk-name" style="flex:1;font-size:var(--bk-fs-sm)">Prose: literary</span><span class="bk-meta">~210 tok</span></div>
+                      <div class="sp-wbody">
+                        <div style="display:flex;gap:var(--bk-space-1)"><span class="bk-tag">System</span><span class="bk-tag">Before the history</span><span class="bk-tag">Order 100</span></div>
+                        <textarea class="sp-editbox" style="min-height:8rem">Write in a literary register. Favor concrete sensory detail over summary, let silences carry weight, and keep {{char}}'s voice consistent with the examples.</textarea>
+                        <p class="bk-meta">Prompt text belongs to Velvet Quill: an edit here changes it for every scene that uses it. The switch beside it is this scene's alone.</p>
+                      </div>
+                    </section>
+                  </div>
+                </section>
+
+                <!-- World / Lorebook -->
+                <section class="sp-wing sp-l sp-wing-world" data-deck="lorebook">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">World / <b>Lorebook</b></p><div class="bk-tag" data-mark>Lorebook &middot; 3 books on</div></div>
+                  <div class="sp-split">
+                    <aside class="sp-side2 bk-panel">
+                      <div class="sp-wing-fold" style="display:flex;justify-content:space-between"><span class="bk-label">Active lorebooks</span><span class="bk-meta">3</span></div>
+                      <div class="sp-side-list">
+                        <div class="bk-item" aria-selected="true"><span class="bk-dot" data-tone="ok" style="margin-right:var(--bk-space-2)"></span><span style="flex:1">Keeper's Log<br><span class="bk-meta">18 entries &middot; From Marguerite</span></span></div>
+                        <div class="bk-item"><span class="bk-dot" data-tone="ok" style="margin-right:var(--bk-space-2)"></span><span style="flex:1">The Drowned Coast<br><span class="bk-meta">21 entries &middot; Added here</span></span></div>
+                        <div class="bk-item" aria-disabled="true"><span class="bk-dot" style="margin-right:var(--bk-space-2)"></span><span style="flex:1">My quirks<br><span class="bk-meta">3 entries &middot; From your persona</span></span></div>
+                        <button type="button" class="bk-tag" data-part="ui.button" style="margin:var(--bk-space-2)">+ Add Lorebook</button>
+                      </div>
+                      <div class="sp-wing-fold bk-meta">Last turn <b class="bk-num">5 fired &middot; ~740 tok</b></div>
+                    </aside>
+                    <section class="sp-ed">
+                      <div class="sp-wing-fold" style="display:flex;align-items:center;gap:var(--bk-space-2)"><span class="bk-tag" data-tone="ok" data-mark style="margin-right:auto">saved</span><button type="button" class="bk-tag" data-part="ui.button">+ New entry</button></div>
+                      <div class="sp-wbody">
+                        <p class="bk-label">Constant &middot; 3</p>
+                        <div class="bk-item"><span style="flex:1">The lighthouse<br><span class="bk-meta">~120 tok</span></span><span class="bk-tag" data-tone="ok">always</span></div>
+                        <div class="bk-item"><span style="flex:1">Marguerite's rules<br><span class="bk-meta">~210 tok</span></span><span class="bk-tag" data-tone="ok">always</span></div>
+                        <p class="bk-label" style="margin-top:var(--bk-space-2)">Selective &middot; 15</p>
+                        <div class="bk-item" aria-selected="true"><span style="flex:1">The storm of '09<br><span class="bk-meta">~180 tok</span></span><span class="bk-tag" data-mark>"storm"</span></div>
+                        <div class="bk-item"><span style="flex:1">Her brother<br><span class="bk-meta">~140 tok</span></span><span class="bk-tag" data-tone="danger">sticky</span></div>
+                        <div class="bk-item"><span style="flex:1">Shipwrecks<br><span class="bk-meta">~200 tok</span></span><span class="bk-tag" data-tone="warn">matched, over budget</span></div>
+                      </div>
+                    </section>
+                  </div>
+                </section>
+
+                <!-- World: entry editor -->
+                <section class="sp-wing sp-l sp-wing-entry" data-deck="lorebook">
+                  <div class="sp-wing-fold" style="display:flex;align-items:center;gap:var(--bk-space-2)"><button type="button" class="bk-tag" data-part="ui.button">&lsaquo; Back</button><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keeper's Log</b><span class="bk-meta">18 entries &middot; ~2.4k tok</span></div>
+                  <div class="sp-wbody">
+                    <div style="display:flex;align-items:center;gap:var(--bk-space-2)"><span class="bk-tag" data-mark>On</span><b class="bk-name" style="flex:1">The storm of '09</b><button type="button" class="bk-tag" data-part="ui.button">Advanced</button></div>
+                    <div style="display:flex;gap:var(--bk-space-3);flex-wrap:wrap"><span class="bk-meta">Type <b class="bk-num">Selective</b></span><span class="bk-meta">Order <b class="bk-num">120</b></span><span class="bk-meta">Scan <b class="bk-num">4</b></span><span class="bk-meta">~180 tok</span></div>
+                    <div><p class="bk-label">Triggers</p><div style="display:flex;gap:var(--bk-space-1);flex-wrap:wrap"><span class="bk-tag">storm</span><span class="bk-tag">'09</span><span class="bk-tag">the flood</span><button type="button" class="bk-tag" data-part="ui.button">+ key</button></div></div>
+                    <div><p class="bk-label">Placement</p><div style="display:flex;gap:var(--bk-space-1);flex-wrap:wrap"><span class="bk-tag">World</span><span class="bk-tag" data-mark>Character</span><span class="bk-tag">Scene</span><span class="bk-tag">@ Depth</span></div></div>
+                    <textarea class="sp-editbox" style="min-height:7rem">In the autumn of '09 a storm took the supply boat and both men aboard. Marguerite kept the light burning three nights without sleep. She does not speak of it unless {{user}} earns it.</textarea>
+                    <p class="bk-meta">Saved to Keeper's Log. Every scene reading this book uses the new text from its next turn.</p>
+                  </div>
+                </section>
+
+                <!-- Props -->
+                <section class="sp-wing sp-l sp-wing-props" data-deck="regex">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Scene / <b>Props</b></p><div class="bk-tag">Props &middot; 0 on</div></div>
+                  <div class="sp-wbody">
+                    <div class="sp-prop-row bk-panel bk-frame" data-crown style="--bk-tint:var(--bk-prop-hare)">
+                      <span class="sp-prop-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.44 7.85c-.05.32.06.65.29.88"/></svg></span>
+                      <div><b class="bk-name" style="font-size:var(--bk-fs-sm)">TrackHare</b><p class="bk-meta">See which lorebook entries went into each reply and why, which ones did not and why not, how the prompt's tokens were spent, and which entries woke which.</p></div>
+                      <span class="bk-tag" style="margin-left:auto">Off</span>
+                    </div>
+                    <p class="bk-meta">Props are optional. With none registered the wing says "No props yet."</p>
+                  </div>
+                </section>
+
+                <!-- AI / Model -->
+                <section class="sp-wing sp-r sp-wing-ai" data-tone="info">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>AI</b></p><div class="bk-tag" data-mark>Model &middot; This scene</div></div>
+                  <div class="sp-wbody">
+                    <header class="sp-whero bk-panel bk-frame" data-crown>
+                      <span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span>
+                      <div><p class="bk-label">AI Brain</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Select AI Model</h2><p class="bk-meta">Pick which model writes the scene. Switch any time mid-scene; the new model picks up where the last one left off.</p></div>
+                    </header>
+                    <div class="sp-pills">
+                      <span class="bk-tag" style="color:var(--bk-accent-text)">+ Connect a provider</span>
+                      <span class="bk-tag" data-mark>All connections</span>
+                      <span class="bk-tag" data-deck="preset">OpenRouter &middot; Personal</span>
+                      <span class="bk-tag" data-deck="lorebook">NanoGPT</span>
+                    </div>
+                    <p class="bk-label" data-tone="ok">Currently Selected</p>
+                    <div class="sp-mrow bk-panel bk-frame" data-crown data-deck="preset" data-cur><span style="flex:1"><b class="bk-name" style="font-size:var(--bk-fs-sm)">anthropic/claude-opus-5-5</b><br><span class="bk-meta">OpenRouter &middot; Personal &middot; 1M context</span></span><span class="bk-tag" data-tone="ok">Active</span></div>
+                    <p class="bk-label">Favorites</p>
+                    <div class="sp-mrow bk-panel" data-deck="lorebook"><span style="flex:1"><b class="bk-name" style="font-size:var(--bk-fs-sm)">deepseek-v4-pro</b><br><span class="bk-meta">NanoGPT &middot; 256k context</span></span></div>
+                  </div>
+                </section>
+
+                <!-- AI: no connections -->
+                <section class="sp-wing sp-r sp-wing-ai-noconn" data-tone="info">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>AI</b></p></div>
+                  <div class="sp-wbody">
+                    <header class="sp-whero bk-panel bk-frame" data-crown><span class="sp-whero-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span><div><p class="bk-label">AI Brain</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">Select AI Model</h2></div></header>
+                    <div class="bk-panel" style="padding:var(--bk-space-4)"><p class="bk-meta">Bunraku talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.</p><button type="button" class="bk-tag" data-part="ui.button" style="margin-top:var(--bk-space-2)">Open Kit connections</button></div>
+                  </div>
+                </section>
+
+                <!-- Stage: empty -->
+                <section class="sp-wing sp-r sp-wing-stage" data-tone="info">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>Stage</b></p></div>
+                  <div class="sp-wbody"><div class="sp-quiet"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14"/></svg><p class="bk-meta">Stage is not built yet.</p><p class="bk-meta" style="color:var(--bk-text-faint)">Appearance, gallery, and music</p></div></div></div>
+                </section>
+
+                <!-- Context: quiet placeholder -->
+                <section class="sp-wing sp-r sp-wing-context" data-tone="warn">
+                  <div class="sp-wing-fold"><p class="sp-crumb bk-label">Tools / <b>Context</b></p></div>
+                  <div class="sp-wbody"><div class="sp-quiet"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></svg><p class="bk-meta">What the AI sees will show here</p><p class="bk-meta" style="color:var(--bk-text-faint)">The prompt viewer arrives in a later step</p></div></div></div>
+                </section>
+              </main>
+            </div>
+
+            <div class="sp-scrim sp-scrim-cutfrom">
+              <div class="bk-panel bk-frame sp-sheet" data-crown role="alertdialog" aria-label="Cut from here">
+                <p class="bk-label">The cutting room</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Cut from here?</h2>
+                <p class="bk-meta">This cuts this message and every one after it. A restore line stays in their place for 3 days.</p>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-tone="danger" data-part="ui.button">Delete from here</button></div>
+              </div>
+            </div>
+            <div class="sp-scrim sp-scrim-fork">
+              <div class="bk-panel bk-frame sp-sheet" data-crown data-deck="preset" role="dialog" aria-label="Fork this scene">
+                <p class="bk-label" data-deck="preset">Scene takes</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Fork this scene</h2>
+                <p class="bk-meta">Create a new take from message 1. Your current scene will not change.</p>
+                <label class="bk-label">Fork name<input type="text" value="Take 3"></label>
+                <div class="sp-sheet-box"><p class="bk-label">This fork includes</p><ul><li>Every message up to and including message 1</li><li>The scene's cast, as it is in this scene</li></ul></div>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Create fork</button></div>
+              </div>
+            </div>
+            <div class="sp-scrim sp-scrim-deltake">
+              <div class="bk-panel bk-frame sp-sheet" data-crown data-tone="danger" role="alertdialog" aria-label="Delete this take">
+                <p class="bk-label">Scene takes</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Delete this take</h2>
+                <p class="bk-name" style="font-size:var(--bk-fs-sm)">Take 2</p>
+                <p class="bk-meta">This take and its 5 messages go to the Trash. You can restore it for 3 days.</p>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Keep take</button><button type="button" class="bk-tag" data-mark data-tone="danger" data-part="ui.button">Delete take</button></div>
+              </div>
+            </div>
+            <div class="sp-scrim sp-scrim-update">
+              <div class="bk-panel bk-frame sp-sheet" data-crown data-tone="warn" role="dialog" aria-label="Update to the latest card">
+                <p class="bk-label" data-tone="warn">Scene cast</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Update to the latest card</h2>
+                <p class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane, version 3 to version 5.</p>
+                <div class="sp-sheet-box"><p class="bk-label">This update changes</p><ul><li>Name, art, description, and prompts, from version 5</li><li>Only this scene; other scenes keep their own version</li></ul></div>
+                <div class="sp-sheet-box"><p class="bk-label">It keeps</p><ul><li>Every message already in the scene, exactly as written</li><li>Version 3, so you can go back from the Cast wing</li></ul></div>
+                <div class="sp-sheet-ft"><button type="button" class="bk-tag" data-part="ui.button">Keep version 3</button><button type="button" class="bk-tag" data-mark data-tone="warn" data-part="ui.button">Update</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="opening">Opening</button>
+          <button type="button" class="spec-chip" data-set-state="conversation" aria-pressed="true">Conversation</button>
+          <button type="button" class="spec-chip" data-set-state="editing">Editing</button>
+          <button type="button" class="spec-chip" data-set-state="delmenu">Delete menu</button>
+          <button type="button" class="spec-chip" data-set-state="cutfrom">Cut-from dialog</button>
+          <button type="button" class="spec-chip" data-set-state="cutline">Restore line</button>
+          <button type="button" class="spec-chip" data-set-state="fork">Branch/Fork dialog</button>
+          <button type="button" class="spec-chip" data-set-state="takes">Scene Takes</button>
+          <button type="button" class="spec-chip" data-set-state="deltake">Delete take</button>
+          <button type="button" class="spec-chip" data-set-state="update">Update available</button>
+          <button type="button" class="spec-chip" data-set-state="error">Scenes unavailable</button>
+          <button type="button" class="spec-chip" data-set-state="railtip">Rail tooltip</button>
+          <button type="button" class="spec-chip" data-set-state="sending">Sending</button>
+          <button type="button" class="spec-chip" data-set-state="streaming">Streaming</button>
+          <button type="button" class="spec-chip" data-set-state="stopped">Stopped</button>
+          <button type="button" class="spec-chip" data-set-state="failed">Failed</button>
+          <button type="button" class="spec-chip" data-set-state="held">Scene changed</button>
+          <button type="button" class="spec-chip" data-set-state="resumed">Reopened after crash</button>
+          <button type="button" class="spec-chip" data-set-state="noconn">No connection</button>
+          <button type="button" class="spec-chip" data-set-state="regen">Regenerating</button>
+          <button type="button" class="spec-chip" data-set-state="newswipe">New version landed</button>
+          <button type="button" class="spec-chip" data-set-state="browse">Browsing versions</button>
+          <button type="button" class="spec-chip" data-set-state="booth">Wing: Control Booth</button>
+          <button type="button" class="spec-chip" data-set-state="cast">Wing: Cast</button>
+          <button type="button" class="spec-chip" data-set-state="cast-newer">Wing: Cast, update available</button>
+          <button type="button" class="spec-chip" data-set-state="cast-gone">Wing: Cast, card in Trash</button>
+          <button type="button" class="spec-chip" data-set-state="prompting">Wing: Prompting</button>
+          <button type="button" class="spec-chip" data-set-state="world">Wing: World</button>
+          <button type="button" class="spec-chip" data-set-state="entry">Wing: World entry</button>
+          <button type="button" class="spec-chip" data-set-state="props">Wing: Props</button>
+          <button type="button" class="spec-chip" data-set-state="ai">Wing: AI</button>
+          <button type="button" class="spec-chip" data-set-state="ai-noconn">Wing: AI, no connections</button>
+          <button type="button" class="spec-chip" data-set-state="stage-wing">Wing: Stage</button>
+          <button type="button" class="spec-chip" data-set-state="context">Wing: Context</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> header (back, name,
+    tagline, take pill, Update badge), opening-message picker, every message action (Edit, Copy,
+    Regenerate, Branch, Delete / Delete-and-after), the composer's ready/busy/no-connection states,
+    every turn state (Starting, streaming with caret, Stop, SwipeCounter incl. "new" badge, the
+    failure card with its unsaved draft and Retry, the "scene changed" held card, a crash cut-off
+    line), Scene Takes, Branch/Fork and Delete-take dialogs, and all eight wings (Control Booth and
+    Stage empty on purpose per 2026-09-24 approval, Cast as a read view with its Update/Trash
+    notices, Prompting's Preset tab, World's Lorebook tab with the source badges and an entry
+    editor, Props with TrackHare, AI's Model tab with and without connections, Context as a quiet
+    placeholder). <b>Left out (per ui.md and scenes-scene.html's own note):</b> the header gear and
+    live dot, the composer's + tools button, the Compendium book, /BTW, Hide from AI, Continue
+    generation, and TrackHare's own Tokens/Chains sheets (scenes-trackhare.html) -- flagged <b>New:
+    needs approval</b> if the full itemizer is wanted drawn here too.</p>
+  </section>
+</main>
+</body>
+</html>

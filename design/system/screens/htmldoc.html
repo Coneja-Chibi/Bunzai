@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: HTML View editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="htmldoc.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">HTML View editor</h1>
+    <p>The HTML document editor: source left, sealed live preview right (or stacked), and a Fullscreen overlay of the drawing alone.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="htmldoc.editor">
+    <header>
+      <h2 class="bk-heading">HTML View editor</h2>
+      <span class="bk-tag">HtmlDocEditor, SealedHtmlPreview</span>
+      <p class="bk-meta">Parts: htmldoc.editor, htmldoc.source, htmldoc.preview, editor.save</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="htmldoc.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Side by side</h3>
+          <p>Source left, sealed preview right.</p></header>
+        <div class="spec-screen hd-screen" data-state="loaded">
+<div class="hd-app" data-part="shell.app">
+  <header class="hd-hud" data-part="shell.hud">
+    <div class="hd-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="hd-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="hd-hud-mid">
+      <div class="hd-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="hd-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="hd-body">
+    <nav class="hd-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="hd-dock-brand" data-part="shell.dock.brand">
+        <svg class="hd-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="hd-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="hd-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="hd-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="hd-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="hd-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="hd-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="hd-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="hd-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="hd-dock-app hd-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="hd-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="hd-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="hd-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="hd-stage bk-stage" data-part="shell.stage">
+
+        <header class="hd-phead">
+          <span class="bk-tag" data-deck="fog"><b>HTML</b></span>
+          <h3 class="bk-name">Lighthouse letterhead</h3>
+          <button type="button" class="bk-item hd-btn-ghost" data-set-state="fullscreen">Fullscreen</button>
+          <button type="button" class="bk-item hd-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="hd-split hd-split-side" data-part="htmldoc.editor">
+          <section class="bk-panel bk-frame hd-pane" data-part="htmldoc.source">
+            <div class="bk-panel__head"><h4 class="bk-name">Source</h4><span class="bk-meta">sandboxed, no scripts</span></div>
+            <div class="bk-panel__body"><textarea class="hd-code">&lt;style&gt;
+  .letter { font-family: serif; padding: 2rem; }
+  .letter h1 { font-size: 1.4rem; }
+&lt;/style&gt;
+&lt;div class="letter"&gt;
+  &lt;h1&gt;The Lighthouse&lt;/h1&gt;
+  &lt;p&gt;Keeper's Log, entry three.&lt;/p&gt;
+&lt;/div&gt;</textarea></div>
+          </section>
+          <section class="bk-panel bk-frame hd-pane" data-part="htmldoc.preview" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Live</h4><span class="bk-meta">sealed preview</span></div>
+            <div class="bk-panel__body hd-sealed">
+              <div class="hd-letter">
+                <h5 class="bk-heading">The Lighthouse</h5>
+                <p>Keeper's Log, entry three.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div class="hd-fsview">
+          <div class="hd-fsbar"><span class="bk-meta">Lighthouse letterhead</span><button type="button" class="bk-item hd-btn-ghost" data-set-state="loaded">Exit fullscreen (Esc)</button></div>
+          <div class="hd-sealed hd-sealed-full">
+            <div class="hd-letter">
+              <h5 class="bk-heading">The Lighthouse</h5>
+              <p>Keeper's Log, entry three.</p>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="hd-status" data-part="shell.status">
+    <span class="hd-status-item" data-part="shell.status.item">Lighthouse letterhead · html</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Side by side">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Source and live</button>
+          <button type="button" class="spec-chip" data-set-state="fullscreen">Fullscreen</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="htmldoc.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Stacked</h3>
+          <p>Preview on top, source below with a resize divider.</p></header>
+        <div class="spec-screen hd-screen" data-state="loaded">
+<div class="hd-app" data-part="shell.app">
+  <header class="hd-hud" data-part="shell.hud">
+    <div class="hd-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="hd-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="hd-hud-mid">
+      <div class="hd-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="hd-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="hd-body">
+    <nav class="hd-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="hd-dock-brand" data-part="shell.dock.brand">
+        <svg class="hd-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="hd-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="hd-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="hd-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="hd-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="hd-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="hd-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="hd-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="hd-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="hd-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="hd-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="hd-dock-app hd-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="hd-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="hd-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="hd-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="hd-stage bk-stage" data-part="shell.stage">
+
+        <header class="hd-phead">
+          <span class="bk-tag" data-deck="fog"><b>HTML</b></span>
+          <h3 class="bk-name">Lighthouse letterhead</h3>
+          <button type="button" class="bk-item hd-btn-ghost" data-set-state="fullscreen">Fullscreen</button>
+          <button type="button" class="bk-item hd-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="hd-split hd-split-stacked" data-part="htmldoc.editor">
+          <section class="bk-panel bk-frame hd-pane" data-part="htmldoc.preview" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Live</h4><span class="bk-meta">sealed preview</span></div>
+            <div class="bk-panel__body hd-sealed">
+              <div class="hd-letter">
+                <h5 class="bk-heading">The Lighthouse</h5>
+                <p>Keeper's Log, entry three.</p>
+              </div>
+            </div>
+          </section>
+          <div class="hd-divider" role="separator" aria-orientation="horizontal" aria-label="Resize"></div>
+          <section class="bk-panel bk-frame hd-pane" data-part="htmldoc.source">
+            <div class="bk-panel__head"><h4 class="bk-name">Source</h4><span class="bk-meta">sandboxed, no scripts</span></div>
+            <div class="bk-panel__body"><textarea class="hd-code">&lt;style&gt;
+  .letter { font-family: serif; padding: 2rem; }
+  .letter h1 { font-size: 1.4rem; }
+&lt;/style&gt;
+&lt;div class="letter"&gt;
+  &lt;h1&gt;The Lighthouse&lt;/h1&gt;
+  &lt;p&gt;Keeper's Log, entry three.&lt;/p&gt;
+&lt;/div&gt;</textarea></div>
+          </section>
+        </div>
+        <div class="hd-fsview">
+          <div class="hd-fsbar"><span class="bk-meta">Lighthouse letterhead</span><button type="button" class="bk-item hd-btn-ghost" data-set-state="loaded">Exit fullscreen (Esc)</button></div>
+          <div class="hd-sealed hd-sealed-full">
+            <div class="hd-letter">
+              <h5 class="bk-heading">The Lighthouse</h5>
+              <p>Keeper's Log, entry three.</p>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="hd-status" data-part="shell.status">
+    <span class="hd-status-item" data-part="shell.status.item">Lighthouse letterhead · html</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Stacked">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Source and live</button>
+          <button type="button" class="spec-chip" data-set-state="fullscreen">Fullscreen</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the source pane (plain text, no highlighting assumed) and the sealed live pane (SealedHtmlPreview: sandbox, no scripts, no remote images or webfonts), and Fullscreen, which shows the drawing alone with an Exit control. No soft wireframe exists for this editor (BUILD-BRIEF says so); content is built from ui.md "HTML View". Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

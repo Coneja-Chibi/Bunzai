@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/promptformat",
+  "sourcePath": "docs/reference/entities/promptformat.md",
+  "sourceHash": "sha256:75fae3274d2eca943bc8c924e39126270e0755eda7525649019cbc18f9553138",
+  "summary": "Prompt format entity is the canonical piece for SillyTavern instruct and context templates: a name plus optional instruct and context halves, each ST's own field names with scalar values, and optional notes. One piece holds both because ST binds them by name. Nothing applies it, since Bunraku has no text-completion connection; the Library card says so in a computed line and the Workbench opens it read-only. The sillytavern-promptformat codec reads either file or a master wrapper and writes one half back as its file or a pair as the wrapper; pairing happens in the Library import.",
+  "topics": [
+    "CanonicalPromptFormat",
+    "instruct and context halves",
+    "text completion unused",
+    "pairing by name",
+    "master wrapper export"
+  ],
+  "sections": [
+    {
+      "slug": "fields",
+      "title": "Fields",
+      "level": 2,
+      "sourceHash": "sha256:754d1cd9feeef5be6dc1c29a2c2211d8b1a1aef8e500f5437858ad178e74f1df",
+      "summary": "Four fields: name; instruct, a flat record of ST instruct keys such as input_sequence, output_sequence, stop_sequence, wrap and names_behavior; context, the same for story_string, example_separator and chat_start; and notes. Every value ST wrote is kept under ST's own key name.",
+      "topics": [
+        "name instruct context notes",
+        "ST field names kept",
+        "scalar values only"
+      ],
+      "children": []
+    },
+    {
+      "slug": "import-and-export",
+      "title": "Import and export",
+      "level": 2,
+      "sourceHash": "sha256:fbfedcd37119949bb975c89495f99ee576d94c7230369f1a6067edb4b1b869cd",
+      "summary": "The sillytavern-promptformat codec reads either template file, an instruct template or a context template, and also ST's master wrapper that holds both under instruct and context keys, provided the wrapper carries no sysprompt and no prompts array. Pairing a same-named instruct and context into one piece happens in the Library import through pairPromptFormats, not in the codec. Export writes one file when the piece holds one half, identical to the source file, and the master wrapper when it holds both. The format spec lives.",
+      "topics": [
+        "sillytavern-promptformat",
+        "pairPromptFormats",
+        "master wrapper"
+      ],
+      "children": []
+    }
+  ]
+}

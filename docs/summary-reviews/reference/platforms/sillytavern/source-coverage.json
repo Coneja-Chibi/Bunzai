@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/sillytavern/source-coverage",
+  "sourcePath": "docs/reference/platforms/sillytavern/source-coverage.md",
+  "sourceHash": "sha256:9d03a8485544a63b8b185977e1c421652a2743f0d7efe4ba5d3858ec828d9875",
+  "semanticSummaryHash": "sha256:421736d20a94b68e9d3831f40a603cd6e8829c8dae737056305d2eca6d6ce4b3",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:48:00.566Z"
+}

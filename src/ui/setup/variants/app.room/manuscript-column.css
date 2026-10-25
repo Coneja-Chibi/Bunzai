@@ -1,0 +1,16 @@
+/** app.room manuscript-column, setup: one narrow centred column. The question is a page with numbered picks ruled by hairlines; the stage sits below as a figure. */
+html[data-surface-app-room="manuscript-column"] .vsetup {
+  & .frame { max-width: 44rem; }
+  & .screen { grid-template-columns: minmax(0, 1fr); }
+  & .qcard { background: transparent; box-shadow: none; border-width: 1px 0 0; border-color: var(--bk-line-strong); padding-inline: 0; }
+  & .q { font-weight: 600; letter-spacing: 0; }
+  & .stack { counter-reset: pick; gap: 0; }
+  & .opt { counter-increment: pick; box-shadow: none; border-width: 0 0 1px; border-color: var(--bk-line); background: transparent; padding-left: 2.6rem; transition: none; }
+  & .opt:hover, & .opt:active, & .opt.on, & .opt[aria-pressed="true"] { transform: none; box-shadow: none; }
+  & .opt::before { content: counter(pick, lower-roman) "."; position: absolute; left: .2rem; top: .9rem; font: italic 400 1rem var(--font-big); color: var(--muted); }
+  & .opt[aria-pressed="true"] .opt-title { text-decoration: underline; text-decoration-color: var(--wiz-a, var(--rose)); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  & .next, & .open { box-shadow: none; }
+  & .house { position: static; }
+  & .proscenium { box-shadow: none; border-width: 1px; }
+  & .stage { min-height: 15rem; }
+}

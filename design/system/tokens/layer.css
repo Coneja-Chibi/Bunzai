@@ -1,0 +1,26 @@
+/*
+ * Bunraku design system: elevation and layering, contract v1.
+ * HUD elevation is flat: a thing sits higher because it is framed, scrimmed or offset, never
+ * because of a blurred glow. Every z-index in the app comes from this list.
+ * --bk-z-protected and above belong to the host: lock screen, Kit approvals (the Gate), secrets,
+ * mod management. A theme or mod may never place anything at or above it.
+ */
+:root {
+  --bk-z-base: 0;
+  --bk-z-raised: 1;       /* a card lifted on hover */
+  --bk-z-mark: 3;         /* frame brackets and badges over card art */
+  --bk-z-sticky: 10;      /* sticky headers inside a pane */
+  --bk-z-dock: 20;
+  --bk-z-hud: 30;         /* the top HUD strip */
+  --bk-z-popover: 40;     /* tooltips, pickers, popovers */
+  --bk-z-menu: 50;        /* the right-click menu */
+  --bk-z-sheet: 60;       /* bottom sheets, drawers, the drop veil */
+  --bk-z-dialog: 70;
+  --bk-z-toast: 80;
+  --bk-z-title: 90;       /* the attract (title) screen over Scenes */
+  --bk-z-protected: 1000; /* host only */
+
+  --bk-elev-flat: none;
+  --bk-elev-float: 0 4px 0 0 var(--bk-shadow);   /* menus, popovers: a hard 4px drop */
+  --bk-elev-modal: 0 8px 0 0 var(--bk-shadow);   /* dialogs and sheets, over the scrim */
+}

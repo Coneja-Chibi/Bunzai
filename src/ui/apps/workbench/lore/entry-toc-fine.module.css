@@ -1,0 +1,315 @@
+/**
+ * Focused TOC expand: one panel, 2x2 chrom grid + action footer.
+ */
+
+.texp {
+  margin: 0 0 0.3rem;
+  padding: 0 0.35rem 0.15rem 0.55rem;
+}
+
+.texpPanel {
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-row);
+  overflow: hidden;
+}
+
+.chromGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.chromTile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.22rem;
+  padding: 0.4rem 0.45rem 0.42rem;
+  border-right: 1px solid var(--stage-seam);
+  border-bottom: 1px solid var(--stage-seam);
+  min-width: 0;
+  background: transparent;
+}
+
+.chromTile:nth-child(2n) {
+  border-right: 0;
+}
+
+.chromTile:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.chromLab {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.chromIn {
+  width: 100%;
+  max-width: 4rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-card);
+  text-align: center;
+  padding: 0.18rem 0.2rem;
+}
+
+.texpFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem 0.75rem;
+  padding: 0.35rem 0.45rem;
+  border-top: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+}
+
+.texpAct {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--stage-soft);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+}
+
+.texpAct:hover {
+  color: var(--stage-card);
+}
+
+.texpActDanger {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--stage-danger-text);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+}
+
+.texpActDanger:hover {
+  color: var(--stage-danger-hot, var(--stage-danger-text));
+}
+
+.texpRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.18rem 0;
+}
+
+.texpK {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-soft);
+  flex: none;
+}
+
+.texpNum {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  width: 3.2rem;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  text-align: center;
+  padding: 0.12rem;
+}
+
+.texpSwitch {
+  width: 1.8rem;
+  height: 0.95rem;
+  border: 2px solid var(--stage-black);
+  background: var(--stage-ok);
+  position: relative;
+  flex: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.texpSwitch::after {
+  content: "";
+  position: absolute;
+  right: 2px;
+  top: 1px;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--stage-ink);
+}
+
+.texpSwitchOff {
+  background: var(--stage-faint);
+}
+
+.texpSwitchOff::after {
+  left: 2px;
+  right: auto;
+}
+
+.texpLabel {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  margin: 0.35rem 0 0.15rem;
+}
+
+/* Fire mode: Keywords / Always on / By meaning (lives in TOC, not Keys head) */
+.modeRow {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin: 0 0 0.35rem;
+}
+
+.modeBtn {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 2px solid var(--stage-seam);
+  border-radius: 0;
+  background: var(--stage-row);
+  color: var(--stage-mute);
+  cursor: pointer;
+  flex: none;
+  line-height: 0;
+}
+
+.modeBtn:hover:not(:disabled) {
+  color: var(--stage-card);
+  border-color: var(--stage-line, var(--stage-seam));
+}
+
+.modeBtnGated {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.modeKey.modeBtnOn {
+  border-color: var(--success);
+  color: var(--success-fg);
+  background: var(--success);
+}
+
+.modeAlways.modeBtnOn {
+  border-color: var(--action-primary);
+  color: var(--action-primary-fg);
+  background: var(--action-primary);
+}
+
+.modeMeaning.modeBtnOn {
+  border-color: var(--selection);
+  color: var(--selection-fg);
+  background: var(--selection);
+}
+
+/* Square icon buttons only - stage chrome, no rounded pills, no text */
+.iconRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem;
+  margin-top: 0.35rem;
+}
+
+.iconBtn {
+  display: inline-grid;
+  place-items: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  padding: 0;
+  border: 2px solid var(--stage-seam);
+  border-radius: 0;
+  background: var(--stage-row);
+  color: var(--stage-soft);
+  cursor: pointer;
+  flex: none;
+  line-height: 0;
+}
+
+.iconBtn:hover {
+  border-color: var(--a, var(--accent));
+  color: var(--stage-card);
+}
+
+.iconInh {
+  border-color: var(--stage-seam);
+  color: var(--stage-mute, var(--stage-text-dim));
+  background: var(--stage-sunken);
+}
+
+.iconOn {
+  border-color: var(--stage-ok);
+  color: var(--stage-ok);
+  background: color-mix(in srgb, var(--stage-ok) 14%, var(--stage-sunken));
+}
+
+.iconOff {
+  border-color: var(--stage-warn);
+  color: var(--stage-warn);
+  background: color-mix(in srgb, var(--stage-warn) 12%, var(--stage-sunken));
+}
+
+.iconDanger {
+  border-color: var(--stage-danger-edge);
+  color: var(--stage-danger-text);
+}
+
+.iconDanger:hover {
+  border-color: var(--stage-danger-edge);
+  color: var(--stage-danger-text);
+  background: color-mix(in srgb, var(--stage-danger-edge) 12%, var(--stage-row));
+}
+
+/* Shared slab buttons (rail launchers still use these class names via binder merge) */
+.texpActs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.3rem;
+}
+
+.texpBtn {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-row);
+  color: var(--stage-soft);
+  padding: 0.16rem 0.3rem;
+  cursor: pointer;
+}
+
+.texpDanger {
+  border-color: var(--stage-danger-edge);
+  color: var(--stage-danger-text);
+}

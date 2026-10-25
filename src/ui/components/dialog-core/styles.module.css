@@ -1,0 +1,29 @@
+/* Placement belongs to the common dialog boundary; wrappers supply only their visual skin. */
+.overlay {
+  display: flex;
+}
+
+.center {
+  position: fixed;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pane-bottom {
+  position: absolute;
+  inset: 0;
+  align-items: flex-end;
+}
+
+.fullscreen {
+  position: fixed;
+  inset: 0;
+  padding: var(--gap-s);
+}
+
+.embedded {
+  position: absolute;
+  inset: 0;
+}

@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Title</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="title.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Title</h1>
+    <p>The attract screen (over Scenes, per ui.md), the Dock kept open beside the stage, the app
+    preview that shrinks the wordmark, and the empty-studio menu. From landing-game-a2.html,
+    the attract screen.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="title.screen">
+    <header>
+      <h2 class="bk-heading">Title screen</h2>
+      <span class="bk-tag">src/ui/shell/TitleScreen.tsx</span>
+      <p class="bk-meta">Parts: title.screen, title.mark, title.wordmark, title.tagline,
+      title.prompt, title.menu (.item), title.preview, title.legend</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="title.screen.a" data-taste-title="A2 in HUD">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">A2 in HUD</h3>
+          <p>A2's open Dock beside the title, the wordmark shrinking when an app is previewed, the
+          keyboard legend as key chips.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen ttl-root" data-part="title.screen" data-variant="a" data-state="attract">
+            <div class="ttl-body">
+                <nav class="ttl-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="ttl-dock-brand" data-part="shell.dock.brand">
+                    <svg class="ttl-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="ttl-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" data-preview-key="scenes">
+                    <span class="ttl-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Scenes</b><small class="ttl-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" data-preview-key="workbench">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Workbench</b><small class="ttl-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="library" data-preview-key="library">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Library</b><small class="ttl-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="press" data-preview-key="press">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Press</b><small class="ttl-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="agent" data-preview-key="agent">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Agent</b><small class="ttl-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="kit" data-preview-key="kit">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Kit</b><small class="ttl-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="settings" data-preview-key="settings">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Settings</b></span>
+                  </button>
+                  <div class="ttl-dock-foot">
+                    <button type="button" class="ttl-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="ttl-dock-tx"><b class="ttl-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="ttl-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="ttl-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <main class="bk-stage ttl-stage" data-part="title.preview">
+                <div class="ttl-backdrop" aria-hidden="true"></div>
+                <div class="ttl-marquee">
+                  <svg class="ttl-mark" data-part="title.mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                  <h1 class="ttl-word" data-part="title.wordmark">bun<b>raku</b></h1>
+                  <p class="ttl-tag" data-part="title.tagline">a little theater for your characters</p>
+                </div>
+                <p class="ttl-prompt" data-part="title.prompt">Press any key <span class="bk-meta">or click</span></p>
+
+                <div class="ttl-area">
+                  <div class="ttl-menu-col">
+                    <p class="ttl-menu-kicker bk-label">Tonight's stage</p>
+                    <nav class="ttl-menu" data-part="title.menu ttl-menu-full" aria-label="Main menu">
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" aria-selected="true" tabindex="0"><span class="bk-cursor"></span>Continue<span class="bk-meta" style="margin-left:auto">The long storm</span></div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>New scene</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Load scene<span class="bk-meta" style="margin-left:auto">6 recent</span></div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Cast</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Library</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Settings</div>
+                    </nav>
+                    <nav class="ttl-menu ttl-menu-empty" data-part="title.menu" aria-label="Main menu, empty studio" hidden>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" aria-selected="true" tabindex="0"><span class="bk-cursor"></span>New scene<span class="bk-meta" style="margin-left:auto">from a blank page</span></div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Import a card</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Library<span class="bk-meta" style="margin-left:auto">empty</span></div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Settings</div>
+                    </nav>
+                  </div>
+
+                  <section class="ttl-preview bk-panel bk-frame" data-crown data-deck="pack">
+                    <span class="bk-tag">SCENES</span>
+                    <h2 class="bk-heading" style="font-size:var(--bk-fs-lg);margin-top:var(--bk-space-2)">Continue where you left off</h2>
+                    <div class="ttl-pv-body">
+                      <div class="ttl-pitem" data-for="scenes">
+                        <div class="ttl-pv-row bk-item" data-deck="character"><span class="ttl-pv-av">V</span><span><b class="bk-name" style="font-size:var(--bk-fs-sm)">The long storm</b><br><span class="bk-meta">Vera Lune &middot; 2 hours ago</span></span></div>
+                      </div>
+                      <div class="ttl-pitem" data-for="workbench">
+                        <div class="ttl-pv-cardrow">
+                          <div class="ttl-pv-card bk-frame" data-deck="character"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><p class="bk-meta">character &middot; unsaved</p></div>
+                          <div class="ttl-pv-card bk-frame" data-deck="lorebook"><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keeper's Log</b><p class="bk-meta">lorebook &middot; open</p></div>
+                        </div>
+                      </div>
+                      <div class="ttl-pitem" data-for="library">
+                        <div class="ttl-pv-row bk-item" data-deck="character"><span class="bk-tag">12</span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Characters</b></div>
+                        <div class="ttl-pv-row bk-item" data-deck="lorebook"><span class="bk-tag">5</span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Lorebooks</b></div>
+                      </div>
+                      <div class="ttl-pitem" data-for="press">
+                        <div class="ttl-pv-row bk-item" data-deck="persona"><span class="ttl-pv-av">M</span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="bk-meta" style="margin-left:auto">ready</span></div>
+                      </div>
+                      <div class="ttl-pitem" data-for="agent">
+                        <div class="bk-panel" data-deck="preset" style="padding:var(--bk-space-3)"><p class="bk-meta">&ldquo;How do I set up a group chat?&rdquo;</p></div>
+                      </div>
+                      <div class="ttl-pitem" data-for="kit">
+                        <div class="bk-panel" style="padding:var(--bk-space-3);background:var(--bk-surface-ink)"><p class="bk-num" data-tone="info" style="color:var(--bk-tint-text)">&gt; bunraku scene export --last</p><p class="bk-num bk-meta">wrote scenes/the-long-storm.json</p></div>
+                      </div>
+                      <div class="ttl-pitem" data-for="settings">
+                        <div class="ttl-pv-row"><span class="bk-tag" data-mark>On</span>Autosave</div>
+                        <div class="ttl-pv-row"><span class="bk-tag">Off</span>Sound</div>
+                      </div>
+                      <div class="ttl-pitem" data-for="empty">
+                        <ul class="ttl-pv-applist">
+                          <li class="bk-meta"><b class="bk-name" style="font-size:var(--bk-fs-sm);color:var(--bk-text)">Scenes</b> &middot; play with your cast</li>
+                          <li class="bk-meta"><b class="bk-name" style="font-size:var(--bk-fs-sm);color:var(--bk-text)">Workbench</b> &middot; make characters and lorebooks</li>
+                          <li class="bk-meta"><b class="bk-name" style="font-size:var(--bk-fs-sm);color:var(--bk-text)">Library</b> &middot; keep everything you own</li>
+                        </ul>
+                        <div class="ttl-pv-actions">
+                          <button type="button" class="bk-tag" data-mark data-part="ui.button">Import a card</button>
+                          <button type="button" class="bk-tag" data-part="ui.button">New scene</button>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+
+                <div class="bk-meta" data-part="title.legend" style="position:relative;z-index:1;margin-top:auto;display:flex;gap:var(--bk-space-4);justify-content:center">
+                  <span><kbd class="bk-num" style="padding:0 var(--bk-space-1);background:var(--bk-surface-ink);color:var(--bk-tint-text)">&uarr;&darr;</kbd> Select</span>
+                  <span><kbd class="bk-num" style="padding:0 var(--bk-space-1);background:var(--bk-surface-ink);color:var(--bk-tint-text)">&larr;</kbd> Dock</span>
+                </div>
+              </main>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="attract" aria-pressed="true">Attract</button>
+          <button type="button" class="spec-chip" data-set-state="menu">Menu</button>
+          <button type="button" class="spec-chip" data-set-state="preview-scenes">Preview: Scenes</button>
+          <button type="button" class="spec-chip" data-set-state="preview-workbench">Preview: Workbench</button>
+          <button type="button" class="spec-chip" data-set-state="preview-library">Preview: Library</button>
+          <button type="button" class="spec-chip" data-set-state="preview-press">Preview: Press</button>
+          <button type="button" class="spec-chip" data-set-state="preview-agent">Preview: Agent</button>
+          <button type="button" class="spec-chip" data-set-state="preview-kit">Preview: Kit</button>
+          <button type="button" class="spec-chip" data-set-state="preview-settings">Preview: Settings</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty studio</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="title.screen.b" data-taste-title="Save select">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Save select</h3>
+          <p>Under the wordmark, the three latest scenes as save slots (SLOT, LV, last line, time)
+          with Continue; the app menu sits beside them.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen ttl-root" data-part="title.screen" data-variant="b" data-state="menu">
+            <div class="ttl-body">
+                <nav class="ttl-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="ttl-dock-brand" data-part="shell.dock.brand">
+                    <svg class="ttl-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="ttl-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" data-preview-key="scenes">
+                    <span class="ttl-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Scenes</b><small class="ttl-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" data-preview-key="workbench">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Workbench</b><small class="ttl-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="library" data-preview-key="library">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Library</b><small class="ttl-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="press" data-preview-key="press">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Press</b><small class="ttl-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="agent" data-preview-key="agent">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Agent</b><small class="ttl-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="kit" data-preview-key="kit">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Kit</b><small class="ttl-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="ttl-dock-app bk-item" data-part="shell.dock.app" data-app="settings" data-preview-key="settings">
+                    <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="ttl-dock-tx"><b class="ttl-dock-label">Settings</b></span>
+                  </button>
+                  <div class="ttl-dock-foot">
+                    <button type="button" class="ttl-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="ttl-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="ttl-dock-tx"><b class="ttl-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="ttl-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="ttl-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <main class="bk-stage ttl-stage" data-part="title.preview">
+                <div class="ttl-backdrop" aria-hidden="true"></div>
+                <div class="ttl-marquee">
+                  <svg class="ttl-mark" data-part="title.mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                  <h1 class="ttl-word" data-part="title.wordmark">bun<b>raku</b></h1>
+                  <p class="ttl-tag" data-part="title.tagline">a little theater for your characters</p>
+                </div>
+                <p class="ttl-prompt" data-part="title.prompt">Press any key <span class="bk-meta">or click</span></p>
+
+                <div class="ttl-area">
+                  <div class="ttl-saves" data-part="title.menu">
+                    <article class="ttl-slot bk-item" data-part="title.menu.item" aria-selected="true" data-deck="character">
+                      <span class="ttl-slot-art">V</span>
+                      <span class="ttl-slot-tx"><b>The long storm</b><small>Vera Lune &middot; 2h ago</small></span>
+                      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+                    </article>
+                    <article class="ttl-slot bk-item" data-part="title.menu.item" data-deck="persona">
+                      <span class="ttl-slot-art">N</span>
+                      <span class="ttl-slot-tx"><b>Cut the deck</b><small>Nuit &middot; 3 days</small></span>
+                      <span class="bk-tag">SLOT <b>02</b> &middot; LV <b>4</b></span>
+                    </article>
+                    <article class="ttl-slot bk-item" data-part="title.menu.item" data-deck="lorebook">
+                      <span class="ttl-slot-art">M</span>
+                      <span class="ttl-slot-tx"><b>The lock gave on the third try</b><small>The Magpie &middot; 6 days</small></span>
+                      <span class="bk-tag">SLOT <b>03</b> &middot; LV <b>3</b></span>
+                    </article>
+                    <button type="button" class="bk-tag" data-mark data-part="ui.button" style="justify-content:center;margin-top:var(--bk-space-2)">Continue Story</button>
+                  </div>
+                  <div class="ttl-menu-col">
+                    <nav class="ttl-menu" data-part="title.menu" aria-label="Main menu">
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>New scene</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Load scene</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Cast</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Library</div>
+                      <div class="bk-item" data-part="title.menu.item" role="menuitem" tabindex="0"><span class="bk-cursor"></span>Settings</div>
+                    </nav>
+                  </div>
+                </div>
+              </main>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="attract">Attract</button>
+          <button type="button" class="spec-chip" data-set-state="menu" aria-pressed="true">Menu</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty studio</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> the ticket-bun mark, the
+    wordmark and tagline, press-any-key, the Dock kept open beside the stage, the main menu with
+    Continue/New/Load/Cast/Library/Settings, the empty-studio menu, and an app preview per Dock
+    item. <b>New (needs approval):</b> variant B's save-slot cards are a new reading of the menu
+    (SLOT/LV framing borrowed from the HUD vocabulary, not in landing-game-a2.html) -- offered as
+    an alternative idea per the brief, flagged for a pick. <b>Simplified:</b> the preview
+    panel's chip and heading stay on "Scenes / Continue where you left off" in this static demo;
+    the live app would re-letter them per the hovered app, same as landing-game-a2.html's JS.</p>
+  </section>
+</main>
+</body>
+</html>

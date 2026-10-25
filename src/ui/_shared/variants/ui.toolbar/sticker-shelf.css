@@ -1,0 +1,7 @@
+/** ui.toolbar sticker-shelf (GirliePop): the filter rows as a dashed shelf of stickers; every field and button is its own thick-edged sticker with a hard shadow. */
+html[data-surface-ui-toolbar="sticker-shelf"] {
+  & :is(.lib.rc .ltop, .scn .filters) { gap: .9rem; align-items: center; margin-bottom: .8rem; padding: .7rem .8rem; background: var(--bk-surface-sunken); border: var(--bk-frame-w) dashed var(--bk-line-control); }
+  & :is(.lib.rc :is(.findbox, .sizedial), .scn .search) { border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); background: var(--bk-surface-panel); }
+  & .lib.rc .findwrap.on .findbox { box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-role-action); }
+  & :is(.lib.rc .ltb, .scn .plaque-actions > .s-btn) { border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); background: var(--bk-role-warn); color: var(--bk-text-on-tint); }
+}

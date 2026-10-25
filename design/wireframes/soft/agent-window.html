@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent window</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Shared skeleton for every workbench-/agent- soft wireframe: the Dock (fluid, marks only under
+ * 46rem of window width - kept exactly as approved, reused unchanged on every page in this set) and
+ * the wf-bar/wf-note pattern. Page content sits in .stage.
+ * Known gap: soft-parts.css sets .s-app small/.s-app kbd and .wf-bar text at 11px,
+ * under this brief's 12px floor - overridden here and on every other page in this set.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+/* The Dock's mark-only collapse answers the WHOLE WINDOW, same as the app's real locked
+   narrow-screen mode and the user-driven slim-dock strip - so this one rule is @media, not
+   @container. Every pane-level fold below it (.pane, .stage) uses @container instead. */
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; container-type: inline-size; background: var(--canvas); }
+/* Fixed wf-bar/wf-note sit over the last ~170px of the page on purpose (wireframe-only chrome);
+   real content gets that much breathing room at the foot so nothing genuine hides under them. */
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+/* wf-bar/wf-note are fixed-position wireframe-only chrome; at phone width they must not float over
+   the content or each other, so they drop into normal flow and stack full width. */
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+
+.agentwrap { max-width: 52rem; margin: 0 auto; padding: 20px 24px 0; container-type: inline-size; }
+.aband { display: flex; align-items: center; gap: 10px; padding: 4px 0 14px; }
+.aband .fold { background: none; border: 0; color: var(--text-dim); cursor: pointer; font-size: 1rem; }
+.akick { display: flex; align-items: center; gap: 8px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.adot { width: 7px; height: 7px; background: var(--text-faint); }
+.adot.live { background: var(--stage-ok); }
+[data-state="nomodel"] .aband { display: none; }
+.atitle-row { display: none; }
+[data-state] .abandbody { }
+.aheadblock { margin-bottom: 6px; }
+[data-state="folded"] .aheadblock { display: none; }
+.aheadblock h1 { font-size: 1.3rem; }
+.aheadblock .sub { color: var(--text-soft); font-size: .92rem; margin-top: 4px; }
+
+.meterbar { display: flex; align-items: center; gap: 16px; padding: 8px 0; box-shadow: inset 0 -1px 0 var(--seam); font: 500 12px var(--font-mono); color: var(--text-dim); margin-bottom: 12px; }
+.meterbar .fill { color: var(--stage-ok); }
+.meterbar .gap { flex: 1; }
+.notice2 { padding: 10px 14px; box-shadow: inset 0 0 0 1px var(--stage-warn); color: var(--stage-warn); font-size: .88rem; margin-bottom: 12px; }
+[data-state="nomodel"] .notice2 { display: block; }
+.notice2 { display: none; }
+
+.talk { min-height: 8rem; margin-bottom: 10px; }
+.aempty { display: none; color: var(--text-dim); font-style: italic; padding: 30px 0; text-align: center; }
+[data-state="empty"] .aempty { display: block; }
+[data-state="empty"] .band2 { display: none !important; }
+/* Trim older turns whenever a special panel (Gate, busy, watch, queue...) needs room near the top of
+   the first viewport - the real transcript auto-scrolls to keep the newest content and the active
+   panel in view together; this fakes the same effect for a screenshot taken at scroll position 0. */
+[data-state]:not([data-state="loaded"]):not([data-state="empty"]):not([data-state="nomodel"]):not([data-state="folded"]):not([data-state="floating"]) .band2.extra { display: none !important; }
+.band2 { display: none; margin-bottom: 14px; }
+.band2.show { display: block; }
+.band2 .who { font: 600 .85rem var(--font-body); margin-bottom: 4px; }
+.band2.user .who { color: var(--deck-preset); } .band2.agent .who { color: var(--accent); } .band2.err .who { color: var(--stage-danger-text); }
+.band2 .txt { color: var(--text-soft); font-size: .95rem; line-height: 1.6; }
+.band2.err { box-shadow: inset 3px 0 0 var(--stage-danger-hot); padding-left: 12px; }
+.diffblock { box-shadow: inset 0 0 0 1px var(--seam); padding: 10px 12px; margin-top: 8px; font: 12px var(--font-mono); }
+.diffblock .add { color: var(--stage-ok); } .diffblock .del { color: var(--stage-danger-text); }
+.htmlblock { box-shadow: inset 0 0 0 1px var(--seam); padding: 10px 12px; margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+.htmlblock .lbl { color: var(--text-dim); font-size: .85rem; flex: 1; }
+
+.stagehand { display: none; align-items: center; gap: 8px; color: var(--text-dim); font-size: .88rem; margin-bottom: 12px; }
+[data-state="busy"] .stagehand { display: flex; }
+.stagehand .bdot { width: 6px; height: 6px; background: var(--accent); }
+.stagehand .stamp { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--accent); padding: 1px 6px; font: 500 12px var(--font-mono); }
+.rehearsal2 { display: none; box-shadow: inset 0 0 0 1px var(--seam); padding: 10px 12px; margin-bottom: 12px; }
+[data-state="rehearsing"] .rehearsal2 { display: block; }
+[data-state="rehearsing"] .stagehand { display: none; }
+.rehearsal2 .rhead { display: flex; justify-content: space-between; font: 500 12px var(--font-mono); color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+.rtrace { display: none; margin-bottom: 12px; }
+[data-state="busy"] .rtrace, [data-state="rehearsing"] .rtrace { display: none !important; }
+.rtrace button { background: none; border: 0; color: var(--text-dim); cursor: pointer; font-size: .85rem; padding: 0; }
+.watchnote { display: none; box-shadow: inset 3px 0 0 var(--stage-warn), inset 0 0 0 1px var(--seam); padding: 10px 12px; margin-bottom: 12px; }
+[data-state="watch"] .watchnote { display: block; }
+.watchnote .whead { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--stage-warn); margin-bottom: 4px; }
+.watchnote p { color: var(--text-soft); font-size: .88rem; }
+
+.gatecard { display: none; box-shadow: 0 0 0 1px var(--stage-danger-edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); background: var(--face); padding: 18px 20px; margin: 0 0 14px; }
+[data-state="gate"] .gatecard { display: block; }
+.gatecard .gkick { font: 500 12px var(--font-mono); color: var(--text-dim); margin-bottom: 4px; }
+.gatecard .gtitle { font-size: 1.15rem; }
+.gatecard .gwhy { color: var(--text-soft); margin-top: 6px; font-size: .9rem; }
+.gatecard .gwarn { margin-top: 10px; padding-left: 18px; color: var(--stage-warn); font-size: .88rem; }
+.gatecard .gwarn li { margin-bottom: 4px; }
+.gatecard pre.gdetail { margin-top: 10px; box-shadow: inset 0 0 0 1px var(--seam); padding: 10px; font-size: .8rem; color: var(--text-dim); white-space: pre-wrap; }
+.gatecard .grow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+.chips2 { display: none; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+[data-state="loaded"] .chips2 { display: flex; }
+.chips2 button { padding: 7px 12px; box-shadow: inset 0 0 0 1px var(--seam); background: none; color: var(--text-soft); cursor: pointer; font-size: .85rem; }
+
+.queue2 { display: none; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+[data-state="queued"] .queue2 { display: flex; }
+.qrow2 { display: flex; align-items: center; gap: 10px; padding: 8px 10px; box-shadow: inset 0 0 0 1px var(--seam); font-size: .85rem; }
+.qrow2 .wk { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.qrow2 .qt { flex: 1; color: var(--text-soft); }
+.qrow2 button { background: none; border: 0; color: var(--deck-preset); cursor: pointer; font-size: .8rem; }
+
+.popupmenu { display: none; box-shadow: 0 0 0 1px var(--seam); background: var(--face); padding: 6px; margin-bottom: 6px; max-width: 20rem; }
+[data-state="slash"] .slashmenu { display: block; }
+[data-state="mentions"] .mentionmenu { display: block; }
+.popupmenu .prow { padding: 6px 10px; font-size: .85rem; color: var(--text-soft); }
+.popupmenu .prow.on { background: var(--shell-panel-2); color: var(--text); }
+
+.shots2 { display: none; gap: 8px; margin-bottom: 8px; }
+[data-state="shots"] .shots2 { display: flex; }
+.shots2 .sh { width: 56px; height: 56px; background: linear-gradient(160deg, var(--deck-preset), var(--stage-well)); box-shadow: inset 0 0 0 1px var(--edge); }
+
+.composer2 { display: flex; align-items: flex-end; gap: 10px; box-shadow: inset 0 0 0 1px var(--seam); padding: 12px 14px; position: relative; }
+.composer2 .sweep { position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0; }
+[data-state="busy"] .composer2 .sweep, [data-state="rehearsing"] .composer2 .sweep { opacity: 1; }
+.composer2 textarea { flex: 1; background: none; border: 0; color: var(--text); font: 400 .95rem var(--font-body); resize: none; min-height: 2.4rem; }
+.composer2 textarea:focus { outline: none; }
+
+.keyhints2 { display: flex; gap: 14px; padding: 10px 0 6px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.keyhints2 b { color: var(--text-soft); background: color-mix(in srgb, var(--text-soft) 10%, transparent); padding: 1px 5px; margin-right: 4px; }
+.seebox { margin: 10px 0 30px; }
+.seebox summary { cursor: pointer; color: var(--text-dim); font-size: .85rem; }
+.seebox pre { margin-top: 8px; box-shadow: inset 0 0 0 1px var(--seam); padding: 10px; font-size: .78rem; color: var(--text-dim); white-space: pre-wrap; }
+
+.floatwrap { display: none; }
+[data-state="floating"] .agentwrap { display: none; }
+[data-state="floating"] .floatwrap { display: block; padding: 40px; }
+.floatpanel { width: 380px; box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); background: var(--face); }
+.floatpanel .fphead { display: flex; align-items: center; gap: 8px; padding: 10px 14px; box-shadow: inset 0 -1px 0 var(--seam); }
+.floatpanel .fphead .t { flex: 1; font: 600 .95rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.floatpanel .fphead button { background: none; border: 0; color: var(--text-dim); cursor: pointer; padding: 2px 6px; }
+.floatpanel .fpbody { padding: 14px; color: var(--text-soft); font-size: .9rem; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent on"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav><div class="stage">
+
+    <div class="agentwrap">
+      <div class="aband">
+        <button type="button" class="fold" title="Fold this band away">&#9662;</button>
+        <span class="akick"><span class="adot live"></span>Anthropic &middot; claude-sonnet &middot; watching the studio folder</span>
+      </div>
+      <div class="aheadblock">
+        <h1 class="s-h3">The Agent</h1>
+        <p class="sub">Standing on Keeper's Log.</p>
+      </div>
+
+      <div class="meterbar">
+        <span>ctx <span class="fill">|######....|</span> 42% 1.2K / 4K</span>
+        <span class="gap"></span>
+        <span>turn 640 &nbsp;&nbsp; session 3.1K</span>
+      </div>
+      <p class="notice2">No model is connected. Add one in Settings; this window uses the same vault and
+        providers as Kit, so anything set up there works here.</p>
+
+      <div class="talk">
+        <p class="aempty">Ask about what is on the screen behind this window.</p>
+
+        <div class="band2 user show">
+          <div class="who">You</div>
+          <div class="txt">Can you check whether any entry in this book never fires?</div>
+        </div>
+        <div class="band2 agent show">
+          <div class="who">Agent</div>
+          <div class="txt">Three entries never fire. "The Old Keeper" is off and has no keywords. Want me
+            to open the full check?</div>
+        </div>
+        <div class="band2 user show">
+          <div class="who">You</div>
+          <div class="txt">Yes, and fix the duplicate keys while you're in there.</div>
+        </div>
+        <div class="band2 agent show extra">
+          <div class="who">Agent</div>
+          <div class="txt">Here's the patch to "The Fog Bell" so its own text stops re-triggering itself:</div>
+          <div class="diffblock"><span class="del">- text: "the bell over the storm door"</span><br><span class="add">+ text: "the old bell by the door"</span></div>
+        </div>
+        <div class="band2 agent show extra">
+          <div class="who">Agent</div>
+          <div class="txt">I also drew a quick map of how your entries wake each other:</div>
+          <div class="htmlblock"><span class="lbl">wake-map.html &middot; a drawing</span><button type="button" class="s-btn ghost" style="padding:5px 10px">Open as tab</button></div>
+        </div>
+        <div class="band2 err show extra">
+          <div class="who">Failed</div>
+          <div class="txt">The provider stopped mid-reply. Nothing was saved.</div>
+        </div>
+      </div>
+
+      <div class="stagehand"><span class="bdot"></span>reading the book<span class="stamp">0:03</span></div>
+      <div class="rehearsal2">
+        <div class="rhead"><span>Rehearsal</span><span class="stamp">0:07</span></div>
+        <p class="s-meta">...so the duplicate is really just the same word used on purpose in two nearby
+          entries, which the health check already treats as worth a look rather than a problem...</p>
+      </div>
+      <div class="rtrace"><button type="button">&middot; rehearsed for 7s, 412 characters</button></div>
+      <div class="watchnote">
+        <div class="whead">Noticed</div>
+        <p>lorebook changed on disk, outside this window.</p>
+      </div>
+
+      <div class="gatecard" role="alertdialog">
+        <p class="gkick">saveEditedEntity &middot; review</p>
+        <strong class="gtitle s-h3">Keeper's Log</strong>
+        <p class="gwhy">Two entries change: a text edit on The Fog Bell, and a duplicate key removed from
+          The Long Storm.</p>
+        <ul class="gwarn">
+          <li>The Fog Bell no longer wakes itself through its own text.</li>
+        </ul>
+        <pre class="gdetail">The Fog Bell.text: "the bell over the storm door" -> "the old bell by the door"
+The Long Storm.keys: removes "stairs" (kept on The Third Stair)</pre>
+        <div class="grow">
+          <button type="button" class="s-btn">Allow once</button>
+          <button type="button" class="s-btn ghost">Allow for this session</button>
+          <button type="button" class="s-btn ghost">No</button>
+          <button type="button" class="s-btn ghost">Wait, tell me more</button>
+          <button type="button" class="s-btn danger">Stop the whole turn</button>
+        </div>
+      </div>
+
+      <div class="chips2">
+        <button type="button">Run the full health check</button>
+        <button type="button">Open Rehearsal with a sample line</button>
+        <button type="button">Show the wake map</button>
+      </div>
+
+      <div class="queue2">
+        <div class="qrow2"><span class="wk">waiting</span><span class="qt">also rename "The Old Keeper" while you're there</span><button type="button">send now</button><button type="button">drop</button></div>
+      </div>
+
+      <div class="popupmenu slashmenu">
+        <div class="prow on">/rail &nbsp; keep a preset's block list open</div>
+        <div class="prow">/gallery &nbsp; lay out card art in a row</div>
+        <div class="prow">/model &nbsp; open provider settings</div>
+      </div>
+      <div class="popupmenu mentionmenu">
+        <div class="prow on">@lorebook:keepers-log</div>
+        <div class="prow">@character:marguerite-vane</div>
+      </div>
+
+      <div class="shots2"><div class="sh"></div><div class="sh"></div></div>
+
+      <form class="composer2">
+        <span class="sweep"></span>
+        <textarea placeholder="Ask about this screen, or type / for a command" rows="2"></textarea>
+        <button type="button" class="s-btn" id="sendBtn">Ask</button>
+      </form>
+
+      <div class="keyhints2">
+        <span><b>enter</b>send</span><span><b>shift+enter</b>newline</span><span><b>/</b>commands</span><span><b>ctrl+/</b>hide</span>
+      </div>
+
+      <details class="seebox">
+        <summary>What it can see</summary>
+        <pre>Keeper's Log is open. 40 entries, 39 enabled, 118 keys. Focused entry: The Long Storm.
+Actions: run the full health check; open Rehearsal; show the wake map.</pre>
+      </details>
+    </div>
+
+    <div class="floatwrap">
+      <div class="floatpanel">
+        <div class="fphead">
+          <span class="t">The Agent</span>
+          <button type="button" title="Minimise the agent; nothing is lost" aria-label="Minimise the agent">&#9866;</button>
+          <button type="button" title="Close the agent" aria-label="Close the agent">&times;</button>
+        </div>
+        <div class="fpbody">
+          <p class="s-meta">Standing on Keeper's Log.</p>
+          <p style="margin-top:10px">The floating panel is the same room, docked over whichever app is
+            open, sized down. Opened with the app-corner control or ctrl+/.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>Agent window.</b> One conversation, one Gate. Busy work shows either the Stagehand line or an open
+  Rehearsal, never both. The Gate takes over the bottom when a write is proposed; its five answers are
+  the only way out. A floating, dockable panel is the same room at a smaller size.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="loaded" class="on">Conversation</button>
+  <button data-s="empty">Empty conversation</button>
+  <button data-s="nomodel">No model connected</button>
+  <button data-s="busy">Working (Stagehand)</button>
+  <button data-s="rehearsing">Working (Rehearsal)</button>
+  <button data-s="watch">Disk changed</button>
+  <button data-s="gate">Gate</button>
+  <button data-s="queued">Queued message</button>
+  <button data-s="slash">Slash menu</button>
+  <button data-s="mentions">@ mentions</button>
+  <button data-s="shots">Attached image</button>
+  <button data-s="folded">Band folded</button>
+  <button data-s="floating">Floating panel</button>
+  <button data-s="phone">Phone width</button>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  function setState(s) {
+    var real = (s === 'phone') ? (body.getAttribute('data-state') || 'loaded') : s;
+    body.setAttribute('data-state', real);
+    document.getElementById('sendBtn').textContent = (real === 'busy' || real === 'rehearsing') ? 'Stop' : 'Ask';
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  setState(q.get('state') || 'loaded');
+  document.getElementById('wfbar').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setState(b.getAttribute('data-s')); });
+})();
+</script>
+</body>
+</html>

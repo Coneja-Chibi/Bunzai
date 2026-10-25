@@ -1,0 +1,12 @@
+/** scenes.list table-of-contents: the row shell. No frame at all, entries on the page. */
+html[data-surface-scenes-list="table-of-contents"] .scn .scene-list {
+  & .grid { gap: 0; }
+  & .sc { height: auto; min-height: 3.4rem; background: transparent; border: 0; box-shadow: none; transform: none; }
+  & .sc:hover .title { text-decoration: underline; text-underline-offset: .2em; }
+  & .sc:hover { transform: none; box-shadow: none; }
+  & .sc.picked { background: var(--bk-surface-sunken); box-shadow: inset 2px 0 0 var(--bk-text); }
+  & .scene-period { font: italic 400 1.1rem var(--font-big); color: var(--bk-text-soft); border-bottom: 1px solid var(--bk-line-control); margin: 1rem 0 .3rem; }
+  & .grid-scroll { padding-right: .2rem; }
+}
+html[data-surface-scenes-list="table-of-contents"] .scn .stagerow { height: 13.5rem; }
+html[data-surface-scenes-list="table-of-contents"] .scn .stagerow :is(.hero, .preview) { height: 13.5rem; }

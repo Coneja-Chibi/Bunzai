@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene edit history and undo</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<link rel="stylesheet" href="rc-parts.css">
+<script src="../theme.js">document.querySelector(".sh .branch").style.cursor = "pointer";
+document.querySelector(".sh .branch").addEventListener("click", function () { window.wfShow && window.wfShow("takes"); });
+</script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
+ * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
+ * composer-shell-styles). Colors are Bunraku tokens:
+ *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
+ *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
+ *   RC user accent (violet)                       ->  --accent
+ *   the character's signature color               ->  --deck-character;  the user's persona  ->  --deck-persona
+ *   greeting gold #D4AF37                         ->  --stage-warn (gilt)
+ *   Cinzel -> --font-fancy;  Inter -> --font-big (as port.css does for the Library)
+ */
+.app { grid-template-columns: 4.2rem 1fr; }
+.dock .app-btn { cursor: default; }
+
+.scene { position: relative; height: 100vh; overflow: hidden; background: var(--stage-well); }
+/* BackgroundMedia + vignette: no scene art set, so the dark floor with RC's faint accent lift */
+.bgm { position: absolute; inset: 0; background:
+  radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%), var(--stage-well); }
+.bgm::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--stage-black) 65%, transparent)); }
+
+/* ---- the blurred layer: everything a wing pauses ---- */
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.scene.paused .play { filter: blur(6px) brightness(.55); pointer-events: none; }
+
+/* SceneHeader (fixed, 44px): black-to-clear gradient, left-aligned name, tagline, branch pill, tools right */
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 35; display: flex; align-items: center; gap: 10px; padding: 0 18px;
+  background: linear-gradient(var(--stage-black) 0%, color-mix(in srgb, var(--stage-black) 95%, transparent) 80%, color-mix(in srgb, var(--stage-black) 70%, transparent) 90%, transparent 100%); }
+.sh .back { width: 26px; height: 26px; display: grid; place-items: center; color: var(--stage-text-dim); border-radius: 50%; flex: none; }
+.sh .nm { font-family: var(--font-fancy); font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-soft); white-space: nowrap; flex: none; }
+.sh .tag { font-family: var(--font-big); font-style: italic; font-size: 9px; color: var(--stage-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 640px; }
+.sh .branch { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 8px; font-family: var(--font-big); font-size: 12px; font-weight: 500;
+  color: color-mix(in srgb, var(--accent) 80%, transparent); background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
+.sh .grow { flex: 1; }
+.sh .live { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.sh .gear { color: var(--stage-line); display: grid; place-items: center; }
+
+/* WingRail (fixed, top 80, 80px; 50px when a panel is open): glass column, masked top and bottom,
+   a 1px neon inner edge in the accent, 40px glyphs 32px apart */
+.rail { position: absolute; top: 80px; bottom: 0; width: 80px; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 32px 0 16px; opacity: .8; transition: width .5s, opacity .2s; }
+.rail:hover { opacity: 1; }
+.rail.l { left: 0; } .rail.r { right: 0; }
+.rail::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.rail.l::after, .rail.r::after { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 30%, transparent); }
+.rail.l::after { right: 0; } .rail.r::after { left: 0; }
+.scene.open-l .rail.l, .scene.open-r .rail.r { width: 50px; }
+/* WingItem: white/45 glyph; hover charges to the wing's color; active is white with a bloom */
+.wi { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: color-mix(in srgb, var(--stage-card) 45%, transparent); cursor: pointer; }
+.wi svg { width: 20px; height: 20px; position: relative; z-index: 1; transition: transform .3s, color .3s; }
+.wi::before { content: ""; position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--w) 25%, transparent) 0%, transparent 70%); opacity: 0; transform: scale(.5); transition: all .5s; }
+.wi:hover { color: var(--w); } .wi:hover svg { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--w)); } .wi:hover::before { opacity: .3; transform: scale(.75); }
+.wi.on { color: var(--stage-card); } .wi.on svg { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--w)); } .wi.on::before { opacity: 1; transform: none; }
+/* the rail-hover map label: 260px, 3px black border, hard 6px shadow in the wing's color, Cinzel 900 */
+.tip { position: absolute; top: 50%; width: 260px; padding: 12px 16px; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--w);
+  opacity: 0; transform: translateY(-60%); transition: opacity .2s, transform .2s; pointer-events: none; z-index: 20; text-align: left; }
+.rail.l .tip { left: 60px; } .rail.r .tip { right: 60px; }
+.rail:hover .tip, .scene.labels .tip { opacity: 1; transform: translateY(-50%); }
+.tip b { display: block; font-family: var(--font-fancy); font-weight: 900; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--w); text-shadow: 3px 3px 0 var(--stage-black); line-height: 1.05; }
+.tip span { display: block; margin-top: 6px; font-family: var(--font-big); font-size: .76rem; font-weight: 600; color: var(--stage-card); line-height: 1.35; }
+
+/* ---- the message scroll: x 80..(right-80), padding 96 48 24 64 ---- */
+.scroll { position: absolute; top: 0; bottom: 0; left: 80px; right: 80px; overflow-y: auto; padding: 96px 48px 150px 64px; }
+.scroll::-webkit-scrollbar { width: 6px; } .scroll::-webkit-scrollbar-thumb { background: var(--stage-seam); }
+
+/* GreetingSelector: max-w-3xl card, gilt dots, italic 4-line preview */
+.greet { max-width: 768px; margin: 0 auto 24px; padding: 16px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(8px); border-radius: 2px; }
+.greet .hd { display: flex; align-items: center; gap: 8px; font-family: var(--font-big); font-size: 14px; font-weight: 500; color: var(--stage-soft); margin-bottom: 12px; }
+.greet .hd svg { width: 16px; height: 16px; color: var(--stage-warn); }
+.greet .hd small { font-size: 12px; font-weight: 400; color: var(--stage-mute); }
+.dots { display: flex; gap: 8px; margin-bottom: 12px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--stage-line); cursor: pointer; }
+.dots i.on { background: var(--stage-warn); box-shadow: 0 0 0 2px var(--stage-black), 0 0 0 4px var(--stage-warn); }
+.greet .pv { padding: 12px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 40%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent);
+  font-family: var(--font-big); font-size: 14px; font-style: italic; line-height: 1.65; color: var(--stage-text-dim); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.greet .help { margin-top: 8px; font-family: var(--font-big); font-size: 12px; color: var(--stage-mute); }
+
+/* ImmersiveMessage: sticky 260x380 portrait (16px outer corners), 12px gutter, post badge, Cinzel name, dark bubble */
+.msg { display: flex; position: relative; margin-bottom: 40px; }
+.msg.user { flex-direction: row-reverse; }
+.por { flex: none; width: 260px; height: 380px; position: sticky; top: 60px; overflow: hidden; border-radius: 16px 0 0 16px; box-shadow: 0 0 20px color-mix(in srgb, var(--tone) 8%, transparent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 55%, var(--stage-panel)), var(--stage-panel) 85%); display: grid; place-items: center; }
+.msg.user .por { border-radius: 0 16px 16px 0; background: linear-gradient(170deg, color-mix(in srgb, var(--tone) 70%, var(--stage-panel)) 0%, color-mix(in srgb, var(--tone) 30%, var(--stage-panel)) 70%, var(--stage-panel)); }
+.por .ini { position: relative; font-family: var(--font-fancy); font-size: 34px; color: color-mix(in srgb, var(--stage-card) 55%, transparent); }
+.por .art { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 38% 30% at 50% 34%, color-mix(in srgb, var(--stage-paper) 45%, transparent), transparent 70%),
+  radial-gradient(ellipse 60% 45% at 50% 92%, color-mix(in srgb, var(--stage-black) 80%, transparent), transparent 75%); }
+.body { flex: 1; min-width: 0; padding-left: 12px; }
+.msg.user .body { padding-left: 0; padding-right: 12px; }
+.badge { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 45%, transparent);
+  padding: 2px 6px; font-family: var(--font-mono); font-size: 10px; line-height: 1; color: var(--stage-soft); box-shadow: 2px 2px 0 var(--stage-black); border-radius: 2px; }
+.msg.user .badge { float: right; }
+.spk { clear: both; font-family: var(--font-fancy); font-weight: 600; font-size: 19px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); line-height: 1.5; margin: 4px 0 6px; }
+.msg.user .spk { text-align: right; }
+.bub { position: relative; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); border-radius: 4px; padding: 14px 18px; }
+.msg.user .bub { padding: 12px 16px; }
+.prose { font-family: var(--font-big); font-size: 16px; line-height: 29.6px; color: color-mix(in srgb, var(--stage-card) 95%, transparent); }
+.prose p + p { margin-top: 20px; }
+.prose em { font-style: italic; }
+.prose q { quotes: '"' '"'; color: var(--tone); }
+/* the hover action bar: bottom-right, 28px buttons in groups */
+.acts { position: absolute; right: 6px; bottom: 6px; z-index: 20; display: flex; gap: 4px; padding: 4px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s; }
+.msg:hover .acts, .scene.hover-acts .msg.char .acts { opacity: 1; }
+.acts button { width: 28px; height: 28px; display: grid; place-items: center; border: 0; background: none; color: var(--tone); cursor: pointer; border-radius: 2px; }
+.acts button:hover { background: color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.acts button svg { width: 16px; height: 16px; }
+.acts .sep { width: 1px; margin: 4px; background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .del { color: var(--stage-danger-text); }
+.acts .dim { color: var(--stage-warn); }
+
+/* while a turn is starting and reasoning streams */
+.think { max-width: 1020px; margin: 0 0 40px; padding: 14px 16px; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 10%, transparent);
+  font-family: var(--font-big); font-size: 16px; line-height: 1.6; color: var(--stage-soft); }
+.think .caret { display: inline-block; width: 9px; height: 16px; background: var(--accent); vertical-align: -2px; }
+.starting { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--stage-panel); font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); margin-bottom: 16px; }
+
+/* the failure card: sits above the composer, 880 wide */
+.fail { position: absolute; left: 50%; transform: translateX(-50%); bottom: 90px; width: min(880px, calc(100% - 96px)); z-index: 30; background: var(--stage-panel); border-top: 2px solid var(--stage-danger-edge); box-shadow: 0 8px 32px var(--shadow-ink); }
+.fail .top { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--stage-seam); }
+.fail .ic { width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-danger-bg); border: 1px solid var(--stage-danger-edge); color: var(--stage-danger-text); flex: none; }
+.fail .tt { font-family: var(--font-big); font-weight: 600; font-size: 14px; color: var(--stage-card); }
+.fail .ln { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-family: var(--font-big); font-size: 13px; color: var(--stage-text-dim); flex-wrap: wrap; }
+.fail code { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.fail .dis { margin-left: auto; padding: 10px 16px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-card); font-family: var(--font-big); font-size: 13px; }
+.fail .dr { padding: 16px 16px 12px; font-family: var(--font-big); font-size: 13px; color: var(--stage-soft); }
+.fail textarea { display: block; margin-top: 10px; width: 100%; height: 110px; background: var(--stage-well); color: var(--stage-card); border: 1px solid var(--stage-line); padding: 8px 10px; font-family: var(--font-big); font-size: 15px; line-height: 1.6; resize: vertical; }
+.fail .nb { margin-top: 8px; font-size: 11px; color: var(--stage-mute); }
+
+/* ImmersiveInputBar + capsule: max-w 880, glass, 2px corners, 12/16 padding, 32px plus and send */
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 48px; pointer-events: none; }
+.cap { pointer-events: auto; max-width: 880px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px; border-radius: 2px;
+  background: color-mix(in srgb, var(--stage-floor) 50%, transparent); backdrop-filter: blur(20px); border: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); box-shadow: 0 8px 32px color-mix(in srgb, var(--stage-black) 40%, transparent); }
+.cap .plus, .cap .send, .cap .stop { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 2px; }
+.cap .plus { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
+.cap .send { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--stage-dim); }
+.cap .stop { background: var(--stage-danger-hot); color: var(--stage-card); display: none; }
+.scene.streaming .cap .stop { display: grid; } .scene.streaming .cap .send { display: none; }
+.cap .ta { flex: 1; min-width: 0; align-self: center; font-family: var(--font-big); font-size: 14px; line-height: 20px; color: color-mix(in srgb, var(--stage-card) 25%, transparent); }
+.cap svg { width: 16px; height: 16px; }
+/* the floating Compendium book and the /BTW tab, bottom-right of the stage */
+.book { position: absolute; right: 96px; bottom: 145px; z-index: 40; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--stage-soft);
+  background: var(--stage-row); border: 1px solid color-mix(in srgb, var(--stage-card) 12%, transparent); box-shadow: 0 4px 14px var(--shadow-ink); }
+.book svg { width: 18px; height: 18px; }
+.btw { position: absolute; right: 19px; bottom: 73px; z-index: 40; width: 90px; height: 34px; display: grid; place-items: center; background: var(--accent); color: var(--stage-black);
+  font-family: var(--font-fancy); font-weight: 900; font-size: 10px; letter-spacing: .3em; }
+
+/* ---- wing panels: open beside their rail, pause and blur the scene ---- */
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 45; display: none; text-align: center; cursor: pointer; }
+.scene.paused .paused-mark { display: block; }
+.scene.open-l .paused-mark { left: 78%; } .scene.open-r .paused-mark { left: 27%; }
+.paused-mark .sq { width: 64px; height: 64px; margin: 0 auto; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.paused-mark .sq svg { width: 26px; height: 26px; }
+.paused-mark small { display: block; margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .3em; color: var(--accent); }
+.wing-panel { position: absolute; top: 0; bottom: 0; z-index: 48; display: none; flex-direction: column; background: var(--stage-well); color: var(--stage-soft); font-family: var(--font-big); }
+.wing-panel.l { left: 0; width: min(1000px, 56%); padding-left: 50px; border-right: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.r { right: 0; width: min(830px, 46%); padding-right: 50px; border-left: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.show { display: flex; }
+/* FoldoutTabs: breadcrumb, then equal bordered tabs with a meta line */
+.fold { position: sticky; top: 0; z-index: 3; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-well) 95%, transparent); }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font-size: .62rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--stage-mute); }
+.crumb b { color: var(--stage-card); font-weight: 600; } .crumb i { font-style: normal; color: var(--stage-faint); }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; min-width: 0; text-align: left; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-card) 3%, transparent); color: var(--stage-text-dim); font-family: var(--font-big); cursor: pointer; }
+.tabs button.on { border-color: color-mix(in srgb, var(--stage-card) 30%, transparent); background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tabs b { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.tabs small { display: block; margin-top: 4px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; opacity: .6; }
+.wbody { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+/* WingHero: accent-edged card, radial wash top-left, 6px soft offset shadow, square icon, eyebrow, Cinzel 900 title with the accent word */
+.hero { position: relative; border: 1px solid color-mix(in srgb, var(--w) 35%, transparent); padding: 24px; box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--w) 12%, transparent);
+  background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--w) 12%, transparent), transparent 55%), linear-gradient(135deg, var(--stage-row), var(--stage-well)); display: flex; gap: 16px; align-items: flex-start; }
+.hero .hi { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--w) 70%, transparent); background: var(--stage-black); color: var(--w); }
+.hero .hi svg { width: 20px; height: 20px; }
+.hero .eb { font-size: .74rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+/* RC asks for Cinzel here but the live page renders a black-weight sans; the port follows what users see */
+.hero h2 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 2rem; line-height: .95; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-card); text-shadow: 3px 3px 0 var(--stage-black); }
+.hero h2 em { font-style: normal; color: var(--w); }
+.hero p { margin-top: 10px; max-width: 42rem; font-size: .95rem; line-height: 1.6; color: var(--stage-soft); }
+/* Cast body: the character card left, the stage-name block right */
+.dossier { display: grid; grid-template-columns: 380px 1fr; gap: 12px; }
+.dcard { position: relative; min-height: 560px; background: linear-gradient(170deg, color-mix(in srgb, var(--deck-character) 40%, var(--stage-panel)), var(--stage-panel) 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+.dcard .np { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 15%, transparent); border: 1px solid color-mix(in srgb, var(--deck-lorebook) 50%, transparent); padding: 3px 8px; }
+.dcard h3 { margin-top: 10px; font-family: var(--font-big); font-weight: 800; font-size: 24px; color: var(--stage-card); }
+.dcard p { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--stage-soft); }
+.fields { border: 2px solid color-mix(in srgb, var(--w) 55%, transparent); padding: 14px; display: flex; flex-direction: column; gap: 14px; align-self: start; }
+.fl { font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); margin-bottom: 6px; }
+.fv { background: var(--stage-row); border: 1px solid var(--stage-seam); padding: 10px 12px; font-size: 14px; color: var(--stage-mute); }
+.fv.set { color: var(--stage-card); font-weight: 700; font-size: 17px; background: none; border: 0; border-bottom: 1px solid var(--stage-seam); padding: 0 0 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.save { margin-top: 4px; padding: 12px; background: var(--w); color: var(--stage-black); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+/* Context body: nested tabs and the empty state */
+.empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--stage-text-dim); font-size: 14px; }
+.empty svg { width: 34px; height: 34px; color: var(--stage-warn); margin-bottom: 12px; }
+.empty small { display: block; margin-top: 10px; font-size: 11px; color: var(--stage-mute); }
+.ptitle .eb { font-size: .62rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+.ptitle h3 { margin-top: 6px; font-family: var(--font-fancy); font-weight: 700; font-size: 20px; font-variant: small-caps; color: var(--stage-card); }
+.ptitle p { margin-top: 6px; font-size: 12px; color: var(--w); }
+
+/* ---- phone (RC: rails hide below lg; collapsed edge handles take their place) ---- */
+.edge { display: none; position: absolute; top: 50%; width: 3px; height: 44px; transform: translateY(-50%); background: linear-gradient(transparent, var(--accent), transparent); z-index: 50; }
+.edge.l { left: 2px; } .edge.r { right: 2px; }
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; } .dock { display: none; }
+  .rail { display: none; } .edge { display: block; }
+  .scroll { left: 0; right: 0; padding: 60px 12px 110px; }
+  .sh { padding: 0 10px; } .sh .tag { display: none; } .sh .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+  .por { width: 88px; height: 118px; border-radius: 8px 0 0 8px; }
+  .msg.user .por { border-radius: 0 8px 8px 0; }
+  .spk { font-size: 15px; letter-spacing: 2px; }
+  .prose { font-size: 15px; line-height: 27px; font-weight: 500; }
+  .bub { padding: 12px 14px; }
+  .dockbar { padding: 12px; } .book { right: 110px; bottom: 100px; } .btw { right: 10px; bottom: 96px; width: 44px; height: 28px; font-size: 8px; letter-spacing: .15em; }
+  .fail { width: calc(100% - 24px); }
+  .wing-panel.l, .wing-panel.r { width: 100%; padding: 0; }
+  .dossier { grid-template-columns: 1fr; } .dcard { min-height: 280px; }
+  .scene.open-l .paused-mark, .scene.open-r .paused-mark { display: none; }
+}
+
+/* wireframe-only control strip (not part of the design) */
+.wf { position: fixed; left: 50%; top: 52px; transform: translateX(-50%); z-index: 999; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--stage-black); border: 1px dashed var(--stage-line); font-family: var(--font-mono); font-size: 10px; }
+.wf button { background: none; border: 1px solid var(--stage-seam); color: var(--stage-mute); padding: 3px 7px; cursor: pointer; font: inherit; }
+.wf button.on { color: var(--stage-card); border-color: var(--accent); }
+body.embed .wf { display: none; }
+.wf-note { bottom: 6.4rem; }
+.wf-chip { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 2rem); }
+/* a cut line left in place (option B): no RC equivalent, so it borrows RC's amber-notice shape in the danger tone */
+.stub { display: flex; align-items: center; gap: 12px; max-width: 1020px; margin: 0 0 24px; padding: 8px 12px; border-left: 4px solid var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-text) 8%, transparent); font: 14px/1.5rem var(--font-big); color: var(--stage-soft); }
+.stub svg { width: 14px; height: 14px; color: var(--stage-danger-text); flex: none; }
+.stub .grow { flex: 1; }
+.stub small { color: var(--stage-mute); font-size: 12px; }
+.stub button { padding: 4px 10px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 12px var(--font-big); text-transform: uppercase; cursor: pointer; }
+body[data-view="delb1"] .m1, body[data-view="delb2"] .m1, body[data-view="delb2"] .m2 { display: none !important; }
+body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-view="forkb"] .sh .branch .bn span { display: none; }
+.acts .more-wrap, .acts .del-wrap { position: relative; display: inline-flex; }
+.acts .on { background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .rc-menu { bottom: calc(100% + 8px); right: -40px; }
+.acts .rc-dd { left: auto; right: -6px; transform: none; }
+/* the menus sit inside the action bar; undo its 28px icon-button rule for their rows */
+.acts .rc-menu button, .acts .rc-dd button { width: 100%; height: auto; display: flex; place-items: initial; border-radius: 0; }
+.acts .rc-menu button { color: var(--stage-card); } .acts .rc-dd button { color: var(--stage-soft); } .acts .rc-dd button.red { color: var(--stage-danger-text); }
+.acts .rc-menu button svg, .acts .rc-dd button svg { width: 14px; height: 14px; }
+.rc-takes.at { top: 40px; left: 390px; }
+
+/* edit history popover: RC has no history viewer, so it is built from RC's own overflow menu (rc-menu) look */
+.rc-hist { position: absolute; bottom: calc(100% + 8px); right: -40px; z-index: 61; width: 22rem; max-height: 26rem; display: flex; flex-direction: column; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 5px 5px 0 0 var(--stage-black); font-family: var(--font-big); text-align: left; }
+.rc-hist header { display: flex; align-items: baseline; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--stage-seam); }
+.rc-hist header b { font: 900 12px var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+.rc-hist header small { color: var(--stage-mute); font-size: 12px; flex: 1; }
+.rc-hist .rows { overflow: auto; }
+.rc-hist .row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-bottom: 1px solid var(--stage-seam); }
+.rc-hist .row:last-child { border-bottom: 0; }
+.rc-hist .row .t { flex: 1; min-width: 0; }
+.rc-hist .row .n { font-size: 12px; color: var(--stage-mute); }
+.rc-hist .row .p { font-size: 13px; line-height: 1.4; color: var(--stage-soft); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.acts .rc-hist .row button { width: auto; height: 24px; display: block; padding: 0 10px; border: 2px solid var(--stage-black); border-radius: 0; box-shadow: 2px 2px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 11px var(--font-big); text-transform: uppercase; cursor: pointer; }
+.rc-hist .row.now { border-left: 4px solid var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.rc-hist footer { padding: 8px 12px; border-top: 1px solid var(--stage-seam); font-size: 12px; color: var(--stage-mute); }
+.rc-hist .empty-h { padding: 16px 12px; font-size: 13px; color: var(--stage-mute); }
+.acts .rc-menu button[disabled] { opacity: .4; cursor: default; }
+.acts .rc-menu button kbd { margin-left: auto; font: 12px var(--font-big); color: var(--stage-mute); }
+[data-o]:not(.show) { display: none !important; }
+</style>
+<script>if (new URLSearchParams(location.search).get("embed")) document.documentElement.classList.add("wf-embed");</script>
+<style>.wf-embed .wf-chip, .wf-embed .wf-chip2, .wf-embed .wf-note, .wf-embed .wf { display: none !important; }</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2z"/><path d="M6 11c1.5 0 2.5.5 3 2"/><path d="M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+    <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.570a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.020.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.020a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M2 8h5M2 16h5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 14 9-14 9V3z"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+
+    <symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn">Lb</div><div class="app-btn on">Sc</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn" data-theme-switch title="Paper or stage">St</div></nav>
+
+  <main class="scene" id="scene">
+    <div class="play">
+      <div class="bgm"></div>
+
+      <header class="sh">
+        <span class="back"><svg width="16" height="16"><use href="#i-back"/></svg></span>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+        <span class="branch"><svg width="14" height="14"><use href="#i-film"/></svg><span class="bn"><span>Director's Cut</span></span><svg width="12" height="12"><use href="#i-down"/></svg></span>
+        <span class="grow"></span>
+        <span class="live"></span>
+        <span class="gear"><svg width="15" height="15"><use href="#i-gear"/></svg></span>
+      </header>
+
+      <div class="scroll">
+        <div class="greet" data-only="opening">
+          <div class="hd"><svg><use href="#i-chat"/></svg>Opening Message <small>(1 of 4)</small></div>
+          <div class="dots"><i class="on" title="Greeting 1"></i><i title="Greeting 2"></i><i title="Greeting 3"></i><i title="Greeting 4"></i></div>
+          <div class="pv">*The lamp room smells of kerosene and wet wool. Marguerite has been awake since the first gust rattled the storm panes, and she is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back...</div>
+          <p class="help">This will be the first message in your conversation</p>
+        </div>
+
+        <div class="stub" data-o="delb1"><svg><use href="#i-trash"/></svg><span>Message #1 cut</span><small>you can restore it for 3 days</small><span class="grow"></span><button>Restore</button></div>
+        <div class="stub" data-o="delb2"><svg><use href="#i-trash"/></svg><span>2 messages cut from #1</span><small>you can restore them for 3 days</small><span class="grow"></span><button>Restore</button></div>
+        <div class="msg char m1" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body">
+            <span class="badge">#1</span>
+            <div class="spk">Marguerite Vane</div>
+            <div class="bub">
+              <div class="prose">
+                <p><em>The lamp room smells of kerosene and wet wool. Marguerite has been awake since the first gust rattled the storm panes, and she is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back.</em></p>
+                <p><em>Her left hand never leaves the rail. The right one holds a logbook gone soft at the corners, forty years of weather in a stranger's handwriting.</em></p>
+                <p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em> <q>Either you know this tower very well, or you are about to learn it the hard way.</q></p>
+                <p><em>The beam swings out over the water and back. Somewhere below, a shutter bangs loose.</em></p>
+                <p><q>Sit, if you like. The storm will not care either way.</q></p>
+              </div>
+              <div class="acts">
+                <button title="Edit"><svg><use href="#i-pen"/></svg></button><button title="Copy"><svg><use href="#i-copy"/></svg></button>
+                <span class="sep"></span>
+                <button title="Regenerate as a new version"><svg><use href="#i-redo"/></svg></button><button title="Continue generation"><svg><use href="#i-play"/></svg></button>
+                <span class="sep"></span>
+                <button class="dim" title="Hide from AI"><svg><use href="#i-eyeoff"/></svg></button><span class="more-wrap"><button title="More message actions" class="more-btn"><svg><use href="#i-more"/></svg></button>
+                  <div class="rc-menu" data-o="more" role="menu"><button><svg><use href="#i-undo"/></svg>Undo last edit</button><button><svg><use href="#i-clap"/></svg>Edit history<kbd>3</kbd></button><button><svg><use href="#i-branch"/></svg>Branch from here</button></div>
+                  <div class="rc-menu" data-o="more-none" role="menu"><button disabled><svg><use href="#i-undo"/></svg>Undo last edit</button><button disabled><svg><use href="#i-clap"/></svg>Edit history</button><button><svg><use href="#i-branch"/></svg>Branch from here</button></div>
+                  <div class="rc-hist" data-o="hist" role="dialog" aria-label="Edit history"><header><b>Edit history</b><small>this version, newest first</small></header>
+                    <div class="rows">
+                      <div class="row now"><div class="t"><div class="n">Now</div><div class="p">The lamp room smells of kerosene and wet wool. Marguerite has been awake since the first gust rattled the storm panes...</div></div></div>
+                      <div class="row"><div class="t"><div class="n">Before the last edit &middot; 61 words</div><div class="p">The lamp room smells of kerosene. Marguerite has been awake since the first gust, counting the seconds between flashes...</div></div><button>Restore</button></div>
+                      <div class="row"><div class="t"><div class="n">Before that &middot; 54 words</div><div class="p">The lamp room smells of kerosene. Marguerite is on her third circuit of the brass rail.</div></div><button>Restore</button></div>
+                      <div class="row"><div class="t"><div class="n">Original &middot; 38 words</div><div class="p">Marguerite is in the lamp room when the storm breaks.</div></div><button>Restore</button></div>
+                    </div>
+                    <footer>Restoring keeps the text it replaces here, so you can undo a restore.</footer></div>
+                  <div class="rc-hist" data-o="hist-empty" role="dialog" aria-label="Edit history"><header><b>Edit history</b><small>this version</small></header><div class="empty-h">No edits yet. The first edit you save will appear here.</div></div></span>
+                <span class="sep"></span>
+                <span class="del-wrap"><button class="del" title="Delete"><svg><use href="#i-trash"/></svg></button>
+                  <div class="rc-dd" data-o="delmenu"><button><svg><use href="#i-trash"/></svg>Delete this message</button><button class="red"><svg><use href="#i-trash"/></svg>Delete this &amp; all after</button></div></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="msg user m2" data-only="conversation streaming error" style="--tone: var(--deck-persona)">
+          <div class="por"><span class="ini">Y</span></div>
+          <div class="body">
+            <span class="badge">#2</span>
+            <div class="spk">You</div>
+            <div class="bub">
+              <div class="prose"><p>I set the lantern I did not bring on the chart table. <q>Is the relief boat still coming?</q></p></div>
+              <div class="acts">
+                <button title="Edit"><svg><use href="#i-pen"/></svg></button><button title="Copy"><svg><use href="#i-copy"/></svg></button>
+                <span class="sep"></span>
+                <button class="dim" title="Hide from AI"><svg><use href="#i-eyeoff"/></svg></button><button title="More message actions"><svg><use href="#i-more"/></svg></button>
+                <span class="sep"></span>
+                <button class="del" title="Delete"><svg><use href="#i-trash"/></svg></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-only="streaming">
+          <div class="starting"><svg width="16" height="16"><use href="#i-spin"/></svg>Starting...</div>
+          <div class="think">The user asks about the relief boat. Marguerite knows it turned back at noon and has not said so. Keep her guarded, answer with the storm first<span class="caret"></span></div>
+        </div>
+      </div>
+
+      <div class="fail" data-only="error">
+        <div class="top">
+          <span class="ic"><svg width="20" height="20"><use href="#i-alert"/></svg></span>
+          <div><div class="tt">Generation Failed</div><div class="ln"><code>upstream_stream_read_error</code>Upstream response stream was interrupted</div></div>
+          <span class="dis">Dismiss</span>
+        </div>
+        <div class="dr">Interrupted draft (not saved)
+          <textarea readonly>The beam swings out over the water. Marguerite closes the logbook on her thumb to keep the place, and for a long moment she only watches the</textarea>
+          <p class="nb">Copy any text you want to keep before dismissing or retrying. This incomplete text is only available in this tab and is not saved to the scene.</p>
+        </div>
+      </div>
+
+      <div class="dockbar">
+        <div class="cap">
+          <span class="plus" title="Tools"><svg><use href="#i-plus"/></svg></span>
+          <span class="ta">Message Marguerite Vane...</span>
+          <span class="send" title="Send"><svg><use href="#i-send"/></svg></span>
+          <span class="stop" title="Stop"><svg><use href="#i-stop"/></svg></span>
+        </div>
+      </div>
+      <span class="book" title="Compendium"><svg><use href="#i-book"/></svg></span>
+      <span class="btw">/BTW</span>
+    </div>
+
+    <!-- the rails sit above the blur: they stay live while a wing is open -->
+    <nav class="rail l" aria-label="Scene wings">
+      <div class="wi" style="--w: var(--accent)" data-wing="booth"><svg><use href="#i-zap"/></svg><div class="tip"><b>Control Booth</b><span>Scene setup and automation</span></div></div>
+      <div class="wi" style="--w: var(--deck-character)" data-wing="cast"><svg><use href="#i-mask"/></svg><div class="tip"><b>Cast</b><span>Character, persona, and speakers</span></div></div>
+      <div class="wi" style="--w: var(--deck-lorebook)" data-wing="world"><svg><use href="#i-compass"/></svg><div class="tip"><b>World</b><span>Lorebooks and Compendium</span></div></div>
+      <div class="wi" style="--w: var(--deck-preset)" data-wing="prompting"><svg><use href="#i-wand"/></svg><div class="tip"><b>Prompting</b><span>Preset, guides, and scene note</span></div></div>
+      <div class="wi" style="--w: var(--deck-regex)" data-wing="props"><svg><use href="#i-puzzle"/></svg><div class="tip"><b>Props</b><span>Tools and scene mechanics</span></div></div>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <div class="wi" style="--w: var(--stage-var)" data-wing="ai"><svg><use href="#i-cpu"/></svg><div class="tip"><b>AI</b><span>Model and generation settings</span></div></div>
+      <div class="wi" style="--w: var(--stage-macro)" data-wing="stage"><svg><use href="#i-monitor"/></svg><div class="tip"><b>Stage</b><span>Appearance, gallery, and music</span></div></div>
+      <div class="wi" style="--w: var(--stage-warn)" data-wing="context"><svg><use href="#i-eye"/></svg><div class="tip"><b>Context</b><span>What the AI sees and remembers</span></div></div>
+    </nav>
+    <span class="edge l"></span><span class="edge r"></span>
+
+    <div class="rc-takes at" data-o="takes">
+      <div class="hd"><b><svg><use href="#i-film"/></svg>Scene Takes</b><small>Switch between alternate versions</small></div>
+      <div class="pad"><div class="rc-take onmain"><span class="ic"><svg><use href="#i-clap"/></svg></span><div class="tx"><div class="nm">Original Take <span class="main">Main</span></div><div class="meta">The original scene</div></div><span class="dot"></span></div></div>
+      <div class="sep">Alternate Takes</div>
+      <div class="pad" style="padding-top:0">
+        <div class="rc-take"><span class="ic"><svg><use href="#i-film"/></svg></span><div class="tx"><div class="nm">Take 2</div><div class="meta">Sep 27<i>&middot;</i>msg 1<i>&middot;</i>5 msgs</div></div><span class="act" title="Rename"><svg><use href="#i-pen"/></svg></span><span class="act x" title="Delete branch"><svg><use href="#i-trash"/></svg></span></div>
+        <div class="rc-take"><span class="ic"><svg><use href="#i-film"/></svg></span><div class="tx"><div class="nm">The quiet version</div><div class="meta">Sep 26<i>&middot;</i>msg 1<i>&middot;</i>3 msgs</div></div><span class="act" title="Rename"><svg><use href="#i-pen"/></svg></span><span class="act x" title="Delete branch"><svg><use href="#i-trash"/></svg></span></div>
+      </div>
+      <div class="foot"><svg><use href="#i-bulb"/></svg>Create new takes from the branch icon on any message</div>
+    </div>
+
+    <div class="rc-scrim" data-o="dela"><div class="rc-confirm sm" style="--tone: var(--stage-warn)"><div class="eb">The Cutting Room</div><h3>Cut this <em>line?</em></h3><p>This permanently removes this message from the scene.</p><div class="rc-row"><button class="rc-btn cancel">Cancel</button><button class="rc-btn go gilt">Delete</button></div></div></div>
+    <div class="rc-scrim" data-o="dela2"><div class="rc-confirm sm"><div class="eb">The Cutting Room</div><h3>Cut from <em>here?</em></h3><p>This removes this message and every one after it. There's no undo.</p><div class="rc-row"><button class="rc-btn cancel">Cancel</button><button class="rc-btn go">Delete from here</button></div></div></div>
+    <div class="rc-toast" data-o="undo"><span class="grow">Message #1 cut</span><button>Undo</button></div>
+    <div class="rc-toast" data-o="undo-edit"><span class="grow">Edit undone</span><button>Redo</button></div>
+
+    <div class="rc-scrim" data-o="forka"><section class="rc-sheet accent">
+      <header class="hd"><div class="eb"><svg><use href="#i-branch"/></svg>Scene takes</div><h2>Fork this scene</h2><p>Create a new take from message 1. Your current scene will not change.</p></header>
+      <div class="bd"><div><label class="lb">Fork name</label><div class="in">Take 2</div></div><div class="box"><div class="t">This fork includes</div><ul><li>Every message up to and including message 1</li><li>The scene's cast, as it is in this scene</li></ul></div></div>
+      <footer class="ft"><button>Cancel</button><button class="go">Create fork</button></footer>
+    </section></div>
+    <div class="rc-toast" data-o="forkb"><span class="grow">Now playing Take 2, from message 1</span><button>Rename</button></div>
+
+    <div class="rc-scrim" data-o="cuttake"><section class="rc-sheet sm">
+      <header class="hd"><div class="eb">Scene takes</div><h2>Delete this take</h2><p>Take 2</p></header>
+      <div class="bd tight"><p>This take and its 5 messages go to the Trash. You can restore it for 3 days.</p></div>
+      <footer class="ft"><button>Keep take</button><button class="red">Delete take</button></footer>
+    </section></div>
+
+    <div class="paused-mark" title="Close the wing"><div class="sq"><svg><use href="#i-pause"/></svg></div><small>SCENE PAUSED</small></div>
+
+    <!-- Cast wing (left) -->
+    <section class="wing-panel l" data-panel="cast" style="--w: var(--deck-character)">
+      <nav class="fold">
+        <div class="crumb">Scene <i>/</i> <b>Cast</b></div>
+        <div class="tabs"><button class="on"><b>Character</b></button><button><b>Persona</b></button><button><b>Participants</b><small>Registry</small></button></div>
+      </nav>
+      <div class="wbody">
+        <header class="hero"><span class="hi"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h2>Identity &amp; <em>Details</em></h2><p>Stage name, casting card, prompts, lorebooks: every page in this character's dossier.</p></div></header>
+        <div class="dossier">
+          <div class="dcard"><span class="np">Now playing</span><h3>Marguerite Vane</h3><p>Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</p></div>
+          <div class="fields">
+            <div><div class="fl">Stage name</div><div class="fv set">Marguerite Vane</div></div>
+            <div><div class="fl">Full name</div><div class="fv">Legal or birth name...</div></div>
+            <div><div class="fl">Title / epithet</div><div class="fv">The Magnificent, Lord of..., etc.</div></div>
+            <div class="two"><div><div class="fl">Age</div><div class="fv">Ancient, 25, Timeless...</div></div><div><div class="fl">Pronouns</div><div class="fv">He/Him, She/Her, They...</div></div></div>
+            <div><div class="fl">Tagline</div><div class="fv" style="color: var(--stage-card)">Keep the lighthouse lit through the long storm...</div></div>
+            <div class="save">Save draft</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Context wing (right) -->
+    <section class="wing-panel r" data-panel="context" style="--w: var(--stage-warn)">
+      <nav class="fold">
+        <div class="crumb">Tools <i>/</i> <b>Context</b></div>
+        <div class="tabs"><button class="on"><b>Prompt inspector</b><small>Next send</small></button><button><b>Summary</b></button></div>
+      </nav>
+      <div class="wbody">
+        <div class="ptitle"><div class="eb">Prompt inspector</div><h3>What the AI Sees</h3><p>Prompt preview and active lore share one debug surface.</p></div>
+        <div class="tabs"><button class="on"><b>Active lore</b><small>Last send</small></button><button><b>Prompt preview</b><small>Next send</small></button></div>
+        <div class="empty"><div><svg><use href="#i-compass"/></svg><div>Send a message to see prompt tracking data</div><small>No debug data available</small></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="wf" id="wf" style="display:none"></div>
+<div class="wf-chip"><span>Edit history</span><button data-o-show="more">More menu</button><button data-o-show="more-none">More, never edited</button><button data-o-show="hist">History list</button><button data-o-show="hist-empty">History, empty</button><button data-o-show="undo-edit">Undo toast</button><button data-theme-switch>Theme</button><a href="../index.html">All</a></div>
+<div class="wf-note"><b>RoleCall's own:</b> the More overflow (MessageActionOverflow) with its Undo last edit item (EditableMessage.tsx:1537), and toasts. <b>New:</b> RC keeps one 12 second in-memory snapshot, only for toolbar edits, so it has no history list. Bunraku stores every replaced text, so More gains <b>Edit history</b> (this popover, in the overflow menu look) and Undo last edit becomes durable. Undo and Restore save through the normal edit, so the text they replace joins the history and they can themselves be undone. Both items are disabled on a version that was never edited. Previews are two lines, no timestamps. No edited mark on the bubble (RC has none).</div>
+
+<script>
+(function () {
+  var scene = document.getElementById("scene");
+  var WINGS = { cast: "l", context: "r" };
+  function set(s) {
+    scene.className = "scene";
+    var flow = s === "cast" || s === "context" || s === "labels" ? "conversation" : s;
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.style.display = el.getAttribute("data-only").split(" ").indexOf(flow) >= 0 ? "" : "none"; });
+    document.querySelectorAll(".wing-panel").forEach(function (p) { p.classList.toggle("show", p.getAttribute("data-panel") === s); });
+    document.querySelectorAll(".wi").forEach(function (w) { w.classList.toggle("on", w.getAttribute("data-wing") === s); });
+    if (WINGS[s]) scene.classList.add("paused", "open-" + WINGS[s]);
+    if (s === "streaming") scene.classList.add("streaming");
+    if (s === "labels") scene.classList.add("labels");
+    if (s === "conversation") scene.classList.add("hover-acts");
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.body.classList.add("embed");
+  set(q.get("state") || "conversation");
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) set(b.getAttribute("data-s")); });
+  document.querySelectorAll(".wi").forEach(function (w) { w.addEventListener("click", function () { var id = w.getAttribute("data-wing"); set(WINGS[id] && !w.classList.contains("on") ? id : "conversation"); }); });
+  document.querySelector(".paused-mark").addEventListener("click", function () { set("conversation"); });
+})();
+</script>
+<script>
+(function () {
+  var PAIRS = {"dela":["delmenu","dela"],"dela2":["delmenu","dela2"],"forka":["more","forka"],"cuttake":["takes","cuttake"]};
+  function show(o) {
+    document.querySelector(".acts .del").classList.toggle("on", ["delmenu", "dela", "dela2"].indexOf(o) >= 0); document.querySelector(".acts .more-btn").classList.toggle("on", ["more","more-none","hist","hist-empty","forka"].indexOf(o) >= 0);
+    var opts = PAIRS[o] || [o];
+    document.body.setAttribute("data-view", o);
+    document.querySelectorAll("[data-o]").forEach(function (el) { el.classList.toggle("show", el.getAttribute("data-o").split(" ").some(function (x) { return opts.indexOf(x) >= 0; })); });
+    document.querySelectorAll("[data-o-show]").forEach(function (b) { b.style.outline = b.getAttribute("data-o-show") === o ? "2px solid var(--accent)" : ""; });
+  }
+  window.wfShow = show;
+  document.querySelectorAll("[data-o-show]").forEach(function (b) { b.addEventListener("click", function () { show(b.getAttribute("data-o-show")); }); });
+  show(new URLSearchParams(location.search).get("o") || "hist");
+})();
+</script>
+</body>
+</html>

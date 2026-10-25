@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Gate</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="gate.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Gate</h1>
+    <p>The library gate: the stage door, load-in, all aboard, and failed. Every surface here is
+    protected: colors and fonts come only from <code>tokens/protected.css</code>, never a theme, so
+    a broken or hostile mod can never hide, recolor, or fake the unlock prompt.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="gate.door">
+    <header>
+      <h2 class="bk-heading">Gate: the stage door</h2>
+      <span class="bk-tag">src/ui/shell/library-gate.tsx</span>
+      <p class="bk-meta">Parts: gate.door, gate.load-in, gate.all-aboard, gate.failed, protected.unlock</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="gate.door.a" data-taste-title="Console">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Console</h3>
+          <p>A centered console with the form; load-in reads as a segmented meter.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen bk-protected-root gt-root" data-part="gate.door" data-variant="a" data-state="door">
+
+            <div class="gt-panel gt-panel-door" data-part="protected.unlock">
+              <div class="gt-dossier">
+                <p class="gt-act">The stage door</p>
+                <h1 class="gt-marquee">Welcome <em>back</em></h1>
+                <p class="gt-direction">The house is locked. Speak the password and the lights come up.</p>
+                <div class="gt-field"><label for="gtpw">Password</label><input id="gtpw" class="gt-input" type="password" value="moonlit harbor"></div>
+                <div class="gt-cta"><button type="button" class="gt-btn">Enter stage right &rarr;</button><button type="button" class="gt-btn" data-ghost>I forgot it: use my lines</button></div>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-door-wrong" data-part="protected.unlock">
+              <div class="gt-dossier">
+                <p class="gt-act">The stage door</p>
+                <h1 class="gt-marquee">Welcome <em>back</em></h1>
+                <div class="gt-field"><label for="gtpw2">Password</label><input id="gtpw2" class="gt-input" data-invalid type="password" value="moonlit harbour"></div>
+                <div class="gt-note"><p class="gt-note-head">Line flub</p><p>That password does not open this library. Check caps lock, or use your recovery words.</p></div>
+                <div class="gt-cta"><button type="button" class="gt-btn">Enter stage right &rarr;</button><button type="button" class="gt-btn" data-ghost>I forgot it: use my lines</button></div>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-door-lines" data-part="protected.unlock protected.words">
+              <div class="gt-dossier">
+                <p class="gt-act">The stage door</p>
+                <h1 class="gt-marquee">Recite your <em>lines</em></h1>
+                <p class="gt-direction">The player gives all twelve words, in order. Paste them into the first cue, or type them one by one.</p>
+                <p class="gt-lines-head">Your cues</p>
+                <div class="gt-line-grid">
+                  <div class="gt-cue"><i>1.</i><input value="velvet"></div><div class="gt-cue"><i>2.</i><input value="harbor"></div><div class="gt-cue"><i>3.</i><input value="lantern"></div>
+                  <div class="gt-cue"><i>4.</i><input value="orchard"></div><div class="gt-cue"><i>5.</i><input value=""></div><div class="gt-cue"><i>6.</i><input value=""></div>
+                  <div class="gt-cue"><i>7.</i><input value=""></div><div class="gt-cue"><i>8.</i><input value=""></div><div class="gt-cue"><i>9.</i><input value=""></div>
+                  <div class="gt-cue"><i>10.</i><input value=""></div><div class="gt-cue"><i>11.</i><input value=""></div><div class="gt-cue"><i>12.</i><input value=""></div>
+                </div>
+                <p class="gt-count">4 / 12 cues delivered</p>
+                <div class="gt-row"><div><div class="gt-label">Remember this computer</div><div class="gt-hint">Next time it opens without asking. Only while no password is set.</div></div><button type="button" class="gt-switch" role="switch" aria-checked="true"></button></div>
+                <button type="button" class="gt-btn">Take the stage &rarr;</button>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-door-notthis" data-part="protected.unlock">
+              <div class="gt-dossier">
+                <p class="gt-act">The stage door</p>
+                <h1 class="gt-marquee">Not <em>this</em></h1>
+                <div class="gt-note"><p class="gt-note-head">Line flub</p><p>This library was set up on another computer and has no password or recovery words, so it cannot be opened here. Open it on the computer that made it.</p></div>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-loadin" data-part="gate.load-in">
+              <div class="gt-dossier">
+                <p class="gt-act">Load-in</p>
+                <h1 class="gt-marquee">Moving <em>in</em></h1>
+                <p class="gt-direction">The company carries every piece into the locked library and checks each one on arrival. The folder is only read.</p>
+                <div role="meter" aria-label="Pieces carried in" aria-valuemin="0" aria-valuemax="412" aria-valuenow="214"><span class="gt-meter-track"><span class="gt-meter-fill" style="width:52%"></span></span></div>
+                <p class="gt-lines-head">On the loading dock</p>
+                <pre class="gt-proof">checked  character/vera.json
+checked  character/the-lighthouse-keeper.json
+checked  lorebook/harbor-town.json
+carrying preset/moonlit.json</pre>
+                <p class="gt-count">214 / 412 pieces carried in</p>
+                <p class="gt-subtle">Closing Bunraku now is safe: nothing is kept half done, and it starts over next time.</p>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-loadin-noroom" data-part="gate.load-in">
+              <div class="gt-dossier">
+                <p class="gt-act">Load-in</p>
+                <h1 class="gt-marquee">No room <em>backstage</em></h1>
+                <div class="gt-note" data-tone="warn"><p class="gt-note-head">Stage direction</p><p>This folder is 156 MB. Carrying it in needs about 312 MB free, and this disk has 90 MB. Nothing was changed.</p></div>
+                <button type="button" class="gt-btn">Try again &rarr;</button>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-allaboard" data-part="gate.all-aboard">
+              <div class="gt-dossier" data-hero>
+                <p class="gt-act" style="justify-content:center">Load-in</p>
+                <h1 class="gt-marquee">All <em>aboard</em></h1>
+                <p class="gt-voice">412 pieces carried in and checked.</p>
+                <p class="gt-direction">Pictures, exports, and other files, 37 in all, stay in the folder as they were. The library keeps each piece's picture inside the piece.</p>
+                <button type="button" class="gt-btn">Take the stage &rarr;</button>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-allaboard-renamed" data-part="gate.all-aboard">
+              <div class="gt-dossier" data-hero>
+                <p class="gt-act" style="justify-content:center">Load-in</p>
+                <h1 class="gt-marquee">All <em>aboard</em></h1>
+                <p class="gt-voice">412 pieces carried in and checked.</p>
+                <div style="text-align:left">
+                  <p class="gt-lines-head">Renamed to keep both</p>
+                  <ol class="gt-list"><li>Vera.json kept as vera-2.json</li></ol>
+                </div>
+                <p class="gt-subtle">Two names that differ only in capitals are one name in the library, so the second got a number.</p>
+                <button type="button" class="gt-btn">Take the stage &rarr;</button>
+              </div>
+            </div>
+
+            <div class="gt-panel gt-panel-failed" data-part="gate.failed">
+              <div class="gt-dossier">
+                <p class="gt-act">The stage door</p>
+                <h1 class="gt-marquee">The house <em>is dark</em></h1>
+                <div class="gt-note"><p class="gt-note-head">Line flub</p><p>The library could not open: the studio server did not answer. Your studio folder was not changed.</p></div>
+                <button type="button" class="gt-btn">Try again &rarr;</button>
+                <p class="gt-subtle">If this keeps happening, close Bunraku and open it again.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="door" aria-pressed="true">Door</button>
+          <button type="button" class="spec-chip" data-set-state="door-wrong">Door: wrong</button>
+          <button type="button" class="spec-chip" data-set-state="door-lines">Door: lines</button>
+          <button type="button" class="spec-chip" data-set-state="door-notthis">Door: not this computer</button>
+          <button type="button" class="spec-chip" data-set-state="loadin">Load-in: carrying</button>
+          <button type="button" class="spec-chip" data-set-state="loadin-noroom">Load-in: no room</button>
+          <button type="button" class="spec-chip" data-set-state="allaboard">All aboard</button>
+          <button type="button" class="spec-chip" data-set-state="allaboard-renamed">All aboard, renamed</button>
+          <button type="button" class="spec-chip" data-set-state="failed">Failed</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="gate.door.b" data-taste-title="Load screen">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Load screen</h3>
+          <p>A two-column load screen: the library's facts (pieces, last opened) as readouts left,
+          the form right.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen bk-protected-root gt-root" data-part="gate.door" data-variant="b" data-state="door">
+            <div class="gt-wrap">
+              <div class="gt-facts">
+                <div><div class="gt-fact-label">Pieces</div><div class="gt-fact-value">412</div></div>
+                <div><div class="gt-fact-label">Last opened</div><div class="gt-fact-value">2d ago</div></div>
+              </div>
+
+              <div class="gt-panel gt-panel-door" data-part="protected.unlock">
+                <div class="gt-dossier">
+                  <p class="gt-act">The stage door</p>
+                  <h1 class="gt-marquee">Welcome <em>back</em></h1>
+                  <p class="gt-direction">The house is locked. Speak the password and the lights come up.</p>
+                  <div class="gt-field"><label for="gtpwb">Password</label><input id="gtpwb" class="gt-input" type="password" value="moonlit harbor"></div>
+                  <div class="gt-cta"><button type="button" class="gt-btn">Enter stage right &rarr;</button><button type="button" class="gt-btn" data-ghost>I forgot it: use my lines</button></div>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-door-wrong" data-part="protected.unlock">
+                <div class="gt-dossier">
+                  <p class="gt-act">The stage door</p>
+                  <h1 class="gt-marquee">Welcome <em>back</em></h1>
+                  <div class="gt-field"><label for="gtpw2b">Password</label><input id="gtpw2b" class="gt-input" data-invalid type="password" value="moonlit harbour"></div>
+                  <div class="gt-note"><p class="gt-note-head">Line flub</p><p>That password does not open this library. Check caps lock, or use your recovery words.</p></div>
+                  <div class="gt-cta"><button type="button" class="gt-btn">Enter stage right &rarr;</button><button type="button" class="gt-btn" data-ghost>I forgot it: use my lines</button></div>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-door-lines" data-part="protected.unlock protected.words">
+                <div class="gt-dossier">
+                  <p class="gt-act">The stage door</p>
+                  <h1 class="gt-marquee">Recite your <em>lines</em></h1>
+                  <p class="gt-lines-head">Your cues</p>
+                  <div class="gt-line-grid">
+                    <div class="gt-cue"><i>1.</i><input value="velvet"></div><div class="gt-cue"><i>2.</i><input value="harbor"></div><div class="gt-cue"><i>3.</i><input value="lantern"></div>
+                    <div class="gt-cue"><i>4.</i><input value="orchard"></div><div class="gt-cue"><i>5.</i><input value=""></div><div class="gt-cue"><i>6.</i><input value=""></div>
+                  </div>
+                  <p class="gt-count">4 / 12 cues delivered</p>
+                  <button type="button" class="gt-btn">Take the stage &rarr;</button>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-door-notthis" data-part="protected.unlock">
+                <div class="gt-dossier">
+                  <p class="gt-act">The stage door</p>
+                  <h1 class="gt-marquee">Not <em>this</em></h1>
+                  <div class="gt-note"><p class="gt-note-head">Line flub</p><p>This library was set up on another computer and has no password or recovery words, so it cannot be opened here.</p></div>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-loadin" data-part="gate.load-in">
+                <div class="gt-dossier">
+                  <p class="gt-act">Load-in</p>
+                  <h1 class="gt-marquee">Moving <em>in</em></h1>
+                  <div role="meter" aria-label="Pieces carried in" aria-valuemin="0" aria-valuemax="412" aria-valuenow="214"><span class="gt-meter-track"><span class="gt-meter-fill" style="width:52%"></span></span></div>
+                  <p class="gt-count">214 / 412 pieces carried in</p>
+                  <p class="gt-subtle">Closing Bunraku now is safe: nothing is kept half done, and it starts over next time.</p>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-loadin-noroom" data-part="gate.load-in">
+                <div class="gt-dossier">
+                  <p class="gt-act">Load-in</p>
+                  <h1 class="gt-marquee">No room <em>backstage</em></h1>
+                  <div class="gt-note" data-tone="warn"><p class="gt-note-head">Stage direction</p><p>This folder is 156 MB. Carrying it in needs about 312 MB free, and this disk has 90 MB.</p></div>
+                  <button type="button" class="gt-btn">Try again &rarr;</button>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-allaboard" data-part="gate.all-aboard">
+                <div class="gt-dossier" data-hero>
+                  <p class="gt-act" style="justify-content:center">Load-in</p>
+                  <h1 class="gt-marquee">All <em>aboard</em></h1>
+                  <p class="gt-voice">412 pieces carried in and checked.</p>
+                  <button type="button" class="gt-btn">Take the stage &rarr;</button>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-allaboard-renamed" data-part="gate.all-aboard">
+                <div class="gt-dossier" data-hero>
+                  <p class="gt-act" style="justify-content:center">Load-in</p>
+                  <h1 class="gt-marquee">All <em>aboard</em></h1>
+                  <p class="gt-voice">412 pieces carried in and checked.</p>
+                  <div style="text-align:left"><p class="gt-lines-head">Renamed to keep both</p><ol class="gt-list"><li>Vera.json kept as vera-2.json</li></ol></div>
+                  <button type="button" class="gt-btn">Take the stage &rarr;</button>
+                </div>
+              </div>
+
+              <div class="gt-panel gt-panel-failed" data-part="gate.failed">
+                <div class="gt-dossier">
+                  <p class="gt-act">The stage door</p>
+                  <h1 class="gt-marquee">The house <em>is dark</em></h1>
+                  <div class="gt-note"><p class="gt-note-head">Line flub</p><p>The library could not open: the studio server did not answer.</p></div>
+                  <button type="button" class="gt-btn">Try again &rarr;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="door" aria-pressed="true">Door</button>
+          <button type="button" class="spec-chip" data-set-state="door-wrong">Door: wrong</button>
+          <button type="button" class="spec-chip" data-set-state="door-lines">Door: lines</button>
+          <button type="button" class="spec-chip" data-set-state="door-notthis">Door: not this computer</button>
+          <button type="button" class="spec-chip" data-set-state="loadin">Load-in: carrying</button>
+          <button type="button" class="spec-chip" data-set-state="loadin-noroom">Load-in: no room</button>
+          <button type="button" class="spec-chip" data-set-state="allaboard">All aboard</button>
+          <button type="button" class="spec-chip" data-set-state="allaboard-renamed">All aboard, renamed</button>
+          <button type="button" class="spec-chip" data-set-state="failed">Failed</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> every state in
+    shell-gate.html (password door, wrong password, recovery-words door, not-this-computer refusal,
+    load-in with its live proof block, the no-room refusal matching library-gate.tsx exactly --
+    Try again only, no second button --, all aboard with and without keep-both renames, and the
+    failed/server-down screen). <b>Note for the primitives:</b> this whole screen had to skip
+    <code>.bk-frame</code>, <code>.bk-panel</code>, <code>.bk-tag</code> and the rest of parts.css
+    because every primitive reads <code>bk.theme</code>-layer tokens (frame width, surface, text);
+    a protected surface may only read <code>--bk-protected-*</code>. The dossier box, button, field
+    and switch here are hand-drawn equivalents in protected tokens -- worth a protected-safe
+    variant of the core primitives if more protected screens follow.</p>
+  </section>
+</main>
+</body>
+</html>

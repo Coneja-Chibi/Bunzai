@@ -1,0 +1,137 @@
+/*
+ * Bunraku design system: workbench.room screen. Prefix .wb-. Tokens only.
+ */
+
+/* ---- shared shell chrome: Dock + HUD strip + status bar (duplicated per screen by design: each
+   page under design/system/screens/ is self-contained, "CSS rules for your
+   area file") ---- */
+.wb-app { display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--bk-surface-base); }
+.wb-hud { flex: none; display: flex; align-items: center; gap: var(--bk-space-6); padding: 0 var(--bk-space-4); min-height: var(--bk-hud-h); background: var(--bk-surface-well); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.wb-hud-start, .wb-hud-end { display: flex; align-items: center; gap: var(--bk-space-3); flex: none; }
+.wb-mark { width: var(--bk-icon-md); height: var(--bk-icon-md); flex: none; color: var(--bk-tint-text); }
+.wb-hud-mid { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: var(--bk-space-6); overflow: hidden; }
+.wb-hud-score { display: flex; align-items: center; gap: var(--bk-space-5); }
+.wb-body { flex: 1; min-height: 0; display: flex; align-items: stretch; }
+.wb-dock { flex: none; width: var(--bk-dock-w); display: flex; flex-direction: column; gap: var(--bk-space-1); padding: var(--bk-space-4) var(--bk-space-3); background: var(--bk-surface-well); box-shadow: inset calc(-1 * var(--bk-divider-w)) 0 0 0 var(--bk-line); overflow-y: auto; }
+.wb-dock-brand { display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-2) var(--bk-space-3); font: var(--bk-type-name); color: var(--bk-text); }
+.wb-dock-app { justify-content: flex-start; gap: var(--bk-space-3); }
+.wb-dock-icon { flex: none; color: var(--bk-tint-text); }
+.wb-dock-label { display: flex; flex-direction: column; min-width: 0; align-items: flex-start; }
+.wb-dock-label b { font: var(--bk-type-small); font-weight: var(--bk-fw-strong); color: inherit; }
+.wb-dock-label small { font: var(--bk-type-label); color: var(--bk-text-dim); min-height: 1em; }
+.wb-dock-add { margin-top: var(--bk-space-2); color: var(--bk-text-dim); }
+.wb-dock-add .wb-dock-icon { color: var(--bk-text-dim); }
+.wb-dock-fold { margin-top: auto; align-self: flex-start; min-height: var(--bk-hit-min); min-width: var(--bk-hit-min); color: var(--bk-text-dim); background: none; border: 0; cursor: pointer; }
+.wb-dock-fold:hover { color: var(--bk-text); }
+.wb-stage { flex: 1; min-width: 0; overflow: auto; padding: var(--bk-pad-page); }
+.wb-status { flex: none; display: flex; align-items: center; justify-content: space-between; min-height: var(--bk-status-h); padding: 0 var(--bk-space-4); font: var(--bk-type-label); color: var(--bk-text-dim); background: var(--bk-surface-ink); }
+
+@container (max-width: 46rem) {
+  .wb-dock { width: var(--bk-dock-w-slim); }
+  .wb-dock-word, .wb-dock-label b, .wb-dock-label small { display: none; }
+  .wb-dock-brand, .wb-dock-app, .wb-dock-add { justify-content: center; }
+}
+@container (max-width: 30rem) {
+  .wb-body { flex-direction: column-reverse; }
+  .wb-dock { width: 100%; flex-direction: row; align-items: center; padding: var(--bk-space-1) var(--bk-space-2); overflow-x: auto; overflow-y: visible; box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-line); gap: var(--bk-space-1); }
+  .wb-dock-brand, .wb-dock-add, .wb-dock-fold { display: none; }
+  .wb-dock-app { flex: none; flex-direction: column; gap: var(--bk-space-1); min-width: 3.25rem; justify-content: center; }
+  .wb-hud-score, .wb-hud-mid .bk-divider { display: none; }
+  .wb-hud { flex-wrap: wrap; min-height: auto; padding: var(--bk-space-2) var(--bk-space-3); gap: var(--bk-space-2); }
+  .wb-stage { padding: var(--bk-space-4); }
+}
+
+.wb-stage { display: flex; flex-direction: column; gap: 0; }
+
+/* ---- variant A: tab strip ---- */
+.wb-tabstrip { display: flex; align-items: stretch; gap: var(--bk-space-1); flex-wrap: wrap; box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); padding-bottom: var(--bk-space-2); margin-bottom: var(--bk-space-4); }
+.wb-tab { width: auto; min-width: 0; background: var(--bk-surface-sunken); box-shadow: inset 0 0 0 1px var(--bk-line); gap: var(--bk-space-2); }
+.wb-tab[aria-selected="true"] { background: var(--bk-surface-panel); box-shadow: inset 0 0 0 1px var(--bk-line), inset 0 calc(-1 * var(--bk-crown-w)) 0 0 var(--bk-tint-text); color: var(--bk-text); }
+.wb-tab[data-beside] { box-shadow: inset 0 0 0 1px var(--bk-line), inset var(--bk-crown-w) 0 0 0 var(--bk-tint-text); }
+.wb-tab .bk-bullet { background: var(--bk-tint-text); }
+.wb-tab-add { width: var(--bk-hit-min); flex: none; justify-content: center; color: var(--bk-text-dim); background: none; }
+.wb-tabfill { flex: 1; }
+
+/* ---- editor card ---- */
+.wb-editorcard { margin-bottom: var(--bk-space-2); }
+.wb-ehead { gap: var(--bk-space-3); }
+.wb-ehead h3 { flex: 1; }
+.wb-besidehint { margin: 0 0 var(--bk-gap-stack); }
+.wb-screen[data-state="split"] .wb-editorcard,
+.wb-screen[data-state="split"] .wb-besidehint,
+.wb-screen[data-state="split"] .wb-loadoutwrap { display: none; }
+.wb-screen:not([data-state="loaded"]) .wb-tabstrip,
+.wb-screen:not([data-state="loaded"]) .wb-loadout { opacity: .55; pointer-events: none; }
+
+/* ---- split panes ---- */
+.wb-panes { display: none; gap: var(--bk-divider-w); background: var(--bk-line); margin-bottom: var(--bk-space-4); }
+.wb-screen[data-state="split"] .wb-panes { display: flex; }
+.wb-pane { flex: 1; min-width: 0; background: var(--bk-surface-base); padding: var(--bk-space-4); container-type: inline-size; }
+.wb-pane-beside { box-shadow: inset var(--bk-crown-w) 0 0 0 var(--bk-tint-text); }
+.wb-rowhead { display: flex; align-items: center; gap: var(--bk-space-2); margin-bottom: var(--bk-space-2); }
+.wb-swap { margin-left: auto; }
+@container (max-width: 60rem) { .wb-panes { flex-direction: column; } }
+
+/* ---- conflict ---- */
+.wb-conflict { display: none; padding: var(--bk-pad-panel); margin-bottom: var(--bk-space-4); box-shadow: inset 0 0 0 1px var(--bk-danger-line); background: var(--bk-danger-bg); }
+.wb-screen[data-state="conflict"] .wb-conflict { display: block; }
+.wb-screen[data-state="conflict"] .wb-editorcard,
+.wb-screen[data-state="conflict"] .wb-loadoutwrap,
+.wb-screen[data-state="conflict"] .wb-besidehint { display: none; }
+.wb-conflict .bk-heading { color: var(--bk-danger); }
+.wb-dlgrow { display: flex; justify-content: flex-end; gap: var(--bk-space-2); margin-top: var(--bk-space-3); }
+
+/* ---- restoring ---- */
+.wb-restoring { display: none; max-width: 24rem; margin: var(--bk-space-8) 0; }
+.wb-screen[data-state="restoring"] .wb-restoring { display: block; }
+.wb-screen[data-state="restoring"] .wb-editorcard,
+.wb-screen[data-state="restoring"] .wb-loadoutwrap,
+.wb-screen[data-state="restoring"] .wb-besidehint,
+.wb-screen[data-state="restoring"] .wb-tabstrip,
+.wb-screen[data-state="restoring"] .wb-loadout { display: none; }
+.wb-pulse { animation: wb-pulse var(--bk-dur-base, 1s) ease-in-out infinite alternate; }
+@keyframes wb-pulse { from { opacity: .4; } to { opacity: 1; } }
+
+/* ---- empty ---- */
+.wb-empty { display: none; max-width: 28rem; margin: var(--bk-space-12) auto; text-align: center; padding: var(--bk-space-8); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.wb-screen[data-state="empty"] .wb-empty { display: block; }
+.wb-screen[data-state="empty"] .wb-tabstrip,
+.wb-screen[data-state="empty"] .wb-loadout,
+.wb-screen[data-state="empty"] .wb-editorcard,
+.wb-screen[data-state="empty"] .wb-loadoutwrap,
+.wb-screen[data-state="empty"] .wb-besidehint { display: none; }
+.wb-empty .bk-heading { margin-top: var(--bk-space-2); }
+.wb-empty [data-part="ui.empty.actions"] { margin-top: var(--bk-space-4); display: flex; justify-content: center; }
+
+/* ---- recents ---- */
+.wb-recents { margin-top: var(--bk-space-6); padding-top: var(--bk-space-4); box-shadow: inset 0 1px 0 0 var(--bk-line); }
+.wb-rlabel { display: inline-flex; align-items: center; gap: var(--bk-space-2); background: none; border: 0; cursor: pointer; padding: 0; min-height: var(--bk-hit-min); }
+.wb-rtoggle-text { color: var(--bk-text-faint); }
+.wb-rrow { display: flex; gap: var(--bk-space-3); overflow-x: auto; margin-top: var(--bk-space-3); padding-bottom: var(--bk-space-1); }
+.wb-rlabel[aria-expanded="false"] + .wb-rrow { display: none; }
+.wb-rcard { flex: none; width: 9.75rem; padding: var(--bk-pad-panel); text-align: left; cursor: pointer; }
+.wb-rcard .bk-meta { display: block; margin-top: var(--bk-space-1); }
+
+/* ---- dialogs ---- */
+.wb-scrim { display: none; position: absolute; inset: 0; z-index: var(--bk-z-dialog, 50); place-items: center; background: var(--bk-scrim); }
+.wb-screen[data-state="follow"] .wb-scrim[aria-label="Follow to the Workbench"],
+.wb-screen[data-state="close"] .wb-scrim[aria-label="Discard unsaved changes"] { display: grid; }
+.wb-dlg { width: min(26rem, 100%); padding: var(--bk-pad-panel); }
+.wb-check { display: flex; align-items: center; gap: var(--bk-space-2); margin-top: var(--bk-space-3); font: var(--bk-type-small); color: var(--bk-text-dim); }
+.wb-btn, .wb-btn-ghost, .wb-btn-danger { width: auto; min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-4); justify-content: center; }
+.wb-btn { background: var(--bk-action-bg); color: var(--bk-action-text); }
+.wb-btn:hover { background: var(--bk-action-bg-hover); }
+.wb-btn-ghost { background: none; box-shadow: inset 0 0 0 1px var(--bk-line-control); color: var(--bk-text); }
+.wb-btn-danger { background: var(--bk-danger-strong); color: var(--bk-text-on-tint); }
+
+/* ---- variant B: loadout bar ---- */
+.wb-loadoutwrap { display: flex; gap: var(--bk-frame-reach); align-items: flex-start; }
+.wb-loadout { flex: none; width: 16rem; display: flex; flex-direction: column; gap: var(--bk-space-2); }
+.wb-slot { align-items: center; gap: var(--bk-space-3); background: var(--bk-surface-sunken); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.wb-slot[aria-selected="true"] { background: var(--bk-surface-panel); box-shadow: inset 0 0 0 var(--bk-frame-w) var(--bk-tint-text); }
+.wb-slot[data-beside] { box-shadow: inset 0 0 0 1px var(--bk-line), inset var(--bk-crown-w) 0 0 0 var(--bk-tint-text); }
+.wb-slot-swatch { flex: none; width: var(--bk-avatar-sm); aspect-ratio: var(--bk-card-ratio); background: var(--bk-tint); }
+.wb-slot-text { display: flex; flex-direction: column; min-width: 0; align-items: flex-start; }
+.wb-slot-add { color: var(--bk-text-dim); background: none; justify-content: center; }
+.wb-loadoutmain { flex: 1; min-width: 0; }
+@container (max-width: 46rem) { .wb-loadoutwrap { flex-direction: column; } .wb-loadout { width: 100%; flex-direction: row; flex-wrap: wrap; } }

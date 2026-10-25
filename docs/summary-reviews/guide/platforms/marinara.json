@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/platforms/marinara",
+  "sourcePath": "docs/guide/platforms/marinara.md",
+  "sourceHash": "sha256:610a99fbe0843bce70e28b2a090cdaaa85ae6ba7b62b941dd94dee0908fcdbcf",
+  "semanticSummaryHash": "sha256:778f87061a72afb6bbd0d39586c1188a67c134d1d41fcd606f8590b217fd2c82",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:46.396Z"
+}

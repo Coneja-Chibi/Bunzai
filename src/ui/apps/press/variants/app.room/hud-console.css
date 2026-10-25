@@ -1,0 +1,9 @@
+/** app.room hud-console, Press: the offer rail lies across the top as an inventory of square slots; the queue and its foot sit under it. */
+html[data-surface-app-room="hud-console"] [data-part="press.room"] {
+  grid-template-columns: minmax(0, 1fr);
+  & [data-part="press.rail"] { position: static; max-height: none; box-shadow: none; border-width: 1px; outline: 1px solid var(--bk-line); outline-offset: -5px; }
+  & [data-part="press.offers"] { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); gap: .5rem; }
+  & [data-part="press.offers"] > button { flex-direction: column; align-items: flex-start; justify-content: space-between; min-height: 4.5rem; border: 1px solid var(--bk-line); }
+  & [data-part="press.queue"] { border-left: 3px solid var(--bk-line-strong); padding-left: 1rem; }
+  & [data-part="press.bundle"] { box-shadow: none; border-width: 1px; outline: 1px solid var(--bk-line); outline-offset: -5px; }
+}

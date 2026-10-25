@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/README",
+  "sourcePath": "docs/reference/README.md",
+  "sourceHash": "sha256:88120e5bc1b8be3d9c94ac84238f55a15c060bbee6379aa778ef3567f455a140",
+  "semanticSummaryHash": "sha256:aaef231b190a12f5dd877898a3fbf2f4568a1841aef6d2ff51db771f402aba8a",
+  "verdict": "APPROVE",
+  "reviewer": "independent-opus-meter-reviewer",
+  "notes": "Reviewed the changed Map row and sidecar Map section: token-meter.md exists and the row's description (base counts, per-model fits, cache planning, cache-friendly trimming) matches src/core/tokens. scan:links clean. Unchanged text relies on the prior approval.",
+  "reviewedAt": "2026-09-27T21:14:40.633Z"
+}

@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/platforms/marinara",
+  "sourcePath": "docs/guide/platforms/marinara.md",
+  "sourceHash": "sha256:610a99fbe0843bce70e28b2a090cdaaa85ae6ba7b62b941dd94dee0908fcdbcf",
+  "summary": "Marinara-Engine has no import export screen of its own; Bunraku takes server dumps of regex scripts and personas. Character cards are SillyTavern-shaped and go through the SillyTavern page with a Marinara tab not this page. What Bunraku reads: bare .json regex arrays matching GET regex-scripts and persona objects with sections theming and stats; detect by Marinara-only marks like targetCharacterIds order ai_output or nameColor personaStats. What comes across cleanly lifts full regex row fields with timestamps escrowed and persona name description sections comment avatar while theming stat bars crop tags scenario ride sealed. What changes when you convert to another app keeps same-app everything; regex crosses to apps with regex slots ST RoleCall Risu Lumiverse and skips Agnai Backyard; personas to ST RoleCall Lumiverse only with theming stats dropped. Editing on the Workbench narrows Writing for Marinara and flags Bunraku-only regex controls. Exporting back out writes .json only. Common questions cover exact return character path sealed theming Writing for hide and character targets.",
+  "topics": [
+    "Marinara regex personas",
+    "server dump JSON",
+    "characters via SillyTavern",
+    "sealed theming stats",
+    "regex slot targets",
+    "Writing for Marinara",
+    "Press JSON only"
+  ],
+  "sections": [
+    {
+      "slug": "what-bunraku-reads",
+      "title": "What Bunraku reads",
+      "level": 2,
+      "sourceHash": "sha256:1505278310819593c1a1312a95c864b1672dcec8047dddbe099fba65933f3d47",
+      "summary": "Bunraku reads two bare .json file types from Marinara-Engine. Regex scripts as an array one row per script matching GET /regex-scripts. Personas as an object with sections comment avatar theming and stat bars. A Marinara character card is different: SillyTavern-shaped so it comes and goes through the SillyTavern page with Marinara-only fields like stat bars and tracker colors under a dedicated Marinara tab not here. Recognition looks inside not name: regex dumps need targetCharacterIds order or placement values like ai_output or user_input that SillyTavern regex never has; personas need id name description personality plus at least one theming or stat key like nameColor or personaStats. Drop on the Library. Full walkthrough lives in the importing guide.",
+      "topics": [
+        "regex array dump",
+        "persona object dump",
+        "characters via ST page",
+        "detect Marinara marks",
+        "Library drop"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-comes-across-cleanly",
+      "title": "What comes across cleanly",
+      "level": 2,
+      "sourceHash": "sha256:1cefc681aa17172d238b64defb146abfd89fa755b4bca1596bbf5ad16b416af3",
+      "summary": "Importing loses nothing. For a regex script Bunraku lifts pattern replacement flags trim strings where it runs input output or both prompt-only depth window character limits on/off and order; row created and updated timestamps ride in the background only. For a persona it lifts name description first-person voice comment as short blurb appearance personality backstory sections and avatar. Marinara persona extras per-persona chat theming name dialogue box colors stat bars avatar crop tags and scenario have no shared home so they ride sealed in the background and return exactly on export back to Marinara rather than being dropped.",
+      "topics": [
+        "regex full row fields",
+        "timestamps escrowed",
+        "persona sections avatar",
+        "theming stats sealed",
+        "round-trip extras keep"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-changes-when-you-convert-to-another-app",
+      "title": "What changes when you convert to another app",
+      "level": 2,
+      "sourceHash": "sha256:39b875896fdde1648d52d4efd0eefcbe83ff65653ea11b2c759edb15a333321a",
+      "summary": "Same-app round-trip keeps everything for both kinds because Bunraku kept the original and only rewrites changed fields. Regex scripts cross as far as the target regex engine holds; timestamps drop cross-app. A regex only lands if the target has a regex slot: SillyTavern RoleCall Risu Lumiverse do; Agnai or Backyard do not so Press skips the piece for that run. Personas keep name description sections comment avatar on cross-app as far as the target holds; chat theming stat bars avatar crop tags scenario and Marinara persona id drop. Fewer apps take personas: only SillyTavern RoleCall Lumiverse; converting to Risu Agnai Backyard skips the piece. The drop is deliberate never blind-copy theming stats or scripts.",
+      "topics": [
+        "same-app full keep",
+        "regex slot or skip",
+        "persona slot few apps",
+        "theming stats drop",
+        "never blind-copy"
+      ],
+      "children": []
+    },
+    {
+      "slug": "editing-on-the-workbench",
+      "title": "Editing on the Workbench",
+      "level": 2,
+      "sourceHash": "sha256:306c985f987d0d452aa6c1e79459f92c224b419da21f00699df7c036be30dcb6",
+      "summary": "A regex set opens as one rule per page in a table of contents with pattern replacement flags where it fires and fine print for the rest. Writing for Marinara narrows fine print to depth window and character targets and hides controls with no place like macro substitution and run-on-edit. Three Bunraku-only controls show under every lens flagged not portable: first match only overlay and conditional chaining. A persona opens with name portrait section tiles appearance personality History for backstory full first-person text and live injection preview. Writing for Marinara narrows to name sections avatar and hides color palette and injection-position picker because Marinara wire has no place for them; sealed theming and stats only reappear on export back to Marinara. Save writes the whole set or persona so untouched parts stay.",
+      "topics": [
+        "regex TOC pages",
+        "Writing for Marinara",
+        "Bunraku-only flags",
+        "persona sections preview",
+        "sealed theming hidden"
+      ],
+      "children": []
+    },
+    {
+      "slug": "exporting-back-out",
+      "title": "Exporting back out",
+      "level": 2,
+      "sourceHash": "sha256:6cec37542703c078f41f32c3eb57b6b9878d1663c024a51ba99bb272f6c16b86",
+      "summary": "Stage for the Press via right-click or rail; each run exports staged pieces to one target. Bunraku writes both Marinara regex sets and personas as .json the only shape Marinara understands. Plain .txt or .md copies are available for reading text. Choosing a different app applies the drop story: regex to apps with regex slots personas to apps with persona slots each dropping what the target cannot hold.",
+      "topics": [
+        "Press JSON only",
+        "regex and persona",
+        "txt md text copy",
+        "slot or drop story"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "common-questions",
+      "title": "Common questions",
+      "level": 2,
+      "sourceHash": "sha256:192543f9bce1673fb3d72a6a14f75aea4b90c06ab22464bdd9dd79592622adbf",
+      "summary": "Will regex or persona come back exactly as it was? Yes on export to Marinara-Engine same app in same app out. Marinara character cards go through the SillyTavern page not this one including stat bars and tracker colors under a Marinara tab. Persona colors and stat bars still ride sealed in the background and return untouched on export to Marinara. Writing for strip narrows the editor to what the platform wire carries so you never fill fields thrown away on export; switch to Bunraku lens for every field. Character targets on regex are kept; empty list means applies to everyone same as the wire.",
+      "topics": [
+        "exact Marinara return",
+        "characters via ST",
+        "sealed theming keep",
+        "Writing for hide only",
+        "character targets list"
+      ],
+      "children": []
+    }
+  ]
+}

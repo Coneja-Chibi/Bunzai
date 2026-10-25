@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lock screen wireframe</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">01 Lock screen</div>
+      <p class="wf-lede">Shown instead of the Studio whenever the library is locked. With no password, this computer unlocks by itself and the person never sees this screen. It appears only when a password is set, or on a computer the library does not know yet.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid">
+    <div>
+      <div class="wf-state">State A: a password is set</div>
+      <div class="lockstage">
+        <div class="door">
+          <div class="kicker">Your library is locked</div>
+          <div class="door-title">Welcome back</div>
+          <div class="field">
+            <label for="pw">Password</label>
+            <input id="pw" class="input" type="password" value="moonlit harbor">
+          </div>
+          <div class="actions">
+            <button class="stamp stamp-btn primary">Unlock</button>
+            <button class="btn-ghost">Use recovery words instead</button>
+          </div>
+          <p class="subtle">Checking takes about two seconds. The app stays usable while it checks.</p>
+        </div>
+      </div>
+      <p class="wf-comp">door = FirstLanding door-card scale / button = Stamp / field = connection input</p>
+    </div>
+
+    <div>
+      <div class="wf-state">State B: wrong password</div>
+      <div class="lockstage">
+        <div class="door">
+          <div class="kicker">Your library is locked</div>
+          <div class="door-title">Welcome back</div>
+          <div class="field">
+            <label for="pw2">Password</label>
+            <input id="pw2" class="input bad" type="password" value="moonlit harbour">
+            <span class="error">That password does not open this library. Check caps lock, or use your recovery words.</span>
+          </div>
+          <div class="actions">
+            <button class="stamp stamp-btn primary">Unlock</button>
+            <button class="btn-ghost">Use recovery words instead</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">State C: recovery words (this computer is new, or the password is forgotten)</div>
+      <div class="lockstage">
+        <div class="door">
+          <div class="kicker">Unlock with your recovery words</div>
+          <div class="door-title">Twelve words</div>
+          <div class="words">
+            <div class="word"><i>1</i><input value="velvet"></div>
+            <div class="word"><i>2</i><input value="harbor"></div>
+            <div class="word"><i>3</i><input value="lantern"></div>
+            <div class="word"><i>4</i><input value=""></div>
+            <div class="word"><i>5</i><input value=""></div>
+            <div class="word"><i>6</i><input value=""></div>
+            <div class="word"><i>7</i><input value=""></div>
+            <div class="word"><i>8</i><input value=""></div>
+            <div class="word"><i>9</i><input value=""></div>
+            <div class="word"><i>10</i><input value=""></div>
+            <div class="word"><i>11</i><input value=""></div>
+            <div class="word"><i>12</i><input value=""></div>
+          </div>
+          <p class="subtle">Paste all twelve into the first box, or type them one by one. Capitals and spacing do not matter.</p>
+          <div class="row">
+            <div class="tx">
+              <div class="label">Remember this computer?</div>
+              <div class="hint">Next time it opens without asking. Only offered while no password is set; with a password, the password is always asked for.</div>
+            </div>
+            <div class="toggle on"><span class="track"><span class="knob"></span></span>Remember</div>
+          </div>
+          <div class="actions">
+            <button class="stamp stamp-btn primary">Unlock</button>
+            <button class="btn-ghost">Back to password</button>
+          </div>
+        </div>
+      </div>
+      <p class="wf-comp">words = new numbered-cell grid in the chip grammar / remember = SettingsRow + ToggleSwitch</p>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Why these words:</b> the error never says whether the password was "close". "Use recovery words instead" is always one click away, because the words are what rescue a forgotten password. The remember switch is off-limits while a password exists, matching the rule that a computer's copy never sits beside a password.</p>
+  <p class="wf-note"><b>Question for you:</b> should the lock screen show the library's name (for people with more than one library later), or stay anonymous so a locked screen reveals nothing?</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 2,
+  "id": "greenroom",
+  "version": "1.0.0",
+  "name": "RoleCall",
+  "requests": [
+    "appearance.accent",
+    "appearance.palette",
+    "appearance.shape",
+    "appearance.surfaces",
+    "appearance.type"
+  ],
+  "appearance": {
+    "surfaces": {},
+    "palette": {
+      "surface": {
+        "well": "#050506",
+        "base": "#0a0a0b",
+        "sunken": "#09090b",
+        "field": "#141318",
+        "panel": "#1c1a22",
+        "raised": "#26232d",
+        "ink": "#000000"
+      },
+      "line": {
+        "strong": "#9f9fa9",
+        "line": "#27272a",
+        "track": "#27272a",
+        "control": "#71717b",
+        "focus": "#e11d48"
+      },
+      "text": {
+        "text": "#f4f4f5",
+        "soft": "#e4e4e7",
+        "dim": "#9f9fa9",
+        "faint": "#8a8a91",
+        "onTint": "#000000",
+        "onDeep": "#ffffff"
+      },
+      "roles": {
+        "brand": {
+          "fill": "#e32e56",
+          "text": "#fb7185",
+          "deep": "#e11d48"
+        },
+        "action": {
+          "fill": "#a78bfa",
+          "text": "#a78bfa",
+          "deep": "#7c3aed"
+        },
+        "select": {
+          "fill": "#f472b6",
+          "text": "#f9a8d4",
+          "deep": "#be185d"
+        },
+        "ok": {
+          "fill": "#10b981",
+          "text": "#6ee7b7",
+          "deep": "#047857"
+        },
+        "warn": {
+          "fill": "#f59e0b",
+          "text": "#fbbf24",
+          "deep": "#b45309"
+        },
+        "danger": {
+          "fill": "#ef4444",
+          "text": "#fca5a5",
+          "deep": "#dc2626"
+        },
+        "info": {
+          "fill": "#22d3ee",
+          "text": "#67e8f9",
+          "deep": "#0e7490"
+        }
+      }
+    },
+    "type": {
+      "display": "cinzel",
+      "ui": "system-ui",
+      "body": "system-ui",
+      "mono": "system-mono",
+      "scale": 0
+    },
+    "shape": {
+      "frame": "stamp",
+      "frameWidth": 3,
+      "density": "comfortable",
+      "motion": "calm",
+      "chrome": "rolecall"
+    },
+    "accent": {
+      "follows": "user"
+    },
+    "marks": {}
+  },
+  "assets": []
+}

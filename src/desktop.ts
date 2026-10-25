@@ -1,0 +1,77 @@
+/**
+ * Bunraku.exe - the desktop entry. Compiled by scripts/build-desktop.ts (bun build --compile).
+ * Real software: OUR process opens a native WebView2 window (webview-bun, MIT, the OS's own
+ * webview - no browser dependency, no Electron), so the window and taskbar wear the bunny-b icon
+ * baked into this exe. The server owns the MAIN thread; the window's blocking message pump lives
+ * in a worker (it starves the event loop otherwise - verified). Window closes -> studio exits.
+ *
+ * Every failure path here is REPORTED rather than swallowed - see desktop-boot-report.ts. The exe hides
+ * its console, so anything that throws on the way up is otherwise invisible to the person who launched
+ * it.
+ */
+import { homedir } from "node:os";
+import { startUi } from "./ui/server";
+import { createLibrary } from "./ui/library-root";
+import { registerPackagedFormats } from "./generated/packaged-formats";
+import { PACKAGED_ASSETS } from "./generated/packaged-assets";
+import type { PackagedAssets } from "./ui/assets";
+import { resolveDefaultStudioDir } from "./studio/resolve-dir";
+import { reportBootFailure, reportWindowFailure } from "./desktop-boot-report";
+import { startDesktopWindow } from "./desktop-window-launch";
+import { claimDesktopPort, desktopPortOverride } from "./desktop-port";
+import { focusExisting } from "./desktop-focus";
+
+const TITLE = "Bunraku.";
+
+/**
+ * Bring the studio up and open its window. Throws on any fatal step; the caller turns that into a log
+ * file and a dialog. Resolves once the window is handed off - the process then stays alive on the
+ * server's own event loop until the window closes.
+ */
+async function boot(): Promise<void> {
+  const portOverride = desktopPortOverride(process.env.BUNRAKU_PORT);
+  // The committed module is a null placeholder; only scripts/build-desktop.ts bakes the real one.
+  // Failing loud beats a compiled exe silently serving nothing (or a stale checkout's UI).
+  if (PACKAGED_ASSETS === null) {
+    throw new Error("assets not baked - build with: bun run scripts/build-desktop.ts");
+  }
+  const assets = PACKAGED_ASSETS;
+  registerPackagedFormats();
+  const studioDir = resolveDefaultStudioDir(homedir());
+  // The window comes up first and the encrypted library opens behind it, so the load-in can show;
+  // until it is open every Studio call refuses. A Bunraku already
+  // running owns the library, so a second launch brings its window forward and exits (decision 9);
+  // only if there is no window to raise does it open one onto the running studio.
+  const library = createLibrary(studioDir);
+  const { server, ours } = await claimDesktopPort(portOverride, (port) => {
+    const { url, stop } = startUi(port, studioDir, assets, library);
+    return { url, stop };
+  });
+  const { url: uiUrl, stop } = server;
+  if (ours) void library.open();
+  else library.close();
+  if (await focusExisting(ours, TITLE, Number(new URL(uiUrl).port))) process.exit(0);
+  console.log(`Bunraku. is up at ${uiUrl} (studio: ${studioDir})`);
+
+  // The RELATIVE STRING LITERAL is load-bearing: it is the one specifier Bun's compiler recognizes
+  // for workers in a standalone executable (paired with the second entrypoint in build-desktop.ts).
+  // Anything computed (join, new URL().href) compiles fine and then boots HEADLESS with the console
+  // hidden (worker ModuleNotFound at B:\~BUN\root), which field reports read as "the download does
+  // nothing" - the v0.1.0 release shipped exactly that.
+  // A window that cannot open is NOT fatal: the studio is already serving, so the user gets told the
+  // address and keeps their work. Exiting here would throw away a running studio over a missing
+  // system runtime. (A failed native load inside the worker does reach this listener - proven.)
+  startDesktopWindow(() => new Worker("./desktop-window.ts"), uiUrl, TITLE, (e) => {
+    reportWindowFailure(uiUrl, (e as ErrorEvent).message ?? e);
+  }, () => {
+    stop();
+    process.exit(0);
+  });
+}
+
+try {
+  await boot();
+} catch (err) {
+  reportBootFailure(err);
+  process.exit(1);
+}

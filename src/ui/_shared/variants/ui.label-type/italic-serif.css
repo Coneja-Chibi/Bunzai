@@ -1,0 +1,4 @@
+/** ui.label-type italic-serif (Paper): the lettering of buttons, tabs, kickers and counts in italic book serif, sentence case, the way a manuscript marks its notes. */
+html[data-surface-ui-label-type="italic-serif"] {
+  & :is(.lib.rc, .scn) :is(.ltb, .lfilter button, .viewseg button, .lrail-toggle button, .lrail-add button, .rstart, .findx, .s-btn, .segs button, .selbar button, .nmjump, .nmclear, .colchip, .crumbsel, .rnewtile, .sk, .ey, .ssub, .lrail-div, .scount, .s-act, .nmk, .lrow .n) { font-family: var(--font-big); font-weight: 500; font-style: italic; letter-spacing: 0; text-transform: none; }
+}

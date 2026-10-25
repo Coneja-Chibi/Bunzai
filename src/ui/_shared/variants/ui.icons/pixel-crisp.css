@@ -1,0 +1,4 @@
+/** ui.icons pixel-crisp: square caps and mitered joins on the pixel grid, no antialiased softness. */
+html[data-surface-ui-icons="pixel-crisp"] :is(svg[data-ic], .ico svg, .mk svg):not(.host-protected, .host-protected *) {
+  stroke-width: 2; stroke-linecap: square; stroke-linejoin: miter; shape-rendering: crispEdges;
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "02-ARCHITECTURE",
+  "sourcePath": "docs/02-ARCHITECTURE.md",
+  "sourceHash": "sha256:29be13635e6a5c41667df4d3e0efcaae439eb81f1e602b382e64a2e022634143",
+  "semanticSummaryHash": "sha256:e676e96388e7285352391efe5c623df3c6c3dad35971eed1fcd9397188a5a8f9",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:10.912Z"
+}

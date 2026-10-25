@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/persona",
+  "sourcePath": "docs/reference/entities/persona.md",
+  "sourceHash": "sha256:bbd06a4e2efc54033bbc358b2b6ae39b4610cb0b76ce50d0e8de68a5f0ba3032",
+  "semanticSummaryHash": "sha256:84db1aa7272b718aab8ce8734d36ea6e2a50fd1d66d84476e180d2d8f2dfac44",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:12.685Z"
+}

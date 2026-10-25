@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenes: the list</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * The Scenes list (src/ui/apps/scenes/scenes-list.tsx, scenes-core.ts), restyled in the soft identity.
+ * On Stage down the side (now playing, Continue Story, Earlier, cut scenes with Restore), the Your Stage
+ * header with Select, Trash (with its count), and search, the time/order filters (no size dial: the
+ * source drops it), a card per scene with alternate-take chips, right-click Rename/Delete, Select mode,
+ * the Cutting Room dialog, rename dialog, and the empty state. @container folds at pane width.
+ */
+* { border-radius: 0 !important; }
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+body { container-type: inline-size; }
+#app { display: flex; min-height: 100vh; background: var(--canvas); }
+
+.scn { display: flex; min-height: 100vh; flex: 1; min-width: 0; background: var(--stage-well); }
+
+/* ---- On Stage sidebar ---- */
+.side { width: 300px; flex: none; background: var(--chrome); box-shadow: inset -1px 0 0 var(--seam); display: flex; flex-direction: column; }
+.side .top { padding: 20px 20px 16px; }
+.side .now { display: block; width: 100%; margin: 0 16px 12px; padding: 0; background: none; border: 0; cursor: pointer; text-align: left; }
+.now-art { position: relative; height: 172px; overflow: hidden; background: linear-gradient(165deg, color-mix(in srgb, var(--t) 45%, var(--face)), var(--face) 85%); box-shadow: 0 0 0 1px var(--edge); display: flex; align-items: flex-end; }
+.now-art .ini { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font: italic 600 32px var(--font-fancy); color: color-mix(in srgb, var(--text) 45%, transparent); }
+.now-ov { position: relative; width: 100%; padding: 10px 12px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 80%, transparent) 55%); }
+.now-ov .who { display: flex; align-items: center; gap: 8px; font: 500 12px var(--font-body); }
+.now-av { width: 22px; height: 22px; flex: none; display: grid; place-items: center; font: 600 12px var(--font-big); color: var(--stage-ink); background: var(--t); }
+.now-ov b { color: var(--t); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.now-ov i { margin-left: auto; font-style: normal; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+.now-ov .tt { margin-top: 6px; font: 600 14px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.cont { display: block; margin: 0 16px 4px; padding: 8px 0; text-align: center; font: 600 12px var(--font-body); color: var(--accent); background: none; border: 0; cursor: pointer; }
+.list { padding: 8px 16px 16px; overflow-y: auto; flex: 1; }
+.lab { margin-top: 18px; padding: 10px 0 0; box-shadow: inset 0 1px 0 var(--seam); display: flex; align-items: center; gap: 8px; font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.lab .sq { width: 6px; height: 6px; background: var(--accent); }
+.lab.gonelab .sq { background: var(--stage-danger-text); }
+.rec { display: flex; align-items: center; gap: 10px; padding: 8px; background: none; border: 0; width: 100%; text-align: left; cursor: pointer; }
+.rec:first-of-type { margin-top: 8px; }
+.rec:hover { background: color-mix(in srgb, var(--text) 5%, transparent); }
+.rec .av { width: 34px; height: 34px; flex: none; display: grid; place-items: center; font: 600 13px var(--font-big); color: var(--stage-ink); background: var(--t); }
+.rec .tx { flex: 1; min-width: 0; }
+.rec .nm { display: block; font: 500 13px var(--font-big); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .sub { display: block; font: 400 12px var(--font-body); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec time { flex: none; font: 500 12px var(--font-mono); color: var(--text-faint); }
+.rec.gone { cursor: default; }
+.rec.gone time { color: var(--stage-danger-text); }
+.rec .rs { flex: none; padding: 4px 10px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); font: 600 12px var(--font-body); cursor: pointer; }
+
+/* ---- the main column ---- */
+.main { flex: 1; min-width: 0; padding: 28px 40px 60px; }
+.hero { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.hero .grow { flex: 1; }
+.hero p { margin-top: 6px; font: 400 13px var(--font-body); color: var(--text-dim); }
+.hbtn { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; font: 600 13px var(--font-body); color: var(--text); background: color-mix(in srgb, var(--text) 5%, transparent); border: 0; cursor: pointer; }
+.hbtn.on { background: var(--accent); color: var(--stage-ink); }
+.hbtn svg { width: 14px; height: 14px; }
+.search { display: flex; align-items: center; gap: 8px; padding: 8px 12px; width: 220px; box-shadow: inset 0 0 0 1px var(--edge); }
+.search input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: 400 13px var(--font-body); }
+.search input::placeholder { color: var(--text-faint); }
+.search svg { width: 14px; height: 14px; color: var(--text-dim); flex: none; }
+
+.selbar { margin-top: 14px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; box-shadow: inset 0 0 0 1px var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); font: 500 13px var(--font-body); color: var(--text); }
+.selbar .del { margin-left: auto; padding: 6px 14px; background: var(--stage-danger-bg); box-shadow: inset 0 0 0 1px var(--stage-danger-edge); color: var(--stage-danger-text); font: 600 12px var(--font-body); border: 0; cursor: pointer; }
+
+.filters { margin-top: 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.segs { display: flex; gap: 2px; padding: 3px; box-shadow: inset 0 0 0 1px var(--edge); }
+.segs button { padding: 6px 12px; font: 500 12px var(--font-body); color: var(--text-dim); background: none; border: 0; cursor: pointer; }
+.segs button.on { background: var(--shell-panel-2); color: var(--text); font-weight: 600; }
+
+/* ---- the scene grid: portrait cards, a thin line, a deck-tone top edge ---- */
+.grid { margin-top: 24px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); align-items: start; }
+.sc { position: relative; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--t); cursor: pointer; transition: transform .2s; }
+.sc:hover { transform: translateY(-2px); }
+.sc .art { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: linear-gradient(170deg, color-mix(in srgb, var(--t) 50%, var(--face)), var(--face) 88%); }
+.sc .ini { position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); font: italic 600 34px var(--font-fancy); color: color-mix(in srgb, var(--text) 35%, transparent); }
+.sc .ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 82%, transparent) 45%); }
+.sc .who { font: 500 12px var(--font-body); color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc h3 { margin-top: 4px; font: 600 15px/1.25 var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc .meta { margin-top: 8px; display: flex; gap: 6px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.sc .meta b { font-weight: 500; color: var(--t); }
+.sc .takes { padding: 10px 14px 12px; box-shadow: inset 0 1px 0 var(--seam); }
+.sc .takes .k { display: flex; align-items: center; gap: 6px; font: 600 12px var(--font-body); color: var(--t); }
+.sc .takes .chips { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; }
+.sc .takes .chips span { font: 500 12px var(--font-body); padding: 2px 8px; background: var(--stage-row); color: var(--text-dim); }
+.sc .takes .chips span.on { background: var(--t); color: var(--stage-ink); font-weight: 600; }
+.sc .tick { display: none; position: absolute; top: 10px; right: 10px; z-index: 3; width: 20px; height: 20px; box-shadow: inset 0 0 0 1px var(--text); background: color-mix(in srgb, var(--stage-black) 45%, transparent); }
+.selecting .sc .tick { display: block; }
+.sc.picked .tick { background: var(--accent); box-shadow: none; }
+.sc.picked { box-shadow: 0 0 0 2px var(--accent), 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); }
+
+.menu { position: absolute; z-index: 20; width: 210px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 6px 6px 0 0 var(--stage-black); display: none; }
+.menu.show { display: block; }
+.menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; background: none; border: 0; text-align: left; font: 400 13px var(--font-body); color: var(--text); cursor: pointer; }
+.menu button:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.menu button.danger { color: var(--stage-danger-text); box-shadow: inset 0 1px 0 var(--seam); }
+.menu svg { width: 14px; height: 14px; flex: none; }
+
+.empty { margin-top: 70px; text-align: center; display: none; }
+.none .empty { display: block; }
+.none .grid, .none .filters { display: none; }
+.empty b { display: block; font: 600 18px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.empty p { margin-top: 10px; max-width: 34rem; margin-left: auto; margin-right: auto; font: 400 13px var(--font-body); color: var(--text-dim); }
+
+.scrim { position: fixed; inset: 0; z-index: 60; display: none; place-items: center; background: var(--scrim); }
+.scrim.show { display: grid; }
+.scn-cut { width: 440px; max-width: calc(100vw - 32px); padding: 24px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--stage-danger-text); }
+.scn-cut h3 { margin-top: 8px; }
+.scn-cut p { margin-top: 10px; font: 400 14px/1.55 var(--font-body); color: var(--text-soft); }
+.scn-cut input { display: block; width: 100%; margin-top: 6px; padding: 9px 12px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 400 15px var(--font-body); }
+.scn-cut .row { margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; }
+.scn-cut .no { padding: 9px 16px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); font: 600 13px var(--font-body); cursor: pointer; }
+.scn-cut .yes { padding: 9px 16px; background: var(--stage-danger-bg); color: var(--stage-danger-text); box-shadow: inset 0 0 0 1px var(--stage-danger-edge); font: 600 13px var(--font-body); border: 0; cursor: pointer; }
+
+/* ---- the Library card, Start Scene beneath it ---- */
+.libdemo { display: none; padding: 40px; gap: 20px; flex-wrap: wrap; background: var(--stage-well); min-height: 100vh; }
+.show-lib .scn { display: none; } .show-lib .libdemo { display: flex; }
+.cell { width: 21rem; display: flex; flex-direction: column; }
+.lcard { position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--t); min-height: 30rem; }
+.lcard .art { flex: 1; min-height: 20rem; display: grid; place-items: center; font: italic 600 3.4rem var(--font-fancy); color: var(--t); background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--t) 30%, transparent), transparent 60%), var(--stage-well); }
+.lcard .body { padding: 14px 16px 0; }
+.genre { display: inline-block; background: var(--t); color: var(--stage-ink); font: 600 12px var(--font-body); padding: 2px 8px; }
+.cname { margin-top: 8px; font: 600 16px var(--font-fancy); font-style: italic; color: var(--text); }
+.cline { font: italic 400 14px var(--font-body); color: var(--text-soft); margin: 4px 0 8px; }
+.foot { margin-top: auto; padding: 10px 16px; display: flex; align-items: center; gap: 8px; box-shadow: inset 0 1px 0 var(--seam); font: 500 12px var(--font-body); color: var(--text-dim); }
+.foot .grow { flex: 1; }
+.start { margin-top: 8px; height: 36px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; background: var(--stamp-bg); color: var(--stamp-fg); font: 700 12px var(--font-body); }
+.start:hover { background: var(--deck-pack); }
+.start svg { width: 14px; height: 14px; }
+.libnote { max-width: 22rem; font: 400 13px/1.6 var(--font-body); color: var(--text-soft); box-shadow: inset 0 0 0 1px var(--seam); padding: 14px 16px; align-self: flex-start; }
+.libnote b { color: var(--text); }
+
+@container (max-width: 900px) {
+  #app { flex-direction: column; }
+  .scn { flex-direction: column; }
+  .s-dock { width: 100%; min-height: 0; flex-direction: row; align-items: center; padding: 8px 12px; }
+  .s-dock .brand { padding: 0; margin-right: auto; }
+  .s-dock .s-app { display: none; }
+  .s-dock .s-app.c-scenes { display: grid; place-items: center; padding: 6px; }
+  .s-dock .s-app.c-scenes b, .s-dock .s-app.c-scenes small { display: none; }
+  .side { width: 100%; }
+  .main { padding: 18px 16px 50px; }
+  .hero .grow { display: none; }
+  .search { width: 100%; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+}
+
+.wf-bar { top: 8px; bottom: auto; }
+.wf-note { max-width: min(30rem, calc(100vw - 24px)); }
+[data-s]:not(.showstate) {}
+/* shared-file gap: soft-parts.css sets .s-app small/kbd and .wf-bar at 11px, under the 12px floor */
+.s-app small, .s-app kbd, .wf-bar { font-size: 12px; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+  <symbol id="i-sel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-find" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-takes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="m6 3 14 9-14 9V3z"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18"/><path d="M7 3v18M2 8h5M2 16h5"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+</defs></svg>
+
+<div id="app">
+  <nav class="s-dock" style="--pink: var(--deck-pack); --ink: var(--stage-ink)">
+    <div class="brand"><svg width="28" height="28"><use href="#bun"/></svg>bunraku</div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-wand"/></svg></i><b>Workbench</b></div>
+    <div class="s-app c-library" id="libtile"><i><svg width="16" height="16"><use href="#i-globe"/></svg></i><b>Library</b></div>
+    <div class="s-app c-scenes on" id="sctile"><i><svg width="16" height="16"><use href="#i-chat"/></svg></i><b>Scenes</b></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-film"/></svg></i><b>Press</b></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-cpu"/></svg></i><b>Agent</b></div>
+  </nav>
+
+  <div id="root">
+  <div class="scn" id="page">
+    <aside class="side">
+      <div class="top"><div class="s-act"><b>Now playing</b></div><h2 class="s-h3" style="margin-top:6px">On Stage</h2></div>
+      <button type="button" class="now" style="--t: var(--deck-character)">
+        <div class="now-art"><span class="ini">M</span>
+          <div class="now-ov"><div class="who"><span class="now-av">M</span><b>Marguerite Vane</b><i>about 2 hours</i></div><div class="tt">The long storm</div></div>
+        </div>
+      </button>
+      <button type="button" class="cont">Continue Story</button>
+      <div class="list">
+        <div class="lab"><span class="sq"></span>Earlier</div>
+        <button type="button" class="rec" style="--t: var(--deck-persona)"><span class="av">N</span><span class="tx"><span class="nm">Nuit</span><span class="sub">Cut the deck</span></span><time>3d</time></button>
+        <button type="button" class="rec" style="--t: var(--deck-lorebook)"><span class="av">T</span><span class="tx"><span class="nm">The Magpie</span><span class="sub">The lock gave on the third try</span></span><time>10d</time></button>
+        <button type="button" class="rec" style="--t: var(--deck-character)"><span class="av">M</span><span class="tx"><span class="nm">Marguerite Vane</span><span class="sub">Untitled Story</span></span><time>21d</time></button>
+        <button type="button" class="rec" style="--t: var(--deck-regex)"><span class="av">V</span><span class="tx"><span class="nm">Vera Lune</span><span class="sub">Who did you let up the stairs?</span></span><time>23d</time></button>
+        <div class="lab gonelab" data-only="cutscenes"><span class="sq"></span>Cut, back for 3 days</div>
+        <div class="rec gone" data-only="cutscenes" style="--t: var(--deck-character)"><span class="av">M</span><span class="tx"><span class="nm">Marguerite Vane</span><span class="sub">The long storm</span></span><time>2d left</time><button type="button" class="rs">Restore</button></div>
+        <div class="rec gone" data-only="cutscenes" style="--t: var(--deck-persona)"><span class="av">N</span><span class="tx"><span class="nm">Nuit</span><span class="sub">Cut the deck</span></span><time>1d left</time><button type="button" class="rs">Restore</button></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="hero">
+        <div><div class="s-act"><b>Your stage</b></div><h1 class="s-title" style="margin-top:8px">Scenes</h1><p>6 stories across 4 characters</p></div>
+        <span class="grow"></span>
+        <button type="button" class="hbtn" id="selbtn"><svg><use href="#i-sel"/></svg>Select</button>
+        <button type="button" class="hbtn" id="trashbtn"><svg><use href="#i-trash"/></svg>Trash <span data-only="cutscenes">2</span></button>
+        <label class="search"><svg><use href="#i-find"/></svg><input placeholder="Search..." aria-label="Search scenes"></label>
+      </header>
+      <div class="selbar" data-only="select"><span>2 scenes selected</span><button type="button" class="del">Delete 2</button><button type="button" class="hbtn" id="selcancel">Cancel</button></div>
+      <div class="filters">
+        <div class="segs"><button type="button" class="on">All Time</button><button type="button">Week</button><button type="button">Month</button><button type="button">Year</button></div>
+        <div class="segs"><button type="button" class="on">Recent</button><button type="button">Messages</button></div>
+      </div>
+
+      <div class="grid" id="grid">
+        <article class="sc" style="--t: var(--deck-character)"><div class="art"><span class="ini">M</span><div class="ov"><div class="who">Marguerite Vane</div><h3>The long storm</h3><div class="meta"><span>42 msgs</span><span>&bull;</span><span>about 2 hours</span><span>&bull;</span><b>3 takes</b></div></div></div>
+          <div class="takes"><div class="k"><svg width="13" height="13"><use href="#i-takes"/></svg>Alternate takes</div><div class="chips"><span class="on">Original</span><span>Take 2</span><span>Take 3</span></div></div><span class="tick"></span></article>
+        <article class="sc" style="--t: var(--deck-persona)"><div class="art"><span class="ini">N</span><div class="ov"><div class="who">Nuit</div><h3>Cut the deck</h3><div class="meta"><span>18 msgs</span><span>&bull;</span><span>3 days</span></div></div></div><span class="tick"></span></article>
+        <article class="sc" style="--t: var(--deck-lorebook)"><div class="art"><span class="ini">T</span><div class="ov"><div class="who">The Magpie</div><h3>The lock gave on the third try</h3><div class="meta"><span>7 msgs</span><span>&bull;</span><span>10 days</span></div></div></div><span class="tick"></span></article>
+        <article class="sc" style="--t: var(--deck-character)"><div class="art"><span class="ini">M</span><div class="ov"><div class="who">Marguerite Vane</div><h3>Untitled Story</h3><div class="meta"><span>1 msg</span><span>&bull;</span><span>21 days</span></div></div></div><span class="tick"></span></article>
+        <article class="sc" style="--t: var(--deck-regex)"><div class="art"><span class="ini">V</span><div class="ov"><div class="who">Vera Lune</div><h3>Who did you let up the stairs?</h3><div class="meta"><span>64 msgs</span><span>&bull;</span><span>23 days</span><span>&bull;</span><b>2 takes</b></div></div></div>
+          <div class="takes"><div class="k"><svg width="13" height="13"><use href="#i-takes"/></svg>Alternate takes</div><div class="chips"><span class="on">Original</span><span>Take 2</span></div></div><span class="tick"></span></article>
+        <article class="sc" style="--t: var(--deck-persona)"><div class="art"><span class="ini">N</span><div class="ov"><div class="who">Nuit</div><h3>Untitled Story</h3><div class="meta"><span>3 msgs</span><span>&bull;</span><span>30 days</span></div></div></div><span class="tick"></span></article>
+      </div>
+      <div class="empty"><b>No scenes yet</b><p>Start one from a character's card in the Library: its Start Scene button opens a new scene here.</p></div>
+      <div class="menu" id="menu" style="left:280px; top:280px"><button type="button"><svg><use href="#i-pen"/></svg>Rename Scene</button><button type="button" class="danger" id="cutopen"><svg><use href="#i-trash"/></svg>Delete Story</button></div>
+    </main>
+  </div>
+
+  <div class="libdemo">
+    <div class="cell" style="--t: var(--deck-character)">
+      <article class="lcard"><div class="art">M</div><div class="body"><span class="genre">SillyTavern V3</span><div class="cname">Marguerite Vane</div><div class="cline">"Sit, if you like. The storm will not care either way."</div></div><div class="foot"><span>9/9 fields</span><span>~2.4K tok</span><span class="grow"></span></div></article>
+      <button type="button" class="start"><svg><use href="#i-play"/></svg>Start Scene</button>
+    </div>
+    <div class="cell" style="--t: var(--deck-regex)">
+      <article class="lcard"><div class="art">V</div><div class="body"><span class="genre">CC V2</span><div class="cname">Vera Lune</div><div class="cline">"Who did you let up the stairs?"</div></div><div class="foot"><span>7/9 fields</span><span>~1.8K tok</span><span class="grow"></span></div></article>
+      <button type="button" class="start"><svg><use href="#i-play"/></svg>Start Scene</button>
+    </div>
+    <div class="libnote"><b>Start Scene</b> sits under every character card in the Library (not personas, presets, or books). It starts a new scene with that character and your default persona (frozen at their current library versions) and opens it, opening-message picker first. Left out on purpose (nothing in Bunraku backs them yet): Group Performances, Smart Folders, Folders, the branching tree, Export to JSONL, the size dial.</div>
+  </div>
+  </div>
+</div>
+
+<div class="scrim" data-only="cut">
+  <div class="scn-cut">
+    <div class="s-act">The Cutting Room</div>
+    <h3 class="s-h2">Cut this story?</h3>
+    <p>"The long storm" and every message in it, all of its takes included, go to the Trash. You can restore it for 3 days.</p>
+    <div class="row"><button type="button" class="no">Cancel</button><button type="button" class="yes">Delete</button></div>
+  </div>
+</div>
+<div class="scrim" data-only="rename">
+  <div class="scn-cut">
+    <h3 class="s-h2">Rename scene</h3>
+    <input type="text" value="The long storm" aria-label="Scene title">
+    <div class="row"><button type="button" class="no">Cancel</button><button type="button" class="yes">Rename</button></div>
+  </div>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="scenes">Scenes</button><button data-s="cutscenes">On Stage: cut scenes</button><button data-s="menu">Card menu</button>
+  <button data-s="cut">Delete confirm</button><button data-s="rename">Rename dialog</button><button data-s="select">Select mode</button>
+  <button data-s="empty">No scenes yet</button><button data-s="library">Library: Start Scene</button>
+  <button data-theme-switch>Theme</button>
+</div>
+<div class="wf-note">The Scenes list (scenes-list.tsx, scenes-core.ts). On Stage: now playing, Continue Story, Earlier, then cut scenes under their own heading with days left and Restore (the source keeps these together, not split into a separate Trash view). Your Stage header: Select, a Trash button with its live count (opens the Library's Trash), search. Filters: All Time/Week/Month/Year and Recent/Messages; the size dial is left out (source comment: "Left out: the size dial"). A card's right-click menu (the shell's one menu system): Rename Scene, Delete Story (the Cutting Room dialog). Alternate-take chips show only on scenes that have takes. No genre tags on cards: the source's SceneCard never reads genre.</div>
+
+<script>
+(function () {
+  var root = document.getElementById("root"), page = document.getElementById("page");
+  function set(s) {
+    root.className = s === "library" ? "show-lib" : "";
+    page.classList.toggle("selecting", s === "select");
+    page.classList.toggle("none", s === "empty");
+    document.getElementById("menu").classList.toggle("show", s === "menu");
+    document.querySelectorAll(".scrim").forEach(function (el) { el.classList.toggle("show", el.getAttribute("data-only") === s); });
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      if (el.classList.contains("scrim")) return;
+      el.style.display = el.getAttribute("data-only").split(" ").indexOf(s) >= 0 ? "" : "none";
+    });
+    var cards = document.querySelectorAll(".sc");
+    cards.forEach(function (c, i) { c.classList.toggle("picked", s === "select" && i < 2); });
+    document.getElementById("libtile").classList.toggle("on", s === "library");
+    document.getElementById("sctile").classList.toggle("on", s !== "library");
+    document.querySelectorAll("#wf button[data-s]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.getElementById("wf").style.display = "none";
+  set(q.get("state") || "cutscenes");
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s")); });
+  document.getElementById("selbtn").onclick = function () { set("select"); };
+  document.getElementById("selcancel").onclick = function () { set("scenes"); };
+  document.getElementById("cutopen").onclick = function () { set("cut"); };
+  document.getElementById("grid").addEventListener("contextmenu", function (e) { e.preventDefault(); set("menu"); });
+})();
+</script>
+</body>
+</html>

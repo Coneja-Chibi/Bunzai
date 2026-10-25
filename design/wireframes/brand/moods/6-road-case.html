@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Road Case mood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@800;900&family=Permanent+Marker&family=JetBrains+Mono:wght@500;700&family=Archivo+Narrow:wght@400;600&display=swap">
+<link rel="stylesheet" href="board.css">
+<style>
+:root {
+  --bg: #0e0f10; --fg: #eceae4; --fg2: #a7a9ab; --dim: #5f6366; --rule: #222427; --accent: #ffcc00;
+  --body: "Archivo Narrow", sans-serif; --mono: "JetBrains Mono", monospace;
+  --display: 900 clamp(4rem, 10vw, 9rem) "Big Shoulders Stencil Display", sans-serif;
+  --h3: 900 1.7rem/1 "Big Shoulders Stencil Display", sans-serif; --quote: 400 1.7rem/1.25 "Permanent Marker", cursive;
+  --alu: #b9bec3; --abs: #161718; --gaff: #1d1d1d; --manila: #d8c38f; --spike: #ff4f1f;
+}
+/* the loading dock: touring cases stacked and labeled */
+.hero { background: #0e0f10; display: grid; place-items: end center; padding: 80px 16px 0; }
+.dock { position: relative; width: min(1180px, 100%); display: grid; grid-template-columns: 1.3fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; align-items: end; padding-bottom: 36px; }
+.dock::after { content: ""; position: absolute; left: -8%; right: -8%; bottom: 0; height: 36px; background: repeating-linear-gradient(-45deg, var(--accent) 0 26px, #111 26px 52px); }
+.case { position: relative; background: var(--abs); border: 9px solid; border-image: linear-gradient(#dfe3e6, #8e9398) 1; background-image: radial-gradient(#ffffff08 1px, transparent 1.4px); background-size: 5px 5px; padding: 26px 28px; min-height: 220px; cursor: pointer; perspective: 800px; }
+.case::before, .case::after { content: ""; position: absolute; width: 30px; height: 30px; background: linear-gradient(135deg, #e6e9ec, #7d8287); box-shadow: inset 0 0 0 3px #0004; }
+.case::before { top: -9px; left: -9px; } .case::after { top: -9px; right: -9px; }
+.latch { position: absolute; bottom: 14px; width: 54px; height: 22px; background: linear-gradient(#cfd3d7, #7d8287); border: 2px solid #555; }
+.sten { font: 900 clamp(2.2rem, 5vw, 4.4rem)/.9 "Big Shoulders Stencil Display"; color: #f1efe8; letter-spacing: .02em; }
+.sten small { display: block; font-size: .38em; letter-spacing: .2em; color: var(--accent); margin-top: 8px; }
+.gaff { display: inline-block; margin-top: 16px; background: var(--gaff); padding: 8px 14px; font: 400 1.1rem "Permanent Marker"; color: #f1efe8; box-shadow: 0 1px 0 #333 inset; transform: rotate(-1.5deg); }
+.gaff.mask { background: #d9ccaa; color: #111; }
+.arrow { position: absolute; right: 22px; top: 22px; font: 900 1rem "Big Shoulders Stencil Display"; color: #f1efe8; letter-spacing: .1em; text-align: center; line-height: 1.05; }
+.arrow::before { content: ""; display: block; width: 0; height: 0; margin: 0 auto 4px; border: 14px solid transparent; border-bottom: 18px solid #f1efe8; border-top: 0; }
+.lid { position: absolute; inset: -9px; background: inherit; border: inherit; transform-origin: top; transition: transform .6s cubic-bezier(.3, .7, .2, 1); z-index: 2; display: grid; align-content: center; padding: 26px 28px; }
+.case.open .lid { transform: rotateX(78deg); }
+.foam { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; min-height: 140px; background: #2a2b2d; background-image: radial-gradient(#0006 1.5px, transparent 2px); background-size: 6px 6px; padding: 14px; }
+.foam div { background: #0c0c0d; display: grid; place-items: center; font: 700 12px var(--mono); color: var(--accent); letter-spacing: .1em; text-align: center; padding: 8px; }
+.tag { position: absolute; right: -24px; top: 40%; width: 170px; background: var(--manila); color: #2a2213; padding: 30px 14px 14px; transform: rotate(8deg); z-index: 5; box-shadow: 3px 8px 14px #000a; clip-path: polygon(14% 0, 86% 0, 100% 12%, 100% 100%, 0 100%, 0 12%); }
+.tag::before { content: ""; position: absolute; top: 9px; left: 50%; width: 14px; height: 14px; margin-left: -7px; background: #0e0f10; outline: 3px solid #b99a55; }
+.tag b { display: block; font: 900 1.4rem/1 "Big Shoulders Stencil Display"; letter-spacing: .06em; } .tag span { font: 400 1rem "Permanent Marker"; }
+.hint { position: absolute; top: 58px; left: 0; right: 0; text-align: center; font: 500 12px/1 var(--mono); letter-spacing: .2em; color: var(--dim); }
+
+/* pieces */
+.k-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+.k-nav span { background: var(--gaff); padding: 9px 14px; font: 400 1.05rem "Permanent Marker"; color: #f1efe8; }
+.k-nav span:nth-child(2) { transform: rotate(1deg); } .k-nav span:nth-child(3) { transform: rotate(-1deg); }
+.k-btn { display: inline-block; padding: 14px 24px; font: 900 1.5rem/1 "Big Shoulders Stencil Display"; letter-spacing: .08em; color: #111; background: var(--accent); border: 3px solid #111; outline: 3px solid var(--accent); }
+.k-btn.alt { background: #1d1e20; color: #f1efe8; outline-color: #8e9398; }
+.k-card { background: var(--abs); border: 7px solid; border-image: linear-gradient(#dfe3e6, #8e9398) 1; padding: 20px; background-image: radial-gradient(#ffffff08 1px, transparent 1.4px); background-size: 5px 5px; }
+.k-card h4 { font: var(--h3); } .k-card p { color: var(--fg2); margin-top: 6px; }
+.k-in { background: #d9ccaa; color: #111; padding: 10px 14px; font: 400 1.4rem "Permanent Marker"; transform: rotate(-.8deg); }
+.k-in small { display: block; font: 700 12px var(--mono); letter-spacing: .14em; color: #5a4e30; }
+.stencil { display: inline-block; margin: 0 8px 8px 0; padding: 5px 10px; border: 2px solid var(--c); color: var(--c); font: 900 1.05rem "Big Shoulders Stencil Display"; letter-spacing: .12em; }
+.k-toast { display: inline-block; padding: 10px 18px; border: 4px double var(--accent); color: var(--accent); font: 900 1.6rem "Big Shoulders Stencil Display"; letter-spacing: .14em; transform: rotate(-3deg); }
+</style>
+</head>
+<body>
+<nav class="top"><a href="5-dressing-room.html">prev</a><span>6 / 6 &middot; The Road Case</span><a href="index.html">all</a></nav>
+
+<header class="hero">
+  <div class="hint">click a case to open it</div>
+  <div class="dock">
+    <div class="case" style="grid-row:span 2;min-height:520px">
+      <div class="foam" style="height:100%"><div>SCENES</div><div>PERSONAS</div><div>GROUP CHATS</div><div>PRESETS</div><div>MACROS</div><div>LOREBOOKS</div></div>
+      <div class="lid"><span class="arrow">THIS<br>SIDE UP</span><div class="sten">BUNRAKU<small>WORLD TOUR / CASE 01 OF 05</small></div><span class="gaff">scenes + everything they need</span><span class="latch" style="left:20%"></span><span class="latch" style="right:20%"></span></div>
+    </div>
+    <div class="case"><div class="foam"><div>CARDS</div><div>IMPORT</div><div>EXPORT</div></div>
+      <div class="lid"><div class="sten">WORKBENCH<small>FRAGILE</small></div><span class="gaff mask">cards, presets, tools</span><span class="latch" style="left:30%"></span></div></div>
+    <div class="case" style="overflow:visible"><div class="foam"><div>WIN</div><div>MAC</div><div>LINUX</div></div>
+      <div class="lid"><div class="sten">LOAD IN<small>DOWNLOAD</small></div><span class="gaff">v0.1.42</span><span class="latch" style="left:30%"></span></div>
+      <div class="tag"><b>SHIP TO:</b><span>your computer. nowhere else.</span></div></div>
+    <div class="case"><div class="foam"><div>GUIDES</div><div>RIDER</div><div>HELP</div></div>
+      <div class="lid"><div class="sten">TECH RIDER<small>GUIDES</small></div><span class="gaff mask">read before load-in</span><span class="latch" style="left:30%"></span></div></div>
+    <div class="case"><div class="foam"><div>PLAY IN<br>BROWSER</div><div>NO<br>INSTALL</div><div>DEMO<br>SCENE</div></div>
+      <div class="lid"><div class="sten">DEMO<small>TRY IT</small></div><span class="gaff">open me</span><span class="latch" style="left:30%"></span></div></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="b"><div class="label"><b>01</b>The idea</div>
+    <div class="pitch"><div><h1>The Road Case</h1><div class="line">load in. set up. play.</div></div>
+      <div><p>Touring shows live in road cases: black, aluminum-edged, stenciled with the show name, patched with gaff tape and marker labels, luggage tags zip-tied to the handles. They go everywhere, take abuse and hold everything the show needs.</p>
+      <p>RoleCall is the resident company in its own theater. Bunraku is <b>the touring production</b>: it comes to your computer, packed tight, <b>nothing left at the venue</b>. Private because it's yours, sturdy because it travels.</p>
+      <p>The site is a loading dock. Every section is a case you unlatch; the foam cutouts inside show exactly what's packed.</p></div></div>
+  </section>
+
+  <section class="b"><div class="label"><b>02</b>Palette: ABS black, aluminum, hazard, manila</div>
+    <div class="sw">
+      <div style="background:#0e0f10;color:#a7a9ab;outline:1px solid #222427"><b>Dock</b>#0E0F10</div>
+      <div style="background:#161718;color:#a7a9ab"><b>ABS shell</b>#161718</div>
+      <div style="background:#b9bec3;color:#111"><b>Aluminum</b>#B9BEC3</div>
+      <div style="background:#ffcc00;color:#111"><b>Hazard</b>#FFCC00</div>
+      <div style="background:#d8c38f;color:#2a2213"><b>Manila tag</b>#D8C38F</div>
+      <div style="background:#d9ccaa;color:#111"><b>Masking tape</b>#D9CCAA</div>
+      <div style="background:#ff4f1f;color:#111"><b>Spike orange</b>#FF4F1F</div>
+      <div style="background:#eceae4;color:#111"><b>Stencil white</b>#ECEAE4</div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>03</b>Type: stencil, marker, spec sheet</div>
+    <div class="type">
+      <div class="row"><small>BIG SHOULDERS STENCIL<br>case labels, titles</small><div style="font:900 clamp(3rem,8vw,7rem)/.85 'Big Shoulders Stencil Display'">THIS SIDE UP</div></div>
+      <div class="row"><small>PERMANENT MARKER<br>anything written on tape</small><div style="font:400 2.2rem/1.1 'Permanent Marker'">scenes + everything they need</div></div>
+      <div class="row"><small>JETBRAINS MONO<br>manifests, versions</small><div style="font:500 1rem 'JetBrains Mono';letter-spacing:.14em">CASE 03 / 12.4 KG / v0.1.42</div></div>
+      <div class="row"><small>ARCHIVO NARROW<br>reading text</small><div style="font:400 1.2rem/1.6 'Archivo Narrow';max-width:40rem;color:var(--fg2)">Presets decide how a scene talks to the model. Pack one for the library, adjust it per scene.</div></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>04</b>Materials</div>
+    <div class="mats">
+      <div style="background:#161718;background-image:radial-gradient(#ffffff0c 1px,transparent 1.4px);background-size:5px 5px"><span>ABS shell</span></div>
+      <div style="background:linear-gradient(#dfe3e6,#8e9398)"><span>Aluminum extrusion</span></div>
+      <div style="background:#2a2b2d;background-image:radial-gradient(#0006 1.5px,transparent 2px);background-size:6px 6px"><span>Pick-and-pluck foam</span></div>
+      <div style="background:repeating-linear-gradient(-45deg,#ffcc00 0 22px,#111 22px 44px)"><span>Hazard stripe</span></div>
+      <div style="background:#1d1d1d;background-image:repeating-linear-gradient(90deg,#0000 0 2px,#ffffff05 2px 3px)"><span>Gaff tape</span></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>05</b>Pieces</div>
+    <div class="kit">
+      <figure><div class="k-nav"><span>scenes</span><span>workbench</span><span>library</span><span>guides</span></div><figcaption>Nav: gaff tape labels</figcaption></figure>
+      <figure><div style="display:flex;gap:18px;flex-wrap:wrap"><span class="k-btn">LOAD IN</span><span class="k-btn alt">TECH RIDER</span></div><figcaption>Buttons: stenciled plates</figcaption></figure>
+      <figure><div class="k-card"><h4>LOREBOOKS</h4><p>Every fact about your world, packed where the story can find it.</p></div><figcaption>Card: a case lid</figcaption></figure>
+      <figure><div class="k-in"><small>LABEL THIS CASE</small>the lighthouse scene</div><figcaption>Input: masking tape and a marker</figcaption></figure>
+      <figure><div><span class="stencil" style="--c:var(--accent)">NEW</span><span class="stencil" style="--c:var(--spike)">BETA</span><span class="stencil" style="--c:var(--alu)">v0.1.42</span></div><figcaption>Tags: spray stencils</figcaption></figure>
+      <figure><div class="k-toast">LOADED IN</div><figcaption>Toast: a rubber stamp</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>06</b>How the site is built</div>
+    <div class="map">
+      <div><h3>Home</h3><strong>The loading dock</strong><p>The show's cases stacked on the dock. Each case is a section; unlatch to open.</p></div>
+      <div><h3>Feature tour</h3><strong>What's in the case</strong><p>Foam cutouts hold each feature. Lift one out to see it running.</p></div>
+      <div><h3>Guides and help</h3><strong>The tech rider</strong><p>The spec sheet every venue gets: plain, exact, numbered.</p></div>
+      <div><h3>Download</h3><strong>Load in</strong><p>The case with your platform's luggage tag. Ships to your computer, nowhere else.</p></div>
+      <div><h3>What's new</h3><strong>Tour manifest</strong><p>Each release is a stop on the tour with its packing list, live from GitHub.</p></div>
+      <div><h3>Try it</h3><strong>The demo case</strong><p>A small case you can open right in the browser.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>07</b>Signature moves</div>
+    <div class="moves">
+      <div><h3>Unlatch <span class="live">LIVE ABOVE</span></h3><p>Click a case and the lid swings up on its hinge to show the foam inside.</p></div>
+      <div><h3>Dollied in</h3><p>Sections roll in from the side like cases pushed up a ramp, with a small bump when they land.</p></div>
+      <div><h3>Tape over it</h3><p>Updates land as a fresh strip of gaff tape over the old label, hand-lettered.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>08</b>Voice</div>
+    <div class="voice">
+      <div><h3>Say it like this</h3><ul><li>Load in. Set up. Play.</li><li>Ships to your computer. Nowhere else.</li><li>Everything the show needs, packed.</li><li>Read the rider before load-in.</li></ul></div>
+      <div class="no"><h3>Never this</h3><ul><li>All-in-one platform</li><li>Enterprise-grade privacy</li><li>Revolutionary</li><li>Seamlessly integrated</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Not this: techwear neon, soft 3D blobs, rounded app icons. Metal, tape, stencil, square.</span><a href="index.html">Back to all six</a></footer>
+</main>
+
+<script>
+// Each case unlatches and relatches on click.
+document.querySelectorAll(".case").forEach((c) => c.addEventListener("click", () => c.classList.toggle("open")));
+</script>
+</body>
+</html>

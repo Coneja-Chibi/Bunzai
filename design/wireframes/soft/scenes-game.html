@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenes: gamified list + Dock</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Scenes, ported from RoleCall's real /scenes (scenes-client.tsx +
+ * components/conversations/*) into the soft identity, slightly gamified (save-file cards, a
+ * "Continue your story" hero, portrait tiles with a scenes-played stat, chapters with a story
+ * count). Two left columns: the Dock (byte-identical to workbench-shell/landing-game-a2,
+ * now with an appended fold toggle that collapses it to a 64px icon rail) and a second, ordinary
+ * Scenes sidebar carried from RC's CharacterRail + ConversationsSidebar merged into one column
+ * (cast tiles, chapters/folders, search). The Attract state is landing-game-a2's title screen,
+ * copied as-is minus its menu/preview machinery. Square corners, 12px floor, tokens only.
+ */
+* { -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: hidden; }
+body { padding-bottom: 190px; container-type: inline-size; }
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+
+/* ---- shell ---- */
+/* Both left columns stay pinned to the viewport while the stage scrolls (standard app-shell
+   behavior) — without this, min-height:100vh on a flex row stretches the Dock to match the
+   TALLEST sibling's full document height, not the viewport, and the fold toggle at its bottom
+   ends up scrolled off past the end of the page instead of staying reachable. */
+.app { display: flex; min-height: 100vh; align-items: flex-start; position: relative; }
+/* no overflow-y:auto here either (see .char-rail below for why): 7 apps plus the fold toggle fit
+   well under 100vh without scrolling, and scrolling would clip the folded tooltip the same way.
+   z-index:5 is deliberate: position:sticky ALWAYS creates a stacking context (unlike relative/
+   absolute, which only do with an explicit z-index), so this sticky Dock and the sticky .scn-side
+   after it are two SEPARATE stacking contexts painted in DOM order — .scn-side, being later,
+   would otherwise paint its opaque columns entirely over the Dock's folded tooltip, and the
+   tooltip's own z-index:40 can't help because that number only competes within the Dock's own
+   stacking context, not against .scn-side's. */
+.s-dock { flex: none; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; z-index: 5; }
+
+/* ---- Dock fold toggle: appended after the existing Dock markup, never edits it ---- */
+/* Flows right after the app list (not pinned to the column's far bottom edge) — reachable without
+   scrolling a tall Dock, and a familiar spot for a collapse toggle (VS Code, Slack). */
+.s-fold { margin-top: 8px; display: flex; align-items: center; gap: 10px; padding: 9px 8px; background: none; border: 0; box-shadow: inset 0 1px 0 var(--seam); color: var(--text-dim); cursor: pointer; font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
+.s-fold:hover { color: var(--text); background: var(--shell-panel); }
+.s-fold svg { width: 16px; height: 16px; flex: none; transition: transform .2s; }
+.s-fold .lbl { flex: 1; text-align: left; }
+.s-dock.folded .s-fold svg { transform: rotate(180deg); }
+
+/* folded rail: same fold rule the real narrow-window Dock already uses (workbench-shell.html,
+   @media max-width:46rem), reused here under a state class instead of a window-width query, since
+   this is a user toggle, not a viewport response. */
+.s-dock.folded { width: 64px; padding: 16px 10px; }
+.s-dock.folded .brand span.word,
+.s-dock.folded .s-app b,
+.s-dock.folded .s-app small,
+.s-dock.folded .s-app kbd,
+.s-dock.folded .s-fold .lbl { display: none; }
+.s-dock.folded .s-app { grid-template-columns: 30px; justify-content: center; position: relative; }
+.s-dock.folded .s-fold { justify-content: center; }
+
+/* tooltip: the app's own name re-shown on hover, positioned beside the icon. headless can't hover,
+   so a .tip-force class on one app forces it visible for verification. */
+.s-dock.folded .s-app:hover b, .s-dock.folded .s-app.tip-force b {
+  display: block; position: absolute; left: 46px; top: 50%; transform: translateY(-50%);
+  background: var(--face); box-shadow: 0 0 0 1px var(--edge), 4px 4px 0 0 var(--stage-black);
+  padding: 7px 12px; white-space: nowrap; z-index: 40; font: 600 .92rem var(--font-big);
+  font-variation-settings: var(--soft-axes); color: var(--text);
+}
+
+/* ---- Scenes sidebar: RC's REAL two-part structure, side by side —
+   (a) CharacterRail: a narrow 64px rail, one square portrait tile per character (+ groups),
+       scrollable, deck-color ring when selected, a name+count tooltip on hover, and a "now
+       playing" marker on the current scene's character.
+   (b) the panel beside it (~270px): ConversationsSidebar — Now Playing / On Stage (a compact
+       StageCard: art, avatar+name, age, title, take pips, msg count, Continue Story), then
+       This Week / Earlier recent-scene rows (avatar, title, one-line last-message snippet, a
+       take pip, age), then Smart Folders (Longest Stories only — RC's disabled "Favorites
+       (Soon)" is a dead control and is not ported), then Folders + New Folder. ---- */
+.scn-side { display: flex; flex: none; position: sticky; top: 0; height: 100vh; }
+
+/* no overflow-y:auto here on purpose: this demo's 6 tiles fit well under 100vh without scrolling,
+   and setting overflow-y non-visible on this element would ALSO clip overflow-x (the CSS Overflow
+   interop rule computes a "visible" axis to "auto" whenever the other axis isn't visible, even if
+   overflow-x:visible is written explicitly) — which would cut off the name+count tooltip that
+   intentionally pokes out past this 64px rail. A build with more characters than fit needs a
+   nested scroll element that does NOT also host the tooltip's positioning context. */
+.char-rail { width: 64px; flex: none; background: var(--chrome); box-shadow: inset -1px 0 0 var(--seam); display: flex; flex-direction: column; align-items: center; padding: 14px 0 10px; gap: 8px; height: 100vh; }
+.cr-mark { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: none; border: 0; cursor: pointer; padding: 0; }
+.cr-mark svg { width: 22px; height: 22px; }
+.cr-div { width: 28px; height: 1px; flex: none; background: var(--seam); }
+.cr-all { width: 40px; height: 40px; flex: none; display: grid; place-items: center; background: var(--shell-panel); box-shadow: inset 0 0 0 1px var(--seam); border: 0; color: var(--text-dim); cursor: pointer; }
+.cr-all.on { background: var(--shell-panel-2); color: var(--accent); box-shadow: inset 0 0 0 1px var(--seam), inset 0 0 0 2px var(--accent); }
+.cr-list { display: flex; flex-direction: column; gap: 8px; align-items: center; flex: 1; min-height: 0; padding: 2px 0; }
+.cr-tile { position: relative; width: 40px; height: 40px; flex: none; display: block; background: none; border: 0; cursor: pointer; padding: 0; }
+.cr-art { width: 40px; height: 40px; display: grid; place-items: center; font: italic 600 15px var(--font-fancy); color: var(--stage-ink); background: var(--t, var(--accent)); box-shadow: inset 0 0 0 0 var(--t); transition: box-shadow .15s; }
+/* the ring needs a color that contrasts the tile's OWN fill (var(--t)) — an inset ring in that
+   same color would be invisible against it, so: a light inset line, then the character color
+   again as an outer ring against the rail's dark chrome. */
+.cr-tile.on .cr-art { box-shadow: inset 0 0 0 2px var(--stage-card), 0 0 0 2px var(--chrome), 0 0 0 4px var(--t, var(--accent)); }
+.cr-tile .cr-playing { position: absolute; bottom: -3px; right: -3px; width: 14px; height: 14px; display: grid; place-items: center; background: var(--stage-ok); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--chrome); z-index: 2; }
+.cr-tile.group .cr-art { background: none; }
+/* display:block is load-bearing: a <span> defaults to inline, where width/height are ignored, so
+   without it .cr-faces collapses to its (empty, since its children are position:absolute and
+   out of flow) inline content size instead of the 40px square every other tile uses — that's
+   what let the two face chips spill past the rail's edges. */
+.cr-faces { position: relative; display: block; width: 40px; height: 40px; }
+.cr-faces span { position: absolute; top: 6px; width: 22px; height: 22px; display: grid; place-items: center; font: 700 12px var(--font-fancy); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--chrome); }
+/* name+count tooltip: hidden by default, shown on hover; .tip-force keeps one visible for a
+   headless screenshot, same technique as the folded Dock's tooltip. */
+.cr-tip { position: absolute; left: 48px; top: 50%; transform: translateY(-50%); z-index: 40; display: none; white-space: nowrap; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 4px 4px 0 0 var(--stage-black); padding: 6px 10px; }
+.cr-tip b { display: block; font: 600 .85rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.cr-tip span { display: block; margin-top: 1px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.cr-tile:hover .cr-tip, .cr-tile.tip-force .cr-tip { display: block; }
+
+.stage-panel { width: 270px; flex: none; background: var(--chrome); box-shadow: inset -1px 0 0 var(--seam); display: flex; flex-direction: column; height: 100vh; }
+.sp-top { padding: 16px 16px 8px; flex: none; }
+.sp-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 14px 24px; }
+
+/* Fan Favorites: same card shape as the old Now Playing / On Stage card (backdrop art, small
+   avatar + name + age, title, take pips, msgs/takes line, Continue Story), but now a sliding
+   carousel of the user's starred scenes, one at a time. .fav-track holds one .fav-slide per
+   favorite side by side; sliding is a transform on the track, not a content swap, so it reads as
+   a physical slide instead of a cut. */
+.fav-carousel { position: relative; overflow: hidden; }
+.fav-track { display: flex; transition: transform .3s ease; }
+.fav-slide { flex: none; width: 100%; }
+.fav-card { display: block; text-decoration: none; color: var(--text); }
+.fav-art { position: relative; height: 118px; overflow: hidden; background: linear-gradient(165deg, color-mix(in srgb, var(--t) 50%, var(--face)), var(--face) 88%); box-shadow: 0 0 0 1px var(--edge); }
+.fav-art .ini { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); font: italic 600 28px var(--font-fancy); color: color-mix(in srgb, var(--text) 40%, transparent); }
+.fav-ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 9px 10px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 82%, transparent) 55%); }
+.fav-who { display: flex; align-items: center; gap: 6px; font: 500 12px var(--font-body); }
+.fav-av { width: 20px; height: 20px; flex: none; display: grid; place-items: center; font: 600 11px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.fav-who b { color: var(--t); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-who i { margin-left: auto; font-style: normal; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+.fav-title { margin-top: 4px; font: 600 14px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-takepips { display: flex; gap: 3px; margin-top: 8px; }
+.fav-takepips span { width: 14px; height: 5px; background: var(--stage-line); }
+.fav-takepips span.on { background: var(--t); }
+.fav-stat { margin-top: 4px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.fav-continue { display: block; width: 100%; margin-top: 6px; padding: 8px 0; text-align: center; font: 600 12px var(--font-body); color: var(--accent); background: none; border: 0; cursor: pointer; }
+
+.fav-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 8px; }
+.fav-arrow { flex: none; width: 24px; height: 24px; display: grid; place-items: center; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); border: 0; cursor: pointer; font-size: 15px; line-height: 1; }
+.fav-arrow:hover { background: var(--shell-panel); }
+.fav-dots { display: flex; gap: 5px; }
+.fav-dots span { width: 6px; height: 6px; background: var(--stage-line); cursor: pointer; }
+.fav-dots span.on { background: var(--accent); }
+
+/* empty: a dashed card, same footprint as the art, no carousel controls under it */
+.fav-empty-card { display: flex; align-items: center; justify-content: center; height: 118px; padding: 0 18px; border: 2px dashed var(--edge); color: var(--text-dim); font-size: 13px; text-align: center; }
+
+.sp-sec { margin-top: 16px; padding-top: 12px; box-shadow: inset 0 1px 0 var(--seam); }
+.sp-sec.fav-sec { margin-top: 4px; padding-top: 0; box-shadow: none; }
+.lab { display: flex; align-items: center; gap: 8px; padding: 0 6px 8px; font: 500 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
+.lab:not(:first-child) { margin-top: 14px; }
+.lab .sq { width: 6px; height: 6px; background: var(--accent); }
+
+.rec { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 6px; background: none; border: 0; text-align: left; cursor: pointer; }
+.rec:hover { background: var(--shell-panel); }
+.rec .rec-av { width: 26px; height: 26px; flex: none; display: grid; place-items: center; font: 600 12px var(--font-fancy); color: var(--stage-ink); background: var(--t, var(--accent)); }
+.rec .rec-tx { flex: 1; min-width: 0; }
+.rec .rec-tx b { display: block; font: 500 12.5px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .rec-tx small { display: block; margin-top: 1px; font: 400 12px var(--font-body); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .rec-pip { flex: none; width: 6px; height: 6px; background: var(--t, var(--accent)); opacity: .75; }
+.rec time { flex: none; font: 500 12px var(--font-mono); color: var(--text-faint); }
+
+.chapter { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 8px; background: none; border: 0; color: var(--text-soft); font: 400 13px var(--font-body); cursor: pointer; text-align: left; }
+.chapter:hover { color: var(--text); background: var(--shell-panel); }
+.chapter.on { color: var(--text); background: var(--shell-panel-2); }
+.chapter .ch-dot { width: 8px; height: 8px; flex: none; background: var(--c, var(--accent)); }
+.chapter .ch-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chapter .ch-count { flex: none; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.chapter.smart svg { color: var(--stage-warn); flex: none; }
+.newchapter { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 4px; padding: 7px 8px; background: none; border: 0; color: var(--text-dim); font: 400 13px var(--font-body); cursor: pointer; }
+.newchapter:hover { color: var(--text-soft); }
+
+/* ---- the stage ---- */
+.stage { flex: 1; min-width: 0; min-height: 100vh; container-type: inline-size; background: var(--stage-well); position: relative; }
+
+/* ==== Attract, copied from landing-game-a2 (motes/backdrop/marquee/press-prompt only) ==== */
+.attract { position: fixed; inset: 0; z-index: 50; display: none; overflow: hidden;
+  background: radial-gradient(ellipse 70% 60% at 50% 30%, color-mix(in srgb, var(--deck-lorebook) 12%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--stage-deck) 0%, var(--stage-floor) 58%, var(--stage-well) 100%); }
+body[data-state="attract"] .attract { display: block; }
+.attract .backdrop { position: absolute; inset: -6%; background:
+  linear-gradient(155deg, color-mix(in srgb, var(--deck-preset) 24%, transparent), transparent 46%),
+  linear-gradient(25deg, color-mix(in srgb, var(--deck-pack) 16%, transparent), transparent 52%),
+  linear-gradient(200deg, color-mix(in srgb, var(--deck-persona) 12%, transparent), transparent 40%);
+  animation: drift 46s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.06) translate(-1.5%, 1%); } }
+.attract .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: linear-gradient(180deg, transparent, var(--stage-well) 78%); }
+.attract .vignette { position: absolute; inset: 0; box-shadow: inset 0 0 min(22cqw, 260px) min(9cqw, 110px) var(--stage-black); pointer-events: none; }
+.attract .motes { position: absolute; inset: 0; pointer-events: none; }
+.attract .mote { position: absolute; width: 4px; height: 4px; background: var(--stage-card); border-radius: 50%; opacity: 0; box-shadow: 0 0 6px 1px color-mix(in srgb, var(--stage-card) 60%, transparent); animation: mote 22s ease-in-out infinite; }
+@keyframes mote { 0% { opacity: 0; transform: translateY(0) translateX(0); } 12% { opacity: .55; } 88% { opacity: .35; } 100% { opacity: 0; transform: translateY(-46vh) translateX(var(--dx, 18px)); } }
+@media (prefers-reduced-motion: reduce) { .attract .backdrop, .attract .mote { animation: none !important; } }
+.attract .marquee { position: absolute; left: 0; right: 0; top: 30%; z-index: 3; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 20px; box-sizing: border-box; }
+.attract .marquee svg { width: clamp(48px, 8cqw, 84px); height: clamp(48px, 8cqw, 84px); filter: drop-shadow(0 6px 0 var(--stage-black)); }
+.attract .marquee .word { margin-top: 6px; font: 800 clamp(1.8rem, 6cqw, 4rem) var(--font-fancy); letter-spacing: .06em; color: var(--text); text-shadow: 0 4px 0 var(--stage-black); }
+.attract .marquee .word em { font-style: normal; color: var(--accent); }
+.attract .marquee .tag { margin-top: 4px; font: 500 12px var(--font-mono); letter-spacing: .3em; text-transform: uppercase; color: var(--text-dim); }
+.attract .attractwrap { position: absolute; left: 0; right: 0; top: 62%; z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.pressprompt { font: 600 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); letter-spacing: .12em; text-transform: uppercase; color: var(--text); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .pressprompt { animation: none; } }
+.pressprompt kbd { font: 500 12px var(--font-mono); color: var(--text-dim); background: color-mix(in srgb, var(--text) 10%, transparent); box-shadow: inset 0 0 0 1px var(--edge); padding: 2px 8px; margin-left: 8px; text-transform: none; letter-spacing: 0; vertical-align: 2px; }
+
+/* ==== the Scenes app content ==== */
+.scenesroot { display: none; padding: 24px 32px 60px; }
+body:not([data-state="attract"]) .scenesroot { display: block; }
+body[data-state="character"] .scenesroot, body[data-state="folder"] .scenesroot { display: none; }
+
+.scn-tabs { display: flex; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 20px; }
+.scn-tabs button { display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 10px 16px; font: 600 .95rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); cursor: pointer; box-shadow: inset 0 -2px 0 transparent; }
+.scn-tabs button.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--accent); }
+.scn-tabs .cnt { padding: 1px 7px; font: 600 12px var(--font-mono); background: var(--shell-panel-2); color: var(--text-dim); }
+.scn-tabs button.on .cnt { background: var(--accent); color: var(--stage-ink); }
+
+.plaque { position: relative; padding: 18px 22px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--accent); margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+.plaque h1 { margin-top: 6px; }
+.plaque .s-lede { margin-top: 4px; font-size: .92rem; }
+.plaque-actions { display: flex; align-items: center; gap: 10px; }
+.search { display: flex; align-items: center; gap: 8px; padding: 8px 12px; width: 220px; box-shadow: inset 0 0 0 1px var(--edge); }
+.search input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: 400 13px var(--font-body); }
+.search input::placeholder { color: var(--text-faint); }
+.search svg { color: var(--text-dim); }
+
+.filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+.segs { display: flex; gap: 2px; padding: 3px; box-shadow: inset 0 0 0 1px var(--edge); }
+.segs button { padding: 6px 12px; font: 500 12px var(--font-body); color: var(--text-dim); background: none; border: 0; cursor: pointer; }
+.segs button.on { background: var(--shell-panel-2); color: var(--text); font-weight: 600; }
+
+/* ---- hero: "Continue your story" — a big PORTRAIT CARD, same 2:3 shape and same full-bleed
+   backdrop-face construction as every .sc card below (see .sc for the shared pattern: the chat's
+   own backdrop image fills the entire face; this is not a distinct visual language, just a
+   bigger instance of it), 1.6x the size (320x480 vs 200x300). It sits at the START of the row
+   beside the grid (.stagerow), never as a full-width banner. .art/.badge/.cont are the exact
+   shared classes .sc cards use, so the backdrop-face and Live badge come for free. */
+.stagerow { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 26px; }
+.hero { position: relative; flex: none; width: 320px; height: 480px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--t); text-decoration: none; color: var(--text); overflow: hidden; display: block; cursor: pointer; }
+.hero-ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 20px 22px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 88%, transparent) 40%); z-index: 1; }
+.hero-ov .s-act { margin-bottom: 4px; }
+.hero-ov h2 { margin-top: 6px; font: 700 1.4rem var(--font-fancy); font-variation-settings: var(--soft-axes); }
+.hero-ov .sub { margin-top: 4px; color: var(--text-soft); font-size: .92rem; }
+.hero-stats { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.hero-stats b { color: var(--t); font-weight: 500; }
+.hero-pips { display: flex; gap: 4px; margin-top: 12px; }
+.hero-pips span { width: 16px; height: 6px; background: var(--stage-line); }
+.hero-pips span.on { background: var(--t); }
+.hero-ov .s-btn { margin-top: 14px; }
+
+/* ---- the scene preview: fills the rest of the hero stage row at the hero's own height, the
+   chat's own backdrop full-bleed behind ONE bottom-anchored panel (not a message list plus a
+   separate summary box). That panel carousels between two kinds of slide, same spot, same
+   styling: the scene's most recent message(s), large and readable, and — only when the scene
+   has one — a "Previously on…" one-paragraph summary. Pips + prev/next only appear when there
+   are 2+ slides (.preview.multi); a scene with no summary is a single static slide, no pips at
+   all. Auto-advances every 6s, pauses on hover. Clicking anywhere continues the scene, same as
+   the hero card; the arrows/pips stop that click from bubbling so paging doesn't also navigate. */
+.preview { position: relative; flex: 1; min-width: 0; height: 480px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--t); overflow: hidden; display: block; text-decoration: none; color: var(--text); cursor: pointer; }
+.preview .art { position: absolute; inset: 0; background: linear-gradient(175deg, color-mix(in srgb, var(--t) 42%, var(--face)), var(--face) 90%); }
+.pv-slide { position: absolute; inset: 0; z-index: 1; display: none; flex-direction: column; justify-content: flex-end; padding: 30px 34px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 85%, transparent) 52%); }
+.pv-slide.on { display: flex; }
+.pv-msg { display: flex; align-items: flex-end; gap: 14px; }
+.pv-msg + .pv-msg { margin-top: 14px; }
+.pv-msg .av { width: 42px; height: 42px; flex: none; display: grid; place-items: center; font: italic 600 18px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.pv-msg .av.you { background: var(--text-dim); }
+.pv-msg-tx { min-width: 0; }
+.pv-msg-tx b { display: block; font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--t); margin-bottom: 4px; }
+.pv-msg-tx p { margin: 0; font: 500 1.15rem/1.4 var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.pv-summary .s-act { color: var(--t); margin-bottom: 8px; }
+.pv-summary .s-act b { color: var(--text); font-weight: 600; }
+.pv-summary p { margin: 0; max-width: 46ch; font-size: 15px; line-height: 1.6; color: var(--text-soft); }
+.pv-arrow { display: none; position: absolute; top: 50%; z-index: 3; transform: translateY(-50%); width: 30px; height: 30px; place-items: center; background: color-mix(in srgb, var(--stage-black) 55%, transparent); box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); border: 0; cursor: pointer; font-size: 18px; line-height: 1; }
+.pv-arrow:hover { background: color-mix(in srgb, var(--t) 30%, transparent); }
+.pv-arrow.prev { left: 14px; }
+.pv-arrow.next { right: 14px; }
+.preview.multi .pv-arrow { display: grid; }
+.pv-pips { display: none; position: absolute; z-index: 3; left: 34px; bottom: 16px; gap: 5px; }
+.preview.multi .pv-pips { display: flex; }
+.preview.multi .pv-slide { padding-bottom: 48px; }
+.pv-pips span { width: 6px; height: 6px; background: color-mix(in srgb, var(--stage-card) 40%, transparent); cursor: pointer; }
+.pv-pips span.on { background: var(--t); }
+
+/* ---- the scene grid: fixed-size portrait "playing cards" (2:3), every card — with or without
+   alternate takes — exactly the same width and height. Takes live in a fixed-height footer strip
+   INSIDE the card instead of an extra block hanging below, so they never change the card's size. ---- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, 200px); grid-auto-rows: 300px; gap: 18px; justify-content: start; }
+.sc { position: relative; width: 200px; height: 300px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--t); cursor: pointer; overflow: hidden; transition: transform .18s; }
+.sc:hover, .sc.demo-hover { transform: translateY(-2px); }
+/* shared with .hero on purpose: the hero is a bigger instance of the exact same backdrop-face
+   card, not a separate visual language — every scene card (hero included) uses its chat's own
+   backdrop image as its full-bleed face. */
+.sc .art, .hero .art { position: absolute; inset: 0; background: linear-gradient(170deg, color-mix(in srgb, var(--t) 50%, var(--face)), var(--face) 88%); }
+.sc .ini, .hero .ini { position: absolute; top: 36%; left: 50%; transform: translate(-50%, -50%); font: italic 600 34px var(--font-fancy); color: color-mix(in srgb, var(--text) 35%, transparent); }
+.sc .badge, .hero .badge { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; background: var(--stage-ok-bg); color: var(--stage-ok); font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; z-index: 2; }
+/* hero override, after the shared rule on purpose: same silhouette-initial pattern, just bigger
+   to match the card's 1.6x size. */
+.hero .ini { font-size: 84px; }
+.sc .badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.sc .cont { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--stage-black) 55%, transparent); opacity: 0; transition: opacity .15s; }
+.sc:hover .cont, .sc.demo-hover .cont { opacity: 1; }
+.sc .cont span { padding: 8px 18px; background: var(--stamp-bg); color: var(--stamp-fg); font: 700 .85rem var(--font-body); }
+.sc .ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 82%, transparent) 45%); z-index: 1; transition: bottom .15s; }
+.sc.hastakes .ov { bottom: 32px; }
+.sc .who { font: 500 12px var(--font-body); color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc h3 { margin-top: 3px; font: 600 14px/1.25 var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc .meta { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.sc .meta b { font-weight: 500; color: var(--t); }
+
+/* take strip: fixed-height footer (present only when .hastakes, but never changes the card's own
+   fixed width/height either way). Compact by default — pips plus the active take's name, so the
+   name stays visible without a hover; the full named list swaps in on hover (or .demo-hover,
+   forced for verification) so branch names are never reduced to pips alone. */
+.sc .takestrip { display: none; position: absolute; left: 0; right: 0; bottom: 0; height: 32px; padding: 0 12px; align-items: center; z-index: 2; background: color-mix(in srgb, var(--stage-black) 88%, var(--face)); box-shadow: inset 0 1px 0 var(--seam); }
+.sc.hastakes .takestrip { display: flex; }
+.takestrip .compact { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.takestrip .pips { display: flex; gap: 3px; flex: none; }
+.takestrip .pips span { width: 7px; height: 7px; background: var(--stage-line); }
+.takestrip .pips span.on { background: var(--t); }
+.takestrip .active { font: 600 12px var(--font-mono); color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.takestrip .full { display: none; align-items: center; gap: 5px; overflow-x: auto; width: 100%; }
+.sc:hover .takestrip .compact, .sc.demo-hover .takestrip .compact { display: none; }
+.sc:hover .takestrip .full, .sc.demo-hover .takestrip .full { display: flex; }
+.takestrip .full span { flex: none; font: 500 12px var(--font-body); padding: 2px 7px; background: var(--stage-row); color: var(--text-dim); white-space: nowrap; }
+.takestrip .full span.on { background: var(--t); color: var(--stage-ink); font-weight: 600; }
+
+/* group / ensemble cards */
+/* in-flow (not absolutely pinned to the art's top), so it stacks above the title inside the
+   bottom overlay instead of fighting the Live badge for the same top-left corner. */
+.sc.grp .facegrid { display: flex; gap: 6px; margin-bottom: 6px; }
+.sc.grp .facegrid span { width: 30px; height: 30px; display: grid; place-items: center; font: 700 12px var(--font-fancy); color: var(--stage-ink); box-shadow: 0 0 0 2px color-mix(in srgb, var(--face) 60%, transparent); }
+
+/* new / start card — same fixed 2:3 footprint as every other card */
+.sc.newcard { width: 200px; height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; box-shadow: inset 0 0 0 2px var(--edge); background: none; border-top: 0; }
+.sc.newcard .plus { width: 52px; height: 52px; display: grid; place-items: center; box-shadow: inset 0 0 0 2px var(--t); color: var(--t); }
+.sc.newcard b { font: 600 .85rem var(--font-body); text-transform: uppercase; letter-spacing: .08em; color: var(--text-soft); }
+.sc.newcard span.with { font: 400 12px var(--font-body); color: var(--text-dim); }
+
+/* ---- character / folder header states (replace the plaque; hero + tabs hidden) ---- */
+.charroot, .folderroot { display: none; padding: 24px 32px 60px; }
+body[data-state="character"] .charroot { display: block; }
+body[data-state="folder"] .folderroot { display: block; }
+.backlink { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--text-dim); font: 500 13px var(--font-body); cursor: pointer; margin-bottom: 16px; padding: 0; }
+.backlink:hover { color: var(--text); }
+.backlink svg { width: 14px; height: 14px; }
+
+.charhead { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; flex-wrap: wrap; }
+.charhead .ch-avatar { width: 64px; height: 64px; flex: none; display: grid; place-items: center; font: italic 600 26px var(--font-fancy); color: var(--stage-ink); background: var(--t); box-shadow: 0 0 0 1px var(--edge); }
+.charhead h1 { margin-top: 4px; font: 700 1.7rem var(--font-fancy); }
+.charhead p { margin-top: 4px; color: var(--text-soft); font-size: .92rem; }
+.sortpills { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.sortpills span { color: var(--text-dim); font-size: 12px; margin-right: 6px; }
+.sortpills button { padding: 6px 12px; font: 500 12px var(--font-body); color: var(--text-dim); background: none; border: 0; box-shadow: inset 0 0 0 1px var(--edge); cursor: pointer; }
+.sortpills button.on { background: var(--accent); color: var(--stage-ink); box-shadow: none; font-weight: 600; }
+
+.folderhead { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+.folderhead .ch-dot.big { width: 20px; height: 20px; flex: none; }
+.folderhead h1 { margin-top: 2px; font: 700 1.7rem var(--font-fancy); }
+.folderhead p { margin-top: 4px; color: var(--text-soft); font-size: .92rem; }
+.folder-progress { margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+.folder-progress .bar { width: 160px; height: 6px; background: var(--stage-line); }
+.folder-progress .bar i { display: block; height: 100%; background: var(--c, var(--accent)); }
+.folder-progress span { font: 500 12px var(--font-mono); color: var(--text-dim); }
+
+/* ---- empty state ---- */
+.emptyroot { display: none; padding: 90px 32px; text-align: center; }
+body[data-state="empty"] .scenesroot, body[data-state="empty"] .charroot, body[data-state="empty"] .folderroot { display: none !important; }
+body[data-state="empty"] .emptyroot { display: block; }
+/* an empty stage has no scenes, so it has no characters, now-playing card, or folders either
+   (all derived from scenes in RC) — hiding these avoids the sidebar contradicting the empty main
+   state. */
+body[data-state="empty"] .cr-list, body[data-state="empty"] .sp-sec { display: none; }
+body[data-state="empty"] .sp-scroll::after { content: "No cast yet — nothing played here."; display: block; margin-top: 10px; padding: 0 2px; font: 400 13px var(--font-body); color: var(--text-dim); }
+.emptyroot .mark { width: 72px; height: 72px; margin: 0 auto 18px; display: grid; place-items: center; background: var(--shell-panel); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-dim); }
+.emptyroot b { display: block; font: 600 20px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.emptyroot p { margin: 10px auto 20px; max-width: 30rem; color: var(--text-dim); font-size: .92rem; }
+
+/* ---- card menu popup ---- */
+.menu { position: fixed; z-index: 70; width: 220px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 6px 6px 0 0 var(--stage-black); display: none; }
+body[data-state="menu"] .menu { display: block; }
+.menu .mhead { padding: 10px 12px; box-shadow: inset 0 -1px 0 var(--seam); font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+.menu button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; background: none; border: 0; text-align: left; font: 400 13px var(--font-body); color: var(--text); cursor: pointer; }
+.menu button:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.menu button.danger { color: var(--stage-danger-text); box-shadow: inset 0 1px 0 var(--seam); }
+.menu .chdot-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px; color: var(--text-soft); }
+.menu .chdot-row .ch-dot { width: 8px; height: 8px; flex: none; }
+
+/* ---- delete confirm ("cut") scrim, bonus state past the required list ---- */
+.scrim { position: fixed; inset: 0; z-index: 80; display: none; place-items: center; background: var(--scrim); }
+body[data-state="cut"] .scrim { display: grid; }
+.dlg { width: 420px; max-width: calc(100vw - 32px); padding: 22px 24px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--stage-danger-text); }
+.dlg p { margin-top: 10px; color: var(--text-soft); font-size: .92rem; line-height: 1.55; }
+.dlg .row { margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px; }
+.dlg .no { padding: 9px 16px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); font: 600 13px var(--font-body); cursor: pointer; }
+.dlg .yes { padding: 9px 16px; background: var(--stage-danger-bg); color: var(--stage-danger-text); box-shadow: inset 0 0 0 1px var(--stage-danger-edge); font: 600 13px var(--font-body); border: 0; cursor: pointer; }
+
+/* ---- phone: Dock -> bottom tab bar, Scenes sidebar -> a sheet drawer ----
+   .app gets a DEFINITE height and .stage scrolls internally (order:1, overflow-y:auto), exactly
+   landing-game-a2's phone technique — not position:fixed for the Dock. body has
+   container-type:inline-size (for these very queries), which makes body the containing block for
+   any position:fixed descendant instead of the viewport; pin the Dock by flex order in a
+   viewport-capped column instead, so it never depends on that containing block at all. The
+   drawer still uses position:fixed (deliberately, as an overlay), which is safe here only because
+   .app's capped height keeps body itself no taller than the viewport. */
+@container (max-width: 30rem) {
+  /* align-items:stretch override is load-bearing: the base .app rule sets flex-start (needed on
+     desktop so the sticky Dock/sidebar columns size to their own content, not stretch full
+     height), but in this column-direction phone layout flex-start applies to the CROSS axis
+     (width) instead — collapsing .stage to near-zero width since it has no explicit width of its
+     own, only flex:1 (which controls the main/vertical axis in a column, not width). */
+  .app { flex-direction: column; align-items: stretch; height: calc(100vh - 190px); min-height: 0; }
+  .s-dock { order: 2; flex: none; position: static; width: 100%; height: auto; min-height: auto; flex-direction: row; padding: 6px 6px; gap: 2px; box-shadow: inset 0 -1px 0 var(--seam); overflow-x: auto; overflow-y: visible; background: var(--chrome); }
+  .s-dock .brand { display: none; }
+  .s-dock .s-fold { display: none; }
+  .s-app { display: flex; flex-direction: column; flex: 1; align-items: center; justify-content: center; gap: 2px; padding: 6px 2px; box-shadow: none; }
+  .s-app.on { box-shadow: inset 0 3px 0 var(--c); }
+  .s-app i { width: 24px; height: 24px; }
+  .s-app small { display: none; }
+  .s-app b { display: block !important; font-size: 11px !important; }
+  /* height (not top+bottom) on purpose: body is the containing block for position:fixed here
+     (container-type on body implies containment), and body's rendered height includes the
+     wf-note/wf-bar wireframe chrome stacked below .app at this width — a bottom offset would
+     resolve against THAT taller box, not the app's own capped height, and the drawer would run
+     past the Dock instead of stopping above it. */
+  .scn-side { position: fixed; top: 0; left: 0; height: calc(100vh - 190px - 56px); width: 92vw; max-width: 360px; z-index: 25; transform: translateX(-102%); transition: transform .2s; box-shadow: inset -1px 0 0 var(--seam), 8px 0 24px var(--shadow-ink); }
+  .scn-side .char-rail, .scn-side .stage-panel { height: 100%; }
+  body[data-state="phone"] .scn-side { transform: translateX(0); }
+  .scrimphone { display: none; position: fixed; top: 0; left: 0; right: 0; height: calc(100vh - 190px); background: var(--scrim); z-index: 24; }
+  body[data-state="phone"] .scrimphone { display: block; }
+  .stage { order: 1; flex: 1; min-height: 0; height: auto; overflow-y: auto; }
+  .scenesroot, .charroot, .folderroot { padding: 16px 16px 40px; }
+  .plaque { flex-direction: column; align-items: flex-start; }
+  .search { width: 100%; }
+  .stagerow { flex-direction: column; }
+  .hero { width: 100%; max-width: 280px; height: 420px; }
+  /* preview goes under the hero card (column direction already does that), full width, shorter.
+     flex:none is load-bearing: the base rule's flex:1 has a flex-basis of 0% (the "1" shorthand
+     is 1 1 0%), which wins over an explicit height in flex layout — and this column-direction
+     .stagerow has no definite height of its own to grow 0% into, so the preview collapsed to
+     near-zero height instead of the 300px set here, until flex-grow/shrink are turned off. */
+  .preview { flex: none; width: 100%; height: 300px; }
+  .pv-slide { padding: 20px 22px; }
+  .preview.multi .pv-slide { padding-bottom: 44px; }
+  .pv-msg-tx p { font-size: 1rem; }
+  .grid { grid-template-columns: repeat(auto-fill, 160px); grid-auto-rows: 240px; gap: 12px; }
+  .sc, .sc.newcard { width: 160px; height: 240px; }
+  .charhead { gap: 12px; }
+  .sortpills { margin-left: 0; width: 100%; }
+}
+
+.wf-bar { top: 8px; bottom: auto; }
+.wf-note { max-width: min(30rem, calc(100vw - 24px)); }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></symbol>
+<symbol id="i-find" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-cast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 20c.3-2.9 2-4.5 4.5-4.6"/></symbol>
+<symbol id="i-takes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.2-5.4 3.2 1.3-6-4.6-4.1 6.1-.6z"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="s-dock" id="dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+    <button type="button" class="s-fold" id="foldBtn" aria-label="Collapse the Dock to icons"><svg width="16" height="16"><use href="#i-chev"/></svg><span class="lbl">Collapse</span></button>
+  </nav>
+
+  <div class="scn-side" id="scnSide">
+    <aside class="char-rail" id="charRail">
+      <button type="button" class="cr-mark" title="Scenes"><svg width="22" height="22" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg></button>
+      <div class="cr-div"></div>
+      <button type="button" class="cr-all on" data-rail="all" title="All Scenes"><svg width="18" height="18"><use href="#i-cast"/></svg></button>
+      <div class="cr-list">
+        <button type="button" class="cr-tile on" id="veraTile" data-rail="char" data-char="vera" style="--t: var(--deck-character)">
+          <span class="cr-art">V</span>
+          <span class="cr-playing" title="Now playing"><svg width="8" height="8"><use href="#i-play"/></svg></span>
+          <span class="cr-tip"><b>Vera Lune</b><span>12 scenes</span></span>
+        </button>
+        <button type="button" class="cr-tile" data-rail="char" data-char="nuit" style="--t: var(--deck-persona)">
+          <span class="cr-art">N</span>
+          <span class="cr-tip"><b>Nuit</b><span>4 scenes</span></span>
+        </button>
+        <button type="button" class="cr-tile" data-rail="char" data-char="magpie" style="--t: var(--deck-lorebook)">
+          <span class="cr-art">M</span>
+          <span class="cr-tip"><b>The Magpie</b><span>3 scenes</span></span>
+        </button>
+        <button type="button" class="cr-tile" data-rail="char" data-char="marguerite" style="--t: var(--deck-regex)">
+          <span class="cr-art">M</span>
+          <span class="cr-tip"><b>Marguerite</b><span>6 scenes</span></span>
+        </button>
+        <button type="button" class="cr-tile" data-rail="char" data-char="corvin" style="--t: var(--deck-preset)">
+          <span class="cr-art">C</span>
+          <span class="cr-tip"><b>Corvin Ashe</b><span>2 scenes</span></span>
+        </button>
+        <button type="button" class="cr-tile group" data-rail="group" title="Heist Crew">
+          <span class="cr-faces"><span style="left:0; background:var(--deck-character)">V</span><span style="left:14px; background:var(--deck-preset)">C</span></span>
+          <span class="cr-tip"><b>Heist Crew</b><span>Ensemble</span></span>
+        </button>
+      </div>
+    </aside>
+
+    <aside class="stage-panel" id="stagePanel">
+      <div class="sp-top">
+        <div class="s-act"><b>Fan Favorites</b></div>
+      </div>
+      <div class="sp-scroll">
+        <div class="sp-sec fav-sec" id="favSec">
+          <div class="fav-carousel" id="favCarousel">
+            <div class="fav-track" id="favTrack">
+              <div class="fav-slide" data-fav="1">
+                <a class="fav-card" href="#" style="--t: var(--deck-character)">
+                  <div class="fav-art">
+                    <span class="ini">V</span>
+                    <div class="fav-ov">
+                      <div class="fav-who"><span class="fav-av">V</span><b>Vera Lune</b><i>2h ago</i></div>
+                      <div class="fav-title">The long storm</div>
+                    </div>
+                  </div>
+                </a>
+                <div class="fav-takepips"><span class="on"></span><span class="on"></span><span></span></div>
+                <div class="fav-stat">42 msgs &middot; 3 takes</div>
+                <button type="button" class="fav-continue">Continue Story</button>
+              </div>
+              <div class="fav-slide" data-fav="2">
+                <a class="fav-card" href="#" style="--t: var(--deck-lorebook)">
+                  <div class="fav-art">
+                    <span class="ini">M</span>
+                    <div class="fav-ov">
+                      <div class="fav-who"><span class="fav-av">M</span><b>The Magpie</b><i>6d ago</i></div>
+                      <div class="fav-title">The lock gave on the third try</div>
+                    </div>
+                  </div>
+                </a>
+                <div class="fav-takepips"><span></span></div>
+                <div class="fav-stat">7 msgs</div>
+                <button type="button" class="fav-continue">Continue Story</button>
+              </div>
+            </div>
+          </div>
+          <div class="fav-nav" id="favNav">
+            <button type="button" class="fav-arrow prev" id="favPrev" aria-label="Previous favorite">&lsaquo;</button>
+            <div class="fav-dots" id="favDots"><span class="on" data-dot="1"></span><span data-dot="2"></span></div>
+            <button type="button" class="fav-arrow next" id="favNext" aria-label="Next favorite">&rsaquo;</button>
+          </div>
+          <div class="fav-empty-card" id="favEmptyCard" style="display:none">Star a scene to keep it here.</div>
+        </div>
+
+        <div class="sp-sec">
+          <div class="lab"><span class="sq"></span>This Week</div>
+          <button type="button" class="rec" data-char="nuit" style="--t: var(--deck-persona)">
+            <span class="rec-av">N</span>
+            <span class="rec-tx"><b>Cut the deck</b><small>Nuit pulled her hand back.</small></span>
+            <span class="rec-pip"></span>
+            <time>3d</time>
+          </button>
+          <button type="button" class="rec" data-char="magpie" style="--t: var(--deck-lorebook)">
+            <span class="rec-av">M</span>
+            <span class="rec-tx"><b>The lock gave on the third try</b><small>It clicked open at last.</small></span>
+            <time>6d</time>
+          </button>
+
+          <div class="lab"><span class="sq"></span>Earlier</div>
+          <button type="button" class="rec" data-char="vera" style="--t: var(--deck-character)">
+            <span class="rec-av">V</span>
+            <span class="rec-tx"><b>Who did you let up the stairs?</b><small>Vera didn't answer right away.</small></span>
+            <span class="rec-pip"></span>
+            <time>23d</time>
+          </button>
+          <button type="button" class="rec" data-char="marguerite" style="--t: var(--deck-regex)">
+            <span class="rec-av">M</span>
+            <span class="rec-tx"><b>Untitled Scene</b><small>No messages yet.</small></span>
+            <time>21d</time>
+          </button>
+          <button type="button" class="rec" data-char="corvin" style="--t: var(--deck-preset)">
+            <span class="rec-av">C</span>
+            <span class="rec-tx"><b>The debt comes due</b><small>Corvin counted the coins twice.</small></span>
+            <time>30d</time>
+          </button>
+        </div>
+
+        <div class="sp-sec">
+          <div class="lab"><span class="sq"></span>Smart Folders</div>
+          <button type="button" class="chapter smart" data-folder="longest"><svg width="14" height="14"><use href="#i-takes"/></svg><span class="ch-name">Longest Stories</span><span class="ch-count">6</span></button>
+        </div>
+
+        <div class="sp-sec">
+          <div class="lab"><span class="sq"></span>Folders</div>
+          <button type="button" class="chapter" data-folder="mainplot" style="--c: var(--deck-pack)"><span class="ch-dot"></span><span class="ch-name">Main Plot</span><span class="ch-count">4</span></button>
+          <button type="button" class="chapter" data-folder="sidequests" style="--c: var(--deck-preset)"><span class="ch-dot"></span><span class="ch-name">Side Quests</span><span class="ch-count">2</span></button>
+          <button type="button" class="newchapter"><svg width="14" height="14"><use href="#i-plus"/></svg>New Folder&hellip;</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="scrimphone" id="scrimPhone"></div>
+
+  <main class="stage" id="stageMain">
+    <!-- ================= ATTRACT ================= -->
+    <div class="attract" id="attract">
+      <div class="backdrop"></div>
+      <div class="floor"></div>
+      <div class="motes" aria-hidden="true">
+        <span class="mote" style="left:14%; top:70%; --dx:22px; animation-delay:0s"></span>
+        <span class="mote" style="left:26%; top:82%; --dx:-14px; animation-delay:3s"></span>
+        <span class="mote" style="left:38%; top:60%; --dx:18px; animation-delay:7s"></span>
+        <span class="mote" style="left:58%; top:78%; --dx:-20px; animation-delay:2s"></span>
+        <span class="mote" style="left:70%; top:65%; --dx:16px; animation-delay:9s"></span>
+        <span class="mote" style="left:82%; top:74%; --dx:-12px; animation-delay:5s"></span>
+        <span class="mote" style="left:47%; top:88%; --dx:10px; animation-delay:11s"></span>
+      </div>
+      <div class="vignette"></div>
+      <div class="marquee">
+        <svg viewBox="0 0 100 100" style="--pink: var(--deck-pack); --ink: var(--stage-ink)"><use href="#bun"/></svg>
+        <div class="word">bun<em>raku</em></div>
+        <div class="tag">a little theater for your characters</div>
+      </div>
+      <div class="attractwrap">
+        <div class="pressprompt">Press any key <kbd>or click</kbd></div>
+      </div>
+    </div>
+
+    <!-- ================= SCENES (default) ================= -->
+    <div class="scenesroot" id="scenesRoot">
+      <div class="scn-tabs">
+        <button type="button" class="on" data-tab="solo">One-on-One <span class="cnt">6</span></button>
+        <button type="button" data-tab="group">Group Performances <span class="cnt">1</span></button>
+        <button type="button" data-tab="all">All <span class="cnt">7</span></button>
+      </div>
+
+      <div class="plaque">
+        <div>
+          <div class="s-act"><b>Your Stage</b></div>
+          <h1 class="s-title" id="plaqueTitle">Scenes</h1>
+          <p class="s-lede" id="plaqueSub">6 stories across 5 characters</p>
+        </div>
+        <div class="plaque-actions">
+          <button type="button" class="s-btn ghost">Select</button>
+          <label class="search"><svg><use href="#i-find"/></svg><input placeholder="Search&hellip;" aria-label="Search scenes"></label>
+        </div>
+      </div>
+
+      <div class="filters">
+        <div class="segs"><button type="button" class="on">All Time</button><button type="button">Week</button><button type="button">Month</button><button type="button">Year</button></div>
+        <div class="segs"><button type="button" class="on">Recent</button><button type="button">Messages</button></div>
+      </div>
+
+      <div class="stagerow" style="--t: var(--deck-character)">
+        <a class="hero" href="#">
+          <div class="art"><span class="ini">V</span></div>
+          <span class="badge"><span class="dot"></span>Live</span>
+          <div class="hero-ov">
+            <span class="s-act"><b>Continue your story</b></span>
+            <h2>The long storm</h2>
+            <p class="sub">Vera Lune &middot; picks up on Take 2</p>
+            <div class="hero-pips"><span class="on"></span><span class="on"></span><span></span></div>
+            <div class="hero-stats"><b>42 msgs</b><span>&middot;</span><span>2 hours ago</span><span>&middot;</span><b>3 takes</b></div>
+            <span class="s-btn">Continue Story</span>
+          </div>
+        </a>
+
+        <a class="preview multi" href="#" id="scenePreview">
+          <div class="art"></div>
+
+          <div class="pv-slide on" data-slide="1">
+            <div class="pv-msg">
+              <span class="av you">Y</span>
+              <div class="pv-msg-tx"><b>You</b><p>Deal. Just don't let it go out this time.</p></div>
+            </div>
+            <div class="pv-msg">
+              <span class="av">V</span>
+              <div class="pv-msg-tx"><b>Vera Lune</b><p>*She strikes the match, cupping the flame against the wind.*</p></div>
+            </div>
+          </div>
+
+          <div class="pv-slide" data-slide="2">
+            <div class="pv-summary">
+              <span class="s-act">Previously on <b>The long storm</b></span>
+              <p>The storm rolled in faster than anyone expected, catching Vera alone on the widow's walk as the first gusts hit. She lit the lamp anyway, half-hoping someone out on the water would see it through the rain.</p>
+            </div>
+          </div>
+
+          <button type="button" class="pv-arrow prev" id="pvPrev" aria-label="Previous slide">&lsaquo;</button>
+          <button type="button" class="pv-arrow next" id="pvNext" aria-label="Next slide">&rsaquo;</button>
+          <div class="pv-pips" id="pvPips"><span class="on" data-pip="1"></span><span data-pip="2"></span></div>
+        </a>
+      </div>
+
+      <div class="grid" id="grid">
+        <article class="sc hastakes demo-hover" style="--t: var(--deck-character)" data-char="vera" data-folder="mainplot" data-menu-target>
+          <div class="art">
+            <span class="ini">V</span>
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>The long storm</h3><div class="meta"><b>42 msgs</b><span>&middot;</span><span>2h ago</span></div></div>
+            <div class="takestrip">
+              <div class="compact"><span class="pips"><span class="on"></span><span class="on"></span><span></span></span><span class="active">Take 2</span></div>
+              <div class="full"><span>Original</span><span class="on">Take 2</span><span>Take 3</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="sc" style="--t: var(--deck-persona)" data-char="nuit" data-folder="mainplot">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Nuit</div><h3>Cut the deck</h3><div class="meta"><b>18 msgs</b><span>&middot;</span><span>3 days</span></div></div>
+          </div>
+        </article>
+
+        <article class="sc" style="--t: var(--deck-lorebook)" data-char="magpie">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">The Magpie</div><h3>The lock gave on the third try</h3><div class="meta"><b>7 msgs</b><span>&middot;</span><span>10 days</span></div></div>
+          </div>
+        </article>
+
+        <article class="sc" style="--t: var(--deck-regex)" data-char="marguerite" data-folder="mainplot">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Marguerite</div><h3>Untitled Scene</h3><div class="meta"><b>1 msg</b><span>&middot;</span><span>21 days</span></div></div>
+          </div>
+        </article>
+
+        <article class="sc hastakes" style="--t: var(--deck-character)" data-char="vera" data-folder="sidequests">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>Who did you let up the stairs?</h3><div class="meta"><b>64 msgs</b><span>&middot;</span><span>23 days</span></div></div>
+            <div class="takestrip">
+              <div class="compact"><span class="pips"><span class="on"></span><span></span></span><span class="active">Original</span></div>
+              <div class="full"><span class="on">Original</span><span>Take 2</span></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="sc" style="--t: var(--deck-preset)" data-char="corvin" data-folder="sidequests">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Corvin Ashe</div><h3>The debt comes due</h3><div class="meta"><b>9 msgs</b><span>&middot;</span><span>30 days</span></div></div>
+          </div>
+        </article>
+
+        <article class="sc grp" style="--t: var(--deck-pack)" data-tab="group">
+          <div class="art">
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov">
+              <span class="facegrid"><span style="background:var(--deck-character)">V</span><span style="background:var(--deck-preset)">C</span><span style="background:var(--deck-regex)">M</span></span>
+              <div class="who">Ensemble &middot; 3 cast</div><h3>Heist Crew</h3><div class="meta"><b>118 msgs</b><span>&middot;</span><span>12 min ago</span></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- ================= CHARACTER ================= -->
+    <div class="charroot" id="charRoot">
+      <button type="button" class="backlink" data-rail="all"><svg><use href="#i-chev"/></svg>All scenes</button>
+      <div class="charhead">
+        <span class="ch-avatar" style="--t: var(--deck-character)">V</span>
+        <div>
+          <span class="s-act"><b>Starring</b></span>
+          <h1>Vera Lune</h1>
+          <p>12 scenes played &middot; 5 total takes</p>
+        </div>
+        <div class="sortpills"><span>Sort:</span><button type="button" class="on">Recent</button><button type="button">A-Z</button><button type="button">Messages</button></div>
+      </div>
+      <div class="grid">
+        <article class="sc hastakes demo-hover" style="--t: var(--deck-character)">
+          <div class="art">
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>The long storm</h3><div class="meta"><b>42 msgs</b><span>&middot;</span><span>2h ago</span></div></div>
+            <div class="takestrip">
+              <div class="compact"><span class="pips"><span class="on"></span><span class="on"></span><span></span></span><span class="active">Take 2</span></div>
+              <div class="full"><span>Original</span><span class="on">Take 2</span><span>Take 3</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="sc hastakes" style="--t: var(--deck-character)">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>Who did you let up the stairs?</h3><div class="meta"><b>64 msgs</b><span>&middot;</span><span>23 days</span></div></div>
+            <div class="takestrip">
+              <div class="compact"><span class="pips"><span class="on"></span><span></span></span><span class="active">Original</span></div>
+              <div class="full"><span class="on">Original</span><span>Take 2</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="sc newcard" style="--t: var(--deck-character)">
+          <span class="plus"><svg width="22" height="22"><use href="#i-plus"/></svg></span>
+          <b>Start New Story</b>
+          <span class="with">with Vera Lune</span>
+        </article>
+      </div>
+    </div>
+
+    <!-- ================= FOLDER ================= -->
+    <div class="folderroot" id="folderRoot">
+      <button type="button" class="backlink" data-rail="all"><svg><use href="#i-chev"/></svg>All scenes</button>
+      <div class="folderhead">
+        <span class="ch-dot big" style="background: var(--deck-pack)"></span>
+        <div>
+          <span class="s-act"><b>Chapter</b></span>
+          <h1>Main Plot</h1>
+          <p>4 stories in this chapter</p>
+          <div class="folder-progress"><div class="bar"><i style="width:66%; --c: var(--deck-pack)"></i></div><span>4 of ~6 expected</span></div>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="sc hastakes" style="--t: var(--deck-character)">
+          <div class="art">
+            <span class="badge"><span class="dot"></span>Live</span>
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Vera Lune</div><h3>The long storm</h3><div class="meta"><b>42 msgs</b><span>&middot;</span><span>2h ago</span></div></div>
+            <div class="takestrip">
+              <div class="compact"><span class="pips"><span class="on"></span><span class="on"></span><span></span></span><span class="active">Take 2</span></div>
+              <div class="full"><span>Original</span><span class="on">Take 2</span><span>Take 3</span></div>
+            </div>
+          </div>
+        </article>
+        <article class="sc" style="--t: var(--deck-persona)">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Nuit</div><h3>Cut the deck</h3><div class="meta"><b>18 msgs</b><span>&middot;</span><span>3 days</span></div></div>
+          </div>
+        </article>
+        <article class="sc" style="--t: var(--deck-regex)">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">Marguerite</div><h3>Untitled Scene</h3><div class="meta"><b>1 msg</b><span>&middot;</span><span>21 days</span></div></div>
+          </div>
+        </article>
+        <article class="sc" style="--t: var(--deck-lorebook)">
+          <div class="art">
+            <div class="cont"><span>Continue &rarr;</span></div>
+            <div class="ov"><div class="who">The Magpie</div><h3>The lock gave on the third try</h3><div class="meta"><b>7 msgs</b><span>&middot;</span><span>10 days</span></div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <!-- ================= EMPTY ================= -->
+    <div class="emptyroot" id="emptyRoot">
+      <div class="mark"><svg width="30" height="30"><use href="#i-cast"/></svg></div>
+      <b>Your stage is empty</b>
+      <p>Discover a character in the Library and start your first scene. Every scene you play shows up here, gathered by cast member and chapter.</p>
+      <button type="button" class="s-btn">Discover Characters</button>
+    </div>
+  </main>
+</div>
+
+<!-- card menu popup -->
+<div class="menu" id="cardMenu" style="left: 640px; top: 300px">
+  <div class="mhead">Cut the deck &middot; Nuit</div>
+  <button type="button"><svg width="14" height="14"><use href="#i-pen"/></svg>Rename Scene</button>
+  <div class="chdot-row"><svg width="14" height="14"><use href="#i-folder"/></svg>Move to chapter</div>
+  <button type="button" style="padding-left:24px"><span class="ch-dot" style="width:8px;height:8px;background:var(--deck-pack)"></span>Main Plot</button>
+  <button type="button" style="padding-left:24px"><span class="ch-dot" style="width:8px;height:8px;background:var(--deck-preset)"></span>Side Quests</button>
+  <button type="button"><svg width="14" height="14"><use href="#i-star"/></svg>Add to Fan Favorites</button>
+  <button type="button" id="menuCut" class="danger"><svg width="14" height="14"><use href="#i-trash"/></svg>Delete Story</button>
+</div>
+
+<!-- delete confirm -->
+<div class="scrim" id="cutScrim">
+  <div class="dlg">
+    <div class="s-act"><b>Cut this story?</b></div>
+    <h3 class="s-h2" style="margin-top:6px">Cut the deck</h3>
+    <p>&ldquo;Cut the deck&rdquo; and every message in it, permanently. There is no undo.</p>
+    <div class="row"><button type="button" class="no" data-s="menu">Cancel</button><button type="button" class="yes">Delete</button></div>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>Scenes, gamified.</b> Dock folds to icons; RC's Scenes sidebar sits beside it.
+  Full carried/left-out list in the chat report.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button type="button" data-s="attract" class="on">Attract</button>
+  <button type="button" data-s="scenes">Scenes</button>
+  <button type="button" data-pv-demo="slide2">Slide 2</button>
+  <button type="button" data-pv-demo="nosummary">No Sum.</button>
+  <button type="button" data-fav-demo="slide2">Fav 2</button>
+  <button type="button" data-fav-demo="empty">Fav Empty</button>
+  <button type="button" data-s="collapsed">Fold</button>
+  <button type="button" data-s="character">Char</button>
+  <button type="button" data-s="folder">Folder</button>
+  <button type="button" data-s="menu">Menu</button>
+  <button type="button" data-s="cut">Cut</button>
+  <button type="button" data-s="empty">Empty</button>
+  <button type="button" data-s="phone">Phone</button>
+  <button type="button" data-theme-switch>Theme</button>
+  <a href="index.html">All</a>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  var dock = document.getElementById('dock');
+  var wfbar = document.getElementById('wfbar');
+
+  function set(s) {
+    var real = (s === 'phone') ? 'phone' : (s === 'collapsed' ? 'scenes' : s);
+    body.setAttribute('data-state', real === 'scenes' && s === 'collapsed' ? 'scenes' : s);
+    // the real state attribute drives most CSS; 'collapsed' and 'phone' are layered on top of 'scenes'
+    body.setAttribute('data-state', s === 'collapsed' ? 'scenes' : s);
+
+    dock.classList.toggle('folded', s === 'collapsed');
+    if (s === 'collapsed') {
+      var wb = dock.querySelector('.c-workbench');
+      dock.querySelectorAll('.s-app').forEach(function (a) { a.classList.remove('tip-force'); });
+      if (wb) wb.classList.add('tip-force');
+    }
+    // Vera's rail tooltip is forced only in 'character' — its own dedicated demo state, so it
+    // never sits over the On Stage card in 'scenes' and never collides with the Dock's own
+    // forced tooltip in 'collapsed'.
+    var veraTile = document.getElementById('veraTile');
+    if (veraTile) veraTile.classList.toggle('tip-force', s === 'character');
+
+    document.querySelectorAll('#wfbar button[data-s]').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-s') === s);
+    });
+
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+  }
+
+  wfbar.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-s]');
+    if (b) set(b.getAttribute('data-s'));
+  });
+
+  // any key/click leaves Attract, except wf chrome and the theme switch
+  document.addEventListener('click', function (e) {
+    if (body.getAttribute('data-state') !== 'attract') return;
+    if (e.target.closest('.wf-bar, .wf-note, [data-theme-switch]')) return;
+    set('scenes');
+  });
+  document.addEventListener('keydown', function () {
+    if (body.getAttribute('data-state') === 'attract') set('scenes');
+  });
+
+  // sidebar rail selection (visual only)
+  document.querySelectorAll('[data-rail]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      var kind = el.getAttribute('data-rail');
+      document.querySelectorAll('.cr-all, .cr-tile').forEach(function (t) { t.classList.remove('on'); });
+      document.querySelectorAll('.chapter').forEach(function (t) { t.classList.remove('on'); });
+      if (kind === 'all') { document.querySelector('.cr-all').classList.add('on'); set('scenes'); }
+      else if (kind === 'char') { el.classList.add('on'); set('character'); }
+      else if (kind === 'group') { el.classList.add('on'); set('scenes'); }
+    });
+  });
+  document.querySelectorAll('[data-folder]').forEach(function (el) {
+    el.addEventListener('click', function () {
+      document.querySelectorAll('.chapter').forEach(function (t) { t.classList.remove('on'); });
+      document.querySelectorAll('.cr-all, .cr-tile').forEach(function (t) { t.classList.remove('on'); });
+      el.classList.add('on');
+      set('folder');
+    });
+  });
+  document.querySelectorAll('.backlink').forEach(function (b) { b.addEventListener('click', function () { set('scenes'); }); });
+
+  document.querySelectorAll('.scn-tabs button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('.scn-tabs button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+    });
+  });
+
+  document.getElementById('foldBtn').addEventListener('click', function () {
+    dock.classList.toggle('folded');
+    set(dock.classList.contains('folded') ? 'collapsed' : 'scenes');
+  });
+
+  document.querySelectorAll('[data-menu-target]').forEach(function (card) {
+    card.addEventListener('contextmenu', function (e) { e.preventDefault(); set('menu'); });
+  });
+  document.getElementById('menuCut').addEventListener('click', function () { set('cut'); });
+  document.getElementById('scrimPhone').addEventListener('click', function () { set('scenes'); });
+
+  // Scene preview carousel: cycles between the recent-message slide and (when present) the
+  // "Previously on…" summary slide, same spot, same styling — never a message list plus a
+  // separate summary box. Auto-advances every 6s, pauses on hover. A scene with no summary
+  // (.preview without .multi) shows only the message slide, with no pips/arrows at all — the
+  // .multi class is exactly what CSS keys the pips/arrows visibility off. Its controls sit
+  // inside the <a class="preview"> that continues the scene on click, so every control here
+  // stops that click from bubbling to the link.
+  (function () {
+    var preview = document.getElementById('scenePreview');
+    if (!preview) return;
+    var slides = Array.prototype.slice.call(preview.querySelectorAll('.pv-slide'));
+    var pips = Array.prototype.slice.call(preview.querySelectorAll('.pv-pips span'));
+    var total = slides.length;
+    var current = 0;
+    var timer = null;
+
+    function show(i) {
+      if (!preview.classList.contains('multi')) return;
+      current = ((i % total) + total) % total;
+      slides.forEach(function (s, idx) { s.classList.toggle('on', idx === current); });
+      pips.forEach(function (p, idx) { p.classList.toggle('on', idx === current); });
+    }
+    function start() {
+      stop();
+      if (!preview.classList.contains('multi')) return;
+      timer = setInterval(function () { show(current + 1); }, 6000);
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    document.getElementById('pvPrev').addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation(); show(current - 1); start();
+    });
+    document.getElementById('pvNext').addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation(); show(current + 1); start();
+    });
+    pips.forEach(function (p, idx) {
+      p.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation(); show(idx); start();
+      });
+    });
+    preview.addEventListener('mouseenter', stop);
+    preview.addEventListener('mouseleave', start);
+
+    // demo toggles for verification: ?slide=2 opens on the summary slide; ?nosummary=1 shows the
+    // no-summary scene (single message slide, no pips/arrows). Same two states are reachable from
+    // the wf-bar's "Slide 2" / "No Summary" buttons below.
+    var qs = new URLSearchParams(location.search);
+    if (qs.get('nosummary') === '1') preview.classList.remove('multi');
+    var demoSlide = parseInt(qs.get('slide'), 10);
+    show(isNaN(demoSlide) ? 0 : demoSlide - 1);
+    start();
+
+    document.querySelectorAll('[data-pv-demo]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var d = b.getAttribute('data-pv-demo');
+        if (d === 'slide2') { preview.classList.add('multi'); show(1); start(); }
+        else if (d === 'nosummary') { preview.classList.remove('multi'); show(0); stop(); }
+        else if (d === 'reset') { preview.classList.add('multi'); show(0); start(); }
+      });
+    });
+  })();
+
+  // Fan Favorites: a sliding carousel of starred scenes in the SAME card shape as the old On
+  // Stage card. The track physically slides (a transform transition on .fav-track), not a
+  // content swap, ~300ms, auto-advancing every 6s and pausing on hover. Empty state swaps the
+  // whole carousel+nav for a dashed placeholder card — no dots/arrows with nothing to page.
+  (function () {
+    var sec = document.getElementById('favSec');
+    var carousel = document.getElementById('favCarousel');
+    var track = document.getElementById('favTrack');
+    var nav = document.getElementById('favNav');
+    var emptyCard = document.getElementById('favEmptyCard');
+    if (!sec) return;
+    var slides = Array.prototype.slice.call(track.children);
+    var dots = Array.prototype.slice.call(document.querySelectorAll('#favDots span'));
+    var total = slides.length;
+    var current = 0;
+    var timer = null;
+
+    function show(i) {
+      current = ((i % total) + total) % total;
+      track.style.transform = 'translateX(-' + (current * 100) + '%)';
+      dots.forEach(function (d, idx) { d.classList.toggle('on', idx === current); });
+    }
+    function start() {
+      stop();
+      timer = setInterval(function () { show(current + 1); }, 6000);
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+    function setEmpty(isEmpty) {
+      carousel.style.display = isEmpty ? 'none' : 'block';
+      nav.style.display = isEmpty ? 'none' : 'flex';
+      emptyCard.style.display = isEmpty ? 'flex' : 'none';
+      if (isEmpty) stop(); else start();
+    }
+
+    document.getElementById('favPrev').addEventListener('click', function () { show(current - 1); start(); });
+    document.getElementById('favNext').addEventListener('click', function () { show(current + 1); start(); });
+    dots.forEach(function (d, idx) { d.addEventListener('click', function () { show(idx); start(); }); });
+    carousel.addEventListener('mouseenter', stop);
+    carousel.addEventListener('mouseleave', start);
+
+    // demo toggles for verification: ?favslide=2 opens on the 2nd favorite; ?favempty=1 shows
+    // the empty state. Same two reachable from the wf-bar's "Fav 2" / "Fav Empty" buttons.
+    var qs = new URLSearchParams(location.search);
+    setEmpty(qs.get('favempty') === '1');
+    var demoFav = parseInt(qs.get('favslide'), 10);
+    show(isNaN(demoFav) ? 0 : demoFav - 1);
+    if (qs.get('favempty') !== '1') start();
+
+    document.querySelectorAll('[data-fav-demo]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var d = b.getAttribute('data-fav-demo');
+        if (d === 'slide2') { setEmpty(false); show(1); }
+        else if (d === 'empty') { setEmpty(true); }
+        else if (d === 'reset') { setEmpty(false); show(0); }
+      });
+    });
+  })();
+
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'attract');
+})();
+</script>
+</body>
+</html>

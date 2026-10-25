@@ -1,0 +1,14 @@
+/** shell.status chip: the footer is a loose row of sticker chips, each with a thick slab edge and a hard shadow. */
+html[data-surface-shell-status="chip"] {
+  --bk-status-reserve: 3rem; /* keeps the replay ? clear of the bar */
+  & #status { gap: .6rem; padding: .5rem 1rem .6rem; border-top: 0; background: var(--bk-surface-base); font-family: var(--font-body); letter-spacing: 0; overflow-x: auto; }
+  & #status .sep, & #status .seg:empty { display: none; }
+  & #status .seg { gap: .35rem; padding: .2rem .7rem; border: var(--bk-frame-w) solid var(--bk-line); background: var(--bk-surface-panel); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+  & #status .k { font-weight: 700; color: var(--bk-text-dim); }
+  & #status .b { font-weight: 700; color: var(--bk-text); }
+  & #status .appdot { width: .7rem; height: .7rem; border-radius: 50%; background: var(--adot, var(--bk-text-dim)); }
+  & #status .seg.note { background: var(--bk-role-warn); border-color: var(--bk-line); }
+  & #status .seg.note .k { color: var(--bk-text-on-tint); }
+  & #status .vaude { padding: .2rem .7rem; border: var(--bk-frame-w) solid var(--bk-line); background: var(--bk-role-brand); color: var(--bk-text-on-tint); font-weight: 700; box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+  & #status .vaude i { color: var(--bk-text-on-tint); }
+}

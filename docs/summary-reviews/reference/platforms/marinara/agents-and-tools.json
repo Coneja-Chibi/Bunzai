@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/marinara/agents-and-tools",
+  "sourcePath": "docs/reference/platforms/marinara/agents-and-tools.md",
+  "sourceHash": "sha256:b40e64b551e2e2aaec26adb8e2655fc276209afb43aed07ce2223e5da7760316",
+  "semanticSummaryHash": "sha256:ac9e8beade8e2379ba9dd9ab9acec16bf09c183656703a8a66b9e533d037784c",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:55.619Z"
+}

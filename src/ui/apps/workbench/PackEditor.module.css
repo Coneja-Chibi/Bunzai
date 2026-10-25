@@ -1,0 +1,162 @@
+/**
+ * Pack folder editor (library pack entity).
+ */
+.root {
+  --wb-selection: var(--rose);
+  --wb-primary: var(--rose-deep);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--stage-well, var(--canvas));
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.55rem 0.75rem;
+  border-bottom: 3px solid var(--edge);
+  background: var(--panel);
+  flex: none;
+}
+.kindTag {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 2px solid var(--edge);
+  padding: 0.2rem 0.35rem;
+}
+.name {
+  flex: 1;
+  min-width: 8rem;
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: 0.95rem;
+  border: 2px solid var(--edge);
+  background: var(--face, var(--panel));
+  color: var(--text);
+  padding: 0.35rem 0.5rem;
+}
+.flag {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.save {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--wb-primary, var(--rose-deep)); /* deep action fill keeps its text readable in either theme */
+  color: var(--action-primary-fg, var(--stage-white));
+  border: 3px solid var(--edge);
+  box-shadow: 3px 3px 0 0 var(--edge);
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+.save:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+.room {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(10rem, 14rem) 1fr;
+  gap: 0;
+  overflow: hidden;
+}
+.aside {
+  border-right: 3px solid var(--edge);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow: auto;
+  background: var(--panel);
+}
+.cover {
+  aspect-ratio: 3 / 4;
+  border: 3px solid var(--edge);
+  background: var(--stage-well, var(--paper)) center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cover b {
+  font-family: var(--font-big);
+  font-size: 2.5rem;
+  color: var(--muted);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field textarea,
+.framed textarea {
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  text-transform: none;
+  letter-spacing: 0;
+  border: 2px solid var(--edge);
+  background: var(--face, var(--panel));
+  color: var(--text);
+  padding: 0.4rem;
+  resize: vertical;
+  min-height: 4rem;
+}
+.hint,
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+.main {
+  overflow: auto;
+  padding: 0.75rem 1rem 1.25rem;
+  background: var(--stage-well, var(--canvas));
+}
+/* fluid law: collapse by the pane's width, not the window's */
+@container (max-width: 40rem) {
+  .room {
+    grid-template-columns: 1fr;
+  }
+  .aside {
+    border-right: none;
+    border-bottom: 3px solid var(--edge);
+  }
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root {
+  --wb-selection: var(--selection);
+  --wb-primary: var(--action-primary);
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* under a theme's editor.frame the layout spans the room's two columns instead of landing in the aside's */
+.framed {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: auto;
+}

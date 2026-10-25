@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/security",
+  "sourcePath": "docs/guide/security.md",
+  "sourceHash": "sha256:2bb35c9dde382215a1a7370e66a21d939ba9328714b4518091e42ac11c181b12",
+  "summary": "User-facing security and privacy guide for a local-first Studio that opens untrusted cards, scripts, regex sets, PNGs, and archives. Your content stays under your control through a primary loopback listener, no accounts or telemetry, and an encrypted studio library, while the guide names three deliberate network boundaries: provider-backed Kit turns, user-opened update and version-switch information, and explicitly enabled remote access. A card cannot run itself because regex is validated and budgeted, macros and triggers are analyzed, and Lua runs only in the opt-in Risu Test Bench with worker, WebAssembly, resource, and separate-origin defenses whose packaged-host isolation is not yet proven. The sandbox origin serves only the Lua worker, regex worker, and glue.wasm. Other files stay bounded by body, archive, parsing, and path rules. Converting never copies one app's code into another because only portable canonical content crosses formats while private fields stay escrowed. About API keys describes optional BYOP Kit vault storage, hop-by-hop provider destination checks, the missing non-Windows passphrase setup flow, and Studio's ephemeral mutation token.",
+  "topics": [
+    "local-first content control",
+    "deliberate network boundaries",
+    "scripts inert by default",
+    "Lua Test Bench limits",
+    "bounded untrusted files",
+    "escrowed cross-format conversion",
+    "BYOP provider credentials",
+    "session mutation token",
+    "honest security nonclaims"
+  ],
+  "sections": [
+    {
+      "slug": "your-content-stays-under-your-control",
+      "title": "Your content stays under your control",
+      "level": 2,
+      "sourceHash": "sha256:d3689057d308afbc7d123960bb9cf8e7ac902a11846dc405ad8a39216bd0ef86",
+      "summary": "The Studio's primary listener binds only 127.0.0.1, and Bunraku has no hosted account, telemetry, analytics, background content upload, or inference proxy. Pieces live encrypted in one file, library.db, in the chosen studio directory, which this computer opens by itself through the system's protection: Windows, the macOS Keychain, a Linux keyring, or else a key file in the home folder that does not protect a whole stolen disk. Without a password anyone using the computer as the user can open it; a password set in Settings Security needs the twelve recovery words first and is asked at the stage door. Network activity is deliberate: Kit sends model context to the configured provider on a submitted turn, Updates reads fixed GitHub release endpoints, and remote access opens only its separately approved listener or tunnel. The private-mesh helper is downloaded only on request and checked against a built-in fingerprint before anything is written. Import, editing, conversion, and analysis make no provider request.",
+      "topics": [
+        "127.0.0.1 local listener",
+        "no accounts telemetry proxy",
+        "encrypted library file",
+        "opens by itself on this computer",
+        "provider model sends",
+        "GitHub update checks",
+        "explicit remote access",
+        "offline deterministic workflows"
+      ],
+      "children": []
+    },
+    {
+      "slug": "a-card-cannot-run-itself",
+      "title": "A card cannot run itself",
+      "level": 2,
+      "sourceHash": "sha256:279fb90e6bbb341339ebf30a9bbcb9c26404c28dff1673e542d9a353171ef2d6",
+      "summary": "Downloaded content is parsed rather than automatically executed. Regex rules are budgeted find-and-replace data, never eval; structurally dangerous patterns are rejected before execution because a timeout cannot reliably interrupt one pathological native match. Macros and Risu-style triggers are analyzed without evaluation, including calc expressions handled by a small numeric parser. Lua executes only after the user opens the Risu Test Bench, never during import, preview, or background work. The bench uses real Lua in WebAssembly inside a killable worker with time and memory limits, served from a second loopback origin that exposes only the Lua worker, regex worker, and glue.wasm, with no session token or API. HTTP-layer tests prove that boundary, but packaged Windows-host isolation remains unmeasured, so the guide claims opt-in limitation rather than complete isolation.",
+      "topics": [
+        "regex preflight and budgets",
+        "macros triggers analysis only",
+        "Lua opt-in bench",
+        "WebAssembly worker limits",
+        "separate sandbox origin",
+        "no token or API",
+        "packaged isolation unmeasured"
+      ],
+      "children": []
+    },
+    {
+      "slug": "other-files-stay-bounded",
+      "title": "Other files stay bounded",
+      "level": 2,
+      "sourceHash": "sha256:f18c9d4822cce03205cc89cc3d61acc3fdc574dd58c1d93590aca0f7607f5fe0",
+      "summary": "Untrusted files are constrained before they can consume unbounded memory, corrupt state, or escape storage. Uploads and request bodies have hard size ceilings. ZIP and PNG readers enforce bounded extraction so compressed archive bombs stop at configured limits rather than expanding indefinitely. Parsers fail closed on malformed content instead of producing partially trusted entities. Kit's gated apply saves and re-reads its target to verify intended canonical content, while Studio editors send expected revisions so stale writes are rejected. Piece identifiers are validated and resolved strictly beneath the selected studio directory; crafted traversal names fail before filesystem access can escape that root.",
+      "topics": [
+        "request body caps",
+        "ZIP PNG expansion limits",
+        "malformed input rejected",
+        "Kit read-back and Studio revision checks",
+        "piece id validation",
+        "studio path containment"
+      ],
+      "children": []
+    },
+    {
+      "slug": "converting-never-copies-one-apps-code-into-another",
+      "title": "Converting never copies one app's code into another",
+      "level": 2,
+      "sourceHash": "sha256:dc4a50bc14f3fa8cfd421f00fe61fc8dee376b6cd3e25626821eed0021cc9c42",
+      "summary": "Cross-format conversion carries only the portable canonical content understood by both sides. Source-specific extension blocks, layout data, triggers, and executable-looking payloads remain in the saved piece's escrow rather than being copied into another platform's output. That escrow allows same-format re-export to preserve source-owned information while preventing a conversion from smuggling one application's private code into a different application's file. Bunraku reports content that cannot cross instead of silently pretending it was portable. The rule is structural: the shared readable core converts, while platform-private material remains attached to its source format.",
+      "topics": [
+        "portable canonical content",
+        "source-private escrow",
+        "same-format preservation",
+        "no blind script copying",
+        "cross-format loss reported"
+      ],
+      "children": []
+    },
+    {
+      "slug": "about-api-keys",
+      "title": "About API keys",
+      "level": 2,
+      "sourceHash": "sha256:ba1e67b85ddf675b19db7eed1fdd9bd2172a5a33408a4ecee54e0a2563fe1722",
+      "summary": "Provider-backed Kit is optional and uses bring-your-own-provider credentials; import, conversion, inspection, validation, editing, and deterministic checks continue without a key. Windows uses the operating-system credential backend. A portable passphrase-encrypted backend exists, but the current settings flow does not collect or supply the passphrase, so first-run setup and unlock remain incomplete on non-Windows systems. Credentials authenticate the configured provider and stay out of messages, tool observations, canonical pieces, exports, transcripts, and privacy accounting. Provider requests validate the configured host before every hop and refuse cross-host redirects, HTTPS downgrades, and chains beyond five redirects. Separately, Studio creates a fresh local session token at launch to authorize mutations and does not persist it.",
+      "topics": [
+        "optional BYOP Kit",
+        "offline core workflows",
+        "local encrypted vault",
+        "configured provider endpoint",
+        "hop-by-hop redirect validation",
+        "credentials excluded from content",
+        "no Bunraku inference proxy",
+        "ephemeral Studio token"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-we-do-not-claim",
+      "title": "What we do not claim",
+      "level": 2,
+      "sourceHash": "sha256:b38f6c41be12ac5e729ae27995b13ae89931cb2c0d68fc1e806d6ace8529a35d",
+      "summary": "The guide avoids reassuring but unsupported claims. Current desktop binaries are unsigned, so SmartScreen or Gatekeeper warnings are expected; users should verify the SHA-256 checksums shipped with releases rather than treating the warning alone as evidence of tampering. The separate Test Bench origin has automated HTTP-layer proof but has not been measured inside the packaged desktop host. Anyone using the computer as the user can open the library, and without a system keyring a stolen disk can too. Kit's portable vault still lacks a settings-driven passphrase setup and unlock flow. Security reports should go privately to chibiconeja@gmail.com, also listed in SECURITY.md.",
+      "topics": [
+        "unsigned desktop binaries",
+        "verify release checksums",
+        "packaged sandbox proof open",
+        "who can open the library",
+        "private vulnerability report"
+      ],
+      "children": []
+    }
+  ]
+}

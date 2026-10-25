@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/faq",
+  "sourcePath": "docs/guide/faq.md",
+  "sourceHash": "sha256:eddbef51eeaef41d18cc2e3ef55d70fc3f9f3d809a95ffa52a99308dfda79948",
+  "semanticSummaryHash": "sha256:0c29689ee59e7e7d1b919d19d5e422cea7483e611ebf18eef91f4d40a02141b3",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Owner approved 2026-09-24: encryption screens, password and recovery words, library gate",
+  "reviewedAt": "2026-09-24T04:27:59.848Z"
+}

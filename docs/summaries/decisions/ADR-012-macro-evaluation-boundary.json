@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-012-macro-evaluation-boundary",
+  "sourcePath": "docs/decisions/ADR-012-macro-evaluation-boundary.md",
+  "sourceHash": "sha256:074d60c06a62311017e5f9c3b5cd25f20b2b15239580a968070a56852dc2e4d3",
+  "summary": "Accepted on 2026-08-23, ADR-012 decides that macro evaluation is a closed-world interpreter rather than a second script sandbox. Bunraku cannot say whether a preset macro survives conversion because support.ts is name-level only: a missing name reliably dies, a present name proves nothing, and random with two arguments means different things on SillyTavern and RoleCall. Closing that gap needs the tokenizer, parser and tree-walking evaluator the macro engine spec designs, which collides with project rule 3 naming macros alongside Lua and regex as sealed payloads. The ADR narrows rule 3 in writing to Lua and regex, which keep ADR-009 isolation, and permits an in-process macro interpreter under bounded depth, output and steps, with no host surface, seeded randomness and clock, and unknown names degrading to literal text. Conversion still never evaluates: the Round-Trip Law boundary is promoted from spec text to accepted decision. Handlers are data-only, enforced by a registry test. Rejection means macro behavior can never be proven, only compared by name. A 2026-09-26 amendment adds chat display as a fourth caller, RoleCall's way: every message runs through the full engine when shown, against the chat's frozen cast, with a fresh caller-supplied seed and a discarded working copy of variables.",
+  "topics": [
+    "closed world interpreter",
+    "rule 3 narrowed",
+    "Lua regex keep isolation",
+    "conversion never evaluates",
+    "bounded depth output steps",
+    "no host surface",
+    "handlers data only",
+    "rejection consequence stated"
+  ],
+  "sections": [
+    {
+      "slug": "context",
+      "title": "Context",
+      "level": 2,
+      "sourceHash": "sha256:1ed0325e5237037579d66c8c67145a5a8569785ebe51422180d90c568f3a0cba",
+      "summary": "Context establishes the question Bunraku cannot answer today: whether a preset macro still works after conversion to another platform format. support.ts is name-level only by its own header, so a name missing from the target engine reliably dies while a name present proves nothing about syntax or meaning, and random with two arguments picks from a list on SillyTavern but is a numeric range on RoleCall. Closing that gap requires the tokenizer, parser and tree-walking evaluator that the macro engine spec already designs. That collides with project rule 3, which names macros alongside Lua and regex as sealed payloads, permits execution only in the user-invoked test benches on the ADR-009 sandbox origin, and forbids adding another execution path. Read widely the rule forbids the very engine the specs describe; read narrowly it governs only imported script payloads. The rule cannot be reinterpreted in a code comment by whoever implements the evaluator first, so it needs a decision.",
+      "topics": [
+        "name level only",
+        "random collision",
+        "spec collides with rule 3",
+        "widest versus narrowest reading",
+        "cannot reinterpret silently"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-distinction-this-adr-draws",
+      "title": "The distinction this ADR draws",
+      "level": 2,
+      "sourceHash": "sha256:39918efadd110a0358004d253ec2c1b8d39e2d27cfdc77ac902a3abe06a4bb2d",
+      "summary": "The distinction separates two hazards that rule 3 currently covers in one sentence. Sealed scripts are code in a general-purpose language: Lua is Turing-complete, regex carries catastrophic backtracking, both would reach an arbitrary host surface without isolation, and their failure modes are escape, exfiltration and hang. Macro templates are text with token substitutions whose expressive power is limited to whatever a registered handler does, whose reachable host surface is none because no handler touches filesystem, network or process, and whose failure modes are wrong text and unbounded expansion. A Lua interpreter runs whatever the payload says; a macro evaluator runs only handlers Bunraku wrote, selected by name from a closed registry, with an unrecognized name emitted as literal text. Applying one mitigation to both is not conservatism but a category error that would place a pure text-substitution pass behind a cross-origin worker for no security gain.",
+      "topics": [
+        "two different hazard classes",
+        "code versus substitution",
+        "closed registry of handlers",
+        "no reachable host surface",
+        "category error named"
+      ],
+      "children": []
+    },
+    {
+      "slug": "decision",
+      "title": "Decision",
+      "level": 2,
+      "sourceHash": "sha256:d48e36c95a0fc192637faeafe5f05cfdcfd36e3246054446a121dad2db5b55c7",
+      "summary": "The decision has five parts. Rule 3 is narrowed in writing to sealed script payloads, meaning Lua and regex, which keep ADR-009 isolation and remain the only execution paths that get it, with the AGENTS.md rule text updated in the same change that accepts this ADR. Macro evaluation is permitted as an in-process closed-world interpreter under src/core/macros subject to the stated constraints. Conversion still never evaluates: the macro engine spec edge case forbidding a codec from calling the evaluator during parse or serialize is promoted from spec text to accepted decision, so macro text stays opaque payload to every adapter. The evaluator is reachable from exactly four callers without a further ADR: the user-invoked test bench, the transfer compatibility report, future prompt assembly, and chat display, added by the 2026-09-26 amendment. Handlers are data-only, with filesystem, network, process, timer and dynamic-code operations prohibited and enforced by a registry test rather than by review alone.",
+      "topics": [
+        "rule 3 narrowed to Lua regex",
+        "interpreter permitted in core",
+        "codecs never evaluate",
+        "three permitted callers",
+        "handlers data only enforced"
+      ],
+      "children": []
+    },
+    {
+      "slug": "constraints-on-the-evaluator",
+      "title": "Constraints on the evaluator",
+      "level": 2,
+      "sourceHash": "sha256:a6d849894c95b1203734948a70f559efd5d3e4abcf8ba1ab3568b5ec38e12ce6",
+      "summary": "Constraints on the evaluator are acceptance criteria rather than aspirations, and an implementation missing any of them does not satisfy the ADR. Recursion is bounded at depth one hundred, with a runaway subtree returning empty rather than throwing or hanging. Output is bounded by a hard ceiling on expanded characters enforced during evaluation rather than checked afterward, because expansion bombs are the realistic denial vector for a substitution engine and depth alone does not stop them. Steps are bounded by a node-evaluation budget so a wide template cannot substitute for a deep one. There is no ambient clock or randomness by default: volatile macros read a seed and a caller-supplied clock, since a test that cannot pin them cannot characterize them. The readOnly context makes side-effect macros no-ops. Unknown names remain literal and never throw or abort, while returned diagnostics may still name them as unresolved. MacroContext carries values only.",
+      "topics": [
+        "acceptance criteria not aspirations",
+        "bounded depth output steps",
+        "expansion bombs named",
+        "seeded clock and randomness",
+        "unknown degrades to literal"
+      ],
+      "children": []
+    },
+    {
+      "slug": "consequences",
+      "title": "Consequences",
+      "level": 2,
+      "sourceHash": "sha256:51b3d3489c05c747610ad71e7f7b0c86113458f83d5888bae7dda1ea5ce3cc84",
+      "summary": "Consequences are stated in both directions. The macro program becomes schedulable rather than blocked on an unresolved rule. The sandbox directory stays exactly as it is, gaining no capability and losing none. The security posture that actually matters is unchanged, because nothing imported from another platform is ever executed as code, at import or at conversion. A reviewer gains a specific checklist to hold an implementation against instead of arguing about whether rule 3 applies to macros. If the ADR is rejected the consequence is concrete and deliberately stated rather than left implicit: Bunraku can never prove macro behavior and can only compare macro names, so the transfer report stays permanently at the name-level honesty it has today.",
+      "topics": [
+        "macro program unblocked",
+        "sandbox unchanged",
+        "import never executes",
+        "reviewer checklist",
+        "rejection cost stated"
+      ],
+      "children": []
+    },
+    {
+      "slug": "amendment-2026-09-26-chat-display",
+      "title": "Amendment, 2026-09-26: chat display",
+      "level": 2,
+      "sourceHash": "sha256:a668c85e8417fb9d33bc8b1f6bf76ca87afe9380e267d1a7f9adb71effb785c6",
+      "summary": "Chat shows messages as RoleCall's useDisplayMessages does: every message, the greeting included, runs through the full evaluator each time it is shown, so every macro the engine knows resolves in the bubble. It resolves against the chat's frozen cast rather than the live card, because the chat-store spec's rule 10 wins over RoleCall there. Volatile macros such as random, pick, and roll re-roll because the display caller passes a fresh seed per showing and each message holding a macro takes the next seed, keeping randomness caller-supplied. Variable writes run on a working copy with readOnly off and are dropped; prompt assembly is what will save variables, and until chats have them display starts from an empty copy. The stored message stays the authored text.",
+      "topics": [
+        "fourth caller chat display",
+        "full engine every showing",
+        "frozen cast not live card",
+        "fresh seed per showing",
+        "discarded variable copy",
+        "stored text unchanged"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-this-adr-does-not-decide",
+      "title": "What this ADR does not decide",
+      "level": 2,
+      "sourceHash": "sha256:e04eb482948c1f99f11f56426772892e8b16c72bce551ff9183294f41a2613a0",
+      "summary": "What this ADR does not decide is kept explicit so its scope cannot drift in later reading. It does not decide whether the Risu bracket CBS dialect or Agnai named-slot templates get modeled at all, because that is a scope question rather than a safety one and it is blocked on source availability rather than on this evaluation boundary. It also does not decide whether the evaluator is ever exposed to the model as a callable tool: a user-invoked test bench and a model-callable evaluation tool are separate exposure decisions, and only the former is contemplated here.",
+      "topics": [
+        "scope kept explicit",
+        "Risu Agnai undecided",
+        "blocked on sources not safety",
+        "tool exposure separate"
+      ],
+      "children": []
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "name": "Test Lorebook",
+  "entries": [
+    {
+      "id": 1,
+      "keys": [
+        "alpha",
+        "first"
+      ],
+      "name": "alpha",
+      "comment": "",
+      "content": "Alpha is the first invented topic in this synthetic lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "after_char",
+      "priority": 7,
+      "selective": false,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 1,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 7
+    },
+    {
+      "id": 2,
+      "keys": [
+        "beta"
+      ],
+      "name": "beta",
+      "comment": "",
+      "content": "Beta is a second invented topic with a secondary key.",
+      "enabled": true,
+      "constant": false,
+      "position": "after_char",
+      "priority": 7,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 2,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [
+        "second"
+      ],
+      "selectiveLogic": 0,
+      "insertion_order": 8
+    },
+    {
+      "id": 3,
+      "keys": [
+        "gamma"
+      ],
+      "name": "gamma",
+      "comment": "",
+      "content": "Gamma is always on.",
+      "enabled": true,
+      "constant": true,
+      "position": "after_char",
+      "priority": 7,
+      "selective": false,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 3,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 9
+    },
+    {
+      "id": 4,
+      "keys": [
+        "delta"
+      ],
+      "name": "delta",
+      "comment": "",
+      "content": "Delta is switched off.",
+      "enabled": false,
+      "constant": false,
+      "position": "after_char",
+      "priority": 7,
+      "selective": false,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 4,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 7
+    },
+    {
+      "id": 5,
+      "keys": [
+        "Epsilon"
+      ],
+      "name": "epsilon",
+      "comment": "",
+      "content": "Epsilon only matches with exact case.",
+      "enabled": true,
+      "constant": false,
+      "position": "before_char",
+      "priority": 7,
+      "selective": false,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 5,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 50,
+      "case_sensitive": true,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 7
+    },
+    {
+      "id": 6,
+      "keys": [
+        "zeta"
+      ],
+      "name": "zeta",
+      "comment": "",
+      "content": "Zeta uses the NOT-any logic with a secondary key.",
+      "enabled": true,
+      "constant": false,
+      "position": "after_char",
+      "priority": 7,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 6,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [
+        "never"
+      ],
+      "selectiveLogic": 1,
+      "insertion_order": 7
+    }
+  ],
+  "extensions": {
+    "chub": {
+      "id": 1,
+      "full_path": "example-user/test-lorebook",
+      "expressions": null,
+      "alt_expressions": {},
+      "related_lorebooks": []
+    }
+  },
+  "scan_depth": 50,
+  "description": "",
+  "token_budget": 511,
+  "recursive_scanning": false
+}

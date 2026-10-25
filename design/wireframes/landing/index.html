@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing concepts</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  body { padding: 3.5rem 1.2rem 4rem; }
+  .wrap { max-width: 64rem; margin: 0 auto; }
+  h1 { font-family: var(--font-fancy); font-weight: 900; font-size: clamp(2rem, 5vw, 3.6rem); text-transform: uppercase; }
+  h1 em { font-style: normal; color: var(--accent-deep); }
+  .lede { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 1.2rem; color: var(--text-soft); margin: 0.4rem 0 2rem; max-width: 44rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 1.2rem; }
+  a.card {
+    display: block; text-decoration: none; color: var(--text); background: var(--face); border: 3px solid var(--edge);
+    box-shadow: 6px 6px 0 var(--tone, var(--edge)); padding: 1rem 1.1rem; transition: transform 0.15s;
+  }
+  a.card:nth-child(odd) { transform: rotate(-0.8deg); }
+  a.card:nth-child(3n) { transform: rotate(1.1deg); }
+  a.card:hover { transform: translate(-3px, -3px) rotate(0deg); }
+  .num { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em; color: var(--text-dim); }
+  .name { font-family: var(--font-big); font-weight: 900; font-size: 1.2rem; text-transform: uppercase; margin: 0.2rem 0 0.4rem; }
+  .what { font-family: var(--font-mono); font-size: 0.74rem; line-height: 1.55; color: var(--text-soft); }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>Landing concepts</span><button data-theme-switch>Theme</button><a href="../index.html">All wireframes</a></div>
+<div class="wrap">
+  <h1>Ten ways <em>in</em></h1>
+  <p class="lede">Ten landing surfaces for Bunraku as a roleplay app. Each opens on the story, not the library: who is waiting on you, where you left off, and one move to continue or begin.</p>
+  <div class="grid">
+    <a class="card" href="01-puppet-rail.html" style="--tone: var(--deck-character)"><div class="num">01</div><div class="name">The Puppet Rail</div><div class="what">Characters hang from a tilted rail on strings; recent ones hang low and sway, a forgotten one hangs upside down. Your last line waits mid-sentence on a ribbon.</div></a>
+    <a class="card" href="02-call-sheet.html" style="--tone: var(--deck-lorebook)"><div class="num">02</div><div class="name">The Call Sheet</div><div class="what">Tonight's call sheet: every scene a cue with where you left it, a curtain clock, crooked stamps, a scrawled note, cold scenes struck through.</div></a>
+    <a class="card" href="03-cold-open.html" style="--tone: var(--accent)"><div class="num">03</div><div class="name">Cold Open</div><div class="what">No menu. Your last line, enormous, typing itself out and cutting off mid-word; other scenes stick in from the edges as torn strips. Any key continues.</div></a>
+    <a class="card" href="04-switchboard.html" style="--tone: var(--deck-preset)"><div class="num">04</div><div class="name">The Switchboard</div><div class="what">An operator's board: characters are jacks, scenes are sockets, cords droop between them. Lamps flicker where someone is waiting on you; patch a cord to start a scene.</div></a>
+    <a class="card" href="05-dressing-room.html" style="--tone: var(--deck-persona)"><div class="num">05</div><div class="name">The Dressing Room</div><div class="what">A split mirror: you (your persona) on one side, who you're opposite tonight on the other, the halves torn out of line and the last line crossing the seam.</div></a>
+    <a class="card" href="06-the-crawl.html" style="--tone: var(--deck-regex)"><div class="num">06</div><div class="name">The Crawl</div><div class="what">Bands of your own lines crawl at clashing speeds, angles, and fonts; hover freezes one and names the scene, click drops you in at that line.</div></a>
+    <a class="card" href="07-prop-table.html" style="--tone: var(--deck-fog)"><div class="num">07</div><div class="name">The Prop Table</div><div class="what">Scenes are objects on a table you can shove around: a glowing lamp, a ledger, a tarot card, a dusty rapier. Characters are masks along the edge.</div></a>
+    <a class="card" href="08-prompt-book.html" style="--tone: var(--deck-regex-deep)"><div class="num">08</div><div class="name">The Prompt Book</div><div class="what">A marked-up script: stories are acts in script format, a pencil bracket on the one waiting for your line, margin notes writing themselves in.</div></a>
+    <a class="card" href="09-contact-sheet.html" style="--tone: var(--stage-warn)"><div class="num">09</div><div class="name">The Contact Sheet</div><div class="what">A film contact sheet of scene stills that twitch in the gate; a grease-pencil loop on the one waiting on you, cold scenes glitching until reshot.</div></a>
+    <a class="card" href="10-ghost-light.html" style="--tone: var(--stage-line)"><div class="num">10</div><div class="name">Ghost Light</div><div class="what">A dark stage lit by one bulb; the cursor is a spotlight, characters stand where you left them, and whoever the light finds says their last line to you.</div></a>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+/*
+ * Slider styles - RoleCall's .slider-dark (apps/rc/src/app/globals.css:468-543) and its sampler card
+ * (PresetPanel.tsx:2943-3029), on theme tokens. The track is 6px, the thumb 14px with a glow, and the
+ * filled portion runs to --slider-p (the value's share of the range, set inline). --slider-color is the thumb,
+ * fill and readout hue and defaults to the accent; --slider-track is the unfilled part.
+ * Other themes resolve --rc-radius-full to their own corner, so the rounding follows the theme.
+ */
+.range {
+  --slider-track: var(--rc-zinc-700, var(--stage-line));
+  --slider-fill: linear-gradient(to right, var(--slider-color, var(--accent)) var(--slider-p, 0%), var(--slider-track) var(--slider-p, 0%));
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  height: 14px;
+}
+.range::-webkit-slider-runnable-track {
+  height: 6px;
+  background: var(--slider-fill);
+  border-radius: var(--rc-radius-full, 0);
+}
+.range::-moz-range-track {
+  height: 6px;
+  background: var(--slider-fill);
+  border-radius: var(--rc-radius-full, 0);
+  border: none;
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--slider-color, var(--accent));
+  border-radius: var(--rc-radius-full, 0);
+  margin-top: -4px;
+  box-shadow: 0 0 8px var(--slider-color, var(--accent));
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--slider-color, var(--accent));
+  border-radius: var(--rc-radius-full, 0);
+  border: none;
+  box-shadow: 0 0 8px var(--slider-color, var(--accent));
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px var(--slider-color, var(--accent));
+}
+.range::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px var(--slider-color, var(--accent));
+}
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.05);
+}
+.range:focus-visible {
+  outline: none;
+}
+.range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--slider-color, var(--accent)) 45%, transparent), 0 0 8px var(--slider-color, var(--accent));
+}
+.range:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--slider-color, var(--accent)) 45%, transparent), 0 0 8px var(--slider-color, var(--accent));
+}
+.range:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.range:disabled::-webkit-slider-thumb,
+.range:disabled::-moz-range-thumb {
+  box-shadow: none;
+}
+
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+/* the sampler card: bg-zinc-800/50 rounded-sm p-3 */
+.card {
+  background: color-mix(in srgb, var(--rc-zinc-800, var(--stage-row)) 50%, transparent);
+  border-radius: var(--rc-radius-sm, 0);
+  padding: 0.75rem;
+}
+.card[data-disabled] {
+  opacity: 0.5;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--rc-text-wing, 0.82rem);
+  margin-bottom: 0.5rem;
+}
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--rc-zinc-400, var(--stage-mute));
+}
+.helpBtn {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.helpBtn:hover {
+  color: var(--rc-zinc-200, var(--stage-soft));
+}
+.help {
+  font-size: var(--rc-text-wing, 0.82rem);
+  color: var(--rc-zinc-300, var(--stage-soft));
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background: color-mix(in srgb, var(--rc-zinc-900, var(--stage-sunken)) 80%, transparent);
+  border: 1px solid var(--rc-zinc-700, var(--stage-line));
+  border-radius: var(--rc-radius, 0);
+}
+
+/* the readout: a button you click to type into */
+.value {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 500;
+  color: var(--slider-color, var(--accent));
+  background: none;
+  border: 0;
+  padding: 0.125rem 0.375rem;
+  border-radius: var(--rc-radius, 0);
+  cursor: text;
+  transition: background-color 0.15s;
+}
+.value:hover:not([data-static]) {
+  background: color-mix(in srgb, var(--rc-zinc-700, var(--stage-line)) 50%, transparent);
+}
+.value[data-static] {
+  cursor: default;
+}
+.wrap .value {
+  font-variant-numeric: tabular-nums;
+  min-width: 2.6rem;
+  text-align: right;
+  flex: none;
+}
+.typed {
+  width: 5rem;
+  padding: 0.125rem 0.375rem;
+  text-align: right;
+  font-family: inherit;
+  font-size: var(--rc-text-wing, 0.82rem);
+  font-weight: 500;
+  color: var(--slider-color, var(--accent));
+  background: var(--rc-zinc-900, var(--stage-sunken));
+  border: 1px solid color-mix(in srgb, var(--rc-zinc-50, var(--stage-paper)) 10%, transparent);
+  border-radius: var(--rc-radius, 0);
+  outline: none;
+}
+.typed:focus {
+  box-shadow: 0 0 0 1px var(--slider-color, var(--accent));
+}

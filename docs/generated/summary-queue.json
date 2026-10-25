@@ -1,0 +1,1062 @@
+{
+  "generated": "2026-10-25",
+  "targetChars": 90000,
+  "totalPages": 119,
+  "totalSourceChars": 1443853,
+  "batches": [
+    {
+      "id": "batch-001",
+      "sourceChars": 85319,
+      "pages": [
+        {
+          "docId": "01-VISION",
+          "sourcePath": "docs/01-VISION.md",
+          "sidecarPath": "docs/summaries/01-VISION.json",
+          "sectionCount": 4,
+          "sourceChars": 2909,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "02-ARCHITECTURE",
+          "sourcePath": "docs/02-ARCHITECTURE.md",
+          "sidecarPath": "docs/summaries/02-ARCHITECTURE.json",
+          "sectionCount": 6,
+          "sourceChars": 4529,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "03-CONVENTIONS",
+          "sourcePath": "docs/03-CONVENTIONS.md",
+          "sidecarPath": "docs/summaries/03-CONVENTIONS.json",
+          "sectionCount": 6,
+          "sourceChars": 4889,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-001-runtime",
+          "sourcePath": "docs/decisions/ADR-001-runtime.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-001-runtime.json",
+          "sectionCount": 3,
+          "sourceChars": 1184,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-002-license",
+          "sourcePath": "docs/decisions/ADR-002-license.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-002-license.json",
+          "sectionCount": 5,
+          "sourceChars": 2302,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-003-distribution",
+          "sourcePath": "docs/decisions/ADR-003-distribution.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-003-distribution.json",
+          "sectionCount": 3,
+          "sourceChars": 1627,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-005-canonical-model",
+          "sourcePath": "docs/decisions/ADR-005-canonical-model.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-005-canonical-model.json",
+          "sectionCount": 4,
+          "sourceChars": 2454,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-006-ai-and-agent",
+          "sourcePath": "docs/decisions/ADR-006-ai-and-agent.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-006-ai-and-agent.json",
+          "sectionCount": 2,
+          "sourceChars": 2008,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-007-renderer-policy",
+          "sourcePath": "docs/decisions/ADR-007-renderer-policy.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-007-renderer-policy.json",
+          "sectionCount": 3,
+          "sourceChars": 2946,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-008-react-ui",
+          "sourcePath": "docs/decisions/ADR-008-react-ui.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-008-react-ui.json",
+          "sectionCount": 3,
+          "sourceChars": 2694,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-009-sandbox-origin",
+          "sourcePath": "docs/decisions/ADR-009-sandbox-origin.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-009-sandbox-origin.json",
+          "sectionCount": 11,
+          "sourceChars": 7598,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-010-content-capabilities",
+          "sourcePath": "docs/decisions/ADR-010-content-capabilities.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-010-content-capabilities.json",
+          "sectionCount": 3,
+          "sourceChars": 1912,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-011-runtime-boundary-schemas",
+          "sourcePath": "docs/decisions/ADR-011-runtime-boundary-schemas.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-011-runtime-boundary-schemas.json",
+          "sectionCount": 3,
+          "sourceChars": 3216,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-012-macro-evaluation-boundary",
+          "sourcePath": "docs/decisions/ADR-012-macro-evaluation-boundary.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-012-macro-evaluation-boundary.json",
+          "sectionCount": 7,
+          "sourceChars": 8497,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "decisions/ADR-013-wing-slots",
+          "sourcePath": "docs/decisions/ADR-013-wing-slots.md",
+          "sidecarPath": "docs/summaries/decisions/ADR-013-wing-slots.json",
+          "sectionCount": 3,
+          "sourceChars": 2081,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "FORMAT-SUPPORT",
+          "sourcePath": "docs/FORMAT-SUPPORT.md",
+          "sidecarPath": "docs/summaries/FORMAT-SUPPORT.json",
+          "sectionCount": 12,
+          "sourceChars": 4978,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/converting",
+          "sourcePath": "docs/guide/converting.md",
+          "sidecarPath": "docs/summaries/guide/converting.json",
+          "sectionCount": 4,
+          "sourceChars": 4470,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/editing",
+          "sourcePath": "docs/guide/editing.md",
+          "sidecarPath": "docs/summaries/guide/editing.json",
+          "sectionCount": 4,
+          "sourceChars": 5167,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/exporting",
+          "sourcePath": "docs/guide/exporting.md",
+          "sidecarPath": "docs/summaries/guide/exporting.json",
+          "sectionCount": 4,
+          "sourceChars": 5598,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/faq",
+          "sourcePath": "docs/guide/faq.md",
+          "sidecarPath": "docs/summaries/guide/faq.json",
+          "sectionCount": 6,
+          "sourceChars": 7843,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/getting-started",
+          "sourcePath": "docs/guide/getting-started.md",
+          "sidecarPath": "docs/summaries/guide/getting-started.json",
+          "sectionCount": 5,
+          "sourceChars": 6417,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-002",
+      "sourceChars": 86047,
+      "pages": [
+        {
+          "docId": "guide/importing",
+          "sourcePath": "docs/guide/importing.md",
+          "sidecarPath": "docs/summaries/guide/importing.json",
+          "sectionCount": 4,
+          "sourceChars": 5290,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/library",
+          "sourcePath": "docs/guide/library.md",
+          "sidecarPath": "docs/summaries/guide/library.json",
+          "sectionCount": 5,
+          "sourceChars": 7125,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/lorebooks",
+          "sourcePath": "docs/guide/lorebooks.md",
+          "sidecarPath": "docs/summaries/guide/lorebooks.json",
+          "sectionCount": 5,
+          "sourceChars": 5888,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/personas",
+          "sourcePath": "docs/guide/personas.md",
+          "sidecarPath": "docs/summaries/guide/personas.json",
+          "sectionCount": 5,
+          "sourceChars": 6754,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/agnai",
+          "sourcePath": "docs/guide/platforms/agnai.md",
+          "sidecarPath": "docs/summaries/guide/platforms/agnai.json",
+          "sectionCount": 6,
+          "sourceChars": 7624,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/backyard",
+          "sourcePath": "docs/guide/platforms/backyard.md",
+          "sidecarPath": "docs/summaries/guide/platforms/backyard.json",
+          "sectionCount": 6,
+          "sourceChars": 8071,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/chub",
+          "sourcePath": "docs/guide/platforms/chub.md",
+          "sidecarPath": "docs/summaries/guide/platforms/chub.json",
+          "sectionCount": 6,
+          "sourceChars": 8992,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/lumiverse",
+          "sourcePath": "docs/guide/platforms/lumiverse.md",
+          "sidecarPath": "docs/summaries/guide/platforms/lumiverse.json",
+          "sectionCount": 6,
+          "sourceChars": 9498,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/marinara",
+          "sourcePath": "docs/guide/platforms/marinara.md",
+          "sidecarPath": "docs/summaries/guide/platforms/marinara.json",
+          "sectionCount": 6,
+          "sourceChars": 8939,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/novelai",
+          "sourcePath": "docs/guide/platforms/novelai.md",
+          "sidecarPath": "docs/summaries/guide/platforms/novelai.json",
+          "sectionCount": 6,
+          "sourceChars": 7004,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/pygmalion",
+          "sourcePath": "docs/guide/platforms/pygmalion.md",
+          "sidecarPath": "docs/summaries/guide/platforms/pygmalion.json",
+          "sectionCount": 6,
+          "sourceChars": 7083,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/README",
+          "sourcePath": "docs/guide/platforms/README.md",
+          "sidecarPath": "docs/summaries/guide/platforms/README.json",
+          "sectionCount": 3,
+          "sourceChars": 3779,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-003",
+      "sourceChars": 87302,
+      "pages": [
+        {
+          "docId": "guide/platforms/risu",
+          "sourcePath": "docs/guide/platforms/risu.md",
+          "sidecarPath": "docs/summaries/guide/platforms/risu.json",
+          "sectionCount": 6,
+          "sourceChars": 9060,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/rolecall",
+          "sourcePath": "docs/guide/platforms/rolecall.md",
+          "sidecarPath": "docs/summaries/guide/platforms/rolecall.json",
+          "sectionCount": 6,
+          "sourceChars": 6446,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/platforms/sillytavern",
+          "sourcePath": "docs/guide/platforms/sillytavern.md",
+          "sidecarPath": "docs/summaries/guide/platforms/sillytavern.json",
+          "sectionCount": 6,
+          "sourceChars": 5634,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/README",
+          "sourcePath": "docs/guide/README.md",
+          "sidecarPath": "docs/summaries/guide/README.json",
+          "sectionCount": 3,
+          "sourceChars": 4204,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/regex",
+          "sourcePath": "docs/guide/regex.md",
+          "sidecarPath": "docs/summaries/guide/regex.json",
+          "sectionCount": 4,
+          "sourceChars": 7206,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/security",
+          "sourcePath": "docs/guide/security.md",
+          "sidecarPath": "docs/summaries/guide/security.json",
+          "sectionCount": 6,
+          "sourceChars": 9104,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "guide/troubleshooting",
+          "sourcePath": "docs/guide/troubleshooting.md",
+          "sidecarPath": "docs/summaries/guide/troubleshooting.json",
+          "sectionCount": 6,
+          "sourceChars": 10934,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "README",
+          "sourcePath": "docs/README.md",
+          "sidecarPath": "docs/summaries/README.json",
+          "sectionCount": 3,
+          "sourceChars": 3555,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/architecture",
+          "sourcePath": "docs/reference/architecture.md",
+          "sidecarPath": "docs/summaries/reference/architecture.json",
+          "sectionCount": 13,
+          "sourceChars": 31159,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-004",
+      "sourceChars": 20335,
+      "pages": [
+        {
+          "docId": "reference/audits",
+          "sourcePath": "docs/reference/audits.md",
+          "sidecarPath": "docs/summaries/reference/audits.json",
+          "sectionCount": 4,
+          "sourceChars": 3209,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/cli",
+          "sourcePath": "docs/reference/cli.md",
+          "sidecarPath": "docs/summaries/reference/cli.json",
+          "sectionCount": 15,
+          "sourceChars": 17126,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-005",
+      "sourceChars": 128946,
+      "pages": [
+        {
+          "docId": "reference/components",
+          "sourcePath": "docs/reference/components.md",
+          "sidecarPath": "docs/summaries/reference/components.json",
+          "sectionCount": 2,
+          "sourceChars": 128946,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-006",
+      "sourceChars": 83485,
+      "pages": [
+        {
+          "docId": "reference/concepts/bundles",
+          "sourcePath": "docs/reference/concepts/bundles.md",
+          "sidecarPath": "docs/summaries/reference/concepts/bundles.json",
+          "sectionCount": 5,
+          "sourceChars": 8491,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/canonical-model",
+          "sourcePath": "docs/reference/concepts/canonical-model.md",
+          "sidecarPath": "docs/summaries/reference/concepts/canonical-model.json",
+          "sectionCount": 5,
+          "sourceChars": 8038,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/character-book",
+          "sourcePath": "docs/reference/concepts/character-book.md",
+          "sidecarPath": "docs/summaries/reference/concepts/character-book.json",
+          "sectionCount": 8,
+          "sourceChars": 9411,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/detection",
+          "sourcePath": "docs/reference/concepts/detection.md",
+          "sidecarPath": "docs/summaries/reference/concepts/detection.json",
+          "sectionCount": 7,
+          "sourceChars": 8998,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/escrow-and-roundtrip",
+          "sourcePath": "docs/reference/concepts/escrow-and-roundtrip.md",
+          "sidecarPath": "docs/summaries/reference/concepts/escrow-and-roundtrip.json",
+          "sectionCount": 5,
+          "sourceChars": 7650,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/persona-editor",
+          "sourcePath": "docs/reference/concepts/persona-editor.md",
+          "sidecarPath": "docs/summaries/reference/concepts/persona-editor.json",
+          "sectionCount": 3,
+          "sourceChars": 3048,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/regex-editor",
+          "sourcePath": "docs/reference/concepts/regex-editor.md",
+          "sidecarPath": "docs/summaries/reference/concepts/regex-editor.json",
+          "sectionCount": 6,
+          "sourceChars": 4473,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/regex-engine",
+          "sourcePath": "docs/reference/concepts/regex-engine.md",
+          "sidecarPath": "docs/summaries/reference/concepts/regex-engine.json",
+          "sectionCount": 4,
+          "sourceChars": 4268,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/safe-rendering",
+          "sourcePath": "docs/reference/concepts/safe-rendering.md",
+          "sidecarPath": "docs/summaries/reference/concepts/safe-rendering.json",
+          "sectionCount": 4,
+          "sourceChars": 5518,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/concepts/tag-taxonomy",
+          "sourcePath": "docs/reference/concepts/tag-taxonomy.md",
+          "sidecarPath": "docs/summaries/reference/concepts/tag-taxonomy.json",
+          "sectionCount": 2,
+          "sourceChars": 1720,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/character",
+          "sourcePath": "docs/reference/entities/character.md",
+          "sidecarPath": "docs/summaries/reference/entities/character.json",
+          "sectionCount": 26,
+          "sourceChars": 21870,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-007",
+      "sourceChars": 87793,
+      "pages": [
+        {
+          "docId": "reference/entities/htmldoc",
+          "sourcePath": "docs/reference/entities/htmldoc.md",
+          "sidecarPath": "docs/summaries/reference/entities/htmldoc.json",
+          "sectionCount": 7,
+          "sourceChars": 7640,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/lorebook",
+          "sourcePath": "docs/reference/entities/lorebook.md",
+          "sidecarPath": "docs/summaries/reference/entities/lorebook.json",
+          "sectionCount": 24,
+          "sourceChars": 21654,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/pack",
+          "sourcePath": "docs/reference/entities/pack.md",
+          "sidecarPath": "docs/summaries/reference/entities/pack.json",
+          "sectionCount": 6,
+          "sourceChars": 7289,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/persona",
+          "sourcePath": "docs/reference/entities/persona.md",
+          "sidecarPath": "docs/summaries/reference/entities/persona.json",
+          "sectionCount": 13,
+          "sourceChars": 11639,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/preset",
+          "sourcePath": "docs/reference/entities/preset.md",
+          "sidecarPath": "docs/summaries/reference/entities/preset.json",
+          "sectionCount": 17,
+          "sourceChars": 21815,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/promptformat",
+          "sourcePath": "docs/reference/entities/promptformat.md",
+          "sidecarPath": "docs/summaries/reference/entities/promptformat.json",
+          "sectionCount": 2,
+          "sourceChars": 2180,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/README",
+          "sourcePath": "docs/reference/entities/README.md",
+          "sidecarPath": "docs/summaries/reference/entities/README.json",
+          "sectionCount": 3,
+          "sourceChars": 3895,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/regex",
+          "sourcePath": "docs/reference/entities/regex.md",
+          "sidecarPath": "docs/summaries/reference/entities/regex.json",
+          "sectionCount": 9,
+          "sourceChars": 11681,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-008",
+      "sourceChars": 77552,
+      "pages": [
+        {
+          "docId": "reference/extending/add-a-format",
+          "sourcePath": "docs/reference/extending/add-a-format.md",
+          "sidecarPath": "docs/summaries/reference/extending/add-a-format.json",
+          "sectionCount": 6,
+          "sourceChars": 11688,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/extending/make-a-theme",
+          "sourcePath": "docs/reference/extending/make-a-theme.md",
+          "sidecarPath": "docs/summaries/reference/extending/make-a-theme.json",
+          "sectionCount": 15,
+          "sourceChars": 29834,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/agnai",
+          "sourcePath": "docs/reference/formats/agnai.md",
+          "sidecarPath": "docs/summaries/reference/formats/agnai.json",
+          "sectionCount": 9,
+          "sourceChars": 19293,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/backyard",
+          "sourcePath": "docs/reference/formats/backyard.md",
+          "sidecarPath": "docs/summaries/reference/formats/backyard.json",
+          "sectionCount": 9,
+          "sourceChars": 16737,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-009",
+      "sourceChars": 69961,
+      "pages": [
+        {
+          "docId": "reference/formats/lumiverse",
+          "sourcePath": "docs/reference/formats/lumiverse.md",
+          "sidecarPath": "docs/summaries/reference/formats/lumiverse.json",
+          "sectionCount": 10,
+          "sourceChars": 19275,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/marinara",
+          "sourcePath": "docs/reference/formats/marinara.md",
+          "sidecarPath": "docs/summaries/reference/formats/marinara.json",
+          "sectionCount": 13,
+          "sourceChars": 16483,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/novelai",
+          "sourcePath": "docs/reference/formats/novelai.md",
+          "sidecarPath": "docs/summaries/reference/formats/novelai.json",
+          "sectionCount": 10,
+          "sourceChars": 18175,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/pygmalion",
+          "sourcePath": "docs/reference/formats/pygmalion.md",
+          "sidecarPath": "docs/summaries/reference/formats/pygmalion.json",
+          "sectionCount": 5,
+          "sourceChars": 11859,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/README",
+          "sourcePath": "docs/reference/formats/README.md",
+          "sidecarPath": "docs/summaries/reference/formats/README.json",
+          "sectionCount": 4,
+          "sourceChars": 4169,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-010",
+      "sourceChars": 88009,
+      "pages": [
+        {
+          "docId": "reference/formats/risu",
+          "sourcePath": "docs/reference/formats/risu.md",
+          "sidecarPath": "docs/summaries/reference/formats/risu.json",
+          "sectionCount": 9,
+          "sourceChars": 21450,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/rolecall-to-sillytavern",
+          "sourcePath": "docs/reference/formats/rolecall-to-sillytavern.md",
+          "sidecarPath": "docs/summaries/reference/formats/rolecall-to-sillytavern.json",
+          "sectionCount": 8,
+          "sourceChars": 14666,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/rolecall",
+          "sourcePath": "docs/reference/formats/rolecall.md",
+          "sidecarPath": "docs/summaries/reference/formats/rolecall.json",
+          "sectionCount": 9,
+          "sourceChars": 21806,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/sillytavern",
+          "sourcePath": "docs/reference/formats/sillytavern.md",
+          "sidecarPath": "docs/summaries/reference/formats/sillytavern.json",
+          "sectionCount": 10,
+          "sourceChars": 23130,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/formats/vaud-json",
+          "sourcePath": "docs/reference/formats/vaud-json.md",
+          "sidecarPath": "docs/summaries/reference/formats/vaud-json.json",
+          "sectionCount": 5,
+          "sourceChars": 6957,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-011",
+      "sourceChars": 89071,
+      "pages": [
+        {
+          "docId": "reference/glossary",
+          "sourcePath": "docs/reference/glossary.md",
+          "sidecarPath": "docs/summaries/reference/glossary.json",
+          "sectionCount": 6,
+          "sourceChars": 14015,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/kit",
+          "sourcePath": "docs/reference/kit/README.md",
+          "sidecarPath": "docs/summaries/reference/kit/README.json",
+          "sectionCount": 0,
+          "sourceChars": 901,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/kit/tools",
+          "sourcePath": "docs/reference/kit/tools.md",
+          "sidecarPath": "docs/summaries/reference/kit/tools.json",
+          "sectionCount": 18,
+          "sourceChars": 39471,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/macro-engine",
+          "sourcePath": "docs/reference/macro-engine.md",
+          "sidecarPath": "docs/summaries/reference/macro-engine.json",
+          "sectionCount": 3,
+          "sourceChars": 6070,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platform-native-fields",
+          "sourcePath": "docs/reference/platform-native-fields.md",
+          "sidecarPath": "docs/summaries/reference/platform-native-fields.json",
+          "sectionCount": 11,
+          "sourceChars": 10646,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/agents-and-tools",
+          "sourcePath": "docs/reference/platforms/marinara/agents-and-tools.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/agents-and-tools.json",
+          "sectionCount": 7,
+          "sourceChars": 6952,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/characters",
+          "sourcePath": "docs/reference/platforms/marinara/characters.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/characters.json",
+          "sectionCount": 9,
+          "sourceChars": 5049,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/chats-and-interchange",
+          "sourcePath": "docs/reference/platforms/marinara/chats-and-interchange.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/chats-and-interchange.json",
+          "sectionCount": 12,
+          "sourceChars": 5967,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-012",
+      "sourceChars": 80873,
+      "pages": [
+        {
+          "docId": "reference/platforms/marinara/conversation-mode",
+          "sourcePath": "docs/reference/platforms/marinara/conversation-mode.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/conversation-mode.json",
+          "sectionCount": 8,
+          "sourceChars": 9765,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/data-and-interop",
+          "sourcePath": "docs/reference/platforms/marinara/data-and-interop.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/data-and-interop.json",
+          "sectionCount": 9,
+          "sourceChars": 3744,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/lorebooks",
+          "sourcePath": "docs/reference/platforms/marinara/lorebooks.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/lorebooks.json",
+          "sectionCount": 17,
+          "sourceChars": 6519,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/macro-reference",
+          "sourcePath": "docs/reference/platforms/marinara/macro-reference.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/macro-reference.json",
+          "sectionCount": 11,
+          "sourceChars": 8069,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/maps-and-game-content",
+          "sourcePath": "docs/reference/platforms/marinara/maps-and-game-content.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/maps-and-game-content.json",
+          "sectionCount": 9,
+          "sourceChars": 7980,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/prompts-and-macros",
+          "sourcePath": "docs/reference/platforms/marinara/prompts-and-macros.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/prompts-and-macros.json",
+          "sectionCount": 8,
+          "sourceChars": 6687,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/README",
+          "sourcePath": "docs/reference/platforms/marinara/README.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/README.json",
+          "sectionCount": 2,
+          "sourceChars": 1298,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/source-coverage",
+          "sourcePath": "docs/reference/platforms/marinara/source-coverage.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/source-coverage.json",
+          "sectionCount": 2,
+          "sourceChars": 7691,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/sprites-and-galleries",
+          "sourcePath": "docs/reference/platforms/marinara/sprites-and-galleries.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/sprites-and-galleries.json",
+          "sectionCount": 5,
+          "sourceChars": 2954,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/marinara/visual-and-css",
+          "sourcePath": "docs/reference/platforms/marinara/visual-and-css.md",
+          "sidecarPath": "docs/summaries/reference/platforms/marinara/visual-and-css.json",
+          "sectionCount": 5,
+          "sourceChars": 4922,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/characters",
+          "sourcePath": "docs/reference/platforms/sillytavern/characters.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/characters.json",
+          "sectionCount": 6,
+          "sourceChars": 9071,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/chats-and-groups",
+          "sourcePath": "docs/reference/platforms/sillytavern/chats-and-groups.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/chats-and-groups.json",
+          "sectionCount": 9,
+          "sourceChars": 4056,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/macro-operators",
+          "sourcePath": "docs/reference/platforms/sillytavern/macro-operators.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/macro-operators.json",
+          "sectionCount": 9,
+          "sourceChars": 8117,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-013",
+      "sourceChars": 75416,
+      "pages": [
+        {
+          "docId": "reference/platforms/sillytavern/macro-reference",
+          "sourcePath": "docs/reference/platforms/sillytavern/macro-reference.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/macro-reference.json",
+          "sectionCount": 8,
+          "sourceChars": 12402,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/macros",
+          "sourcePath": "docs/reference/platforms/sillytavern/macros.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/macros.json",
+          "sectionCount": 4,
+          "sourceChars": 5501,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/personas-and-data-bank",
+          "sourcePath": "docs/reference/platforms/sillytavern/personas-and-data-bank.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/personas-and-data-bank.json",
+          "sectionCount": 4,
+          "sourceChars": 4901,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/prompts-and-presets",
+          "sourcePath": "docs/reference/platforms/sillytavern/prompts-and-presets.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/prompts-and-presets.json",
+          "sectionCount": 10,
+          "sourceChars": 10449,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/README",
+          "sourcePath": "docs/reference/platforms/sillytavern/README.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/README.json",
+          "sectionCount": 4,
+          "sourceChars": 4727,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/regex-and-automation",
+          "sourcePath": "docs/reference/platforms/sillytavern/regex-and-automation.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/regex-and-automation.json",
+          "sectionCount": 4,
+          "sourceChars": 5489,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/source-coverage",
+          "sourcePath": "docs/reference/platforms/sillytavern/source-coverage.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/source-coverage.json",
+          "sectionCount": 5,
+          "sourceChars": 7875,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/platforms/sillytavern/world-info",
+          "sourcePath": "docs/reference/platforms/sillytavern/world-info.md",
+          "sidecarPath": "docs/summaries/reference/platforms/sillytavern/world-info.json",
+          "sectionCount": 5,
+          "sourceChars": 6033,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/README",
+          "sourcePath": "docs/reference/README.md",
+          "sidecarPath": "docs/summaries/reference/README.json",
+          "sectionCount": 3,
+          "sourceChars": 3149,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/archives",
+          "sourcePath": "docs/reference/security/archives.md",
+          "sidecarPath": "docs/summaries/reference/security/archives.json",
+          "sectionCount": 14,
+          "sourceChars": 14890,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-014",
+      "sourceChars": 83315,
+      "pages": [
+        {
+          "docId": "reference/security/README",
+          "sourcePath": "docs/reference/security/README.md",
+          "sidecarPath": "docs/summaries/reference/security/README.json",
+          "sectionCount": 12,
+          "sourceChars": 16264,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/regex-safety",
+          "sourcePath": "docs/reference/security/regex-safety.md",
+          "sidecarPath": "docs/summaries/reference/security/regex-safety.json",
+          "sectionCount": 8,
+          "sourceChars": 20797,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/remote-access",
+          "sourcePath": "docs/reference/security/remote-access.md",
+          "sidecarPath": "docs/summaries/reference/security/remote-access.json",
+          "sectionCount": 11,
+          "sourceChars": 15031,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/safe-rendering",
+          "sourcePath": "docs/reference/security/safe-rendering.md",
+          "sidecarPath": "docs/summaries/reference/security/safe-rendering.json",
+          "sectionCount": 7,
+          "sourceChars": 17649,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/script-sandbox",
+          "sourcePath": "docs/reference/security/script-sandbox.md",
+          "sidecarPath": "docs/summaries/reference/security/script-sandbox.json",
+          "sectionCount": 8,
+          "sourceChars": 13574,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-015",
+      "sourceChars": 49960,
+      "pages": [
+        {
+          "docId": "reference/security/secrets-and-keys",
+          "sourcePath": "docs/reference/security/secrets-and-keys.md",
+          "sidecarPath": "docs/summaries/reference/security/secrets-and-keys.json",
+          "sectionCount": 13,
+          "sourceChars": 24158,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/security/untrusted-content",
+          "sourcePath": "docs/reference/security/untrusted-content.md",
+          "sidecarPath": "docs/summaries/reference/security/untrusted-content.json",
+          "sectionCount": 5,
+          "sourceChars": 14370,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/token-meter",
+          "sourcePath": "docs/reference/token-meter.md",
+          "sidecarPath": "docs/summaries/reference/token-meter.json",
+          "sectionCount": 3,
+          "sourceChars": 11432,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-016",
+      "sourceChars": 245743,
+      "pages": [
+        {
+          "docId": "reference/ui",
+          "sourcePath": "docs/reference/ui.md",
+          "sidecarPath": "docs/summaries/reference/ui.json",
+          "sectionCount": 32,
+          "sourceChars": 245743,
+          "status": "APPROVED"
+        }
+      ]
+    },
+    {
+      "id": "batch-017",
+      "sourceChars": 4726,
+      "pages": [
+        {
+          "docId": "reference/updates",
+          "sourcePath": "docs/reference/updates.md",
+          "sidecarPath": "docs/summaries/reference/updates.json",
+          "sectionCount": 3,
+          "sourceChars": 4726,
+          "status": "APPROVED"
+        }
+      ]
+    }
+  ]
+}

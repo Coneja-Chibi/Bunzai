@@ -1,0 +1,164 @@
+/*
+ * Bunraku design system: library.html ("library.room"). The rail (decks, Trash, collections,
+ * Add), the top bar (search, All/Recent, art dial, Select all), the send bar, one numbered
+ * section per deck with its own drop-in view, the Show view, the card menu, the split/merge
+ * workshop sheet, the damage and no-match notices, and the first-landing doors. Prefix: lib-.
+ * Tokens only.
+ */
+.lib-root { position: relative; display: flex; flex-direction: column; min-height: 100%; container-type: inline-size; }
+.lib-body { flex: 1; min-height: 0; display: flex; align-items: stretch; }
+/* ---------- Dock (shared across every screen; see shell.html for the full chrome spec) ---------- */
+.lib-dock { flex: none; width: var(--bk-dock-w); display: flex; flex-direction: column; padding: var(--bk-space-4) var(--bk-space-3); gap: var(--bk-space-1); background: var(--bk-surface-well); box-shadow: inset -1px 0 0 var(--bk-line); overflow-y: auto; }
+.lib-dock-brand { display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-1) var(--bk-space-3); }
+.lib-bun { width: var(--bk-icon-lg); height: var(--bk-icon-lg); flex: none; }
+.lib-dock-word { color: var(--bk-text); }
+.lib-dock-app { justify-content: flex-start; }
+.lib-dock-icon { flex: none; width: var(--bk-icon-md); height: var(--bk-icon-md); display: grid; place-items: center; color: var(--bk-tint-text); }
+.lib-dock-icon svg { width: 100%; height: 100%; }
+.lib-dock-tx { display: flex; flex-direction: column; min-width: 0; }
+.lib-dock-label { font: var(--bk-type-body); font-weight: var(--bk-fw-strong); color: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lib-dock-sub { text-transform: var(--bk-case-label); }
+.lib-dock-foot { margin-top: auto; display: flex; flex-direction: column; gap: var(--bk-space-1); padding-top: var(--bk-space-2); box-shadow: inset 0 1px 0 var(--bk-line); }
+.lib-dock-fold { display: flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-hit-min); padding: var(--bk-space-1) var(--bk-space-2); font: var(--bk-type-label); color: var(--bk-text-dim); background: none; border: 0; cursor: pointer; }
+.lib-dock-fold:hover { color: var(--bk-text); background: var(--bk-wash-hover); }
+@container (max-width: 46rem) {
+  .lib-dock { width: var(--bk-dock-w-slim); align-items: center; }
+  .lib-dock-word, .lib-dock-tx, .lib-dock-fold-label { display: none; }
+  .lib-dock-brand, .lib-dock-app, .lib-dock-add, .lib-dock-fold { justify-content: center; }
+}
+.lib-root[data-state="collapsed"] .lib-dock { width: var(--bk-dock-w-slim); align-items: center; }
+.lib-root[data-state="collapsed"] .lib-dock-word,
+.lib-root[data-state="collapsed"] .lib-dock-tx,
+.lib-root[data-state="collapsed"] .lib-dock-fold-label { display: none; }
+.lib-root[data-state="collapsed"] .lib-dock-brand,
+.lib-root[data-state="collapsed"] .lib-dock-app,
+.lib-root[data-state="collapsed"] .lib-dock-add,
+.lib-root[data-state="collapsed"] .lib-dock-fold { justify-content: center; }
+@container (max-width: 30rem) {
+  .lib-body { flex-direction: column; }
+  .lib-dock { width: 100%; flex-direction: row; align-items: center; height: auto; order: 2; padding: var(--bk-space-2); box-shadow: inset 0 1px 0 var(--bk-line); overflow-x: auto; overflow-y: visible; }
+  .lib-dock-brand, .lib-dock-foot { display: none; }
+  .lib-dock-app, .lib-dock-add { flex-direction: column; flex: 1; min-height: var(--bk-hit-min); }
+}
+
+/* ---------- rail (variant a: vertical inventory list) ---------- */
+.lib-rail { width: var(--bk-side-w); flex: none; display: flex; flex-direction: column; background: var(--bk-surface-well); box-shadow: inset -1px 0 0 var(--bk-line); overflow-y: auto; }
+.lib-rail-head { padding: var(--bk-space-4); text-align: center; box-shadow: inset 0 -1px 0 var(--bk-line); }
+.lib-rail-body { flex: 1; padding: var(--bk-space-3) 0; }
+.lib-deck { gap: var(--bk-space-2); }
+.lib-deck-tile { flex: none; width: 1.75rem; height: 1.75rem; display: grid; place-items: center; color: var(--bk-tint-text); background: color-mix(in srgb, var(--bk-tint) 16%, transparent); }
+.lib-deck-tile svg { width: 1rem; height: 1rem; }
+.lib-deck-tx { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.lib-deck-tx b { font-family: var(--bk-font-name); font-weight: var(--bk-fw-name); font-size: var(--bk-fs-sm); color: var(--bk-text); }
+.lib-deck-tx small { font: var(--bk-type-small); font-size: var(--bk-fs-xs); color: var(--bk-text-dim); }
+.lib-rail-add { padding: var(--bk-space-3); box-shadow: inset 0 1px 0 var(--bk-line); }
+
+/* ---------- main column ---------- */
+.lib-main { flex: 1; min-width: 0; padding: var(--bk-space-6) var(--bk-space-8); overflow: auto; }
+.lib-topbar { display: flex; align-items: center; gap: var(--bk-space-3); flex-wrap: wrap; margin-bottom: var(--bk-space-3); }
+.lib-search { flex: 1; min-width: 14rem; display: flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-3); background: var(--bk-surface-field); box-shadow: inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control); }
+.lib-search input { flex: 1; min-width: 0; background: none; border: 0; color: var(--bk-text); font: var(--bk-type-body); }
+.lib-dial { display: flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-3); background: var(--bk-surface-field); box-shadow: inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control); }
+.lib-colbar { display: none; align-items: center; gap: var(--bk-space-2); margin-bottom: var(--bk-space-3); flex-wrap: wrap; }
+.lib-root[data-state="select"] .lib-colbar,
+.lib-root[data-state="default"] .lib-colbar { display: flex; }
+
+/* ---------- send bar ---------- */
+.lib-sendbar { display: none; align-items: center; gap: var(--bk-space-3); padding: var(--bk-space-3); margin-bottom: var(--bk-space-3); flex-wrap: wrap; }
+.lib-root[data-state="select"] .lib-sendbar { display: flex; }
+
+/* ---------- sections ---------- */
+.lib-section { margin: var(--bk-gap-section) 0 var(--bk-space-2); }
+.lib-section-head { display: flex; align-items: flex-end; gap: var(--bk-space-4); flex-wrap: wrap; margin-bottom: var(--bk-space-3); }
+.lib-section-views { display: flex; align-items: center; gap: var(--bk-space-2); margin-left: auto; flex-wrap: wrap; }
+
+/* portrait card (Cards view) */
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, var(--bk-card-w-md)); gap: var(--bk-gap-cards); padding: var(--bk-frame-reach); margin: calc(-1 * var(--bk-frame-reach)); }
+.lib-card { position: relative; display: flex; flex-direction: column; overflow: hidden; }
+.lib-card-art { aspect-ratio: var(--bk-card-ratio); background: linear-gradient(160deg, color-mix(in srgb, var(--bk-tint) 50%, var(--bk-surface-panel)), var(--bk-surface-panel)); display: grid; place-items: center; }
+.lib-card-art span { font: var(--bk-type-title); font-size: var(--bk-fs-4xl); color: color-mix(in srgb, var(--bk-text-on-tint) 55%, transparent); }
+.lib-card-body { padding: var(--bk-space-3); display: flex; flex-direction: column; gap: var(--bk-space-1); }
+.lib-card-tagline { font: var(--bk-type-small); color: var(--bk-text-soft); }
+.lib-card-facts { font: var(--bk-type-meta); color: var(--bk-text-dim); padding-top: var(--bk-space-2); box-shadow: inset 0 1px 0 var(--bk-line); margin-top: var(--bk-space-1); }
+.lib-card-start { width: 100%; margin-top: var(--bk-space-2); justify-content: center; }
+.lib-new-tile { flex: none; width: var(--bk-card-w-md); aspect-ratio: var(--bk-card-ratio); display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 2px var(--bk-line-control); color: var(--bk-text-dim); background: none; cursor: pointer; }
+
+/* Shelf view (spine cards for lorebooks) */
+.lib-shelfgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: var(--bk-gap-cards); }
+.lib-spine { position: relative; padding-left: var(--bk-space-3); display: flex; flex-direction: column; min-height: 8rem; }
+.lib-spine::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--bk-space-2); background: var(--bk-tint); }
+.lib-spine-body { padding: var(--bk-space-3) var(--bk-space-3) var(--bk-space-2) var(--bk-space-2); }
+.lib-spine-facts { display: flex; gap: var(--bk-space-1); flex-wrap: wrap; margin-top: var(--bk-space-2); }
+.lib-spine-foot { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3) var(--bk-space-2) var(--bk-space-2); margin-top: auto; box-shadow: inset 0 1px 0 var(--bk-line); }
+
+/* Profiles view (personas) */
+.lib-profgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: var(--bk-gap-cards); }
+.lib-prof { display: flex; flex-direction: column; overflow: hidden; }
+.lib-prof-cov { height: 5rem; background: var(--bk-tint); display: grid; place-items: center; color: var(--bk-text-on-tint); font: var(--bk-type-title); position: relative; }
+.lib-prof-def { position: absolute; top: var(--bk-space-1); right: var(--bk-space-1); }
+
+/* Tiles view (sprite packs) */
+.lib-tilegrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: var(--bk-gap-cards); }
+.lib-tile { display: flex; flex-direction: column; overflow: hidden; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; }
+.lib-tile-cov { aspect-ratio: var(--bk-card-ratio); background: var(--bk-tint); position: relative; }
+
+/* List view (presets) */
+.lib-list { display: flex; flex-direction: column; gap: var(--bk-space-2); }
+
+/* Sets view (regex) */
+.lib-set { position: relative; padding-left: var(--bk-space-3); min-height: 9rem; display: flex; flex-direction: column; }
+.lib-set::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--bk-space-2); background: var(--bk-tint); }
+.lib-set-head { display: flex; gap: var(--bk-space-2); padding: var(--bk-space-3) var(--bk-space-3) var(--bk-space-1) var(--bk-space-2); }
+.lib-set-mark { width: 2rem; height: 2rem; flex: none; display: grid; place-items: center; background: var(--bk-tint); color: var(--bk-text-on-tint); font-weight: var(--bk-fw-mono-strong); }
+.lib-set-does { padding: var(--bk-space-1) var(--bk-space-3) var(--bk-space-1) var(--bk-space-2); font: var(--bk-type-small); color: var(--bk-text-soft); flex: 1; }
+.lib-set-foot { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3) var(--bk-space-3) var(--bk-space-2); box-shadow: inset 0 1px 0 var(--bk-line); }
+
+/* ghost (empty deck) */
+.lib-ghost { padding: var(--bk-space-8); text-align: center; color: var(--bk-text-dim); box-shadow: inset 0 0 0 1px var(--bk-line); }
+
+/* Show view */
+.lib-show { display: flex; align-items: center; gap: var(--bk-space-5); padding: var(--bk-space-4); }
+.lib-show-hero { width: 12rem; flex: none; aspect-ratio: var(--bk-card-ratio); background: var(--bk-tint); display: grid; place-items: center; }
+.lib-show-rail { display: flex; gap: var(--bk-space-1); margin-top: var(--bk-space-3); }
+.lib-show-mini { width: 2rem; aspect-ratio: var(--bk-card-ratio); background: var(--bk-tint); opacity: .5; border: 0; cursor: pointer; }
+.lib-show-mini[aria-current="true"] { opacity: 1; box-shadow: 0 0 0 2px var(--bk-tint-text); }
+
+/* ---------- menu / workshop / notices / doors (plain draw) ---------- */
+.lib-menu { display: none; position: absolute; z-index: var(--bk-z-menu); width: 14rem; left: 30%; top: 8rem; }
+.lib-root[data-state="menu"] .lib-menu { display: block; }
+.lib-scrim { display: none; position: absolute; inset: 0; z-index: var(--bk-z-dialog); place-items: center; background: var(--bk-scrim); }
+.lib-root[data-state="workshop"] .lib-scrim { display: grid; }
+.lib-workshop { width: min(44rem, 92%); padding: var(--bk-pad-panel); }
+.lib-bench { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--bk-space-3); margin-top: var(--bk-space-4); align-items: start; }
+.lib-bench-list { min-height: 10rem; padding: var(--bk-space-2); box-shadow: inset 0 0 0 1px var(--bk-line); display: flex; flex-direction: column; gap: var(--bk-space-1); }
+.lib-bench-arrow { display: grid; place-items: center; color: var(--bk-text-faint); font-size: var(--bk-fs-xl); }
+.lib-workshop-acts { display: flex; justify-content: flex-end; gap: var(--bk-space-2); margin-top: var(--bk-space-4); }
+
+.lib-damage { display: none; margin: var(--bk-space-4) 0; padding: var(--bk-space-3) var(--bk-space-4); }
+.lib-root[data-state="damage"] .lib-damage { display: block; }
+.lib-nomatch { display: none; padding: var(--bk-space-8); text-align: center; }
+.lib-root[data-state="nomatch"] .lib-nomatch { display: block; }
+.lib-root[data-state="nomatch"] .lib-section,
+.lib-root[data-state="damage"] .lib-sendbar { display: none; }
+
+.lib-doors { display: none; flex: 1; flex-direction: column; align-items: center; justify-content: center; gap: var(--bk-space-5); padding: var(--bk-space-16); text-align: center; }
+.lib-root[data-state="doors"] .lib-doors-first,
+.lib-root[data-state="unreachable"] .lib-doors-unreachable { display: flex; }
+.lib-root[data-state="doors"] .lib-rail,
+.lib-root[data-state="doors"] .lib-main,
+.lib-root[data-state="unreachable"] .lib-rail,
+.lib-root[data-state="unreachable"] .lib-main { display: none; }
+.lib-doorcard { width: min(24rem, 90%); padding: var(--bk-space-6); }
+
+/* ---------- grid layout state (lasso) ---------- */
+.lib-lasso { display: none; position: absolute; z-index: var(--bk-z-popover); box-shadow: inset 0 0 0 2px var(--bk-role-select-text); background: color-mix(in srgb, var(--bk-role-select) 14%, transparent); left: 48%; top: 10rem; width: 16rem; height: 10rem; pointer-events: none; }
+.lib-root[data-state="grid"] .lib-lasso { display: block; }
+.lib-root[data-state="grid"] #libCharGrid { display: grid; grid-template-columns: repeat(auto-fill, var(--bk-card-w-md)); }
+.lib-root:not([data-state="grid"]) #libCharGrid { display: flex; overflow-x: auto; }
+.lib-root:not([data-state="grid"]) #libCharGrid .lib-card { flex: none; width: var(--bk-card-w-md); }
+
+/* ---------- variant b: deck tabs ---------- */
+.lib-root[data-variant="b"] .lib-rail { display: none; }
+.lib-tabs { display: none; align-items: center; gap: var(--bk-space-1); margin-bottom: var(--bk-space-4); flex-wrap: wrap; }
+.lib-root[data-variant="b"] .lib-tabs { display: flex; }
+.lib-root[data-variant="b"] .lib-topbar-right { display: flex; align-items: center; gap: var(--bk-space-2); }

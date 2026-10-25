@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/character-book",
+  "sourcePath": "docs/reference/concepts/character-book.md",
+  "sourceHash": "sha256:44f48d63df496bbb620dceb4d8f9eed5e7de5bb6194d8cc29ded0e7014eb7fca",
+  "semanticSummaryHash": "sha256:7ec211fd55b447e01ad7267f8b94de548d728151467235ea9e545b56cb8c28ea",
+  "verdict": "APPROVE",
+  "reviewer": "gpt-6.1-sol:/root/implementation_review",
+  "notes": "Markdown and sidecar describe parsed-field and raw-residue fidelity, not container-byte identity; extraction, twin matching, duplicate ids and omitted/empty/resolved bundle behavior agree with owners. Source-only review.",
+  "reviewedAt": "2026-10-02T01:04:44.223Z"
+}

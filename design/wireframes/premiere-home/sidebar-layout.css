@@ -1,0 +1,32 @@
+/* The existing Dock occupies the shell edge; the foyer owns only its remaining canvas. */
+.preview-shell { display: grid; grid-template-columns: auto minmax(0, 1fr); container-type: inline-size; }
+#sidebar-root { position: sticky; top: 0; height: 100svh; }
+#dock { height: 100%; margin: 0; gap: 0; width: 200px; }
+#dock button { color: var(--text); }
+.theater { min-width: 0; }
+.stage { height: calc(100svh - 42px); min-height: 770px; }
+.hero h1 { font-size: clamp(60px, 6.5cqw, 110px); }
+@container (max-width: 1150px) {
+  .stage { height: calc(100svh - 42px); min-height: 800px; }
+  .hero h1 { font-size: 72px; }
+  .foyer-floor { grid-template-columns: 1fr; gap: 24px; }
+  .now-playing { max-width: 380px; }
+}
+@container (max-width: 736px) {
+  #dock { width: 56px; }
+  #dockhome { justify-content: center; padding: .7rem .4rem; }
+  #dockhome .hk, #dock .docklabel, #dock .apptile .tx, #dock .dockslot .sl, #dockToggle .col { display: none; }
+  #dock .apptile { justify-content: center; padding: .45rem .35rem; }
+  #dock .apptile.on::before { display: none; }
+  #dockToggle .exp { display: inline; }
+}
+@container (max-width: 620px) {
+  .stage { height: auto; min-height: calc(100svh - 42px); }
+  .hero h1 { font-size: clamp(33px, 10cqw, 43px); }
+  .stage-content { padding: 56px 20px 88px; }
+  .hero-link { max-width: 230px; }
+  .tagline { font-size: 16px; }
+  .now-playing { padding: 12px; gap: 12px; }
+  .story-still { width: 42px; height: 64px; }
+  .story-caption strong { font-size: 18px; }
+}

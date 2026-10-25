@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en" data-theme="stage">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bunraku | Theater with existing sidebar</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="foyer.css"><link rel="stylesheet" href="sidebar-shell.css"><link rel="stylesheet" href="sidebar-component.css"><link rel="stylesheet" href="sidebar-layout.css"><link rel="stylesheet" href="sidebar-aesthetic.css">
+</head>
+<body>
+<div class="preview-shell"><div id="sidebar-root"></div><div class="theater">
+
+<main class="stage">
+  <div class="art" aria-hidden="true"></div><canvas class="atmosphere" aria-hidden="true"></canvas>
+  <div class="stage-content">
+    <section class="hero" aria-labelledby="welcome">
+      <div class="hero-kicker"><span></span>The velvet premiere<span></span></div>
+      <h1 id="welcome">Bun<em>raku</em></h1>
+      <p class="tagline">Every story deserves a stage.</p>
+      <div class="hero-actions"><a class="button primary" href="#new-story">Enter the theater <span aria-hidden="true">↗</span></a><a class="button" href="#resume">Continue your story <span aria-hidden="true">→</span></a></div>
+      <a class="hero-link" href="#import">Have a character or world already? Bring it in →</a>
+    </section>
+    <div class="foyer-floor">
+      <a class="now-playing" href="#resume">
+        <span class="story-still" aria-hidden="true"></span>
+        <span class="story-caption"><span class="eyebrow gilt">Now playing</span><strong>The Paper Moon</strong><small>Act II · The last letter <span>Scene 07</span></small></span>
+        <span class="resume-arrow" aria-hidden="true">↗</span>
+      </a>
+      <section class="rooms" aria-label="Explore backstage">
+        <span class="eyebrow gilt">Beyond the curtain</span>
+        <div class="foyer-links">
+          <a href="#library"><strong>Library</strong><span>Your cast & worlds</span><i aria-hidden="true">↗</i></a>
+          <a href="#workbench"><strong>Workbench</strong><span>Edit your pieces</span><i aria-hidden="true">↗</i></a>
+          <a href="#press"><strong>Press</strong><span>Convert & export</span><i aria-hidden="true">↗</i></a>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+<footer><span>Scenes make bolder people.</span><span class="gilt">Your private theater</span><span class="preview-label">Design preview · sample story</span></footer>
+</div>
+</div><dialog id="destination" aria-labelledby="destination-title">
+<div class="dialog-heading"><span class="eyebrow gilt">Backstage</span><button class="close" aria-label="Close preview">×</button></div>
+<h2 id="destination-title"></h2><div id="destination-body"></div>
+<div class="dialog-footer"><a href="#home">← Back to the theater</a><span>Interactive wireframe</span></div>
+</dialog>
+<script src="navigation.js"></script><script src="sidebar.js"></script><script src="effects.js"></script>
+</body>
+</html>

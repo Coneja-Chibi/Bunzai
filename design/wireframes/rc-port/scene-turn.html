@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene turn controls</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<link rel="stylesheet" href="rc-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
+ * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
+ * composer-shell-styles). Colors are Bunraku tokens:
+ *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
+ *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
+ *   RC user accent (violet)                       ->  --accent
+ *   the character's signature color               ->  --deck-character;  the user's persona  ->  --deck-persona
+ *   greeting gold #D4AF37                         ->  --stage-warn (gilt)
+ *   Cinzel -> --font-fancy;  Inter -> --font-big (as port.css does for the Library)
+ */
+.app { grid-template-columns: 4.2rem 1fr; }
+.dock .app-btn { cursor: default; }
+
+.scene { position: relative; height: 100vh; overflow: hidden; background: var(--stage-well); }
+/* BackgroundMedia + vignette: no scene art set, so the dark floor with RC's faint accent lift */
+.bgm { position: absolute; inset: 0; background:
+  radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%), var(--stage-well); }
+.bgm::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--stage-black) 65%, transparent)); }
+
+/* ---- the blurred layer: everything a wing pauses ---- */
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.scene.paused .play { filter: blur(6px) brightness(.55); pointer-events: none; }
+
+/* SceneHeader (fixed, 44px): black-to-clear gradient, left-aligned name, tagline, branch pill, tools right */
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 35; display: flex; align-items: center; gap: 10px; padding: 0 18px;
+  background: linear-gradient(var(--stage-black) 0%, color-mix(in srgb, var(--stage-black) 95%, transparent) 80%, color-mix(in srgb, var(--stage-black) 70%, transparent) 90%, transparent 100%); }
+.sh .back { width: 26px; height: 26px; display: grid; place-items: center; color: var(--stage-text-dim); border-radius: 50%; flex: none; }
+.sh .nm { font-family: var(--font-fancy); font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-soft); white-space: nowrap; flex: none; }
+.sh .tag { font-family: var(--font-big); font-style: italic; font-size: 9px; color: var(--stage-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 640px; }
+.sh .branch { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 8px; font-family: var(--font-big); font-size: 12px; font-weight: 500;
+  color: color-mix(in srgb, var(--accent) 80%, transparent); background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
+.sh .grow { flex: 1; }
+.sh .live { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.sh .gear { color: var(--stage-line); display: grid; place-items: center; }
+
+/* WingRail (fixed, top 80, 80px; 50px when a panel is open): glass column, masked top and bottom,
+   a 1px neon inner edge in the accent, 40px glyphs 32px apart */
+.rail { position: absolute; top: 80px; bottom: 0; width: 80px; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 32px 0 16px; opacity: .8; transition: width .5s, opacity .2s; }
+.rail:hover { opacity: 1; }
+.rail.l { left: 0; } .rail.r { right: 0; }
+.rail::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.rail.l::after, .rail.r::after { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 30%, transparent); }
+.rail.l::after { right: 0; } .rail.r::after { left: 0; }
+.scene.open-l .rail.l, .scene.open-r .rail.r { width: 50px; }
+/* WingItem: white/45 glyph; hover charges to the wing's color; active is white with a bloom */
+.wi { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: color-mix(in srgb, var(--stage-card) 45%, transparent); cursor: pointer; }
+.wi svg { width: 20px; height: 20px; position: relative; z-index: 1; transition: transform .3s, color .3s; }
+.wi::before { content: ""; position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--w) 25%, transparent) 0%, transparent 70%); opacity: 0; transform: scale(.5); transition: all .5s; }
+.wi:hover { color: var(--w); } .wi:hover svg { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--w)); } .wi:hover::before { opacity: .3; transform: scale(.75); }
+.wi.on { color: var(--stage-card); } .wi.on svg { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--w)); } .wi.on::before { opacity: 1; transform: none; }
+/* the rail-hover map label: 260px, 3px black border, hard 6px shadow in the wing's color, Cinzel 900 */
+.tip { position: absolute; top: 50%; width: 260px; padding: 12px 16px; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--w);
+  opacity: 0; transform: translateY(-60%); transition: opacity .2s, transform .2s; pointer-events: none; z-index: 20; text-align: left; }
+.rail.l .tip { left: 60px; } .rail.r .tip { right: 60px; }
+.rail:hover .tip, .scene.labels .tip { opacity: 1; transform: translateY(-50%); }
+.tip b { display: block; font-family: var(--font-fancy); font-weight: 900; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--w); text-shadow: 3px 3px 0 var(--stage-black); line-height: 1.05; }
+.tip span { display: block; margin-top: 6px; font-family: var(--font-big); font-size: .76rem; font-weight: 600; color: var(--stage-card); line-height: 1.35; }
+
+/* ---- the message scroll: x 80..(right-80), padding 96 48 24 64 ---- */
+.scroll { position: absolute; top: 0; bottom: 0; left: 80px; right: 80px; overflow-y: auto; padding: 96px 48px 150px 64px; }
+.scroll::-webkit-scrollbar { width: 6px; } .scroll::-webkit-scrollbar-thumb { background: var(--stage-seam); }
+
+/* GreetingSelector: max-w-3xl card, gilt dots, italic 4-line preview */
+.greet { max-width: 768px; margin: 0 auto 24px; padding: 16px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(8px); border-radius: 2px; }
+.greet .hd { display: flex; align-items: center; gap: 8px; font-family: var(--font-big); font-size: 14px; font-weight: 500; color: var(--stage-soft); margin-bottom: 12px; }
+.greet .hd svg { width: 16px; height: 16px; color: var(--stage-warn); }
+.greet .hd small { font-size: 12px; font-weight: 400; color: var(--stage-mute); }
+.dots { display: flex; gap: 8px; margin-bottom: 12px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--stage-line); cursor: pointer; }
+.dots i.on { background: var(--stage-warn); box-shadow: 0 0 0 2px var(--stage-black), 0 0 0 4px var(--stage-warn); }
+.greet .pv { padding: 12px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 40%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent);
+  font-family: var(--font-big); font-size: 14px; font-style: italic; line-height: 1.65; color: var(--stage-text-dim); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.greet .help { margin-top: 8px; font-family: var(--font-big); font-size: 12px; color: var(--stage-mute); }
+
+/* ImmersiveMessage: sticky 260x380 portrait (16px outer corners), 12px gutter, post badge, Cinzel name, dark bubble */
+.msg { display: flex; position: relative; margin-bottom: 40px; }
+.msg.user { flex-direction: row-reverse; }
+.por { flex: none; width: 260px; height: 380px; position: sticky; top: 60px; overflow: hidden; border-radius: 16px 0 0 16px; box-shadow: 0 0 20px color-mix(in srgb, var(--tone) 8%, transparent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 55%, var(--stage-panel)), var(--stage-panel) 85%); display: grid; place-items: center; }
+.msg.user .por { border-radius: 0 16px 16px 0; background: linear-gradient(170deg, color-mix(in srgb, var(--tone) 70%, var(--stage-panel)) 0%, color-mix(in srgb, var(--tone) 30%, var(--stage-panel)) 70%, var(--stage-panel)); }
+.por .ini { position: relative; font-family: var(--font-fancy); font-size: 34px; color: color-mix(in srgb, var(--stage-card) 55%, transparent); }
+.por .art { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 38% 30% at 50% 34%, color-mix(in srgb, var(--stage-paper) 45%, transparent), transparent 70%),
+  radial-gradient(ellipse 60% 45% at 50% 92%, color-mix(in srgb, var(--stage-black) 80%, transparent), transparent 75%); }
+.body { flex: 1; min-width: 0; padding-left: 12px; }
+.msg.user .body { padding-left: 0; padding-right: 12px; }
+.badge { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 45%, transparent);
+  padding: 2px 6px; font-family: var(--font-mono); font-size: 10px; line-height: 1; color: var(--stage-soft); box-shadow: 2px 2px 0 var(--stage-black); border-radius: 2px; }
+.msg.user .badge { float: right; }
+.spk { clear: both; font-family: var(--font-fancy); font-weight: 600; font-size: 19px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); line-height: 1.5; margin: 4px 0 6px; }
+.msg.user .spk { text-align: right; }
+.bub { position: relative; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); border-radius: 4px; padding: 14px 18px; }
+.msg.user .bub { padding: 12px 16px; }
+.prose { font-family: var(--font-big); font-size: 16px; line-height: 29.6px; color: color-mix(in srgb, var(--stage-card) 95%, transparent); }
+.prose p + p { margin-top: 20px; }
+.prose em { font-style: italic; }
+.prose q { quotes: '"' '"'; color: var(--tone); }
+/* the hover action bar: bottom-right, 28px buttons in groups */
+.acts { position: absolute; right: 6px; bottom: 6px; z-index: 20; display: flex; gap: 4px; padding: 4px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s; }
+.msg:hover .acts, .scene.hover-acts .msg.char .acts { opacity: 1; }
+.acts button { width: 28px; height: 28px; display: grid; place-items: center; border: 0; background: none; color: var(--tone); cursor: pointer; border-radius: 2px; }
+.acts button:hover { background: color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.acts button svg { width: 16px; height: 16px; }
+.acts .sep { width: 1px; margin: 4px; background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .del { color: var(--stage-danger-text); }
+.acts .dim { color: var(--stage-warn); }
+
+/* while a turn is starting and reasoning streams */
+.think { max-width: 1020px; margin: 0 0 40px; padding: 14px 16px; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 10%, transparent);
+  font-family: var(--font-big); font-size: 16px; line-height: 1.6; color: var(--stage-soft); }
+.think .caret { display: inline-block; width: 9px; height: 16px; background: var(--accent); vertical-align: -2px; }
+.starting { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--stage-panel); font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); margin-bottom: 16px; }
+
+/* the failure card: sits above the composer, 880 wide */
+.fail { position: absolute; left: 50%; transform: translateX(-50%); bottom: 90px; width: min(880px, calc(100% - 96px)); z-index: 30; background: var(--stage-panel); border-top: 2px solid var(--stage-danger-edge); box-shadow: 0 8px 32px var(--shadow-ink); }
+.fail .top { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--stage-seam); }
+.fail .ic { width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-danger-bg); border: 1px solid var(--stage-danger-edge); color: var(--stage-danger-text); flex: none; }
+.fail .tt { font-family: var(--font-big); font-weight: 600; font-size: 14px; color: var(--stage-card); }
+.fail .ln { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-family: var(--font-big); font-size: 13px; color: var(--stage-text-dim); flex-wrap: wrap; }
+.fail code { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.fail.held { border-top-color: var(--stage-warn); }
+.fail .ic.warn { background: color-mix(in srgb, var(--stage-warn) 12%, transparent); border-color: var(--stage-warn); color: var(--stage-warn); }
+.fail .dis + .dis { margin-left: 8px; }
+.fail .dis { white-space: nowrap; }
+.fail .dis.go { background: var(--accent); border-color: var(--accent); color: var(--stage-ink); }
+.fail .dis { margin-left: auto; padding: 10px 16px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-card); font-family: var(--font-big); font-size: 13px; }
+.fail .dr { padding: 16px 16px 12px; font-family: var(--font-big); font-size: 13px; color: var(--stage-soft); }
+.fail textarea { display: block; margin-top: 10px; width: 100%; height: 110px; background: var(--stage-well); color: var(--stage-card); border: 1px solid var(--stage-line); padding: 8px 10px; font-family: var(--font-big); font-size: 15px; line-height: 1.6; resize: vertical; }
+.fail .nb { margin-top: 8px; font-size: 11px; color: var(--stage-mute); }
+
+/* ImmersiveInputBar + capsule: max-w 880, glass, 2px corners, 12/16 padding, 32px plus and send */
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 48px; pointer-events: none; }
+.cap { pointer-events: auto; max-width: 880px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px; border-radius: 2px;
+  background: color-mix(in srgb, var(--stage-floor) 50%, transparent); backdrop-filter: blur(20px); border: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); box-shadow: 0 8px 32px color-mix(in srgb, var(--stage-black) 40%, transparent); }
+.cap .plus, .cap .send, .cap .stop { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 2px; }
+.cap .plus { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
+.cap .send { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--stage-dim); }
+.cap .stop { background: var(--stage-danger-hot); color: var(--stage-card); display: none; }
+.scene.streaming .cap .stop { display: grid; } .scene.streaming .cap .send { display: none; }
+.cap .ta { flex: 1; min-width: 0; align-self: center; font-family: var(--font-big); font-size: 14px; line-height: 20px; color: color-mix(in srgb, var(--stage-card) 25%, transparent); }
+.cap svg { width: 16px; height: 16px; }
+/* the floating Compendium book and the /BTW tab, bottom-right of the stage */
+.book { position: absolute; right: 96px; bottom: 145px; z-index: 40; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--stage-soft);
+  background: var(--stage-row); border: 1px solid color-mix(in srgb, var(--stage-card) 12%, transparent); box-shadow: 0 4px 14px var(--shadow-ink); }
+.book svg { width: 18px; height: 18px; }
+.btw { position: absolute; right: 19px; bottom: 73px; z-index: 40; width: 90px; height: 34px; display: grid; place-items: center; background: var(--accent); color: var(--stage-black);
+  font-family: var(--font-fancy); font-weight: 900; font-size: 10px; letter-spacing: .3em; }
+
+/* ---- wing panels: open beside their rail, pause and blur the scene ---- */
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 45; display: none; text-align: center; cursor: pointer; }
+.scene.paused .paused-mark { display: block; }
+.scene.open-l .paused-mark { left: 78%; } .scene.open-r .paused-mark { left: 27%; }
+.paused-mark .sq { width: 64px; height: 64px; margin: 0 auto; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.paused-mark .sq svg { width: 26px; height: 26px; }
+.paused-mark small { display: block; margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .3em; color: var(--accent); }
+.wing-panel { position: absolute; top: 0; bottom: 0; z-index: 48; display: none; flex-direction: column; background: var(--stage-well); color: var(--stage-soft); font-family: var(--font-big); }
+.wing-panel.l { left: 0; width: min(1000px, 56%); padding-left: 50px; border-right: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.r { right: 0; width: min(830px, 46%); padding-right: 50px; border-left: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.show { display: flex; }
+/* FoldoutTabs: breadcrumb, then equal bordered tabs with a meta line */
+.fold { position: sticky; top: 0; z-index: 3; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-well) 95%, transparent); }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font-size: .62rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--stage-mute); }
+.crumb b { color: var(--stage-card); font-weight: 600; } .crumb i { font-style: normal; color: var(--stage-faint); }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; min-width: 0; text-align: left; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-card) 3%, transparent); color: var(--stage-text-dim); font-family: var(--font-big); cursor: pointer; }
+.tabs button.on { border-color: color-mix(in srgb, var(--stage-card) 30%, transparent); background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tabs b { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.tabs small { display: block; margin-top: 4px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; opacity: .6; }
+.wbody { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+/* WingHero: accent-edged card, radial wash top-left, 6px soft offset shadow, square icon, eyebrow, Cinzel 900 title with the accent word */
+.hero { position: relative; border: 1px solid color-mix(in srgb, var(--w) 35%, transparent); padding: 24px; box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--w) 12%, transparent);
+  background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--w) 12%, transparent), transparent 55%), linear-gradient(135deg, var(--stage-row), var(--stage-well)); display: flex; gap: 16px; align-items: flex-start; }
+.hero .hi { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--w) 70%, transparent); background: var(--stage-black); color: var(--w); }
+.hero .hi svg { width: 20px; height: 20px; }
+.hero .eb { font-size: .74rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+/* RC asks for Cinzel here but the live page renders a black-weight sans; the port follows what users see */
+.hero h2 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 2rem; line-height: .95; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-card); text-shadow: 3px 3px 0 var(--stage-black); }
+.hero h2 em { font-style: normal; color: var(--w); }
+.hero p { margin-top: 10px; max-width: 42rem; font-size: .95rem; line-height: 1.6; color: var(--stage-soft); }
+/* Cast body: the character card left, the stage-name block right */
+.dossier { display: grid; grid-template-columns: 380px 1fr; gap: 12px; }
+.dcard { position: relative; min-height: 560px; background: linear-gradient(170deg, color-mix(in srgb, var(--deck-character) 40%, var(--stage-panel)), var(--stage-panel) 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+.dcard .np { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 15%, transparent); border: 1px solid color-mix(in srgb, var(--deck-lorebook) 50%, transparent); padding: 3px 8px; }
+.dcard h3 { margin-top: 10px; font-family: var(--font-big); font-weight: 800; font-size: 24px; color: var(--stage-card); }
+.dcard p { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--stage-soft); }
+.fields { border: 2px solid color-mix(in srgb, var(--w) 55%, transparent); padding: 14px; display: flex; flex-direction: column; gap: 14px; align-self: start; }
+.fl { font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); margin-bottom: 6px; }
+.fv { background: var(--stage-row); border: 1px solid var(--stage-seam); padding: 10px 12px; font-size: 14px; color: var(--stage-mute); }
+.fv.set { color: var(--stage-card); font-weight: 700; font-size: 17px; background: none; border: 0; border-bottom: 1px solid var(--stage-seam); padding: 0 0 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.save { margin-top: 4px; padding: 12px; background: var(--w); color: var(--stage-black); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+/* Context body: nested tabs and the empty state */
+.empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--stage-text-dim); font-size: 14px; }
+.empty svg { width: 34px; height: 34px; color: var(--stage-warn); margin-bottom: 12px; }
+.empty small { display: block; margin-top: 10px; font-size: 11px; color: var(--stage-mute); }
+.ptitle .eb { font-size: .62rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+.ptitle h3 { margin-top: 6px; font-family: var(--font-fancy); font-weight: 700; font-size: 20px; font-variant: small-caps; color: var(--stage-card); }
+.ptitle p { margin-top: 6px; font-size: 12px; color: var(--w); }
+
+/* ---- phone (RC: rails hide below lg; collapsed edge handles take their place) ---- */
+.edge { display: none; position: absolute; top: 50%; width: 3px; height: 44px; transform: translateY(-50%); background: linear-gradient(transparent, var(--accent), transparent); z-index: 50; }
+.edge.l { left: 2px; } .edge.r { right: 2px; }
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; } .dock { display: none; }
+  .rail { display: none; } .edge { display: block; }
+  .scroll { left: 0; right: 0; padding: 60px 12px 110px; }
+  .sh { padding: 0 10px; } .sh .tag { display: none; } .sh .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+  .por { width: 88px; height: 118px; border-radius: 8px 0 0 8px; }
+  .msg.user .por { border-radius: 0 8px 8px 0; }
+  .spk { font-size: 15px; letter-spacing: 2px; }
+  .prose { font-size: 15px; line-height: 27px; font-weight: 500; }
+  .bub { padding: 12px 14px; }
+  .dockbar { padding: 12px; } .book { right: 110px; bottom: 100px; } .btw { right: 10px; bottom: 96px; width: 44px; height: 28px; font-size: 8px; letter-spacing: .15em; }
+  .fail { width: calc(100% - 24px); }
+  .wing-panel.l, .wing-panel.r { width: 100%; padding: 0; }
+  .dossier { grid-template-columns: 1fr; } .dcard { min-height: 280px; }
+  .scene.open-l .paused-mark, .scene.open-r .paused-mark { display: none; }
+}
+
+/* wireframe-only control strip (not part of the design) */
+.wf { position: fixed; left: 50%; top: 52px; transform: translateX(-50%); z-index: 999; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--stage-black); border: 1px dashed var(--stage-line); font-family: var(--font-mono); font-size: 10px; }
+.wf button { background: none; border: 1px solid var(--stage-seam); color: var(--stage-mute); padding: 3px 7px; cursor: pointer; font: inherit; }
+.wf button.on { color: var(--stage-card); border-color: var(--accent); }
+body.embed .wf { display: none; }
+.wf-note { bottom: 6.4rem; }
+.wf-chip { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 2rem); }
+/* a cut line left in place (option B): no RC equivalent, so it borrows RC's amber-notice shape in the danger tone */
+.stub { display: flex; align-items: center; gap: 12px; max-width: 1020px; margin: 0 0 24px; padding: 8px 12px; border-left: 4px solid var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-text) 8%, transparent); font: 14px/1.5rem var(--font-big); color: var(--stage-soft); }
+.stub svg { width: 14px; height: 14px; color: var(--stage-danger-text); flex: none; }
+.stub .grow { flex: 1; }
+.stub small { color: var(--stage-mute); font-size: 12px; }
+.stub button { padding: 4px 10px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 12px var(--font-big); text-transform: uppercase; cursor: pointer; }
+body[data-view="delb1"] .m1, body[data-view="delb2"] .m1, body[data-view="delb2"] .m2 { display: none !important; }
+body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-view="forkb"] .sh .branch .bn span { display: none; }
+.acts .more-wrap, .acts .del-wrap { position: relative; display: inline-flex; }
+.acts .on { background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .rc-menu { bottom: calc(100% + 8px); right: -40px; }
+.acts .rc-dd { left: auto; right: -6px; transform: none; }
+/* the menus sit inside the action bar; undo its 28px icon-button rule for their rows */
+.acts .rc-menu button, .acts .rc-dd button { width: 100%; height: auto; display: flex; place-items: initial; border-radius: 0; }
+.acts .rc-menu button { color: var(--stage-card); } .acts .rc-dd button { color: var(--stage-soft); } .acts .rc-dd button.red { color: var(--stage-danger-text); }
+.acts .rc-menu button svg, .acts .rc-dd button svg { width: 14px; height: 14px; }
+.rc-takes.at { top: 40px; left: 390px; }
+[data-o]:not(.show) { display: none !important; }
+
+/* ---- scene-turn additions: RoleCall's own parts for a turn ---- */
+/* ImmersiveMessage meta row: under the bubble, right-aligned, shows on hover: "model · 6.2s" then the SwipeCounter */
+.meta { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; opacity: 0; transition: opacity .3s; }
+.msg:hover .meta, .scene.show-meta .msg.last .meta, .msg.keepmeta .meta { opacity: 1; }
+.meta .mdl { font-family: var(--font-big); font-size: 11px; color: var(--stage-mute); opacity: .7; }
+/* SwipeCounter, desktop variant: square corners, black/55 glass, character-accent numbers */
+.swc { display: inline-flex; align-items: center; gap: 2px; padding: 2px 4px; font-family: var(--font-big); font-size: 12px; border-radius: 2px; border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); background: color-mix(in srgb, var(--stage-black) 55%, transparent); backdrop-filter: blur(4px); }
+.swc.new { background: color-mix(in srgb, var(--tone) 15%, transparent); border-color: color-mix(in srgb, var(--tone) 40%, transparent); box-shadow: 0 0 10px color-mix(in srgb, var(--tone) 15%, transparent); }
+.swc button { width: 24px; height: 24px; display: grid; place-items: center; border: 0; border-radius: 2px; background: none; color: var(--stage-soft); cursor: pointer; }
+.swc button:hover { color: var(--stage-white); background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.swc button.off { color: var(--stage-line); cursor: not-allowed; background: none; }
+.swc button svg { width: 16px; height: 16px; }
+.swc .ct { display: flex; align-items: center; gap: 6px; padding: 2px 8px; user-select: none; }
+.swc .n { font-weight: 600; color: var(--tone); font-variant-numeric: tabular-nums; }
+.swc .sl { color: var(--stage-mute); }
+.swc .t { color: color-mix(in srgb, var(--tone) 80%, transparent); font-variant-numeric: tabular-nums; }
+.swc .nw { margin-left: 2px; padding: 2px 6px; font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; border-radius: 2px; background: var(--tone); color: var(--stage-well); }
+.swc .wip { display: flex; align-items: center; gap: 4px; padding: 2px 6px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; border-radius: 2px; color: var(--tone);
+  background: color-mix(in srgb, var(--tone) 15%, transparent); border: 1px solid color-mix(in srgb, var(--tone) 40%, transparent); animation: pulse 1.6s ease-in-out infinite; }
+.swc .wip svg { width: 12px; height: 12px; }
+/* the bubble while a version streams into it (isLiveRegenerating): an accent glow, text fading in behind a caret */
+.bub.live { border-color: color-mix(in srgb, var(--tone) 35%, transparent); box-shadow: 0 0 20px color-mix(in srgb, var(--tone) 12%, transparent), 0 0 40px color-mix(in srgb, var(--tone) 6%, transparent); }
+.caret { display: inline-block; width: 8px; height: 17px; margin-left: 2px; vertical-align: -3px; background: var(--tone); animation: pulse 1s steps(2) infinite; }
+/* generation actions sit disabled while a reply runs (RC's generationActionsDisabled) */
+.scene.busy .acts .gen { color: var(--stage-line); cursor: not-allowed; }
+/* a typed draft in the capsule, and the send button it wakes */
+.cap .ta.typed { color: color-mix(in srgb, var(--stage-card) 92%, transparent); }
+.cap .send.ready { background: var(--accent); color: var(--stage-black); }
+.cap.off { opacity: .55; }
+.cap .hint { flex: none; align-self: center; font-family: var(--font-big); font-size: 12px; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+/* Bunraku's addition: a reply cut off by a crash, kept, in RC's amber-notice shape (ForkSceneModal) */
+.cutoff { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 8px 12px; border-left: 4px solid var(--stage-warn); background: color-mix(in srgb, var(--stage-warn) 10%, transparent);
+  font: 14px/1.5rem var(--font-big); color: var(--stage-card); }
+.cutoff svg { width: 14px; height: 14px; color: var(--stage-warn); flex: none; }
+.cutoff .grow { flex: 1; }
+.cutoff small { color: var(--stage-mute); font-size: 12px; }
+.cutoff button { padding: 4px 10px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 12px var(--font-big); text-transform: uppercase; cursor: pointer; }
+@keyframes pulse { 50% { opacity: .35; } }
+/* wireframe chrome: the state buttons sit under the header so they never cover the capsule */
+.wf-chip { bottom: auto; top: 52px; }
+.wf-note { max-width: min(30rem, calc(100vw - 1.6rem)); }
+@media (max-width: 1023px) {
+  /* SwipeCounter mobile variant: self-end, below the bubble, always shown */
+  .meta { opacity: 1; } .meta .mdl { display: none; }
+}
+
+</style>
+<script>if (new URLSearchParams(location.search).get("embed")) document.documentElement.classList.add("wf-embed");</script>
+<style>.wf-embed .wf-chip, .wf-embed .wf-chip2, .wf-embed .wf-note, .wf-embed .wf { display: none !important; }</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2z"/><path d="M6 11c1.5 0 2.5.5 3 2"/><path d="M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+    <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.570a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.020.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.020a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M2 8h5M2 16h5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 14 9-14 9V3z"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+
+    <symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-loader" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn">Lb</div><div class="app-btn on">Sc</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn" data-theme-switch title="Paper or stage">St</div></nav>
+
+  <main class="scene" id="scene">
+    <div class="play">
+      <div class="bgm"></div>
+
+      <header class="sh">
+        <span class="back"><svg width="16" height="16"><use href="#i-back"/></svg></span>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+        <span class="branch"><svg width="14" height="14"><use href="#i-film"/></svg><span class="bn"><span>Director's Cut</span></span><svg width="12" height="12"><use href="#i-down"/></svg></span>
+        <span class="grow"></span>
+        <span class="live"></span>
+        <span class="gear"><svg width="15" height="15"><use href="#i-gear"/></svg></span>
+      </header>
+
+      <div class="scroll">
+        <!-- #1: the greeting. RC shows no swipe counter on the first message. -->
+        <div class="msg char" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body">
+            <span class="badge">#1</span>
+            <div class="spk">Marguerite Vane</div>
+            <div class="bub"><div class="prose">
+              <p><em>The lamp room smells of kerosene and wet wool. Marguerite is on her third circuit of the brass rail, counting the seconds between flashes as though the count could keep the dark back.</em></p>
+              <p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em> <q>Sit, if you like. The storm will not care either way.</q></p>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- #2: the user -->
+        <div class="msg user" style="--tone: var(--deck-persona)">
+          <div class="por"><span class="ini">Y</span></div>
+          <div class="body">
+            <span class="badge">#2</span>
+            <div class="spk">You</div>
+            <div class="bub"><div class="prose"><p>I set the lantern I did not bring on the chart table. <q>Is the relief boat still coming?</q></p></div></div>
+          </div>
+        </div>
+
+        <!-- #3: the last assistant message: the swipe counter lives in its meta row -->
+        <div class="msg char last" data-only="ready noconn regen newswipe browse" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body">
+            <span class="badge">#3</span>
+            <div class="spk">Marguerite Vane</div>
+            <div class="bub" data-only="ready noconn newswipe browse"><div class="prose">
+              <p data-only="ready noconn browse"><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q> <em>She says it to the glass, not to you.</em> <q>I watched it go. I did not wave.</q></p>
+              <p data-only="newswipe"><em>Marguerite's thumb finds the logbook's soft corner and stays there.</em> <q>Boats come when the sea lets them.</q> <em>A flash, a count of nine.</em> <q>Tonight it does not.</q></p>
+              </div>
+              <div class="acts">
+                <button title="Edit"><svg><use href="#i-pen"/></svg></button><button title="Copy"><svg><use href="#i-copy"/></svg></button>
+                <span class="sep"></span>
+                <button class="gen" title="Regenerate as a new version"><svg><use href="#i-redo"/></svg></button>
+                <span class="sep"></span>
+                <button class="dim" title="Hide from AI"><svg><use href="#i-eyeoff"/></svg></button><button title="More message actions"><svg><use href="#i-more"/></svg></button>
+                <span class="sep"></span>
+                <button class="del" title="Delete"><svg><use href="#i-trash"/></svg></button>
+              </div>
+            </div>
+            <div class="bub live" data-only="regen"><div class="prose">
+              <p><em>Marguerite's thumb finds the logbook's soft corner and stays there.</em> <q>Boats come when the sea lets them.</q><span class="caret"></span></p>
+            </div></div>
+            <div class="meta">
+              <span class="mdl" data-only="ready noconn">claude-opus-5-5 &middot; 6.2s</span>
+              <span class="mdl" data-only="newswipe">claude-opus-5-5 &middot; 5.8s</span>
+              <span class="mdl" data-only="browse">claude-opus-5-5 &middot; 6.2s</span>
+              <!-- ready: one version, the right arrow is Regenerate -->
+              <span class="swc" data-only="ready noconn"><button class="off" title="No previous version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">1</span><span class="sl">/</span><span class="t">1</span></span><button title="Regenerate"><svg><use href="#i-rotate"/></svg></button></span>
+              <!-- regen, viewing the version being written: back returns to the saved one; regenerate waits -->
+              <span class="swc" data-only="regen"><button title="Back to saved version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">2</span><span class="sl">/</span><span class="t">2</span></span><button class="off" title="Generation in progress"><svg><use href="#i-rotate"/></svg></button></span>
+              <!-- the new version landed while you were looking elsewhere -->
+              <span class="swc new" data-only="newswipe"><button title="Previous version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">2</span><span class="sl">/</span><span class="t">2</span><span class="nw">new</span></span><button title="Regenerate"><svg><use href="#i-rotate"/></svg></button></span>
+              <!-- browsing three versions -->
+              <span class="swc" data-only="browse"><button class="off" title="No previous version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">1</span><span class="sl">/</span><span class="t">3</span></span><button title="Next version"><svg><use href="#i-right"/></svg></button></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- #3 as it stood before the turn, for the send states: no counter (it is no longer the last reply) -->
+        <div class="msg char" data-only="sending streaming stopped error resumed conflict" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body">
+            <span class="badge">#3</span>
+            <div class="spk">Marguerite Vane</div>
+            <div class="bub"><div class="prose"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q> <em>She says it to the glass, not to you.</em> <q>I watched it go. I did not wave.</q></p></div></div>
+          </div>
+        </div>
+
+        <!-- #4: what you just sent -->
+        <div class="msg user" data-only="sending streaming stopped error resumed conflict" style="--tone: var(--deck-persona)">
+          <div class="por"><span class="ini">Y</span></div>
+          <div class="body">
+            <span class="badge">#4</span>
+            <div class="spk">You</div>
+            <div class="bub"><div class="prose"><p><q>Then we keep the light for whoever else is out there.</q> I take the second rail.</p></div></div>
+          </div>
+        </div>
+
+        <!-- RC's "Starting..." chip while the request opens -->
+        <div data-only="sending"><div class="starting"><svg width="16" height="16"><use href="#i-spin"/></svg>Starting...</div></div>
+
+        <!-- #5: the reply, streaming, stopped, or cut off -->
+        <div class="msg char last" data-only="streaming stopped resumed" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body">
+            <span class="badge">#5</span>
+            <div class="spk">Marguerite Vane</div>
+            <div class="bub live" data-only="streaming"><div class="prose">
+              <p><em>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench</em><span class="caret"></span></p>
+            </div></div>
+            <div class="bub" data-only="stopped resumed"><div class="prose">
+              <p><em>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench</em></p>
+              </div>
+              <div class="acts">
+                <button title="Edit"><svg><use href="#i-pen"/></svg></button><button title="Copy"><svg><use href="#i-copy"/></svg></button>
+                <span class="sep"></span>
+                <button class="gen" title="Regenerate as a new version"><svg><use href="#i-redo"/></svg></button>
+                <span class="sep"></span>
+                <button class="dim" title="Hide from AI"><svg><use href="#i-eyeoff"/></svg></button><button title="More message actions"><svg><use href="#i-more"/></svg></button>
+                <span class="sep"></span>
+                <button class="del" title="Delete"><svg><use href="#i-trash"/></svg></button>
+              </div>
+            </div>
+            <div class="cutoff" data-only="resumed"><svg><use href="#i-alert"/></svg><span class="grow">Cut off when Bunraku closed. <small>What arrived is kept.</small></span><button>Regenerate</button></div>
+            <div class="meta" data-only="stopped resumed">
+              <span class="mdl">claude-opus-5-5 &middot; 2.9s</span>
+              <span class="swc"><button class="off" title="No previous version"><svg><use href="#i-left"/></svg></button><span class="ct"><span class="n">1</span><span class="sl">/</span><span class="t">1</span></span><button title="Regenerate"><svg><use href="#i-rotate"/></svg></button></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RC's failure card: the draft is shown, not saved -->
+      <!-- Bunraku: the take changed while the reply was written (another window, or an edit). The reply is kept, waiting. -->
+      <div class="fail held" data-only="conflict">
+        <div class="top">
+          <span class="ic warn"><svg width="20" height="20"><use href="#i-alert"/></svg></span>
+          <div><div class="tt">The scene changed while it answered</div><div class="ln">Something was added to this take while the reply was being written. The reply is kept, waiting.</div></div>
+          <span class="dis">Discard</span><span class="dis go">Add it at the end</span>
+        </div>
+        <div class="dr">Waiting reply
+          <textarea readonly>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes room on a bench.</textarea>
+        </div>
+      </div>
+
+      <div class="fail" data-only="error">
+        <div class="top">
+          <span class="ic"><svg width="20" height="20"><use href="#i-alert"/></svg></span>
+          <div><div class="tt">Generation Failed</div><div class="ln"><code>upstream_stream_read_error</code>Upstream response stream was interrupted</div></div>
+          <span class="dis">Dismiss</span><span class="dis go">Retry</span>
+        </div>
+        <div class="dr">Interrupted draft (not saved)
+          <textarea readonly>For a moment she only watches your hands on the brass. Then she moves her own along the rail to make room, the way one makes</textarea>
+          <p class="nb">Copy any text you want to keep before dismissing or retrying. This incomplete text is only available in this tab and is not saved to the scene.</p>
+        </div>
+      </div>
+
+      <div class="dockbar">
+        <div class="cap" id="cap">
+          <span class="plus" title="Tools"><svg><use href="#i-plus"/></svg></span>
+          <span class="ta typed" data-only="ready">Then we keep the light for whoever else is out there.</span>
+          <span class="ta" data-only="sending streaming stopped error resumed regen newswipe browse conflict">Message Marguerite Vane...</span>
+          <span class="ta" data-only="noconn">Pick a connection to start the scene.</span>
+          <span class="hint" data-only="noconn">Open AI wing</span>
+          <span class="send ready" data-only="ready" title="Send (Enter)"><svg><use href="#i-send"/></svg></span>
+          <span class="send" data-only="stopped error resumed newswipe browse noconn conflict" title="Send"><svg><use href="#i-send"/></svg></span>
+          <span class="stop" title="Stop"><svg><use href="#i-stop"/></svg></span>
+        </div>
+      </div>
+      <span class="book" title="Compendium"><svg><use href="#i-book"/></svg></span>
+    </div>
+
+    <nav class="rail l" aria-label="Scene wings">
+      <div class="wi" style="--w: var(--accent)"><svg><use href="#i-zap"/></svg><div class="tip"><b>Control Booth</b><span>Scene setup and automation</span></div></div>
+      <div class="wi" style="--w: var(--deck-character)"><svg><use href="#i-mask"/></svg><div class="tip"><b>Cast</b><span>Character, persona, and speakers</span></div></div>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <div class="wi" style="--w: var(--stage-var)"><svg><use href="#i-cpu"/></svg><div class="tip"><b>AI</b><span>Model and generation settings</span></div></div>
+      <div class="wi" style="--w: var(--stage-warn)"><svg><use href="#i-eye"/></svg><div class="tip"><b>Context</b><span>What the AI sees and remembers</span></div></div>
+    </nav>
+    <span class="edge l"></span><span class="edge r"></span>
+  </main>
+</div>
+
+<div class="wf-chip" id="wf">
+  <span>Send</span><button data-s="ready">Typed</button><button data-s="sending">Starting</button><button data-s="streaming">Streaming</button><button data-s="stopped">Stopped</button><button data-s="error">Failed</button><button data-s="conflict">Scene changed</button>
+  <span>Swipe</span><button data-s="regen">Regenerating</button><button data-s="newswipe">New version</button><button data-s="browse">Browsing</button>
+  <span>Bunraku</span><button data-s="resumed">Reopened after a crash</button><button data-s="noconn">No connection</button>
+  <button data-theme-switch>Theme</button><a href="../index.html">All</a>
+</div>
+<div class="wf-note"><b>RoleCall's own parts, word for word:</b> the capsule's send and red stop, the "Starting..." chip, the accent glow on a bubble being written, the failure card, and ImmersiveMessage's meta row with the SwipeCounter (model and time, then back, count, and Regenerate or next). Enter sends, Shift+Enter is a new line, and the arrow keys swipe the last reply. <b>Scene changed</b> (added 2026-09-28): if something lands in the take while a reply is written, the reply is kept on hold on RC's failure-card frame in amber, to add at the end or discard. While a reply runs, regenerate and swipe wait (greyed), as in RC. <b>Stop</b> keeps what arrived as the reply, RC's rule; with nothing arrived it saves nothing. <b>Failed</b> is RC's card: the draft shows but is not saved; Retry asks again for the same message. <b>Bunraku's two additions:</b> a reply cut off by a crash comes back kept, with an amber line and Regenerate (RC's server kept writing; a closed app cannot), and a scene with no connection says so in the capsule and points at the AI wing, whose picker needs its own wireframe. <b>Left for later steps:</b> Continue (2d, with presets) and RC's side-by-side version compare. Hover a message to see its meta row.</div>
+
+<script>
+(function () {
+  var scene = document.getElementById("scene");
+  var BUSY = ["sending", "streaming", "regen"];
+  function set(s) {
+    scene.className = "scene show-meta";
+    if (BUSY.indexOf(s) >= 0) scene.classList.add("streaming", "busy");
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.style.display = el.getAttribute("data-only").split(" ").indexOf(s) >= 0 ? "" : "none"; });
+    document.getElementById("cap").classList.toggle("off", s === "noconn");
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.style.outline = b.getAttribute("data-s") === s ? "2px solid var(--accent)" : ""; });
+    var sc = document.querySelector(".scroll"); sc.scrollTop = sc.scrollHeight; scene.scrollTop = 0; document.querySelector(".play").scrollTop = 0;
+  }
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s")); });
+  set(new URLSearchParams(location.search).get("state") || "ready");
+})();
+</script>
+</body>
+</html>

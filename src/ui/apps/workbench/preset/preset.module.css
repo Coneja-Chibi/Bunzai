@@ -1,0 +1,353 @@
+/**
+ * Preset editor - shell + list + shared fields (RC-neo, in vaud's language). The prompt ROW lives in
+ * row.module.css and the EDIT PROMPT sidebar in sidebar.module.css (split for the 500-line cap).
+ * NEOBRUTALIST per RC's rc-preset-editor-neo: the darkest canvas = vaud stage; accent = the house accent
+ * (--pa = --accent); hard-neo fields (2px black border + offset shadow). This
+ * editor deliberately reads like RC, unlike vaud's other editors: the resemblance is scoped to here.
+ */
+
+.root {
+  --wb-selection: var(--rose);
+  --wb-primary: var(--rose-deep);
+  --pa: var(--accent);
+  /* RC's prompt toggle reads green for on; the house default is rose. Scoped here only, per the
+     "reproduce RC's look in this editor" ruling - the shared control keeps its default elsewhere. */
+  --toggle-on: var(--stage-ok);
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--stage);
+  color: var(--stage-card);
+}
+
+.listCol {
+  /* height:100% matters: SplitPane's own pane wrapper (`.pane`, split-pane.module.css) is a plain
+     `overflow:auto` block, not a flex/grid container, so it does NOT stretch this child to fill it
+     on its own - a grid item's default stretch only reaches `.pane` itself. Without this, `.listCol`
+     falls back to its content's natural (auto) height, `.list` below has nothing bounded to flex
+     against, and virtualization silently stops bounding the DOM (caught live, not in jsdom, where
+     every ancestor in the test's fixed-size stub chain already had a definite height). */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 1rem;
+}
+
+/* VIRTUALIZED: `.list` is now the scroll element itself (ListToolbar and
+   BulkBar are its fixed siblings in `.listCol`, never inside the scroller - so nothing needs its
+   own `scrollMargin`), sized by flex rather than content. `.listInner`/`.listRow` mirror the
+   Library's List view (`views/list.tsx` `.dv-list`/`.dv-listrow`): one relatively-positioned
+   spacer sized to the virtualizer's total height, holding absolutely-positioned rows. */
+.list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.listInner {
+  position: relative;
+  width: 100%;
+}
+
+.listRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Autosave has used up its tries: said out loud, next to a setting that still reads "on". */
+.autosaveStalled {
+  padding: 0.5rem 1rem;
+  background: color-mix(in srgb, var(--stage-warn) 10%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--stage-warn) 45%, transparent);
+  color: var(--stage-warn);
+  font: 600 var(--text-control) var(--font-body);
+}
+
+.empty {
+  border: 2px dashed color-mix(in srgb, var(--stage-card) 15%, transparent);
+  color: var(--stage-mute);
+  font: 500 var(--text-control) var(--font-body);
+  padding: 1.4rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.emptyTitle {
+  font: 900 var(--text-control) var(--font-big);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--stage-soft);
+  margin: 0;
+}
+
+.emptyHint {
+  font: 500 var(--text-meta) var(--font-body);
+  color: var(--stage-text-dim);
+  margin: 0;
+  max-width: 26rem;
+  line-height: 1.5;
+}
+
+.emptyAction {
+  border: 2px solid var(--stage-black);
+  background: var(--stage-panel);
+  box-shadow: 2px 2px 0 0 var(--stage-black);
+  color: var(--pa);
+  font: 800 var(--text-control) var(--font-big);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.emptyAction:hover {
+  transform: translate(-1px, -1px);
+}
+
+.emptyAction:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* ---------- the rail (owns the aside; tabs between per-block and whole-preset truth) ---------- */
+
+/* No border-left: the SplitPane grip between the columns IS the divider now, and a painted one
+   beside a draggable one reads as two edges and hides which of them can be grabbed. */
+.sidebar {
+  background: var(--stage-panel);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.railTabs {
+  display: flex;
+  border-bottom: 3px solid var(--stage-black);
+  flex: none;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--stage-panel);
+}
+
+.railTab {
+  flex: 1;
+  border: 0;
+  border-right: 2px solid var(--stage-black);
+  background: color-mix(in srgb, var(--stage-card) 3%, transparent);
+  color: var(--stage-mute);
+  font: 800 var(--text-control) var(--font-big);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.4rem;
+  cursor: pointer;
+}
+
+.railTab:last-child {
+  border-right: 0;
+}
+
+.railTab:hover {
+  color: var(--stage-soft);
+}
+
+.railTabOn {
+  background: var(--pa);
+  color: var(--stage-ink, var(--stage));
+}
+html[data-surface-ui-tabs="underline-ink"] .railTabOn { background: var(--accent-deep); color: var(--selection-fg); }
+
+@container (max-width: 48rem) {
+  .sidebar {
+    height: 100%;
+    min-height: 0;
+    border-left: 0;
+    border-top: 3px solid var(--stage-black);
+    overflow: hidden;
+  }
+}
+
+/* ---------- categories (RC's collapsible sections) ---------- */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-inline-start: min(calc(var(--preset-group-depth, 0) * 0.85rem), 2.55rem);
+}
+
+.section[data-depth="1"] .sectionHead {
+  border-left-width: 5px;
+}
+
+.sectionHead {
+  font: inherit; /* buttons do not inherit fonts */
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  text-align: left;
+  border: 2px solid var(--stage-black);
+  background: color-mix(in srgb, var(--pa) 10%, transparent);
+  box-shadow: 3px 3px 0 0 var(--stage-black);
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.sectionHead:hover {
+  background: color-mix(in srgb, var(--pa) 16%, transparent);
+}
+
+.sectionChev {
+  font-size: var(--text-control);
+  line-height: 1;
+  color: var(--pa);
+  transition: transform 0.12s ease;
+}
+
+.sectionChevOpen {
+  transform: rotate(90deg);
+}
+
+.sectionName {
+  flex: 1;
+  font: 900 var(--text-control) var(--font-big);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sectionCount {
+  font: 800 var(--text-meta) var(--font-mono);
+  color: var(--pa);
+  background: color-mix(in srgb, var(--stage-black) 35%, transparent);
+  border: 1px solid color-mix(in srgb, var(--pa) 30%, transparent);
+  padding: 0.05rem 0.35rem;
+}
+
+.sectionEmpty {
+  font: 500 var(--text-control) var(--font-body);
+  color: var(--stage-text-dim);
+  margin: 0;
+  margin-inline-start: min(calc(var(--preset-group-depth, 0) * 0.85rem), 2.55rem);
+  padding: 0.4rem 0.7rem;
+  border-left: 2px solid color-mix(in srgb, var(--pa) 25%, transparent);
+}
+
+.addBlock {
+  margin-top: 0.5rem;
+  border: 2px dashed color-mix(in srgb, var(--stage-card) 15%, transparent);
+  background: none;
+  color: var(--stage-soft);
+  font: 700 var(--text-control) var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.55rem 0.8rem;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.addBlock:hover {
+  border-color: var(--pa);
+  color: var(--pa);
+}
+
+/* ---------- inline content ---------- */
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentTa {
+  min-height: 8rem;
+}
+
+.contentFoot {
+  margin-top: 0.45rem;
+  font: 600 var(--text-control) var(--font-mono);
+  color: var(--stage-text-dim);
+}
+
+/* ---------- preset fields (hard-neo; the shared es.in is vaud's, not RC's) ---------- */
+
+.field {
+  width: 100%;
+  background: var(--stage-sunken, var(--stage-row));
+  border: 2px solid var(--stage-black);
+  box-shadow: 3px 3px 0 0 var(--stage-black);
+  color: var(--stage-card);
+  font: 500 var(--text-control) var(--font-body);
+  padding: 0.4rem 0.55rem;
+}
+
+.field:focus {
+  outline: none;
+  border-color: var(--pa);
+}
+
+.ta {
+  min-height: 5rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.sfield {
+  display: block;
+}
+
+.flabel {
+  display: block;
+  font: 700 var(--text-control) var(--font-big);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  margin-bottom: 0.3rem;
+}
+
+/* ---------- collapse the sidebar by PANE width (fluid-container law) ---------- */
+
+@container (max-width: 48rem) {
+  .root .splitPaneHost {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .root .splitPaneHost > :first-child,
+  .root .splitPaneHost > :last-child {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex: 1 1 0;
+  }
+  .root .splitPaneHost > [role="separator"] { display: none; }
+  .listCol {
+    overflow: visible;
+  }
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root {
+  --wb-selection: var(--selection);
+  --wb-primary: var(--action-primary);
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracker refresh</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../play-shared/play.css">
+<script src="../play-shared/palettes.js"></script>
+<script src="../play-shared/play.js"></script>
+<style>
+/* The tracker frame (tracker-style.ts trk-*), the Props wing box (props-style.ts pw-*), and the refresh review parts. Tokens only, square corners. */
+.trk { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+.trk-hero { margin: 16px 16px 0; display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--stage-seam); background: color-mix(in srgb, var(--w) 7%, var(--stage-panel)); box-shadow: inset 3px 0 0 var(--w); }
+.trk-hero .hi { flex: none; width: 36px; height: 36px; display: grid; place-items: center; background: color-mix(in srgb, var(--w) 16%, transparent); color: var(--w); }
+.trk-hero .eb { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--w); }
+.trk-hero h3 { margin-top: 3px; font-family: var(--font-big); font-weight: 800; font-size: 1.2rem; color: var(--stage-card); }
+.trk-hero p { margin-top: 3px; font-size: 12px; line-height: 1.5; color: var(--stage-text-dim); }
+.trk-strip { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; padding: 10px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 40%, transparent); flex-wrap: wrap; }
+.trk-badges, .trk-actions { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.trk-tokens { padding: 2px 8px; border: 1px solid var(--stage-line); background: color-mix(in srgb, var(--stage-black) 60%, transparent); font: 700 10px/1.4 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--stage-soft); }
+.trk-btn { display: inline-grid; grid-auto-flow: column; align-items: center; place-items: center; gap: 6px; padding: 6px; min-height: 30px; min-width: 30px; border: 1px solid var(--stage-line); background: color-mix(in srgb, var(--stage-black) 40%, transparent); color: var(--stage-soft); box-shadow: 2px 2px 0 0 var(--stage-black); font-family: var(--font-big); font-weight: 700; font-size: 12px; cursor: pointer; }
+.trk-btn.lbl { padding: 6px 10px; }
+.trk-btn.on { border-color: var(--w); color: var(--w); }
+.trk-btn.busy svg { animation: pl-spin 1s linear infinite; }
+.trk-btn.off { opacity: .45; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { .trk-btn.busy svg { animation: none; } }
+.trk-error { margin: 0; padding: 8px 16px; background: var(--stage-danger-bg); color: var(--stage-danger-text); font-size: 12.5px; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
+.trk-error .grow { flex: 1; min-width: 0; } .trk-error small { display: block; color: var(--stage-soft); font-size: 11.5px; margin-top: 2px; }
+.trk-undo { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 16px; background: var(--stage-panel); color: var(--stage-soft); font-size: 12.5px; }
+.trk-undo button { padding: 2px 10px; border: 1px solid var(--stage-line); background: var(--stage-black); color: var(--stage-card); font: 700 10px/1.4 var(--font-body); letter-spacing: .1em; text-transform: uppercase; }
+.trk-status { display: flex; align-items: center; gap: 10px; padding: 8px 16px; background: color-mix(in srgb, var(--w) 8%, var(--stage-panel)); color: var(--stage-card); font-size: 12.5px; border-bottom: 1px solid var(--stage-seam); }
+.trk-status svg { color: var(--w); }
+.trk-status .grow { flex: 1; min-width: 0; }
+.trk-body { flex: 1; min-height: 0; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--stage-seam); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); font-size: 13px; color: var(--stage-card); }
+.item small { color: var(--stage-mute); font-size: 11.5px; }
+.item .grow { flex: 1; min-width: 0; }
+/* the review sheet */
+.rv { background: var(--stage-panel); border: 2px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--stage-black); display: flex; flex-direction: column; min-width: 0; }
+.rv > header { padding: 12px 14px; border-bottom: 1px solid var(--stage-seam); }
+.rv > header b { display: block; font-family: var(--font-big); font-weight: 800; font-size: 1.05rem; color: var(--stage-card); }
+.rv > header span { display: block; margin-top: 3px; font-size: 12px; line-height: 1.5; color: var(--stage-soft); }
+.rv > .bd { padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; font-size: 13px; color: var(--stage-soft); }
+.rv > footer { display: flex; justify-content: flex-end; align-items: center; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--stage-seam); flex-wrap: wrap; }
+.rv > footer .grow { flex: 1; font-size: 12px; color: var(--stage-mute); min-width: 8rem; }
+.dg { display: flex; flex-direction: column; border: 1px solid var(--stage-seam); }
+.dg > .dh2 { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: color-mix(in srgb, var(--c) 10%, transparent); box-shadow: inset 3px 0 0 var(--c); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--c); }
+.dg > .dh2 .r { margin-left: auto; letter-spacing: .04em; text-transform: none; font-weight: 500; color: var(--stage-mute); }
+.dg > .dr { display: flex; align-items: flex-start; gap: 10px; padding: 7px 10px; border-top: 1px solid var(--stage-seam); font-size: 13px; color: var(--stage-card); min-width: 0; }
+.dg > .dr .mk { flex: none; width: 1.1rem; font-family: var(--font-mono); font-weight: 700; color: var(--c); }
+.dg > .dr .grow { flex: 1; min-width: 0; }
+.dg > .dr .ch2 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 3px; font-family: var(--font-mono); font-size: 11.5px; }
+.dg .was { color: var(--stage-mute); text-decoration: line-through; }
+.dg .now { color: var(--stage-card); }
+.dg.add { --c: var(--stage-ok); } .dg.chg { --c: var(--stage-warn); } .dg.rem { --c: var(--stage-danger-text); }
+.mods { display: flex; flex-direction: column; border: 1px solid var(--stage-seam); }
+.mod { border-bottom: 1px solid var(--stage-seam); }
+.mod:last-child { border-bottom: 0; }
+.mod > .mh { display: flex; align-items: center; gap: 10px; padding: 9px 10px; min-width: 0; flex-wrap: wrap; }
+.mod > .mh b { font-family: var(--font-big); font-size: 13.5px; color: var(--stage-card); }
+.mod > .mh .grow { flex: 1; min-width: 8rem; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.mod > .mb { padding: 0 10px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+.mod.fail { box-shadow: inset 3px 0 0 var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-bg) 50%, transparent); }
+.mod.done { opacity: .55; }
+.prog { height: 12px; border: 2px solid var(--stage-line); background: var(--stage-seam); position: relative; }
+.prog i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-right: 2px solid var(--stage-black); }
+.stepsx { display: flex; flex-wrap: wrap; gap: 6px; }
+.stepsx .ch.run { color: var(--stage-card); border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.stepsx .ch.fin { color: var(--stage-ok); border-color: var(--stage-ok); background: var(--stage-ok-bg); }
+/* Props wing box (pw-box, legacy variant) */
+.pw-box { padding: 10px; border: 1px solid var(--stage-line); background: color-mix(in srgb, var(--stage-black) 40%, transparent); display: flex; flex-direction: column; gap: 8px; }
+.pw-box-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pw-box h4 { margin: 0; font: 700 10px/1.4 var(--font-body); letter-spacing: .2em; text-transform: uppercase; color: var(--stage-soft); }
+.pw-chip { flex: none; padding: 3px 8px; border: 1px solid var(--stage-line); font: 700 10px/1.2 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--stage-mute); }
+.pw-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.pw-tile { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-panel) 50%, transparent); font-size: 12px; color: var(--stage-mute); }
+.pw-tile.on { border-color: color-mix(in srgb, var(--tone) 44%, transparent); background: color-mix(in srgb, var(--tone) 8%, transparent); color: var(--stage-card); }
+.pw-tile.on svg:first-child { color: var(--tone); }
+.pw-tile .pw-chip { margin-left: auto; }
+.pw-tile.run { border-color: var(--accent); }
+.rall { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 6px 12px; border: 1px solid var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--stage-card); font-family: var(--font-big); font-weight: 700; font-size: 12px; box-shadow: 2px 2px 0 0 var(--stage-black); cursor: pointer; }
+.rall.off { opacity: .45; cursor: not-allowed; border-color: var(--stage-line); background: transparent; }
+.rall.busy svg { animation: pl-spin 1s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .rall.busy svg { animation: none; } }
+.help { font-size: 11px; line-height: 1.45; color: var(--stage-mute); }
+.tipx2 { display: inline-block; padding: 6px 10px; background: var(--stage-black); border: 1px solid var(--stage-line); font-size: 12px; color: var(--stage-card); }
+.scrim2 { position: absolute; inset: 0; background: color-mix(in srgb, var(--stage-black) 70%, transparent); display: grid; place-items: center; padding: 12px; z-index: 80; overflow: auto; }
+</style>
+</head>
+<body>
+<script src="../play-shared/icons.js"></script>
+<div class="page">
+  <div class="themebar"></div>
+  <header class="wf-head"><div>
+    <h1 class="wf-title">Tracker refresh</h1>
+    <p class="wf-lede">Two ways to re-read the chat into a tracker: the Refresh button on a tracker's own strip (one module), and Refresh Enabled Boards in the Props wing (every enabled module, one after another). RoleCall applies the answer straight away, even when the model's answer was a guess or empty. Here the answer is a proposal: you see what would be added, changed and removed, and nothing changes until you Accept. Accept saves with Undo.</p>
+  </div></header>
+
+  <div class="wf-note"><b>Where the words come from.</b> Button tooltip "Refresh from chat history" and the batch label "Refresh Enabled Boards" with "Refreshing {label} (n/m)" are RoleCall's. The visible "Refresh" label on the strip button, the review sheets and every failure line are new, because RoleCall shows nothing at all when a refresh fails. A refresh reads the last 20 messages plus the first message, and sees the tracker as it is now, so it updates rather than starts over. Removed rows are hidden and kept (never hard deleted) and come back with Undo.</div>
+
+  <div class="states">
+
+    <!-- 1 strip typical -->
+    <div class="pn wide">
+      <div class="wf-state">A tracker frame (Inventory): the Refresh button on the action strip</div>
+      <div class="fr" style="--h:33rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--deck-lorebook)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Inventory</b></div></nav>
+          <div class="trk" style="--w:var(--deck-lorebook)" data-part="props.tracker.inventory">
+            <header class="trk-hero"><span class="hi"><svg><use href="#i-folder"/></svg></span><div><div class="eb">Inventory module</div><h3>Inventory</h3><p>What Marguerite is carrying, with quantities and notes.</p></div></header>
+            <div class="trk-strip">
+              <div class="trk-badges"><span class="trk-tokens">~84t</span></div>
+              <div class="trk-actions" data-part="props.tracker.actions">
+                <button class="trk-btn lbl" title="Refresh from chat history" aria-label="Refresh from chat history" data-part="props.tracker.refresh"><svg><use href="#i-refresh"/></svg>Refresh</button>
+                <button class="trk-btn" title="Panel AI settings" aria-label="Panel AI settings"><svg><use href="#i-sliders"/></svg></button>
+                <button class="trk-btn" title="Pop out to floating panel" aria-label="Pop out to floating panel"><svg><use href="#i-ext"/></svg></button>
+              </div>
+            </div>
+            <div class="trk-body">
+              <div class="item"><span class="grow">Brass lantern key<br><small>Opens the gallery door</small></span><span class="num">x1</span></div>
+              <div class="item"><span class="grow">Oilskin coat<br><small>Worn, salt-stiff</small></span><span class="num">x1</span></div>
+              <div class="item"><span class="grow">Matches<br><small>Damp</small></span><span class="num">x6</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">TrackerFrame <code>actions</code> slot (trackers/tracker-frame.tsx) &middot; trk-btn grammar, with a visible label because RoleCall's icon-only button hides the feature &middot; every tracker frame gets it except Storyboards and Tarot (RoleCall's tarot button spins and does nothing) &middot; parts: props.tracker.refresh, props.tracker.review</div>
+    </div>
+
+    <!-- 2 working -->
+    <div class="pn">
+      <div class="wf-state">Reading the chat: the strip button busy, Cancel offered, the rest of the panel still usable</div>
+      <div class="fr" style="--h:26rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--deck-lorebook)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Inventory</b></div></nav>
+          <div class="trk" style="--w:var(--deck-lorebook)">
+            <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn lbl busy off" disabled aria-busy="true"><svg><use href="#i-spin"/></svg>Refreshing</button><button class="trk-btn" title="Panel AI settings"><svg><use href="#i-sliders"/></svg></button></div></div>
+            <div class="trk-status" role="status"><svg><use href="#i-spin"/></svg><span class="grow">Reading the last 20 messages for Inventory.</span><button class="b2">Cancel</button></div>
+            <div class="trk-body"><div class="item"><span class="grow">Brass lantern key</span><span class="num">x1</span></div><div class="item"><span class="grow">Oilskin coat</span><span class="num">x1</span></div></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 3 disabled -->
+    <div class="pn">
+      <div class="wf-state">Nothing to read yet: the button is off and says why</div>
+      <div class="fr" style="--h:18rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--deck-lorebook)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Inventory</b></div></nav>
+          <div class="trk" style="--w:var(--deck-lorebook)">
+            <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~0t</span></div><div class="trk-actions"><button class="trk-btn lbl off" disabled title="Send a message first. Refresh reads the chat."><svg><use href="#i-refresh"/></svg>Refresh</button><button class="trk-btn"><svg><use href="#i-sliders"/></svg></button></div></div>
+            <div class="trk-body"><span class="tipx2">Send a message first. Refresh reads the chat.</span><div class="empty2" style="padding:12px"><b>Nothing here yet</b>Items you pick up will appear.</div></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 4 review sheet -->
+    <div class="pn wide">
+      <div class="wf-state">Review one module: added, changed and removed rows, with Accept, Try again, Discard</div>
+      <div class="fr" style="--h:46rem" data-part="props.tracker.review">
+        <div class="bgm"></div>
+        <div class="scrim2"><div class="rv" style="width:min(40rem,100%)" role="dialog" aria-label="Review Inventory refresh">
+          <header><b>Refresh Inventory: review</b><span>Read from the last 20 messages and the first message. Nothing changes until you accept.</span></header>
+          <div class="bd">
+            <div class="dg add"><div class="dh2">Added <span class="r">2</span></div>
+              <div class="dr"><span class="mk">+</span><div class="grow">Torn ledger page<div class="ch2"><span class="ch">x1</span><span class="mut">Salt still in the fold</span></div></div></div>
+              <div class="dr"><span class="mk">+</span><div class="grow">Salvage receipt<div class="ch2"><span class="ch">x1</span><span class="mut">Dated the night the third ship went down</span></div></div></div></div>
+            <div class="dg chg"><div class="dh2">Changed <span class="r">2</span></div>
+              <div class="dr"><span class="mk">~</span><div class="grow">Matches<div class="ch2"><span class="was">x6</span><span>&rarr;</span><span class="now">x2</span></div></div></div>
+              <div class="dr"><span class="mk">~</span><div class="grow">Oilskin coat<div class="ch2"><span class="was">Worn, salt-stiff</span><span>&rarr;</span><span class="now">Torn at the left cuff</span></div></div></div></div>
+            <div class="dg rem"><div class="dh2">Removed <span class="r">1 &middot; hidden, not erased</span></div>
+              <div class="dr"><span class="mk">-</span><div class="grow">Brass lantern key<div class="ch2"><span class="mut">Marguerite handed it to the keeper in reply 11</span></div></div></div></div>
+            <span class="help">Matched by name. Items the chat does not mention are left alone. Removed items are hidden, and Undo brings them back.</span>
+          </div>
+          <footer><span class="grow">5 changes</span><button class="b2 ghost">Discard</button><button class="b2">Try again</button><button class="b2 go">Accept</button></footer>
+        </div></div>
+      </div>
+      <div class="wf-comp">DialogCore / InkDialog &middot; diff rows (the cast-wing and context-wing list rows, +/~/- markers in the ok, warn and danger tokens) &middot; Accept applies through the tracker's <code>apply(..., "Refreshed from chat history")</code> so the frame shows its normal Undo strip &middot; Try again asks again with the same window, replacing this proposal &middot; parts: props.tracker.review, .review.added, .review.changed, .review.removed, .review.accept, .review.retry, .review.discard</div>
+    </div>
+
+    <!-- 5 after accept -->
+    <div class="pn">
+      <div class="wf-state">After Accept: the normal Undo strip</div>
+      <div class="fr" style="--h:19rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--deck-lorebook)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Inventory</b></div></nav>
+          <div class="trk" style="--w:var(--deck-lorebook)">
+            <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~96t</span></div><div class="trk-actions"><button class="trk-btn lbl"><svg><use href="#i-refresh"/></svg>Refresh</button><button class="trk-btn"><svg><use href="#i-sliders"/></svg></button></div></div>
+            <div class="trk-undo" role="status"><span>Refreshed from chat history</span><button>Undo</button></div>
+            <div class="trk-body"><div class="item"><span class="grow">Torn ledger page</span><span class="num">x1</span></div><div class="item"><span class="grow">Salvage receipt</span><span class="num">x1</span></div><div class="item"><span class="grow">Matches</span><span class="num">x2</span></div></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 6 no change -->
+    <div class="pn">
+      <div class="wf-state">Nothing to change: no sheet, a line in the frame</div>
+      <div class="fr" style="--h:14rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--deck-lorebook)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Inventory</b></div></nav>
+          <div class="trk" style="--w:var(--deck-lorebook)">
+            <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~96t</span></div><div class="trk-actions"><button class="trk-btn lbl"><svg><use href="#i-refresh"/></svg>Refresh</button></div></div>
+            <div class="trk-undo" role="status"><span>Inventory already matches the last 20 messages.</span><button>Dismiss</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 7 failure -->
+    <div class="pn wide">
+      <div class="wf-state">Failures say why and change nothing (RoleCall shows nothing, or applies defaults)</div>
+      <div class="cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,24rem),1fr));gap:12px;align-items:start">
+        <div class="fr" style="--h:17rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn lbl"><svg><use href="#i-refresh"/></svg>Refresh</button></div></div>
+          <div class="trk-error" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">Refresh failed. The model's answer could not be read as an Inventory list.<small>Inventory is unchanged. Try again, or pick a different model for the Director.</small></div><button class="b2">Try again</button></div></div></section></div>
+        <div class="fr" style="--h:17rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn lbl"><svg><use href="#i-refresh"/></svg>Refresh</button></div></div>
+          <div class="trk-error" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">Refresh failed. The provider returned a gateway timeout (502).<small>Nothing was read or changed.</small></div><button class="b2">Try again</button></div></div></section></div>
+        <div class="fr" style="--h:17rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn lbl"><svg><use href="#i-refresh"/></svg>Refresh</button></div></div>
+          <div class="trk-error" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">Refresh was dropped. Inventory changed while it was reading.<small>Undo or another edit moved the tracker. Refresh again to read it as it is now.</small></div><button class="b2">Refresh again</button></div></div></section></div>
+        <div class="fr" style="--h:17rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn lbl"><svg><use href="#i-refresh"/></svg>Refresh</button></div></div>
+          <div class="trk-undo" role="status"><span>Refresh cancelled. Inventory is unchanged.</span><button>Dismiss</button></div></div></section></div>
+      </div>
+      <div class="wf-comp">Same error strip as the frame's existing <code>view.error</code> &middot; fail closed (plan decisions 15 and 16): a provider error, an unreadable answer or a changed chat never writes defaults and never half-applies</div>
+    </div>
+
+    <!-- 8 batch in Props wing -->
+    <div class="pn wide">
+      <div class="wf-state">Props wing, Legacy Trackers box: Refresh Enabled Boards idle, running (2/5) with Cancel, and cancelled</div>
+      <div class="cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,26rem),1fr));gap:12px;align-items:start">
+        <div class="fr" style="--h:30rem" data-part="scene.props"><section class="wp solo" style="--w:var(--accent)"><nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav><div class="wbody" style="--w:var(--accent)">
+          <div class="pw-box" data-part="scene.props.box.legacy"><div class="pw-box-head"><h4>Legacy Trackers</h4><span class="pw-chip">optional</span></div>
+            <button class="rall" data-part="scene.props.refresh-all"><svg><use href="#i-refresh"/></svg>Refresh Enabled Boards</button>
+            <span class="help">Reads the last 20 messages once per enabled board, then shows you every proposal. Nothing changes until you accept.</span>
+            <div class="pw-grid" style="--tone:var(--deck-lorebook)"><div class="pw-tile on"><svg><use href="#i-folder"/></svg>Inventory</div><div class="pw-tile on"><svg><use href="#i-hash"/></svg>Resources</div><div class="pw-tile on"><svg><use href="#i-zap"/></svg>Battle</div><div class="pw-tile on"><svg><use href="#i-user"/></svg>Party</div><div class="pw-tile on"><svg><use href="#i-book"/></svg>Knowledge</div><div class="pw-tile"><svg><use href="#i-scroll"/></svg>Events</div></div></div>
+        </div></section></div>
+        <div class="fr" style="--h:30rem" data-part="scene.props"><section class="wp solo" style="--w:var(--accent)"><nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav><div class="wbody" style="--w:var(--accent)">
+          <div class="pw-box"><div class="pw-box-head"><h4>Legacy Trackers</h4><span class="pw-chip">optional</span></div>
+            <button class="rall busy" disabled aria-busy="true"><svg><use href="#i-spin"/></svg>Refreshing Inventory (2/5)</button>
+            <div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="1"><i style="width:30%"></i></div>
+            <div class="stepsx"><span class="ch fin">Resources done</span><span class="ch run">Inventory reading</span><span class="ch">Battle</span><span class="ch">Party</span><span class="ch">Knowledge</span></div>
+            <div class="row2"><span class="help grow">One board at a time, so each gets the model's full attention.</span><button class="b2" data-part="scene.props.refresh-all.cancel">Cancel</button></div></div>
+        </div></section></div>
+        <div class="fr" style="--h:30rem" data-part="scene.props"><section class="wp solo" style="--w:var(--accent)"><nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav><div class="wbody" style="--w:var(--accent)">
+          <div class="pw-box"><div class="pw-box-head"><h4>Legacy Trackers</h4><span class="pw-chip">optional</span></div>
+            <button class="rall"><svg><use href="#i-refresh"/></svg>Refresh Enabled Boards</button>
+            <div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">Cancelled after 2 of 5.<small>The two finished are waiting in the review. Battle, Party and Knowledge were not read.</small></div><button class="b2 go">Review 2</button></div></div>
+        </div></section></div>
+        <div class="fr" style="--h:30rem" data-part="scene.props"><section class="wp solo" style="--w:var(--accent)"><nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav><div class="wbody" style="--w:var(--accent)">
+          <div class="pw-box"><div class="pw-box-head"><h4>Legacy Trackers</h4><span class="pw-chip">optional</span></div>
+            <button class="rall off" disabled title="Send a message first. Refresh reads the chat."><svg><use href="#i-refresh"/></svg>Refresh Enabled Boards</button>
+            <span class="help">Send a message first. Refresh reads the chat.</span>
+            <button class="rall off" disabled title="Turn on a board to refresh it."><svg><use href="#i-refresh"/></svg>Refresh Enabled Boards</button>
+            <span class="help">No board is on. Turn one on to refresh it. Storyboards and Tarot are not refreshed.</span></div>
+        </div></section></div>
+      </div>
+      <div class="wf-comp">Button sits in the box header region as RoleCall's full-width accent button, but in the always-visible Legacy Trackers box instead of the Director's drawer (RoleCall hides it unless the Director is on) &middot; label copy "Refresh Enabled Boards" and "Refreshing {label} (i/n)" are RoleCall's &middot; Cancel is new (RoleCall cannot stop a run) &middot; progress = MeterBar grammar &middot; parts: scene.props.refresh-all, .refresh-all.cancel, .refresh-all.progress</div>
+    </div>
+
+    <!-- 9 combined review -->
+    <div class="pn wide">
+      <div class="wf-state">Combined review sheet: each module's proposal with its own Accept, plus Accept all</div>
+      <div class="fr" style="--h:56rem" data-part="props.tracker.review">
+        <div class="bgm"></div>
+        <div class="scrim2"><div class="rv" style="width:min(46rem,100%)" role="dialog" aria-label="Review refresh">
+          <header><b>Refresh Enabled Boards: review</b><span>5 boards read from the last 20 messages and the first message. Nothing changes until you accept.</span></header>
+          <div class="bd">
+            <div class="mods">
+              <div class="mod"><div class="mh"><b>Inventory</b><span class="grow"><span class="ch ok">+2 added</span><span class="ch warn">~2 changed</span><span class="ch bad">-1 removed</span></span><button class="b2 ghost">Discard</button><button class="b2 go">Accept</button></div>
+                <div class="mb"><div class="dg add"><div class="dr"><span class="mk">+</span><div class="grow">Torn ledger page</div></div><div class="dr"><span class="mk">+</span><div class="grow">Salvage receipt</div></div></div>
+                  <div class="dg chg"><div class="dr"><span class="mk">~</span><div class="grow">Matches<div class="ch2"><span class="was">x6</span><span>&rarr;</span><span class="now">x2</span></div></div></div><div class="dr"><span class="mk">~</span><div class="grow">Oilskin coat<div class="ch2"><span class="was">Worn, salt-stiff</span><span>&rarr;</span><span class="now">Torn at the left cuff</span></div></div></div></div>
+                  <div class="dg rem"><div class="dr"><span class="mk">-</span><div class="grow">Brass lantern key</div></div></div></div></div>
+              <div class="mod"><div class="mh"><b>Resources</b><span class="grow"><span class="ch warn">~2 changed</span></span><button class="b2 ghost">Discard</button><button class="b2 go">Accept</button></div>
+                <div class="mb"><div class="dg chg"><div class="dr"><span class="mk">~</span><div class="grow">Lamp oil<div class="ch2"><span class="was">8 / 10</span><span>&rarr;</span><span class="now">3 / 10</span></div></div></div><div class="dr"><span class="mk">~</span><div class="grow">Coin<div class="ch2"><span class="was">14</span><span>&rarr;</span><span class="now">9</span></div></div></div></div></div></div>
+              <div class="mod fail"><div class="mh"><b>Battle</b><span class="grow"><span class="ch bad">Failed</span><span class="mut" style="font-size:12px">The model's answer could not be read as a Battle state. Battle is unchanged.</span></span><button class="b2">Try again</button></div></div>
+              <div class="mod"><div class="mh"><b>Party</b><span class="grow"><span class="ch">No changes</span></span><span class="mut" style="font-size:12px">Matches the chat</span></div></div>
+              <div class="mod done"><div class="mh"><b>Knowledge</b><span class="grow"><span class="ch ok">Accepted</span><span class="mut" style="font-size:12px">+1 added</span></span><button class="b2">Undo</button></div></div>
+            </div>
+            <span class="help">Skipped: Storyboards and Tarot. Each Accept can be undone on its own board.</span>
+          </div>
+          <footer><span class="grow">3 boards have changes</span><button class="b2 ghost">Discard all</button><button class="b2 go">Accept all</button></footer>
+        </div></div>
+      </div>
+      <div class="wf-comp">Same sheet grammar as the single review &middot; per-module Accept applies that module alone through its own <code>apply</code> with its own Undo &middot; Accept all applies every module that has changes and no failure &middot; a proposal read for another scene is dropped at Accept (scene-id guard) and shown as "Dropped: this was read for another scene" on its row &middot; parts: props.tracker.review.module, .review.accept-all, .review.discard-all</div>
+    </div>
+
+    <!-- 10 dropped + narrow -->
+    <div class="pn">
+      <div class="wf-state">Narrow: the sheet fills the width, rows stack</div>
+      <div class="fr" style="max-width:22rem;--h:36rem" data-part="props.tracker.review">
+        <div class="bgm"></div>
+        <div class="scrim2" style="padding:6px"><div class="rv" style="width:100%">
+          <header><b>Refresh Inventory: review</b><span>Nothing changes until you accept.</span></header>
+          <div class="bd"><div class="dg add"><div class="dh2">Added <span class="r">2</span></div><div class="dr"><span class="mk">+</span><div class="grow">Torn ledger page</div></div><div class="dr"><span class="mk">+</span><div class="grow">Salvage receipt</div></div></div>
+            <div class="dg chg"><div class="dh2">Changed <span class="r">1</span></div><div class="dr"><span class="mk">~</span><div class="grow">Matches<div class="ch2"><span class="was">x6</span><span>&rarr;</span><span class="now">x2</span></div></div></div></div></div>
+          <footer><button class="b2 ghost">Discard</button><button class="b2">Try again</button><button class="b2 go">Accept</button></footer>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="pn">
+      <div class="wf-state">Scene changed while refreshing</div>
+      <div class="fr" style="--h:17rem" data-part="scene.props"><section class="wp solo" style="--w:var(--accent)"><div class="wbody">
+        <div class="pw-box"><div class="pw-box-head"><h4>Legacy Trackers</h4></div>
+          <div class="nt bad" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">Refresh dropped. It was read for another scene.<small>No board in this scene was touched. Run Refresh Enabled Boards here to read this scene.</small></div></div></div>
+      </div></section></div>
+    </div>
+
+  </div>
+
+  <section class="q"><b>Needs your eye</b>
+    A proposal appears even when it is large, and there is no per-row tick box: you accept or discard a whole board. RoleCall can only replace; a per-row choice would be a new editing surface per module for a flow that is already one Undo away.
+    <span class="rec">Recommendation: whole-board Accept, as drawn.</span></section>
+</div>
+</body>
+</html>

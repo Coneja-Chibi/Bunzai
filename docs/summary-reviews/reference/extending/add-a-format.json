@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/extending/add-a-format",
+  "sourcePath": "docs/reference/extending/add-a-format.md",
+  "sourceHash": "sha256:8cdda31455ef2806865536f58d76dbb17755ec90d7ed4e986946d1e43bd4481e",
+  "semanticSummaryHash": "sha256:5e1cbabda72288c733dc02d0c610bd2a3545be4fe2bc5b992c219874bb99b0d6",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:51.876Z"
+}

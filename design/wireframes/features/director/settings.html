@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Director settings</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../play-shared/play.css">
+<script src="../play-shared/palettes.js"></script>
+<script src="../play-shared/play.js"></script>
+<style>
+/* The Props wing rows, copied from props-style.ts (pw-*), and the Director's settings block. Tokens only, square corners. */
+.pw { gap: 16px; }
+.pw-hero { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--stage-seam); background: color-mix(in srgb, var(--accent) 7%, var(--stage-panel)); box-shadow: inset 3px 0 0 var(--accent); position: relative; }
+.pw-hero .hi { flex: none; width: 36px; height: 36px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--accent); }
+.pw-hero .eb { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+.pw-hero h3 { margin-top: 3px; font-family: var(--font-big); font-weight: 800; font-size: 1.2rem; color: var(--stage-card); }
+.pw-hero h3 em { font-style: normal; color: var(--accent); }
+.pw-hero p { margin-top: 3px; font-size: 12px; line-height: 1.5; color: var(--stage-text-dim); max-width: 36rem; }
+.pw-label { padding: 0 4px; font: 700 10px/1.4 var(--font-body); letter-spacing: .2em; text-transform: uppercase; color: var(--stage-soft); }
+.pw-list { display: flex; flex-direction: column; gap: 8px; }
+.pw-row { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-panel) 50%, transparent); cursor: pointer; }
+.pw-row.hot { border-color: color-mix(in srgb, var(--stage-card) 25%, transparent); }
+.pw-ic { width: 32px; height: 32px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--tone) 12%, transparent); color: var(--tone); }
+.pw-text { min-width: 0; flex: 1; }
+.pw-name { font-size: 14px; font-weight: 600; color: var(--stage-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pw-tier { font: 700 10px/1.4 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--stage-mute); }
+.pw-end { display: flex; align-items: center; gap: 6px; }
+.pw-gear { padding: 6px; border: 0; background: none; color: var(--stage-soft); display: grid; place-items: center; cursor: pointer; }
+.pw-row .sw.on { background: var(--tone); }
+.pw-sub { margin: 8px 0 0 20px; padding-left: 12px; border-left: 1px solid color-mix(in srgb, var(--tone) 25%, transparent); display: flex; flex-direction: column; gap: 10px; }
+.pw-tip { position: absolute; left: 44px; top: calc(100% + 4px); z-index: 5; width: min(320px, 90%); padding: 10px 12px; border: 1px solid var(--stage-line); background: var(--stage-black); color: var(--stage-soft); font-size: 12px; line-height: 1.5; }
+.pw-tip b { color: var(--stage-card); } .pw-tip p { margin: 4px 0 0; } .pw-tip ul { margin: 6px 0 0; padding-left: 16px; }
+.pw-chip { flex: none; padding: 3px 8px; border: 1px solid var(--stage-line); font: 700 10px/1.2 var(--font-body); letter-spacing: .1em; text-transform: uppercase; color: var(--stage-mute); }
+/* the settings block (RoleCall's StagecraftExtensions 1028-1219, trimmed to the controls that work) */
+.sb { display: flex; flex-direction: column; gap: 10px; }
+.sb .sec { gap: 8px; padding: 10px; }
+.sr { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 6px 8px; border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); background: color-mix(in srgb, var(--stage-black) 35%, transparent); font-size: 12.5px; color: var(--stage-soft); min-width: 0; }
+.sr > span:first-child { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.sr svg { color: var(--stage-soft); }
+.sr .v { font-family: var(--font-mono); font-size: 12px; color: var(--stage-card); }
+.sr .num2 { width: 4.6rem; padding: 3px 6px; background: var(--stage-black); border: 1px solid var(--stage-line); font-family: var(--font-mono); font-size: 12px; color: var(--stage-card); text-align: right; }
+.sr .num2.bad { border-color: var(--stage-danger-edge); }
+.help { font-size: 11px; line-height: 1.45; color: var(--stage-mute); }
+.help.bad { color: var(--stage-danger-text); }
+.pcard { display: flex; gap: 12px; padding: 10px; border: 2px solid var(--w, var(--accent)); background: color-mix(in srgb, var(--w, var(--accent)) 7%, transparent); }
+.pcard .av3 { flex: none; width: 44px; height: 56px; display: grid; place-items: center; font-family: var(--font-fancy); font-size: 18px; color: var(--stage-ink); background: var(--w, var(--accent)); }
+.pcard .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.pcard .tx b { font-family: var(--font-big); font-size: 14px; color: var(--stage-card); }
+.pcard .tx b i { font-style: normal; font-weight: 500; color: var(--stage-soft); margin-left: 6px; font-size: 12px; }
+.pcard .tx em { font-size: 12.5px; color: var(--stage-soft); }
+.pcard .tx p { font-size: 12px; line-height: 1.5; color: var(--stage-text-dim); }
+.pl { display: flex; flex-direction: column; border: 1px solid var(--stage-seam); max-height: 30rem; overflow: hidden; }
+.pl > .po { display: flex; gap: 10px; padding: 8px 10px; border-bottom: 1px solid var(--stage-seam); align-items: flex-start; box-shadow: inset 3px 0 0 var(--w); }
+.pl > .po:last-child { border-bottom: 0; }
+.pl > .po.on { background: color-mix(in srgb, var(--w) 12%, transparent); }
+.pl .av3 { flex: none; width: 30px; height: 38px; display: grid; place-items: center; font-family: var(--font-fancy); font-size: 14px; color: var(--stage-ink); background: var(--w); }
+.pl .tx { flex: 1; min-width: 0; font-size: 12px; color: var(--stage-soft); line-height: 1.45; }
+.pl .tx b { font-family: var(--font-big); font-size: 13px; color: var(--stage-card); }
+.pl .tx b i { font-style: normal; font-weight: 500; color: var(--stage-soft); margin-left: 6px; font-size: 12px; }
+.pl .tx em { display: block; }
+.pl .tx .kv2 { margin-top: 4px; }
+.kv2 { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg3 { display: inline-flex; border: 1px solid var(--stage-line); }
+.seg3 span { padding: 4px 10px; font-family: var(--font-big); font-weight: 700; font-size: 12px; color: var(--stage-mute); border-left: 1px solid var(--stage-line); }
+.seg3 span:first-child { border-left: 0; }
+.seg3 span.on { background: var(--accent); color: var(--stage-ink); }
+.mode { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.mode > div { padding: 8px 10px; border: 1px solid var(--stage-seam); background: var(--stage-row); font-size: 12px; line-height: 1.45; color: var(--stage-soft); }
+.mode > div.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.mode b { display: flex; align-items: center; gap: 6px; font-family: var(--font-big); font-size: 13px; color: var(--stage-card); margin-bottom: 2px; }
+.cap3 { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--c); background: color-mix(in srgb, var(--c) 8%, transparent); color: var(--c); font-size: 12px; }
+.cap3.ok { --c: var(--stage-ok); } .cap3.warn { --c: var(--stage-warn); } .cap3.unk { --c: var(--stage-var); }
+.ta2 { display: block; width: 100%; padding: 8px 10px; background: var(--stage-black); border: 1px solid var(--stage-line); color: var(--stage-card); font-size: 12.5px; line-height: 1.5; min-height: 4.6rem; }
+.ta2.ph { color: var(--stage-mute); }
+.lblr { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--stage-soft); margin-bottom: 4px; }
+.cnt { display: flex; justify-content: space-between; font-size: 11px; color: var(--stage-mute); margin-top: 4px; }
+.cnt .full { color: var(--stage-warn); }
+.pwtile { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-panel) 50%, transparent); font-size: 12px; color: var(--stage-mute); }
+.tg2 { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border: 1px solid var(--stage-seam); background: var(--stage-row); min-width: 0; }
+.tg2.on { border-color: var(--stage-var); background: color-mix(in srgb, var(--stage-var) 10%, transparent); }
+.tg2 .ico { color: var(--stage-var); }
+.tg2 .t { flex: 1; min-width: 0; }
+.tg2 .t b { display: block; font-size: 14px; font-weight: 600; color: var(--stage-card); }
+.tg2 .t small { display: block; font-size: 11.5px; color: var(--stage-mute); }
+.lock { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 10px; color: var(--stage-mute); }
+</style>
+</head>
+<body>
+<script src="../play-shared/icons.js"></script>
+<div class="page">
+  <div class="themebar"></div>
+  <header class="wf-head"><div>
+    <h1 class="wf-title">Story Director settings</h1>
+    <p class="wf-lede">Two places, the same values (ChatStore, one writer each): the Story Director row in the Props wing with its settings block underneath, and the Narrator section in the Control Booth. The switch on the row is the on/off. Default off for every new scene. Copy is RoleCall's; changes are marked.</p>
+  </div></header>
+
+  <div class="wf-note"><b>Only controls that work are drawn.</b> On: on/off, Personality, Model (with Reasoning), Command mode, Temperature, Auto-retry, Creativity, Custom instructions. Not drawn: Max tool rounds and Default AI Awareness (they gain meaning with automatic tracker updates, the later SD-3 slice) and Interactive choices (RoleCall's switch does nothing for the Director). Auto-retry is real here: it allows one corrective pass when the model returns malformed data. Creativity is real here: RoleCall saves it and never reads it; here it is the "creativity level" line in the Director's prompt.</div>
+
+  <div class="states">
+
+    <!-- 1 typical -->
+    <div class="pn wide">
+      <div class="wf-state">Props wing: Story Director on, settings open under its row (hover card shown)</div>
+      <div class="fr" style="--h:78rem" data-part="scene.page">
+        <div class="bgm"></div>
+        <div class="play"><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div></div>
+        <nav class="rail l" data-part="scene.wings"><div class="wi on" style="--w:var(--accent)"><svg><use href="#i-bulb"/></svg></div><div class="wi" style="--w:var(--deck-character)"><svg><use href="#i-mask"/></svg></div><div class="wi" style="--w:var(--deck-lorebook)"><svg><use href="#i-globe"/></svg></div></nav>
+        <section class="wp l" data-part="scene.wings.panel" style="--w:var(--accent);width:min(62rem,100%)" aria-label="Props">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav>
+          <div class="wbody pw" data-part="scene.props" style="--w:var(--accent)">
+            <header class="pw-hero"><span class="hi"><svg><use href="#i-bulb"/></svg></span><div><div class="eb">Scene Augmentations</div><h3>Stage<em>Props</em></h3><p>Optional scene systems live here. Toggle the ones you want active; their wing icons and deeper panels appear only when enabled.</p></div></header>
+            <div class="pw-label">Built-In Props</div>
+            <div class="pw-list">
+              <div>
+                <div class="pw-row hot" style="--tone:var(--deck-persona)" data-part="scene.props.row.story-director">
+                  <span class="pw-ic"><svg><use href="#i-clap"/></svg></span>
+                  <div class="pw-text"><div class="pw-name">Story Director</div><div class="pw-tier">Story engine</div></div>
+                  <div class="pw-end"><span class="pw-gear" title="Open Story Director panel"><svg><use href="#i-gear"/></svg></span><span class="sw on"></span></div>
+                  <div class="pw-tip" style="display:block;z-index:9"><b>Story Director</b><p>Turns on the behind-the-scenes story intelligence pass for this chat. It plans the story before each reply is written.</p><p class="help" style="margin-top:6px">Sends the chat to the Director's model before each reply. Writes only its own saved state.</p>
+                    <ul><li>Adds Story Director model, personality, command mode, temperature, creativity, and retry controls.</li><li>Saves per chat; turning it off stops new planning but does not delete existing state.</li></ul></div>
+                </div>
+                <div class="pw-sub" style="--tone:var(--deck-persona)" data-part="props.story-director.settings">
+                  <div class="sb">
+                    <section class="sec" data-part="props.story-director.personality"><h4>Personality</h4>
+                      <div class="pcard" style="--w:var(--deck-lorebook)"><div class="av3">S</div><div class="tx"><b>Sage<i>The Balanced</i></b><em>"The story speaks. I listen. Together we find the way."</em><p>A versatile narrator who reads the story's needs and adapts fluidly.</p><div class="kv2"><span class="ch">fluid improv</span><span class="ch">high agency</span><span class="ch">medium info control</span></div></div><svg style="align-self:center"><use href="#i-down"/></svg></div></section>
+                    <section class="sec" data-part="props.story-director.model"><h4>Story Director Model</h4>
+                      <span class="help">AI model for narrative direction.</span>
+                      <div class="inp"><span class="dot r" style="--c:var(--stage-ok)"></span><span class="grow">OpenRouter &middot; claude-opus-5-5</span><span class="ch">tools</span><svg><use href="#i-down"/></svg></div>
+                      <div class="sr"><span>Reasoning</span><span class="seg3"><span class="on">Auto</span><span>Low</span><span>Medium</span><span>High</span></span></div>
+                      <span class="help">Auto follows the model default. Leave the model unset to use the narrator's.</span></section>
+                    <section class="sec" data-part="props.story-director.mode"><h4>Story Director command mode</h4>
+                      <span class="help">Both modes use the same Director rules and state; only the command transport changes.</span>
+                      <div class="mode"><div class="on"><b><svg><use href="#i-puzzle"/></svg>Tool call</b>Native provider function calls. Recommended for models with reliable tool support.</div><div><b><svg><use href="#i-scroll"/></svg>Tagged</b>Validated text commands for providers or models without native function calling.</div></div>
+                      <div class="cap3 ok"><svg><use href="#i-check"/></svg>Native tools available</div></section>
+                    <section class="sec" data-part="props.story-director.runtime">
+                      <div class="sr"><span><svg><use href="#i-sliders"/></svg>DM Temperature</span><span class="num2">0.7</span></div>
+                      <span class="help">Controls randomness for Story Director reasoning and tool decisions. 0 to 2.</span>
+                      <div class="sr"><span><svg><use href="#i-wand"/></svg>Creativity</span><span class="seg3"><span>Subtle</span><span class="on">Moderate</span><span>Dramatic</span></span></div>
+                      <div class="sr"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><span class="sw on"></span></div>
+                      <span class="help">Retries once when the model returns malformed tool data for Story Director. May add one extra model call.</span>
+                      <div><div class="lblr"><svg><use href="#i-pen"/></svg>Custom Instructions for DM</div>
+                        <div class="ta2">Keep the tone warm and grounded; no sudden villains or outside observers; let scenes breathe.</div>
+                        <div class="cnt"><span>Persistent, unlike the in-the-moment steering note.</span><span>96/2000</span></div></div>
+                    </section>
+                  </div>
+                </div>
+              </div>
+              <div class="pw-row" style="--tone:var(--deck-lorebook)"><span class="pw-ic"><svg><use href="#i-search"/></svg></span><div class="pw-text"><div class="pw-name">TrackHare</div><div class="pw-tier">Lore tools</div></div><div class="pw-end"><span class="sw"></span></div></div>
+            </div>
+            <div class="pwtile"><svg><use href="#i-layers"/></svg>Storyboards and Legacy Trackers boxes continue below, as today. See the tracker refresh wireframe for their Refresh Enabled Boards button.</div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">PropRow (props/prop-row.tsx) with a Sub block (the existing <code>p.Sub</code> slot) &middot; ToggleSwitch &middot; ModelPicker (the AI wing's) &middot; SegControl &middot; InputField &middot; parts: props.story-director, props.story-director.settings, .personality, .model, .mode, .runtime &middot; tier "Story engine", reach "model" (it sends the chat to the Director's model, so the row's reach note says so) &middot; hover card = RoleCall's catalog text with "after messages" corrected to "before each reply"; the "storyboard and tracker tools" clause is dropped and the "tool-round" bullet is replaced, because neither exists yet</div>
+    </div>
+
+    <!-- 2 off -->
+    <div class="pn">
+      <div class="wf-state">Story Director off (the default): the row alone, no block, nothing sent</div>
+      <div class="fr" style="--h:14rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--accent)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav>
+          <div class="wbody pw" style="--w:var(--accent)"><div class="pw-label">Built-In Props</div>
+            <div class="pw-row" style="--tone:var(--deck-persona)"><span class="pw-ic"><svg><use href="#i-clap"/></svg></span><div class="pw-text"><div class="pw-name">Story Director</div><div class="pw-tier">Story engine</div></div><div class="pw-end"><span class="sw"></span></div></div>
+            <span class="help">Turning it on never changes earlier replies. Turning it off keeps everything it saved.</span></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 3 personality picker -->
+    <div class="pn">
+      <div class="wf-state">Personality picker open: ten narrators, the chosen one shows its philosophy</div>
+      <div class="fr" style="--h:70rem" data-part="props.story-director.personality">
+        <section class="wp solo" style="--w:var(--accent)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Personality</b></div></nav>
+          <div class="wbody" style="--w:var(--accent)">
+            <div class="pl">
+              <div class="po" style="--w:var(--deck-lorebook)"><div class="av3">M</div><div class="tx"><b>Meridian<i>The Weaver</i></b><em>"The world breathes. Your choices matter. Let's see what emerges."</em><div class="kv2"><span class="ch">high improv</span><span class="ch">high agency</span><span class="ch">low info control</span></div></div></div>
+              <div class="po" style="--w:var(--deck-preset)"><div class="av3">C</div><div class="tx"><b>Cassian<i>The Architect</i></b><em>"Build the investment. Earn the devastation. Let the moments breathe."</em><div class="kv2"><span class="ch">low improv</span><span class="ch">medium agency</span><span class="ch">high info control</span></div></div></div>
+              <div class="po" style="--w:var(--deck-regex)"><div class="av3">V</div><div class="tx"><b>Vesper<i>The Oracle</i></b><em>"Knowledge is currency. Revelation is art. Timing is everything."</em></div></div>
+              <div class="po" style="--w:var(--deck-persona)"><div class="av3">R</div><div class="tx"><b>Rosalind<i>The Romantic</i></b><em>"Love is built in quiet moments, not grand gestures."</em></div></div>
+              <div class="po" style="--w:var(--stage-warn)"><div class="av3">M</div><div class="tx"><b>Magnus<i>The Thrill-Seeker</i></b><em>"Fortune favors the bold. The stakes are always rising."</em></div></div>
+              <div class="po" style="--w:var(--stage-var)"><div class="av3">M</div><div class="tx"><b>Morrigan<i>The Shadow</i></b><em>"The oldest stories are the ones that make you check over your shoulder."</em></div></div>
+              <div class="po" style="--w:var(--stage-ok)"><div class="av3">F</div><div class="tx"><b>Felix<i>The Jester</i></b><em>"Life's a stage, and we're all ridiculous. Might as well laugh."</em></div></div>
+              <div class="po" style="--w:var(--deck-character)"><div class="av3">C</div><div class="tx"><b>Cassandra<i>The Enigma</i></b><em>"The truth hides in plain sight. Question everything."</em></div></div>
+              <div class="po" style="--w:var(--accent)"><div class="av3">A</div><div class="tx"><b>Aldric<i>The Chronicler</i></b><em>"History breathes. Legends walk. Your story joins the eternal chronicle."</em></div></div>
+              <div class="po on" style="--w:var(--deck-lorebook)"><div class="av3">S</div><div class="tx"><b>Sage<i>The Balanced</i></b><em>"The story speaks. I listen. Together we find the way."</em>
+                <div class="kv2"><span class="ch">fluid improv</span><span class="ch">high agency</span><span class="ch">medium info control</span><span class="ch ok">Chosen</span></div>
+                <div class="lab" style="margin-top:8px">Philosophy</div><div>Serve the story, not a preference. Read what the scene needs. Let the player's choices bend the plan.</div>
+                <div class="lab" style="margin-top:8px">Favorite Story Arcs</div><div>Whatever the story is asking for.</div>
+                <div class="lab" style="margin-top:8px">Emotional Focus</div><div>The feeling the last reply left behind.</div></div></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">List (one selectable row each) &middot; chips &middot; the ten are the ported personalities; style chips read each personality's own philosophy values (the values drawn are samples)</div>
+    </div>
+
+    <!-- 4 model states -->
+    <div class="pn">
+      <div class="wf-state">Model and command mode: unset, no tool support, tool support unknown</div>
+      <div class="fr" style="--h:56rem" data-part="props.story-director.model">
+        <section class="wp solo" style="--w:var(--accent)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--accent)">
+            <section class="sec"><h4>Story Director Model</h4><div class="inp ph"><span class="grow">Same as the narrator (claude-opus-5-5)</span><svg><use href="#i-down"/></svg></div><span class="help">Unset: the Director uses the narrator's model, connection and reasoning.</span></section>
+            <section class="sec"><h4>Story Director Model</h4>
+              <div class="inp"><span class="dot r" style="--c:var(--stage-warn)"></span><span class="grow">OpenRouter &middot; mistral-small-3</span><svg><use href="#i-down"/></svg></div>
+              <div class="nt"><svg><use href="#i-alert"/></svg><div class="grow">This model reports no tool-calling support. The Story Director needs it and will fall back every turn.</div></div>
+              <div class="mode"><div><b>Tool call</b>Native provider function calls. Recommended for models with reliable tool support.</div><div class="on"><b>Tagged</b>Validated text commands for providers or models without native function calling.</div></div>
+              <div class="cap3 warn"><svg><use href="#i-alert"/></svg>Tagged recommended</div>
+              <span class="help">This model reports no native tool support. Select Tagged for reliable commands.</span></section>
+            <section class="sec"><h4>Story Director Model</h4>
+              <div class="inp"><span class="dot r" style="--c:var(--stage-var)"></span><span class="grow">Local &middot; my-finetune-7b</span><svg><use href="#i-down"/></svg></div>
+              <div class="cap3 unk"><svg><use href="#i-info"/></svg>Tool support unknown</div>
+              <span class="help">Choose Tool call only when this provider/model supports native function calls.</span></section>
+            <section class="sec"><h4>Story Director Model</h4>
+              <div class="inp bad"><span class="dot r" style="--c:var(--stage-danger-text)"></span><span class="grow">OpenRouter &middot; (connection removed)</span><svg><use href="#i-down"/></svg></div>
+              <div class="nt bad"><svg><use href="#i-alert"/></svg><div class="grow">The Director's connection is gone, so planning is skipped and replies go out without a directive.<small>Pick another model, or clear this to use the narrator's.</small></div><button class="b2">Use narrator's model</button></div></section>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">The no-tool-support line is RoleCall's exact words. The last state is new: a missing connection must say so instead of silently turning into "no directive" every turn. Model row is a protected control (director-model): themes can restyle it, never hide it.</div>
+    </div>
+
+    <!-- 5 validation -->
+    <div class="pn">
+      <div class="wf-state">Limits: Custom Instructions at 2000, a temperature out of range</div>
+      <div class="fr" style="--h:25rem" data-part="props.story-director.runtime">
+        <section class="wp solo" style="--w:var(--accent)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--accent)">
+            <div class="sr"><span><svg><use href="#i-sliders"/></svg>DM Temperature</span><span class="num2 bad">2.6</span></div>
+            <span class="help bad">Temperature is 0 to 2. Using 2 until you change it.</span>
+            <div><div class="lblr"><svg><use href="#i-pen"/></svg>Custom Instructions for DM</div>
+              <div class="ta2">Keep the tone warm and grounded; no sudden villains or outside observers; let scenes breathe. ...</div>
+              <div class="cnt"><span>Persistent, unlike the in-the-moment steering note.</span><span class="full">2000/2000</span></div></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 6 save failure + loading -->
+    <div class="pn">
+      <div class="wf-state">Saving and failing to save a setting</div>
+      <div class="fr" style="--h:20rem" data-part="props.story-director.settings">
+        <section class="wp solo" style="--w:var(--accent)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--accent)">
+            <div class="sr"><span><svg><use href="#i-wand"/></svg>Creativity</span><span class="seg3 ro"><span>Subtle</span><span>Moderate</span><span class="on">Dramatic</span></span></div>
+            <span class="live2"><svg><use href="#i-spin"/></svg>Saving...</span>
+            <div class="nt bad" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">Story Director could not be updated.<small>The scene's settings changed in another window. Your change was not saved; nothing else was touched.</small></div><button class="b2">Try again</button></div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">RoleCall's Basic Chat error words "Story Director could not be updated." &middot; every write carries expectedVersion, so a stale window cannot overwrite a newer setting</div>
+    </div>
+
+    <!-- 7 Booth -->
+    <div class="pn wide">
+      <div class="wf-state">Control Booth, Narrator section: the same switch, personality and model, in the quick-access hub</div>
+      <div class="cols" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+        <div class="fr" style="--h:31rem" data-part="scene.booth">
+          <section class="wp solo" style="--w:var(--accent)">
+            <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Control Booth</b></div></nav>
+            <div class="wbody" style="--w:var(--accent)">
+              <section class="sec" data-part="scene.booth.narrator"><h4>Narrator <span class="r">Props wing</span></h4>
+                <div class="tg2 on"><span class="ico"><svg><use href="#i-clap"/></svg></span><div class="t"><b>Story Director</b><small>Scene direction and narrator context</small></div><span class="sw on" style="--accent:var(--stage-var)"></span></div>
+                <div style="padding-left:12px;display:flex;flex-direction:column;gap:10px">
+                  <div class="pcard" style="--w:var(--deck-lorebook)"><div class="av3">S</div><div class="tx"><b>Sage<i>The Balanced</i></b><em>"The story speaks. I listen. Together we find the way."</em></div><svg style="align-self:center"><use href="#i-down"/></svg></div>
+                  <div><div class="lblr">Story Director Model</div><div class="inp"><span class="dot r" style="--c:var(--stage-ok)"></span><span class="grow">OpenRouter &middot; claude-opus-5-5</span><svg><use href="#i-down"/></svg></div><span class="help">AI model for narrative direction. Unset uses the narrator's model.</span></div>
+                  <span class="lock"><svg><use href="#i-lock"/></svg>The model row cannot be hidden by a theme.</span>
+                  <button class="b2 ghost" style="align-self:flex-start">All Director settings</button>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+        <div class="fr" style="--h:31rem" data-part="scene.booth">
+          <section class="wp solo" style="--w:var(--accent)">
+            <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Control Booth</b></div></nav>
+            <div class="wbody" style="--w:var(--accent)">
+              <section class="sec" data-part="scene.booth.narrator"><h4>Narrator <span class="r">Props wing</span></h4>
+                <div class="tg2"><span class="ico" style="color:var(--stage-mute)"><svg><use href="#i-clap"/></svg></span><div class="t"><b>Story Director</b><small>Scene direction and narrator context</small></div><span class="sw"></span></div></section>
+              <div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">Reply #6 is being planned. A change now applies to the next reply.<small>The Director's model and personality are held until this one finishes.</small></div></div>
+              <section class="sec"><h4>Narrator</h4>
+                <div class="tg2 on"><span class="ico"><svg><use href="#i-clap"/></svg></span><div class="t"><b>Story Director</b><small>Scene direction and narrator context</small></div><span class="sw on" style="--accent:var(--stage-var)"></span></div>
+                <div class="inp ro"><span class="grow">OpenRouter &middot; claude-opus-5-5</span><svg><use href="#i-down"/></svg></div></section>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="wf-comp">Booth rule (control-booth wireframe): the Booth composes, never forks, so this is the Props wing's switch, personality picker and model picker, one value each &middot; RoleCall's sub-label "Scene direction, storyboards, and narrator context" drops "storyboards" because there is no storyboard in the Director yet; "tracker updates" leaves the model description for the same reason &middot; RoleCall's Booth has no command mode, instructions or temperature; neither does this one &middot; parts: scene.booth.narrator</div>
+    </div>
+
+  </div>
+
+  <section class="q"><b>Needs your eye</b>
+    RoleCall's Booth has no command mode, Custom Instructions or Temperature, so the Booth stays at three controls and "All Director settings" jumps to the Props wing. The Props row is the one place all eight settings live.
+    <span class="rec">Recommendation: as drawn.</span></section>
+</div>
+</body>
+</html>

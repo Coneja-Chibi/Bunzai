@@ -1,0 +1,11 @@
+/** ui.section-header slot-header (Encore): a section is a HUD bar, slot number then name then a boxed readout, with a top rail in the brand color. */
+html[data-surface-ui-section-header="slot-header"] {
+  & .lib.rc .lsec { gap: .4rem .9rem; margin: 1.1rem 0 .6rem; padding: .35rem .8rem; background: var(--bk-surface-panel); border: 0; box-shadow: inset 0 0 0 1px var(--bk-line), inset 0 2px 0 var(--bk-role-brand); }
+  & .lib.rc .lsec::before { display: none; }
+  & .lib.rc .lsec .num { font: 500 .8125rem var(--font-mono); letter-spacing: .08em; text-shadow: none; color: var(--bk-role-brand-text); }
+  & .lib.rc .lsec .stitle { font-size: 1.05rem; letter-spacing: .14em; text-shadow: none; }
+  & .lib.rc .lsec .ssub { font: 500 .75rem var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--bk-text-dim); }
+  & .lib.rc .lsec .scount { border: 1px solid var(--bk-line-control); background: var(--bk-surface-ink); }
+  & .scn .plaque .s-title { font-family: var(--font-mono); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  & .scn .plaque .s-act { font-family: var(--font-mono); }
+}

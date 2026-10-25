@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en" data-chrome="rolecall">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messenger port</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<script src="messenger-icons.js"></script>
+<style>
+/*
+ * RoleCall's chat-appearance chooser and its "Messenger" layout, ported to Bunraku (plan 20).
+ * Sources (RoleCall origin/Mainstage):
+ *   components/scene/ChatAppearanceChooser.tsx + .module.css   the chooser page
+ *   styles/neo-ui.css:7-10                                     --rc-neo-* (canvas, panel, ink, hard)
+ *   components/scene/discord/DiscordChrome.tsx + discord.css    the Messenger shell, every size and color below
+ *   lib/desktop98/programs.ts                                   rail order and tab titles
+ * The Messenger palette is that layout's own token set (it ignores the theme in RoleCall too). It is
+ * declared once here as --msg-* and becomes the Messenger appearance's token block in tokens.css.
+ */
+:root {
+  --rc-neo-canvas: #0a0a0b; --rc-neo-panel: #1c1a22; --rc-neo-ink: #fafaf9; --rc-neo-hard: #000;  /* neo-ui.css:7-10 */
+  --chooser-user: var(--accent); --chooser-character: var(--deck-character, #e879a6);
+  /* discord.css: rail #1e1f22, sidebar #2b2d31, chat #313338, user bar #232428, hover #35373c, active #404249,
+     blurple #5865f2, text #dbdee1, bright #f2f3f5, muted #b5bac1, faint #a0a4ac, input #383a40, divider #35363c */
+  --msg-rail: #1e1f22; --msg-side: #2b2d31; --msg-chat: #313338; --msg-bar: #232428; --msg-hover: #35373c;
+  --msg-active: #404249; --msg-brand: #5865f2; --msg-text: #dbdee1; --msg-bright: #f2f3f5; --msg-mute: #b5bac1;
+  --msg-faint: #a0a4ac; --msg-input: #383a40; --msg-divider: #35363c; --msg-edge: #26272b; --msg-pill: #383b45;
+  --msg-pill-text: #c9ceff; --msg-modal-edge: #44464d; --msg-close-ring: #767b87; --msg-focus: #aab1ff;
+  --msg-rail-w: 72px; --msg-side-w: 240px; --msg-head-h: 56px; --msg-portrait-w: clamp(240px, 20vw, 288px);
+  --msg-left: calc(var(--msg-rail-w) + var(--msg-side-w));
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--rc-neo-canvas); color: var(--rc-neo-ink); font: 14px/1.45 var(--rc-font-inter); }
+svg.i { width: 1em; height: 1em; display: block; }
+button { font: inherit; color: inherit; cursor: pointer; }
+
+/* ---- wireframe-only switcher (not product) ---- */
+.wf-bar { position: fixed; z-index: 999; top: 8px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; padding: 4px;
+  background: var(--rc-zinc-900); border: 1px solid var(--rc-zinc-700); border-radius: 6px; font-size: 12px; }
+.wf-bar button { border: 0; background: transparent; color: var(--rc-zinc-300); padding: 6px 10px; border-radius: 4px; }
+.wf-bar button[aria-pressed="true"] { background: var(--rc-zinc-700); color: var(--rc-zinc-50); }
+.wf-note { position: fixed; z-index: 998; bottom: 8px; right: 8px; max-width: 360px; padding: 10px 12px; font-size: 12px; line-height: 1.5;
+  background: var(--rc-zinc-950); border: 1px solid var(--rc-zinc-700); border-radius: 6px; color: var(--rc-zinc-300); }
+.wf-note b { color: var(--rc-zinc-50); }
+html.embed .wf-bar, html.embed .wf-note { display: none; }
+.view[hidden] { display: none !important; }
+
+/* =================== 1. Chooser (ChatAppearanceChooser.module.css) =================== */
+.ch { position: relative; isolation: isolate; min-height: 100dvh; padding: 28px clamp(20px,4vw,80px) 40px; background: var(--rc-neo-canvas); }
+.ch-rays { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .85;
+  background: radial-gradient(60% 70% at 25% -10%, color-mix(in srgb, var(--chooser-user) 28%, transparent), transparent 70%),
+              radial-gradient(60% 70% at 75% -10%, color-mix(in srgb, var(--chooser-character) 24%, transparent), transparent 70%); }
+.ch-in { max-width: 1600px; margin: auto; }
+.title { font-family: var(--font-fancy), "Cinzel", serif; font-weight: 700; letter-spacing: .02em; }
+.ch-mast { display: flex; align-items: center; gap: 24px; padding-bottom: 20px; border-bottom: 2px solid var(--rc-neo-panel); }
+.ch-mast .title { font-size: 24px; }
+.ch-mast span:last-child, .ch-eyebrow, .ch-num { font-size: 12px; letter-spacing: .15em; }
+.ch-mast span:last-child { color: var(--rc-zinc-300); }
+.ch-intro { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 32px; margin: 40px 0 32px; }
+.ch-eyebrow { margin: 0 0 12px; }
+.ch-intro h1 { margin: 0; font-size: clamp(36px,4vw,56px); line-height: 1.15; text-shadow: 3px 3px var(--rc-neo-hard); }
+.ch-intro h1 span { color: color-mix(in srgb, var(--chooser-character) 55%, white); }
+.ch-intro p { max-width: 540px; font-size: 14px; line-height: 1.7; color: var(--rc-zinc-300); margin: 0 0 8px; }
+.ch-intro .sub { font-size: 20px; color: var(--rc-neo-ink); }
+.ch-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; }
+.card { flex: 1 1 270px; max-width: 400px; display: flex; flex-direction: column; background: var(--rc-neo-panel);
+  border: 3px solid var(--rc-neo-hard); box-shadow: 5px 5px var(--rc-neo-hard); cursor: pointer; }
+.card[data-selected="true"] { border-color: var(--chooser-user); box-shadow: 5px 5px var(--chooser-character); }
+.card-h { display: flex; align-items: center; gap: 10px; padding: 16px 14px; }
+.card-h .title { font-size: 19px; }
+.ch-num { color: color-mix(in srgb, var(--chooser-character) 55%, white); }
+.check { display: grid; place-items: center; margin-left: auto; width: 24px; height: 24px; border: 2px solid var(--rc-zinc-400); font-size: 16px; }
+.card[data-selected="true"] .check { background: var(--rc-neo-canvas); border-color: var(--rc-neo-ink); }
+.shot { aspect-ratio: 1920/947; background: var(--rc-neo-canvas); display: flex; align-items: center; justify-content: center; color: var(--rc-zinc-500); font-size: 12px;
+  border-top: 1px solid var(--rc-zinc-800); border-bottom: 1px solid var(--rc-zinc-800); }
+.mini { width: 92%; height: 84%; display: grid; gap: 3px; }
+.mini.stage { grid-template-columns: 6% 1fr 6%; } .mini.stage i { background: var(--rc-zinc-800); } .mini.stage i:nth-child(2) { background: var(--rc-zinc-900); }
+.mini.mess { grid-template-columns: 5% 15% 1fr 17%; } .mini.mess i:nth-child(1) { background: var(--msg-rail); } .mini.mess i:nth-child(2) { background: var(--msg-side); }
+.mini.mess i:nth-child(3) { background: var(--msg-chat); } .mini.mess i:nth-child(4) { background: var(--msg-side); }
+.copy { display: flex; flex-direction: column; gap: 10px; padding: 18px 16px 10px; font-size: 14px; line-height: 1.65; }
+.copy span { color: var(--rc-zinc-300); }
+.prev { align-self: flex-end; margin: 0 8px 8px; min-height: 40px; display: flex; align-items: center; gap: 6px; font-size: 12px; border: 0; background: transparent; padding: 0 12px; }
+.ch-cap { margin: 20px 0; font-size: 12px; color: var(--rc-zinc-300); text-align: center; }
+.ch-foot { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 22px; border-top: 2px solid var(--rc-neo-panel); }
+.primary { min-height: 48px; padding: 12px 24px; display: flex; align-items: center; gap: 8px; border: 2px solid var(--chooser-user);
+  background: var(--rc-neo-panel); box-shadow: 4px 4px var(--chooser-character); font-weight: 800; }
+.primary:hover { background: color-mix(in srgb, var(--chooser-user) 15%, var(--rc-neo-canvas)); }
+
+/* =================== 2-4. Messenger (discord.css) =================== */
+.ms { position: relative; height: 100dvh; overflow: hidden; background: var(--msg-chat); color: var(--msg-text); font: 14px/1.45 var(--rc-font-inter); isolation: isolate; }
+.ms button:focus-visible { outline: 2px solid var(--msg-focus); outline-offset: 2px; }
+.ms-left { position: absolute; inset: 0 auto 0 0; width: var(--msg-left); display: flex; z-index: 50; }
+.av { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; background: var(--msg-brand); color: white; font-size: 13px; font-weight: 700; overflow: hidden; }
+.rail { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 0 0 var(--msg-rail-w); padding: 14px 0 8px; background: var(--msg-rail); min-height: 0; }
+.rail-list { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-height: 0; width: 100%; overflow-y: auto; scrollbar-width: thin; padding-bottom: 8px; }
+.tab { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; min-height: 48px; border: 0; padding: 0; border-radius: 16px; background: var(--msg-chat); color: var(--msg-text); position: relative; }
+.tab:is(:hover,[data-active="true"]) { background: var(--msg-brand); color: #fff; }
+.tab svg { width: 23px; height: 23px; }
+.tab[data-active="true"]::before { content: ""; position: absolute; left: -12px; width: 4px; height: 34px; border-radius: 0 4px 4px 0; background: white; }
+.divider { width: 28px; height: 2px; min-height: 2px; background: var(--msg-divider); }
+.side { display: flex; flex: 1; flex-direction: column; min-width: 0; background: var(--msg-side); }
+.side-h { min-height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 18px; box-shadow: 0 1px 0 var(--msg-rail); font-weight: 750; font-size: 16px; }
+.browse { display: flex; align-items: center; gap: 12px; padding: 12px; margin: 12px 8px 8px; background: transparent; border: 0; border-radius: 5px; text-align: left; }
+.browse:hover, .dm:hover, .profile:hover, .gear:hover { background: var(--msg-hover); }
+.browse svg { width: 20px; height: 20px; color: var(--msg-mute); }
+.dms { flex: 1; min-height: 0; overflow-y: auto; padding: 4px 8px 12px; }
+.dms h2 { margin: 8px 10px 10px; color: var(--msg-mute); font: 700 11px/1.4 var(--rc-font-inter); letter-spacing: .04em; }
+.dm { display: flex; width: 100%; align-items: center; gap: 10px; padding: 8px; margin: 2px 0; background: transparent; border: 0; border-radius: 5px; text-align: left; }
+.dm[data-active="true"] { background: var(--msg-active); color: #fff; }
+:is(.dm,.profile) > span:last-child { min-width: 0; display: flex; flex-direction: column; flex: 1; }
+:is(.dm,.profile) strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 600; }
+:is(.dm,.profile) small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--msg-mute); font-size: 11px; }
+.acts { display: flex; gap: 6px; flex-wrap: wrap; max-height: 100px; overflow-y: auto; padding: 8px 12px; }
+.acts button { border: 0; background: var(--msg-pill); color: var(--msg-pill-text); font-size: 11px; padding: 4px 8px; border-radius: 4px; }
+.ubar { display: flex; align-items: center; gap: 4px; min-height: 62px; padding: 8px; background: var(--msg-bar); }
+.profile { display: flex; flex: 1; min-width: 0; align-items: center; gap: 8px; text-align: left; border: 0; background: transparent; padding: 4px; border-radius: 5px; }
+.gear, .mmenu, .mclose { display: flex; align-items: center; justify-content: center; background: transparent; border: 0; border-radius: 5px; width: 36px; height: 36px; padding: 7px; flex-shrink: 0; }
+.gear svg, .mmenu svg, .mclose svg { width: 22px; height: 22px; }
+.head { position: absolute; top: 0; left: var(--msg-left); right: 0; height: var(--msg-head-h); display: flex; align-items: center; gap: 10px; padding: 0 20px;
+  background: var(--msg-chat); border-bottom: 1px solid var(--msg-edge); box-shadow: 0 1px 3px color-mix(in srgb, var(--msg-rail) 19%, transparent); z-index: 50; }
+.head > div { min-width: 0; display: flex; flex-direction: column; }
+.head strong { color: var(--msg-bright); font-size: 16px; }
+.head small { font-size: 11px; color: var(--msg-mute); }
+.portrait { position: absolute; right: 0; top: var(--msg-head-h); bottom: 0; width: var(--msg-portrait-w); display: flex; flex-direction: column; gap: 14px; padding: 18px;
+  background: var(--msg-side); border-left: 1px solid var(--msg-active); z-index: 50; }
+.portrait > button { flex: 1; min-height: 0; border: 0; border-radius: 8px; padding: 0; background: var(--msg-bar); overflow: hidden; }
+.portrait .art { width: 100%; height: 100%; background: linear-gradient(170deg, color-mix(in srgb, var(--chooser-character) 45%, var(--msg-bar)), var(--msg-bar) 75%); display: grid; place-items: end center; padding-bottom: 12px; color: var(--msg-mute); font-size: 11px; }
+.portrait > div { display: flex; flex-direction: column; text-align: center; }
+.portrait strong { color: var(--msg-bright); }
+.portrait small { color: var(--msg-mute); font-size: 11px; }
+.mmenu, .mclose { display: none; }
+
+/* the existing Bunraku transcript + composer, positioned by the shell (discord.css:56-90) */
+.chat { position: absolute; inset: var(--msg-head-h) var(--msg-portrait-w) 0 var(--msg-left); display: flex; flex-direction: column; background: var(--msg-chat); z-index: 40; }
+.chat[hidden] { display: none; }
+.tx { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 24px; font-size: 16px; color: var(--msg-text); }
+.msg { display: flex; gap: 16px; padding: 10px 0 14px; }
+.msg .av { width: 40px; height: 40px; flex-basis: 40px; }
+.msg-h { margin-bottom: 4px; display: flex; align-items: baseline; gap: 8px; }
+.msg-h b { color: var(--msg-bright); font: 600 15px/1.4 var(--rc-font-inter); }
+.msg-h time { color: var(--msg-faint); font-size: 11px; }
+.msg p { margin: 0 0 6px; line-height: 1.6; }
+.msg em { color: var(--msg-mute); }
+.msg q { color: var(--msg-pill-text); }
+.comp { padding: 8px 20px 20px; }
+.comp-shell { display: flex; align-items: flex-end; gap: 6px; padding: 6px; background: var(--msg-input); border-radius: 8px; }
+.comp-shell textarea { flex: 1; min-width: 0; resize: none; border: 0; background: var(--msg-input); color: var(--msg-text); border-radius: 6px; padding: 10px 8px; font: 16px/1.4 var(--rc-font-inter); height: 42px; }
+.comp-shell textarea::placeholder { color: var(--msg-faint); }
+.comp-shell button { width: 36px; height: 36px; display: grid; place-items: center; border: 0; border-radius: 6px; background: var(--msg-input); color: var(--msg-text); }
+
+/* the settings surface: one element, two views (tab = in place of the chat; modal = centered dialog) */
+.sb { position: absolute; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px;
+  background: color-mix(in srgb, #14151b 75%, transparent); backdrop-filter: blur(5px); }
+.sb[hidden] { display: none !important; }  /* discord.css:92 */
+.sb[data-view="tab"] { inset: var(--msg-head-h) var(--msg-portrait-w) 0 var(--msg-left); z-index: 45; display: block; padding: 0; background: var(--msg-chat); backdrop-filter: none; }
+.sb[data-view="tab"] .set { width: 100%; height: 100%; max-height: none; border: 0; border-radius: 0; box-shadow: none; }
+.set { display: flex; width: min(1180px,100%); height: 100%; max-height: 920px; overflow: hidden; border: 1px solid var(--msg-modal-edge); border-radius: 10px; box-shadow: 0 24px 80px #0008; background: var(--msg-chat); }
+.snav { display: flex; flex-direction: column; width: 220px; flex: 0 0 220px; padding: 24px 14px; background: var(--msg-side); overflow-y: auto; }
+.snav[hidden] { display: none; }
+.cap { padding: 14px 10px 8px; color: var(--msg-mute); font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+.snav > button { border: 0; border-radius: 4px; background: transparent; color: var(--msg-mute); text-align: left; padding: 9px 10px; margin: 1px 0; }
+.snav > button:hover { background: var(--msg-hover); color: var(--msg-bright); }
+.snav > button[aria-current="page"] { background: var(--msg-active); color: white; }
+.scont { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; }
+.scont > header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 28px 20px; }
+.scont > header span { color: var(--msg-mute); font-size: 10px; font-weight: 700; letter-spacing: .07em; }
+.scont > header h2 { margin: 5px 0 0; color: var(--msg-bright); font: 700 24px/1.25 var(--rc-font-inter); }
+.xbtn { display: flex; align-items: center; flex-direction: column; gap: 3px; background: transparent; border: 0; padding: 0; color: var(--msg-mute); }
+.xbtn svg { width: 34px; height: 34px; padding: 6px; border: 2px solid var(--msg-close-ring); border-radius: 50%; }
+.xbtn small { font-size: 10px; }
+.outlet { flex: 1; min-height: 0; padding: 0 20px 20px; }
+.body { height: 100%; overflow: auto; border-radius: 6px; background: var(--msg-chat); border: 1px dashed var(--msg-modal-edge); display: grid; place-items: center; text-align: center; color: var(--msg-mute); font-size: 13px; padding: 24px; }
+.body b { color: var(--msg-bright); display: block; margin-bottom: 6px; font-size: 14px; }
+
+@media (max-width: 1023px) {
+  .ms.has-portrait { --msg-portrait-w: 0px; --msg-head-h: 144px; }
+  .ms.has-portrait .head { right: 128px; }
+  .portrait { top: 0; bottom: auto; width: 128px; height: 144px; padding: 8px; border-left: 0; border-bottom: 1px solid var(--msg-edge); background: var(--msg-chat); }
+  .portrait > div { display: none; }
+}
+@media (max-width: 640px) {
+  .ms { --msg-left: 0px; }
+  .ms-left { display: none; width: min(312px, calc(100% - 40px)); z-index: 102; box-shadow: 8px 0 32px #0007; }
+  .ms[data-nav-open="true"] .ms-left { display: flex; }
+  .ms[data-nav-open="true"] .backdrop { display: block; }
+  .backdrop { display: none; position: absolute; inset: 0; border: 0; background: #0008; z-index: 101; }
+  .mmenu, .mclose { display: flex; }
+  .head { padding: 0 10px; }
+  .tx { padding: 12px; }
+  .comp { padding: 6px 10px 12px; }
+  .sb { padding: 0; } .set { border: 0; border-radius: 0; max-height: none; }
+  .snav { width: 124px; flex-basis: 124px; padding: 12px 6px; }
+  .snav > button { padding: 10px 6px; font-size: 12px; }
+  .scont > header { padding: 16px 12px; } .scont > header h2 { font-size: 19px; }
+  .outlet { padding: 0 8px 10px; }
+  .ch-intro { grid-template-columns: 1fr; gap: 12px; margin-top: 28px; } .ch-mast span:last-child { display: none; }
+  .card { max-width: none; flex-basis: 100%; } .ch-foot { flex-direction: column; align-items: stretch; }
+}
+
+/* phone frame view */
+.phone { min-height: 100dvh; display: flex; gap: 32px; justify-content: center; align-items: center; padding: 60px 16px 16px; flex-wrap: wrap; }
+.phone figure { margin: 0; text-align: center; color: var(--rc-zinc-400); font-size: 12px; }
+.phone iframe { width: 390px; height: 760px; border: 1px solid var(--rc-zinc-700); border-radius: 18px; background: var(--msg-chat); display: block; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<nav class="wf-bar" aria-label="Wireframe views">
+  <button data-go="chooser">1 Chooser</button>
+  <button data-go="chat">2 Messenger</button>
+  <button data-go="tab">3 Tab open</button>
+  <button data-go="modal">4 Settings</button>
+  <button data-go="phone">5 Phone</button>
+</nav>
+
+<!-- ============ 1. Chooser ============ -->
+<main class="view ch" data-view="chooser">
+  <div class="ch-rays" aria-hidden="true"></div>
+  <div class="ch-in">
+    <div class="ch-mast"><span class="title">Bunraku</span><span>YOUR SPACE / YOUR STORIES</span></div>
+    <header class="ch-intro">
+      <div><p class="ch-eyebrow">A space for your stories</p><h1 class="title">Choose your<br><span>chat layout.</span></h1></div>
+      <div><p class="sub">Same characters. Same stories. Your kind of stage.</p><p>Choose a layout for all your chats. You can change it anytime in Appearance.</p></div>
+    </header>
+    <div class="ch-cards" role="radiogroup" aria-label="Chat layout">
+      <article class="card" data-pick="stage" data-selected="true" role="radio" aria-checked="true" tabindex="0">
+        <div class="card-h"><span class="ch-num">01</span><span class="title">Full Chat</span><span class="check" data-ic="check"></span></div>
+        <div class="shot"><div class="mini stage"><i></i><i></i><i></i></div></div>
+        <div class="copy"><strong>Your complete writing workspace.</strong><span>Keep the conversation, character details and trackers together, with your tools close at hand.</span></div>
+        <button class="prev" type="button"><span data-ic="expand"></span>Preview</button>
+      </article>
+      <article class="card" data-pick="messenger" data-selected="false" role="radio" aria-checked="false" tabindex="-1">
+        <div class="card-h"><span class="ch-num">02</span><span class="title">Messenger</span><span class="check"></span></div>
+        <div class="shot"><div class="mini mess"><i></i><i></i><i></i><i></i></div></div>
+        <div class="copy"><strong>A familiar place to catch up.</strong><span>Recent characters, your persona profile and a conversation with one settings workspace.</span></div>
+        <button class="prev" type="button"><span data-ic="expand"></span>Preview</button>
+      </article>
+    </div>
+    <p class="ch-cap">Real screenshots of each layout go in the cards once Messenger is built (RoleCall uses screenshots of one test chat).</p>
+    <footer class="ch-foot"><p role="status" id="ch-status">Full Chat selected</p><button class="primary" type="button" data-go="chat" id="ch-use">Use Full Chat <span data-ic="arrow-right"></span></button></footer>
+  </div>
+</main>
+
+<!-- ============ 2-4. Messenger ============ -->
+<div class="view ms has-portrait" data-view="messenger" data-nav-open="false">
+  <button class="backdrop" type="button" aria-label="Close recent characters" data-nav="close"></button>
+  <div class="ms-left">
+    <nav class="rail" aria-label="Feature tabs">
+      <button class="tab" type="button" title="Chat" aria-label="Chat" data-active="true" data-chat><span data-ic="message-circle"></span></button>
+      <span class="divider"></span>
+      <div class="rail-list" id="rail"></div>
+    </nav>
+    <aside class="side" aria-label="Character conversations">
+      <div class="side-h"><span>Bunraku</span><button class="mclose" type="button" aria-label="Close character sidebar" data-nav="close"><span data-ic="chevron-left"></span></button></div>
+      <button class="browse" type="button" data-open="characters"><span data-ic="message-circle"></span>Browse Characters</button>
+      <div class="dms"><h2>RECENT CHARACTERS</h2>
+        <button class="dm" type="button" data-active="true"><span class="av">VE</span><span><strong>Vera Lindqvist</strong><small>The lighthouse keeper</small></span></button>
+        <button class="dm" type="button"><span class="av">OK</span><span><strong>Oskar</strong><small>Night market fixer</small></span></button>
+        <button class="dm" type="button"><span class="av">MA</span><span><strong>Marisol</strong></span></button>
+        <button class="dm" type="button"><span class="av">TH</span><span><strong>The Hollow King</strong><small>Group scene</small></span></button>
+      </div>
+      <nav class="acts" aria-label="Active features"><button type="button" data-open="director">Story Director</button><button type="button" data-open="regex">Regex (2)</button><button type="button">Weather</button></nav>
+      <footer class="ubar">
+        <button class="profile" type="button" aria-label="Profile settings" data-modal="persona"><span class="av">CH</span><span><strong>Chi</strong><small>Profile</small></span></button>
+        <button class="gear" type="button" aria-label="Open settings" title="Settings" data-modal="characters"><span data-ic="settings"></span></button>
+      </footer>
+    </aside>
+  </div>
+  <header class="head"><button class="mmenu" type="button" aria-label="Show recent characters" data-nav="open"><span data-ic="menu"></span></button><span class="av">VE</span><div><strong>Vera Lindqvist</strong><small>Character conversation</small></div></header>
+  <aside class="portrait" aria-label="Character portrait"><button type="button" aria-label="View Vera Lindqvist portrait"><span class="art">portrait (opens the existing portrait viewer)</span></button><div><strong>Vera Lindqvist</strong><small>Character portrait</small></div></aside>
+
+  <section class="chat" id="chat" aria-label="Conversation">
+    <div class="tx">
+      <div class="msg"><span class="av">VE</span><div><div class="msg-h"><b>Vera Lindqvist</b><time>Today at 9:41 PM</time></div>
+        <p><em>The lamp turns once over the water before she answers.</em> <q>You came all this way in the storm. Either you are very brave or you are lost.</q></p></div></div>
+      <div class="msg"><span class="av">CH</span><div><div class="msg-h"><b>Chi</b><time>Today at 9:42 PM</time></div>
+        <p><q>Lost, mostly.</q> <em>I shake the rain off my coat.</em> <q>Is there tea?</q></p></div></div>
+      <div class="msg"><span class="av">VE</span><div><div class="msg-h"><b>Vera Lindqvist</b><time>Today at 9:42 PM</time></div>
+        <p><em>She is already reaching for the kettle.</em> <q>There is always tea.</q></p></div></div>
+    </div>
+    <div class="comp"><div class="comp-shell"><button type="button" aria-label="Writing tools"><span data-ic="pen-line"></span></button><textarea placeholder="Message Vera Lindqvist"></textarea><button type="button" aria-label="Send"><span data-ic="arrow-right"></span></button></div></div>
+  </section>
+
+  <div class="sb" id="sb" data-view="tab" hidden>
+    <div class="set" id="set" role="region" aria-label="Feature workspace">
+      <nav class="snav" id="snav" hidden aria-label="Scene settings sections"></nav>
+      <section class="scont"><header><div><span id="s-cap">FEATURE WORKSPACE</span><h2 id="s-title">Lorebooks</h2></div><button class="xbtn" type="button" id="s-close"><span data-ic="x"></span><small id="s-esc" hidden>ESC</small></button></header>
+        <div class="outlet"><div class="body" id="s-body"></div></div></section>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 5. Phone ============ -->
+<div class="view phone" data-view="phone">
+  <figure><iframe title="Phone chat" data-src="?embed&v=chat"></iframe>Chat (portrait shrinks into the header corner)</figure>
+  <figure><iframe title="Phone nav" data-src="?embed&v=nav"></iframe>Menu opens rail + recents as a drawer</figure>
+  <figure><iframe title="Phone settings" data-src="?embed&v=modal"></iframe>Settings fills the screen</figure>
+</div>
+
+<aside class="wf-note" id="note"></aside>
+
+<script>
+// Rail = every Bunraku wing tab that exists, in RoleCall's order (programs.ts GROUPS, left wings then right), with RoleCall's titles.
+const PROGRAMS = [
+  ["characters", "Characters", "contact-round", "Cast wing: the character tab"],
+  ["persona", "My Persona", "user-round", "Cast wing: the persona tab"],
+  ["lorebook", "Lorebooks", "book-open", "World wing: lorebooks"],
+  ["compendium", "Compendium", "library-big", "World wing: compendium"],
+  ["prompts", "Generation", "sliders-horizontal", "Prompting wing: preset + samplers (RoleCall folds the sampler here too)"],
+  ["guides", "Guides", "compass", "Prompting wing: guides"],
+  ["regex", "Regex Workshop", "regex", "Prompting wing: regex"],
+  ["author-note", "Scene Note", "sticky-note", "Prompting wing: author note"],
+  ["props", "Add / Remove Features", "puzzle", "Props wing"],
+  ["final-cut", "Final Cut", "scissors", "Final Cut"],
+  ["model", "AI Connection", "plug", "AI wing: model"],
+  ["display", "Control Panel", "monitor-cog", "Stage wing: display"],
+  ["image-gallery", "My Pictures", "image", "Stage wing: gallery"],
+  ["inspector", "Context Inspector", "scan-search", "Context wing: inspector"],
+  ["memory", "Memory", "history", "Context wing: memory"],
+  ["director", "Story Director", "clapperboard", "Director"],
+  ["ttrpg", "TTRPG", "dices", "Tracker props get their own tab when switched on"],
+];
+const NOTES = {
+  chooser: "<b>Chooser.</b> Shows once, the first time you open a chat, until you pick. Full Chat is preselected. Same page, copy and look as RoleCall's chooser, with only the two layouts Bunraku has. Saved per studio; Settings &gt; Appearance gets a Chat layout row to change it later.",
+  chat: "<b>Messenger.</b> RoleCall's Discord-style shell around the same Bunraku transcript and composer. Rail = one icon per feature tab; sidebar = Browse Characters, recent chats, active features, your persona; portrait on the right. Click a rail icon, the persona or the gear.",
+  tab: "<b>Tab view.</b> A rail icon swaps the chat for that feature's panel, in place. The panel is the same component the wings use, not a copy. X goes back to chat.",
+  modal: "<b>Settings view.</b> The gear or your profile opens every tab as one dialog with a section list. Esc or outside click closes. Tabs you visited stay mounted, so drafts survive switching.",
+  phone: "<b>Phone.</b> Under 640px the rail + recents become a drawer behind a menu button; under 1024px the portrait moves to a 128x144 corner of the header.",
+};
+const ic = (n) => `<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n] || ""}</svg>`;
+const fill = (root) => root.querySelectorAll("[data-ic]").forEach((el) => { el.innerHTML = ic(el.dataset.ic); el.style.display = "inline-flex"; });
+
+const rail = document.getElementById("rail");
+for (const [id, title, icon] of PROGRAMS) {
+  const b = document.createElement("button");
+  b.className = "tab"; b.type = "button"; b.title = title; b.setAttribute("aria-label", title); b.dataset.open = id; b.dataset.ic = icon;
+  rail.appendChild(b);
+}
+const snav = document.getElementById("snav");
+snav.insertAdjacentHTML("beforeend", `<span class="cap">YOUR PROFILE</span><button type="button" data-modal="persona">My Profile</button><span class="cap">SCENE SETTINGS</span>`);
+for (const [id, title] of PROGRAMS) if (id !== "persona") snav.insertAdjacentHTML("beforeend", `<button type="button" data-modal="${id}">${title}</button>`);
+fill(document);
+
+const ms = document.querySelector(".ms"), sb = document.getElementById("sb"), chat = document.getElementById("chat");
+const find = (id) => PROGRAMS.find((p) => p[0] === id);
+function setRail(id) { ms.querySelectorAll(".tab").forEach((t) => t.dataset.active = String(id ? t.dataset.open === id : t.hasAttribute("data-chat"))); }
+function body(id) { const p = find(id); document.getElementById("s-body").innerHTML = `<div><b>${p[1]}</b>${p[3]}<br>rendered here unchanged, in the Messenger palette</div>`; }
+let activeTab = null;
+function showChat() { activeTab = null; sb.hidden = true; chat.hidden = false; setRail(null); ms.dataset.navOpen = "false"; }
+function openTab(id) {
+  const p = find(id); if (!p) return;
+  activeTab = id; sb.hidden = false; sb.dataset.view = "tab"; chat.hidden = true; snav.hidden = true; setRail(id);
+  document.getElementById("s-cap").textContent = "FEATURE WORKSPACE"; document.getElementById("s-title").textContent = p[1];
+  document.getElementById("s-esc").hidden = true; document.getElementById("s-close").setAttribute("aria-label", "Back to chat"); body(id); ms.dataset.navOpen = "false";
+}
+function openModal(id) {
+  sb.hidden = false; sb.dataset.view = "modal"; snav.hidden = false;
+  document.getElementById("s-cap").textContent = "BUNRAKU SETTINGS"; document.getElementById("s-title").textContent = id === "persona" ? "My Profile" : find(id)[1];
+  document.getElementById("s-esc").hidden = false; document.getElementById("s-close").setAttribute("aria-label", "Close settings");
+  snav.querySelectorAll("button").forEach((b) => b.setAttribute("aria-current", b.dataset.modal === id ? "page" : "false")); body(id); ms.dataset.navOpen = "false";
+}
+// Closing the dialog returns to the open tab, or to the chat (DiscordChrome closeSettings keeps activeTabId).
+function closeModal() { if (activeTab) openTab(activeTab); else showChat(); }
+document.getElementById("s-close").onclick = () => sb.dataset.view === "modal" ? closeModal() : showChat();
+sb.addEventListener("click", (e) => { if (e.target === sb && sb.dataset.view === "modal") closeModal(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !sb.hidden && sb.dataset.view === "modal") closeModal(); });
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("[data-open],[data-modal],[data-chat],[data-nav],[data-pick],[data-go]");
+  if (!t) return;
+  if (t.dataset.pick) {
+    document.querySelectorAll(".card").forEach((c) => { const on = c === t; c.dataset.selected = String(on); c.setAttribute("aria-checked", String(on)); c.querySelector(".check").innerHTML = on ? ic("check") : ""; });
+    const name = t.dataset.pick === "stage" ? "Full Chat" : "Messenger";
+    document.getElementById("ch-status").textContent = `${name} selected`;
+    const use = document.getElementById("ch-use"); use.innerHTML = `Use ${name} ${ic("arrow-right")}`; use.dataset.go = t.dataset.pick === "stage" ? "chooser" : "chat";
+    return;
+  }
+  if (t.dataset.go) return go(t.dataset.go);
+  if (t.dataset.nav) { ms.dataset.navOpen = String(t.dataset.nav === "open"); return; }
+  if (t.hasAttribute("data-chat")) return showChat();
+  if (t.dataset.open) return openTab(t.dataset.open);
+  if (t.dataset.modal) return openModal(t.dataset.modal);
+});
+function go(v) {
+  const view = v === "chooser" ? "chooser" : v === "phone" ? "phone" : "messenger";
+  document.querySelectorAll(".view").forEach((el) => el.hidden = el.dataset.view !== view);
+  document.querySelectorAll(".wf-bar button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.go === v)));
+  if (view === "messenger") { showChat(); if (v === "tab") openTab("lorebook"); if (v === "modal") openModal("prompts"); if (v === "nav") ms.dataset.navOpen = "true"; }
+  if (view === "phone") document.querySelectorAll(".phone iframe").forEach((f) => { if (!f.src) f.src = f.dataset.src; });
+  document.getElementById("note").innerHTML = NOTES[v] || NOTES.chat;
+}
+const qs = new URLSearchParams(location.search);
+if (qs.has("embed")) document.documentElement.classList.add("embed");
+go(qs.get("v") || "chooser");
+</script>
+</body>
+</html>

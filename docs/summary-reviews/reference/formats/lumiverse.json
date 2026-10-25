@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/lumiverse",
+  "sourcePath": "docs/reference/formats/lumiverse.md",
+  "sourceHash": "sha256:211d2c171e2799307d4cc13d6efceb5abfeef58d32e6d97f7c26b813b7c7189a",
+  "semanticSummaryHash": "sha256:552710c254070b7905a66a15437fbd8a298314de47f20b158c82d6fed256073b",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page matches the current sources, including the persona and preset codec paths; links and paths resolve; sidecar fresh.",
+  "reviewedAt": "2026-10-25T01:34:42.279Z"
+}

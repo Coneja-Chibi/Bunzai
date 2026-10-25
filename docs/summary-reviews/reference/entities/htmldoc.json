@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/htmldoc",
+  "sourcePath": "docs/reference/entities/htmldoc.md",
+  "sourceHash": "sha256:ce8126bb701ed8af0dc1b5a89b27645d3b6e8f4a4ac6a63116ed6ccfb0696ada",
+  "semanticSummaryHash": "sha256:8d079adb1863ea0df0a8e06b48528faee04705c0118756aa7a83a28012afca35",
+  "verdict": "APPROVE",
+  "reviewer": "review_current_release_tranche",
+  "notes": "Complete entity and every section summary re-read; summary faithfully covers storage, render-time sealing, focus handling, editing surfaces, size cap, fields, and proof limits.",
+  "reviewedAt": "2026-09-13T02:03:41.965Z"
+}

@@ -1,0 +1,259 @@
+/* RoleCall × Plotlight — Design Tokens
+ *
+ * ONE design language. Neobrutalist on a dark stage.
+ *
+ * Both products share the same visual vocabulary now:
+ *   • Dark zinc canvas (#0a0a0b → #1c1a22 → #26232d)
+ *   • Hard 3-4px solid black borders
+ *   • Hard offset drop-shadows (6px 6px 0 0 — black or category color)
+ *   • Zero radius on primary surfaces (pills/avatars keep r-pill)
+ *   • Cinzel display with text-shadow 4px 4px 0 #000 punch
+ *   • Radial color washes INSIDE panels for atmospheric glow
+ *     (this is the only place "glow" survives — as background bloom,
+ *     never as soft drop-shadow on the panel itself)
+ *
+ * The two products differ in CONTENT and PALETTE WEIGHTING, not in geometry.
+ *   • RoleCall  — writing/drafting; violet+rose+pink lean
+ *   • Plotlight — discovery/library + landing/marketing; cream paper
+ *                 inversion still shows up in proscenium/scrim moments
+ *
+ * If you find yourself reaching for backdrop-blur, soft 12px radii,
+ * or 0 0 24px rgba glow shadows — STOP. That's the old RoleCall.
+ * The new RoleCall stamps. It does not float.
+ */
+
+/* ──────────────────────────────────────────────
+   FONTS
+   ────────────────────────────────────────────── */
+@font-face { font-family:"Cinzel"; font-weight:400; font-style:normal; font-display:swap; src:url("fonts/Cinzel-Regular.ttf")   format("truetype"); }
+@font-face { font-family:"Cinzel"; font-weight:500; font-style:normal; font-display:swap; src:url("fonts/Cinzel-Medium.ttf")    format("truetype"); }
+@font-face { font-family:"Cinzel"; font-weight:600; font-style:normal; font-display:swap; src:url("fonts/Cinzel-SemiBold.ttf")  format("truetype"); }
+@font-face { font-family:"Cinzel"; font-weight:700; font-style:normal; font-display:swap; src:url("fonts/Cinzel-Bold.ttf")      format("truetype"); }
+@font-face { font-family:"Cinzel"; font-weight:800; font-style:normal; font-display:swap; src:url("fonts/Cinzel-ExtraBold.ttf") format("truetype"); }
+@font-face { font-family:"Cinzel"; font-weight:900; font-style:normal; font-display:swap; src:url("fonts/Cinzel-Black.ttf")     format("truetype"); }
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+:root {
+  /* ─────────── TYPE ─────────── */
+  --font-display: "Cinzel", "Playfair Display", Georgia, serif;
+  --font-serif:   "Cormorant Garamond", Garamond, Georgia, serif;
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --fs-display:  4rem;     /* 64px — Cinzel 900 */
+  --fs-h1:       2.6rem;   /* ~42px */
+  --fs-h2:       2rem;
+  --fs-h3:       1.3rem;
+  --fs-body:     1rem;
+  --fs-small:    0.88rem;
+  --fs-eyebrow:  0.72rem;
+  --fs-mono:     0.92rem;
+
+  --lh-tight:    1.05;
+  --lh-normal:   1.55;
+  --lh-editorial:1.35;
+
+  --track-marquee: 0.04em;   /* Cinzel 900 display */
+  --track-eyebrow: 0.22em;   /* — TONIGHT'S SHOW — */
+  --track-label:   0.14em;
+
+  /* ─────────── BRAND HUES (shared) ─────────── */
+  --brand:        #e11d48;   /* rose-600 */
+  --brand-soft:   #fb7185;   /* rose-400 */
+  --brand-deep:   #9f1239;
+  --accent:       #8b5cf6;   /* violet-500 — RC user-customizable */
+  --accent-soft:  #a78bfa;
+  --accent-deep:  #6d28d9;
+  --gold:         #eab308;   /* gilt — featured/awards */
+  --gold-soft:    #fcd34d;
+
+  /* semantic */
+  --ok:           #22c55e;
+  --warn:         #eab308;
+  --danger:       #ef4444;
+  --info:         #8b5cf6;
+
+  /* ─────────── CATEGORY PALETTE (RoleCall tag system) ─────────── */
+  --cat-cyan:     #06b6d4;   --cat-cyan-soft:    #67e8f9;
+  --cat-violet:   #8b5cf6;   --cat-violet-soft:  #c4b5fd;
+  --cat-rose:     #f43f5e;   --cat-rose-soft:    #fda4af;
+  --cat-amber:    #f59e0b;   --cat-amber-soft:   #fcd34d;
+  --cat-emerald:  #10b981;   --cat-emerald-soft: #6ee7b7;
+  --cat-pink:     #ec4899;   --cat-pink-soft:    #f9a8d4;
+  --cat-blue:     #3b82f6;   --cat-blue-soft:    #93c5fd;
+  --cat-fuchsia:  #d946ef;   --cat-fuchsia-soft: #f0abfc;
+
+  /* ─────────── CANVAS (dark — both products' default) ─────────── */
+  --canvas:      #0a0a0b;
+  --bg-elev:     #141318;
+  --bg-panel:    #1c1a22;
+  --bg-higher:   #26232d;
+
+  --ink:         #fafaf9;
+  --ink-soft:    #e4e4e7;
+  --ink-muted:   #a1a1aa;
+  --ink-dim:     #71717a;
+  --ink-faint:   #52525b;
+  --line:        #3f3f46;
+
+  /* hard black — the signature border ink */
+  --hard:        #000000;
+
+  /* Optional cream paper (Plotlight proscenium / scrim / knockout moments) */
+  --paper:       #faf8f3;
+  --paper-ink:   #0a0a0b;
+
+  /* Ambient page bloom — radial brand/accent wash. Used on body, NOT on cards. */
+  --bg-wash:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(225,29,72,0.08), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(139,92,246,0.06), transparent);
+
+  /* ─────────── SPACING (4px base) ─────────── */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-8: 32px; --s-10: 40px;
+  --s-12: 48px; --s-16: 64px; --s-20: 80px; --s-24: 96px;
+
+  /* ─────────── RADII — zero on primary surfaces ─────────── */
+  --r:           0;
+  --r-pill:      9999px;       /* avatars, status dots, gender chips */
+
+  /* ─────────── BORDERS — hard, thick, black ─────────── */
+  --bw-thin:     2px;
+  --bw:          3px;
+  --bw-thick:    4px;
+  --border-thin:    2px solid var(--hard);
+  --border:         3px solid var(--hard);
+  --border-thick:   4px solid var(--hard);
+
+  /* ─────────── SHADOWS — hard offset only ─────────── */
+  --shadow-sm:        3px 3px 0 0 var(--hard);
+  --shadow:           6px 6px 0 0 var(--hard);
+  --shadow-lg:       10px 10px 0 0 var(--hard);
+  --shadow-xl:       14px 14px 0 0 var(--hard);
+
+  /* Category-tinted offset shadows — for marquee panels + featured cards */
+  --shadow-rose:      6px 6px 0 0 var(--brand);
+  --shadow-violet:    6px 6px 0 0 var(--accent);
+  --shadow-amber:     6px 6px 0 0 var(--cat-amber);
+  --shadow-pink:      6px 6px 0 0 var(--cat-pink);
+  --shadow-cyan:      6px 6px 0 0 var(--cat-cyan);
+  --shadow-emerald:   6px 6px 0 0 var(--cat-emerald);
+  --shadow-gold:      6px 6px 0 0 var(--gold);
+  --shadow-crit:      6px 6px 0 0 var(--brand-deep);
+
+  /* Aliases — legacy callsites still work */
+  --shadow-red:       var(--shadow-rose);
+
+  /* ─────────── MOTION ─────────── */
+  --t-fast: 0.08s ease-out;
+  --t-base: 0.12s ease-out;
+  --t-slow: 0.2s  ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SEMANTIC ELEMENT DEFAULTS
+   ═══════════════════════════════════════════════════════════════ */
+html { background: var(--canvas); color-scheme: dark; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--canvas);
+  background-image: var(--bg-wash);
+  background-attachment: fixed;
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--fs-h1);
+  letter-spacing: var(--track-marquee);
+  line-height: var(--lh-tight);
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+h2, .h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-h2);
+  letter-spacing: 0.04em;
+  line-height: var(--lh-tight);
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+h3, .h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+
+/* Marquee title — hard black text-shadow punch. THE display treatment. */
+.h-marquee {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--fs-display);
+  letter-spacing: var(--track-marquee);
+  line-height: var(--lh-tight);
+  color: var(--ink);
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 var(--hard);
+}
+/* The accent <em> in a marquee title — colored text inside the punch */
+.h-marquee em {
+  font-style: normal;
+  color: var(--accent-soft);   /* swap to --brand-soft, --cat-emerald-soft, etc per page */
+}
+
+.h-serif {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: var(--lh-editorial);
+  color: var(--ink-soft);
+}
+
+p, .body { font-family: var(--font-body); font-size: var(--fs-body); color: var(--ink); }
+.body-muted { color: var(--ink-muted); }
+.body-dim   { color: var(--ink-dim); }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: 700;
+  letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+code, .mono, kbd {
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  color: var(--cat-violet-soft);
+}
+
+a { color: var(--ink); text-decoration: none; transition: color var(--t-base); }
+a:hover { color: var(--accent-soft); }
+
+hr { border: 0; border-top: var(--border-thin); margin: var(--s-8) 0; }
+
+::selection { background: var(--brand); color: var(--ink); }

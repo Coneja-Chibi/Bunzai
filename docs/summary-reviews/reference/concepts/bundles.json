@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/bundles",
+  "sourcePath": "docs/reference/concepts/bundles.md",
+  "sourceHash": "sha256:b2ee12e4332f3d3cc1e772554d9576e1b1d98e49b7e53a96da2c92c900181c40",
+  "semanticSummaryHash": "sha256:bab7b020de6c8730a8749912a3b292afc035416eb3d0f71bdc9a198a3d88d8d1",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:49.851Z"
+}

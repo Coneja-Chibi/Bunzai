@@ -1,0 +1,5 @@
+/** ui.toast bubble: the status note is a small chat bubble sitting in the status row beside the chips, square with a hard shadow. It never leaves the row, so it cannot cover the cards above. */
+html[data-surface-ui-toast="bubble"] #status .seg.note[data-toast="live"] { position: fixed; right: 9rem; bottom: .3rem; z-index: 90; box-sizing: border-box; display: flex; flex-direction: row; align-items: center; max-width: min(24rem, 60vw); height: calc(var(--bk-status-reserve, 1.9rem) - .8rem); padding: 0 .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  background: var(--bk-role-brand); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); font: 700 .9375rem var(--font-body); }
+html[data-surface-ui-toast="bubble"] #status .seg.note[data-toast="live"] .sep { display: none; }
+html[data-surface-ui-toast="bubble"] #status .seg.note[data-toast="live"] .k { color: var(--bk-text-on-tint); font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; }

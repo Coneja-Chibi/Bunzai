@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/sillytavern/chats-and-groups",
+  "sourcePath": "docs/reference/platforms/sillytavern/chats-and-groups.md",
+  "sourceHash": "sha256:ba4c94ebfa60fd7d7e37e0be3956eb7448100b5da31630702eaf2199b8d5e7fb",
+  "semanticSummaryHash": "sha256:7efd1ecae742f7ce00be6553f51e8551edb86fb5c637e0b88dd9d7bd52b8b7f6",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:58.686Z"
+}

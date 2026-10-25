@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recovery words wireframe</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">03 Recovery words</div>
+      <p class="wf-lede">Twelve words that open the library when everything else is lost: a forgotten password, a new computer, a backup restored elsewhere. Shown once, typed back to prove they were saved, and only then put in force. Offered the first time a password or backups are turned on, and any time from Settings.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid">
+    <div>
+      <div class="wf-state">Step 1 of 2: write them down</div>
+      <div class="card hero">
+        <div class="kicker">Step 1 of 2</div>
+        <div class="card-title">Your recovery words</div>
+        <p class="card-body">Write these down on paper, in order, and keep them somewhere safe. <b>Anyone with these words can open your library.</b> Bunraku does not keep a copy it can show you again.</p>
+        <div class="words">
+          <div class="word"><i>1</i>velvet</div><div class="word"><i>2</i>harbor</div><div class="word"><i>3</i>lantern</div>
+          <div class="word"><i>4</i>orchard</div><div class="word"><i>5</i>silent</div><div class="word"><i>6</i>marble</div>
+          <div class="word"><i>7</i>tunnel</div><div class="word"><i>8</i>crisp</div><div class="word"><i>9</i>ribbon</div>
+          <div class="word"><i>10</i>ember</div><div class="word"><i>11</i>shadow</div><div class="word"><i>12</i>violin</div>
+        </div>
+        <div class="actions">
+          <button class="stamp stamp-btn">Print a recovery sheet</button>
+          <button class="stamp stamp-btn primary">I wrote them down</button>
+        </div>
+        <p class="subtle">There is no copy button on purpose: copied words tend to end up in a clipboard history or a synced note.</p>
+      </div>
+      <p class="wf-comp">card = section-card hero / words = numbered-cell grid / buttons = Stamp</p>
+    </div>
+
+    <div>
+      <div class="wf-state">Step 2 of 2: type them back</div>
+      <div class="card">
+        <div class="kicker">Step 2 of 2</div>
+        <div class="card-title">Type your words back</div>
+        <p class="card-body">This proves they were saved correctly. Your old words, if you had any, keep working until these are confirmed.</p>
+        <div class="words">
+          <div class="word"><i>1</i><input value="velvet"></div><div class="word"><i>2</i><input value="harbor"></div><div class="word"><i>3</i><input value="lantern"></div>
+          <div class="word"><i>4</i><input value="orchard"></div><div class="word"><i>5</i><input value="silent"></div><div class="word"><i>6</i><input value="marble"></div>
+          <div class="word"><i>7</i><input value="tunnel"></div><div class="word"><i>8</i><input value="crisp"></div><div class="word"><i>9</i><input value="ribon"></div>
+          <div class="word"><i>10</i><input value=""></div><div class="word"><i>11</i><input value=""></div><div class="word"><i>12</i><input value=""></div>
+        </div>
+        <span class="error">Word 9 does not match. Check your paper.</span>
+        <div class="actions">
+          <button class="stamp stamp-btn primary" disabled>Confirm my words</button>
+          <button class="btn-ghost">Show the words again</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">The printable recovery sheet</div>
+      <div class="card">
+        <div class="kicker">Bunraku recovery sheet</div>
+        <div class="card-title">Keep this somewhere safe, away from this computer</div>
+        <div class="words">
+          <div class="word"><i>1</i>velvet</div><div class="word"><i>2</i>harbor</div><div class="word"><i>3</i>lantern</div>
+          <div class="word"><i>4</i>orchard</div><div class="word"><i>5</i>silent</div><div class="word"><i>6</i>marble</div>
+          <div class="word"><i>7</i>tunnel</div><div class="word"><i>8</i>crisp</div><div class="word"><i>9</i>ribbon</div>
+          <div class="word"><i>10</i>ember</div><div class="word"><i>11</i>shadow</div><div class="word"><i>12</i>violin</div>
+        </div>
+        <p class="card-body">These twelve words open your Bunraku library if you forget your password or move to a new computer. Anyone who has them can open it. Made on 23 September 2026.</p>
+      </div>
+      <p class="wf-comp">printed from the app's own print view; the words never leave this computer otherwise</p>
+    </div>
+
+    <div>
+      <div class="wf-state">Now and then: check you still have them</div>
+      <div class="card">
+        <div class="card-title">Do you still have your recovery words?</div>
+        <p class="card-body">It has been three months. Type all twelve to check your paper is still right. Bunraku stores no single word, so it cannot check just one or two.</p>
+        <div class="actions">
+          <button class="stamp stamp-btn primary">Check my words</button>
+          <button class="btn-ghost">Remind me later</button>
+          <button class="btn-ghost">Make new words</button>
+        </div>
+      </div>
+      <p class="wf-comp">shown as a card in Settings, Security, never as a popup that interrupts work</p>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Why no copy button:</b> the words are a master key; the clipboard is shared with every app and often synced. Printing or writing them keeps them off the computer.</p>
+  <p class="wf-note"><b>Question for you:</b> how often should the "do you still have them" check come up: every three months, every six, or never unless the person asks?</p>
+</div>
+</body>
+</html>

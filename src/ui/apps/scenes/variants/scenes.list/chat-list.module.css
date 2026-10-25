@@ -1,0 +1,10 @@
+/** scenes.list chat-list: a messenger list. Square avatar, bold name over a muted preview, time and an unread-style count. Tokens only. */
+.row { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto; align-items: center; gap: .9rem; width: 100%; height: 100%; padding: .5rem .9rem; padding-right: 3.4rem; text-align: left; }
+.avatar { position: relative; display: block; width: 3.2rem; height: 3.2rem; overflow: hidden; border: var(--bk-frame-w) solid var(--bk-line); background: var(--bk-surface-ink); }
+.avatar > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+.body { display: grid; gap: .15rem; min-width: 0; }
+.name { font: 800 1.05rem var(--font-fancy); color: var(--bk-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview { font: 400 .9375rem var(--font-body); color: var(--bk-text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side { display: grid; justify-items: end; gap: .3rem; }
+.time { font: 700 .75rem var(--font-body); color: var(--bk-text-dim); }
+.count { min-width: 1.6rem; padding: .05rem .45rem; text-align: center; font: 800 .8125rem var(--font-body); background: var(--bk-role-brand); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); }

@@ -1,0 +1,58 @@
+/*
+ * Bunraku design system: sizing tokens, contract v1. Pixels only for ornament (meter and pip
+ * geometry); everything a person reads or hits is in rem.
+ *
+ * Container breakpoints (CSS cannot read a variable inside @container, so these are constants;
+ * collapse is always @container on the pane, never @media on the window):
+ *   phone  30rem   (480px)  one column, Dock becomes a bottom bar
+ *   narrow 46rem   (736px)  Dock folds to marks, side panels become drawers
+ *   wide   64rem   (1024px) two-pane layouts open
+ */
+:root {
+  --bk-hit-min: 1.5rem;          /* 24px: the smallest target anything clickable may have */
+  --bk-control-h-sm: 1.75rem;    /* 28px: mini buttons, chips with actions */
+  --bk-control-h-md: 2.25rem;    /* 36px: the default button and field */
+  --bk-control-h-lg: 2.75rem;    /* 44px: primary calls, touch */
+
+  --bk-icon-sm: 1rem;
+  --bk-icon-md: 1.25rem;
+  --bk-icon-lg: 1.5rem;
+
+  --bk-avatar-xs: 1.25rem;       /* 20px: inline in a line of text */
+  --bk-avatar-sm: 1.75rem;       /* 28px: list rows */
+  --bk-avatar-md: 2.5rem;        /* 40px: cast rail tiles */
+  --bk-avatar-lg: 4rem;          /* 64px: headers */
+
+  /* portrait cards: always 2:3, never landscape */
+  --bk-card-ratio: 2 / 3;
+  --bk-card-w-sm: 10rem;         /* 160px: phone grids */
+  --bk-card-w-md: 12.5rem;       /* 200px: the scene grid */
+  --bk-card-w-lg: 20rem;         /* 320px: the Continue hero */
+  --bk-card-w-min: 9rem;         /* the Library art dial's tile floor */
+
+  /* shell geometry */
+  --bk-dock-w: 13.75rem;         /* 220px open */
+  --bk-dock-w-slim: 4rem;        /* 64px marks only */
+  --bk-rail-w: 4rem;             /* the cast rail */
+  --bk-side-w: 17rem;            /* a side panel beside the stage */
+  --bk-hud-h: 3.5rem;            /* the top HUD strip */
+  --bk-status-h: 1.75rem;        /* the status bar */
+
+  --bk-dialog-w-sm: 26rem;       /* confirms */
+  --bk-dialog-w-md: 36rem;       /* forms */
+  --bk-dialog-w-lg: 52rem;       /* workshops, wide sheets */
+  --bk-measure: 42rem;           /* the longest comfortable reading line */
+  --bk-content-max: 80rem;
+
+  /* HUD ornament geometry */
+  --bk-meter-h: 9px;
+  --bk-meter-h-lg: 12px;
+  --bk-meter-seg: 12px;          /* one segment of a segmented meter */
+  --bk-meter-cut: 1px;           /* the cut between segments */
+  --bk-pip: 9px;
+  --bk-dot: 6px;                 /* status dots (Live, playing) */
+
+  /* how far a frame paints OUTSIDE its box (outer line + offset shadow). A container that clips
+     (overflow other than visible) must pad or gap at least this much around framed children. */
+  --bk-frame-reach: calc(var(--bk-frame-w) + max(var(--bk-frame-shadow-x), var(--bk-frame-shadow-y)));
+}

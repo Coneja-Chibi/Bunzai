@@ -1,0 +1,13 @@
+/** ui.section-header chapter-heading (Paper): a section is a chapter heading, serif numeral and title over one heavy rule. */
+html[data-surface-ui-section-header="chapter-heading"] {
+  & .lib.rc .lsec { margin: 1.4rem 0 .5rem; padding: .3rem 0 .5rem; background: transparent; border: 0; border-bottom: 2px solid var(--bk-text); box-shadow: none; }
+  & .lib.rc .lsec::before { display: none; }
+  & .lib.rc .lsec .num { font: 500 1.35rem var(--font-big); text-shadow: none; color: var(--bk-text-soft); }
+  & .lib.rc .lsec .stitle { font: 600 1.5rem var(--font-big); letter-spacing: 0; text-transform: none; text-shadow: none; }
+  & .lib.rc .lsec .stitle em { color: inherit; }
+  & .lib.rc .lsec .ssub { font: italic 400 1rem var(--font-big); color: var(--bk-text-soft); }
+  & .lib.rc .lsec .scount { border: 0; background: transparent; font: italic 400 .9375rem var(--font-big); color: var(--bk-text-soft); }
+  & .lib.rc .lsec .scount em { color: inherit; }
+  & .scn .plaque .s-title { font: 600 2rem var(--font-big); letter-spacing: 0; text-transform: none; }
+  & .scn .plaque .s-act { font: italic 400 .9375rem var(--font-big); letter-spacing: 0; text-transform: none; }
+}

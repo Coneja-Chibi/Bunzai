@@ -1,0 +1,28 @@
+/*
+ * The browser's own dialog styles (Canvas colours, a border, padding, a size cap) are reset at zero specificity so a
+ * surface's class decides its own look. Opened with showModal() the dialog is in the top layer; the backdrop is the host
+ * canvas, opaque for the stage door and dimmed for a card. Tokens only.
+ */
+:where(.dialog) {
+  box-sizing: border-box;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  max-width: none;
+  max-height: none;
+  overflow: auto;
+}
+.full {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.full::backdrop { background: var(--host-canvas); }
+.card {
+  width: min(40rem, calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+}
+.card::backdrop { background: color-mix(in srgb, var(--host-canvas) 70%, transparent); }

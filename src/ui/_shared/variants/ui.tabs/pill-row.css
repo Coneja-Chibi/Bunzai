@@ -1,0 +1,7 @@
+/** ui.tabs pill-row (GirliePop): each tab is its own chunky square pill with a thick edge and a hard shadow; the open one is filled. */
+html[data-surface-ui-tabs="pill-row"] {
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) { border: 0; box-shadow: none; background: transparent; padding: 0 .35rem .35rem 0; gap: .5rem; flex-wrap: wrap; }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button { border: var(--bk-frame-w) solid var(--bk-line); background: var(--bk-surface-panel); color: var(--bk-text); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:hover { background: var(--bk-surface-raised); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:is(.on, [aria-pressed="true"]) { background: var(--bk-role-action); color: var(--bk-text-on-tint); }
+}

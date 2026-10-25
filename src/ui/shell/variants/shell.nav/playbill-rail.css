@@ -1,0 +1,2 @@
+/* shell.nav playbill-rail: stronger frame on the shared bottom dock. */
+html[data-surface-shell-nav="playbill-rail"] [data-part="shell.nav"] > nav { border-color: var(--bk-line-strong); }

@@ -1,0 +1,146 @@
+/** Quick-reply set editor layout. */
+.root {
+  --wb-selection: var(--rose);
+  --wb-primary: var(--rose-deep);
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--stage);
+  color: var(--stage-card);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  padding: 1rem;
+}
+
+.list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.items {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.itemsSpace {
+  position: relative;
+}
+
+.virtualRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.4fr) minmax(16rem, 1fr) auto;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.75rem;
+  border: 2px solid var(--stage-black);
+  background: var(--stage-panel);
+  box-shadow: 3px 3px 0 var(--stage-black);
+}
+
+.stack {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.label {
+  font: 700 var(--text-control) var(--font-big);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.field {
+  width: 100%;
+  border: 2px solid var(--stage-black);
+  background: var(--stage-row);
+  color: var(--stage-card);
+  font: 500 var(--text-control) var(--font-body);
+  padding: 0.45rem 0.55rem;
+}
+
+.message {
+  min-height: 5rem;
+  resize: vertical;
+  font-family: var(--font-mono);
+}
+
+.actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.button {
+  border: 2px solid var(--stage-black);
+  background: var(--stage-panel);
+  color: var(--stage-soft);
+  font: 800 var(--text-control) var(--font-big);
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.add {
+  justify-self: start;
+}
+
+.empty {
+  color: var(--stage-text-dim);
+  font: 500 var(--text-control) var(--font-body);
+}
+
+@container (max-width: 42rem) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root {
+  --wb-selection: var(--selection);
+  --wb-primary: var(--action-primary);
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* under a theme frame the fields stack in one column beside the actions */
+@container (min-width: 43rem) {
+  .rowFramed {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}

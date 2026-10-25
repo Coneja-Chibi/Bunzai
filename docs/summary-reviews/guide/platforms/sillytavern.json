@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/platforms/sillytavern",
+  "sourcePath": "docs/guide/platforms/sillytavern.md",
+  "sourceHash": "sha256:112d22862841c3af3a5a47eb489a47492f2be32f5fb5361f62bdd42509b5fca4",
+  "semanticSummaryHash": "sha256:172a802ce08031d7bcb8dbee38a15f46300e65d5b5cd676ac38872ac0cdcb2de",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:47.745Z"
+}

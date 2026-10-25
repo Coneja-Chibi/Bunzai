@@ -1,0 +1,7 @@
+/** scenes.list table-of-contents: a book contents page. Serif entries joined to their count by a dotted leader. Tokens only. */
+.entry { display: grid; grid-template-columns: 2.2rem auto minmax(1rem, 1fr) auto; grid-template-rows: auto auto; align-items: baseline; column-gap: .4rem; width: 100%; height: 100%; padding: .5rem .3rem; padding-right: 3.4rem; text-align: left; font-family: var(--font-big); }
+.no { font: italic 400 1rem var(--font-big); color: var(--bk-text-soft); }
+.title { font: 600 1.2rem var(--font-big); color: var(--bk-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+.leader { border-bottom: 2px dotted var(--bk-line-control); transform: translateY(-.25em); }
+.folio { font: italic 400 1rem var(--font-big); color: var(--bk-text-soft); }
+.sub { grid-column: 2 / -1; font: italic 400 .9375rem var(--font-big); color: var(--bk-text-soft); }

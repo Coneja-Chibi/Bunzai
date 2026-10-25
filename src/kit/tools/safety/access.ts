@@ -1,0 +1,159 @@
+/**
+ * access: the central trust map, the single auditable place that declares which tools are safe. Today
+ * known shell tools map explicitly; everything else resolves to "unknown" and is therefore treated as
+ * dangerous. Validated semantic capabilities can be supplied to createAccessResolver and receive the
+ * preview-only "draft" class. This is still deny by absence: arbitrary dropped-in tools and
+ * capability-like names are not trusted, and the gated thing never declares its own risk.
+ */
+import type { CapabilityDescriptor } from "../../../entities/capabilities";
+import type { ToolAccess } from "./risk";
+
+const TRUST = new Map<string, ToolAccess>([
+  ["studio_list", "read"],
+  ["studio_read", "read"],
+  ["studio_search", "read"],
+  // Reads collections.json and nothing else; the seam it goes through has no write side at all.
+  ["studio_collections", "read"],
+  // Reads graveyard.json. Burying is a separate tool so a harmless look never asks permission.
+  ["studio_graveyard", "read"],
+  ["studio_graveyard_bury", "draft"],
+  ["docs_query", "read"],
+  ["result_query", "read"],
+  ["capability_find", "read"],
+  ["change_query", "read"],
+  ["change_discard", "draft"],
+  ["change_apply", "write"],
+  ["studio_character_create", "draft"],
+  ["studio_lorebook_create", "draft"],
+  ["studio_persona_create", "draft"],
+  ["studio_preset_create", "draft"],
+  ["studio_regex_create", "draft"],
+  ["studio_pack_create", "draft"],
+  ["studio_quickreply_create", "draft"],
+  // A drawing is a preview-only create like the rest: it composes a document and shows it, and the
+  // Gate is what turns that into a file.
+  ["studio_htmldoc_create", "draft"],
+  // Lifecycle beyond creation. A copy is preview-only like every other create, so it is a draft.
+  // Removal is durable and irreversible, so it takes the dedicated `delete` class (danger floor)
+  // rather than "write" - a piece coming back is not something the Gate can offer.
+  ["studio_duplicate", "draft"],
+  ["studio_delete", "delete"],
+  // Transfer serializes to another platform's wire and returns the payload as an observation. It
+  // touches no storage and writes no file, so it is a read. Export is the tool that writes, and it
+  // gets its own name and its own class here rather than a widened meaning of transfer.
+  ["studio_transfer", "read"],
+  // Export creates a file in the studio's exports folder. `write` rather than `delete`: it is
+  // create-only and refuses an occupied name, so it can add a file but never destroy one.
+  ["studio_export", "write"],
+  // Pure catalog lookup: no storage, no filesystem, no network.
+  ["macro_lookup", "read"],
+  // Hands the shell a list to draw. Reads nothing, stores nothing, and cannot answer for anybody:
+  // picking fills the composer rather than sending.
+  ["ask_choice", "read"],
+  // Its sibling, and it sat outside this map long enough to reach a user: `block_lookup` declares
+  // `effect: "read"` at its own definition, but this map is the authority and had no entry, so every
+  // call raised a DANGER banner reading `unrecognized tool`. Four others were in the same state. The
+  // consequence of a missed entry is not a quiet hole - it is a false alarm on a safe tool, which
+  // teaches people to click through the prompts that matter. `trust-map.test.ts` now fails when a
+  // registered tool is missing here, so the next one is caught by CI instead of by somebody using it.
+  ["block_lookup", "read"],
+  // Reads inside an explicitly shared folder and can do nothing else; the grant is the boundary.
+  ["folder_search", "read"],
+  // The one-way door into the studio. Preview-only like every other create, hence draft, not write.
+  ["folder_import", "draft"],
+  // Renders a preset through an engine checkout to see whether its macros resolve. It SPAWNS a
+  // subprocess, which is worth stating plainly - but the payload is a first-party renderer in this
+  // repo, not an opaque one, and the studio is never mutated. `exec` is reserved for a payload we did
+  // not write; this is a read that happens to fork.
+  ["preset_verify", "read"],
+  // Opens the outline rail over the transcript. Display only.
+  ["rail_open", "read"],
+  // Showing a picture writes nothing and reads one piece the person named.
+  ["studio_art", "read"],
+  // The regex workbench. It RUNS patterns, which sounds like exec and is not: the payload is a
+  // regular expression, the engine refuses anything the validator calls a backtracking bomb, and
+  // every run is time-bounded. Nothing is stored - saving belongs to regex_create.
+  ["regex_lab", "read"],
+  // Reads one drawing out of the studio and does string work on it: flattening, escaping, slot
+  // substitution. With a sample it runs the pair through the same bounded engine regex_lab uses.
+  // Nothing is written - the rule comes back as text for a person to look at and save deliberately.
+  ["regex_from_drawing", "read"],
+  // Reads markup against the seal's tag list and reports. No studio access at all; it is handed the
+  // text it answers about.
+  ["html_will_draw", "read"],
+  /**
+   * Copies blocks between presets BY REFERENCE and stages the result. `draft` like every other
+   * create: it composes a change and writes nothing.
+   *
+   * THE SECOND TOOL TO REACH A USER FROM OUTSIDE THIS MAP, and it went further than block_lookup
+   * did. Missing here it resolved to "unknown", which is the danger floor - and the floor asks in
+   * EVERY mode, so neither "allow for this session" nor `/gates full` could clear it. Each answer
+   * re-decided, the three-round cap ran out, and the call came back "too many confirmation rounds":
+   * a tool that only stages, permanently unusable, with the gate insisting it was too dangerous to
+   * run. Somebody answered that prompt nine times before it was diagnosed.
+   *
+   * The CI guard that was supposed to prevent exactly this only walked the drop-in tools that
+   * `discoverTools()` finds. This one is built by a factory (it needs the change session), so the
+   * guard never saw it. `trust-map.test.ts` now reads the source tree instead.
+   */
+  ["preset_copy_blocks", "draft"],
+]);
+
+export type AccessResolver = (name: string) => ToolAccess;
+export interface CatalogToolAccess {
+  name: string;
+  /**
+   * Supplied entries may name safe classes, or `egress` - and nothing else. The constraint's job
+   * is that nothing outside the trust map can hand a name a class that SKIPS asking: read and
+   * draft are the safe tiers, and egress is the DANGER tier that confirms at the Gate and can at
+   * most be allowed for a session. External MCP tools use it, enumerated by exact folded name at
+   * the moment they join the belt; without an entry they land on the unknown floor, which asks in
+   * every mode, caps its confirmation rounds, and made preset_copy_blocks permanently unusable.
+   * `write`, `delete` and `exec` stay unGRANTable here on purpose.
+   */
+  access: "read" | "draft" | "egress";
+}
+
+/**
+ * Derive safe exact names only from pure content capabilities. General HarnessTools keep their
+ * writable bridge and therefore cannot self-classify as safe through discovery metadata.
+ */
+export function contentCapabilityAccess(
+  descriptors: readonly CapabilityDescriptor[],
+): CatalogToolAccess[] {
+  return descriptors
+    .filter((descriptor) => descriptor.domain === "content")
+    .map((descriptor) => ({
+      name: descriptor.toolName,
+      access: descriptor.effect,
+    }));
+}
+
+/** Resolve a tool name to its access class. Absent or non-string names -> "unknown" (deny by absence).
+ *  A Map lookup (not object indexing) so a name like "__proto__" can never surface a phantom access. */
+export function resolveAccess(name: string): ToolAccess {
+  if (typeof name !== "string") return "unknown";
+  return TRUST.get(name) ?? "unknown";
+}
+
+/**
+ * Extend the closed policy with exact provider names derived from the validated capability catalog.
+ * No prefix or pattern matching is permitted.
+ */
+export function createAccessResolver(
+  capabilityTools: readonly (string | CatalogToolAccess)[],
+): AccessResolver {
+  const catalog = new Map<string, ToolAccess>();
+  for (const entry of capabilityTools) {
+    if (typeof entry === "string") {
+      if (entry.length > 0) catalog.set(entry, "draft");
+      continue;
+    }
+    if (entry.name.length > 0) catalog.set(entry.name, entry.access);
+  }
+  return (name: string): ToolAccess => {
+    const known = resolveAccess(name);
+    if (known !== "unknown") return known;
+    return typeof name === "string" ? catalog.get(name) ?? "unknown" : "unknown";
+  };
+}

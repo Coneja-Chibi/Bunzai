@@ -1,0 +1,10 @@
+/*
+ * Theme "g3": Arcade HUD, the default look.
+ * G3 is the base: its values ARE the defaults in tokens/, so this file only names the theme and
+ * sets the color scheme. A theme that wants "G3 but..." overrides just the "but".
+ * Modders: copy c1.css or c3.css, not this file. They show the pattern: a theme is a list of token
+ * overrides on :root[data-theme="<id>"], nothing else.
+ */
+:root, :root[data-theme="g3"] {
+  color-scheme: dark;
+}

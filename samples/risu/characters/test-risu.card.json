@@ -1,0 +1,496 @@
+{
+  "spec": "chara_card_v3",
+  "spec_version": "3.0",
+  "data": {
+    "name": "Test Risu Character",
+    "description": "Synthetic fixture. A made-up assistant used only to exercise the Risu card reader.\nStatus: {{getvar::status}}",
+    "personality": "",
+    "scenario": "",
+    "first_mes": "Hello from the synthetic fixture. Status: Daily | Score: (50/100)",
+    "mes_example": "",
+    "creator_notes": "\n# `en`\nSynthetic test card. Invented content, https://example.invalid/test-risu-card\n",
+    "system_prompt": "",
+    "post_history_instructions": "## Status\nEnd every reply with a line: Status: <Working|Resting|Daily|Busy|Tired|Excited|Calm> | Score: (<n>/100)",
+    "alternate_greetings": [
+      "Hello again. Status: Resting | Score: (40/100)",
+      "Hello once more. Status: Busy | Score: (60/100)"
+    ],
+    "tags": [],
+    "creator": "test-author",
+    "character_version": "1",
+    "group_only_greetings": [],
+    "nickname": "",
+    "source": [],
+    "creation_date": 1700000000000,
+    "modification_date": 1700086400,
+    "assets": [
+      {
+        "type": "x-risu-asset",
+        "uri": "embeded://assets/other/1.png",
+        "name": "happy1.png",
+        "ext": "png"
+      },
+      {
+        "type": "x-risu-asset",
+        "uri": "embeded://assets/other/2.png",
+        "name": "calm1.png",
+        "ext": "png"
+      },
+      {
+        "type": "icon",
+        "uri": "embeded://assets/icon/3.png",
+        "name": "main",
+        "ext": "png"
+      }
+    ],
+    "character_book": {
+      "scan_depth": 2,
+      "token_budget": 2000,
+      "recursive_scanning": false,
+      "extensions": {
+        "risu_fullWordMatching": false
+      },
+      "entries": [
+        {
+          "keys": [
+            ""
+          ],
+          "content": "##### the workshop\n- a made-up place used in synthetic tests",
+          "extensions": {
+            "risu_case_sensitive": false,
+            "risu_loreCache": null
+          },
+          "enabled": true,
+          "insertion_order": 100,
+          "constant": true,
+          "selective": false,
+          "name": "workshop",
+          "comment": "workshop",
+          "case_sensitive": false,
+          "use_regex": false
+        },
+        {
+          "keys": [
+            "lamp",
+            "lantern"
+          ],
+          "content": "##### the lamp\n- a brass lamp on the desk",
+          "extensions": {
+            "risu_case_sensitive": false,
+            "risu_loreCache": null
+          },
+          "enabled": true,
+          "insertion_order": 90,
+          "constant": false,
+          "selective": false,
+          "name": "lamp",
+          "comment": "lamp",
+          "case_sensitive": false,
+          "use_regex": false
+        },
+        {
+          "keys": [
+            "^key\\d+$"
+          ],
+          "secondary_keys": [
+            "box"
+          ],
+          "content": "##### the box\n- opens with any numbered key",
+          "extensions": {
+            "risu_case_sensitive": true,
+            "risu_loreCache": null
+          },
+          "enabled": true,
+          "insertion_order": 80,
+          "constant": false,
+          "selective": true,
+          "name": "box",
+          "comment": "box",
+          "case_sensitive": true,
+          "use_regex": true
+        }
+      ]
+    },
+    "extensions": {
+      "depth_prompt": {
+        "depth": 0,
+        "prompt": ""
+      },
+      "risuai": {
+        "bias": [],
+        "viewScreen": "none",
+        "customScripts": [
+          {
+            "comment": "m1",
+            "in": "선생님",
+            "out": "주인님",
+            "type": "edittrans",
+            "ableFlag": false
+          },
+          {
+            "comment": "m2",
+            "in": "스승님",
+            "out": "주인님",
+            "type": "edittrans",
+            "ableFlag": false
+          },
+          {
+            "comment": "m3",
+            "in": "주인",
+            "out": "주인님",
+            "type": "edittrans",
+            "ableFlag": false
+          },
+          {
+            "comment": "m4",
+            "in": "주인님님",
+            "out": "주인님",
+            "type": "edittrans",
+            "ableFlag": false
+          },
+          {
+            "comment": "Score",
+            "in": "Score: \\((\\d+)\\/100\\)",
+            "out": "{{#if {{equal::{{getvar::score}}::null}}}} {{setvar::score::50}} {{/if}}Score: ({{getvar::score}}/100)",
+            "type": "editoutput",
+            "ableFlag": false
+          },
+          {
+            "comment": "Status",
+            "in": "Status: (.*?)(?=\\s\\|)",
+            "out": "{{setvar::status::$1}}Status: $1",
+            "type": "editoutput",
+            "ableFlag": false
+          },
+          {
+            "comment": "Mood",
+            "in": "Mood\\s*:\\s*\\(\\d+\\s*/\\s*10\\)",
+            "out": "{{#if {{equal::{{getvar::mood}}::null}}}} {{setvar::mood::4}} {{/if}}Mood: ({{getvar::mood}}/10)",
+            "type": "editoutput",
+            "ableFlag": false
+          },
+          {
+            "comment": "Asset",
+            "in": "{{img=\"(.*?)(\\d+)\"}}",
+            "out": "<style>.box { display: grid; place-items: center; }</style><div class=\"box\">$1$2</div>",
+            "type": "editdisplay",
+            "ableFlag": false
+          }
+        ],
+        "utilityBot": false,
+        "sdData": [
+          [
+            "always",
+            "solo, 1girl"
+          ],
+          [
+            "negative",
+            ""
+          ],
+          [
+            "|character's appearance",
+            ""
+          ],
+          [
+            "current situation",
+            ""
+          ],
+          [
+            "$character's pose",
+            ""
+          ],
+          [
+            "$character's emotion",
+            ""
+          ],
+          [
+            "current location",
+            ""
+          ]
+        ],
+        "backgroundHTML": "",
+        "triggerscript": [
+          {
+            "comment": "working",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Working",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "10",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::100}}",
+                "operator": "+="
+              }
+            ]
+          },
+          {
+            "comment": "tired",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Tired",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "30",
+                "operator": "-="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "1",
+                "operator": "-="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::50}}",
+                "operator": "-="
+              }
+            ]
+          },
+          {
+            "comment": "resting",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Resting",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::50}}",
+                "operator": "-="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "4",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "5",
+                "operator": "-="
+              }
+            ]
+          },
+          {
+            "comment": "busy",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Busy",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::20}}",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "{{roll::3}}",
+                "operator": "-="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "5",
+                "operator": "+="
+              }
+            ]
+          },
+          {
+            "comment": "daily",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Daily",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::10}}",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "{{roll::3}}",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "3",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::10}}",
+                "operator": "-="
+              }
+            ]
+          },
+          {
+            "comment": "excited",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Excited",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "10",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::40}}",
+                "operator": "+="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "8",
+                "operator": "-="
+              }
+            ]
+          },
+          {
+            "comment": "calm",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "var",
+                "var": "status",
+                "value": "Calm",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "30",
+                "operator": "-="
+              },
+              {
+                "type": "setvar",
+                "var": "score",
+                "value": "{{roll::5}}",
+                "operator": "-="
+              },
+              {
+                "type": "setvar",
+                "var": "mood",
+                "value": "5",
+                "operator": "+="
+              }
+            ]
+          },
+          {
+            "comment": "-end-",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "value",
+                "var": "^{{greater_equal::{{getvar::score}}::100}}",
+                "value": "^1",
+                "operator": "="
+              }
+            ],
+            "effect": [
+              {
+                "type": "impersonate",
+                "role": "user",
+                "value": "(ooc: synthetic ending text for the fixture.)"
+              }
+            ]
+          },
+          {
+            "comment": ".......",
+            "type": "output",
+            "conditions": [
+              {
+                "type": "value",
+                "value": "^1",
+                "operator": "=",
+                "var": "^{{greater_equal::{{getvar::score}}::100}}"
+              }
+            ],
+            "effect": [
+              {
+                "type": "command",
+                "value": "/echo The synthetic score reached its limit"
+              },
+              {
+                "type": "impersonate",
+                "role": "char",
+                "value": "Status: Calm | Score: (100/100)"
+              }
+            ]
+          }
+        ],
+        "additionalText": "",
+        "virtualscript": "",
+        "largePortrait": true,
+        "lorePlus": false,
+        "inlayViewScreen": false,
+        "newGenData": {
+          "prompt": "",
+          "negative": "",
+          "instructions": "",
+          "emotionInstructions": ""
+        },
+        "vits": {},
+        "lowLevelAccess": false
+      }
+    }
+  }
+}

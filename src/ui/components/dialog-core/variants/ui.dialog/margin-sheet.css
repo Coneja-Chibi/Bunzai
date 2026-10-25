@@ -1,0 +1,12 @@
+/** ui.dialog margin-sheet: a sheet laid in from the margin. It takes the full height of the right edge, bounded by a hairline rule, with no shadow. */
+@keyframes bk-margin-in { from { opacity: 0; transform: translateX(1.5rem); } to { opacity: 1; transform: none; } }
+html[data-surface-ui-dialog="margin-sheet"] [data-dialog-overlay="center"]:not(:has(.host-protected)) {
+  background: color-mix(in srgb, var(--bk-surface-ink) 45%, transparent); justify-content: flex-end; align-items: stretch; padding: 0;
+  & [data-dialog-sheet]:has(> .scn-sheet) { padding: 0; background: none; border: 0; box-shadow: none; max-width: none; width: min(30rem, 100%); align-self: stretch; display: flex; flex-direction: column; overflow: auto; }
+  & :is([data-dialog-sheet]:not(:has(> .scn-sheet)), [data-dialog-sheet] > .scn-sheet) {
+    width: min(30rem, 100%); max-width: 30rem; max-height: none; min-height: 100%; overflow: auto; background: var(--bk-surface-base); color: var(--bk-text);
+    border: 0; border-left: 1px solid var(--bk-text); box-shadow: none; font-family: var(--font-big);
+    animation: bk-margin-in var(--bk-dur-base) var(--bk-ease-move) both; }
+  & [data-dialog-sheet]:not(:has(> .scn-sheet)) { align-self: stretch; padding: 2rem 1.8rem; }
+  & [data-dialog-sheet] > .scn-sheet { width: 100%; max-width: none; flex: 1; }
+}

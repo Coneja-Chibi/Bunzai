@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Password wireframe</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../../rc-bridge.css">
+<script src="../../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">02 A key for the stage door (in-between)</div>
+      <p class="wf-lede">Setting a password, in the dossier style. The lines (recovery words) come first, because a forgotten password with no lines would lock the person out for good.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">No lines yet</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Before the key</div>
+          <div class="marquee">Lines <em>first</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <div class="stage-note gilt">
+          <div class="stage-note-label">Stage direction</div>
+          <p>A password you forget would lock the stage door for good. Your twelve lines are the way back in, so they are written first. It takes about a minute.</p>
+        </div>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta">Write my opening lines &rarr;</button>
+          <button class="btn-ghost">Not tonight</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Choosing the password</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Act II, The Key</div>
+          <div class="marquee">A key for the <em>door</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>Once set, every computer forgets its own key and the door asks for this one.<span class="p">)</span></p>
+        <div class="field">
+          <label for="p1">New password</label>
+          <input id="p1" class="input" type="password" value="velvet lantern crosses harbor">
+        </div>
+        <div class="meter s4" aria-label="strength: strong"><span></span><span></span><span></span><span></span></div>
+        <p class="subtle"><b>Strong.</b> A few unrelated words make a good key.</p>
+        <div class="field">
+          <label for="p2">Say it again</label>
+          <input id="p2" class="input" type="password" value="velvet lantern crosses harbor">
+        </div>
+        <div class="row">
+          <div class="tx">
+            <div class="label">When the door asks</div>
+            <div class="hint">Each time the app opens, and also after you step away if you choose.</div>
+          </div>
+          <div class="seg"><button class="on">Each open</button><button>Also after 15 min idle</button></div>
+        </div>
+        <button class="stamp stamp-btn primary cta">Lock the door &rarr;</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Changing things later: a fresh proof</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Stage manager</div>
+          <div class="marquee">Is it <em>you</em>?</div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>Changing the password, the lines, or the remembered computers needs the password or your lines. You will not be asked again for five minutes.<span class="p">)</span></p>
+        <div class="field">
+          <label for="p3">Current password</label>
+          <input id="p3" class="input" type="password" value="">
+        </div>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta">It is me &rarr;</button>
+          <button class="btn-ghost">Use my lines instead</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Meter:</b> zxcvbn's score drives the four segments; a weak key is allowed after the warning, because the lines are the real safety net.</p>
+</div>
+</body>
+</html>

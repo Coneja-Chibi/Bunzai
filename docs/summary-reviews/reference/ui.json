@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/ui",
+  "sourcePath": "docs/reference/ui.md",
+  "sourceHash": "sha256:71639dae4b4d76126b646cd1964684b0a5a30fed7df3087a666f875177ecbf75",
+  "semanticSummaryHash": "sha256:2e329031a3712265e6f171ba0e5bdfd8f07037151135e476c783379a7a31ed75",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Chooser screenshots (1920x947, tracked, caption text exact) and the .spk-time/.pstamp description match scene-bubble.tsx:133 and messenger-chat-style.ts:19-21; sidecar fresh, scans and links clean.",
+  "reviewedAt": "2026-10-25T04:17:52.876Z"
+}

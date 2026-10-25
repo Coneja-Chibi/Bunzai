@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "README",
+  "sourcePath": "docs/README.md",
+  "sourceHash": "sha256:4ad72241202708a125ef7d1de264391b8e29890ac29bb83522a125f8d350ad33",
+  "semanticSummaryHash": "sha256:55d4f51ba6b50085f336fa784e1a6156cd6518f2e8943719984eaf9dd972debc",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:11.236Z"
+}

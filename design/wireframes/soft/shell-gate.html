@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: the library gate</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-gate: what the window shows before the Studio (src/ui/shell/library-gate.tsx). Content and
+ * copy are verbatim from that file and its approved in-between wireframes (design/wireframes/
+ * encryption/in-between/01-stage-door.html, 06-load-in.html), redrawn with soft-parts instead of
+ * house.css/rc-bridge.css. The no-room screen matches the CODE exactly (Try again only) - the old
+ * wireframe's extra "Open the folder as it is" button was dropped when this was implemented and is
+ * NOT reproduced here.
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--stage-well); }
+.stage { min-height: 100vh; display: grid; place-items: center; padding: 2rem 1rem; }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+/* width uses calc(100vw - Npx), NOT 100%: .dossier is centered by a `display:grid;place-items:center`
+   ancestor, whose grid track has an INDEFINITE size (sized to content) - a percentage against that
+   resolves as if unconstrained, so min(30rem, 100%) silently ignored the 100% and overflowed narrow
+   viewports. vw is always definite, so it actually caps the width. */
+.dossier { width: min(30rem, calc(100vw - 2rem)); background: var(--face); box-shadow: 0 0 0 1px var(--edge), 8px 8px 0 0 var(--stage-black); padding: 1.9rem 2rem 1.7rem; box-sizing: border-box; }
+.dossier.hero { text-align: center; }
+.act { font: 500 12px var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+.act::after { content: "\2726"; color: var(--accent); margin-left: auto; }
+.marquee { font: 700 1.9rem var(--font-big); font-variation-settings: var(--soft-axes); margin: .5rem 0 1rem; }
+.marquee em { font-style: normal; color: var(--accent); }
+.direction { font-style: italic; color: var(--text-soft); line-height: 1.55; margin: 0 0 1.1rem; }
+.direction b { font-style: normal; color: var(--text); }
+.field { margin-bottom: 1rem; }
+.field label { display: block; font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+.lines-head { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.line-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+.cue { display: flex; align-items: center; gap: 6px; box-shadow: inset 0 0 0 1px var(--seam); padding: 6px 8px; }
+.cue i { font: 500 12px var(--font-mono); color: var(--text-faint); font-style: normal; width: 1.1em; }
+.cue input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: 400 .92rem var(--font-body); }
+.cues-count { font: 500 12px var(--font-mono); color: var(--text-dim); margin-bottom: 1rem; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 1rem; }
+.row .label { font: 600 .9rem var(--font-big); }
+.row .hint { font-size: .8rem; color: var(--text-dim); margin-top: 2px; max-width: 19rem; }
+.cta-row { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin-top: .4rem; }
+.cta-row.after-note { flex-direction: row; align-items: center; flex-wrap: wrap; }
+.subtle { font-size: .82rem; color: var(--text-dim); margin-top: 1rem; }
+.proof { font: 12px/1.7 var(--font-mono); color: var(--text-soft); box-shadow: inset 0 0 0 1px var(--seam); background: var(--stage-well); padding: 10px 12px; margin: 0 0 8px; white-space: pre-wrap; }
+.voice { font: 600 1.1rem var(--font-big); font-variation-settings: var(--soft-axes); text-align: center; margin: 0 0 1rem; }
+.lines-list { font-size: .85rem; color: var(--text-soft); padding-left: 1.1rem; margin: 0 0 .8rem; }
+
+.gate-note { position: fixed; left: 12px; top: 12px; max-width: 30rem; padding: 10px 12px; background: var(--status-bg); box-shadow: 0 0 0 1px var(--seam); font: 12px/1.5 var(--font-body); color: var(--status-fg); z-index: 5; }
+[data-only] { display: none; }
+[data-only].show { display: grid; }
+.stage[data-only].show { display: grid; }
+
+@media (max-width: 30rem) {
+  .line-grid { grid-template-columns: repeat(2, 1fr); }
+  .dossier { padding: 1.4rem 1.3rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Stage door: password set -->
+<div class="stage" data-only="door" >
+  <div class="dossier">
+    <div class="act">The stage door</div>
+    <div class="marquee">Welcome <em>back</em></div>
+    <p class="direction">(The house is locked. Speak the password and the lights come up.)</p>
+    <div class="field"><label for="pw">Password</label><input id="pw" class="s-input" type="password" value="moonlit harbor"></div>
+    <div class="cta-row"><button class="s-btn">Enter stage right &rarr;</button><button class="s-btn ghost">I forgot it: use my lines</button></div>
+  </div>
+</div>
+
+<!-- Stage door: wrong password -->
+<div class="stage" data-only="door-wrong">
+  <div class="dossier">
+    <div class="act">The stage door</div>
+    <div class="marquee">Welcome <em>back</em></div>
+    <div class="field"><label for="pw2">Password</label><input id="pw2" class="s-input" type="password" value="moonlit harbour" style="box-shadow:inset 0 0 0 1px var(--stage-danger-edge)"></div>
+    <div class="s-card" style="box-shadow:inset 0 0 0 1px var(--stage-danger-edge);padding:10px 12px;margin-bottom:1rem;--c:transparent">
+      <div class="s-act" style="color:var(--stage-danger-text)">Line flub</div>
+      <p style="margin:4px 0 0;color:var(--stage-danger-text);font-size:.88rem">That password does not open this library. Check caps lock, or use your recovery words.</p>
+    </div>
+    <div class="cta-row"><button class="s-btn">Enter stage right &rarr;</button><button class="s-btn ghost">I forgot it: use my lines</button></div>
+  </div>
+</div>
+
+<!-- Stage door: recovery words -->
+<div class="stage" data-only="door-lines">
+  <div class="dossier">
+    <div class="act">The stage door</div>
+    <div class="marquee">Recite your <em>lines</em></div>
+    <p class="direction">(The <b>PLAYER</b> gives all twelve words, in order. Paste them into the first cue, or type them one by one.)</p>
+    <div class="lines-head">&#9656; Your cues</div>
+    <div class="line-grid">
+      <div class="cue"><i>1.</i><input value="velvet"></div><div class="cue"><i>2.</i><input value="harbor"></div><div class="cue"><i>3.</i><input value="lantern"></div>
+      <div class="cue"><i>4.</i><input value="orchard"></div><div class="cue"><i>5.</i><input value=""></div><div class="cue"><i>6.</i><input value=""></div>
+      <div class="cue"><i>7.</i><input value=""></div><div class="cue"><i>8.</i><input value=""></div><div class="cue"><i>9.</i><input value=""></div>
+      <div class="cue"><i>10.</i><input value=""></div><div class="cue"><i>11.</i><input value=""></div><div class="cue"><i>12.</i><input value=""></div>
+    </div>
+    <div class="cues-count">4 / 12 cues delivered</div>
+    <div class="row"><div><div class="label">Remember this computer</div><div class="hint">Next time it opens without asking. Only while no password is set.</div></div><span class="s-switch on"></span></div>
+    <button class="s-btn">Take the stage &rarr;</button>
+  </div>
+</div>
+
+<!-- Stage door: not this computer -->
+<div class="stage" data-only="door-notthis">
+  <div class="dossier">
+    <div class="act">The stage door</div>
+    <div class="marquee">Not <em>this</em></div>
+    <div class="s-card" style="box-shadow:inset 0 0 0 1px var(--stage-danger-edge);padding:12px 14px;--c:transparent">
+      <div class="s-act" style="color:var(--stage-danger-text)">Line flub</div>
+      <p style="margin:6px 0 0;color:var(--stage-danger-text);font-size:.9rem">This library was set up on another computer and has no password or recovery words, so it cannot be opened here. Open it on the computer that made it.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Load-in: carrying -->
+<div class="stage" data-only="loadin">
+  <div class="dossier">
+    <div class="act">Load-in</div>
+    <div class="marquee">Moving <em>in</em></div>
+    <p class="direction">(The company carries every piece into the locked library and checks each one on arrival. The folder is only read.)</p>
+    <div class="lines-head">&#9656; On the loading dock</div>
+    <pre class="proof">checked  character/vera.json
+checked  character/the-lighthouse-keeper.json
+checked  lorebook/harbor-town.json
+carrying preset/moonlit.json</pre>
+    <div class="cues-count">214 / 412 pieces carried in</div>
+    <p class="subtle">Closing Bunraku now is safe: nothing is kept half done, and it starts over next time.</p>
+  </div>
+</div>
+
+<!-- Load-in: no room (matches library-gate.tsx's NoRoom exactly: StageNote + Try again only) -->
+<div class="stage" data-only="loadin-noroom">
+  <div class="dossier">
+    <div class="act">Load-in</div>
+    <div class="marquee">No room <em>backstage</em></div>
+    <div class="s-card" style="box-shadow:inset 0 0 0 1px var(--stage-warn);padding:12px 14px;margin-bottom:1rem;--c:transparent">
+      <div class="s-act" style="color:var(--stage-warn)">Stage direction</div>
+      <p style="margin:6px 0 0;color:var(--text);font-size:.9rem">This folder is 156 MB. Carrying it in needs about 312 MB free, and this disk has 90 MB. Nothing was changed.</p>
+    </div>
+    <button class="s-btn">Try again &rarr;</button>
+  </div>
+</div>
+
+<!-- All aboard -->
+<div class="stage" data-only="allaboard">
+  <div class="dossier hero">
+    <div class="act" style="justify-content:center">Load-in</div>
+    <div class="marquee">All <em>aboard</em></div>
+    <p class="voice">412 pieces carried in and checked.</p>
+    <p class="direction">(Pictures, exports, and other files, 37 in all, stay in the folder as they were. The library keeps each piece's picture inside the piece.)</p>
+    <button class="s-btn">Take the stage &rarr;</button>
+  </div>
+</div>
+
+<!-- All aboard, renamed -->
+<div class="stage" data-only="allaboard-renamed">
+  <div class="dossier hero">
+    <div class="act" style="justify-content:center">Load-in</div>
+    <div class="marquee">All <em>aboard</em></div>
+    <p class="voice">412 pieces carried in and checked.</p>
+    <div style="text-align:left">
+      <div class="lines-head">&#9656; Renamed to keep both</div>
+      <ol class="lines-list"><li>Vera.json kept as vera-2.json</li></ol>
+    </div>
+    <p class="subtle">Two names that differ only in capitals are one name in the library, so the second got a number.</p>
+    <button class="s-btn">Take the stage &rarr;</button>
+  </div>
+</div>
+
+<!-- Failed -->
+<div class="stage" data-only="failed">
+  <div class="dossier">
+    <div class="act">The stage door</div>
+    <div class="marquee">The house <em>is dark</em></div>
+    <div class="s-card" style="box-shadow:inset 0 0 0 1px var(--stage-danger-edge);padding:12px 14px;margin-bottom:1rem;--c:transparent">
+      <div class="s-act" style="color:var(--stage-danger-text)">Line flub</div>
+      <p style="margin:6px 0 0;color:var(--stage-danger-text);font-size:.9rem">The library could not open: the studio server did not answer. Your studio folder was not changed.</p>
+    </div>
+    <button class="s-btn">Try again &rarr;</button>
+    <p class="subtle">If this keeps happening, close Bunraku and open it again.</p>
+  </div>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="door" class="on">Door: password</button>
+  <button data-s="door-wrong">Door: wrong password</button>
+  <button data-s="door-lines">Door: recovery words</button>
+  <button data-s="door-notthis">Door: not this computer</button>
+  <button data-s="loadin">Load-in: carrying</button>
+  <button data-s="loadin-noroom">Load-in: no room</button>
+  <button data-s="allaboard">Load-in: all aboard</button>
+  <button data-s="allaboard-renamed">Load-in: all aboard, renamed</button>
+  <button data-s="failed">Failed</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var NOTES = {
+    door: "StageDoor, hasPassword=true, withLines=false (the default when a password IS set). Direction, SecretField, Enter stage right, plus \"use my lines\" since hasWords is also true.",
+    "door-wrong": "Same screen after a 401: StageNote (Line flub) appears, input reads invalid.",
+    "door-lines": "StageDoor, withLines=true: shown by default when NO password is set, or on demand (\"use my lines\"). The Remember-this-computer row only shows when !hasPassword.",
+    "door-notthis": "hasPassword=false AND hasWords=false: a library set up on another computer. No password field, no lines, no CTA - just the refusal, exactly as library-gate.tsx returns it.",
+    loadin: "gateScreen() phase opening/loading-in. The proof block is a live-updating <pre>, last line \"carrying\" while done<total.",
+    "loadin-noroom": "status.noRoom=true. Matches the CODE exactly: one StageNote (warn) + \"Try again\" (label flips to \"Restarting\" and disables while a retry POST runs). The old encryption wireframe's second button (\"Open the folder as it is\") is NOT in the shipped component and is intentionally left out here.",
+    allaboard: "phase unlocked, status.copied set, load-in not yet seen this session (sessionStorage key bunraku.library.loadInSeen).",
+    "allaboard-renamed": "Same screen when copied.renamed.length > 0: an ordered list, one line per keep-both rename.",
+    failed: "phase failed (server down/restarting/500). Reason is whatever statusOnError() or the server supplied; \"the studio server did not answer\" is the code's own fallback text.",
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.classList.toggle("show", el.dataset.only === s); });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + NOTES[s];
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "door");
+})();
+</script>
+</body>
+</html>

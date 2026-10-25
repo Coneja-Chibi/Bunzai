@@ -1,0 +1,2314 @@
+{
+  "generated": "2026-10-05T04:11:29.027Z",
+  "viewport": "1400x900",
+  "content": "1100x700 at the top left of #canvas (the app area, shell chrome dropped)",
+  "map": "140x90",
+  "metric": "1 - SSIM of Sobel edge maps",
+  "groups": [
+    {
+      "group": "scene",
+      "screens": 11
+    },
+    {
+      "group": "library",
+      "screens": 10
+    },
+    {
+      "group": "editor",
+      "screens": 12
+    },
+    {
+      "group": "scenes-list",
+      "screens": 4
+    },
+    {
+      "group": "settings",
+      "screens": 9
+    },
+    {
+      "group": "other",
+      "screens": 21
+    }
+  ],
+  "views": {
+    "window": {
+      "calibration": {
+        "negative": 0.21326822853164962,
+        "positive": 0.5400775222591112,
+        "separated": true,
+        "threshold": 0.3393838187686078,
+        "colourMax": 0.21326822853164962,
+        "fontMax": 0.16464712560861539,
+        "colourOnlyThreshold": 0.3393838187686078,
+        "fontReflow": [
+          "settings.appearance"
+        ],
+        "negativeMedian": 0.04687658934844041,
+        "positiveScreen": "scene.play",
+        "positivePairs": {
+          "theater|encore": 0.8322384590083672,
+          "theater|girliepop": 0.7831823772377344,
+          "theater|paper": 0.5400775222591112,
+          "encore|girliepop": 0.8510547012940806,
+          "encore|paper": 0.8193342391574059,
+          "girliepop|paper": 0.628477136560981
+        }
+      },
+      "themes": [
+        {
+          "theme": "theater",
+          "equal": 0.9850746268656716,
+          "timeWeighted": 0.9904761904761904,
+          "count": 67
+        },
+        {
+          "theme": "encore",
+          "equal": 1,
+          "timeWeighted": 1,
+          "count": 67
+        },
+        {
+          "theme": "girliepop",
+          "equal": 0.9850746268656716,
+          "timeWeighted": 0.9904761904761904,
+          "count": 67
+        },
+        {
+          "theme": "paper",
+          "equal": 1,
+          "timeWeighted": 1,
+          "count": 67
+        }
+      ],
+      "screens": [
+        {
+          "id": "shell.title",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.7307054744678109,
+            "theater|girliepop": 0.6316692488025821,
+            "theater|paper": 0.5916611908651281,
+            "encore|girliepop": 0.7356063653136239,
+            "encore|paper": 0.6735203199711178,
+            "girliepop|paper": 0.6390130774847518
+          },
+          "control": 0.07677201657074262,
+          "fontControl": 0.0000330885741014475
+        },
+        {
+          "id": "setup.theme",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5015315833125815,
+            "theater|girliepop": 0.4480925517235358,
+            "theater|paper": 0.5472470277062196,
+            "encore|girliepop": 0.45780273330643273,
+            "encore|paper": 0.5405876290149458,
+            "girliepop|paper": 0.5171183861421993
+          },
+          "control": 0.11159583750412849,
+          "fontControl": 0
+        },
+        {
+          "id": "setup.makes",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.520689630682338,
+            "theater|girliepop": 0.4713526150029592,
+            "theater|paper": 0.5477817010394517,
+            "encore|girliepop": 0.5422562357538154,
+            "encore|paper": 0.4571134753621322,
+            "girliepop|paper": 0.5157748950754025
+          },
+          "control": 0.059758844174703896,
+          "fontControl": 0
+        },
+        {
+          "id": "setup.publish",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.38725746526789406,
+            "theater|girliepop": 0.37173871238010026,
+            "theater|paper": 0.4875406252927197,
+            "encore|girliepop": 0.43929189897696586,
+            "encore|paper": 0.46690659267995727,
+            "girliepop|paper": 0.4645991149730778
+          },
+          "control": 0.05840001233627179,
+          "fontControl": 0
+        },
+        {
+          "id": "setup.accent",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.4280548930112591,
+            "theater|girliepop": 0.421603829626399,
+            "theater|paper": 0.5131227471449042,
+            "encore|girliepop": 0.46471172839708486,
+            "encore|paper": 0.5117534587372994,
+            "girliepop|paper": 0.4873175959530981
+          },
+          "control": 0.05899949412151173,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.rename",
+          "app": "library",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.4667653549020362,
+            "theater|girliepop": 0.38071435882979077,
+            "theater|paper": 0.5806178409809424,
+            "encore|girliepop": 0.48237163826990925,
+            "encore|paper": 0.6897170685722489,
+            "girliepop|paper": 0.638743031532562
+          },
+          "control": 0.032323975556815765,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.delete",
+          "app": "library",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5056626068057771,
+            "theater|girliepop": 0.47761519331218494,
+            "theater|paper": 0.5532351543809586,
+            "encore|girliepop": 0.5621180838267907,
+            "encore|paper": 0.7135215830214443,
+            "girliepop|paper": 0.6596325092679494
+          },
+          "control": 0.038438602365002406,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.close-piece",
+          "app": "workbench",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.36910939606145154,
+            "theater|girliepop": 0.2749678084693826,
+            "theater|paper": 0.3724431578500885,
+            "encore|girliepop": 0.4167082588999169,
+            "encore|paper": 0.5613116119727122,
+            "girliepop|paper": 0.4028681718891851
+          },
+          "control": 0.014492031508660741,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.follow",
+          "app": "library",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.45623722240603415,
+            "theater|girliepop": 0.5370068383285749,
+            "theater|paper": 0.560704786065743,
+            "encore|girliepop": 0.5305557811578419,
+            "encore|paper": 0.6792431243684895,
+            "girliepop|paper": 0.6503700213320466
+          },
+          "control": 0.03317356410072514,
+          "fontControl": 0
+        },
+        {
+          "id": "scene.play",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.8322384590083672,
+            "theater|girliepop": 0.7831823772377344,
+            "theater|paper": 0.5400775222591112,
+            "encore|girliepop": 0.8510547012940806,
+            "encore|paper": 0.8193342391574059,
+            "girliepop|paper": 0.628477136560981
+          },
+          "control": 0.16991010823605412,
+          "fontControl": 0.1571064362602579
+        },
+        {
+          "id": "scene.wing.cast",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.7493958591420757,
+            "theater|girliepop": 0.6901780019302672,
+            "theater|paper": 0.4444641121382118,
+            "encore|girliepop": 0.7677620546976383,
+            "encore|paper": 0.6816883729412261,
+            "girliepop|paper": 0.6813404410185976
+          },
+          "control": 0.16390357234386,
+          "fontControl": 0.00015102940111388907
+        },
+        {
+          "id": "scene.wing.prompting",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.8603623525593905,
+            "theater|girliepop": 0.8366088078872205,
+            "theater|paper": 0.4757082140545065,
+            "encore|girliepop": 0.9186185160193665,
+            "encore|paper": 0.7797785189299951,
+            "girliepop|paper": 0.8106167864680791
+          },
+          "control": 0.20891812296828327,
+          "fontControl": 0.00012296604173323011
+        },
+        {
+          "id": "scene.wing.world",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.6781934804779248,
+            "theater|girliepop": 0.6215164144674623,
+            "theater|paper": 0.375035105474646,
+            "encore|girliepop": 0.7145540625693947,
+            "encore|paper": 0.604024644960679,
+            "girliepop|paper": 0.595069553141705
+          },
+          "control": 0.09853300229259765,
+          "fontControl": 0.00015095424299604865
+        },
+        {
+          "id": "scene.wing.props",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.665497368489955,
+            "theater|girliepop": 0.6144345240744251,
+            "theater|paper": 0.3707132656626454,
+            "encore|girliepop": 0.7133858070765061,
+            "encore|paper": 0.5984772036176154,
+            "girliepop|paper": 0.5931604052387093
+          },
+          "control": 0.08703018380454552,
+          "fontControl": 0.00015089819975711016
+        },
+        {
+          "id": "scene.wing.ai",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.8819915314538507,
+            "theater|girliepop": 0.832385599207388,
+            "theater|paper": 0.5257498422405694,
+            "encore|girliepop": 0.9196727571125118,
+            "encore|paper": 0.815941155864299,
+            "girliepop|paper": 0.8140443086737897
+          },
+          "control": 0.0883433940400401,
+          "fontControl": 0.015648596917478663
+        },
+        {
+          "id": "scene.wing.stage",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.6252370622982752,
+            "theater|girliepop": 0.5804038958905438,
+            "theater|paper": 0.4572840268217152,
+            "encore|girliepop": 0.6162361464349877,
+            "encore|paper": 0.5236273735888242,
+            "girliepop|paper": 0.5102396539906122
+          },
+          "control": 0.07010589676058532,
+          "fontControl": 0.0086482615315574
+        },
+        {
+          "id": "scene.booth",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.6023536762869768,
+            "theater|girliepop": 0.5727738379955652,
+            "theater|paper": 0.3586518266473754,
+            "encore|girliepop": 0.617799071622916,
+            "encore|paper": 0.5366323297250936,
+            "girliepop|paper": 0.5254347338442005
+          },
+          "control": 0.08590225275826613,
+          "fontControl": 0.00015101268518435962
+        },
+        {
+          "id": "scene.streaming",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.802156415382181,
+            "theater|girliepop": 0.7726740840179545,
+            "theater|paper": 0.5400135703553544,
+            "encore|girliepop": 0.8287542555891438,
+            "encore|paper": 0.7996649509726029,
+            "girliepop|paper": 0.6136507298523548
+          },
+          "control": 0.1624224613087707,
+          "fontControl": 0.06736022307574352
+        },
+        {
+          "id": "scene.edit",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.8246994012114451,
+            "theater|girliepop": 0.7567583513912505,
+            "theater|paper": 0.5921757006312351,
+            "encore|girliepop": 0.8470442564241538,
+            "encore|paper": 0.8073291293111643,
+            "girliepop|paper": 0.6328844709061376
+          },
+          "control": 0.14950106108417716,
+          "fontControl": 0.11870799055836401
+        },
+        {
+          "id": "scene.msg-menu",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.8445825532271072,
+            "theater|girliepop": 0.7958391472871185,
+            "theater|paper": 0.5595490476407916,
+            "encore|girliepop": 0.8639438573475257,
+            "encore|paper": 0.8165969264861437,
+            "girliepop|paper": 0.6291936382193196
+          },
+          "control": 0.17611945718547084,
+          "fontControl": 0.16464712560861539
+        },
+        {
+          "id": "scenes.list",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.7738288493930132,
+            "theater|girliepop": 0.7593325389098614,
+            "theater|paper": 0.519068287725627,
+            "encore|girliepop": 0.8015086101130341,
+            "encore|paper": 0.7524023556088878,
+            "girliepop|paper": 0.6722479792789353
+          },
+          "control": 0.15059236904383755,
+          "fontControl": 0.009861067443805882
+        },
+        {
+          "id": "scenes.select",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.800177833822111,
+            "theater|girliepop": 0.8013265550395674,
+            "theater|paper": 0.5634674744851871,
+            "encore|girliepop": 0.7638139302865826,
+            "encore|paper": 0.7776551478356718,
+            "girliepop|paper": 0.714073547552816
+          },
+          "control": 0.16488639074639233,
+          "fontControl": 0.010882818144750672
+        },
+        {
+          "id": "scenes.trash",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.7217751170825157,
+            "theater|girliepop": 0.5960446887645414,
+            "theater|paper": 0.4514639024561118,
+            "encore|girliepop": 0.6499518880307396,
+            "encore|paper": 0.7504734339025534,
+            "girliepop|paper": 0.5434223519295257
+          },
+          "control": 0.12339881704920752,
+          "fontControl": 0
+        },
+        {
+          "id": "scenes.search",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.8236683090945299,
+            "theater|girliepop": 0.8307141363919517,
+            "theater|paper": 0.6758883416369239,
+            "encore|girliepop": 0.771854390608922,
+            "encore|paper": 0.7270750598551341,
+            "girliepop|paper": 0.7230575593782733
+          },
+          "control": 0.21326822853164962,
+          "fontControl": 0
+        },
+        {
+          "id": "library.carousel",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.9074357897976855,
+            "theater|girliepop": 0.838247736979908,
+            "theater|paper": 0.8626410699430384,
+            "encore|girliepop": 0.8503523055595761,
+            "encore|paper": 0.9315661446544093,
+            "girliepop|paper": 0.8984079282358252
+          },
+          "control": 0.1291035318381153,
+          "fontControl": 0
+        },
+        {
+          "id": "library.grid",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.9271034634305286,
+            "theater|girliepop": 0.9117787372572783,
+            "theater|paper": 0.8724987623225002,
+            "encore|girliepop": 0.8508901279261254,
+            "encore|paper": 0.9330664542194103,
+            "girliepop|paper": 0.8982394114707171
+          },
+          "control": 0.131262953106981,
+          "fontControl": 0
+        },
+        {
+          "id": "library.list",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8976536891539594,
+            "theater|girliepop": 0.8914368536172326,
+            "theater|paper": 0.7789664078388159,
+            "encore|girliepop": 0.9126526082009869,
+            "encore|paper": 0.9418513116482019,
+            "girliepop|paper": 0.923642566483472
+          },
+          "control": 0.16219821403478663,
+          "fontControl": 0
+        },
+        {
+          "id": "library.tiles",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8425863653028761,
+            "theater|girliepop": 0.8617002227035521,
+            "theater|paper": 0.7535450890510044,
+            "encore|girliepop": 0.7999602874847532,
+            "encore|paper": 0.8234270611410074,
+            "girliepop|paper": 0.8361572725571648
+          },
+          "control": 0.1645049312095841,
+          "fontControl": 0
+        },
+        {
+          "id": "library.shelf",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8520668816440466,
+            "theater|girliepop": 0.9098396396679432,
+            "theater|paper": 0.7410904617856775,
+            "encore|girliepop": 0.8996320391163471,
+            "encore|paper": 0.8747552366125577,
+            "girliepop|paper": 0.911141401053245
+          },
+          "control": 0.17877338222182537,
+          "fontControl": 0
+        },
+        {
+          "id": "library.select",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.9076726722412587,
+            "theater|girliepop": 0.8515678205575196,
+            "theater|paper": 0.8590422831903155,
+            "encore|girliepop": 0.9304238068156769,
+            "encore|paper": 0.9105355533841859,
+            "girliepop|paper": 0.8748160205243575
+          },
+          "control": 0.17046910332362009,
+          "fontControl": 0
+        },
+        {
+          "id": "library.trash",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.7501003241498718,
+            "theater|girliepop": 0.612215910740004,
+            "theater|paper": 0.39584355377381086,
+            "encore|girliepop": 0.6721648764442013,
+            "encore|paper": 0.7329064044098291,
+            "girliepop|paper": 0.5147823189259357
+          },
+          "control": 0.12235320060734844,
+          "fontControl": 0
+        },
+        {
+          "id": "library.import",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.47340692765455716,
+            "theater|girliepop": 0.49253404789173283,
+            "theater|paper": 0.5437623282097923,
+            "encore|girliepop": 0.46677940282504726,
+            "encore|paper": 0.7039075064003419,
+            "girliepop|paper": 0.6230452197829923
+          },
+          "control": 0.05869863342576609,
+          "fontControl": 0
+        },
+        {
+          "id": "library.menu",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.9281890839336135,
+            "theater|girliepop": 0.7854610971481905,
+            "theater|paper": 0.8812589614512821,
+            "encore|girliepop": 0.9079365896365836,
+            "encore|paper": 0.9711011594548226,
+            "girliepop|paper": 0.8694563834192203
+          },
+          "control": 0.1230285347658846,
+          "fontControl": 0
+        },
+        {
+          "id": "library.search",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.9117155225954149,
+            "theater|girliepop": 0.8420950115089776,
+            "theater|paper": 0.821602543203874,
+            "encore|girliepop": 0.8637429998661448,
+            "encore|paper": 0.9620398493116117,
+            "girliepop|paper": 0.8933130095616044
+          },
+          "control": 0.12791638249312431,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.empty",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.7130998346795347,
+            "theater|girliepop": 0.7245153641415916,
+            "theater|paper": 0.6435850548375933,
+            "encore|girliepop": 0.6285999815113372,
+            "encore|paper": 0.6668516107862008,
+            "girliepop|paper": 0.5963048202104437
+          },
+          "control": 0.15345343878828077,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.character",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.9703585559579042,
+            "theater|girliepop": 0.8758154878460417,
+            "theater|paper": 0.8012340642074902,
+            "encore|girliepop": 1.0054632915808965,
+            "encore|paper": 0.9543741752537187,
+            "girliepop|paper": 0.48374711722987196
+          },
+          "control": 0.08995140690169656,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.persona",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.7590002676120327,
+            "theater|girliepop": 0.6495407451879316,
+            "theater|paper": 0.5707894005315852,
+            "encore|girliepop": 0.8318306084881907,
+            "encore|paper": 0.803362439602207,
+            "girliepop|paper": 0.48000058238220444
+          },
+          "control": 0.05714950172321975,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.pack",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.6356412786150853,
+            "theater|girliepop": 0.6629678905405376,
+            "theater|paper": 0.5096434176393682,
+            "encore|girliepop": 0.6792622962867993,
+            "encore|paper": 0.6414767626060528,
+            "girliepop|paper": 0.5251403113615496
+          },
+          "control": 0.05267040508389742,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.htmldoc",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.5345333535305459,
+            "theater|girliepop": 0.6510475754813081,
+            "theater|paper": 0.45964387234663917,
+            "encore|girliepop": 0.7950157930205717,
+            "encore|paper": 0.6960285466730467,
+            "girliepop|paper": 0.7301275508776601
+          },
+          "control": 0.01821259697279265,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.preset",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.6021796183200392,
+            "theater|girliepop": 0.8753743976767103,
+            "theater|paper": 0.6345819227036287,
+            "encore|girliepop": 0.9076797144578712,
+            "encore|paper": 0.7189009129709576,
+            "girliepop|paper": 0.7420593047504516
+          },
+          "control": 0.04687658934844041,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.preset.settings",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8082373085685985,
+            "theater|girliepop": 0.8614948428911499,
+            "theater|paper": 0.6177697430258475,
+            "encore|girliepop": 0.9533236762118942,
+            "encore|paper": 0.8527619413404867,
+            "girliepop|paper": 0.7420593047504516
+          },
+          "control": 0.06275754568225367,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.lorebook",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.9292297425705841,
+            "theater|girliepop": 0.9113119817694029,
+            "theater|paper": 0.8121621380777266,
+            "encore|girliepop": 0.9368630681294281,
+            "encore|paper": 0.923925587808466,
+            "girliepop|paper": 0.603359937500998
+          },
+          "control": 0.14833668095586938,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.lorebook.contents",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.6597490092103032,
+            "theater|girliepop": 0.7182281429695536,
+            "theater|paper": 0.6175005435518596,
+            "encore|girliepop": 0.7458941945807425,
+            "encore|paper": 0.7105148705055624,
+            "girliepop|paper": 0.603359937500998
+          },
+          "control": 0.07540300196422112,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.regex",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8761651606586984,
+            "theater|girliepop": 0.8909634039589021,
+            "theater|paper": 0.8749002907412191,
+            "encore|girliepop": 0.9434513445123366,
+            "encore|paper": 0.9476923624814168,
+            "girliepop|paper": 0.5879872827717341
+          },
+          "control": 0.10965887546929431,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.regex.bench",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.762587317672626,
+            "theater|girliepop": 0.9382571267876476,
+            "theater|paper": 0.8144613748110195,
+            "encore|girliepop": 0.9097821723590871,
+            "encore|paper": 0.8437061186271774,
+            "girliepop|paper": 0.6580670363830652
+          },
+          "control": 0.10317922821827819,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.quickreply",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8726546443448223,
+            "theater|girliepop": 0.8666684079615103,
+            "theater|paper": 0.70778083938519,
+            "encore|girliepop": 0.9071370486495367,
+            "encore|paper": 0.8475592019933698,
+            "girliepop|paper": 0.7227947230948857
+          },
+          "control": 0.06419167428868278,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.appearance",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.8555062382899333,
+            "theater|girliepop": 0.7241202412175369,
+            "theater|paper": 0.8027043273279603,
+            "encore|girliepop": 0.9219977068567368,
+            "encore|paper": 0.8107624972787096,
+            "girliepop|paper": 0.8368477961784474
+          },
+          "control": 0.4678656170801798,
+          "fontControl": 0.37960368873056294
+        },
+        {
+          "id": "settings.models",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.7100336218822751,
+            "theater|girliepop": 0.5122805421328132,
+            "theater|paper": 0.41583430512047537,
+            "encore|girliepop": 0.7021585163964676,
+            "encore|paper": 0.6874149329357215,
+            "girliepop|paper": 0.500227806218393
+          },
+          "control": 0.10054340844336551,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.connections",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.698665397227751,
+            "theater|girliepop": 0.6385722484851699,
+            "theater|paper": 0.4338965462564789,
+            "encore|girliepop": 0.7956620049806314,
+            "encore|paper": 0.6584720488856427,
+            "girliepop|paper": 0.6778601699830751
+          },
+          "control": 0.06780822213198978,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.studio",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.7667619790253222,
+            "theater|girliepop": 0.9193590069619452,
+            "theater|paper": 0.5227414892493271,
+            "encore|girliepop": 0.8957866867026874,
+            "encore|paper": 0.6704581511794576,
+            "girliepop|paper": 0.9110329280762752
+          },
+          "control": 0.0855235511195126,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.security",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.8429326259198355,
+            "theater|girliepop": 0.9159008059094718,
+            "theater|paper": 0.7864406860441238,
+            "encore|girliepop": 0.7642135673722237,
+            "encore|paper": 0.882520659962607,
+            "girliepop|paper": 0.8928089103242781
+          },
+          "control": 0.1640614054775157,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.workbench",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.73035221727793,
+            "theater|girliepop": 0.8192238143697874,
+            "theater|paper": 0.4523379357057127,
+            "encore|girliepop": 0.950675861240408,
+            "encore|paper": 0.6458574866149138,
+            "girliepop|paper": 0.8062012894567456
+          },
+          "control": 0.08312220437881179,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.remote-access",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.6952581703509852,
+            "theater|girliepop": 0.6841573625114794,
+            "theater|paper": 0.641115288295955,
+            "encore|girliepop": 0.8018800571302616,
+            "encore|paper": 0.7572678427187299,
+            "girliepop|paper": 0.6043930744400747
+          },
+          "control": 0.06317021591570404,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.updates",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.705374131217769,
+            "theater|girliepop": 0.469307662109424,
+            "theater|paper": 0.4750743614431363,
+            "encore|girliepop": 0.6727505915809813,
+            "encore|paper": 0.6229183361463959,
+            "girliepop|paper": 0.4254564414457924
+          },
+          "control": 0.05780417820426198,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.about",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.735655561818443,
+            "theater|girliepop": 0.8039083214960667,
+            "theater|paper": 0.47993832260416625,
+            "encore|girliepop": 0.8899354802605064,
+            "encore|paper": 0.6744150896621467,
+            "girliepop|paper": 0.7836137059473381
+          },
+          "control": 0.0871674681269129,
+          "fontControl": 0
+        },
+        {
+          "id": "press.home",
+          "app": "press",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.8396478912417943,
+            "theater|girliepop": 0.7085897825763534,
+            "theater|paper": 0.5836492031211966,
+            "encore|girliepop": 0.8577280013737515,
+            "encore|paper": 0.8164171095966893,
+            "girliepop|paper": 0.7238416561491121
+          },
+          "control": 0.05549422909375756,
+          "fontControl": 0
+        },
+        {
+          "id": "press.staged",
+          "app": "press",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.8339327085627901,
+            "theater|girliepop": 0.6699766199818336,
+            "theater|paper": 0.5210089239265456,
+            "encore|girliepop": 0.8279972257356422,
+            "encore|paper": 0.8232711811077874,
+            "girliepop|paper": 0.7133025274499845
+          },
+          "control": 0.08916464631849574,
+          "fontControl": 0
+        },
+        {
+          "id": "agent.room",
+          "app": "agent",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.8408299635114712,
+            "theater|girliepop": 0.8240367751246378,
+            "theater|paper": 0.7321548233025441,
+            "encore|girliepop": 0.8221215350818221,
+            "encore|paper": 0.7965226918843505,
+            "girliepop|paper": 0.8504081672505237
+          },
+          "control": 0.15340624319498397,
+          "fontControl": 0
+        },
+        {
+          "id": "app-catalog.grid",
+          "app": "app-catalog",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5232494657114655,
+            "theater|girliepop": 0.7642646581866648,
+            "theater|paper": 0.4705886122640288,
+            "encore|girliepop": 0.6572905800026055,
+            "encore|paper": 0.5942881815640024,
+            "girliepop|paper": 0.8111368595388717
+          },
+          "control": 0.07585467828987003,
+          "fontControl": 0
+        },
+        {
+          "id": "docs.home",
+          "app": "docs",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5165993753270688,
+            "theater|girliepop": 0.6050646615400976,
+            "theater|paper": 0.48283305253732156,
+            "encore|girliepop": 0.45551520445072036,
+            "encore|paper": 0.4341120037970593,
+            "girliepop|paper": 0.5072551793028732
+          },
+          "control": 0.19577087134115756,
+          "fontControl": 0
+        },
+        {
+          "id": "docs.page",
+          "app": "docs",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5800180592268235,
+            "theater|girliepop": 0.6443141020109799,
+            "theater|paper": 0.5176090511522791,
+            "encore|girliepop": 0.5410013880248199,
+            "encore|paper": 0.4915441496088918,
+            "girliepop|paper": 0.5603915157826695
+          },
+          "control": 0.15757839791537742,
+          "fontControl": 0
+        },
+        {
+          "id": "css-workshop.simple",
+          "app": "css-workshop",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.7408909305918007,
+            "theater|girliepop": 0.7757376147087938,
+            "theater|paper": 0.685098073915418,
+            "encore|girliepop": 0.7456082951233379,
+            "encore|paper": 0.6717024516089997,
+            "girliepop|paper": 0.7047865319672777
+          },
+          "control": 0.15402202606113702,
+          "fontControl": 0
+        },
+        {
+          "id": "css-workshop.advanced",
+          "app": "css-workshop",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.767747166577762,
+            "theater|girliepop": 0.7132907200104932,
+            "theater|paper": 0.6799338586344159,
+            "encore|girliepop": 0.6988506112171801,
+            "encore|paper": 0.6893949845533138,
+            "girliepop|paper": 0.6447397753820978
+          },
+          "control": 0.14293305934100264,
+          "fontControl": 0
+        },
+        {
+          "id": "macro-lab.reading",
+          "app": "macro-lab",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6325838275900517,
+            "theater|girliepop": 0.8222824626128622,
+            "theater|paper": 0.6389145054025408,
+            "encore|girliepop": 0.7874017188969965,
+            "encore|paper": 0.5987221377397418,
+            "girliepop|paper": 0.7868800464224877
+          },
+          "control": 0.09512004212782077,
+          "fontControl": 0
+        },
+        {
+          "id": "macro-lab.bible",
+          "app": "macro-lab",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6954520243036926,
+            "theater|girliepop": 0.8721397773069586,
+            "theater|paper": 0.6060498008626544,
+            "encore|girliepop": 0.8246987836973063,
+            "encore|paper": 0.6160192616562945,
+            "girliepop|paper": 0.8229620420806958
+          },
+          "control": 0.09376744887097654,
+          "fontControl": 0
+        },
+        {
+          "id": "macro-lab.ops",
+          "app": "macro-lab",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6367275826901438,
+            "theater|girliepop": 0.8417529431529821,
+            "theater|paper": 0.6292748965214241,
+            "encore|girliepop": 0.8089970116325553,
+            "encore|paper": 0.6148115099418113,
+            "girliepop|paper": 0.7570027064904343
+          },
+          "control": 0.10453095243326771,
+          "fontControl": 0
+        },
+        {
+          "id": "html-view.empty",
+          "app": "html-view",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.7614016105473254,
+            "theater|girliepop": 0.774279248032394,
+            "theater|paper": 0.6907510209774834,
+            "encore|girliepop": 0.7973487710756703,
+            "encore|paper": 0.7594125934805225,
+            "girliepop|paper": 0.7533922877362895
+          },
+          "control": 0.12085527972594068,
+          "fontControl": 0
+        }
+      ],
+      "notDistinct": [
+        {
+          "id": "dialog.close-piece",
+          "app": "workbench",
+          "group": "other",
+          "themes": [
+            "theater",
+            "girliepop"
+          ]
+        }
+      ]
+    },
+    "content": {
+      "calibration": {
+        "negative": 0.29274090815664044,
+        "positive": 0.40241462937845707,
+        "separated": true,
+        "threshold": 0.34322474278490966,
+        "colourMax": 0.2688033358186075,
+        "fontMax": 0.29274090815664044,
+        "colourOnlyThreshold": 0.32889267969831415,
+        "fontReflow": [
+          "settings.appearance"
+        ],
+        "negativeMedian": 0.02310309568531288,
+        "positiveScreen": "scene.play",
+        "positivePairs": {
+          "theater|encore": 0.7605534506326987,
+          "theater|girliepop": 0.6300589025000385,
+          "theater|paper": 0.40241462937845707,
+          "encore|girliepop": 0.8252483347015024,
+          "encore|paper": 0.7862197855514439,
+          "girliepop|paper": 0.5525696350871796
+        }
+      },
+      "themes": [
+        {
+          "theme": "theater",
+          "equal": 0.8955223880597015,
+          "timeWeighted": 0.8608297258297257,
+          "count": 67
+        },
+        {
+          "theme": "encore",
+          "equal": 0.8955223880597015,
+          "timeWeighted": 0.8978354978354979,
+          "count": 67
+        },
+        {
+          "theme": "girliepop",
+          "equal": 0.8805970149253731,
+          "timeWeighted": 0.8922799422799422,
+          "count": 67
+        },
+        {
+          "theme": "paper",
+          "equal": 0.9104477611940298,
+          "timeWeighted": 0.8663852813852814,
+          "count": 67
+        }
+      ],
+      "screens": [
+        {
+          "id": "shell.title",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6001264072480383,
+            "theater|girliepop": 0.5367045422960915,
+            "theater|paper": 0.5359070226280342,
+            "encore|girliepop": 0.7039418105305634,
+            "encore|paper": 0.6249574287173394,
+            "girliepop|paper": 0.6371233530027396
+          },
+          "control": 0.00010429973388959013,
+          "fontControl": 0.00011101022892578971
+        },
+        {
+          "id": "setup.theme",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5015315833125815,
+            "theater|girliepop": 0.4480925517235358,
+            "theater|paper": 0.5472470277062196,
+            "encore|girliepop": 0.45780273330643273,
+            "encore|paper": 0.5405876290149458,
+            "girliepop|paper": 0.5171183861421993
+          },
+          "control": 0.11159583750412849,
+          "fontControl": 0
+        },
+        {
+          "id": "setup.makes",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.520689630682338,
+            "theater|girliepop": 0.4713526150029592,
+            "theater|paper": 0.5477817010394517,
+            "encore|girliepop": 0.5422562357538154,
+            "encore|paper": 0.4571134753621322,
+            "girliepop|paper": 0.5157748950754025
+          },
+          "control": 0.059758844174703896,
+          "fontControl": 0
+        },
+        {
+          "id": "setup.publish",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.38725746526789406,
+            "theater|girliepop": 0.37173871238010026,
+            "theater|paper": 0.4875406252927197,
+            "encore|girliepop": 0.43929189897696586,
+            "encore|paper": 0.46690659267995727,
+            "girliepop|paper": 0.4645991149730778
+          },
+          "control": 0.05840001233627179,
+          "fontControl": 0
+        },
+        {
+          "id": "setup.accent",
+          "app": "shell",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.4280548930112591,
+            "theater|girliepop": 0.421603829626399,
+            "theater|paper": 0.5131227471449042,
+            "encore|girliepop": 0.46471172839708486,
+            "encore|paper": 0.5117534587372994,
+            "girliepop|paper": 0.4873175959530981
+          },
+          "control": 0.05899949412151173,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.rename",
+          "app": "library",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5885255293069458,
+            "theater|girliepop": 0.5336330546935297,
+            "theater|paper": 0.62269776389019,
+            "encore|girliepop": 0.5924206800563878,
+            "encore|paper": 0.7519664288041739,
+            "girliepop|paper": 0.7345885290866287
+          },
+          "control": 0.03371933454635456,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.delete",
+          "app": "library",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6244909975785875,
+            "theater|girliepop": 0.5368003622951356,
+            "theater|paper": 0.5929233100261422,
+            "encore|girliepop": 0.625645331755595,
+            "encore|paper": 0.7721285413360375,
+            "girliepop|paper": 0.7335918289846253
+          },
+          "control": 0.03976884583609619,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.close-piece",
+          "app": "workbench",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.4147867689640681,
+            "theater|girliepop": 0.4276532703889683,
+            "theater|paper": 0.3924877275025992,
+            "encore|girliepop": 0.5699300599985864,
+            "encore|paper": 0.5636746393120737,
+            "girliepop|paper": 0.37912115377708255
+          },
+          "control": 0.014534749563177463,
+          "fontControl": 0
+        },
+        {
+          "id": "dialog.follow",
+          "app": "library",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5686077717704456,
+            "theater|girliepop": 0.5846032463964687,
+            "theater|paper": 0.6407030631003555,
+            "encore|girliepop": 0.5890859069633358,
+            "encore|paper": 0.7695856457076269,
+            "girliepop|paper": 0.7252287881770865
+          },
+          "control": 0.038520149852689145,
+          "fontControl": 0
+        },
+        {
+          "id": "scene.play",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.7605534506326987,
+            "theater|girliepop": 0.6300589025000385,
+            "theater|paper": 0.40241462937845707,
+            "encore|girliepop": 0.8252483347015024,
+            "encore|paper": 0.7862197855514439,
+            "girliepop|paper": 0.5525696350871796
+          },
+          "control": 0.18094344057423606,
+          "fontControl": 0.2519675593347771
+        },
+        {
+          "id": "scene.wing.cast",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.667118354152858,
+            "theater|girliepop": 0.6426637276865573,
+            "theater|paper": 0.40308787794071677,
+            "encore|girliepop": 0.7034277195933772,
+            "encore|paper": 0.6002465143149183,
+            "girliepop|paper": 0.6268222951025186
+          },
+          "control": 0.15081717441087228,
+          "fontControl": 0.0005423581645698228
+        },
+        {
+          "id": "scene.wing.prompting",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.7540037974655576,
+            "theater|girliepop": 0.8411772582715706,
+            "theater|paper": 0.4507959300696882,
+            "encore|girliepop": 0.8594304729402484,
+            "encore|paper": 0.6958661826657262,
+            "girliepop|paper": 0.7786080660883808
+          },
+          "control": 0.2020455200346416,
+          "fontControl": 0.0004373309040880402
+        },
+        {
+          "id": "scene.wing.world",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.48869732724478687,
+            "theater|girliepop": 0.5442689006423724,
+            "theater|paper": 0.3253766497963585,
+            "encore|girliepop": 0.487895544703121,
+            "encore|paper": 0.4194545639736291,
+            "girliepop|paper": 0.5307085991388985
+          },
+          "control": 0.04705408728868343,
+          "fontControl": 0.0005423851382033718
+        },
+        {
+          "id": "scene.wing.props",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.4784087538301841,
+            "theater|girliepop": 0.5331209331368141,
+            "theater|paper": 0.3190803163062038,
+            "encore|girliepop": 0.46108834602879656,
+            "encore|paper": 0.41683710865406176,
+            "girliepop|paper": 0.5187451630904656
+          },
+          "control": 0.0317051327243848,
+          "fontControl": 0.000542379288696937
+        },
+        {
+          "id": "scene.wing.ai",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.8554433623473298,
+            "theater|girliepop": 0.8707260844550919,
+            "theater|paper": 0.371104017642534,
+            "encore|girliepop": 0.7755275675199472,
+            "encore|paper": 0.8299499193017648,
+            "girliepop|paper": 0.8498860699051465
+          },
+          "control": 0.08285093612820527,
+          "fontControl": 0.025635005097373154
+        },
+        {
+          "id": "scene.wing.stage",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.332260669292202,
+            "theater|girliepop": 0.37900404709403746,
+            "theater|paper": 0.2932321742119205,
+            "encore|girliepop": 0.3102568691797526,
+            "encore|paper": 0.30667701982682116,
+            "girliepop|paper": 0.3824592967799356
+          },
+          "control": 0.04246119006697702,
+          "fontControl": 0.01683676491174224
+        },
+        {
+          "id": "scene.booth",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.3400388762520591,
+            "theater|girliepop": 0.38778404318152626,
+            "theater|paper": 0.29250727081931127,
+            "encore|girliepop": 0.31262325730310314,
+            "encore|paper": 0.3038577746858927,
+            "girliepop|paper": 0.3862699039460149
+          },
+          "control": 0.02596510137386132,
+          "fontControl": 0.0005424102732782821
+        },
+        {
+          "id": "scene.streaming",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.71122015108812,
+            "theater|girliepop": 0.6157360510484357,
+            "theater|paper": 0.4209788023302987,
+            "encore|girliepop": 0.7845518473911717,
+            "encore|paper": 0.7471700355660913,
+            "girliepop|paper": 0.5053533853494215
+          },
+          "control": 0.18624123438289353,
+          "fontControl": 0.15957868243643314
+        },
+        {
+          "id": "scene.edit",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.768270143925561,
+            "theater|girliepop": 0.67075532509854,
+            "theater|paper": 0.47343369299388527,
+            "encore|girliepop": 0.8041409997996375,
+            "encore|paper": 0.7259941016274136,
+            "girliepop|paper": 0.5561107876041143
+          },
+          "control": 0.16940078939761882,
+          "fontControl": 0.1948994852242194
+        },
+        {
+          "id": "scene.msg-menu",
+          "app": "scenes",
+          "group": "scene",
+          "distances": {
+            "theater|encore": 0.7836236981557299,
+            "theater|girliepop": 0.6767731565820302,
+            "theater|paper": 0.4344343902141026,
+            "encore|girliepop": 0.8236287910213402,
+            "encore|paper": 0.7981444065568755,
+            "girliepop|paper": 0.5624503006650821
+          },
+          "control": 0.1935383093343056,
+          "fontControl": 0.29274090815664044
+        },
+        {
+          "id": "scenes.list",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.6280290017450796,
+            "theater|girliepop": 0.5052233455186224,
+            "theater|paper": 0.45343484135133705,
+            "encore|girliepop": 0.4390438768004902,
+            "encore|paper": 0.5475368347243422,
+            "girliepop|paper": 0.4423170613416101
+          },
+          "control": 0.11439450783826755,
+          "fontControl": 0.020054557123054484
+        },
+        {
+          "id": "scenes.select",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.6686447722723994,
+            "theater|girliepop": 0.5562244957263436,
+            "theater|paper": 0.5475276728620381,
+            "encore|girliepop": 0.4832568065974807,
+            "encore|paper": 0.5762229297866386,
+            "girliepop|paper": 0.518830235103598
+          },
+          "control": 0.1289929919603816,
+          "fontControl": 0.021379394355636516
+        },
+        {
+          "id": "scenes.trash",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.7155270924904853,
+            "theater|girliepop": 0.5016437833150468,
+            "theater|paper": 0.3612159628596273,
+            "encore|girliepop": 0.5912772051625625,
+            "encore|paper": 0.724533000779246,
+            "girliepop|paper": 0.4960560312428176
+          },
+          "control": 0.11019849203586196,
+          "fontControl": 0
+        },
+        {
+          "id": "scenes.search",
+          "app": "scenes",
+          "group": "scenes-list",
+          "distances": {
+            "theater|encore": 0.693008290897664,
+            "theater|girliepop": 0.7130253161398199,
+            "theater|paper": 0.6480954342512286,
+            "encore|girliepop": 0.5294444548870572,
+            "encore|paper": 0.6289269569239865,
+            "girliepop|paper": 0.5740522441435396
+          },
+          "control": 0.20268756020923528,
+          "fontControl": 0
+        },
+        {
+          "id": "library.carousel",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8881333224836845,
+            "theater|girliepop": 0.6739912414379198,
+            "theater|paper": 0.8614448107804162,
+            "encore|girliepop": 0.800488120881263,
+            "encore|paper": 0.9490278210956881,
+            "girliepop|paper": 0.9414364804597479
+          },
+          "control": 0.1239900396493121,
+          "fontControl": 0
+        },
+        {
+          "id": "library.grid",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8568894085361709,
+            "theater|girliepop": 0.7660924798370381,
+            "theater|paper": 0.9040984066321239,
+            "encore|girliepop": 0.800488120881263,
+            "encore|paper": 0.9490278210956881,
+            "girliepop|paper": 0.9414364804597479
+          },
+          "control": 0.13320452727480703,
+          "fontControl": 0
+        },
+        {
+          "id": "library.list",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8759483606214982,
+            "theater|girliepop": 0.7058919043757067,
+            "theater|paper": 0.773205876175531,
+            "encore|girliepop": 0.7177028082692044,
+            "encore|paper": 0.9369960252726172,
+            "girliepop|paper": 0.9234267031023629
+          },
+          "control": 0.1695144800412003,
+          "fontControl": 0
+        },
+        {
+          "id": "library.tiles",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.7668180588956175,
+            "theater|girliepop": 0.6995303093259639,
+            "theater|paper": 0.6942836143952927,
+            "encore|girliepop": 0.5842890995893757,
+            "encore|paper": 0.7637427289966244,
+            "girliepop|paper": 0.702283844330092
+          },
+          "control": 0.19034192346686807,
+          "fontControl": 0
+        },
+        {
+          "id": "library.shelf",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8085880912740341,
+            "theater|girliepop": 0.7558476759208723,
+            "theater|paper": 0.7177850547688913,
+            "encore|girliepop": 0.7297438143074508,
+            "encore|paper": 0.8785627181329392,
+            "girliepop|paper": 0.8566079426700852
+          },
+          "control": 0.19460126948458756,
+          "fontControl": 0
+        },
+        {
+          "id": "library.select",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8799861580425737,
+            "theater|girliepop": 0.681087981904112,
+            "theater|paper": 0.8464711869936813,
+            "encore|girliepop": 0.8490086097383627,
+            "encore|paper": 0.8938139394763165,
+            "girliepop|paper": 0.9522154574455202
+          },
+          "control": 0.15943836753666385,
+          "fontControl": 0
+        },
+        {
+          "id": "library.trash",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.6928442722825198,
+            "theater|girliepop": 0.4537329729220376,
+            "theater|paper": 0.26963942188229617,
+            "encore|girliepop": 0.591556078209484,
+            "encore|paper": 0.715028201617969,
+            "girliepop|paper": 0.4753070360864927
+          },
+          "control": 0.10218956763867637,
+          "fontControl": 0
+        },
+        {
+          "id": "library.import",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.6315348073068949,
+            "theater|girliepop": 0.6710447667094179,
+            "theater|paper": 0.6432525799279583,
+            "encore|girliepop": 0.6669970785314698,
+            "encore|paper": 0.7594360449197007,
+            "girliepop|paper": 0.79974568734432
+          },
+          "control": 0.06552145411289578,
+          "fontControl": 0
+        },
+        {
+          "id": "library.menu",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8967257096684075,
+            "theater|girliepop": 0.6578335706968577,
+            "theater|paper": 0.8967772489120319,
+            "encore|girliepop": 0.8352927710787224,
+            "encore|paper": 0.9730239133162968,
+            "girliepop|paper": 0.9546176284339427
+          },
+          "control": 0.11279954246462742,
+          "fontControl": 0
+        },
+        {
+          "id": "library.search",
+          "app": "library",
+          "group": "library",
+          "distances": {
+            "theater|encore": 0.8958334828116915,
+            "theater|girliepop": 0.6797435134274774,
+            "theater|paper": 0.8295638908729897,
+            "encore|girliepop": 0.8768698800486356,
+            "encore|paper": 0.9397961195108918,
+            "girliepop|paper": 0.9390468661146901
+          },
+          "control": 0.12856319566044028,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.empty",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8278419406839599,
+            "theater|girliepop": 0.8883343174029757,
+            "theater|paper": 0.8682285583190801,
+            "encore|girliepop": 0.6160862157817384,
+            "encore|paper": 0.6519779295131998,
+            "girliepop|paper": 0.614591861995839
+          },
+          "control": 0.2688033358186075,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.character",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8921602915733486,
+            "theater|girliepop": 0.9035813907602311,
+            "theater|paper": 0.8149537580144817,
+            "encore|girliepop": 0.9231620721570282,
+            "encore|paper": 0.8754386691487961,
+            "girliepop|paper": 0.43763446553013385
+          },
+          "control": 0.09125347713924792,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.persona",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.6918652762867217,
+            "theater|girliepop": 0.7466524161387975,
+            "theater|paper": 0.5984159704003131,
+            "encore|girliepop": 0.830429125077004,
+            "encore|paper": 0.7479067411528733,
+            "girliepop|paper": 0.36118812711357273
+          },
+          "control": 0.03663651511579458,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.pack",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.4736517675330144,
+            "theater|girliepop": 0.6411161308202386,
+            "theater|paper": 0.47697938399127393,
+            "encore|girliepop": 0.6795894229287065,
+            "encore|paper": 0.5281326090315748,
+            "girliepop|paper": 0.45717432692668625
+          },
+          "control": 0.054774407165895767,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.htmldoc",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.3816255988259283,
+            "theater|girliepop": 0.6467241561484018,
+            "theater|paper": 0.4238339068810131,
+            "encore|girliepop": 0.6357371391544886,
+            "encore|paper": 0.6153706386698445,
+            "girliepop|paper": 0.7276704168226813
+          },
+          "control": 0.006508164684080664,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.preset",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.43563697282346103,
+            "theater|girliepop": 0.784821782542611,
+            "theater|paper": 0.6108317383707984,
+            "encore|girliepop": 0.8385350196404435,
+            "encore|paper": 0.6024000042339039,
+            "girliepop|paper": 0.7660106862281294
+          },
+          "control": 0.02393973861373,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.preset.settings",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.7051253534164742,
+            "theater|girliepop": 0.8185042886352221,
+            "theater|paper": 0.60513759212748,
+            "encore|girliepop": 0.8309932802303999,
+            "encore|paper": 0.7156398688753258,
+            "girliepop|paper": 0.7660106862281294
+          },
+          "control": 0.040349193194251676,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.lorebook",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8403095181589537,
+            "theater|girliepop": 0.8395960334632725,
+            "theater|paper": 0.7754278279523497,
+            "encore|girliepop": 0.880731634564154,
+            "encore|paper": 0.8551525260837431,
+            "girliepop|paper": 0.514919081649928
+          },
+          "control": 0.09447381980922265,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.lorebook.contents",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.4880161424022127,
+            "theater|girliepop": 0.6523633655160248,
+            "theater|paper": 0.5743775945940606,
+            "encore|girliepop": 0.6216067384518584,
+            "encore|paper": 0.6268984723096649,
+            "girliepop|paper": 0.514919081649928
+          },
+          "control": 0.04911643424449408,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.regex",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8517375237251804,
+            "theater|girliepop": 0.9470649879022451,
+            "theater|paper": 0.9016185884366489,
+            "encore|girliepop": 0.9116697303660628,
+            "encore|paper": 0.8772942904586004,
+            "girliepop|paper": 0.39689068842272524
+          },
+          "control": 0.07047915816203865,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.regex.bench",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.7712194423239662,
+            "theater|girliepop": 0.8461486471102823,
+            "theater|paper": 0.8132007315086033,
+            "encore|girliepop": 0.8468251565974776,
+            "encore|paper": 0.8159029308767914,
+            "girliepop|paper": 0.7219007916998057
+          },
+          "control": 0.07722584865737436,
+          "fontControl": 0
+        },
+        {
+          "id": "editor.quickreply",
+          "app": "workbench",
+          "group": "editor",
+          "distances": {
+            "theater|encore": 0.8007692008215341,
+            "theater|girliepop": 0.8093094701060808,
+            "theater|paper": 0.6649644307143712,
+            "encore|girliepop": 0.872967366981585,
+            "encore|paper": 0.8152994289822523,
+            "girliepop|paper": 0.7131872054261954
+          },
+          "control": 0.0367050010683313,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.appearance",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.937550153648856,
+            "theater|girliepop": 0.8902254337574503,
+            "theater|paper": 0.8432405301693264,
+            "encore|girliepop": 0.8510719404310243,
+            "encore|paper": 0.7459739675449157,
+            "girliepop|paper": 0.8092454867661606
+          },
+          "control": 0.623939037925902,
+          "fontControl": 0.5980449659887214
+        },
+        {
+          "id": "settings.models",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.6247769157253744,
+            "theater|girliepop": 0.3721778624184825,
+            "theater|paper": 0.41192687681285345,
+            "encore|girliepop": 0.5704328788813089,
+            "encore|paper": 0.4885221033665704,
+            "girliepop|paper": 0.40199233712135296
+          },
+          "control": 0.0892691347254655,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.connections",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.5815431096592247,
+            "theater|girliepop": 0.6136675945331962,
+            "theater|paper": 0.4023735668053091,
+            "encore|girliepop": 0.6573037069091898,
+            "encore|paper": 0.49067959137762984,
+            "girliepop|paper": 0.5523868701194794
+          },
+          "control": 0.04142472077397541,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.studio",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.7211260961204253,
+            "theater|girliepop": 0.8962226101549535,
+            "theater|paper": 0.5144420448568342,
+            "encore|girliepop": 0.8181757970556476,
+            "encore|paper": 0.6119419929832922,
+            "girliepop|paper": 0.8764444575972383
+          },
+          "control": 0.07019166082868611,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.security",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.8336439665888932,
+            "theater|girliepop": 0.7474957914424496,
+            "theater|paper": 0.8687858444378792,
+            "encore|girliepop": 0.9164392276066206,
+            "encore|paper": 0.7714138242048981,
+            "girliepop|paper": 0.9376683976918055
+          },
+          "control": 0.14026095896193236,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.workbench",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.6388874408354626,
+            "theater|girliepop": 0.7621062461828668,
+            "theater|paper": 0.42003178582719314,
+            "encore|girliepop": 0.7756418314831527,
+            "encore|paper": 0.538357701077232,
+            "girliepop|paper": 0.7798659651579373
+          },
+          "control": 0.06591577313990293,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.remote-access",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.6350544412422205,
+            "theater|girliepop": 0.44328110015119504,
+            "theater|paper": 0.7224410214859277,
+            "encore|girliepop": 0.6153059613193881,
+            "encore|paper": 0.6879808323401568,
+            "girliepop|paper": 0.6489557664729634
+          },
+          "control": 0.026657393120087858,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.updates",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.6008850171603216,
+            "theater|girliepop": 0.33841182492897626,
+            "theater|paper": 0.45222042577702737,
+            "encore|girliepop": 0.535803184057423,
+            "encore|paper": 0.5263021164307533,
+            "girliepop|paper": 0.4096326748036361
+          },
+          "control": 0.01595764671453115,
+          "fontControl": 0
+        },
+        {
+          "id": "settings.about",
+          "app": "settings",
+          "group": "settings",
+          "distances": {
+            "theater|encore": 0.6503737430443395,
+            "theater|girliepop": 0.8044417729183577,
+            "theater|paper": 0.47850547870292137,
+            "encore|girliepop": 0.7467166982835842,
+            "encore|paper": 0.5841248493777408,
+            "girliepop|paper": 0.8013164204700446
+          },
+          "control": 0.07236185799837991,
+          "fontControl": 0
+        },
+        {
+          "id": "press.home",
+          "app": "press",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.8569250132212951,
+            "theater|girliepop": 0.9362172624381605,
+            "theater|paper": 0.680462249284371,
+            "encore|girliepop": 0.9159697358622305,
+            "encore|paper": 0.8147348726576225,
+            "girliepop|paper": 0.9265553622869801
+          },
+          "control": 0.0212367543790144,
+          "fontControl": 0
+        },
+        {
+          "id": "press.staged",
+          "app": "press",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.9292764310405143,
+            "theater|girliepop": 0.6155475350573157,
+            "theater|paper": 0.5665885044129648,
+            "encore|girliepop": 0.8994505989993511,
+            "encore|paper": 0.9369353345600384,
+            "girliepop|paper": 0.7403909245239837
+          },
+          "control": 0.24455374109919847,
+          "fontControl": 0
+        },
+        {
+          "id": "agent.room",
+          "app": "agent",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.7656329438274011,
+            "theater|girliepop": 0.83574723805161,
+            "theater|paper": 0.7184795092655218,
+            "encore|girliepop": 0.7548758962845941,
+            "encore|paper": 0.790276039927404,
+            "girliepop|paper": 0.8504779271033525
+          },
+          "control": 0.08033942074966405,
+          "fontControl": 0
+        },
+        {
+          "id": "app-catalog.grid",
+          "app": "app-catalog",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.3714358395221189,
+            "theater|girliepop": 0.3980099115608444,
+            "theater|paper": 0.3764352028235999,
+            "encore|girliepop": 0.05357083210720448,
+            "encore|paper": 0.3979299104303772,
+            "girliepop|paper": 0.42381511292111573
+          },
+          "control": 0.02310309568531288,
+          "fontControl": 0
+        },
+        {
+          "id": "docs.home",
+          "app": "docs",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.3889826170582409,
+            "theater|girliepop": 0.3317852651127089,
+            "theater|paper": 0.33836080824385584,
+            "encore|girliepop": 0.23153166314485973,
+            "encore|paper": 0.35770029833074957,
+            "girliepop|paper": 0.28342816809699656
+          },
+          "control": 0.12013861778914248,
+          "fontControl": 0
+        },
+        {
+          "id": "docs.page",
+          "app": "docs",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.49361465418568806,
+            "theater|girliepop": 0.47390013000865694,
+            "theater|paper": 0.39704722018597105,
+            "encore|girliepop": 0.1343310841647346,
+            "encore|paper": 0.4142005515164934,
+            "girliepop|paper": 0.37585808007665955
+          },
+          "control": 0.16157175467257512,
+          "fontControl": 0
+        },
+        {
+          "id": "css-workshop.simple",
+          "app": "css-workshop",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.7678534440186576,
+            "theater|girliepop": 0.7546902112905863,
+            "theater|paper": 0.7149531593496214,
+            "encore|girliepop": 0.4142702037924475,
+            "encore|paper": 0.6333466494050652,
+            "girliepop|paper": 0.6946799754087619
+          },
+          "control": 0.15717720576267447,
+          "fontControl": 0
+        },
+        {
+          "id": "css-workshop.advanced",
+          "app": "css-workshop",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.7607471582394145,
+            "theater|girliepop": 0.6917157067093921,
+            "theater|paper": 0.6871787890256087,
+            "encore|girliepop": 0.37713445200415363,
+            "encore|paper": 0.6525739108966115,
+            "girliepop|paper": 0.6052550373691741
+          },
+          "control": 0.13362711235455949,
+          "fontControl": 0
+        },
+        {
+          "id": "macro-lab.reading",
+          "app": "macro-lab",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.5834439077680128,
+            "theater|girliepop": 0.6452968200648517,
+            "theater|paper": 0.642137332996632,
+            "encore|girliepop": 0.3237659870417904,
+            "encore|paper": 0.5471889714820792,
+            "girliepop|paper": 0.5727342076574287
+          },
+          "control": 0.023766500822954062,
+          "fontControl": 0
+        },
+        {
+          "id": "macro-lab.bible",
+          "app": "macro-lab",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6621964723082067,
+            "theater|girliepop": 0.6830113711015601,
+            "theater|paper": 0.5991471420262705,
+            "encore|girliepop": 0.348468996689678,
+            "encore|paper": 0.570702514144554,
+            "girliepop|paper": 0.5850347225521211
+          },
+          "control": 0.018658554547812733,
+          "fontControl": 0
+        },
+        {
+          "id": "macro-lab.ops",
+          "app": "macro-lab",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.6098370934848469,
+            "theater|girliepop": 0.6617755524375502,
+            "theater|paper": 0.6233416426165032,
+            "encore|girliepop": 0.31681411305841367,
+            "encore|paper": 0.5371796884869238,
+            "girliepop|paper": 0.5589796366824926
+          },
+          "control": 0.06646179415349074,
+          "fontControl": 0
+        },
+        {
+          "id": "html-view.empty",
+          "app": "html-view",
+          "group": "other",
+          "distances": {
+            "theater|encore": 0.8208000937655107,
+            "theater|girliepop": 0.9527189045850619,
+            "theater|paper": 0.9823819221527162,
+            "encore|girliepop": 0.9673730929175364,
+            "encore|paper": 0.9562072913922284,
+            "girliepop|paper": 0.9718601474744005
+          },
+          "control": 0.15327922610328726,
+          "fontControl": 0
+        }
+      ],
+      "notDistinct": [
+        {
+          "id": "scene.wing.world",
+          "app": "scenes",
+          "group": "scene",
+          "themes": [
+            "theater",
+            "paper"
+          ]
+        },
+        {
+          "id": "scene.wing.props",
+          "app": "scenes",
+          "group": "scene",
+          "themes": [
+            "theater",
+            "paper"
+          ]
+        },
+        {
+          "id": "scene.wing.stage",
+          "app": "scenes",
+          "group": "scene",
+          "themes": [
+            "theater",
+            "encore",
+            "girliepop",
+            "paper"
+          ]
+        },
+        {
+          "id": "scene.booth",
+          "app": "scenes",
+          "group": "scene",
+          "themes": [
+            "theater",
+            "encore",
+            "girliepop",
+            "paper"
+          ]
+        },
+        {
+          "id": "library.trash",
+          "app": "library",
+          "group": "library",
+          "themes": [
+            "theater",
+            "paper"
+          ]
+        },
+        {
+          "id": "settings.updates",
+          "app": "settings",
+          "group": "settings",
+          "themes": [
+            "theater",
+            "girliepop"
+          ]
+        },
+        {
+          "id": "app-catalog.grid",
+          "app": "app-catalog",
+          "group": "other",
+          "themes": [
+            "encore",
+            "girliepop"
+          ]
+        },
+        {
+          "id": "docs.home",
+          "app": "docs",
+          "group": "other",
+          "themes": [
+            "theater",
+            "encore",
+            "girliepop",
+            "paper"
+          ]
+        },
+        {
+          "id": "docs.page",
+          "app": "docs",
+          "group": "other",
+          "themes": [
+            "encore",
+            "girliepop"
+          ]
+        },
+        {
+          "id": "macro-lab.reading",
+          "app": "macro-lab",
+          "group": "other",
+          "themes": [
+            "encore",
+            "girliepop"
+          ]
+        },
+        {
+          "id": "macro-lab.ops",
+          "app": "macro-lab",
+          "group": "other",
+          "themes": [
+            "encore",
+            "girliepop"
+          ]
+        }
+      ]
+    }
+  },
+  "skipped": [
+    {
+      "id": "gate.locked",
+      "app": "shell",
+      "why": "protected by design: host UI no theme can restyle, so it is not scored"
+    },
+    {
+      "id": "gate.lines",
+      "app": "shell",
+      "why": "protected by design: host UI no theme can restyle, so it is not scored"
+    },
+    {
+      "id": "gate.loadin",
+      "app": "shell",
+      "why": "protected by design: host UI no theme can restyle, so it is not scored"
+    },
+    {
+      "id": "gate.allaboard",
+      "app": "shell",
+      "why": "protected by design: host UI no theme can restyle, so it is not scored"
+    },
+    {
+      "id": "gate.failed",
+      "app": "shell",
+      "why": "protected by design: host UI no theme can restyle, so it is not scored"
+    },
+    {
+      "id": "scene.wing.context",
+      "app": "scenes",
+      "why": "looks the same as scene.wing.stage in all four themes (the state did not change)"
+    },
+    {
+      "id": "scenes.list-view",
+      "app": "scenes",
+      "why": "looks the same as scenes.list in all four themes (the state did not change)"
+    },
+    {
+      "id": "scenes.messages",
+      "app": "scenes",
+      "why": "looks the same as scenes.list in all four themes (the state did not change)"
+    },
+    {
+      "id": "docs.dev",
+      "app": "docs",
+      "why": "looks the same as docs.home in all four themes (the state did not change)"
+    }
+  ]
+}

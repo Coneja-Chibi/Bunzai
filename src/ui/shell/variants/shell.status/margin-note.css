@@ -1,0 +1,13 @@
+/** shell.status margin-note: the footer reads as a note in the margin of the page, serif italic labels over a hairline. */
+html[data-surface-shell-status="margin-note"] {
+  --bk-status-reserve: 2.2rem; /* keeps the replay ? clear of the bar */
+  & #status { gap: .9rem; padding: .35rem 1.2rem; border-top: 1px solid var(--bk-line-control); background: var(--bk-surface-base); font-family: var(--font-big); font-size: .8125rem; letter-spacing: 0; }
+  & #status .sep, & #status .seg:empty { display: none; }
+  & #status .seg + .seg { padding-left: .9rem; border-left: 1px solid var(--bk-line-track); }
+  & #status .k { font-style: italic; font-weight: 400; color: var(--bk-text-soft); }
+  & #status .seg:not(.trim) .k::after { content: ":"; }
+  & #status .b { font-weight: 600; color: var(--bk-text); }
+  & #status .appdot { width: .5rem; height: .5rem; border-radius: 50%; background: var(--adot, var(--bk-text-dim)); }
+  & #status .vaude { font: italic 400 .8125rem var(--font-big); color: var(--bk-text-soft); }
+  & #status .vaude i { color: var(--bk-text); }
+}

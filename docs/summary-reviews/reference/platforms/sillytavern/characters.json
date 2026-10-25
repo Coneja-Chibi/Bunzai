@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/sillytavern/characters",
+  "sourcePath": "docs/reference/platforms/sillytavern/characters.md",
+  "sourceHash": "sha256:b805b2b21f1e9cedc5053343b71498675d7879c75eedb5fd27eafeb62cd9873b",
+  "semanticSummaryHash": "sha256:9fa6197a7db6f5099ff53af25a7a4daebcc4d43b8f05456c4c6bdd9151ced5c1",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:58.447Z"
+}

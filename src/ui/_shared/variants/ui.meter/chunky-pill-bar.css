@@ -1,0 +1,3 @@
+/** ui.meter chunky-pill-bar: a fat bar with a slab edge and a hard shadow (square, never round). */
+html[data-surface-ui-meter="chunky-pill-bar"] [role="progressbar"]:not(.host-protected, .host-protected *) { position: relative; display: block; height: 1.15rem; border: var(--bk-frame-w) solid var(--bk-line); background: var(--bk-surface-panel); overflow: hidden; box-shadow: 3px 3px 0 0 var(--bk-line); }
+html[data-surface-ui-meter="chunky-pill-bar"] [role="progressbar"]:not(.host-protected, .host-protected *) > i { background: var(--bk-role-ok); border-right: var(--bk-frame-w) solid var(--bk-line); }

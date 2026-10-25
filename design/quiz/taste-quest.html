@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bunraku Taste Quest</title>
+<style>
+@font-face { font-family: "Fraunces"; font-weight: 100 900; src: url("../../src/site/fonts/fraunces-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 400 900; src: url("../../src/ui/theme/fonts/cinzel-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; src: url("../../src/site/fonts/atkinson-hyperlegible-latin-normal-400.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; src: url("../../src/site/fonts/atkinson-hyperlegible-latin-normal-700.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; src: url("../../src/site/fonts/ibm-plex-mono-latin-normal-500.woff2") format("woff2"); }
+body{margin:0}
+:root{
+  color-scheme:dark;
+  --floor:#150f1c;--deck:#1c1526;--panel:#241d2d;--row:#1e1826;--well:#120d18;
+  --seam:#3d3348;--line:#4d4159;--mute:#8a7d8f;--soft:#c9bccb;--paper:#f5ecf0;
+  --rose:#ff5fa0;--rose-deep:#83204c;--mint:#7fe0c0;--gold:#ffd166;--sky:#7cc4ff;--lilac:#c7a6ff;
+  --f-title:"Cinzel",Georgia,serif;--f-big:"Fraunces",Georgia,serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,sans-serif;--f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{background:var(--floor);color:var(--paper)}
+body{font:15px/1.5 var(--f-body);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:980px;margin:0 auto}
+header.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--well);border-bottom:2px solid var(--seam);margin-inline:-16px;padding:10px 16px}
+.hud-in{max-width:980px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.brand{font:800 18px var(--f-title);letter-spacing:.08em;color:var(--rose)}
+.brand small{display:block;font:500 11px var(--f-mono);letter-spacing:.12em;color:var(--mute)}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap}
+nav.tabs button{font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--soft);background:var(--row);border:2px solid var(--line);padding:7px 12px;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--floor);background:var(--rose);border-color:var(--rose)}
+nav.tabs button:focus-visible,.opt:focus-visible,button:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.save{margin-left:auto;font:500 11px var(--f-mono);color:var(--mute);letter-spacing:.08em}
+.save b{color:var(--mint);font-weight:500}
+.meter{flex-basis:100%;display:flex;gap:8px;align-items:center;font:500 11px var(--f-mono);color:var(--mute)}
+.track{flex:1;height:8px;background:var(--row);border:1px solid var(--line);position:relative}
+.fill{position:absolute;inset:0 auto 0 0;background:var(--rose);width:0}
+.intro{margin:28px 0 8px;border:2px solid var(--seam);background:var(--deck);padding:18px 20px}
+.intro h1{font:600 clamp(26px,4vw,36px)/1.15 var(--f-big);margin:0 0 6px;text-wrap:balance}
+.intro p{margin:0;color:var(--soft);max-width:62ch}
+.q{margin-top:18px;background:var(--panel);border:2px solid var(--seam);padding:16px 18px}
+.q.done{border-color:var(--line)}
+.qh{display:flex;gap:12px;align-items:baseline}
+.qn{font:500 12px var(--f-mono);color:var(--rose);letter-spacing:.1em;flex:none}
+.qt{font:700 17px/1.3 var(--f-body);margin:0;text-wrap:balance}
+.qhint{color:var(--mute);font-size:13px;margin:4px 0 0 34px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:12px}
+.opt{all:unset;box-sizing:border-box;cursor:pointer;background:var(--row);border:2px solid var(--line);padding:10px 12px;display:flex;flex-direction:column;gap:8px;min-height:64px}
+.opt:hover{border-color:var(--soft)}
+.opt[aria-pressed="true"]{border-color:var(--rose);background:#2d1a2a}
+.opt .ol{font-weight:700;font-size:14px}
+.opt .od{font-size:12.5px;color:var(--mute)}
+.opt .pick{font:500 10px var(--f-mono);letter-spacing:.12em;color:var(--rose);visibility:hidden}
+.opt[aria-pressed="true"] .pick{visibility:visible}
+.rankn{font:500 11px var(--f-mono);color:var(--gold)}
+.mock{border:1px solid var(--seam);background:var(--well);padding:10px;min-height:120px;overflow:hidden;pointer-events:none}
+.opts.wide{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.demo{height:54px;border:1px solid var(--seam);display:flex;align-items:center;justify-content:center;gap:6px;overflow:hidden;background:var(--well)}
+.sw{width:22px;height:22px}
+.note{width:100%;margin-top:10px;background:var(--well);color:var(--paper);border:1px solid var(--line);padding:8px 10px;font:14px var(--f-body);resize:vertical;min-height:38px}
+.note::placeholder{color:var(--mute)}
+.scale{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.scale .opt{min-height:0;padding:8px 12px;flex-direction:row;align-items:center}
+.scale .ends{font-size:12px;color:var(--mute)}
+.foot{margin-top:24px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:500 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;background:var(--rose);color:var(--floor);border:2px solid var(--rose);padding:9px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--soft);border-color:var(--line)}
+.status{color:var(--mute);font-size:13px}
+@media (prefers-reduced-motion:no-preference){.fill{transition:width .25s ease}.opt{transition:border-color .12s}}
+@media (max-width:520px){.qhint{margin-left:0}.opts{grid-template-columns:1fr}}
+</style>
+</head><body>
+<header class="hud"><div class="hud-in">
+  <div class="brand">Taste Quest<small>BUNRAKU · CHI'S PICKS</small></div>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+  <div class="save" id="save">loading…</div>
+  <div class="meter"><span id="mlabel">0 / 0</span><div class="track"><div class="fill" id="mfill"></div></div></div>
+</div></header>
+
+<main class="wrap" id="main"></main>
+
+<script src="parts-taste.js"></script>
+<script src="parts-design.js"></script>
+<script>
+const WANTS = {label:"What I want", title:"What gets built, and how", intro:"Specific either-or calls. Each one decides real work. Skip any you have no feeling about.", qs:[
+ {id:"next",t:"After the new storage lands, build which first?",kind:"one",o:[
+  ["basics","The missing basics","Continue, hide-from-AI, Scene Note, swipe browsing"],["memory","Long-term memory",""],
+  ["groups","Group scenes",""],["chapters","Chapters",""],["mods","UI mods and themes",""]]},
+ {id:"memstyle",t:"Memory should mostly be",kind:"one",o:[
+  ["auto","Facts the app tracks for you","Who, where, what happened; editable"],["summaries","Chapter summaries","One recap per chapter"],
+  ["manual","Notes you write","Like a Scene Note that never scrolls away"],["all","All three",""]]},
+ {id:"memcost",t:"Memory building may spend AI calls while idle",kind:"one",o:[
+  ["yes","Yes, with a Settings switch",""],["onsend","Only when I send a message",""],["never","Never, local only",""]]},
+ {id:"groupturn",t:"In a group scene, who speaks next?",kind:"one",o:[
+  ["you","I pick each time",""],["ai","The AI picks",""],["order","Takes turns in order",""],["mix","AI picks, I can override",""]]},
+ {id:"chaptermark",t:"Chapters get marked by",kind:"one",o:[
+  ["me","Me, with a key or button",""],["suggest","The app suggests breaks, I confirm",""],["auto","Automatically",""]]},
+ {id:"ingestfirst",t:"A finished chapter should first become",kind:"one",o:[
+  ["lore","A lorebook",""],["novel","A novel chapter",""],["manga","A manga page (needs image gen)",""]]},
+ {id:"imagegen",t:"Image generation",kind:"one",o:[
+  ["never","Not in Bunraku",""],["comfy","ComfyUI only, my own setup",""],["providers","Built-in providers too",""],["later","Later, after 1.0",""]]},
+ {id:"voice",t:"Voice (text to speech)",kind:"one",o:[["never","Never",""],["later","After 1.0",""],["soon","Soon",""]]},
+ {id:"choices",t:"Story choices and stakes (choice buttons, a money/health ledger)",kind:"one",o:[
+  ["core","Built in",""],["prop","An optional Prop you switch on",""],["no","Not wanted",""]]},
+ {id:"costline",t:"Show what each reply cost",kind:"one",o:[["always","Always, one quiet line",""],["hover","On hover",""],["never","Never",""]]},
+ {id:"ext",t:"Extensions (code that adds features)",kind:"one",o:[
+  ["first","Only ones Bunraku makes (Props)",""],["third","Third-party too, sandboxed",""],["later","Third-party, but later",""]]},
+ {id:"modhub",t:"Getting themes and mods",kind:"one",o:[
+  ["files","Just drop files in",""],["browser","An in-app browser",""],["site","A website you download from",""]]},
+ {id:"kit",t:"The Kit agent should feel like",kind:"one",o:[
+  ["helper","A quiet helper you call",""],["cowriter","A co-writer on the stage",""],["tool","A power tool for editing and building",""]]},
+ {id:"phone",t:"On a phone",kind:"one",o:[
+  ["remote","Reach my desktop Bunraku from my phone","Already partly built"],["app","A full phone app",""],["none","Not needed",""]]},
+ {id:"sync",t:"Using two computers",kind:"one",o:[
+  ["none","Not needed",""],["folder","Sync through my own cloud folder",""],["service","A Bunraku sync service",""]]},
+ {id:"rc",t:"Bunraku and RoleCall",kind:"one",o:[
+  ["io","Import and export between them",""],["live","Live sync of my library",""],["separate","Keep them unrelated",""]]},
+ {id:"price",t:"Price",kind:"one",o:[["free","Free",""],["pwyw","Pay what you want",""],["once","Paid once",""],["donate","Free, with donations",""]]},
+ {id:"source",t:"Open source",kind:"one",o:[["yes","Yes",""],["later","Later",""],["no","No",""]]},
+ {id:"oneoh",t:"1.0 ships when",kind:"one",o:[
+  ["basics","The basics are solid and fast",""],["unique","It has 2 or 3 things nobody else has",""],["pretty","It looks finished in G3 HUD",""],["date","On a date I pick",""]]},
+ {id:"proud",t:"What would make you proud of it",kind:"text"},
+ {id:"fear",t:"Your biggest worry about it",kind:"text"},
+ {id:"cut",t:"Anything you'd happily cut or delay",kind:"text"}]};
+const PARTS = window.QUIZ_PARTS || {};
+const QUIZZES = { ...PARTS, wants: WANTS };
+const ORDER = [...Object.keys(PARTS), "wants"];
+for (const [id, p] of Object.entries(PARTS)) if (p.css) { const s = document.createElement("style"); s.textContent = p.css; document.head.append(s); }
+let answers = {}; // { quizId: { qid: {v, note} } }
+let current = ORDER[0];
+try { const h = location.hash.slice(1); if (ORDER.includes(h)) current = h; } catch {}
+try { const ls = localStorage.getItem("bq-answers"); if (ls) answers = JSON.parse(ls) || {}; } catch {}
+
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === "class") e.className = v; else if (k === "style") e.setAttribute("style", v); else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v); } for (const k of kids) if (k != null) e.append(k); return e; };
+const ans = (qz, qid) => ((answers[qz] ||= {})[qid] ||= {});
+
+function demoFor(o) {
+  const [, , , swatches, style, text] = o;
+  // Parts files draw each option as a mockup: a trusted, local HTML string from this design folder.
+  if (typeof swatches === "string") { const box = el("div", { class: "mock" }); box.innerHTML = swatches; return box; }
+  if (swatches) return el("div", { class: "demo" }, ...swatches.map(c => el("span", { class: "sw", style: "background:" + c })));
+  if (style !== undefined) return el("div", { class: "demo" }, el("span", { style }, text || ""));
+  return null;
+}
+
+function renderTabs() {
+  const t = $("#tabs"); t.replaceChildren();
+  for (const id of ORDER) t.append(el("button", { role: "tab", "aria-selected": String(id === current), onclick: () => { current = id; try { history.replaceState(null, "", "#" + id); } catch {} render(); } }, QUIZZES[id].label));
+}
+
+function isDone(qz, q) { const a = (answers[qz] || {})[q.id]; if (!a) return false; if (q.kind === "text") return !!(a.v && a.v.trim()); if (Array.isArray(a.v)) return a.v.length > 0; return a.v !== undefined && a.v !== null && a.v !== ""; }
+
+function meter() {
+  const qz = QUIZZES[current]; const n = qz.qs.length; const d = qz.qs.filter(q => isDone(current, q)).length;
+  $("#mlabel").textContent = qz.label.toUpperCase() + " " + d + " / " + n;
+  $("#mfill").style.width = (n ? (d / n) * 100 : 0) + "%";
+}
+
+function render() {
+  renderTabs();
+  const qz = QUIZZES[current]; const m = $("#main"); m.className = "wrap qz-" + current; m.replaceChildren();
+  m.append(el("section", { class: "intro" }, el("h1", {}, qz.title), el("p", {}, qz.intro)));
+  qz.qs.forEach((q, i) => m.append(renderQ(current, q, i + 1)));
+  const next = ORDER[ORDER.indexOf(current) + 1];
+  m.append(el("div", { class: "foot" },
+    next ? el("button", { class: "btn", onclick: () => { current = next; render(); scrollTo(0, 0); } }, "Next: " + QUIZZES[next].label) : el("span", { class: "status" }, "That's all three. Thank you!"),
+    el("button", { class: "btn", onclick: saveFile }, "Save answers file"),
+    el("button", { class: "btn ghost", onclick: copyAnswers }, "Copy answers"),
+    el("span", { class: "status", id: "foot-status" }, "Saves in this browser as you go. \"Save answers file\" puts bunraku-taste-answers.json in Downloads for Claude.")));
+  meter();
+}
+
+function renderQ(qz, q, n) {
+  const a = ans(qz, q.id);
+  const box = el("section", { class: "q" + (isDone(qz, q) ? " done" : "") });
+  box.append(el("div", { class: "qh" }, el("span", { class: "qn" }, String(n).padStart(2, "0")), el("h2", { class: "qt" }, q.t)));
+  if (q.hint) box.append(el("p", { class: "qhint" }, q.hint));
+  if (q.kind === "one" || q.kind === "many" || q.kind === "rank") {
+    const grid = el("div", { class: q.o.some(o => typeof o[3] === "string") ? "opts wide" : "opts" });
+    for (const o of q.o) {
+      const [val, label, desc] = o;
+      const sel = q.kind === "one" ? a.v === val : Array.isArray(a.v) && a.v.includes(val);
+      const kids = [demoFor(o), el("span", { class: "ol" }, label), desc ? el("span", { class: "od" }, desc) : null];
+      if (q.kind === "rank" || q.kind === "many") { const idx = Array.isArray(a.v) ? a.v.indexOf(val) : -1; kids.push(el("span", { class: "rankn" }, idx >= 0 ? "#" + (idx + 1) : "")); }
+      kids.push(el("span", { class: "pick" }, "PICKED"));
+      grid.append(el("button", { class: "opt", type: "button", "aria-pressed": String(sel), onclick: () => choose(qz, q, val) }, ...kids));
+    }
+    box.append(grid);
+  } else if (q.kind === "scale") {
+    const row = el("div", { class: "scale" }, el("span", { class: "ends" }, q.lo));
+    for (let i = 1; i <= q.n; i++) row.append(el("button", { class: "opt", type: "button", "aria-pressed": String(a.v === i), "aria-label": q.t + " " + i + " of " + q.n, onclick: () => choose(qz, q, i) }, el("span", { class: "ol" }, String(i))));
+    row.append(el("span", { class: "ends" }, q.hi)); box.append(row);
+  }
+  const isText = q.kind === "text";
+  const ta = el("textarea", { class: "note", id: qz + "-" + q.id, rows: isText ? "3" : "1", placeholder: isText ? "Type here" : "Note (optional)" });
+  ta.value = (isText ? a.v : a.note) || "";
+  ta.addEventListener("input", () => { if (isText) a.v = ta.value; else a.note = ta.value; box.classList.toggle("done", isDone(qz, q)); meter(); queueSave(); });
+  box.append(ta);
+  return box;
+}
+
+function choose(qz, q, val) {
+  const a = ans(qz, q.id);
+  if (q.kind === "one" || q.kind === "scale") a.v = a.v === val ? undefined : val;
+  else { const arr = Array.isArray(a.v) ? a.v.slice() : []; const i = arr.indexOf(val); if (i >= 0) arr.splice(i, 1); else if (!(q.kind === "rank" && arr.length >= q.max)) arr.push(val); a.v = arr; }
+  const y = scrollY; render(); scrollTo(0, y); queueSave();
+}
+
+function status(t) { $("#save").replaceChildren(...t); }
+function queueSave() {
+  try { localStorage.setItem("bq-answers", JSON.stringify(answers)); status([el("b", {}, "saved"), " in this browser"]); }
+  catch { status(["could not save in this browser; use Save answers file"]); }
+}
+function payload() {
+  // Questions travel with the answers so the file reads on its own.
+  const out = { savedAt: new Date().toISOString(), quizzes: {} };
+  for (const id of ORDER) {
+    out.quizzes[id] = QUIZZES[id].qs.map(q => {
+      const a = (answers[id] || {})[q.id] || {};
+      const label = v => { const o = (q.o || []).find(x => x[0] === v); return o ? o[1] : v; };
+      const v = Array.isArray(a.v) ? a.v.map(label) : a.v === undefined ? null : q.kind === "scale" ? a.v + " of " + q.n + " (" + q.lo + " to " + q.hi + ")" : label(a.v);
+      return { id: q.id, question: q.t, answer: v, note: a.note || "" };
+    });
+  }
+  return JSON.stringify(out, null, 2);
+}
+function saveFile() {
+  const url = URL.createObjectURL(new Blob([payload()], { type: "application/json" }));
+  const a = el("a", { href: url, download: "bunraku-taste-answers.json" }); document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  $("#foot-status").textContent = "Saved bunraku-taste-answers.json to your Downloads folder.";
+}
+async function copyAnswers() {
+  try { await navigator.clipboard.writeText(payload()); $("#foot-status").textContent = "Copied. Paste it to Claude."; }
+  catch { $("#foot-status").textContent = "Copy was blocked; use Save answers file."; }
+}
+
+render();
+status(["saves in this browser"]);
+</script>
+</body></html>

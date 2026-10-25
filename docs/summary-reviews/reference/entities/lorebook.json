@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/lorebook",
+  "sourcePath": "docs/reference/entities/lorebook.md",
+  "sourceHash": "sha256:96c4d8b85c6a2d8b062cf4ce03a2b1055acac1b0a5191ed6b3e8ac209f766b73",
+  "semanticSummaryHash": "sha256:55ea9b7b4081f08b122a20ff1e74e1fbc1e1a75d1b2f0b7d2a08b13fb98b9fb2",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Side-effects paragraph and boost fields match lore-effects.ts and scene-turn.ts, where failure, an empty Stop and an empty continue now restore touched variables, so a retry no longer counts an effect twice.",
+  "reviewedAt": "2026-10-11T17:46:15.923Z"
+}

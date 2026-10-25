@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Shell</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="shell.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Shell</h1>
+    <p>The always-on chrome: the HUD strip, the Dock, the tab strip, the stage, the status bar, the
+    right-click menus, and the shell-owned overlays (Follow, Close piece, Drop veil, Boot error, the
+    floating Agent).</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="shell.app">
+    <header>
+      <h2 class="bk-heading">Shell: app chrome</h2>
+      <span class="bk-tag">src/ui/shell</span>
+      <p class="bk-meta">Parts: shell.app, shell.hud (.brand .score .meter .keys), shell.dock (.brand
+      .app .icon .add .fold), shell.tabs (.tab), shell.stage, shell.status (.item), shell.drop-veil,
+      shell.boot-error, shell.follow, shell.close-piece. Slots: shell.hud.start, shell.hud.end,
+      shell.dock.end, shell.status.end.</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="shell.app.a" data-taste-title="HUD over Dock">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">HUD over Dock</h3>
+          <p>G3 as approved: the HUD strip across the top, the Dock below it on the left, tabs and
+          stage beside.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen sh-root" data-part="shell.app" data-variant="a" data-state="full">
+
+              <header class="sh-hud" data-part="shell.hud">
+                <div data-part="shell.hud.brand" data-deck="pack"><span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span></div>
+                <div class="sh-hud-mid">
+                  <div class="sh-hud-score" data-part="shell.hud.score">
+                    <span class="bk-readout"><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></span>
+                    <span class="bk-readout"><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></span>
+                    <span class="bk-readout"><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></span>
+                  </div>
+                  <hr class="bk-divider" aria-orientation="vertical">
+                  <div class="bk-meter" data-part="shell.hud.meter" data-deck="lorebook" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64">
+                    <span class="bk-meter__label">Lore budget</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:64%"></span></span><span class="bk-meter__value">64%</span>
+                  </div>
+                  <hr class="bk-divider" aria-orientation="vertical">
+                  <span class="bk-pips" data-tone="ok" aria-label="2 of 5 cast online"><i data-on></i><i data-on></i><i></i><i></i><i></i></span>
+                </div>
+                <div class="sh-hud-keys" data-part="shell.hud.keys">
+                  <span class="sh-key"><kbd>Enter</kbd>Continue</span>
+                  <span class="sh-key"><kbd>F</kbd>Favorite</span>
+                </div>
+              </header>
+
+              <div class="sh-body">
+                <nav class="sh-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="sh-dock-brand" data-part="shell.dock.brand">
+                    <svg class="sh-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="sh-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" aria-current="page">
+                    <span class="sh-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Scenes</b><small class="sh-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Workbench</b><small class="sh-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Library</b><small class="sh-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Press</b><small class="sh-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Agent</b><small class="sh-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Kit</b><small class="sh-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app sh-dock-future bk-item" data-part="shell.dock.app" data-tone="info" aria-disabled="true" title="New: needs approval">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Company</b><small class="sh-dock-sub bk-meta">installs later</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Settings</b></span>
+                  </button>
+                  <div class="sh-dock-score" data-deck="pack">
+                    <span class="bk-readout"><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></span>
+                    <span class="bk-readout"><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></span>
+                  </div>
+                  <div class="sh-dock-foot">
+                    <button type="button" class="sh-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="sh-dock-tx"><b class="sh-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="sh-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="sh-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+
+                <div class="sh-main">
+                  <nav class="sh-tabs" data-part="shell.tabs" aria-label="Open pieces" role="tablist">
+                    <button type="button" class="sh-tab" data-part="shell.tabs.tab" role="tab" aria-selected="true" data-deck="character"><span class="bk-dot"></span>Vera Lune<span class="sh-tab-dirty">&bull;</span><span class="sh-tab-kind">char</span><span class="sh-tab-close" aria-label="Close Vera Lune">&times;</span></button>
+                    <button type="button" class="sh-tab" data-part="shell.tabs.tab" role="tab" aria-selected="false" data-deck="lorebook"><span class="bk-dot"></span>Gull Point lore<span class="sh-tab-kind">lore</span><span class="sh-tab-close" aria-label="Close Gull Point lore">&times;</span></button>
+                    <button type="button" class="sh-tab-add" aria-label="New piece">+</button>
+                    <span class="sh-tab-fill"></span>
+                    <span class="sh-tab-actions">
+                      <button type="button" class="bk-tag">Import</button>
+                    </span>
+                  </nav>
+
+                  <main class="bk-stage sh-stage" data-part="shell.stage" data-deck="character" data-slot="shell.stage">
+                    <p class="sh-ghost">Vera Lune is open on the Workbench</p>
+
+                    <div class="sh-menu sh-menu-app" data-part="ui.menu" role="menu" style="left:1rem;top:3rem" aria-label="The Agent">
+                      <div class="sh-menu-head">The Agent</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Open The Agent</div>
+                    </div>
+                    <div class="sh-menu sh-menu-future" data-part="ui.menu" role="menu" style="left:1rem;top:9rem" aria-label="The Company">
+                      <div class="sh-menu-head">The Company</div>
+                      <div class="bk-item" role="menuitem" aria-disabled="true">Installs later</div>
+                    </div>
+                    <div class="sh-menu sh-menu-entity" data-part="ui.menu" role="menu" style="left:2rem;top:2rem" aria-label="Vera Lune">
+                      <div class="sh-menu-head">Vera Lune</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Show on the Workbench</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Open beside</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Stage for the Press</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Remove from the Workbench</div>
+                    </div>
+                    <div class="sh-menu sh-menu-shell" data-part="ui.menu" role="menu" style="left:6rem;top:6rem" aria-label="Bunraku">
+                      <div class="sh-menu-head">Bunraku</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Go home</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Import files</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Switch theme</div>
+                      <div class="bk-item" role="menuitem" tabindex="0">Replay tutorials</div>
+                    </div>
+
+                    <div class="sh-scrim sh-scrim-follow" data-part="shell.follow">
+                      <div class="bk-panel bk-frame sh-dialog" data-tone="info" data-crown role="alertdialog" aria-label="Follow to the Workbench">
+                        <p class="bk-meta">3 items were sent to the Workbench. Follow?</p>
+                        <label class="sh-dialog-remember"><input type="checkbox" class="bk-check">Never ask me this again</label>
+                        <div class="sh-dialog-actions"><button type="button" class="bk-tag" data-mark>Yes</button><button type="button" class="bk-tag">No</button></div>
+                      </div>
+                    </div>
+                    <div class="sh-scrim sh-scrim-close" data-part="shell.close-piece">
+                      <div class="bk-panel bk-frame sh-dialog" data-tone="danger" data-crown role="alertdialog" aria-label="Discard changes">
+                        <p class="bk-meta">Vera Lune has unsaved changes. Close this tab and discard them?</p>
+                        <div class="sh-dialog-actions"><button type="button" class="bk-tag" data-mark data-tone="danger">Discard changes</button><button type="button" class="bk-tag">Keep editing</button></div>
+                      </div>
+                    </div>
+
+                    <div class="sh-veil" data-part="shell.drop-veil">
+                      <div class="bk-panel bk-frame sh-veil-box" data-mark data-crown><span class="bk-heading">Drop to import</span></div>
+                    </div>
+
+                    <div class="sh-boot" data-part="shell.boot-error">
+                      <div class="sh-boot-box">
+                        <h2 class="bk-heading">Studio could not start</h2>
+                        <p class="bk-meta">Settings are unreadable. Fix or restore settings.json, then reload.</p>
+                        <p class="bk-meta">Open the forwarded address on this computer, not the server or container address.</p>
+                        <div class="sh-boot-links"><button type="button" class="bk-tag">Open Studio</button><button type="button" class="bk-tag">Open Remote Access setup</button></div>
+                        <div class="sh-boot-code bk-num">ssh -L 4173:localhost:4173 you@host</div>
+                        <div class="sh-boot-links"><button type="button" class="bk-tag">Copy SSH command</button></div>
+                      </div>
+                    </div>
+
+                    <div class="sh-catalog">
+                      <p class="bk-label">Apps in this build</p>
+                      <h2 class="bk-heading">Official Bunraku apps</h2>
+                      <p class="bk-meta" style="max-width:36rem">Everything here shipped with this copy of Bunraku. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock.</p>
+                      <div class="sh-catalog-grid">
+                        <article class="bk-panel bk-frame" data-app="scenes" style="padding:var(--bk-space-4)">
+                          <div class="sh-ccard-head"><span class="sh-ccard-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span><h3 class="bk-name">Scenes</h3></div>
+                          <p class="bk-meta">Play a scene with anyone in your cast.</p>
+                          <div class="sh-ccard-foot"><span class="bk-tag">On your Dock</span><button type="button" class="bk-tag">Open</button></div>
+                        </article>
+                        <article class="bk-panel bk-frame" data-app="kit" style="padding:var(--bk-space-4)">
+                          <div class="sh-ccard-head"><span class="sh-ccard-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span><h3 class="bk-name">CSS Workshop</h3></div>
+                          <p class="bk-meta">Assisted CSS authoring, with a sealed preview.</p>
+                          <div class="sh-ccard-foot"><span class="bk-tag">Included app</span><button type="button" class="bk-tag">Open</button></div>
+                        </article>
+                        <article class="bk-panel bk-frame" data-app="agent" style="padding:var(--bk-space-4)">
+                          <div class="sh-ccard-head"><span class="sh-ccard-mark" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span><h3 class="bk-name">Help / Docs</h3></div>
+                          <p class="bk-meta">The committed documentation corpus.</p>
+                          <div class="sh-ccard-foot"><span class="bk-tag">Included app</span><button type="button" class="bk-tag">Open</button></div>
+                        </article>
+                      </div>
+                    </div>
+
+                    <button type="button" class="bk-panel bk-frame sh-agent-tab" data-lift data-deck="preset"><span class="bk-dot"></span><span class="bk-meta">THE AGENT</span></button>
+                    <section class="bk-panel bk-frame sh-agent-panel" data-deck="preset" aria-label="The Agent">
+                      <header class="bk-panel__head"><span class="bk-dot"></span><span class="bk-heading" style="font-size:var(--bk-fs-sm)">THE AGENT</span><button type="button" class="bk-tag" style="margin-left:auto" aria-label="Minimise">&ndash;</button><button type="button" class="bk-tag" aria-label="Close">&times;</button></header>
+                      <div class="bk-panel__body"><p class="bk-meta">Standing on the Workbench, editing Vera Lune. Ask about this character, or anything else in the studio.</p></div>
+                    </section>
+                  </main>
+                </div>
+              </div>
+
+              <footer class="sh-status bk-panel" data-part="shell.status" style="flex-direction:row;align-items:center;min-height:var(--bk-status-h);padding:0 var(--bk-space-3);gap:var(--bk-space-3)">
+                <span class="bk-meta" data-part="shell.status.item"><span class="bk-dot" data-deck="character"></span> Workbench</span>
+                <span class="bk-meta" data-part="shell.status.item">theme <b class="bk-num">dark</b></span>
+                <span class="bk-meta" data-part="shell.status.item">pieces <b class="bk-num">214</b></span>
+                <span style="flex:1"></span>
+                <span class="bk-meta" data-slot="shell.status.end">bunraku.</span>
+              </footer>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="full" aria-pressed="true">Full</button>
+          <button type="button" class="spec-chip" data-set-state="slim">Slim</button>
+          <button type="button" class="spec-chip" data-set-state="future">+ Company</button>
+          <button type="button" class="spec-chip" data-set-state="catalog">Catalog</button>
+          <button type="button" class="spec-chip" data-set-state="menu-app">Menu: app</button>
+          <button type="button" class="spec-chip" data-set-state="menu-entity">Menu: entity</button>
+          <button type="button" class="spec-chip" data-set-state="menu-shell">Menu: shell</button>
+          <button type="button" class="spec-chip" data-set-state="follow">Dialog: Follow</button>
+          <button type="button" class="spec-chip" data-set-state="close">Dialog: close</button>
+          <button type="button" class="spec-chip" data-set-state="dropveil">Drop veil</button>
+          <button type="button" class="spec-chip" data-set-state="boot-error">Boot error</button>
+          <button type="button" class="spec-chip" data-set-state="agent-min">Agent: min</button>
+          <button type="button" class="spec-chip" data-set-state="agent-open">Agent: open</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="shell.app.b" data-taste-title="Command column">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Command column</h3>
+          <p>The Dock runs full height with the brand at its top and the scoreboard readouts at its
+          foot; the top strip is gone and the stage starts at the top.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen sh-root" data-part="shell.app" data-variant="b" data-state="full">
+              <div class="sh-body">
+                <nav class="sh-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="sh-dock-brand" data-part="shell.dock.brand">
+                    <svg class="sh-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="sh-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" aria-current="page">
+                    <span class="sh-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Scenes</b><small class="sh-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Workbench</b><small class="sh-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Library</b><small class="sh-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Press</b><small class="sh-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Agent</b><small class="sh-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Kit</b><small class="sh-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app sh-dock-future bk-item" data-part="shell.dock.app" data-tone="info" aria-disabled="true" title="New: needs approval">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Company</b><small class="sh-dock-sub bk-meta">installs later</small></span>
+                  </button>
+                  <button type="button" class="sh-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+                    <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg></span>
+                    <span class="sh-dock-tx"><b class="sh-dock-label">Settings</b></span>
+                  </button>
+                  <div class="sh-dock-score" data-part="shell.hud.score" data-deck="pack">
+                    <span class="bk-readout"><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></span>
+                    <span class="bk-readout"><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></span>
+                    <span class="bk-readout"><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></span>
+                  </div>
+                  <div class="sh-dock-foot">
+                    <button type="button" class="sh-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="sh-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="sh-dock-tx"><b class="sh-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="sh-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="sh-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+
+                <div class="sh-main">
+                  <nav class="sh-tabs" data-part="shell.tabs" aria-label="Open pieces" role="tablist">
+                    <button type="button" class="sh-tab" data-part="shell.tabs.tab" role="tab" aria-selected="true" data-deck="character"><span class="bk-dot"></span>Vera Lune<span class="sh-tab-kind">char</span><span class="sh-tab-close" aria-label="Close Vera Lune">&times;</span></button>
+                    <button type="button" class="sh-tab-add" aria-label="New piece">+</button>
+                    <span class="sh-tab-fill"></span>
+                  </nav>
+                  <main class="bk-stage sh-stage" data-part="shell.stage" data-deck="character">
+                    <p class="sh-ghost">Vera Lune is open on the Workbench</p>
+                  </main>
+                </div>
+              </div>
+              <footer class="sh-status bk-panel" data-part="shell.status" style="flex-direction:row;align-items:center;min-height:var(--bk-status-h);padding:0 var(--bk-space-3);gap:var(--bk-space-3)">
+                <span class="bk-meta" data-part="shell.status.item">Workbench &middot; dark &middot; 214 pieces</span>
+              </footer>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="full" aria-pressed="true">Full</button>
+          <button type="button" class="spec-chip" data-set-state="slim">Slim</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> full/slim Dock, the seven
+    apps in brief order plus Add app, the tab strip with a dirty mark, the status bar, the app/entity/
+    shell right-click menus, Follow and Close-piece dialogs, the drop veil, the boot-error screen, the
+    Apps catalog room, and the floating Agent (min and open). <b>New (needs approval):</b> the
+    hypothetical "Company" coming-soon tile is drawn only in the "+ Company" state, matching
+    shell-app.html's own labelled hypothetical; it is not part of the seven-app contract.</p>
+  </section>
+</main>
+</body>
+</html>

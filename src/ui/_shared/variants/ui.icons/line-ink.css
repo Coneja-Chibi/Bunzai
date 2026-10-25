@@ -1,0 +1,4 @@
+/** ui.icons line-ink: a thin pen line, like a figure drawn in the margin. */
+html[data-surface-ui-icons="line-ink"] :is(svg[data-ic], .ico svg, .mk svg):not(.host-protected, .host-protected *) {
+  stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round;
+}

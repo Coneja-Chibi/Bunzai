@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Persona editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="persona.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Persona editor</h1>
+    <p>The persona editor: fixed Identity, Sections that beat Identity Text once filled, Prompt Injection, Knowledge, Color Palette and the real compiled Live Preview.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="persona.editor">
+    <header>
+      <h2 class="bk-heading">Persona editor</h2>
+      <span class="bk-tag">PersonaEditor</span>
+      <p class="bk-meta">Parts: persona.editor, editor.save</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="persona.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Profile</h3>
+          <p>The fixed Identity card and Sections stacked, with Injection, Knowledge, Palette and Preview beside them.</p></header>
+        <div class="spec-screen pe-screen" data-state="loaded">
+<div class="pe-app" data-part="shell.app">
+  <header class="pe-hud" data-part="shell.hud">
+    <div class="pe-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="pe-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="pe-hud-mid">
+      <div class="pe-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="pe-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="pe-body">
+    <nav class="pe-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="pe-dock-brand" data-part="shell.dock.brand">
+        <svg class="pe-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="pe-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="pe-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="pe-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="pe-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="pe-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="pe-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="pe-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="pe-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="pe-dock-app pe-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="pe-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="pe-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="pe-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="pe-stage bk-stage" data-part="shell.stage">
+
+        <header class="pe-phead">
+          <span class="bk-tag" data-deck="persona"><b>PERS</b></span>
+          <h3 class="bk-name">Vera Lune</h3>
+          <span class="bk-meta pe-default">Set as default <span class="pe-star">&#9733;</span></span>
+          <nav class="pe-writefor" role="group" aria-label="Write for"><button type="button" class="bk-item pe-wfbtn" aria-selected="true">Bunraku</button><button type="button" class="bk-item pe-wfbtn">SillyTavern</button><button type="button" class="bk-item pe-wfbtn">RoleCall</button><button type="button" class="bk-item pe-wfbtn">Lumiverse</button><button type="button" class="bk-item pe-wfbtn">Agnai</button></nav>
+          <button type="button" class="bk-item pe-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="pe-grid" data-part="persona.editor">
+          <div class="pe-left">
+          <section class="bk-panel bk-frame pe-card" data-deck="persona" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Identity</h4></div>
+            <div class="bk-panel__body">
+              <div class="pe-identrow">
+                <label class="pe-field"><span class="bk-label">Name</span><input class="pe-input" value="Vera Lune"></label>
+                <label class="pe-field"><span class="bk-label">Tagline</span><input class="pe-input" value="Reads the cards, keeps the counsel"></label>
+                <label class="pe-field"><span class="bk-label">Pronouns</span><input class="pe-input" value="she/her"></label>
+                <label class="pe-field"><span class="bk-label">Height</span><input class="pe-input" value="5'6&quot;"></label>
+                <label class="pe-field"><span class="bk-label">Age</span><input class="pe-input" value="ageless"></label>
+              </div>
+              <p class="bk-meta">Identity always compiles first, ahead of section order.</p>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__head"><h4 class="bk-name">Sections</h4><nav class="pe-sectiontabs" role="tablist"><button type="button" class="bk-item pe-sectab" aria-selected="true">Appearance</button><button type="button" class="bk-item pe-sectab">Body</button><button type="button" class="bk-item pe-sectab">Personality</button><button type="button" class="bk-item pe-sectab">Quirks</button><button type="button" class="bk-item pe-sectab">History</button></nav></div>
+            <div class="bk-panel__body">
+              <textarea class="pe-input pe-sectiontext">Dark hair pinned with a silver comb, a shawl of playing cards sewn into the hem. Her eyes never quite focus on the room.</textarea>
+              <p class="bk-meta">Fill even one section and Identity Text below goes inert, not deleted.</p>
+            </div>
+          </section>
+          <details class="pe-fold">
+            <summary class="bk-meta">Identity Text (used only when every section is empty)</summary>
+            <div class="pe-foldbody"><textarea class="pe-input">I am Vera. I read what the cards already know.</textarea></div>
+          </details>
+          </div>
+          <div class="pe-right">
+          <section class="bk-panel bk-frame pe-card pe-injcard">
+            <div class="bk-panel__head"><h4 class="bk-name">Prompt Injection</h4></div>
+            <div class="bk-panel__body pe-injstops">
+              <span class="bk-tag" aria-selected="true">World</span>
+              <span class="bk-tag">Character</span>
+              <span class="bk-tag">Scene</span>
+              <span class="bk-tag">Depth <input class="pe-depthin" value="4"></span>
+              <span class="bk-tag pe-foreign" data-tone="warn" title="Kept, not carried here">In chat &middot; kept, not carried here</span>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card" data-deck="lorebook">
+            <div class="bk-panel__head"><h4 class="bk-name">Knowledge</h4></div>
+            <div class="bk-panel__body">
+              <div class="pe-leader"><span class="bk-name">The Tarot Primer</span><span class="bk-meta">18 entries</span></div>
+              <button type="button" class="bk-item pe-btn-ghost" style="width:100%">Attach lorebook</button>
+              <p class="bk-meta">Only the first linked book crosses on export to ST, RC or Lumiverse.</p>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__head"><h4 class="bk-name">Color Palette</h4></div>
+            <div class="bk-panel__body pe-colorrow">
+              <span class="bk-tag pe-swatch" data-deck="character"><span class="pe-swatchdot" data-deck="character"></span>Hair</span>
+              <span class="bk-tag pe-swatch" data-deck="preset"><span class="pe-swatchdot" data-deck="preset"></span>Shawl</span>
+              <button type="button" class="bk-item pe-btn-ghost">+ color</button>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__head"><h4 class="bk-name">Live Preview</h4><span class="bk-meta">the real compiler</span></div>
+            <div class="bk-panel__body pe-livepreview">
+              <b>&lt;pronouns&gt;</b>she/her<b>&lt;/pronouns&gt;</b> <b>&lt;tagline&gt;</b>Reads the cards, keeps the counsel<b>&lt;/tagline&gt;</b><br>
+              <b>&lt;appearance&gt;</b>Dark hair pinned with a silver comb...<b>&lt;/appearance&gt;</b><br>
+              <b>&lt;hair&gt;</b>chestnut<b>&lt;/hair&gt;</b>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__body">
+              <p class="bk-meta">Brief lives on the Personas shelf only; it never enters this block.</p>
+              <input class="pe-input" value="The reader who never lies to you">
+            </div>
+          </section>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="pe-status" data-part="shell.status">
+    <span class="pe-status-item" data-part="shell.status.item">Vera Lune · persona</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Profile">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Loaded</button>
+          <button type="button" class="spec-chip" data-set-state="agnai">Write for: Agnai</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="persona.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Sheet</h3>
+          <p>A portrait with identity readouts under it (default, pronouns, sections, linked lorebook), the editor cards to the right.</p></header>
+        <div class="spec-screen pe-screen" data-state="loaded">
+<div class="pe-app" data-part="shell.app">
+  <header class="pe-hud" data-part="shell.hud">
+    <div class="pe-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="pe-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="pe-hud-mid">
+      <div class="pe-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="pe-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="pe-body">
+    <nav class="pe-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="pe-dock-brand" data-part="shell.dock.brand">
+        <svg class="pe-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="pe-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="pe-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="pe-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="pe-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="pe-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="pe-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="pe-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="pe-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="pe-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="pe-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="pe-dock-app pe-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="pe-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="pe-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="pe-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="pe-stage bk-stage" data-part="shell.stage">
+
+        <header class="pe-phead">
+          <span class="bk-tag" data-deck="persona"><b>PERS</b></span>
+          <h3 class="bk-name">Vera Lune</h3>
+          <span class="bk-meta pe-default">Set as default <span class="pe-star">&#9733;</span></span>
+          <nav class="pe-writefor" role="group" aria-label="Write for"><button type="button" class="bk-item pe-wfbtn" aria-selected="true">Bunraku</button><button type="button" class="bk-item pe-wfbtn">SillyTavern</button><button type="button" class="bk-item pe-wfbtn">RoleCall</button><button type="button" class="bk-item pe-wfbtn">Lumiverse</button><button type="button" class="bk-item pe-wfbtn">Agnai</button></nav>
+          <button type="button" class="bk-item pe-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="pe-sheet" data-part="persona.editor">
+          <aside class="pe-sheetleft">
+            <div class="pe-portrait" data-deck="persona"><span class="bk-name">V</span></div>
+            <dl class="pe-statlist">
+              <div><dt class="bk-label">Default</dt><dd class="bk-meta">★ yes</dd></div>
+              <div><dt class="bk-label">Pronouns</dt><dd class="bk-meta">she/her</dd></div>
+              <div><dt class="bk-label">Sections filled</dt><dd class="bk-meta">1 of 5</dd></div>
+              <div><dt class="bk-label">Linked lorebook</dt><dd class="bk-meta">The Tarot Primer</dd></div>
+            </dl>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__head"><h4 class="bk-name">Color Palette</h4></div>
+            <div class="bk-panel__body pe-colorrow">
+              <span class="bk-tag pe-swatch" data-deck="character"><span class="pe-swatchdot" data-deck="character"></span>Hair</span>
+              <span class="bk-tag pe-swatch" data-deck="preset"><span class="pe-swatchdot" data-deck="preset"></span>Shawl</span>
+              <button type="button" class="bk-item pe-btn-ghost">+ color</button>
+            </div>
+          </section>
+          </aside>
+          <div class="pe-sheetright">
+          <section class="bk-panel bk-frame pe-card" data-deck="persona" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Identity</h4></div>
+            <div class="bk-panel__body">
+              <div class="pe-identrow">
+                <label class="pe-field"><span class="bk-label">Name</span><input class="pe-input" value="Vera Lune"></label>
+                <label class="pe-field"><span class="bk-label">Tagline</span><input class="pe-input" value="Reads the cards, keeps the counsel"></label>
+                <label class="pe-field"><span class="bk-label">Pronouns</span><input class="pe-input" value="she/her"></label>
+                <label class="pe-field"><span class="bk-label">Height</span><input class="pe-input" value="5'6&quot;"></label>
+                <label class="pe-field"><span class="bk-label">Age</span><input class="pe-input" value="ageless"></label>
+              </div>
+              <p class="bk-meta">Identity always compiles first, ahead of section order.</p>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__head"><h4 class="bk-name">Sections</h4><nav class="pe-sectiontabs" role="tablist"><button type="button" class="bk-item pe-sectab" aria-selected="true">Appearance</button><button type="button" class="bk-item pe-sectab">Body</button><button type="button" class="bk-item pe-sectab">Personality</button><button type="button" class="bk-item pe-sectab">Quirks</button><button type="button" class="bk-item pe-sectab">History</button></nav></div>
+            <div class="bk-panel__body">
+              <textarea class="pe-input pe-sectiontext">Dark hair pinned with a silver comb, a shawl of playing cards sewn into the hem. Her eyes never quite focus on the room.</textarea>
+              <p class="bk-meta">Fill even one section and Identity Text below goes inert, not deleted.</p>
+            </div>
+          </section>
+          <details class="pe-fold">
+            <summary class="bk-meta">Identity Text (used only when every section is empty)</summary>
+            <div class="pe-foldbody"><textarea class="pe-input">I am Vera. I read what the cards already know.</textarea></div>
+          </details>
+          <section class="bk-panel bk-frame pe-card pe-injcard">
+            <div class="bk-panel__head"><h4 class="bk-name">Prompt Injection</h4></div>
+            <div class="bk-panel__body pe-injstops">
+              <span class="bk-tag" aria-selected="true">World</span>
+              <span class="bk-tag">Character</span>
+              <span class="bk-tag">Scene</span>
+              <span class="bk-tag">Depth <input class="pe-depthin" value="4"></span>
+              <span class="bk-tag pe-foreign" data-tone="warn" title="Kept, not carried here">In chat &middot; kept, not carried here</span>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card" data-deck="lorebook">
+            <div class="bk-panel__head"><h4 class="bk-name">Knowledge</h4></div>
+            <div class="bk-panel__body">
+              <div class="pe-leader"><span class="bk-name">The Tarot Primer</span><span class="bk-meta">18 entries</span></div>
+              <button type="button" class="bk-item pe-btn-ghost" style="width:100%">Attach lorebook</button>
+              <p class="bk-meta">Only the first linked book crosses on export to ST, RC or Lumiverse.</p>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__head"><h4 class="bk-name">Live Preview</h4><span class="bk-meta">the real compiler</span></div>
+            <div class="bk-panel__body pe-livepreview">
+              <b>&lt;pronouns&gt;</b>she/her<b>&lt;/pronouns&gt;</b> <b>&lt;tagline&gt;</b>Reads the cards, keeps the counsel<b>&lt;/tagline&gt;</b><br>
+              <b>&lt;appearance&gt;</b>Dark hair pinned with a silver comb...<b>&lt;/appearance&gt;</b><br>
+              <b>&lt;hair&gt;</b>chestnut<b>&lt;/hair&gt;</b>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame pe-card">
+            <div class="bk-panel__body">
+              <p class="bk-meta">Brief lives on the Personas shelf only; it never enters this block.</p>
+              <input class="pe-input" value="The reader who never lies to you">
+            </div>
+          </section>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="pe-status" data-part="shell.status">
+    <span class="pe-status-item" data-part="shell.status.item">Vera Lune · persona</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Sheet">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Loaded</button>
+          <button type="button" class="spec-chip" data-set-state="agnai">Write for: Agnai</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the write-for row (Bunraku, SillyTavern, RoleCall, Lumiverse, Agnai), Set as default marker, the fixed Identity card, Sections with its tab row and the Identity Text fallback fold, Prompt Injection stops (with a foreign in-chat stop), Knowledge with its attach action, Color Palette swatches, the real-compiler Live Preview, and the Personas-shelf brief note. New: a portrait and a stat-readout list in variant B (not in the soft source, which has no portrait); built from the card and readout primitives per BUILD-BRIEF’s own description of that variant. Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

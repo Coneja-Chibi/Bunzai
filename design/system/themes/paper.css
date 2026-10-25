@@ -1,0 +1,68 @@
+/*
+ * Theme "paper": G3 in daylight. The same HUD grammar (crisp 2px frames, corner brackets, segmented
+ * meters, mono readouts) on blush paper with plum ink. Not a soft reskin: frames darken to a firm
+ * plum so panels still read as framed, and every role and deck drops to its deep jewel shade for text
+ * and marks while fills turn light, because a jewel name on blush is unreadable. Overrides tokens
+ * only.
+ * Overrides tokens only.
+ */
+:root[data-theme="paper"] {
+  color-scheme: light;
+
+  --bk-surface-well: #ebdfe7;
+  --bk-surface-base: #f6eff3;
+  --bk-surface-sunken: #efe5ec;
+  --bk-surface-field: #fffbfd;
+  --bk-surface-panel: #fffbfd;
+  --bk-surface-raised: #f3e9ef;
+  --bk-surface-ink: #efe3eb;
+  --bk-scrim: rgb(42 34 48 / 0.55);
+  --bk-shadow: #c9b6c5;
+
+  --bk-line-strong: #6f5a6d;
+  --bk-line: #d6c6d1;
+  --bk-line-track: #e1d4dd;
+  --bk-line-control: #7a6478;
+
+  --bk-text: #2a2230;
+  --bk-text-soft: #4d4050;
+  --bk-text-dim: #4f4255;
+  --bk-text-faint: #5e5063;
+  --bk-text-disabled: #b6a6b3;
+  --bk-text-on-tint: #2a2230;
+
+  /* roles in deep jewel shades: light fills for slabs and chips (dark ink), deep text and marks */
+  --bk-role-brand: #ffa7d1;   --bk-role-brand-text: #a61d5e;   --bk-role-brand-deep: #a61d5e;
+  --bk-role-action: #aeceff;  --bk-role-action-text: #2758a6;  --bk-role-action-deep: #2758a6;
+  --bk-role-select: #dac6ff;  --bk-role-select-text: #6a4ca6;  --bk-role-select-deep: #6a4ca6;
+  --bk-role-ok: #9ff0c7;      --bk-role-ok-text: #036b39;      --bk-role-ok-deep: #036b39;
+  --bk-role-warn: #ffdc9e;    --bk-role-warn-text: #7c4d00;    --bk-role-warn-deep: #7c4d00;
+  --bk-role-danger: #ffadb3;  --bk-role-danger-text: #a62530;  --bk-role-danger-deep: #a62530;
+  --bk-role-info: #97ece7;    --bk-role-info-text: #006963;    --bk-role-info-deep: #006963;
+
+  /* the primary action is a deep sapphire plate with white text on paper */
+  --bk-action-bg: var(--bk-role-action-deep);
+  --bk-action-bg-hover: #1d4686;
+  --bk-action-text: #ffffff;
+
+  --bk-ok-bg: #dcf6e8;
+  --bk-warn-bg: #fdeccc;
+  --bk-danger-bg: #fde0e2;
+  --bk-danger-line: #e08a92;
+  --bk-danger-strong: #b3202d;
+  --bk-info-bg: #d9f5f3;
+
+  --bk-code-macro: #5b4596;
+  --bk-code-var: #2f5288;
+
+  /* decks: lighter jewel fills under dark ink, deep jewel for text and marks */
+  --bk-deck-character: #ffc5ad;  --bk-deck-character-text: #9a4320;  --bk-deck-character-deep: #9a4320;
+  --bk-deck-lorebook: #c7c6ff;   --bk-deck-lorebook-text: #4f4ca6;   --bk-deck-lorebook-deep: #4f4ca6;
+  --bk-deck-persona: #d3f1ad;    --bk-deck-persona-text: #406512;    --bk-deck-persona-deep: #406512;
+  --bk-deck-pack: #f4b9ff;       --bk-deck-pack-text: #87329a;       --bk-deck-pack-deep: #87329a;
+  --bk-deck-preset: #a6e2ff;     --bk-deck-preset-text: #0b5e85;     --bk-deck-preset-deep: #0b5e85;
+  --bk-deck-regex: #fae99d;      --bk-deck-regex-text: #6e5900;      --bk-deck-regex-deep: #6e5900;
+  --bk-deck-fog: #d8d1dd;        --bk-deck-fog-text: #605869;        --bk-deck-fog-deep: #605869;
+
+  --bk-prop-hare: #c2410c;
+}

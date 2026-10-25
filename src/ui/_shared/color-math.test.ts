@@ -1,0 +1,102 @@
+/** Regression coverage for the color-math.test behavior owned beside this file. */
+import { expect, test } from "bun:test";
+import { clamp01, contrastRatio, deepAccent, dragFraction, hexToHsv, hsvToHex, lerpHex, normalizeHex, readableInk } from "./color-math";
+
+test("readableInk picks dark ink on light fills and cream on dark fills", () => {
+  expect(readableInk("#ffd21e")).toBe("#0a0a0b"); // hugging-face yellow -> dark ink
+  expect(readableInk("#111111")).toBe("#faf8f3"); // near-black fill -> cream ink
+  expect(readableInk("#5865f2")).toBe("#faf8f3"); // discord blurple -> cream ink
+  expect(readableInk("not a color")).toBe("#faf8f3"); // fail closed to cream on garbage
+});
+
+test("normalizeHex expands 3-digit shorthand and lowercases", () => {
+  expect(normalizeHex("#ABC")).toBe("#aabbcc");
+  expect(normalizeHex("E11D48")).toBe("#e11d48");
+  expect(normalizeHex("  #Fff  ")).toBe("#ffffff");
+});
+
+test("normalizeHex fails closed on non-colors", () => {
+  expect(normalizeHex("")).toBeNull();
+  expect(normalizeHex("nope")).toBeNull();
+  expect(normalizeHex("#12")).toBeNull();
+  expect(normalizeHex("#1234567")).toBeNull();
+  expect(normalizeHex("#gggggg")).toBeNull();
+});
+
+test("clamp01 pins to the unit interval", () => {
+  expect(clamp01(-3)).toBe(0);
+  expect(clamp01(0.42)).toBe(0.42);
+  expect(clamp01(9)).toBe(1);
+});
+
+test("hexToHsv reads a pure hue", () => {
+  const red = hexToHsv("#ff0000");
+  expect(red.h).toBeCloseTo(0, 5);
+  expect(red.s).toBeCloseTo(1, 5);
+  expect(red.v).toBeCloseTo(1, 5);
+});
+
+test("hexToHsv reads black and white without dividing by zero", () => {
+  expect(hexToHsv("#000000")).toEqual({ h: 0, s: 0, v: 0 });
+  const white = hexToHsv("#ffffff");
+  expect(white.s).toBeCloseTo(0, 5);
+  expect(white.v).toBeCloseTo(1, 5);
+});
+
+test("hexToHsv tolerates garbage as black (never throws)", () => {
+  expect(hexToHsv("not-a-color")).toEqual({ h: 0, s: 0, v: 0 });
+});
+
+test("hexToHsv -> hsvToHex round-trips real colors", () => {
+  for (const hex of ["#e11d48", "#f59e0b", "#10b981", "#8b5cf6", "#3b82f6", "#123456", "#abcdef"]) {
+    expect(hsvToHex(hexToHsv(hex))).toBe(hex);
+  }
+});
+
+test("hsvToHex wraps hue and clamps out-of-range axes", () => {
+  expect(hsvToHex({ h: 360, s: 1, v: 1 })).toBe(hsvToHex({ h: 0, s: 1, v: 1 }));
+  expect(hsvToHex({ h: -120, s: 1, v: 1 })).toBe(hsvToHex({ h: 240, s: 1, v: 1 }));
+  expect(hsvToHex({ h: 0, s: 5, v: 5 })).toBe("#ff0000");
+});
+
+test("contrastRatio matches the WCAG anchors", () => {
+  expect(contrastRatio("#000000", "#ffffff")).toBeCloseTo(21, 5);
+  expect(contrastRatio("#ffffff", "#000000")).toBeCloseTo(21, 5); // order-independent
+  expect(contrastRatio("#777777", "#777777")).toBeCloseTo(1, 5);
+});
+
+test("deepAccent darkens bright accents until white text clears AA with margin", () => {
+  // every deck accent plus the house rose (soft identity, 2026-09-28), plus the fixed swatch-row
+  // house-accent picks (amber/emerald/violet/blue, components/swatch-row/index.tsx) - paintTheme
+  // feeds whichever one a person picks through this same function: the exact palette that must
+  // carry white labels
+  for (const hex of [
+    "#ff9ebb", "#ffc9ae", "#d9c8ff", "#bfead7", "#ffb3c7", "#bcd7ff", "#ffeaa8",
+    "#f59e0b", "#10b981", "#8b5cf6", "#3b82f6",
+  ]) {
+    expect(contrastRatio(deepAccent(hex), "#ffffff")).toBeGreaterThanOrEqual(4.5);
+  }
+});
+
+test("deepAccent of the house rose matches the --rose-deep token (tokens.css must agree)", () => {
+  expect(deepAccent("#ff9ebb")).toBe("#854256");
+});
+
+test("deepAccent leaves already-deep colors alone and fails closed on garbage", () => {
+  expect(deepAccent("#123456")).toBe("#123456"); // already past the target -> untouched
+  expect(contrastRatio(deepAccent("garbage"), "#ffffff")).toBeGreaterThanOrEqual(4.5); // reads as black
+});
+
+test("dragFraction clamps to the track and handles a zero-size track", () => {
+  expect(dragFraction(50, 0, 100)).toBe(0.5);
+  expect(dragFraction(-20, 0, 100)).toBe(0);
+  expect(dragFraction(500, 0, 100)).toBe(1);
+  expect(dragFraction(50, 0, 0)).toBe(0);
+});
+
+test("lerpHex paints an unparseable stop as black, not #00000a", () => {
+  expect(lerpHex("garbage", "garbage", 0)).toBe("#000000");
+  expect(lerpHex("nope", "#ffffff", 1)).toBe("#ffffff");
+  expect(lerpHex("#ffffff", "nope", 1)).toBe("#000000");
+  expect(lerpHex("#000000", "#ffffff", 0.5)).toBe("#808080");
+});

@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Director tracker updates</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../play-shared/play.css">
+<script src="../play-shared/palettes.js"></script>
+<script src="../play-shared/play.js"></script>
+<style>
+/* The real Director, Props and tracker styles (generated from director-style.ts, props-style.ts and tracker-style.ts, `.scs ` prefix removed), so every part below is drawn by the CSS the app ships. */
+
+.dr{display:flex;flex-direction:column;gap:0;min-height:0}
+.dr>.hero{margin:0}
+.dr-bar{display:flex;align-items:center;gap:8px;margin-top:12px;padding-bottom:12px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.dr-hist{display:flex;align-items:center;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.dr-hist button{display:grid;place-items:center;height:32px;min-width:32px;padding:0;border:0;background:none;color:var(--stage-soft);cursor:pointer}
+.dr-hist button:hover:not(:disabled){background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.dr-hist button:disabled{opacity:.3;cursor:default}
+.dr-hist>span{min-width:6ch;padding:0 8px;border-inline:1px solid var(--stage-line);text-align:center;font:var(--text-meta) var(--font-mono);color:var(--stage-soft)}
+.dr-hist .jump{padding:0 10px;border-left:1px solid var(--stage-line);color:var(--w);background:color-mix(in srgb,var(--w) 15%,transparent);font:700 var(--text-meta)/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase}
+.dr-bar-r{margin-left:auto;display:flex;align-items:center;gap:6px}
+.dr-btn{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 40%,transparent);color:var(--stage-soft);font:700 var(--text-meta)/1 var(--font-body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.dr-btn:hover:not(:disabled){border-color:var(--w);color:var(--w)}
+.dr-btn.reset:hover:not(:disabled),.dr-btn.danger{border-color:var(--stage-warn);color:var(--stage-warn)}
+.dr-btn.go{background:var(--w);border-color:var(--w);color:var(--stage-black)}
+.dr-btn:disabled{opacity:.4;cursor:default}
+.dr-ico{display:inline-grid;place-items:center;padding:4px;border:0;background:none;color:var(--stage-mute);cursor:pointer}
+.dr-ico:hover:not(:disabled){color:var(--stage-danger-text);background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.dr-ico:disabled{opacity:.4;cursor:default}
+.dr-confirm{margin-top:12px;padding:12px;border:1px solid var(--stage-warn);background:var(--stage-warn-ink);color:var(--stage-card);font:var(--text-control)/1.5 var(--font-body)}
+.dr-confirm p{margin:0 0 10px}
+.dr-confirm div{display:flex;gap:8px;justify-content:flex-end}
+.dr-note-line{display:flex;align-items:center;gap:8px;margin:12px 0 0;padding:8px 12px;border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-panel) 60%,transparent);color:var(--stage-soft);font:var(--text-meta)/1.5 var(--font-body)}
+.dr-note-line.bad{border-color:var(--stage-danger-edge);background:var(--stage-danger-bg);color:var(--stage-danger-text)}
+.dr-note-line.bad .dr-ico{margin-left:auto}
+.dr-note-line.live svg{color:var(--w);animation:dr-spin 1s linear infinite}
+@keyframes dr-spin{to{transform:rotate(360deg)}}
+.dr-tabs{display:flex;margin-top:16px;overflow-x:auto;border-bottom:2px solid var(--stage-black);scrollbar-width:none}
+.dr-tabs::-webkit-scrollbar{display:none}
+.dr-tabs button{position:relative;flex:1;min-width:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 8px;border:2px solid var(--stage-line);border-bottom:0;background:transparent;color:var(--stage-text-dim);font:700 var(--text-meta)/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.dr-tabs button:hover{color:var(--stage-card)}
+.dr-tabs button.on{top:2px;border-color:var(--stage-black);background:var(--stage-panel);color:var(--stage-card)}
+.dr-tabs button.on svg{color:var(--w)}
+.dr-pane{padding:16px;display:flex;flex-direction:column;gap:20px}
+.dr-sec-h{display:flex;align-items:center;gap:6px;margin-bottom:8px;font:600 var(--text-meta)/1.4 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--stage-text-dim)}
+.dr-sec-h svg{color:var(--w)}
+.dr-stack{display:flex;flex-direction:column;gap:8px}
+.dr-stack.tight{gap:6px}
+.dr-card{padding:16px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-card.sm{padding:10px;border-color:color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 3%,transparent)}
+.dr-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.dr-row.end{justify-content:flex-end;margin:0}
+.dr-row b{font:600 var(--text-control)/1.4 var(--font-body);color:var(--stage-card)}
+.dr-card.sm .dr-row b{font-weight:500;color:var(--stage-soft)}
+.dr-soft{margin:4px 0 0;font:var(--text-meta)/1.6 var(--font-body);color:var(--stage-text-dim)}
+.dr-dim{margin:2px 0 0;font:var(--text-meta)/1.6 var(--font-body);color:var(--stage-mute)}
+.dr-dim.big{font-size:var(--text-control);color:var(--stage-text-dim)}
+.dr-goals{margin-top:8px;display:flex;flex-direction:column;gap:4px;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.dr-goals.dim{color:var(--stage-mute)}
+.dr-goals div{display:flex;align-items:flex-start;gap:6px}
+.dr-goals svg{margin-top:2px;flex:none;color:var(--stage-mute)}
+.dr-chips{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:8px}
+.dr-meta{display:flex;flex-wrap:wrap;align-items:center;gap:2px 12px;margin-top:6px;font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
+.dr-badge{display:inline-block;padding:2px 6px;background:color-mix(in srgb,var(--b) 15%,transparent);color:var(--b);font:var(--text-meta)/1.3 var(--font-body)}
+.dr-badge.ok{--b:var(--stage-ok)}.dr-badge.info{--b:var(--bk-role-info-text)}.dr-badge.warn{--b:var(--stage-warn)}.dr-badge.danger{--b:var(--stage-danger-text)}.dr-badge.select{--b:var(--bk-role-select-text)}.dr-badge.mute{--b:var(--stage-mute)}
+.dr-hz{display:inline-grid;color:var(--c);flex:none}
+.dr-mood-row{display:flex;align-items:center;gap:8px;font:var(--text-control)/1.4 var(--font-body);color:var(--stage-soft);text-transform:capitalize}
+.dr-mood{width:10px;height:10px;flex:none;background:var(--c);animation:dr-pulse 2s ease-in-out infinite}
+@keyframes dr-pulse{50%{opacity:.4}}
+.dr-action{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 5%,transparent);font:var(--text-control)/1.4 var(--font-body);color:var(--stage-soft)}
+.dr-action svg{margin-top:3px;flex:none;color:var(--stage-mute)}
+.dr-list{margin:0;padding-left:18px;font:var(--text-control)/1.6 var(--font-body);color:var(--stage-text-dim)}
+.dr-quiet{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:12rem;color:var(--stage-mute)}
+.dr-quiet.short{min-height:6rem}
+.dr-quiet svg{opacity:.3}
+.dr-quiet p{margin:0;font:var(--text-control)/1.4 var(--font-body)}
+.dr-quiet small{font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-line)}
+.dr-empty{display:flex;flex-direction:column;align-items:center;gap:16px;padding:64px 24px;text-align:center}
+.dr-empty-ic{display:grid;place-items:center;width:72px;height:72px;border:3px solid var(--stage-black);background:var(--stage-panel);box-shadow:6px 6px 0 0 var(--stage-black);color:var(--w)}
+.dr-empty h3{margin:0;font:700 1.125rem/1.3 var(--font-fancy);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-card)}
+.dr-empty p{margin:0;max-width:32ch;font:italic 1.05rem/1.4 var(--font-fancy);color:var(--stage-soft)}
+.dr-grp-h{display:flex;align-items:center;gap:6px;padding:0 4px;font:600 var(--text-meta)/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-text-dim)}
+.dr-grp-h.branch svg{color:var(--bk-role-brand-text)}.dr-grp-h.checkcircle svg{color:var(--stage-ok)}.dr-grp-h.xcircle{color:var(--stage-mute)}
+.dr-chap{display:flex;align-items:center;gap:6px;padding:4px 4px 0;font:500 var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
+.dr-arc{border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-arc.dim{border-color:color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 2%,transparent);opacity:.6}
+.dr-arc-h{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border:0;background:none;color:var(--stage-card);text-align:left;cursor:pointer}
+.dr-arc-h:hover{background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-arc-t,.dr-arc-s{display:flex;align-items:center;gap:8px;min-width:0}
+.dr-arc-s{flex:none}
+.dr-arc-t b{font:500 var(--text-control)/1.4 var(--font-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dr-arc.dim .dr-arc-t b{color:var(--stage-mute)}
+.dr-arc-b{display:flex;flex-direction:column;gap:8px;padding:8px 12px 12px;border-top:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-arc-b .dr-chips,.dr-arc-b .dr-meta{margin-top:0}
+.dr-chev{display:inline-grid;color:var(--stage-mute);transition:transform .2s}
+.dr-chev.open{transform:rotate(180deg)}
+.dr-beat{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--w);background:color-mix(in srgb,var(--w) 9%,transparent)}
+.dr-beat-l{display:flex;align-items:center;gap:6px;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--w)}
+.dr-beat p{margin:0;font:var(--text-control)/1.5 var(--font-body);color:var(--stage-card)}
+.dr-beat small{font:var(--text-meta) var(--font-mono);color:var(--stage-mute)}
+.dr-sub{display:flex;align-items:center;gap:6px;margin-bottom:6px;font:500 var(--text-meta)/1.4 var(--font-body);color:var(--stage-text-dim)}
+.dr-sub.up{font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--stage-mute)}
+.dr-stages{position:relative;display:flex;flex-direction:column;gap:6px;margin-left:4px;padding-left:12px;border-left:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.dr-stages>div{position:relative;padding-left:4px}
+.dr-stages b{font:500 var(--text-meta)/1.4 var(--font-body);color:var(--stage-soft)}
+.dr-stages p{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-mute)}
+.dr-stages small{font:var(--text-meta) var(--font-body);color:var(--stage-mute)}
+.dr-stage-dot{position:absolute;left:-17px;top:6px;width:8px;height:8px;background:var(--stage-line);border:1px solid color-mix(in srgb,var(--stage-card) 20%,transparent)}
+.dr-stages .now .dr-stage-dot{background:var(--w)}
+.dr-seeds{display:flex;flex-direction:column;gap:4px;padding-left:4px}
+.dr-seeds div{display:flex;align-items:flex-start;gap:6px;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-text-dim)}
+.dr-seeds div svg{margin-top:2px;flex:none;color:var(--stage-ok)}
+.dr-seeds div.done{color:var(--stage-mute);text-decoration:line-through}
+.dr-seeds small{color:var(--stage-mute)}
+.dr-resolve{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:6px 10px;border:1px solid color-mix(in srgb,var(--stage-ok) 30%,transparent);background:color-mix(in srgb,var(--stage-ok) 10%,transparent);color:var(--stage-ok);font:500 var(--text-meta)/1.2 var(--font-body);cursor:pointer}
+.dr-resolve:hover:not(:disabled){background:color-mix(in srgb,var(--stage-ok) 20%,transparent)}
+.dr-resolve:disabled{opacity:.4;cursor:default}
+.dr-kv{display:flex;flex-direction:column;gap:12px}
+.dr-kv h4{margin:0 0 4px;font:600 var(--text-meta)/1.4 var(--font-body);text-transform:capitalize;color:var(--stage-soft)}
+.dr-kv p{margin:0;font:var(--text-control)/1.6 var(--font-body);color:var(--stage-text-dim)}
+.dr-kv ul{margin:0;padding-left:18px;font:var(--text-control)/1.6 var(--font-body);color:var(--stage-text-dim)}
+.dr-filters{display:flex;align-items:center;gap:4px;padding:8px 12px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.dr-filters>button{padding:4px 8px;border:0;background:none;color:var(--stage-mute);font:var(--text-meta)/1.2 var(--font-body);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.dr-filters>button:hover{color:var(--stage-soft);background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-filters>button.on{background:color-mix(in srgb,var(--stage-card) 10%,transparent);color:var(--w)}
+.dr-filters-r{margin-left:auto;display:flex;align-items:center;gap:8px;font:var(--text-meta) var(--font-body);color:var(--stage-mute)}
+.dr-feed{display:flex;flex-direction:column}
+.dr-act{padding:8px 12px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-act.more{cursor:pointer}
+.dr-act.more:hover{background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-act-h{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.dr-act-l{display:flex;align-items:center;gap:6px;min-width:0}
+.dr-act-l b{font:500 var(--text-meta)/1.4 var(--font-body)}
+.dr-act small{font:var(--text-meta) var(--font-body);color:var(--stage-mute)}
+.dr-act svg{color:var(--stage-mute)}
+.dr-dot{width:6px;height:6px;flex:none;background:var(--c)}
+.dr-act p{margin:2px 0 0;padding-left:12px;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-text-dim);white-space:pre-wrap;overflow-wrap:anywhere}
+.dr-act p.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dr-act pre{margin:8px 0 0 12px;padding:8px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-black) 30%,transparent);font:var(--text-meta)/1.5 var(--font-mono);color:var(--stage-mute);white-space:pre-wrap;overflow-wrap:anywhere}
+.dr-act-m{margin:6px 0 0 12px;font:var(--text-meta) var(--font-mono);color:var(--stage-mute)}
+.dr-warn{display:flex;align-items:flex-start;gap:8px;padding:10px;border:1px solid color-mix(in srgb,var(--stage-warn) 20%,transparent);background:color-mix(in srgb,var(--stage-warn) 10%,transparent);color:var(--stage-warn);font:var(--text-control)/1.4 var(--font-body)}
+.dr-warn svg{flex:none;margin-top:2px}
+.dr-wide{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-card) 5%,transparent);color:var(--stage-text-dim);font:var(--text-control)/1.4 var(--font-body);cursor:pointer}
+.dr-wide:hover{color:var(--stage-card);background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.dr-fold{border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-card) 3%,transparent)}
+.dr-fold-h{width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border:0;background:none;color:var(--stage-text-dim);cursor:pointer}
+.dr-fold-h:hover{background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.dr-fold-h span{display:flex;align-items:center;gap:8px}
+.dr-fold-h b{font:500 var(--text-control)/1.4 var(--font-body)}
+.dr-fold-b{padding:8px 12px 12px;border-top:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);max-height:calc(100vh - 16rem);overflow-y:auto}
+.dr-raw{margin:0;padding:8px;background:color-mix(in srgb,var(--stage-black) 40%,transparent);font:var(--text-meta)/1.5 var(--font-mono);color:var(--stage-text-dim);white-space:pre-wrap;overflow-wrap:anywhere}
+.dr-seed{display:flex;align-items:flex-start;gap:8px;padding:8px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 3%,transparent)}
+.dr-seed>svg{margin-top:2px;flex:none;color:var(--stage-ok)}
+.dr-seed>div{flex:1;min-width:0}
+.dr-seed .dr-chips{margin-top:0}
+.dr-seed b{font:500 var(--text-control)/1.4 var(--font-body);color:var(--stage-soft)}
+.dr-ok-text,.dr-warn-text{margin:2px 0 0;font:var(--text-meta)/1.5 var(--font-body)}
+.dr-ok-text{color:var(--stage-ok)}.dr-warn-text{color:var(--stage-warn)}
+.dr-ok-text span,.dr-warn-text span{opacity:.7}
+.dr-plant{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 12px;border:1px solid color-mix(in srgb,var(--w) 30%,transparent);background:color-mix(in srgb,var(--w) 10%,transparent);color:var(--w);font:var(--text-meta)/1.4 var(--font-body);cursor:pointer}
+.dr-plant:hover:not(:disabled){background:color-mix(in srgb,var(--w) 20%,transparent)}
+.dr-plant:disabled{opacity:.4;cursor:default}
+.dr-form{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid color-mix(in srgb,var(--w) 30%,transparent);background:color-mix(in srgb,var(--w) 5%,transparent)}
+.dr-form label{display:flex;flex-direction:column;gap:4px;font:600 var(--text-meta)/1.4 var(--font-body);color:var(--stage-soft)}
+.dr-form input,.dr-form textarea,.dr-form select{padding:6px 8px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:var(--text-control)/1.4 var(--font-body)}
+.dr-form textarea{resize:vertical}
+.dr-err{margin:0;font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-danger-text)}
+.dr-done-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 2%,transparent);opacity:.6;font:var(--text-meta) var(--font-body);color:var(--stage-mute)}
+.dr-note{display:flex;align-items:flex-start;gap:8px;padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 3%,transparent)}
+.dr-note>svg{margin-top:3px;flex:none;color:var(--stage-warn)}
+.dr-note p{flex:1;margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-text-dim)}
+.dr-store{display:flex;flex-direction:column;gap:6px}
+.dr-store .dr-row{margin:0;font:var(--text-meta) var(--font-body);color:var(--stage-mute)}
+.dr-store .dr-row b{font:600 var(--text-meta) var(--font-mono);color:var(--stage-soft)}
+.dr-store .dr-row b.warn{color:var(--stage-warn)}
+.dr-tour{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;padding:10px 12px;border:1px solid var(--w);background:color-mix(in srgb,var(--w) 9%,var(--stage-panel));color:var(--stage-card);font:var(--text-meta)/1.5 var(--font-body)}
+.dr-tour>svg{margin-top:2px;flex:none;color:var(--w)}
+.dr-tour>div{flex:1;min-width:0}
+.dr-tour p{margin:4px 0 0;color:var(--stage-soft)}
+.dr-tour ul{margin:6px 0 0;padding-left:16px;color:var(--stage-soft)}
+.dr-fab{--w:var(--deck-persona);position:absolute;z-index:44}
+.dr-fab-btn{display:grid;place-items:center;width:40px;height:40px;border:2px solid var(--stage-line);background:var(--stage-panel);color:var(--stage-text-dim);box-shadow:3px 3px 0 0 var(--stage-black);cursor:pointer;touch-action:none}
+.dr-fab-btn:hover,.dr-fab-btn.open{border-color:var(--w);color:var(--w)}
+.dr-fab-btn.pulse{color:var(--c);animation:dr-fab-pulse 6s ease-out 1 both}
+@keyframes dr-fab-pulse{0%,60%{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 40%,transparent),3px 3px 0 0 var(--stage-black)}100%{border-color:var(--stage-line);box-shadow:3px 3px 0 0 var(--stage-black)}}
+.dr-fab-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;display:grid;place-items:center;background:var(--w);color:var(--stage-black);font:700 var(--text-meta)/1 var(--font-body);pointer-events:none}
+.dr-fab-pop{position:absolute;bottom:52px;width:320px;max-width:calc(100vw - 32px);max-height:420px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--stage-line);background:var(--stage-panel);box-shadow:6px 6px 0 0 var(--stage-black);right:0}
+.dr-fab-pop.below{bottom:auto;top:52px}
+.dr-fab-pop.right{right:auto;left:0}
+.dr-fab-hd{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--stage-seam);font:500 var(--text-meta)/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-text-dim)}
+.dr-fab-hd svg{color:var(--w)}
+.dr-fab-list{overflow-y:auto;max-height:340px}
+.dr-fab-all{padding:8px 12px;border:0;border-top:1px solid var(--stage-seam);background:none;color:var(--w);font:var(--text-meta)/1.4 var(--font-body);text-align:center;cursor:pointer}
+.dr-fab-all:hover{background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.ds{--w:var(--deck-persona);display:flex;flex-direction:column;gap:12px}
+.ds-block{display:flex;flex-direction:column;gap:6px}
+.ds-h{font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-text-dim)}
+.ds-help{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.ds-amber{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-warn)}
+.ds-err{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-danger-text)}
+.ds-quiet{align-self:flex-start;padding:0;border:0;background:none;color:var(--stage-soft);font:var(--text-meta)/1.4 var(--font-body);text-decoration:underline;cursor:pointer}
+.ds-box{display:flex;flex-direction:column;gap:6px;padding:12px;border:2px solid var(--stage-black);background:var(--stage-well);box-shadow:2px 2px 0 0 var(--stage-black)}
+.ds-box .ds-h{color:var(--stage-card);letter-spacing:.14em}
+.ds-seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+.ds-seg button{padding:4px 10px;border:1px solid var(--stage-line);background:transparent;color:var(--stage-text-dim);font:600 var(--text-meta)/1.3 var(--font-body);cursor:pointer}
+.ds-seg button.on{border-color:var(--w);background:color-mix(in srgb,var(--w) 15%,transparent);color:var(--stage-card)}
+.ds-modes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ds-modes button{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--stage-seam);background:var(--stage-row);color:var(--stage-soft);text-align:left;font:var(--text-meta)/1.45 var(--font-body);cursor:pointer}
+.ds-modes button.on{border-color:var(--w);background:color-mix(in srgb,var(--w) 12%,transparent)}
+.ds-modes b{display:flex;align-items:center;gap:6px;font:600 var(--text-control)/1.4 var(--font-body);color:var(--stage-card)}
+@container (max-width:30rem){.ds-modes{grid-template-columns:1fr}}
+.ds-cap{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid color-mix(in srgb,var(--c) 25%,transparent);background:color-mix(in srgb,var(--c) 6%,transparent);color:var(--c);font:var(--text-meta)/1.4 var(--font-body)}
+.ds-cap.ok{--c:var(--stage-ok)}.ds-cap.warn{--c:var(--stage-warn)}.ds-cap.info{--c:var(--bk-role-info-text)}
+.ds-runtime{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.ds-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent);font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-text-dim)}
+.ds-row>span:first-child{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.ds-row svg{color:var(--stage-soft)}
+.ds-row input{width:4.5rem;padding:4px 6px;border:1px solid var(--stage-line);background:var(--stage-row);color:var(--stage-soft);text-align:center;font:var(--text-meta) var(--font-body)}
+.ds-row input:focus{outline:none;border-color:var(--w)}
+.ds-instr{padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent)}
+.ds-instr label{display:flex;align-items:center;gap:6px;margin-bottom:4px;font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-text-dim)}
+.ds-instr textarea{width:100%;padding:6px 8px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:var(--text-meta)/1.6 var(--font-body);resize:vertical}
+.ds-instr textarea:focus{outline:none;border-color:var(--w)}
+.ds-instr p{display:flex;justify-content:space-between;margin:4px 0 0;font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
+.dp-card{width:100%;display:flex;align-items:flex-start;gap:16px;padding:20px;border:2px solid color-mix(in srgb,var(--pc) 50%,transparent);background:color-mix(in srgb,var(--pc) 6%,transparent);color:inherit;text-align:left;cursor:pointer}
+.dp-av{display:grid;place-items:center;flex:none;width:56px;height:56px;border:2px solid color-mix(in srgb,var(--pc) 30%,transparent);background:color-mix(in srgb,var(--pc) 20%,transparent);color:var(--pc);font:700 1.25rem var(--font-fancy)}
+.dp-av.xl{width:72px;height:72px;border-color:color-mix(in srgb,var(--pc) 60%,transparent);font-size:1.5rem}
+.dp-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.dp-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dp-name b{font:600 1.125rem/1.3 var(--font-body);color:var(--stage-card)}
+.dp-name i{padding:2px 8px;background:color-mix(in srgb,var(--pc) 25%,transparent);color:var(--pc);font:500 var(--text-meta)/1.4 var(--font-body);font-style:normal}
+.dp-tx em{font:italic var(--text-control)/1.5 var(--font-body);color:var(--stage-soft)}
+.dp-tx small{margin-top:6px;font:var(--text-control)/1.6 var(--font-body);color:var(--stage-text-dim)}
+.dp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.dp-chips span{padding:2px 8px;background:var(--stage-row);color:var(--stage-text-dim);font:var(--text-meta)/1.4 var(--font-body);text-transform:capitalize}
+.dp-chips.arcs span{background:color-mix(in srgb,var(--pc) 12%,transparent);color:var(--pc)}
+.dp-list{display:flex;flex-direction:column;gap:12px;padding-top:8px}
+.dp-opt{display:flex;flex-direction:column;gap:8px;padding:16px;border:2px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-panel) 60%,transparent);color:inherit;text-align:left;cursor:pointer}
+.dp-opt.on{border-color:var(--pc);background:color-mix(in srgb,var(--pc) 8%,transparent)}
+.dp-opt:hover{border-color:color-mix(in srgb,var(--pc) 60%,transparent)}
+.dp-head{display:flex;align-items:center;gap:12px}
+.dp-check{display:grid;place-items:center;width:28px;height:28px;flex:none;background:var(--pc);color:var(--stage-black)}
+.dp-opt>small{font:var(--text-control)/1.6 var(--font-body);color:var(--stage-text-dim)}
+.dp-more{display:flex;flex-direction:column;gap:6px;padding-top:8px;border-top:1px solid var(--stage-seam)}
+.dp-more ul{margin:0;padding-left:16px;font:var(--text-control)/1.5 var(--font-body);color:var(--stage-soft)}
+.dp-h{font:500 var(--text-meta)/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-mute)}
+.dp-more .dp-chips{margin-top:0}
+
+
+@container (min-width:1024px){.wing-panel.l.props-wing{width:min(1120px,100%)}}
+.pw{gap:16px}
+.pw-heroWrap{position:relative}
+.pw-tipbtn{position:absolute;top:12px;right:12px;padding:6px 10px;border:1px solid color-mix(in srgb,var(--stage-card) 15%,transparent);background:var(--stage-black);color:var(--stage-soft);font:700 var(--text-meta)/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.pw-tipbtn:hover{border-color:var(--w);color:var(--stage-card)}
+.pw-label{padding:0 4px;margin-bottom:-8px;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:var(--stage-soft)}
+.pw-list{display:flex;flex-direction:column;gap:8px}
+.pw-row{position:relative;display:flex;align-items:center;gap:12px;padding:10px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-panel) 50%,transparent);cursor:pointer}
+.pw-row:hover{border-color:color-mix(in srgb,var(--stage-card) 20%,transparent)}
+.pw-row:focus-visible{outline:2px solid color-mix(in srgb,var(--stage-card) 20%,transparent);outline-offset:0}
+.pw-row.soon{cursor:default;opacity:.55;background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.pw-ic{width:32px;height:32px;flex:none;display:grid;place-items:center;background:color-mix(in srgb,var(--tone) 12%,transparent);color:var(--tone)}
+.pw-text{min-width:0;flex:1}
+.pw-name{font-size:14px;font-weight:600;color:var(--stage-card);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pw-tier{font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--stage-mute)}
+.pw-end{display:flex;align-items:center;gap:6px}
+.pw-gear{padding:6px;border:0;background:none;color:var(--stage-soft);cursor:pointer;display:grid;place-items:center}
+.pw-gear:hover{color:var(--stage-card)}
+.pw-row.soon .pw-gear{cursor:default;color:var(--stage-line)}
+.pw-row .tg.on{background:var(--tone)}
+.pw-sub{margin:8px 0 0 20px;padding-left:12px;border-left:1px solid color-mix(in srgb,var(--tone,var(--w)) 25%,transparent)}
+.pw-tip{display:none;position:absolute;left:44px;top:calc(100% + 4px);z-index:5;width:min(320px,90%);padding:10px 12px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-soft);font:400 var(--text-body)/1.5 var(--font-body);pointer-events:none}
+.pw-tip b{color:var(--stage-card)}
+.pw-tip p{margin:4px 0 0}
+.pw-tip ul{margin:6px 0 0;padding-left:16px}
+.pw-row:hover .pw-tip,.pw-row:focus-visible .pw-tip{display:block}
+.pw-subrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border:1px solid color-mix(in srgb,var(--stage-card) 8%,transparent);background:color-mix(in srgb,var(--stage-panel) 50%,transparent)}
+.pw-subrow b{display:block;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.15em;text-transform:uppercase;color:var(--tone,var(--stage-card))}
+.pw-subrow small{display:block;margin-top:2px;font:400 var(--text-meta)/1.5 var(--font-body);color:var(--stage-mute)}
+.wing-panel.l.props-wing:has(.pw[data-open]){width:min(900px,100%)}
+.pw-back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-soft);font:700 var(--text-meta)/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.pw-back:hover{border-color:var(--w);color:var(--stage-card)}
+.pw-box{padding:10px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.pw-box.story{border-color:color-mix(in srgb,var(--stage-ok) 25%,transparent);background:color-mix(in srgb,var(--stage-ok) 4%,transparent)}
+.pw-box-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pw-box h4{margin:0;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:var(--stage-soft)}
+.pw-box.story h4{color:var(--stage-ok)}
+.pw-box-head p{margin:4px 0 0;font:400 var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.pw-chip{flex:none;padding:3px 8px;border:1px solid var(--stage-line);font:700 var(--text-meta)/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--stage-mute)}
+.pw-box.story .pw-chip{border-color:color-mix(in srgb,var(--stage-ok) 35%,transparent);color:var(--stage-ok)}
+.pw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pw-tile{position:relative;display:flex;flex-direction:column;gap:8px;padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-panel) 50%,transparent);cursor:pointer}
+.pw-span2{grid-column:span 2;display:flex;flex-direction:column;gap:4px}
+.pw-dots{display:flex;align-items:center;gap:3px;margin-left:auto}
+.pw-dots i{width:5px;height:5px;background:var(--stage-line)}
+.pw-dots i.up{background:color-mix(in srgb,var(--tone) 40%,transparent)}
+.pw-dots i.on{background:var(--tone)}
+.pw-subs{display:flex;flex-direction:column;gap:2px;margin:0 0 2px 12px;padding:2px 0 2px 10px;border-left:2px solid color-mix(in srgb,var(--tone) 40%,transparent)}
+.pw-subs button{display:flex;align-items:center;gap:8px;padding:2px 0;border:0;background:none;color:var(--stage-soft);font:400 var(--text-meta)/1.4 var(--font-body);text-align:left;cursor:pointer}
+.pw-subs button:hover{color:var(--stage-card)}
+.pw-subs i{width:12px;height:12px;border:1.5px solid var(--stage-line);border-radius:50%;display:grid;place-items:center;flex:none}
+.pw-subs i.on{border-color:var(--tone)}
+.pw-subs i.on::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--tone)}
+.pw-tile:hover{border-color:color-mix(in srgb,var(--stage-card) 20%,transparent)}
+.pw-tile.on{border-color:color-mix(in srgb,var(--tone) 44%,transparent);background:color-mix(in srgb,var(--tone) 8%,transparent)}
+.pw-tile.story{min-height:96px;padding:12px}
+.pw-tile-head{display:flex;align-items:center;gap:8px;color:var(--stage-mute)}
+.pw-tile.on .pw-tile-head{color:var(--tone)}
+.pw-tile.soon{cursor:default;opacity:.55}
+.pw-tile.soon:hover{border-color:color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.pw-tile-name{flex:1;min-width:0;font:400 var(--text-meta)/1.3 var(--font-body);color:var(--stage-mute)}
+.pw-tile.on .pw-tile-name{color:var(--stage-card)}
+.pw-tile.story .pw-tile-name{font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.pw-tile-blurb{margin:0;font:400 var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.pw-tile .pw-chip{margin-left:auto}
+.pw-tile.on .pw-chip{border-color:color-mix(in srgb,var(--stage-card) 30%,transparent);color:var(--stage-card)}
+.pw-tile .pw-tip{left:8px;top:calc(100% + 4px)}
+.pw-tile:hover .pw-tip,.pw-tile:focus-visible .pw-tip{display:block}
+.prop-note{font:400 var(--text-body)/1.4 var(--font-body);color:var(--stage-mute)}
+
+
+.trk{display:flex;flex-direction:column;min-height:0}
+.trk>.hero{margin:16px 16px 0}
+.trk-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:10px 16px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.trk-badges,.trk-actions{display:flex;align-items:center;gap:6px;min-width:0}
+.trk-tokens{padding:2px 8px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 60%,transparent);font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-soft)}
+.trk-btn{display:grid;place-items:center;padding:6px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 40%,transparent);color:var(--stage-soft);box-shadow:2px 2px 0 0 var(--stage-black);cursor:pointer}
+.trk-btn:hover,.trk-btn.on{border-color:var(--w);color:var(--w)}
+.trk-settings{display:flex;flex-direction:column;gap:10px;padding:12px 16px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent)}
+.trk-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font:400 var(--text-control)/1.4 var(--font-body);color:var(--stage-soft)}
+.trk-row span{display:inline-flex;align-items:center;gap:6px}
+.trk-row select{padding:2px 6px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer}
+.trk-row select:focus{outline:none;border-color:var(--w)}
+.trk-rule{border-top:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.trk-clear{display:inline-flex;align-items:center;gap:6px;padding:4px 0;border:0;background:none;color:var(--stage-danger-text);font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer;text-align:left}
+.trk-confirm p{margin:0 0 6px;color:var(--stage-danger-text);font:400 var(--text-control)/1.4 var(--font-body)}
+.trk-confirm div{display:flex;gap:8px}
+.trk-yes,.trk-no{padding:4px 10px;border:0;font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer}
+.trk-yes{background:var(--stage-danger-bg);color:var(--stage-danger-text)}
+.trk-no{background:var(--stage-black);color:var(--stage-soft)}
+.trk-error{margin:0;padding:8px 16px;background:var(--stage-danger-bg);color:var(--stage-danger-text);font:400 var(--text-control)/1.4 var(--font-body)}
+.trk-undo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;background:var(--stage-panel);color:var(--stage-soft);font:400 var(--text-control)/1.4 var(--font-body)}
+.trk-undo button{padding:2px 10px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.trk-body{flex:1;min-height:0}
+.st-tabs{display:flex;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-black) 20%,transparent)}
+.st-tabs button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border:0;border-bottom:2px solid transparent;background:none;color:var(--stage-mute);font:500 var(--text-control)/1.4 var(--font-body);cursor:pointer}
+.st-tabs button:hover{color:var(--stage-card);background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
+.st-tabs button.on{color:var(--stage-card);border-bottom-color:var(--stage-ok);background:color-mix(in srgb,var(--stage-ok) 5%,transparent)}
+.st-body{display:flex;flex-direction:column;gap:16px;padding:12px}
+.st-card{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid color-mix(in srgb,var(--c) 20%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--c) 10%,transparent),transparent 70%)}
+.st-card .st-ic{padding:8px;border:1px solid color-mix(in srgb,var(--c) 30%,transparent);background:color-mix(in srgb,var(--c) 20%,transparent);color:var(--c);display:grid;place-items:center}
+.st-card b{font:700 var(--text-control)/1.4 var(--font-body);color:var(--stage-card)}
+.st-card small{display:block;font:400 var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
+.st-card strong{margin-left:auto;font:700 1.125rem/1.4 var(--font-body);color:var(--c)}
+.st-card.st-shield b,.st-card:not(.st-shield) b{flex:1}
+.st-card div b{flex:none}
+.st-bar{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-card) 4%,transparent)}
+.st-bar:hover{border-color:color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.st-bar-head{display:flex;align-items:center;gap:8px}
+.st-bar-head .st-ic{padding:6px;border:1px solid color-mix(in srgb,var(--c) 40%,transparent);background:color-mix(in srgb,var(--c) 20%,transparent);color:var(--c);display:grid;place-items:center}
+.st-bar-head b{flex:1;font:500 var(--text-meta)/1.4 var(--font-body);color:var(--stage-soft)}
+.st-val{font:700 var(--text-control)/1.4 var(--font-mono);color:var(--stage-card)}
+.st-bar-row{display:flex;align-items:center;gap:8px}
+.st-step{display:grid;place-items:center;padding:6px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 50%,transparent);color:var(--stage-mute);cursor:pointer}
+.st-step:hover{color:var(--stage-card);border-color:var(--c)}
+.st-track{flex:1;height:12px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:var(--stage-black)}
+.st-track.thin{height:8px}
+.st-track div{height:100%;background:var(--c);transition:width .2s}
+.st-needs-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;font:500 var(--text-meta)/1.4 var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-mute)}
+.st-needs{display:flex;flex-direction:column;gap:4px}
+.st-need{display:flex;align-items:center;gap:8px;padding:8px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.st-need .st-ic{padding:4px;background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c);display:grid;place-items:center}
+.st-need-label{width:64px;flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:400 var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
+.st-need .st-step{padding:4px;opacity:0}
+.st-need:hover .st-step,.st-need:focus-within .st-step{opacity:1}
+.st-need-val{width:48px;flex:none;text-align:right;font:400 var(--text-meta)/1.4 var(--font-mono);color:var(--stage-mute)}
+.st-loghead{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;font:400 var(--text-control)/1.4 var(--font-body);color:var(--stage-mute)}
+.st-loghead button{border:0;background:none;color:var(--stage-mute);font:400 var(--text-meta)/1.4 var(--font-body);cursor:pointer}
+.st-loghead button:hover{color:var(--stage-card)}
+.st-log{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.st-log li{display:flex;align-items:center;gap:8px;padding:8px;background:color-mix(in srgb,var(--stage-panel) 60%,transparent);font:400 var(--text-control)/1.4 var(--font-body)}
+.st-log-text{flex:1;color:var(--stage-soft)}
+.st-log-text i{font-style:normal;color:var(--stage-mute)}
+.st-delta{font:400 var(--text-control)/1.4 var(--font-mono)}
+.st-empty{padding:32px 0;text-align:center;color:var(--stage-line)}
+.st-empty p{margin:8px 0 0;font:400 var(--text-control)/1.4 var(--font-body);color:var(--stage-mute)}
+
+.tg{position:relative;flex:none;border:0;padding:0;background:var(--stage-line);cursor:pointer;width:32px;height:16px}.tg::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;background:var(--stage-white)}.tg.on{background:var(--stage-ok)}.tg.on::after{left:18px}
+/* wireframe-only helpers */
+.fr svg { width: 1em; height: 1em; }
+.fr .dr-ico svg, .fr .ds-row svg, .fr .dr-sub svg { width: 12px; height: 12px; }
+.fr .trk-btn svg { width: 14px; height: 14px; }
+.ds-row small.unit { font: var(--text-meta) var(--font-body); color: var(--stage-soft); margin-left: 6px; }
+.ds-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ds-hint { margin: 0; padding: 0 8px 4px; font: var(--text-meta)/1.45 var(--font-body); color: var(--stage-soft); }
+.ds-hint.warn { color: var(--stage-warn); }
+.ds-aware { display: flex; flex-direction: column; gap: 2px; }
+.ds-aware > .ds-row { margin: 0; }
+.ds-row.off { opacity: .5; pointer-events: none; }
+.ds-row .scene-default { font: var(--text-meta) var(--font-body); color: var(--stage-mute); }
+.ds-row .linkish { padding: 0; border: 0; background: none; color: var(--w); font: var(--text-meta) var(--font-body); text-decoration: underline; cursor: pointer; }
+.trk-set { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); }
+.trk-set .ds-row { padding: 0; border: 0; background: none; font: var(--text-control)/1.4 var(--font-body); color: var(--stage-soft); }
+.trk-set .ds-row select { padding: 2px 6px; border: 1px solid var(--stage-line); background: var(--stage-black); color: var(--stage-card); font: var(--text-meta) var(--font-body); }
+.trk-set .ds-row input { width: 3rem; }
+.trk-set .ds-row .stack { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.pw-tip.on { display: block; position: relative; left: 0; top: 0; width: auto; max-width: 22rem; margin-top: 6px; }
+.dr-pane.flush { padding: 0; }
+.cap-note { font-family: var(--font-mono); font-size: .68rem; line-height: 1.55; color: var(--text-dim); max-width: 60rem; }
+.cap-note b { color: var(--text); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/></symbol><symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol><symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18ZM12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18ZM15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4M17.599 6.5a3 3 0 0 0 .399-1.375M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M19.938 10.5a4 4 0 0 1 .585.396M6 18a4 4 0 0 1-1.967-.516M19.967 17.484A4 4 0 0 1 18 18"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol><symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></symbol><symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3ZM6.2 5.3l3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol><symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol><symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 8v4M12 16h.01"/></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 16v-4M12 8h.01"/></symbol><symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol><symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol><symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5M12 7v5l4 2"/></symbol><symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol><symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10ZM2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol><symbol id="i-scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4M19 17V5a2 2 0 0 0-2-2H4"/></symbol></defs></svg>
+<script src="../play-shared/icons.js"></script>
+<div class="page">
+  <div class="themebar"></div>
+  <header class="wf-head"><div>
+    <h1 class="wf-title">Story Director: tracker updates</h1>
+    <p class="wf-lede">Addendum to the Director wireframes (plan 16). After a reply is saved, the Director updates the trackers that are due, in the background. Every part below is RoleCall's own component, drawn with the app's real Director, Props and tracker styles. New against the shipped Director UI: Default AI Awareness and Max Tool Rounds (the two settings that were held back), a tracker's "DM Updates" row, the "Updated by the Story Director" line with Undo, and Tracker lines in the Activity tab.</p>
+  </div></header>
+
+  <div class="wf-note"><b>Two numbers worth reading twice.</b> Default AI Awareness is how many of your messages pass between updates (1 = after every reply, 0 = never by itself, up to 99). RoleCall's own screen says 0 but its worker uses 1; this build shows the real value, 1. Max Tool Rounds is the most model calls the Director spends on one turn, planning included (1 to 6, default 2). At 1 it can only plan, so no tracker is updated; the row says so. RoleCall's range (1 to 20 in the Booth) and its 4 are not copied: its control does nothing there.</div>
+
+  <div class="states">
+
+    <!-- 1 Props wing settings -->
+    <div class="pn wide">
+      <div class="wf-state">Props wing, Story Director settings: the runtime box with Default AI Awareness first and Max Tool Rounds beside DM Temperature (RoleCall's order, StagecraftExtensions.tsx:1147-1152)</div>
+      <div class="fr" style="--h:42rem" data-part="scene.props">
+        <section class="wp solo" style="--w:var(--accent)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div></nav>
+          <div class="wbody pw" style="--w:var(--accent)">
+            <div class="pw-row" style="--tone:var(--deck-persona)"><span class="pw-ic"><svg><use href="#i-clap"/></svg></span><div class="pw-text"><div class="pw-name">Story Director</div><div class="pw-tier">Story engine</div></div><div class="pw-end"><span class="pw-gear"><svg><use href="#i-gear"/></svg></span><span class="sw on" style="--tone:var(--deck-persona);background:var(--deck-persona)"></span></div></div>
+            <div class="pw-sub" style="--tone:var(--deck-persona)">
+              <div class="ds" data-part="props.story-director.settings">
+                <p class="ds-help" style="margin:0">Personality, model, reasoning and command mode sit above, as shipped.</p>
+                <div class="ds-runtime" data-part="props.story-director.runtime">
+                  <div class="ds-aware" data-part="props.story-director.awareness">
+                    <label class="ds-row" title="Controls how often enabled trackers ask Story Director to refresh state."><span><svg><use href="#i-refresh"/></svg>Default AI Awareness</span><span><input type="number" value="1" min="0" max="99" aria-label="Default AI Awareness"><small class="unit">turns</small></span></label>
+                    <p class="ds-hint">0 = manual only. Per-panel overrides live in each tracker's settings menu.</p>
+                  </div>
+                  <div class="ds-pair">
+                    <label class="ds-row" title="Limits how many model calls Story Director can spend on one turn, planning included."><span><svg><use href="#i-wrench"/></svg>Max Tool Rounds</span><input type="number" value="2" min="1" max="6" aria-label="Max Tool Rounds" data-part="props.story-director.rounds"></label>
+                    <label class="ds-row" title="Controls randomness for Story Director reasoning and tool decisions."><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label>
+                  </div>
+                  <div class="ds-row"><span><svg><use href="#i-wand"/></svg>Creativity</span><span class="ds-seg"><button>Subtle</button><button class="on">Moderate</button><button>Dramatic</button></span></div>
+                  <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="tg on" aria-label="Auto-retry"></button></div>
+                </div>
+              </div>
+              <div class="pw-tip on" role="note" style="--tone:var(--deck-persona)"><b>Default AI Awareness</b><p>Controls how often enabled trackers ask Story Director to refresh state.</p><ul><li>0 means manual only.</li><li>1 means every user turn.</li><li>Higher numbers reduce token use but update less often.</li></ul></div>
+              <div class="pw-tip on" role="note"><b>Max Tool Rounds</b><p>Limits how many model calls Story Director can spend on one turn, planning included.</p><ul><li>Higher values can fix complex state, but cost more tokens and latency.</li><li>At 1 the Director only plans; trackers are not updated.</li></ul></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <p class="cap-note"><b>Copy.</b> Both tooltips are RoleCall's, with "storyboards" dropped from the first sentence until storyboards are updated this way, and "tool-call rounds ... before it must stop" reworded to what the number now counts. The two hover cards are drawn open here; in the app they appear on hover. Corrective retries do not count against Max Tool Rounds.</p>
+      <div class="wf-comp">InputField (number, saved when it loses focus, like DM Temperature) &middot; parts: props.story-director.awareness, props.story-director.rounds &middot; the RoleCall placement is kept: Awareness full width, then Max Tool Rounds and DM Temperature as a pair, then the toggle row</div>
+    </div>
+
+    <!-- 2 limits -->
+    <div class="pn">
+      <div class="wf-state">Limits: out-of-range numbers, 0 = manual only, Max Tool Rounds at 1</div>
+      <div class="fr" style="--h:27rem" data-part="props.story-director.runtime">
+        <section class="wp solo" style="--w:var(--accent)"><nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)"><div class="ds"><div class="ds-runtime">
+            <div class="ds-aware"><label class="ds-row"><span><svg><use href="#i-refresh"/></svg>Default AI Awareness</span><span><input type="number" value="0" aria-label="Default AI Awareness"><small class="unit">turns</small></span></label>
+              <p class="ds-hint">0 = manual only. Trackers change only when you ask (Refresh) or edit them.</p></div>
+            <div class="ds-pair"><div><label class="ds-row"><span><svg><use href="#i-wrench"/></svg>Max Tool Rounds</span><input type="number" value="1" aria-label="Max Tool Rounds"></label>
+              <p class="ds-hint warn" style="padding-top:4px">At 1 the Director only plans. Trackers are not updated by it.</p></div>
+              <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label></div>
+            <p class="ds-err" style="margin:0">Max Tool Rounds is 1 to 6. Using 6 until you change it.</p>
+          </div></div></div></section>
+      </div>
+    </div>
+
+    <!-- 3 Booth -->
+    <div class="pn">
+      <div class="wf-state">Control Booth, Narrator section: the same two rows in the runtime box (QuickPlayPanel.tsx:1392-1490), same values</div>
+      <div class="fr" style="--h:27rem" data-part="scene.booth.narrator">
+        <section class="wp solo" style="--w:var(--accent)"><nav class="fold"><div class="crumb">Scene <i>/</i> <b>Control Booth</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <section class="bth-sec" style="display:flex;flex-direction:column;gap:6px"><h3 style="margin:0 0 4px;font:700 var(--text-meta) var(--font-big);letter-spacing:.16em;text-transform:uppercase;color:var(--stage-text-dim)">Narrator</h3>
+              <div class="ds-runtime" data-part="scene.booth.narrator.runtime">
+                <div class="ds-aware"><label class="ds-row"><span><svg><use href="#i-refresh"/></svg>Default AI Awareness</span><span><input type="number" value="1" aria-label="Default AI Awareness"><small class="unit">turns</small></span></label>
+                  <p class="ds-hint">0 = manual only. Per-panel overrides live in each tracker's settings menu.</p></div>
+                <div class="ds-pair"><label class="ds-row"><span><svg><use href="#i-wrench"/></svg>Max Tool Rounds</span><input type="number" value="2" aria-label="Max Tool Rounds"></label>
+                  <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label></div>
+                <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="tg on" aria-label="Auto-retry"></button></div>
+              </div></section>
+          </div></section>
+      </div>
+      <p class="cap-note"><b>Differs from RoleCall:</b> its Booth lets rounds run to 20 with a fallback of 4; here the range, the default and the value are the Props wing's, because it is one setting. The Booth keeps the Refresh button out (it lives in the Props wing's Legacy Trackers box).</p>
+    </div>
+
+    <!-- 4 tracker settings menu -->
+    <div class="pn wide">
+      <div class="wf-state">A tracker's Panel AI settings menu: RoleCall's "DM Updates" row first, then AI Context (immersion/index.tsx:486-526)</div>
+      <div class="cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,26rem),1fr));gap:12px;align-items:start">
+        <div class="fr" style="--h:21rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn on"><svg><use href="#i-sliders"/></svg></button></div></div>
+          <div class="trk-set" data-part="props.tracker.settings">
+            <label class="ds-row" data-part="props.tracker.dm-updates"><span><svg><use href="#i-refresh"/></svg>DM Updates</span><span class="stack"><span><input type="number" value="1" aria-label="DM Updates"><small class="unit">turns</small></span><span class="scene-default">Scene default</span></span></label>
+            <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label>
+          </div></div></section></div>
+        <div class="fr" style="--h:21rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn on"><svg><use href="#i-sliders"/></svg></button></div></div>
+          <div class="trk-set">
+            <label class="ds-row"><span><svg><use href="#i-refresh"/></svg>DM Updates</span><span class="stack"><span><input type="number" value="3" aria-label="DM Updates"><small class="unit">turns</small></span><button class="linkish" type="button">Use scene default (1)</button></span></label>
+            <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label>
+          </div></div></section></div>
+        <div class="fr" style="--h:21rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn on"><svg><use href="#i-sliders"/></svg></button></div></div>
+          <div class="trk-set">
+            <label class="ds-row off" title="Turn on the Story Director to use this."><span><svg><use href="#i-refresh"/></svg>DM Updates</span><span class="stack"><span><input type="number" value="1" aria-label="DM Updates" disabled><small class="unit">turns</small></span></span></label>
+            <p class="ds-hint" style="padding:0">The Story Director is off, so nothing updates this tracker by itself.</p>
+            <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label>
+          </div></div></section></div>
+      </div>
+      <p class="cap-note"><b>The row.</b> A number with "turns" (0 to 99), RoleCall's. Unset it follows the scene's Default AI Awareness and says "Scene default" under the number; typing a value overrides it for this tracker only, and "Use scene default (1)" puts it back. 0 on a tracker means never by itself. With the Director off the row is dimmed and ignores clicks (RoleCall's opacity 50), and a line says why. Panels that only mirror the Story Director (Storyboards) are not in this slice.</p>
+    </div>
+
+    <!-- 5 Lorebook -->
+    <div class="pn">
+      <div class="wf-state">RoleCall's "Lorebook" row in the same menu: not drawn</div>
+      <div class="fr" style="--h:14rem"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="wbody">
+        <div class="trk-set" style="border:1px dashed var(--stage-seam)"><label class="ds-row"><span><svg><use href="#i-bookmark"/></svg>Lorebook</span><select><option>None</option></select></label></div>
+        <p class="ds-help">Shown in RoleCall only when the scene has a lorebook. It writes <code>immersionModules[module].lorebookId</code> (scene page.tsx:1969-1985, options from the scene's enabled lorebooks, page.tsx:3133) and nothing reads that value back: no tracker round, prompt or lorebook code uses it (the only other touch is a copy between tracker presets, tracker-presets.ts:293). A control that saves and does nothing is not drawn.</p>
+      </div></section></div>
+    </div>
+
+    <!-- 6 frame line -->
+    <div class="pn wide">
+      <div class="wf-state">The tracker frame: "Updated by the Story Director, reply N" with Undo, in the frame's existing Undo strip</div>
+      <div class="cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,26rem),1fr));gap:12px;align-items:start">
+        <div class="fr" style="--h:21rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~96t</span></div><div class="trk-actions"><button class="trk-btn lbl" style="padding:6px 10px"><svg><use href="#i-refresh"/></svg>Refresh</button><button class="trk-btn"><svg><use href="#i-sliders"/></svg></button></div></div>
+          <div class="trk-undo" role="status" data-part="props.tracker.director-update"><span>Updated by the Story Director, reply 14</span><button>Undo</button></div>
+          <div class="trk-body"><div class="item" style="display:flex;gap:10px;padding:8px 10px;border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-panel) 60%,transparent);color:var(--stage-card);font-size:13px"><span style="flex:1">Torn ledger page</span><span class="num">x1</span></div><div class="item" style="display:flex;gap:10px;padding:8px 10px;border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-panel) 60%,transparent);color:var(--stage-card);font-size:13px"><span style="flex:1">Matches</span><span class="num">x2</span></div></div>
+        </div></section></div>
+        <div class="fr" style="--h:21rem" data-part="props.tracker.inventory"><section class="wp solo" style="--w:var(--deck-lorebook)"><div class="trk" style="--w:var(--deck-lorebook)">
+          <div class="trk-strip" style="margin-top:0"><div class="trk-badges"><span class="trk-tokens">~84t</span></div><div class="trk-actions"><button class="trk-btn"><svg><use href="#i-sliders"/></svg></button></div></div>
+          <div class="trk-undo" role="status"><span>Undone: the update from reply 14 is taken back.</span><button>Dismiss</button></div>
+          <div class="trk-error" role="alert" style="margin:0;padding:8px 16px;background:var(--stage-danger-bg);color:var(--stage-danger-text);font-size:12.5px;line-height:1.5">Matches was changed after the update, so it was left as you have it. The rest of the update is undone.</div>
+        </div></section></div>
+      </div>
+      <p class="cap-note"><b>Behavior.</b> The line shows the newest automatic update of that tracker and stays until you edit the tracker, refresh it, or a newer reply replaces it. Undo takes back only what the update changed, and leaves anything you changed since (the left-alone rule loadouts use), and says so. An update that was dropped (you edited while it was reading, or the answer could not be read) shows nothing in the frame: it is a line in Activity. The shipped frame's own Undo for your edits and Refresh keeps its place; this line never covers it.</p>
+    </div>
+
+    <!-- 7 activity -->
+    <div class="pn wide">
+      <div class="wf-state">Activity tab: RoleCall's "Tracker" entries (type colour, T14, ago), including a failure and a conflict</div>
+      <div class="fr" style="--h:33rem" data-part="scene.director"><section class="wp solo" style="--w:var(--deck-persona)"><nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+        <div class="wbody dr" style="--w:var(--deck-persona);padding:0">
+          <div class="dr-tabs" role="tablist" style="margin:0"><button><svg><use href="#i-scroll"/></svg><span>Story</span></button><button><svg><use href="#i-leaf"/></svg><span>Arcs</span></button><button><svg><use href="#i-brain"/></svg><span>Analysis</span></button><button class="on"><svg><use href="#i-activity"/></svg><span>Activity</span></button><button><svg><use href="#i-info"/></svg><span>Debug</span></button></div>
+          <div class="dr-activity">
+            <div class="dr-filters"><button class="on">All</button><button>Turns</button><button>Tools</button><button>Planning</button><span class="dr-filters-r"><small>6 entries</small></span></div>
+            <div class="dr-feed">
+              <div class="dr-act more"><div class="dr-act-h"><span class="dr-act-l"><i class="dr-dot" style="--c:var(--stage-ok)"></i><b style="color:var(--bk-role-info-text)">Tracker</b><small>T14</small><svg style="width:12px;height:12px"><use href="#i-down"/></svg></span><small>6s ago</small></div><p>Inventory updated: 1 added, 2 changed. Resources updated: Lamp oil 8 to 3.</p><pre>Inventory: +Torn ledger page; Matches x6 to x2; Oilskin coat note
+Resources: Lamp oil 8/10 to 3/10</pre><div class="dr-act-m">claude-opus-5-5</div></div>
+              <div class="dr-act"><div class="dr-act-h"><span class="dr-act-l"><i class="dr-dot" style="--c:var(--stage-ok)"></i><b style="color:var(--stage-ok)">Turn Done</b><small>T14</small></span><small>9s ago</small></div><p>Directive set: slow, tension 6. Trackers next: Inventory, Resources.</p></div>
+              <div class="dr-act"><div class="dr-act-h"><span class="dr-act-l"><i class="dr-dot" style="--c:var(--bk-role-info-text)"></i><b style="color:var(--bk-role-info-text)">Tracker</b><small>T13</small></span><small>2m ago</small></div><p>Party skipped: you changed it while the Director was reading, so your edit was kept.</p></div>
+              <div class="dr-act more"><div class="dr-act-h"><span class="dr-act-l"><i class="dr-dot" style="--c:var(--stage-danger-text)"></i><b style="color:var(--bk-role-info-text)">Tracker</b><small>T12</small><svg style="width:12px;height:12px"><use href="#i-right"/></svg></span><small>5m ago</small></div><p>Battle not updated: the answer could not be read as a Battle state. Battle is unchanged.</p></div>
+              <div class="dr-act"><div class="dr-act-h"><span class="dr-act-l"><i class="dr-dot" style="--c:var(--bk-role-info-text)"></i><b style="color:var(--bk-role-info-text)">Tracker</b><small>T11</small></span><small>9m ago</small></div><p>Reply 10 was replaced. Inventory and Resources went back to how they were before it; Party was left, because you had changed it.</p></div>
+              <div class="dr-act"><div class="dr-act-h"><span class="dr-act-l"><i class="dr-dot" style="--c:var(--bk-role-info-text)"></i><b style="color:var(--bk-role-info-text)">Tracker</b><small>T9</small></span><small>14m ago</small></div><p>Not run: Max Tool Rounds is 1, so the Director only plans.</p></div>
+            </div>
+          </div>
+        </div></section></div>
+      <p class="cap-note"><b>Filters.</b> RoleCall's Tools filter holds its tool types, Tracker included, so Tracker lines show under All and Tools. Result dots: green updated, blue skipped or rolled back (info), red failed. A failed line never leaves a half update, and the tracker frame shows nothing for it. The reasons are bounded plain sentences; the open line shows the per-module changes and the model.</p>
+      <div class="wf-comp">ActivityLine (director-parts.tsx) with the existing "Tracker" type added to the type list &middot; no new control</div>
+    </div>
+
+  </div>
+
+  <section class="q"><b>Needs your eye</b>
+    Two small choices beyond RoleCall: (1) Default AI Awareness shows and uses 1, where RoleCall's screen says 0; (2) the Lorebook row is not drawn, because RoleCall's saves a value nothing reads.
+    <span class="rec">Recommendation: as drawn.</span></section>
+</div>
+</body>
+</html>

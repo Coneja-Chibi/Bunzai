@@ -1,0 +1,70 @@
+/*
+ * Bunraku design system: history.changes screen. Prefix .hi-. Tokens only.
+ */
+
+/* ---- shared shell chrome: Dock + HUD strip + status bar (duplicated per screen by design: each
+   page under design/system/screens/ is self-contained, "CSS rules for your
+   area file") ---- */
+.hi-app { display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--bk-surface-base); }
+.hi-hud { flex: none; display: flex; align-items: center; gap: var(--bk-space-6); padding: 0 var(--bk-space-4); min-height: var(--bk-hud-h); background: var(--bk-surface-well); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.hi-hud-start, .hi-hud-end { display: flex; align-items: center; gap: var(--bk-space-3); flex: none; }
+.hi-mark { width: var(--bk-icon-md); height: var(--bk-icon-md); flex: none; color: var(--bk-tint-text); }
+.hi-hud-mid { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: var(--bk-space-6); overflow: hidden; }
+.hi-hud-score { display: flex; align-items: center; gap: var(--bk-space-5); }
+.hi-body { flex: 1; min-height: 0; display: flex; align-items: stretch; }
+.hi-dock { flex: none; width: var(--bk-dock-w); display: flex; flex-direction: column; gap: var(--bk-space-1); padding: var(--bk-space-4) var(--bk-space-3); background: var(--bk-surface-well); box-shadow: inset calc(-1 * var(--bk-divider-w)) 0 0 0 var(--bk-line); overflow-y: auto; }
+.hi-dock-brand { display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-2) var(--bk-space-3); font: var(--bk-type-name); color: var(--bk-text); }
+.hi-dock-app { justify-content: flex-start; gap: var(--bk-space-3); }
+.hi-dock-icon { flex: none; color: var(--bk-tint-text); }
+.hi-dock-label { display: flex; flex-direction: column; min-width: 0; align-items: flex-start; }
+.hi-dock-label b { font: var(--bk-type-small); font-weight: var(--bk-fw-strong); color: inherit; }
+.hi-dock-label small { font: var(--bk-type-label); color: var(--bk-text-dim); min-height: 1em; }
+.hi-dock-add { margin-top: var(--bk-space-2); color: var(--bk-text-dim); }
+.hi-dock-add .hi-dock-icon { color: var(--bk-text-dim); }
+.hi-dock-fold { margin-top: auto; align-self: flex-start; min-height: var(--bk-hit-min); min-width: var(--bk-hit-min); color: var(--bk-text-dim); background: none; border: 0; cursor: pointer; }
+.hi-dock-fold:hover { color: var(--bk-text); }
+.hi-stage { flex: 1; min-width: 0; overflow: auto; padding: var(--bk-pad-page); }
+.hi-status { flex: none; display: flex; align-items: center; justify-content: space-between; min-height: var(--bk-status-h); padding: 0 var(--bk-space-4); font: var(--bk-type-label); color: var(--bk-text-dim); background: var(--bk-surface-ink); }
+
+@container (max-width: 46rem) {
+  .hi-dock { width: var(--bk-dock-w-slim); }
+  .hi-dock-word, .hi-dock-label b, .hi-dock-label small { display: none; }
+  .hi-dock-brand, .hi-dock-app, .hi-dock-add { justify-content: center; }
+}
+@container (max-width: 30rem) {
+  .hi-body { flex-direction: column-reverse; }
+  .hi-dock { width: 100%; flex-direction: row; align-items: center; padding: var(--bk-space-1) var(--bk-space-2); overflow-x: auto; overflow-y: visible; box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-line); gap: var(--bk-space-1); }
+  .hi-dock-brand, .hi-dock-add, .hi-dock-fold { display: none; }
+  .hi-dock-app { flex: none; flex-direction: column; gap: var(--bk-space-1); min-width: 3.25rem; justify-content: center; }
+  .hi-hud-score, .hi-hud-mid .bk-divider { display: none; }
+  .hi-hud { flex-wrap: wrap; min-height: auto; padding: var(--bk-space-2) var(--bk-space-3); gap: var(--bk-space-2); }
+  .hi-stage { padding: var(--bk-space-4); }
+}
+
+.hi-wrap { max-width: 44rem; margin: 0 auto; display: flex; flex-direction: column; gap: var(--bk-gap-section); }
+.hi-surface { display: none; }
+.hi-screen[data-state="changes"] [data-surface="changes"],
+.hi-screen[data-state="scene"] [data-surface="scene"],
+.hi-screen[data-state="updates"] [data-surface="updates"] { display: block; }
+
+.hi-log { display: flex; flex-direction: column; gap: var(--bk-space-2); margin-top: var(--bk-gap-stack); }
+.hi-entry { display: flex; align-items: center; gap: var(--bk-space-3); padding: var(--bk-space-2) 0; box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); flex-wrap: wrap; }
+.hi-what { flex: 1; min-width: 12rem; }
+.hi-diff { flex-basis: 100%; box-shadow: inset 0 0 0 1px var(--bk-line); padding: var(--bk-space-2) var(--bk-space-3); margin: var(--bk-space-1) 0; font: var(--bk-fw-mono) var(--bk-fs-xs)/var(--bk-lh-body) var(--bk-font-mono); white-space: pre-wrap; }
+.hi-add { color: var(--bk-ok); }
+.hi-del { color: var(--bk-danger); }
+.hi-actbtn { width: auto; min-height: var(--bk-control-h-sm); padding: 0 var(--bk-space-3); background: none; box-shadow: inset 0 0 0 1px var(--bk-line-control); }
+
+.hi-castcard { margin: var(--bk-gap-stack) 0; }
+.hi-backline { margin-top: var(--bk-space-2); }
+.hi-link { background: none; border: 0; padding: 0; margin-left: var(--bk-space-2); color: var(--bk-text-link); cursor: pointer; font: inherit; text-decoration: underline; }
+
+.hi-track { display: flex; align-items: center; gap: var(--bk-space-2); margin: var(--bk-gap-stack) 0; padding: var(--bk-space-4) 0; box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.hi-pip { width: .75rem; height: .75rem; border-radius: var(--bk-dot-radius); background: var(--bk-line-track); border: 0; cursor: pointer; padding: 0; }
+.hi-pip[aria-current="true"] { background: var(--bk-role-select-text); box-shadow: 0 0 0 var(--bk-frame-w) var(--bk-role-select-text); }
+.hi-vdetail { margin-top: var(--bk-space-2); }
+
+.hi-verlog { display: flex; flex-direction: column; gap: var(--bk-space-1); margin-top: var(--bk-gap-stack); }
+.hi-verrow { display: flex; align-items: center; gap: var(--bk-space-3); padding: var(--bk-space-2) 0; box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); flex-wrap: wrap; }
+.hi-verrow[aria-current="true"] { box-shadow: inset var(--bk-crown-w) 0 0 0 var(--bk-role-select-text); padding-left: var(--bk-space-2); }
+.hi-verrow .bk-name { flex: 1; min-width: 10rem; }

@@ -1,0 +1,5 @@
+[test]
+root = "src"
+# Every test run points per-user folders at a throwaway one and fails if the real home changed,
+# and loads react-dom once with a DOM present, so file order cannot break text inputs.
+preload = ["./scripts/test-sandbox.ts", "./scripts/test-react-dom.ts"]

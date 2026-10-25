@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/vaud-json",
+  "sourcePath": "docs/reference/formats/vaud-json.md",
+  "sourceHash": "sha256:390cbe4de7c9d1d27dd92a03dbd578979533513c4faaaf814b1151d22f74c3c0",
+  "semanticSummaryHash": "sha256:8bb9c95e368e188db4c3b63686f38a644bbe28d4d3a3d6bd6a4d53ecdfb528db",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:54.737Z"
+}

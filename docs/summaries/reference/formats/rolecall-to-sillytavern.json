@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/rolecall-to-sillytavern",
+  "sourcePath": "docs/reference/formats/rolecall-to-sillytavern.md",
+  "sourceHash": "sha256:40288e8748543d58ea14cee5f724d5848ed02b3406dbcefc58f7f1c5bae0f0cf",
+  "summary": "How a RoleCall preset becomes a SillyTavern preset, separating what converts mechanically from the remainder needing human judgment. A RoleCall preset can carry a second program beside its prompts: a hook machine writing variables as text passes through, and conditionals reading them back. The page is one crossing on purpose while the machinery is not, since macros resolve through a canonical operation hub and no engine pair is written down anywhere. Converting without a decision: separator differences, indexed access lowering onto composed names, conditionals preserved rather than flattened, and macros nested in blocks or passed as arguments. Kit reports facts without deciding them, in a structure section carrying arrays, domains, wideVariables, pushHooks, choices and markerCandidates, plus stateLayer as read, absent or unknown. Four patterns follow: a choice group becomes a seeded variable, still author work; an inline cleanup macro is removed by guarding the appends that made it necessary, since regex scripts run over messages rather than prompt content and cannot replace it; a closed domain expands into a conditional, reported rather than applied; and a splice macro is promoted into a marker block by splitting its prompt. Hook machines are rendered as regex rules in declaration order, with authored values verbatim, while push is refused. Evidence is labelled unit-proven, integration-proven or code-read.",
+  "topics": [
+    "RoleCall SillyTavern preset crossing",
+    "canonical operation hub no pair table",
+    "indexed access lowering composed names",
+    "conditionals preserved not flattened",
+    "structure report computed facts",
+    "stateLayer unknown versus zero",
+    "four judgment patterns",
+    "hook machine regex scripts push",
+    "evidence strength labels"
+  ],
+  "sections": [
+    {
+      "slug": "what-converts-without-a-decision",
+      "title": "What converts without a decision",
+      "level": 2,
+      "sourceHash": "sha256:f8f07431699384f9dbe7b8fc5ee734f7a3811a3a9d3e26f6197c93165425ecb1",
+      "summary": "Handled in code, appearing in the transfer receipt only as rewrite entries. Separator differences resolve because each catalog declares the shape of its own forms, so roll with double-colon becomes roll with single colon without either engine knowing about the other. Indexed access lowers because SillyTavern has no arrays but an array of fixed slots is a set of variables whose names carry the index: getvarkey on propp_plan at 3 becomes getvar on propp_plan_3, and a computed index becomes a composed name, which works because a nested macro resolves before its consumer. SillyTavern documents exactly this shape itself. Conditionals are preserved rather than flattened because SillyTavern's current macro engine has if, else, closing tags, inversion and comparison; the target's own catalog decides this through the canonical flow.conditional operation, and an engine without conditionals still gets blocks flattened to their body with the condition kept as a comment. Macros nested inside a preserved block, or passed as arguments to a portable macro, are translated too; both were defects at one point and both are now covered by tests.",
+      "topics": [
+        "rewrite entries no review",
+        "catalog-declared separators",
+        "indexed access lowering",
+        "composed name computed index",
+        "conditionals preserved flow.conditional",
+        "nested and argument macros"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-kit-reports",
+      "title": "What Kit reports",
+      "level": 2,
+      "sourceHash": "sha256:a9e413204a61fe0e90cdcb152773728790386933b7ca5d5c97adf25468eebc18",
+      "summary": "The engine computes facts and does not decide what to do about them. A preset transfer or export receipt carries a structure section: arrays answering which variables are addressed by index, which literal indices appear, and how many accesses use a computed index; domains for variables whose every written value was a short literal, with the value set; wideVariables for variables that are literal but too long or too many to expand inline, named rather than dropped in silence; pushHooks for hooks that append to a list, with the trigger regex verbatim; choices, each choice macro resolved against the choice group it names with that group's declared options and default; markerCandidates for dead macros whose name resembles a canonical marker slot; and stateLayer as read, absent, or unknown. stateLayer deserves attention because a RoleCall hook machine lives only in escrow and never in the canonical body, so a piece whose escrow was dropped reports unknown rather than zero hooks, since zero read as there are none is precisely the mistake this distinction exists to prevent.",
+      "topics": [
+        "engine facts not decisions",
+        "arrays domains wideVariables",
+        "pushHooks verbatim trigger",
+        "choices markerCandidates",
+        "stateLayer escrow-only",
+        "unknown not zero"
+      ],
+      "children": []
+    },
+    {
+      "slug": "pattern-1-a-choice-group-becomes-a-seeded-variable",
+      "title": "Pattern 1: a choice group becomes a seeded variable",
+      "level": 2,
+      "sourceHash": "sha256:c432bf6141b6c53aa4977c26be9218034c3892c1d8f6b6ef946d339fb8b3e45a",
+      "summary": "The choice macro asks RoleCall for the option a user picked at load time, and SillyTavern has no such concept, so the macro is removed on the way out and the receipt records it. The choice group itself survives conversion as canonical data, so the receipt can hand you its options. Replace the read with an ordinary variable and seed that variable once at the top of the preset: a seed block placed first sets the variable to a value, and every former choice read becomes a plain getvar. The seed is the group's declared default when it has one. A person switching options edits one line instead of hunting every reference, which is the closest thing to the original behaviour a preset without a picker can offer.",
+      "topics": [
+        "choice removed and recorded",
+        "choice group survives canonical",
+        "seed block placed first",
+        "getvar replaces choice",
+        "declared default as seed",
+        "one line to switch"
+      ],
+      "children": []
+    },
+    {
+      "slug": "pattern-2-fix-the-producer-not-the-consumer",
+      "title": "Pattern 2: fix the producer, not the consumer",
+      "level": 2,
+      "sourceHash": "sha256:dfcb616fbc928c6a9b3443636468e5ab7bfca4663a9517806b27aab65ce092e7",
+      "summary": "The regex macro rewrites a value as a prompt renders and SillyTavern has no such macro. Regex scripts are not the counterpart: they run over chat messages and world-info entries, never over preset prompt content, so no arrangement of them reproduces it and emitting one gives a rule that runs, matches nothing and looks correct. The move is to stop needing it, and the converter now performs that repair for the shape it recognises. A list assembled by appending separator plus item onto an empty variable comes out with a leading separator; guarding each append on whether the variable already holds something means it never appears, and the cleanup is deleted rather than translated. Scope travels with the variable, since chat-local and global live in separate stores. Nothing is compiled: recognition is textual, and a cleanup that rewrites rather than strips, reads something other than a plain variable, or whose producer is elsewhere comes back unfixed with a reason.",
+      "topics": [
+        "regex scripts are not the counterpart",
+        "wrong surface entirely",
+        "guarded append removes the need",
+        "cleanup deleted not translated",
+        "scope travels with the variable",
+        "nothing compiled, unfixed reported"
+      ],
+      "children": []
+    },
+    {
+      "slug": "pattern-3-a-closed-domain-expands-into-a-conditional",
+      "title": "Pattern 3: a closed domain expands into a conditional",
+      "level": 2,
+      "sourceHash": "sha256:140449af6e5d0f41e78b121ef82a2060f445d001c45e3d173001f5e1607c82f8",
+      "summary": "The upper macro has no SillyTavern equivalent. Applied to a variable whose values are unknown it is unfixable; applied to one whose value set is closed it is a lookup. This is why the receipt reports domains: when every write is a short literal the full value set is known, so the uppercase form can be written beside the value, after which the upper read becomes a plain getvar. Check the receipt first, because the pattern needs a literal assignment site and only works for a variable listed under domains; in the preset measured here upper was applied to a computed variable, where the fix is Pattern 2. Domains counts every write form, not just setvar: shorthand assignment, addvar, incvar and decvar all open a domain, since a value derived from the current one cannot be enumerated. Three variables there looked like the closed set containing zero until the arithmetic writes driving them were counted; they are counters, and expanding one into a constant would badly mislead.",
+      "topics": [
+        "upper unfixable when open",
+        "closed set is a lookup",
+        "paired upper write at assignment site",
+        "needs a literal assignment site",
+        "every write form opens a domain",
+        "counters are not constants",
+        "wideVariables is not no domain"
+      ],
+      "children": []
+    },
+    {
+      "slug": "pattern-4-a-macro-becomes-a-marker-prompt",
+      "title": "Pattern 4: a macro becomes a marker prompt",
+      "level": 2,
+      "sourceHash": "sha256:839063ca5a81a97ae21cd3f45bbf948d24e1e111162efc201ca2febf8ef29807",
+      "summary": "The message_history macro splices the transcript; SillyTavern does the same job with a marker prompt, a prompt-list entry named chatHistory that the builder fills during assembly. There is no macro to rewrite it to, so the conversion is a structural edit and the converter now performs it: the block carrying the macro is split, keeping the text before and after on either side of a new marker block. Order of operations is the whole trick, since the translator removes a macro with no home on the target and would leave nothing to promote; promotion therefore reads dead tokens off the original body and restructures first. Promotion happens only when the slot is unambiguous: exactly one shared-word match promotes, zero or several leave the token for a person, because content moved to the wrong slot reads as odd behaviour rather than a conversion error. A macro the target can still run is never touched. Every split is reported under promotions.",
+      "topics": [
+        "marker prompt not macro",
+        "chatHistory identifier",
+        "block split around the marker",
+        "promotion runs before translation",
+        "unambiguous slot or nothing",
+        "working presets untouched",
+        "every split reported"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-hook-machine",
+      "title": "The hook machine",
+      "level": 2,
+      "sourceHash": "sha256:5dac5f34fd4a57d4b4a3faa97a656116d9196be172d359d4925d18922b1eec3c",
+      "summary": "RoleCall's macro_engine_yaml is regex-triggered hooks: a trigger, flags, a placement of user_input or ai_output, an optional strip, and actions that set, unset, append or push. They line up with SillyTavern regex scripts, whose replacement is macro-substituted after capture groups fill in, so a replacement containing a setvar really does write state. A dialect-changing crossing now returns hookRules: the hooks as rules the target can run, in declaration order, triggers verbatim because both engines share regex syntax. The authored value crosses verbatim too, which is load-bearing: RoleCall writes templates woven around two capture groups and writes an empty value to clear, so guessing would discard a group or turn a clear into a write. sortOrder preserves declaration order because a hook that clears state must precede the hooks that write it. Push is still refused, since its rule count comes from how the preset reads the array. Bunraku still seals the YAML as escrow and never executes it, and placing the rules into a target remains a separate act.",
+      "topics": [
+        "hooks and regex scripts are one mechanism",
+        "replacement writes state",
+        "hookRules rendered in order",
+        "authored value verbatim",
+        "sortOrder is load-bearing",
+        "push still refused",
+        "escrow never executed"
+      ],
+      "children": []
+    },
+    {
+      "slug": "evidence",
+      "title": "Evidence",
+      "level": 2,
+      "sourceHash": "sha256:2b3902a68d8d04a9af732e66da688e59522bca76d4222d24469f9ebb61a695cd",
+      "summary": "Claims are backed at different strengths and the difference matters. Unit-proven covers separator rewriting, indexed-access lowering, block preservation, nested-argument translation, every field of the structure report, the observations in explanation, the rendered hookRules, marker promotion and producer repair. Integration-proven covers a RoleCall preset crossing to SillyTavern through the real adapter registry, resolving its dialect from escrow and carrying structural findings, promotions and rendered rules into the receipt. Code-read covers SillyTavern's regex replacement path calling substituteParams, its placement values, its marker prompt identifiers, and the surfaces regex scripts actually run over, all read from that project's source. Pattern 1 remains a recommendation and says so. Patterns 2 and 4 were recommendations when the page was written and are now performed; Pattern 3 is reported rather than applied, since expanding a closed domain is still the author's edit.",
+      "topics": [
+        "unit-proven surface",
+        "integration-proven crossing",
+        "code-read SillyTavern source",
+        "pattern 1 still a recommendation",
+        "patterns 2 and 4 now performed",
+        "pattern 3 reported not applied"
+      ],
+      "children": []
+    }
+  ]
+}

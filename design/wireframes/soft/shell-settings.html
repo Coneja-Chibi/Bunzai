@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: Settings (Appearance, Models, Connections, Studio, Workbench, About)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-settings 1/4: Appearance, Models, Connections, Studio, Workbench, About. Split across four
+ * files by area-name per the brief (Security, Remote access and Updates are their own files - each
+ * has enough mutually exclusive states that one 60rem file could not hold the tab bar AND every
+ * state without the wf-bar burying the page). The tab bar here is real navigation: every tab not in
+ * this file is a link to its own file, at the equivalent state where one exists.
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--canvas); }
+.room { max-width: 60rem; margin: 0 auto; padding: 26px 22px 90px; }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+.stabs { display: flex; flex-wrap: wrap; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 22px; }
+.stabs a { font: 600 .88rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); text-decoration: none; padding: 10px 14px; box-shadow: inset 0 -2px 0 transparent; }
+.stabs a.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--text-dim); }
+.stabs a:hover { color: var(--text); }
+.srow { display: flex; justify-content: space-between; gap: 24px; padding: 18px 4px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.srow .tx { max-width: 24rem; }
+.srow .label { font: 600 .95rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.srow .hint { font-size: .82rem; color: var(--text-dim); margin-top: 3px; line-height: 1.5; }
+.srow .ctrl { flex: none; display: flex; align-items: center; gap: 8px; }
+.notice { font-size: .85rem; color: var(--stage-warn); margin: 0 4px 14px; }
+.plates { display: flex; flex-wrap: wrap; gap: 8px; }
+.plate { font: 500 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .04em; padding: 7px 12px; box-shadow: inset 0 0 0 1px var(--seam); background: none; color: var(--text-soft); cursor: pointer; border: 0; }
+.plate.on { box-shadow: inset 0 0 0 2px var(--accent); color: var(--text); }
+.list { display: flex; flex-direction: column; gap: 10px; margin: 12px 4px; }
+.rowcard { display: flex; align-items: center; gap: 14px; padding: 12px 14px; background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); flex-wrap: wrap; }
+.rowcard .name { font: 600 .92rem var(--font-big); min-width: 8rem; }
+.rowcard .mono { font: 12px var(--font-mono); color: var(--text-dim); }
+.rowcard .grow { flex: 1; min-width: 8rem; }
+.rowcard .acts { display: flex; gap: 6px; margin-left: auto; }
+.rowcard .acts button { font: 500 .75rem var(--font-mono); text-transform: uppercase; padding: 5px 9px; background: none; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-soft); cursor: pointer; border: 0; }
+.rowcard.active { box-shadow: inset 0 0 0 1px var(--accent); }
+.empty { padding: 14px; color: var(--text-dim); font-style: italic; }
+.form { margin: 10px 4px; padding: 16px; background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); display: flex; flex-direction: column; gap: 12px; }
+.form label { display: block; font: 500 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim); margin-bottom: 5px; }
+.form select, .form input, .form textarea { width: 100%; }
+.form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form .facts { display: flex; gap: 10px; }
+.problem { color: var(--stage-danger-text); font-size: .84rem; margin: 6px 4px; }
+.swatchrow { display: flex; gap: 30px; align-items: center; flex-wrap: wrap; padding-bottom: 18px; }
+.sw { width: 30px; height: 30px; box-shadow: inset 0 0 0 1px var(--edge); cursor: pointer; position: relative; }
+.sw.on { box-shadow: 0 0 0 2px var(--stage-black), 0 0 0 4px var(--accent); }
+.sw span { position: absolute; top: 36px; left: 0; font: 500 12px var(--font-mono); color: var(--text-dim); white-space: nowrap; }
+.section-title { font: 500 12px var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint); margin: 30px 4px 4px; }
+.armcard { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; padding: 16px; background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); margin: 12px 4px 0; }
+[data-only] { display: none; }
+[data-only].show { display: block; }
+.s-btn[data-only].show { display: inline-flex; }
+.armcard[data-only].show { display: flex; }
+.form[data-only].show { display: flex; }
+.srow[data-only].show { display: flex; }
+@media (max-width: 30rem) { .form .row2 { grid-template-columns: 1fr; } .srow { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+<div class="room">
+  <nav class="stabs">
+    <a href="#" class="on" data-tab="appearance">Appearance</a>
+    <a href="#" data-tab="models">Models</a>
+    <a href="#" data-tab="connections">Connections</a>
+    <a href="#" data-tab="studio">Studio</a>
+    <a href="shell-settings-security.html">Security</a>
+    <a href="#" data-tab="workbench">Workbench</a>
+    <a href="shell-settings-remote.html">Remote access</a>
+    <a href="shell-settings-updates.html">Updates</a>
+    <a href="#" data-tab="about">About</a>
+  </nav>
+
+  <!-- APPEARANCE -->
+  <section data-only="appearance" class="show">
+    <div class="srow">
+      <div class="tx"><div class="label">Theme</div><div class="hint">Light paper or the dark forge. Flips instantly.</div></div>
+      <div class="ctrl"><span class="plates"><button class="plate">Light</button><button class="plate on">Dark</button></span></div>
+    </div>
+    <div class="srow">
+      <div class="tx"><div class="label">Your color</div><div class="hint">The workspace accent. The brand rose never changes.</div></div>
+    </div>
+    <div class="swatchrow" style="margin:4px 4px 30px">
+      <div class="sw on" style="background:var(--rose)"><span>rose</span></div>
+      <div class="sw" style="background:var(--deck-character)"><span>amber</span></div>
+      <div class="sw" style="background:var(--deck-persona)"><span>emerald</span></div>
+      <div class="sw" style="background:var(--deck-lorebook)"><span>violet</span></div>
+      <div class="sw" style="background:var(--deck-preset)"><span>blue</span></div>
+      <div class="sw" style="box-shadow:inset 0 0 0 1px dashed var(--seam);display:grid;place-items:center;font-size:12px;color:var(--text-dim)"><span>custom</span>?</div>
+    </div>
+    <p class="wf-note" style="position:static;max-width:none;margin-top:26px">HOUSE_PALETTE hexes (src/ui/components/swatch-row/index.tsx: rose/amber/emerald/violet/blue) are stood in with --rose and --deck-* tokens, since the soft palette has no matching hexes - labelled with the real palette names.</p>
+  </section>
+
+  <!-- MODELS -->
+  <section data-only="models models-edit">
+    <p class="wf-note" style="position:static;max-width:none;margin-bottom:16px">Shared with Kit in the terminal (src/ui/apps/settings/sections/models.tsx). A key goes in and never comes back - the field is always blank, even when editing a saved provider.</p>
+    <div class="list">
+      <div class="rowcard active"><span style="width:16px;height:16px;box-shadow:inset 0 0 0 2px var(--accent);border-radius:50%;flex:none"></span><span class="name">Claude (personal)</span><span class="mono grow">claude-sonnet-5</span><span class="mono">key saved</span><span class="acts"><button>Test</button><button>Edit</button><button>Remove</button></span></div>
+      <div class="rowcard"><span style="width:16px;height:16px;box-shadow:inset 0 0 0 2px var(--seam);border-radius:50%;flex:none"></span><span class="name">Local (LM Studio)</span><span class="mono grow">llama-3.1-8b</span><span class="mono">no key</span><span class="acts"><button>Test</button><button>Edit</button><button>Remove</button></span></div>
+    </div>
+    <button class="s-btn ghost" data-only="models" style="margin:6px 4px 0">Add a model</button>
+    <div class="form" data-only="models-edit">
+      <label>Provider<select><option>Anthropic (Claude)</option><option>OpenAI</option><option>OpenRouter</option><option>Local (OpenAI-compatible)</option></select></label>
+      <label>Model<select><option>claude-sonnet-5</option><option>claude-opus-5</option><option>Type an id...</option></select></label>
+      <label>Let Kit make changes this session<select><option>Ask each time</option><option>Always this session</option><option>Never</option></select></label>
+      <label>Name (optional)<input placeholder="Personal, Work"></label>
+      <label>API key<input type="password" placeholder="paste your key"></label>
+      <div style="display:flex;gap:10px"><button class="s-btn">Save</button><button class="s-btn ghost">Cancel</button></div>
+    </div>
+  </section>
+
+  <!-- CONNECTIONS -->
+  <section data-only="connections connections-edit">
+    <div class="srow" style="box-shadow:none;padding-top:0">
+      <div class="tx"><div class="label">MCP servers</div><div class="hint">Programs this machine runs so their tools join Kit's belt. Every external tool asks at the Gate before it runs.</div></div>
+    </div>
+    <p class="problem">"weather-tools" was rejected: command must be an absolute path or a known launcher.</p>
+    <div class="list">
+      <div class="rowcard"><span class="name">my-tools</span><span class="mono grow">uvx --from git+https... my-server</span><span class="mono" style="color:var(--stage-ok)">6 tool(s)</span><span class="mono">env: MY_TOKEN</span><span class="acts"><button>Test</button><button>Disable</button><button>Edit</button><button>Remove</button></span></div>
+      <div class="rowcard"><span class="name">local-fs</span><span class="mono grow">C:\tools\fs-mcp.exe</span><span class="mono" style="color:var(--stage-danger-text)">not connected</span><span class="acts"><button>Test</button><button>Enable</button><button>Edit</button><button>Remove</button></span></div>
+    </div>
+    <button class="s-btn ghost" data-only="connections" style="margin:6px 4px 16px">Add a server</button>
+    <div class="form" data-only="connections-edit">
+      <label>Name<input placeholder="my-tools" disabled value="my-tools"></label>
+      <label>Command<input value="uvx"></label>
+      <label>Arguments<input value="--from git+https://... server-cmd"></label>
+      <label>Environment (KEY=VALUE per line)<textarea rows="3" placeholder="leave blank to keep the saved values"></textarea></label>
+      <div style="display:flex;gap:10px"><button class="s-btn">Save</button><button class="s-btn ghost">Cancel</button></div>
+    </div>
+    <div class="srow" style="box-shadow:none">
+      <div class="tx"><div class="label">Bunraku as a server</div><div class="hint">Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</div></div>
+      <code class="mono" style="padding:8px 10px;background:var(--stage-well);box-shadow:inset 0 0 0 1px var(--seam)">claude mcp add bunraku -- bunraku mcp "C:\Users\you\Bunraku"</code>
+    </div>
+  </section>
+
+  <!-- STUDIO -->
+  <section data-only="studio">
+    <div class="srow">
+      <div class="tx"><div class="label">Home</div><div class="hint">The room Bunraku opens in when you start it.</div></div>
+      <div class="ctrl"><span class="plates"><button class="plate on">Workbench</button><button class="plate">Library</button><button class="plate">Scenes</button><button class="plate">Press</button><button class="plate">Agent</button></span></div>
+    </div>
+    <div class="srow">
+      <div class="tx"><div class="label">Library opens on</div><div class="hint">The deck you see first when you visit the shelves.</div></div>
+      <div class="ctrl"><span class="plates"><button class="plate on">Characters</button><button class="plate">Lorebooks</button><button class="plate">Personas</button><button class="plate">Sprite packs</button><button class="plate">Presets</button><button class="plate">Regex sets</button><button class="plate">Quick replies</button></span></div>
+    </div>
+    <div class="srow" style="align-items:flex-start">
+      <div class="tx"><div class="label">You publish to</div><div class="hint">Pick any that fit. Every format stays ready either way.</div></div>
+      <div class="ctrl plates" style="max-width:20rem"><button class="plate on">SillyTavern</button><button class="plate on">RoleCall</button><button class="plate">RisuAI</button><button class="plate">Agnaistic</button><button class="plate">NovelAI</button><button class="plate">Pygmalion</button></div>
+    </div>
+    <div class="section-title">Engine checkouts on this machine</div>
+    <div class="srow">
+      <div class="tx"><div class="label">SillyTavern</div><div class="hint">The folder holding SillyTavern's public/ tree. Kit uses it too.</div></div>
+      <div class="ctrl" style="flex-direction:column;align-items:flex-end;gap:6px">
+        <input class="s-input" style="width:16rem" value="C:\Users\you\SillyTavern">
+        <span style="display:flex;gap:6px"><button class="s-btn ghost" style="padding:6px 10px">Save</button><button class="s-btn ghost" style="padding:6px 10px">Clear</button></span>
+        <span class="mono" style="color:var(--stage-ok)">found, engine answers</span>
+      </div>
+    </div>
+    <div class="srow">
+      <div class="tx"><div class="label">Marinara</div><div class="hint">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</div></div>
+      <div class="ctrl" style="flex-direction:column;align-items:flex-end;gap:6px">
+        <input class="s-input" style="width:16rem" disabled placeholder="paste the folder's path">
+        <span class="mono">env: BUNRAKU_MARINARA_ROOT=C:\tools\marinara</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKBENCH -->
+  <section data-only="workbench">
+    <div class="srow"><div class="tx"><div class="label">Autosave</div><div class="hint">Save half a second after you stop typing. Ctrl+S still works, and still saves at once.</div></div><div class="ctrl"><span class="plates"><button class="plate on">Off</button><button class="plate">On</button></span></div></div>
+    <div class="srow"><div class="tx"><div class="label">Reopen where you left off</div><div class="hint">Restore the pieces you had open, and which one you were editing, after a restart or a crash.</div></div><div class="ctrl"><span class="plates"><button class="plate">Off</button><button class="plate on">On</button></span></div></div>
+    <div class="srow"><div class="tx"><div class="label">Editor layout</div><div class="hint">Bento shows every field at once; Playbill turns them into acts you page through.</div></div><div class="ctrl"><span class="plates"><button class="plate on">Bento</button><button class="plate">Playbill</button></span></div></div>
+    <div class="srow"><div class="tx"><div class="label">How you fill it in</div><div class="hint">Grid shows every field to edit directly; Steps walks you through like a quiz.</div></div><div class="ctrl"><span class="plates"><button class="plate on">Grid</button><button class="plate">Steps</button></span></div></div>
+    <div class="srow"><div class="tx"><div class="label">After sending a piece</div><div class="hint">Follow it to the Workbench, stay where you are, or ask every time.</div></div><div class="ctrl"><span class="plates"><button class="plate on">Ask me</button><button class="plate">Always follow</button><button class="plate">Stay</button></span></div></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section data-only="about about-armed">
+    <div class="srow">
+      <div class="tx"><div class="label">Updates</div><div class="hint">Version 0.14.2, installed app. Checks GitHub only when you press the button; nothing runs on its own.</div></div>
+      <div class="ctrl plates"><button class="plate">Check for updates</button><span class="mono" style="align-self:center">You are on the newest release.</span></div>
+    </div>
+    <div class="srow">
+      <div class="tx"><div class="label">Your studio folder</div><div class="hint">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</div></div>
+      <div class="ctrl mono">C:\Users\you\Bunraku</div>
+    </div>
+    <div class="srow">
+      <div class="tx"><div class="label">Project</div><div class="hint">Open source under AGPL-3.0. Bugs and wishes welcome.</div></div>
+      <div class="ctrl plates"><button class="plate">GitHub</button><button class="plate">Releases</button></div>
+    </div>
+
+    <div class="section-title">Shortcuts (Windows desktop app only)</div>
+    <div class="srow">
+      <div class="tx"><div class="label">Start menu</div><div class="hint">Bunraku is in your Start menu, so searching "Bunraku" finds it.</div></div>
+      <div class="ctrl"><span class="s-switch on"></span></div>
+    </div>
+    <div class="srow">
+      <div class="tx"><div class="label">Desktop</div><div class="hint">A Bunraku shortcut is on your desktop.</div></div>
+      <div class="ctrl"><span class="s-switch on"></span></div>
+    </div>
+    <p class="wf-note" style="position:static;max-width:none;margin:6px 4px 0">These two switches are proposed (design/wireframes/settings/shortcuts.html): merged into the SAME "The app" card as Restart/Quit/Reset below, per that wireframe's own layout, rather than a separate card. Only on the Windows .exe build; the browser Studio, Mac and Linux show neither row.</p>
+
+    <div class="srow" style="align-items:flex-start" data-only="about">
+      <div class="tx"><div class="label">The app</div><div class="hint">Restart relaunches the studio in place; Quit stops it fully. Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers - the app you were on, the agent conversation, the overlay's position - never your studio, tabs or settings.</div></div>
+      <div class="ctrl plates"><button class="plate">Restart Bunraku</button><button class="plate">Quit Bunraku</button><button class="plate">Reset this window</button></div>
+    </div>
+    <div class="armcard" data-only="about-armed">
+      <div class="tx"><div class="label">The app</div><div class="hint">A second press actually restarts or quits - this state shows both armed at once for reference; only one arms at a time in the real room.</div></div>
+      <div class="ctrl plates"><button class="plate on">Really restart?</button><button class="plate" style="box-shadow:inset 0 0 0 2px var(--stage-danger-edge);color:var(--stage-danger-text)">Really quit?</button><button class="plate">Reset this window</button></div>
+    </div>
+  </section>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="appearance" class="on">Appearance</button>
+  <button data-s="models">Models: list</button>
+  <button data-s="models-edit">Models: add/edit form</button>
+  <button data-s="connections">Connections: list</button>
+  <button data-s="connections-edit">Connections: edit form</button>
+  <button data-s="studio">Studio</button>
+  <button data-s="workbench">Workbench</button>
+  <button data-s="about">About</button>
+  <button data-s="about-armed">About: restart/quit armed</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var TABOF = { appearance: "appearance", models: "models", "models-edit": "models", connections: "connections", "connections-edit": "connections", studio: "studio", workbench: "workbench", about: "about", "about-armed": "about" };
+  var NOTES = {
+    appearance: "Appearance (order 10): theme segmented, house-accent SwatchRow (same component the setup wizard uses).",
+    models: "Models (order 15): the vault Kit's terminal also reads. Radio = active provider. Key is never sent back from the server, shown only as \"key saved\"/\"no key\".",
+    "models-edit": "Add/edit form: provider select, model picker (falls back to a text field when a provider publishes no list), a spoke-declared option (Claude's \"let Kit make changes this session\"), optional name, base URL when needed, API key.",
+    connections: "Connections (order 16): MCP servers this machine RUNS (consuming) plus the snippet to add Bunraku itself as a server (serving). A rejected server shows its reason above the list.",
+    "connections-edit": "Add/edit form: name locked while editing an existing server; env textarea left blank keeps the saved values.",
+    studio: "Studio (order 20): Home app picker (every non-comingSoon, non-dockFoot, non-catalogOnly app), Library's first deck (all 7 decks from _shared/decks.ts), publish plates (same data-driven list as setup), then EngineRoots - the machine-specific SillyTavern/Marinara checkout paths Macro Lab needs, last because it is the one block about THIS MACHINE rather than the work.",
+    workbench: "Workbench (order 30): autosave (off by default - a setting that writes to your files on a timer should not default to on), restore session, editor layout/mode (mirrors the editor's own header toggles), and the follow-to-Workbench behavior.",
+    about: "About (order 90): update check (the only network call the app makes on its own trigger), studio folder path, project links, then the proposed Shortcuts switches, then Restart/Quit/Reset - merged into one card per the shortcuts.html proposal.",
+    "about-armed": "Restart and Quit both arm on first press (\"Really ...?\", 4s to reconsider) and fire on the second; Reset this window is unarmed since nothing it touches is unnamed.",
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      var list = (el.getAttribute("data-only") || "").split(" ");
+      el.classList.toggle("show", list.indexOf(s) !== -1);
+    });
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.querySelectorAll(".stabs a[data-tab]").forEach(function (a) { a.classList.toggle("on", a.dataset.tab === TABOF[s]); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + NOTES[s];
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  document.querySelectorAll(".stabs a[data-tab]").forEach(function (a) {
+    a.addEventListener("click", function (e) { e.preventDefault(); set(a.dataset.tab); });
+  });
+  set(new URLSearchParams(location.search).get("state") || "appearance");
+})();
+</script>
+</body>
+</html>

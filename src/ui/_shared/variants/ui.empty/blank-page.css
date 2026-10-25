@@ -1,0 +1,5 @@
+/** ui.empty blank-page: an empty space as a blank page with a ruled margin, the message in italic at the top of it. No ruled backdrop. */
+html[data-surface-ui-empty="blank-page"] :is(.scn .emptyroot, .ltrash-empty, [data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { max-width: 30rem; margin-inline: auto; padding: 1.5rem 1.25rem; font-family: var(--font-big); font-style: italic; border-left: 2px solid var(--bk-role-brand); }
+html[data-surface-ui-empty="blank-page"] .ghost-shelf:not(.host-protected, .host-protected *) { border: 1px solid var(--bk-line-control); }
+/* A whole-room empty is a blank page with a ruled margin. */
+html[data-surface-ui-empty="blank-page"] :is([data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { border: 1px solid var(--bk-line); border-left: 3px solid var(--bk-role-brand); }

@@ -1,0 +1,78 @@
+#dock{grid-column:1;grid-row:1/3;width:clamp(11.5rem,15vw,12.5rem);
+  background:var(--chrome);border-right:3px solid var(--seam);
+  display:flex;flex-direction:column;min-height:0}
+#dockhome{display:flex;align-items:center;gap:.55rem;flex:none;cursor:pointer;font-family:var(--font-mono);
+  background:transparent;border:none;border-bottom:3px solid var(--seam);
+  padding:.7rem .7rem;width:100%}
+#dockhome .beam{width:1.8rem;height:1.8rem;flex:none}
+#dockhome .beam svg{display:block;width:100%;height:100%}
+#dockhome .hk{font-family:var(--font-mono);font-size:.625rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text-dim);white-space:nowrap}
+#dockhome:hover .hk{color:var(--text-soft)}
+#dockapps{flex:1;min-height:0;overflow-y:auto;padding:.55rem .5rem .4rem;display:flex;flex-direction:column;gap:.25rem}
+.docklabel{font-family:var(--font-mono);font-size:.625rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text-dim);margin:.25rem .3rem .35rem}
+.apptile{position:relative;display:flex;align-items:center;gap:.5rem;width:100%;text-align:left;font:inherit;
+  min-height:3.4rem;padding:.45rem .4rem;cursor:pointer;
+  background:transparent;border:3px solid transparent;transition:transform .1s ease-out}
+.apptile .mk{width:2rem;height:2rem;flex:none;border:3px solid var(--edge);background:var(--face);
+  color:var(--text-soft);display:flex;align-items:center;justify-content:center}
+.apptile .mk svg{display:block;width:18px;height:18px}
+.apptile .tx{display:flex;flex-direction:column;gap:1px;min-width:0}
+.apptile .nm{font-family:var(--font-big);font-weight:800;font-size:.6875rem;
+  text-transform:uppercase;color:var(--text-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apptile .kd{font-family:var(--font-mono);font-size:.6875rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-soft)}
+.apptile:hover{transform:translate(-1px,-1px)}
+.apptile:hover .nm{color:var(--text)}
+.apptile:hover .mk{border-color:var(--a);color:var(--text)}
+.apptile.on{background:var(--stamp-bg);border-color:var(--edge);box-shadow:4px 4px 0 0 var(--a)}
+.apptile.on .nm{color:var(--stamp-fg);font-weight:800}
+.apptile.on .kd{color:var(--stamp-fg);opacity:.66}
+.apptile.on .mk{background:var(--a);border-color:var(--edge);color:var(--stage-ink)}
+/* paper: no black plate on the selected tile (the inverted stamp read as a black blob on cream).
+   Selected = white tile pushed forward: face fill, black border,
+   ink offset shadow; the accent stays on the icon box and the edge nib. Dark keeps its inverted
+   plate and accent glow untouched. */
+:root[data-theme="paper"] .apptile.on{background:var(--face);box-shadow:4px 4px 0 0 var(--edge)}
+:root[data-theme="paper"] .apptile.on .nm{color:var(--text)}
+:root[data-theme="paper"] .apptile.on .kd{color:var(--text-soft)}
+.apptile.on::before{content:"";position:absolute;right:-3px;top:50%;transform:translateY(-50%);
+  width:4px;height:1.7rem;background:var(--a)}
+.dockdiv{height:3px;background:var(--seam);opacity:.6;margin:.5rem .35rem;flex:none}
+.apptile.future{cursor:default}
+.apptile.future .mk{border-color:var(--text-faint);color:var(--text-faint);border-style:dashed;background:transparent}
+.apptile.future .nm{color:var(--text-dim)}
+.apptile.future:hover{transform:none}
+.apptile.future:hover .mk{border-color:var(--text-faint);color:var(--text-faint)}
+.apptile.future:hover .nm{color:var(--text-dim)}
+.dockslot{display:flex;align-items:center;justify-content:center;gap:.4rem;
+  min-height:3rem;margin:.15rem .5rem .35rem;border:2px dashed var(--text-faint);
+  color:var(--text-faint);background:transparent;width:calc(100% - 1rem);font:inherit;
+  cursor:pointer;transition:border-color .1s ease-out,color .1s ease-out;flex:none}
+.dockslot:hover{border-color:var(--text-dim);color:var(--text-dim)}
+.dockslot.on{border-color:var(--accent);color:var(--text);background:var(--face)}
+.dockslot:disabled{cursor:default;opacity:.5}
+.dockslot .plus{font-family:var(--font-big);font-weight:900;font-size:1.05rem;line-height:0}
+.dockslot .sl{font-family:var(--font-mono);font-weight:600;font-size:.625rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text)}
+#dockfoot{flex:none;border-top:3px solid var(--seam);display:flex;flex-direction:column}
+#dockfoot .apptile{min-height:2.9rem}
+#dockToggle{flex:none;display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;
+  background:transparent;border:none;border-top:3px solid var(--seam);cursor:pointer;
+  font-family:var(--font-mono);font-size:.5625rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-dim);padding:.42rem}
+#dockToggle:hover{color:var(--text-soft)}
+#dockToggle .exp{display:none}
+/* user-driven marks-only collapse: identical language to the locked narrow mode below, so the
+   dock reads the same whether the window shrank it or the user did */
+#dock.slim{width:auto}
+#dock.slim #dockhome{justify-content:center;padding:.7rem .4rem}
+#dock.slim #dockhome .hk{display:none}
+#dock.slim .docklabel{display:none}
+#dock.slim .apptile{justify-content:center;padding:.45rem .35rem}
+#dock.slim .apptile .tx{display:none}
+#dock.slim .apptile.on::before{display:none}
+#dock.slim .apptile.on{box-shadow:3px 3px 0 0 var(--a)}
+:root[data-theme="paper"] #dock.slim .apptile.on{box-shadow:3px 3px 0 0 var(--edge)}
+#dock.slim .dockslot .sl{display:none}
+#dock.slim #dockToggle .col{display:none}
+#dock.slim #dockToggle .exp{display:inline}

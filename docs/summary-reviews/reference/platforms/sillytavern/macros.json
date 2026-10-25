@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/sillytavern/macros",
+  "sourcePath": "docs/reference/platforms/sillytavern/macros.md",
+  "sourceHash": "sha256:bea9901efad8d3e36b5689946e0dee77faf70800bf7c958d288ac42e086755ac",
+  "semanticSummaryHash": "sha256:1863477b635b91f5d65c96fb16cd30516971c1a48f699d694754ed865e87872e",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:59.370Z"
+}

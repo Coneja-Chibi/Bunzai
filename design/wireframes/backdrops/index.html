@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene backdrops wireframe (where a user picks a background)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<link rel="stylesheet" href="../rc-bridge.css">
+<script src="../theme.js"></script>
+<style>
+  /* layout only: every color is a theme token */
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: var(--gap-m); }
+  .thumb { border: var(--ink-border); border-color: var(--edge); background: var(--paper-2); aspect-ratio: 16 / 10; display: flex; align-items: flex-end; padding: 0.3rem; font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); }
+  .thumb.on { box-shadow: 3px 3px 0 0 var(--edge); background: var(--face); color: var(--text); }
+  .thumb.none { align-items: center; justify-content: center; border-style: dashed; }
+  .preview { border: var(--ink-border); border-color: var(--edge); background: var(--paper-2); aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">Scene backdrops (where you pick a background)</div>
+      <p class="wf-lede">SillyTavern keeps a folder of background images and lets a chat pick one. Bunraku has no home for that today: the only backdrop is a theme slot (theme-owned, not your art), and a character's creator-picked background has no place that shows it. This page shows where a person would pick a backdrop, so the 39 images in the ST folder have somewhere to land. Awaiting approval. Nothing here is built.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="stack">
+    <div class="wf-state">1. The scene, Cast and World wing: one new row, Backdrop</div>
+    <div class="card">
+      <div class="card-title">This scene</div>
+      <div class="row">
+        <div class="tx"><div class="label">Cast</div><div class="hint">Vera, with Sam (user-default) playing you.</div></div>
+        <button class="btn-ghost">Edit</button>
+      </div>
+      <div class="row">
+        <div class="tx"><div class="label">Lorebooks</div><div class="hint">2 attached.</div></div>
+        <button class="btn-ghost">Edit</button>
+      </div>
+      <div class="row">
+        <div class="tx"><div class="label">Backdrop <span class="chip">New</span></div><div class="hint">The picture behind the messages. Only this scene changes. None keeps the theme's own look.</div></div>
+        <div style="display:flex; gap: var(--gap-m); align-items:center;">
+          <div class="thumb on" style="width:6rem;">Harbor at dusk</div>
+          <button class="btn-ghost">Change</button>
+        </div>
+      </div>
+    </div>
+    <p class="wf-comp">Reuses: the scene wing's existing rows (label, hint, ghost button) and the TicketWindow thumbnail used for art elsewhere. The scene stores one reference to a stored image. The backdrop paints in the existing scene.backdrop slot position, under the messages, with the stage's own darkening so text stays legible.</p>
+
+    <div class="wf-state">2. The picker: a grid of your backdrops, None first</div>
+    <div class="scrim">
+      <div class="dialog" style="max-width: 44rem;">
+        <div class="card-title">Pick a backdrop</div>
+        <div class="seg"><button class="on">All 39</button><button>Recent</button><button>Search</button></div>
+        <div class="thumbs">
+          <div class="thumb none">None</div>
+          <div class="thumb on">Harbor at dusk</div>
+          <div class="thumb">Bedroom, night</div>
+          <div class="thumb">Castle hall</div>
+          <div class="thumb">Forest road</div>
+          <div class="thumb">Rooftop</div>
+          <div class="thumb">Tavern</div>
+          <div class="thumb">Library</div>
+        </div>
+        <div class="hint">Picking one hangs it on this scene at once and can be undone with None. Upload new art with Add image; it joins the same grid.</div>
+        <div class="actions">
+          <button class="btn-ghost">Add image</button>
+          <button class="stamp stamp-btn primary">Done</button>
+        </div>
+      </div>
+    </div>
+    <p class="wf-comp">Reuses: the dialog shell, SegControl, the art-thumbnail tile, stamp and ghost buttons. A large image grid is the one place a picker earns lazy loading, as the Library cards already do.</p>
+
+    <div class="wf-state">3. Preview in the scene, and the empty states</div>
+    <div class="wf-grid">
+      <div class="wf-frame">
+        <div class="kicker">Scene with a backdrop</div>
+        <div class="preview">backdrop image under the messages</div>
+      </div>
+      <div class="wf-frame">
+        <div class="kicker">No backdrops yet</div>
+        <p class="hint">Nothing in your collection to pick from. Add image, or import your SillyTavern backgrounds from the Library import.</p>
+      </div>
+      <div class="wf-frame">
+        <div class="kicker">The picked image is gone</div>
+        <p class="hint">This scene's backdrop is no longer in your collection. The scene shows the theme's own look and says so here, with Change next to it.</p>
+      </div>
+    </div>
+
+    <div class="wf-state">4. Where the images live: the three options (you choose)</div>
+    <div class="card">
+      <div class="row"><div class="tx"><div class="label">A. A backdrop on the scene only <span class="chip">smallest</span></div><div class="hint">The scene stores its own image bytes. No shelf: you pick a file per scene. 39 imported backgrounds have nowhere to wait, so a bulk import cannot land.</div></div></div>
+      <div class="row"><div class="tx"><div class="label">B. A new kind, Backdrop <span class="chip warn">new storage</span></div><div class="hint">A Library deck of backdrops, a format adapter that reads image files, and the scene points at one. Cleanest for the shelf and for import. It adds a new entity kind, which is a new piece of storage and needs your approval.</div></div></div>
+      <div class="row"><div class="tx"><div class="label">C. Reuse the Sprite pack <span class="chip ok">no new kind</span></div><div class="hint">A pack named "SillyTavern backgrounds" holds the 39 images (the pack already stores art through the sealed image path and has a deck and an editor). The scene points at one pack item. The cost: the pack's wording is about expressions, and it has no importer yet, so one small adapter for image folders is still needed.</div></div></div>
+    </div>
+    <p class="wf-note"><b>Recommendation:</b> C with the scene row from screen 1. It gives the 39 images a shelf and an editor with no new storage kind. The scene stores only a reference (pack and item), the picker in screen 2 reads the pack, and the pack's own wording gets a small tweak (Sprite packs become "Packs", art and expressions). If you want backdrops to feel like their own thing in the Library, B is the honest alternative, and it is the only one that is a new storage authority.</p>
+    <p class="wf-note"><b>New, called out:</b> one scene row, one picker dialog, and one reference field on the scene. Every control in them is an existing component. Nothing else is invented.</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/marinara/lorebooks",
+  "sourcePath": "docs/reference/platforms/marinara/lorebooks.md",
+  "sourceHash": "sha256:a761d54f2507ab9f92dfe5a7bb512a8f30b97dc1be7c659bda8a9db053113b18",
+  "semanticSummaryHash": "sha256:29f5a5d1559d7114fe4247559879135069c586e7ea79f3f1327c508e9216f60d",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:56.781Z"
+}

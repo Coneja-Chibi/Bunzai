@@ -1,0 +1,16 @@
+/** Macro-oracle source loader resolves a root-relative module on the current platform. */
+import { expect, test } from "bun:test";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { loadSourceModule } from "./load-source";
+
+test("loads a source module from a Windows-style root path", async () => {
+  const root = mkdtempSync(join(tmpdir(), "macro-oracle-source-"));
+  try {
+    writeFileSync(join(root, "entry.mjs"), "export const value = 42;\n");
+    expect(await loadSourceModule<{ value: number }>(root.replaceAll("/", "\\"), "entry.mjs")).toEqual({ value: 42 });
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

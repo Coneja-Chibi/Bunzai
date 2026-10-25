@@ -1,0 +1,7 @@
+/** ui.toolbar playbill-bar (Theater): the Library and Scenes filter rows as a program bar, one framed strip under a double hairline; fields are underlined, buttons are hairline-boxed. */
+html[data-surface-ui-toolbar="playbill-bar"] {
+  & :is(.lib.rc .ltop, .scn .filters) { gap: 1.2rem; align-items: center; margin-bottom: .6rem; padding: .55rem 1rem; background: var(--bk-surface-sunken); box-shadow: 0 0 0 1px var(--bk-line), 0 0 0 4px var(--bk-surface-base), 0 0 0 5px var(--bk-line-track); }
+  & :is(.lib.rc :is(.findbox, .sizedial), .scn .search) { border: 0; border-bottom: 1px solid var(--bk-line-control); box-shadow: none; background: transparent; }
+  & .lib.rc .findwrap.on .findbox { box-shadow: inset 0 -2px 0 var(--bk-role-brand); }
+  & :is(.lib.rc .ltb, .scn .plaque-actions > .s-btn) { border: 0; box-shadow: inset 0 0 0 1px var(--bk-line-control); background: transparent; color: var(--bk-text); }
+}

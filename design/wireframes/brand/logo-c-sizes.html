@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ticket bun at every size</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+/*
+ * Logo C ("Ticket bun") made legible small, the way app icons are: one drawing per size band, each
+ * simpler than the last. Large keeps the tilt, the tear line, and the punch; medium straightens and
+ * drops the fine details; small is the ticket and a big bunny; tiny is the ticket and two ears. All
+ * colors are theme tokens.
+ */
+:root { --pink: color-mix(in srgb, var(--rose) 30%, var(--stage-paper)); --ink: var(--stage-ink); }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--stage-floor); color: var(--stage-soft); font-family: var(--font-body); padding: 32px 28px 60px; }
+h1 { font: 900 2rem/1 var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+h1 em { font-style: normal; color: var(--rose); }
+.lede { margin: 8px 0 22px; font-size: 1.05rem; color: var(--stage-text-dim); max-width: 50rem; }
+.band { display: grid; grid-template-columns: 170px 1fr; gap: 18px; align-items: center; padding: 16px 0; border-top: 1px solid var(--stage-seam); }
+.band h2 { font: 900 .95rem var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+.band h2 small { display: block; margin-top: 4px; font: 500 .7rem var(--font-mono); color: var(--stage-mute); text-transform: none; }
+.strip { display: flex; align-items: flex-end; gap: 22px; flex-wrap: wrap; }
+.cell { display: flex; flex-direction: column; align-items: center; gap: 6px; font: 500 .66rem var(--font-mono); color: var(--stage-mute); }
+.pair { display: flex; gap: 8px; align-items: flex-end; padding: 10px; border-radius: 10px; }
+.pair.dark { background: var(--stage-black); }
+.pair.task { background: color-mix(in srgb, var(--stage-panel) 80%, var(--stage-var)); }
+.pair.light { background: var(--stage-paper); }
+.icon { display: block; image-rendering: auto; }
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+.box { padding: 14px; border: 3px solid var(--ink); border-radius: 12px; background: var(--stage-panel); box-shadow: 5px 5px 0 var(--ink); }
+.box h3 { font: 900 .9rem var(--font-big); text-transform: uppercase; color: var(--stage-card); margin-bottom: 10px; }
+.box h3 b { color: var(--rose); }
+.note { margin-top: 24px; padding: 12px 16px; border-left: 4px solid var(--rose); background: var(--stage-rose-well); font-size: 1rem; line-height: 1.5; }
+.note b { color: var(--stage-card); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- XL (128+): the original, tilted, with tear line and punch hole. -->
+    <symbol id="c-xl" viewBox="0 0 100 100">
+      <g transform="rotate(-8 50 50)">
+        <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--rose)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+        <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+        <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/>
+        <circle cx="78" cy="50" r="6" fill="var(--stage-paper)" stroke="var(--ink)" stroke-width="2.5"/>
+      </g>
+    </symbol>
+    <!-- M (48-64): straight, no tear line, the stub end kept as a flat block, bigger bunny. -->
+    <symbol id="c-m" viewBox="0 0 100 100">
+      <path d="M6 22 H94 V40 A10 10 0 0 0 94 60 V78 H6 V60 A10 10 0 0 0 6 40 Z" fill="var(--rose)" stroke="var(--stage-paper)" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M6 22 H94 V40 A10 10 0 0 0 94 60 V78 H6 V60 A10 10 0 0 0 6 40 Z" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"/>
+      <rect x="70" y="26" width="7" height="48" fill="var(--rose-deep)"/>
+      <path d="M30 48 C26 30 29 20 34 20 C39 20 40 34 38 48 Z M44 48 C44 31 49 21 54 23 C59 25 54 38 50 49 Z" fill="var(--ink)"/>
+      <ellipse cx="40" cy="61" rx="17" ry="13" fill="var(--ink)"/>
+    </symbol>
+    <!-- S (24-32): a taller ticket that fills the square, a whole bunny head punched out, a light rim. -->
+    <symbol id="c-s" viewBox="0 0 32 32">
+      <path d="M1.5 3.5 H30.5 V12.5 A3.5 3.5 0 0 0 30.5 19.5 V28.5 H1.5 V19.5 A3.5 3.5 0 0 0 1.5 12.5 Z" fill="var(--rose)" stroke="var(--stage-paper)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M11 17 C9.6 10 10.6 6.5 12.4 6.5 C14.2 6.5 14.6 11.5 14 17 Z M17.6 17 C17.6 11 19.4 7 21 7.6 C22.6 8.2 21.4 13 19.8 17.4 Z" fill="var(--ink)"/>
+      <circle cx="16" cy="21.2" r="6.4" fill="var(--ink)"/>
+    </symbol>
+    <!-- XS (16-20): the same ticket; the bunny head tilted, its right ear flopped out. -->
+    <symbol id="c-xs" viewBox="0 0 16 16">
+      <path d="M0.5 1.5 H15.5 V6 A2 2 0 0 0 15.5 10 V14.5 H0.5 V10 A2 2 0 0 0 0.5 6 Z" fill="var(--rose)" stroke="var(--stage-paper)" stroke-width="1" stroke-linejoin="round"/>
+      <!-- the head tilts a little; the right ear flops out to the right from its base -->
+      <g transform="rotate(-10 8 10)">
+        <rect x="5" y="3" width="2" height="5.5" rx="1" fill="var(--ink)"/>
+        <rect x="9" y="3.4" width="2" height="5.2" rx="1" fill="var(--ink)" transform="rotate(32 10 8.4)"/>
+        <circle cx="8" cy="10.2" r="3.2" fill="var(--ink)"/>
+      </g>
+    </symbol>
+    <!-- XS, droopy: the head tilts right, the left ear stands, the right ear folds down and out. -->
+    <symbol id="c-xs2" viewBox="0 0 16 16">
+      <path d="M0.5 1.5 H15.5 V6 A2 2 0 0 0 15.5 10 V14.5 H0.5 V10 A2 2 0 0 0 0.5 6 Z" fill="var(--rose)" stroke="var(--stage-paper)" stroke-width="1" stroke-linejoin="round"/>
+      <g transform="rotate(10 8 10)">
+        <rect x="5.4" y="2.6" width="2" height="6" rx="1" fill="var(--ink)"/>
+        <rect x="9" y="3.6" width="2" height="5" rx="1" fill="var(--ink)" transform="rotate(38 10 8.6)"/>
+        <circle cx="8" cy="10.3" r="3.2" fill="var(--ink)"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<h1>Ticket bun, <em>at every size</em></h1>
+<p class="lede">The trick app icons use: one drawing per size, each simpler than the last. Big sizes keep all the charm; small sizes keep only what reads. Each row shows its drawing on black, on a taskbar tint, and on paper, at real pixel sizes.</p>
+
+<div class="band"><h2>Large<small>128 px and up: app store, installer, about box</small></h2>
+  <div class="strip">
+    <div class="cell"><div class="pair dark"><svg class="icon" width="128" height="128"><use href="#c-xl"/></svg></div>128</div>
+    <div class="cell"><div class="pair light"><svg class="icon" width="128" height="128"><use href="#c-xl"/></svg></div>128</div>
+  </div></div>
+
+<div class="band"><h2>Medium<small>48 to 64 px: desktop, Start menu tile</small></h2>
+  <div class="strip">
+    <div class="cell"><div class="pair dark"><svg class="icon" width="64" height="64"><use href="#c-m"/></svg><svg class="icon" width="48" height="48"><use href="#c-m"/></svg></div>64 / 48</div>
+    <div class="cell"><div class="pair task"><svg class="icon" width="64" height="64"><use href="#c-m"/></svg><svg class="icon" width="48" height="48"><use href="#c-m"/></svg></div>64 / 48</div>
+    <div class="cell"><div class="pair light"><svg class="icon" width="64" height="64"><use href="#c-m"/></svg><svg class="icon" width="48" height="48"><use href="#c-m"/></svg></div>64 / 48</div>
+  </div></div>
+
+<div class="band"><h2>Small<small>24 to 32 px: taskbar, search results, dock</small></h2>
+  <div class="strip">
+    <div class="cell"><div class="pair dark"><svg class="icon" width="32" height="32"><use href="#c-s"/></svg><svg class="icon" width="24" height="24"><use href="#c-s"/></svg></div>32 / 24</div>
+    <div class="cell"><div class="pair task"><svg class="icon" width="32" height="32"><use href="#c-s"/></svg><svg class="icon" width="24" height="24"><use href="#c-s"/></svg></div>32 / 24</div>
+    <div class="cell"><div class="pair light"><svg class="icon" width="32" height="32"><use href="#c-s"/></svg><svg class="icon" width="24" height="24"><use href="#c-s"/></svg></div>32 / 24</div>
+  </div></div>
+
+<div class="band"><h2>Tiny, splayed<small>16 to 20 px: browser tab, file icons. Head tilted left, right ear out</small></h2>
+  <div class="strip">
+    <div class="cell"><div class="pair dark"><svg class="icon" width="20" height="20"><use href="#c-xs"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs"/></svg></div>20 / 16</div>
+    <div class="cell"><div class="pair task"><svg class="icon" width="20" height="20"><use href="#c-xs"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs"/></svg></div>20 / 16</div>
+    <div class="cell"><div class="pair light"><svg class="icon" width="20" height="20"><use href="#c-xs"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs"/></svg></div>20 / 16</div>
+    <div class="cell"><div class="pair dark"><svg class="icon" width="96" height="96"><use href="#c-xs"/></svg></div>zoomed</div>
+  </div></div>
+
+<div class="band"><h2>Tiny, droopy<small>the same sizes: head tilted the other way, right ear folded down</small></h2>
+  <div class="strip">
+    <div class="cell"><div class="pair dark"><svg class="icon" width="20" height="20"><use href="#c-xs2"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs2"/></svg></div>20 / 16</div>
+    <div class="cell"><div class="pair task"><svg class="icon" width="20" height="20"><use href="#c-xs2"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs2"/></svg></div>20 / 16</div>
+    <div class="cell"><div class="pair light"><svg class="icon" width="20" height="20"><use href="#c-xs2"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs2"/></svg></div>20 / 16</div>
+    <div class="cell"><div class="pair dark"><svg class="icon" width="96" height="96"><use href="#c-xs2"/></svg></div>zoomed</div>
+  </div></div>
+
+<div class="cmp">
+  <div class="box"><h3><b>Before</b> one drawing shrunk</h3>
+    <div class="strip">
+      <div class="cell"><div class="pair dark"><svg class="icon" width="32" height="32"><use href="#c-xl"/></svg><svg class="icon" width="24" height="24"><use href="#c-xl"/></svg><svg class="icon" width="16" height="16"><use href="#c-xl"/></svg></div>32 / 24 / 16</div>
+      <div class="cell"><div class="pair task"><svg class="icon" width="32" height="32"><use href="#c-xl"/></svg><svg class="icon" width="24" height="24"><use href="#c-xl"/></svg><svg class="icon" width="16" height="16"><use href="#c-xl"/></svg></div>taskbar</div>
+    </div></div>
+  <div class="box"><h3><b>After</b> a drawing per size</h3>
+    <div class="strip">
+      <div class="cell"><div class="pair dark"><svg class="icon" width="32" height="32"><use href="#c-s"/></svg><svg class="icon" width="24" height="24"><use href="#c-s"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs"/></svg></div>32 / 24 / 16</div>
+      <div class="cell"><div class="pair task"><svg class="icon" width="32" height="32"><use href="#c-s"/></svg><svg class="icon" width="24" height="24"><use href="#c-s"/></svg><svg class="icon" width="16" height="16"><use href="#c-xs"/></svg></div>taskbar</div>
+    </div></div>
+</div>
+
+<div class="note"><b>What changes by size:</b> the tilt goes below 128 px (tilted edges blur into mush); the tear line and punch hole go below 64 (the stub end becomes a solid darker band); below 48 the ticket gets taller so it fills the square, and a whole bunny head (two ears and a round face) is punched out; at 16 to 20 that head is drawn on the pixel grid so it stays crisp. A thin paper-colored rim keeps it from sinking into dark taskbars. Windows .ico files hold each size as its own drawing, so the app picks the right one automatically.</div>
+</body>
+</html>

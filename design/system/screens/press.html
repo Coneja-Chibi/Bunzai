@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Press</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="press.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Press</h1>
+    <p>The staging grammar applied to export: unstaged stamps in the rail, the staged queue grouped
+    into bundles and solos, readiness per card, target platforms, filename and flavor, and the run
+    results with download.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="press.room">
+    <header>
+      <h2 class="bk-heading">Press: the staged set prints</h2>
+      <span class="bk-tag">src/ui/apps/press</span>
+      <p class="bk-meta">Parts: press.room, press.rail, press.queue, press.card (.readiness),
+      press.rider, press.target, press.result</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="press.room.a" data-taste-title="Print queue">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Print queue</h3>
+          <p>Rail of unstaged-piece stamps, the queue with bundles and riders, readiness per card.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen pr-root" data-part="press.room" data-variant="a" data-state="staged">
+            <div class="pr-body">
+                <nav class="pr-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="pr-dock-brand" data-part="shell.dock.brand">
+                    <svg class="pr-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="pr-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" >
+                    <span class="pr-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Scenes</b><small class="pr-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Workbench</b><small class="pr-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="library" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Library</b><small class="pr-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="press" aria-current="page">
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Press</b><small class="pr-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Agent</b><small class="pr-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Kit</b><small class="pr-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Settings</b></span>
+                  </button>
+                  <div class="pr-dock-foot">
+                    <button type="button" class="pr-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="pr-dock-tx"><b class="pr-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="pr-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="pr-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <div class="pr-main" style="display:flex;flex:1;min-width:0">
+                <aside class="bk-stage pr-rail" data-part="press.rail">
+                  <p class="bk-label">from the library &middot; click to stage</p>
+                  <div style="display:flex;flex-direction:column;gap:var(--bk-space-2);margin-top:var(--bk-space-3)">
+                    <button type="button" class="bk-item pr-offer"><span class="pr-offer-nm">Nuit</span><span class="bk-meta">character</span></button>
+                    <button type="button" class="bk-item pr-offer"><span class="pr-offer-nm">Wren</span><span class="bk-meta">persona</span></button>
+                    <button type="button" class="bk-item pr-offer"><span class="pr-offer-nm">The Lighthouse</span><span class="bk-meta">lorebook</span></button>
+                    <button type="button" class="bk-item pr-offer"><span class="pr-offer-nm">Chibi Gram Pacer</span><span class="bk-meta">preset</span></button>
+                    <button type="button" class="bk-item pr-offer"><span class="pr-offer-nm">Tidy asterisks</span><span class="bk-meta">regex</span></button>
+                  </div>
+                </aside>
+
+                <section class="pr-queue" data-part="press.queue">
+                  <div class="pr-view pr-view-empty">
+                    <div class="pr-sheethead"><p class="bk-label">the queue &middot; 0 staged</p></div>
+                    <p class="pr-empty bk-meta" style="display:block">Nothing staged. Stage pieces from the Library, right-click any piece, or use the rail on the left. A staged character brings his linked lorebooks as a bundle.</p>
+                  </div>
+
+                  <div class="pr-view pr-view-staged">
+                    <div class="pr-sheethead">
+                      <p class="bk-label">the queue &middot; 4 staged &middot; 1 dropped</p>
+                      <div class="pr-targets" data-part="press.target"><button type="button" class="bk-tag" data-part="ui.button">SillyTavern</button><button type="button" class="bk-tag" data-part="ui.button">Risu</button><button type="button" class="bk-tag" data-part="ui.button">Agnai</button></div>
+                    </div>
+                    <div class="pr-bundles">
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="character" data-part="press.card">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">bundle &middot; Marguerite Vane</span><i>character + 1 linked</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="bk-meta">character</span><span class="pr-info bk-meta">no target picked yet</span></div>
+                        <div class="pr-kcard" data-dropped data-part="press.rider"><span class="pr-dot"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keeper's Log</b><span class="bk-meta">lorebook &middot; rides with Marguerite Vane</span><button type="button" class="bk-tag" data-part="ui.button">ride again</button></div>
+                      </div>
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="lorebook" data-part="press.card">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">solo &middot; The Lighthouse</span><i>lorebook</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="danger" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">The Lighthouse</b><span class="bk-meta">lorebook</span><span class="pr-note bk-meta" data-tone="danger">no entry has keywords, it will never fire</span></div>
+                      </div>
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="lorebook" data-part="press.card">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">solo &middot; Harbor Town</span><i>lorebook</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="warn" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Harbor Town</b><span class="bk-meta">lorebook</span><span class="pr-note bk-meta" data-tone="warn">14 entries of 213 without keywords</span></div>
+                      </div>
+                    </div>
+                    <div class="pr-foot">
+                      <span class="pr-sum bk-meta">4 in the run &middot; pick a platform</span>
+                      <button type="button" class="bk-tag" data-part="ui.button">clear the queue</button>
+                      <button type="button" class="bk-tag" data-part="ui.button" aria-disabled="true" title="Pick a target platform first">run the press</button>
+                    </div>
+                  </div>
+
+                  <div class="pr-view pr-view-target">
+                    <div class="pr-sheethead">
+                      <p class="bk-label">the queue &middot; 4 staged &middot; 1 dropped</p>
+                      <div class="pr-targets" data-part="press.target"><button type="button" class="bk-tag" data-mark data-part="ui.button">SillyTavern</button><button type="button" class="bk-tag" data-part="ui.button">Risu</button><button type="button" class="bk-tag" data-part="ui.button">Agnai</button></div>
+                    </div>
+                    <div class="pr-bundles">
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="character" data-part="press.card">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">bundle &middot; Marguerite Vane</span><i>character + 1 linked</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard">
+                          <span class="pr-dot" data-tone="warn" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="bk-meta">character</span>
+                          <span class="pr-info bk-meta">11 of 16 filled, empty: nickname, personality, +3 more &middot; <button type="button" style="color:var(--bk-accent-text);text-decoration:underline;background:none;border:0;cursor:pointer">open in the editor</button></span>
+                          <div class="pr-fileedit"><input class="pr-filein" value="Marguerite Vane"><button type="button" class="bk-tag" data-mark>.json</button><button type="button" class="bk-tag">.txt</button><button type="button" class="bk-tag">.md</button></div>
+                        </div>
+                        <div class="pr-kcard" data-dropped data-part="press.rider"><span class="pr-dot"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keeper's Log</b><span class="bk-meta">lorebook &middot; rides with Marguerite Vane</span><button type="button" class="bk-tag" data-part="ui.button">ride again</button></div>
+                      </div>
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="lorebook" data-part="press.card">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">solo &middot; The Lighthouse</span><i>lorebook</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard">
+                          <span class="pr-dot" data-tone="danger" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">The Lighthouse</b><span class="bk-meta">lorebook</span>
+                          <span class="pr-note bk-meta" data-tone="danger">no entry has keywords, it will never fire</span>
+                          <div class="pr-fileedit"><input class="pr-filein" value="The Lighthouse"><button type="button" class="bk-tag" data-mark>.json</button><button type="button" class="bk-tag">.txt</button><button type="button" class="bk-tag">.md</button></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="pr-foot">
+                      <span class="pr-sum bk-meta">4 on the sheet</span>
+                      <button type="button" class="bk-tag" data-part="ui.button">clear the queue</button>
+                      <button type="button" class="bk-tag" data-mark data-part="ui.button">run the press</button>
+                    </div>
+                  </div>
+
+                  <div class="pr-view pr-view-results">
+                    <div class="pr-sheethead">
+                      <p class="bk-label">the queue &middot; 4 staged &middot; 1 dropped</p>
+                      <div class="pr-targets" data-part="press.target"><button type="button" class="bk-tag" data-mark data-part="ui.button">SillyTavern</button><button type="button" class="bk-tag" data-part="ui.button">Risu</button><button type="button" class="bk-tag" data-part="ui.button">Agnai</button></div>
+                    </div>
+                    <div class="pr-bundles">
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="character" data-part="press.result">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">bundle &middot; Marguerite Vane</span><i>character + 1 linked</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="ok"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="bk-meta">character</span><span class="pr-info bk-meta">carries: portrait &middot; expression pack</span><span class="pr-file bk-num">marguerite-vane.json</span></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="ok"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Keeper's Log</b><span class="bk-meta">lorebook &middot; rides with Marguerite Vane</span><span class="pr-file bk-num">keepers-log.json</span></div>
+                      </div>
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="lorebook" data-part="press.result">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">solo &middot; The Lighthouse</span><i>lorebook</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="danger"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">The Lighthouse</b><span class="bk-meta">lorebook</span><span class="pr-note bk-meta" data-tone="danger">no entry has keywords, it will never fire</span></div>
+                      </div>
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="lorebook" data-part="press.result">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">solo &middot; Harbor Town</span><i>lorebook</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="warn"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Harbor Town</b><span class="bk-meta">lorebook</span><span class="pr-note bk-meta" data-tone="warn">3 fields not carried</span><span class="pr-file bk-num">harbor-town.json</span></div>
+                      </div>
+                      <div class="pr-bundle bk-panel bk-frame" data-crown data-deck="regex" data-part="press.result">
+                        <div class="pr-bundlemarq bk-meta"><span class="bk-name" style="font-size:var(--bk-fs-sm)">solo &middot; Tidy asterisks</span><i>regex</i><button type="button" class="bk-tag" data-part="ui.button">unstage &times;</button></div>
+                        <div class="pr-kcard"><span class="pr-dot" data-tone="danger"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Tidy asterisks</b><span class="bk-meta">regex</span><span class="pr-note bk-meta" data-tone="danger">SillyTavern has no regex format</span></div>
+                      </div>
+                    </div>
+                    <div class="pr-foot">
+                      <span class="pr-sum bk-meta">3 printed &middot; 1 with notes &middot; 2 failed</span>
+                      <button type="button" class="bk-tag" data-part="ui.button">clear the results</button>
+                      <button type="button" class="bk-tag" data-part="ui.button">clear the queue</button>
+                      <button type="button" class="bk-tag" data-mark data-part="ui.button">download the bundle</button>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="empty">Empty queue</button>
+          <button type="button" class="spec-chip" data-set-state="staged" aria-pressed="true">Staged, no target</button>
+          <button type="button" class="spec-chip" data-set-state="target">Target picked</button>
+          <button type="button" class="spec-chip" data-set-state="results">Run results</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="press.room.b" data-taste-title="Loadout">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Loadout</h3>
+          <p>Staged pieces as slots with readiness meters; riders as attached sub-slots; one target
+          picker at the top.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen pr-root" data-part="press.room" data-variant="b" data-state="staged">
+            <div class="pr-body">
+                <nav class="pr-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="pr-dock-brand" data-part="shell.dock.brand">
+                    <svg class="pr-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="pr-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" >
+                    <span class="pr-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Scenes</b><small class="pr-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Workbench</b><small class="pr-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="library" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Library</b><small class="pr-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="press" aria-current="page">
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Press</b><small class="pr-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Agent</b><small class="pr-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Kit</b><small class="pr-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="pr-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="pr-dock-tx"><b class="pr-dock-label">Settings</b></span>
+                  </button>
+                  <div class="pr-dock-foot">
+                    <button type="button" class="pr-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="pr-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="pr-dock-tx"><b class="pr-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="pr-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="pr-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <div class="pr-main" style="display:flex;flex:1;min-width:0">
+                <section class="bk-stage pr-queue" data-part="press.queue" style="flex:1">
+                  <div class="pr-view pr-view-empty">
+                    <div class="pr-sheethead"><p class="bk-label">the queue &middot; 0 staged</p></div>
+                    <p class="pr-empty bk-meta" style="display:block">Nothing staged. Stage pieces from the Library, right-click any piece.</p>
+                  </div>
+                  <div class="pr-view pr-view-staged">
+                    <div class="pr-sheethead">
+                      <p class="bk-label">the queue &middot; 4 staged</p>
+                      <div class="pr-targets" data-part="press.target"><button type="button" class="bk-tag" data-part="ui.button">SillyTavern</button><button type="button" class="bk-tag" data-part="ui.button">Risu</button><button type="button" class="bk-tag" data-part="ui.button">Agnai</button></div>
+                    </div>
+                    <div class="pr-slotgrid">
+                      <div class="pr-slot bk-frame" data-lift data-crown data-deck="character" data-part="press.card">
+                        <span class="pr-dot" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="bk-meta">character &middot; no target yet</span>
+                        <div class="pr-slot-riders" data-part="press.rider"><span class="bk-meta">Keeper's Log (rider)</span></div>
+                      </div>
+                      <div class="pr-slot bk-frame" data-lift data-crown data-deck="lorebook" data-part="press.card">
+                        <span class="pr-dot" data-tone="danger" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">The Lighthouse</b><span class="bk-meta" data-tone="danger">will never fire</span>
+                      </div>
+                      <div class="pr-slot bk-frame" data-lift data-crown data-deck="lorebook" data-part="press.card">
+                        <span class="pr-dot" data-tone="warn" data-part="press.card.readiness"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Harbor Town</b><span class="bk-meta" data-tone="warn">14 of 213 without keywords</span>
+                      </div>
+                    </div>
+                    <div class="pr-foot">
+                      <span class="pr-sum bk-meta">4 in the run &middot; pick a platform</span>
+                      <button type="button" class="bk-tag" data-part="ui.button">clear the queue</button>
+                      <button type="button" class="bk-tag" aria-disabled="true" data-part="ui.button">run the press</button>
+                    </div>
+                  </div>
+                  <div class="pr-view pr-view-target">
+                    <div class="pr-sheethead"><p class="bk-label">the queue &middot; 4 staged</p><div class="pr-targets"><button type="button" class="bk-tag" data-mark data-part="ui.button">SillyTavern</button></div></div>
+                    <div class="pr-slotgrid">
+                      <div class="pr-slot bk-frame" data-lift data-crown data-deck="character" data-part="press.card"><span class="pr-dot" data-tone="warn"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="bk-meta">11 of 16 filled</span></div>
+                    </div>
+                    <div class="pr-foot"><span class="pr-sum bk-meta">4 on the sheet</span><button type="button" class="bk-tag" data-mark data-part="ui.button">run the press</button></div>
+                  </div>
+                  <div class="pr-view pr-view-results">
+                    <div class="pr-sheethead"><p class="bk-label">the queue &middot; 4 staged</p><div class="pr-targets"><button type="button" class="bk-tag" data-mark data-part="ui.button">SillyTavern</button></div></div>
+                    <div class="pr-slotgrid">
+                      <div class="pr-slot bk-frame" data-lift data-crown data-deck="character" data-part="press.result"><span class="pr-dot" data-tone="ok"></span><b class="bk-name" style="font-size:var(--bk-fs-sm)">Marguerite Vane</b><span class="pr-file bk-num">marguerite-vane.json</span></div>
+                    </div>
+                    <div class="pr-foot"><span class="pr-sum bk-meta">3 printed &middot; 1 with notes &middot; 2 failed</span><button type="button" class="bk-tag" data-mark data-part="ui.button">download the bundle</button></div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="empty">Empty queue</button>
+          <button type="button" class="spec-chip" data-set-state="staged" aria-pressed="true">Staged, no target</button>
+          <button type="button" class="spec-chip" data-set-state="target">Target picked</button>
+          <button type="button" class="spec-chip" data-set-state="results">Run results</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> the unstaged rail, bundle
+    grouping (a character's linked lorebooks ride along, "ride again"), solos, per-card readiness
+    (a lorebook's own keyword check, a character against the picked platform's coverage with a fix
+    link, "no target picked yet"), filename and flavor editing once a target is picked, and every
+    run-result state (printed, printed with a dropped-fields note, failed, and download the bundle).
+    <b>Simplified:</b> variant B folds the rider display to one summary line per slot instead of a
+    full attached sub-slot card, to fit the loadout grid; "drop from this run" / "ride again" per
+    rider and the download's single-file-vs-zip distinction are both one control here, matching the
+    source wireframe's own note that it is the same button either way.</p>
+  </section>
+</main>
+</body>
+</html>

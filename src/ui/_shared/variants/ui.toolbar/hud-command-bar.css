@@ -1,0 +1,8 @@
+/** ui.toolbar hud-command-bar (Encore): the filter rows as a boxed command bar with an action-colored top rail; fields are dark wells, the button is a deep action key. */
+html[data-surface-ui-toolbar="hud-command-bar"] {
+  & :is(.lib.rc .ltop, .scn .filters) { gap: .6rem; align-items: center; margin-bottom: .6rem; padding: .4rem .6rem; background: var(--bk-surface-ink); border: 1px solid var(--bk-line-control); box-shadow: inset 0 2px 0 var(--bk-role-action); }
+  & :is(.lib.rc :is(.findbox, .sizedial), .scn .search) { border: 1px solid var(--bk-line-track); box-shadow: none; background: var(--bk-surface-well); }
+  & .lib.rc .findwrap.on .findbox { box-shadow: inset 0 0 0 1px var(--bk-role-action); }
+  & .lib.rc .findbox .sk::after { content: " >"; }
+  & :is(.lib.rc .ltb, .scn .plaque-actions > .s-btn) { border: 1px solid var(--bk-line-control); box-shadow: none; background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); }
+}

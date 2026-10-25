@@ -1,0 +1,72 @@
+/*
+ * Bunraku design system: import.html ("import.flow"). The Library's import overlay: reading,
+ * shelving, the clean and mixed receipts, the brand-new empty studio, drop-anywhere, the damage
+ * notice, and the SillyTavern backup wizard (drop, scanning, choose, needs-character, duplicates,
+ * options, importing, partial, receipt, first-run wizard line). Prefix: imp-. Tokens only.
+ */
+.imp-root { position: relative; min-height: 100%; display: flex; align-items: flex-start; justify-content: center; padding: var(--bk-space-8) var(--bk-space-4); container-type: inline-size; }
+.imp-sheet { width: min(34rem, 100%); padding: var(--bk-pad-panel); }
+.imp-sheet[data-wide] { width: min(44rem, 100%); }
+.imp-title { font: var(--bk-type-heading); font-size: var(--bk-fs-xl); margin: var(--bk-space-2) 0 0; }
+.imp-sub { color: var(--bk-text-dim); font-size: var(--bk-fs-sm); margin-top: var(--bk-space-2); }
+.imp-bar-track { display: block; height: 0.375rem; background: var(--bk-surface-sunken); box-shadow: inset 0 0 0 1px var(--bk-line); margin-top: var(--bk-space-4); }
+.imp-bar-fill { display: block; height: 100%; background: var(--bk-tint-text); }
+.imp-prog { font: var(--bk-type-meta); color: var(--bk-text-dim); margin-top: var(--bk-space-2); }
+.imp-acts { display: flex; gap: var(--bk-space-2); justify-content: flex-end; margin-top: var(--bk-space-5); flex-wrap: wrap; }
+.imp-rows { display: flex; flex-direction: column; gap: var(--bk-space-2); margin-top: var(--bk-space-4); max-height: 26rem; overflow-y: auto; }
+.imp-row { display: flex; gap: var(--bk-space-2); align-items: flex-start; padding: var(--bk-space-2) var(--bk-space-3); }
+.imp-row input[type="checkbox"] { margin-top: var(--bk-space-1); width: 1rem; height: 1rem; accent-color: var(--bk-role-select); }
+.imp-row-body { flex: 1; min-width: 0; }
+.imp-name { font-family: var(--bk-font-name); font-weight: var(--bk-fw-name); color: var(--bk-text); }
+.imp-kind { font-size: var(--bk-fs-sm); color: var(--bk-text-dim); margin-top: var(--bk-space-1); }
+.imp-meta { font-size: var(--bk-fs-xs); color: var(--bk-text-faint); margin-top: var(--bk-space-1); }
+.imp-report { padding: var(--bk-space-3); background: var(--bk-surface-field); }
+.imp-report ul { margin: var(--bk-space-1) 0 0; padding-left: 1.1rem; font-size: var(--bk-fs-xs); color: var(--bk-text-dim); }
+
+/* ---------- stk groups (ST choose) ---------- */
+.imp-stksum { font: var(--bk-type-meta); color: var(--bk-text-dim); margin-top: var(--bk-space-1); }
+.imp-stkgroups { display: flex; flex-direction: column; gap: var(--bk-space-2); margin-top: var(--bk-space-3); }
+.imp-stkhead { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); cursor: pointer; }
+.imp-stkhead input { width: 1rem; height: 1rem; accent-color: var(--bk-role-select); }
+.imp-stktile { width: 1.75rem; height: 1.75rem; flex: none; display: grid; place-items: center; color: var(--bk-tint-text); background: color-mix(in srgb, var(--bk-tint) 16%, transparent); }
+.imp-stkname { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.imp-stkname span { font-size: var(--bk-fs-xs); color: var(--bk-text-dim); }
+.imp-stkgroup[data-off] { opacity: .55; }
+.imp-stkreason { font-size: var(--bk-fs-xs); color: var(--bk-text-faint); padding: 0 var(--bk-space-3) var(--bk-space-2) 2.75rem; }
+.imp-neverhead { font: var(--bk-type-label); color: var(--bk-text-dim); margin: var(--bk-space-4) 0 var(--bk-space-2); }
+
+/* ---------- state visibility ---------- */
+.imp-view { display: none; }
+.imp-root[data-state="clean"] .imp-view-clean,
+.imp-root[data-state="mixed"] .imp-view-mixed,
+.imp-root[data-state="reading"] .imp-view-reading,
+.imp-root[data-state="saving"] .imp-view-saving,
+.imp-root[data-state="empty"] .imp-view-empty,
+.imp-root[data-state="dropover"] .imp-view-dropover,
+.imp-root[data-state="damage"] .imp-view-damage,
+.imp-root[data-state="drop"] .imp-view-drop,
+.imp-root[data-state="scanning"] .imp-view-scanning,
+.imp-root[data-state="choose"] .imp-view-choose,
+.imp-root[data-state="needs-character"] .imp-view-needs-character,
+.imp-root[data-state="duplicates"] .imp-view-duplicates,
+.imp-root[data-state="options"] .imp-view-options,
+.imp-root[data-state="importing"] .imp-view-importing,
+.imp-root[data-state="partial"] .imp-view-partial,
+.imp-root[data-state="receipt"] .imp-view-receipt,
+.imp-root[data-state="wizard"] .imp-view-wizard { display: block; }
+
+.imp-dropveil { display: none; position: absolute; inset: 0; z-index: var(--bk-z-sheet); place-items: center; background: color-mix(in srgb, var(--bk-role-action) 10%, var(--bk-scrim)); }
+.imp-root[data-state="dropover"] .imp-dropveil { display: grid; }
+.imp-dropveil-box { padding: var(--bk-space-6) var(--bk-space-8); }
+
+/* ---------- option toggles (ST options screen) ---------- */
+.imp-opt-row { display: flex; align-items: center; justify-content: space-between; gap: var(--bk-space-3); padding: var(--bk-space-2) var(--bk-space-3); }
+.imp-opt-row p { margin: var(--bk-space-1) 0 0; font-size: var(--bk-fs-xs); color: var(--bk-text-dim); max-width: 24rem; }
+
+/* ---------- variant b: found items as cards ---------- */
+.imp-root[data-variant="b"] .imp-rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: var(--bk-space-2); max-height: none; }
+.imp-root[data-variant="b"] .imp-row { flex-direction: column; align-items: stretch; }
+
+@container (max-width: 30rem) {
+  .imp-sheet, .imp-sheet[data-wide] { width: 100%; padding: var(--bk-space-4); }
+}

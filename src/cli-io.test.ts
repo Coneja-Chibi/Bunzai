@@ -1,0 +1,191 @@
+/**
+ * CLI IO policy: flags, path identity, container agreement, atomic publish.
+ */
+import { describe, expect, test } from "bun:test";
+import { mkdtemp, writeFile, readFile, mkdir } from "node:fs/promises";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
+import {
+  assertContainerAgreement,
+  guardConvertOutput,
+  isJsonText,
+  normalizeExtension,
+  normalizePathKey,
+  parseConvertFlags,
+  pathsAreSame,
+  publishAtomic,
+  shouldHoldConsole,
+} from "./cli-io";
+import { isZipBytes } from "./core/bytes";
+
+describe("parseConvertFlags", () => {
+  test("happy path with --yes and --to", () => {
+    const r = parseConvertFlags(["--to", "risu", "--yes", "--strict"]);
+    expect(r).toEqual({ ok: true, yes: true, strict: true, to: "risu", rest: [] });
+  });
+
+  test("rejects unknown flag", () => {
+    const r = parseConvertFlags(["--force"]);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error).toContain("unknown flag");
+  });
+
+  test("rejects missing --to value", () => {
+    const r = parseConvertFlags(["--to"]);
+    expect(r.ok).toBe(false);
+  });
+
+  test("rejects duplicate --to", () => {
+    const r = parseConvertFlags(["--to", "a", "--to", "b"]);
+    expect(r.ok).toBe(false);
+  });
+});
+
+describe("normalizeExtension", () => {
+  test("from path and bare", () => {
+    expect(normalizeExtension("out.CHARX")).toBe("charx");
+    expect(normalizeExtension(".json")).toBe("json");
+    expect(normalizeExtension("json")).toBe("json");
+  });
+});
+
+describe("path identity and guards", () => {
+  test("same relative aliases are equal", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-cli-"));
+    const a = join(dir, "card.json");
+    await writeFile(a, "{}");
+    expect(await pathsAreSame(a, join(dir, ".", "card.json"))).toBe(true);
+    if (process.platform === "win32") {
+      expect(normalizePathKey(a)).toBe(normalizePathKey(a.toUpperCase()));
+    }
+  });
+
+  test("in-place always refused even with yes", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-cli-"));
+    const p = join(dir, "x.json");
+    await writeFile(p, "{}");
+    const g = await guardConvertOutput(p, p, true);
+    expect(g.ok).toBe(false);
+    if (!g.ok) expect(g.code).toBe("in-place");
+  });
+
+  test("existing output refused without --yes and preserved", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-cli-"));
+    const inn = join(dir, "in.json");
+    const out = join(dir, "out.json");
+    await writeFile(inn, "IN");
+    await writeFile(out, "KEEP");
+    const g = await guardConvertOutput(inn, out, false);
+    expect(g.ok).toBe(false);
+    if (!g.ok) expect(g.code).toBe("exists");
+    expect(await readFile(out, "utf8")).toBe("KEEP");
+  });
+
+  test("existing output allowed with --yes", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-cli-"));
+    const inn = join(dir, "in.json");
+    const out = join(dir, "out.json");
+    await writeFile(inn, "IN");
+    await writeFile(out, "OLD");
+    const g = await guardConvertOutput(inn, out, true);
+    expect(g.ok).toBe(true);
+  });
+});
+
+describe("container agreement", () => {
+  test("json text ok", () => {
+    expect(
+      assertContainerAgreement("json", "json", { text: JSON.stringify({ a: 1 }) }).ok,
+    ).toBe(true);
+  });
+
+  test("zip magic for charx", () => {
+    const bytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 0, 0]);
+    expect(isZipBytes(bytes)).toBe(true);
+    // two bytes of PK is not a zip header (the sibling sniffers all want four)
+    expect(isZipBytes(new Uint8Array([0x50, 0x4b]))).toBe(false);
+    expect(isZipBytes(new TextEncoder().encode("PKI notes"))).toBe(false);
+    expect(assertContainerAgreement("charx", "charx", { bytes }).ok).toBe(true);
+  });
+
+  test("mismatch suggested extension fails", () => {
+    const r = assertContainerAgreement("json", "charx", { text: "{}" });
+    expect(r.ok).toBe(false);
+  });
+
+  test("json request with zip bytes fails", () => {
+    const bytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04]);
+    const r = assertContainerAgreement("json", "json", { bytes });
+    expect(r.ok).toBe(false);
+  });
+
+  test("isJsonText", () => {
+    expect(isJsonText('{"a":1}')).toBe(true);
+    expect(isJsonText("not json")).toBe(false);
+  });
+});
+
+describe("publishAtomic", () => {
+  test("writes new file", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-pub-"));
+    const out = join(dir, "out.json");
+    await publishAtomic(out, '{"ok":true}');
+    expect(await readFile(out, "utf8")).toBe('{"ok":true}');
+  });
+
+  test("replaces existing; failed write leaves prior when rename path intact", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-pub2-"));
+    const out = join(dir, "out.json");
+    await writeFile(out, "PRIOR");
+    await publishAtomic(out, "NEXT");
+    expect(await readFile(out, "utf8")).toBe("NEXT");
+  });
+
+  // B13: publishAtomic now delegates to the shared writeAtomicReplace (src/studio/atomic-file.ts)
+  // instead of its own copy. These two cover what that fold must not change: binary payloads still
+  // round-trip, and a failed write still surfaces the real OS error to the CLI's own error print,
+  // not writeAtomicReplace's generic "could not write file" (that generic message is correct for a
+  // browser-facing Studio route, which is why writeAtomicReplace defaults to it, but a CLI user
+  // debugging a failed export needs the specific reason).
+  test("binary payload round-trips", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-pub3-"));
+    const out = join(dir, "out.bin");
+    const bytes = new Uint8Array([0, 1, 2, 250, 255]);
+    await publishAtomic(out, bytes);
+    expect(new Uint8Array(await readFile(out))).toEqual(bytes);
+  });
+
+  test("a write failure surfaces the real OS error, not a generic message", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaud-pub4-"));
+    const missing = join(dir, "nested", "out.json"); // "nested" does not exist: open(tmp, "wx") -> ENOENT
+    const caught: unknown = await publishAtomic(missing, "x").catch((e: unknown) => e);
+    expect(caught).toBeInstanceOf(Error);
+    expect((caught as NodeJS.ErrnoException).code).toBe("ENOENT");
+    expect((caught as Error).message).not.toBe("could not write file");
+  });
+});
+
+describe("shouldHoldConsole", () => {
+  const base = { platform: "win32", noArguments: true, stdinIsTty: true, stdoutIsTty: true };
+
+  test("holds a bare double-clicked Windows console so the help can be read", () => {
+    expect(shouldHoldConsole(base)).toBe(true);
+  });
+
+  test("never holds when a command was given, including an explicit --help", () => {
+    // `--help` was typed on purpose in a shell that outlives the process; there is nothing to hold.
+    expect(shouldHoldConsole({ ...base, noArguments: false })).toBe(false);
+  });
+
+  test("never holds without a terminal, so a pipe or CI can never block on a prompt", () => {
+    expect(shouldHoldConsole({ ...base, stdinIsTty: false })).toBe(false);
+    expect(shouldHoldConsole({ ...base, stdoutIsTty: false })).toBe(false);
+    expect(shouldHoldConsole({ ...base, stdinIsTty: false, stdoutIsTty: false })).toBe(false);
+  });
+
+  test("only Windows: elsewhere the launching shell outlives the process", () => {
+    for (const platform of ["linux", "darwin", "freebsd"]) {
+      expect(shouldHoldConsole({ ...base, platform })).toBe(false);
+    }
+  });
+});

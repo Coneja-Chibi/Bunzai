@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/remote-access",
+  "sourcePath": "docs/reference/security/remote-access.md",
+  "sourceHash": "sha256:0136dfdcf632a08077846bb198560d5083398ba276088bd5c6973ad1e6dddbe6",
+  "semanticSummaryHash": "sha256:cce2d7757afebeed6dd79b1a24157ba89a061bd2e651b85236b4103e8f76e8c5",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:48:01.942Z"
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku, a little stage for your AI characters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="ds/colors_and_type.css">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- the ticket bun: the logo -->
+    <symbol id="tk" viewBox="0 0 100 100">
+      <g transform="rotate(-8 50 50)">
+        <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--brand)" stroke="#000" stroke-width="4" stroke-linejoin="miter"/>
+        <path d="M64 30 V70" stroke="#000" stroke-width="2.5" stroke-dasharray="4 4"/>
+        <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="#000"/>
+        <ellipse cx="36" cy="58" rx="13" ry="11" fill="#000"/>
+        <circle cx="78" cy="50" r="6" fill="var(--paper)" stroke="#000" stroke-width="3"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#/"><svg><use href="#tk"/></svg><span>BUN<i>·</i>RAKU</span></a>
+  <nav class="links" aria-label="Site">
+    <a href="#/tour" data-nav="tour">The Tour</a>
+    <a href="#/guides" data-nav="guides">Guides</a>
+    <a href="#/whats-new" data-nav="whats-new">What's New</a>
+    <a href="#/try" data-nav="try">Try It</a>
+  </nav>
+  <span class="ver" id="verChip" title="Latest release"><i></i><b id="verText">v0.1.42</b></span>
+  <a class="btn btn-rose" href="#/download">Get a Ticket</a>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</header>
+
+<div id="app"></div>
+
+<div class="ticker" aria-hidden="true"><div class="ticker-track" id="ticker"></div></div>
+
+<script src="data.js"></script>
+<script src="bunny.js"></script>
+<script src="pages.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

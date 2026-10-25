@@ -1,0 +1,68 @@
+/**
+ * The turn's side of the narrator tool loop. Which tools a reply gets (none unless the scene's
+ * Narrator Tool Access is on, the connection takes tools, and the reply is not a Continue), the send itself (the plain send when there
+ * are none), and what the stored trace and request keep of the calls: a `tools` section, plus one trace block and one request text per
+ * tool answer, so the Tokens sheet and the raw request show what the model was told. Split out of scene-turn.ts for the file-size cap.
+ */
+import { TOOL_ROUNDS_DEFAULT } from "../core/assembly/tool-rounds";
+import { countText } from "../core/tokens";
+import type { Chat, JsonObject } from "../stage/contracts/chat-store";
+import type { ProviderCompletion, ProviderEvent, ProviderMessage, ProviderRequest } from "../stage/contracts/provider";
+import { sendWithTools, type NarratorTool, type ToolCallRecord } from "../stage/provider/tool-loop";
+import type { Connected } from "./scene-turn";
+import type { LoadedTurn, TurnKind } from "./scene-turn-load";
+
+/** The first-party tools a scene's reply may call; the server supplies the real list. */
+export type NarratorToolsFor = (ctx: { chat: Chat; loaded: LoadedTurn }) => NarratorTool<never>[];
+
+/** What one turn collects as its tool rounds run; read by the trace, the meter and the fallback rule. */
+export interface ToolTurn {
+  tools: NarratorTool<never>[];
+  maxRounds: number;
+  calls: ToolCallRecord[];
+  extra: ProviderMessage[];
+  rounds: number;
+  tokens: { prompt: number; output: number };
+}
+
+export function toolTurn(find: NarratorToolsFor | undefined, kind: TurnKind, chat: Chat, loaded: LoadedTurn): ToolTurn {
+  const on = chat.prompting?.toolAccess === true && kind !== "continue";
+  return { tools: on && find ? find({ chat, loaded }) : [], maxRounds: chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT, calls: [], extra: [], rounds: 0, tokens: { prompt: 0, output: 0 } };
+}
+
+/** The definitions the Prompt Inspector shows: only when this connection will actually be sent them. */
+export const sentTools = (turn: ToolTurn, connected: Connected): { name: string; description: string; parameters: JsonObject }[] =>
+  connected.tools === true ? turn.tools.map((t) => ({ name: t.definition.function.name, description: t.definition.function.description, parameters: t.definition.function.parameters as JsonObject })) : [];
+
+/** One send of the reply: through the tool loop when the connection takes the turn's tools, else the plain send. */
+export async function sendReply(
+  connected: Connected,
+  request: ProviderRequest,
+  io: { signal: AbortSignal; onEvent: (event: ProviderEvent) => void },
+  turn: ToolTurn,
+  now: () => number,
+): Promise<ProviderCompletion> {
+  if (connected.tools !== true || turn.tools.length === 0) return connected.provider.send(request, io);
+  const done = await sendWithTools(connected.provider, request, io, { tools: turn.tools, maxRounds: turn.maxRounds, now, onCall: (r) => void turn.calls.push(r) });
+  turn.extra = done.extra;
+  turn.rounds = done.rounds;
+  turn.tokens = done.tokens;
+  return done.completion;
+}
+
+/** The trace and the request texts with this turn's tool calls added; unchanged when there were none. */
+export function withToolCalls<T extends { texts: string[] }>(turn: ToolTurn, trace: JsonObject, request: T): { trace: JsonObject; request: T } {
+  if (turn.calls.length === 0) return { trace, request };
+  const blocks = Array.isArray(trace["blocks"]) ? (trace["blocks"] as JsonObject[]) : [];
+  const section: JsonObject = {
+    maxRounds: turn.maxRounds,
+    rounds: turn.rounds,
+    defs: turn.tools.map((t) => t.definition.function.name),
+    // Names, arguments, outcomes and counts: never what the tool returned (04b F12).
+    calls: turn.calls.map((c) => ({ round: c.round, name: c.name, args: c.args, ok: c.ok, ...(c.error ? { error: c.error } : {}), ms: c.ms, chars: c.text.length, tokens: countText(c.text), ...(c.detail ? { detail: c.detail as JsonObject } : {}) })),
+  };
+  return {
+    trace: { ...trace, blocks: [...blocks, ...turn.calls.map((c): JsonObject => ({ source: { kind: "tool", id: c.name }, role: "tool", tokens: countText(c.text) }))], tools: section },
+    request: { ...request, texts: [...request.texts, ...turn.calls.map((c) => c.text)] },
+  };
+}

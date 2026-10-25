@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/persona-editor",
+  "sourcePath": "docs/reference/concepts/persona-editor.md",
+  "sourceHash": "sha256:235b2a040e17a31ab1c50118396c3a016ce6d615b94901feb11da285b4cb756e",
+  "semanticSummaryHash": "sha256:2ccc59e52b9af273954432aa400ee80e5d44eb0a7f506667aff90cae079110b5",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:12.369Z"
+}

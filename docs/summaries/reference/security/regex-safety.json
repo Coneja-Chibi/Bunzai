@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/regex-safety",
+  "sourcePath": "docs/reference/security/regex-safety.md",
+  "sourceHash": "sha256:db33c9f61b196931c6864bdf3b9e7acf0cd724ae7d65c5f25d4b05a0071eeba5",
+  "summary": "Canonical reference for ReDoS defense when untrusted card-authored find patterns enter the regex engine. JavaScript RegExp is synchronous and uninterruptible on its thread, so installed Bunraku layers structural AST screening before compile with disposable-worker previews terminated at 750 ms. Static GitHub Pages keeps regex source editable but refuses execution because it cannot provide ADR-009's separate sandbox origin. parseRegex builds data-only typed trees and reports errors as values. The screen detects nested unbounded quantifiers, overlapping quantified alternation, and quantified backreferences with exact culprit spans and safe, suspicious, or dangerous severity. validateRule caps fields, rejects empty or invalid patterns, and blocks dangerous shapes; applyRule validates every enabled rule before compile and leaves text unchanged on rejection. UI surfaces show plain errors while culprit highlighting remains unwired. Known gaps include non-preemptive direct-core timeout, weaker fallback analysis, unimplemented v-flag set notation, and coarse character-set overlap.",
+  "topics": [
+    "ReDoS catastrophic backtracking",
+    "AST parse never executes",
+    "validateRule gate",
+    "dangerous vs suspicious severity",
+    "applyRule every run",
+    "Studio regex worker 750ms",
+    "culprit span not rendered",
+    "precision over recall",
+    "fallback heuristic Annex B",
+    "guidedMiss not rejection"
+  ],
+  "sections": [
+    {
+      "slug": "the-ast-layer-never-executes-anything",
+      "title": "The AST layer never executes anything",
+      "level": 2,
+      "sourceHash": "sha256:132b26f45d7f8894598d73129741ca0af2048c5788fc210a1a55916cd65b0e3c",
+      "summary": "parser.ts is a clean-room ECMAScript parser parseRegex that turns a pattern string into a typed node tree under the unicode-mode u-flag grammar regardless of the rule flags string. It never throws: syntax failure returns { error, at } as a value. ast-types states the tree is DATA describing a pattern, never executable; compilation and matching stay in apply.ts. No AST-layer file including the ReDoS analyzer ever constructs or runs a RegExp. A narrow Annex-B-only legacy class is out of scope by design and returns an honest parse error instead of a silently different parse: lone open brace, bare close bracket, \\p as literal p, octal \\8, or quantified lookaround. The v-flag set-notation grammar nested class operators -- and && is staged and unimplemented: parseClass has no branch for them and V_MODE_ENABLED is false. ReDoS implications of that staging appear under Known gaps.",
+      "topics": [
+        "parseRegex never throws",
+        "AST data not executable",
+        "unicode-mode grammar",
+        "Annex B honest error",
+        "v-flag unimplemented"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-screen-three-structural-culprits",
+      "title": "The screen: three structural culprits",
+      "level": 2,
+      "sourceHash": "sha256:d983f6dd23591ba74fd305698375e3eee2f47ebe6018d143b0095d6adb7711e0",
+      "summary": "redos.ts walks every unbounded quantifier max null in the parsed tree and checks three shapes, each producing a finding with exact RedosFinding.culpritSpan. Nested unbounded quantifier via hasAmbiguousInnerLoop catches (a+)+ and (.+)+ while (a+b)+ with a mandatory separator is safe. Overlapping alternation under a quantifier via alternationOverlap catches (a|a)+ and prefix ambiguity (a|ab)+; disjoint (a|b)+ is safe. Backreference inside unbounded repetition via containsBackreference catches (a)\\1+ while unquantified (a)\\1 is fine. Severity is safe, suspicious, or dangerous: literal prefix or equality ambiguity is dangerous; coarse first-set overlap on complex alternatives like (\\d|\\w)+ is only suspicious; nested quantifier and quantified backreference findings are always dangerous. Detector is precision over recall: false positives cry wolf while misses fall through to existing guards. Character-set membership is a coarse sample-based approximation; dot and Unicode-property atoms are wide true and can only push toward suspicious or dangerous. Mandatory disjoint separators are proven safe via nullability and first-set reasoning over the AST.",
+      "topics": [
+        "nested unbounded quantifier",
+        "alternation overlap",
+        "quantified backreference",
+        "safe suspicious dangerous",
+        "precision over recall",
+        "culpritSpan"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-gate-validaterule",
+      "title": "The gate: `validateRule`",
+      "level": 2,
+      "sourceHash": "sha256:a22135320dba5b96a57bda91c0a7ee9760d4aa55faffdb89ef8e90df1e3b4904",
+      "summary": "validate.ts turns analyzeRedos into refusal. Order: length caps reject find over MAX_PATTERN_LENGTH 10000 or replace over MAX_REPLACEMENT_LENGTH 10000 first; empty or whitespace-only find rejects; native new RegExp under jsFlagsForRule with the same flags apply.ts will use; then parseRegex without flags because flags do not change ReDoS shape. When the pattern parses the AST branch is authoritative: severity dangerous returns ok false with nested quantifiers catastrophic backtracking error, complexity COMPLEXITY_HARD_CAP, and culprit span, and the pattern is never compiled for real; numeric complexity is display only here not re-thresholded. Severity suspicious still ok true but complexity floored at COMPLEXITY_HARD_CAP minus 10 (40) to clear inspect SLOW_COMPLEXITY 20 so it runs with a heavy-pattern nudge not a block. Culprit attaches whenever analyzeRedos found something even on ok true; safe leaves culprit unset. When parse fails Annex-B-legacy-only, fallback estimateComplexity uses NESTED_QUANTIFIER regex plus flat costs; only on this path complexity >= COMPLEXITY_HARD_CAP 50 is itself rejection. Verbatim error strings cover length empty replacement invalid native and nested quantifiers.",
+      "topics": [
+        "MAX_PATTERN_LENGTH 10000",
+        "dangerous never compile",
+        "suspicious still ok",
+        "jsFlagsForRule native check",
+        "fallback complexity 50",
+        "verbatim error strings"
+      ],
+      "children": []
+    },
+    {
+      "slug": "enforced-on-every-run-not-just-at-save",
+      "title": "Enforced on every run, not just at save",
+      "level": 2,
+      "sourceHash": "sha256:456c75fcd9f98067251fa2e10aa2d281a94d21893e29378b71015a64433a1440",
+      "summary": "applyRule calls validateRule for every enabled rule on every engine pass, after cheap skip checks and before compilation; rejection returns applied false with the error and leaves text unchanged. Accepted patterns get a between-step timeout that cannot interrupt one synchronous match, so the installed Studio adds a preemptive disposable worker. Its request check (request.ts) caps a request at 200000 text characters and 500 rules and also takes a batch of up to 300 texts at their own depths, which is how a scene runs its messages. A door test lists the only files allowed to call applyRules: the worker's request check and the Kit regex tools. A scene's display and prompt regex reach an imported rule only through the worker, and a worker that cannot run ends a prompt pass instead of sending text unrewritten. Static Pages refuses before creating a worker.",
+      "topics": [
+        "validate every applyRule",
+        "between-step timeout",
+        "disposable worker",
+        "batch requests",
+        "applyRules door list",
+        "scene regex fails closed",
+        "static Pages refusal"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-the-user-actually-sees-when-a-pattern-is-rejected",
+      "title": "What the user actually sees when a pattern is rejected",
+      "level": 2,
+      "sourceHash": "sha256:85446006fa7107eacda098ec0ecd96d568eaa0dead1ca73373b78acdfec27ca2",
+      "summary": "Two UI surfaces read RuleValidation.error as plain text; neither currently renders the culprit span. The per-rule Health card in rule-rail calls validateRule and when not ok shows health.error or Check this pattern, the exact refusal string while editing. The whole-set linter in inspect calls validateRule on every enabled rule and on failure pushes a broken-pattern finding whose message embeds v.error; broken rules are excluded from duplicate and shadowing checks for that pass. redos describes itself as underline source for QOL row 22 editor highlights culpritSpan, and RuleValidation.culprit is populated on the dangerous path with tests; the suspicious path shares culprit attach by code inspection not test. As of this reading no file under src/ui reads .culprit; only the two plain-text surfaces consume validateRule in the UI. Exact-span underline is computed and tested but not yet wired to a rendered highlight.",
+      "topics": [
+        "Health card plain error",
+        "broken-pattern linter",
+        "culprit not rendered",
+        "no UI culprit consumer",
+        "underline unwired"
+      ],
+      "children": []
+    },
+    {
+      "slug": "guided-modes-hitmiss-chips-are-a-separate-feature-not-a-rejection-report",
+      "title": "Guided mode's hit/miss chips are a separate feature, not a rejection report",
+      "level": 2,
+      "sourceHash": "sha256:db406d8915c8be0036c6972d02e1b790aed798b345ef492b24a61ee64402c63f",
+      "summary": "guided-feedback.ts is easy to mistake for a second rejection surface because it touches user examples and a compiled RegExp; it is not. guidedMiss builds the Guided quiz it will catch preview from author examples and the pattern buildFromExamples derived, substituting one unseen word struck only if the compiled pattern truly rejects it. It never reports validation failure and has no severity or culprit. It skips the ReDoS gate: compile builds new RegExp without validateRule or analyzeRedos and swallows failure as null. Safety is read-only String.test never eval, not the ReDoS screen. The preview pattern comes from buildFromExamples not raw author regex; this page claims nothing about that builder. Not an execution bypass: when the guided wizard writes find and flags, the stored pattern hits the same validateRule-before-compile gate on every applyRules pass. The gap is only the wizard preview compile on every keystroke, ahead of the downstream gate.",
+      "topics": [
+        "guidedMiss not rejection",
+        "preview skips validateRule",
+        "buildFromExamples pattern",
+        "stored rule still gated",
+        "read-only String.test"
+      ],
+      "children": []
+    },
+    {
+      "slug": "known-gaps",
+      "title": "Known gaps",
+      "level": 2,
+      "sourceHash": "sha256:d2141d0115e3c6f94eadd22118d75c50b8e91a0c774de3663aa1f1eb57fb6155",
+      "summary": "Core timeout is not preemptive: an AST false negative can hang inside one synchronous RegExp match because timeoutMs is checked only between steps. Installed Studio terminates a disposable worker; static Pages refuses execution; direct core callers must supply their own terminable boundary. When strict AST parsing refuses syntax, fallback analysis is materially weaker and misses overlap and quantified-backreference classes. v-flag set notation likely reaches that weaker path because parseClass lacks set operators. Character-set overlap is coarse rather than full algebra. Culprit spans are computed but not rendered. Patterns reaching the core gate are analyzed before compile and AST-dangerous patterns never run.",
+      "topics": [
+        "timeout not preemptive",
+        "direct core boundary required",
+        "weaker fallback heuristic",
+        "v-flag set notation gap",
+        "coarse character-set overlap",
+        "culprit UI unwired"
+      ],
+      "children": []
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:bf47583fba1aec3a86f81d0ead21f534b3c89093f5af494eb58dcd9e6c8a7616",
+      "summary": "Maps each concern to its authority file. ECMAScript AST parser that never executes is parser.ts; node shapes and spans are ast-types.ts; structural ReDoS analysis culprit spans and severity are redos.ts; the gate validateRule length caps complexity and fallback heuristic is validate.ts; flags derivation shared between gate and runtime is dialect.ts; runtime validate-before-compile and per-rule timeout match-count budget is apply.ts; Studio worker shell wall-clock termination is run-in-worker.ts; value-only regex execution worker and request caps are sandbox regex worker.ts; whole-set linter broken-pattern and slow-pattern findings are inspect.ts; per-rule Health card plain-text rejection is rule-rail.tsx; guided hit miss chips are guided-feedback.ts and mode-guided.tsx; fixtures for every severity tier and exact culprit span are redos.test.ts and validate.test.ts.",
+      "topics": [
+        "parser redos validate files",
+        "apply run-in-worker",
+        "sandbox regex worker",
+        "inspect rule-rail",
+        "redos validate tests"
+      ],
+      "children": []
+    }
+  ]
+}

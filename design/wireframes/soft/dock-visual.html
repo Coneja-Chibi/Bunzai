@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dock, more visual</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * A more visual Dock: the same left sidebar from workbench-shell.html (kept byte-identical at
+ * rest - same classes, same icon set, same order/colors), with three things layered on top of it,
+ * all off by default so the Dock's rest look never changes:
+ *   1. hover peeks - a picture-led flyout beside the hovered app (nested .peek, shown on :hover or
+ *      forced open by ?state= for screenshotting)
+ *   2. a first-run guide - each app grows a one-line description + tiny illustration strip, plus a
+ *      "Got it, keep it compact" button that returns to the normal Dock
+ *   3. a Rich Dock setting - a wider Dock where each app keeps a small live strip under it
+ * Phone width folds the Dock into a bottom tab bar; long-press opens the peek as a bottom sheet.
+ * Known gap (same as every page in this set): soft-parts.css sets .s-app small/kbd
+ * and .wf-bar text at 11px, under this brief's 12px floor - overridden below.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; position: relative; transition: width .15s; }
+.stage { flex: 1; min-width: 0; background: var(--canvas); position: relative; }
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+/* ---- the placeholder page: deliberately dull so the Dock stays the subject ---- */
+.placeholder { filter: blur(3px); opacity: .55; padding: 40px 44px; pointer-events: none; user-select: none; }
+.placeholder .prow { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.placeholder .pcard { flex: 1; min-width: 200px; height: 130px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.placeholder .pbar { height: 34px; width: 60%; background: var(--face); box-shadow: 0 0 0 1px var(--edge); margin-bottom: 24px; }
+.placeholder .pline { height: 12px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); margin-bottom: 8px; }
+.placeholder .pline.w1 { width: 80%; } .placeholder .pline.w2 { width: 65%; } .placeholder .pline.w3 { width: 72%; }
+.stage-caption { position: absolute; top: 18px; left: 44px; font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); }
+
+/* ================= 1. hover peeks ================= */
+.s-app { position: relative; }
+.peek {
+  display: none; position: absolute; left: calc(100% + 10px); top: -2px; z-index: 80; width: 300px;
+  text-align: left; cursor: default;
+  background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow);
+  border-top: 4px solid var(--c); padding: 14px 16px 16px;
+}
+.peek .s-h3 { color: var(--text); }
+.peek-desc { color: var(--text-soft); font-size: 12px; line-height: 1.5; margin: 4px 0 12px; }
+.peek-body { display: flex; flex-direction: column; gap: 8px; }
+.peek-foot { display: flex; gap: 8px; margin-top: 14px; }
+.peek-foot .s-btn { padding: 7px 12px; font-size: 12px; flex: none; }
+.peek-foot .s-btn.grow { flex: 1; justify-content: center; }
+
+.peek-scene { display: flex; align-items: center; gap: 10px; }
+.peek-av { width: 28px; height: 28px; flex: none; display: grid; place-items: center; font: 700 12px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.peek-tx { flex: 1; min-width: 0; }
+.peek-tx b { display: block; font: 600 13px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.peek-tx span { display: block; font: 400 12px var(--font-body); color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.peek-editor { display: flex; align-items: center; gap: 8px; padding: 7px 9px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); }
+.peek-editor .pip { width: 7px; height: 7px; flex: none; background: var(--t); }
+.peek-editor b { flex: 1; min-width: 0; font: 600 12px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.peek-editor .kind { font: 500 12px var(--font-mono); color: var(--text-dim); flex: none; }
+.peek-editor .ddot { width: 6px; height: 6px; flex: none; background: var(--stage-warn); }
+
+.peek-deck { display: flex; align-items: center; gap: 9px; }
+.peek-cov { width: 24px; height: 24px; flex: none; display: grid; place-items: center; font: 700 11px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.peek-decktx { flex: 1; font: 500 12px var(--font-body); color: var(--text-soft); }
+.peek-cnt { font: 600 12px var(--font-mono); color: var(--text-dim); }
+
+.peek-line { font: 600 13px var(--font-body); color: var(--text); margin: 0 0 2px; }
+.peek-item { display: flex; align-items: center; gap: 8px; font: 400 12px var(--font-body); color: var(--text-soft); }
+.peek-item .dot { width: 8px; height: 8px; flex: none; box-shadow: inset 0 0 0 1px var(--edge); background: var(--stage-faint); }
+.peek-item .dot.ok { background: var(--stage-ok); }
+.peek-item .dot.warn { background: var(--stage-warn); }
+.peek-item .dot.fail { background: var(--stage-danger-edge); }
+.peek-item b { color: var(--text); font-weight: 600; }
+.peek-item span { color: var(--text-dim); }
+
+.peek-q { margin: 0; padding: 10px 12px; font: italic 400 13px var(--font-body); color: var(--text-soft); background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); }
+.peek-ask-row { display: flex; gap: 6px; margin-top: 10px; }
+.peek-ask { flex: 1; min-width: 0; padding: 7px 9px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 400 12px var(--font-body); }
+.peek-ask::placeholder { color: var(--text-faint); }
+
+.peek-term { margin: 0; padding: 10px 12px; background: var(--stage-ink); color: var(--stage-soft); font: 400 12px/1.6 var(--font-mono); white-space: pre-wrap; box-shadow: inset 0 0 0 1px var(--seam); }
+.peek-term b { color: var(--deck-persona); font-weight: 500; }
+
+.peek-switchrow { display: flex; align-items: center; gap: 10px; font: 500 12px var(--font-body); color: var(--text-soft); }
+
+.s-app:hover .peek, .s-app:focus-within .peek { display: block; }
+body[data-state="peek-scenes"] .c-scenes .peek,
+body[data-state="peek-workbench"] .c-workbench .peek,
+body[data-state="peek-library"] .c-library .peek,
+body[data-state="peek-press"] .c-press .peek,
+body[data-state="peek-agent"] .c-agent .peek,
+body[data-state="peek-kit"] .c-kit .peek,
+body[data-state="peek-settings"] .c-settings .peek { display: block; }
+
+/* ================= 2. first-run guide ================= */
+.fr-desc, .fr-strip { display: none; grid-column: 1 / -1; }
+.fr-desc { font: 400 12px/1.5 var(--font-body); color: var(--text-dim); margin-top: 3px; }
+.fr-strip { gap: 4px; margin-top: 7px; }
+.fr-chip { width: 20px; height: 20px; flex: none; display: grid; place-items: center; font: 700 10px var(--font-fancy); color: var(--stage-ink); background: var(--t); opacity: .9; }
+.fr-done { display: none; margin-top: 10px; padding: 4px 8px 0; }
+.fr-done .s-btn { width: 100%; justify-content: center; padding: 9px 10px; font-size: 12px; }
+
+body[data-state="firstrun"] .s-dock { width: 268px; }
+body[data-state="firstrun"] .s-app { align-items: start; padding: 11px 10px 13px; }
+body[data-state="firstrun"] .s-app i { margin-top: 1px; }
+body[data-state="firstrun"] .fr-desc,
+body[data-state="firstrun"] .fr-strip { display: flex; }
+body[data-state="firstrun"] .fr-desc { display: block; }
+body[data-state="firstrun"] .fr-done { display: block; }
+body[data-state="firstrun"] .peek { display: none !important; }
+
+/* ================= 3. Rich Dock setting ================= */
+.rd-strip { display: none; grid-column: 1 / -1; gap: 6px; align-items: center; margin-top: 5px; }
+.rd-dot { width: 14px; height: 14px; flex: none; display: grid; place-items: center; font: 700 8px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.rd-txt { font: 500 12px var(--font-mono); color: var(--text-dim); }
+
+body[data-state="rich"] .s-dock { width: 268px; }
+body[data-state="rich"] .rd-strip { display: flex; }
+
+/* ================= phone: Dock becomes a bottom tab bar ================= */
+@media (max-width: 640px) {
+  .stage { padding-bottom: 68px; }
+  .s-dock {
+    position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60;
+    width: 100%; min-height: 0; flex-direction: row; align-items: stretch;
+    padding: 4px 2px; gap: 0; box-shadow: inset 0 1px 0 var(--seam);
+  }
+  .s-dock .brand { display: none; }
+  .s-dock .s-app {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; padding: 7px 2px; grid-template-columns: none;
+  }
+  .s-dock .s-app.on { background: none; box-shadow: inset 0 2px 0 var(--c); }
+  .s-dock .s-app b { font-size: 10px; }
+  .s-dock .s-app small,
+  .s-dock .s-app .fr-desc, .s-dock .s-app .fr-strip, .s-dock .s-app .rd-strip { display: none !important; }
+  .s-dock .s-app i { width: 20px; height: 20px; }
+  .s-dock .peek { display: none !important; }
+  .s-dock .fr-done { display: none !important; }
+}
+
+/* the long-press sheet that stands in for the peek at phone width */
+.sheet-scrim { display: none; position: fixed; inset: 0; z-index: 90; background: var(--scrim); }
+.sheet { display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; max-height: 72vh; overflow-y: auto;
+  background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--c, var(--accent)); padding: 10px 18px 22px; }
+.sheet-scrim.show, .sheet.show { display: block; }
+.sheet-handle { width: 36px; height: 4px; background: var(--seam); margin: 0 auto 14px; }
+.sheet .peek { display: block !important; position: static; width: auto; box-shadow: none; border: 0; padding: 0; }
+.sheet-hint { text-align: center; font: 500 12px var(--font-mono); color: var(--text-faint); margin-top: 10px; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="s-dock" id="dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+
+    <div class="s-app c-scenes">
+      <i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small>
+      <p class="fr-desc">Scenes: where you play your stories.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--deck-character)">M</span><span class="fr-chip" style="--t:var(--deck-persona)">N</span><span class="fr-chip" style="--t:var(--deck-lorebook)">T</span></div>
+      <div class="rd-strip"><span class="rd-dot" style="--t:var(--deck-character)">M</span><span class="rd-dot" style="--t:var(--deck-persona)">N</span><span class="rd-dot" style="--t:var(--deck-lorebook)">T</span><span class="rd-txt">3 cast, latest 2h ago</span></div>
+      <div class="peek">
+        <b class="s-h3">Scenes</b>
+        <p class="peek-desc">Scenes: where you play your stories.</p>
+        <div class="peek-body">
+          <div class="peek-scene" style="--t:var(--deck-character)"><span class="peek-av">M</span><span class="peek-tx"><b>Marguerite Vane</b><span>The long storm &middot; 2h ago</span></span></div>
+          <div class="peek-scene" style="--t:var(--deck-persona)"><span class="peek-av">N</span><span class="peek-tx"><b>Nuit</b><span>Cut the deck &middot; 3d ago</span></span></div>
+          <div class="peek-scene" style="--t:var(--deck-lorebook)"><span class="peek-av">T</span><span class="peek-tx"><b>The Magpie</b><span>The lock gave on the third try &middot; 10d ago</span></span></div>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn grow">Continue</button><button type="button" class="s-btn ghost">Open</button></div>
+      </div>
+    </div>
+
+    <div class="s-app c-workbench">
+      <i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small>
+      <p class="fr-desc">Workbench: where you edit and build pieces.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--deck-character)">C</span><span class="fr-chip" style="--t:var(--deck-lorebook)">L</span><span class="fr-chip" style="--t:var(--deck-preset)">P</span></div>
+      <div class="rd-strip"><span class="rd-txt">3 open, 1 unsaved</span></div>
+      <div class="peek">
+        <b class="s-h3">Workbench</b>
+        <p class="peek-desc">Workbench: where you edit and build pieces.</p>
+        <div class="peek-body">
+          <div class="peek-editor" style="--t:var(--deck-character)"><span class="pip"></span><b>Marguerite Vane</b><span class="ddot" title="unsaved changes"></span><span class="kind">CHAR</span></div>
+          <div class="peek-editor" style="--t:var(--deck-lorebook)"><span class="pip"></span><b>Keeper's Log</b><span class="kind">LORE</span></div>
+          <div class="peek-editor" style="--t:var(--deck-preset)"><span class="pip"></span><b>Velvet Quill</b><span class="kind">PSET</span></div>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn ghost grow">Open</button></div>
+      </div>
+    </div>
+
+    <div class="s-app c-library">
+      <i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small>
+      <p class="fr-desc">Library: where everything you own lives.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--deck-character)">C</span><span class="fr-chip" style="--t:var(--deck-lorebook)">L</span><span class="fr-chip" style="--t:var(--deck-persona)">P</span></div>
+      <div class="rd-strip"><span class="rd-txt">75 pieces across 4 decks</span></div>
+      <div class="peek">
+        <b class="s-h3">Library</b>
+        <p class="peek-desc">Library: where everything you own lives.</p>
+        <div class="peek-body">
+          <div class="peek-deck" style="--t:var(--deck-character)"><span class="peek-cov">C</span><span class="peek-decktx">Characters</span><span class="peek-cnt">41</span></div>
+          <div class="peek-deck" style="--t:var(--deck-lorebook)"><span class="peek-cov">L</span><span class="peek-decktx">Lorebooks</span><span class="peek-cnt">18</span></div>
+          <div class="peek-deck" style="--t:var(--deck-persona)"><span class="peek-cov">P</span><span class="peek-decktx">Personas</span><span class="peek-cnt">4</span></div>
+          <div class="peek-deck" style="--t:var(--deck-preset)"><span class="peek-cov">S</span><span class="peek-decktx">Presets</span><span class="peek-cnt">12</span></div>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn ghost grow">Open</button></div>
+      </div>
+    </div>
+
+    <div class="s-app c-press">
+      <i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small>
+      <p class="fr-desc">Press: where you export to other apps.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--stage-ok)">&check;</span><span class="fr-chip" style="--t:var(--stage-warn)">!</span><span class="fr-chip" style="--t:var(--stage-danger-edge)">&times;</span></div>
+      <div class="rd-strip"><span class="rd-txt">4 staged, 1 dropped</span></div>
+      <div class="peek">
+        <b class="s-h3">Press</b>
+        <p class="peek-desc">Press: where you export to other apps.</p>
+        <div class="peek-body">
+          <p class="peek-line">4 staged &middot; 1 dropped</p>
+          <div class="peek-item"><span class="dot warn"></span><b>Marguerite Vane</b><span>character</span></div>
+          <div class="peek-item"><span class="dot"></span><b>Keeper's Log</b><span>rides with Marguerite Vane</span></div>
+          <div class="peek-item"><span class="dot fail"></span><b>The Lighthouse</b><span>lorebook</span></div>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn ghost grow">Open</button></div>
+      </div>
+    </div>
+
+    <div class="s-app c-agent">
+      <i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small>
+      <p class="fr-desc">Agent: ask questions, get quick fixes.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--deck-preset)">?</span></div>
+      <div class="rd-strip"><span class="rd-txt">answered 6m ago</span></div>
+      <div class="peek">
+        <b class="s-h3">Agent</b>
+        <p class="peek-desc">Agent: ask questions, get quick fixes.</p>
+        <div class="peek-body">
+          <p class="peek-q">"What does Marguerite know about the lighthouse keeper?"</p>
+          <div class="peek-ask-row"><input class="peek-ask" placeholder="Ask a question&hellip;" aria-label="Ask the Agent"><button type="button" class="s-btn">Ask</button></div>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn ghost grow">Open</button></div>
+      </div>
+    </div>
+
+    <div class="s-app c-kit">
+      <i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small>
+      <p class="fr-desc">Kit: a terminal for advanced tasks.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--deck-lorebook)">&gt;</span></div>
+      <div class="rd-strip"><span class="rd-txt">idle</span></div>
+      <div class="peek">
+        <b class="s-h3">Kit</b>
+        <p class="peek-desc">Kit: a terminal for advanced tasks.</p>
+        <div class="peek-body">
+          <pre class="peek-term">$ bunraku export marguerite-vane --to sillytavern
+wrote <b>marguerite-vane.json</b></pre>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn ghost grow">Open</button></div>
+      </div>
+    </div>
+
+    <div class="s-app c-settings">
+      <i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small>
+      <p class="fr-desc">Settings: tune how Bunraku behaves.</p>
+      <div class="fr-strip"><span class="fr-chip" style="--t:var(--text-dim)">A</span></div>
+      <div class="rd-strip"><span class="rd-txt">2 of 3 on</span></div>
+      <div class="peek">
+        <b class="s-h3">Settings</b>
+        <p class="peek-desc">Settings: tune how Bunraku behaves.</p>
+        <div class="peek-body">
+          <div class="peek-switchrow"><span class="s-switch on" style="--c:var(--deck-character)"></span>Auto-save drafts</div>
+          <div class="peek-switchrow"><span class="s-switch on" style="--c:var(--deck-character)"></span>Confirm before delete</div>
+          <div class="peek-switchrow"><span class="s-switch" style="--c:var(--deck-character)"></span>Sound cues</div>
+        </div>
+        <div class="peek-foot"><button type="button" class="s-btn ghost grow">Open</button></div>
+      </div>
+    </div>
+
+    <div class="fr-done"><button type="button" class="s-btn" id="frDoneBtn">Got it, keep it compact</button></div>
+  </nav>
+
+  <div class="stage">
+    <span class="stage-caption">a placeholder page, so the Dock has somewhere to sit</span>
+    <div class="placeholder">
+      <div class="pbar"></div>
+      <div class="prow"><div class="pcard"></div><div class="pcard"></div><div class="pcard"></div></div>
+      <div class="pline w1"></div><div class="pline w2"></div><div class="pline w3"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-scrim" id="sheetScrim"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div id="sheetBody"></div>
+  <p class="sheet-hint">Long-press a tab to see this; tap outside or the handle to close.</p>
+</div>
+
+<div class="wf-note">
+  <b>The Dock, made more visual.</b> Rest is workbench-shell.html's Dock, unchanged. Hovering an app
+  opens a picture-led peek beside it (Scenes: 3 latest scenes with cast + Continue; Workbench: open
+  editors; Library: deck cover counts; Press: staged queue; Agent: last question + Ask; Kit: a
+  terminal line; Settings: most-used switches) - each peek is a nested, off-by-default child so the
+  Dock's own box never changes size at rest. First-run grows a description + tiny illustration strip
+  under every app's name, with "Got it, keep it compact" returning to normal. Rich Dock (a setting) is
+  a wider Dock that keeps a small live strip under each app permanently, no onboarding copy. At phone
+  width the Dock becomes a bottom tab bar with the same icons and colors; long-press opens the peek as
+  a bottom sheet (try it after loading the Phone state on an actual narrow window - the sheet is real
+  pointer/touch interaction, not a wf-bar toggle).
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="rest" class="on">Rest</button>
+  <button data-s="peek-scenes">Peek: Scenes</button>
+  <button data-s="peek-workbench">Peek: Workbench</button>
+  <button data-s="peek-library">Peek: Library</button>
+  <button data-s="peek-press">Peek: Press</button>
+  <button data-s="peek-agent">Peek: Agent</button>
+  <button data-s="peek-kit">Peek: Kit</button>
+  <button data-s="peek-settings">Peek: Settings</button>
+  <button data-s="firstrun">First-run guide</button>
+  <button data-s="rich">Rich Dock</button>
+  <button data-s="phone">Phone width</button>
+  <button data-s="phone-sheet">Phone: long-press sheet</button>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  var sheet = document.getElementById('sheet');
+  var sheetScrim = document.getElementById('sheetScrim');
+  var sheetBody = document.getElementById('sheetBody');
+
+  function closeSheet() { sheet.classList.remove('show'); sheetScrim.classList.remove('show'); }
+  function openSheetFor(app) {
+    var peek = app.querySelector('.peek');
+    if (!peek) return;
+    sheetBody.innerHTML = '';
+    sheetBody.appendChild(peek.cloneNode(true));
+    sheet.style.setProperty('--c', getComputedStyle(app).getPropertyValue('--c'));
+    sheet.classList.add('show');
+    sheetScrim.classList.add('show');
+  }
+
+  function set(s) {
+    var real = (s === 'phone-sheet') ? 'phone' : s;
+    body.setAttribute('data-state', real);
+    document.documentElement.style.maxWidth = (real === 'phone') ? '390px' : '';
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+    closeSheet();
+    if (s === 'phone-sheet') {
+      var scenes = document.querySelector('.s-app.c-scenes');
+      if (scenes) openSheetFor(scenes);
+    }
+  }
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'rest');
+  document.getElementById('wfbar').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) set(b.getAttribute('data-s')); });
+
+  /* long-press, real pointer interaction: only meaningful once the Dock is the bottom tab bar */
+  var LONG_PRESS_MS = 500, timer = null;
+  document.querySelectorAll('.s-app').forEach(function (app) {
+    function start(e) { timer = setTimeout(function () { openSheetFor(app); }, LONG_PRESS_MS); }
+    function cancel() { if (timer) { clearTimeout(timer); timer = null; } }
+    app.addEventListener('pointerdown', start);
+    app.addEventListener('pointerup', cancel);
+    app.addEventListener('pointerleave', cancel);
+  });
+  sheetScrim.addEventListener('click', closeSheet);
+  document.querySelector('.sheet-handle').addEventListener('click', closeSheet);
+})();
+</script>
+</body>
+</html>

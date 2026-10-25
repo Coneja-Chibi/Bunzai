@@ -1,0 +1,11 @@
+/** app.room sticker-tray, Agent (the docked room; the floating panel keeps the base arrangement): the conversation takes the wide side as chat bubbles, the status is a sticker tray on the right and the prompt is a card with a chunky send block. */
+html[data-surface-app-room="sticker-tray"] .agent-room[data-room="docked"] {
+  padding-right: 15.5rem;
+  & .agent-room__head { position: absolute; inset: 0 0 0 auto; width: 15rem; overflow: auto; border: 3px solid var(--bk-line-strong); border-width: 0 0 0 3px; padding: 1rem .8rem; }
+  & .agent-room__talk { gap: .7rem; padding: .8rem 1rem; background-image: radial-gradient(var(--bk-line) 2.5px, transparent 3px); background-size: 1.6rem 1.6rem; }
+  & .agent-room__line { border: 3px solid var(--bk-line-strong); border-left-width: 3px; max-width: 82%; box-shadow: 3px 3px 0 0 var(--bk-line-strong); }
+  & .agent-room__line--user { margin-left: auto; }
+  & .agent-room__compose { padding: .5rem .8rem .8rem; }
+  & .agent-room__composer { border: 3px solid var(--bk-line-strong); box-shadow: 4px 4px 0 0 var(--bk-line-strong); padding: .4rem; gap: .4rem; }
+  & .agent-room__composer button { border-width: 3px; padding-inline: 1.2rem; }
+}

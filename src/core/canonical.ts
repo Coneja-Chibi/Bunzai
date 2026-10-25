@@ -1,0 +1,115 @@
+/**
+ * Canonical core - the superset model every format converts through.
+ * The STRUCTURE here (wrapper, original, per-app profiles, format ids) is the stable spine.
+ * Entity field details live in ../entities/<kind>/schema.ts. Formats live in ../formats/<name>/.
+ */
+
+/**
+ * A format id. OPEN on purpose (just a string): drop a new adapter folder into src/formats/
+ * and it can claim any id it likes. The core never hardcodes the set of formats.
+ */
+export type FormatId = string;
+
+export const CANONICAL_SCHEMA_VERSION = "1" as const;
+
+const WIN_RESERVED = /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i;
+const STUDIO_ID_MAX = 120;
+
+/**
+ * Derive a stable storage-safe id from a display name. One owner for the policy so every
+ * adapter mints ids the same way. Always passes studio path-policy (letters/numbers + ._-).
+ * Fall back to "character" when empty after sanitization.
+ */
+export function canonicalId(name: unknown): string {
+  const raw = typeof name === "string" ? name.normalize("NFKC").toLowerCase().trim() : "";
+  // Keep letters/numbers; turn other runs into single hyphens.
+  let slug = raw
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  if (slug.length > STUDIO_ID_MAX) {
+    slug = Array.from(slug).slice(0, STUDIO_ID_MAX).join("").replace(/-+$/g, "");
+  }
+  if (!slug) return "character";
+  if (WIN_RESERVED.test(slug)) return `${slug}-id`;
+  return slug;
+}
+
+/** What we preserve from a source format so a round-trip loses nothing. */
+export interface OriginalEntry {
+  /** The original parsed payload, verbatim. */
+  raw: unknown;
+  /** Fields the canonical model did not (yet) express. */
+  unmapped?: Record<string, unknown>;
+  /** The binary CARRIER the payload arrived inside. A PNG card's pixels ARE authored art, so the
+   * carrier is kept as a raw-bytes twin - the portrait survives after the source file is gone,
+   * and a future same-format re-emit can restore the original file. Absent for text sources. */
+  sourceMedia?: { b64: string; mime: string };
+}
+
+/** Per-source original. Filled automatically on import, never hand-edited. */
+export type Original = Record<FormatId, OriginalEntry>;
+
+/**
+ * The raw source payload an entity was imported from: the first original entry's `raw`. One owner for
+ * "which original entry is the source", so a reader (labeler) and the bundle layer can't drift on it.
+ * Returns undefined for a from-scratch entity that never carried original.
+ */
+export const primaryOriginalRaw = (original: Partial<Original> | undefined): unknown =>
+  original ? Object.values(original)[0]?.raw : undefined;
+
+/**
+ * The format id of the primary original entry - the same "first entry is the source" rule as
+ * primaryOriginalRaw, but the KEY rather than the `raw` value. A caller building a per-format
+ * report (buildParseReport, a receipt) needs the id, not the payload; this is one owner for that
+ * lookup too, so it can never drift from primaryOriginalRaw's own notion of "primary."
+ */
+export const primaryOriginalId = (original: Partial<Original> | undefined): FormatId | undefined =>
+  original ? Object.keys(original)[0] : undefined;
+
+/**
+ * Sparse per-app overrides. Empty by default.
+ * You author the entity ONCE; set only the fields you want to DIFFER for a given app.
+ * A "per-app version" = canonical body + that app's overrides, projected by its adapter.
+ * It is NEVER a full duplicate record.
+ */
+export type Profiles<Body> = Record<FormatId, Partial<Body>>;
+
+/**
+ * An author's own note about a piece.
+ *
+ * NOT PART OF THE BODY, deliberately. The body is what a codec reads and writes, so anything living
+ * there has to be carried, dropped or escrowed by every adapter in the graph. A note is about the
+ * piece rather than in it - "the reset hook must stay first or this silently does nothing" is exactly
+ * the sort of thing worth keeping and exactly the sort of thing no target format has a field for. On
+ * the envelope it belongs to the studio, survives every conversion untouched, and needs no adapter
+ * to know it exists.
+ *
+ * ON THE ENVELOPE ALSO MEANS EVERY KIND GETS IT from one declaration, and that any surface reading a
+ * canonical entity - Kit, the Workbench, the Library - already has it in hand.
+ */
+export interface EntityNote {
+  /** Stable id, so an edit or a delete can name one note without matching its text. */
+  id: string;
+  text: string;
+  /** ISO timestamp of the last write. */
+  at: string;
+  /** Who wrote it. Absent means the person at the keyboard. */
+  by?: string;
+}
+
+/** The wrapper shared by every canonical entity (character, lorebook, preset, ...). */
+export interface CanonicalEntity<Kind extends string, Body> {
+  schemaVersion: typeof CANONICAL_SCHEMA_VERSION;
+  kind: Kind;
+  /** Stable internal id. */
+  id: string;
+  /** The actual content, in the canonical superset shape. */
+  body: Body;
+  /** Optional per-app deltas. */
+  profiles?: Profiles<Body>;
+  /** Lossless carry of source-format specifics. */
+  original?: Original;
+  /** The author's own notes about this piece. Studio-only; no format carries them. */
+  notes?: EntityNote[];
+}

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backups wireframe (first run: start from a backup)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<link rel="stylesheet" href="../rc-bridge.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">First run, "Start from a backup"</div>
+      <p class="wf-lede">NOT BUILT. Needs approval first. A person on a new computer has a copy of their library (a snapshot file) and their recovery words, and no library here yet. The first-run screen offers one extra way in beside "Begin": open the library you already have. It is the doorway that makes the recovery-words promise ("a copy opens on a new computer with your lines") usable.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="stack">
+    <div class="wf-state">1. The first-run screen, with the new way in</div>
+    <div class="marquee-hero">
+      <div class="eyebrow">Opening night</div>
+      <div class="marquee">Welcome to the <em>theatre</em></div>
+      <div class="voice">Start a new library, or bring the one you already have.</div>
+    </div>
+    <div class="actions">
+      <button class="stamp stamp-btn primary">Begin a new library &rarr;</button>
+      <button class="btn-ghost">Start from a backup</button>
+    </div>
+    <p class="wf-comp">The existing first-run screen, plus one ghost button under the call to action. Nothing else on that screen changes.</p>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">2. Pick the copy</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Act 0, Prologue</div>
+          <div class="marquee">Find your <em>copy</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>Choose the backup file from your old computer or a drive. Its name looks like <b>auto-1790000000000.db</b>. Bunraku copies it into a new library folder and leaves your file alone.<span class="p">)</span></p>
+        <div class="card">
+          <div class="pc">
+            <div><div class="pc-name">No file chosen</div><div class="pc-meta">A Bunraku backup (.db)</div></div>
+            <button class="btn-ghost">Choose a file</button>
+          </div>
+        </div>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta" disabled>On to your lines &rarr;</button>
+          <button class="btn-ghost">Back</button>
+        </div>
+      </div>
+      <p class="wf-comp">Dossier on the scrim as the stage door; file row is the computer-list row; a native file picker.</p>
+    </div>
+
+    <div>
+      <div class="wf-state">3. Your lines (or your password)</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Act 1, The Audition</div>
+          <div class="marquee">Recite your <em>lines</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>The twelve words that open this library. If the copy has a password, you can use that instead.<span class="p">)</span></p>
+        <div class="cues-count">0 / 12 cues delivered</div>
+        <div class="cue-grid">[the cue grid, as in Security]</div>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta" disabled>Open my library &rarr;</button>
+          <button class="btn-ghost">Use my password instead</button>
+        </div>
+      </div>
+      <p class="wf-comp">The Security cue grid and the stage door's unlock fields, unchanged. Also asks "Remember this computer?" as the stage door does.</p>
+    </div>
+
+    <div>
+      <div class="wf-state">4. It did not open</div>
+      <div class="stage-note">
+        <div class="stage-note-label">Line flub</div>
+        <p>Those lines do not open this copy. Check your script, or choose another copy. Nothing was changed.</p>
+      </div>
+      <div class="stage-note">
+        <div class="stage-note-label">Not a copy</div>
+        <p>This file is not a Bunraku backup, or it is damaged. Nothing was changed.</p>
+      </div>
+      <div class="stage-note">
+        <div class="stage-note-label">Made by another version</div>
+        <p>This copy was made by a newer version of Bunraku. Update Bunraku, then try again. Nothing was changed.</p>
+      </div>
+      <p class="wf-comp">The same notes as the restore dialog's refusals; the sentence always says nothing was changed.</p>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Rule kept:</b> the theatrical name is the label; the sentence under it is always plain.</p>
+  <p class="wf-note"><b>What it needs that does not exist yet:</b> a host-only route that takes a chosen file (not a path from the page), checks it is a snapshot, places it as the new library file before the library opens, and then runs the normal unlock with the words. Older-schema copies are migrated by the normal open. Nothing here is built until you approve this page.</p>
+  <p class="wf-note"><b>Questions for you:</b> (1) Is "Start from a backup" the right label? (2) Should it also be reachable from Settings later, to swap the whole library for a copy from another computer? (3) Does a person with no recovery words and a copy from this same computer need this at all (Restore in Settings already covers it)?</p>
+</div>
+</body>
+</html>

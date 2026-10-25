@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" data-theme="stage">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bunraku | The velvet playbill</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="game.css"><link rel="stylesheet" href="middle.css">
+</head>
+<body>
+<div class="theater">
+<header class="header"><a class="logo" href="#home">Bun<span>raku</span></a><span class="header-label">Your private theater</span><div class="utilities"><a href="#import">Import a piece</a><a href="#help">Guide</a><a href="#settings">Settings</a></div></header>
+<main class="stage">
+<div class="art" aria-hidden="true"></div><canvas class="atmosphere" aria-hidden="true"></canvas>
+<div class="stage-content">
+<section class="marquee"><span class="eyebrow gilt">The velvet premiere</span><h1>Bun<em>raku</em></h1><p>Every story deserves a stage.</p></section>
+<div class="menu-grid">
+<nav class="commands" aria-label="Theater main menu">
+<div class="menu-heading"><span class="eyebrow gilt">Choose your next act</span><span class="menu-heading-rule"></span></div>
+<a class="command selected" href="#resume" data-preview="continue" tabindex="0"><span class="cursor" aria-hidden="true"></span><span class="command-label">Continue</span><span class="command-note">Your last scene</span></a>
+<a class="command" href="#new-story" data-preview="new" tabindex="-1"><span class="cursor" aria-hidden="true"></span><span class="command-label">New story</span><span class="command-note">Raise a new curtain</span></a>
+<div class="menu-divider"></div>
+<a class="command" href="#library" data-preview="library" tabindex="-1"><span class="cursor" aria-hidden="true"></span><span class="command-label">Library</span><span class="command-note">Your cast & worlds</span></a>
+<a class="command" href="#workbench" data-preview="workbench" tabindex="-1"><span class="cursor" aria-hidden="true"></span><span class="command-label">Workbench</span><span class="command-note">Refine a piece</span></a>
+<a class="command" href="#press" data-preview="press" tabindex="-1"><span class="cursor" aria-hidden="true"></span><span class="command-label">Press</span><span class="command-note">Take it elsewhere</span></a>
+<div class="menu-divider"></div>
+<a class="command secondary" href="#settings" data-preview="settings" tabindex="-1"><span class="cursor" aria-hidden="true"></span><span class="command-label">Settings</span><span class="command-note">Set the atmosphere</span></a>
+<a class="command secondary" href="#help" data-preview="help" tabindex="-1"><span class="cursor" aria-hidden="true"></span><span class="command-label">Backstage guide</span><span class="command-note">Find your bearings</span></a>
+</nav>
+<section class="preview-window" aria-labelledby="preview-title">
+<div class="window-bar"><span class="window-diamond" aria-hidden="true"></span><span id="preview-kicker">Continue your story</span><span class="window-index">01 / 07</span></div>
+<div id="selection-preview"></div>
+</section>
+</div>
+<div class="key-legend"><span><kbd>↑ ↓</kbd> Choose</span><span><kbd>Enter</kbd> Open</span><span><kbd>Esc</kbd> Back</span><span class="mouse-hint">Mouse & touch welcome</span></div>
+</div>
+</main>
+<footer><span>Scenes make bolder people.</span><span class="gilt">The stage is yours.</span><span class="preview-label">Design preview · sample stories</span></footer>
+</div>
+<dialog id="destination" aria-labelledby="destination-title">
+<div class="dialog-heading"><span class="eyebrow gilt">Backstage</span><button class="close" aria-label="Close preview">×</button></div>
+<h2 id="destination-title"></h2><div id="destination-body"></div>
+<div class="dialog-footer"><a href="#home">← Back to the theater</a><span>Interactive wireframe</span></div>
+</dialog>
+<script src="navigation.js"></script><script src="title-menu.js"></script><script src="effects.js"></script>
+</body>
+</html>

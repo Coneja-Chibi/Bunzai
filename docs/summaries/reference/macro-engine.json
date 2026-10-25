@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/macro-engine",
+  "sourcePath": "docs/reference/macro-engine.md",
+  "sourceHash": "sha256:8879c07bd543b46202812aa36d4a196e848a2696fab280c39127a4bde6fecaec",
+  "summary": "RoleCall's macro engine, ported under src/core/macros/ inside the closed world ADR-012 allows. It parses macro templates and evaluates them against a value-only context, producing expanded text plus segments that trace each rendered span back to the authored characters behind it, the contract the editable preview stands on. It behaves as RoleCall's engine does at the pinned commit, proven by a parity test over all 179 entries of RoleCall's own characterization corpus, recorded from RoleCall, plus RoleCall's ported processor and handler tests. Where ADR-012 requires, it differs: the clock, randomness, locale and time zone come from the context, and evaluation is bounded so no cut-off value is stored; four RoleCall families and its interceptors are left out. Callers are the ADR-012 list, now including chat display; codecs and adapters never evaluate, and macro text stays opaque payload at every import and conversion boundary.",
+  "topics": [
+    "rolecall engine port",
+    "parity with recorded corpus",
+    "value-only context",
+    "span provenance",
+    "bounded evaluation",
+    "seeded randomness",
+    "editable preview segments",
+    "permitted callers only"
+  ],
+  "sections": [
+    {
+      "slug": "what-it-does",
+      "title": "What it does",
+      "level": 2,
+      "sourceHash": "sha256:116b7c9b58654c3589b7c502898eea753838a74e5c0626a717db1a7aab21e2fe",
+      "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's corpus, recorded by tools/rc-recorder: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, each file naming what it leaves out. Normalization applies RoleCall's rewrites in order through an offset map, and macro output holding macros is normalized and evaluated again. Twenty-five families register in RoleCall's order from one closed table, since order decides which family owns a shared name; lazy macros get unevaluated arguments and phases run across a preset's prompts. Unknown macros render as reconstructed text with an error. ADR-012 differences: clock, randomness, locale and time zone come from the context, timediff included; strings, variable writes, whole runs and node counts are capped, and once a cap trips no handler runs and nothing cut off is stored; a scan checks every source file for ambient reads. Author regex is off unless a caller opts in. The game, mechanics, visual novel and off-band families and RoleCall's interceptors are left out.",
+      "topics": [
+        "corpus parity proof",
+        "offset mapped rewrites",
+        "registration order matters",
+        "lazy macros and phases",
+        "stripped families unknown",
+        "adr-012 differences",
+        "regex off by default"
+      ],
+      "children": []
+    },
+    {
+      "slug": "segments-the-editable-preview-contract",
+      "title": "Segments: the editable-preview contract",
+      "level": 2,
+      "sourceHash": "sha256:5874d994abb431187e198dcc7e4ebaf9ffe90c3757eb7e8f1476042c590ba028",
+      "summary": "Segments are the editable-preview contract: processMacros returns one segment per top-level node alongside the flat text. A literal segment's value is the authored slice verbatim, escaped braces unrestored and newline runs uncollapsed, so splicing an edited value into its source range can never corrupt the source; the restored, whitespace-collapsed rendering lives in the flat text, which is postprocessed once as a whole, and segments are provenance rather than a partition of it. A macro segment carries its raw authored expression, its resolved value, and for the random family and block-if which option or branch fired, so a preview can offer branch-level edits instead of guessing at a flat string. live-render.ts layers this over buildPreview's engine-truth ordering, threading one variable context across blocks in build order and tagging each line with its block id.",
+      "topics": [
+        "one segment per node",
+        "literal value is authored slice",
+        "segments are provenance not partition",
+        "branch detail carried",
+        "block id provenance",
+        "shared variable context"
+      ],
+      "children": []
+    },
+    {
+      "slug": "who-may-call-it",
+      "title": "Who may call it",
+      "level": 2,
+      "sourceHash": "sha256:b41f0f93755194c291932e661f5a121bd407da796394a571798b9ea6db2b41c5",
+      "summary": "Who may call it is exactly the ADR-012 list: the user-invoked macro test bench, the transfer compatibility report, prompt assembly and its previews such as live-render, and chat display. The external-engine renderer under src/core/preset/render/ remains the cross-check oracle: it answers what the real platform says, while this engine answers what the text says and where each character came from.",
+      "topics": [
+        "four permitted callers",
+        "external renderer as oracle"
+      ],
+      "children": []
+    }
+  ]
+}

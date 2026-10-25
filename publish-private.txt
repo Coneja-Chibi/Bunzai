@@ -1,0 +1,25 @@
+# Paths that stay in this repository but are not part of a public export (bun run publish:export).
+# A trailing slash names a folder. One path per line; # starts a comment.
+specs/
+plans/
+audit-plans/
+docs/BUNRAKU-PLAN.md
+docs/KINTSU-PLAN.md
+docs/LESSONS.md
+docs/ROADMAP.md
+design/system/BUILD-BRIEF.md
+docs/summaries/BUNRAKU-PLAN.json
+docs/summaries/KINTSU-PLAN.json
+docs/summaries/LESSONS.json
+docs/summaries/ROADMAP.json
+docs/summary-reviews/BUNRAKU-PLAN.json
+docs/summary-reviews/KINTSU-PLAN.json
+docs/summary-reviews/LESSONS.json
+docs/summary-reviews/ROADMAP.json
+# A leading ~ leaves the file out but does not count a mention of it as dangling: these are generated from the
+# page catalog (which lists the private pages), and the export recreates them with `bun run docs:index`.
+~docs/llms.txt
+~docs/generated/PAGE-INDEX.md
+~docs/generated/docs-index.json
+~docs/generated/summary-queue.json
+~docs/generated/summary-review.json

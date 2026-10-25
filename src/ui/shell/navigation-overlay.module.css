@@ -1,0 +1,45 @@
+/* One overlay layout across all themes; surface variants adjust only widget decoration. */
+.scrim { padding: 0; overflow: auto; background: color-mix(in srgb, var(--bk-surface-ink) 80%, transparent); backdrop-filter: blur(5px); }
+.sheet { width: 100%; min-height: 100%; color: var(--bk-text); font: 400 14px/1.5 var(--bk-font-body); }
+.layout { min-height: 100%; padding: 28px 36px 22px; display: flex; flex-direction: column; gap: 24px; container-type: inline-size; }
+.layout :is(h2, h3, p):not(.appSurface *) { margin: 0; }
+.layout :is(button, input):not(.appSurface *) { border-radius: 0; font: inherit; color: var(--bk-text); min-height: 40px; }
+.layout button:not(.appSurface *) { cursor: pointer; padding: 10px 14px; border: 1px solid var(--bk-line-control); background: var(--bk-surface-panel); }
+.layout button:not(.appSurface *):hover { background: var(--bk-surface-raised); }
+.layout :is(button, input):not(.appSurface *):focus-visible { outline: 2px solid var(--bk-focus-color); outline-offset: 3px; }
+.layout :is(kbd, p, small, footer):not(.appSurface *) { color: var(--bk-text-dim); }
+.layout :is(kbd, small, footer):not(.appSurface *) { font-size: 12px; }
+.header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.header h2 { font: 700 26px var(--bk-font-display); }
+.header button { background: transparent; border: 0; }
+.header kbd { margin-left: 12px; }
+.panel { border: 1px solid var(--bk-line-control); outline: var(--overlay-outline, none); outline-offset: 3px; background: var(--bk-surface-panel); box-shadow: var(--overlay-shadow, 0 18px 60px color-mix(in srgb, var(--bk-surface-ink) 70%, transparent)); }
+.quick { display: flex; gap: 6px; padding: 8px; align-self: center; flex-wrap: wrap; }
+.quick button { border: 0; }
+.body { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 36px; width: min(1440px, 100%); margin: 10px auto auto; }
+.launcher { padding: 10px; align-self: start; }
+.launcher header { padding: 12px 14px 16px; }
+.launcher h3, .import h3 { font-size: 16px; font-family: var(--overlay-heading, var(--bk-font-body)); text-transform: var(--overlay-case, none); }
+.launcher input { width: 100%; padding: 8px 12px; border: 1px solid var(--bk-line-control); background: var(--bk-surface-field); }
+.apps { display: grid; gap: 4px; max-height: 50dvh; overflow: auto; margin-top: 10px; }
+.apps .app { display: flex; gap: 14px; align-items: center; text-align: left; border: 0; }
+.app[aria-current="page"] { background: var(--bk-surface-raised); box-shadow: inset 3px 0 var(--bk-role-select-text); }
+.app > span { display: grid; min-width: 0; }
+.app strong { overflow-wrap: anywhere; }
+.mark { width: 34px; height: 34px; flex: none; }
+.floating { min-width: 0; }
+.appWindow:not([hidden]) { display: flex; flex-direction: column; min-width: 0; }
+.windowHeader { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--bk-line-control); }
+.windowHeader h3 { font: 600 16px var(--overlay-heading, var(--bk-font-body)); text-transform: var(--overlay-case, none); }
+.appSurface { height: clamp(420px, 62dvh, 800px); min-width: 0; overflow: auto; container-type: inline-size; }
+.shortcuts { padding: 12px; border-top: 1px solid var(--bk-line-control); }
+.shortcuts summary { cursor: pointer; min-height: 24px; }
+.widgets { width: 100%; margin-top: 12px; display: grid; gap: 24px; }
+.import { width: min(540px, 100%); margin: 30px 0 0 auto; }
+.import header { display: flex; align-items: center; gap: 20px; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--bk-line); }
+.intake { padding: 28px 22px; display: grid; gap: 22px; }
+.intake button { justify-self: center; background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); }
+.note { width: min(360px, 100%); margin: 44px 20px 0 auto !important; border: 1px dashed var(--bk-line-control); padding: 22px; }
+.layout footer { margin-top: 28px; }
+@container (max-width: 760px) { .body { gap: 22px; grid-template-columns: 230px minmax(0, 1fr); } }
+@container (max-width: 580px) { .body { grid-template-columns: 1fr; margin-top: 0; } .apps { max-height: 180px; } .quick { align-self: stretch; justify-content: center; } .import, .widgets { margin: 0; width: 100%; } .note { display: none; } .header kbd { display: none; } }

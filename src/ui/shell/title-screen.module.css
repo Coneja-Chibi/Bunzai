@@ -1,0 +1,171 @@
+/** The approved velvet premiere: responsive HTML chrome over theatrical artwork, dark in either theme. */
+.stage {
+  /* The stage lights and the lead buttons wear the person's accent (deep twin under white labels), not a fixed red. */
+  --premiere-rose: var(--accent-deep);
+  --premiere-violet: var(--accent);
+  --ink-border: 3px solid var(--premiere-hard);
+  --stamp-x: 6px;
+  --stamp-y: 6px;
+  --stamp-shadow: var(--premiere-hard);
+  --text: var(--premiere-text);
+  --chrome: var(--premiere-panel);
+  position: relative;
+  min-height: 100%;
+  container-type: inline-size;
+  display: flex;
+  flex-direction: column;
+  background: var(--premiere-canvas);
+  color: var(--premiere-text);
+  outline: none;
+  transition: opacity 250ms ease;
+}
+.closing { opacity: 0; pointer-events: none; }
+.word em { color: var(--bk-role-brand-text, var(--accent)); font-style: normal; }
+.stage button:focus-visible { outline: 2px solid var(--premiere-gold); outline-offset: 5px; }
+.scene {
+  container-type: inline-size;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  isolation: isolate;
+  overflow: hidden;
+  border-inline: 3px solid var(--premiere-hard);
+}
+.art {
+  position: absolute;
+  inset: 0;
+  background-image: var(--theater-tablet);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+.art::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--premiere-hard) 90%, transparent); }
+@container (min-aspect-ratio: 2/1) { .art { background-image: var(--theater-wide); } }
+@container (max-aspect-ratio: 4/5) { .art { background-image: var(--theater-phone); } }
+.scene::before, .scene::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  left: -20%;
+  bottom: 5%;
+  width: 140%;
+  height: 34%;
+  background:
+    radial-gradient(ellipse 24% 18% at 12% 68%, color-mix(in srgb, var(--premiere-text) 42%, transparent), transparent 85%),
+    radial-gradient(ellipse 30% 24% at 35% 52%, color-mix(in srgb, var(--premiere-text) 34%, transparent), transparent 85%),
+    radial-gradient(ellipse 22% 16% at 60% 75%, color-mix(in srgb, var(--premiere-text) 46%, transparent), transparent 85%),
+    radial-gradient(ellipse 28% 28% at 84% 46%, color-mix(in srgb, var(--premiere-text) 32%, transparent), transparent 85%),
+    radial-gradient(ellipse 65% 20% at 45% 82%, color-mix(in srgb, var(--premiere-text) 20%, transparent), transparent);
+  mask-image: linear-gradient(transparent, var(--premiere-hard) 30%, var(--premiere-hard) 85%, transparent);
+  animation-name: premiereFloorFog;
+  animation-duration: 18s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+.scene::after {
+  bottom: 4%;
+  height: 25%;
+  opacity: .85;
+  background:
+    radial-gradient(ellipse 26% 22% at 25% 45%, color-mix(in srgb, var(--premiere-text) 40%, transparent), transparent 85%),
+    radial-gradient(ellipse 34% 18% at 70% 68%, color-mix(in srgb, var(--premiere-text) 35%, transparent), transparent 85%),
+    radial-gradient(ellipse 20% 26% at 90% 40%, color-mix(in srgb, var(--premiere-text) 30%, transparent), transparent 85%);
+  animation-duration: 25s;
+  animation-direction: alternate-reverse;
+}
+.scene:has(canvas[data-rays-ready="true"])::before,
+.scene:has(canvas[data-rays-ready="true"])::after { display: none; }
+.marquee { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(1rem, 3cqh, 3rem) 1.5rem; text-align: center; }
+.word {
+  margin: 0;
+  font: 700 clamp(3rem, min(6.5cqw, 12cqh), 6.25rem) var(--font-fancy);
+  letter-spacing: .025em;
+  text-transform: uppercase;
+  text-shadow: 4px 4px 0 var(--premiere-hard);
+}
+.tag {
+  margin: .5rem 0 2rem;
+  font: italic 400 clamp(1.125rem, 1.8cqw, 1.5rem) var(--font-big);
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+  color: var(--premiere-text);
+  text-shadow: 2px 2px 0 var(--premiere-hard);
+}
+.actions { display: flex; justify-content: center; gap: 1.25rem; }
+.actions button {
+  justify-content: center;
+  min-height: 3.25rem;
+  min-width: 13.5rem;
+  padding: .875rem 1.25rem;
+  font: 500 .7rem var(--font-mono);
+  letter-spacing: .15em;
+}
+.actions button:first-child { background: var(--premiere-rose); }
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: .5rem 2rem;
+  background: var(--premiere-hard);
+  border-inline: 3px solid var(--premiere-hard);
+  flex: none;
+}
+.note { font: 500 .625rem/1.65 var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
+.note:last-child { text-align: right; }
+.premiere { display: flex; align-items: center; gap: 1.5rem; color: var(--premiere-gold); font: 500 .75rem var(--font-mono); letter-spacing: .35em; text-transform: uppercase; }
+.premiere::before, .premiere::after { content: ""; width: clamp(1rem, 8cqw, 8rem); height: 1px; background: var(--premiere-gold); }
+@container (max-width: 42rem) {
+  .marquee { padding: 4rem 1rem 5rem; }
+  .word { font-size: clamp(2.75rem, 11cqw, 4.5rem); }
+  .tag { margin-bottom: 2rem; }
+  .actions { flex-direction: column; align-items: center; }
+  .actions button { min-width: 0; width: min(100%, 19rem); }
+  .footer { justify-content: center; padding: .75rem 1rem; }
+  .note { display: none; }
+  .premiere { gap: .75rem; font-size: .625rem; letter-spacing: .22em; }
+  .premiere::before, .premiere::after { width: 1.5rem; }
+}
+.kicker { color: var(--premiere-gold); font: 500 .625rem var(--font-mono); letter-spacing: .16em; text-transform: uppercase; }
+.marquee > .kicker { margin-bottom: 1.25rem; }
+.importLink { margin-top: 1.25rem; }
+.importLink button { border: 0; box-shadow: none; background: transparent; font: 400 .7rem var(--font-mono); text-transform: none; letter-spacing: normal; }
+.importLink button:hover { box-shadow: none; color: var(--premiere-gold); }
+.floor { z-index: 1; position: relative; display: grid; width: min(100%, 84rem); align-self: center; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); align-items: center; gap: 2rem; padding: 1rem clamp(1rem, 5cqw, 4rem) clamp(1.5rem, 3cqw, 3rem); }
+.floor h2 { font: 500 clamp(1.2rem, 1.8cqw, 1.65rem)/1.3 var(--font-fancy); margin: .75rem 0; overflow-wrap: anywhere; }
+.floor p { font: 400 .75rem/1.6 var(--font-mono); margin: .5rem 0 1rem; }
+.floor > section button { margin-top: auto; width: 100%; border: 1px solid var(--premiere-gold); box-shadow: none; background: var(--premiere-hard); font: 500 .7rem var(--font-mono); padding: .875rem; color: var(--premiere-gold); }
+.emptyScreen { display: grid; place-content: center; justify-items: center; gap: 15px; width: 100%; height: 100%; min-height: 240px; background: radial-gradient(ellipse at center, color-mix(in srgb, var(--premiere-violet) 15%, var(--premiere-hard)), var(--premiere-hard)); }
+.emptyScreen svg { width: 44px; height: 44px; color: var(--premiere-gold); }
+.emptyScreen span { font: 400 .7rem var(--font-mono); color: var(--premiere-text); }
+.quickStart { min-width: 0; }
+.quickHeading { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent); }
+.quickHeading > span:last-child { font: 400 .6rem var(--font-mono); text-transform: uppercase; opacity: .55; }
+.tickets { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+.tickets button { display: flex; align-items: center; justify-content: flex-start; min-width: 0; padding: 16px 14px; gap: 12px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 40%, transparent); box-shadow: none; background: var(--premiere-panel); color: var(--premiere-text); text-align: left; mask-image: radial-gradient(circle at left center, transparent 6px, var(--premiere-hard) 6.5px), radial-gradient(circle at right center, transparent 6px, var(--premiere-hard) 6.5px); mask-composite: intersect; }
+.tickets button:first-child { grid-column: 1 / -1; background: var(--premiere-rose); min-height: 82px; }
+.tickets button:hover { box-shadow: none; transform: none; border-color: var(--premiere-gold); }
+.tickets button:focus-visible { outline-offset: -4px; }
+.tickets svg { width: 23px; height: 23px; flex: none; }
+.tickets button > span:first-of-type { flex: 1; border-left: 1px dashed color-mix(in srgb, var(--premiere-text) 35%, transparent); padding-left: 12px; min-width: 0; }
+.tickets strong, .tickets small { display: block; }
+.tickets strong { font: 500 .75rem var(--font-mono); letter-spacing: .06em; }
+.tickets small { font: 400 .65rem/1.5 var(--font-body); text-transform: none; margin-top: 6px; }
+.tickets button:first-child strong { font-size: .875rem; }
+@container (max-width: 55rem) {
+  .scene { container-type: inline-size; }
+  .floor { grid-template-columns: 1fr; gap: 2rem; padding-inline: 7%; }
+}
+@container (max-width: 42rem) {
+  .scene { container-type: inline-size; }
+  .art { background-image: var(--theater-phone); }
+  .floor { padding: 1rem 1.25rem 2rem; }
+  .tickets { grid-template-columns: 1fr; }
+  .marquee { padding: 3rem 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage { transition: none; }
+  .scene::before, .scene::after { animation: none; }
+}

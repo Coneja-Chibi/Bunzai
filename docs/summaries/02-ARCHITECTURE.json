@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "docId": "02-ARCHITECTURE",
+  "sourcePath": "docs/02-ARCHITECTURE.md",
+  "sourceHash": "sha256:29be13635e6a5c41667df4d3e0efcaae439eb81f1e602b382e64a2e022634143",
+  "summary": "This page defines Bunraku's implemented architecture and the boundaries contributors must preserve. Source boundaries assign the shared engine to src/core, entity schemas to src/entities, drop-in adapters to src/formats, durable local storage to src/studio, sealed-script analysis to src/sandbox, the primary loopback React application to src/ui, Kit's agent loop to src/kit, and the command surface to src/cli.ts. Canonical model and formats explains the hub-and-spoke superset, original source escrow, sparse platform profiles, same-format re-projection, cross-format loss reports, and folder-discovered adapters. Storage and mutation describes the folder database, contained paths, atomic writes, revisions, pure previews, and verified durable application. The three surfaces are the scriptable bunraku CLI, the local desktop Studio with separately enabled remote access, and source-checkout Kit, all sharing one engine while Kit remains absent from release binaries until its build and smoke gates exist. Effects and trust boundaries require fail-closed parsing, sealed imported scripts, deliberate network paths, and encrypted provider credentials that never enter content or model-visible records. Kit checks the initial provider request host but does not yet revalidate runtime redirects. Decisions and future systems points to ADR-001 onward and says specs remain planned rather than implemented until source, tests, and a user entry point prove otherwise.",
+  "topics": [
+    "source dependency boundaries",
+    "canonical model and escrow",
+    "folder-discovered format adapters",
+    "atomic studio storage",
+    "CLI Studio and Kit",
+    "effects and trust boundaries",
+    "provider credential isolation",
+    "ADRs and planned systems"
+  ],
+  "sections": [
+    {
+      "slug": "source-boundaries",
+      "title": "Source boundaries",
+      "level": 2,
+      "sourceHash": "sha256:927990b0b56862bd9510542e07a48aa7eb5f85a97133f4cdf2e629cabd690892",
+      "summary": "Bunraku is a Bun and TypeScript repository rooted in src, with three user surfaces built on one shared engine. src/core owns canonical entities, detection, conversion, coverage, and semantic engines. src/entities owns per-kind schemas and pure capabilities. src/formats contains one drop-in adapter folder per external family. src/studio is the durable local folder database. src/sandbox owns sealed-script analysis and user-invoked benches. src/ui contains the loopback server and React Studio. src/kit contains the source-checkout agent loop, provider adapters, discovery, staged drafts, and transcript ledger. src/cli.ts is the command entry. Dependencies point inward: surface code may depend on engine code, while engine code must never depend on a surface.",
+      "topics": [
+        "shared engine",
+        "source tree ownership",
+        "inward dependencies",
+        "three user surfaces"
+      ],
+      "children": []
+    },
+    {
+      "slug": "canonical-model-and-formats",
+      "title": "Canonical model and formats",
+      "level": 2,
+      "sourceHash": "sha256:c7877fd5c92f12fc3985be30a897dd171a0ce0445d6351a4025283607d233722",
+      "summary": "Every supported file maps through the canonical model in src/core/canonical.ts; no format converts directly to another format. The canonical body is a superset of interoperable wire fields. Each imported entity also retains its parsed source snapshot and unmapped fields in original escrow, while sparse profiles preserve platform-specific overrides. Same-format export re-projects edits over that source twin so untouched details survive. Cross-format export carries only supported canonical meaning and reports escrowed, dropped, shadowed, or warned paths rather than silently claiming portability. Format adapters are folders under src/formats and expose detect, toCanonical, and fromCanonical. The loader discovers those folders, and the registry, CLI formats listing, Studio import surfaces, and support matrix all consume the same live adapter set.",
+      "topics": [
+        "hub and spoke conversion",
+        "canonical superset",
+        "source escrow",
+        "platform profiles",
+        "serialization reports",
+        "folder discovery"
+      ],
+      "children": []
+    },
+    {
+      "slug": "storage-and-mutation",
+      "title": "Storage and mutation",
+      "level": 2,
+      "sourceHash": "sha256:35d411ef7ed267894c7dff03b8629ffde50a547db4797f6835cf52970126b909",
+      "summary": "Studio storage is a folder database rather than an opaque application database. Each piece is saved as readable JSON beneath a per-kind and per-id path. The storage layer contains paths to the studio root, writes atomically, supports keep-both collision behavior, and compares expected revisions before saving so concurrent edits fail visibly. Semantic capability operations remain pure: they produce previews and validation evidence without touching disk. A separate apply path performs the authorized durable mutation, then re-reads the saved entity to verify the result and produce trustworthy post-write evidence. This separation lets CLI, Studio, and Kit share edit logic without granting preview code an accidental write path.",
+      "topics": [
+        "folder database",
+        "path containment",
+        "atomic compare-and-save",
+        "pure previews",
+        "verified apply"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-three-surfaces",
+      "title": "The three surfaces",
+      "level": 2,
+      "sourceHash": "sha256:e01cec880f84b02d30cbc546cf2ee69be1dde22cbdea018e82abf834d8ac9245",
+      "summary": "Bunraku exposes three faces over the same engine. The bunraku command is the scriptable CLI for conversion, inspection, validation, labeling, discovery, and Studio launch. Studio is the local desktop experience: a React client served by a Bun loopback server, with the remote-access sidecar remaining an explicit opt-in. Kit is the source-checkout conversational surface. It connects a configured model provider, progressively discovers content and documentation tools, accumulates staged changes with warnings and platform impact, and applies only through the same durable storage boundary. Kit is real source code but is not yet part of distributed release binaries; release claims must wait for a defined bundle, binary inclusion, and installed-artifact smoke test.",
+      "topics": [
+        "scriptable CLI",
+        "loopback React Studio",
+        "Kit agent surface",
+        "shared engine",
+        "release binary boundary"
+      ],
+      "children": []
+    },
+    {
+      "slug": "effects-and-trust-boundaries",
+      "title": "Effects and trust boundaries",
+      "level": 2,
+      "sourceHash": "sha256:cb55163805a33a520cd5ada0794556e89935dc15c8331cc0e47f84329ff59d7a",
+      "summary": "Untrusted files and requests are parsed once at their boundary and rejected when unreadable. Imported Lua, macros, and regex payloads remain inert data during import, conversion, storage, preview, and agent use. Execution exists only in the explicit Lua or regex test benches on the isolated sandbox origin, and no additional execution path is allowed. Network effects are deliberate and auditable: remote Studio access is opt-in, Kit checks the initial provider request URL against the configured host, and update checks target fixed GitHub release infrastructure. The current Kit fetch path does not revalidate runtime redirects, so its host gate is not an end-to-end redirect policy. Bunraku has no accounts, telemetry, proxying, or background upload. Provider credentials are encrypted at rest and are configuration, never content: they must not appear in canonical entities, prompts, tool observations, exports, transcripts, or the ledger.",
+      "topics": [
+        "fail-closed parsing",
+        "sealed imported scripts",
+        "isolated test benches",
+        "deliberate network effects",
+        "no telemetry",
+        "credential isolation"
+      ],
+      "children": []
+    },
+    {
+      "slug": "decisions-and-future-systems",
+      "title": "Decisions and future systems",
+      "level": 2,
+      "sourceHash": "sha256:66b2396c1c8f19f013038457964af817335717b0be4cd9dc5138de43a509b034",
+      "summary": "Consequential architectural choices begin with ADR-001 in docs/decisions and continue through the repository's current decision records. Detailed contracts for implemented and future areas live under specs. A specification, roadmap entry, or design description does not by itself establish a shipped capability. Future systems remain explicitly planned until matching source code exists, tests prove the contract, and users have a real entry point. Reference documentation must describe that implemented state honestly rather than converting architectural intent into a release claim.",
+      "topics": [
+        "architecture decision records",
+        "specification contracts",
+        "planned versus implemented",
+        "truthful reference docs"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

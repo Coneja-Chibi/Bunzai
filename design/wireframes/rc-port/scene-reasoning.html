@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene reasoning block</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<link rel="stylesheet" href="rc-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Slice S5: RoleCall's ThinkBlock ("Behind the Scene", ThinkBlock.tsx) in
+ * Bunraku's soft tokens. Square corners everywhere, 12px type floor, no glow, no offset shadow.
+ * RC zinc / purple accent -> --z-* aliases below, which resolve from the active theme's --bk-* tokens.
+ * A .pane re-points those tokens so two themes can sit side by side on one page.
+ */
+.wf {
+  --z-well: var(--bk-surface-well); --z-base: var(--bk-surface-base); --z-panel: var(--bk-surface-panel);
+  --z-sunken: var(--bk-surface-sunken); --z-ink: var(--bk-surface-ink);
+  --z-line: var(--bk-line); --z-seam: var(--bk-line-track); --z-ctl: var(--bk-line-control);
+  --z-text: var(--bk-text); --z-soft: var(--bk-text-soft); --z-dim: var(--bk-text-dim); --z-faint: var(--bk-text-faint);
+  --z-acc: var(--bk-role-brand-text); --z-accf: var(--bk-role-brand);
+  --z-warn: var(--bk-role-warn-text); --z-select: var(--bk-role-select-text);
+  --tone: var(--deck-character);
+}
+body { font-size: 14px; }
+.page { max-width: 1180px; margin: 0 auto; padding: 28px 28px 120px; color: var(--z-soft); }
+.page h1 { font-family: var(--font-fancy); font-size: 24px; letter-spacing: .06em; text-transform: uppercase; color: var(--z-text); font-weight: 600; }
+.page .lede { margin-top: 8px; max-width: 70ch; line-height: 1.6; color: var(--z-soft); }
+.page h2 { margin: 36px 0 4px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--z-acc); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.page h2::before { content: ""; width: 8px; height: 8px; background: var(--z-acc); }
+.page .sub { margin-bottom: 14px; color: var(--z-dim); font-size: 13px; line-height: 1.55; max-width: 80ch; }
+.cite { font-family: var(--font-mono); font-size: 12px; color: var(--z-dim); }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+/* a framed example: tag line, then the scene fragment on the scene floor */
+.ex { border: 1px solid var(--z-line); background: var(--z-well); min-width: 0; }
+.ex > .tag { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid var(--z-line); background: var(--z-sunken); font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--z-soft); }
+.ex > .tag b { color: var(--z-text); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; }
+.ex > .stage { padding: 20px 18px; }
+.ex > .why { padding: 10px 12px; border-top: 1px solid var(--z-line); background: var(--z-sunken); font-size: 13px; line-height: 1.55; color: var(--z-dim); }
+.ex > .why b { color: var(--z-text); }
+
+/* ---- the message the block sits in (matches scene-meta: speaker, bubble, meta line) ---- */
+.msg .spk { font-family: var(--font-fancy); font-weight: 600; font-size: 16px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); line-height: 1.5; margin-bottom: 6px; }
+.msg .bub { background: color-mix(in srgb, var(--z-ink) 55%, transparent); border: 1px solid var(--z-line); padding: 14px 18px; }
+.msg .prose { font-family: var(--font-big); font-size: 16px; line-height: 1.8; color: var(--z-text); }
+.msg .prose em { font-style: italic; }
+.msg .prose q { quotes: '"' '"'; color: var(--tone); }
+.msg .meta { margin-top: 6px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-family: var(--font-mono); font-size: 12px; color: var(--z-dim); }
+.msg .cursor { display: inline-block; width: 9px; height: 16px; margin-left: 2px; background: var(--tone); vertical-align: -2px; animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.msg .nothing { font-family: var(--font-big); font-size: 14px; font-style: italic; color: var(--z-dim); }
+
+/* ---- the Behind the Scene block ---- */
+.tb { margin: 0 0 12px; border: 1px solid color-mix(in srgb, var(--z-acc) 45%, var(--z-line)); background: color-mix(in srgb, var(--z-acc) 9%, var(--z-panel)); }
+.tb .hd { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: none; border: 0; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.tb .hd:focus-visible { outline: 2px solid var(--bk-focus-color); outline-offset: -2px; }
+.tb .ico { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--z-acc) 55%, transparent); background: color-mix(in srgb, var(--z-acc) 18%, transparent); color: var(--z-acc); }
+.tb .ico svg { width: 15px; height: 15px; }
+.tb.live .ico svg { animation: pulse 1.4s ease-in-out infinite; }
+.tb .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.tb .top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tb .lbl { font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--z-acc); }
+.tb .dur { font-family: var(--font-big); font-size: 12px; color: var(--z-dim); display: inline-flex; align-items: center; gap: 6px; }
+.tb .src { font-family: var(--font-mono); font-size: 12px; padding: 0 6px; line-height: 18px; border: 1px solid color-mix(in srgb, var(--z-acc) 50%, transparent); color: var(--z-soft); background: color-mix(in srgb, var(--z-ink) 40%, transparent); }
+.tb .dots { display: inline-flex; gap: 3px; }
+.tb .dots i { width: 5px; height: 5px; background: var(--z-acc); animation: dotf 1.2s ease-in-out infinite; }
+.tb .dots i:nth-child(2) { animation-delay: .15s; } .tb .dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes dotf { 0%, 80%, 100% { opacity: .3; } 40% { opacity: 1; } }
+@keyframes pulse { 50% { opacity: .4; } }
+.tb .snip { font-family: var(--font-big); font-size: 13px; font-style: italic; color: var(--z-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tb.open .snip { display: none; }
+/* native variant: RC's mono body, serif italic snippet, a tighter tint, "Before the curtain" label */
+.tb.nat .snip { font-style: italic; color: var(--z-soft); }
+.tb.nat .body { font-family: var(--font-mono); font-style: normal; font-size: 13px; line-height: 1.65; }
+.tb.nat .body .curtain { margin-bottom: 8px; font-family: var(--font-fancy); font-size: 12px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--z-acc); }
+.tb .acts { display: flex; gap: 4px; opacity: 0; }
+.tb:hover .acts, .tb.open .acts { opacity: 1; }
+.tb .acts span { width: 28px; height: 28px; display: grid; place-items: center; color: var(--z-dim); border: 1px solid transparent; }
+.tb .acts span:hover { color: var(--z-acc); border-color: color-mix(in srgb, var(--z-acc) 40%, transparent); background: color-mix(in srgb, var(--z-acc) 14%, transparent); }
+.tb .acts svg { width: 14px; height: 14px; }
+.tb .chev { width: 16px; height: 16px; flex: none; color: var(--z-acc); transition: transform .2s; }
+.tb.open .chev { transform: rotate(180deg); }
+.tb .rule { display: none; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--z-acc) 55%, transparent) 15%, var(--z-acc) 50%, color-mix(in srgb, var(--z-acc) 55%, transparent) 85%, transparent); }
+.tb .body { display: none; padding: 12px 14px; font-family: var(--font-big); font-size: 14px; line-height: 1.7; font-style: italic; color: var(--z-soft); white-space: pre-wrap; }
+.tb.open .rule, .tb.open .body { display: block; }
+.tb .body .caret { display: inline-block; width: 2px; height: 15px; margin-left: 2px; background: var(--z-acc); vertical-align: -3px; animation: blink 1s steps(2) infinite; }
+.tb.long .body { max-height: 300px; overflow-y: auto; scrollbar-width: thin; }
+.tb .more { display: none; padding: 6px 14px; border-top: 1px solid color-mix(in srgb, var(--z-acc) 30%, transparent); font-family: var(--font-mono); font-size: 12px; color: var(--z-dim); justify-content: space-between; }
+.tb.open.long .more { display: flex; }
+
+/*
+ * RC's two cards, matched to ThinkBlock.tsx (both take the character's accent; they differ in weight and material).
+ * Mapping (RC -> Bunraku token): character accentColor -> --tone (deck-character); accent used as TEXT (label, icon, chevron,
+ * dots) -> --tone mixed 55% toward --bk-text, so it stays readable on paper (RC's text is the raw accent on a dark floor);
+ * rgba(accent, n) fills and borders -> color-mix(--tone n%, transparent); rgba(20,18,26,.96) and rgba(10,10,12,.96) native
+ * gradient ends -> --bk-surface-ink; rgba(0,0,0,.75) hard shadow -> --bk-surface-ink; zinc-300 / zinc-500 text -> --bk-text-soft / --bk-text-dim;
+ * RC's font-mono -> --bk-font-mono; font-serif snippet -> --bk-font-name; font-display label -> --bk-font-display.
+ */
+.tb { --a: var(--tone); --at: color-mix(in srgb, var(--tone) 55%, var(--z-text)); background: none; border: 0; }
+.tb .hd, .tb .body { border: 1px solid color-mix(in srgb, var(--a) 30%, transparent); }
+.tb .hd { background: color-mix(in srgb, var(--a) 15%, transparent); }
+.tb.open .hd { border-bottom: 0; }
+.tb .body { border-top: 0; background: color-mix(in srgb, var(--a) 15%, transparent); }
+.tb .ico { border: 1px solid color-mix(in srgb, var(--a) 30%, transparent); background: color-mix(in srgb, var(--a) 20%, transparent); color: var(--at); }
+.tb .lbl { font-family: var(--font-body); font-size: 12px; font-weight: 600; letter-spacing: .1em; color: var(--at); }
+.tb .dur { color: var(--z-dim); }
+.tb .dots i { background: var(--at); }
+.tb .chev { color: var(--at); opacity: .7; }
+.tb .snip { font-family: var(--font-body); font-style: italic; color: var(--z-dim); }
+.tb .acts span:hover { color: var(--at); }
+.tb .rule { height: 1px; background: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--a) 50%, transparent) 15%, var(--a) 50%, color-mix(in srgb, var(--a) 50%, transparent) 85%, transparent 100%); box-shadow: 0 0 8px color-mix(in srgb, var(--a) 50%, transparent); }
+.tb .body .caret { background: var(--at); }
+/* native: a heavier card. 2px border, hard offset shadow plus a faint glow, dark gradient, mono body, serif snippet */
+.tb.nat { box-shadow: 4px 4px 0 color-mix(in srgb, var(--z-ink) 75%, transparent), 0 0 18px color-mix(in srgb, var(--a) 14%, transparent); margin-right: 4px; margin-bottom: 16px; }
+.tb.nat .hd, .tb.nat .body { border: 2px solid color-mix(in srgb, var(--a) 50%, transparent); }
+.tb.nat .hd { background: linear-gradient(180deg, color-mix(in srgb, var(--a) 13%, transparent), color-mix(in srgb, var(--z-ink) 96%, transparent)); }
+.tb.nat.open .hd { border-bottom: 0; }
+.tb.nat .body { border-top: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--a) 6%, transparent), color-mix(in srgb, var(--z-ink) 96%, transparent)); font-family: var(--font-mono); font-style: normal; font-size: 13px; line-height: 1.65; color: var(--z-soft); }
+.tb.nat .ico { background: color-mix(in srgb, var(--a) 14%, transparent); border-color: color-mix(in srgb, var(--a) 50%, transparent); }
+.tb.nat .snip { font-family: var(--font-big); color: var(--z-soft); }
+.tb.nat .body .curtain { font-family: var(--font-fancy); font-size: 12px; font-weight: 900; letter-spacing: .22em; color: var(--at); }
+/* tags: the lighter card. 1px border, flat tint, italic sans body */
+.tb:not(.nat) .body { font-family: var(--font-body); font-size: 14px; font-style: italic; color: var(--z-soft); }
+
+/* annotation chips */
+.note { margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--z-ctl); font-size: 13px; line-height: 1.5; color: var(--z-dim); }
+.note b { color: var(--z-text); }
+.flag { border-color: var(--z-warn); }
+.flag b { color: var(--z-warn); }
+
+/* settings row (the one new control this slice adds) */
+.setrow { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--z-line); background: var(--z-panel); }
+.setrow .tx { flex: 1; } .setrow .tx b { display: block; color: var(--z-text); font-size: 14px; } .setrow .tx span { font-size: 13px; color: var(--z-dim); }
+.sw { width: 44px; height: 24px; flex: none; border: 1px solid var(--z-ctl); background: var(--z-sunken); position: relative; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: var(--z-dim); }
+.sw.on { border-color: var(--z-acc); background: color-mix(in srgb, var(--z-acc) 25%, transparent); }
+.sw.on::after { left: 22px; background: var(--z-acc); }
+
+/* two-theme panes */
+.pane { background: var(--z-well); border: 1px solid var(--z-line); padding: 0; min-width: 0; }
+.pane .ph { padding: 8px 12px; border-bottom: 1px solid var(--z-line); background: var(--z-sunken); font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--z-text); font-weight: 700; }
+.pane .pb { padding: 18px 16px; }
+
+.legend { width: 100%; border-collapse: collapse; font-size: 13px; }
+.legend th, .legend td { text-align: left; vertical-align: top; padding: 8px 10px; border: 1px solid var(--z-line); }
+.legend th { background: var(--z-sunken); color: var(--z-text); font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.legend td { color: var(--z-soft); line-height: 1.5; }
+.legend code { font-family: var(--font-mono); font-size: 12px; color: var(--z-acc); }
+.wf-chip { z-index: 1000; }
+</style>
+</head>
+<body class="wf">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-theater" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10s3-3 3-8"/><path d="M22 10s-3-3-3-8"/><path d="M10 2c0 4.4-3.6 8-8 8"/><path d="M14 2c0 4.4 3.6 8 8 8"/><path d="M2 10s2 11 10 11 10-11 10-11"/><path d="M9 13h.01M15 13h.01"/><path d="M9.5 16.5a3.5 3.5 0 0 0 5 0"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="0"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <h1>Reasoning block, slice S5</h1>
+  <p class="lede">Today Bunraku strips <code>&lt;think&gt;</code> text from the bubble (<span class="cite">src/core/chat-display.ts:83</span>) and stores <code>Generation.reasoning</code> but draws it nowhere. This is RoleCall's "Behind the Scene" block, ported at parity: collapsed-by-default blocks above the reply (native thinking first, tag thinking second, never merged), click to open, a duration line, live while the model is still thinking. Click any block header on this page to open and close it. Use the Theme chip (bottom) to cycle paper, stage and theater.</p>
+
+  <h2>1. Collapsed and expanded</h2>
+  <p class="sub">Default is collapsed with a one-line snippet (first sentence, 60 characters, then "..."). The header is the whole click target. Copy shows on hover and while open. The block sits above the reply bubble, inside the same message.</p>
+  <div class="grid">
+    <div class="ex"><div class="tag"><b>Collapsed (default)</b><span>finished reply, 8.4 s</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":false,"dur":"Thought for 8.4s","src":"Native","snip":"The player asked about the relief boat, which she has been avoiding...","text":"The player asked about the relief boat, which she has been avoiding all night. She would not lie outright, but she also cannot admit the boat is days overdue.\n\nKeep the answer short and physical: the beam, the brass, her hands. End on a question so the player has something to answer."}'></div>
+        <div class="bub"><div class="prose"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q></p></div></div>
+        <div class="meta"><span>Today at 2:42 PM</span><span>claude-opus-5-5 &middot; 6.2s</span></div>
+      </div></div>
+      <div class="why"><b>RC:</b> collapsed unless the user opened it (<span class="cite">ThinkBlock.tsx:127-135</span>); snippet <span class="cite">:73-80</span>, shown only while collapsed <span class="cite">:276-280</span>.</div>
+    </div>
+    <div class="ex"><div class="tag"><b>Expanded</b><span>same message, opened by click</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":true,"dur":"Thought for 8.4s","src":"Native","snip":"The player asked about the relief boat, which she has been avoiding...","text":"The player asked about the relief boat, which she has been avoiding all night. She would not lie outright, but she also cannot admit the boat is days overdue.\n\nKeep the answer short and physical: the beam, the brass, her hands. End on a question so the player has something to answer."}'></div>
+        <div class="bub"><div class="prose"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q></p></div></div>
+        <div class="meta"><span>Today at 2:42 PM</span><span>claude-opus-5-5 &middot; 6.2s</span></div>
+      </div></div>
+      <div class="why"><b>RC:</b> glowing divider then plain-text, italic, pre-wrapped body (<span class="cite">ThinkBlock.tsx:379-420</span>). Bunraku drops the glow; the divider stays as a 1px accent rule. The choice is remembered per block (next section).</div>
+    </div>
+  </div>
+
+  <h2>2. Streaming while the model is still thinking</h2>
+  <p class="sub">The block appears the moment the first reasoning token arrives and opens by itself (setting below, on by default). The icon pulses, the duration slot shows "Thinking" with three dots, and a caret trails the text. Once the reply text starts the dots turn into the final "Thought for N s". If the user closes the block mid-stream it stays closed for that stream.</p>
+  <div class="grid">
+    <div class="ex"><div class="tag"><b>Phase 1: thinking</b><span>no reply text yet</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":true,"live":true,"text":"The player is waiting on an answer about the boat. She would deflect first, then give a half truth. Start with the lamp, not the words. Her hands are busy, so she does not look up..."}'></div>
+      </div></div>
+      <div class="why"><b>RC:</b> streaming state <span class="cite">ThinkBlock.tsx:259-272</span> (dots) and <span class="cite">:408-415</span> (caret). Auto-open only for native reasoning, only when the setting is on and the user has not chosen yet (<span class="cite">:140-144</span>).</div>
+    </div>
+    <div class="ex"><div class="tag"><b>Phase 2: replying</b><span>thinking done, text streaming</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":true,"dur":"Thought for 6.2s","src":"Native","text":"The player is waiting on an answer about the boat. She would deflect first, then give a half truth. Start with the lamp, not the words. Her hands are busy, so she does not look up."}'></div>
+        <div class="bub"><div class="prose"><p><em>The beam swings out over the water</em><span class="cursor"></span></p></div></div>
+      </div></div>
+      <div class="why"><b>RC flaw F11:</b> RC passes the duration only while streaming (<span class="cite">StreamingText.tsx:212</span>); the finished block (<span class="cite">MarkdownMessage.tsx:815-835</span>) never gets it and falls back to a bare "Thought". Bunraku stores it so it survives: new optional <code>Generation.reasoningMs</code>.</div>
+    </div>
+  </div>
+  <div class="grid" style="margin-top:16px">
+    <div class="ex"><div class="tag"><b>Closed by hand mid-stream</b><span>stays closed</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":false,"live":true,"snip":"The player is waiting on an answer about the boat...","text":"x"}'></div>
+      </div></div>
+      <div class="why"><b>RC:</b> manual open or close is kept in a module map keyed by the stream segment id, so the streaming-to-final remount does not reopen it (<span class="cite">useReasoningPanelPreferences.ts:30-52</span>, <span class="cite">ThinkBlock.tsx:121-154</span>). Not saved to disk.</div>
+    </div>
+    <div class="ex"><div class="tag"><b>Two new settings</b><span>Scenes display settings</span></div>
+      <div class="stage"><div class="setrow"><div class="tx"><b>Open thinking while it streams</b><span>On: the block opens by itself as the model thinks. Off: it stays collapsed until you open it.</span></div><div class="sw on"></div></div>
+        <div class="setrow" style="margin-top:8px"><div class="tx"><b>Cap long thinking (scroll inside)</b><span>Off: an open block shows all of its text. On: it stops at 300px and scrolls inside itself.</span></div><div class="sw"></div></div></div>
+      <div class="why"><b>Open while streaming, RC:</b> <code>rc-reasoning-auto-expand</code>, default on, localStorage (<span class="cite">useReasoningPanelPreferences.ts:55-58</span>). <b>Cap, new:</b> default off, because RC has no cap and the person can opt in. <b>Where they live:</b> the existing app prefs, read with <code>ctx.prefs.get</code> like <code>scenes.showTimestamps</code> (<code>scene-page.tsx:78,344</code>): <code>scenes.autoOpenReasoning</code> (on unless <code>false</code>) and <code>scenes.capLongReasoning</code> (off unless <code>true</code>). No new store; the RC localStorage key is not reused.</div>
+    </div>
+  </div>
+
+  <h2>3. A long reasoning block</h2>
+  <p class="sub">Reasoning from big thinking models runs for pages. By default an open block shows everything, as RC does. People who find that too long can turn on "Cap long thinking": the block then stops at 300px and scrolls inside itself so the reply stays in view.</p>
+  <div class="grid">
+    <div class="ex"><div class="tag"><b>Cap on: capped and scrolling</b><span>300px, scrolls inside</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":true,"long":true,"dur":"Thought for 94.3s","src":"Native","text":"Step 1. Re-read the last three turns. The player has now asked about the boat twice, and both times Marguerite changed the subject to the lamp. A third deflection will read as a tic, not a character.\n\nStep 2. What does she know? The relief boat was due on Tuesday. The radio has been dead since the storm front. She has not told the player either fact, and the player has only her word that the supplies are fine.\n\nStep 3. What does she want? She wants the player to stay calm and keep working the rail, because a frightened player leaves the tower, and she cannot keep the light alone through the night.\n\nStep 4. So she cannot lie flatly and cannot confess. The honest middle is a partial truth: the boat is late, but boats are always late in this weather. That is true and it hides the radio.\n\nStep 5. Tone. Clipped, practical, a little dry. No speeches. One physical beat first, one line of speech, then a question handed back so the player carries the next turn.\n\nStep 6. Check against the established facts: kerosene smell, wet wool, brass fittings on the chart table, the beam period of eleven seconds. Use one of them, not all four.\n\nStep 7. Length. Two short paragraphs at most. The player writes one line at a time, so match that rhythm.\n\nStep 8. Draft one: she wipes the glass and says the boat will come when the sea lets it. Too glib. Draft two: she counts the beam aloud, once, and says it is the only clock she trusts. Better, it shows the dead radio without saying it.\n\nStep 9. Final shape: beam beat, the line about the clock, then ask whether the player has eaten. Done."}'></div>
+        <div class="bub"><div class="prose"><p><em>She counts the beam under her breath, once, and does not look away from the glass.</em> <q>It is the only clock I trust tonight. Have you eaten?</q></p></div></div>
+      </div></div>
+      <div class="why"><b>Setting on.</b> The reply stays in view; the footer says the block scrolls.</div>
+    </div>
+    <div class="ex"><div class="tag"><b>Cap off (default): full length</b><span>no limit, as RC</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":true,"dur":"Thought for 94.3s","src":"Native","text":"Step 1. Re-read the last three turns. The player has now asked about the boat twice, and both times Marguerite changed the subject to the lamp. A third deflection will read as a tic, not a character.\n\nStep 2. What does she know? The relief boat was due on Tuesday. The radio has been dead since the storm front. She has not told the player either fact, and the player has only her word that the supplies are fine.\n\nStep 3. What does she want? She wants the player to stay calm and keep working the rail, because a frightened player leaves the tower, and she cannot keep the light alone through the night.\n\nStep 4. So she cannot lie flatly and cannot confess. The honest middle is a partial truth: the boat is late, but boats are always late in this weather. That is true and it hides the radio.\n\nStep 5. Tone. Clipped, practical, a little dry. No speeches. One physical beat first, one line of speech, then a question handed back so the player carries the next turn.\n\nStep 6. Check against the established facts: kerosene smell, wet wool, brass fittings on the chart table, the beam period of eleven seconds. Use one of them, not all four.\n\nStep 7. Length. Two short paragraphs at most. The player writes one line at a time, so match that rhythm.\n\nStep 8. Draft one: she wipes the glass and says the boat will come when the sea lets it. Too glib. Draft two: she counts the beam aloud, once, and says it is the only clock she trusts. Better, it shows the dead radio without saying it.\n\nStep 9. Final shape: beam beat, the line about the clock, then ask whether the player has eaten. Done."}'></div>
+        <div class="bub"><div class="prose"><p><em>She counts the beam under her breath, once, and does not look away from the glass.</em> <q>It is the only clock I trust tonight. Have you eaten?</q></p></div></div>
+      </div></div>
+      <div class="why"><b>Setting off.</b> <b>RC:</b> no height limit; the body is <code>whitespace-pre-wrap</code> with no max-height (<span class="cite">ThinkBlock.tsx:391-419</span>), so a 90 second pass pushes the reply off screen. The default stays RC's; the cap is an opt-in Bunraku addition, flagged for approval.</div>
+    </div>
+  </div>
+
+  <h2>4. A reply that is only reasoning</h2>
+  <p class="sub">A model can return thinking and nothing else, or a reply cut off while still inside its thought. The block still shows, and the bubble says plainly that no reply text came back, so the turn does not look empty or broken. The existing rule stays: if the text is only an unclosed thought tag, the text itself is shown instead of a blank bubble (<span class="cite">reasoning-tags.ts:58-60</span>).</p>
+  <div class="grid">
+    <div class="ex"><div class="tag"><b>Reasoning only</b><span>finish reason: length</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":true,"dur":"Thought for 41.0s","src":"&lt;think&gt;","text":"She would answer by moving to the window. The beam is at its lowest point. The player cannot see her face, so the line has to carry..."}'></div>
+        <div class="bub"><div class="nothing">No reply text. The model returned only its thinking, and stopped at the token limit.</div></div>
+        <div class="meta"><span>Oct 4, 9:16 PM</span><span>gpt-5.1 &middot; 41.0s</span><span style="color:var(--z-warn)">length</span></div>
+      </div></div>
+      <div class="why"><b>Bunraku:</b> Regenerate and the version arrows work as on any reply. The block opens by default here, since it is the only content. <b>RC:</b> code-read only. The reasoning panel and the body are independent (<span class="cite">MarkdownMessage.tsx:815-860</span>); I found no placeholder, so an RC reply like this shows a block over an empty bubble. Not live-checked.</div>
+    </div>
+    <div class="ex"><div class="tag"><b>Imported chat, no timing</b><span>SillyTavern history</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":false,"dur":"Thought","src":"&lt;think&gt;","snip":"Checking what she knows about the boat before she answers...","text":"Checking what she knows about the boat before she answers. She knows it is late."}'></div>
+        <div class="bub"><div class="prose"><p><em>For a moment she only watches your hands on the brass.</em></p></div></div>
+      </div></div>
+      <div class="why"><b>Fallback:</b> no stored duration (imports, replies from before this slice) shows just "Thought", the same as RC's no-duration fallback (<span class="cite">ThinkBlock.tsx:179-183</span>). No guessed number.</div>
+    </div>
+  </div>
+
+  <h2>5. Hidden when the model returns none</h2>
+  <p class="sub">No reasoning means no block: no header, no empty card, no "no thinking" label. The bubble is exactly what it is today. Whitespace-only reasoning counts as none.</p>
+  <div class="grid">
+    <div class="ex"><div class="tag"><b>No reasoning</b><span>model without thinking</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div class="bub"><div class="prose"><p><em>The keeper does not answer.</em></p></div></div>
+        <div class="meta"><span>Today at 3:05 PM</span><span>some-model &middot; 1.3s</span></div>
+      </div></div>
+      <div class="why"><b>RC:</b> the native block needs <code>nativeReasoning?.trim()</code> (<span class="cite">MarkdownMessage.tsx:815</span>); the tag block needs a non-null merge (<span class="cite">:826</span>, <span class="cite">thinking-tags.ts:587-591</span>). User messages can carry a block too (<span class="cite">ImmersiveMessage.tsx:1095</span>); Bunraku shows it on both roles.</div>
+    </div>
+    <div class="ex"><div class="tag"><b>Both kinds at once</b><span>native first, then the tagged thinking</span></div>
+      <div class="stage"><div class="msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":false,"dur":"Thought for 12.0s","src":"Native","snip":"The provider reasoned about the boat before writing anything...","text":"The provider reasoned about the boat before writing anything. The radio is dead; she will not say so."}'></div>
+        <div data-think='{"open":false,"dur":"Thought for 3.1s","src":"&lt;think&gt;","snip":"Plan from the preset: one beat, one line, one question...","text":"Plan from the preset: one beat, one line, one question."}'></div>
+        <div class="bub"><div class="prose"><p><em>Rain on the glass.</em></p></div></div>
+      </div></div>
+      <div class="why"><b>RC:</b> two separate blocks, native first (<span class="cite">MarkdownMessage.tsx:815-835</span>). Native: "Backstage - Native Reasoning", theatre icon, mono body, "Reasoned for" (<span class="cite">ThinkBlock.tsx:178-183</span>, <span class="cite">:224-246</span>, <span class="cite">:393</span>, <span class="cite">:400-407</span>). Tags: "Behind the Scene", clapper icon, italic body, "Thought for". Not merged, per Chi. Each block keeps its own open state and duration.</div>
+    </div>
+  </div>
+
+  <h2>6. Two themes, side by side</h2>
+  <p class="sub">Both cards stacked on one reply, native first, each collapsed then open, in paper and in stage. Native is the heavy card (2px border, hard shadow, dark gradient, mono body); tags are the light card (1px border, flat tint, italic body). Same accent hue, as in RC. The Theme chip cycles the whole page through paper, stage and theater. All colors are theme tokens; none are hardcoded.</p>
+  <div class="grid">
+    <div class="pane wf" style='--bk-surface-well:#ece4d3;--bk-surface-base:#f7f1e3;--bk-surface-sunken:#f0e8d6;--bk-surface-panel:#fffdf7;--bk-surface-ink:#efe6d2;--bk-line:#d8ccb4;--bk-line-track:#e2d8c2;--bk-line-control:#766850;--bk-text:#231f1a;--bk-text-soft:#433c33;--bk-text-dim:#4a4238;--bk-text-faint:#5a5145;--bk-role-brand:#ffa7d1;--bk-role-brand-text:#a61d5e;--bk-role-warn-text:#7c4d00;--bk-role-select-text:#6a4ca6;--bk-focus-color:#5a3fa0;--bk-font-name:"Fraunces",serif;--bk-font-display:"Fraunces",serif;--bk-font-mono:"IBM Plex Mono",monospace;color:#433c33'>
+      <div class="ph">Paper</div>
+      <div class="pb msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":false,"dur":"Thought for 8.4s","src":"Native","snip":"The player asked about the relief boat, which she has been avoiding...","text":"x"}'></div>
+        <div data-think='{"open":false,"dur":"Thought for 3.1s","src":"&lt;think&gt;","snip":"Plan: one beat, one line, one question...","text":"x"}'></div>
+        <div data-think='{"open":true,"dur":"Thought for 8.4s","src":"Native","text":"The player asked about the relief boat, which she has been avoiding all night. The radio is dead and she will not say so. Keep the answer short and physical."}'></div>
+        <div data-think='{"open":true,"dur":"Thought for 3.1s","src":"&lt;think&gt;","text":"Plan from the preset: one beat, one line, one question. Do not mention the radio."}'></div>
+        <div class="bub"><div class="prose"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q></p></div></div>
+      </div>
+    </div>
+    <div class="pane wf" style='--bk-surface-well:#16121c;--bk-surface-base:#1a1620;--bk-surface-sunken:#1c1723;--bk-surface-panel:#26202f;--bk-surface-ink:#14111a;--bk-line:#4a3f55;--bk-line-track:#3d3347;--bk-line-control:#a898ab;--bk-text:#f5ecf0;--bk-text-soft:#c2b5c4;--bk-text-dim:#a898ab;--bk-text-faint:#a3959f;--bk-role-brand:#ffb3c7;--bk-role-brand-text:#ffb3c7;--bk-role-warn-text:#ffe08a;--bk-role-select-text:#d9c8ff;--bk-focus-color:#f4d387;--bk-font-name:"Fraunces",serif;--bk-font-display:"Fraunces",serif;--bk-font-mono:"IBM Plex Mono",monospace;color:#c2b5c4'>
+      <div class="ph">Stage</div>
+      <div class="pb msg">
+        <div class="spk">Marguerite Vane</div>
+        <div data-think='{"open":false,"dur":"Thought for 8.4s","src":"Native","snip":"The player asked about the relief boat, which she has been avoiding...","text":"x"}'></div>
+        <div data-think='{"open":false,"dur":"Thought for 3.1s","src":"&lt;think&gt;","snip":"Plan: one beat, one line, one question...","text":"x"}'></div>
+        <div data-think='{"open":true,"dur":"Thought for 8.4s","src":"Native","text":"The player asked about the relief boat, which she has been avoiding all night. The radio is dead and she will not say so. Keep the answer short and physical."}'></div>
+        <div data-think='{"open":true,"dur":"Thought for 3.1s","src":"&lt;think&gt;","text":"Plan from the preset: one beat, one line, one question. Do not mention the radio."}'></div>
+        <div class="bub"><div class="prose"><p><em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q></p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>7. What each state needs from the code</h2>
+  <table class="legend">
+    <tr><th>State</th><th>Data</th><th>Where it comes from</th></tr>
+    <tr><td>Reasoning text</td><td>two sources, kept apart</td><td>native: <code>Generation.reasoning.text</code> (<code>chat-store.ts:26</code>). Tags: a new <code>splitReasoning(text, format)</code> beside <code>stripReasoningTags</code>, using the preset's own prefix and suffix when set (<code>chat-display.ts:83</code>). Native block first, tag block second.</td></tr>
+    <tr><td>"Reasoned for N s" (native)</td><td>one optional number</td><td>new <code>Generation.reasoningMs</code>, the native channel's own time; absent shows "Native reasoning"</td></tr>
+    <tr><td>"Thought for N s" (tags)</td><td>one optional number</td><td>new <code>Generation.tagThinkingMs</code>, the time spent inside the tag; absent shows "Thought". It can only be measured live while the tag streams, so imports and old replies have none.</td></tr>
+    <tr><td>Streaming</td><td>reasoning deltas before text deltas</td><td>native: the turn stream's reasoning channel, timed from first reasoning token to first text token. Tags: timed from the opening tag to the closing tag in the text stream. Each block times itself.</td></tr>
+    <tr><td>Open or closed</td><td>per block (native and tag separately), per session</td><td>in-memory map keyed by message id and take, not saved; plus the one display setting above</td></tr>
+    <tr><td>Hidden</td><td>empty after trim</td><td>no node rendered</td></tr>
+  </table>
+  <div class="note flag" style="margin-top:14px"><b>Out of this slice, drawn nowhere:</b> RC's Edit reasoning and "Put back in the reply" (Dump to narration) buttons (<span class="cite">ThinkBlock.tsx:304-345</span>), and its "Catch thinking" chips. They belong with the writing tools (A21). Copy stays.</div>
+</div>
+
+<div class="wf-chip" id="wf"><button data-theme-switch>Theme</button><a href="../index.html">All</a></div>
+
+<script>
+(function () {
+  var ICON_NAT = '<svg><use href="#i-theater"/></svg>';
+  var ICON = '<svg><use href="#i-clap"/></svg>';
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+  function build(o) {
+    var live = !!o.live;
+    var nat = !o.src || o.src.indexOf("Native") === 0;
+    var durText = o.dur ? (nat ? o.dur.replace(/^Thought/, "Reasoned") : o.dur) : (nat ? "Native reasoning" : "Thought");
+    var dur = live ? (nat ? "Reasoning" : "Thinking") + ' <span class="dots"><i></i><i></i><i></i></span>' : esc(durText);
+    var src = "";
+    var text = esc(o.text || "").replace(/&amp;apos;/g, "'");
+    var caret = live && o.open ? '<span class="caret"></span>' : "";
+    var cls = "tb" + (nat ? " nat" : "") + (o.open ? " open" : "") + (live ? " live" : "") + (o.long ? " long" : "");
+    var snip = o.snip ? esc(o.snip).replace(/&apos;/g, "'") : "";
+    return '<div class="' + cls + '">' +
+      '<button class="hd" type="button" aria-expanded="' + (o.open ? "true" : "false") + '">' +
+      '<span class="ico">' + (nat ? ICON_NAT : ICON) + '</span>' +
+      '<span class="info"><span class="top"><span class="lbl">' + (nat ? "Backstage - Native Reasoning" : "Behind the Scene") + '</span>' + src + '<span class="dur">' + dur + '</span></span>' +
+      '<span class="snip">' + snip + '</span></span>' +
+      '<span class="acts"><span title="Copy reasoning"><svg><use href="#i-copy"/></svg></span></span>' +
+      '<svg class="chev"><use href="#i-chev"/></svg></button>' +
+      '<div class="rule"></div><div class="body">' + (nat ? '<div class="curtain">Before the curtain</div>' : "") + text.replace(/&apos;/g, "'") + caret + '</div>' +
+      '<div class="more"><span>Scrolls inside the block</span><span>capped at 300px</span></div></div>';
+  }
+  document.querySelectorAll("[data-think]").forEach(function (el) {
+    var o = JSON.parse(el.getAttribute("data-think"));
+    var wrap = document.createElement("div");
+    wrap.innerHTML = build(o);
+    var node = wrap.firstChild;
+    node.querySelector(".hd").addEventListener("click", function () {
+      var open = node.classList.toggle("open");
+      this.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+    el.replaceWith(node);
+  });
+})();
+</script>
+</body>
+</html>

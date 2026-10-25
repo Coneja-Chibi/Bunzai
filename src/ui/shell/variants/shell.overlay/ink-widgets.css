@@ -1,0 +1,2 @@
+/* Ink widgets: quiet ruled panels and display headings on the shared overlay layout. */
+html[data-surface-shell-overlay="ink-widgets"] [data-part="shell.overlay"] { --overlay-heading: var(--bk-font-display); --overlay-shadow: none; }

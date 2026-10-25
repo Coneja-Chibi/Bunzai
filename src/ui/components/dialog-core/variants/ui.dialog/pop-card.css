@@ -1,0 +1,12 @@
+/** ui.dialog pop-card: a sticker card that pops in. A thick slab edge, a hard offset shadow and a bright stripe across the top. */
+@keyframes bk-pop-in { 0% { opacity: 0; transform: scale(.92); } 70% { opacity: 1; transform: scale(1.02); } 100% { transform: none; } }
+html[data-surface-ui-dialog="pop-card"] [data-dialog-overlay="center"]:not(:has(.host-protected)) {
+  background: color-mix(in srgb, var(--bk-surface-ink) 78%, transparent);
+  & [data-dialog-sheet]:has(> .scn-sheet) { padding: 0; background: none; border: 0; box-shadow: none; max-width: none; width: auto; }
+  & :is([data-dialog-sheet]:not(:has(> .scn-sheet)), [data-dialog-sheet] > .scn-sheet) {
+    position: relative; background: var(--bk-surface-panel); color: var(--bk-text); border: var(--bk-frame-w) solid var(--bk-line);
+    border-top-width: calc(var(--bk-frame-w) + .65rem); border-top-color: var(--bk-role-brand);
+    box-shadow: calc(var(--bk-frame-shadow-x) + 2px) calc(var(--bk-frame-shadow-y) + 2px) 0 0 var(--bk-line);
+    animation: bk-pop-in var(--bk-dur-slow) var(--bk-ease-move) both; }
+  & [data-dialog-sheet]:not(:has(> .scn-sheet)) { padding: 1.3rem 1.4rem; }
+}

@@ -1,0 +1,13 @@
+/**
+ * library.grid catalog-list: in Grid every piece is one entry per line. (Carousel or Grid is still the person's choice;
+ * first run opens on Grid. The rail, section headers, toolbar and tabs belong to their own surfaces.)
+ */
+html[data-surface-library-grid="catalog-list"] {
+  & .lib.rc { --cw: min(calc(7rem + (var(--card-w, 8.5rem) - 4rem) * 2), 85cqi); }
+  & .lib.rc .rgrid-row, & .lib.rc .rgrid-row.presets { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+  /* the Start scene button rides at the end of its entry instead of under it */
+  & .lib.rc .rgrid-row .rcell { flex-direction: row; align-items: stretch; gap: .5rem; }
+  & .lib.rc .rgrid-row .rcell > .rcard { flex: 1; width: auto; }
+  & .lib.rc .rgrid-row .rstart { margin-top: 0; width: 9rem; height: auto; flex: none; }
+  & .lib.rc .rnewtile { border: 1px dashed var(--bk-line-control); min-height: 3rem; font: italic 400 1rem var(--font-big); letter-spacing: 0; text-transform: none; }
+}

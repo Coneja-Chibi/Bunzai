@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/architecture",
+  "sourcePath": "docs/reference/architecture.md",
+  "sourceHash": "sha256:30e58bcdd37f47d3d8602cdb16f3d55128042d55619d1843af513473a55a63bb",
+  "summary": "This reference maps Bunraku's implemented engine and tool architecture. Hub and spoke explains why every external format maps through one canonical model. The canonical entity defines the shared wrapper and superset rule; escrow preserves source twins and binary carriers without moving private or executable payloads across formats. The adapter contract uses a kind-discriminated open format system, attaches serialization-loss reports, and routes canonical JSON through strict per-kind decoders. defineExhaustiveShape<T>() demands exact schema input and output parity, rejecting drift escapes such as narrowed unions and coercion while leaving declared record bags open. Detection ranks confident kind-correct adapters, and folder discovery supplies the registry. Bundles extract and re-embed lorebook references. Semantic content capabilities define pure previews, progressive discovery, bounded reads and stored results, independently reviewed semantic docs, and explicit compare-and-save apply with re-read verification. Layering points dependencies inward across CLI, installed Studio, and a static browser Studio that reuses the same adapters and API contract over a memory ContentStore and StateStore. The stage section records the encrypted library: a versioned ContentStore with a 3-day Trash and ids never reused, a StateStore for the Studio's own documents, and plain folders only through the folder import and export; source-of-truth links name the governing modules. Integrated PieceStore, cold-worker, snapshot, asset/search and scale-evidence source paths are independently reviewed; runtime and packaged proof remain pending. The source-of-truth map now names the snapshot and health-check files under src/stage/store/sqlite and the host-only care routes.",
+  "topics": [
+    "hub and spoke conversion",
+    "canonical entity and superset",
+    "escrow and round trips",
+    "strict canonical runtime boundary",
+    "adapter detection and discovery",
+    "bundled lorebooks",
+    "semantic capability tools",
+    "per-turn exposure persistent drafts",
+    "result store eviction and paging",
+    "hash-bound summary approval",
+    "explicit durable apply",
+    "engine layering and CLI"
+  ],
+  "sections": [
+    {
+      "slug": "the-one-idea-hub-and-spoke",
+      "title": "The one idea: hub and spoke",
+      "level": 2,
+      "sourceHash": "sha256:5968e07a4eccc2c3e553ec922fcb66262633b9f5bb198ea23ec8125318f50e64",
+      "summary": "Every external format maps to and from one canonical superset rather than converting directly to every other format. A pairwise mesh requires N times N minus one paths; hub and spoke needs only N adapters. Adding a format therefore adds one adapter without changing existing formats or core conversion logic. Import calls the adapter's toCanonical operation, export calls fromCanonical, and conversion composes those two steps. This is the architectural invariant behind adapter independence and honest interoperability.",
+      "topics": [
+        "canonical hub",
+        "N adapters",
+        "import toCanonical",
+        "export fromCanonical"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "the-canonical-entity",
+      "title": "The canonical entity",
+      "level": 2,
+      "sourceHash": "sha256:e6a9058d74cea7b6321606fdcac4e3fd0ab744f29e9bc25a903c95f02c3f952c",
+      "summary": "src/core/canonical.ts defines the shared wrapper: schemaVersion identifies the canonical revision, kind selects the entity family, id is the stable identity, body contains interoperable content, profiles hold sparse per-platform overrides, and original holds source escrow. Character, lorebook, persona, preset, regex, and quickreply are adapter-backed kinds; canonical schemas also define pack and htmldoc entities. Body details live in their entity folders rather than in the wrapper. The superset rule limits body fields to meaning represented by at least one real wire format. Values that exist only in one application's memory or have no portable producer remain in escrow instead of acquiring a misleading canonical slot.",
+      "topics": [
+        "canonical wrapper",
+        "adapter-backed entity kinds",
+        "profiles and original",
+        "entity body schemas",
+        "superset rule"
+      ],
+      "children": [
+        {
+          "slug": "the-superset-rule",
+          "title": "The superset rule",
+          "level": 3,
+          "sourceHash": "sha256:c28c436853755bfb51d9334fc35cd858e8ac3edc35720d7b9105e428afc637f7",
+          "summary": "Canonical bodies contain only fields serialized by real formats. A field earns a first-class slot only when a wire producer exists. Application-only values, including five RoleCall lorebook fields, stay escrowed so Bunraku does not promise unsupported portability.",
+          "topics": [
+            "wire-backed fields",
+            "first-class slot rule",
+            "escrow fallback",
+            "RoleCall lorebook fields"
+          ],
+          "children": [],
+          "shortSource": true
+        }
+      ]
+    },
+    {
+      "slug": "escrow-semantic-round-trips-contained-cross-format-loss",
+      "title": "Escrow: semantic round-trips, contained cross-format loss",
+      "level": 2,
+      "sourceHash": "sha256:52da001412f62f96699333666d97918364dd714269942add7e68a5c3d929db55",
+      "summary": "Escrow preserves parsed source snapshots and unmapped fields for semantic same-format round trips. Byte identity is limited to explicitly specified fixture-proven tiers. Entity parts isolate escrow from light editor reads; light media stays sealed with stable references, while legacy blobbed authored text is materialized only when needed. Conversion follows hub and spoke with explicit loss reporting.",
+      "topics": [
+        "raw source twin",
+        "same-format re-projection",
+        "contained cross-format loss",
+        "no blind executable copying",
+        "PNG sourceMedia"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-adapter-contract",
+      "title": "The adapter contract",
+      "level": 2,
+      "sourceHash": "sha256:5c7332ae57bb7d6275314e86538418e076ff08951a0878225606d5e196af5628",
+      "summary": "src/core/adapter.ts defines a kind-discriminated union of open format plugins whose character, lorebook, persona, preset, regex, and quickreply branches convert to and from matching canonical entities. Adapter output carries text or bytes, suggestedExtension, and a SerializeReport naming escrowed, dropped, shadowed, and warning paths. An adapter normally owns the source twin under its own id; escrowFormatIds explicitly declares family-keyed twins when a narrower wire adapter owns one, such as rolecall-preset owning original.rolecall. Loss reporting can therefore exclude genuine same-format escrow without hiding unrelated foreign data. Canonical JSON crosses storage and HTTP through src/entities/runtime-schema.ts, which composes eight strict per-kind decoders. Each adjacent runtime schema uses defineExhaustiveShape<T>() to require exact input and output parity; missing or extra keys, narrowed unions, coercion, any, and never fail typecheck. Unknown same-version keys fail except in declared open bags. Kind-matched profiles are shallow partial bodies whose present fields receive complete validation. Storage, HTTP save, format-corpus verification, and Kit drafts share this ADR-011 boundary.",
+      "topics": [
+        "kind-discriminated union",
+        "toCanonical fromCanonical",
+        "SerializeReport",
+        "escrowFormatIds source twin ownership",
+        "open formats closed kinds",
+        "exhaustive runtime decoders",
+        "strict keys and open bags",
+        "typed partial profiles"
+      ],
+      "children": []
+    },
+    {
+      "slug": "detection-and-the-registry",
+      "title": "Detection and the registry",
+      "level": 2,
+      "sourceHash": "sha256:e722a0614da147a2f69ae541b8c3595c7d70d2a7d5ed60d62174a29885d9dbfc",
+      "summary": "src/core/registry.ts holds the in-memory adapter table. Detection runs every adapter, rejects scores at or below 0.5, and selects the single highest-confidence match. Scores encode specificity: a RoleCall card can score 1.0 and outrank the generic SillyTavern reader at 0.9 for the same compatible CCv3 payload. Because character and lorebook adapters share one registry, detectors also enforce a cross-kind firewall. A bare name is insufficient evidence for SillyTavern flat-v1 character data; at least one genuine character signal such as description, personality, scenario, first_mes, or mes_example is required, preventing a name-bearing worldbook from being misclassified.",
+      "topics": [
+        "confidence threshold",
+        "specific format priority",
+        "cross-kind firewall",
+        "character detection signals"
+      ],
+      "children": []
+    },
+    {
+      "slug": "folders-as-schema-the-moddability-promise",
+      "title": "Folders-as-schema (the moddability promise)",
+      "level": 2,
+      "sourceHash": "sha256:55f811f25372d9e0b954d8a46cd26cc0a581324bfb9a9152513ee4ecb0ba736f",
+      "summary": "src/core/loader.ts is the impure discovery edge. It scans src/formats/*/index.ts with filesystem primitives, dynamically imports each module, and registers its default export. Names beginning with an underscore, including _shared and _template, are ignored. A folder may export one adapter or an array when a format family supplies multiple codecs. Agnai, Risu, SillyTavern, and RoleCall each include character and lorebook codecs; some arrays also include regex, persona, preset, or quick-reply codecs. FormatId is an open string rather than a central enum. Adding a format means copying the template, implementing detection and both canonical directions, and supplying proof; no core registry list or unrelated format file is edited.",
+      "topics": [
+        "filesystem discovery",
+        "underscore folders skipped",
+        "single or array exports",
+        "open FormatId",
+        "no central registration"
+      ],
+      "children": []
+    },
+    {
+      "slug": "bundles-a-card-plus-its-lorebook",
+      "title": "Bundles: a card plus its lorebook",
+      "level": 2,
+      "sourceHash": "sha256:d99c031d6496e237991d9877bb3bd2271d2ffb3689e34b05308eeec68c846855",
+      "summary": "CCv2 and CCv3 character cards can embed a character_book, but Bunraku models that book as a separate canonical lorebook referenced by the character rather than leaving an opaque nested blob. During import, shared bundle logic extracts the book, creates a CanonicalLorebook, and records its id in knowledgeRefs. During export, the character adapter receives resolved lorebooks through EmitContext and embeds the appropriate target-format representation. The resolved list is authoritative even when empty: removing a link or disabling all linked books clears stale embedded data from the escrowed source twin. convertFile coordinates extraction and re-embedding for ordinary same-kind conversions, keeping bundle behavior format-agnostic at the canonical layer.",
+      "topics": [
+        "embedded character book",
+        "canonical lorebook extraction",
+        "knowledgeRefs",
+        "EmitContext re-embedding",
+        "authoritative empty list",
+        "convertFile orchestration"
+      ],
+      "children": []
+    },
+    {
+      "slug": "semantic-content-capabilities",
+      "title": "Semantic content capabilities",
+      "level": 2,
+      "sourceHash": "sha256:6e5331ab0eb272725e63ab414df0590de911b49c55a9f70bcd22936ff4d0bde6",
+      "summary": "Capability folders provide pure operations returning previews, changes, warnings, and platform impact without writing. Kit projects content, studio, transfer, and diagnostics into one catalog. Only pure content gets exact read-or-draft access; deferred apply and writable bridges fail closed until separate safety policy grants an exact name. Search exposes five matches, browse and describe progressively, hidden or duplicate descriptors fail, and deferred exposure resets each user turn while drafts persist. studio_read uses RFC 6901 pointers and paging; oversized values use result_query handles whose store enforces per-entry and aggregate UTF-8 byte caps, a count cap, oldest-first eviction, character paging, and direct-offset recovery beyond capacity. change_query retains proposals; read-effect tools return deterministic observations and are rejected for changing content or claiming changes. docs_query searches indexed metadata and reads authoritative Markdown without arbitrary paths or network. Summaries enter generated indexes only with independent hash-bound APPROVE receipts; source or summary edits invalidate approval. Focused checks validate an author's sidecar; global checks require every approval and current projections. Security classifies only exact catalog-derived names as preview-only; durable apply remains an explicit compareAndSave write with re-read verification.",
+      "topics": [
+        "pure semantic previews",
+        "per-turn deferred exposure",
+        "fail-closed deferred apply",
+        "read-effect purity",
+        "bounded result store",
+        "persistent draft queries",
+        "hash-bound docs approval",
+        "explicit durable apply"
+      ],
+      "children": []
+    },
+    {
+      "slug": "layering",
+      "title": "Layering",
+      "level": 2,
+      "sourceHash": "sha256:12a9b80d9a63d7fd8a1359960459d7e71541a4ab243180f253565cbb49d0efc3",
+      "summary": "Core owns pure canonical computation and shared synchronous derivation; entity schemas and capabilities own semantic shape; codecs convert through canonical; Stage storage backends remain opaque. Light editor reads, selected escrow and native asset metadata feed conditional patch saves without full escrow/media opens. D18 prevents backend imports of engine, entity or format code.",
+      "topics": [
+        "inward dependency layers",
+        "UI-free engine",
+        "prove converters first",
+        "shared CLI and Studio engine",
+        "static browser delivery",
+        "volatile memory storage"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "the-stage-chat-runtime-in-progress",
+      "title": "The stage (chat runtime, in progress)",
+      "level": 2,
+      "sourceHash": "sha256:f3662052ff58e531f2f19e09adf613b92fe410a5a7b4ac22ca380ed127782cf2",
+      "summary": "Stage stores encrypted pieces and chats behind contracts; scene turns assemble prompts through Kit providers. A SillyTavern chat imports in one transaction (rule 29); a message can be hidden (rule 30); a turn writes a reply, a version, or a continuation (rule 31); a cut message is purged after 1 day, other trash after 3 (rule 11). Guides and saved scene setups are StateStore documents the folder export carries. Runtime, migrations and packaged proof remain unrun.",
+      "topics": [
+        "chat runtime",
+        "versioned ContentStore",
+        "3-day Trash retired ids",
+        "StateStore documents",
+        "folder import and export",
+        "encryption at rest",
+        "boundary lint",
+        "native Anthropic connection"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "the-cli",
+      "title": "The CLI",
+      "level": 2,
+      "sourceHash": "sha256:879f97d18e32ff62cfa34235aa7e0f9dd200afdd4886ebfadcf4484947bb63ba",
+      "summary": "The thin CLI provides convert, inspect, label, validate, formats, UI, plain-folder export, derived stats/clear, version and help. Derived commands inspect or clear rebuildable cache rows in an existing encrypted library; ordinary content operations continue through the same canonical engine and adapter registry.",
+      "topics": [
+        "convert inspect label",
+        "validate formats",
+        "Studio launch",
+        "library export",
+        "version and help"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:242bb034f071c3e274a97e3e08a50306407dbfccbea9f74fc707643b7f4099ec",
+      "summary": "The map names canonical, registry, adapter, loader, format overlay, MIME, bundles, derivation, database, encryption and entity owners, now including snapshots, the health check and the host-only care routes. Scale evidence is bounded and artifact-matched; CLI launch differs from desktop identity; source paths are reviewed while runtime metrics and physical RSS remain unproved.",
+      "topics": [
+        "canonical and adapter owners",
+        "registry and loader owners",
+        "bundle conversion owner",
+        "entity schema owners"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

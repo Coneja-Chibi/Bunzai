@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/architecture",
+  "sourcePath": "docs/reference/architecture.md",
+  "sourceHash": "sha256:30e58bcdd37f47d3d8602cdb16f3d55128042d55619d1843af513473a55a63bb",
+  "semanticSummaryHash": "sha256:3ffebe1caf047ca6d526df70844d90ac7d4f3fd689904402aeccb2b6d7c92ae4",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Two added rows cite existing shell files (store-navigation, AppSurface, AppRooms, Dock, dock-core, bottom-dock css); sidecar fresh.",
+  "reviewedAt": "2026-10-25T02:20:04.661Z"
+}

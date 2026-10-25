@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/components",
+  "sourcePath": "docs/reference/components.md",
+  "sourceHash": "sha256:cfde663b13387f536816d0f696687b3a1ae8fd0a1ba4c7e2e1d2b0e067cabc62",
+  "summary": "Component catalog is the generated inventory of exported Bunraku UI entries. scripts/hooks/component-catalog.ts scans React components throughout src/ui plus exported create/build/swatch/inject helpers under src/ui/_shared. Authors do not hand-edit the markdown: regenerate it with bun run scripts/hooks/component-catalog.ts, and the pre-commit --check gate fails when live exports drift. Each row records Name, source File, TypeScript Signature, optional Doc blurb, and Styles class list. Before building a control, scan this catalog and reuse an existing entry rather than inventing a twin. The two tables distinguish React `.tsx` components from shared `.ts` UI helpers; that distinction is file shape and API role, not a claim that helpers are legacy or awaiting migration. Use the catalog as lookup authority for props and file homes; behavior and layout truth remain in reference/ui and the owning source. The catalog also includes the cover composer, context-menu button, reusable proscenium and capped LightRays effect used by the approved premiere layout. It also lists the Context wing parts under src/ui/apps/scenes/context (the wing shell and its resize edge, This turn, Next send, Lore & state with its Macros view, the pressure bar and the Memory controls), the Booth's Chat Summary row and Settings > Memory & Summaries.",
+  "topics": [
+    "generated component catalog",
+    "component-catalog.ts hook",
+    "React ADR-008 tsx",
+    "shared TypeScript UI helpers",
+    "pre-commit catalog check",
+    "reuse before invent",
+    "Name File Signature Doc Styles",
+    "all src/ui TSX exports"
+  ],
+  "sections": [
+    {
+      "slug": "components-react-tsx",
+      "title": "Components (React, `.tsx`)",
+      "level": 2,
+      "sourceHash": "sha256:a967acdc96239b82e95b9ccffc79a962b1768d56ac427f85b476a564075b42e9",
+      "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, TitleScreen, setup and shared controls; Library shelves, cards, staging, tools, import and Trash; Workbench editors and split panes; Scenes lists, hero, cards, dialogs, LiveBubble, SceneArt, SceneComposer, the EditBox message editor, the Edit history list and Undo toast, wings and TrackHare; and Settings, security and documentation surfaces. BookCover and BookCoverDialog compose lorebook presentation layers. Proscenium frames scene artwork and HTML controls, while LightRays supplies capped beams and floor fog for the premiere landing. These rows are generated discovery metadata, not proof of behavior or a second registry; contributors reuse the owning component and consult reference/ui and source for its live contract. It also lists the Stage wing's AccentRow, the draft tools' status strip and Correction Tools modal, the Compendium Settings tab and access chip, the Participants tab's rows, the Storyboards tab's dossier parts and bodies, and the Props wing's rows, tiles, TrackerFrame and the twelve tracker panels with their parts.",
+      "topics": [
+        "React tsx exports",
+        "shell Dock App",
+        "shared components folder",
+        "workbench editors presenters",
+        "library settings docs apps",
+        "signature and styles columns",
+        "World wing",
+        "Props wing and TrackHare"
+      ],
+      "children": []
+    },
+    {
+      "slug": "shared-ui-helpers-srcui_shared-ts",
+      "title": "Shared UI helpers (`src/ui/_shared`, `.ts`)",
+      "level": 2,
+      "sourceHash": "sha256:7d5ec1c8a7e579c8c2e899942c5ae9434e33ee12354e82fb633e96d7f0057ae8",
+      "summary": "Secondary table for exported TypeScript UI helpers under src/ui/_shared whose names begin create, build, swatch, or inject. These are ordinary `.ts` functions rather than JSX components; the table makes no deprecation or migration claim. It uses the same Name, File, Signature, Doc, and Styles columns as the React table. Current entries include buildPiecePatch and buildTouchedPatch for captured editor submissions, buildTimeline from version-history, a pure helper the Updates surface uses to derive release relations and behind counts, and createArtCache, the bounded in-memory art cache that dedupes decrypted portraits and revokes its object URLs on eviction or clear (the app's singleton is also cleared on library lock). Regenerating the catalog adds or removes rows as matching exports change. Open this table when a UI task needs shared computation or construction logic, and open the React table when it needs a rendered control.",
+      "topics": [
+        "shared TypeScript helpers",
+        "src/ui/_shared exports",
+        "buildTimeline version history",
+        "createArtCache",
+        "same table columns",
+        "active React consumers"
+      ],
+      "children": []
+    }
+  ]
+}

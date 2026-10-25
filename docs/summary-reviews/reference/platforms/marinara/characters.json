@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/marinara/characters",
+  "sourcePath": "docs/reference/platforms/marinara/characters.md",
+  "sourceHash": "sha256:7a7862a1be94fb1d3159bf64aa4f22703920e3c846db2910f4b8eebe05a46697",
+  "semanticSummaryHash": "sha256:44b34c67e2c98b78a457c48a795d7089c4cbeb0e6bec467dbe2c5d3714eae263",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:55.848Z"
+}

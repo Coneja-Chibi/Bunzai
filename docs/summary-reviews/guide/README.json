@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/README",
+  "sourcePath": "docs/guide/README.md",
+  "sourceHash": "sha256:e1ea82c30d64acedf6186b7f1b69931f0ce80d8b84c928941eadc0e339c16625",
+  "semanticSummaryHash": "sha256:1779ea806aa562df4982d47faae4b6f4ec5ff4559445c1eefb6662e9f529b628",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Chi approved the Library RC port summaries 2026-09-24 (combined build)",
+  "reviewedAt": "2026-09-24T15:47:24.793Z"
+}

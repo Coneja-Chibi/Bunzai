@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/detection",
+  "sourcePath": "docs/reference/concepts/detection.md",
+  "sourceHash": "sha256:8903d8a72b0ac2b11cc80e9e97d7763de7d2fec4b752ac6bf1bef887ea5ff291",
+  "semanticSummaryHash": "sha256:c9f37dbd948898fff26c4ef857562b5f3299e9cd5ea1c6d474df90f13227bbe8",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:50.289Z"
+}

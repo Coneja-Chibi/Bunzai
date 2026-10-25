@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/library",
+  "sourcePath": "docs/guide/library.md",
+  "sourceHash": "sha256:4edf8a03f7c55d9cb65a024ff541c37fae8824cd71762f761eb01e011f045359",
+  "semanticSummaryHash": "sha256:dd586fac7bf7b3410f3ce4f9390278bd7686bbc68ca5b959e50ff2a0016dcadb",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Backdrop (rule 36, /api/chats/backdrop, picker, link guard, image-pack, Packs rename) matches code",
+  "reviewedAt": "2026-10-09T06:34:04.456Z"
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-013-wing-slots",
+  "sourcePath": "docs/decisions/ADR-013-wing-slots.md",
+  "sourceHash": "sha256:b12f8f31d624eb806aa0521c0b634c520b6c5d91e24eb1355001e06b38a2e252",
+  "summary": "Proposed on 2026-10-12 and awaiting review, ADR-013 gives the scene's nine wings, and the tabs each one opens, slots in the one slot registry that theme packages already use. Until now a theme could restyle the Control Booth, Cast, Prompting, World, Final Cut, Props, AI, Stage and Context wings through named parts but could not add an image or a line of text to any of them, and the registry and permission audit recorded that as a model gap. The registry gains 29 ids, scene.wing.<wing> and scene.wing.<wing>.<tab>, each with exactly one literal render point that theme-slot.test.tsx enforces in both directions. Slot meaning and limits do not change: data only, one to four items per slot, 24 per package, nothing drawn when empty, no code, and no access to scene data. A slot is not the protected layer and cannot press or read a wing's controls.",
+  "topics": [
+    "wing slots",
+    "slot registry",
+    "scene.wing ids",
+    "render point test",
+    "data-only content"
+  ],
+  "sections": [
+    {
+      "slug": "context",
+      "title": "Context",
+      "level": 2,
+      "sourceHash": "sha256:1d761868b07e0d6997c57aef10861b178b83b93739a2580c3c3d214126221828",
+      "summary": "A theme package may place static images and plain text in 11 named slots, all on app pages and the scene backdrop and composer. The scene's wings are where a scene is set up, and a theme could restyle them through parts but could not add content to any of them. This is a gap in the model, not a defect, and a hand-rolled substitute is the wrong fix.",
+      "topics": [
+        "11 slots",
+        "scene wings",
+        "parts only",
+        "model gap"
+      ],
+      "children": []
+    },
+    {
+      "slug": "decision",
+      "title": "Decision",
+      "level": 2,
+      "sourceHash": "sha256:91de56a81761e2601437fa48b96fa21764fb88d5849660519a92c30aeb2d7fe1",
+      "summary": "slot-registry.ts stays the one list and parseSlots the one parser, gaining 29 ids: scene.wing.<wing> for each of nine wings and scene.wing.<wing>.<tab> for each tab. Each id has one literal ThemeSlot render point, and theme-slot.test.tsx fails when an id has none or a wing or tab has no id. Limits and meaning are unchanged: data only, one to four items per slot, 24 per package, nothing drawn when empty, no code and no scene data. A slot id survives component renames.",
+      "topics": [
+        "29 new ids",
+        "one parser",
+        "render point test",
+        "unchanged limits",
+        "stable ids"
+      ],
+      "children": []
+    },
+    {
+      "slug": "consequences",
+      "title": "Consequences",
+      "level": 2,
+      "sourceHash": "sha256:94a77558cbcf1fcfc7eccc96b788aaf509772a21ea663a1883da1e664502e98b",
+      "summary": "A theme can brand or annotate any wing without touching its controls. A slot is not the protected layer and holds no behavior, so it cannot press or read anything in a wing. The 24-item package cap is unchanged, so more ids do not let a package draw more. Adding a wing or tab means adding its ids and one render point, which the test enforces.",
+      "topics": [
+        "branding wings",
+        "no behavior",
+        "item cap",
+        "enforced growth"
+      ],
+      "children": []
+    }
+  ]
+}

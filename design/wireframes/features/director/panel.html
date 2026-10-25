@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Director panel</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../play-shared/play.css">
+<script src="../play-shared/palettes.js"></script>
+<script src="../play-shared/play.js"></script>
+<style>
+/* Director-only parts. Every color is a token; every corner is square. Each class names the part the build gives a dotted data-part. */
+.dh { display: flex; gap: 12px; align-items: flex-start; padding: 12px; border: 1px solid var(--stage-seam); background: color-mix(in srgb, var(--w) 7%, var(--stage-panel)); box-shadow: inset 3px 0 0 var(--w); }
+.dh .hi { flex: none; width: 36px; height: 36px; display: grid; place-items: center; background: color-mix(in srgb, var(--w) 16%, transparent); color: var(--w); }
+.dh .hi svg { width: 20px; height: 20px; }
+.dh .tx { flex: 1; min-width: 0; }
+.dh .eb { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--w); }
+.dh h3 { margin-top: 3px; font-family: var(--font-big); font-weight: 800; font-size: 1.2rem; color: var(--stage-card); }
+.dh h3 em { font-style: normal; color: var(--w); }
+.dh p { margin-top: 3px; font-size: 12px; line-height: 1.5; color: var(--stage-text-dim); }
+.dtools { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.tb { display: inline-grid; place-items: center; min-width: 28px; height: 28px; padding: 0 6px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-soft); font-family: var(--font-mono); font-size: 11px; box-shadow: 2px 2px 0 0 var(--stage-black); cursor: pointer; }
+.tb.off { opacity: .45; cursor: not-allowed; }
+.tb.txt { grid-auto-flow: column; gap: 6px; font-family: var(--font-big); font-weight: 700; font-size: 12px; padding: 0 9px; }
+.tb.bad { color: var(--stage-danger-text); border-color: var(--stage-danger-edge); }
+.hist { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--stage-soft); }
+.hist b { min-width: 3.6rem; text-align: center; color: var(--stage-card); }
+.dtabs { display: flex; border-bottom: 1px solid var(--stage-seam); }
+.dtabs button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 8px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--stage-mute); font-family: var(--font-big); font-weight: 700; font-size: 12px; cursor: pointer; }
+.dtabs button.on { color: var(--stage-card); border-bottom-color: var(--w); background: color-mix(in srgb, var(--w) 8%, transparent); }
+.dtabs button .ch { padding: 0 5px; }
+.kv2 { display: flex; flex-wrap: wrap; gap: 6px; }
+.kv2 .ch b { color: var(--stage-card); font-weight: 700; }
+.pgh { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); display: flex; align-items: center; gap: 8px; }
+.pgh .r { margin-left: auto; letter-spacing: .04em; text-transform: none; font-weight: 500; color: var(--stage-mute); }
+.txt2 { font-size: 13px; line-height: 1.55; color: var(--stage-soft); }
+.txt2 b { color: var(--stage-card); }
+.ul2 { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.55; color: var(--stage-soft); }
+.arc { border: 1px solid var(--stage-seam); background: color-mix(in srgb, var(--stage-panel) 70%, transparent); }
+.arc > .ah { display: flex; align-items: center; gap: 8px; padding: 9px 10px; min-width: 0; }
+.arc > .ah b { flex: 1; min-width: 0; font-size: 13px; color: var(--stage-card); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.arc > .ab { padding: 4px 10px 10px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--stage-seam); }
+.arc.open { box-shadow: inset 3px 0 0 var(--w); }
+.beat { border: 1px solid var(--w); background: color-mix(in srgb, var(--w) 9%, transparent); padding: 8px 10px; display: flex; flex-direction: column; gap: 3px; }
+.beat .lab { color: var(--w); }
+.beat .t { font-size: 13px; line-height: 1.5; color: var(--stage-card); }
+.beat .s { font-family: var(--font-mono); font-size: 10.5px; color: var(--stage-mute); }
+.steps2 { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; border-left: 2px solid var(--stage-line); margin-left: 4px; }
+.steps2 li { padding: 2px 0 6px 12px; position: relative; font-size: 12.5px; line-height: 1.5; color: var(--stage-soft); }
+.steps2 li::before { content: ""; position: absolute; left: -6px; top: 6px; width: 8px; height: 8px; background: var(--stage-line); }
+.steps2 li.now::before { background: var(--w); }
+.steps2 li b { color: var(--stage-card); }
+.beats { display: flex; flex-direction: column; gap: 4px; }
+.beats .li2 { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--stage-soft); }
+.beats .li2.done { color: var(--stage-mute); text-decoration: line-through; }
+.ev { display: flex; flex-direction: column; border: 1px solid var(--stage-seam); }
+.ev > .e { padding: 8px 10px; border-bottom: 1px solid var(--stage-seam); display: flex; flex-direction: column; gap: 4px; box-shadow: inset 3px 0 0 var(--c); }
+.ev > .e:last-child { border-bottom: 0; }
+.ev .eh { display: flex; align-items: center; gap: 8px; min-width: 0; font-size: 12.5px; }
+.ev .eh .ty { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--c); }
+.ev .eh .tt { font-family: var(--font-mono); font-size: 10.5px; color: var(--stage-mute); }
+.ev .eh .ago { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--stage-mute); white-space: nowrap; }
+.ev .ed { font-size: 12.5px; line-height: 1.5; color: var(--stage-soft); }
+.ev .e.ok { --c: var(--stage-ok); } .ev .e.bad { --c: var(--stage-danger-text); } .ev .e.info { --c: var(--stage-var); }
+.filt { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.filt .ch { cursor: pointer; padding: 3px 8px; }
+.filt .ch.on { color: var(--stage-card); border-color: var(--w); background: color-mix(in srgb, var(--w) 14%, transparent); }
+.ta2 { display: block; width: 100%; padding: 8px 10px; background: var(--stage-row); border: 1px solid var(--stage-seam); color: var(--stage-card); font-size: 13px; line-height: 1.5; min-height: 4.2rem; }
+.ta2.ph { color: var(--stage-mute); }
+.xbtn { margin-left: auto; flex: none; }
+.tour { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border: 1px solid var(--w); background: color-mix(in srgb, var(--w) 9%, var(--stage-panel)); font-size: 12.5px; line-height: 1.5; color: var(--stage-card); }
+.tour .tx { flex: 1; min-width: 0; }
+.tour .tx small { display: block; margin-top: 2px; color: var(--stage-soft); font-size: 12px; }
+.tour > svg { margin-top: 2px; color: var(--w); }
+.plan { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--stage-seam); background: var(--stage-row); font-size: 12.5px; color: var(--stage-card); }
+.plan svg { color: var(--w); animation: pl-spin 1s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .plan svg { animation: none; } }
+/* FloatingDMActivity: a 40px square button the person can drag, a badge, and a 320px popover */
+.fab { position: absolute; z-index: 44; width: 40px; height: 40px; display: grid; place-items: center; background: var(--stage-black); border: 2px solid var(--w); color: var(--w); box-shadow: 3px 3px 0 0 var(--stage-black); cursor: grab; }
+.fab svg { width: 20px; height: 20px; }
+.fab .bd { position: absolute; top: -9px; right: -9px; min-width: 18px; height: 18px; padding: 0 4px; display: grid; place-items: center; background: var(--w); color: var(--stage-ink); font-family: var(--font-mono); font-size: 10px; font-weight: 700; }
+.fab.pulse { box-shadow: 0 0 0 3px color-mix(in srgb, var(--w) 35%, transparent), 3px 3px 0 0 var(--stage-black); }
+.fab.err { --w: var(--stage-danger-text); }
+.fpop { position: absolute; z-index: 46; width: min(20rem, calc(100% - 24px)); background: var(--stage-panel); border: 2px solid var(--stage-black); box-shadow: 5px 5px 0 0 var(--stage-black); }
+.fpop .ph2 { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--stage-seam); font-family: var(--font-big); font-weight: 800; font-size: 12.5px; color: var(--stage-card); }
+.fpop .ph2 svg { color: var(--w); }
+.fpop .fe { padding: 6px 10px; border-bottom: 1px solid var(--stage-seam); font-size: 12px; line-height: 1.45; color: var(--stage-soft); box-shadow: inset 3px 0 0 var(--c); display: flex; flex-direction: column; gap: 1px; }
+.fpop .fe b { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--c); display: flex; gap: 8px; }
+.fpop .fe b i { font-style: normal; margin-left: auto; color: var(--stage-mute); letter-spacing: 0; text-transform: none; }
+.fpop .fe.ok { --c: var(--stage-ok); } .fpop .fe.bad { --c: var(--stage-danger-text); } .fpop .fe.info { --c: var(--stage-var); }
+.fpop .ft { padding: 8px 10px; font-family: var(--font-big); font-weight: 700; font-size: 12px; color: var(--w); display: flex; justify-content: space-between; }
+.fpop .none { padding: 14px 10px; text-align: center; font-size: 12.5px; color: var(--stage-mute); }
+.dim5 { filter: none; }
+</style>
+</head>
+<body>
+<script src="../play-shared/icons.js"></script>
+<div class="page">
+  <div class="themebar"></div>
+  <header class="wf-head"><div>
+    <h1 class="wf-title">Story Director panel</h1>
+    <p class="wf-lede">The right wing "story-director", opened from the Story Director row in the Props wing (gear) or from the floating activity button. Five tabs as RoleCall draws them: Story, Arcs, Analysis, Activity, Debug. RoleCall's copy is kept word for word. Three deliberate differences are marked: arc cards now show the planned next beat, the activity log survives a reload, and every edit saves to the current branch tip so a swipe or a branch switch never leaves the panel showing the wrong story.</p>
+  </div></header>
+
+  <div class="wf-note"><b>What the panel reads.</b> The Director state saved with the newest reply on the branch you are looking at. Turn history (Latest, 3 / 14) steps back through earlier replies' snapshots; stepping back is read only, and every edit button is off until you are on Latest. <b>What it writes.</b> Only the person's own edits (Mark as Complete, delete a seed, arc or note, add a hidden arc or note, Reset, Clear activity). Nothing here is ever hard deleted: a removed item leaves the panel and the prompt and stays in the saved state.</div>
+
+  <div class="states">
+
+    <!-- 1 Story tab, typical, wing open on a scene -->
+    <div class="pn wide">
+      <div class="wf-state">Story tab: the wing open on a scene (right wing, Story Director on)</div>
+      <div class="fr paused" style="--h:62rem" data-part="scene.page">
+        <div class="bgm"></div>
+        <div class="play"><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div></div>
+        <nav class="rail r" data-part="scene.wings"><div class="wi" style="--w:var(--accent)"><svg><use href="#i-zap"/></svg></div><div class="wi on" style="--w:var(--deck-persona)"><svg><use href="#i-clap"/></svg></div><div class="wi" style="--w:var(--deck-lorebook)"><svg><use href="#i-globe"/></svg></div></nav>
+        <section class="wp r" data-part="scene.wings.panel" style="--w:var(--deck-persona);width:min(52rem,100%)" aria-label="Story Director">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" data-part="scene.director" style="--w:var(--deck-persona)">
+            <div class="tour" data-part="scene.director.tour"><svg><use href="#i-clap"/></svg><div class="tx"><b>Meet the Story Director</b><small>It plans each reply from behind the curtain: chapters, story arcs, and what the narrator must and must not do. Look at Arcs for what it is steering, and at Debug for what it is hiding from you.</small></div><button class="tb xbtn" aria-label="Dismiss"><svg><use href="#i-x"/></svg></button></div>
+            <header class="dh" data-part="scene.director.hero">
+              <span class="hi"><svg><use href="#i-clap"/></svg></span>
+              <div class="tx"><div class="eb">Turn 14</div><h3>Story <em>Director</em></h3><p>Chapter, arc, and pacing intelligence the DM keeps just behind the curtain.</p></div>
+              <div class="dtools" data-part="scene.director.tools">
+                <span class="hist" data-part="scene.director.history"><button class="tb" aria-label="Earlier turn"><svg><use href="#i-left"/></svg></button><b>Latest</b><button class="tb off" aria-label="Later turn" disabled><svg><use href="#i-right"/></svg></button></span>
+                <button class="tb txt bad" title="Reset DM state: re-evaluate mood, arcs & context from chat history" data-part="scene.director.reset"><svg><use href="#i-rotate"/></svg>Reset DM</button>
+              </div>
+            </header>
+            <nav class="dtabs" data-part="scene.director.tabs"><button class="on">Story</button><button>Arcs <span class="ch">4</span></button><button>Analysis</button><button>Activity <span class="ch">12</span></button><button>Debug</button></nav>
+
+            <section class="sec" data-part="scene.director.chapter">
+              <h4>Current Chapter <span class="r">9 turns elapsed</span></h4>
+              <div class="row2"><b style="font-family:var(--font-big);font-size:15px;color:var(--stage-card)">Ch. 2: The Keeper's Ledger</b><span class="ch ok">Active</span></div>
+              <p class="txt2"><b>Premise.</b> The ledger Marguerite inherited lists every ship the lighthouse has ever "saved", and three of the names are crossed out in her own mother's hand.</p>
+              <p class="txt2"><b>Goal.</b> Learn what the crossed-out names have in common before the storm season closes the causeway.</p>
+              <div class="kv2"><span class="ch">Themes <b>inheritance, guilt</b></span><span class="ch">Tone <b>slow dread</b></span></div>
+            </section>
+            <section class="sec" data-part="scene.director.history-chapters">
+              <h4>Chapter History</h4>
+              <div class="list"><div class="li"><span class="grow"><b style="color:var(--stage-card)">Ch. 1: The Causeway at Low Tide</b><div class="s mut" style="font-size:11px">Closed on turn 5 with the lantern lit by a stranger</div></span><span class="ch">Complete</span></div></div>
+            </section>
+            <div class="cols" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <section class="sec" data-part="scene.director.mood"><h4>Current Mood</h4><p class="txt2">Hushed and watchful. The scene should feel like holding your breath while someone reads aloud from the wrong page.</p><div class="kv2"><span class="ch">Pacing <b>slow</b></span><span class="ch">Tension <b>6 / 10</b></span></div></section>
+              <section class="sec" data-part="scene.director.actions"><h4>Suggested Actions</h4><ul class="ul2"><li>Ask the keeper why the third name is smudged.</li><li>Walk the gallery and check the lantern glass.</li><li>Say nothing and let the silence work.</li></ul><span class="mut" style="font-size:11px">Suggestions only; they are not buttons.</span></section>
+            </div>
+            <section class="sec" data-part="scene.director.intentions"><h4>DM Intentions</h4><ul class="ul2"><li>Let Marguerite find the torn page before anyone explains it.</li><li>Keep the harbormaster offstage one more turn.</li></ul></section>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">WingPanel (scene-wings.tsx) &middot; hero (hero grammar of the tracker frame) &middot; SegControl/tab bar (st-tabs) &middot; sec cards (WingSection) &middot; chips (pw-chip) &middot; parts: scene.director, .hero, .tools, .history, .reset, .tabs, .tour, .chapter, .mood, .actions, .intentions &middot; Reset DM keeps RoleCall's label and tooltip; Unpin is not drawn (Bunraku wings have no pin)</div>
+    </div>
+
+    <!-- 2 Arcs tab -->
+    <div class="pn">
+      <div class="wf-state">Arcs tab: grouped by chapter, one card open. NEW: the Next beat block (RoleCall plans it and never shows it)</div>
+      <div class="fr" style="--h:56rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <nav class="dtabs"><button>Story</button><button class="on">Arcs <span class="ch">4</span></button><button>Analysis</button><button>Activity <span class="ch">12</span></button><button>Debug</button></nav>
+            <div class="pgh">Ch. 2: The Keeper's Ledger</div>
+            <div class="pgh" style="color:var(--stage-ok)">Active (3)</div>
+            <div class="arc open" data-part="scene.director.arc">
+              <div class="ah"><span class="ch info">short</span><b>The lantern that burns blue</b><span class="ch acc">Building</span></div>
+              <div class="ab">
+                <p class="txt2">The lantern has burned blue since the night the third ship went down, and only the keeper's family can see it.</p>
+                <div class="kv2"><span class="ch">Type <b>mystery</b></span><span class="ch">Priority <b>high</b></span><span class="ch">Scope <b>personal</b></span><span class="ch">Rigidity <b>flexible</b></span><span class="ch">Active <b>7 turns</b></span><span class="ch">Payoff <b>~4 turns</b></span></div>
+                <div class="beat" data-part="scene.director.arc.nextbeat"><span class="lab pgh">Next beat</span><span class="t">Marguerite finds the second ledger page, torn out at the crease, with salt still in the fold.</span><span class="s">Planned for turn 16</span></div>
+                <div><div class="pgh" style="margin-bottom:6px">Involved characters</div><div class="kv2"><span class="ch">Marguerite Vane</span><span class="ch">Harbormaster Oyelaran</span></div></div>
+                <div><div class="pgh" style="margin-bottom:6px">Stages</div><ul class="steps2"><li><b>Seeding.</b> The glass is the wrong color at dusk.</li><li><b>Building.</b> The keeper admits she has never lit it herself.</li><li class="now"><b>Now.</b> A name in the ledger matches the ship in the salvage list.</li></ul></div>
+                <div><div class="pgh" style="margin-bottom:6px">Planned Beats</div><div class="beats"><div class="li2 done"><span class="cb on"></span>The keeper refuses to look at the glass</div><div class="li2"><span class="cb"></span>The torn page turns up</div><div class="li2"><span class="cb"></span>The harbormaster lies about the date</div></div></div>
+                <div><div class="pgh" style="margin-bottom:6px">Planted Seeds</div><div class="kv2"><span class="ch">Salt in a dry room</span><span class="ch">Mother's left-handed crossings-out</span></div></div>
+                <div class="row2"><button class="b2" data-part="scene.director.arc.complete"><svg><use href="#i-check"/></svg>Mark as Complete</button></div>
+              </div>
+            </div>
+            <div class="arc"><div class="ah"><span class="ch">medium</span><b>Who paid for the causeway</b><span class="ch">Seeding</span></div></div>
+            <div class="arc"><div class="ah"><span class="ch info">immediate</span><b>The storm that is not on any chart</b><span class="ch warn">Climax</span></div></div>
+            <div class="pgh" style="color:var(--stage-mute)">Completed (1)</div>
+            <div class="arc"><div class="ah"><span class="ch">short</span><b>Who lit the lantern</b><span class="ch ok">Complete</span></div></div>
+            <div class="pgh" style="color:var(--stage-mute)">Abandoned (0)</div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">Expandable card (arc rows) &middot; chips &middot; the Next beat block uses the arc's <code>nextBeat{description,targetTurn}</code> field the Director already writes &middot; Mark as Complete writes a snapshot at the tip with expectedVersion</div>
+    </div>
+
+    <!-- 3 Arcs: empty and save error -->
+    <div class="pn">
+      <div class="wf-state">Arcs: nothing yet, and a save that failed</div>
+      <div class="fr" style="--h:27rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <nav class="dtabs"><button>Story</button><button class="on">Arcs</button><button>Analysis</button><button>Activity</button><button>Debug</button></nav>
+            <div class="empty2"><b>No active story arcs yet</b>The Director plants its first arcs on the next reply.</div>
+            <div class="empty2"><b>No active arcs. All resolved.</b>Completed arcs are listed below.</div>
+            <div class="nt bad" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">Couldn't save the resolved arc.<small>The story changed since you opened this panel. Reload this story before trying again.</small></div><button class="b2">Reload</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 4 Analysis -->
+    <div class="pn">
+      <div class="wf-state">Analysis tab: the last turn's plan, as read-only key and value blocks</div>
+      <div class="fr" style="--h:44rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <nav class="dtabs"><button>Story</button><button>Arcs <span class="ch">4</span></button><button class="on">Analysis</button><button>Activity <span class="ch">12</span></button><button>Debug</button></nav>
+            <section class="sec" data-part="scene.director.analysis.turn"><h4>Turn Analysis</h4>
+              <div class="list"><div class="li"><span class="lab" style="width:8rem">What happened</span><span class="grow txt2" style="white-space:normal">Marguerite opened the ledger at the crossed-out names and asked the keeper to read them aloud.</span></div>
+                <div class="li"><span class="lab" style="width:8rem">Summary</span><span class="grow txt2" style="white-space:normal">The keeper stalls; the lantern flickers blue.</span></div>
+                <div class="li"><span class="lab" style="width:8rem">Seeds planted</span><span class="grow txt2" style="white-space:normal">Salt in a dry room</span></div>
+                <div class="li"><span class="lab" style="width:8rem">Player energy</span><span class="grow txt2" style="white-space:normal">High and curious; wants answers, not atmosphere.</span></div></div></section>
+            <section class="sec" data-part="scene.director.analysis.pacing"><h4>Pacing Analysis</h4><p class="txt2">Four quiet turns in a row. One concrete discovery next turn keeps the dread from going slack.</p></section>
+            <section class="sec" data-part="scene.director.analysis.chapter"><h4>Chapter Update</h4><div class="list"><div class="li"><span class="lab" style="width:8rem">Action</span><span class="grow txt2">none</span></div></div></section>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 5 Activity -->
+    <div class="pn">
+      <div class="wf-state">Activity tab: filters, 12 entries, one expanded. NEW: the log survives a reload (last 200 per chat)</div>
+      <div class="fr" style="--h:50rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <nav class="dtabs"><button>Story</button><button>Arcs <span class="ch">4</span></button><button>Analysis</button><button class="on">Activity <span class="ch">12</span></button><button>Debug</button></nav>
+            <div class="row2" data-part="scene.director.activity.bar"><div class="filt"><span class="ch on">All</span><span class="ch">Turns</span><span class="ch">Tools</span><span class="ch">Planning</span></div><span class="grow"></span><span class="mut" style="font-size:12px">12 entries</span><button class="tb" title="Clear activity log" aria-label="Clear activity log"><svg><use href="#i-trash"/></svg></button></div>
+            <div class="ev" data-part="scene.director.activity.list">
+              <div class="e ok"><div class="eh"><span class="ty">Turn Done</span><span class="tt">T14</span><span class="ago">12s ago</span></div><div class="ed">Directive set: slow, tension 6. 2 arcs updated, 1 seed planted.</div></div>
+              <div class="e info"><div class="eh"><span class="ty">Directive</span><span class="tt">T14</span><span class="ago">14s ago</span></div><div class="ed">Narrator told to advance "The lantern that burns blue" and avoid the harbormaster.</div><pre class="raw" style="padding-left:10px">{"mood":"hushed, watchful","pacing":"slow","sceneGuidance":{"tension_level":6}}</pre><div class="s mut" style="font-size:11px;font-family:var(--font-mono)">claude-opus-5-5 &middot; 7.8s</div></div>
+              <div class="e info"><div class="eh"><span class="ty">Arc</span><span class="tt">T14</span><span class="ago">14s ago</span></div><div class="ed">Next beat set: the torn page, turn 16.</div></div>
+              <div class="e info"><div class="eh"><span class="ty">Turn Start</span><span class="tt">T14</span><span class="ago">22s ago</span></div><div class="ed">Planning before the reply.</div></div>
+              <div class="e bad"><div class="eh"><span class="ty">Turn Error</span><span class="tt">T13</span><span class="ago">3m ago</span></div><div class="ed">The planning call returned no tool call, so there was no directive for this reply. The model made 0 tool calls. Pick a different model for the Director in the Props wing.</div></div>
+              <div class="e ok"><div class="eh"><span class="ty">Seed</span><span class="tt">T12</span><span class="ago">6m ago</span></div><div class="ed">Planted: salt in a dry room.</div></div>
+            </div>
+            <div class="empty2" style="display:none"></div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">Filter chips &middot; entry rows (dot rail in the entry's token color) &middot; Clear is soft: it sets a cleared-at marker, the entries stay in the saved state &middot; types as RoleCall: Turn Start, Turn Done, Turn Error, Arc, Seed, Invisible Arc, Tracker, Tool, Directive, Momentum, Backfill (Tracker, Tool and Backfill appear only once those exist)</div>
+    </div>
+
+    <!-- 6 Activity empty -->
+    <div class="pn">
+      <div class="wf-state">Activity: empty, and Clear confirmed</div>
+      <div class="fr" style="--h:21rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <nav class="dtabs"><button>Story</button><button>Arcs</button><button>Analysis</button><button class="on">Activity</button><button>Debug</button></nav>
+            <div class="empty2"><b>No activity yet</b>Send a message to see DM activity</div>
+            <div class="toast" style="background:var(--stage-black);border:1px solid var(--stage-line);display:flex;align-items:center;gap:12px;padding:8px 12px;font-size:13px;color:var(--stage-card)"><svg><use href="#i-check"/></svg><span class="grow" style="flex:1">Activity log cleared.</span><button class="b2">Undo</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 7 Debug -->
+    <div class="pn wide">
+      <div class="wf-state">Debug tab: spoilers hidden until asked, then the hidden state with the person's own edit tools</div>
+      <div class="cols" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start">
+        <div class="fr" style="--h:34rem" data-part="scene.director">
+          <section class="wp solo" style="--w:var(--deck-persona)">
+            <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+            <div class="wbody" style="--w:var(--deck-persona)">
+              <nav class="dtabs"><button>Story</button><button>Arcs</button><button>Analysis</button><button>Activity</button><button class="on">Debug</button></nav>
+              <div class="nt warn" data-part="scene.director.debug.warning"><svg><use href="#i-alert"/></svg><div class="grow">Debug data contains story spoilers and hidden DM information.</div></div>
+              <button class="b2" style="align-self:flex-start" data-part="scene.director.debug.toggle"><svg><use href="#i-eye"/></svg>Show Debug Data</button>
+              <div class="empty2"><b>Hidden</b>Nothing below is shown until you ask.</div>
+            </div>
+          </section>
+        </div>
+        <div class="fr" style="--h:34rem" data-part="scene.director">
+          <section class="wp solo" style="--w:var(--deck-persona)">
+            <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+            <div class="wbody" style="--w:var(--deck-persona)">
+              <nav class="dtabs"><button>Story</button><button>Arcs</button><button>Analysis</button><button>Activity</button><button class="on">Debug</button></nav>
+              <button class="b2" style="align-self:flex-start"><svg><use href="#i-eyeoff"/></svg>Hide Spoilers</button>
+              <section class="sec" data-part="scene.director.debug.shadow"><h4>Shadow World <span class="r">hidden arcs</span></h4>
+                <div class="list"><div class="li"><span class="grow txt2" style="white-space:normal"><b style="color:var(--stage-card)">The harbormaster sold the salvage rights</b><div class="s mut" style="font-size:11px">Director's own &middot; surfaces in about 6 turns</div></span><button class="tb" aria-label="Delete hidden arc"><svg><use href="#i-trash"/></svg></button></div>
+                  <div class="li"><span class="grow txt2" style="white-space:normal"><b style="color:var(--stage-card)">The causeway was never meant to hold</b><div class="s mut" style="font-size:11px">Yours &middot; user authored</div></span><button class="tb" aria-label="Delete hidden arc"><svg><use href="#i-trash"/></svg></button></div></div>
+                <div class="fld"><label>Add a hidden arc</label><div class="inp ph"><span class="grow">What is secretly going on?</span></div></div>
+                <button class="b2" style="align-self:flex-start"><svg><use href="#i-plus"/></svg>Add hidden arc</button></section>
+              <section class="sec" data-part="scene.director.debug.notes"><h4>DM Notes</h4>
+                <div class="list"><div class="li"><span class="grow txt2" style="white-space:normal">Keep the lantern's color a surprise until the ledger is read.</span><button class="tb" aria-label="Delete note"><svg><use href="#i-trash"/></svg></button></div></div></section>
+              <section class="sec" data-part="scene.director.debug.seeds"><h4>Seeds</h4>
+                <div class="list"><div class="li"><span class="grow txt2">Salt in a dry room</span><span class="ch">world</span><button class="tb" aria-label="Delete seed"><svg><use href="#i-trash"/></svg></button></div></div></section>
+              <section class="sec"><h4>Raw DM Hidden Data</h4><pre class="raw" style="padding-left:10px">{ "chapters": 2, "activeArcs": 4, "epicSeeds": 3,
+  "invisibleArcs": 2, "lastDirectiveTurn": 14 }</pre></section>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div class="wf-comp">Spoiler gate (button toggle) &middot; list rows with square icon buttons &middot; add form = InputField + Button &middot; RoleCall's Debug also lists Tool Call Log, Storyboards AI Context, NPC Off-Screen Actions, Parallel Timelines, Memory Updates and Raw DM Response: the first has no Bunraku source yet, the rest are fields nothing writes (plan decision 3)</div>
+    </div>
+
+    <!-- 8 Debug delete errors -->
+    <div class="pn">
+      <div class="wf-state">Debug: delete errors, RoleCall's words</div>
+      <div class="fr" style="--h:23rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <div class="nt bad" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">The arc could not be deleted. Reload this story before trying again.</div></div>
+            <div class="nt bad" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">The note could not be deleted. Reload this story before trying again.</div></div>
+            <div class="nt bad" role="alert"><svg><use href="#i-alert"/></svg><div class="grow">The seed could not be deleted. Refresh and try again.</div></div>
+            <div class="nt"><svg><use href="#i-info"/></svg><div class="grow">Wait for the current seed deletion to finish, then try again.</div></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 9 Empty -->
+    <div class="pn">
+      <div class="wf-state">No data yet (Director just turned on): every tab but Activity shows this</div>
+      <div class="fr" style="--h:23rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <header class="dh"><span class="hi"><svg><use href="#i-clap"/></svg></span><div class="tx"><div class="eb">Narrative oversight</div><h3>Story <em>Director</em></h3><p>Chapter, arc, and pacing intelligence the DM keeps just behind the curtain.</p></div></header>
+            <nav class="dtabs"><button class="on">Story</button><button>Arcs</button><button>Analysis</button><button>Activity</button><button>Debug</button></nav>
+            <div class="empty2" data-part="scene.director.empty"><b>The Stage Is Dark</b>Send a message and the Director takes its place behind the curtain.</div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 10 Loading, failed turn, off -->
+    <div class="pn">
+      <div class="wf-state">Planning in flight, a failed plan, and the Director off</div>
+      <div class="fr" style="--h:31rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> Props <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <div class="plan" role="status"><svg><use href="#i-spin"/></svg><span>The Director is planning reply 15.</span></div>
+            <div class="nt bad" role="alert" data-part="scene.director.failed"><svg><use href="#i-alert"/></svg><div class="grow">No directive for reply 14. The narrator wrote it without one, and the story state is unchanged.<small>Gateway timeout from the Director's model. Retried once. See Activity for the full reason.</small></div><button class="b2">Open Activity</button></div>
+            <div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">The Story Director is off for this scene.<small>Turn it on in the Props wing. Everything it saved stays here, and nothing is deleted when it is off.</small></div><button class="b2 go">Open Props</button></div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">The Director never reuses last turn's directive after a failure (plan decision 6). The banner is shown on the Story tab only for the newest reply.</div>
+    </div>
+
+    <!-- 11 Reset confirm -->
+    <div class="pn">
+      <div class="wf-state">Reset DM: asks first (new copy; RoleCall resets with no question)</div>
+      <div class="fr" style="--h:23rem">
+        <div class="bgm"></div>
+        <div class="scr" style="position:absolute;inset:0;background:color-mix(in srgb,var(--stage-black) 70%,transparent);display:grid;place-items:center;padding:12px;z-index:80"><div class="dlg" role="dialog" aria-label="Reset the Director" style="width:min(30rem,100%);background:var(--stage-panel);border:2px solid var(--stage-black);box-shadow:6px 6px 0 0 var(--stage-black)">
+          <header style="padding:12px 14px;border-bottom:1px solid var(--stage-seam);font-family:var(--font-big);font-weight:800;font-size:1.05rem;color:var(--stage-card)">Reset the Story Director?</header>
+          <div style="padding:12px 14px;font-size:13px;line-height:1.55;color:var(--stage-soft)">Chapters, arcs, seeds, hidden arcs and notes are cleared from this point. The Director re-reads the chat history and starts again on the next reply. Earlier replies keep the story they were written with, and Undo brings this one back.</div>
+          <footer style="display:flex;justify-content:flex-end;gap:8px;padding:10px 14px;border-top:1px solid var(--stage-seam)"><button class="b2 ghost">Cancel</button><button class="b2 bad">Reset DM</button></footer></div></div>
+      </div>
+    </div>
+
+    <!-- 12 floating button -->
+    <div class="pn wide">
+      <div class="wf-state">Floating activity button on the scene (wings closed): resting, with the 10-entry popover, and with an error pulse</div>
+      <div class="cols" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,26rem),1fr));gap:12px;align-items:start">
+        <div>
+          <div class="fr" style="--h:26rem" data-part="scene.page">
+            <div class="bgm"></div>
+            <div class="play"><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div>
+              <div class="scroll"><div class="msg" style="--tone:var(--deck-character)"><div class="av">M</div><div class="bd"><div class="spk">Marguerite</div><div class="bub">The keeper does not look up. "Third name," she says. "You will want to leave that one alone."</div></div></div></div></div>
+            <div class="fab pulse" style="--w:var(--deck-persona);right:56px;bottom:84px" title="DM: Turn Done" data-part="scene.director.fab"><svg><use href="#i-clap"/></svg><span class="bd">3</span></div>
+            <div class="dockbar"><div class="cap"><span class="plus"><svg><use href="#i-plus"/></svg></span><span class="ta ph">Say something...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div>
+          </div>
+          <span class="cap2" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim)">Resting. Appears after the first Director entry. Drag it anywhere; it remembers where. The badge counts entries from the last 5 minutes, and the border pulses for 6 seconds in the newest entry's color. Title: "DM: Turn Done".</span>
+        </div>
+        <div>
+          <div class="fr" style="--h:26rem" data-part="scene.page">
+            <div class="bgm"></div>
+            <div class="play"><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div></div>
+            <div class="fab" style="--w:var(--deck-persona);right:56px;bottom:84px" title="Story Director Activity"><svg><use href="#i-clap"/></svg><span class="bd">3</span></div>
+            <div class="fpop" style="right:56px;bottom:132px" data-part="scene.director.fab.popover" role="dialog" aria-label="Story Director Activity"><div class="ph2"><svg><use href="#i-clap"/></svg>Story Director Activity</div>
+              <div class="fe ok"><b>Turn Done<i>12s ago</i></b>Directive set: slow, tension 6.</div>
+              <div class="fe info"><b>Arc<i>14s ago</i></b>Next beat set: the torn page, turn 16.</div>
+              <div class="fe info"><b>Turn Start<i>22s ago</i></b>Planning before the reply.</div>
+              <div class="fe bad"><b>Turn Error<i>3m ago</i></b>No directive for reply 13: the model made 0 tool calls.</div>
+              <div class="fe ok"><b>Seed<i>6m ago</i></b>Planted: salt in a dry room.</div>
+              <div class="ft"><span>View All Activity</span><svg><use href="#i-right"/></svg></div></div>
+          </div>
+          <span class="cap2" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim)">Popover: last 10 entries, shown 5 here. "View All Activity" opens this panel on the Activity tab.</span>
+        </div>
+        <div>
+          <div class="fr" style="--h:14rem" data-part="scene.page"><div class="bgm"></div>
+            <div class="fab pulse err" style="--w:var(--stage-danger-text);right:56px;bottom:24px" title="DM: Turn Error"><svg><use href="#i-clap"/></svg><span class="bd">1</span></div>
+            <div class="fpop" style="right:56px;bottom:72px"><div class="ph2"><svg><use href="#i-clap"/></svg>Story Director Activity</div><div class="none">No recent activity</div><div class="ft"><span>View All Activity</span><svg><use href="#i-right"/></svg></div></div></div>
+          <span class="cap2" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim)">Error pulse in the danger color, and the popover's empty line when the last 5 minutes were quiet.</span>
+        </div>
+        <div>
+          <div class="fr" style="max-width:22rem;--h:20rem" data-part="scene.page"><div class="bgm"></div><div class="play"><div class="sh"><span class="nm">Marguerite</span></div></div>
+            <div class="fab" style="--w:var(--deck-persona);right:12px;bottom:84px"><svg><use href="#i-clap"/></svg><span class="bd">2</span></div>
+            <div class="dockbar"><div class="cap"><span class="plus"><svg><use href="#i-plus"/></svg></span><span class="ta ph">Say something...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div></div>
+          <span class="cap2" style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-dim)">Narrow: the button stays at the edge, the popover fills the width. Not shown in a scene that has the Director off.</span>
+        </div>
+      </div>
+      <div class="wf-comp">New part (square 40px, RoleCall's is round) &middot; popover = the composer popover grammar (.pop) &middot; parts: scene.director.fab, scene.director.fab.badge, scene.director.fab.popover &middot; position is a per-user pref</div>
+    </div>
+
+    <!-- 13 narrow -->
+    <div class="pn">
+      <div class="wf-state">Narrow wing: tabs shrink to their names, toolbar wraps</div>
+      <div class="fr" style="max-width:22rem;--h:38rem" data-part="scene.director">
+        <section class="wp solo" style="--w:var(--deck-persona)">
+          <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Story Director</b></div></nav>
+          <div class="wbody" style="--w:var(--deck-persona)">
+            <header class="dh" style="flex-wrap:wrap"><span class="hi"><svg><use href="#i-clap"/></svg></span><div class="tx"><div class="eb">Turn 14</div><h3>Story <em>Director</em></h3></div><div class="dtools"><span class="hist"><button class="tb"><svg><use href="#i-left"/></svg></button><b>3 / 14</b><button class="tb"><svg><use href="#i-right"/></svg></button></span><button class="tb txt">Jump to latest</button></div></header>
+            <nav class="dtabs"><button class="on">Story</button><button>Arcs</button><button>Analysis</button><button>Activity</button><button>Debug</button></nav>
+            <div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">Reading turn 3. Edits are off until you jump to latest.</div></div>
+            <section class="sec"><h4>Current Chapter</h4><div class="row2"><b style="color:var(--stage-card)">Ch. 1: The Causeway at Low Tide</b></div><p class="txt2">Marguerite crosses at low tide with a borrowed key.</p></section>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">Turn history on an older turn: "n / total", "Jump to latest", every edit control off (RoleCall allows edits against stale data; here they would write onto the wrong branch point)</div>
+    </div>
+
+  </div>
+
+  <section class="q"><b>Needs your eye</b>
+    The Debug tab only draws the lists the Director really writes (hidden arcs, notes, seeds, raw state). RoleCall's other Debug sections (Tool Call Log, NPC Off-Screen Actions, Parallel Timelines, Memory Updates, Raw DM Response) are not drawn because nothing in Bunraku produces them.
+    <span class="rec">Recommendation: keep it this short. They can return the day something fills them.</span></section>
+</div>
+</body>
+</html>

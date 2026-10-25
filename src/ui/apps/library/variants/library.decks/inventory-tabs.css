@@ -1,0 +1,20 @@
+/**
+ * library.decks inventory-tabs (Encore): the deck sidebar as an inventory menu. A command rail of slot-numbered boxed
+ * entries; the open deck takes a cursor bar. Same decks, same collections, same Add button.
+ */
+html[data-surface-library-decks="inventory-tabs"] {
+  & .lib.rc .lrail { width: 17rem; background: var(--bk-surface-well); border-right: 1px solid var(--bk-line-strong); }
+  & .lib.rc .lrail-head { padding: 1rem 1rem .9rem; text-align: left; background: var(--bk-surface-well); border-bottom: 1px solid var(--bk-line-track); }
+  & .lib.rc .lrail-head .ey { letter-spacing: .24em; margin-bottom: .3rem; color: var(--bk-role-brand-text); }
+  & .lib.rc .lrail-head .ttl { font-size: 1.25rem; letter-spacing: .16em; }
+  & .lib.rc .lrail-rows { counter-reset: slot; gap: .35rem; padding: 0 .6rem .5rem; }
+  & .lib.rc .lrail .lrow { counter-increment: slot; gap: .5rem; padding: .4rem .5rem; border: 1px solid var(--bk-line-control); background: transparent; }
+  & .lib.rc .lrail .lrow::before { content: counter(slot, decimal-leading-zero); flex: none; font: 500 .75rem var(--font-mono); color: var(--bk-text-dim); }
+  & .lib.rc .lrail .lrow:hover { background: var(--bk-surface-sunken); }
+  & .lib.rc .lrail .lrow.on { background: var(--bk-surface-sunken); border-color: var(--bk-role-select); box-shadow: inset 4px 0 0 var(--bk-role-select); }
+  & .lib.rc .lrail .tile { width: 1.8rem; height: 1.8rem; border: 1px solid var(--bk-line-control); background: transparent; box-shadow: none; }
+  & .lib.rc .lrail .cnt { min-width: 1.8rem; border: 1px solid var(--bk-line-control); background: var(--bk-surface-ink); }
+  & .lib.rc .lrail-add { background: var(--bk-surface-well); border-top: 1px solid var(--bk-line-track); }
+  & .lib.rc .lrail-add button { border: 1px solid var(--bk-line-control); box-shadow: none; background: var(--bk-role-brand-deep); color: var(--bk-text-on-deep); }
+  @container (max-width: 48rem) { & .lib.rc .lrail { width: auto; flex: none; } & .lib.rc .lrail .lrow::before { display: none; } }
+}

@@ -1,0 +1,7 @@
+/** ui.tabs underline-ink (Paper): tabs are plain words; the open one is bold with an ink rule under it. */
+html[data-surface-ui-tabs="underline-ink"] {
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) { border: 0; box-shadow: none; background: transparent; padding: 0; gap: .35rem; }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button { background: transparent; border: 0; border-bottom: 2px solid transparent; box-shadow: none; color: var(--bk-text-soft); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:hover { border-bottom-color: var(--bk-line-control); color: var(--bk-text); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:is(.on, [aria-pressed="true"]) { background: transparent; color: var(--bk-text); font-weight: 700; border-bottom-color: var(--bk-text); }
+}

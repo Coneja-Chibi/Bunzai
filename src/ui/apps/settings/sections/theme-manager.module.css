@@ -1,0 +1,19 @@
+.manager{display:grid;gap:.75rem;border:1px solid var(--control-boundary);background:var(--canvas);padding:1rem;color:var(--text)}
+.manager h3,.manager h4{margin:0;color:var(--text);font-family:var(--font-fancy)}
+.choice,.file{display:grid;gap:.35rem;color:var(--text-soft);font-size:var(--text-body);font-weight:600}
+.choice select,.file input{max-width:100%;min-height:2.5rem;border:1px solid var(--control-boundary);border-radius:0;background:var(--face);color:var(--text);font:inherit;padding:.45rem .6rem}
+.hint,.state,.review p{margin:0;color:var(--text-soft);font-size:var(--text-body);line-height:1.5}
+.review,.catalog li{display:grid;gap:.65rem;border:1px solid var(--control-boundary);border-radius:0;padding:.75rem;background:var(--face)}
+.review code,.catalog code{overflow-wrap:anywhere;color:var(--text-soft);font-family:var(--font-mono);font-size:var(--text-meta)}
+.review ul{margin:0;padding-left:1.25rem;color:var(--text)}
+.catalog{display:grid;gap:.5rem;margin:0;padding:0;list-style:none}
+.catalog li{grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.catalog li>div:first-child{display:grid;gap:.2rem;min-width:0}
+.catalog li span{color:var(--text-soft);font-size:var(--text-control)}
+.example{display:flex;align-items:center;justify-content:space-between;gap:.75rem;border:1px solid var(--control-boundary);border-radius:0;padding:.7rem;background:var(--face);color:var(--text)}
+.example>div{display:grid;gap:.2rem}.example span{color:var(--text-soft);font-size:var(--text-control)}
+.example button{min-height:2.25rem;border:1px solid var(--control-boundary);border-radius:0;background:var(--action-primary);color:var(--action-primary-fg);font:inherit;font-size:var(--text-control);font-weight:650;padding:.35rem .65rem;cursor:pointer}
+.actions{display:flex;flex-wrap:wrap;gap:.4rem}
+.actions button{min-height:2.25rem;border:1px solid var(--control-boundary);border-radius:0;background:var(--action-primary);color:var(--action-primary-fg);font:inherit;font-size:var(--text-control);font-weight:650;padding:.35rem .65rem;cursor:pointer}
+.actions button:disabled{background:var(--disabled-bg);color:var(--disabled-fg);cursor:wait}
+@container (max-width:38rem){.catalog li{grid-template-columns:minmax(0,1fr)}.actions{width:100%}.actions button{flex:1 1 auto}}

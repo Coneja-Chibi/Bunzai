@@ -1,0 +1,15 @@
+/** app.room hud-console, setup: the stage is the viewport on the left, the question is a menu window on the right; picks read as menu rows with a cursor. */
+html[data-surface-app-room="hud-console"] .vsetup {
+  & .screen { grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); }
+  & .house { order: -1; }
+  & .qcard { box-shadow: none; border: 1px solid var(--bk-line-strong); outline: 1px solid var(--bk-line); outline-offset: -7px; padding: clamp(1.5rem, 3vw, 2.25rem); }
+  & .top { border-bottom: 0; padding-bottom: 0; }
+  & .dots i { width: 1.4rem; height: .5rem; border-width: 1px; }
+  & .opt { box-shadow: none; border-width: 0 0 1px 0; border-color: var(--bk-line); background: transparent; padding-left: 1.7rem; transition: none; }
+  & .opt:hover, & .opt:active, & .opt.on, & .opt[aria-pressed="true"] { transform: none; box-shadow: none; }
+  & .opt::before { content: ""; position: absolute; left: .5rem; top: 50%; margin-top: -.35rem; border: .35rem solid transparent; border-left-color: var(--bk-text-faint, currentColor); border-right-width: 0; opacity: 0; }
+  & .opt:hover::before, & .opt[aria-pressed="true"]::before { opacity: 1; border-left-color: var(--wiz-a, var(--rose)); }
+  & .stack { gap: 0; }
+  & .next, & .open { box-shadow: none; }
+  & .proscenium { box-shadow: none; }
+}

@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenes: TrackHare</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * TrackHare, the ported SillyTavern extension, now built as a real scene Prop (props/trackhare/
+ * hare-stage.tsx, hare-popover.tsx, hare-options.tsx, chains-sheet.tsx, tokens-sheet.tsx, hare-core.ts,
+ * tokens-core.ts), restyled in the soft identity. The stage button (drag to move, drag the corner to
+ * resize, right-click or long-press for options), the popover (what fired, grouped by book, reason
+ * badges, Didn't fire, Earlier replies), the Tokens sheet (the itemizer: donut, draggable what-if
+ * legend, budget bar, raw sections), and the Chains sheet (Starters/Links/Ends/Standalone). --prop-hare
+ * (TrackHare's own orange) stays its accent, everywhere else soft.
+ */
+* { border-radius: 0 !important; }
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+body { container-type: inline-size; }
+#app { display: flex; min-height: 100vh; background: var(--canvas); }
+
+.stage { position: relative; flex: 1; min-width: 0; min-height: 100vh; overflow: hidden; background: var(--stage-well); }
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.stage.paused .play { filter: blur(5px); pointer-events: none; }
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 56px; z-index: 20; display: flex; align-items: center; gap: 10px; padding: 0 18px; background: var(--stage-well); box-shadow: inset 0 -1px 0 var(--seam); }
+.sh .back { width: 32px; height: 32px; flex: none; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); }
+.sh .nm { font: 600 15px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.sh .tag { font: italic 400 12px var(--font-body); color: var(--text-soft); }
+.scroll { position: absolute; top: 56px; bottom: 0; left: 60px; right: 60px; padding: 90px 48px; overflow: hidden; }
+.msg { display: flex; gap: 14px; max-width: 46rem; margin: 0 auto; }
+.por { flex: none; width: 108px; height: 148px; background: linear-gradient(165deg, color-mix(in srgb, var(--deck-character) 45%, var(--face)), var(--face) 85%); box-shadow: 0 0 0 1px var(--edge); display: grid; place-items: center; }
+.por .ini { font: italic 600 26px var(--font-fancy); color: color-mix(in srgb, var(--text) 55%, transparent); }
+.body .spk { font: 600 15px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--deck-character); margin-bottom: 6px; }
+.bub { background: var(--face); box-shadow: 0 0 0 1px var(--edge); padding: 12px 16px; }
+.prose { font: 400 15px/1.65 var(--font-body); color: var(--text); }
+.prose q { color: var(--deck-character); quotes: '"' '"'; } .prose em { color: var(--text-soft); font-style: italic; }
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 48px; }
+.cap { max-width: 880px; margin: 0 auto; display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.cap span.ta { flex: 1; color: var(--text-faint); font: 400 14px var(--font-body); }
+.cap .send { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text-dim); }
+.rail { position: absolute; top: 56px; bottom: 0; width: 60px; z-index: 15; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0; background: var(--chrome); }
+.rail.l { left: 0; box-shadow: inset -1px 0 0 var(--seam); } .rail.r { right: 0; box-shadow: inset 1px 0 0 var(--seam); }
+.wi { position: relative; width: 38px; height: 38px; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); box-shadow: inset 3px 0 0 transparent; }
+.wi.on { color: var(--w); background: color-mix(in srgb, var(--w) 16%, transparent); box-shadow: inset 3px 0 0 var(--w); }
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 18; display: none; text-align: center; background: none; border: 0; color: var(--text); }
+.stage.paused .paused-mark { display: block; }
+.paused-mark .sq { width: 52px; height: 52px; margin: 0 auto; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); color: var(--accent); }
+.paused-mark small { display: block; margin-top: 12px; font: 500 12px var(--font-mono); letter-spacing: .1em; color: var(--accent); }
+
+/* ---- the Props wing: TrackHare's row ---- */
+.wing-panel { position: absolute; top: 0; bottom: 0; left: 0; width: min(680px, 50%); z-index: 25; display: none; flex-direction: column; background: var(--stage-well); box-shadow: inset -1px 0 0 var(--seam); }
+.wing-panel.show { display: flex; }
+.fold { padding: 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.crumb b { color: var(--text); font-weight: 600; } .crumb i { font-style: normal; color: var(--text-faint); }
+.tabs button { padding: 7px 12px; box-shadow: inset 0 0 0 1px var(--w); background: color-mix(in srgb, var(--w) 10%, transparent); color: var(--text); font: 500 13px var(--font-body); border: 0; }
+.tabs small { display: block; margin-top: 2px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
+.wbody { flex: 1; padding: 20px; }
+.prop-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--prop-hare); }
+.prop-ic { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--prop-hare) 18%, transparent); color: var(--prop-hare); }
+.prop-ic svg { width: 18px; height: 18px; }
+.prop-row b { font: 600 14px var(--font-big); color: var(--text); }
+.prop-row small { display: block; margin-top: 2px; font: 400 12px/1.4 var(--font-body); color: var(--text-dim); }
+.tg { width: 30px; height: 17px; flex: none; background: var(--stage-line); border: 0; cursor: pointer; position: relative; }
+.tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; background: var(--stage-card); }
+.tg.on { background: var(--prop-hare); } .tg.on::after { left: 15px; background: var(--stage-ink); }
+.prop-note { margin-top: 10px; font: 400 12px var(--font-body); color: var(--text-faint); }
+
+/* ---- the stage button: draggable, badge, resize handle ---- */
+.hare-btn { position: absolute; z-index: 22; width: 48px; height: 48px; left: 96px; top: 28px; display: grid; place-items: center; background: var(--face); box-shadow: 0 0 0 1px var(--prop-hare), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); color: var(--prop-hare); cursor: grab; border: 0; }
+.hare-btn svg { width: 26px; height: 26px; }
+.hare-btn .n { position: absolute; top: -6px; right: -6px; min-width: 16px; height: 16px; padding: 0 4px; display: grid; place-items: center; background: var(--prop-hare); color: var(--stage-ink); font: 700 12px var(--font-mono); }
+.hare-btn .rh { position: absolute; right: -3px; bottom: -3px; width: 10px; height: 10px; background: var(--prop-hare); cursor: nwse-resize; opacity: .6; }
+.hare-line { position: absolute; z-index: 21; left: 120px; top: 76px; width: 1px; height: 40px; background: var(--prop-hare); opacity: .4; }
+
+/* ---- the popover ---- */
+.hare-pop { position: absolute; z-index: 26; left: 96px; top: 116px; width: 400px; max-height: 70vh; display: flex; flex-direction: column; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--prop-hare); }
+.hp-hd { display: flex; align-items: center; gap: 8px; padding: 12px 14px; box-shadow: inset 0 -1px 0 var(--seam); }
+.hp-hd svg { width: 16px; height: 16px; color: var(--prop-hare); }
+.hp-hd b { font: 600 14px var(--font-big); color: var(--text); }
+.hp-hd .cnt { font: 700 12px var(--font-mono); padding: 1px 7px; background: color-mix(in srgb, var(--prop-hare) 18%, transparent); color: var(--prop-hare); }
+.hp-hd .grow { flex: 1; }
+.seg2 { display: flex; box-shadow: inset 0 0 0 1px var(--edge); }
+.seg2 button { padding: 4px 9px; background: none; border: 0; color: var(--text-dim); font: 500 12px var(--font-body); cursor: pointer; }
+.seg2 button.on { background: color-mix(in srgb, var(--prop-hare) 16%, transparent); color: var(--prop-hare); }
+.hp-hd .close { width: 24px; height: 24px; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); cursor: pointer; }
+.hp-hd .close svg { width: 13px; height: 13px; }
+.hp-sub { display: flex; justify-content: space-between; padding: 8px 14px; font: 500 12px var(--font-mono); color: var(--text-dim); box-shadow: inset 0 -1px 0 var(--seam); }
+.hare-none, .hare-err { padding: 24px; text-align: center; font: 400 13px var(--font-body); color: var(--text-dim); }
+.hare-none .hint { display: block; margin-top: 6px; color: var(--text-faint); font-size: 12px; }
+.bkh { display: flex; align-items: center; gap: 8px; padding: 10px 14px 4px; font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+.bkh svg { width: 12px; height: 12px; }
+.he { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 14px; background: none; border: 0; box-shadow: inset 3px 0 0 var(--c); text-align: left; cursor: pointer; }
+.he:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
+.he svg { width: 15px; height: 15px; color: var(--c); flex: none; }
+.he b { display: block; font: 500 13px var(--font-big); color: var(--text); }
+.he .rs { display: block; font: 600 12px var(--font-mono); letter-spacing: .04em; color: var(--c); }
+.he .tags { margin-top: 2px; display: flex; gap: 6px; }
+.he .tags span { font: 500 12px var(--font-body); color: var(--text-faint); }
+.he .tk { flex: none; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.hare-miss { box-shadow: inset 0 1px 0 var(--seam); }
+.mh { display: flex; justify-content: space-between; width: 100%; padding: 10px 14px; background: none; border: 0; color: var(--text-dim); font: 500 12px var(--font-body); cursor: pointer; }
+.mi { display: flex; justify-content: space-between; padding: 6px 14px 6px 24px; font: 400 12px var(--font-body); color: var(--text-soft); }
+.mi em { color: var(--text-faint); font-style: italic; font-size: 12px; }
+.hp-ft { display: flex; gap: 8px; padding: 12px 14px; box-shadow: inset 0 1px 0 var(--seam); }
+.hbtn { display: flex; align-items: center; gap: 6px; padding: 7px 12px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); font: 600 12px var(--font-body); cursor: pointer; }
+.hbtn:disabled { opacity: .4; cursor: not-allowed; }
+.hbtn.pri { background: var(--prop-hare); color: var(--stage-ink); box-shadow: none; }
+.hbtn svg { width: 13px; height: 13px; }
+.hare-replies { padding: 10px 14px; box-shadow: inset 0 1px 0 var(--seam); display: flex; flex-wrap: wrap; gap: 6px; }
+.hare-replies button { padding: 5px 10px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text-soft); font: 500 12px var(--font-body); cursor: pointer; }
+
+/* ---- options (right-click) ---- */
+.cfg { position: absolute; z-index: 26; left: 96px; top: 116px; width: 300px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); border-top: 4px solid var(--prop-hare); }
+.cfg .hp-hd b { font-size: 13px; }
+.cfg .r { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; box-shadow: inset 0 -1px 0 var(--seam); }
+.cfg .r div { font: 400 13px var(--font-body); color: var(--text); }
+.cfg .r small { display: block; color: var(--text-dim); font-size: 12px; margin-top: 2px; }
+.cfg .r select { padding: 5px 8px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 400 12px var(--font-body); }
+
+/* ---- the Tokens / Chains sheets: full stage overlays ---- */
+.sheet { position: absolute; inset: 40px 60px; z-index: 30; display: flex; flex-direction: column; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 10px 10px 0 0 var(--stage-black); border-top: 4px solid var(--prop-hare); }
+.sh-hd { display: flex; align-items: center; gap: 10px; padding: 16px 20px; box-shadow: inset 0 -1px 0 var(--seam); }
+.sh-hd b { font: 600 16px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.sh-hd small { font: 400 12px var(--font-body); color: var(--text-dim); }
+.sh-hd .grow { flex: 1; }
+.sh-hd .tbtn { width: 30px; height: 30px; display: grid; place-items: center; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text-dim); cursor: pointer; }
+.sh-hd .tbtn svg { width: 13px; height: 13px; }
+.sh-body { flex: 1; min-height: 0; display: flex; overflow: hidden; }
+.sh-side { width: 280px; flex: none; padding: 20px; box-shadow: inset -1px 0 0 var(--seam); overflow-y: auto; }
+.donut { width: 150px; height: 150px; margin: 0 auto; border-radius: 50% !important; display: grid; place-items: center; position: relative; }
+.donut::before { content: ""; position: absolute; inset: 20px; background: var(--face); border-radius: 50% !important; }
+.donut b { position: relative; z-index: 1; text-align: center; font: 700 22px var(--font-mono); color: var(--text); }
+.donut b small { display: block; font: 500 12px var(--font-body); color: var(--text-dim); text-transform: uppercase; letter-spacing: .04em; }
+.leg { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+.tok-legrow, .leg > div { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: none; border: 0; width: 100%; cursor: pointer; }
+.tok-legrow:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
+.tok-legrow.tok-x, .leg .x { opacity: .4; text-decoration: line-through; }
+.tok-sw, .leg i { width: 9px; height: 9px; flex: none; background: var(--c); }
+.tok-nm { flex: 1; text-align: left; font: 400 12px var(--font-body); color: var(--text); }
+.leg em { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.tok-grip, .grip2 { color: var(--text-faint); font-size: 12px; cursor: grab; }
+.bud { margin-top: 16px; }
+.bud small { display: block; font: 400 12px var(--font-body); color: var(--text-dim); }
+.tok-bar, .bar { margin-top: 6px; height: 6px; display: flex; background: var(--stage-line); }
+.tok-bar i, .bar i { display: block; height: 100%; background: var(--c); }
+.tok-bl, .bl { margin-top: 6px; display: flex; justify-content: space-between; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.tok-model { margin-top: 4px; font: 500 12px var(--font-body); color: var(--text); }
+.sh-main, .tok-main { flex: 1; overflow-y: auto; padding: 16px 20px; }
+.tok-note { display: flex; gap: 8px; align-items: flex-start; padding: 10px 12px; background: color-mix(in srgb, var(--stage-warn) 8%, transparent); box-shadow: inset 3px 0 0 var(--stage-warn); font: 400 12px/1.5 var(--font-body); color: var(--text); margin-bottom: 14px; }
+.tok-note svg { width: 13px; height: 13px; color: var(--stage-warn); flex: none; margin-top: 2px; }
+.cat2, .tok-cat { margin-bottom: 14px; box-shadow: inset 0 0 0 1px var(--edge); }
+.tok-ch, .ch { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 14px; background: color-mix(in srgb, var(--c) 8%, transparent); border: 0; box-shadow: inset 3px 0 0 var(--c); text-align: left; font: 600 12px var(--font-body); color: var(--text); cursor: pointer; }
+.tok-ch svg, .ch svg { width: 12px; height: 12px; }
+.tok-ch em, .ch em { margin-left: auto; font: 500 12px var(--font-mono); color: var(--text-dim); font-style: normal; }
+.tok-bkh { padding: 8px 14px 2px; font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+.tok-sec, .sec { display: flex; align-items: center; gap: 10px; padding: 8px 14px; box-shadow: inset 0 1px 0 var(--seam); }
+.tok-sec-open, .tok-sec-lbl { flex: 1; text-align: left; background: none; border: 0; font: 400 13px var(--font-body); color: var(--text); cursor: pointer; }
+.tok-sec em, .sec em { font: 500 12px var(--font-mono); color: var(--text-dim); font-style: normal; }
+.tok-btn, .sec .hbtn { flex: none; padding: 4px 10px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text-dim); font: 500 12px var(--font-body); cursor: pointer; }
+.tok-raw { margin: 0 14px 10px; padding: 10px 12px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); font: 400 12px/1.5 var(--font-mono); color: var(--text-soft); }
+.tok-raw-ft { margin-top: 8px; }
+.raw { margin: 0 14px 10px 24px; padding: 10px 12px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); font: 400 12px/1.5 var(--font-mono); color: var(--text-soft); }
+.sh-ft, .tok-ft { display: flex; align-items: center; gap: 8px; padding: 12px 20px; box-shadow: inset 0 1px 0 var(--seam); }
+.sh-ft .grow, .tok-grow { flex: 1; }
+
+/* Chains */
+.chains { flex: 1; overflow-y: auto; padding: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: start; }
+.cg { background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--c); padding: 14px; }
+.cg h4 { font: 600 14px var(--font-big); color: var(--c); }
+.cg p { margin-top: 4px; font: 400 11px/1.4 var(--font-body); color: var(--text-dim); }
+.cg .cl { margin-top: 10px; padding-top: 10px; box-shadow: inset 0 1px 0 var(--seam); font: 600 13px var(--font-big); color: var(--text); }
+.cg .cl small { display: block; margin-top: 4px; font: 400 11px/1.4 var(--font-body); color: var(--text-soft); font-weight: 400; }
+.cg .none { margin-top: 10px; font: 400 12px var(--font-body); color: var(--text-faint); }
+
+@container (max-width: 900px) {
+  #app { flex-direction: column; }
+  .stage { flex: none; height: 100vh; min-height: 100vh; }
+  .s-dock { width: 100%; min-height: 0; flex-direction: row; align-items: center; padding: 8px 12px; }
+  .s-dock .brand { padding: 0; margin-right: auto; }
+  .s-dock .s-app { display: none; }
+  .s-dock .s-app.c-scenes { display: grid; place-items: center; padding: 6px; }
+  .s-dock .s-app.c-scenes b, .s-dock .s-app.c-scenes small { display: none; }
+  .rail { display: none; }
+  .wing-panel { width: 100%; }
+  .hare-pop, .cfg { left: 12px; right: 12px; width: auto; }
+  .sheet { inset: 20px 10px; }
+  .sh-body { flex-direction: column; overflow-y: auto; }
+  .sh-side { width: 100%; box-shadow: inset 0 -1px 0 var(--seam); }
+  .chains { grid-template-columns: 1fr; }
+  .stage.paused .paused-mark { display: none; }
+}
+
+.wf-bar { top: 8px; bottom: auto; }
+.wf-note { max-width: min(32rem, calc(100vw - 24px)); }
+/* shared-file gap: soft-parts.css sets .s-app small/kbd and .wf-bar at 11px, under the 12px floor */
+.s-app small, .s-app kbd, .wf-bar { font-size: 12px; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+  <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2zM6 11c1.5 0 2.5.5 3 2M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+  <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.57a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.02.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.02a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.8V4h6v6.8l3 3.2H6z"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-hare" viewBox="0 0 30 34.286"><path fill="currentColor" d="m6.316 -0.028 0.256 -0.002c0.232 -0.001 0.464 -0.002 0.696 -0.002 0.251 0 0.503 -0.002 0.754 -0.003 0.548 -0.002 1.096 -0.003 1.645 -0.004q0.515 -0.001 1.029 -0.002c0.952 -0.002 1.904 -0.004 2.856 -0.004l0.184 0 0.555 0 0.185 0c0.991 0 1.982 -0.003 2.973 -0.008q1.531 -0.006 3.061 -0.006c0.572 0 1.144 -0.001 1.715 -0.004Q22.956 -0.067 23.686 -0.065c0.248 0.001 0.496 0.001 0.743 -0.002C25.835 -0.08 27.082 0.066 28.192 1.004l0.11 0.092a34.152 34.152 0 0 1 0.713 0.613 5.156 5.156 0 0 0 0.233 0.189c0.39 0.305 0.698 0.687 0.789 1.184 0.014 0.233 0.016 0.463 0.013 0.697q0.001 0.135 0.002 0.269c0.001 0.245 0 0.49 -0.001 0.734 -0.001 0.265 0 0.529 0.001 0.794 0.001 0.518 0 1.036 -0.001 1.553a517.299 517.299 0 0 0 -0.001 1.81c0 1.077 -0.001 2.153 -0.004 3.229a993.147 993.147 0 0 0 -0.003 3.132 1664.129 1664.129 0 0 1 -0.001 3.777l0 0.181q-0.001 0.63 0 1.261 0.001 0.768 -0.002 1.537c-0.001 0.261 -0.002 0.523 -0.001 0.784q0.001 0.359 -0.002 0.718c-0.001 0.127 0 0.254 0.001 0.382 -0.005 0.466 -0.051 0.775 -0.304 1.17l-0.18 0.167c-0.581 0.628 -0.298 2.533 -0.268 3.34l0.007 0.201c0.024 0.934 0.024 0.934 0.412 1.754 0.341 0.431 0.316 0.796 0.321 1.335q0.002 0.137 0.005 0.274c0.016 0.589 -0.003 1.081 -0.364 1.567 -0.379 0.357 -0.745 0.552 -1.273 0.553l-0.246 0.001 -0.27 -0.001 -0.287 0.001c-0.263 0.001 -0.526 0.001 -0.789 0 -0.284 0 -0.567 0 -0.851 0.001q-0.834 0.001 -1.668 0.001 -0.678 0 -1.356 0l-0.195 0 -0.392 0q-1.84 0.001 -3.68 0c-1.121 0 -2.242 0 -3.363 0.002q-1.727 0.002 -3.454 0.002c-0.646 0 -1.292 0 -1.939 0.001q-0.826 0.001 -1.652 0c-0.281 0 -0.561 -0.001 -0.842 0q-0.386 0.001 -0.773 0c-0.136 0 -0.272 0 -0.408 0.001C4.452 34.302 2.913 33.596 1.674 32.344l-0.152 -0.148c-1.102 -1.139 -1.555 -2.786 -1.548 -4.329q0 -0.145 -0.001 -0.29c-0.001 -0.263 -0.001 -0.526 0 -0.789 0 -0.285 -0.001 -0.569 -0.001 -0.854 -0.001 -0.557 -0.001 -1.113 -0.001 -1.67q0 -0.679 0 -1.358l0 -0.196 0 -0.394c-0.001 -1.229 -0.001 -2.458 0 -3.687 0.001 -1.122 0 -2.245 -0.002 -3.367q-0.002 -1.732 -0.002 -3.464c0 -0.647 0 -1.295 -0.001 -1.942q-0.001 -0.827 0 -1.653c0.001 -0.281 0.001 -0.561 0 -0.842C-0.042 5.195 -0.042 5.195 0.268 4.286l0.058 -0.173C0.677 3.162 1.235 2.391 1.942 1.674l0.148 -0.151C3.205 0.462 4.807 -0.032 6.316 -0.028M21.362 2.679c-0.741 0.365 -1.234 0.866 -1.54 1.644 -0.252 0.784 -0.269 1.591 0.1 2.347C20.34 7.336 20.935 7.893 21.496 8.438l0.167 0.169c0.691 0.68 1.372 1.161 2.361 1.191 0.74 -0.017 1.283 -0.182 1.825 -0.691l0.096 -0.089c0.403 -0.353 0.403 -0.353 0.707 -0.783 0 -0.359 -0.335 -0.63 -0.573 -0.869 -0.333 -0.333 -0.653 -0.575 -1.101 -0.737l-0.132 -0.049C24.14 6.364 23.44 6.499 22.768 6.763l-0.201 0.134 0.071 -0.167c0.355 -0.872 0.439 -1.657 0.092 -2.558C22.458 3.619 21.966 3.197 21.496 2.813zm-8.571 6.629c0.058 0.31 0.244 0.468 0.464 0.68l0.12 0.119c0.127 0.125 0.254 0.249 0.382 0.373a118.862 118.862 0 0 1 0.381 0.373 37.098 37.098 0 0 0 0.238 0.232c0.233 0.228 0.405 0.401 0.441 0.73L14.816 11.987l0.001 0.172c-0.019 0.176 -0.053 0.284 -0.152 0.431 -0.19 0.063 -0.325 0.082 -0.523 0.088l-0.169 0.008c-0.53 -0.085 -0.911 -0.612 -1.267 -0.974l-0.185 -0.186A235.313 235.313 0 0 1 12.054 11.049l-0.134 -0.134c-0.187 0.219 -0.314 0.413 -0.417 0.681 -0.141 0.352 -0.292 0.696 -0.451 1.04l-0.072 0.157q-0.112 0.241 -0.223 0.482c-0.302 0.653 -0.603 1.305 -0.888 1.966 -0.126 0.29 -0.257 0.577 -0.392 0.863a36.563 36.563 0 0 0 -0.469 1.038c-0.225 0.518 -0.462 1.03 -0.703 1.54l-0.154 0.327 -0.16 0.339 -0.075 0.158 -0.073 0.153 -0.071 0.149c-0.071 0.146 -0.145 0.289 -0.22 0.433 -0.146 0.293 -0.193 0.528 -0.118 0.851 0.188 0.363 0.448 0.603 0.804 0.804l0.138 0.088c0.353 0.125 0.755 -0.143 1.071 -0.289l0.366 -0.167 0.187 -0.086c0.213 -0.097 0.427 -0.193 0.64 -0.289 0.161 -0.072 0.321 -0.145 0.482 -0.217a117.522 117.522 0 0 1 0.815 -0.364c0.202 -0.09 0.404 -0.18 0.606 -0.27q0.151 -0.067 0.303 -0.134c0.143 -0.063 0.285 -0.126 0.427 -0.19l0.13 -0.057c0.24 -0.109 0.39 -0.208 0.526 -0.436 -0.092 -0.103 -0.092 -0.103 -0.201 -0.201h-0.134l-0.053 -0.119c-0.087 -0.159 -0.179 -0.258 -0.309 -0.383l-0.134 -0.13q-0.14 -0.134 -0.28 -0.267c-0.488 -0.474 -0.488 -0.474 -0.502 -0.866l0.018 -0.152 0.015 -0.153c0.046 -0.166 0.107 -0.232 0.24 -0.341 0.152 -0.076 0.249 -0.082 0.419 -0.088l0.152 -0.008c0.407 0.07 0.705 0.415 0.984 0.699l0.114 0.115c0.119 0.12 0.238 0.241 0.357 0.362l0.243 0.245a231.027 231.027 0 0 1 0.442 0.447q0.151 0.153 0.303 0.305l0.199 -0.101c0.717 -0.361 1.437 -0.714 2.174 -1.033C19.584 17.106 20.89 16.228 21.563 14.531c0.081 -0.242 0.151 -0.486 0.218 -0.732l0.054 -0.188c0.184 -0.671 0.157 -1.228 -0.021 -1.897l-0.042 -0.169c-0.099 -0.387 -0.24 -0.738 -0.41 -1.099l-0.06 -0.139c-0.281 -0.644 -0.802 -1.171 -1.346 -1.602l-0.127 -0.104C19.214 8.117 18.564 7.84 17.813 7.634l-0.225 -0.073c-1.806 -0.453 -3.53 0.559 -4.797 1.747M4.796 26.472Q4.704 26.592 4.621 26.719l-0.084 0.126c-0.284 0.518 -0.268 1.185 -0.138 1.749 0.198 0.543 0.529 0.941 1.048 1.199 0.565 0.23 1.199 0.226 1.8 0.222l0.237 0q0.322 0 0.645 -0.001c0.233 -0.001 0.466 0 0.698 0q0.604 0 1.208 -0.001c0.582 -0.001 1.164 -0.001 1.746 -0.002q1.416 0 2.833 -0.002a3807.924 3807.924 0 0 1 3.774 -0.003c2.353 -0.001 4.705 -0.004 7.058 -0.007v-4.286a11307.589 11307.589 0 0 0 -8.085 -0.007l-0.172 0q-1.376 -0.001 -2.751 -0.003 -1.412 -0.002 -2.824 -0.002 -0.871 0 -1.742 -0.002 -0.598 -0.001 -1.195 -0.001c-0.23 0 -0.459 0 -0.689 -0.001 -0.25 -0.001 -0.499 -0.001 -0.749 0l-0.218 -0.001c-0.856 0.003 -1.618 0.121 -2.225 0.775"/></symbol>
+</defs></svg>
+
+<div id="app">
+  <nav class="s-dock" style="--pink: var(--deck-pack); --ink: var(--stage-ink)">
+    <div class="brand"><svg width="28" height="28"><use href="#bun"/></svg>bunraku</div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-wand"/></svg></i><b>Workbench</b></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-globe"/></svg></i><b>Library</b></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-mask"/></svg></i><b>Scenes</b></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-book"/></svg></i><b>Press</b></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-cpu"/></svg></i><b>Agent</b></div>
+  </nav>
+
+  <main class="stage" id="stage">
+    <div class="play">
+      <header class="sh">
+        <button type="button" class="back"><svg><use href="#i-back"/></svg></button>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm...</span>
+      </header>
+      <div class="scroll">
+        <div class="msg"><div class="por"><span class="ini">M</span></div><div class="body"><div class="spk">Marguerite Vane</div>
+          <div class="bub"><div class="prose"><p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em></p></div></div>
+        </div></div>
+      </div>
+      <div class="dockbar"><div class="cap"><span class="ta">Message Marguerite Vane...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div>
+
+      <!-- the stage button: TrackHare's own entry point -->
+      <button type="button" class="hare-btn" data-only="stage panel miss earlier settings tokens chains" title="TrackHare (right-click for options)">
+        <svg><use href="#i-hare"/></svg><span class="n">5</span><span class="rh"></span>
+      </button>
+    </div>
+
+    <nav class="rail l" aria-label="Scene wings">
+      <button type="button" class="wi" style="--w: var(--accent)"><svg width="19" height="19"><use href="#i-wand"/></svg></button>
+      <button type="button" class="wi" style="--w: var(--deck-character)"><svg width="19" height="19"><use href="#i-mask"/></svg></button>
+      <button type="button" class="wi" style="--w: var(--deck-preset)"><svg width="19" height="19"><use href="#i-wand"/></svg></button>
+      <button type="button" class="wi" style="--w: var(--deck-lorebook)"><svg width="19" height="19"><use href="#i-globe"/></svg></button>
+      <button type="button" class="wi on" style="--w: var(--deck-regex)" id="propswi"><svg width="19" height="19"><use href="#i-puzzle"/></svg></button>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <button type="button" class="wi" style="--w: var(--stage-var)"><svg width="19" height="19"><use href="#i-cpu"/></svg></button>
+    </nav>
+    <div class="paused-mark"><span class="sq"><svg><use href="#i-pause"/></svg></span><small>Scene paused</small></div>
+
+    <!-- Props wing: TrackHare's row, switched on -->
+    <section class="wing-panel show" id="propspanel" data-only="props" style="--w: var(--deck-regex)">
+      <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div><div class="tabs"><button type="button" class="on"><b>Props</b><small>1 on</small></button></div></nav>
+      <div class="wbody">
+        <div class="prop-row"><span class="prop-ic"><svg><use href="#i-puzzle"/></svg></span><div><b>TrackHare</b><small>See which lorebook entries went into each reply and why, which ones did not and why not, how the prompt's tokens were spent, and which entries woke which.</small></div><button type="button" class="tg on"></button></div>
+        <p class="prop-note">Props are optional. TrackHare only watches; it never changes what is sent. Its button appears on the stage while it is on.</p>
+      </div>
+    </section>
+
+    <!-- the popover: what fired on the last reply -->
+    <div class="hare-pop" data-only="panel miss earlier">
+      <div class="hp-hd">
+        <svg><use href="#i-hare"/></svg><b>TrackHare</b><span class="cnt">5</span><span class="grow"></span>
+        <span class="seg2"><button type="button" class="on">Detailed</button><button type="button">Compact</button></span>
+        <button type="button" class="close" aria-label="Close"><svg><use href="#i-x"/></svg></button>
+      </div>
+      <div class="hp-sub"><span>Reply #14 &middot; Take 2</span><span>~740 lore tok</span></div>
+      <div class="bkh"><svg><use href="#i-book"/></svg> Keeper's Log</div>
+      <button type="button" class="he" style="--c: var(--stage-macro)"><svg><use href="#i-pin"/></svg><div><b>The lighthouse</b><span class="rs">ALWAYS ON</span><div class="tags"><span>World</span></div></div><span class="tk">~120</span></button>
+      <button type="button" class="he" style="--c: var(--stage-ok)"><svg><use href="#i-key"/></svg><div><b>The storm of '09</b><span class="rs">KEY: "storm"</span><div class="tags"><span>Character</span></div></div><span class="tk">~180</span></button>
+      <button type="button" class="he" style="--c: var(--deck-lorebook)"><svg><use href="#i-link"/></svg><div><b>The lantern</b><span class="rs">WOKEN BY: The storm of '09 (loop 1)</span><div class="tags"><span>World</span></div></div><span class="tk">~95</span></button>
+      <button type="button" class="he" style="--c: var(--stage-danger-text)"><svg><use href="#i-clock"/></svg><div><b>Her brother</b><span class="rs">STICKY: 2 turns left</span><div class="tags"><span>@ Depth 4</span></div></div><span class="tk">~140</span></button>
+      <div class="hare-miss">
+        <button type="button" class="mh" id="missbtn"><span>Didn't fire (3)</span><span data-only="panel">show</span><span data-only="miss earlier">hide</span></button>
+        <div data-only="miss earlier">
+          <div class="mi"><span>Shipwrecks</span><em>matched "wreck", over budget: 200 tok, 90 left</em></div>
+          <div class="mi"><span>The tide tables</span><em>chance: rolled 71, needed 50</em></div>
+          <div class="mi"><span>Old keeper</span><em>cooling down: 1 turn left</em></div>
+        </div>
+      </div>
+      <div class="hp-ft">
+        <button type="button" class="hbtn pri" id="tokensbtn"><svg><use href="#i-chart"/></svg>Tokens</button>
+        <button type="button" class="hbtn" id="chainsbtn"><svg><use href="#i-link"/></svg>Chains</button>
+        <button type="button" class="hbtn" id="earlierbtn"><svg><use href="#i-back"/></svg>Earlier replies</button>
+      </div>
+      <div class="hare-replies" data-only="earlier">
+        <button type="button">Reply #10</button><button type="button">Reply #12</button><button type="button">Reply #14</button>
+      </div>
+    </div>
+
+    <!-- no reply yet / loading / failed -->
+    <div class="hare-pop" data-only="none"><div class="hp-hd"><svg><use href="#i-hare"/></svg><b>TrackHare</b><span class="grow"></span><button type="button" class="close"><svg><use href="#i-x"/></svg></button></div><div class="hare-none">No reply yet.</div></div>
+    <div class="hare-pop" data-only="nolore"><div class="hp-hd"><svg><use href="#i-hare"/></svg><b>TrackHare</b><span class="grow"></span><button type="button" class="close"><svg><use href="#i-x"/></svg></button></div><div class="hp-sub"><span>Reply #14 &middot; Take 2</span><span>~0 lore tok</span></div><div class="hare-none">No lorebooks fired in this reply.<span class="hint">Open the World wing to add or turn on a lorebook.</span></div></div>
+    <div class="hare-pop" data-only="failed"><div class="hp-hd"><svg><use href="#i-hare"/></svg><b>TrackHare</b><span class="grow"></span><button type="button" class="close"><svg><use href="#i-x"/></svg></button></div><div class="hare-err">TrackHare couldn't read this reply.</div></div>
+
+    <!-- settings: right-click the button -->
+    <div class="cfg" data-only="settings">
+      <div class="hp-hd"><b>TrackHare options</b></div>
+      <div class="r"><div>Group by book</div><button type="button" class="tg on"></button></div>
+      <div class="r"><div>Sort<small>Placement order, A to Z, or size</small></div><select><option>Placement</option><option>A to Z</option><option>Size</option></select></div>
+      <div class="r"><div>Show &quot;Didn't fire&quot;</div><button type="button" class="tg on"></button></div>
+      <div class="r"><div>Button<small>Drag it anywhere; drag the corner to resize</small></div><button type="button" class="hbtn">Reset place</button></div>
+    </div>
+
+    <!-- Tokens: the itemizer -->
+    <section class="sheet" data-only="tokens">
+      <div class="sh-hd"><svg style="width:18px;height:20px;color:var(--prop-hare)"><use href="#i-hare"/></svg><b>Tokens</b><small>Reply #14 &middot; exactly what was sent, section by section</small><span class="grow"></span><button type="button" class="tbtn" title="Close"><svg><use href="#i-x"/></svg></button></div>
+      <div class="sh-body">
+        <aside class="sh-side">
+          <div class="donut" style="background: conic-gradient(var(--deck-preset) 0% 18%, var(--deck-character) 18% 34%, var(--deck-persona) 34% 40%, var(--deck-lorebook) 40% 52%, var(--stage-var) 52% 92%, var(--stage-card) 92% 100%)"><b>6,184<small>tokens sent</small></b></div>
+          <div class="leg">
+            <div style="--c: var(--deck-preset)"><i></i><span class="tok-nm">Preset prompts</span><em>1,113</em><span class="grip2">::</span></div>
+            <div style="--c: var(--deck-character)"><i></i><span class="tok-nm">Character card</span><em>989</em><span class="grip2">::</span></div>
+            <div style="--c: var(--deck-persona)"><i></i><span class="tok-nm">Persona</span><em>371</em><span class="grip2">::</span></div>
+            <div style="--c: var(--deck-lorebook)"><i></i><span class="tok-nm">Lore</span><em>740</em><span class="grip2">::</span></div>
+            <div style="--c: var(--stage-var)"><i></i><span class="tok-nm">Chat history</span><em>2,474</em><span class="grip2">::</span></div>
+            <div class="tok-x" style="--c: var(--stage-card)"><i></i><span class="tok-nm">Current message</span><em>497</em><span class="grip2">::</span></div>
+          </div>
+          <div class="bud"><small>Context: 6,184 of 32,000 (reply keeps 1,200)</small>
+            <div class="bar"><i style="--c: var(--deck-preset); width: 3.5%"></i><i style="--c: var(--deck-character); width: 3.1%"></i><i style="--c: var(--deck-persona); width: 1.2%"></i><i style="--c: var(--deck-lorebook); width: 2.3%"></i><i style="--c: var(--stage-var); width: 7.7%"></i><i style="--c: var(--stage-card); width: 1.5%"></i></div>
+            <div class="bl"><span>19% used</span><span>lore share: 740 of 8,000</span></div>
+          </div>
+          <div class="bud"><small>Counting with</small><div class="tok-model">This scene's model (Claude Sonnet)</div></div>
+        </aside>
+        <div class="sh-main">
+          <p class="tok-note"><svg><use href="#i-alert"/></svg>Raw text is kept for each take's latest reply; this one shows sizes only.</p>
+          <div class="cat2" style="--c: var(--deck-preset)"><button type="button" class="ch"><svg><use href="#i-down"/></svg>Preset prompts (Velvet Quill)<em>1,113</em></button>
+            <div class="sec"><button type="button" class="tok-sec-open">Main Prompt</button><em>420</em><button type="button" class="hbtn">Copy</button></div>
+            <div class="sec"><button type="button" class="tok-sec-open">Prose: literary</button><em>210</em><button type="button" class="hbtn">Copy</button></div>
+            <div class="sec"><button type="button" class="tok-sec-open">Jailbreak</button><em>180</em><button type="button" class="hbtn">Copy</button></div></div>
+          <div class="cat2" style="--c: var(--deck-lorebook)"><button type="button" class="ch"><svg><use href="#i-down"/></svg>Lore (5 entries)<em>740</em></button>
+            <div class="tok-bkh">Keeper's Log</div>
+            <div class="sec"><button type="button" class="tok-sec-open">The lighthouse &middot; World</button><em>120</em><button type="button" class="hbtn">Copy</button></div>
+            <div class="sec"><button type="button" class="tok-sec-open">The storm of '09 &middot; Character</button><em>180</em><button type="button" class="hbtn">Copy</button></div></div>
+          <div class="cat2" style="--c: var(--stage-var)"><button type="button" class="ch"><svg style="transform:rotate(-90deg)"><use href="#i-down"/></svg>Chat history (22 messages, 6 left out for space)<em>2,474</em></button></div>
+          <div class="cat2" style="--c: var(--deck-character)"><button type="button" class="ch"><svg style="transform:rotate(-90deg)"><use href="#i-down"/></svg>Character card<em>989</em></button></div>
+        </div>
+      </div>
+      <div class="sh-ft"><button type="button" class="hbtn">Copy as JSON</button><button type="button" class="hbtn">Copy the raw request</button><button type="button" class="hbtn">Export .json</button><button type="button" class="hbtn">Export .txt</button><span class="grow"></span><button type="button" class="hbtn" disabled>Reset what-if</button></div>
+    </section>
+
+    <!-- Chains -->
+    <section class="sheet" data-only="chains">
+      <div class="sh-hd"><svg style="width:18px;height:20px;color:var(--prop-hare)"><use href="#i-hare"/></svg><b>Chains</b><small>Reply #14 &middot; an entry's text can wake another entry's keys</small><span class="grow"></span><button type="button" class="tbtn" title="Close"><svg><use href="#i-x"/></svg></button></div>
+      <div class="chains">
+        <div class="cg" style="--c: var(--stage-ok)"><h4>Starters</h4><p>Fired from the chat, then woke others</p>
+          <div class="cl">The storm of '09<small>woke The lantern with "lantern"</small></div></div>
+        <div class="cg" style="--c: var(--deck-lorebook)"><h4>Links</h4><p>Woken, then woke others</p>
+          <div class="cl">The lantern<small>woken by The storm of '09 (loop 1); woke Her brother with "brother"</small></div></div>
+        <div class="cg" style="--c: var(--stage-warn)"><h4>Ends</h4><p>Woken, woke nothing</p>
+          <div class="cl">Her brother<small>woken by The lantern (loop 2)</small></div></div>
+        <div class="cg" style="--c: var(--text-dim)"><h4>Standalone</h4><p>Fired alone</p>
+          <div class="cl">The lighthouse<small>always on</small></div><div class="none">None else</div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="props">Props wing: on</button><button data-s="stage">On the stage</button><button data-s="panel">What fired</button><button data-s="miss">Didn't fire, open</button>
+  <button data-s="earlier">Earlier replies</button><button data-s="none">No reply yet</button><button data-s="nolore">No lore fired</button><button data-s="failed">Couldn't read reply</button>
+  <button data-s="settings">Options (right-click)</button><button data-s="tokens">Tokens sheet</button><button data-s="chains">Chains sheet</button>
+  <button data-theme-switch>Theme</button>
+</div>
+<div class="wf-note">TrackHare, the ported SillyTavern extension, now a real Prop (props/trackhare/hare-stage.tsx, hare-popover.tsx, hare-options.tsx, chains-sheet.tsx, tokens-sheet.tsx). Switch it on per scene in the Props wing (its wing row uses the generic puzzle icon, the deck-regex tone; the carrot mark is TrackHare's own, on the stage button and every sheet header). The button drags anywhere and its corner resizes it (40 to 96px); click opens the popover, right-click or a long press opens options. Popover: Detailed/Compact, grouped by book, reason badges (always on, key, woken by + loop, sticky + turns left, a chance roll on top), Didn't fire with why not, Earlier replies. Tokens: a draggable what-if legend (click to leave a category out, drag to reorder), the budget bar, raw sections with Copy, export. Chains: Starters/Links/Ends/Standalone. Left out, honestly: VectHare (no vector search yet), Potato Mode (nothing to strip), the 18-tokenizer picker (counts with the scene's own model).</div>
+
+<script>
+(function () {
+  var stage = document.getElementById("stage");
+  function set(s) {
+    stage.classList.toggle("paused", s === "props");
+    document.getElementById("propswi").classList.toggle("on", s === "props");
+    document.getElementById("propspanel").classList.toggle("show", s === "props");
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      var states = el.getAttribute("data-only").split(" ");
+      el.style.display = states.indexOf(s) >= 0 ? "" : "none";
+    });
+    document.querySelectorAll("#wf button[data-s]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.getElementById("wf").style.display = "none";
+  set(q.get("state") || "panel");
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s")); });
+  document.getElementById("missbtn") && document.getElementById("missbtn").addEventListener("click", function () { set("miss"); });
+  document.getElementById("tokensbtn") && document.getElementById("tokensbtn").addEventListener("click", function () { set("tokens"); });
+  document.getElementById("chainsbtn") && document.getElementById("chainsbtn").addEventListener("click", function () { set("chains"); });
+  document.getElementById("earlierbtn") && document.getElementById("earlierbtn").addEventListener("click", function () { set("earlier"); });
+})();
+</script>
+</body>
+</html>

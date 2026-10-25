@@ -1,0 +1,251 @@
+/**
+ * Entry panel skin - RC desk doctrine: compact header dials, mode tabs, instrument strips,
+ * content-first canvas. Merged into desk styles by LorebookEditor.
+ */
+
+.panes {
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  padding: 0.55rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
+  align-content: start;
+  background: var(--stage-floor);
+}
+
+.panesSplit {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@container (max-width: 68rem) {
+  .panesSplit {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.panel {
+  border: 2px solid var(--stage-black);
+  box-shadow: 4px 4px 0 0 var(--stage-black);
+  background: var(--stage-panel);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.panelFocused {
+  border-color: var(--a, var(--accent));
+}
+
+/* ---------- header: identity + dials ---------- */
+
+.phead {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.45rem;
+  border-bottom: 2px solid var(--stage-black);
+  background: var(--stage-row);
+  flex: none;
+}
+
+/* Panel title field: mono chrome (--font-big/Fraunces is reserved for the page entry title). */
+.ptitle {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  flex: 1;
+  min-width: 6rem;
+  border: 0;
+  background: transparent;
+  color: var(--stage-card);
+  padding: 0.2rem 0.25rem;
+}
+
+.ptitle:focus {
+  outline: 2px solid var(--a, var(--accent));
+}
+
+.headDials {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.28rem;
+  flex: none;
+  margin-left: auto;
+}
+
+.headSel {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  border: 2px solid var(--a, var(--accent));
+  background: color-mix(in srgb, var(--a, var(--accent)) 18%, var(--stage-row));
+  color: var(--stage-soft);
+  padding: 0.2rem 0.3rem;
+}
+
+.headBtn {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  padding: 0.22rem 0.38rem;
+  cursor: pointer;
+}
+
+.headFld {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  padding: 0.12rem 0.28rem;
+}
+
+.headFld > span {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.headNum {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  width: 2.6rem;
+  text-align: center;
+  border: 0;
+  background: transparent;
+  color: var(--stage-soft);
+  padding: 0.1rem 0;
+}
+
+.pclose {
+  font: inherit;
+  font-family: var(--font-mono);
+  width: 1.4rem;
+  height: 1.4rem;
+  border: 2px solid var(--stage-seam);
+  background: transparent;
+  color: var(--stage-text-dim);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.tokest {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--stage-text-dim);
+}
+
+/* ---------- body ---------- */
+
+.pbody {
+  padding: 0.45rem 0.55rem 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-height: 0;
+  flex: 1;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.stripLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+/* plabel kept for drawer / legacy */
+.plabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  display: block;
+  margin: 0.45rem 0 0.2rem;
+}
+
+/* ---------- simple / advanced ---------- */
+
+.modeRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.modeTab {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--stage-text-dim);
+  padding: 0.1rem 0.15rem;
+  cursor: pointer;
+}
+
+.modeOn {
+  color: var(--stage-card);
+  border-bottom-color: var(--a, var(--accent));
+}
+
+.modeHint {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.06em;
+  color: var(--stage-text-dim);
+}
+
+.chanceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 2px solid var(--stage-ok);
+  background: color-mix(in srgb, var(--stage-ok) 18%, var(--stage-sunken));
+  color: var(--stage-ok);
+  padding: 0.1rem 0.28rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-weight: 800;
+}
+
+.chanceIn {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 800;
+  width: 2.4rem;
+  text-align: center;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}

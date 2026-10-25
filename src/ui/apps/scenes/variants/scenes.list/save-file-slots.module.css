@@ -1,0 +1,16 @@
+/** scenes.list save-file-slots: a HUD save slot row. Slot number, thumbnail, details, takes and a load prompt. Tokens only. */
+.slot { display: grid; grid-template-columns: 4.2rem 3.4rem minmax(0, 1fr) auto auto; align-items: center; gap: .9rem; width: 100%; height: 100%; padding: .4rem .9rem .4rem .6rem; padding-right: 3.4rem; text-align: left; }
+.no { display: grid; justify-items: center; font: 700 1.4rem var(--font-mono); color: var(--bk-role-brand-text); line-height: 1; }
+.no small { font: 500 .75rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--bk-text-dim); margin-bottom: .2rem; }
+.thumb { position: relative; display: block; width: 3.4rem; height: 4.2rem; overflow: hidden; box-shadow: 0 0 0 1px var(--bk-line); background: var(--bk-surface-ink); }
+.thumb > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+.body { display: grid; gap: .25rem; min-width: 0; }
+.title { font: 700 1rem var(--font-fancy); letter-spacing: .06em; text-transform: uppercase; color: var(--bk-text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meta { font: 500 .75rem var(--font-mono); letter-spacing: .04em; color: var(--bk-text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.take { display: grid; justify-items: end; gap: .2rem; font: 500 .75rem var(--font-mono); color: var(--bk-text-dim); }
+.pips { display: flex; gap: 3px; align-items: center; }
+.pips i { width: .5rem; height: .5rem; background: var(--bk-line-track); }
+.pips i.on { background: var(--bk-role-brand); }
+.pips b { margin-left: .3rem; font-weight: 500; }
+.load { font: 700 .75rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--bk-role-brand-text); }
+@container (max-width: 40rem) { .take, .load { display: none; } .slot { grid-template-columns: 3.2rem 3rem minmax(0, 1fr); } }

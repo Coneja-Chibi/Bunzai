@@ -1,0 +1,78 @@
+/**
+ * portrait tests - the untrusted-art reader. Entities are imported files, so the mime is an
+ * allowlist: hostile payloads (text/html, scripted SVG) must read as "no portrait", never serve.
+ */
+import { describe, expect, test } from "bun:test";
+import type { CanonicalEntity } from "../core/canonical";
+import { hasPortrait, portraitBytes } from "./portrait";
+
+type AnyEntity = CanonicalEntity<string, unknown>;
+const PNG_B64 = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3]).toString("base64");
+
+const withOriginalMedia = (mime: string): AnyEntity =>
+  ({
+    schemaVersion: "1",
+    kind: "character",
+    id: "x",
+    body: {},
+    original: { sillytavern: { raw: {}, sourceMedia: { b64: PNG_B64, mime } } },
+  }) as AnyEntity;
+
+const withPortraitRef = (ref: string): AnyEntity =>
+  ({ schemaVersion: "1", kind: "character", id: "x", body: { media: { portrait: { role: "portrait", ref } } } }) as AnyEntity;
+
+describe("portraitBytes", () => {
+  test("serves the kept PNG carrier", () => {
+    const art = portraitBytes(withOriginalMedia("image/png"));
+    expect(art?.mime).toBe("image/png");
+    expect(art?.bytes.length).toBeGreaterThan(0);
+  });
+
+  test("serves a raster data-URI portrait", () => {
+    expect(portraitBytes(withPortraitRef(`data:image/webp;base64,${PNG_B64}`))?.mime).toBe("image/webp");
+  });
+
+  test("REFUSES non-image and scriptable mimes everywhere (stored-XSS guard)", () => {
+    expect(portraitBytes(withOriginalMedia("text/html"))).toBeNull();
+    expect(portraitBytes(withOriginalMedia("image/svg+xml"))).toBeNull();
+    expect(portraitBytes(withPortraitRef(`data:text/html;base64,${PNG_B64}`))).toBeNull();
+    expect(portraitBytes(withPortraitRef(`data:image/svg+xml;base64,${PNG_B64}`))).toBeNull();
+    expect(portraitBytes(withPortraitRef("https://example.com/a.png"))).toBeNull(); // no remote fetch, ever
+  });
+
+  test("malformed shapes read as no portrait, never throw", () => {
+    expect(hasPortrait({ schemaVersion: "1", kind: "character", id: "x", body: {} } as AnyEntity)).toBe(false);
+    expect(portraitBytes(withPortraitRef("data:image/png;base64,%%%not-b64"))).toBeNull();
+  });
+
+  test("hasPortrait agrees with portraitBytes: art that cannot decode is no portrait, and a later valid carrier still wins", () => {
+    const bad = { b64: PNG_B64.replace(/=+$/, "") + "!", mime: "image/png" };
+    const only = { schemaVersion: "1", kind: "character", id: "x", body: {}, original: { sillytavern: { raw: {}, sourceMedia: bad } } } as AnyEntity;
+    expect(portraitBytes(only)).toBeNull();
+    expect(hasPortrait(only)).toBe(false);
+    const both = { ...only, body: { media: { portrait: { role: "portrait", ref: `data:image/png;base64,${PNG_B64}` } } } } as AnyEntity;
+    expect(hasPortrait(both)).toBe(true);
+    expect(portraitBytes(both)?.mime).toBe("image/png");
+  });
+
+  test("library pack entity uses default/first face as cover", () => {
+    const pack = {
+      schemaVersion: "1",
+      kind: "pack",
+      id: "emo",
+      body: {
+        name: "Emotions",
+        pack: {
+          defaultLabel: "happy",
+          items: [
+            { id: "1", label: "sad", ref: `data:image/png;base64,${PNG_B64}` },
+            { id: "2", label: "happy", ref: `data:image/webp;base64,${PNG_B64}` },
+          ],
+        },
+      },
+    } as AnyEntity;
+    expect(hasPortrait(pack)).toBe(true);
+    expect(portraitBytes(pack)?.mime).toBe("image/webp");
+  });
+});
+

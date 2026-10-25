@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shell: Settings, Remote access</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * shell-settings 3/4: Remote access (src/ui/apps/settings/sections/remote-access.tsx, helper-card.tsx,
+ * lan-card.tsx). Every StateCard phase, the downloadable mesh-helper card (offered / not offered),
+ * and LAN mode (off / on with pending + connected devices), plus the redaction eye toggle and the
+ * host-only "managed elsewhere" notice for a tailed-in session.
+ */
+html, body { overflow-x: hidden; }
+body { background: var(--canvas); }
+.room { max-width: 60rem; margin: 0 auto; padding: 26px 22px 90px; }
+/* soft-parts.css's .wf-note (max-width 420px) and .wf-bar (60vw) can exceed a narrow viewport and
+   expand the document's scrollable width, clipping real content off-screen at the right edge. */
+@media (max-width: 30rem) {
+  .wf-note { max-width: calc(100vw - 24px); }
+  .wf-bar { max-width: calc(100vw - 24px); }
+}
+.stabs { display: flex; flex-wrap: wrap; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 22px; }
+.stabs a { font: 600 .88rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text-dim); text-decoration: none; padding: 10px 14px; box-shadow: inset 0 -2px 0 transparent; }
+.stabs a.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--text-dim); }
+.titlerow { display: flex; align-items: center; gap: 10px; margin: 4px 4px 4px; }
+.titlerow .t { font: 700 1.3rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.eyebtn { width: 30px; height: 30px; display: grid; place-items: center; background: none; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-dim); cursor: pointer; border: 0; }
+.blurb { color: var(--text-soft); font-size: .9rem; margin: 0 4px 20px; max-width: 34rem; }
+.card { background: var(--face); box-shadow: inset 0 0 0 1px var(--edge); margin: 0 4px 14px; padding: 16px 18px; }
+.card.hero { box-shadow: inset 0 0 0 1px var(--accent); }
+.card .ct { font: 700 1rem var(--font-big); margin-bottom: 6px; }
+.card .cb { color: var(--text-soft); font-size: .88rem; line-height: 1.55; }
+.card .acts { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+.status { display: inline-flex; align-items: center; gap: 7px; font: 500 .82rem var(--font-mono); color: var(--text-soft); }
+.dot { width: 8px; height: 8px; background: var(--text-faint); flex: none; }
+.dot.on { background: var(--stage-ok); }
+.dot.busy { background: var(--stage-warn); }
+.dot.bad { background: var(--stage-danger-hot); }
+.urlbar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--stage-well); box-shadow: inset 0 0 0 1px var(--seam); font: 12px var(--font-mono); color: var(--text-soft); margin: 10px 4px; }
+.subtle { font-size: .8rem; color: var(--text-dim); margin-top: 10px; }
+.devices { margin-top: 12px; }
+.devicestitle { font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+.devicerow { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; box-shadow: inset 0 -1px 0 var(--seam); }
+.devicerow:last-child { box-shadow: none; }
+.code { font: 700 1.3rem var(--font-mono); letter-spacing: .1em; color: var(--text); background: var(--stage-well); box-shadow: inset 0 0 0 1px var(--seam); padding: 8px 14px; display: inline-block; margin: 8px 4px; }
+[data-only] { display: none; }
+[data-only].show { display: block; }
+.redacted .mono-mask { filter: blur(3px); }
+@media (max-width: 30rem) { .card .acts { flex-direction: column; align-items: stretch; } }
+</style>
+</head>
+<body>
+<div class="room">
+  <nav class="stabs">
+    <a href="shell-settings.html">Appearance</a>
+    <a href="shell-settings.html?state=models">Models</a>
+    <a href="shell-settings.html?state=connections">Connections</a>
+    <a href="shell-settings.html?state=studio">Studio</a>
+    <a href="shell-settings-security.html">Security</a>
+    <a href="shell-settings.html?state=workbench">Workbench</a>
+    <a href="#" class="on">Remote access</a>
+    <a href="shell-settings-updates.html">Updates</a>
+    <a href="shell-settings.html?state=about">About</a>
+  </nav>
+
+  <div class="titlerow"><span class="t">Remote access</span><button class="eyebtn" id="eyebtn" title="Hide details for a screenshot">&#128065;</button></div>
+  <p class="blurb" id="blurb">Reach this studio from your phone or another computer, over a private, encrypted link. Off by default. Turning it on needs a one-time free Tailscale sign-in, Bunraku opens that page for you.</p>
+
+  <div id="statecard">
+    <!-- filled per state -->
+  </div>
+
+  <div class="card" id="lancard">
+    <div class="ct">Local network access</div>
+    <div class="cb">A no-account option: reach this studio from devices on the <b>same network</b> (home or office Wi-Fi), with no Tailscale sign-in. Each device enters a connect code, and you approve it here before it gets in.</div>
+    <div class="acts"><button class="s-btn">Enable local access</button></div>
+  </div>
+
+  <div class="card" data-only="managed">
+    <div class="ct">Managed on the host device</div>
+    <div class="cb">You are connected to this studio remotely. Remote access is turned on or off, and devices are managed, only on the computer actually running Bunraku, never from a device that connected in. Open Bunraku on that computer to change these settings.</div>
+  </div>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="off" class="on">Off</button>
+  <button data-s="unavailable-offered">Unavailable: helper offered</button>
+  <button data-s="unavailable-none">Unavailable: no helper for this build</button>
+  <button data-s="starting">Starting</button>
+  <button data-s="needs-login">Needs Tailscale sign-in</button>
+  <button data-s="needs-https">Needs HTTPS</button>
+  <button data-s="connected">Connected</button>
+  <button data-s="connected-redacted">Connected, redacted</button>
+  <button data-s="error">Error</button>
+  <button data-s="managed">Managed elsewhere (tailed-in session)</button>
+  <button data-s="lan-on">LAN mode: on, pending + connected</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var STATE = {
+    off: '<div class="card hero"><div class="ct">Turn on remote access</div><div class="cb">Bunraku stays on your machine. A private, encrypted link lets your own devices reach it, with no router changes and no ports opened. You sign in to Tailscale once (free); we open that page for you.</div><div class="acts"><button class="s-btn">Enable remote access</button></div><div class="subtle">Mesh helper downloaded with v1.4.0. <button class="s-btn ghost" style="padding:4px 10px">Get it again</button></div></div>',
+    "unavailable-offered": '<div class="card"><div class="ct">Add the private-mesh link</div><div class="cb">The private-mesh link needs one extra piece that is not bundled with the app, to keep the download small. Bunraku can fetch it for you now, once.</div><div class="acts"><button class="s-btn">Download the extra piece</button></div><div class="subtle">It is downloaded from Bunraku\'s own releases and checked against a fingerprint built into this copy; a file that does not match is thrown away rather than used. You can skip this entirely and use <b>LAN mode</b> below, which needs no download.</div></div>',
+    "unavailable-none": '<div class="card"><div class="ct">Private-mesh link not available in this copy</div><div class="cb">This copy of Bunraku was built without the Tailscale helper.</div><div class="subtle">Nothing is wrong with your studio, and nothing else is affected. Use <b>LAN mode</b> below to reach this studio from another device on the same network.</div></div>',
+    starting: '<div class="card"><div class="ct">Bringing up the private link</div><span class="status"><span class="dot busy"></span>Starting. This is quick.</span></div>',
+    "needs-login": '<div class="card"><div class="ct">Sign in to Tailscale</div><div class="cb">A Tailscale sign-in page just opened in your browser. Sign in once (free), then come back here. This reconnects on its own.</div><div class="acts"><span class="status"><span class="dot busy"></span>Waiting for sign-in</span><button class="s-btn ghost">Open sign-in again</button></div></div>',
+    "needs-https": '<div class="card"><div class="ct">One more setup step: turn on HTTPS</div><div class="cb">Tailscale needs HTTPS certificates enabled for your account, a one-time switch. Open your Tailscale settings, turn on <b>HTTPS Certificates</b>, and this connects on its own, you do not need to come back here and click anything.</div><div class="acts"><button class="s-btn">Open Tailscale HTTPS settings</button><span class="status"><span class="dot busy"></span>Waiting for HTTPS to be turned on</span></div></div>',
+    connected: '<div class="card hero"><div class="ct"><span class="status"><span class="dot on"></span>On, reachable</span></div><div class="cb">Open this link on any device signed into the same Tailscale account, your phone, another computer. It is a real, trusted https link with no certificate warnings.</div><div class="urlbar">&#128274; https://vera-studio.tailXXXXX.ts.net</div><div class="acts"><button class="s-btn ghost">Copy link</button><button class="s-btn ghost" style="color:var(--stage-danger-text)">Turn off</button></div><div class="subtle">To add a device: install the free Tailscale app on it, sign in with the same account, then open the link above.</div><div class="devices"><div class="devicestitle">Connected devices</div><div class="devicerow"><span>Chi’s phone</span><button class="s-btn ghost" style="color:var(--stage-danger-text)">Remove</button></div></div></div>',
+    "connected-redacted": '<div class="card hero"><div class="ct"><span class="status"><span class="dot on"></span>On, reachable</span></div><div class="cb">Open this link on any device signed into the same Tailscale account, your phone, another computer. It is a real, trusted https link with no certificate warnings.</div><div class="urlbar"><span class="mono-mask">&#128274; https://vera-studio.tailXXXXX.ts.net</span></div><div class="acts"><button class="s-btn ghost">Copy link</button><button class="s-btn ghost" style="color:var(--stage-danger-text)">Turn off</button></div><div class="devices"><div class="devicestitle">Connected devices</div><div class="devicerow"><span class="mono-mask">Chi’s phone</span><button class="s-btn ghost" style="color:var(--stage-danger-text)">Remove</button></div></div></div>',
+    error: '<div class="card"><div class="ct">Remote access could not start</div><span class="status"><span class="dot bad"></span>Something stopped the link from coming up.</span><div class="cb" style="margin-top:8px">Nothing else in Bunraku is affected.</div><div class="acts"><button class="s-btn">Try again</button></div></div>',
+    managed: "",
+    "lan-on": "",
+  };
+  var LAN_ON = '<div class="ct"><span class="status"><span class="dot on"></span>Local access on</span></div><div class="cb">On a device on this network, open the link and enter this code. Only enable on a network you trust.</div><div class="code">7F K2 Q9</div><div class="urlbar">https://192.168.1.42:4173</div><div class="subtle">Certificate fingerprint (verify on first connect): 4A:9B:3C:...</div><div class="devices"><div class="devicestitle">Wants to connect</div><div class="devicerow"><span>Living room tablet</span><span class="acts" style="margin:0"><button class="s-btn" style="padding:5px 10px">Approve</button><button class="s-btn ghost" style="padding:5px 10px;color:var(--stage-danger-text)">Deny</button></span></div></div><div class="devices"><div class="devicestitle">Connected devices</div><div class="devicerow"><span>Chi’s phone</span><button class="s-btn ghost" style="color:var(--stage-danger-text)">Remove</button></div></div><div class="acts"><button class="s-btn ghost" style="color:var(--stage-danger-text)">Turn off local access</button></div>';
+  var NOTES = {
+    off: "phase off. HelperInstalledLine shows only when a helper IS installed - so this state also proves the download exists and offers “Get it again”.",
+    "unavailable-offered": "phase unavailable, helper.status.offered=true: this platform HAS a downloadable helper, just not fetched yet.",
+    "unavailable-none": "phase unavailable, offered=false: this BUILD was compiled without the helper at all (never offers Try again - a retry would reproduce the same nothing).",
+    starting: "phase starting: the sidecar process is coming up.",
+    "needs-login": "phase needs-login: Bunraku already opened the Tailscale sign-in page once.",
+    "needs-https": "phase needs-https: a one-time account-level toggle on Tailscale's own site.",
+    connected: "phase connected. Devices list only appears with a.devices.length>0.",
+    "connected-redacted": "Same phase, eye toggled off (redacted=true): the URL and device names blur for a screenshot, via mask() rather than removal.",
+    error: "phase error, with the server's own message or the generic fallback.",
+    managed: "A 403 from the status poll (apiStatusIs(e,403)) means this session is TAILED IN, not the host: the whole StateCard + LanCard are replaced by this one host-only notice.",
+    "lan-on": "LanCard, lan.on=true: connect code, URL, certificate fingerprint (all maskable), a pending device to Approve/Deny, and an already-connected device to Remove.",
+  };
+  function set(s) {
+    var lan = s === "lan-on";
+    document.getElementById("statecard").innerHTML = s === "managed" ? "" : (STATE[s] || "");
+    document.getElementById("statecard").parentElement.querySelectorAll("[data-only]").forEach(function(){});
+    document.querySelectorAll(".room > [data-only]").forEach(function (el) { el.classList.toggle("show", el.dataset.only === s); });
+    document.getElementById("lancard").style.display = (s === "managed") ? "none" : "";
+    document.getElementById("lancard").innerHTML = lan ? LAN_ON : '<div class="ct">Local network access</div><div class="cb">A no-account option: reach this studio from devices on the <b>same network</b> (home or office Wi-Fi), with no Tailscale sign-in. Each device enters a connect code, and you approve it here before it gets in.</div><div class="acts"><button class="s-btn">Enable local access</button></div>';
+    document.getElementById("statecard").style.display = (s === "managed" || s === "lan-on") ? "none" : "";
+    document.getElementById("blurb").style.display = (s === "managed") ? "none" : "";
+    document.querySelectorAll("#wf button").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = "<b>" + s + ".</b> " + (NOTES[s] || "");
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "off");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/lumiverse",
+  "sourcePath": "docs/reference/formats/lumiverse.md",
+  "sourceHash": "sha256:211d2c171e2799307d4cc13d6efceb5abfeef58d32e6d97f7c26b813b7c7189a",
+  "summary": "Developer reference for four Lumiverse adapters: an ST CCv2/v3 character wire with Lumiverse extensions and an optional modules ZIP, a versioned regex export, an account Persona object, and a block-based preset wrapper that exports as a flat ST preset. There is no dedicated lorebook codec; embedded character_book uses the shared bundle layer. Detection, field mapping, bounded archive handling, dual escrow twins, module packing, character variants, regex and persona behavior, and the preset wrapper's import-only asymmetry are documented with their source files.",
+  "topics": [
+    "lumiverse CCv3 modules ZIP",
+    "lumiverse_modules.json",
+    "fingerprint detect scores",
+    "variants bridge alts",
+    "original.sillytavern lumiverse",
+    "regex persona preset codecs",
+    "packModules charx emit",
+    "no lorebook codec"
+  ],
+  "sections": [
+    {
+      "slug": "detection",
+      "title": "Detection",
+      "level": 2,
+      "sourceHash": "sha256:8f8a4a0eff22b3c138ea199ad0d192d4f5423dcc17cb7c297cf4fed3541816bd",
+      "summary": "Registry highest score above 0.5; ties resolve by registration order not content. Character checks ZIP first: modules json scores 1; bare module.risum scores 0 ceding to Risu; card.json with Lumiverse fingerprint scores 0.96; PNG chara ccv3 fingerprint 0.95; plain V3 V2 flat JSON fingerprint 0.95. Fingerprints include expressions expression_groups alternate_fields alternate_avatars lora name world_book_ids databank_ids ttsVoice. Fingerprinted cards outbid ST 0.9; plain ST without fingerprint scores 0 here. A genuine modules ZIP ties Risu at 1 because Risu claims any ZIP with card.json, but sorted folder registration puts Lumiverse before Risu and the strictly-greater registry comparison retains Lumiverse. Regex claims only type lumiverse_regex_scripts with scripts array score 1. Persona claims name description and both subjective and objective pronoun strings score 0.95 outbidding ST character heuristic 0.9.",
+      "topics": [
+        "modules ZIP score 1",
+        "cede module.risum",
+        "fingerprint 0.95 0.96",
+        "Risu tie resolves Lumiverse",
+        "regex envelope persona pronouns"
+      ],
+      "children": [
+        {
+          "slug": "character",
+          "title": "Character",
+          "level": 3,
+          "sourceHash": "sha256:a3f0d0b9116ab60c7513c9a7edff7220883ca620408551e96cbc28d25fa7aefc",
+          "summary": "Character detection checks modules ZIP first, cedes bare module.risum, then requires Lumiverse fingerprints for charx, PNG, or JSON. Modules ZIP ties Risu, but sorted registration and first-winner tie handling select Lumiverse.",
+          "topics": [
+            "ZIP PNG JSON order",
+            "fingerprint keys",
+            "Risu score-1 tie"
+          ],
+          "children": [],
+          "shortSource": true
+        },
+        {
+          "slug": "regex",
+          "title": "Regex",
+          "level": 3,
+          "sourceHash": "sha256:3576614fecd2d831421b6e1c095fab2c9628788bfca843f193b4560dfa478896",
+          "summary": "lumiverse-regex claims only self-identifying envelope type lumiverse_regex_scripts with scripts array for score 1. Bare scripts array or wrong type scores 0. No other adapter reads this shape.",
+          "topics": [
+            "lumiverse_regex_scripts",
+            "score 1 exclusive",
+            "no bare scripts claim"
+          ],
+          "children": [],
+          "shortSource": true
+        },
+        {
+          "slug": "persona",
+          "title": "Persona",
+          "level": 3,
+          "sourceHash": "sha256:caaf95eab29d68ce0e0b94994375b1e92c8096567df3e42299250a827a42c00b",
+          "summary": "Claims object with name description and both subjective_pronoun and objective_pronoun as strings at 0.95. Pronoun pair is the signal that outbids SillyTavern flat character name plus description at 0.9.",
+          "topics": [
+            "pronoun pair signal",
+            "score 0.95",
+            "outbid ST character"
+          ],
+          "children": [],
+          "shortSource": true
+        }
+      ]
+    },
+    {
+      "slug": "field-map",
+      "title": "Field map",
+      "level": 2,
+      "sourceHash": "sha256:c738e0abd61e1fa453ae5c40d1acd47dad5a2c407e4cd3427f6fccfc8f82a03b",
+      "summary": "Character field map reuses shared tavern-fields dataToBody applyBodyToData and CCv3 assets with lumiverse dialect identical to ST emotion typing. Lumiverse-specific data lives under extensions as native not escrow but almost none lifts to body: alternate_fields and alternate_avatars bridge to body.variants via altsToVariants label merge and variantsToAlts wholesale overwrite; resolved expression and avatar data URIs become media.assets emotion or other. Other extension keys stay Workbench native panel only. Archive regex scripts decode to RegexRule arrays under extensions but never lift to behaviorRefs. Modules sidecar rehydrate merges expressions groups alternate fields avatars world_books regex_scripts into extensions with resolveAssetRef 64 MiB cap leaving bare paths for missing or oversized files.",
+      "topics": [
+        "shared tavern-fields",
+        "variants bridge alts",
+        "media from expressions",
+        "no behaviorRefs regex",
+        "modules rehydrate pack"
+      ],
+      "children": [
+        {
+          "slug": "character-1",
+          "title": "Character",
+          "level": 3,
+          "sourceHash": "sha256:13805ff26cba3d186766a0d15a2adbc0447c519824657b9ab9421b8d757e0be4",
+          "summary": "Shared ST data mapping plus two bridges: alternate fields and avatars to CharacterVariant overrides by label; resolved expression group and avatar URIs to media assets. Remaining extension keys stay native. Module regex lands as typed rules under extensions without behaviorRefs. Variants export overwrites alternate_fields and alternate_avatars wholesale from body.variants deleting keys when empty.",
+          "topics": [
+            "dataToBody shared",
+            "altsToVariants merge",
+            "applyVariants wholesale",
+            "extensions native remainder"
+          ],
+          "children": []
+        },
+        {
+          "slug": "modules-sidecar",
+          "title": "Modules sidecar",
+          "level": 3,
+          "sourceHash": "sha256:de151db3f606099918063cb46a62ea6a78495f958267c945ab95152e8279d125",
+          "summary": "rehydrateCardData merges lumiverse_modules.json into cloned extensions: expressions and expression_groups produce emotion assets when resolved; alternate_fields feed variants; alternate_avatars produce other assets; world_books and regex_scripts land on private extension keys with regex decoded to RegexRule arrays. resolveAssetRef turns archive paths into data URIs under 64 MiB or leaves bare path strings.",
+          "topics": [
+            "rehydrateCardData merge",
+            "emotion other assets",
+            "regex_scripts typed",
+            "MAX_ASSET 64 MiB"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "escrow-and-round-trip",
+      "title": "Escrow and round-trip",
+      "level": 2,
+      "sourceHash": "sha256:984437e1cd80678c00f53b99120fbab4cc2763c78eb3f9bc0961b8d19f15a0c6",
+      "summary": "Two escrow buckets: original.sillytavern with hydrated extensions raw, unmapped variant, and optional PNG sourceMedia; original.lumiverse with modules, fromZip, and a base64 files map containing every ZIP entry, including card.json and lumiverse_modules.json. SillyTavern raw extensions are hydrated and not byte-identical to input card.json when imported from ZIP. Export clones the ST twin, overlays body and media, merges current extensions, folds variants, applies lorebooks, and chooses the requested or source container. packModulesFromExtensions rewrites the two structured JSON entries, uses deterministic asset paths and typed regex encoding, and preserves other files from the complete twin map. JSON export from a ZIP can conservatively refuse when original archive content would be lost. Plain-JSON unedited round trips are field-lossless; ZIP round trips are data-lossless rather than path- or byte-identical. Cross-format output carries canonical content while both twins remain escrowed.",
+      "topics": [
+        "dual escrow twins",
+        "hydrated extensions",
+        "export merge order",
+        "packModules paths",
+        "json-from-zip refuse",
+        "data not byte lossless ZIP"
+      ],
+      "children": []
+    },
+    {
+      "slug": "quirks",
+      "title": "Quirks",
+      "level": 2,
+      "sourceHash": "sha256:e2a701e8df6de20db2c1ebbc8b5881890cf35e483474fc5f8801dde1962a5097",
+      "summary": "All ZIP inflate uses unzipBounded CARD_ARCHIVE_BOUNDS shared with Risu and BYAF: 96 MiB archive, 512 entries, 64 MiB per entry, 96 MiB aggregate. Regex codec converges account RegexScript export and reduced archive regex_scripts on one RegexRule with extras sealing account fields; placement maps to phases including memory; unmapped placements and substitution modes are not fabricated. Persona maps title, pronouns, knowledge refs, and image URL; its twin seals folder, default, narrator, and metadata. A from-scratch persona materializes required description, subjective, and objective string keys while optional possessive stays absent. alternate_character_name is a prompt override. Lumiverse preset import converts blocks to ST preset wire; export writes ST flat preset and does not reproduce the wrapper.",
+      "topics": [
+        "CARD_ARCHIVE_BOUNDS",
+        "two regex wire shapes",
+        "persona pronoun triplet",
+        "alternate_character_name",
+        "preset ST export non-goal"
+      ],
+      "children": []
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:b6845bdf9e57ad60bac452b5dd454af6c1295cd4b0f254b61f2f2ef1c9782a52",
+      "summary": "Authoritative files: character adapter index.ts for detect toCanonical fromCanonical and container selection; modules.ts for rehydrate pack and fingerprint; variants-bridge for alternate fields and avatars to body.variants; regex.ts for both wire shapes; persona.ts; preset.ts; coverage.ts; shared tavern-fields assets png card-io; core archive registry and canonical; samples/lumiverse rich.extensions.card.json.",
+      "topics": [
+        "index modules variants",
+        "regex persona preset coverage",
+        "shared tavern assets",
+        "archive registry samples"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-013-wing-slots",
+  "sourcePath": "docs/decisions/ADR-013-wing-slots.md",
+  "sourceHash": "sha256:b12f8f31d624eb806aa0521c0b634c520b6c5d91e24eb1355001e06b38a2e252",
+  "semanticSummaryHash": "sha256:42b51ce426f2b4d7c512c1bf644fda811d6cf294659ab65ff0ddc451339570b2",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:11.874Z"
+}

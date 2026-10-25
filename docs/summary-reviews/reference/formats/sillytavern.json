@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/sillytavern",
+  "sourcePath": "docs/reference/formats/sillytavern.md",
+  "sourceHash": "sha256:b00fbff6f6023030b8cdadfce4754be437b63eea039c2c1895f3f0424faf5cd6",
+  "semanticSummaryHash": "sha256:2f15132d6cae74a1cf905d6366ef8ec237b73cb13542da46f0df2839d1db2d28",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:13.828Z"
+}

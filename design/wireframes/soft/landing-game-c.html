@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing: character select</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Concept C: the landing as a character-select screen. A square-tile roster of your cast sits along
+ * the bottom (recent first, favorites starred, wrapping into a proper grid at narrow widths); whichever
+ * tile has the cursor (hover, arrow keys, or click) stands large on the stage in its own pastel light,
+ * with an info panel beside it: name, tagline, a stats strip, and its scenes (Continue is the one clear
+ * primary action). Random and Import a card close the roster; a group scene reads as a party pick, a
+ * small cluster of faces in one tile. Head and Dock markup copied byte-identical from workbench-shell.html.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+
+/* ---- the stage: fills the remaining width, reserves room at the foot for the wf-bar/note ---- */
+.stage { flex: 1; min-width: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column;
+  overflow: hidden; position: relative; container-type: inline-size;
+  padding-bottom: 190px;
+  background: linear-gradient(180deg, var(--stage-deck) 0%, var(--stage-floor) 55%, var(--stage-well) 100%); }
+@media (max-width: 560px) { .stage { height: auto; min-height: 100vh; padding-bottom: 300px; } }
+/* wf-bar/wf-note are fixed-position wireframe-only chrome; at phone width they must not float over
+   the content or each other, so they drop into normal flow and stack full width (same rule as the
+   rest of this set, e.g. workbench-shell.html). */
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+.csHead { flex: none; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 28px 10px; }
+.csHead .s-lede { margin-top: 4px; }
+.csHead-r { display: flex; gap: 10px; padding-top: 6px; flex: none; }
+@container (max-width: 30rem) { .csHead { flex-direction: column; } .csHead-r { padding-top: 0; } }
+
+/* ---- the two-up stage: a full-height figure in its pastel light, an info panel beside it ---- */
+.csMain { flex: 1; min-height: 0; display: flex; gap: 20px; padding: 4px 28px 16px; }
+[data-state="empty"] .csMain { display: none; }
+
+.figureStage { flex: 1; min-width: 0; position: relative; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+.figureBackdrop { position: absolute; inset: 0; transition: background .2s;
+  background: radial-gradient(ellipse 58% 68% at 50% 36%, color-mix(in srgb, var(--fc, var(--deck-character)) 30%, transparent), transparent 72%),
+    radial-gradient(ellipse 70% 30% at 50% 100%, color-mix(in srgb, var(--fc, var(--deck-character)) 22%, transparent), transparent 80%); }
+.figureSolo { position: relative; z-index: 1; width: min(230px, 26vw); height: 84%; max-height: 580px;
+  background: var(--fc, var(--deck-character)); transition: background .2s;
+  -webkit-mask: radial-gradient(ellipse 30% 14% at 50% 15%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000,#000) bottom/76% 78% no-repeat;
+  mask: radial-gradient(ellipse 30% 14% at 50% 15%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000,#000) bottom/76% 78% no-repeat;
+  display: flex; justify-content: center; padding-top: 8%; }
+.figureSolo .figIni { font: 700 clamp(2.2rem, 4.4vw, 3.8rem) var(--font-fancy); color: var(--stage-ink); opacity: .55; }
+.figureParty { display: none; position: relative; z-index: 1; height: 78%; align-items: flex-end; gap: 4px; }
+[data-kind="party"] .figureParty { display: flex; }
+[data-kind="party"] .figureSolo { display: none; }
+.figureParty .pfig { width: min(140px, 15vw); height: 92%; background: var(--pc);
+  -webkit-mask: radial-gradient(ellipse 32% 15% at 50% 16%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000,#000) bottom/78% 74% no-repeat;
+  mask: radial-gradient(ellipse 32% 15% at 50% 16%, #000 98%, #0000) top/100% 100% no-repeat, linear-gradient(#000,#000) bottom/78% 74% no-repeat;
+  opacity: .95; }
+.figureParty .pfig:nth-child(2) { height: 100%; }
+.figureParty .pfig:nth-child(3) { height: 84%; }
+
+.infoPanel { width: 21rem; flex: none; padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.ip-kicker { display: flex; align-items: center; gap: 8px; }
+.ip-name { font: 700 clamp(1.5rem, 2vw, 2.1rem) var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); margin: 0; }
+.ip-tag { font: italic 400 .95rem var(--font-body); color: var(--text-soft); margin: 0; }
+.ip-stats { display: grid; grid-template-columns: repeat(3, 1fr); box-shadow: inset 0 1px 0 var(--seam), inset 0 -1px 0 var(--seam); padding: 10px 0; }
+.ip-stats div { text-align: center; padding: 0 4px; }
+.ip-stats div + div { box-shadow: inset 1px 0 0 var(--seam); }
+.ip-stats b { display: block; font: 700 1.15rem var(--font-big); color: var(--text); }
+.ip-stats span { display: block; margin-top: 3px; font: 500 12px var(--font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+
+.ip-scenes { display: flex; flex-direction: column; gap: 8px; }
+.ip-scenes .lbl { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); margin: 2px 0 -2px; }
+.ip-continue { width: 100%; text-align: left; border: 0; cursor: pointer; padding: 12px 14px; background: var(--stamp-bg); color: var(--stamp-fg);
+  display: flex; flex-direction: column; gap: 3px; transition: transform .2s, box-shadow .2s; }
+.ip-continue:hover { transform: translateY(-2px); }
+.ip-continue.flash { box-shadow: 0 0 0 2px var(--stage-card); }
+.ip-continue .cKick { font: 700 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; opacity: .72; }
+.ip-continue .cName { font: 700 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.ip-continue .cSnip { font: italic 400 .85rem var(--font-body); opacity: .85; }
+.ip-continue .cMeta { font: 500 12px var(--font-mono); opacity: .68; }
+.ip-other { display: flex; flex-direction: column; gap: 5px; }
+.ip-other-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; text-align: left;
+  padding: 8px 10px; background: none; border: 0; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); cursor: pointer; }
+.ip-other-row:hover { box-shadow: inset 0 0 0 1px var(--accent); }
+.ip-other-row .n { font: 600 .88rem var(--font-big); font-variation-settings: var(--soft-axes); }
+.ip-other-row .m { font: 500 12px var(--font-mono); color: var(--text-dim); }
+
+@container (max-width: 46rem) {
+  .csMain { flex-direction: column; }
+  .infoPanel { width: auto; }
+  .figureStage { min-height: 12rem; flex: none; height: 34vh; }
+}
+
+/* ---- empty stage: brand-new studio ---- */
+.emptyStage { display: none; flex: 1; align-items: center; justify-content: center; flex-direction: column; text-align: center; gap: 16px; padding: 20px 28px; }
+[data-state="empty"] .emptyStage { display: flex; }
+.emptyStage .s-lede { max-width: 30rem; }
+.emptyStage .doors { display: flex; gap: 12px; }
+
+/* ---- the roster: square tiles, along the bottom, grid-wrapping when narrow ---- */
+.rosterRail { flex: none; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 10px; padding: 12px 28px 14px;
+  max-height: 13rem; overflow-y: auto; box-shadow: inset 0 1px 0 var(--seam); }
+.rtile { position: relative; flex: none; width: 84px; height: 84px; cursor: pointer; border: 0; padding: 0;
+  box-shadow: 0 0 0 1px var(--edge); background: linear-gradient(165deg, color-mix(in srgb, var(--tc, var(--deck-character)) 55%, var(--stage-panel)), var(--stage-panel) 88%);
+  transition: transform .15s, box-shadow .15s; }
+.rtile .rini { position: absolute; inset: 0; display: grid; place-items: center; font: 700 1.7rem var(--font-fancy); color: color-mix(in srgb, var(--stage-card) 68%, transparent); }
+.rtile .rlabel { position: absolute; left: 3px; right: 3px; bottom: 3px; font: 600 12px var(--font-big); font-variation-settings: var(--soft-axes);
+  color: var(--stage-card); background: color-mix(in srgb, var(--stage-ink) 60%, transparent); padding: 1px 3px; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rtile .rstar { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background: var(--deck-regex);
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.rtile.cursor { box-shadow: 0 0 0 2px var(--accent); }
+.rtile.on { box-shadow: 0 0 0 2px var(--tc, var(--accent)), 0 0 0 4px var(--stage-ink); transform: translateY(-6px); }
+.rtile.on.cursor { box-shadow: 0 0 0 2px var(--stage-card), 0 0 0 4px var(--tc, var(--accent)); }
+.rtile.party .pface { position: absolute; width: 30px; height: 30px; box-shadow: 0 0 0 1px var(--stage-ink); }
+.rtile.party .pface:nth-child(1) { left: 6px; top: 30px; background: var(--p1); }
+.rtile.party .pface:nth-child(2) { left: 27px; top: 12px; background: var(--p2); }
+.rtile.party .pface:nth-child(3) { left: 48px; top: 30px; background: var(--p3); }
+.rtile.party .pmore { position: absolute; top: 4px; right: 4px; font: 600 12px var(--font-mono); color: var(--stage-card); background: color-mix(in srgb, var(--stage-ink) 65%, transparent); padding: 0 3px; }
+.rtile.special { display: grid; place-items: center; gap: 4px; background: var(--shell-panel); box-shadow: inset 0 0 0 1px dashed var(--seam);
+  color: var(--text-dim); text-align: center; padding: 6px; }
+.rtile.special .sIcon { width: 22px; height: 22px; }
+.rtile.special .sLbl { font: 600 12px var(--font-body); line-height: 1.2; }
+.rtile.special .qmark { font: 700 1.6rem var(--font-fancy); color: var(--text-faint); }
+.rtile.special:hover, .rtile.special.cursor { box-shadow: inset 0 0 0 1px var(--accent), 0 0 0 2px var(--accent); color: var(--text); }
+.rtile.onlyEmpty { display: none; }
+[data-state="empty"] .rtile.hideEmpty { display: none; }
+[data-state="empty"] .rtile.onlyEmpty { display: grid; }
+
+@media (max-width: 560px) { .rosterRail { max-height: none; } }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav>
+
+  <div class="stage" id="stage" data-state="roster" data-kind="char">
+    <header class="csHead">
+      <div>
+        <div class="s-act"><b>Character select</b> &middot; your stage</div>
+        <h1 class="s-title">Who's on <em>tonight</em>?</h1>
+        <p class="s-lede">Arrow keys move across the roster; Enter continues. The stage shows whoever has the cursor.</p>
+      </div>
+      <div class="csHead-r">
+        <button type="button" class="s-btn ghost" id="btnImport"><svg width="13" height="13"><use href="#i-import"/></svg>Import</button>
+        <button type="button" class="s-btn" id="btnNew"><svg width="13" height="13"><use href="#i-plus"/></svg>New scene</button>
+      </div>
+    </header>
+
+    <div class="csMain">
+      <div class="figureStage" id="figureStage">
+        <div class="figureBackdrop"></div>
+        <div class="figureSolo" id="figureSolo"><span class="figIni" id="figIni">V</span></div>
+        <div class="figureParty" id="figureParty">
+          <span class="pfig" style="--pc: var(--deck-lorebook)"></span>
+          <span class="pfig" style="--pc: var(--deck-persona)"></span>
+          <span class="pfig" style="--pc: var(--deck-preset)"></span>
+        </div>
+      </div>
+
+      <aside class="infoPanel s-card" id="infoPanel" style="--c: var(--deck-pack)">
+        <div class="ip-kicker"><span class="s-chip" id="ipKind" style="--c: var(--deck-pack)">CHARACTER</span></div>
+        <h2 class="ip-name" id="ipName">Vera Lune</h2>
+        <p class="ip-tag" id="ipTag">"Who did you let up the stairs?"</p>
+        <div class="ip-stats">
+          <div><b id="stScenes">42</b><span>scenes</span></div>
+          <div><b id="stLines">3.1K</b><span>lines</span></div>
+          <div><b id="stLast">2h ago</b><span>last seen</span></div>
+        </div>
+        <div class="ip-scenes">
+          <div class="lbl">Continue</div>
+          <button type="button" class="ip-continue" id="btnContinue" style="background: var(--deck-pack)">
+            <span class="cKick">take 2</span>
+            <span class="cName" id="cName">The long storm</span>
+            <span class="cSnip" id="cSnip">"You came up the stairs without a lantern."</span>
+            <span class="cMeta" id="cMeta">42 messages &middot; 2 hours ago</span>
+          </button>
+          <div class="lbl">Other scenes</div>
+          <div class="ip-other" id="ipOther">
+            <button type="button" class="ip-other-row"><span class="n">Low tide</span><span class="m">take 1 &middot; 3 days</span></button>
+            <button type="button" class="ip-other-row"><span class="n">The wrong key</span><span class="m">finished &middot; 1 week</span></button>
+          </div>
+          <button type="button" class="s-btn ghost" id="btnNewWith">New scene with <span id="npName">Vera</span></button>
+        </div>
+      </aside>
+    </div>
+
+    <div class="emptyStage">
+      <div class="s-act" style="justify-content:center"><b>Curtain up</b></div>
+      <h1 class="s-title">The stage is <em>empty</em></h1>
+      <p class="s-lede">Bring a character in, or make one, and they'll wait for you here.</p>
+      <div class="doors">
+        <button type="button" class="s-btn">Make a character</button>
+        <button type="button" class="s-btn ghost">Import a card</button>
+      </div>
+    </div>
+
+    <nav class="rosterRail" id="roster" aria-label="Your cast">
+      <button type="button" class="rtile hideEmpty on cursor" data-i="0" data-kind="char" style="--tc: var(--deck-pack)">
+        <span class="rini">V</span><span class="rstar" title="favorite"></span><span class="rlabel">Vera Lune</span>
+      </button>
+      <button type="button" class="rtile hideEmpty" data-i="1" data-kind="char" style="--tc: var(--deck-character)">
+        <span class="rini">M</span><span class="rlabel">Marguerite Vane</span>
+      </button>
+      <button type="button" class="rtile hideEmpty" data-i="2" data-kind="char" style="--tc: var(--deck-persona)">
+        <span class="rini">N</span><span class="rlabel">Nuit</span>
+      </button>
+      <button type="button" class="rtile hideEmpty" data-i="3" data-kind="char" style="--tc: var(--deck-lorebook)">
+        <span class="rini">T</span><span class="rstar" title="favorite"></span><span class="rlabel">The Magpie</span>
+      </button>
+      <button type="button" class="rtile hideEmpty party" data-i="4" data-kind="party" style="--tc: var(--deck-lorebook)">
+        <span class="pface" style="--p1: var(--deck-lorebook)"></span>
+        <span class="pface" style="--p2: var(--deck-persona)"></span>
+        <span class="pface" style="--p3: var(--deck-preset)"></span>
+        <span class="pmore">+1</span>
+        <span class="rlabel">The Heist</span>
+      </button>
+      <button type="button" class="rtile hideEmpty" data-i="5" data-kind="char" style="--tc: var(--deck-preset)">
+        <span class="rini">K</span><span class="rlabel">Keeper</span>
+      </button>
+      <button type="button" class="rtile hideEmpty" data-i="6" data-kind="char" style="--tc: var(--deck-regex)">
+        <span class="rini">O</span><span class="rlabel">Orla of the Pier</span>
+      </button>
+      <button type="button" class="rtile special hideEmpty" data-i="rnd" data-kind="random">
+        <span class="qmark">?</span><span class="sLbl">Random</span>
+      </button>
+      <button type="button" class="rtile special" data-i="imp" data-kind="import">
+        <svg class="sIcon" width="20" height="20"><use href="#i-import"/></svg><span class="sLbl">Import a card</span>
+      </button>
+      <button type="button" class="rtile special onlyEmpty" data-i="mk" data-kind="make">
+        <svg class="sIcon" width="20" height="20"><use href="#i-plus"/></svg><span class="sLbl">Make a character</span>
+      </button>
+    </nav>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>Concept C: character select.</b> A square-tile roster stands along the bottom, recent first, favorites
+  starred; whichever tile has the cursor (hover, arrow keys, or click) stands large on stage with a pastel
+  light in its own color, its name, tagline, a scenes/lines/last-seen strip, and its scenes, Continue first.
+  Random and Import a card close the roster; a group scene reads as a small cluster of faces in one tile and
+  fills the stage as a party. Enter continues the cursor's tile. Empty strips the roster to Make a character
+  and Import a card only. Dock and head copied byte-identical from workbench-shell.html.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="roster" class="on">Roster</button>
+  <button data-s="other">Other pick</button>
+  <button data-s="party">Party pick</button>
+  <button data-s="empty">Empty studio</button>
+  <button data-s="phone">Phone width</button>
+</div>
+
+<script>
+(function () {
+  var CHARS = {
+    0: { kind: "char", name: "Vera Lune", tag: "“Who did you let up the stairs?”", ini: "V", c: "var(--deck-pack)",
+      scenes: "42", lines: "3.1K", last: "2h ago",
+      cont: { kick: "take 2", name: "The long storm", snip: "“You came up the stairs without a lantern.”", meta: "42 messages · 2 hours ago" },
+      other: [["Low tide", "take 1 · 3 days"], ["The wrong key", "finished · 1 week"]] },
+    1: { kind: "char", name: "Marguerite Vane", tag: "“Sit, if you like. The storm will not care either way.”", ini: "M", c: "var(--deck-character)",
+      scenes: "18", lines: "1.4K", last: "yesterday",
+      cont: { kick: "take 1", name: "The empty parlor", snip: "“The candles were lit when I arrived. I did not light them.”", meta: "27 messages · 1 day ago" },
+      other: [["First meeting", "finished · 3 days"]] },
+    2: { kind: "char", name: "Nuit", tag: "Cuts the deck before anyone asks twice.", ini: "N", c: "var(--deck-persona)",
+      scenes: "9", lines: "620", last: "3 days ago",
+      cont: { kick: "take 1", name: "A fair hand", snip: "“Deal again. I saw that.”", meta: "11 messages · 3 days ago" },
+      other: [] },
+    3: { kind: "char", name: "The Magpie", tag: "“The lock gave on the third try.”", ini: "T", c: "var(--deck-lorebook)",
+      scenes: "31", lines: "2.2K", last: "10 days ago",
+      cont: { kick: "take 3", name: "Keeper's Log", snip: "“Someone already opened this page.”", meta: "64 messages · 10 days ago" },
+      other: [["The first key", "finished · 3 weeks"], ["A quiet count", "finished · 1 month"]] },
+    4: { kind: "party", name: "The Heist", tag: "Your heist crew, four strong.", ini: "", c: "var(--deck-lorebook)",
+      scenes: "9", lines: "2.6K", last: "3 days ago",
+      cont: { kick: "take 1", name: "The vault door", snip: "“Everyone quiet. On three.”", meta: "38 messages · 3 days ago" },
+      other: [["The getaway", "finished · 2 weeks"]] },
+    5: { kind: "char", name: "Keeper", tag: "Answers three questions, no more, no less.", ini: "K", c: "var(--deck-preset)",
+      scenes: "5", lines: "310", last: "2 weeks ago",
+      cont: { kick: "take 1", name: "Three questions", snip: "“You have asked one.”", meta: "6 messages · 2 weeks ago" },
+      other: [] },
+    6: { kind: "char", name: "Orla of the Pier", tag: "Sells what washes up, no questions.", ini: "O", c: "var(--deck-regex)",
+      scenes: "2", lines: "90", last: "new", cont: { kick: "take 1", name: "First catch", snip: "“That one is not for sale.”", meta: "4 messages · new" }, other: [] }
+  };
+
+  var stage = document.getElementById("stage");
+  var roster = document.getElementById("roster");
+  var tiles = Array.prototype.slice.call(roster.querySelectorAll(".rtile"));
+  var activeIdx = 0;
+  var cursorTile = tiles[0];
+
+  function setCursor(tile, scroll) {
+    tiles.forEach(function (t) { t.classList.remove("cursor"); });
+    tile.classList.add("cursor");
+    cursorTile = tile;
+    if (scroll) tile.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+
+  function renderMain(idx) {
+    var d = CHARS[idx];
+    if (!d) return;
+    activeIdx = idx;
+    stage.setAttribute("data-kind", d.kind);
+    document.getElementById("figureStage").style.setProperty("--fc", d.c);
+    document.getElementById("figIni").textContent = d.ini;
+    document.getElementById("infoPanel").style.setProperty("--c", d.c);
+    document.getElementById("ipKind").style.setProperty("--c", d.c);
+    document.getElementById("ipKind").textContent = d.kind === "party" ? "GROUP SCENE" : "CHARACTER";
+    document.getElementById("ipName").textContent = d.name;
+    document.getElementById("ipTag").textContent = d.tag;
+    document.getElementById("stScenes").textContent = d.scenes;
+    document.getElementById("stLines").textContent = d.lines;
+    document.getElementById("stLast").textContent = d.last;
+    document.getElementById("btnContinue").style.background = d.c;
+    document.getElementById("cName").textContent = d.cont.name;
+    document.getElementById("cSnip").textContent = d.cont.snip;
+    document.getElementById("cMeta").textContent = d.cont.meta;
+    document.querySelector("#btnContinue .cKick").textContent = d.cont.kick;
+    document.getElementById("npName").textContent = d.name;
+    var otherWrap = document.getElementById("ipOther");
+    otherWrap.innerHTML = "";
+    if (d.other.length === 0) {
+      var none = document.createElement("p");
+      none.className = "s-meta"; none.textContent = "No other scenes yet.";
+      otherWrap.appendChild(none);
+    } else {
+      d.other.forEach(function (row) {
+        var b = document.createElement("button");
+        b.type = "button"; b.className = "ip-other-row";
+        b.innerHTML = "<span class=\"n\"></span><span class=\"m\"></span>";
+        b.querySelector(".n").textContent = row[0];
+        b.querySelector(".m").textContent = row[1];
+        otherWrap.appendChild(b);
+      });
+    }
+    tiles.forEach(function (t) { t.classList.toggle("on", t.getAttribute("data-i") === String(idx)); });
+  }
+
+  function selectTile(tile, scroll) {
+    setCursor(tile, scroll);
+    var i = tile.getAttribute("data-i");
+    if (i === "rnd") {
+      var keys = Object.keys(CHARS);
+      var pick = keys[Math.floor(Math.random() * keys.length)];
+      renderMain(Number(pick));
+      flashTile(tile);
+      return;
+    }
+    if (i === "imp" || i === "mk") { flashTile(tile); return; }
+    renderMain(Number(i));
+  }
+
+  function flashTile(tile) {
+    tile.style.boxShadow = "0 0 0 2px var(--stage-card), 0 0 0 4px var(--accent)";
+    setTimeout(function () { tile.style.boxShadow = ""; }, 280);
+  }
+
+  tiles.forEach(function (t) {
+    t.addEventListener("mouseenter", function () { selectTile(t); });
+    t.addEventListener("click", function () { selectTile(t); });
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (stage.getAttribute("data-state") === "empty") return;
+    var visible = tiles.filter(function (t) { return t.offsetParent !== null; });
+    var idx = visible.indexOf(cursorTile);
+    if (idx < 0) idx = 0;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      selectTile(visible[Math.min(idx + 1, visible.length - 1)], true);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      selectTile(visible[Math.max(idx - 1, 0)], true);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      var i = cursorTile.getAttribute("data-i");
+      if (i === "rnd" || i === "imp" || i === "mk") { flashTile(cursorTile); return; }
+      document.getElementById("btnContinue").classList.add("flash");
+      setTimeout(function () { document.getElementById("btnContinue").classList.remove("flash"); }, 320);
+    }
+  });
+
+  function apply(s) {
+    document.querySelectorAll("#wfbar button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+    document.documentElement.style.maxWidth = s === "phone" ? "390px" : "";
+    if (s === "empty") {
+      stage.setAttribute("data-state", "empty");
+      return;
+    }
+    stage.setAttribute("data-state", "roster");
+    var startIdx = 0;
+    if (s === "other") startIdx = 5;
+    if (s === "party") startIdx = 4;
+    var tile = tiles.filter(function (t) { return t.getAttribute("data-i") === String(startIdx); })[0];
+    renderMain(startIdx);
+    setCursor(tile);
+  }
+
+  var q = new URLSearchParams(location.search);
+  apply(q.get("state") || "roster");
+  document.getElementById("wfbar").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-s"));
+  });
+})();
+</script>
+</body>
+</html>

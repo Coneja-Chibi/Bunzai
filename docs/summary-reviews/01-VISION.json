@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "01-VISION",
+  "sourcePath": "docs/01-VISION.md",
+  "sourceHash": "sha256:f496141cf5187a60342135687217a7a063493dba185aed213dc85cfa2712e996",
+  "semanticSummaryHash": "sha256:7b9f4444937e669a32dd16bbdeb374c82c78c260cbf0c3f170761a3180582cf5",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:41.550Z"
+}

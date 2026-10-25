@@ -1,0 +1,7 @@
+/** app.room manuscript-column, CSS Workshop: one narrow centred page. The title is a title block with the actions in a ruled row under it. */
+html[data-surface-app-room="manuscript-column"] [data-part="css-workshop.room"] {
+  max-width: 50rem;
+  margin-inline: auto;
+  & [data-part="css-workshop.head"] { flex-direction: column; align-items: center; text-align: center; border-bottom: 1px solid var(--bk-line-strong); padding-bottom: .8rem; }
+  & [data-part="css-workshop.head"] > div { align-items: center; justify-content: center; }
+}

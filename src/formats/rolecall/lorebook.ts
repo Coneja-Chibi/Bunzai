@@ -1,0 +1,342 @@
+/**
+ * RoleCall lorebook codec (RoleCallExportV1, `.json`).
+ * Maps RC's nested v1 export wire (triggers/matching/injection/priority/timing/grouping/advanced/
+ * scanSources groups) to the flat canonical LorebookEntry and back. Field shapes verified against
+ * RoleCall's lorebook package schemas.ts + serializer.ts + parser.ts (interop facts only).
+ *
+ * Lossless by original-of-raw: the whole parsed RoleCallExportV1 rides in original, so raw-only carriers
+ * the canonical body does not model (tree, exportDate, per-entry unsupportedFields, trigger runtime
+ * junk) survive a round-trip verbatim. fromCanonical re-projects the canonical body onto a clone of
+ * the raw wire, matching entries by id; a from-scratch canonical (no original) serializes fresh defaults.
+ *
+ * NOTE: standalone codec, not yet wired into the character-only registry. Conforming it to the
+ * entity-generic FormatAdapter (task #5 wiring step) is additive: id/label/outputExtensions + a type.
+ */
+import type { LorebookAdapter, AdapterInput, AdapterOutput } from "../../core/adapter";
+import type {
+  CanonicalLorebook,
+  LorebookBody,
+  LorebookEntry,
+  LorebookCategory,
+  Trigger,
+} from "../../entities/lorebook/schema";
+import { CANONICAL_SCHEMA_VERSION, canonicalId } from "../../core/canonical";
+import { numOr, presentNum } from "../../core/guards";
+import { readJsonObject } from "../_shared/card-io";
+import { parseCharacterFilter } from "../_shared/lore-enums";
+import { presentBool } from "../_shared/character-book";
+
+const RC_LOREBOOK_SCHEMA_PREFIX = "1.0.0";
+
+/** The RC v1 export wire, kept loose: we read known fields and carry the rest in original. */
+interface RcExportRaw {
+  schemaVersion?: unknown;
+  exportDate?: unknown;
+  lorebook?: Record<string, unknown>;
+}
+
+/** Parse untrusted json into the RC export shape, or null if it is not one. */
+function readExport(input: AdapterInput): RcExportRaw | null {
+  const obj = readJsonObject(input) as RcExportRaw | null;
+  if (!obj) return null;
+  const book = obj.lorebook;
+  if (!book || typeof book !== "object" || !Array.isArray((book as { entries?: unknown }).entries)) {
+    return null;
+  }
+  return obj;
+}
+
+/** RC v1 is unambiguous: a "1.0.0"-family schemaVersion plus a lorebook envelope with entries. */
+const isRcVersion = (v: unknown): boolean =>
+  typeof v === "string" && v.includes(RC_LOREBOOK_SCHEMA_PREFIX);
+
+/** Read a canonical trigger out of the wire, dropping per-session runtime junk (lastActivatedAt). */
+function triggerToCanonical(t: Record<string, unknown>): Trigger {
+  const out: Trigger = {
+    keyword: typeof t.keyword === "string" ? t.keyword : "",
+    isRegex: t.isRegex === true,
+  };
+  if (typeof t.flags === "string") out.flags = t.flags;
+  const frequency = presentNum(t.frequency);
+  if (frequency !== undefined) out.frequency = frequency;
+  const probability = presentNum(t.probability);
+  if (probability !== undefined) out.probability = probability;
+  return out;
+}
+
+export const triggersToCanonical = (arr: unknown): Trigger[] =>
+  Array.isArray(arr) ? arr.map((t) => triggerToCanonical(t as Record<string, unknown>)) : [];
+
+/** Map one nested RoleCallEntryV1 to a flat canonical LorebookEntry. */
+function entryToCanonical(e: Record<string, unknown>): LorebookEntry {
+  const triggers = (e.triggers ?? {}) as Record<string, unknown>;
+  const matching = (e.matching ?? {}) as Record<string, unknown>;
+  const injection = (e.injection ?? {}) as Record<string, unknown>;
+  const priority = (e.priority ?? {}) as Record<string, unknown>;
+  const timing = (e.timing ?? {}) as Record<string, unknown>;
+  const grouping = (e.grouping ?? {}) as Record<string, unknown>;
+  const advanced = (e.advanced ?? {}) as Record<string, unknown>;
+  const scan = (e.scanSources ?? {}) as Record<string, unknown>;
+  // ST-origin authored toggles RC preserves in its unsupportedFields bag; now first-class canonical
+  const unsup = (e.unsupportedFields ?? {}) as Record<string, unknown>;
+
+  return {
+    id: typeof e.id === "string" ? e.id : "",
+    title: typeof e.title === "string" ? e.title : "",
+    content: typeof e.content === "string" ? e.content : "",
+    comment: (e.comment as string | null | undefined) ?? null,
+    enabled: e.enabled !== false,
+    constant: e.constant === true,
+
+    triggerMode: triggers.mode === "advanced" ? "advanced" : "simple",
+    triggers: triggersToCanonical(triggers.primary),
+    secondaryTriggers: triggersToCanonical(triggers.secondary),
+    selectiveLogic: (triggers.selectiveLogic as LorebookEntry["selectiveLogic"]) ?? "and_any",
+
+    caseSensitive: (matching.caseSensitive as boolean | null | undefined) ?? null,
+    matchWholeWords: (matching.matchWholeWords as boolean | null | undefined) ?? null,
+    scanDepth: (matching.scanDepth as number | null | undefined) ?? null,
+
+    position: (injection.position as LorebookEntry["position"]) ?? "character",
+    depth: numOr(injection.depth, 4),
+    role: (injection.role as LorebookEntry["role"]) ?? "system",
+
+    sortOrder: numOr(priority.sortOrder, 0),
+    priority: numOr(priority.priority, 100),
+
+    sticky: numOr(timing.sticky, 0),
+    cooldown: numOr(timing.cooldown, 0),
+    delay: numOr(timing.delay, 0),
+
+    groupName: (grouping.groupName as string | null | undefined) ?? null,
+    categoryId: (grouping.categoryId as string | null | undefined) ?? null,
+    groupWeight: numOr(grouping.groupWeight, 100),
+
+    probability: numOr(e.probability, 100),
+
+    useMemo: advanced.useMemo === true,
+    excludeRecursion: advanced.excludeRecursion === true,
+    preventRecursion: advanced.preventRecursion === true,
+    delayUntilRecursion: numOr(advanced.delayUntilRecursion, 0),
+
+    characterFilter: parseCharacterFilter(e.characterFilter),
+
+    scanCharacterDescription: scan.characterDescription === true,
+    scanCharacterPersonality: scan.characterPersonality === true,
+    scanUserPersona: scan.userPersona === true,
+    scanScenario: scan.scenario === true,
+
+    ignoreBudget: advanced.ignoreBudget === true,
+
+    vectorized: presentBool(unsup.vectorized),
+    groupOverride: presentBool(unsup.groupOverride),
+    useGroupScoring: presentBool(unsup.useGroupScoring),
+    automationId: typeof unsup.automationId === "string" ? unsup.automationId : undefined,
+    scanCharacterDepthPrompt: presentBool(unsup.matchCharacterDepthPrompt),
+    scanCreatorNotes: presentBool(unsup.matchCreatorNotes),
+
+    sideEffects: (e.sideEffects as LorebookEntry["sideEffects"]) ?? null,
+    metadata: (e.metadata as Record<string, unknown> | null | undefined) ?? undefined,
+  };
+}
+
+function bookToCanonical(book: Record<string, unknown>): LorebookBody {
+  const settings = (book.settings ?? {}) as Record<string, unknown>;
+  const meta = (book.metadata ?? {}) as Record<string, unknown>;
+  const cats = book.categories as unknown;
+
+  const categories: LorebookCategory[] | undefined = Array.isArray(cats)
+    ? cats.map((c) => {
+        const cat = c as Record<string, unknown>;
+        return {
+          id: typeof cat.id === "string" ? cat.id : "",
+          name: typeof cat.name === "string" ? cat.name : "",
+          sortOrder: numOr(cat.sortOrder, 0),
+          enabled: cat.enabled !== false,
+        };
+      })
+    : undefined;
+
+  const body: LorebookBody = {
+    name: typeof book.name === "string" ? book.name : "",
+    description: (book.description as string | null | undefined) ?? null,
+    lorebookType: (settings.lorebookType as LorebookBody["lorebookType"]) ?? "other",
+    genre: (meta.genre as string | null | undefined) ?? null,
+    fandom: (meta.fandom as string | null | undefined) ?? null,
+    tags: Array.isArray(meta.tags) ? (meta.tags as string[]) : [],
+
+    globalCaseSensitive: settings.globalCaseSensitive === true,
+    globalMatchWholeWords: settings.globalMatchWholeWords === true,
+    globalScanDepth: numOr(settings.globalScanDepth, 0),
+    globalRecursion: settings.globalRecursion === true,
+    tokenBudget: numOr(settings.tokenBudget, 0),
+    budgetMode: settings.budgetMode === "entry" ? "entry" : "token",
+    entryBudget: numOr(settings.entryBudget, 0),
+
+    entries: (book.entries as Record<string, unknown>[]).map(entryToCanonical),
+  };
+  if (categories) body.categories = categories;
+  return body;
+}
+
+// -- serialize (canonical -> wire), re-projecting onto raw so raw-only fields survive --------------
+
+/** Emit a canonical trigger to the wire. Advanced triggers keep their probability. */
+export function triggerToWire(t: Trigger): Record<string, unknown> {
+  const out: Record<string, unknown> = { keyword: t.keyword, isRegex: t.isRegex };
+  if (t.flags !== undefined) out.flags = t.flags;
+  if (t.frequency !== undefined) out.frequency = t.frequency;
+  if (t.probability !== undefined) out.probability = t.probability;
+  return out;
+}
+
+/** Overlay a canonical entry onto a clone of its raw wire twin (or {} when converting fresh). */
+function entryToWire(e: LorebookEntry, raw: Record<string, unknown> | undefined): Record<string, unknown> {
+  const base = raw ? structuredClone(raw) : {};
+  const wire: Record<string, unknown> = {
+    ...base,
+    id: e.id,
+    title: e.title,
+    content: e.content,
+    comment: e.comment ?? null,
+    enabled: e.enabled,
+    constant: e.constant,
+    triggers: {
+      mode: e.triggerMode,
+      primary: e.triggers.map(triggerToWire),
+      secondary: e.secondaryTriggers.map(triggerToWire),
+      selectiveLogic: e.selectiveLogic,
+    },
+    matching: {
+      caseSensitive: e.caseSensitive,
+      matchWholeWords: e.matchWholeWords,
+      scanDepth: e.scanDepth,
+    },
+    injection: { position: e.position, depth: e.depth, role: e.role },
+    priority: { sortOrder: e.sortOrder, priority: e.priority },
+    timing: { sticky: e.sticky, cooldown: e.cooldown, delay: e.delay },
+    grouping: { groupName: e.groupName, categoryId: e.categoryId ?? null, groupWeight: e.groupWeight },
+    probability: e.probability,
+    advanced: {
+      useMemo: e.useMemo,
+      excludeRecursion: e.excludeRecursion,
+      preventRecursion: e.preventRecursion,
+      delayUntilRecursion: e.delayUntilRecursion,
+      ignoreBudget: e.ignoreBudget,
+    },
+    characterFilter: e.characterFilter
+      ? { isExclude: e.characterFilter.isExclude, names: e.characterFilter.names, tags: e.characterFilter.tags }
+      : null,
+    scanSources: {
+      characterDescription: e.scanCharacterDescription,
+      characterPersonality: e.scanCharacterPersonality,
+      userPersona: e.scanUserPersona,
+      scenario: e.scanScenario,
+    },
+  };
+  // sideEffects / metadata are additive on the wire: emit only when present, matching RC's serializer.
+  if (e.sideEffects && e.sideEffects.effects.length > 0) wire.sideEffects = e.sideEffects;
+  else delete wire.sideEffects;
+  if (e.metadata != null) wire.metadata = e.metadata;
+  else delete wire.metadata;
+  // de-kept ST-origin toggles re-emit into the unsupportedFields bag (other bag keys ride the clone)
+  const de: [string, unknown][] = [
+    ["vectorized", e.vectorized],
+    ["groupOverride", e.groupOverride],
+    ["useGroupScoring", e.useGroupScoring],
+    ["automationId", e.automationId],
+    ["matchCharacterDepthPrompt", e.scanCharacterDepthPrompt],
+    ["matchCreatorNotes", e.scanCreatorNotes],
+  ];
+  if (de.some(([, v]) => v !== undefined)) {
+    const bag = (wire.unsupportedFields ?? {}) as Record<string, unknown>;
+    for (const [k, v] of de) if (v !== undefined) bag[k] = v;
+    wire.unsupportedFields = bag;
+  }
+  return wire;
+}
+
+function bookToWire(body: LorebookBody, rawBook: Record<string, unknown> | undefined): Record<string, unknown> {
+  const base = rawBook ? structuredClone(rawBook) : {};
+  const rawEntries = new Map<string, Record<string, unknown>>();
+  if (Array.isArray(base.entries)) {
+    for (const re of base.entries as Record<string, unknown>[]) {
+      if (typeof re.id === "string") rawEntries.set(re.id, re);
+    }
+  }
+
+  // budgetMode/entryBudget: real RC exports OMIT them at defaults, so preserve the twin's
+  // presence/absence (a fresh cross-format encode emits them only when non-default) - always writing
+  // them mutated an unedited real export by two fabricated keys.
+  const rawSettings = (
+    base.settings && typeof base.settings === "object" && !Array.isArray(base.settings) ? base.settings : {}
+  ) as Record<string, unknown>;
+  const settings: Record<string, unknown> = {
+    lorebookType: body.lorebookType ?? "other",
+    globalCaseSensitive: body.globalCaseSensitive,
+    globalMatchWholeWords: body.globalMatchWholeWords,
+    globalScanDepth: body.globalScanDepth,
+    globalRecursion: body.globalRecursion,
+    tokenBudget: body.tokenBudget,
+  };
+  if ((rawBook ? "budgetMode" in rawSettings : body.budgetMode !== "token")) settings.budgetMode = body.budgetMode;
+  if ((rawBook ? "entryBudget" in rawSettings : body.entryBudget !== 0)) settings.entryBudget = body.entryBudget;
+
+  const wire: Record<string, unknown> = {
+    ...base,
+    name: body.name,
+    description: body.description ?? null,
+    settings,
+    metadata: { genre: body.genre ?? null, fandom: body.fandom ?? null, tags: body.tags },
+    entries: body.entries.map((e) => entryToWire(e, rawEntries.get(e.id))),
+  };
+
+  if (body.categories) {
+    wire.categories = body.categories.map((c) => ({
+      id: c.id,
+      name: c.name,
+      sortOrder: c.sortOrder,
+      enabled: c.enabled ?? true,
+    }));
+  }
+  return wire;
+}
+
+const rolecallLorebook: LorebookAdapter = {
+  id: "rolecall-lorebook",
+  label: "RoleCall lorebook (v1 export json)",
+  outputExtensions: ["json"],
+  kind: "lorebook",
+
+  detect(input: AdapterInput): number {
+    const raw = readExport(input);
+    if (!raw) return 0;
+    return isRcVersion(raw.schemaVersion) ? 1 : 0;
+  },
+
+  toCanonical(input: AdapterInput): CanonicalLorebook {
+    const raw = readExport(input);
+    if (!raw || !raw.lorebook) throw new Error("rolecall-lorebook: not a RoleCall v1 export");
+    const body = bookToCanonical(raw.lorebook);
+    return {
+      schemaVersion: CANONICAL_SCHEMA_VERSION,
+      kind: "lorebook",
+      id: canonicalId(body.name),
+      body,
+      original: { "rolecall-lorebook": { raw } },
+    };
+  },
+
+  fromCanonical(entity: CanonicalLorebook): AdapterOutput {
+    const raw = entity.original?.["rolecall-lorebook"]?.raw as RcExportRaw | undefined;
+    const rawBook = (raw?.lorebook ?? undefined) as Record<string, unknown> | undefined;
+    const out = {
+      schemaVersion: isRcVersion(raw?.schemaVersion) ? (raw?.schemaVersion as string) : RC_LOREBOOK_SCHEMA_PREFIX,
+      exportDate: typeof raw?.exportDate === "string" ? raw.exportDate : new Date().toISOString(),
+      lorebook: bookToWire(entity.body, rawBook),
+    };
+    return { text: JSON.stringify(out, null, 2), suggestedExtension: "json" };
+  },
+};
+
+export default rolecallLorebook;

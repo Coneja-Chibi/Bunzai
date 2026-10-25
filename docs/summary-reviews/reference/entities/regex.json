@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/regex",
+  "sourcePath": "docs/reference/entities/regex.md",
+  "sourceHash": "sha256:d11c4ab497bfdf21659cd74513bcdbfb4821731e11b9c90d23172681b31b5ee6",
+  "semanticSummaryHash": "sha256:89f077cdd55f1cf286c993273e3efb53368ccd68895257adf67296754cc5f0dc",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:12.999Z"
+}

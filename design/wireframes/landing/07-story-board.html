@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Board landing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .head .marquee { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+  .lanes { display: grid; grid-template-columns: repeat(3, minmax(16rem, 1fr)); gap: 1.2rem; align-items: start; }
+  .lane { background: var(--panel); border: 3px solid var(--edge); padding: 0.9rem; min-height: 22rem; }
+  .lane.over { outline: 3px dashed var(--accent); outline-offset: -8px; }
+  .lane h2 { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-dim); font-weight: 800; margin-bottom: 0.8rem; }
+  .lane h2 .n { background: var(--face); border: 2px solid var(--edge); padding: 0 0.4rem; color: var(--text); }
+  .lane.on h2 { color: var(--accent-deep); }
+  .card { background: var(--face); border: 2px solid var(--edge); box-shadow: 4px 4px 0 var(--tone); padding: 0.8rem; margin-bottom: 0.8rem; cursor: grab; }
+  .card:active { cursor: grabbing; }
+  .card .top { display: flex; gap: 0.5rem; align-items: center; }
+  .card .avs { display: flex; }
+  .card .avs .avatar { width: 1.8rem; height: 1.8rem; font-size: 0.7rem; margin-right: -0.35rem; }
+  .card .t { font-family: var(--font-big); font-weight: 900; font-size: 0.86rem; text-transform: uppercase; margin-left: 0.4rem; }
+  .card .l { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 1rem; margin: 0.6rem 0 0.4rem; color: var(--text); }
+  .card .m { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); display: flex; justify-content: space-between; }
+  .lane.rest .card { opacity: 0.7; box-shadow: none; }
+  .add { width: 100%; border: 2px dashed var(--edge); background: transparent; padding: 0.6rem; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim); cursor: pointer; }
+  @media (max-width: 60rem) { .lanes { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>07 The Story Board</span><button data-theme-switch>Theme</button><a href="index.html">All ten</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Hm</div><div class="app-btn">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+  <header class="topbar"><div class="crumb"><b>Home</b> / story board</div><div class="search">Find a scene...</div></header>
+  <main class="main">
+    <div class="head">
+      <div><div class="kicker">Your running scenes</div><h1 class="marquee">The story <em>board</em></h1></div>
+      <button class="btn">+ New scene</button>
+    </div>
+    <div class="lanes">
+      <section class="lane on" data-lane="on"><h2>On you <span class="n">2</span></h2>
+        <div class="card waiting" draggable="true" style="--tone: var(--deck-character)"><div class="top"><div class="avs"><div class="avatar" style="--tone: var(--deck-character)">V</div></div><div class="t">The Drowned Lamp</div></div><div class="l">"Who did you let up the stairs?"</div><div class="m"><span>Vera</span><span>4 min</span></div></div>
+        <div class="card" draggable="true" style="--tone: var(--deck-lorebook)"><div class="top"><div class="avs"><div class="avatar" style="--tone: var(--deck-lorebook)">O</div><div class="avatar" style="--tone: var(--deck-preset)">M</div></div><div class="t">Salt &amp; Ledger</div></div><div class="l">"It'll still be short one page."</div><div class="m"><span>group</span><span>1 day</span></div></div>
+        <button class="add">+ add a scene here</button>
+      </section>
+      <section class="lane" data-lane="play"><h2>In play <span class="n">2</span></h2>
+        <div class="card" draggable="true" style="--tone: var(--deck-persona)"><div class="top"><div class="avs"><div class="avatar" style="--tone: var(--deck-persona)">N</div></div><div class="t">A Card for Nuit</div></div><div class="l">You turned the Tower over.</div><div class="m"><span>Nuit's turn</span><span>2 days</span></div></div>
+        <div class="card" draggable="true" style="--tone: var(--deck-preset)"><div class="top"><div class="avs"><div class="avatar" style="--tone: var(--deck-preset)">M</div></div><div class="t">The Magpie's Errand</div></div><div class="l">The lock gave on the third try.</div><div class="m"><span>Magpie's turn</span><span>5 days</span></div></div>
+      </section>
+      <section class="lane rest" data-lane="rest"><h2>Resting <span class="n">1</span></h2>
+        <div class="card" draggable="true" style="--tone: var(--deck-regex)"><div class="top"><div class="avs"><div class="avatar" style="--tone: var(--deck-regex)">I</div></div><div class="t">The Duel at Dawn</div></div><div class="l">"You're late."</div><div class="m"><span>rested by you</span><span>4 mo</span></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="wf-note"><b>The idea:</b> scenes on a board in three lanes: On you (they're waiting for your reply), In play (their turn, or just touched), Resting (paused, on purpose or by time). Scenes move lanes on their own as turns pass; drag one to Resting to shelve it without deleting, or back to wake it. Good for people juggling many stories who want order without a spreadsheet.</div>
+
+<script>
+  let dragged = null;
+  document.querySelectorAll(".card").forEach((c) => c.addEventListener("dragstart", () => (dragged = c)));
+  document.querySelectorAll(".lane").forEach((lane) => {
+    lane.addEventListener("dragover", (e) => { e.preventDefault(); lane.classList.add("over"); });
+    lane.addEventListener("dragleave", () => lane.classList.remove("over"));
+    lane.addEventListener("drop", (e) => { e.preventDefault(); lane.classList.remove("over"); if (dragged) lane.insertBefore(dragged, lane.querySelector(".add")); document.querySelectorAll(".lane").forEach((l) => (l.querySelector(".n").textContent = l.querySelectorAll(".card").length)); });
+  });
+</script>
+</body>
+</html>

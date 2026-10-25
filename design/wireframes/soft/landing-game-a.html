@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing: game title screen (A)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Concept A: the landing as a video-game title screen / main menu. The last scene's backdrop fills
+ * the stage behind a big wordmark; "press any key" reveals a vertical keyboard-first menu (arrow keys
+ * move the cursor, Enter picks, the mouse works too). Full bleed on purpose, so the approved Dock is
+ * an off-canvas drawer here instead of the fixed left rail every other soft page uses: one click (or a
+ * hover peek) away via the corner handle, never gone. The Dock's own markup below is byte-identical to
+ * workbench-shell.html; only the "on" state and the surrounding layout (drawer vs. fixed rail) differ,
+ * same as every other soft page picks its own "on" app.
+ */
+* { -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow-x: hidden; }
+body { margin: 0; background: var(--stage-well); }
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+/* same reserved-footer contract as the rest of the set: fixed wf-bar/wf-note sit over the last ~170px
+   on purpose (wireframe-only chrome); real content keeps clear of that band instead. */
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+/* ---- the stage: fills the viewport, the last scene's backdrop softened behind everything ---- */
+/* container-type (not @media) is deliberate: the phone state below only shrinks html's max-width via
+   JS, it never resizes the real window, so @media never sees it (the approved pattern in
+   workbench-shell.html does the same for its own pane-level folds, for the same reason). Every rule
+   in this file that must react to the simulated phone width queries this container, in cqw/@container,
+   not vw/@media. */
+.stage { container-type: inline-size; position: relative; width: 100%; height: 100vh; min-height: 560px; overflow: hidden; background:
+  radial-gradient(ellipse 70% 60% at 50% 30%, color-mix(in srgb, var(--deck-lorebook) 12%, transparent), transparent 70%),
+  linear-gradient(180deg, var(--stage-deck) 0%, var(--stage-floor) 58%, var(--stage-well) 100%); }
+.backdrop { position: absolute; inset: -6%; background:
+  linear-gradient(155deg, color-mix(in srgb, var(--deck-preset) 24%, transparent), transparent 46%),
+  linear-gradient(25deg, color-mix(in srgb, var(--deck-pack) 16%, transparent), transparent 52%),
+  linear-gradient(200deg, color-mix(in srgb, var(--deck-persona) 12%, transparent), transparent 40%);
+  animation: drift 46s ease-in-out infinite alternate; }
+@keyframes drift { from { transform: scale(1) translate(0, 0); } to { transform: scale(1.06) translate(-1.5%, 1%); } }
+[data-state="empty"] .backdrop { opacity: .4; filter: saturate(.55); }
+.floor { position: absolute; left: 0; right: 0; bottom: 0; height: 40%; background: linear-gradient(180deg, transparent, var(--stage-well) 78%); }
+.vignette { position: absolute; inset: 0; box-shadow: inset 0 0 min(22cqw, 260px) min(9cqw, 110px) var(--stage-black); pointer-events: none; }
+
+/* dust motes: a few soft points drifting slowly upward */
+.motes { position: absolute; inset: 0; pointer-events: none; }
+.mote { position: absolute; width: 4px; height: 4px; background: var(--stage-card); border-radius: 50%; opacity: 0; box-shadow: 0 0 6px 1px color-mix(in srgb, var(--stage-card) 60%, transparent); animation: mote 22s ease-in-out infinite; }
+@keyframes mote { 0% { opacity: 0; transform: translateY(0) translateX(0); } 12% { opacity: .55; } 88% { opacity: .35; } 100% { opacity: 0; transform: translateY(-46vh) translateX(var(--dx, 18px)); } }
+@media (prefers-reduced-motion: reduce) { .backdrop, .mote { animation: none !important; } }
+
+/* ---- the marque: logo + wordmark, always present, large ---- */
+.marquee { position: absolute; left: 0; right: 0; top: 9%; z-index: 3; display: flex; flex-direction: column; align-items: center; text-align: center; transition: top .35s ease; padding: 0 20px; box-sizing: border-box; }
+.marquee .tag { max-width: 100%; }
+[data-state="menu"] .marquee, [data-state="load"] .marquee, [data-state="empty"] .marquee { top: 6%; }
+.marquee svg { width: clamp(56px, 9cqw, 96px); height: clamp(56px, 9cqw, 96px); filter: drop-shadow(0 6px 0 var(--stage-black)); }
+.marquee .word { margin-top: 6px; font: 800 clamp(2rem, 7cqw, 5rem) var(--font-fancy); letter-spacing: .06em; color: var(--text); text-shadow: 0 4px 0 var(--stage-black); }
+.marquee .word em { font-style: normal; color: var(--accent); }
+.marquee .tag { margin-top: 4px; font: 500 12px var(--font-mono); letter-spacing: .3em; text-transform: uppercase; color: var(--text-dim); }
+
+/* ---- attract: press any key ---- */
+.attractwrap { position: absolute; left: 0; right: 0; top: 62%; z-index: 3; display: none; flex-direction: column; align-items: center; gap: 10px; }
+[data-state="attract"] .attractwrap { display: flex; }
+.pressprompt { font: 600 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); letter-spacing: .12em; text-transform: uppercase; color: var(--text); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .pressprompt { animation: none; } }
+.pressprompt kbd { font: 500 12px var(--font-mono); color: var(--text-dim); background: color-mix(in srgb, var(--text) 10%, transparent); box-shadow: inset 0 0 0 1px var(--edge); padding: 2px 8px; margin-left: 8px; text-transform: none; letter-spacing: 0; vertical-align: 2px; }
+[data-state="attract"] .gamemenu, [data-state="attract"] .kbdlegend, [data-state="attract"] .sidepick { display: none !important; }
+
+/* ---- the main menu: vertical, keyboard-first ---- */
+.menuwrap { position: absolute; left: 0; right: 0; top: 31%; z-index: 3; display: none; justify-content: center; }
+[data-state="menu"] .menuwrap, [data-state="load"] .menuwrap, [data-state="empty"] .menuwrap { display: flex; }
+.gamemenu { display: flex; flex-direction: column; align-items: stretch; width: min(92cqw, 420px); }
+.mitem { display: flex; align-items: center; gap: 12px; padding: 7px 16px; cursor: pointer; color: var(--text-soft); background: transparent; box-shadow: inset 0 0 0 1px transparent; outline: none; }
+.mitem .cursor { width: 14px; flex: none; font: 700 .8rem var(--font-body); color: var(--accent); opacity: 0; transform: translateX(-4px) scale(.7); transition: opacity .12s, transform .12s; }
+.mitem .body { flex: 1; min-width: 0; }
+.mitem .label { display: block; font: 700 1.05rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); letter-spacing: .01em; }
+.mitem .sub { display: block; margin-top: 1px; font: 500 11px var(--font-mono); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mitem i { width: 22px; height: 22px; flex: none; display: grid; place-items: center; color: var(--text-dim); }
+.mitem i svg { width: 17px; height: 17px; }
+.mitem:hover { color: var(--text); }
+.mitem.sel { background: color-mix(in srgb, var(--accent) 12%, transparent); box-shadow: inset 3px 0 0 var(--accent), inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+.mitem.sel .cursor { opacity: 1; transform: translateX(0) scale(1); }
+.mitem.sel .label { color: var(--text); }
+.mitem.sel i { color: var(--accent); }
+[data-menu="empty"] { display: none; }
+[data-state="empty"] [data-menu="full"] { display: none; }
+[data-state="empty"] [data-menu="empty"] { display: flex; }
+
+.menukicker { text-align: center; margin: 0 0 14px; font: 500 12px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--text-dim); }
+[data-state="menu"] .menukicker[data-for="menu"], [data-state="load"] .menukicker[data-for="menu"] { display: block; }
+[data-state="empty"] .menukicker[data-for="empty"] { display: block; }
+.menukicker { display: none; }
+.menuwrap { flex-direction: column; align-items: center; }
+
+/* the keyboard legend, a game HUD strip. bottom: 200px keeps it just above the reserved wf-bar/
+   wf-note band (the last 190px of the viewport, same reserved strip workbench-shell.html defines);
+   the menu above it is sized to end well clear, so the two never touch at 900px or 1000px tall. */
+.kbdlegend { position: absolute; left: 0; right: 0; bottom: 200px; z-index: 3; display: none; justify-content: center; gap: 18px; flex-wrap: wrap; padding: 0 16px; }
+[data-state="menu"] .kbdlegend, [data-state="load"] .kbdlegend, [data-state="empty"] .kbdlegend { display: flex; }
+.kbdlegend span { display: inline-flex; align-items: center; gap: 6px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.kbdlegend kbd { font: 500 11px var(--font-mono); color: var(--text); background: color-mix(in srgb, var(--text) 10%, transparent); box-shadow: inset 0 0 0 1px var(--edge); padding: 2px 7px; }
+@container (max-width: 35rem) { .kbdlegend span.hideonphone { display: none; } }
+
+/* ---- Load scene: a side panel of recent scenes, beside the menu, its own keyboard focus ---- */
+.sidepick { position: absolute; left: calc(50% + 230px); top: 31%; z-index: 4; width: min(88cqw, 300px); display: none; }
+[data-state="load"] .sidepick { display: block; }
+/* narrow: no room beside the menu, so Load scene drills in - the list takes the menu's own slot
+   instead of sitting beside it (the menu item stays visible above as the way back, same as a mobile
+   "back" row); this only matters for a real narrow window, since ?state=phone always starts on Menu. */
+@container (max-width: 56rem) {
+  .sidepick { position: absolute; left: 0; right: 0; top: 27%; width: auto; padding: 0 20px; box-sizing: border-box; }
+  .sidepick .loadlist { max-height: 33vh; }
+  [data-state="load"] .menuwrap { display: none; }
+}
+.sidepick .head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.loadlist { display: flex; flex-direction: column; gap: 6px; max-height: 40vh; overflow-y: auto; padding-right: 2px; }
+.loaditem { display: flex; align-items: center; gap: 10px; padding: 9px 10px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-left: 3px solid var(--c, var(--edge)); cursor: pointer; }
+.loaditem .av { width: 30px; height: 30px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 45%, var(--face)); font: 400 1rem var(--font-fancy); color: var(--text); }
+.loaditem b { display: block; font: 600 .9rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.loaditem small { display: block; color: var(--text-dim); font: 500 11px var(--font-mono); }
+.loaditem.sel { box-shadow: 0 0 0 1px var(--accent), 3px 3px 0 0 var(--rose-deep); }
+.loaditem.sel b { color: var(--accent); }
+
+/* ---- the corner handle: opens the Dock; a hover peek, one click to pin ---- */
+.handle { position: fixed; left: 14px; top: 14px; z-index: 60; width: 42px; height: 42px; display: grid; place-items: center; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); cursor: pointer; transition: opacity .15s; }
+/* the Dock's own brand row lands in the same corner once it slides open, so the handle steps aside -
+   click the scrim (or Esc) to close instead, same as any drawer */
+body.dock-open .handle { opacity: 0; pointer-events: none; }
+.handle svg { width: 18px; height: 18px; color: var(--text); }
+.handle:hover ~ #dock:not(.open) { transform: translateX(-84%); }
+#dock { position: fixed; left: 0; top: 0; bottom: 0; z-index: 55; transform: translateX(-100%); transition: transform .22s ease; box-shadow: 1px 0 0 var(--seam), 12px 0 30px -10px var(--shadow-ink-deep); }
+#dock.open { transform: translateX(0); }
+.dockscrim { position: fixed; inset: 0; z-index: 54; background: var(--scrim); opacity: 0; pointer-events: none; transition: opacity .2s; }
+.dockscrim.show { opacity: 1; pointer-events: auto; }
+
+/* ---- phone width: menu narrows, handle and legend still reachable ---- */
+@container (max-width: 46rem) {
+  .marquee .word { font-size: clamp(1.8rem, 11cqw, 2.8rem); }
+  .marquee .tag { letter-spacing: .1em; font-size: 10px; overflow-wrap: break-word; }
+  .gamemenu { width: 94cqw; }
+  .mitem .sub { white-space: normal; }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+<symbol id="i-cast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 20c.3-2.9 2-4.5 4.5-4.6"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h11M4 18h7"/><circle cx="19" cy="18" r="2"/></symbol>
+</defs></svg>
+
+<button type="button" class="handle" id="dockHandle" title="Apps" aria-label="Open apps"><svg viewBox="0 0 24 24"><use href="#i-menu"/></svg></button>
+<div class="dockscrim" id="dockScrim"></div>
+<nav class="s-dock" id="dock">
+  <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+  <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+  <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+  <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+  <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+  <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+  <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+  <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+</nav>
+
+<main class="stage" id="stage">
+  <div class="backdrop"></div>
+  <div class="floor"></div>
+  <div class="motes" aria-hidden="true">
+    <span class="mote" style="left:14%; top:70%; --dx:22px; animation-delay:0s"></span>
+    <span class="mote" style="left:26%; top:82%; --dx:-14px; animation-delay:3s"></span>
+    <span class="mote" style="left:38%; top:60%; --dx:18px; animation-delay:7s"></span>
+    <span class="mote" style="left:58%; top:78%; --dx:-20px; animation-delay:2s"></span>
+    <span class="mote" style="left:70%; top:65%; --dx:16px; animation-delay:9s"></span>
+    <span class="mote" style="left:82%; top:74%; --dx:-12px; animation-delay:5s"></span>
+    <span class="mote" style="left:47%; top:88%; --dx:10px; animation-delay:11s"></span>
+  </div>
+  <div class="vignette"></div>
+
+  <div class="marquee">
+    <svg viewBox="0 0 100 100" style="--pink: var(--deck-pack); --ink: var(--stage-ink)"><use href="#bun"/></svg>
+    <div class="word">bun<em>raku</em></div>
+    <div class="tag">a little theater for your characters</div>
+  </div>
+
+  <div class="attractwrap">
+    <div class="pressprompt">Press any key <kbd>or click</kbd></div>
+  </div>
+
+  <div class="menuwrap">
+    <div class="menukicker" data-for="menu">Tonight's stage</div>
+    <div class="menukicker" data-for="empty">The stage is empty</div>
+
+    <nav class="gamemenu" data-menu="full" aria-label="Main menu">
+      <div class="mitem sel" data-index="0" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-play"/></svg></i><span class="body"><span class="label">Continue</span><span class="sub">The long storm &middot; Vera Lune &middot; 2 hours ago</span></span></div>
+      <div class="mitem" data-index="1" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-plus"/></svg></i><span class="body"><span class="label">New scene</span><span class="sub">Start fresh with anyone in your cast</span></span></div>
+      <div class="mitem" data-index="2" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-list"/></svg></i><span class="body"><span class="label">Load scene</span><span class="sub">6 recent, 2 favorited</span></span></div>
+      <div class="mitem" data-index="3" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-cast"/></svg></i><span class="body"><span class="label">Cast</span><span class="sub">Your characters</span></span></div>
+      <div class="mitem" data-index="4" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-keep"/></svg></i><span class="body"><span class="label">Library</span><span class="sub">Everything you keep</span></span></div>
+      <div class="mitem" data-index="5" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-gear"/></svg></i><span class="body"><span class="label">Settings</span></span></div>
+    </nav>
+
+    <nav class="gamemenu" data-menu="empty" aria-label="Main menu, empty studio" hidden>
+      <div class="mitem sel" data-index="0" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-plus"/></svg></i><span class="body"><span class="label">New scene</span><span class="sub">Write a character from a blank page</span></span></div>
+      <div class="mitem" data-index="1" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-import"/></svg></i><span class="body"><span class="label">Import a card</span><span class="sub">SillyTavern, RoleCall, and more</span></span></div>
+      <div class="mitem" data-index="2" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-keep"/></svg></i><span class="body"><span class="label">Library</span><span class="sub">Empty for now</span></span></div>
+      <div class="mitem" data-index="3" tabindex="0" role="menuitem"><span class="cursor">&#9632;</span><i><svg><use href="#i-gear"/></svg></i><span class="body"><span class="label">Settings</span></span></div>
+    </nav>
+  </div>
+
+  <aside class="sidepick s-card" style="--c: var(--deck-pack)">
+    <div class="head"><span class="s-chip" style="--c: var(--deck-pack)">LOAD</span><span class="s-meta">6 recent</span></div>
+    <div class="loadlist">
+      <div class="loaditem sel" style="--c: var(--deck-character)"><span class="av">V</span><div><b>The long storm</b><small>Vera Lune &middot; 2 hours ago</small></div></div>
+      <div class="loaditem" style="--c: var(--deck-lorebook)"><span class="av">M</span><div><b>Marguerite at dawn</b><small>Marguerite Vane &middot; yesterday</small></div></div>
+      <div class="loaditem" style="--c: var(--deck-persona)"><span class="av">N</span><div><b>Nuit finds the door</b><small>Nuit &middot; 3 days ago</small></div></div>
+      <div class="loaditem" style="--c: var(--deck-preset)"><span class="av">K</span><div><b>The Keeper's watch</b><small>Keeper &middot; 1 week ago</small></div></div>
+      <div class="loaditem" style="--c: var(--deck-regex)"><span class="av">T</span><div><b>The Magpie's price</b><small>The Magpie &middot; 2 weeks ago</small></div></div>
+      <div class="loaditem" style="--c: var(--deck-lorebook)"><span class="av">H</span><div><b>The Heist (group)</b><small>4 characters &middot; 3 weeks ago</small></div></div>
+    </div>
+  </aside>
+
+  <div class="kbdlegend">
+    <span><kbd>&#8593;&#8595;</kbd> Select</span>
+    <span><kbd>Enter</kbd> Choose</span>
+    <span class="hideonphone"><kbd>I</kbd> Import a card</span>
+    <span><kbd>Esc</kbd> Apps</span>
+  </div>
+</main>
+
+<div class="wf-note">
+  <b>Concept A: title screen.</b> The last scene's backdrop fills the stage, drifting slowly with a few
+  floating motes. Press any key (or click) to reveal the vertical menu; arrow keys move the cursor,
+  Enter picks, the mouse works the same. Continue always shows the last scene's name, character, and
+  when. Load scene opens the recent list beside the menu. The Dock is the same one every soft page
+  uses, kept off-canvas for a full-bleed title screen: the handle top-left opens it with one click, or
+  peeks on hover.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="attract" class="on">Attract</button>
+  <button data-s="menu">Menu</button>
+  <button data-s="load">Load scene</button>
+  <button data-s="empty">Empty studio</button>
+  <button data-s="phone">Phone width</button>
+  <button type="button" data-theme-switch>Theme</button>
+  <a href="index.html">All</a>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  var dock = document.getElementById('dock');
+  var scrim = document.getElementById('dockScrim');
+  var handle = document.getElementById('dockHandle');
+
+  function items() {
+    return Array.prototype.slice.call(document.querySelectorAll('.gamemenu:not([hidden]) .mitem'));
+  }
+  function select(el) {
+    items().forEach(function (m) { m.classList.remove('sel'); });
+    el.classList.add('sel');
+  }
+  function selectByOffset(delta) {
+    var list = items();
+    if (!list.length) return;
+    var cur = list.findIndex(function (m) { return m.classList.contains('sel'); });
+    if (cur < 0) cur = 0;
+    var next = ((cur + delta) % list.length + list.length) % list.length;
+    select(list[next]);
+    list[next].focus({ preventScroll: true });
+  }
+
+  function openDock(open) {
+    dock.classList.toggle('open', open);
+    scrim.classList.toggle('show', open);
+    body.classList.toggle('dock-open', open);
+  }
+
+  function set(s) {
+    var real = (s === 'phone') ? (body.getAttribute('data-state') === 'attract' ? 'menu' : body.getAttribute('data-state') || 'menu') : s;
+    if (s === 'phone' && real === 'attract') real = 'menu';
+    body.setAttribute('data-state', real);
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    document.querySelectorAll('#wfbar button[data-s]').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+    if (real === 'menu' || real === 'load' || real === 'empty') {
+      var list = items();
+      // Load scene carries the cursor while its panel is open, same item that opened it; every
+      // other content state starts on the first item (Continue, or New scene when the studio is empty).
+      var wantIndex = real === 'load' ? list.findIndex(function (m) { return m.querySelector('.label').textContent.trim() === 'Load scene'; }) : 0;
+      if (wantIndex < 0) wantIndex = 0;
+      if (list.length) select(list[wantIndex]);
+    }
+  }
+
+  document.getElementById('wfbar').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-s]');
+    if (b) set(b.getAttribute('data-s'));
+  });
+
+  document.querySelectorAll('.mitem').forEach(function (m) {
+    m.addEventListener('mouseenter', function () { select(m); });
+    m.addEventListener('click', function () {
+      select(m);
+      if (m.querySelector('.label').textContent.trim() === 'Load scene') set('load');
+    });
+  });
+
+  handle.addEventListener('click', function () { openDock(!dock.classList.contains('open')); });
+  scrim.addEventListener('click', function () { openDock(false); });
+
+  document.addEventListener('keydown', function (e) {
+    if (body.getAttribute('data-state') === 'attract' && !dock.classList.contains('open')) {
+      set('menu');
+      return;
+    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); selectByOffset(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); selectByOffset(-1); }
+    else if (e.key === 'Escape') { openDock(!dock.classList.contains('open')); }
+    else if (e.key === 'Enter') {
+      var sel = items().find(function (m) { return m.classList.contains('sel'); });
+      if (sel && sel.querySelector('.label').textContent.trim() === 'Load scene') set('load');
+    }
+  });
+
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'attract');
+})();
+</script>
+</body>
+</html>

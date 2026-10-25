@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/marinara/data-and-interop",
+  "sourcePath": "docs/reference/platforms/marinara/data-and-interop.md",
+  "sourceHash": "sha256:0486253ee8503a2ebd476fc31d07abc55f3073f963cb780e3ab3dbef4d624820",
+  "semanticSummaryHash": "sha256:56eb9d747392ee1481005aa4d479a9ac0abe4a2fee9e03dbf8964ee0c1e55d2a",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:56.546Z"
+}

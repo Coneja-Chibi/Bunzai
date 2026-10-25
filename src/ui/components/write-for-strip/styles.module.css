@@ -1,0 +1,35 @@
+/** WriteForStrip - the Write-for pills, transcribed 1:1 from the regex/persona header twins. */
+
+.strip {
+  display: inline-flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  border: 2px solid var(--stage-seam);
+}
+
+.stripLabel {
+  font-style: normal;
+  font: 700 var(--text-control) var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  padding: 0 0.45rem;
+}
+
+.pill {
+  font: 700 var(--text-control) var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 0;
+  border-left: 2px solid var(--stage-seam);
+  background: var(--stage-row);
+  color: var(--stage-mute);
+  padding: 0.32rem 0.5rem;
+  cursor: pointer;
+}
+
+.pillOn {
+  background: var(--a-deep, var(--accent-deep)); /* deep companion: bright accents cannot carry small text */
+  color: var(--stage-white);
+}

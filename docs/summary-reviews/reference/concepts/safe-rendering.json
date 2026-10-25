@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/safe-rendering",
+  "sourcePath": "docs/reference/concepts/safe-rendering.md",
+  "sourceHash": "sha256:d48e5d5fc333058c26d92983947c1da8e7260e1ec162841892d867401ddb4ebe",
+  "semanticSummaryHash": "sha256:aa7dae0df991f6d012c11f8b6f414bf1a2423aff5bb48259813a37093030003b",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page and summary href rules (single-slash paths, # anchors, http/https/mailto, trimmed and stripped) match isSafeHref and stripBlanks.",
+  "reviewedAt": "2026-10-09T16:16:58.125Z"
+}

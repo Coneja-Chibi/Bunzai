@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene preset wing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<link rel="stylesheet" href="rc-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
+ * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
+ * composer-shell-styles). Colors are Bunraku tokens:
+ *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
+ *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
+ *   RC user accent (violet)                       ->  --accent
+ *   the character's signature color               ->  --deck-character;  the user's persona  ->  --deck-persona
+ *   greeting gold #D4AF37                         ->  --stage-warn (gilt)
+ *   Cinzel -> --font-fancy;  Inter -> --font-big (as port.css does for the Library)
+ */
+.app { grid-template-columns: 4.2rem 1fr; }
+.dock .app-btn { cursor: default; }
+
+.scene { position: relative; height: 100vh; overflow: hidden; background: var(--stage-well); }
+/* BackgroundMedia + vignette: no scene art set, so the dark floor with RC's faint accent lift */
+.bgm { position: absolute; inset: 0; background:
+  radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%), var(--stage-well); }
+.bgm::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--stage-black) 65%, transparent)); }
+
+/* ---- the blurred layer: everything a wing pauses ---- */
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.scene.paused .play { filter: blur(6px) brightness(.55); pointer-events: none; }
+
+/* SceneHeader (fixed, 44px): black-to-clear gradient, left-aligned name, tagline, branch pill, tools right */
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 35; display: flex; align-items: center; gap: 10px; padding: 0 18px;
+  background: linear-gradient(var(--stage-black) 0%, color-mix(in srgb, var(--stage-black) 95%, transparent) 80%, color-mix(in srgb, var(--stage-black) 70%, transparent) 90%, transparent 100%); }
+.sh .back { width: 26px; height: 26px; display: grid; place-items: center; color: var(--stage-text-dim); border-radius: 50%; flex: none; }
+.sh .nm { font-family: var(--font-fancy); font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-soft); white-space: nowrap; flex: none; }
+.sh .tag { font-family: var(--font-big); font-style: italic; font-size: 9px; color: var(--stage-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 640px; }
+.sh .branch { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 8px; font-family: var(--font-big); font-size: 12px; font-weight: 500;
+  color: color-mix(in srgb, var(--accent) 80%, transparent); background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
+.sh .grow { flex: 1; }
+.sh .live { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.sh .gear { color: var(--stage-line); display: grid; place-items: center; }
+
+/* WingRail (fixed, top 80, 80px; 50px when a panel is open): glass column, masked top and bottom,
+   a 1px neon inner edge in the accent, 40px glyphs 32px apart */
+.rail { position: absolute; top: 80px; bottom: 0; width: 80px; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 32px 0 16px; opacity: .8; transition: width .5s, opacity .2s; }
+.rail:hover { opacity: 1; }
+.rail.l { left: 0; } .rail.r { right: 0; }
+.rail::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.rail.l::after, .rail.r::after { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 30%, transparent); }
+.rail.l::after { right: 0; } .rail.r::after { left: 0; }
+.scene.open-l .rail.l, .scene.open-r .rail.r { width: 50px; }
+/* WingItem: white/45 glyph; hover charges to the wing's color; active is white with a bloom */
+.wi { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: color-mix(in srgb, var(--stage-card) 45%, transparent); cursor: pointer; }
+.wi svg { width: 20px; height: 20px; position: relative; z-index: 1; transition: transform .3s, color .3s; }
+.wi::before { content: ""; position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--w) 25%, transparent) 0%, transparent 70%); opacity: 0; transform: scale(.5); transition: all .5s; }
+.wi:hover { color: var(--w); } .wi:hover svg { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--w)); } .wi:hover::before { opacity: .3; transform: scale(.75); }
+.wi.on { color: var(--stage-card); } .wi.on svg { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--w)); } .wi.on::before { opacity: 1; transform: none; }
+/* the rail-hover map label: 260px, 3px black border, hard 6px shadow in the wing's color, Cinzel 900 */
+.tip { position: absolute; top: 50%; width: 260px; padding: 12px 16px; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--w);
+  opacity: 0; transform: translateY(-60%); transition: opacity .2s, transform .2s; pointer-events: none; z-index: 20; text-align: left; }
+.rail.l .tip { left: 60px; } .rail.r .tip { right: 60px; }
+.rail:hover .tip, .scene.labels .tip { opacity: 1; transform: translateY(-50%); }
+.tip b { display: block; font-family: var(--font-fancy); font-weight: 900; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--w); text-shadow: 3px 3px 0 var(--stage-black); line-height: 1.05; }
+.tip span { display: block; margin-top: 6px; font-family: var(--font-big); font-size: .76rem; font-weight: 600; color: var(--stage-card); line-height: 1.35; }
+
+/* ---- the message scroll: x 80..(right-80), padding 96 48 24 64 ---- */
+.scroll { position: absolute; top: 0; bottom: 0; left: 80px; right: 80px; overflow-y: auto; padding: 96px 48px 150px 64px; }
+.scroll::-webkit-scrollbar { width: 6px; } .scroll::-webkit-scrollbar-thumb { background: var(--stage-seam); }
+
+/* GreetingSelector: max-w-3xl card, gilt dots, italic 4-line preview */
+.greet { max-width: 768px; margin: 0 auto 24px; padding: 16px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(8px); border-radius: 2px; }
+.greet .hd { display: flex; align-items: center; gap: 8px; font-family: var(--font-big); font-size: 14px; font-weight: 500; color: var(--stage-soft); margin-bottom: 12px; }
+.greet .hd svg { width: 16px; height: 16px; color: var(--stage-warn); }
+.greet .hd small { font-size: 12px; font-weight: 400; color: var(--stage-mute); }
+.dots { display: flex; gap: 8px; margin-bottom: 12px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--stage-line); cursor: pointer; }
+.dots i.on { background: var(--stage-warn); box-shadow: 0 0 0 2px var(--stage-black), 0 0 0 4px var(--stage-warn); }
+.greet .pv { padding: 12px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 40%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent);
+  font-family: var(--font-big); font-size: 14px; font-style: italic; line-height: 1.65; color: var(--stage-text-dim); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.greet .help { margin-top: 8px; font-family: var(--font-big); font-size: 12px; color: var(--stage-mute); }
+
+/* ImmersiveMessage: sticky 260x380 portrait (16px outer corners), 12px gutter, post badge, Cinzel name, dark bubble */
+.msg { display: flex; position: relative; margin-bottom: 40px; }
+.msg.user { flex-direction: row-reverse; }
+.por { flex: none; width: 260px; height: 380px; position: sticky; top: 60px; overflow: hidden; border-radius: 16px 0 0 16px; box-shadow: 0 0 20px color-mix(in srgb, var(--tone) 8%, transparent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 55%, var(--stage-panel)), var(--stage-panel) 85%); display: grid; place-items: center; }
+.msg.user .por { border-radius: 0 16px 16px 0; background: linear-gradient(170deg, color-mix(in srgb, var(--tone) 70%, var(--stage-panel)) 0%, color-mix(in srgb, var(--tone) 30%, var(--stage-panel)) 70%, var(--stage-panel)); }
+.por .ini { position: relative; font-family: var(--font-fancy); font-size: 34px; color: color-mix(in srgb, var(--stage-card) 55%, transparent); }
+.por .art { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 38% 30% at 50% 34%, color-mix(in srgb, var(--stage-paper) 45%, transparent), transparent 70%),
+  radial-gradient(ellipse 60% 45% at 50% 92%, color-mix(in srgb, var(--stage-black) 80%, transparent), transparent 75%); }
+.body { flex: 1; min-width: 0; padding-left: 12px; }
+.msg.user .body { padding-left: 0; padding-right: 12px; }
+.badge { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 45%, transparent);
+  padding: 2px 6px; font-family: var(--font-mono); font-size: 10px; line-height: 1; color: var(--stage-soft); box-shadow: 2px 2px 0 var(--stage-black); border-radius: 2px; }
+.msg.user .badge { float: right; }
+.spk { clear: both; font-family: var(--font-fancy); font-weight: 600; font-size: 19px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); line-height: 1.5; margin: 4px 0 6px; }
+.msg.user .spk { text-align: right; }
+.bub { position: relative; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); border-radius: 4px; padding: 14px 18px; }
+.msg.user .bub { padding: 12px 16px; }
+.prose { font-family: var(--font-big); font-size: 16px; line-height: 29.6px; color: color-mix(in srgb, var(--stage-card) 95%, transparent); }
+.prose p + p { margin-top: 20px; }
+.prose em { font-style: italic; }
+.prose q { quotes: '"' '"'; color: var(--tone); }
+/* the hover action bar: bottom-right, 28px buttons in groups */
+.acts { position: absolute; right: 6px; bottom: 6px; z-index: 20; display: flex; gap: 4px; padding: 4px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s; }
+.msg:hover .acts, .scene.hover-acts .msg.char .acts { opacity: 1; }
+.acts button { width: 28px; height: 28px; display: grid; place-items: center; border: 0; background: none; color: var(--tone); cursor: pointer; border-radius: 2px; }
+.acts button:hover { background: color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.acts button svg { width: 16px; height: 16px; }
+.acts .sep { width: 1px; margin: 4px; background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .del { color: var(--stage-danger-text); }
+.acts .dim { color: var(--stage-warn); }
+
+/* while a turn is starting and reasoning streams */
+.think { max-width: 1020px; margin: 0 0 40px; padding: 14px 16px; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 10%, transparent);
+  font-family: var(--font-big); font-size: 16px; line-height: 1.6; color: var(--stage-soft); }
+.think .caret { display: inline-block; width: 9px; height: 16px; background: var(--accent); vertical-align: -2px; }
+.starting { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--stage-panel); font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); margin-bottom: 16px; }
+
+/* the failure card: sits above the composer, 880 wide */
+.fail { position: absolute; left: 50%; transform: translateX(-50%); bottom: 90px; width: min(880px, calc(100% - 96px)); z-index: 30; background: var(--stage-panel); border-top: 2px solid var(--stage-danger-edge); box-shadow: 0 8px 32px var(--shadow-ink); }
+.fail .top { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--stage-seam); }
+.fail .ic { width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-danger-bg); border: 1px solid var(--stage-danger-edge); color: var(--stage-danger-text); flex: none; }
+.fail .tt { font-family: var(--font-big); font-weight: 600; font-size: 14px; color: var(--stage-card); }
+.fail .ln { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-family: var(--font-big); font-size: 13px; color: var(--stage-text-dim); flex-wrap: wrap; }
+.fail code { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.fail .dis { margin-left: auto; padding: 10px 16px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-card); font-family: var(--font-big); font-size: 13px; }
+.fail .dr { padding: 16px 16px 12px; font-family: var(--font-big); font-size: 13px; color: var(--stage-soft); }
+.fail textarea { display: block; margin-top: 10px; width: 100%; height: 110px; background: var(--stage-well); color: var(--stage-card); border: 1px solid var(--stage-line); padding: 8px 10px; font-family: var(--font-big); font-size: 15px; line-height: 1.6; resize: vertical; }
+.fail .nb { margin-top: 8px; font-size: 11px; color: var(--stage-mute); }
+
+/* ImmersiveInputBar + capsule: max-w 880, glass, 2px corners, 12/16 padding, 32px plus and send */
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 48px; pointer-events: none; }
+.cap { pointer-events: auto; max-width: 880px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px; border-radius: 2px;
+  background: color-mix(in srgb, var(--stage-floor) 50%, transparent); backdrop-filter: blur(20px); border: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); box-shadow: 0 8px 32px color-mix(in srgb, var(--stage-black) 40%, transparent); }
+.cap .plus, .cap .send, .cap .stop { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 2px; }
+.cap .plus { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
+.cap .send { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--stage-dim); }
+.cap .stop { background: var(--stage-danger-hot); color: var(--stage-card); display: none; }
+.scene.streaming .cap .stop { display: grid; } .scene.streaming .cap .send { display: none; }
+.cap .ta { flex: 1; min-width: 0; align-self: center; font-family: var(--font-big); font-size: 14px; line-height: 20px; color: color-mix(in srgb, var(--stage-card) 25%, transparent); }
+.cap svg { width: 16px; height: 16px; }
+/* the floating Compendium book and the /BTW tab, bottom-right of the stage */
+.book { position: absolute; right: 96px; bottom: 145px; z-index: 40; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--stage-soft);
+  background: var(--stage-row); border: 1px solid color-mix(in srgb, var(--stage-card) 12%, transparent); box-shadow: 0 4px 14px var(--shadow-ink); }
+.book svg { width: 18px; height: 18px; }
+.btw { position: absolute; right: 19px; bottom: 73px; z-index: 40; width: 90px; height: 34px; display: grid; place-items: center; background: var(--accent); color: var(--stage-black);
+  font-family: var(--font-fancy); font-weight: 900; font-size: 10px; letter-spacing: .3em; }
+
+/* ---- wing panels: open beside their rail, pause and blur the scene ---- */
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 45; display: none; text-align: center; cursor: pointer; }
+.scene.paused .paused-mark { display: block; }
+.scene.open-l .paused-mark { left: 78%; } .scene.open-r .paused-mark { left: 27%; }
+.paused-mark .sq { width: 64px; height: 64px; margin: 0 auto; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.paused-mark .sq svg { width: 26px; height: 26px; }
+.paused-mark small { display: block; margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .3em; color: var(--accent); }
+.wing-panel { position: absolute; top: 0; bottom: 0; z-index: 48; display: none; flex-direction: column; background: var(--stage-well); color: var(--stage-soft); font-family: var(--font-big); }
+.wing-panel.l { left: 0; width: min(1000px, 56%); padding-left: 50px; border-right: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.r { right: 0; width: min(830px, 46%); padding-right: 50px; border-left: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.show { display: flex; }
+/* FoldoutTabs: breadcrumb, then equal bordered tabs with a meta line */
+.fold { position: sticky; top: 0; z-index: 3; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-well) 95%, transparent); }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font-size: .62rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--stage-mute); }
+.crumb b { color: var(--stage-card); font-weight: 600; } .crumb i { font-style: normal; color: var(--stage-faint); }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; min-width: 0; text-align: left; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-card) 3%, transparent); color: var(--stage-text-dim); font-family: var(--font-big); cursor: pointer; }
+.tabs button.on { border-color: color-mix(in srgb, var(--stage-card) 30%, transparent); background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tabs b { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.tabs small { display: block; margin-top: 4px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; opacity: .6; }
+.wbody { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+/* WingHero: accent-edged card, radial wash top-left, 6px soft offset shadow, square icon, eyebrow, Cinzel 900 title with the accent word */
+.hero { position: relative; border: 1px solid color-mix(in srgb, var(--w) 35%, transparent); padding: 24px; box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--w) 12%, transparent);
+  background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--w) 12%, transparent), transparent 55%), linear-gradient(135deg, var(--stage-row), var(--stage-well)); display: flex; gap: 16px; align-items: flex-start; }
+.hero .hi { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--w) 70%, transparent); background: var(--stage-black); color: var(--w); }
+.hero .hi svg { width: 20px; height: 20px; }
+.hero .eb { font-size: .74rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+/* RC asks for Cinzel here but the live page renders a black-weight sans; the port follows what users see */
+.hero h2 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 2rem; line-height: .95; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-card); text-shadow: 3px 3px 0 var(--stage-black); }
+.hero h2 em { font-style: normal; color: var(--w); }
+.hero p { margin-top: 10px; max-width: 42rem; font-size: .95rem; line-height: 1.6; color: var(--stage-soft); }
+/* Cast body: the character card left, the stage-name block right */
+.dossier { display: grid; grid-template-columns: 380px 1fr; gap: 12px; }
+.dcard { position: relative; min-height: 560px; background: linear-gradient(170deg, color-mix(in srgb, var(--deck-character) 40%, var(--stage-panel)), var(--stage-panel) 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+.dcard .np { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 15%, transparent); border: 1px solid color-mix(in srgb, var(--deck-lorebook) 50%, transparent); padding: 3px 8px; }
+.dcard h3 { margin-top: 10px; font-family: var(--font-big); font-weight: 800; font-size: 24px; color: var(--stage-card); }
+.dcard p { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--stage-soft); }
+.fields { border: 2px solid color-mix(in srgb, var(--w) 55%, transparent); padding: 14px; display: flex; flex-direction: column; gap: 14px; align-self: start; }
+.fl { font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); margin-bottom: 6px; }
+.fv { background: var(--stage-row); border: 1px solid var(--stage-seam); padding: 10px 12px; font-size: 14px; color: var(--stage-mute); }
+.fv.set { color: var(--stage-card); font-weight: 700; font-size: 17px; background: none; border: 0; border-bottom: 1px solid var(--stage-seam); padding: 0 0 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.save { margin-top: 4px; padding: 12px; background: var(--w); color: var(--stage-black); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+/* Context body: nested tabs and the empty state */
+.empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--stage-text-dim); font-size: 14px; }
+.empty svg { width: 34px; height: 34px; color: var(--stage-warn); margin-bottom: 12px; }
+.empty small { display: block; margin-top: 10px; font-size: 11px; color: var(--stage-mute); }
+.ptitle .eb { font-size: .62rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+.ptitle h3 { margin-top: 6px; font-family: var(--font-fancy); font-weight: 700; font-size: 20px; font-variant: small-caps; color: var(--stage-card); }
+.ptitle p { margin-top: 6px; font-size: 12px; color: var(--w); }
+
+/* ---- phone (RC: rails hide below lg; collapsed edge handles take their place) ---- */
+.edge { display: none; position: absolute; top: 50%; width: 3px; height: 44px; transform: translateY(-50%); background: linear-gradient(transparent, var(--accent), transparent); z-index: 50; }
+.edge.l { left: 2px; } .edge.r { right: 2px; }
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; } .dock { display: none; }
+  .rail { display: none; } .edge { display: block; }
+  .scroll { left: 0; right: 0; padding: 60px 12px 110px; }
+  .sh { padding: 0 10px; } .sh .tag { display: none; } .sh .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+  .por { width: 88px; height: 118px; border-radius: 8px 0 0 8px; }
+  .msg.user .por { border-radius: 0 8px 8px 0; }
+  .spk { font-size: 15px; letter-spacing: 2px; }
+  .prose { font-size: 15px; line-height: 27px; font-weight: 500; }
+  .bub { padding: 12px 14px; }
+  .dockbar { padding: 12px; } .book { right: 110px; bottom: 100px; } .btw { right: 10px; bottom: 96px; width: 44px; height: 28px; font-size: 8px; letter-spacing: .15em; }
+  .fail { width: calc(100% - 24px); }
+  .wing-panel.l, .wing-panel.r { width: 100%; padding: 0; }
+  .dossier { grid-template-columns: 1fr; } .dcard { min-height: 280px; }
+  .scene.open-l .paused-mark, .scene.open-r .paused-mark { display: none; }
+}
+
+/* wireframe-only control strip (not part of the design) */
+.wf { position: fixed; left: 50%; top: 52px; transform: translateX(-50%); z-index: 999; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--stage-black); border: 1px dashed var(--stage-line); font-family: var(--font-mono); font-size: 10px; }
+.wf button { background: none; border: 1px solid var(--stage-seam); color: var(--stage-mute); padding: 3px 7px; cursor: pointer; font: inherit; }
+.wf button.on { color: var(--stage-card); border-color: var(--accent); }
+body.embed .wf { display: none; }
+.wf-note { bottom: 6.4rem; }
+.wf-chip { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 2rem); }
+/* a cut line left in place (option B): no RC equivalent, so it borrows RC's amber-notice shape in the danger tone */
+.stub { display: flex; align-items: center; gap: 12px; max-width: 1020px; margin: 0 0 24px; padding: 8px 12px; border-left: 4px solid var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-text) 8%, transparent); font: 14px/1.5rem var(--font-big); color: var(--stage-soft); }
+.stub svg { width: 14px; height: 14px; color: var(--stage-danger-text); flex: none; }
+.stub .grow { flex: 1; }
+.stub small { color: var(--stage-mute); font-size: 12px; }
+.stub button { padding: 4px 10px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 12px var(--font-big); text-transform: uppercase; cursor: pointer; }
+body[data-view="delb1"] .m1, body[data-view="delb2"] .m1, body[data-view="delb2"] .m2 { display: none !important; }
+body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-view="forkb"] .sh .branch .bn span { display: none; }
+.acts .more-wrap, .acts .del-wrap { position: relative; display: inline-flex; }
+.acts .on { background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .rc-menu { bottom: calc(100% + 8px); right: -40px; }
+.acts .rc-dd { left: auto; right: -6px; transform: none; }
+/* the menus sit inside the action bar; undo its 28px icon-button rule for their rows */
+.acts .rc-menu button, .acts .rc-dd button { width: 100%; height: auto; display: flex; place-items: initial; border-radius: 0; }
+.acts .rc-menu button { color: var(--stage-card); } .acts .rc-dd button { color: var(--stage-soft); } .acts .rc-dd button.red { color: var(--stage-danger-text); }
+.acts .rc-menu button svg, .acts .rc-dd button svg { width: 14px; height: 14px; }
+.rc-takes.at { top: 40px; left: 390px; }
+[data-o]:not(.show) { display: none !important; }
+
+
+/* ---- Prompting wing: RoleCall's PresetPanel (scene/wings/panels/PresetPanel.tsx) ----
+ * RoleCall tints the panel with --wing-accent (the preset's accent, else the wing's); here that is
+ * --w, the preset deck color. RC emerald switch -> --stage-ok; zinc-600 off -> --stage-line;
+ * role badges blue/green/purple -> --deck-persona / --stage-ok / --deck-lorebook. */
+.wing-panel.l .wbody.pp { gap: 0; padding: 0; }
+.pp > .hero { margin: 20px 20px 12px; }
+.hero-tools { margin-left: auto; display: flex; gap: 6px; align-self: flex-start; }
+.tbtn { width: 28px; height: 28px; display: grid; place-items: center; background: color-mix(in srgb, var(--stage-card) 5%, transparent); color: var(--stage-soft); cursor: pointer; border-radius: 2px; flex: none; }
+.tbtn:hover { background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tbtn.red:hover { background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.tbtn svg { width: 14px; height: 14px; }
+.hero.bad { --w: var(--stage-danger-text); }
+/* CollapsibleSamplerBar */
+.sbar { border-top: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); background: color-mix(in srgb, var(--stage-panel) 50%, transparent); }
+.sbar-row { display: flex; align-items: center; gap: 16px; padding: 8px 16px; font-size: .82rem; cursor: pointer; flex-wrap: wrap; }
+.sbar-row:hover { background: color-mix(in srgb, var(--stage-row) 30%, transparent); }
+.sbar .lbl { color: var(--stage-soft); }
+.qv { color: var(--stage-mute); white-space: nowrap; }
+.qv b { color: var(--c); font-weight: 600; margin-left: 4px; font-family: var(--font-mono); font-size: .78rem; }
+.ov { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--w); margin-left: 5px; vertical-align: 1px; }
+.sbar .chev { margin-left: auto; width: 16px; height: 16px; color: var(--stage-soft); }
+.sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 16px 16px; }
+.sl .slh { display: flex; align-items: baseline; gap: 8px; font-size: .78rem; color: var(--stage-soft); margin-bottom: 6px; }
+.sl .slh b { margin-left: auto; font-family: var(--font-mono); color: var(--stage-card); }
+.sl .reset { font-family: var(--font-mono); font-size: .7rem; color: var(--stage-mute); text-decoration: line-through; cursor: pointer; }
+.track { height: 4px; background: var(--stage-seam); border-radius: 2px; }
+.track i { display: block; height: 100%; background: var(--w); border-radius: 2px; }
+.sl small { display: block; margin-top: 6px; font-size: .7rem; color: var(--stage-mute); }
+.sel { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--stage-row); border: 1px solid var(--stage-seam); font-size: .8rem; color: var(--stage-card); }
+.sel svg { width: 14px; height: 14px; color: var(--stage-mute); }
+/* the split view */
+.split { flex: 1; min-height: 480px; display: flex; }
+.side { width: 240px; flex: none; display: flex; flex-direction: column; background: color-mix(in srgb, var(--stage-black) 90%, transparent); border-right: 1px solid color-mix(in srgb, var(--w) 30%, transparent); }
+.side-hd { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid var(--stage-seam); font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; color: var(--stage-soft); }
+.side-hd span + span { text-transform: none; letter-spacing: 0; color: var(--stage-text-dim); }
+.side-search { position: relative; padding: 6px 8px; border-bottom: 1px solid var(--stage-seam); }
+.side-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; color: var(--stage-soft); }
+.side-search .in { display: block; padding: 5px 8px 5px 26px; background: var(--stage-row); border: 1px solid var(--stage-seam); border-radius: 2px; font-size: .78rem; color: var(--stage-mute); }
+.side-search .in.typed { color: var(--stage-card); border-color: var(--w); }
+.cat { display: flex; align-items: center; gap: 6px; padding: 8px; font-size: .82rem; color: var(--stage-text-dim); border-bottom: 1px solid color-mix(in srgb, var(--stage-seam) 50%, transparent); cursor: pointer; }
+.cat.acc { color: color-mix(in srgb, var(--w) 80%, transparent); }
+.cat.mute { color: var(--stage-soft); padding-left: 10px; }
+.cat .cn { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat .cc { color: var(--stage-soft); }
+.cat .cv { width: 12px; height: 12px; flex: none; }
+.cat .cv.r { transform: rotate(-90deg); }
+/* category switch: 24x14, emerald all / accent some / grey none */
+.sw { position: relative; width: 24px; height: 14px; border-radius: 7px; background: var(--stage-line); flex: none; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--stage-white); }
+.sw.on { background: var(--stage-ok); } .sw.on::after { left: 12px; }
+.sw.some { background: var(--w); }
+/* MiniPromptItem: 32x16 switch, name + tokens or slot label, role badge; selected has an accent left edge */
+.pi { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-left: 2px solid transparent; cursor: pointer; }
+.pi:hover { background: color-mix(in srgb, var(--stage-row) 50%, transparent); }
+.pi.sel { border-left-color: var(--w); background: color-mix(in srgb, var(--w) 12%, transparent); }
+.pi.off { opacity: .5; }
+.tg { position: relative; width: 32px; height: 16px; border-radius: 8px; background: var(--stage-line); flex: none; }
+.tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--stage-white); }
+.tg.on { background: var(--stage-ok); } .tg.on::after { left: 18px; }
+.pn { flex: 1; min-width: 0; }
+.pn span { display: block; font-size: .82rem; color: var(--stage-text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pi.sel .pn span { color: var(--stage-white); }
+.pn small { display: block; font-size: .72rem; color: var(--stage-mute); }
+.pn small.mk { color: color-mix(in srgb, var(--deck-lorebook) 70%, transparent); }
+.role { font-size: .68rem; font-weight: 600; padding: 2px 5px; border-radius: 2px; flex: none; }
+.role.sys { background: color-mix(in srgb, var(--deck-persona) 20%, transparent); color: var(--deck-persona); }
+.role.usr { background: color-mix(in srgb, var(--stage-ok) 20%, transparent); color: var(--stage-ok); }
+.role.ast { background: color-mix(in srgb, var(--deck-lorebook) 20%, transparent); color: var(--deck-lorebook); }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; padding: 8px; border-top: 1px solid var(--stage-seam); font-size: .78rem; color: var(--stage-soft); }
+.side-foot b { margin-left: auto; font-family: var(--font-mono); color: var(--stage-card); font-weight: 500; }
+.info { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--stage-mute); display: grid; place-items: center; font-size: .6rem; color: var(--stage-mute); cursor: help; }
+.grip { width: 4px; flex: none; cursor: col-resize; background: transparent; }
+.grip:hover { background: color-mix(in srgb, var(--w) 40%, transparent); }
+/* PromptEditPane */
+.ed { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ed-empty { flex: 1; display: grid; place-items: center; font-size: .9rem; color: var(--stage-mute); }
+.ed-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 0 0 16px; }
+.ed-hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); }
+.ed-hd .nmx { flex: 1; font-size: .9rem; font-weight: 600; color: var(--stage-white); border-bottom: 1px solid transparent; }
+.ed-hd .tk { font-size: .78rem; color: var(--stage-soft); }
+.ed-meta { display: flex; gap: 6px; padding: 0 16px; flex-wrap: wrap; }
+.chip { padding: 3px 8px; font-size: .72rem; border: 1px solid color-mix(in srgb, var(--w) 40%, transparent); color: var(--w); background: color-mix(in srgb, var(--w) 8%, transparent); }
+.chip.dim { border-color: var(--stage-seam); color: var(--stage-mute); background: none; }
+.ta { margin: 0 16px; flex: 1; min-height: 220px; padding: 12px; background: color-mix(in srgb, var(--stage-black) 60%, transparent); border: 2px solid var(--stage-line); box-shadow: inset 2px 2px 0 0 color-mix(in srgb, var(--stage-black) 40%, transparent); font-family: var(--font-mono); font-size: .92rem; line-height: 1.55; color: var(--stage-card); white-space: pre-wrap; }
+.ta .caret { display: inline-block; width: 8px; height: 15px; background: var(--w); vertical-align: -2px; }
+body:has([data-s="editing"][style*="outline"]) .ta { border-color: var(--w); }
+.ed-note { margin: 0 16px; display: flex; gap: 8px; align-items: flex-start; font-size: .78rem; line-height: 1.5; color: var(--stage-mute); }
+.ed-note svg { width: 14px; height: 14px; color: var(--stage-ok); flex: none; margin-top: 2px; }
+/* PresetPicker */
+.picker { padding: 12px 20px 24px; display: flex; flex-direction: column; gap: 8px; }
+.picker .side-search { padding: 0 0 8px; border: 0; }
+.picker .side-search svg { left: 8px; top: 13px; transform: none; }
+.pk-hd { margin-top: 6px; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--stage-soft); }
+.pk-hd small { color: var(--stage-mute); font-weight: 400; }
+.pk { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); cursor: pointer; }
+.pk:hover { background: var(--stage-row); border-color: color-mix(in srgb, var(--w) 40%, transparent); }
+.pk b { display: block; font-size: .9rem; color: var(--stage-white); font-weight: 500; }
+.pk small { display: block; margin-top: 2px; font-size: .74rem; color: var(--stage-text-dim); }
+.pk-ic { width: 36px; height: 36px; flex: none; display: grid; place-items: center; font-family: var(--font-fancy); font-size: .8rem; color: var(--stage-black); background: var(--c); }
+.pk.none { border-style: dashed; }
+@media (max-width: 1023px) {
+  .split { flex-direction: column; } .side { width: 100%; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--w) 30%, transparent); }
+  .grip { display: none; } .sliders { grid-template-columns: 1fr; }
+  .pp > .hero { margin: 12px; padding: 16px; flex-wrap: wrap; } .pp > .hero > div { min-width: 0; flex: 1 1 200px; } .pp > .hero h2 { font-size: 1.5rem; }
+  .hero-tools { margin-left: 0; order: 3; }
+  .app { grid-template-columns: minmax(0, 1fr) !important; } .scene { min-width: 0; }
+  .wing-panel.l { overflow-x: hidden; } .wing-panel.l .wbody.pp { min-width: 0; } .split, .side, .ed { min-width: 0; max-width: 100%; }
+}
+
+.wf-chip { bottom: auto; top: 52px; left: auto; right: 96px; transform: none; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - min(1000px, 56vw) - 140px); }
+.wf-note { left: auto; right: 84px; bottom: 96px; max-width: min(28rem, calc(100vw - 1100px)); }
+@media (max-width: 900px) { .wf-chip, .wf-note { left: 8px; right: auto; max-width: calc(100vw - 16px); } }
+</style>
+<script>if (new URLSearchParams(location.search).get("embed")) document.documentElement.classList.add("wf-embed");</script>
+<style>.wf-embed .wf-chip, .wf-embed .wf-chip2, .wf-embed .wf-note, .wf-embed .wf { display: none !important; }</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2z"/><path d="M6 11c1.5 0 2.5.5 3 2"/><path d="M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+    <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.570a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.020.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.020a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M2 8h5M2 16h5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 14 9-14 9V3z"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+
+    <symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2L7 14.2 2 9.3l6.9-1z"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn">Lb</div><div class="app-btn on">Sc</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn" data-theme-switch title="Paper or stage">St</div></nav>
+
+  <main class="scene paused open-l" id="scene">
+    <div class="play">
+      <div class="bgm"></div>
+      <header class="sh">
+        <span class="back"><svg width="16" height="16"><use href="#i-back"/></svg></span>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+        <span class="branch"><svg width="14" height="14"><use href="#i-film"/></svg><span class="bn"><span>Director's Cut</span></span><svg width="12" height="12"><use href="#i-down"/></svg></span>
+        <span class="grow"></span><span class="live"></span><span class="gear"><svg width="15" height="15"><use href="#i-gear"/></svg></span>
+      </header>
+      <div class="scroll">
+        <div class="msg char" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body"><span class="badge">#1</span><div class="spk">Marguerite Vane</div>
+            <div class="bub"><div class="prose"><p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em></p></div></div></div>
+        </div>
+      </div>
+      <div class="dockbar"><div class="cap"><span class="plus"><svg><use href="#i-plus"/></svg></span><span class="ta">Message Marguerite Vane...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div>
+    </div>
+
+    <nav class="rail l" aria-label="Scene wings">
+      <div class="wi" style="--w: var(--accent)"><svg><use href="#i-zap"/></svg></div>
+      <div class="wi" style="--w: var(--deck-character)"><svg><use href="#i-mask"/></svg></div>
+      <div class="wi on" style="--w: var(--deck-preset)"><svg><use href="#i-wand"/></svg><div class="tip"><b>Prompting</b><span>The preset: its prompts, samplers, and switches for this scene</span></div></div>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <div class="wi" style="--w: var(--stage-var)"><svg><use href="#i-cpu"/></svg></div>
+      <div class="wi" style="--w: var(--stage-warn)"><svg><use href="#i-eye"/></svg></div>
+    </nav>
+    <div class="paused-mark"><div class="sq"><svg><use href="#i-pause"/></svg></div><small>SCENE PAUSED</small></div>
+
+    <!-- The Prompting wing: RoleCall's left-prompting group, its Preset tab (PresetPanel.tsx) -->
+    <section class="wing-panel l show" style="--w: var(--deck-preset)">
+      <nav class="fold">
+        <div class="crumb">Prompting <i>/</i> <b>Preset</b></div>
+        <div class="tabs"><button class="on"><b>Preset</b><small data-only="ready bar editing search phone">14 of 22 on</small><small data-only="none gone">None chosen</small></button></div>
+      </nav>
+      <div class="wbody pp">
+
+        <!-- Hero: RoleCall's WingHero, per state -->
+        <header class="hero" data-only="ready bar editing search phone"><span class="hi"><svg><use href="#i-wand"/></svg></span><div><div class="eb">Edit Preset</div><h2>Velvet <em>Quill</em></h2><p>Tune prompts, samplers, and post-processing for this scene. Switches and samplers here are this scene's own; prompt text edits change the preset everywhere.</p></div>
+          <div class="hero-tools"><span class="tbtn" title="Open in Workbench"><svg><use href="#i-pen"/></svg></span><span class="tbtn" title="Switch preset"><svg><use href="#i-book"/></svg></span><span class="tbtn red" title="Run without a preset"><svg><use href="#i-trash"/></svg></span></div>
+        </header>
+        <header class="hero" data-only="none"><span class="hi"><svg><use href="#i-wand"/></svg></span><div><div class="eb">Select Preset</div><h2>Choose a <em>Preset</em></h2><p>Pick a recipe from your library to load prompts and sampler defaults for this scene. Without one, the scene sends the card, persona, and history in RoleCall's default order.</p></div></header>
+        <header class="hero bad" data-only="gone"><span class="hi"><svg><use href="#i-alert"/></svg></span><div><div class="eb">Preset Error</div><h2>Preset <em>Unavailable</em></h2><p>This scene's preset is no longer in your library. Choose another, or restore it from the Trash.</p></div></header>
+
+        <!-- Quick sampler bar: RoleCall's CollapsibleSamplerBar -->
+        <div class="sbar" data-only="ready bar editing search">
+          <div class="sbar-row"><span class="lbl">Samplers:</span>
+            <span class="qv" style="--c: var(--deck-regex)">Temp <b>0.85</b><i class="ov" title="This scene's own value"></i></span>
+            <span class="qv" style="--c: var(--deck-persona)">Top P <b>0.95</b></span>
+            <span class="qv" style="--c: var(--stage-ok)">Top K <b>40</b></span>
+            <span class="qv" style="--c: var(--deck-lorebook)">Response <b>1,200</b></span>
+            <span class="qv" style="--c: var(--stage-warn)">Context <b>32k</b></span>
+            <span class="qv" style="--c: var(--stage-text-dim)">Merge <b>none</b></span>
+            <svg class="chev"><use href="#i-down"/></svg></div>
+          <div class="sliders" data-only="bar">
+            <div class="sl"><div class="slh"><span>Temperature</span><b>0.85</b><span class="reset" title="Back to the preset's 1.00">1.00</span></div><div class="track"><i style="width: 42%"></i></div></div>
+            <div class="sl"><div class="slh"><span>Top P</span><b>0.95</b></div><div class="track"><i style="width: 95%"></i></div></div>
+            <div class="sl"><div class="slh"><span>Top K</span><b>40</b></div><div class="track"><i style="width: 20%"></i></div></div>
+            <div class="sl"><div class="slh"><span>Response tokens</span><b>1,200</b></div><div class="track"><i style="width: 15%"></i></div></div>
+            <div class="sl"><div class="slh"><span>Context tokens</span><b>32,000</b></div><div class="track"><i style="width: 100%"></i></div><small>Capped at this model's window (32,000).</small></div>
+            <div class="sl"><div class="slh"><span>Message merging</span></div><div class="sel">None (send as built) <svg><use href="#i-down"/></svg></div></div>
+          </div>
+        </div>
+
+        <!-- Split view: prompt list left, editor right -->
+        <div class="split" data-only="ready bar editing search phone">
+          <aside class="side">
+            <div class="side-hd"><span>Prompts</span><span>14/22</span></div>
+            <div class="side-search"><svg><use href="#i-search"/></svg><span class="in" data-only="ready bar editing phone">Search prompts...</span><span class="in typed" data-only="search">jail</span></div>
+
+            <div data-only="search">
+              <div class="cat"><span class="sw on"></span><svg class="cv"><use href="#i-down"/></svg><span class="cn">Uncategorized</span><span class="cc">1/1</span></div>
+              <div class="pi"><span class="tg on"></span><div class="pn"><span>Jailbreak</span><small>~180 tok</small></div><span class="role sys">SYS</span></div>
+            </div>
+
+            <div data-only="ready bar editing phone">
+              <div class="cat"><span class="sw on"></span><svg class="cv"><use href="#i-down"/></svg><span class="cn">Uncategorized</span><span class="cc">3/3</span></div>
+              <div class="pi"><span class="tg on"></span><div class="pn"><span>Main Prompt</span><small>~420 tok</small></div><span class="role sys">SYS</span></div>
+              <div class="pi"><span class="tg on"></span><div class="pn"><span>Chat History</span><small class="mk">Chat history slot</small></div><span class="role sys">SYS</span></div>
+              <div class="pi"><span class="tg on"></span><div class="pn"><span>Jailbreak</span><small>~180 tok</small></div><span class="role sys">SYS</span></div>
+
+              <div class="cat acc"><span class="sw some"></span><svg class="cv"><use href="#i-down"/></svg><span class="cn">Style</span><span class="cc">2/4</span></div>
+              <div class="pi sel"><span class="tg on"></span><div class="pn"><span>Prose: literary <i class="ov" title="This scene's own switch"></i></span><small>~210 tok</small></div><span class="role sys">SYS</span></div>
+              <div class="pi off"><span class="tg"></span><div class="pn"><span>Prose: punchy</span><small>~150 tok</small></div><span class="role sys">SYS</span></div>
+              <div class="pi"><span class="tg on"></span><div class="pn"><span>Dialogue in quotes</span><small>~40 tok</small></div><span class="role usr">USR</span></div>
+              <div class="pi off"><span class="tg"></span><div class="pn"><span>Second person</span><small>~60 tok</small></div><span class="role sys">SYS</span></div>
+
+              <div class="cat acc"><span class="sw on"></span><svg class="cv r"><use href="#i-down"/></svg><span class="cn">Character</span><span class="cc">5/5</span></div>
+              <div class="cat acc"><span class="sw"></span><svg class="cv r"><use href="#i-down"/></svg><span class="cn">NSFW</span><span class="cc">0/6</span></div>
+              <div class="cat acc"><span class="sw on"></span><svg class="cv r"><use href="#i-down"/></svg><span class="cn">Reminders</span><span class="cc">4/4</span></div>
+
+              <div class="cat mute"><svg class="cv r"><use href="#i-down"/></svg><span class="cn">Templates</span></div>
+              <div class="cat mute"><svg class="cv r"><use href="#i-down"/></svg><span class="cn">Behavior</span></div>
+            </div>
+            <div class="side-foot"><span>Active Prompts</span><b>~3,420 tok</b><span class="info" title="Estimate from the raw prompt text. Macros, slots, chat history, and lore are not included; the trace shows what each send really cost.">?</span></div>
+          </aside>
+          <div class="grip" title="Resize prompt list"></div>
+
+          <section class="ed">
+            <div class="ed-empty" data-only="ready search">Select a prompt to edit</div>
+            <div class="ed-body" data-only="bar editing phone">
+              <div class="ed-hd"><span class="nmx">Prose: literary</span><span class="tk">~210 tok</span><span class="tbtn" title="Fullscreen"><svg><use href="#i-plus"/></svg></span></div>
+              <div class="ed-meta"><span class="chip">System</span><span class="chip">Before the history</span><span class="chip dim">Order 100</span></div>
+              <div class="ta">Write in a literary register. Favor concrete sensory detail over summary, let silences carry weight, and keep {{char}}'s voice consistent with the examples.<span class="caret" data-only="editing"></span></div>
+              <div class="ed-note" data-only="editing"><svg><use href="#i-check"/></svg> Saved to Velvet Quill. Every scene using this preset sends the new text from its next turn.</div>
+              <div class="ed-note" data-only="bar phone">Prompt text belongs to the preset: an edit here changes it for every scene that uses it. The switch beside it is this scene's alone.</div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Picker: RoleCall's PresetPicker, library only (Bunraku has no Plotlight) -->
+        <div class="picker" data-only="none gone">
+          <div class="side-search"><svg><use href="#i-search"/></svg><span class="in">Search my library...</span></div>
+          <div class="pk-hd">My Library <small>(4)</small></div>
+          <div class="pk"><span class="pk-ic" style="--c: var(--deck-preset)">VQ</span><div><b>Velvet Quill</b><small>22 prompts · literary prose</small></div></div>
+          <div class="pk"><span class="pk-ic" style="--c: var(--deck-regex)">MP</span><div><b>Minimal Pulse</b><small>6 prompts · imported from SillyTavern</small></div></div>
+          <div class="pk"><span class="pk-ic" style="--c: var(--deck-lorebook)">LG</span><div><b>Long Game</b><small>31 prompts · slow burn</small></div></div>
+          <div class="pk"><span class="pk-ic" style="--c: var(--deck-persona)">NS</span><div><b>Night Shift</b><small>12 prompts · horror</small></div></div>
+          <div class="pk none"><div><b>No preset</b><small>RoleCall's default order: card, persona, history</small></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-chip" id="wf">
+  <span>Preset wing</span><button data-s="ready">Loaded</button><button data-s="bar">Samplers open</button><button data-s="editing">Editing text</button><button data-s="search">Search</button><button data-s="none">No preset</button><button data-s="gone">Preset gone</button>
+  <button data-theme-switch>Theme</button><a href="../index.html">All</a>
+</div>
+<div class="wf-note"><b>RoleCall's own Preset tab (PresetPanel), part for part:</b> the Edit Preset hero with switch and clear, the collapsible sampler bar (Temp, Top P, Top K, Response, Context, merging), then the split view: prompt list with category switches, counts, SYS/USR/AST badges and slot labels, a resize grip, and the editor on the right. <b>Owner's call (2026-09-28): the scene follows its library preset.</b> Switches and sampler values set here are this scene's own (a dot marks them, and each sampler resets to the preset's value); prompt text edits save to the preset in the library, like RoleCall. <b>What changes for Bunraku:</b> the picker lists your library only (no Plotlight); "Open in Workbench" jumps to the full editor for categories, templates, and import; RoleCall's per-chat diff bar ("Changes from original", "Save as new version") is left out because edits already land in the preset. <b>Context</b> may shrink below the model's window, never above it. <b>Left out:</b> RoleCall's Guides and Scene Note tabs, which come later; no empty tabs.</div>
+
+<script>
+(function () {
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.style.display = el.getAttribute("data-only").split(" ").indexOf(s) >= 0 ? "" : "none"; });
+    document.body.classList.toggle("phone", s === "phone");
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.style.outline = b.getAttribute("data-s") === s ? "2px solid var(--accent)" : ""; });
+  }
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s")); });
+  set(new URLSearchParams(location.search).get("state") || "ready");
+})();
+</script>
+</body>
+</html>

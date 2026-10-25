@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Quick-reply editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="quickreply.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Quick-reply editor</h1>
+    <p>The quick-reply editor: an ordered list of labeled messages, each with a button label, hover title, hidden state, and message or slash-command text.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="quickreply.editor">
+    <header>
+      <h2 class="bk-heading">Quick-reply editor</h2>
+      <span class="bk-tag">QuickReplyEditor (no soft wireframe; built from ui.md)</span>
+      <p class="bk-meta">Parts: quickreply.editor, quickreply.row, editor.toc, editor.save</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="quickreply.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Ordered list</h3>
+          <p>Labeled messages as rows, reorder by the grip, edit label and text inline.</p></header>
+        <div class="spec-screen qr-screen" data-state="loaded">
+<div class="qr-app" data-part="shell.app">
+  <header class="qr-hud" data-part="shell.hud">
+    <div class="qr-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="qr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="qr-hud-mid">
+      <div class="qr-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="qr-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="qr-body">
+    <nav class="qr-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="qr-dock-brand" data-part="shell.dock.brand">
+        <svg class="qr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="qr-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="qr-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="qr-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="qr-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="qr-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="qr-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="qr-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="qr-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="qr-dock-app qr-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="qr-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="qr-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="qr-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="qr-stage bk-stage" data-part="shell.stage">
+
+        <header class="qr-phead">
+          <span class="bk-tag" data-deck="pack"><b>QR</b></span>
+          <label class="qr-namefield"><span class="bk-label">Set name</span><input class="qr-input" value="Scene starters"></label>
+          <span class="qr-dirtymark bk-dot" data-tone="warn" title="unsaved changes"></span>
+          <button type="button" class="bk-item qr-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="qr-listwrap" data-part="quickreply.editor">
+          <div class="qr-list" data-part="editor.toc">
+          <div class="bk-item qr-row" aria-selected="true" data-part="quickreply.row">
+            <span class="qr-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <span class="qr-n bk-num">1</span>
+            <span class="qr-rowtext">
+              <span class="bk-name">Knock</span>
+              <span class="bk-meta">Knock on the door</span>
+              <span class="bk-meta qr-msg">You knock twice and wait.</span>
+            </span>
+            
+            <button type="button" class="bk-item qr-rowdel" aria-label="Remove Knock">&times;</button>
+          </div>
+          <div class="bk-item qr-row" data-part="quickreply.row">
+            <span class="qr-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <span class="qr-n bk-num">2</span>
+            <span class="qr-rowtext">
+              <span class="bk-name">Look around</span>
+              <span class="bk-meta">Take in the room</span>
+              <span class="bk-meta qr-msg">*looks around the room slowly*</span>
+            </span>
+            
+            <button type="button" class="bk-item qr-rowdel" aria-label="Remove Look around">&times;</button>
+          </div>
+          <div class="bk-item qr-row" data-part="quickreply.row">
+            <span class="qr-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <span class="qr-n bk-num">3</span>
+            <span class="qr-rowtext">
+              <span class="bk-name">Leave</span>
+              <span class="bk-meta">Step away</span>
+              <span class="bk-meta qr-msg">/cut</span>
+            </span>
+            
+            <button type="button" class="bk-item qr-rowdel" aria-label="Remove Leave">&times;</button>
+          </div>
+          <div class="bk-item qr-row" data-part="quickreply.row">
+            <span class="qr-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <span class="qr-n bk-num">4</span>
+            <span class="qr-rowtext">
+              <span class="bk-name">Ask about the storm</span>
+              <span class="bk-meta">Bring up the weather</span>
+              <span class="bk-meta qr-msg">Has the storm reached the coast yet?</span>
+            </span>
+            
+            <button type="button" class="bk-item qr-rowdel" aria-label="Remove Ask about the storm">&times;</button>
+          </div>
+          <div class="bk-item qr-row" data-part="quickreply.row">
+            <span class="qr-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <span class="qr-n bk-num">5</span>
+            <span class="qr-rowtext">
+              <span class="bk-name">Hidden draft</span>
+              <span class="bk-meta">Not shown to the cast</span>
+              <span class="bk-meta qr-msg">Still being written.</span>
+            </span>
+            <span class="bk-tag" data-tone="warn">hidden</span>
+            <button type="button" class="bk-item qr-rowdel" aria-label="Remove Hidden draft">&times;</button>
+          </div>
+            <button type="button" class="bk-item qr-addrow">+ New reply</button>
+          </div>
+        </div>
+        <div class="qr-empty" data-part="ui.empty">
+          <p class="bk-label">Scene starters</p>
+          <h3 class="bk-heading">No replies yet</h3>
+          <p class="bk-meta">Add one to give the cast a one-click line.</p>
+          <button type="button" class="bk-item qr-btn" style="margin-top:var(--bk-space-3)">+ New reply</button>
+        </div>    </main>
+  </div>
+  <footer class="qr-status" data-part="shell.status">
+    <span class="qr-status-item" data-part="shell.status.item">Scene starters · quick replies</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Ordered list">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Loaded</button>
+          <button type="button" class="spec-chip" data-set-state="reordering">Reordering</button>
+          <button type="button" class="spec-chip" data-set-state="dirty">Dirty, unsaved</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="quickreply.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Hotbar</h3>
+          <p>Replies as numbered slots (1 to 9) like an action bar; the selected one edits below.</p></header>
+        <div class="spec-screen qr-screen" data-state="loaded">
+<div class="qr-app" data-part="shell.app">
+  <header class="qr-hud" data-part="shell.hud">
+    <div class="qr-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="qr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="qr-hud-mid">
+      <div class="qr-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="qr-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="qr-body">
+    <nav class="qr-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="qr-dock-brand" data-part="shell.dock.brand">
+        <svg class="qr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="qr-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="qr-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="qr-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="qr-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="qr-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="qr-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="qr-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="qr-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="qr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="qr-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="qr-dock-app qr-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="qr-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="qr-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="qr-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="qr-stage bk-stage" data-part="shell.stage">
+
+        <header class="qr-phead">
+          <span class="bk-tag" data-deck="pack"><b>QR</b></span>
+          <label class="qr-namefield"><span class="bk-label">Set name</span><input class="qr-input" value="Scene starters"></label>
+          <span class="qr-dirtymark bk-dot" data-tone="warn" title="unsaved changes"></span>
+          <button type="button" class="bk-item qr-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="qr-hotbarwrap" data-part="quickreply.editor">
+          <div class="qr-hotbar" data-part="editor.toc">
+          <button type="button" class="bk-item qr-slot" aria-selected="true" data-part="quickreply.row">
+            <span class="qr-n bk-num">1</span>
+            <span class="bk-name">Knock</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-part="quickreply.row">
+            <span class="qr-n bk-num">2</span>
+            <span class="bk-name">Look around</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-part="quickreply.row">
+            <span class="qr-n bk-num">3</span>
+            <span class="bk-name">Leave</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-part="quickreply.row">
+            <span class="qr-n bk-num">4</span>
+            <span class="bk-name">Ask about the storm</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-part="quickreply.row">
+            <span class="qr-n bk-num">5</span>
+            <span class="bk-name">Hidden draft</span>
+            <span class="bk-dot" data-tone="warn" title="hidden"></span>
+          </button>
+          <button type="button" class="bk-item qr-slot" data-empty="true" data-part="quickreply.row">
+            <span class="qr-n bk-num">6</span>
+            <span class="bk-name">Empty slot</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-empty="true" data-part="quickreply.row">
+            <span class="qr-n bk-num">7</span>
+            <span class="bk-name">Empty slot</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-empty="true" data-part="quickreply.row">
+            <span class="qr-n bk-num">8</span>
+            <span class="bk-name">Empty slot</span>
+            
+          </button>
+          <button type="button" class="bk-item qr-slot" data-empty="true" data-part="quickreply.row">
+            <span class="qr-n bk-num">9</span>
+            <span class="bk-name">Empty slot</span>
+            
+          </button>
+          </div>
+          <section class="bk-panel bk-frame qr-editor" data-deck="pack" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Knock</h4><span class="bk-meta">slot 1</span></div>
+            <div class="bk-panel__body">
+              <label class="qr-field"><span class="bk-label">Button label</span><input class="qr-input" value="Knock"></label>
+              <label class="qr-field"><span class="bk-label">Hover title</span><input class="qr-input" value="Knock on the door"></label>
+              <label class="qr-field"><span class="bk-label">Message or slash command</span><textarea class="qr-input qr-textarea">You knock twice and wait.</textarea></label>
+              <label class="qr-check"><input type="checkbox">Hidden from the cast</label>
+            </div>
+          </section>
+        </div>
+        <div class="qr-empty" data-part="ui.empty">
+          <p class="bk-label">Scene starters</p>
+          <h3 class="bk-heading">No replies yet</h3>
+          <p class="bk-meta">Add one to give the cast a one-click line.</p>
+          <button type="button" class="bk-item qr-btn" style="margin-top:var(--bk-space-3)">+ New reply</button>
+        </div>    </main>
+  </div>
+  <footer class="qr-status" data-part="shell.status">
+    <span class="qr-status-item" data-part="shell.status.item">Scene starters · quick replies</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Hotbar">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Loaded</button>
+          <button type="button" class="spec-chip" data-set-state="reordering">Reordering</button>
+          <button type="button" class="spec-chip" data-set-state="dirty">Dirty, unsaved</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> New: no soft wireframe exists for this editor (BUILD-BRIEF says so); content is built from ui.md "Quick-reply editor" (set name, ordered labeled messages, add/remove/reorder, label, hover title, hidden state, message or slash-command text, explicit save with a dirty guard). Carried from the editor family’s shared grammar: the drag grip, numbered rows, hidden tag, and Save-only header used by the other Workbench editors. Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

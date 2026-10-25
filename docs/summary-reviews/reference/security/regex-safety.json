@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/regex-safety",
+  "sourcePath": "docs/reference/security/regex-safety.md",
+  "sourceHash": "sha256:db33c9f61b196931c6864bdf3b9e7acf0cd724ae7d65c5f25d4b05a0071eeba5",
+  "semanticSummaryHash": "sha256:ae62fa704982ec6716efe7b44fc4582817624f5b58a125ff647ad5c95c280dfe",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:14.451Z"
+}

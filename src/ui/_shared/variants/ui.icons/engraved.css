@@ -1,0 +1,5 @@
+/** ui.icons engraved: a fine stroke with a one-pixel cut shadow underneath, like a plate engraving. */
+html[data-surface-ui-icons="engraved"] :is(svg[data-ic], .ico svg, .mk svg):not(.host-protected, .host-protected *) {
+  stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 1px 0 var(--bk-surface-ink));
+}

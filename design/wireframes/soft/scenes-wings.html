@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenes: every wing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Every scene wing (scene-wings.tsx, scene-preset-wing.tsx + scene-preset-parts.tsx, scene-lore-wing.tsx
+ * + scene-lore-parts.tsx + scene-lore-entry.tsx, props/props-wing.tsx, scene-ai-wing.tsx), restyled in
+ * the soft identity. Control Booth and Stage open empty on purpose; Cast shows the frozen cast, not an editor (that dossier-edit form lives only in
+ * the retired rc-port wireframe); Context is a quiet placeholder until the prompt viewer exists. World
+ * is Lorebook tab version B (source badges + Last turn). Props shows TrackHare, the one registered prop.
+ */
+* { border-radius: 0 !important; }
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+body { container-type: inline-size; }
+#app { display: flex; min-height: 100vh; background: var(--canvas); }
+
+.stage { position: relative; flex: 1; min-width: 0; min-height: 100vh; overflow: hidden; background: var(--stage-well); }
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.stage.paused .play { filter: blur(5px); pointer-events: none; }
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 56px; z-index: 20; display: flex; align-items: center; gap: 10px; padding: 0 18px; background: var(--stage-well); box-shadow: inset 0 -1px 0 var(--seam); }
+.sh .back { width: 32px; height: 32px; flex: none; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); }
+.sh .back svg { width: 18px; height: 18px; }
+.sh .nm { font: 600 15px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.sh .tag { font: italic 400 12px var(--font-body); color: var(--text-soft); }
+.scroll { position: absolute; top: 56px; bottom: 0; left: 60px; right: 60px; padding: 90px 48px; overflow: hidden; }
+.msg { display: flex; gap: 14px; max-width: 46rem; margin: 0 auto; }
+.por { flex: none; width: 108px; height: 148px; background: linear-gradient(165deg, color-mix(in srgb, var(--deck-character) 45%, var(--face)), var(--face) 85%); box-shadow: 0 0 0 1px var(--edge); display: grid; place-items: center; }
+.por .ini { font: italic 600 26px var(--font-fancy); color: color-mix(in srgb, var(--text) 55%, transparent); }
+.body .spk { font: 600 15px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--deck-character); margin-bottom: 6px; }
+.bub { background: var(--face); box-shadow: 0 0 0 1px var(--edge); padding: 12px 16px; }
+.prose { font: 400 15px/1.65 var(--font-body); color: var(--text); }
+.prose q { color: var(--deck-character); quotes: '"' '"'; } .prose em { color: var(--text-soft); font-style: italic; }
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 48px; }
+.cap { max-width: 880px; margin: 0 auto; display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.cap span.ta { flex: 1; color: var(--text-faint); font: 400 14px var(--font-body); }
+.cap .send { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text-dim); }
+.cap .send svg { width: 15px; height: 15px; }
+
+/* ---- rails ---- */
+.rail { position: absolute; top: 56px; bottom: 0; width: 60px; z-index: 15; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 20px 0; background: var(--chrome); }
+.rail.l { left: 0; box-shadow: inset -1px 0 0 var(--seam); } .rail.r { right: 0; box-shadow: inset 1px 0 0 var(--seam); }
+.wi { position: relative; width: 38px; height: 38px; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); cursor: pointer; box-shadow: inset 3px 0 0 transparent; }
+.rail.r .wi { box-shadow: inset -3px 0 0 transparent; }
+.wi svg { width: 19px; height: 19px; }
+.wi.on { color: var(--w); background: color-mix(in srgb, var(--w) 16%, transparent); box-shadow: inset 3px 0 0 var(--w); }
+.rail.r .wi.on { box-shadow: inset -3px 0 0 var(--w); }
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 18; display: none; text-align: center; background: none; border: 0; cursor: pointer; color: var(--text); }
+.stage.paused .paused-mark { display: block; }
+.paused-mark .sq { width: 52px; height: 52px; margin: 0 auto; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 12%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); color: var(--accent); }
+.paused-mark .sq svg { width: 22px; height: 22px; }
+.paused-mark small { display: block; margin-top: 12px; font: 500 12px var(--font-mono); letter-spacing: .1em; color: var(--accent); }
+
+/* ---- the wing panel itself ---- */
+.wing-panel { position: absolute; top: 0; bottom: 0; z-index: 25; display: none; flex-direction: column; background: var(--stage-well); }
+.wing-panel.l { left: 0; width: min(1040px, 62%); box-shadow: inset -1px 0 0 var(--seam); }
+.wing-panel.r { right: 0; width: min(760px, 46%); box-shadow: inset 1px 0 0 var(--seam); }
+.wing-panel.show { display: flex; }
+.fold { position: sticky; top: 0; z-index: 3; padding: 14px 60px 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); background: color-mix(in srgb, var(--stage-well) 96%, transparent); }
+.wing-panel.l .fold { padding-left: 76px; }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.crumb b { color: var(--text); font-weight: 600; } .crumb i { font-style: normal; color: var(--text-faint); }
+.tabs { display: flex; gap: 6px; }
+.tabs button { flex: 1; min-width: 0; text-align: left; padding: 7px 12px; box-shadow: inset 0 0 0 1px var(--edge); background: none; color: var(--text-dim); font: 500 13px var(--font-body); cursor: pointer; }
+.tabs button.on { box-shadow: inset 0 0 0 1px var(--w); background: color-mix(in srgb, var(--w) 10%, transparent); color: var(--text); }
+.tabs small { display: block; margin-top: 2px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; opacity: .7; }
+.wbody { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+.wing-panel.l .wbody { padding-left: 76px; }
+
+.hero { background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--w); padding: 20px; display: flex; gap: 14px; align-items: flex-start; }
+.hero.bad { border-top-color: var(--stage-danger-text); }
+.hero .hi { width: 42px; height: 42px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--w) 16%, transparent); color: var(--w); }
+.hero.bad .hi { background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.hero-tools { margin-left: auto; display: flex; gap: 6px; flex: none; }
+.hero .eb { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--w); }
+.hero h2 { margin-top: 6px; font: 600 22px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.hero h2 em { font-style: normal; color: var(--w); }
+.hero p { margin-top: 8px; max-width: 42rem; font: 400 13px/1.6 var(--font-body); color: var(--text-soft); }
+.tbtn { width: 30px; height: 30px; display: grid; place-items: center; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text-dim); cursor: pointer; }
+.tbtn.red:hover { color: var(--stage-danger-text); }
+.tbtn svg { width: 14px; height: 14px; }
+
+.notice { padding: 10px 14px; box-shadow: inset 3px 0 0 var(--stage-warn); background: color-mix(in srgb, var(--stage-warn) 8%, transparent); font: 400 13px var(--font-body); color: var(--text); display: flex; align-items: center; gap: 10px; }
+.notice.gone { box-shadow: inset 3px 0 0 var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-text) 8%, transparent); }
+.notice .grow { flex: 1; }
+.notice button { padding: 5px 12px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); font: 600 12px var(--font-body); cursor: pointer; }
+.upd { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin-bottom: 10px; background: color-mix(in srgb, var(--stage-warn) 14%, transparent); color: var(--stage-warn); font: 600 12px var(--font-body); border: 0; cursor: pointer; }
+.upd svg { width: 11px; height: 11px; }
+
+/* Cast */
+.dcard { position: relative; padding: 20px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--deck-character); }
+.dcard.persona { border-top-color: var(--deck-persona); }
+.dcard .np { font: 500 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.dcard h3 { margin-top: 6px; font: 600 20px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); }
+.dcard p { margin-top: 6px; font: 400 13px/1.5 var(--font-body); color: var(--text-soft); }
+
+/* empty/quiet states */
+.quiet { flex: 1; display: grid; place-items: center; text-align: center; color: var(--text-dim); font: 400 14px var(--font-body); }
+.quiet svg { width: 30px; height: 30px; color: var(--w); margin-bottom: 10px; }
+.quiet small { display: block; margin-top: 8px; font-size: 12px; color: var(--text-faint); }
+
+/* Preset & Lorebook: sampler bar, split view, entries pane, editor */
+.sbar { background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.sbar-row { width: 100%; display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: none; border: 0; cursor: pointer; flex-wrap: wrap; }
+.lbl { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.qv { font: 500 12px var(--font-body); color: var(--c); display: flex; align-items: center; gap: 4px; }
+.qv b { font-weight: 700; }
+.qv .ov { width: 5px; height: 5px; background: var(--c); }
+.chev { margin-left: auto; width: 14px; height: 14px; color: var(--text-dim); }
+.sliders { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 12px; box-shadow: inset 0 1px 0 var(--seam); }
+.sl { padding-top: 12px; }
+.slh { display: flex; align-items: center; gap: 8px; font: 500 12px var(--font-body); color: var(--text); margin-bottom: 6px; }
+.slh b { color: var(--text-dim); font-weight: 600; }
+.slh .reset { margin-left: auto; font: 500 12px var(--font-mono); color: var(--accent); background: none; border: 0; cursor: pointer; }
+.slh small { flex: none; }
+.track2 { height: 4px; background: var(--stage-line); position: relative; }
+.track2 i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.sl select { width: 100%; padding: 7px 10px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 400 13px var(--font-body); }
+.sl small { display: block; margin-top: 4px; color: var(--text-dim); font-size: 12px; }
+
+.split { flex: 1; min-height: 0; display: flex; gap: 0; }
+.side2 { width: 320px; flex: none; display: flex; flex-direction: column; background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.side-hd { display: flex; justify-content: space-between; padding: 10px 14px; box-shadow: inset 0 -1px 0 var(--seam); font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+.side-search { display: flex; align-items: center; gap: 8px; margin: 10px 14px; padding: 7px 10px; box-shadow: inset 0 0 0 1px var(--seam); }
+.side-search svg { width: 13px; height: 13px; color: var(--text-dim); flex: none; }
+.side-search input { flex: 1; background: none; border: 0; color: var(--text); font: 400 13px var(--font-body); }
+.side-list { flex: 1; overflow-y: auto; padding: 0 0 10px; }
+.cat, .grp { display: flex; align-items: center; gap: 8px; padding: 8px 14px; }
+.cat .sw { width: 13px; height: 13px; box-shadow: inset 0 0 0 1px var(--edge); background: none; border: 0; cursor: pointer; }
+.cat .sw.on { background: var(--accent); box-shadow: none; }
+.cat .sw.some { background: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: none; }
+.cn { font: 600 12px var(--font-body); letter-spacing: .04em; text-transform: uppercase; color: var(--text-dim); }
+.cc, .cnt { margin-left: auto; font: 500 12px var(--font-mono); color: var(--text-faint); }
+.cv { width: 12px; height: 12px; color: var(--text-dim); }
+.pi, .en { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 30px; cursor: pointer; }
+.pi:hover, .en:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
+.pi.sel, .en.sel { background: color-mix(in srgb, var(--accent) 8%, transparent); box-shadow: inset 3px 0 0 var(--accent); }
+.pi.off, .en.off { opacity: .5; }
+.tg { width: 30px; height: 17px; flex: none; background: var(--stage-line); border: 0; cursor: pointer; position: relative; }
+.tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 13px; height: 13px; background: var(--stage-card); }
+.tg.on { background: var(--accent); } .tg.on::after { left: 15px; background: var(--stage-ink); }
+.pn { flex: 1; min-width: 0; }
+.pn span { display: block; font: 400 13px var(--font-body); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pn small { display: block; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.pn .ov { display: inline-block; width: 4px; height: 4px; margin-left: 4px; background: var(--accent); }
+.role { flex: none; font: 600 9px var(--font-mono); padding: 2px 5px; color: var(--text-dim); box-shadow: inset 0 0 0 1px var(--edge); }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 10px 14px; box-shadow: inset 0 1px 0 var(--seam); font: 500 12px var(--font-body); color: var(--text-dim); }
+.side-foot b { color: var(--text); }
+.info { width: 14px; height: 14px; display: grid; place-items: center; font-size: 12px; background: var(--stage-line); color: var(--text); cursor: help; }
+.grip { width: 5px; flex: none; cursor: col-resize; background: var(--seam); }
+
+.ed { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--stage-well); overflow-y: auto; }
+.ed-empty { flex: 1; display: grid; place-items: center; color: var(--text-dim); font: 400 13px var(--font-body); }
+.eh, .ed-hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; box-shadow: inset 0 -1px 0 var(--seam); }
+.nbtn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font: 600 12px var(--font-body); border: 0; cursor: pointer; }
+.nbtn svg { width: 12px; height: 12px; }
+.saved { display: flex; align-items: center; gap: 6px; font: 500 12px var(--font-body); color: var(--stage-ok); }
+.saved svg { width: 13px; height: 13px; }
+.nmx { flex: 1; font: 600 15px var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); background: none; border: 0; }
+.tk { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.ed-meta { display: flex; gap: 6px; padding: 12px 16px 0; }
+.chip { font: 500 12px var(--font-body); padding: 3px 9px; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text-soft); }
+.chip.dim { color: var(--text-faint); }
+.ed-body, .entry { padding: 4px 16px 16px; }
+.ta2, textarea.entrytext { display: block; width: 100%; min-height: 130px; margin-top: 10px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); color: var(--text); border: 0; padding: 12px 14px; font: 400 15px/1.6 var(--font-body); resize: vertical; }
+.ed-note { margin-top: 10px; display: flex; align-items: flex-start; gap: 8px; font: 400 12px/1.5 var(--font-body); color: var(--text-dim); }
+.ed-note.warn { color: var(--stage-warn); }
+.ed-note svg { width: 13px; height: 13px; flex: none; margin-top: 2px; }
+
+/* Lorebook: World wing specific */
+.lh { display: flex; align-items: center; gap: 10px; padding: 14px 16px; box-shadow: inset 0 -1px 0 var(--seam); }
+.lh svg { width: 16px; height: 16px; color: var(--w); }
+.lh b { font: 600 14px var(--font-big); color: var(--text); }
+.lh-st { font: 500 12px var(--font-body); color: var(--text-dim); }
+.bk { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; }
+.bk:hover { background: color-mix(in srgb, var(--text) 4%, transparent); }
+.bk.sel { background: color-mix(in srgb, var(--accent) 8%, transparent); box-shadow: inset 3px 0 0 var(--accent); }
+.bk.off { opacity: .5; }
+.bk.missing { opacity: .5; cursor: default; }
+.bd { width: 8px; height: 8px; flex: none; box-shadow: inset 0 0 0 1px var(--edge); }
+.bd.on { background: var(--w); box-shadow: none; }
+.bk .pn small { display: flex; align-items: center; gap: 6px; }
+.src { font-style: normal; color: var(--text-faint); font-size: 12px; }
+.bt { width: 26px; height: 26px; flex: none; display: grid; place-items: center; background: none; border: 0; color: var(--text-dim); cursor: pointer; }
+.bt.red:hover { color: var(--stage-danger-text); }
+.bt svg { width: 13px; height: 13px; }
+.addbk { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 14px; background: none; border: 0; color: var(--accent); font: 600 12px var(--font-body); cursor: pointer; }
+.addbk svg { width: 12px; height: 12px; }
+.addbk.solo { justify-content: center; margin-top: 14px; box-shadow: inset 0 0 0 1px var(--edge); }
+.fire-why { flex: none; font: 500 12px var(--font-mono); padding: 2px 7px; }
+.fire-why.c-con { background: color-mix(in srgb, var(--stage-macro) 18%, transparent); color: var(--stage-macro); }
+.fire-why.c-key { background: color-mix(in srgb, var(--stage-ok) 18%, transparent); color: var(--stage-ok); }
+.fire-why.c-stk { background: color-mix(in srgb, var(--stage-danger-text) 18%, transparent); color: var(--stage-danger-text); }
+.fire-why.c-cut { background: color-mix(in srgb, var(--stage-warn) 18%, transparent); color: var(--stage-warn); }
+.dd2 { position: absolute; right: 14px; width: 190px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), 6px 6px 0 0 var(--stage-black); z-index: 30; }
+.dd2 button { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; background: none; border: 0; text-align: left; font: 400 13px var(--font-body); color: var(--text); cursor: pointer; }
+.dd2 button:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.dd2 button.red { color: var(--stage-danger-text); }
+.dd2 button:disabled { opacity: .4; cursor: not-allowed; }
+.dd2 button svg { width: 13px; height: 13px; flex: none; }
+.ex-hd { display: flex; align-items: center; gap: 10px; padding: 14px 16px; box-shadow: inset 0 -1px 0 var(--seam); }
+.ex-pill { padding: 4px 10px; background: var(--stage-line); color: var(--text-dim); font: 600 12px var(--font-body); border: 0; cursor: pointer; }
+.ex-pill.on { background: var(--stage-ok); color: var(--stage-ink); }
+.ex-hd input.nmx { background: none; border: 0; }
+.adv { display: flex; align-items: center; gap: 6px; background: none; border: 0; color: var(--text-dim); font: 500 12px var(--font-body); cursor: pointer; }
+.adv svg { width: 13px; height: 13px; }
+.ex-adv { display: flex; gap: 16px; align-items: center; padding: 12px 16px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.ex-adv label { font: 500 12px var(--font-mono); color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+.ex-adv select, .num { padding: 5px 8px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 400 13px var(--font-body); width: 64px; }
+.ex-sec { padding: 14px 16px; box-shadow: inset 0 -1px 0 var(--seam); }
+.ex-l { font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 8px; }
+.ex-sec .mode { margin-left: 10px; font: 500 12px var(--font-body); color: var(--text-faint); }
+.ex-sec .mode b { color: var(--text); }
+.keys { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.keys span { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); font: 400 12px var(--font-body); color: var(--text); }
+.keys .addkey { padding: 4px 8px; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--accent); font: 500 12px var(--font-body); border: 0; cursor: pointer; }
+.logic { margin: 8px 0; }
+.logic select { padding: 5px 8px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 500 12px var(--font-mono); }
+.pos { display: flex; flex-wrap: wrap; gap: 6px; }
+.pos button { padding: 6px 10px; box-shadow: inset 0 0 0 1px var(--edge); background: none; color: var(--text-dim); font: 500 12px var(--font-body); cursor: pointer; }
+.pos button.on { background: var(--w); color: var(--stage-ink); box-shadow: none; }
+.row3 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.ex-more { padding: 14px 16px; font: 400 12px var(--font-body); color: var(--text-dim); }
+.ex-more button { background: none; border: 0; color: var(--accent); text-decoration: underline; cursor: pointer; font: inherit; padding: 0; }
+.picker { padding: 14px; overflow-y: auto; }
+.pk-hd { padding: 8px 4px; font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
+.pk { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); margin-bottom: 6px; border: 0; text-align: left; cursor: pointer; }
+.pk.on { opacity: .5; cursor: not-allowed; }
+.pk-ic { width: 30px; height: 30px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--c) 20%, transparent); color: var(--c); font: 600 12px var(--font-big); }
+.pk b { font: 600 13px var(--font-big); color: var(--text); }
+.pk small { display: block; font: 400 12px var(--font-body); color: var(--text-dim); }
+.pk.none input { width: 100%; padding: 8px 10px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); border: 0; font: 400 13px var(--font-body); }
+.empty2 { flex: 1; display: grid; place-items: center; text-align: center; color: var(--text-dim); }
+.empty2 svg { width: 30px; height: 30px; color: var(--w); margin-bottom: 10px; }
+
+/* Props wing */
+.prop-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--tone); }
+.prop-ic { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--tone) 18%, transparent); color: var(--tone); }
+.prop-ic svg { width: 18px; height: 18px; }
+.prop-row b { font: 600 14px var(--font-big); color: var(--text); }
+.prop-row small { display: block; margin-top: 2px; font: 400 12px/1.4 var(--font-body); color: var(--text-dim); }
+.prop-note { margin-top: 10px; font: 400 12px var(--font-body); color: var(--text-faint); }
+
+/* AI wing */
+.ms-empty { padding: 20px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); font: 400 13px/1.6 var(--font-body); color: var(--text-soft); }
+.ms-empty .go { display: inline-block; margin-top: 10px; color: var(--accent); text-decoration: underline; cursor: pointer; }
+.ms-search { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.ms-search svg { width: 14px; height: 14px; color: var(--text-dim); }
+.ms-search .in { color: var(--text-faint); font: 400 13px var(--font-body); }
+.ms-search .in.typed { color: var(--text); }
+.pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; box-shadow: inset 0 0 0 1px var(--edge); font: 500 12px var(--font-body); color: var(--text-dim); cursor: pointer; }
+.pill .dot { width: 6px; height: 6px; background: var(--tone); }
+.pill.add { color: var(--accent); box-shadow: inset 0 0 0 1px dashed var(--accent); }
+.pill.all.on, .pill[data-pill].on { background: color-mix(in srgb, var(--text) 10%, transparent); color: var(--text); box-shadow: none; }
+.pill.off { opacity: .5; }
+.grp-hd { display: flex; align-items: center; gap: 8px; padding: 4px 0; font: 600 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+.grp-hd.sel { color: var(--stage-ok); } .grp-hd.fav svg { width: 13px; height: 13px; }
+.grp-hd .rule { flex: 1; height: 1px; background: var(--seam); }
+.rows { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.mrow { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); }
+.mrow.cur { box-shadow: 0 0 0 1px var(--tone); }
+.mrow.na { opacity: .6; }
+.mrow .t { display: flex; align-items: center; gap: 8px; font: 500 13px var(--font-big); color: var(--text); }
+.mrow .t .dot { width: 7px; height: 7px; background: var(--tone); flex: none; }
+.mrow .sub { margin-top: 2px; font: 400 12px var(--font-body); color: var(--text-dim); }
+.mrow .state { font: 600 12px var(--font-mono); color: var(--stage-ok); }
+.mrow .badge2 { margin-left: 6px; font: 600 9px var(--font-mono); padding: 1px 5px; background: var(--stage-ok-bg); color: var(--stage-ok); }
+.mrow .why { flex: 1; font: 400 12px var(--font-body); color: var(--text-dim); }
+.star { width: 15px; height: 15px; color: var(--text-faint); cursor: pointer; flex: none; }
+.star.on { color: var(--stage-warn); fill: var(--stage-warn); }
+.loading { display: flex; align-items: center; gap: 8px; padding: 12px; color: var(--text-dim); font: 400 13px var(--font-body); }
+.loading svg { width: 14px; height: 14px; animation: spin 1.1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.ms-note { padding: 10px 12px; background: color-mix(in srgb, var(--stage-warn) 8%, transparent); box-shadow: inset 3px 0 0 var(--stage-warn); font: 400 12px/1.5 var(--font-body); color: var(--text); }
+
+@container (max-width: 900px) {
+  #app { flex-direction: column; }
+  .stage { flex: none; height: 100vh; min-height: 100vh; }
+  .s-dock { width: 100%; min-height: 0; flex-direction: row; align-items: center; padding: 8px 12px; }
+  .s-dock .brand { padding: 0; margin-right: auto; }
+  .s-dock .s-app { display: none; }
+  .s-dock .s-app.c-scenes { display: grid; place-items: center; padding: 6px; }
+  .s-dock .s-app.c-scenes b, .s-dock .s-app.c-scenes small { display: none; }
+  .rail { display: none; }
+  .wing-panel.l, .wing-panel.r { width: 100%; }
+  .wing-panel.l .fold, .wing-panel.l .wbody { padding-left: 20px; }
+  .split { flex-direction: column; overflow-y: auto; }
+  .side2 { width: 100%; }
+  .grip { display: none; }
+  .stage.paused .paused-mark { display: none; }
+}
+
+.wf-bar { top: 8px; bottom: auto; }
+.wf-note { max-width: min(32rem, calc(100vw - 24px)); }
+/* shared-file gap: soft-parts.css sets .s-app small/kbd and .wf-bar at 11px, under the 12px floor */
+.s-app small, .s-app kbd, .wf-bar { font-size: 12px; }
+
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4ZM22 2 11 13"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2zM6 11c1.5 0 2.5.5 3 2M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+  <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+  <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.57a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.02.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.02a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2L7 14.2 2 9.3l6.9-1z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10M18.4 6.6a9 9 0 1 1-12.8 0"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+  <symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+</defs></svg>
+
+<div id="app">
+  <nav class="s-dock" style="--pink: var(--deck-pack); --ink: var(--stage-ink)">
+    <div class="brand"><svg width="28" height="28"><use href="#bun"/></svg>bunraku</div>
+    <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-wand"/></svg></i><b>Workbench</b></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-globe"/></svg></i><b>Library</b></div>
+    <div class="s-app c-scenes on"><i><svg width="16" height="16"><use href="#i-mask"/></svg></i><b>Scenes</b></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-book"/></svg></i><b>Press</b></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-cpu"/></svg></i><b>Agent</b></div>
+  </nav>
+
+  <main class="stage paused" id="stage">
+    <div class="play">
+      <header class="sh">
+        <button type="button" class="back"><svg><use href="#i-back"/></svg></button>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm...</span>
+      </header>
+      <div class="scroll">
+        <div class="msg"><div class="por"><span class="ini">M</span></div><div class="body"><div class="spk">Marguerite Vane</div>
+          <div class="bub"><div class="prose"><p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em></p></div></div>
+        </div></div>
+      </div>
+      <div class="dockbar"><div class="cap"><span class="ta">Message Marguerite Vane...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div>
+    </div>
+
+    <nav class="rail l" aria-label="Scene wings">
+      <button type="button" class="wi" data-wing="booth" style="--w: var(--accent)"><svg><use href="#i-zap"/></svg></button>
+      <button type="button" class="wi" data-wing="cast" style="--w: var(--deck-character)"><svg><use href="#i-mask"/></svg></button>
+      <button type="button" class="wi" data-wing="prompting" style="--w: var(--deck-preset)"><svg><use href="#i-wand"/></svg></button>
+      <button type="button" class="wi" data-wing="world" style="--w: var(--deck-lorebook)"><svg><use href="#i-globe"/></svg></button>
+      <button type="button" class="wi" data-wing="props" style="--w: var(--deck-regex)"><svg><use href="#i-puzzle"/></svg></button>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <button type="button" class="wi" data-wing="ai" style="--w: var(--stage-var)"><svg><use href="#i-cpu"/></svg></button>
+      <button type="button" class="wi" data-wing="stage" style="--w: var(--stage-macro)"><svg><use href="#i-monitor"/></svg></button>
+      <button type="button" class="wi" data-wing="context" style="--w: var(--stage-warn)"><svg><use href="#i-eye"/></svg></button>
+    </nav>
+    <div class="paused-mark"><span class="sq"><svg><use href="#i-pause"/></svg></span><small>Scene paused</small></div>
+
+    <!-- Control Booth: empty -->
+    <section class="wing-panel l" data-panel="booth" style="--w: var(--accent)">
+      <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Control Booth</b></div></nav>
+      <div class="wbody"><div class="quiet"><div><svg><use href="#i-zap"/></svg><div>Control Booth is not built yet.</div><small>Scene setup and automation</small></div></div></div>
+    </section>
+
+    <!-- Cast: the frozen character + persona, not an editor -->
+    <section class="wing-panel l" data-panel="cast" style="--w: var(--deck-character)">
+      <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Cast</b></div></nav>
+      <div class="wbody">
+        <header class="hero"><span class="hi"><svg><use href="#i-mask"/></svg></span><div><div class="eb">This scene's cast</div><h2>Cast</h2><p>The character and persona as they were when this scene started. Edits in the Library reach a scene only when you update it here.</p></div></header>
+        <p class="notice" data-only="newer"><span>This scene plays version 3 of Marguerite Vane. The Library has version 5.</span></p>
+        <p class="notice gone" data-only="gonecard"><span>Marguerite Vane's card is in the Trash. This scene keeps playing its own copy, version 3.</span></p>
+        <div class="dcard"><button type="button" class="upd" data-only="newer"><svg><use href="#i-refresh"/></svg>Update available</button><span class="np">Now playing</span><h3>Marguerite Vane</h3><p>Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</p></div>
+        <div class="dcard persona"><span class="np">You</span><h3>User</h3><p>No default persona is set, so you play as User.</p></div>
+      </div>
+    </section>
+
+    <!-- Prompting: the Preset tab -->
+    <section class="wing-panel l show" data-panel="prompting" style="--w: var(--deck-preset)">
+      <nav class="fold"><div class="crumb">Prompting <i>/</i> <b>Preset</b></div><div class="tabs"><button type="button" class="on"><b>Preset</b><small>14 of 22 on</small></button></div></nav>
+      <div class="wbody">
+        <header class="hero"><span class="hi"><svg><use href="#i-wand"/></svg></span><div><div class="eb">Edit Preset</div><h2>Velvet <em>Quill</em></h2><p>Tune prompts, samplers, and post-processing for this scene. Switches and sampler values here are this scene's own; prompt text edits change the preset everywhere.</p></div>
+          <div class="hero-tools"><button type="button" class="tbtn" title="Open in Workbench"><svg><use href="#i-pen"/></svg></button><button type="button" class="tbtn" title="Switch preset"><svg><use href="#i-book"/></svg></button><button type="button" class="tbtn red" title="Run without a preset"><svg><use href="#i-trash"/></svg></button></div>
+        </header>
+        <div class="sbar">
+          <button type="button" class="sbar-row">
+            <span class="lbl">Samplers:</span>
+            <span class="qv" style="--c: var(--deck-regex)">Temp <b>0.85</b><i class="ov"></i></span>
+            <span class="qv" style="--c: var(--deck-persona)">Top P <b>0.95</b></span>
+            <span class="qv" style="--c: var(--stage-ok)">Top K <b>40</b></span>
+            <span class="qv" style="--c: var(--deck-lorebook)">Response <b>1,200</b></span>
+            <span class="qv" style="--c: var(--stage-warn)">Context <b>32k</b></span>
+            <span class="qv" style="--c: var(--text-dim)">Merge <b>none</b></span>
+            <svg class="chev"><use href="#i-down"/></svg>
+          </button>
+        </div>
+        <div class="split">
+          <aside class="side2">
+            <div class="side-hd"><span>Prompts</span><span>14/22</span></div>
+            <label class="side-search"><svg><use href="#i-search"/></svg><input placeholder="Search prompts..."></label>
+            <div class="side-list">
+              <div class="cat"><button type="button" class="sw on"></button><svg class="cv"><use href="#i-down"/></svg><span class="cn">Uncategorized</span><span class="cc">3/3</span></div>
+              <div class="pi"><button type="button" class="tg on"></button><div class="pn"><span>Main Prompt</span><small>~420 tok</small></div><span class="role">SYS</span></div>
+              <div class="pi"><button type="button" class="tg on"></button><div class="pn"><span>Chat History</span><small class="mk">Chat history slot</small></div><span class="role">SYS</span></div>
+              <div class="pi"><button type="button" class="tg on"></button><div class="pn"><span>Jailbreak</span><small>~180 tok</small></div><span class="role">SYS</span></div>
+              <div class="cat"><button type="button" class="sw some"></button><svg class="cv"><use href="#i-down"/></svg><span class="cn">Style</span><span class="cc">2/4</span></div>
+              <div class="pi sel"><button type="button" class="tg on"></button><div class="pn"><span>Prose: literary<span class="ov"></span></span><small>~210 tok</small></div><span class="role">SYS</span></div>
+              <div class="pi off"><button type="button" class="tg"></button><div class="pn"><span>Prose: punchy</span><small>~150 tok</small></div><span class="role">SYS</span></div>
+              <div class="pi"><button type="button" class="tg on"></button><div class="pn"><span>Dialogue in quotes</span><small>~40 tok</small></div><span class="role">USR</span></div>
+              <div class="pi off"><button type="button" class="tg"></button><div class="pn"><span>Second person</span><small>~60 tok</small></div><span class="role">SYS</span></div>
+            </div>
+            <div class="side-foot"><span>Active Prompts</span><b>~3,420 tok</b><span class="info" title="Estimate from the raw prompt text.">?</span></div>
+          </aside>
+          <div class="grip"></div>
+          <section class="ed">
+            <div class="ed-hd"><span class="nmx">Prose: literary</span><span class="tk">~210 tok</span><button type="button" class="tbtn" title="Fullscreen"><svg><use href="#i-plus"/></svg></button></div>
+            <div class="ed-meta"><span class="chip">System</span><span class="chip">Before the history</span><span class="chip dim">Order 100</span></div>
+            <div class="ed-body">
+              <div class="ta2" contenteditable>Write in a literary register. Favor concrete sensory detail over summary, let silences carry weight, and keep {{char}}'s voice consistent with the examples.</div>
+              <div class="ed-note"><svg><use href="#i-check"/></svg> Prompt text belongs to Velvet Quill: an edit here changes it for every scene that uses it. The switch beside it is this scene's alone.</div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- World: Lorebook tab, version B -->
+    <section class="wing-panel l" data-panel="world" style="--w: var(--deck-lorebook)">
+      <nav class="fold"><div class="crumb">World <i>/</i> <b>Lorebook</b></div><div class="tabs"><button type="button" class="on"><b>Lorebook</b><small>3 books on</small></button></div></nav>
+      <div class="wbody" style="padding-top:0">
+        <header class="lh"><svg><use href="#i-book"/></svg><b>World Info</b><span class="lh-st">&middot; 3 books &middot; 42 entries &middot; ~6.1k tok</span><span class="grow" style="flex:1"></span><button type="button" class="tbtn" title="Browse and add lorebooks"><svg><use href="#i-plus"/></svg></button></header>
+        <div class="split">
+          <aside class="side2">
+            <div class="side-hd"><span>Active lorebooks</span><span>3</span></div>
+            <div class="side-list">
+              <div class="bk sel"><i class="bd on"></i><div class="pn"><span>Keeper's Log</span><small>18 entries <em class="src">From Marguerite</em></small></div><button type="button" class="bt"><svg><use href="#i-power"/></svg></button></div>
+              <div class="bk"><i class="bd on"></i><div class="pn"><span>The Drowned Coast</span><small>21 entries <em class="src">Added here</em></small></div><button type="button" class="bt"><svg><use href="#i-power"/></svg></button><button type="button" class="bt red"><svg><use href="#i-trash"/></svg></button></div>
+              <div class="bk off"><i class="bd"></i><div class="pn"><span>My quirks</span><small>3 entries <em class="src">From your persona</em></small></div><button type="button" class="bt"><svg><use href="#i-power"/></svg></button></div>
+              <button type="button" class="addbk"><svg><use href="#i-plus"/></svg> Add Lorebook</button>
+            </div>
+            <div class="side-foot"><span>Last turn</span><b>5 fired &middot; ~740 tok</b><span class="info" title="From the last reply's trace.">?</span></div>
+          </aside>
+          <div class="grip"></div>
+          <section class="ed">
+            <div class="eh"><span class="saved"><svg><use href="#i-check"/></svg> saved</span><span style="flex:1"></span><button type="button" class="nbtn"><svg><use href="#i-plus"/></svg> New entry</button><button type="button" class="tbtn" title="Open in Workbench"><svg><use href="#i-pen"/></svg></button></div>
+            <label class="side-search"><svg><use href="#i-search"/></svg><input placeholder="Search entries, text, or triggers..."></label>
+            <div class="grp"><span class="cn">Constant</span><span class="cnt">3</span></div>
+            <div class="en"><div class="pn"><span>The lighthouse</span><small>~120 tok</small></div><span class="fire-why c-con">always</span><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+            <div class="en"><div class="pn"><span>Marguerite's rules</span><small>~210 tok</small></div><span class="fire-why c-con">always</span><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+            <div class="en off"><div class="pn"><span>Old keeper (retired)</span><small>~90 tok</small></div><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+            <div class="grp"><span class="cn">Selective</span><span class="cnt">15</span></div>
+            <div class="en sel" style="position:relative"><div class="pn"><span>The storm of '09</span><small>~180 tok</small></div><span class="fire-why c-key">"storm"</span><button type="button" class="tbtn" id="entrymenubtn"><svg><use href="#i-more"/></svg></button>
+              <div class="dd2" data-only="entrymenu" style="top:36px"><button type="button">Open</button><button type="button"><svg><use href="#i-power"/></svg>Turn off</button><button type="button" disabled>Move up</button><button type="button">Move down</button><button type="button" class="red"><svg><use href="#i-trash"/></svg>Delete</button></div>
+            </div>
+            <div class="en"><div class="pn"><span>The lantern</span><small>~95 tok</small></div><span class="fire-why c-key">"lantern"</span><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+            <div class="en"><div class="pn"><span>Her brother</span><small>~140 tok</small></div><span class="fire-why c-stk">sticky</span><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+            <div class="en"><div class="pn"><span>The tide tables</span><small>~60 tok</small></div><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+            <div class="en"><div class="pn"><span>Shipwrecks</span><small>~200 tok</small></div><span class="fire-why c-cut">matched, over budget</span><button type="button" class="tbtn"><svg><use href="#i-more"/></svg></button></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- World: entry editor state -->
+    <section class="wing-panel l" data-panel="entry" style="--w: var(--deck-lorebook)">
+      <nav class="fold"><div class="crumb">World <i>/</i> <b>Lorebook</b></div><div class="tabs"><button type="button" class="on"><b>Lorebook</b><small>3 books on</small></button></div></nav>
+      <div class="wbody" style="padding-top:0">
+        <header class="lh"><button type="button" class="tbtn" title="Back"><svg><use href="#i-back"/></svg></button><svg><use href="#i-book"/></svg><b>Keeper's Log</b><span class="lh-st">&middot; 18 entries &middot; ~2.4k tok</span></header>
+        <div class="entry">
+          <div class="ex-hd"><button type="button" class="ex-pill on">On</button><input class="nmx" value="The storm of '09"><button type="button" class="adv open">Advanced <svg><use href="#i-down"/></svg></button></div>
+          <div class="ex-adv">
+            <label>Type <select><option>Selective</option><option>Constant</option></select></label>
+            <label>Order <input class="num" value="120"></label>
+            <label>Scan <input class="num" value="4"></label>
+            <span class="tk">~180 tok</span>
+          </div>
+          <div class="ex-sec"><div class="ex-l">Triggers <span class="mode"><b>Simple</b> Advanced</span></div>
+            <div class="keys"><span>storm</span><span>'09</span><span>the flood</span><button type="button" class="addkey">+ key</button></div>
+            <div class="logic"><select><option>AND ANY</option></select></div>
+            <div class="keys two"><span>Marguerite</span><span>keeper</span><button type="button" class="addkey">+ key</button></div>
+          </div>
+          <div class="ex-sec"><div class="ex-l">Injection</div>
+            <div class="pos"><button type="button">World</button><button type="button" class="on">Character</button><button type="button">Scene</button><button type="button">@ Depth</button><button type="button">Append</button><button type="button">Pin top</button><button type="button">Pin bottom</button></div>
+          </div>
+          <div class="ex-sec row3">
+            <div><div class="ex-l">Sticky</div><input class="num" value="3"></div>
+            <div><div class="ex-l">Cooldown</div><input class="num" value="0"></div>
+            <div><div class="ex-l">Delay</div><input class="num" value="0"></div>
+            <div><div class="ex-l">Recursion</div><select><option>Normal</option></select></div>
+          </div>
+          <div class="ex-l" style="margin:0 16px">Content</div>
+          <div class="ta2" contenteditable style="margin:10px 16px;width:auto">In the autumn of '09 a storm took the supply boat and both men aboard. Marguerite kept the light burning three nights without sleep. She does not speak of it unless {{user}} earns it.</div>
+          <div class="ed-note" style="margin-left:16px"><svg><use href="#i-check"/></svg> Saved to Keeper's Log. Every scene reading this book uses the new text from its next turn.</div>
+          <div class="ex-more">Group, character filter, and side effects sit under <button type="button">More</button>, in Keeper's Log on the Workbench.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Props wing -->
+    <section class="wing-panel l" data-panel="props" style="--w: var(--deck-regex)">
+      <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div><div class="tabs"><button type="button" class="on"><b>Props</b><small>0 on</small></button></div></nav>
+      <div class="wbody">
+        <div class="prop-row" style="--tone: var(--prop-hare)"><span class="prop-ic"><svg><use href="#i-puzzle"/></svg></span><div><b>TrackHare</b><small>See which lorebook entries went into each reply and why, which ones did not and why not, how the prompt's tokens were spent, and which entries woke which.</small></div><button type="button" class="tg"></button></div>
+        <p class="prop-note">Props are optional.</p>
+      </div>
+    </section>
+
+    <!-- AI wing -->
+    <section class="wing-panel r" data-panel="ai" style="--w: var(--stage-var)">
+      <nav class="fold"><div class="crumb">Tools <i>/</i> <b>AI</b></div><div class="tabs"><button type="button" class="on"><b>Model</b><small>This scene</small></button></div></nav>
+      <div class="wbody">
+        <header class="hero"><span class="hi"><svg><use href="#i-cpu"/></svg></span><div><div class="eb">AI Brain</div><h2>Select AI <em>Model</em></h2><p>Pick which model writes the scene. Switch any time mid-scene; the new model picks up where the last one left off.</p></div></header>
+        <div class="ms-search"><svg><use href="#i-search"/></svg><span class="in">Search models...</span></div>
+        <div class="pills">
+          <span class="pill add"><b>+</b> Connect a provider</span>
+          <span class="pill all on">All connections</span>
+          <span class="pill" style="--tone: var(--deck-preset)"><span class="dot"></span>OpenRouter &middot; Personal</span>
+          <span class="pill" style="--tone: var(--deck-lorebook)"><span class="dot"></span>NanoGPT</span>
+          <span class="pill" style="--tone: var(--deck-regex)"><span class="dot"></span>LM Studio</span>
+        </div>
+        <div class="grp-hd sel"><svg width="13" height="13"><use href="#i-check"/></svg>Currently Selected<span class="rule"></span></div>
+        <div class="mrow cur" style="--tone: var(--deck-preset)"><div><div class="t"><span class="dot"></span>anthropic/claude-opus-5-5</div><div class="sub">OpenRouter &middot; Personal &middot; 1M context</div></div><span class="state">Active</span></div>
+        <div class="grp-hd fav" style="margin-top:16px"><svg><use href="#i-star"/></svg>Favorites<span class="rule"></span></div>
+        <div class="rows">
+          <div class="mrow" style="--tone: var(--deck-lorebook)"><div><div class="t"><span class="dot"></span>deepseek-v4-pro</div><div class="sub">NanoGPT &middot; 256k context</div></div><svg class="star on"><use href="#i-star"/></svg></div>
+          <div class="mrow" style="--tone: var(--deck-regex)"><div><div class="t"><span class="dot"></span>qwen3-32b</div><div class="sub">LM Studio &middot; this computer &middot; 32k context</div></div><svg class="star on"><use href="#i-star"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI: no connections -->
+    <section class="wing-panel r" data-panel="noconn" style="--w: var(--stage-var)">
+      <nav class="fold"><div class="crumb">Tools <i>/</i> <b>AI</b></div><div class="tabs"><button type="button" class="on"><b>Model</b><small>This scene</small></button></div></nav>
+      <div class="wbody">
+        <header class="hero"><span class="hi"><svg><use href="#i-cpu"/></svg></span><div><div class="eb">AI Brain</div><h2>Select AI <em>Model</em></h2></div></header>
+        <div class="ms-empty">Bunraku talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.<br><span class="go">Open Kit connections</span></div>
+      </div>
+    </section>
+
+    <!-- Stage: empty -->
+    <section class="wing-panel r" data-panel="stage-wing" style="--w: var(--stage-macro)">
+      <nav class="fold"><div class="crumb">Tools <i>/</i> <b>Stage</b></div></nav>
+      <div class="wbody"><div class="quiet"><div><svg><use href="#i-monitor"/></svg><div>Stage is not built yet.</div><small>Appearance, gallery, and music</small></div></div></div>
+    </section>
+
+    <!-- Context: quiet placeholder -->
+    <section class="wing-panel r" data-panel="context" style="--w: var(--stage-warn)">
+      <nav class="fold"><div class="crumb">Tools <i>/</i> <b>Context</b></div></nav>
+      <div class="wbody"><div class="quiet"><div><svg><use href="#i-compass"/></svg><div>What the AI sees will show here</div><small>The prompt viewer arrives in a later step</small></div></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-bar" id="wf">
+  <button data-s="booth">Control Booth</button><button data-s="cast">Cast</button><button data-s="cast-newer">Cast: update available</button><button data-s="cast-gone">Cast: card in Trash</button>
+  <button data-s="prompting">Prompting: loaded</button><button data-s="world">World: books &amp; entries</button><button data-s="entry">World: entry editor</button>
+  <button data-s="props">Props</button><button data-s="ai">AI: picked</button><button data-s="noconn">AI: no connections</button>
+  <button data-s="stage-wing">Stage</button><button data-s="context">Context</button>
+  <button data-s="entrymenu">World: entry menu</button>
+  <button data-theme-switch>Theme</button>
+</div>
+<div class="wf-note">Every scene wing (scene-wings.tsx). Control Booth and Stage open empty. Cast shows the frozen character and persona, with the Update badge and its notice when the Library holds a newer card, or "the card is in the Trash" when it left the library; it is not an editor (the source's Cast wing has no dossier form, only the read view here). Context is a quiet placeholder until the prompt viewer exists. Prompting/Preset, World/Lorebook (version B: source badges "From &lt;character&gt;"/"From your persona"/"Added here", Last turn trace), and AI/Model match their approved wireframes closely; Props lists TrackHare, the one registered Prop (its full stage popover/sheets are their own file, scenes-trackhare.html). The paused-scene blur stays under every open wing.</div>
+
+<script>
+(function () {
+  var stage = document.getElementById("stage");
+  var WINGS = { booth: "l", cast: "l", prompting: "l", world: "l", entry: "l", props: "l", ai: "r", noconn: "r", "stage-wing": "r", context: "r" };
+  function set(s) {
+    var panel = s === "cast-newer" || s === "cast-gone" ? "cast" : s === "entrymenu" ? "world" : s;
+    stage.className = "stage";
+    document.querySelectorAll(".wing-panel").forEach(function (p) { p.classList.toggle("show", p.getAttribute("data-panel") === panel); });
+    document.querySelectorAll(".wi").forEach(function (w) { w.classList.toggle("on", w.getAttribute("data-wing") === panel); });
+    if (WINGS[panel]) stage.classList.add("paused");
+    document.querySelectorAll("[data-only]").forEach(function (el) {
+      var states = el.getAttribute("data-only").split(" ");
+      var want = s === "cast-newer" ? "newer" : s === "cast-gone" ? "gonecard" : s;
+      el.style.display = states.indexOf(want) >= 0 ? "" : "none";
+    });
+    document.querySelectorAll("#wf button[data-s]").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+  }
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.getElementById("wf").style.display = "none";
+  set(q.get("state") || "prompting");
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s")); });
+  document.getElementById("entrymenubtn") && document.getElementById("entrymenubtn").addEventListener("click", function () { set("entrymenu"); });
+})();
+</script>
+</body>
+</html>

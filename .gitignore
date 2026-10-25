@@ -1,0 +1,33 @@
+node_modules/
+dist/
+build/*
+!build/vaude.ico
+!build/vaude-256.png
+*.log
+.DS_Store
+.env
+.env.*
+bun.lockb
+
+# Large binary samples: kept locally / downloaded on demand, referenced by URL in each SOURCES.md.
+# The small sliced card.json fixture beside them IS committed for tests.
+samples/**/*.charx
+design/_serve.cjs
+*.bun-build
+
+# Agent-tooling state: never ships
+.agents/
+.claude/
+CLAUDE.md
+audit-out/
+.playwright-mcp/
+
+
+# local planning notes
+external-refs/
+
+# The mutation check saves originals here while a file is broken on purpose (scripts/mutation-check.ts).
+.mutation-check/
+
+# local audit notes, never published
+audit-plans/

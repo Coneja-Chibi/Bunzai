@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soft wireframes</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/* The index of every wireframe waiting on approval: the soft app restyle, plus the features drawn for approval. */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 48px 24px 80px; }
+.group { margin-top: 44px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; margin-top: 16px; }
+.grid a { display: block; padding: 18px; text-decoration: none; color: var(--text); }
+.grid a p { margin: 6px 0 0; color: var(--text-soft); font-size: .92rem; }
+.pend { opacity: .55; }
+.pend .s-chip { --c: var(--stage-warn); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="s-act"><b>Bunraku</b> &middot; wireframes for your review</div>
+  <h1 class="s-title" style="margin-top:10px">The soft app, and what is <em>waiting</em> on you</h1>
+  <p class="s-lede">The whole app in the site's soft identity (every feature kept in place), plus the features drawn for approval. Each page has state buttons at the bottom right and a theme switch.</p>
+  <div class="s-dots" style="margin-top:28px"></div>
+
+  <section class="group"><div class="s-act"><b>Act I</b> &middot; the shell</div>
+    <div class="grid">
+      <a class="s-card c-scenes" href="shell-start.html"><h3 class="s-h3">First screen: options A, B, C</h3><p>Tonight's program, Green room, Stage door. Pick one.</p></a>
+      <a class="s-card c-settings" href="shell-app.html"><h3 class="s-h3">Shell and Dock</h3><p>The Dock, header, status bar, right-click menu.</p></a>
+      <a class="s-card c-kit" href="shell-setup.html"><h3 class="s-h3">Setup wizard</h3><p>All steps, including the new shortcuts question.</p></a>
+      <a class="s-card c-agent" href="shell-gate.html"><h3 class="s-h3">Library gate</h3><p>Locked, load-in, failed.</p></a>
+      <a class="s-card c-settings" href="shell-settings.html"><h3 class="s-h3">Settings</h3><p>Every section.</p></a>
+      <a class="s-card c-settings" href="shell-settings-security.html"><h3 class="s-h3">Settings: Security</h3><p>Password, recovery words, other computers.</p></a>
+      <a class="s-card c-settings" href="shell-settings-remote.html"><h3 class="s-h3">Settings: Remote access</h3><p>LAN and the private link.</p></a>
+      <a class="s-card c-settings" href="shell-settings-updates.html"><h3 class="s-h3">Settings: Updates</h3><p>The version timeline.</p></a>
+    </div></section>
+
+  <section class="group"><div class="s-act"><b>Act II</b> &middot; the Library and the Press</div>
+    <div class="grid">
+      <a class="s-card c-library" href="library-shelves.html"><h3 class="s-h3">Library shelves</h3><p>Decks, views, cards, selection, menus, first doors.</p></a>
+      <a class="s-card c-library" href="library-import.html"><h3 class="s-h3">Import</h3><p>The receipt, unreadable files, archives.</p></a>
+      <a class="s-card c-library" href="library-trash.html"><h3 class="s-h3">Trash</h3><p>Pieces, cut scenes, deleted takes.</p></a>
+      <a class="s-card c-press" href="press-room.html"><h3 class="s-h3">The Press</h3><p>Staging, riders, readiness, results.</p></a>
+    </div></section>
+
+  <section class="group"><div class="s-act"><b>Act III</b> &middot; the Workbench and the Agent</div>
+    <div class="grid">
+      <a class="s-card c-workbench" href="workbench-shell.html"><h3 class="s-h3">Workbench</h3><p>The tab strip and first editor.</p></a>
+      <div class="s-card c-workbench pend" style="padding:18px"><h3 class="s-h3">Every editor, the Agent, the tools</h3><p style="margin:6px 0 0;color:var(--text-soft);font-size:.92rem">Being drawn now.</p><span class="s-chip">in progress</span></div>
+    </div></section>
+
+  <section class="group"><div class="s-act"><b>Act IV</b> &middot; Scenes</div>
+    <div class="grid">
+      <a class="s-card c-scenes" href="_preview-scenes.html"><h3 class="s-h3">Scenes list, tokens only</h3><p>The first test: colors and fonts swapped, shapes not yet.</p></a>
+      <div class="s-card c-scenes pend" style="padding:18px"><h3 class="s-h3">Scenes, the scene page, every wing</h3><p style="margin:6px 0 0;color:var(--text-soft);font-size:.92rem">Starts next.</p><span class="s-chip">queued</span></div>
+    </div></section>
+
+  <section class="group"><div class="s-act"><b>Also waiting</b> &middot; features drawn for approval</div>
+    <div class="grid">
+      <a class="s-card" style="--c:var(--deck-pack)" href="../settings/shortcuts.html"><h3 class="s-h3">Shortcuts</h3><p>The wizard step (Yes picked), the one-time note, the Settings switches.</p></a>
+      <a class="s-card" style="--c:var(--prop-hare)" href="../props/trackhare.html"><h3 class="s-h3">TrackHare (approved)</h3><p>Being built now.</p></a>
+      <a class="s-card" style="--c:var(--deck-lorebook)" href="../rc-port/scene-lorebook-wing.html?v=b"><h3 class="s-h3">Lorebook wing (approved, built)</h3><p>Version B, live in the app.</p></a>
+    </div></section>
+</div>
+</body>
+</html>

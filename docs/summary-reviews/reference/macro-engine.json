@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/macro-engine",
+  "sourcePath": "docs/reference/macro-engine.md",
+  "sourceHash": "sha256:8879c07bd543b46202812aa36d4a196e848a2696fab280c39127a4bde6fecaec",
+  "semanticSummaryHash": "sha256:46bc2e23ba03411c3721f54b62fc8abc49b7674077c4c943725b43f7513936d5",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh.",
+  "reviewedAt": "2026-10-25T01:34:42.465Z"
+}

@@ -1,0 +1,82 @@
+/*
+ * The library gate's stage: the whole window while the library is locked or loading in (the approved
+ * wireframes 01-stage-door and 06-load-in). Nothing of the studio shows behind it. Tokens only.
+ */
+.stage {
+  /* A theme contribution can choose the workspace typeface, but never the password/recovery UI. */
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-big: "Fraunces", serif;
+  --font-fancy: "Cinzel", serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--stage-floor);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  padding: clamp(1.5rem, 5vw, 3rem) var(--gap-m);
+}
+/* centered when it fits, scrolled from the top when it does not */
+.inner {
+  margin: auto 0;
+  width: 100%;
+  max-width: 35rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* the remember-this-computer row: SettingsRow's grammar inside a dossier */
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.rowText {
+  flex: 1;
+  min-width: 12rem;
+}
+.rowLabel {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control, 0.875rem);
+  color: var(--text);
+}
+.rowHint {
+  font-family: var(--font-mono);
+  font-size: var(--text-body, 1rem);
+  line-height: 1.6;
+  color: var(--text-soft);
+  margin-top: 0.2rem;
+}
+
+/* the load-in's running list: the design system's mono proof block */
+.proof {
+  background: var(--stage-black);
+  color: var(--stage-ok);
+  font-family: var(--font-mono);
+  font-size: var(--text-body, 1rem);
+  line-height: 1.6;
+  padding: 0.9rem 1.1rem;
+  border: 2px solid var(--edge);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.count {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta, 0.75rem);
+  color: var(--text-soft);
+  text-align: center;
+  margin-top: 0.8rem;
+}
+.subtle {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta, 0.75rem);
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin: 0;
+}

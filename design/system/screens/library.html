@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Library</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="library.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Library</h1>
+    <p>The rail, the top bar, the send bar, one numbered section per deck with its own drop-in
+    view, the Show view, the card menu, the split/merge workshop, the damage and no-match notices,
+    and the first-landing doors.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="library.room">
+    <header>
+      <h2 class="bk-heading">Library: the shelves</h2>
+      <span class="bk-tag">src/ui/apps/library</span>
+      <p class="bk-meta">Parts: library.rail (.deck .collection .add .trash), library.top,
+      library.search, library.dial, library.section (.head .views), library.card (.art .title
+      .tagline .chip .facts .switch .menu .start), library.new-tile, library.send-bar,
+      library.damage, library.doors</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="library.room.a" data-taste-title="Inventory">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Inventory</h3>
+          <p>The rail as an inventory list with live count readouts, numbered sections (Roman
+          numeral, count, New).</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen lib-root" data-part="library.room" data-variant="a" data-state="default">
+            <div class="lib-body">
+                <nav class="lib-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="lib-dock-brand" data-part="shell.dock.brand">
+                    <svg class="lib-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="lib-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" >
+                    <span class="lib-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Scenes</b><small class="lib-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Workbench</b><small class="lib-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="library" aria-current="page">
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Library</b><small class="lib-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="press" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Press</b><small class="lib-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Agent</b><small class="lib-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Kit</b><small class="lib-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Settings</b></span>
+                  </button>
+                  <div class="lib-dock-foot">
+                    <button type="button" class="lib-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="lib-dock-tx"><b class="lib-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="lib-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="lib-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <div class="lib-main-wrap" style="display:flex;flex:1;min-width:0">
+                <aside class="lib-rail" data-part="library.rail">
+                  <div class="lib-rail-head"><p class="bk-label">Your collection</p><h2 class="bk-heading" style="font-size:var(--bk-fs-xl)">The Library</h2></div>
+                  <nav class="lib-rail-body" aria-label="Decks">
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" aria-selected="true" data-deck="character"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span><span class="lib-deck-tx"><b>Characters</b><small>Your cast</small></span><span class="bk-tag">41</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" data-deck="lorebook"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/></svg></span><span class="lib-deck-tx"><b>Lorebooks</b><small>World knowledge</small></span><span class="bk-tag">18</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" data-deck="persona"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><rect x="4" y="3" width="16" height="18"/></svg></span><span class="lib-deck-tx"><b>Personas</b><small>Who you play</small></span><span class="bk-tag">4</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" data-deck="pack"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3 3 8l9 5 9-5z"/></svg></span><span class="lib-deck-tx"><b>Sprite packs</b><small>Expressions and art</small></span><span class="bk-tag">2</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" data-deck="preset"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h10M18 6h2"/></svg></span><span class="lib-deck-tx"><b>Presets</b><small>Prompts and samplers</small></span><span class="bk-tag">12</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" data-deck="regex"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h11l-3-3"/><path d="M20 17H9l3 3"/></svg></span><span class="lib-deck-tx"><b>Regex sets</b><small>Text transformations</small></span><span class="bk-tag">9</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.deck" data-deck="preset"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H9l-5 4z"/></svg></span><span class="lib-deck-tx"><b>Quick replies</b><small>One-tap lines</small></span><span class="bk-tag" style="color:var(--bk-text-faint)">0</span></div>
+                    <div class="bk-item lib-deck" data-part="library.rail.trash" data-tone="danger"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></span><span class="lib-deck-tx"><b>Trash</b><small>Restore within 3 days</small></span><span class="bk-tag">3</span></div>
+                    <p class="bk-label" style="margin:var(--bk-space-3) var(--bk-space-4) 0">Collections</p>
+                    <div class="bk-item lib-deck" data-part="library.rail.collection" data-deck="lorebook"><span class="lib-deck-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h7l2 2h9v10H3z"/></svg></span><span class="lib-deck-tx"><b>Harbor Town</b><small>7 pieces</small></span></div>
+                  </nav>
+                  <div class="lib-rail-add"><button type="button" class="bk-tag" data-part="library.rail.add ui.button" data-mark style="width:100%;justify-content:center">+ Add to the library</button></div>
+                </aside>
+
+                <main class="bk-stage lib-main" data-part="library.top">
+                  <div class="lib-topbar">
+                    <label class="lib-search" data-part="library.search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input type="text" placeholder="name, kind:preset, from:sillytavern, has:art" aria-label="Search the library"></label>
+                    <div class="bk-tag" role="group" aria-label="Order" style="display:flex;padding:0"><button type="button" class="bk-tag" data-mark data-part="ui.segments ui.button">All</button><button type="button" class="bk-tag" data-part="ui.button">Recent</button></div>
+                    <label class="lib-dial" data-part="library.dial"><span class="bk-label">Art</span><input type="range" value="60" aria-label="Card size"></label>
+                    <button type="button" class="bk-tag" data-part="ui.button">Select all</button>
+                  </div>
+
+                  <div class="lib-colbar">
+                    <span class="bk-label">Groups</span>
+                    <span class="bk-tag" data-mark>Harbor Town <b>7</b></span>
+                    <button type="button" class="bk-tag" data-part="ui.button">+ new group</button>
+                  </div>
+
+                  <div class="lib-sendbar bk-panel bk-frame" data-mark data-part="library.send-bar">
+                    <span class="bk-meta">2 pieces staged</span>
+                    <button type="button" class="bk-tag" data-mark data-part="ui.button">Send all 2 to the Workbench</button>
+                    <button type="button" class="bk-tag" data-tone="danger" data-part="ui.button">Delete all 2</button>
+                    <button type="button" class="bk-tag" data-part="ui.button">Select all</button>
+                    <button type="button" class="bk-tag" data-part="ui.button">Clear</button>
+                  </div>
+
+                  <div class="lib-nomatch" data-part="ui.empty">
+                    <p class="bk-heading" style="font-size:var(--bk-fs-lg)">No presets match</p>
+                    <p class="bk-meta">Nothing on this shelf matches <code class="bk-num">kind:preset velvet</code>. All 12 presets are still in the studio; this shelf is filtered, not bare.</p>
+                    <button type="button" class="bk-tag" data-part="ui.button" style="margin-top:var(--bk-space-2)">Clear search</button>
+                  </div>
+
+                  <div class="lib-damage bk-panel bk-frame" data-tone="danger" data-crown data-part="library.damage">
+                    <p class="bk-heading" style="font-size:var(--bk-fs-sm);color:var(--bk-danger)">2 files in your studio folder could not be read</p>
+                    <p class="bk-meta">The files are still on disk and Bunraku did not change them.</p>
+                    <details open style="margin-top:var(--bk-space-2)"><summary class="bk-meta">Show files and recovery details</summary>
+                      <p class="bk-num" style="margin-top:var(--bk-space-2)">character/9f2a-old-vera.json is not readable JSON.</p>
+                      <p class="bk-num">lorebook/harbor-town-2.json holds a different piece id than its filename.</p>
+                    </details>
+                  </div>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act I</p><h2 class="bk-heading">Characters</h2><p class="bk-meta">Your cast</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">41</span><span class="bk-readout__label">characters</span></span>
+                        <div class="bk-tag" data-mark>Cards</div><div class="bk-tag">Tiles</div><div class="bk-tag">Show</div><div class="bk-tag">List</div><div class="bk-tag">Shelf</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="character">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-grid" id="libCharGrid" data-part="library.card" role="list">
+                      <article class="lib-card bk-frame" data-lift data-crown data-deck="character" aria-selected="true" role="listitem">
+                        <span class="lib-card-art" data-part="library.card.art"><span>V</span></span>
+                        <div class="lib-card-body">
+                          <div><span class="bk-tag">SillyTavern V3</span></div>
+                          <b class="bk-name" data-part="library.card.title">Vera Lune</b>
+                          <p class="lib-card-tagline" data-part="library.card.tagline">"Who did you let up the stairs?"</p>
+                          <p class="lib-card-facts" data-part="library.card.facts">9/9 fields &middot; ~2.4K tokens &middot; Imported 9h ago</p>
+                        </div>
+                        <button type="button" class="bk-tag lib-card-start" data-part="library.card.start ui.button" data-mark>Start Scene</button>
+                      </article>
+                      <article class="lib-card bk-frame" data-lift data-crown data-deck="preset" role="listitem">
+                        <span class="lib-card-art" data-part="library.card.art"><span>M</span></span>
+                        <div class="lib-card-body">
+                          <div><span class="bk-tag">RoleCall V3</span><span class="bk-tag" data-part="library.card.chip" data-mark>on the workbench</span></div>
+                          <b class="bk-name" data-part="library.card.title">Marguerite Vane</b>
+                          <p class="lib-card-tagline" data-part="library.card.tagline">"Sit, if you like. The storm will not care either way."</p>
+                          <p class="lib-card-facts" data-part="library.card.facts">7/9 fields &middot; ~1.8K tokens &middot; Imported 3d ago</p>
+                        </div>
+                        <button type="button" class="bk-tag lib-card-start" data-part="library.card.start ui.button" data-mark>Start Scene</button>
+                      </article>
+                      <button type="button" class="lib-new-tile bk-frame" data-part="library.new-tile" data-lift><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act II</p><h2 class="bk-heading">Lorebooks</h2><p class="bk-meta">World knowledge</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">18</span><span class="bk-readout__label">lorebooks</span></span>
+                        <div class="bk-tag">Cards</div><div class="bk-tag">Tiles</div><div class="bk-tag">Show</div><div class="bk-tag">List</div><div class="bk-tag" data-mark>Shelf</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="lorebook">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-shelfgrid" data-part="library.card" role="list">
+                      <article class="lib-spine bk-frame" data-crown data-deck="lorebook" role="listitem">
+                        <div class="lib-spine-body">
+                          <b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Harbor Town</b>
+                          <p class="bk-meta">213 entries</p>
+                          <div class="lib-spine-facts" data-part="library.card.facts"><span class="bk-tag">SillyTavern</span><span class="bk-tag">~92.6K tok</span><span class="bk-tag">tide</span></div>
+                        </div>
+                        <div class="lib-spine-foot"><span class="bk-tag" data-part="library.card.switch" data-mark>On</span><span style="flex:1"></span><button type="button" class="bk-tag" data-part="ui.button">Split</button><button type="button" class="bk-tag" data-part="ui.button">Copy</button></div>
+                      </article>
+                      <article class="lib-spine bk-frame" data-crown data-deck="lorebook" role="listitem">
+                        <div class="lib-spine-body">
+                          <b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">The Lighthouse</b>
+                          <p class="bk-meta">12 entries</p>
+                          <div class="lib-spine-facts" data-part="library.card.facts"><span class="bk-tag">Risu</span><span class="bk-tag">~3.4K tok</span></div>
+                        </div>
+                        <div class="lib-spine-foot"><span class="bk-tag" data-part="library.card.switch">Off, skipped on export</span><span style="flex:1"></span><button type="button" class="bk-tag" data-part="ui.button">Split</button><button type="button" class="bk-tag" data-part="ui.button">Copy</button></div>
+                      </article>
+                    </div>
+                    <p class="bk-meta" style="margin-top:var(--bk-space-2)">Drag a book onto another book to merge</p>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act III</p><h2 class="bk-heading">Personas</h2><p class="bk-meta">Who you play</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">4</span><span class="bk-readout__label">personas</span></span>
+                        <div class="bk-tag" data-mark>Profiles</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="persona">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-profgrid" data-part="library.card" role="list">
+                      <article class="lib-prof bk-frame" data-lift data-crown data-deck="persona" role="listitem">
+                        <div class="lib-prof-cov" data-part="library.card.art">W<span class="bk-tag lib-prof-def" data-mark>Default</span></div>
+                        <div class="lib-card-body"><b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Wren</b><p class="lib-card-tagline" data-part="library.card.tagline">A night keeper with a short fuse.</p></div>
+                      </article>
+                      <button type="button" class="lib-new-tile bk-frame" data-part="library.new-tile" data-lift style="height:8rem;aspect-ratio:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act IV</p><h2 class="bk-heading">Sprite packs</h2><p class="bk-meta">Expressions and art</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">2</span><span class="bk-readout__label">packs</span></span>
+                        <div class="bk-tag" data-mark>Tiles</div>
+                      </div>
+                    </div>
+                    <div class="lib-tilegrid" data-part="library.card" role="list">
+                      <button type="button" class="lib-tile bk-frame" data-lift data-crown data-deck="pack" role="listitem">
+                        <span class="lib-tile-cov" data-part="library.card.art"><span class="bk-tag" style="position:absolute;top:0;left:0">pack</span></span>
+                        <div class="lib-card-body"><b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Vera, six faces</b></div>
+                      </button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act V</p><h2 class="bk-heading">Presets</h2><p class="bk-meta">Prompts and samplers</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">12</span><span class="bk-readout__label">presets</span></span>
+                        <div class="bk-tag" data-mark>List</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="preset">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-list" data-part="library.card" role="list">
+                      <button type="button" class="bk-item" data-deck="preset" role="listitem"><b class="bk-name" style="font-size:var(--bk-fs-sm);flex:1" data-part="library.card.title">Chibi Gram Pacer</b><span class="bk-tag" data-part="library.card.facts">1.0 temp &middot; 47 prompts</span></button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act VI</p><h2 class="bk-heading">Regex sets</h2><p class="bk-meta">Text transformations</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">9</span><span class="bk-readout__label">regex sets</span></span>
+                        <div class="bk-tag" data-mark>Sets</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="regex">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-shelfgrid" data-part="library.card" role="list">
+                      <article class="lib-set bk-frame" data-crown data-deck="regex" role="listitem">
+                        <div class="lib-set-head"><span class="lib-set-mark">TA</span><div><b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Tidy asterisks</b><p class="bk-meta">SillyTavern</p></div></div>
+                        <p class="lib-set-does" data-part="library.card.tagline">Collapses doubled asterisks and trims stray spaces.</p>
+                        <div class="lib-set-foot"><span class="bk-readout" data-inline data-part="library.card.facts"><span class="bk-readout__value">5</span><span class="bk-readout__label">rules, 4 on</span></span><span class="bk-tag" data-tone="warn">1 slow</span><span class="bk-tag" data-part="library.card.switch" data-mark>On</span><button type="button" class="bk-tag" data-part="ui.button">Split</button></div>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act VII</p><h2 class="bk-heading">Quick replies</h2><p class="bk-meta">One-tap lines</p></div>
+                      <div class="lib-section-views" data-part="library.section.views"><span class="bk-readout" data-inline><span class="bk-readout__value">0</span><span class="bk-readout__label">quick replies</span></span></div>
+                    </div>
+                    <div class="lib-ghost">your first quick reply lands here &middot; import or start fresh<br><button type="button" class="bk-tag" data-part="ui.button" data-deck="preset" style="margin-top:var(--bk-space-2)">New quick replies</button></div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Show view, demonstrated</p><h2 class="bk-heading">One card at a time</h2></div>
+                    </div>
+                    <div class="lib-show bk-panel bk-frame" data-deck="character">
+                      <button type="button" class="bk-tag" data-part="ui.button" aria-label="Previous">&lsaquo;</button>
+                      <span class="lib-show-hero" data-part="library.card.art"><span class="bk-name" style="font-size:var(--bk-fs-4xl);color:var(--bk-text-on-tint)">V</span></span>
+                      <div style="flex:1;min-width:0">
+                        <b class="bk-name" data-part="library.card.title">Vera Lune</b>
+                        <p class="lib-card-tagline" data-part="library.card.tagline">"Who did you let up the stairs?"</p>
+                        <p class="bk-meta">A retired locksmith who talks to the tide. 9/9 fields, ~2.4K tokens.</p>
+                        <p class="bk-meta">1 / 41</p>
+                        <button type="button" class="bk-tag" data-mark data-part="ui.button" style="margin-top:var(--bk-space-2)">Stage for the Workbench</button>
+                        <div class="lib-show-rail"><button type="button" class="lib-show-mini" aria-current="true"></button><button type="button" class="lib-show-mini"></button><button type="button" class="lib-show-mini"></button></div>
+                      </div>
+                      <button type="button" class="bk-tag" data-part="ui.button" aria-label="Next">&rsaquo;</button>
+                    </div>
+                  </section>
+
+                  <div class="lib-lasso"></div>
+                </main>
+              </div>
+            </div>
+
+            <div class="lib-doors lib-doors-first" data-part="library.doors">
+              <button type="button" class="bk-tag lib-doorcard" data-mark data-part="ui.button">Drag and drop to import a piece</button>
+              <button type="button" class="bk-tag lib-doorcard" data-part="ui.button">Click here to start fresh</button>
+              <p class="bk-meta">Every pack starts with a first card.</p>
+            </div>
+            <div class="lib-doors lib-doors-unreachable" data-part="library.doors">
+              <p class="bk-meta">Could not reach the studio. Your pieces are still on disk.</p>
+              <button type="button" class="bk-tag lib-doorcard" data-mark data-part="ui.button">Try again</button>
+            </div>
+
+            <div class="lib-menu bk-panel bk-frame" data-part="ui.menu" data-mark role="menu" aria-label="Marguerite Vane">
+              <div class="bk-item" role="menuitem" tabindex="0">Send to the Workbench</div>
+              <div class="bk-item" role="menuitem" tabindex="0">Open beside</div>
+              <div class="bk-item" role="menuitem" tabindex="0">Stage for the Press</div>
+              <div class="bk-item" role="menuitem" tabindex="0">Rename</div>
+              <div class="bk-item" role="menuitem" tabindex="0">Duplicate</div>
+              <div class="bk-item" role="menuitem" tabindex="0" data-tone="danger">Delete from the studio</div>
+            </div>
+
+            <div class="lib-scrim">
+              <div class="bk-panel bk-frame lib-workshop" data-crown role="dialog" aria-label="Split Harbor Town">
+                <p class="bk-label">The Library &middot; Lorebook workshop</p>
+                <h2 class="bk-heading" style="font-size:var(--bk-fs-lg)">Split Harbor Town</h2>
+                <p class="bk-meta">Move entries to a new book. Apply is the only write; nothing changes until you click it.</p>
+                <div class="lib-bench">
+                  <div><p class="bk-label">Harbor Town &middot; 208 entries</p><div class="lib-bench-list"><div class="bk-item">Tide charts</div><div class="bk-item">Smuggler's code</div></div></div>
+                  <div class="lib-bench-arrow">&rarr;</div>
+                  <div><p class="bk-label">New book &middot; 5 entries</p><div class="lib-bench-list"><div class="bk-item">Harbor watch schedule</div><div class="bk-item">Dockworkers' guild</div></div></div>
+                </div>
+                <div class="lib-workshop-acts"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-part="ui.button">Apply</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="default" aria-pressed="true">Default</button>
+          <button type="button" class="spec-chip" data-set-state="grid">Grid + lasso</button>
+          <button type="button" class="spec-chip" data-set-state="select">Staged + collections</button>
+          <button type="button" class="spec-chip" data-set-state="menu">Card menu</button>
+          <button type="button" class="spec-chip" data-set-state="workshop">Split/merge sheet</button>
+          <button type="button" class="spec-chip" data-set-state="damage">Damage notice</button>
+          <button type="button" class="spec-chip" data-set-state="nomatch">No-match</button>
+          <button type="button" class="spec-chip" data-set-state="doors">First landing</button>
+          <button type="button" class="spec-chip" data-set-state="unreachable">Unreachable</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="library.room.b" data-taste-title="Deck tabs">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Deck tabs</h3>
+          <p>The rail becomes a row of deck tabs with counts above the shelves; collections and
+          Trash move into the top bar's right group.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen lib-root" data-part="library.room" data-variant="b" data-state="default">
+            <div class="lib-body">
+                <nav class="lib-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="lib-dock-brand" data-part="shell.dock.brand">
+                    <svg class="lib-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="lib-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" >
+                    <span class="lib-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Scenes</b><small class="lib-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Workbench</b><small class="lib-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="library" aria-current="page">
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Library</b><small class="lib-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="press" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Press</b><small class="lib-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Agent</b><small class="lib-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Kit</b><small class="lib-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="lib-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="lib-dock-tx"><b class="lib-dock-label">Settings</b></span>
+                  </button>
+                  <div class="lib-dock-foot">
+                    <button type="button" class="lib-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="lib-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="lib-dock-tx"><b class="lib-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="lib-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="lib-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <div class="lib-main-wrap" style="display:flex;flex:1;min-width:0">
+                <main class="bk-stage lib-main" data-part="library.top" style="padding-top:var(--bk-space-6)">
+                  <div class="lib-topbar">
+                    <label class="lib-search" data-part="library.search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/></svg><input type="text" placeholder="Search the library" aria-label="Search the library"></label>
+                    <label class="lib-dial" data-part="library.dial"><span class="bk-label">Art</span><input type="range" value="60" aria-label="Card size"></label>
+                    <div class="lib-topbar-right">
+                      <button type="button" class="bk-tag" data-part="ui.button">Select all</button>
+                      <span class="bk-tag" data-mark>Harbor Town <b>7</b></span>
+                      <div class="bk-item lib-deck" data-part="library.rail.trash" data-tone="danger" style="width:auto"><span class="bk-tag">Trash <b>3</b></span></div>
+                    </div>
+                  </div>
+                  <nav class="lib-tabs" aria-label="Decks">
+                    <button type="button" class="bk-tag" data-mark data-deck="character" data-part="library.rail.deck ui.tabs">Characters <b>41</b></button>
+                    <button type="button" class="bk-tag" data-deck="lorebook" data-part="library.rail.deck ui.tabs">Lorebooks <b>18</b></button>
+                    <button type="button" class="bk-tag" data-deck="persona" data-part="library.rail.deck ui.tabs">Personas <b>4</b></button>
+                    <button type="button" class="bk-tag" data-deck="pack" data-part="library.rail.deck ui.tabs">Packs <b>2</b></button>
+                    <button type="button" class="bk-tag" data-deck="preset" data-part="library.rail.deck ui.tabs">Presets <b>12</b></button>
+                    <button type="button" class="bk-tag" data-deck="regex" data-part="library.rail.deck ui.tabs">Regex <b>9</b></button>
+                    <button type="button" class="bk-tag" data-part="library.rail.deck ui.tabs">Quick replies <b style="color:var(--bk-text-faint)">0</b></button>
+                  </nav>
+
+                  <div class="lib-sendbar bk-panel bk-frame" data-mark data-part="library.send-bar">
+                    <span class="bk-meta">2 pieces staged</span>
+                    <button type="button" class="bk-tag" data-mark data-part="ui.button">Send all 2 to the Workbench</button>
+                    <button type="button" class="bk-tag" data-part="ui.button">Clear</button>
+                  </div>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act I</p><h2 class="bk-heading">Characters</h2><p class="bk-meta">Your cast</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">41</span><span class="bk-readout__label">characters</span></span>
+                        <div class="bk-tag" data-mark>Cards</div><div class="bk-tag">Tiles</div><div class="bk-tag">Show</div><div class="bk-tag">List</div><div class="bk-tag">Shelf</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="character">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-grid" id="libCharGridB" data-part="library.card" role="list">
+                      <article class="lib-card bk-frame" data-lift data-crown data-deck="character" aria-selected="true" role="listitem">
+                        <span class="lib-card-art" data-part="library.card.art"><span>V</span></span>
+                        <div class="lib-card-body">
+                          <div><span class="bk-tag">SillyTavern V3</span></div>
+                          <b class="bk-name" data-part="library.card.title">Vera Lune</b>
+                          <p class="lib-card-tagline" data-part="library.card.tagline">"Who did you let up the stairs?"</p>
+                          <p class="lib-card-facts" data-part="library.card.facts">9/9 fields &middot; ~2.4K tokens &middot; Imported 9h ago</p>
+                        </div>
+                        <button type="button" class="bk-tag lib-card-start" data-part="library.card.start ui.button" data-mark>Start Scene</button>
+                      </article>
+                      <article class="lib-card bk-frame" data-lift data-crown data-deck="preset" role="listitem">
+                        <span class="lib-card-art" data-part="library.card.art"><span>M</span></span>
+                        <div class="lib-card-body">
+                          <div><span class="bk-tag">RoleCall V3</span><span class="bk-tag" data-part="library.card.chip" data-mark>on the workbench</span></div>
+                          <b class="bk-name" data-part="library.card.title">Marguerite Vane</b>
+                          <p class="lib-card-tagline" data-part="library.card.tagline">"Sit, if you like. The storm will not care either way."</p>
+                          <p class="lib-card-facts" data-part="library.card.facts">7/9 fields &middot; ~1.8K tokens &middot; Imported 3d ago</p>
+                        </div>
+                        <button type="button" class="bk-tag lib-card-start" data-part="library.card.start ui.button" data-mark>Start Scene</button>
+                      </article>
+                      <button type="button" class="lib-new-tile bk-frame" data-part="library.new-tile" data-lift><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act II</p><h2 class="bk-heading">Lorebooks</h2><p class="bk-meta">World knowledge</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">18</span><span class="bk-readout__label">lorebooks</span></span>
+                        <div class="bk-tag">Cards</div><div class="bk-tag">Tiles</div><div class="bk-tag">Show</div><div class="bk-tag">List</div><div class="bk-tag" data-mark>Shelf</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="lorebook">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-shelfgrid" data-part="library.card" role="list">
+                      <article class="lib-spine bk-frame" data-crown data-deck="lorebook" role="listitem">
+                        <div class="lib-spine-body">
+                          <b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Harbor Town</b>
+                          <p class="bk-meta">213 entries</p>
+                          <div class="lib-spine-facts" data-part="library.card.facts"><span class="bk-tag">SillyTavern</span><span class="bk-tag">~92.6K tok</span><span class="bk-tag">tide</span></div>
+                        </div>
+                        <div class="lib-spine-foot"><span class="bk-tag" data-part="library.card.switch" data-mark>On</span><span style="flex:1"></span><button type="button" class="bk-tag" data-part="ui.button">Split</button><button type="button" class="bk-tag" data-part="ui.button">Copy</button></div>
+                      </article>
+                      <article class="lib-spine bk-frame" data-crown data-deck="lorebook" role="listitem">
+                        <div class="lib-spine-body">
+                          <b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">The Lighthouse</b>
+                          <p class="bk-meta">12 entries</p>
+                          <div class="lib-spine-facts" data-part="library.card.facts"><span class="bk-tag">Risu</span><span class="bk-tag">~3.4K tok</span></div>
+                        </div>
+                        <div class="lib-spine-foot"><span class="bk-tag" data-part="library.card.switch">Off, skipped on export</span><span style="flex:1"></span><button type="button" class="bk-tag" data-part="ui.button">Split</button><button type="button" class="bk-tag" data-part="ui.button">Copy</button></div>
+                      </article>
+                    </div>
+                    <p class="bk-meta" style="margin-top:var(--bk-space-2)">Drag a book onto another book to merge</p>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act III</p><h2 class="bk-heading">Personas</h2><p class="bk-meta">Who you play</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">4</span><span class="bk-readout__label">personas</span></span>
+                        <div class="bk-tag" data-mark>Profiles</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="persona">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-profgrid" data-part="library.card" role="list">
+                      <article class="lib-prof bk-frame" data-lift data-crown data-deck="persona" role="listitem">
+                        <div class="lib-prof-cov" data-part="library.card.art">W<span class="bk-tag lib-prof-def" data-mark>Default</span></div>
+                        <div class="lib-card-body"><b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Wren</b><p class="lib-card-tagline" data-part="library.card.tagline">A night keeper with a short fuse.</p></div>
+                      </article>
+                      <button type="button" class="lib-new-tile bk-frame" data-part="library.new-tile" data-lift style="height:8rem;aspect-ratio:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act IV</p><h2 class="bk-heading">Sprite packs</h2><p class="bk-meta">Expressions and art</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">2</span><span class="bk-readout__label">packs</span></span>
+                        <div class="bk-tag" data-mark>Tiles</div>
+                      </div>
+                    </div>
+                    <div class="lib-tilegrid" data-part="library.card" role="list">
+                      <button type="button" class="lib-tile bk-frame" data-lift data-crown data-deck="pack" role="listitem">
+                        <span class="lib-tile-cov" data-part="library.card.art"><span class="bk-tag" style="position:absolute;top:0;left:0">pack</span></span>
+                        <div class="lib-card-body"><b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Vera, six faces</b></div>
+                      </button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act V</p><h2 class="bk-heading">Presets</h2><p class="bk-meta">Prompts and samplers</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">12</span><span class="bk-readout__label">presets</span></span>
+                        <div class="bk-tag" data-mark>List</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="preset">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-list" data-part="library.card" role="list">
+                      <button type="button" class="bk-item" data-deck="preset" role="listitem"><b class="bk-name" style="font-size:var(--bk-fs-sm);flex:1" data-part="library.card.title">Chibi Gram Pacer</b><span class="bk-tag" data-part="library.card.facts">1.0 temp &middot; 47 prompts</span></button>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act VI</p><h2 class="bk-heading">Regex sets</h2><p class="bk-meta">Text transformations</p></div>
+                      <div class="lib-section-views" data-part="library.section.views">
+                        <span class="bk-readout" data-inline><span class="bk-readout__value">9</span><span class="bk-readout__label">regex sets</span></span>
+                        <div class="bk-tag" data-mark>Sets</div>
+                        <button type="button" class="bk-tag" data-part="ui.button" data-deck="regex">+ New</button>
+                      </div>
+                    </div>
+                    <div class="lib-shelfgrid" data-part="library.card" role="list">
+                      <article class="lib-set bk-frame" data-crown data-deck="regex" role="listitem">
+                        <div class="lib-set-head"><span class="lib-set-mark">TA</span><div><b class="bk-name" data-part="library.card.title" style="font-size:var(--bk-fs-sm)">Tidy asterisks</b><p class="bk-meta">SillyTavern</p></div></div>
+                        <p class="lib-set-does" data-part="library.card.tagline">Collapses doubled asterisks and trims stray spaces.</p>
+                        <div class="lib-set-foot"><span class="bk-readout" data-inline data-part="library.card.facts"><span class="bk-readout__value">5</span><span class="bk-readout__label">rules, 4 on</span></span><span class="bk-tag" data-tone="warn">1 slow</span><span class="bk-tag" data-part="library.card.switch" data-mark>On</span><button type="button" class="bk-tag" data-part="ui.button">Split</button></div>
+                      </article>
+                    </div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Act VII</p><h2 class="bk-heading">Quick replies</h2><p class="bk-meta">One-tap lines</p></div>
+                      <div class="lib-section-views" data-part="library.section.views"><span class="bk-readout" data-inline><span class="bk-readout__value">0</span><span class="bk-readout__label">quick replies</span></span></div>
+                    </div>
+                    <div class="lib-ghost">your first quick reply lands here &middot; import or start fresh<br><button type="button" class="bk-tag" data-part="ui.button" data-deck="preset" style="margin-top:var(--bk-space-2)">New quick replies</button></div>
+                  </section>
+
+                  <section class="lib-section" data-part="library.section">
+                    <div class="lib-section-head" data-part="library.section.head">
+                      <div><p class="bk-label">Show view, demonstrated</p><h2 class="bk-heading">One card at a time</h2></div>
+                    </div>
+                    <div class="lib-show bk-panel bk-frame" data-deck="character">
+                      <button type="button" class="bk-tag" data-part="ui.button" aria-label="Previous">&lsaquo;</button>
+                      <span class="lib-show-hero" data-part="library.card.art"><span class="bk-name" style="font-size:var(--bk-fs-4xl);color:var(--bk-text-on-tint)">V</span></span>
+                      <div style="flex:1;min-width:0">
+                        <b class="bk-name" data-part="library.card.title">Vera Lune</b>
+                        <p class="lib-card-tagline" data-part="library.card.tagline">"Who did you let up the stairs?"</p>
+                        <p class="bk-meta">A retired locksmith who talks to the tide. 9/9 fields, ~2.4K tokens.</p>
+                        <p class="bk-meta">1 / 41</p>
+                        <button type="button" class="bk-tag" data-mark data-part="ui.button" style="margin-top:var(--bk-space-2)">Stage for the Workbench</button>
+                        <div class="lib-show-rail"><button type="button" class="lib-show-mini" aria-current="true"></button><button type="button" class="lib-show-mini"></button><button type="button" class="lib-show-mini"></button></div>
+                      </div>
+                      <button type="button" class="bk-tag" data-part="ui.button" aria-label="Next">&rsaquo;</button>
+                    </div>
+                  </section>
+
+                </main>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="default" aria-pressed="true">Default</button>
+          <button type="button" class="spec-chip" data-set-state="select">Staged</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> every Hoplight control
+    (per-deck view switch, New, the art dial, search, All/Recent, Select all, collections, Trash
+    with count), the Cards/Shelf/Profiles/Tiles/List/Sets views each shown on their real deck, the
+    Show view, the card menu (with lorebook/regex-only Switch and Split), the split/merge workshop,
+    damage and no-match notices, and the first-landing doors. <b>Simplified:</b> each deck shows 1-2
+    demo cards rather than a full shelf, and the Carousel/Grid toggle is represented by the "grid"
+    state on Characters only (per the source wireframe, Grid is a Characters-only demo).</p>
+  </section>
+</main>
+</body>
+</html>

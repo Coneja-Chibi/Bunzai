@@ -1,0 +1,1170 @@
+{
+  "name": "Test Large Lorebook",
+  "extensions": {},
+  "scan_depth": 4,
+  "description": "",
+  "token_budget": 512,
+  "recursive_scanning": false,
+  "entries": [
+    {
+      "id": 1,
+      "keys": [
+        "amber0",
+        "AMBER0"
+      ],
+      "name": "amber0",
+      "comment": "amber0",
+      "content": "amber0 is entry 1 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 1,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 2,
+      "keys": [
+        "brook0",
+        "BROOK0"
+      ],
+      "name": "brook0",
+      "comment": "brook0",
+      "content": "brook0 is entry 2 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 2,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 3,
+      "keys": [
+        "cedar0",
+        "CEDAR0"
+      ],
+      "name": "cedar0",
+      "comment": "cedar0",
+      "content": "cedar0 is entry 3 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 3,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 4,
+      "keys": [
+        "dune0",
+        "DUNE0"
+      ],
+      "name": "dune0",
+      "comment": "dune0",
+      "content": "dune0 is entry 4 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 4,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 5,
+      "keys": [
+        "ember0",
+        "EMBER0"
+      ],
+      "name": "ember0",
+      "comment": "ember0",
+      "content": "ember0 is entry 5 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 5,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 6,
+      "keys": [
+        "fjord0",
+        "FJORD0"
+      ],
+      "name": "fjord0",
+      "comment": "fjord0",
+      "content": "fjord0 is entry 6 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 6,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 7,
+      "keys": [
+        "grove0",
+        "GROVE0"
+      ],
+      "name": "grove0",
+      "comment": "grove0",
+      "content": "grove0 is entry 7 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 7,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 8,
+      "keys": [
+        "harbor0",
+        "HARBOR0"
+      ],
+      "name": "harbor0",
+      "comment": "harbor0",
+      "content": "harbor0 is entry 8 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 8,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 9,
+      "keys": [
+        "isle0",
+        "ISLE0"
+      ],
+      "name": "isle0",
+      "comment": "isle0",
+      "content": "isle0 is entry 9 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 9,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 10,
+      "keys": [
+        "juniper0",
+        "JUNIPER0"
+      ],
+      "name": "juniper0",
+      "comment": "juniper0",
+      "content": "juniper0 is entry 10 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 10,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 11,
+      "keys": [
+        "amber1",
+        "AMBER1"
+      ],
+      "name": "amber1",
+      "comment": "amber1",
+      "content": "amber1 is entry 11 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 11,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 12,
+      "keys": [
+        "brook1",
+        "BROOK1"
+      ],
+      "name": "brook1",
+      "comment": "brook1",
+      "content": "brook1 is entry 12 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 12,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 13,
+      "keys": [
+        "cedar1",
+        "CEDAR1"
+      ],
+      "name": "cedar1",
+      "comment": "cedar1",
+      "content": "cedar1 is entry 13 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 13,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 14,
+      "keys": [
+        "dune1",
+        "DUNE1"
+      ],
+      "name": "dune1",
+      "comment": "dune1",
+      "content": "dune1 is entry 14 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 14,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 15,
+      "keys": [
+        "ember1",
+        "EMBER1"
+      ],
+      "name": "ember1",
+      "comment": "ember1",
+      "content": "ember1 is entry 15 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 15,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 16,
+      "keys": [
+        "fjord1",
+        "FJORD1"
+      ],
+      "name": "fjord1",
+      "comment": "fjord1",
+      "content": "fjord1 is entry 16 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 16,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 17,
+      "keys": [
+        "grove1",
+        "GROVE1"
+      ],
+      "name": "grove1",
+      "comment": "grove1",
+      "content": "grove1 is entry 17 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 17,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 18,
+      "keys": [
+        "harbor1",
+        "HARBOR1"
+      ],
+      "name": "harbor1",
+      "comment": "harbor1",
+      "content": "harbor1 is entry 18 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 18,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 19,
+      "keys": [
+        "isle1",
+        "ISLE1"
+      ],
+      "name": "isle1",
+      "comment": "isle1",
+      "content": "isle1 is entry 19 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 19,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 20,
+      "keys": [
+        "juniper1",
+        "JUNIPER1"
+      ],
+      "name": "juniper1",
+      "comment": "juniper1",
+      "content": "juniper1 is entry 20 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 20,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 21,
+      "keys": [
+        "amber2",
+        "AMBER2"
+      ],
+      "name": "amber2",
+      "comment": "amber2",
+      "content": "amber2 is entry 21 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 21,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 22,
+      "keys": [
+        "brook2",
+        "BROOK2"
+      ],
+      "name": "brook2",
+      "comment": "brook2",
+      "content": "brook2 is entry 22 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 22,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 23,
+      "keys": [
+        "cedar2",
+        "CEDAR2"
+      ],
+      "name": "cedar2",
+      "comment": "cedar2",
+      "content": "cedar2 is entry 23 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 23,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 24,
+      "keys": [
+        "dune2",
+        "DUNE2"
+      ],
+      "name": "dune2",
+      "comment": "dune2",
+      "content": "dune2 is entry 24 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 24,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 25,
+      "keys": [
+        "ember2",
+        "EMBER2"
+      ],
+      "name": "ember2",
+      "comment": "ember2",
+      "content": "ember2 is entry 25 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 25,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 26,
+      "keys": [
+        "fjord2",
+        "FJORD2"
+      ],
+      "name": "fjord2",
+      "comment": "fjord2",
+      "content": "fjord2 is entry 26 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 26,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 27,
+      "keys": [
+        "grove2",
+        "GROVE2"
+      ],
+      "name": "grove2",
+      "comment": "grove2",
+      "content": "grove2 is entry 27 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 27,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 28,
+      "keys": [
+        "harbor2",
+        "HARBOR2"
+      ],
+      "name": "harbor2",
+      "comment": "harbor2",
+      "content": "harbor2 is entry 28 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 28,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 29,
+      "keys": [
+        "isle2",
+        "ISLE2"
+      ],
+      "name": "isle2",
+      "comment": "isle2",
+      "content": "isle2 is entry 29 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 29,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 30,
+      "keys": [
+        "juniper2",
+        "JUNIPER2"
+      ],
+      "name": "juniper2",
+      "comment": "juniper2",
+      "content": "juniper2 is entry 30 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 30,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 31,
+      "keys": [
+        "amber3",
+        "AMBER3"
+      ],
+      "name": "amber3",
+      "comment": "amber3",
+      "content": "amber3 is entry 31 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 31,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 32,
+      "keys": [
+        "brook3",
+        "BROOK3"
+      ],
+      "name": "brook3",
+      "comment": "brook3",
+      "content": "brook3 is entry 32 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 32,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 33,
+      "keys": [
+        "cedar3",
+        "CEDAR3"
+      ],
+      "name": "cedar3",
+      "comment": "cedar3",
+      "content": "cedar3 is entry 33 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 33,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 34,
+      "keys": [
+        "dune3",
+        "DUNE3"
+      ],
+      "name": "dune3",
+      "comment": "dune3",
+      "content": "dune3 is entry 34 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 34,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 35,
+      "keys": [
+        "ember3",
+        "EMBER3"
+      ],
+      "name": "ember3",
+      "comment": "ember3",
+      "content": "ember3 is entry 35 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 35,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 36,
+      "keys": [
+        "fjord3",
+        "FJORD3"
+      ],
+      "name": "fjord3",
+      "comment": "fjord3",
+      "content": "fjord3 is entry 36 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 36,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 37,
+      "keys": [
+        "grove3",
+        "GROVE3"
+      ],
+      "name": "grove3",
+      "comment": "grove3",
+      "content": "grove3 is entry 37 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 37,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 38,
+      "keys": [
+        "harbor3",
+        "HARBOR3"
+      ],
+      "name": "harbor3",
+      "comment": "harbor3",
+      "content": "harbor3 is entry 38 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 38,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 39,
+      "keys": [
+        "isle3",
+        "ISLE3"
+      ],
+      "name": "isle3",
+      "comment": "isle3",
+      "content": "isle3 is entry 39 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "0",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 39,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    },
+    {
+      "id": 40,
+      "keys": [
+        "juniper3",
+        "JUNIPER3"
+      ],
+      "name": "juniper3",
+      "comment": "juniper3",
+      "content": "juniper3 is entry 40 of the invented large lorebook.",
+      "enabled": true,
+      "constant": false,
+      "position": "1",
+      "priority": 10,
+      "selective": true,
+      "extensions": {
+        "depth": 4,
+        "weight": 10,
+        "addMemo": true,
+        "displayIndex": 40,
+        "useProbability": true,
+        "characterFilter": null,
+        "excludeRecursion": true
+      },
+      "probability": 100,
+      "case_sensitive": false,
+      "secondary_keys": [],
+      "selectiveLogic": 0,
+      "insertion_order": 100
+    }
+  ]
+}

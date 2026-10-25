@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene options side by side</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+  body { padding: 28px 32px 60px; }
+  h1 { font-family: var(--font-fancy); font-weight: 900; font-size: 28px; letter-spacing: .06em; text-transform: uppercase; color: var(--stage-card); }
+  .lede { margin-top: 6px; font-size: 14px; color: var(--text-soft); max-width: 60rem; }
+  section { margin-top: 36px; padding-top: 20px; border-top: 2px solid var(--hard); }
+  h2 { font-family: var(--font-fancy); font-weight: 700; font-size: 20px; letter-spacing: .08em; text-transform: uppercase; color: var(--stage-card); }
+  h2 small { font-family: var(--font-big); font-weight: 400; font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--text-soft); margin-left: 10px; }
+  .row { margin-top: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 20px; }
+  .opt { border: 2px solid var(--hard); box-shadow: 4px 4px 0 var(--hard); background: var(--raise); }
+  .opt.rec { border-color: var(--accent); }
+  .opt .top { display: flex; align-items: baseline; gap: 10px; padding: 10px 12px; }
+  .opt .k { font-family: var(--font-mono); font-weight: 700; font-size: 13px; color: var(--accent); }
+  .opt .t { font-weight: 600; font-size: 14px; color: var(--stage-card); }
+  .opt .badge { margin-left: auto; font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; padding: 2px 6px; background: var(--accent); color: var(--stage-white); }
+  .opt .d { padding: 0 12px 10px; font-size: 13px; line-height: 1.45; color: var(--text-soft); }
+  .opt.shared .k { color: var(--text-dim); }
+  /* each frame is the real page at 1600 x 900, scaled to the card */
+  .frame { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-top: 2px solid var(--hard); background: var(--stage-well); }
+  .frame iframe { position: absolute; top: 0; left: 0; width: 1600px; height: 900px; border: 0; transform-origin: 0 0; pointer-events: none; }
+  .frame a { position: absolute; inset: 0; }
+  .frame a:hover { box-shadow: inset 0 0 0 3px var(--accent); }
+</style>
+</head>
+<body>
+<h1>Scene options, side by side</h1>
+<p class="lede">Four decisions. Each card is the live wireframe; click one to open it full size. "Every option" cards show a part that is the same whichever you pick. My recommendation is outlined.</p>
+
+<section>
+  <h2>1. Getting cut scenes back <small>RoleCall has none; it deletes scenes for good</small></h2>
+  <div class="row">
+    <div class="opt rec"><div class="top"><span class="k">A</span><span class="t">One Trash</span><span class="badge">Recommended</span></div><div class="d">Cut scenes join the Library Trash with pieces, with an All / Pieces / Scenes filter.</div><div class="frame" data-src="scene-trash.html"></div></div>
+    <div class="opt"><div class="top"><span class="k">B</span><span class="t">In the Scenes page</span></div><div class="d">Cut scenes list under Earlier in the On Stage column, with Restore. The Library Trash stays pieces only.</div><div class="frame" data-src="scene-trash-scenes.html?o=b"></div></div>
+    <div class="opt"><div class="top"><span class="k">C</span><span class="t">Both</span></div><div class="d">A's one Trash, plus a Trash button beside Select on the Scenes page that opens it.</div><div class="frame" data-src="scene-trash-scenes.html?o=c"></div></div>
+    <div class="opt shared"><div class="top"><span class="k">Every option</span><span class="t">The cut dialog</span></div><div class="d">RoleCall's "Cut this story?", now saying it goes to the Trash for 3 days.</div><div class="frame" data-src="scene-trash-scenes.html?o=cutdlg"></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>2. Updating a scene to the latest card <small>RoleCall's "Update available" badge</small></h2>
+  <div class="row">
+    <div class="opt rec"><div class="top"><span class="k">A</span><span class="t">In the Cast wing</span><span class="badge">Recommended</span></div><div class="d">The badge sits on the scene's card in the Cast wing, with a line saying which version plays.</div><div class="frame" data-src="scene-latest-card.html?o=a"></div></div>
+    <div class="opt"><div class="top"><span class="k">B</span><span class="t">In the scene header</span></div><div class="d">The badge sits beside the take pill, visible without opening a wing.</div><div class="frame" data-src="scene-latest-card.html?o=b"></div></div>
+    <div class="opt"><div class="top"><span class="k">C</span><span class="t">Both</span></div><div class="d">The header badge, and the Cast wing badge and line.</div><div class="frame" data-src="scene-latest-card.html?o=c"></div></div>
+    <div class="opt shared"><div class="top"><span class="k">Every option</span><span class="t">The confirm</span></div><div class="d">What changes and what stays; the old version is kept, so it can be undone.</div><div class="frame" data-src="scene-latest-card.html?o=dialog"></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>3. Deleting a message <small>the undo is ours to design</small></h2>
+  <div class="row">
+    <div class="opt shared"><div class="top"><span class="k">Every option</span><span class="t">RoleCall's delete menu</span></div><div class="d">The trash button opens "Delete this message" or "Delete this &amp; all after".</div><div class="frame" data-src="scene-messages.html?o=delmenu"></div></div>
+    <div class="opt"><div class="top"><span class="k">A</span><span class="t">Confirm, then Undo</span></div><div class="d">RoleCall's "Cut this line?" dialog, then an Undo toast for a few seconds.</div><div class="frame" data-src="scene-messages.html?o=dela"></div></div>
+    <div class="opt rec"><div class="top"><span class="k">B</span><span class="t">No dialog, fold to a stub</span><span class="badge">Recommended</span></div><div class="d">The message folds to a stub where it was, with Restore, for 3 days.</div><div class="frame" data-src="scene-messages.html?o=delb1"></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>4. Making a new take <small>RoleCall's Scene Takes and "Branch from here"</small></h2>
+  <div class="row">
+    <div class="opt shared"><div class="top"><span class="k">Every option</span><span class="t">Scene Takes</span></div><div class="d">The take pill lists takes to switch, rename, or delete (delete goes to the Trash).</div><div class="frame" data-src="scene-messages.html?o=takes"></div></div>
+    <div class="opt"><div class="top"><span class="k">A</span><span class="t">RoleCall's fork dialog</span></div><div class="d">"Fork this scene" asks for a name first.</div><div class="frame" data-src="scene-messages.html?o=forka"></div></div>
+    <div class="opt rec"><div class="top"><span class="k">B</span><span class="t">Starts right away</span><span class="badge">Recommended</span></div><div class="d">The new take starts playing at once; Rename sits in the toast.</div><div class="frame" data-src="scene-messages.html?o=forkb"></div></div>
+  </div>
+</section>
+
+<div class="wf-chip"><span>Scene options</span><button data-theme-switch>Theme</button><a href="../index.html">All wireframes</a></div>
+<script>
+document.querySelectorAll(".frame").forEach(function (f) {
+  var src = f.getAttribute("data-src"), url = src + (src.indexOf("?") < 0 ? "?" : "&") + "embed=1";
+  var frame = document.createElement("iframe"), link = document.createElement("a");
+  frame.loading = "lazy"; frame.tabIndex = -1; frame.src = url;
+  link.href = src; link.target = "_blank"; link.setAttribute("aria-label", "Open full size");
+  f.append(frame, link);
+});
+function fit() { document.querySelectorAll(".frame").forEach(function (f) { f.firstChild.style.transform = "scale(" + f.clientWidth / 1600 + ")"; }); }
+addEventListener("resize", fit); fit();
+</script>
+</body>
+</html>

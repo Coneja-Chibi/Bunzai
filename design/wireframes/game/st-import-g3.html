@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="en" data-theme="stage">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Import from SillyTavern: G3 HUD</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-g3.css">
+<link rel="stylesheet" href="../soft/soft-parts.css">
+<style>
+/*
+ * The Library's SillyTavern backup importer, G3 "Arcade HUD" identity. Same content, same ten
+ * states, same copy as design/wireframes/soft/library-st-import.html (the approved soft version) -
+ * this pass only changes what it looks like, the way g3-hud.html recolors the Dock/Scenes/Library
+ * screens without touching their content. Loads the same three stylesheets g3-hud.html does
+ * (tokens.css, tokens-g3.css, soft-parts.css); everything the HUD look needs beyond that (the top
+ * hudstrip, corner-bracket frames, segmented meters, key chips) is copied in here from g3-hud.html's
+ * own inline block, since there is no shared "game-parts.css" yet - every G3 page carries its own
+ * copy of these parts today, the same way library-st-import.html carries its own copy of the sheet/
+ * checklist/receipt parts soft-parts.css has no opinion on.
+ *
+ * Dark only, square corners, no glow, no scanlines, no pixel font, nothing tilted - this is an "import
+ * save data" screen for an app, not an arcade cabinet.
+ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; overflow-x: hidden; padding-bottom: 190px; container-type: inline-size; }
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+
+/* ================= HUD FRAME: corner brackets on any positioned box, copied from g3-hud.html ================= */
+.hud-frame { position: relative; }
+.hud-frame::before {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))),
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))),
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))),
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent)));
+  background-size: 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px;
+  background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+}
+
+/* ================= top HUD strip: constant app chrome, same role as g3-hud.html's header ================= */
+.hudshell { display: flex; flex-direction: column; min-height: 100vh; }
+.hudstrip { flex: none; display: flex; align-items: center; gap: 22px; padding: 10px 20px; background: var(--stage-well); box-shadow: inset 0 -1px 0 var(--seam); --hb: var(--accent); }
+.hudstrip .slotmark { display: flex; align-items: center; gap: 10px; flex: none; }
+.hudstrip .slotmark svg { width: 22px; height: 22px; }
+.hud-tag { font: 700 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+.hud-tag b { color: var(--c, var(--accent)); font-weight: 700; }
+.hud-score { display: flex; align-items: center; gap: 18px; }
+.hud-stat { text-align: center; line-height: 1.1; }
+.hud-stat b { display: block; font: 700 1.15rem var(--font-mono); color: var(--text); }
+.hud-stat span { display: block; margin-top: 2px; font: 600 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.hud-div { width: 1px; align-self: stretch; background: var(--seam); flex: none; }
+.hudstrip .mid { flex: 1; min-width: 0; display: flex; align-items: center; gap: 22px; justify-content: center; }
+.hudstrip .right { flex: none; display: flex; align-items: center; gap: 20px; }
+
+.hud-meter { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hud-meter .bar { position: relative; width: 108px; height: 9px; flex: none; background: var(--stage-line); overflow: hidden; }
+.hud-meter .bar i { display: block; height: 100%; background: var(--c, var(--accent)); }
+.hud-meter .bar::after { content: ""; position: absolute; inset: 0; background-image: repeating-linear-gradient(to right, transparent 0 12px, var(--stage-well) 12px 13px); pointer-events: none; }
+.hud-meter .lbl { font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+.hud-meter .val { font: 700 12px var(--font-mono); color: var(--c, var(--accent)); white-space: nowrap; }
+.hud-meter.stacked { flex-direction: column; align-items: flex-start; gap: 3px; width: 100%; }
+.hud-meter.stacked .bar { width: 100%; height: 10px; }
+.hud-meter.stacked .row { display: flex; justify-content: space-between; width: 100%; }
+
+.hud-key { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px 5px 6px; font: 600 12px var(--font-body); color: var(--text-soft); background: var(--shell-panel-2); box-shadow: inset 0 0 0 1px var(--edge); white-space: nowrap; }
+.hud-key kbd { font: 700 12px var(--font-mono); padding: 2px 6px; color: var(--c, var(--accent)); background: var(--stage-ink); box-shadow: inset 0 0 0 1px var(--c, var(--accent)); }
+.hud-keys { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* ================= shell: hudstrip on top, Dock + stage below ================= */
+.app { flex: 1; display: flex; align-items: flex-start; min-height: 0; }
+.s-dock { flex: none; }
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; background: var(--stage-well); }
+.center { display: flex; align-items: flex-start; justify-content: center; padding: 6vh 20px 6vh; }
+.dropzone { position: fixed; inset: 0; z-index: 5; display: none; place-items: center; background: color-mix(in srgb, var(--accent) 12%, var(--scrim)); }
+.dropzone.show { display: grid; }
+.dropzone .hint { padding: 30px 40px; background: var(--face); box-shadow: 0 0 0 2px var(--accent); font: 700 1.1rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--text); }
+
+/* ---- the sheet: a HUD-framed panel, border-top tells you the state's mood (accent/warn/danger/ok) ---- */
+.sheet { position: relative; width: min(40rem, 100%); background: var(--face); box-shadow: 0 0 0 2px var(--edge); border-top: 4px solid var(--hb, var(--accent)); padding: 26px 28px 24px; }
+.sheet.wide { width: min(54rem, 100%); }
+.imptitle { display: block; font: 700 1.4rem var(--font-fancy); color: var(--text); margin-top: 10px; }
+.impsub { color: var(--text-dim); font-size: .88rem; margin-top: 6px; line-height: 1.5; }
+.impacts { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+.impacts.center { justify-content: center; }
+
+/* ---- drop state ---- */
+.stdrop { margin-top: 18px; padding: 26px; text-align: center; box-shadow: inset 0 0 0 2px dashed var(--seam); }
+.stdrophint { font: 700 .9rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--text); }
+.stdrops { font-size: .76rem; color: var(--text-faint); margin: 6px 0 10px; font-family: var(--font-mono); }
+.stdrop .impacts { justify-content: center; margin-top: 4px; }
+.stprivacy { margin-top: 16px; padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--stage-ok); background: var(--stage-ok-bg); }
+.stprivacy b { color: var(--stage-ok); font: 700 .82rem var(--font-mono); text-transform: uppercase; letter-spacing: .04em; }
+.stprivacy p { font-size: .8rem; color: var(--text-soft); margin: 6px 0 0; }
+.stprivacy code { font-family: var(--font-mono); font-size: .76rem; }
+
+/* ---- scanning state: a readout, not a soft list - bracket pips instead of a checkmark glyph ---- */
+.scanlist { list-style: none; margin: 16px 0 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.scanlist li { display: flex; align-items: center; gap: 10px; padding: 7px 10px; font: 500 .8rem var(--font-mono); color: var(--text-faint); box-shadow: inset 0 0 0 1px var(--seam); }
+.scanlist li .pip { width: 8px; height: 8px; flex: none; background: var(--stage-line); }
+.scanlist li b { margin-left: auto; font-weight: 700; color: var(--text-dim); }
+.scanlist li.done { color: var(--text-soft); }
+.scanlist li.done .pip { background: var(--stage-ok); }
+.scanlist li.active { color: var(--text); box-shadow: inset 0 0 0 1px var(--accent); }
+.scanlist li.active .pip { background: var(--accent); }
+.scanlist li.active span.now { margin-left: auto; color: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+.scanlist li.queued { opacity: .55; }
+.scanlist li.skip { opacity: .75; }
+.scanlist li.skip .pip { background: var(--stage-danger-text); }
+.scanlist li.skip span.now { margin-left: auto; color: var(--stage-danger-text); text-transform: uppercase; letter-spacing: .04em; }
+
+/* ---- choose state: an inventory manifest - numbered slots, deck-colored left tile, counts in mono ---- */
+.stksum { font: 700 .78rem var(--font-mono); letter-spacing: .04em; color: var(--text-soft); margin-top: 10px; }
+.stkgroups { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.stkgroup { box-shadow: inset 0 0 0 1px var(--seam); border-left: 3px solid var(--c, var(--accent)); }
+.stkhead { display: flex; align-items: center; gap: 10px; padding: 11px 12px; cursor: pointer; }
+.stkhead input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--c, var(--accent)); flex: none; }
+.slotno { flex: none; width: 26px; height: 26px; display: grid; place-items: center; font: 700 11px var(--font-mono); color: var(--text-faint); box-shadow: inset 0 0 0 1px var(--seam); }
+.stktile { width: 28px; height: 28px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--c, var(--accent)) 20%, transparent); color: var(--c, var(--accent)); }
+.stktile svg { width: 15px; height: 15px; }
+.stkname { flex: 1; min-width: 0; }
+.stkname b { display: block; font: 700 .92rem var(--font-big); color: var(--text); }
+.stkname span { font: 600 .72rem var(--font-mono); letter-spacing: .03em; color: var(--text-faint); }
+.stkcount { font: 700 .82rem var(--font-mono); color: var(--c, var(--text-soft)); white-space: nowrap; }
+.stksize { font: 600 .74rem var(--font-mono); color: var(--text-faint); white-space: nowrap; margin-left: 8px; }
+.stksub { padding: 2px 12px 12px 76px; display: flex; flex-direction: column; gap: 6px; }
+.stksub .note { font-size: .76rem; color: var(--text-faint); }
+.stkopt { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--text-soft); cursor: pointer; }
+.stkopt input { accent-color: var(--c, var(--accent)); }
+.stknum { width: 3.4rem; padding: 3px 6px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); font: 600 .8rem var(--font-mono); border: 0; }
+
+.stkgroup.grey { opacity: .6; border-left-color: var(--deck-fog); }
+.stkgroup.grey .stkhead { cursor: default; }
+.stkgroup.grey .stktile { background: color-mix(in srgb, var(--deck-fog) 20%, transparent); color: var(--deck-fog); }
+.stkgroup.grey .stkcount { color: var(--text-faint); }
+.stkgroup.grey .stksub { padding-top: 0; }
+.stkreason { font-size: .78rem; color: var(--text-dim); font-style: normal; font-family: var(--font-mono); }
+.stknever { margin-top: 20px; }
+.stknever .divlabel { font: 700 11px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; display: block; }
+
+/* ---- duplicates state ---- */
+.duprow { display: flex; align-items: center; gap: 14px; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--seam); flex-wrap: wrap; }
+.dupchoice { display: flex; gap: 12px; flex-wrap: wrap; }
+.dupchoice label { display: flex; align-items: center; gap: 5px; font: 600 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .02em; color: var(--text-soft); cursor: pointer; white-space: nowrap; }
+.dupchoice input { accent-color: var(--accent); }
+
+/* ---- needs-a-character state ---- */
+.needrow { display: flex; align-items: center; gap: 14px; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--stage-warn); background: color-mix(in srgb, var(--stage-warn) 10%, transparent); flex-wrap: wrap; }
+.needpick { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-left: auto; }
+.needpick select { padding: 7px 10px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); font: 500 .8rem var(--font-body); border: 0; }
+
+/* ---- options state ---- */
+.optlist { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; }
+.opttoggle { display: flex; gap: 12px; align-items: flex-start; padding: 12px; box-shadow: inset 0 0 0 1px var(--seam); }
+.opttoggle .s-switch { margin-top: 2px; }
+.optbody { flex: 1; min-width: 0; }
+.optbody b { display: block; font: 700 .88rem var(--font-body); color: var(--text); }
+.optbody p { font-size: .78rem; color: var(--text-dim); margin: 3px 0 0; }
+.optgroup { padding: 12px; box-shadow: inset 0 0 0 1px var(--seam); }
+.optlabel { display: block; font: 700 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .04em; color: var(--text); margin-bottom: 8px; }
+.optgroup .stkopt { margin-top: 4px; }
+
+/* ---- importing state: per-kind rows share the hudstrip's own meter part ---- */
+.kindprogs { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.kindprog { display: grid; grid-template-columns: 7.5rem 1fr 5.5rem; gap: 12px; align-items: center; }
+.kpname { font: 700 .76rem var(--font-mono); text-transform: uppercase; letter-spacing: .03em; color: var(--text); }
+.kindprog .hud-meter .bar { width: 100%; }
+.kpcount { font: 600 .76rem var(--font-mono); color: var(--text-dim); text-align: right; }
+.kindprog.queued { opacity: .5; }
+.kindprog.queued .kpcount { font-style: italic; }
+.kindprog.done .hud-meter .bar i { background: var(--stage-ok); }
+.kindprog.failed .hud-meter .bar i { background: var(--stage-danger-text); }
+.impkeepnote { margin-top: 18px; padding: 10px 12px; font-size: .78rem; color: var(--text-dim); box-shadow: inset 0 0 0 1px var(--seam); background: var(--stage-row); font-family: var(--font-mono); }
+
+/* ---- receipt / partial states: the tallies are hud-stat scoreboard cells, same part as the hudstrip ---- */
+.rcpthead { text-align: center; }
+.rcptcounts { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: 1px; background: var(--seam); margin-top: 18px; }
+.rcptcell { background: var(--face); padding: 16px 10px; text-align: center; }
+.rcptcell b { display: block; font: 700 1.4rem var(--font-mono); color: var(--c, var(--accent)); }
+.rcptcell span { font: 700 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: .05em; color: var(--text-dim); }
+.rcptsection { margin-top: 18px; }
+.rcptsection summary { font: 700 .8rem var(--font-mono); text-transform: uppercase; letter-spacing: .03em; color: var(--text); cursor: pointer; padding: 4px 0; }
+.rcptsection ul { margin: 8px 0 0; padding-left: 1.2rem; font-size: .8rem; color: var(--text-soft); display: flex; flex-direction: column; gap: 4px; }
+.rcptattn { margin-top: 14px; padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--stage-warn); background: color-mix(in srgb, var(--stage-warn) 10%, transparent); }
+.rcptattn b { color: var(--stage-warn); font: 700 .8rem var(--font-mono); text-transform: uppercase; letter-spacing: .03em; }
+.rcptattn p { font-size: .8rem; color: var(--text-soft); margin: 4px 0 0; }
+.rcptbtns { display: flex; gap: 10px; justify-content: center; margin-top: 22px; flex-wrap: wrap; }
+.rcptlog { text-align: center; margin-top: 12px; }
+.rcptlog a { font: 600 .76rem var(--font-mono); text-transform: uppercase; letter-spacing: .03em; color: var(--accent); text-decoration: none; }
+.rcptlog a:hover { text-decoration: underline; }
+
+/* row/report primitives shared by needs-character, duplicates, importing-partial */
+.improws { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; max-height: 56vh; overflow-y: auto; padding-right: 2px; }
+.improw { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--seam); }
+.improw.bad { box-shadow: inset 0 0 0 1px var(--stage-danger-edge); background: var(--stage-danger-bg); }
+.impbody { flex: 1; min-width: 0; }
+.impname { display: block; font: 700 .9rem var(--font-big); color: var(--text); }
+.impkind { font-size: .78rem; color: var(--text-dim); margin: 2px 0 0; font-family: var(--font-mono); }
+.impmeta { font-size: .76rem; color: var(--text-faint); margin: 2px 0 0; font-family: var(--font-mono); }
+.impflag { font: 700 10px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--stage-danger-text); }
+.imperr { font-size: .8rem; color: var(--stage-danger-text); margin: 2px 0 0; font-family: var(--font-mono); }
+.impreport { padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--seam); background: var(--stage-row); }
+.impreport ul { margin: 6px 0 0; padding-left: 1.1rem; font-size: .76rem; color: var(--text-dim); }
+
+/* ---- wizard state (first-run, one line among other doors) ---- */
+.wizopts { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.wizopt { display: block; width: 100%; text-align: left; padding: 12px 14px; background: none; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-soft); font: 700 .86rem var(--font-mono); text-transform: uppercase; letter-spacing: .02em; cursor: pointer; }
+.wizopt.on { box-shadow: inset 0 0 0 2px var(--accent); color: var(--text); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.wizhint { display: block; font: 400 .76rem var(--font-body); text-transform: none; letter-spacing: normal; color: var(--text-dim); margin-top: 4px; font-weight: 500; }
+
+/* ---- buttons: reuse soft-parts' s-btn, already recolored by tokens-g3; impbtn is a quieter line
+   button for the dense action rows, framed flush instead of lifted ---- */
+.impbtn { padding: 9px 16px; font: 700 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .03em; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); cursor: pointer; border: 0; }
+.impbtn.primary { background: var(--stamp-bg); color: var(--stamp-fg); box-shadow: none; }
+.impbtn.primary:disabled { opacity: .5; cursor: default; }
+.impbtn.big { padding: 13px 22px; font-size: .82rem; }
+.impbtn:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--accent); }
+.impbtn.primary:hover:not(:disabled) { box-shadow: 0 0 0 2px var(--accent); }
+
+/* body container-type (set above) lets these fold on the simulated phone box, same technique g3-hud.html
+   uses: a real narrow --window-size can't be reached by a headless screenshot, so phone caps body's
+   width via inline style and these @container rules answer that instead of the real viewport. */
+@container (max-width: 30rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+  .hudstrip { flex-wrap: wrap; gap: 12px; }
+  .hudstrip .mid { justify-content: flex-start; }
+  .center { padding: 4vh 12px; }
+  .sheet { padding: 18px 16px; }
+  .improw, .duprow, .needrow { flex-wrap: wrap; }
+  .stkhead { flex-wrap: wrap; align-items: flex-start; row-gap: 4px; }
+  .stkcount { flex-basis: 100%; margin-left: 60px; }
+  .stksize { margin-left: 60px; }
+  .stksub { padding-left: 60px; }
+  .kindprog { grid-template-columns: 1fr; gap: 4px; }
+  .kpcount { text-align: left; }
+  .rcptbtns { flex-direction: column; }
+  .rcptbtns .impbtn { width: 100%; text-align: center; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+  <symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+  <symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+  <symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-character" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol>
+  <symbol id="i-lorebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M9 7h7"/></symbol>
+  <symbol id="i-persona" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 17c1-2 2.4-3 4-3s3 1 4 3"/></symbol>
+  <symbol id="i-preset" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10"/><path d="M18 6h2"/><circle cx="16" cy="6" r="2"/><path d="M4 12h4"/><path d="M12 12h8"/><circle cx="10" cy="12" r="2"/><path d="M4 18h12"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="i-regex" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11l-3-3"/><path d="M20 17H9l3 3"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M13 8l-2 3h3l-2 3"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 16-5.5-5.5-4 4-3-3-5.5 5.5"/></symbol>
+  <symbol id="i-group" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c1-3.5 3.2-5 6-5s5 1.5 6 5"/><circle cx="17" cy="9" r="2.3"/><path d="M15.2 11.3c1.8.6 2.9 2 3.5 4.2"/></symbol>
+  <symbol id="i-theme" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 1 0-18c4 0 8 2.5 8 6.5 0 2-1.5 3.5-3.5 3.5H14a1.5 1.5 0 0 0-1 2.6c.5.5.5 1.4 0 1.9-.4.4-.8.5-1 .5z"/><circle cx="7.5" cy="11" r=".9" fill="currentColor" stroke="none"/><circle cx="9.5" cy="7.5" r=".9" fill="currentColor" stroke="none"/><circle cx="14.5" cy="7" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-extension" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h4v2.5a1.5 1.5 0 0 0 3 0V4h4v4h-2.5a1.5 1.5 0 0 0 0 3H20v4h-4v-2.5a1.5 1.5 0 0 0-3 0V15H9v-4H6.5a1.5 1.5 0 0 1 0-3H9z"/></symbol>
+  <symbol id="i-vector" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="1.6"/><circle cx="18" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="6" cy="18" r="1.6"/><circle cx="17" cy="17" r="1.6"/><path d="M6.3 7.3 10.8 11M13.2 11l4-4.3M11 13.4 7.3 16.7M13.3 13.2l3 3"/></symbol>
+</defs></svg>
+
+<div class="hudshell">
+  <header class="hudstrip hud-frame">
+    <div class="slotmark">
+      <svg width="22" height="22" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg>
+      <span class="hud-tag">ARCHIVE <b>IMPORT</b></span>
+    </div>
+    <div class="mid">
+      <div class="hud-score">
+        <div class="hud-stat"><b>08</b><span>Kinds</span></div>
+        <div class="hud-stat"><b>549</b><span>Items</span></div>
+      </div>
+      <div class="hud-div"></div>
+      <div class="hud-meter" style="--c: var(--deck-lorebook)">
+        <span class="lbl">Space used</span>
+        <span class="bar"><i style="width:48%"></i></span>
+        <span class="val">963 MB</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="hud-keys">
+        <span class="hud-key"><kbd>Enter</kbd>Continue</span>
+        <span class="hud-key"><kbd>Esc</kbd>Back</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <nav class="s-dock">
+      <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+      <div class="s-app c-scenes"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+      <div class="s-app c-workbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+      <div class="s-app c-library on"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+      <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+      <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+      <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+      <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+    </nav>
+
+    <div class="stage">
+      <div class="center" id="center">
+
+        <!-- ============ DROP (entry) ============ -->
+        <div class="sheet" data-view="drop">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Bring in a whole SillyTavern backup.</b>
+          <p class="impsub">Drop a SillyTavern backup <code>.zip</code>, or point at your <code>SillyTavern/data/default-user</code> folder. We read it right here on this computer.</p>
+          <div class="stdrop" id="stDrop">
+            <p class="stdrophint">Drop your backup .zip or folder here</p>
+            <p class="stdrops">or</p>
+            <div class="impacts center">
+              <button type="button" class="impbtn primary">Choose a .zip file</button>
+              <button type="button" class="impbtn">Select the default-user folder</button>
+            </div>
+          </div>
+          <div class="stprivacy">
+            <b>Your API keys stay behind.</b>
+            <p>We never read <code>secrets.json</code>. <code>backups/</code>, <code>vectors/</code>, and your <code>user/</code> folder are skipped too. Nothing about your backup leaves this computer.</p>
+          </div>
+          <div class="impacts"><button type="button" class="impbtn">Not now</button></div>
+        </div>
+
+        <!-- ============ SCANNING ============ -->
+        <div class="sheet" data-view="scanning">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Reading your backup&hellip;</b>
+          <div class="hud-meter stacked" style="--c: var(--accent); margin-top:16px">
+            <span class="row"><span class="lbl">Folders scanned</span><span class="val">6 / 9</span></span>
+            <span class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="9" aria-valuenow="6"><i style="width:66%"></i></span>
+          </div>
+          <ul class="scanlist">
+            <li class="done"><span class="pip"></span>characters/<b>84 found</b></li>
+            <li class="done"><span class="pip"></span>chats/<b>75 chat folders</b></li>
+            <li class="done"><span class="pip"></span>worlds/<b>155 found</b></li>
+            <li class="done"><span class="pip"></span>OpenAI Settings/<b>167 found</b></li>
+            <li class="active"><span class="pip"></span>User Avatars/<span class="now">reading</span></li>
+            <li class="queued"><span class="pip"></span>QuickReplies/</li>
+            <li class="queued"><span class="pip"></span>backgrounds/</li>
+            <li class="skip"><span class="pip"></span>secrets.json<span class="now">never read</span></li>
+          </ul>
+          <div class="impacts"><button type="button" class="impbtn">Cancel</button></div>
+        </div>
+
+        <!-- ============ CHOOSE (default) ============ -->
+        <div class="sheet wide" data-view="choose">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Choose what comes in.</b>
+          <p class="impsub">We read your backup at <code>SillyTavern/data/default-user</code>. Uncheck anything you do not want; import only writes the checked ones.</p>
+          <p class="stksum">549 items checked across 8 kinds &middot; about 963 MB</p>
+
+          <div class="stkgroups">
+            <div class="stkgroup" style="--c:var(--deck-character)">
+              <label class="stkhead"><span class="slotno">01</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-character"/></svg></span>
+                <span class="stkname"><b>Characters</b><span>CHARACTER CARDS</span></span>
+                <span class="stkcount">84</span><span class="stksize">612 MB</span>
+              </label>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-pack)">
+              <label class="stkhead"><span class="slotno">02</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-play"/></svg></span>
+                <span class="stkname"><b>Chats</b><span>COME IN AS SCENES, WITH SWIPES</span></span>
+                <span class="stkcount">75 folders</span><span class="stksize">89 MB</span>
+              </label>
+              <div class="stksub">
+                <label class="stkopt"><input type="radio" name="chatscope" checked>Bring every chat</label>
+                <label class="stkopt"><input type="radio" name="chatscope">Only the most recent <input type="number" class="stknum" value="10" min="1" aria-label="Number of recent chats per character"> chats per character</label>
+                <p class="note">~4,200 messages total. Group chats are listed separately below.</p>
+              </div>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-lorebook)">
+              <label class="stkhead"><span class="slotno">03</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-lorebook"/></svg></span>
+                <span class="stkname"><b>Lorebooks</b><span>SILLYTAVERN WORLDS</span></span>
+                <span class="stkcount">155</span><span class="stksize">41 MB</span>
+              </label>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-preset)">
+              <label class="stkhead"><span class="slotno">04</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-preset"/></svg></span>
+                <span class="stkname"><b>Presets</b><span>OPENAI SETTINGS + THE OTHER THREE ROOTS</span></span>
+                <span class="stkcount">167</span><span class="stksize">3 MB</span>
+              </label>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-persona)">
+              <label class="stkhead"><span class="slotno">05</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-persona"/></svg></span>
+                <span class="stkname"><b>Personas</b><span>USER AVATARS + SETTINGS.JSON'S OWN</span></span>
+                <span class="stkcount">6</span><span class="stksize">2 MB</span>
+              </label>
+              <div class="stksub"><p class="note">All 6 personas come in, not just your default one.</p></div>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-preset)">
+              <label class="stkhead"><span class="slotno">06</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-qr"/></svg></span>
+                <span class="stkname"><b>Quick Replies</b></span>
+                <span class="stkcount">14 sets</span><span class="stksize">1 MB</span>
+              </label>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-regex)">
+              <label class="stkhead"><span class="slotno">07</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-regex"/></svg></span>
+                <span class="stkname"><b>Regex</b></span>
+                <span class="stkcount">9 sets</span><span class="stksize">&lt;1 MB</span>
+              </label>
+            </div>
+
+            <div class="stkgroup" style="--c:var(--deck-fog)">
+              <label class="stkhead"><span class="slotno">08</span><input type="checkbox" checked>
+                <span class="stktile"><svg><use href="#i-image"/></svg></span>
+                <span class="stkname"><b>Backgrounds</b></span>
+                <span class="stkcount">39</span><span class="stksize">210 MB</span>
+              </label>
+              <div class="stksub"><p class="note">Kept as files. The Library has no shelf view for backgrounds yet.</p></div>
+            </div>
+          </div>
+
+          <div class="stknever">
+            <span class="divlabel">Bunraku cannot take these yet</span>
+            <div class="stkgroups">
+              <div class="stkgroup grey" style="--c:var(--deck-fog)">
+                <label class="stkhead"><span class="slotno">&ndash;</span><input type="checkbox" disabled>
+                  <span class="stktile"><svg><use href="#i-group"/></svg></span>
+                  <span class="stkname"><b>Group chats</b></span>
+                  <span class="stkcount">5</span>
+                </label>
+                <!-- the "group chats" status line: it is not decided if or when group scenes
+                     happen, so keep this phrasing exact and easy to swap in one place -->
+                <div class="stksub"><p class="stkreason">Coming later, not imported yet. Not decided if or when.</p></div>
+              </div>
+              <div class="stkgroup grey" style="--c:var(--deck-fog)">
+                <label class="stkhead"><span class="slotno">&ndash;</span><input type="checkbox" disabled>
+                  <span class="stktile"><svg><use href="#i-theme"/></svg></span>
+                  <span class="stkname"><b>Themes</b></span>
+                  <span class="stkcount">3</span>
+                </label>
+                <div class="stksub"><p class="stkreason">A SillyTavern appearance setting; Bunraku has its own look.</p></div>
+              </div>
+              <div class="stkgroup grey" style="--c:var(--deck-fog)">
+                <label class="stkhead"><span class="slotno">&ndash;</span><input type="checkbox" disabled>
+                  <span class="stktile"><svg><use href="#i-extension"/></svg></span>
+                  <span class="stkname"><b>Extensions data</b></span>
+                  <span class="stkcount">11 folders</span>
+                </label>
+                <div class="stksub"><p class="stkreason">Third-party extension config; no Bunraku equivalent to hold it.</p></div>
+              </div>
+              <div class="stkgroup grey" style="--c:var(--deck-fog)">
+                <label class="stkhead"><span class="slotno">&ndash;</span><input type="checkbox" disabled>
+                  <span class="stktile"><svg><use href="#i-vector"/></svg></span>
+                  <span class="stkname"><b>Vectors</b></span>
+                  <span class="stkcount">7 files</span>
+                </label>
+                <div class="stksub"><p class="stkreason">Embeddings tied to SillyTavern's own vector store; they would not mean anything here.</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="impacts">
+            <button type="button" class="impbtn">Select all</button>
+            <button type="button" class="impbtn">Back</button>
+            <button type="button" class="impbtn primary">Continue</button>
+            <button type="button" class="impbtn">Not now</button>
+          </div>
+        </div>
+
+        <!-- ============ NEEDS A CHARACTER ============ -->
+        <div class="sheet wide" data-view="needs-character" style="--hb: var(--stage-warn)">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Some chats need a character.</b>
+          <p class="impsub">These chat folders' character was not found in this backup or your Library. Pick one, make a stub, or skip the chat.</p>
+          <div class="improws">
+            <div class="needrow">
+              <div class="impbody"><b class="impname">chats/The Old Marchioness/</b><p class="impkind">14 messages &middot; character name did not match anything</p></div>
+              <div class="needpick">
+                <select aria-label="Pick a character for The Old Marchioness">
+                  <option>Pick a character&hellip;</option>
+                  <option>Vera Lune</option>
+                  <option>Marguerite Vane</option>
+                  <option>Keeper's Log</option>
+                </select>
+                <button type="button" class="impbtn">Create a stub</button>
+                <button type="button" class="impbtn">Skip</button>
+              </div>
+            </div>
+            <div class="needrow">
+              <div class="impbody"><b class="impname">chats/Agias (deleted card)/</b><p class="impkind">238 messages &middot; character name did not match anything</p></div>
+              <div class="needpick">
+                <select aria-label="Pick a character for Agias">
+                  <option>Pick a character&hellip;</option>
+                  <option>Vera Lune</option>
+                  <option>Marguerite Vane</option>
+                  <option>Keeper's Log</option>
+                </select>
+                <button type="button" class="impbtn">Create a stub</button>
+                <button type="button" class="impbtn">Skip</button>
+              </div>
+            </div>
+          </div>
+          <div class="impacts">
+            <button type="button" class="impbtn">Back</button>
+            <button type="button" class="impbtn primary">Continue</button>
+          </div>
+        </div>
+
+        <!-- ============ DUPLICATES ============ -->
+        <div class="sheet wide" data-view="duplicates" style="--hb: var(--stage-link, var(--accent))">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Already in your Library.</b>
+          <p class="impsub">These pieces match something you already have by name. Chats you have already imported before are always skipped automatically.</p>
+          <div class="improws">
+            <div class="impreport">12 chats you have already imported are skipped automatically. They are "already here."</div>
+            <div class="duprow">
+              <div class="impbody"><b class="impname">Vera Lune</b><p class="impkind">Character &middot; already on your shelf as Vera Lune</p></div>
+              <div class="dupchoice" role="radiogroup" aria-label="Vera Lune"><label><input type="radio" name="dup1">Keep both</label><label><input type="radio" name="dup1" checked>Skip</label><label><input type="radio" name="dup1">Replace</label></div>
+            </div>
+            <div class="duprow">
+              <div class="impbody"><b class="impname">Harbor Town</b><p class="impkind">Lorebook &middot; already on your shelf as Harbor Town</p></div>
+              <div class="dupchoice" role="radiogroup" aria-label="Harbor Town"><label><input type="radio" name="dup2">Keep both</label><label><input type="radio" name="dup2" checked>Skip</label><label><input type="radio" name="dup2">Replace</label></div>
+            </div>
+            <div class="duprow">
+              <div class="impbody"><b class="impname">Velvet Quill</b><p class="impkind">Persona &middot; already on your shelf as Velvet Quill</p></div>
+              <div class="dupchoice" role="radiogroup" aria-label="Velvet Quill"><label><input type="radio" name="dup3">Keep both</label><label><input type="radio" name="dup3" checked>Skip</label><label><input type="radio" name="dup3">Replace</label></div>
+            </div>
+          </div>
+          <div class="impacts">
+            <button type="button" class="impbtn">Back</button>
+            <button type="button" class="impbtn primary">Continue</button>
+          </div>
+        </div>
+
+        <!-- ============ OPTIONS ============ -->
+        <div class="sheet" data-view="options">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Set your import options.</b>
+          <p class="impsub">Every one of these is real and does what it says.</p>
+          <div class="optlist">
+            <div class="opttoggle" style="--c:var(--deck-pack)"><span class="s-switch on" style="--c:var(--deck-pack)"></span>
+              <div class="optbody"><b>Keep swipes</b><p>Keep every alternate reply on a message, not just the one you last saw.</p></div></div>
+            <div class="opttoggle" style="--c:var(--deck-pack)"><span class="s-switch on" style="--c:var(--deck-pack)"></span>
+              <div class="optbody"><b>Keep each swipe's reasoning</b><p>SillyTavern can store a different reasoning trace per alternate reply. Bring all of them in, per swipe, not glued to just one.</p></div></div>
+            <div class="opttoggle" style="--c:var(--deck-pack)"><span class="s-switch on" style="--c:var(--deck-pack)"></span>
+              <div class="optbody"><b>Keep hidden and system messages</b><p>OOC asides and system lines stay in the scene, marked hidden. They stay out of what the AI reads.</p></div></div>
+            <div class="optgroup">
+              <b class="optlabel">Message cap per scene</b>
+              <label class="stkopt"><input type="radio" name="cap" checked>No cap: bring every message</label>
+              <label class="stkopt"><input type="radio" name="cap">Last 500 messages only</label>
+            </div>
+          </div>
+          <div class="impacts">
+            <button type="button" class="impbtn">Back</button>
+            <button type="button" class="impbtn primary">Start the import</button>
+          </div>
+        </div>
+
+        <!-- ============ IMPORTING ============ -->
+        <div class="sheet" data-view="importing">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Bringing it in&hellip;</b>
+          <div class="kindprogs">
+            <div class="kindprog done"><span class="kpname">Characters</span><span class="hud-meter"><span class="bar"><i style="width:100%"></i></span></span><span class="kpcount">84 / 84</span></div>
+            <div class="kindprog done"><span class="kpname">Personas</span><span class="hud-meter"><span class="bar"><i style="width:100%"></i></span></span><span class="kpcount">6 / 6</span></div>
+            <div class="kindprog"><span class="kpname">Chats</span><span class="hud-meter"><span class="bar"><i style="width:55%"></i></span></span><span class="kpcount">41 / 75</span></div>
+            <div class="kindprog queued"><span class="kpname">Lorebooks</span><span class="hud-meter"><span class="bar"><i style="width:0%"></i></span></span><span class="kpcount">queued</span></div>
+            <div class="kindprog queued"><span class="kpname">Presets</span><span class="hud-meter"><span class="bar"><i style="width:0%"></i></span></span><span class="kpcount">queued</span></div>
+            <div class="kindprog queued"><span class="kpname">Quick Replies</span><span class="hud-meter"><span class="bar"><i style="width:0%"></i></span></span><span class="kpcount">queued</span></div>
+            <div class="kindprog queued"><span class="kpname">Regex</span><span class="hud-meter"><span class="bar"><i style="width:0%"></i></span></span><span class="kpcount">queued</span></div>
+            <div class="kindprog queued"><span class="kpname">Backgrounds</span><span class="hud-meter"><span class="bar"><i style="width:0%"></i></span></span><span class="kpcount">queued</span></div>
+          </div>
+          <div class="impkeepnote">A pause or a failure never throws away what already came in. Everything above stays saved.</div>
+          <div class="impacts"><button type="button" class="impbtn">Pause</button><button type="button" class="impbtn">Cancel</button></div>
+        </div>
+
+        <!-- ============ PARTIAL ============ -->
+        <div class="sheet wide" data-view="partial" style="--hb: var(--stage-danger-text)">
+          <p class="s-act">The Library &middot; Import from SillyTavern</p>
+          <b class="imptitle">Most of it came in.</b>
+          <p class="impsub">546 of 549 checked items were saved. The rest of your import was kept: nothing already written was thrown away.</p>
+          <div class="improws">
+            <div class="impreport">
+              <b class="impname">Import report</b>
+              <p class="impkind">84 characters, 6 personas, 155 lorebooks, 167 presets, 14 quick reply sets, 9 regex sets, 39 backgrounds imported.</p>
+              <p class="impmeta">72 of 75 chat folders imported as Scenes.</p>
+            </div>
+            <div class="improw bad">
+              <div class="impbody"><span class="impflag">Could not read</span><b class="impname">3 chat folders</b>
+                <p class="imperr">malformed JSONL: a line was cut off mid-message</p>
+                <p class="impmeta">chats/Midas and Icarus/2025-06-30.jsonl &middot; chats/Agias/2025-08-03.jsonl &middot; +1 more</p></div>
+            </div>
+          </div>
+          <div class="rcptbtns">
+            <button type="button" class="impbtn">Retry the 3 that failed</button>
+            <button type="button" class="impbtn big primary">Open Scenes</button>
+            <button type="button" class="impbtn big">Open the Library</button>
+          </div>
+          <div class="rcptlog"><a href="#" download>Download the import log (.txt)</a></div>
+        </div>
+
+        <!-- ============ RECEIPT ============ -->
+        <div class="sheet wide" data-view="receipt" style="--hb: var(--stage-ok)">
+          <div class="rcpthead">
+            <p class="s-act">The Library &middot; Import from SillyTavern</p>
+            <b class="imptitle">Your SillyTavern backup is home.</b>
+            <p class="impsub">Everything you checked was read on this computer and saved to your Library.</p>
+          </div>
+          <div class="rcptcounts">
+            <div class="rcptcell" style="--c:var(--deck-character)"><b>84</b><span>Characters</span></div>
+            <div class="rcptcell" style="--c:var(--deck-pack)"><b>75</b><span>Scenes</span></div>
+            <div class="rcptcell" style="--c:var(--deck-lorebook)"><b>155</b><span>Lorebooks</span></div>
+            <div class="rcptcell" style="--c:var(--deck-preset)"><b>167</b><span>Presets</span></div>
+            <div class="rcptcell" style="--c:var(--deck-persona)"><b>6</b><span>Personas</span></div>
+            <div class="rcptcell" style="--c:var(--deck-preset)"><b>14</b><span>Quick Replies</span></div>
+            <div class="rcptcell" style="--c:var(--deck-regex)"><b>9</b><span>Regex sets</span></div>
+            <div class="rcptcell" style="--c:var(--deck-fog)"><b>39</b><span>Backgrounds</span></div>
+          </div>
+          <details class="rcptsection" open>
+            <summary>What was skipped, and why</summary>
+            <ul>
+              <!-- same group-chats line as the choose state above; keep both in sync if this changes -->
+              <li>5 group chats: coming later, not imported yet. Not decided if or when.</li>
+              <li>3 themes: Bunraku has its own look.</li>
+              <li>11 extension folders: no Bunraku equivalent.</li>
+              <li>7 vector files: tied to SillyTavern's own store, meaningless here.</li>
+              <li>1 character, 1 lorebook, 1 persona: already on your shelf, skipped by your choice.</li>
+              <li>12 chats: already imported before, skipped automatically.</li>
+            </ul>
+          </details>
+          <div class="rcptattn">
+            <b>2 items still need attention</b>
+            <p>2 chats were linked to a stub character you created during this import. Give them a real card when you have one.</p>
+          </div>
+          <div class="rcptbtns">
+            <button type="button" class="impbtn big primary">Open Scenes</button>
+            <button type="button" class="impbtn big">Open the Library</button>
+          </div>
+          <div class="rcptlog"><a href="#" download>Download the import log (.txt)</a></div>
+        </div>
+
+        <!-- ============ WIZARD (first-run, one line among the doors) ============ -->
+        <div class="sheet" data-view="wizard" style="width:min(30rem,100%)">
+          <p class="s-act">Welcome &middot; Bring your stuff</p>
+          <b class="imptitle">Where do your characters live today?</b>
+          <p class="impsub">Pick one now. You can always import more later from the Library.</p>
+          <div class="wizopts">
+            <button type="button" class="wizopt">Start with a blank Library</button>
+            <button type="button" class="wizopt on">Import a SillyTavern backup<span class="wizhint">Characters, chats, lorebooks, personas, presets, and more: all at once.</span></button>
+            <button type="button" class="wizopt">Bring in a single file</button>
+          </div>
+          <div class="impacts"><button type="button" class="impbtn">Skip for now</button></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dropzone" id="dropzone"><div class="hint">Drop your backup here</div></div>
+
+<div class="wf-bar" id="wfBar">
+  <button data-s="drop">Drop (entry)</button>
+  <button data-s="scanning">Scanning</button>
+  <button data-s="choose">Choose (review)</button>
+  <button data-s="needs-character">Needs a character</button>
+  <button data-s="duplicates">Duplicates</button>
+  <button data-s="options">Options</button>
+  <button data-s="importing">Importing</button>
+  <button data-s="partial">Partial (error state)</button>
+  <button data-s="receipt">Done, with results</button>
+  <button data-s="wizard">First-run wizard line</button>
+  <button data-s="phone">Phone, 390px</button>
+</div>
+<div class="wf-note" id="wfNote">
+  <b>SillyTavern backup import, G3 HUD identity.</b> Same content and ten states as the approved soft
+  version (design/wireframes/soft/library-st-import.html); only the look changed. The owner's six-beat
+  arc maps onto these buttons as: drop = pick the backup, scanning = the readout, choose/needs-character/
+  duplicates/options = review and choices, importing = the transfer meter, receipt = done with results,
+  partial = the error/partial state. Group chats keep the exact line "Coming later, not imported yet. Not
+  decided if or when." in both the choose checklist and the receipt's skip list (marked with a comment in
+  each place) since it is not decided whether group scenes are happening. Phone reuses the choose
+  checklist at 390px, the same way the soft version does.
+</div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.body.classList.add("embed");
+  function apply(s) {
+    var real = s === "phone" ? "choose" : s;
+    document.querySelectorAll("#wfBar button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+    document.querySelectorAll("[data-view]").forEach(function (el) { el.style.display = el.getAttribute("data-view") === real ? "" : "none"; });
+    document.documentElement.style.maxWidth = s === "phone" ? "390px" : "";
+    window.scrollTo(0, 0);
+  }
+  apply(q.get("state") || "choose");
+  document.getElementById("wfBar").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-s")); });
+})();
+</script>
+</body>
+</html>

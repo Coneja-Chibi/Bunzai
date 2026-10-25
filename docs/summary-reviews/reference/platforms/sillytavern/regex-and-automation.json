@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/sillytavern/regex-and-automation",
+  "sourcePath": "docs/reference/platforms/sillytavern/regex-and-automation.md",
+  "sourceHash": "sha256:d2a2cdd0754feff541a6d620d97acf00fcee91fff6ede1f0f5490c9f3ab33f50",
+  "semanticSummaryHash": "sha256:a7ea1dbbc787440837f7ad363471f7023b4a313f81d5dce4213ce1d08eea3e4b",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:48:00.317Z"
+}

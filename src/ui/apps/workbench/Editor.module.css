@@ -1,0 +1,489 @@
+/**
+ * Editor chrome styles - split from Editor.module.css (last-wins cascade).
+ */
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.save {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--wb-primary, var(--a-deep, var(--accent-deep))); /* deep companion keeps the saved accent readable */
+  color: var(--action-primary-fg, var(--stage-white));
+  border: 3px solid var(--stage-black);
+  box-shadow: 3px 3px 0 0 var(--stage-black);
+  padding: 0.45rem 0.9rem;
+  cursor: pointer;
+  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+}
+
+.save:hover:not(:disabled) {
+  border-color: var(--chrome-structure);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 0 var(--stage-black);
+}
+
+.save:active:not(:disabled) {
+  border-color: var(--chrome-structure);
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 0 var(--stage-black);
+}
+
+.save:disabled {
+  opacity: 0.45;
+  cursor: default;
+  transform: none;
+  box-shadow: 3px 3px 0 0 var(--stage-black);
+}
+
+/* fluid law: the editor lives in a workbench pane (a size container) - every collapse below
+   queries the PANE, so a half-width split, a drawer, and a phone all compose the same way */
+@container (max-width: 74rem) {
+  .stickyCol {
+    position: static;
+  }
+}
+
+@container (max-width: 72rem) {
+  .playbill {
+    grid-template-columns: 1fr;
+  }
+  .pbBill {
+    display: none;
+  }
+}
+
+@container (max-width: 46rem) {
+  .pbfields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.35rem 0;
+  text-decoration: none;
+  border-top: 1px solid var(--seam);
+}
+
+.tno {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  min-width: 3.4em;
+}
+
+.tnm {
+  font-family: var(--font-big);
+  font-size: var(--text-control);
+  color: var(--text-dim);
+}
+
+.toc a:hover .tnm {
+  color: var(--text);
+}
+
+.tct {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--text-faint);
+}
+
+@container (max-width: 60rem) {
+  .splitter { display: none; }
+}
+
+.write {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--edge);
+  padding: 0.5rem 0.2rem;
+}
+
+.write::placeholder {
+  color: var(--text-faint);
+}
+
+.writeArea {
+  min-height: 7rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+
+.composite {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .opt { transition: none; }
+}
+
+.rank {
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid var(--edge);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  background: var(--paper-2);
+  color: var(--text);
+}
+
+.cr {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--text);
+}
+
+.crtl { top: 9px; left: 9px; border-right: none; border-bottom: none; }
+
+.crtr { top: 9px; right: 9px; border-left: none; border-bottom: none; }
+
+.crbl { bottom: 9px; left: 9px; border-right: none; border-top: none; }
+
+.crbr { bottom: 9px; right: 9px; border-left: none; border-top: none; }
+
+.stinner {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  gap: 1.1rem;
+  padding: 0.5rem;
+}
+
+@container (max-width: 34rem) {
+  .stinner { grid-template-columns: 1fr; }
+}
+
+.pcol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.drow {
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+  padding: 0.45rem 0;
+  border-bottom: 1.5px solid var(--ghost);
+}
+
+.drow:last-child {
+  border-bottom: none;
+}
+
+.dk {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  width: 4.2rem;
+  flex: none;
+}
+
+.dv {
+  font-family: var(--font-body);
+  color: var(--text);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.drowAwait .dv {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.root {
+  --wb-selection: var(--rose);
+  --wb-primary: var(--a-deep, var(--accent-deep));
+  --wb-info-bg: var(--stage-link);
+  --wb-info-fg: var(--stage-white);
+  gap: 0;
+}
+
+:global(html[data-surface-editor-frame="two-pane"]) .root {
+  --wb-selection: var(--selection);
+  --wb-primary: var(--action-primary);
+  --wb-info-bg: var(--action-primary);
+  --wb-info-fg: var(--action-primary-fg);
+}
+.tabstrip {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--stage-row);
+  border-bottom: 3px solid var(--stage-black);
+  padding: 0.45rem 0.9rem;
+  flex-wrap: wrap;
+}
+
+.done {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+/* fluid law: when the pane can't fit names + progress on one line, the progress chips become a
+   deliberate second row, left-aligned - not a right-floating orphan mid-wrap */
+@container (max-width: 74rem) {
+  .tabstrip {
+    gap: 0.4rem 0.8rem;
+  }
+  .done {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+
+.escale {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--seam);
+  margin-right: 0.35rem;
+}
+
+.escaleStep {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  padding: 0.12rem 0.45rem;
+  cursor: pointer;
+}
+
+.escaleStep:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.escaleStep:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.escalePct {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.03em;
+  color: var(--text-dim);
+  background: transparent;
+  border: none;
+  border-left: 2px solid var(--seam);
+  border-right: 2px solid var(--seam);
+  padding: 0.15rem 0.4rem;
+  min-width: 3em;
+  text-align: center;
+  cursor: pointer;
+}
+
+.escalePct:hover {
+  color: var(--text);
+}
+
+.frac {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--stage-mute);
+  margin-right: 0.2rem;
+}
+
+.lensStat {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.05em;
+  color: var(--stage-mute);
+  border: 2px solid var(--stage-seam);
+  padding: 0.1rem 0.35rem;
+  margin-right: 0.2rem;
+}
+
+.hdr {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 3px solid var(--stage-black);
+}
+
+.hdr b {
+  font-family: var(--font-big);
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  color: var(--stage-paper);
+}
+
+.back {
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border: 3px solid var(--stage-black);
+  background: var(--stage-panel);
+  color: var(--stage-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+
+.vchip {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 700;
+  background: var(--wb-info-bg);
+  color: var(--wb-info-fg);
+  border: 2px solid var(--stage-black);
+  padding: 0.12rem 0.4rem;
+}
+
+.hdrRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.flagOn {
+  background: var(--stage-warn-ink);
+  color: var(--stage-warn);
+}
+
+.tailWrap {
+  padding: 1rem 0.9rem;
+}
+
+.klabel {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.55rem 0 0.2rem;
+}
+
+.klabel .k {
+  margin: 0;
+}
+
+.kaff {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.kaff > button {
+  cursor: pointer;
+}
+
+.kaff > button:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.variants {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.2rem 0.6rem 1.2rem;
+  align-items: center;
+}
+
+.varThumb {
+  width: 3rem;
+  aspect-ratio: 2/3;
+  background: var(--stage-rose-well);
+  background-size: cover;
+  background-position: center top;
+  border: 2px solid var(--stage-black);
+  position: relative;
+}
+
+.varOn {
+  outline: 2px solid var(--wb-selection, var(--rose));
+}
+
+.varThumb i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1rem;
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--stage-mute);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.varAdd {
+  width: 3rem;
+  aspect-ratio: 2/3;
+  background: transparent;
+  border: 2px dashed var(--stage-line);
+  color: var(--stage-line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Mobile grammar gate (design/vs-mobile-editors.html): the chrome renders BOTH grammars and the
+   pane width picks one. Components SWAP below 34rem, they do not shrink. Lives at the FILE END
+   on purpose: container queries add no specificity, a later base rule would override this. */
+.mobileChrome {
+  display: none;
+}
+
+@container (max-width: 34rem) {
+  .mobileChrome {
+    display: block;
+  }
+  .desktopChrome {
+    display: none;
+  }
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

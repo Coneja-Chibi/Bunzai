@@ -1,0 +1,100 @@
+/*
+ * The in-between: RoleCall's theatrical structure on Bunraku's tokens, so local Bunraku feels like
+ * RoleCall without leaving its own theme. Taken from RoleCall's encryption flow
+ * (EncryptionSetup.tsx: the act label, the Cinzel marquee with a hard text
+ * shadow, the flourish, the parenthesised stage direction, the "Your Lines" box with an accent spine,
+ * the STAGE DIRECTION warning, LINE FLUB, cues delivered) and the Vaudeville Design System
+ * (eyebrow, marquee title with one colored word, one italic line of voice, mono for proof).
+ * Colors and spacing are Bunraku tokens only. Cinzel comes from the design system's font folder
+ * for this wireframe; shipping it means bundling the font in the app.
+ */
+
+@font-face {
+  font-family: "Cinzel";
+  font-weight: 900;
+  src: url("brand/site-v2/ds/fonts/Cinzel-Black.ttf") format("truetype");
+}
+@font-face {
+  font-family: "Cinzel";
+  font-weight: 800;
+  src: url("brand/site-v2/ds/fonts/Cinzel-ExtraBold.ttf") format("truetype");
+}
+
+/* the dossier panel: RoleCall's modal, square, hard border, hard shadow */
+.dossier { background: var(--face); border: var(--ink-border); border-color: var(--edge); box-shadow: 8px 8px 0 0 var(--edge); padding: clamp(1.4rem, 4vw, 2.4rem); max-width: 34rem; width: 100%; display: flex; flex-direction: column; gap: 1.2rem; position: relative; }
+.dossier.hero { box-shadow: 8px 8px 0 0 var(--accent-deep); }
+/* RoleCall's thin accent line along the top edge (drawn flat here: no gradient on chrome) */
+.dossier::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--accent); }
+
+.dossier-head { text-align: center; padding-bottom: 1.3rem; border-bottom: 2px solid var(--seam); position: relative; }
+.act { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: 0.6rem; }
+:root[data-theme="stage"] .act { color: var(--accent); }
+.marquee { font-family: var(--font-fancy); font-weight: 900; font-size: clamp(1.7rem, 1.2rem + 1.8vw, 2.4rem); letter-spacing: 0.03em; text-transform: uppercase; line-height: 1.1; color: var(--text); }
+.marquee em { font-style: normal; color: var(--accent-deep); }
+/* the hard punch is a dark-stage device; on paper it is dropped (Vaudeville PAPER.md) */
+:root[data-theme="stage"] .marquee { text-shadow: 3px 3px 0 var(--stage-black); }
+:root[data-theme="stage"] .marquee em { color: var(--accent); }
+.flourish { position: absolute; left: 50%; bottom: -0.85rem; transform: translateX(-50%); background: var(--face); padding: 0 0.8rem; color: var(--accent); font-size: 1.1rem; }
+
+/* the parenthesised stage direction: mono italic, the one theatrical aside */
+.direction { font-family: var(--font-mono); font-style: italic; font-size: 0.85rem; line-height: 1.7; color: var(--text-soft); text-align: center; }
+.direction .p { color: var(--text-faint); font-style: normal; }
+.direction b { font-style: normal; font-weight: 600; color: var(--accent-deep); }
+:root[data-theme="stage"] .direction b { color: var(--accent); }
+
+/* one line of voice (Bunraku's voice role is Crimson Pro italic 600) */
+.voice { font-family: var(--font-body); font-style: italic; font-weight: 600; font-size: 1.1rem; color: var(--text); text-align: center; }
+
+/* "Your Lines" / "Your Cues": the box with the accent spine */
+.lines { background: var(--paper-2); border: 2px solid var(--seam); border-left: 4px solid var(--accent); padding: 1.1rem 1.2rem; }
+.lines-head { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: 0.9rem; }
+:root[data-theme="stage"] .lines-head { color: var(--accent); }
+.line-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.6rem 1.1rem; }
+.line { display: flex; gap: 0.6rem; align-items: baseline; padding: 0.35rem 0; border-bottom: 2px dotted var(--seam); font-family: var(--font-mono); }
+.line i { font-style: normal; font-size: 0.7rem; color: var(--text-dim); min-width: 1.3rem; }
+.line span { font-size: 1rem; color: var(--text); letter-spacing: 0.03em; }
+.cue { display: flex; align-items: center; gap: 0.4rem; border: 2px solid var(--edge); background: var(--panel); padding: 0.45rem 0.55rem; font-family: var(--font-mono); }
+.cue i { font-style: normal; font-size: 0.7rem; color: var(--text-dim); min-width: 1.3rem; }
+.cue input { border: none; background: transparent; font: inherit; font-size: 0.95rem; color: var(--text); flex: 1; min-width: 0; }
+.cue.flubbed { border-color: var(--stage-danger-edge); }
+.cue.flubbed i, .cue.flubbed input { color: var(--stage-danger-text); }
+.cues-count { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-soft); text-align: center; margin-top: 0.8rem; }
+
+/* STAGE DIRECTION (warning) and LINE FLUB (error): RoleCall's plates, squared and hard-edged */
+.stage-note { border: 2px solid var(--stage-danger-edge); background: var(--stage-danger-bg); padding: 0.8rem 1rem; text-align: center; }
+.stage-note.gilt { border-color: var(--stage-warn); background: var(--stage-warn-ink); }
+.stage-note-label { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--stage-danger-text); margin-bottom: 0.35rem; }
+.stage-note.gilt .stage-note-label { color: var(--stage-warn); }
+.stage-note p { font-family: var(--font-mono); font-style: italic; font-size: 0.8rem; line-height: 1.6; color: var(--text); }
+
+/* RoleCall's pledge checkbox: "I have memorized my lines..." */
+.pledge { display: flex; gap: 0.8rem; align-items: flex-start; font-family: var(--font-body); font-style: italic; font-size: 1.05rem; color: var(--text-soft); line-height: 1.5; }
+.pledge .box { width: 1.25rem; height: 1.25rem; border: 2px solid var(--edge); background: var(--accent); flex: none; margin-top: 0.2rem; display: grid; place-items: center; color: var(--stage-white); font-style: normal; font-size: 0.8rem; font-family: var(--font-mono); }
+.pledge b { font-style: normal; font-weight: 600; color: var(--accent-deep); }
+:root[data-theme="stage"] .pledge b { color: var(--accent); }
+
+/* RoleCall's big CTA: full-width stamp with the arrow */
+.cta { width: 100%; justify-content: center; font-size: 0.8rem; padding: 0.85rem 1rem; }
+.cta-row { display: flex; flex-direction: column; gap: 0.6rem; }
+
+/* the settings hero: eyebrow, marquee with one colored word, one line of voice (Vaudeville pattern 1) */
+.marquee-hero { border: 2px solid var(--accent); background: var(--face); padding: 1.6rem 1.8rem; display: flex; flex-direction: column; gap: 0.55rem; }
+.eyebrow { font-family: var(--font-mono); font-weight: 700; font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent-deep); }
+:root[data-theme="stage"] .eyebrow { color: var(--accent); }
+.marquee-hero .voice { text-align: left; }
+.marquee-hero .marquee { font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.3rem); }
+
+/* the mono proof block (Vaudeville pattern 4): the system proving what it does */
+.proof { background: var(--stage-black); color: var(--stage-ok); font-family: var(--font-mono); font-size: 0.78rem; line-height: 1.6; padding: 0.9rem 1.1rem; border: 2px solid var(--edge); }
+:root[data-theme="paper"] .proof { color: var(--stage-white); }
+
+
+/* space between a stage note and the buttons that answer it */
+.after-note { margin-top: var(--gap-m); }
+
+/* the in-between pages show one wide dossier per column */
+.wf-grid.wide { grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr)); }
+@media (max-width: 40rem) { .wf-grid.wide { grid-template-columns: 1fr; } }
+
+/* the design system's stat tile row: four passive readouts */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--gap-m); }

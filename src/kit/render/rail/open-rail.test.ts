@@ -1,0 +1,158 @@
+/**
+ * Opening the rail.
+ *
+ * Every branch here is a sentence somebody reads and has to act on, so the tests are about the words
+ * as much as the outcome. The one that matters most is ambiguity: opening the wrong preset and then
+ * rearranging it is worse than asking for one more keystroke.
+ */
+import { describe, expect, test } from "bun:test";
+import { openRail, type PresetSource } from "./open-rail";
+import type { OutlineRow } from "../../../core/preset/outline";
+import type { PresetBody } from "../../../entities/preset";
+
+const body = (...names: string[]): PresetBody =>
+  ({ name: "P", prompts: names.map((name, i) => ({ id: `b${i}`, name, content: "x" })) }) as PresetBody;
+
+const source = (
+  pieces: { id: string; name: string }[],
+  bodies: Record<string, PresetBody> = {},
+): PresetSource => ({
+  list: async () => pieces as never,
+  read: async (id) => bodies[id],
+});
+
+const catcher = () => {
+  const seen: { id: string; title: string; rows: readonly OutlineRow[] }[] = [];
+  return {
+    seen,
+    follow: (id: string, title: string, rows: readonly OutlineRow[]) => void seen.push({ id, title, rows }),
+  };
+};
+
+describe("openRail", () => {
+  test("one preset and no argument opens it without asking", async () => {
+    // Being asked which of one is a question with a known answer.
+    const { seen, follow } = catcher();
+    const result = await openRail(
+      source([{ id: "solo", name: "Solo" }], { solo: body("A", "B") }),
+      "",
+      follow,
+    );
+    expect(result.ok).toBe(true);
+    expect(seen[0]!.title).toBe("Solo");
+    expect(seen[0]!.rows).toHaveLength(2);
+  });
+
+  test("a name matches on id or on display name, case-insensitively", async () => {
+    const pieces = [{ id: "paramnesia-vi-rc", name: "Paramnesia VI RC" }];
+    const src = source(pieces, { "paramnesia-vi-rc": body("A") });
+    for (const query of ["paramnesia", "PARAMNESIA", "vi-rc", "VI RC"]) {
+      const { seen, follow } = catcher();
+      expect((await openRail(src, query, follow)).ok).toBe(true);
+      expect(seen).toHaveLength(1);
+    }
+  });
+
+  test("several matches never picks one, and names them", async () => {
+    // A wrong guess here is a preset somebody then edits believing it is the other one.
+    const { seen, follow } = catcher();
+    const result = await openRail(
+      source([{ id: "para-v5", name: "Para V5" }, { id: "para-v6", name: "Para V6" }]),
+      "para",
+      follow,
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.detail).toContain("para-v5");
+    expect(result.detail).toContain("para-v6");
+    expect(seen).toHaveLength(0);
+  });
+
+  test("no argument with several presets asks which, and lists them", async () => {
+    const result = await openRail(
+      source([{ id: "a", name: "A" }, { id: "b", name: "B" }]),
+      "",
+      catcher().follow,
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    // It points at the real chooser rather than being one. The slash popup now completes the
+    // ARGUMENT too, so a comma-separated wall to read and retype from is no longer the interaction -
+    // it is the fallback for somebody who submitted a bare /rail and got here anyway.
+    expect(result.detail).toContain("/rail then a space");
+    // The ids still come with it: whoever landed here deserves the answer, not just a redirect.
+    expect(result.detail).toContain("a, b");
+  });
+
+  test("no match says so and says what there is", async () => {
+    const result = await openRail(source([{ id: "only", name: "Only" }]), "zzz", catcher().follow);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.detail).toContain('No preset matches "zzz"');
+    expect(result.detail).toContain("only");
+  });
+
+  test("an empty studio says that, rather than that nothing matched", async () => {
+    const result = await openRail(source([]), "anything", catcher().follow);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.detail).toContain("no presets in the studio");
+  });
+
+  test("a piece that cannot be read is named, not silently skipped", async () => {
+    const result = await openRail(source([{ id: "broken", name: "Broken" }]), "broken", catcher().follow);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.detail).toContain("broken could not be read");
+  });
+
+  test("no seam at all reports the feature missing rather than throwing", async () => {
+    const result = await openRail(undefined, "x", catcher().follow);
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.detail).toContain("unavailable");
+  });
+
+  test("a piece with no display name falls back to its id for the title", async () => {
+    const { seen, follow } = catcher();
+    await openRail(source([{ id: "no-name", name: "" }], { "no-name": body("A") }), "", follow);
+    expect(seen[0]!.title).toBe("no-name");
+  });
+});
+
+describe("an exact name beats a longer one that merely contains it", () => {
+  /**
+   * Reported from a real studio: two presets whose names share a prefix, and the SHORTER one could
+   * not be opened at all. It matched itself and its longer sibling, so the refusal fired, and there
+   * was no more specific string to type because the name was already complete. The refusal exists to
+   * stop a guess between candidates; typing one of them exactly is not a guess.
+   */
+  const two = [
+    { id: "paramnesia", name: "Paramnesia" },
+    { id: "paramnesia-vi", name: "Paramnesia VI" },
+  ];
+  const source = {
+    list: async () => two,
+    read: async (id: string) => ({ name: id, prompts: [] }),
+  };
+
+  test("the shorter exact id opens instead of refusing", async () => {
+    let openedId = "";
+    const outcome = await openRail(source as never, "paramnesia", (id) => { openedId = id; });
+    expect(outcome.ok).toBe(true);
+    expect(openedId).toBe("paramnesia");
+  });
+
+  test("the longer one still opens by its own exact id", async () => {
+    let openedId = "";
+    const outcome = await openRail(source as never, "paramnesia-vi", (id) => { openedId = id; });
+    expect(outcome.ok).toBe(true);
+    expect(openedId).toBe("paramnesia-vi");
+  });
+
+  test("a genuinely ambiguous partial still refuses rather than guessing", async () => {
+    const outcome = await openRail(source as never, "param", () => {});
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.detail).toContain("Several match");
+  });
+});

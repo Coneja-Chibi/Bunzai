@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "id": "paper",
+  "version": "2.0.0",
+  "name": "Paper",
+  "requests": [
+    "appearance.accent",
+    "appearance.palette",
+    "appearance.shape",
+    "appearance.surfaces",
+    "appearance.type"
+  ],
+  "appearance": {
+    "surfaces": {
+      "shell.nav": "index-rail",
+      "shell.overlay": "ink-widgets",
+      "shell.title": "title-page",
+      "shell.status": "margin-note",
+      "library.grid": "catalog-list",
+      "library.card": "index-card",
+      "scenes.list": "table-of-contents",
+      "ui.dialog": "margin-sheet",
+      "ui.toast": "footnote",
+      "ui.empty": "blank-page",
+      "ui.panel": "ruled-frame",
+      "ui.meter": "ink-tally",
+      "ui.icons": "line-ink",
+      "ui.toolbar": "margin-ruler",
+      "library.decks": "chapter-index",
+      "ui.section-header": "chapter-heading",
+      "ui.tabs": "underline-ink",
+      "ui.label-type": "italic-serif",
+      "scene.layout": "manuscript",
+      "scene.message": "screenplay",
+      "scene.composer": "typewriter-line",
+      "scene.swipes": "margin-numbers",
+      "scene.wings": "marginalia",
+      "scene.hud": "footnotes",
+      "scene.reasoning": "footnote",
+      "editor.frame": "long-form",
+      "editor.fields": "form-on-paper",
+      "settings.shape": "contents-page",
+      "app.room": "manuscript-column",
+      "ui.controls": "ink"
+    },
+    "palette": {
+      "surface": {
+        "well": "#ece4d3",
+        "base": "#f7f1e3",
+        "sunken": "#f0e8d6",
+        "field": "#fffdf7",
+        "panel": "#fffdf7",
+        "raised": "#f3ecdc",
+        "ink": "#efe6d2"
+      },
+      "line": {
+        "strong": "#6b5d48",
+        "line": "#d8ccb4",
+        "track": "#e2d8c2",
+        "control": "#766850",
+        "focus": "#5a3fa0"
+      },
+      "text": {
+        "text": "#231f1a",
+        "soft": "#433c33",
+        "dim": "#4a4238",
+        "faint": "#5a5145",
+        "onTint": "#231f1a",
+        "onDeep": "#ffffff"
+      },
+      "roles": {
+        "brand": {
+          "fill": "#ffa7d1",
+          "text": "#a61d5e",
+          "deep": "#a61d5e"
+        },
+        "action": {
+          "fill": "#aeceff",
+          "text": "#2758a6",
+          "deep": "#2758a6"
+        },
+        "select": {
+          "fill": "#dac6ff",
+          "text": "#6a4ca6",
+          "deep": "#6a4ca6"
+        },
+        "ok": {
+          "fill": "#9ff0c7",
+          "text": "#036b39",
+          "deep": "#036b39"
+        },
+        "warn": {
+          "fill": "#ffdc9e",
+          "text": "#7c4d00",
+          "deep": "#7c4d00"
+        },
+        "danger": {
+          "fill": "#ffadb3",
+          "text": "#a62530",
+          "deep": "#a62530"
+        },
+        "info": {
+          "fill": "#97ece7",
+          "text": "#006963",
+          "deep": "#006963"
+        }
+      }
+    },
+    "type": {
+      "display": "fraunces",
+      "ui": "fraunces",
+      "body": "fraunces",
+      "mono": "courier-prime",
+      "scale": 0
+    },
+    "shape": {
+      "frame": "rule",
+      "frameWidth": 1,
+      "density": "airy",
+      "motion": "none",
+      "chrome": "bunraku"
+    },
+    "accent": {
+      "follows": "user"
+    },
+    "marks": {}
+  },
+  "assets": []
+}

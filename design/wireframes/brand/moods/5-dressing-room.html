@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dressing Room mood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,800;1,6..96,500&family=Mrs+Saint+Delafield&family=IBM+Plex+Mono:wght@500&family=Libre+Franklin:wght@400;600&display=swap">
+<link rel="stylesheet" href="board.css">
+<style>
+:root {
+  --bg: #140709; --fg: #f6e7e0; --fg2: #c7a9a5; --dim: #7d5a5a; --rule: #2d1318; --accent: #e8254f;
+  --body: "Libre Franklin", sans-serif; --mono: "IBM Plex Mono", monospace;
+  --display: 800 clamp(3.6rem, 9vw, 8rem) "Bodoni Moda", serif;
+  --h3: 800 1.45rem/1.1 "Bodoni Moda", serif; --quote: italic 500 1.6rem/1.3 "Bodoni Moda", serif;
+  --gold: #d9b26a; --powder: #f0c9c4; --glass: #1d2226;
+}
+/* a dressing-room vanity: square mirror, a ring of bulbs, things tucked in the frame */
+.hero { background: radial-gradient(ellipse 70% 60% at 50% 40%, #3a1219, transparent 70%), #140709; display: grid; place-items: center; padding: 70px 16px 0; }
+.vanity { position: relative; width: min(1000px, 100%); }
+.mirror { position: relative; height: min(640px, 70vh); min-height: 460px; border: 20px solid #2a1a10; outline: 3px solid var(--gold); outline-offset: -12px; background: linear-gradient(115deg, #262c31 0 30%, #313a40 38%, #1d2226 46% 100%); box-shadow: 0 40px 80px #000c; }
+.bulb { position: absolute; width: 26px; height: 26px; border-radius: 50% !important; background: #4a3a30; transition: background .3s, box-shadow .3s; cursor: pointer; }
+.bulb.on { background: #fff6dc; box-shadow: 0 0 22px 8px #ffd98a88; }
+.lip { position: absolute; left: 12%; top: 26%; font: 400 clamp(5rem, 13vw, 10rem)/1 "Mrs Saint Delafield"; color: var(--accent); transform: rotate(-6deg); text-shadow: 1px 1px 0 #7a0d27; }
+.lip2 { position: absolute; right: 12%; bottom: 14%; font: 400 clamp(2rem, 4vw, 3.4rem)/1 "Mrs Saint Delafield"; color: var(--accent); transform: rotate(-4deg); }
+.tuck { position: absolute; background: #f3ece2; padding: 8px 8px 30px; box-shadow: 3px 8px 14px #0009; transition: transform .25s; cursor: pointer; }
+.tuck:hover { transform: translateY(-18px) rotate(0) !important; }
+.tuck i { display: block; width: 120px; height: 100px; background: var(--img); }
+.tuck span { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font: italic 500 .95rem "Bodoni Moda"; color: #2a1a10; }
+.gram { position: absolute; right: 3%; top: 4%; width: 220px; background: #efe1bf; color: #2a1a10; padding: 12px; font: 500 12px/1.5 var(--mono); transform: rotate(4deg); box-shadow: 3px 8px 14px #0009; }
+.gram b { display: block; font: 800 .95rem "Bodoni Moda"; letter-spacing: .2em; border-bottom: 1px solid #2a1a10; margin-bottom: 6px; }
+.counter { height: 84px; background: linear-gradient(#3b2416, #24150c); border-top: 4px solid var(--gold); display: flex; gap: 0; justify-content: center; align-items: center; margin: 0 -6%; }
+.counter span { font: 500 12px/1 var(--mono); letter-spacing: .18em; color: var(--gold); padding: 0 18px; border-right: 1px solid #5a3a22; text-transform: uppercase; }
+.hint { text-align: center; font: 500 12px/1 var(--mono); letter-spacing: .2em; color: var(--dim); padding: 16px; }
+
+/* pieces */
+.k-nav { display: flex; gap: 12px; flex-wrap: wrap; }
+.k-nav span { padding: 10px 16px; background: linear-gradient(#e6c887, #b98d45); color: #2a1a10; font: 800 .95rem "Bodoni Moda"; letter-spacing: .14em; text-transform: uppercase; border: 1px solid #7a5a2a; box-shadow: inset 0 1px 0 #fff6; }
+.k-btn { display: inline-block; padding: 16px 28px; background: var(--accent); color: #fff; font: 800 1.05rem "Bodoni Moda"; letter-spacing: .16em; text-transform: uppercase; border: 1px solid #ff6b86; }
+.k-btn.alt { background: none; color: var(--fg); border: 0; border-bottom: 3px solid var(--accent); padding: 8px 2px; font-style: italic; letter-spacing: .02em; text-transform: none; font-size: 1.3rem; }
+.k-card { background: #f3ece2; color: #2a1a10; padding: 10px 10px 18px; width: 260px; transform: rotate(-2deg); box-shadow: 4px 10px 18px #000a; }
+.k-card i { display: block; height: 150px; background: linear-gradient(135deg, #5a1a2a, #e8254f 60%, #d9b26a); }
+.k-card h4 { font: var(--h3); margin-top: 10px; } .k-card p { font-size: .9rem; color: #5a3a30; }
+.k-in { padding: 10px 14px; background: var(--glass); border: 1px solid #3a2a28; font: 400 2.4rem/1 "Mrs Saint Delafield"; color: var(--accent); }
+.k-in small { display: block; font: 500 12px var(--mono); letter-spacing: .16em; color: var(--dim); margin-bottom: 4px; }
+.star { display: inline-grid; place-items: center; width: 74px; height: 70px; margin: 0 8px 8px 0; background: var(--gold); color: #2a1a10; font: 800 .75rem "Bodoni Moda"; letter-spacing: .1em; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.k-toast { font: italic 500 1.3rem "Bodoni Moda"; color: var(--fg); border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 12px 0; text-align: center; }
+</style>
+</head>
+<body>
+<nav class="top"><a href="4-the-booth.html">prev</a><span>5 / 6 &middot; The Dressing Room</span><a href="6-road-case.html">next</a></nav>
+
+<header class="hero">
+  <div class="vanity">
+    <div class="mirror" id="mirror">
+      <div class="lip">Bunraku</div>
+      <div class="lip2">break a leg, bun</div>
+      <div class="tuck" style="left:3%;top:5%;transform:rotate(-7deg);--img:linear-gradient(135deg,#5a1a2a,#e8254f)"><i></i><span>Scenes</span></div>
+      <div class="tuck" style="left:4%;bottom:6%;transform:rotate(5deg);--img:linear-gradient(135deg,#2a3a4a,#d9b26a)"><i></i><span>the Guides</span></div>
+      <div class="tuck" style="right:5%;bottom:8%;transform:rotate(-4deg);--img:linear-gradient(135deg,#d9b26a,#f0c9c4)"><i></i><span>Download</span></div>
+      <div class="gram"><b>TELEGRAM</b>PRESETS ARRIVED STOP LOREBOOKS NEXT WEEK STOP YOUR ROOM IS READY STOP v0.1.42</div>
+    </div>
+    <div class="counter"><span>Makeup box: presets</span><span>Script: guides</span><span>Flowers: what's new</span><span>Chair: try it</span></div>
+  </div>
+  <div class="hint">click a bulb / pull a photo</div>
+</header>
+
+<main class="wrap">
+  <section class="b"><div class="label"><b>01</b>The idea</div>
+    <div class="pitch"><div><h1>The Dressing Room</h1><div class="line">your room is ready, darling</div></div>
+      <div><p>Past the stage door, down a narrow hall, there's a room with your name on it. A mirror ringed with bulbs, photos and good-luck cards tucked into the frame, lipstick notes on the glass, a telegram from someone who couldn't make it.</p>
+      <p>RoleCall is the stage everyone sees. Bunraku is <b>the room where you become the character</b>: private, glamorous in a worn-in way, full of your things. It's the "home away from home" that performers personalize.</p>
+      <p>The site is warm, oxblood and gold, and intimate. <b>Every page is a different corner of your room.</b> Nothing here is for the audience.</p></div></div>
+  </section>
+
+  <section class="b"><div class="label"><b>02</b>Palette: oxblood, lipstick, brass, warm bulbs</div>
+    <div class="sw">
+      <div style="background:#140709;color:#c7a9a5;outline:1px solid #2d1318"><b>Oxblood dark</b>#140709</div>
+      <div style="background:#3a1219;color:#f0c9c4"><b>Velvet</b>#3A1219</div>
+      <div style="background:#e8254f;color:#fff"><b>Lipstick</b>#E8254F</div>
+      <div style="background:#f0c9c4;color:#2a1a10"><b>Powder</b>#F0C9C4</div>
+      <div style="background:#d9b26a;color:#2a1a10"><b>Brass</b>#D9B26A</div>
+      <div style="background:#fff6dc;color:#2a1a10"><b>Bulb</b>#FFF6DC</div>
+      <div style="background:#1d2226;color:#c7cdd2"><b>Mirror</b>#1D2226</div>
+      <div style="background:#2a1a10;color:#d9b26a"><b>Walnut</b>#2A1A10</div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>03</b>Type: old-glamour serif, a lipstick hand</div>
+    <div class="type">
+      <div class="row"><small>BODONI MODA<br>names on doors, titles</small><div style="font:800 clamp(2.8rem,7vw,6rem)/.95 'Bodoni Moda'">Five Minutes</div></div>
+      <div class="row"><small>BODONI MODA ITALIC<br>the voice</small><div style="font:italic 500 2rem/1.3 'Bodoni Moda'">Your room is ready, darling.</div></div>
+      <div class="row"><small>MRS SAINT DELAFIELD<br>lipstick on the glass</small><div style="font:400 4.4rem/1 'Mrs Saint Delafield';color:var(--accent)">break a leg</div></div>
+      <div class="row"><small>IBM PLEX MONO<br>telegrams, versions</small><div style="font:500 1rem 'IBM Plex Mono';letter-spacing:.16em">PRESETS ARRIVED STOP v0.1.42</div></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>04</b>Materials</div>
+    <div class="mats">
+      <div style="background:linear-gradient(115deg,#262c31 0 30%,#313a40 38%,#1d2226 46%)"><span>Old mirror</span></div>
+      <div style="background:repeating-linear-gradient(90deg,#3a1219 0 3px,#30101a 3px 6px)"><span>Velvet</span></div>
+      <div style="background:linear-gradient(#e6c887,#b98d45)"><span>Brass plate</span></div>
+      <div style="background:#efe1bf;padding:20px;font:500 12px/1.6 'IBM Plex Mono';color:#2a1a10">STOP<br>STOP<br>STOP<span>Telegram paper</span></div>
+      <div style="background:#140709;display:grid;place-items:center;font:400 4rem 'Mrs Saint Delafield';color:#e8254f">xo<span>Lipstick</span></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>05</b>Pieces</div>
+    <div class="kit">
+      <figure><div class="k-nav"><span>Scenes</span><span>Workbench</span><span>Library</span><span>Guides</span></div><figcaption>Nav: brass door plates</figcaption></figure>
+      <figure><div style="display:flex;gap:22px;align-items:center;flex-wrap:wrap"><span class="k-btn">Get Bunraku</span><span class="k-btn alt">read the guides</span></div><figcaption>Buttons: lipstick red, a lipstick underline</figcaption></figure>
+      <figure><div class="k-card"><i></i><h4>Lorebooks</h4><p>Every fact about your world, tucked where the story can find it.</p></div><figcaption>Card: a photo tucked in the frame</figcaption></figure>
+      <figure><div class="k-in"><small>WRITE ON THE MIRROR</small>my scene</div><figcaption>Input: lipstick on glass</figcaption></figure>
+      <figure><div><span class="star">NEW</span><span class="star">BETA</span><span class="star">v0.1</span></div><figcaption>Tags: the star on the door</figcaption></figure>
+      <figure><div class="k-toast">Five minutes, please. Saved.</div><figcaption>Toast: the calls over the intercom</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>06</b>How the site is built</div>
+    <div class="map">
+      <div><h3>Home</h3><strong>The vanity</strong><p>The mirror, the bulbs, the things tucked in the frame. Each one opens a section.</p></div>
+      <div><h3>Feature tour</h3><strong>The hallway of doors</strong><p>Walk the corridor; each door's brass plate is a feature. Open it to see that room.</p></div>
+      <div><h3>Guides and help</h3><strong>The script on the counter</strong><p>Dog-eared, annotated. Help is the stage manager's number taped to the mirror.</p></div>
+      <div><h3>Download</h3><strong>The star on your door</strong><p>Your name goes on the door. Pick your platform and the room is yours.</p></div>
+      <div><h3>What's new</h3><strong>Flowers and telegrams</strong><p>Each release arrives as a card on the counter, live from GitHub.</p></div>
+      <div><h3>Try it</h3><strong>Sit in the chair</strong><p>The mirror becomes a scene you can play right there.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>07</b>Signature moves</div>
+    <div class="moves">
+      <div><h3>Bulbs warm up <span class="live">LIVE ABOVE</span></h3><p>On load the bulbs come on one by one. Click one to switch it off and on.</p></div>
+      <div><h3>Pull a photo <span class="live">LIVE ABOVE</span></h3><p>Hover a tucked photo and it slides out of the frame.</p></div>
+      <div><h3>Lipstick writes itself</h3><p>Headings draw on the glass in real time, stroke by stroke.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>08</b>Voice</div>
+    <div class="voice">
+      <div><h3>Say it like this</h3><ul><li>Your room is ready, darling.</li><li>Five minutes, please.</li><li>Flowers arrived: presets.</li><li>Break a leg.</li></ul></div>
+      <div class="no"><h3>Never this</h3><ul><li>Level up your workflow</li><li>Built for creators</li><li>Your personal AI studio</li><li>Sign up now</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Not this: pastel pink SaaS, rounded cards, soft gradients as decoration. The only round things are the bulbs.</span><a href="6-road-case.html">Next: The Road Case</a></footer>
+</main>
+
+<script>
+// Bulbs around three sides of the mirror, switched on one by one; click toggles.
+const m = document.getElementById("mirror");
+const spots = [];
+for (let i = 0; i < 7; i++) spots.push([`${6 + i * 14.6}%`, "-34px"]);
+for (let i = 0; i < 5; i++) { spots.push(["-34px", `${8 + i * 20}%`, "l"]); spots.push(["-34px", `${8 + i * 20}%`, "r"]); }
+spots.forEach(([a, b, side], i) => {
+  const el = document.createElement("span");
+  el.className = "bulb";
+  if (side) { el.style.top = b; el.style[side === "l" ? "left" : "right"] = a; } else { el.style.left = a; el.style.top = b; }
+  el.style.marginLeft = side ? "" : "-13px";
+  m.append(el);
+  el.addEventListener("click", () => el.classList.toggle("on"));
+  setTimeout(() => el.classList.add("on"), 250 + i * 110);
+});
+</script>
+</body>
+</html>

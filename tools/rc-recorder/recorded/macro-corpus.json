@@ -1,0 +1,8107 @@
+{
+  "rolecall": "68afe385987811c4c1b8594013b27e75bebbe8f2",
+  "now": "2026-09-27T12:00:00.000Z",
+  "host": {
+    "locale": "en-US",
+    "calendar": "gregory",
+    "numberingSystem": "latn",
+    "timeZone": "America/New_York",
+    "year": "numeric",
+    "month": "numeric",
+    "day": "numeric"
+  },
+  "context": {
+    "characterName": "TestChar",
+    "userName": "TestUser"
+  },
+  "entries": [
+    {
+      "id": "text-empty",
+      "category": "text",
+      "input": "",
+      "note": "empty string",
+      "seed": 1,
+      "volatile": false,
+      "ast": [],
+      "result": {
+        "text": "",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-plain",
+      "category": "text",
+      "input": "Just plain text with no macros.",
+      "note": null,
+      "seed": 2,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "Just plain text with no macros."
+        }
+      ],
+      "result": {
+        "text": "Just plain text with no macros.",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-leading-ws",
+      "category": "text",
+      "input": "   leading whitespace",
+      "note": null,
+      "seed": 3,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "   leading whitespace"
+        }
+      ],
+      "result": {
+        "text": "   leading whitespace",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-trailing-ws",
+      "category": "text",
+      "input": "trailing whitespace   ",
+      "note": null,
+      "seed": 4,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "trailing whitespace   "
+        }
+      ],
+      "result": {
+        "text": "trailing whitespace   ",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-internal-ws",
+      "category": "text",
+      "input": "lots   of   internal    spaces",
+      "note": null,
+      "seed": 5,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "lots   of   internal    spaces"
+        }
+      ],
+      "result": {
+        "text": "lots   of   internal    spaces",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-only-ws",
+      "category": "text",
+      "input": "     ",
+      "note": null,
+      "seed": 6,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "     "
+        }
+      ],
+      "result": {
+        "text": "     ",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-tabs-newlines",
+      "category": "text",
+      "input": "\tindented\n\twith tabs",
+      "note": null,
+      "seed": 7,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "\tindented\n\twith tabs"
+        }
+      ],
+      "result": {
+        "text": "\tindented\n\twith tabs",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-then-macro",
+      "category": "text",
+      "input": "before {{char}}",
+      "note": "coalescing boundary: text then macro",
+      "seed": 8,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before "
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "before TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-macro-then-text",
+      "category": "text",
+      "input": "{{char}} after",
+      "note": null,
+      "seed": 9,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": " after"
+        }
+      ],
+      "result": {
+        "text": "TestChar after",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-around-macro",
+      "category": "text",
+      "input": "before {{char}} after",
+      "note": "text-macro-text boundaries",
+      "seed": 10,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before "
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": " after"
+        }
+      ],
+      "result": {
+        "text": "before TestChar after",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-adjacent-macros",
+      "category": "text",
+      "input": "{{char}}{{user}}",
+      "note": "no text between macros",
+      "seed": 11,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "macro",
+          "name": "user",
+          "rawContent": "user",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "TestCharTestUser",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-unicode",
+      "category": "text",
+      "input": "emoji 👁 and accents café résumé",
+      "note": null,
+      "seed": 12,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "emoji 👁 and accents café résumé"
+        }
+      ],
+      "result": {
+        "text": "emoji 👁 and accents café résumé",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "text-braces-only-single",
+      "category": "text",
+      "input": "a { b } c",
+      "note": "single braces are plain text",
+      "seed": 13,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a { b } c"
+        }
+      ],
+      "result": {
+        "text": "a { b } c",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-simple",
+      "category": "inline",
+      "input": "{{char}}",
+      "note": null,
+      "seed": 14,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-one-arg",
+      "category": "inline",
+      "input": "{{upper::hello}}",
+      "note": null,
+      "seed": 15,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "upper",
+          "rawContent": "upper::hello",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "hello"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "HELLO",
+        "expansions": [
+          {
+            "original": "{{upper::hello}}",
+            "expanded": "HELLO",
+            "macroName": "upper",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-two-arg",
+      "category": "inline",
+      "input": "{{setvar::name::value}}",
+      "note": null,
+      "seed": 16,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::name::value",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "name"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "value"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::name::value}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "name",
+            "value": "value",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:name"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-three-arg",
+      "category": "inline",
+      "input": "{{random::a::b::c}}",
+      "note": null,
+      "seed": 17,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "random",
+          "rawContent": "random::a::b::c",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "b"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "c"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "c",
+        "expansions": [
+          {
+            "original": "{{random::a::b::c}}",
+            "expanded": "c",
+            "macroName": "random",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "inline-empty-both-args",
+      "category": "inline",
+      "input": "{{x::::y}}",
+      "note": "empty middle arg",
+      "seed": 18,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "x",
+          "rawContent": "x::::y",
+          "args": [
+            [],
+            [
+              {
+                "type": "text",
+                "value": "y"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{x::::y}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{x::::y}}",
+            "message": "Unknown macro \"x\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-trailing-empty-arg",
+      "category": "inline",
+      "input": "{{x::a::}}",
+      "note": "trailing empty arg",
+      "seed": 19,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "x",
+          "rawContent": "x::a::",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ],
+            []
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{x::a::}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{x::a::}}",
+            "message": "Unknown macro \"x\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-leading-empty-arg",
+      "category": "inline",
+      "input": "{{x::::a}}",
+      "note": "leading empty arg",
+      "seed": 20,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "x",
+          "rawContent": "x::::a",
+          "args": [
+            [],
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{x::::a}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{x::::a}}",
+            "message": "Unknown macro \"x\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-all-empty-args",
+      "category": "inline",
+      "input": "{{x::::}}",
+      "note": null,
+      "seed": 21,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "x",
+          "rawContent": "x::::",
+          "args": [
+            [],
+            []
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{x::::}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{x::::}}",
+            "message": "Unknown macro \"x\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-arg-whitespace",
+      "category": "inline",
+      "input": "{{upper::  hello  }}",
+      "note": "args get trimmed at eval",
+      "seed": 22,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "upper",
+          "rawContent": "upper::  hello  ",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "  hello  "
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "HELLO",
+        "expansions": [
+          {
+            "original": "{{upper::hello}}",
+            "expanded": "HELLO",
+            "macroName": "upper",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-nested-in-arg",
+      "category": "inline",
+      "input": "{{a::{{b::c}}}}",
+      "note": "macro nested in an arg",
+      "seed": 23,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "a",
+          "rawContent": "a::{{b::c}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "b",
+                "rawContent": "b::c",
+                "args": [
+                  [
+                    {
+                      "type": "text",
+                      "value": "c"
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{a::{{b::c}}}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{b::c}}",
+            "message": "Unknown macro \"b\". Did you mean \"if\"?"
+          },
+          {
+            "macro": "{{a::{{b::c}}}}",
+            "message": "Unknown macro \"a\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-nested-real",
+      "category": "inline",
+      "input": "{{upper::{{char}}}}",
+      "note": null,
+      "seed": 24,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "upper",
+          "rawContent": "upper::{{char}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "char",
+                "rawContent": "char",
+                "args": []
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "TESTCHAR",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{upper::TestChar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-nested-deepest-first",
+      "category": "inline",
+      "input": "{{lower::{{upper::HeLLo}}}}",
+      "note": null,
+      "seed": 25,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "lower",
+          "rawContent": "lower::{{upper::HeLLo}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "upper",
+                "rawContent": "upper::HeLLo",
+                "args": [
+                  [
+                    {
+                      "type": "text",
+                      "value": "HeLLo"
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "hello",
+        "expansions": [
+          {
+            "original": "{{upper::HeLLo}}",
+            "expanded": "HELLO",
+            "macroName": "upper",
+            "depth": 0
+          },
+          {
+            "original": "{{lower::HELLO}}",
+            "expanded": "hello",
+            "macroName": "lower",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-mixed-text-and-nest",
+      "category": "inline",
+      "input": "{{upper::pre {{char}} post}}",
+      "note": null,
+      "seed": 26,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "upper",
+          "rawContent": "upper::pre {{char}} post",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "pre "
+              },
+              {
+                "type": "macro",
+                "name": "char",
+                "rawContent": "char",
+                "args": []
+              },
+              {
+                "type": "text",
+                "value": " post"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "PRE TESTCHAR POST",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{upper::pre TestChar post}}",
+            "expanded": "PRE TESTCHAR POST",
+            "macroName": "upper",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-name-uppercase",
+      "category": "inline",
+      "input": "{{CHAR}}",
+      "note": "name lowercased",
+      "seed": 27,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "CHAR",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-name-mixedcase",
+      "category": "inline",
+      "input": "{{GetVar::Mood}}",
+      "note": null,
+      "seed": 28,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "GetVar::Mood",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "Mood"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{getvar::Mood}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:Mood"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-deep-12",
+      "category": "inline",
+      "input": "{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}}}}}}}}}}}}}",
+      "note": "12 levels inline nesting",
+      "seed": 29,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "lower",
+          "rawContent": "lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}}}}}}}}}}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "upper",
+                "rawContent": "upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}}}}}}}}}",
+                "args": [
+                  [
+                    {
+                      "type": "macro",
+                      "name": "lower",
+                      "rawContent": "lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}}}}}}}",
+                      "args": [
+                        [
+                          {
+                            "type": "macro",
+                            "name": "upper",
+                            "rawContent": "upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}}}}}",
+                            "args": [
+                              [
+                                {
+                                  "type": "macro",
+                                  "name": "lower",
+                                  "rawContent": "lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}}}",
+                                  "args": [
+                                    [
+                                      {
+                                        "type": "macro",
+                                        "name": "upper",
+                                        "rawContent": "upper::{{lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}}}",
+                                        "args": [
+                                          [
+                                            {
+                                              "type": "macro",
+                                              "name": "lower",
+                                              "rawContent": "lower::{{upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}}}",
+                                              "args": [
+                                                [
+                                                  {
+                                                    "type": "macro",
+                                                    "name": "upper",
+                                                    "rawContent": "upper::{{lower::{{upper::{{lower::{{upper::{{char}}}}}}}}}}",
+                                                    "args": [
+                                                      [
+                                                        {
+                                                          "type": "macro",
+                                                          "name": "lower",
+                                                          "rawContent": "lower::{{upper::{{lower::{{upper::{{char}}}}}}}}",
+                                                          "args": [
+                                                            [
+                                                              {
+                                                                "type": "macro",
+                                                                "name": "upper",
+                                                                "rawContent": "upper::{{lower::{{upper::{{char}}}}}}",
+                                                                "args": [
+                                                                  [
+                                                                    {
+                                                                      "type": "macro",
+                                                                      "name": "lower",
+                                                                      "rawContent": "lower::{{upper::{{char}}}}",
+                                                                      "args": [
+                                                                        [
+                                                                          {
+                                                                            "type": "macro",
+                                                                            "name": "upper",
+                                                                            "rawContent": "upper::{{char}}",
+                                                                            "args": [
+                                                                              [
+                                                                                {
+                                                                                  "type": "macro",
+                                                                                  "name": "char",
+                                                                                  "rawContent": "char",
+                                                                                  "args": []
+                                                                                }
+                                                                              ]
+                                                                            ]
+                                                                          }
+                                                                        ]
+                                                                      ]
+                                                                    }
+                                                                  ]
+                                                                ]
+                                                              }
+                                                            ]
+                                                          ]
+                                                        }
+                                                      ]
+                                                    ]
+                                                  }
+                                                ]
+                                              ]
+                                            }
+                                          ]
+                                        ]
+                                      }
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "testchar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{upper::TestChar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 1
+          },
+          {
+            "original": "{{lower::TESTCHAR}}",
+            "expanded": "testchar",
+            "macroName": "lower",
+            "depth": 2
+          },
+          {
+            "original": "{{upper::testchar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 3
+          },
+          {
+            "original": "{{lower::TESTCHAR}}",
+            "expanded": "testchar",
+            "macroName": "lower",
+            "depth": 4
+          },
+          {
+            "original": "{{upper::testchar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 5
+          },
+          {
+            "original": "{{lower::TESTCHAR}}",
+            "expanded": "testchar",
+            "macroName": "lower",
+            "depth": 6
+          },
+          {
+            "original": "{{upper::testchar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 7
+          },
+          {
+            "original": "{{lower::TESTCHAR}}",
+            "expanded": "testchar",
+            "macroName": "lower",
+            "depth": 8
+          },
+          {
+            "original": "{{upper::testchar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 9
+          },
+          {
+            "original": "{{lower::TESTCHAR}}",
+            "expanded": "testchar",
+            "macroName": "lower",
+            "depth": 10
+          },
+          {
+            "original": "{{upper::testchar}}",
+            "expanded": "TESTCHAR",
+            "macroName": "upper",
+            "depth": 11
+          },
+          {
+            "original": "{{lower::TESTCHAR}}",
+            "expanded": "testchar",
+            "macroName": "lower",
+            "depth": 12
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-arg-with-colon-text",
+      "category": "inline",
+      "input": "{{setvar::note::a:b:c}}",
+      "note": "single colons in arg value stay",
+      "seed": 30,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::note::a:b:c",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "note"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "a:b:c"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::note::a:b:c}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "note",
+            "value": "a:b:c",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:note"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "inline-two-side-by-side",
+      "category": "inline",
+      "input": "{{random::a::b}} and {{random::c::d}}",
+      "note": null,
+      "seed": 31,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "random",
+          "rawContent": "random::a::b",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "b"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": " and "
+        },
+        {
+          "type": "macro",
+          "name": "random",
+          "rawContent": "random::c::d",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "c"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "d"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "b and d",
+        "expansions": [
+          {
+            "original": "{{random::a::b}}",
+            "expanded": "b",
+            "macroName": "random",
+            "depth": 0
+          },
+          {
+            "original": "{{random::c::d}}",
+            "expanded": "d",
+            "macroName": "random",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 2
+      }
+    },
+    {
+      "id": "escaped-full",
+      "category": "escaped",
+      "input": "Use \\{\\{char\\}\\} literally",
+      "note": "fully escaped braces",
+      "seed": 32,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "Use \\{\\{char\\}\\} literally"
+        }
+      ],
+      "result": {
+        "text": "Use {{char}} literally",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-half-open",
+      "category": "escaped",
+      "input": "half \\{{char}}",
+      "note": "escaped open then real",
+      "seed": 33,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "half \\"
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "half {{char}}",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-half-close",
+      "category": "escaped",
+      "input": "{{char}}\\}}",
+      "note": "real then escaped close",
+      "seed": 34,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "\\}}"
+        }
+      ],
+      "result": {
+        "text": "TestChar}}",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-adjacent-real",
+      "category": "escaped",
+      "input": "\\{\\{x\\}\\}{{char}}",
+      "note": "escaped adjacent to real macro",
+      "seed": 35,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "\\{\\{x\\}\\}"
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{x}}TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-only-open",
+      "category": "escaped",
+      "input": "just \\{\\{ open",
+      "note": null,
+      "seed": 36,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "just \\{\\{ open"
+        }
+      ],
+      "result": {
+        "text": "just {{ open",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-only-close",
+      "category": "escaped",
+      "input": "just \\}\\} close",
+      "note": null,
+      "seed": 37,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "just \\}\\} close"
+        }
+      ],
+      "result": {
+        "text": "just }} close",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-inside-arg",
+      "category": "escaped",
+      "input": "{{upper::\\{\\{x\\}\\}}}",
+      "note": "escaped braces inside a macro arg",
+      "seed": 38,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "upper",
+          "rawContent": "upper::\\{\\{x\\}\\",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "\\{\\{x\\}\\"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "}"
+        }
+      ],
+      "result": {
+        "text": "{{X}}",
+        "expansions": [
+          {
+            "original": "{{upper::\u0001\u0001x\u0002\u0002}}",
+            "expanded": "\u0001\u0001X\u0002\u0002",
+            "macroName": "upper",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-sentinel-open-raw",
+      "category": "escaped",
+      "input": "raw open sentinel \u0001 here",
+      "note": "\\x01 collision hazard in user input",
+      "seed": 39,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "raw open sentinel \u0001 here"
+        }
+      ],
+      "result": {
+        "text": "raw open sentinel { here",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-sentinel-close-raw",
+      "category": "escaped",
+      "input": "raw close sentinel \u0002 here",
+      "note": "\\x02 collision hazard",
+      "seed": 40,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "raw close sentinel \u0002 here"
+        }
+      ],
+      "result": {
+        "text": "raw close sentinel } here",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-sentinel-phase-raw",
+      "category": "escaped",
+      "input": "raw phase sentinel \u0003 here",
+      "note": "\\x03 collision hazard",
+      "seed": 41,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "raw phase sentinel \u0003 here"
+        }
+      ],
+      "result": {
+        "text": "raw phase sentinel \u0003 here",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-sentinel-trim-raw",
+      "category": "escaped",
+      "input": "raw trim sentinel \u0004 here",
+      "note": "\\x04 collision hazard",
+      "seed": 42,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "raw trim sentinel \u0004 here"
+        }
+      ],
+      "result": {
+        "text": "raw trim sentinelhere",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "escaped-sentinels-with-macro",
+      "category": "escaped",
+      "input": "\u0001\u0002{{char}}\u0004",
+      "note": null,
+      "seed": 43,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "\u0001\u0002"
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "\u0004"
+        }
+      ],
+      "result": {
+        "text": "{}TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-user",
+      "category": "angle",
+      "input": "<user>",
+      "note": null,
+      "seed": 44,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "<user>"
+        }
+      ],
+      "result": {
+        "text": "TestUser",
+        "expansions": [
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-char",
+      "category": "angle",
+      "input": "<char>",
+      "note": null,
+      "seed": 45,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "<char>"
+        }
+      ],
+      "result": {
+        "text": "TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-bot",
+      "category": "angle",
+      "input": "<bot>",
+      "note": "bot -> char",
+      "seed": 46,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "<bot>"
+        }
+      ],
+      "result": {
+        "text": "TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-mixed-case",
+      "category": "angle",
+      "input": "<USER> meets <Char>; <Bot> nods",
+      "note": null,
+      "seed": 47,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "<USER> meets <Char>; <Bot> nods"
+        }
+      ],
+      "result": {
+        "text": "TestUser meets TestChar; TestChar nods",
+        "expansions": [
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 0
+          },
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 1
+          },
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 2
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-in-sentence",
+      "category": "angle",
+      "input": "Hi <user>, I am <char>.",
+      "note": null,
+      "seed": 48,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "Hi <user>, I am <char>."
+        }
+      ],
+      "result": {
+        "text": "Hi TestUser, I am TestChar.",
+        "expansions": [
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 0
+          },
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-non-token",
+      "category": "angle",
+      "input": "<div>HTML stays</div> <userdata>too</userdata>",
+      "note": "unrelated angle content untouched",
+      "seed": 49,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "<div>HTML stays</div> <userdata>too</userdata>"
+        }
+      ],
+      "result": {
+        "text": "<div>HTML stays</div> <userdata>too</userdata>",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "angle-adjacent",
+      "category": "angle",
+      "input": "<char><user>",
+      "note": null,
+      "seed": 50,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "<char><user>"
+        }
+      ],
+      "result": {
+        "text": "TestCharTestUser",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-get",
+      "category": "dotdollar",
+      "input": "{{.v}}",
+      "note": null,
+      "seed": 51,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v",
+          "rawContent": ".v",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{getvar::v}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-inc",
+      "category": "dotdollar",
+      "input": "{{.v++}}",
+      "note": null,
+      "seed": 52,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v++",
+          "rawContent": ".v++",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "1",
+        "expansions": [
+          {
+            "original": "{{incvar::v}}",
+            "expanded": "1",
+            "macroName": "incvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "v",
+            "value": 1,
+            "cause": "incvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-dec",
+      "category": "dotdollar",
+      "input": "{{.v--}}",
+      "note": null,
+      "seed": 53,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v--",
+          "rawContent": ".v--",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "-1",
+        "expansions": [
+          {
+            "original": "{{decvar::v}}",
+            "expanded": "-1",
+            "macroName": "decvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "v",
+            "value": -1,
+            "cause": "decvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-addeq",
+      "category": "dotdollar",
+      "input": "{{.v += 2}}",
+      "note": null,
+      "seed": 54,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v += 2",
+          "rawContent": ".v += 2",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{addvar::v::2}}",
+            "expanded": "",
+            "macroName": "addvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "v",
+            "value": 2,
+            "cause": "addvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-subeq",
+      "category": "dotdollar",
+      "input": "{{.v -= 2}}",
+      "note": null,
+      "seed": 55,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v -= 2",
+          "rawContent": ".v -= 2",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{addvar::v::-2}}",
+            "expanded": "",
+            "macroName": "addvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "v",
+            "value": -2,
+            "cause": "addvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-set",
+      "category": "dotdollar",
+      "input": "{{.v = 5}}",
+      "note": null,
+      "seed": 56,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v = 5",
+          "rawContent": ".v = 5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::v::5}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "v",
+            "value": 5,
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-eq",
+      "category": "dotdollar",
+      "input": "{{.v == 5}}",
+      "note": null,
+      "seed": 57,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v == 5",
+          "rawContent": ".v == 5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "false",
+        "expansions": [
+          {
+            "original": "{{getvar::v}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{compare::::==::5}}",
+            "expanded": "false",
+            "macroName": "compare",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-neq",
+      "category": "dotdollar",
+      "input": "{{.v != 5}}",
+      "note": null,
+      "seed": 58,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v != 5",
+          "rawContent": ".v != 5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "true",
+        "expansions": [
+          {
+            "original": "{{getvar::v}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{compare::::!=::5}}",
+            "expanded": "true",
+            "macroName": "compare",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-gte",
+      "category": "dotdollar",
+      "input": "{{.v >= 5}}",
+      "note": null,
+      "seed": 59,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v >= 5",
+          "rawContent": ".v >= 5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "false",
+        "expansions": [
+          {
+            "original": "{{getvar::v}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{compare::::>=::5}}",
+            "expanded": "false",
+            "macroName": "compare",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-lt",
+      "category": "dotdollar",
+      "input": "{{.v < 5}}",
+      "note": null,
+      "seed": 60,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".v < 5",
+          "rawContent": ".v < 5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "false",
+        "expansions": [
+          {
+            "original": "{{getvar::v}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{compare::::<::5}}",
+            "expanded": "false",
+            "macroName": "compare",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:v"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dollar-global",
+      "category": "dotdollar",
+      "input": "{{$global}}",
+      "note": "$name -> getglobalvar",
+      "seed": 61,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "$global",
+          "rawContent": "$global",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{getglobalvar::global}}",
+            "expanded": "",
+            "macroName": "getglobalvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "global:global"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dollar-positional-1",
+      "category": "dotdollar",
+      "input": "{{$1}}",
+      "note": "positional, NOT getglobalvar",
+      "seed": 62,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "$1",
+          "rawContent": "$1",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{$1}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{$1}}",
+            "message": "Unknown macro \"$1\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dollar-positional-2",
+      "category": "dotdollar",
+      "input": "{{$2}}",
+      "note": "positional, NOT getglobalvar",
+      "seed": 63,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "$2",
+          "rawContent": "$2",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{$2}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{$2}}",
+            "message": "Unknown macro \"$2\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-set-then-get",
+      "category": "dotdollar",
+      "input": "{{.score = 10}}{{.score}}",
+      "note": null,
+      "seed": 64,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".score = 10",
+          "rawContent": ".score = 10",
+          "args": []
+        },
+        {
+          "type": "macro",
+          "name": ".score",
+          "rawContent": ".score",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "10",
+        "expansions": [
+          {
+            "original": "{{setvar::score::10}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::score}}",
+            "expanded": "10",
+            "macroName": "getvar",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "score",
+            "value": 10,
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:score"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "dot-inc-then-get",
+      "category": "dotdollar",
+      "input": "{{.n++}}{{.n}}",
+      "note": null,
+      "seed": 65,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": ".n++",
+          "rawContent": ".n++",
+          "args": []
+        },
+        {
+          "type": "macro",
+          "name": ".n",
+          "rawContent": ".n",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "11",
+        "expansions": [
+          {
+            "original": "{{incvar::n}}",
+            "expanded": "1",
+            "macroName": "incvar",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::n}}",
+            "expanded": "1",
+            "macroName": "getvar",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "n",
+            "value": 1,
+            "cause": "incvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:n"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "space-getvar",
+      "category": "spaceform",
+      "input": "{{getvar x}}",
+      "note": null,
+      "seed": 66,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "getvar x",
+          "rawContent": "getvar x",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{getvar::x}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:x"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "space-setvar",
+      "category": "spaceform",
+      "input": "{{setvar x y}}",
+      "note": null,
+      "seed": 67,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar x y",
+          "rawContent": "setvar x y",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::x::y}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "x",
+            "value": "y",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:x"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "space-roll",
+      "category": "spaceform",
+      "input": "{{roll 1d20}}",
+      "note": null,
+      "seed": 68,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "roll 1d20",
+          "rawContent": "roll 1d20",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "8",
+        "expansions": [
+          {
+            "original": "{{roll::1d20}}",
+            "expanded": "8",
+            "macroName": "roll",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "space-hasvar",
+      "category": "spaceform",
+      "input": "{{hasvar x}}",
+      "note": null,
+      "seed": 69,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "hasvar x",
+          "rawContent": "hasvar x",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "false",
+        "expansions": [
+          {
+            "original": "{{hasvar::x}}",
+            "expanded": "false",
+            "macroName": "hasvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:x"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "space-incvar",
+      "category": "spaceform",
+      "input": "{{incvar count}}",
+      "note": null,
+      "seed": 70,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "incvar count",
+          "rawContent": "incvar count",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "1",
+        "expansions": [
+          {
+            "original": "{{incvar::count}}",
+            "expanded": "1",
+            "macroName": "incvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "count",
+            "value": 1,
+            "cause": "incvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:count"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "space-addvar",
+      "category": "spaceform",
+      "input": "{{addvar score 5}}",
+      "note": null,
+      "seed": 71,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "addvar score 5",
+          "rawContent": "addvar score 5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{addvar::score::5}}",
+            "expanded": "",
+            "macroName": "addvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "score",
+            "value": 5,
+            "cause": "addvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:score"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "space-setvar-multiword-value",
+      "category": "spaceform",
+      "input": "{{setvar mood very happy}}",
+      "note": "value captures rest",
+      "seed": 72,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar mood very happy",
+          "rawContent": "setvar mood very happy",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::mood::very happy}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "mood",
+            "value": "very happy",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:mood"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "colon-random",
+      "category": "singlecolon",
+      "input": "{{random:a,b,c}}",
+      "note": "allowlisted single colon",
+      "seed": 73,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "random:a,b,c",
+          "rawContent": "random:a,b,c",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "c",
+        "expansions": [
+          {
+            "original": "{{random::a,b,c}}",
+            "expanded": "c",
+            "macroName": "random",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "colon-roll",
+      "category": "singlecolon",
+      "input": "{{roll:1d50}}",
+      "note": null,
+      "seed": 74,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "roll:1d50",
+          "rawContent": "roll:1d50",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "8",
+        "expansions": [
+          {
+            "original": "{{roll::1d50}}",
+            "expanded": "8",
+            "macroName": "roll",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "colon-setvar",
+      "category": "singlecolon",
+      "input": "{{setvar:x:5}}",
+      "note": null,
+      "seed": 75,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar:x:5",
+          "rawContent": "setvar:x:5",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::x::5}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "x",
+            "value": 5,
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:x"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "colon-getvar",
+      "category": "singlecolon",
+      "input": "{{getvar:mood}}",
+      "note": null,
+      "seed": 76,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "getvar:mood",
+          "rawContent": "getvar:mood",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{getvar::mood}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:mood"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "colon-comma-escape",
+      "category": "singlecolon",
+      "input": "{{random:hello\\, world,goodbye\\, world}}",
+      "note": "escaped comma",
+      "seed": 77,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "random:hello\\, world,goodbye\\, world",
+          "rawContent": "random:hello\\, world,goodbye\\, world",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "hello, world",
+        "expansions": [
+          {
+            "original": "{{random::hello\\, world,goodbye\\, world}}",
+            "expanded": "hello, world",
+            "macroName": "random",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "colon-not-allowlisted",
+      "category": "singlecolon",
+      "input": "{{upper:x}}",
+      "note": "non-allowlisted single colon stays literal name",
+      "seed": 78,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "upper:x",
+          "rawContent": "upper:x",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{upper:x}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{upper:x}}",
+            "message": "Unknown macro \"upper:x\". Did you mean \"upper\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "colon-idempotent-canonical",
+      "category": "singlecolon",
+      "input": "{{random::a::b}}",
+      "note": "canonical :: unchanged",
+      "seed": 79,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "random",
+          "rawContent": "random::a::b",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "b"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "a",
+        "expansions": [
+          {
+            "original": "{{random::a::b}}",
+            "expanded": "a",
+            "macroName": "random",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "colon-roll-already-canonical",
+      "category": "singlecolon",
+      "input": "{{roll::1d50}}",
+      "note": null,
+      "seed": 80,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "roll",
+          "rawContent": "roll::1d50",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "1d50"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "40",
+        "expansions": [
+          {
+            "original": "{{roll::1d50}}",
+            "expanded": "40",
+            "macroName": "roll",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "blockif-space",
+      "category": "blockif",
+      "input": "{{if true}}YES{{/if}}",
+      "note": null,
+      "seed": 81,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "true"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "YES",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-hash",
+      "category": "blockif",
+      "input": "{{#if true}}YES{{/#if}}",
+      "note": null,
+      "seed": 82,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "true"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "YES",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-colon",
+      "category": "blockif",
+      "input": "{{if::1}}YES{{/if}}",
+      "note": null,
+      "seed": 83,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "YES",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-else",
+      "category": "blockif",
+      "input": "{{if false}}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 84,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "false"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "NO",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-colon-else",
+      "category": "blockif",
+      "input": "{{if::0}}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 85,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "0"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "NO",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-elseif-2arm",
+      "category": "blockif",
+      "input": "{{if .x == 1}}one{{else if .x == 2}}two{{/if}}",
+      "note": null,
+      "seed": 86,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": ".x == 1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "one"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "blockIf",
+              "condition": [
+                {
+                  "type": "text",
+                  "value": ".x == 2"
+                }
+              ],
+              "thenBranch": [
+                {
+                  "type": "text",
+                  "value": "two"
+                }
+              ],
+              "elseBranch": []
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:x"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-elseif-3arm",
+      "category": "blockif",
+      "input": "{{if::{{getvar::m}} == a}}A{{else if::{{getvar::m}} == b}}B{{else if::{{getvar::m}} == c}}C{{else}}D{{/if}}",
+      "note": null,
+      "seed": 87,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "getvar",
+              "rawContent": "getvar::m",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "m"
+                  }
+                ]
+              ]
+            },
+            {
+              "type": "text",
+              "value": " == a"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "A"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "blockIf",
+              "condition": [
+                {
+                  "type": "macro",
+                  "name": "getvar",
+                  "rawContent": "getvar::m",
+                  "args": [
+                    [
+                      {
+                        "type": "text",
+                        "value": "m"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " == b"
+                }
+              ],
+              "thenBranch": [
+                {
+                  "type": "text",
+                  "value": "B"
+                }
+              ],
+              "elseBranch": [
+                {
+                  "type": "blockIf",
+                  "condition": [
+                    {
+                      "type": "macro",
+                      "name": "getvar",
+                      "rawContent": "getvar::m",
+                      "args": [
+                        [
+                          {
+                            "type": "text",
+                            "value": "m"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "value": " == c"
+                    }
+                  ],
+                  "thenBranch": [
+                    {
+                      "type": "text",
+                      "value": "C"
+                    }
+                  ],
+                  "elseBranch": [
+                    {
+                      "type": "text",
+                      "value": "D"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "D",
+        "expansions": [
+          {
+            "original": "{{getvar::m}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::m}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 1
+          },
+          {
+            "original": "{{getvar::m}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 2
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:m"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-term-slashif",
+      "category": "blockif",
+      "input": "{{if 1}}X{{/if}}",
+      "note": null,
+      "seed": 88,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "X"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "X",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-term-doubleslash",
+      "category": "blockif",
+      "input": "{{if::1}}X{{//if}}",
+      "note": null,
+      "seed": 89,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "X"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "X",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-term-hashclose",
+      "category": "blockif",
+      "input": "{{#if 1}}X{{/#if}}",
+      "note": null,
+      "seed": 90,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "X"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "X",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-term-endif",
+      "category": "blockif",
+      "input": "{{if 1}}X{{endif}}",
+      "note": null,
+      "seed": 91,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "X"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "X",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-inline-ternary",
+      "category": "blockif",
+      "input": "{{if::true::then::else}}",
+      "note": "inline macro, NOT a block",
+      "seed": 92,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "if",
+          "rawContent": "if::true::then::else",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "true"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "then"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "else"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "then",
+        "expansions": [
+          {
+            "original": "{{if::true::then::else}}",
+            "expanded": "then",
+            "macroName": "if",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-inline-ternary-2arg",
+      "category": "blockif",
+      "input": "{{if::1::yes}}",
+      "note": "inline 2-arg, not block",
+      "seed": 93,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "if",
+          "rawContent": "if::1::yes",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "1"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "yes"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "yes",
+        "expansions": [
+          {
+            "original": "{{if::1::yes}}",
+            "expanded": "yes",
+            "macroName": "if",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-malformed-no-close",
+      "category": "blockif",
+      "input": "{{if true}}content without closing tag",
+      "note": "head becomes literal text",
+      "seed": 94,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "{{if true}}"
+        },
+        {
+          "type": "text",
+          "value": "content without closing tag"
+        }
+      ],
+      "result": {
+        "text": "{{if true}}content without closing tag",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-colon-malformed-no-close",
+      "category": "blockif",
+      "input": "{{if::1}}no terminator here",
+      "note": "falls through to inline",
+      "seed": 95,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "if",
+          "rawContent": "if::1",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "1"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "no terminator here"
+        }
+      ],
+      "result": {
+        "text": "{{if::1}}no terminator here",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{if::1}}",
+            "message": "if requires condition and then value"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-contains-inline-if",
+      "category": "blockif",
+      "input": "{{if true}}{{if::a::b}}{{/if}}",
+      "note": "desync guard: inline if inside block if",
+      "seed": 96,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "true"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "macro",
+              "name": "if",
+              "rawContent": "if::a::b",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "a"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "b"
+                  }
+                ]
+              ]
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "b",
+        "expansions": [
+          {
+            "original": "{{if::a::b}}",
+            "expanded": "b",
+            "macroName": "if",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-negation",
+      "category": "blockif",
+      "input": "{{if !x}}neg{{else}}pos{{/if}}",
+      "note": null,
+      "seed": 97,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "!x"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "neg"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "pos"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "pos",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-comparison",
+      "category": "blockif",
+      "input": "{{if {{getvar::t}} >= 8}}A{{else}}B{{/if}}",
+      "note": null,
+      "seed": 98,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "getvar",
+              "rawContent": "getvar::t",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "t"
+                  }
+                ]
+              ]
+            },
+            {
+              "type": "text",
+              "value": " >= 8"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "A"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "B"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "B",
+        "expansions": [
+          {
+            "original": "{{getvar::t}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:t"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-unknown-literal-truthy",
+      "category": "blockif",
+      "input": "{{if somethingTruthy}}taken{{/if}}",
+      "note": "unknown literal is truthy",
+      "seed": 99,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "somethingTruthy"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "taken"
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "taken",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-empty-lhs",
+      "category": "blockif",
+      "input": "{{if {{getvar::missing}} == wp}}Y{{else}}N{{/if}}",
+      "note": "empty LHS comparison",
+      "seed": 100,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "getvar",
+              "rawContent": "getvar::missing",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "missing"
+                  }
+                ]
+              ]
+            },
+            {
+              "type": "text",
+              "value": " == wp"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "Y"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "N"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "N",
+        "expansions": [
+          {
+            "original": "{{getvar::missing}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:missing"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-nested-4",
+      "category": "blockif",
+      "input": "{{if true}}{{if true}}{{if true}}{{if true}}DEEP{{/if}}{{/if}}{{/if}}{{/if}}",
+      "note": "4-level nested blocks",
+      "seed": 101,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "true"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "blockIf",
+              "condition": [
+                {
+                  "type": "text",
+                  "value": "true"
+                }
+              ],
+              "thenBranch": [
+                {
+                  "type": "blockIf",
+                  "condition": [
+                    {
+                      "type": "text",
+                      "value": "true"
+                    }
+                  ],
+                  "thenBranch": [
+                    {
+                      "type": "blockIf",
+                      "condition": [
+                        {
+                          "type": "text",
+                          "value": "true"
+                        }
+                      ],
+                      "thenBranch": [
+                        {
+                          "type": "text",
+                          "value": "DEEP"
+                        }
+                      ],
+                      "elseBranch": []
+                    }
+                  ],
+                  "elseBranch": []
+                }
+              ],
+              "elseBranch": []
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "DEEP",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-mixed-hash-space-nest",
+      "category": "blockif",
+      "input": "{{if 1}}A{{#if 1}}B{{/if}}{{/if}}",
+      "note": null,
+      "seed": 102,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "1"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "A"
+            },
+            {
+              "type": "blockIf",
+              "condition": [
+                {
+                  "type": "text",
+                  "value": "1"
+                }
+              ],
+              "thenBranch": [
+                {
+                  "type": "text",
+                  "value": "B"
+                }
+              ],
+              "elseBranch": []
+            }
+          ],
+          "elseBranch": []
+        }
+      ],
+      "result": {
+        "text": "AB",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-nested-compare",
+      "category": "blockif",
+      "input": "{{if {{compare::{{getvar::x}}::>=::3}} }}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 103,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "compare",
+              "rawContent": "compare::{{getvar::x}}::>=::3",
+              "args": [
+                [
+                  {
+                    "type": "macro",
+                    "name": "getvar",
+                    "rawContent": "getvar::x",
+                    "args": [
+                      [
+                        {
+                          "type": "text",
+                          "value": "x"
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": ">="
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "3"
+                  }
+                ]
+              ]
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "NO",
+        "expansions": [
+          {
+            "original": "{{getvar::x}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{compare::::>=::3}}",
+            "expanded": "false",
+            "macroName": "compare",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:x"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-dotshorthand-cond",
+      "category": "blockif",
+      "input": "{{if .body_roll <= 25}}low{{else}}high{{/if}}",
+      "note": null,
+      "seed": 104,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": ".body_roll <= 25"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "low"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "high"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "low",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:body_roll"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-true-string",
+      "category": "blockif",
+      "input": "{{if true}}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 105,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "true"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "YES",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-false-string",
+      "category": "blockif",
+      "input": "{{if false}}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 106,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "false"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "NO",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-zero-falsy",
+      "category": "blockif",
+      "input": "{{if 0}}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 107,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "0"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "NO",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "blockif-nonzero-truthy",
+      "category": "blockif",
+      "input": "{{if 3}}YES{{else}}NO{{/if}}",
+      "note": null,
+      "seed": 108,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": "3"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "YES"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "NO"
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "YES",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "trim-block",
+      "category": "trim",
+      "input": "a[{{trim}}  spaced out  {{/trim}}]b",
+      "note": null,
+      "seed": 109,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a["
+        },
+        {
+          "type": "blockTrim",
+          "content": [
+            {
+              "type": "text",
+              "value": "  spaced out  "
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "]b"
+        }
+      ],
+      "result": {
+        "text": "a[spaced out]b",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "trim-bare",
+      "category": "trim",
+      "input": "left  \n {{trim}} \n  right",
+      "note": "bare trim collapses surrounding ws",
+      "seed": 110,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "left  \n "
+        },
+        {
+          "type": "macro",
+          "name": "trim",
+          "rawContent": "trim",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": " \n  right"
+        }
+      ],
+      "result": {
+        "text": "leftright",
+        "expansions": [
+          {
+            "original": "{{trim}}",
+            "expanded": "\u0004",
+            "macroName": "trim",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "trim-inline",
+      "category": "trim",
+      "input": "{{trim::  x  }}",
+      "note": null,
+      "seed": 111,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "trim",
+          "rawContent": "trim::  x  ",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "  x  "
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "x",
+        "expansions": [
+          {
+            "original": "{{trim::x}}",
+            "expanded": "x",
+            "macroName": "trim",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "trim-orphan",
+      "category": "trim",
+      "input": "a{{/trim}}b",
+      "note": null,
+      "seed": 112,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a"
+        },
+        {
+          "type": "text",
+          "value": "b"
+        }
+      ],
+      "result": {
+        "text": "ab",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "trim-block-with-macro",
+      "category": "trim",
+      "input": "{{trim}}  {{char}}  {{/trim}}",
+      "note": null,
+      "seed": 113,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockTrim",
+          "content": [
+            {
+              "type": "text",
+              "value": "  "
+            },
+            {
+              "type": "macro",
+              "name": "char",
+              "rawContent": "char",
+              "args": []
+            },
+            {
+              "type": "text",
+              "value": "  "
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "trim-bare-no-neighbors",
+      "category": "trim",
+      "input": "{{trim}}",
+      "note": null,
+      "seed": 114,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "trim",
+          "rawContent": "trim",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{trim}}",
+            "expanded": "\u0004",
+            "macroName": "trim",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setvar-block",
+      "category": "setvar",
+      "input": "{{setvar::greeting}}Hello World{{/setvar}}{{getvar::greeting}}",
+      "note": null,
+      "seed": 115,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockSetvar",
+          "varName": [
+            {
+              "type": "text",
+              "value": "greeting"
+            }
+          ],
+          "scope": "local",
+          "content": [
+            {
+              "type": "text",
+              "value": "Hello World"
+            }
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::greeting",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "greeting"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "Hello World",
+        "expansions": [
+          {
+            "original": "{{getvar::greeting}}",
+            "expanded": "Hello World",
+            "macroName": "getvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "greeting",
+            "value": "Hello World",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:greeting"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setvar-inline-not-block",
+      "category": "setvar",
+      "input": "{{setvar::n::v}}",
+      "note": "two args => inline, NOT a block",
+      "seed": 116,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::n::v",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "n"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "v"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setvar::n::v}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "n",
+            "value": "v",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:n"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setvar-block-with-macro",
+      "category": "setvar",
+      "input": "{{setvar::info}}Name is {{char}}{{/setvar}}{{getvar::info}}",
+      "note": null,
+      "seed": 117,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockSetvar",
+          "varName": [
+            {
+              "type": "text",
+              "value": "info"
+            }
+          ],
+          "scope": "local",
+          "content": [
+            {
+              "type": "text",
+              "value": "Name is "
+            },
+            {
+              "type": "macro",
+              "name": "char",
+              "rawContent": "char",
+              "args": []
+            }
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::info",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "info"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "Name is TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::info}}",
+            "expanded": "Name is TestChar",
+            "macroName": "getvar",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "info",
+            "value": "Name is TestChar",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:info"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setglobalvar-block",
+      "category": "setvar",
+      "input": "{{setglobalvar::msg}}Greetings{{/setglobalvar}}{{getglobalvar::msg}}",
+      "note": null,
+      "seed": 118,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockSetvar",
+          "varName": [
+            {
+              "type": "text",
+              "value": "msg"
+            }
+          ],
+          "scope": "global",
+          "content": [
+            {
+              "type": "text",
+              "value": "Greetings"
+            }
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getglobalvar",
+          "rawContent": "getglobalvar::msg",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "msg"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "Greetings",
+        "expansions": [
+          {
+            "original": "{{getglobalvar::msg}}",
+            "expanded": "Greetings",
+            "macroName": "getglobalvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setGlobalVar",
+            "key": "msg",
+            "value": "Greetings",
+            "cause": "setglobalvar"
+          }
+        ],
+        "touchedVariables": [
+          "global:msg"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setglobalvar-inline",
+      "category": "setvar",
+      "input": "{{setglobalvar::counter::42}}",
+      "note": null,
+      "seed": 119,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setglobalvar",
+          "rawContent": "setglobalvar::counter::42",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "counter"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "42"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{setglobalvar::counter::42}}",
+            "expanded": "",
+            "macroName": "setglobalvar",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setGlobalVar",
+            "key": "counter",
+            "value": 42,
+            "cause": "setglobalvar"
+          }
+        ],
+        "touchedVariables": [
+          "global:counter"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setvar-inline-inside-block",
+      "category": "setvar",
+      "input": "{{setvar::outer}}pre {{setvar::inner::x}} post{{/setvar}}{{getvar::outer}}",
+      "note": "desync guard: inline setvar inside setvar block",
+      "seed": 120,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockSetvar",
+          "varName": [
+            {
+              "type": "text",
+              "value": "outer"
+            }
+          ],
+          "scope": "local",
+          "content": [
+            {
+              "type": "text",
+              "value": "pre "
+            },
+            {
+              "type": "macro",
+              "name": "setvar",
+              "rawContent": "setvar::inner::x",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "inner"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "x"
+                  }
+                ]
+              ]
+            },
+            {
+              "type": "text",
+              "value": " post"
+            }
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::outer",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "outer"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "pre  post",
+        "expansions": [
+          {
+            "original": "{{setvar::inner::x}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::outer}}",
+            "expanded": "pre  post",
+            "macroName": "getvar",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "inner",
+            "value": "x",
+            "cause": "setvar"
+          },
+          {
+            "type": "setLocalVar",
+            "key": "outer",
+            "value": "pre  post",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:inner",
+          "local:outer"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setvar-block-nested-macro-value",
+      "category": "setvar",
+      "input": "{{setvar::a}}{{random::x::y}}{{/setvar}}{{getvar::a}}",
+      "note": null,
+      "seed": 121,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "blockSetvar",
+          "varName": [
+            {
+              "type": "text",
+              "value": "a"
+            }
+          ],
+          "scope": "local",
+          "content": [
+            {
+              "type": "macro",
+              "name": "random",
+              "rawContent": "random::x::y",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "x"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "y"
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::a",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "x",
+        "expansions": [
+          {
+            "original": "{{random::x::y}}",
+            "expanded": "x",
+            "macroName": "random",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::a}}",
+            "expanded": "x",
+            "macroName": "getvar",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "a",
+            "value": "x",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:a"
+        ],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "setvar-inline-nested-value",
+      "category": "setvar",
+      "input": "{{setvar::Author::style of {{random::A::B}} text}}{{getvar::Author}}",
+      "note": null,
+      "seed": 122,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::Author::style of {{random::A::B}} text",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "Author"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "style of "
+              },
+              {
+                "type": "macro",
+                "name": "random",
+                "rawContent": "random::A::B",
+                "args": [
+                  [
+                    {
+                      "type": "text",
+                      "value": "A"
+                    }
+                  ],
+                  [
+                    {
+                      "type": "text",
+                      "value": "B"
+                    }
+                  ]
+                ]
+              },
+              {
+                "type": "text",
+                "value": " text"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::Author",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "Author"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "style of B text",
+        "expansions": [
+          {
+            "original": "{{random::A::B}}",
+            "expanded": "B",
+            "macroName": "random",
+            "depth": 0
+          },
+          {
+            "original": "{{setvar::Author::style of B text}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 1
+          },
+          {
+            "original": "{{getvar::Author}}",
+            "expanded": "style of B text",
+            "macroName": "getvar",
+            "depth": 2
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "Author",
+            "value": "style of B text",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:Author"
+        ],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "setvar-inline-nested-name",
+      "category": "setvar",
+      "input": "{{setvar::{{lower::AUTHOR}}::{{upper::value}}}}{{getvar::author}}",
+      "note": null,
+      "seed": 123,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::{{lower::AUTHOR}}::{{upper::value}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "lower",
+                "rawContent": "lower::AUTHOR",
+                "args": [
+                  [
+                    {
+                      "type": "text",
+                      "value": "AUTHOR"
+                    }
+                  ]
+                ]
+              }
+            ],
+            [
+              {
+                "type": "macro",
+                "name": "upper",
+                "rawContent": "upper::value",
+                "args": [
+                  [
+                    {
+                      "type": "text",
+                      "value": "value"
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::author",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "author"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "VALUE",
+        "expansions": [
+          {
+            "original": "{{lower::AUTHOR}}",
+            "expanded": "author",
+            "macroName": "lower",
+            "depth": 0
+          },
+          {
+            "original": "{{upper::value}}",
+            "expanded": "VALUE",
+            "macroName": "upper",
+            "depth": 1
+          },
+          {
+            "original": "{{setvar::author::VALUE}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 2
+          },
+          {
+            "original": "{{getvar::author}}",
+            "expanded": "VALUE",
+            "macroName": "getvar",
+            "depth": 3
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "author",
+            "value": "VALUE",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:author"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "setvar-block-nested-block",
+      "category": "setvar",
+      "input": "{{setvar::outer}}A{{setvar::inner}}B{{/setvar}}{{getvar::inner}}{{/setvar}}{{getvar::outer}}",
+      "note": "nested setvar blocks",
+      "seed": 124,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockSetvar",
+          "varName": [
+            {
+              "type": "text",
+              "value": "outer"
+            }
+          ],
+          "scope": "local",
+          "content": [
+            {
+              "type": "text",
+              "value": "A"
+            },
+            {
+              "type": "blockSetvar",
+              "varName": [
+                {
+                  "type": "text",
+                  "value": "inner"
+                }
+              ],
+              "scope": "local",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "B"
+                }
+              ]
+            },
+            {
+              "type": "macro",
+              "name": "getvar",
+              "rawContent": "getvar::inner",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "inner"
+                  }
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::outer",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "outer"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "AB",
+        "expansions": [
+          {
+            "original": "{{getvar::inner}}",
+            "expanded": "B",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::outer}}",
+            "expanded": "AB",
+            "macroName": "getvar",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "inner",
+            "value": "B",
+            "cause": "setvar"
+          },
+          {
+            "type": "setLocalVar",
+            "key": "outer",
+            "value": "AB",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:inner",
+          "local:outer"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-slashif",
+      "category": "orphan",
+      "input": "before{{/if}}after",
+      "note": null,
+      "seed": 125,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-endif",
+      "category": "orphan",
+      "input": "before{{endif}}after",
+      "note": null,
+      "seed": 126,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-doubleslashif",
+      "category": "orphan",
+      "input": "before{{//if}}after",
+      "note": null,
+      "seed": 127,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-hashslashif",
+      "category": "orphan",
+      "input": "before{{/#if}}after",
+      "note": null,
+      "seed": 128,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-else",
+      "category": "orphan",
+      "input": "before{{else}}after",
+      "note": null,
+      "seed": 129,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-elseif",
+      "category": "orphan",
+      "input": "before{{else if::x}}after",
+      "note": null,
+      "seed": 130,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-slashtrim",
+      "category": "orphan",
+      "input": "before{{/trim}}after",
+      "note": null,
+      "seed": 131,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-slashsetvar",
+      "category": "orphan",
+      "input": "before{{/setvar}}after",
+      "note": null,
+      "seed": 132,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-slashsetglobalvar",
+      "category": "orphan",
+      "input": "before{{/setglobalvar}}after",
+      "note": null,
+      "seed": 133,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "orphan-multiple",
+      "category": "orphan",
+      "input": "{{/if}}{{else}}{{/trim}}{{endif}}",
+      "note": null,
+      "seed": 134,
+      "volatile": false,
+      "ast": [],
+      "result": {
+        "text": "",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-simple",
+      "category": "comment",
+      "input": "before{{// this is a comment}}after",
+      "note": null,
+      "seed": 135,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "// this is a comment",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "this is a comment"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [
+          {
+            "original": "{{//::this is a comment}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-with-colons",
+      "category": "comment",
+      "input": "before{{//:: note: a::b::c}}after",
+      "note": "body NOT split on ::",
+      "seed": 136,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "//:: note: a::b::c",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": ":: note: a::b::c"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [
+          {
+            "original": "{{//:::: note: a::b::c}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-multiline",
+      "category": "comment",
+      "input": "before{{// line one\nline two\nline three}}after",
+      "note": null,
+      "seed": 137,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "// line one\nline two\nline three",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "line one\nline two\nline three"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [
+          {
+            "original": "{{//::line one\nline two\nline three}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-empty",
+      "category": "comment",
+      "input": "before{{//}}after",
+      "note": null,
+      "seed": 138,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "before"
+        },
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "//",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "after"
+        }
+      ],
+      "result": {
+        "text": "beforeafter",
+        "expansions": [
+          {
+            "original": "{{//}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-with-macro-after",
+      "category": "comment",
+      "input": "{{// setup}}Hello {{char}}!",
+      "note": null,
+      "seed": 139,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "// setup",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "setup"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "Hello "
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "!"
+        }
+      ],
+      "result": {
+        "text": "Hello TestChar!",
+        "expansions": [
+          {
+            "original": "{{//::setup}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          },
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-doubleslashif-is-orphan",
+      "category": "comment",
+      "input": "{{//if}}",
+      "note": "must be orphan terminator NOT comment",
+      "seed": 140,
+      "volatile": false,
+      "ast": [],
+      "result": {
+        "text": "",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "comment-leading-space",
+      "category": "comment",
+      "input": "{{//   spaced comment   }}",
+      "note": null,
+      "seed": 141,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "//   spaced comment   ",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "spaced comment"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{//::spaced comment}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-bare",
+      "category": "unknown",
+      "input": "{{unknown}}",
+      "note": null,
+      "seed": 142,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "unknown",
+          "rawContent": "unknown",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{unknown}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{unknown}}",
+            "message": "Unknown macro \"unknown\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-one-arg",
+      "category": "unknown",
+      "input": "{{unknown::a}}",
+      "note": null,
+      "seed": 143,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "unknown",
+          "rawContent": "unknown::a",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{unknown::a}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{unknown::a}}",
+            "message": "Unknown macro \"unknown\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-multi-arg",
+      "category": "unknown",
+      "input": "{{unknown::a::b::c}}",
+      "note": null,
+      "seed": 144,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "unknown",
+          "rawContent": "unknown::a::b::c",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "b"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "c"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{unknown::a::b::c}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{unknown::a::b::c}}",
+            "message": "Unknown macro \"unknown\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-nested-arg",
+      "category": "unknown",
+      "input": "{{unknown::{{char}}}}",
+      "note": "reconstructed with EVALUATED args",
+      "seed": 145,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "unknown",
+          "rawContent": "unknown::{{char}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "char",
+                "rawContent": "char",
+                "args": []
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "{{unknown::TestChar}}",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [
+          {
+            "macro": "{{unknown::TestChar}}",
+            "message": "Unknown macro \"unknown\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-in-sentence",
+      "category": "unknown",
+      "input": "Hello {{unknownmacro}}!",
+      "note": null,
+      "seed": 146,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "Hello "
+        },
+        {
+          "type": "macro",
+          "name": "unknownmacro",
+          "rawContent": "unknownmacro",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "!"
+        }
+      ],
+      "result": {
+        "text": "Hello {{unknownmacro}}!",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{unknownmacro}}",
+            "message": "Unknown macro \"unknownmacro\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-typo-suggestion",
+      "category": "unknown",
+      "input": "{{chr}}",
+      "note": "near-miss suggestion path",
+      "seed": 147,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "chr",
+          "rawContent": "chr",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{chr}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{chr}}",
+            "message": "Unknown macro \"chr\". Did you mean \"char\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unknown-mixed-with-known",
+      "category": "unknown",
+      "input": "{{bad}} meets {{char}}",
+      "note": null,
+      "seed": 148,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "bad",
+          "rawContent": "bad",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": " meets "
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{bad}} meets TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 1
+          }
+        ],
+        "errors": [
+          {
+            "macro": "{{bad}}",
+            "message": "Unknown macro \"bad\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-open-eof",
+      "category": "unterminated",
+      "input": "text {{",
+      "note": null,
+      "seed": 149,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "text "
+        },
+        {
+          "type": "text",
+          "value": "{{"
+        }
+      ],
+      "result": {
+        "text": "text {{",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-open-name-eof",
+      "category": "unterminated",
+      "input": "text {{char",
+      "note": null,
+      "seed": 150,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "text "
+        },
+        {
+          "type": "text",
+          "value": "{{char"
+        }
+      ],
+      "result": {
+        "text": "text {{char",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-lone-open",
+      "category": "unterminated",
+      "input": "a { b",
+      "note": null,
+      "seed": 151,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a { b"
+        }
+      ],
+      "result": {
+        "text": "a { b",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-lone-close",
+      "category": "unterminated",
+      "input": "a } b",
+      "note": null,
+      "seed": 152,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a } b"
+        }
+      ],
+      "result": {
+        "text": "a } b",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-triple-open",
+      "category": "unterminated",
+      "input": "{{{char}}",
+      "note": null,
+      "seed": 153,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "{char",
+          "rawContent": "{char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{{char}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{{char}}",
+            "message": "Unknown macro \"{char\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-triple-close",
+      "category": "unterminated",
+      "input": "{{char}}}",
+      "note": null,
+      "seed": 154,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "}"
+        }
+      ],
+      "result": {
+        "text": "TestChar}",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-triple-both",
+      "category": "unterminated",
+      "input": "{{{char}}}",
+      "note": null,
+      "seed": 155,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "{char",
+          "rawContent": "{char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "}"
+        }
+      ],
+      "result": {
+        "text": "{{{char}}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{{char}}",
+            "message": "Unknown macro \"{char\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-quad-open",
+      "category": "unterminated",
+      "input": "{{{{char}}}}",
+      "note": null,
+      "seed": 156,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "{{char}}",
+          "rawContent": "{{char}}",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{{{char}}}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{{{char}}}}",
+            "message": "Unknown macro \"{{char}}\""
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-close-before-open",
+      "category": "unterminated",
+      "input": "}} before {{char}}",
+      "note": null,
+      "seed": 157,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "}} before "
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "}} before TestChar",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-bare-pairs",
+      "category": "unterminated",
+      "input": "}} {{",
+      "note": null,
+      "seed": 158,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "}} "
+        },
+        {
+          "type": "text",
+          "value": "{{"
+        }
+      ],
+      "result": {
+        "text": "}} {{",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-empty-macro",
+      "category": "unterminated",
+      "input": "{{}}",
+      "note": "empty braces",
+      "seed": 159,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "",
+          "rawContent": "",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{}}",
+            "message": "Unknown macro \"\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "unterm-whitespace-macro",
+      "category": "unterminated",
+      "input": "{{   }}",
+      "note": "whitespace-only inner",
+      "seed": 160,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "",
+          "rawContent": "   ",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "{{}}",
+        "expansions": [],
+        "errors": [
+          {
+            "macro": "{{}}",
+            "message": "Unknown macro \"\". Did you mean \"if\"?"
+          }
+        ],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "ws-three-newlines",
+      "category": "whitespace",
+      "input": "a\n\n\nb",
+      "note": "3 newlines collapse to 2",
+      "seed": 161,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a\n\n\nb"
+        }
+      ],
+      "result": {
+        "text": "a\n\nb",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "ws-five-newlines",
+      "category": "whitespace",
+      "input": "a\n\n\n\n\nb",
+      "note": null,
+      "seed": 162,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a\n\n\n\n\nb"
+        }
+      ],
+      "result": {
+        "text": "a\n\nb",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "ws-two-newlines-kept",
+      "category": "whitespace",
+      "input": "a\n\nb",
+      "note": "2 newlines preserved",
+      "seed": 163,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a\n\nb"
+        }
+      ],
+      "result": {
+        "text": "a\n\nb",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "ws-trim-sentinel-collapse",
+      "category": "whitespace",
+      "input": "a  {{trim}}  b",
+      "note": null,
+      "seed": 164,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "a  "
+        },
+        {
+          "type": "macro",
+          "name": "trim",
+          "rawContent": "trim",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "  b"
+        }
+      ],
+      "result": {
+        "text": "ab",
+        "expansions": [
+          {
+            "original": "{{trim}}",
+            "expanded": "\u0004",
+            "macroName": "trim",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "ws-newlines-with-macro",
+      "category": "whitespace",
+      "input": "{{char}}\n\n\n\n{{user}}",
+      "note": null,
+      "seed": 165,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": "\n\n\n\n"
+        },
+        {
+          "type": "macro",
+          "name": "user",
+          "rawContent": "user",
+          "args": []
+        }
+      ],
+      "result": {
+        "text": "TestChar\n\nTestUser",
+        "expansions": [
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 0
+          },
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "ws-mixed-block",
+      "category": "whitespace",
+      "input": "line1\n\n\nline2\n\n\n\nline3",
+      "note": null,
+      "seed": 166,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "text",
+          "value": "line1\n\n\nline2\n\n\n\nline3"
+        }
+      ],
+      "result": {
+        "text": "line1\n\nline2\n\nline3",
+        "expansions": [],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-volatile-rcounter-seq",
+      "category": "lazyvolatile",
+      "input": "S{{rcounter::s}}.S{{rcounter::s}}.S{{rcounter::s}}.",
+      "note": "volatile counter sequence",
+      "seed": 167,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "text",
+          "value": "S"
+        },
+        {
+          "type": "macro",
+          "name": "rcounter",
+          "rawContent": "rcounter::s",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "s"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": ".S"
+        },
+        {
+          "type": "macro",
+          "name": "rcounter",
+          "rawContent": "rcounter::s",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "s"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": ".S"
+        },
+        {
+          "type": "macro",
+          "name": "rcounter",
+          "rawContent": "rcounter::s",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "s"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "."
+        }
+      ],
+      "result": {
+        "text": "S1.S2.S3.",
+        "expansions": [
+          {
+            "original": "{{rcounter::s}}",
+            "expanded": "1",
+            "macroName": "rcounter",
+            "depth": 0
+          },
+          {
+            "original": "{{rcounter::s}}",
+            "expanded": "2",
+            "macroName": "rcounter",
+            "depth": 1
+          },
+          {
+            "original": "{{rcounter::s}}",
+            "expanded": "3",
+            "macroName": "rcounter",
+            "depth": 2
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-volatile-rcounter-multi",
+      "category": "lazyvolatile",
+      "input": "{{rcounter::a}}-{{rcounter::b}}-{{rcounter::a}}",
+      "note": null,
+      "seed": 168,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "rcounter",
+          "rawContent": "rcounter::a",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "-"
+        },
+        {
+          "type": "macro",
+          "name": "rcounter",
+          "rawContent": "rcounter::b",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "b"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "-"
+        },
+        {
+          "type": "macro",
+          "name": "rcounter",
+          "rawContent": "rcounter::a",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "1-1-2",
+        "expansions": [
+          {
+            "original": "{{rcounter::a}}",
+            "expanded": "1",
+            "macroName": "rcounter",
+            "depth": 0
+          },
+          {
+            "original": "{{rcounter::b}}",
+            "expanded": "1",
+            "macroName": "rcounter",
+            "depth": 1
+          },
+          {
+            "original": "{{rcounter::a}}",
+            "expanded": "2",
+            "macroName": "rcounter",
+            "depth": 2
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-volatile-random",
+      "category": "lazyvolatile",
+      "input": "{{random::a::b::c}}",
+      "note": "cacheable false",
+      "seed": 169,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "random",
+          "rawContent": "random::a::b::c",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "a"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "b"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "c"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "a",
+        "expansions": [
+          {
+            "original": "{{random::a::b::c}}",
+            "expanded": "a",
+            "macroName": "random",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "lazy-volatile-roll",
+      "category": "lazyvolatile",
+      "input": "{{roll::1d20}}",
+      "note": null,
+      "seed": 170,
+      "volatile": true,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "roll",
+          "rawContent": "roll::1d20",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "1d20"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "20",
+        "expansions": [
+          {
+            "original": "{{roll::1d20}}",
+            "expanded": "20",
+            "macroName": "roll",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": false,
+        "randomDraws": 1
+      }
+    },
+    {
+      "id": "lazy-foreach",
+      "category": "lazyvolatile",
+      "input": "{{foreach::d in [A,B,C]::- $d}}",
+      "note": "lazy iteration macro",
+      "seed": 171,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "foreach",
+          "rawContent": "foreach::d in [A,B,C]::- $d",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "d in [A,B,C]"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "- $d"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "- A\n- B\n- C",
+        "expansions": [
+          {
+            "original": "{{foreach::d in [A,B,C]::- $d}}",
+            "expanded": "- A\n- B\n- C",
+            "macroName": "foreach",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-foreach-field",
+      "category": "lazyvolatile",
+      "input": "{{foreach::x in [one,two]::$x done}}",
+      "note": null,
+      "seed": 172,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "foreach",
+          "rawContent": "foreach::x in [one,two]::$x done",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "x in [one,two]"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "$x done"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "one done\ntwo done",
+        "expansions": [
+          {
+            "original": "{{foreach::x in [one,two]::$x done}}",
+            "expanded": "one done\ntwo done",
+            "macroName": "foreach",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-when-all",
+      "category": "lazyvolatile",
+      "input": "{{when_all::1::1::both set}}",
+      "note": null,
+      "seed": 173,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "when_all",
+          "rawContent": "when_all::1::1::both set",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "1"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "1"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "both set"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "both set",
+        "expansions": [
+          {
+            "original": "{{when_all::1::1::both set}}",
+            "expanded": "both set",
+            "macroName": "when_all",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-when-any",
+      "category": "lazyvolatile",
+      "input": "{{when_any::0::1::at least one}}",
+      "note": null,
+      "seed": 174,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "when_any",
+          "rawContent": "when_any::0::1::at least one",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "0"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "1"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "at least one"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "at least one",
+        "expansions": [
+          {
+            "original": "{{when_any::0::1::at least one}}",
+            "expanded": "at least one",
+            "macroName": "when_any",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "lazy-ifset",
+      "category": "lazyvolatile",
+      "input": "{{ifset::mood::has mood::no mood}}",
+      "note": null,
+      "seed": 175,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "ifset",
+          "rawContent": "ifset::mood::has mood::no mood",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "mood"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "has mood"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "no mood"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "",
+        "expansions": [
+          {
+            "original": "{{ifset::mood::has mood::no mood}}",
+            "expanded": "",
+            "macroName": "ifset",
+            "depth": 0
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:mood"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "template-phase-cascade",
+      "category": "template",
+      "input": "{{setvar::t::200}}{{setvar::phase::Opening}}{{if {{compare::{{getvar::t}}::>=::16}} }}{{setvar::phase::Rising}}{{/if}}{{if {{compare::{{getvar::t}}::>=::51}} }}{{setvar::phase::Cruising}}{{/if}}{{if {{compare::{{getvar::t}}::>=::151}} }}{{setvar::phase::Marathon}}{{/if}}{{if {{compare::{{getvar::t}}::>=::500}} }}{{setvar::phase::Endurance}}{{/if}}Phase: {{getvar::phase}}",
+      "note": "HawThorne-style phase cascade",
+      "seed": 176,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::t::200",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "t"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "200"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "macro",
+          "name": "setvar",
+          "rawContent": "setvar::phase::Opening",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "phase"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "Opening"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "compare",
+              "rawContent": "compare::{{getvar::t}}::>=::16",
+              "args": [
+                [
+                  {
+                    "type": "macro",
+                    "name": "getvar",
+                    "rawContent": "getvar::t",
+                    "args": [
+                      [
+                        {
+                          "type": "text",
+                          "value": "t"
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": ">="
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "16"
+                  }
+                ]
+              ]
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "macro",
+              "name": "setvar",
+              "rawContent": "setvar::phase::Rising",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "phase"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "Rising"
+                  }
+                ]
+              ]
+            }
+          ],
+          "elseBranch": []
+        },
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "compare",
+              "rawContent": "compare::{{getvar::t}}::>=::51",
+              "args": [
+                [
+                  {
+                    "type": "macro",
+                    "name": "getvar",
+                    "rawContent": "getvar::t",
+                    "args": [
+                      [
+                        {
+                          "type": "text",
+                          "value": "t"
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": ">="
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "51"
+                  }
+                ]
+              ]
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "macro",
+              "name": "setvar",
+              "rawContent": "setvar::phase::Cruising",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "phase"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "Cruising"
+                  }
+                ]
+              ]
+            }
+          ],
+          "elseBranch": []
+        },
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "compare",
+              "rawContent": "compare::{{getvar::t}}::>=::151",
+              "args": [
+                [
+                  {
+                    "type": "macro",
+                    "name": "getvar",
+                    "rawContent": "getvar::t",
+                    "args": [
+                      [
+                        {
+                          "type": "text",
+                          "value": "t"
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": ">="
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "151"
+                  }
+                ]
+              ]
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "macro",
+              "name": "setvar",
+              "rawContent": "setvar::phase::Marathon",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "phase"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "Marathon"
+                  }
+                ]
+              ]
+            }
+          ],
+          "elseBranch": []
+        },
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "compare",
+              "rawContent": "compare::{{getvar::t}}::>=::500",
+              "args": [
+                [
+                  {
+                    "type": "macro",
+                    "name": "getvar",
+                    "rawContent": "getvar::t",
+                    "args": [
+                      [
+                        {
+                          "type": "text",
+                          "value": "t"
+                        }
+                      ]
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": ">="
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "500"
+                  }
+                ]
+              ]
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "macro",
+              "name": "setvar",
+              "rawContent": "setvar::phase::Endurance",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "phase"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "Endurance"
+                  }
+                ]
+              ]
+            }
+          ],
+          "elseBranch": []
+        },
+        {
+          "type": "text",
+          "value": "Phase: "
+        },
+        {
+          "type": "macro",
+          "name": "getvar",
+          "rawContent": "getvar::phase",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "phase"
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "Phase: Marathon",
+        "expansions": [
+          {
+            "original": "{{setvar::t::200}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 0
+          },
+          {
+            "original": "{{setvar::phase::Opening}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 1
+          },
+          {
+            "original": "{{getvar::t}}",
+            "expanded": "200",
+            "macroName": "getvar",
+            "depth": 2
+          },
+          {
+            "original": "{{compare::200::>=::16}}",
+            "expanded": "true",
+            "macroName": "compare",
+            "depth": 3
+          },
+          {
+            "original": "{{setvar::phase::Rising}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 4
+          },
+          {
+            "original": "{{getvar::t}}",
+            "expanded": "200",
+            "macroName": "getvar",
+            "depth": 5
+          },
+          {
+            "original": "{{compare::200::>=::51}}",
+            "expanded": "true",
+            "macroName": "compare",
+            "depth": 6
+          },
+          {
+            "original": "{{setvar::phase::Cruising}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 7
+          },
+          {
+            "original": "{{getvar::t}}",
+            "expanded": "200",
+            "macroName": "getvar",
+            "depth": 8
+          },
+          {
+            "original": "{{compare::200::>=::151}}",
+            "expanded": "true",
+            "macroName": "compare",
+            "depth": 9
+          },
+          {
+            "original": "{{setvar::phase::Marathon}}",
+            "expanded": "",
+            "macroName": "setvar",
+            "depth": 10
+          },
+          {
+            "original": "{{getvar::t}}",
+            "expanded": "200",
+            "macroName": "getvar",
+            "depth": 11
+          },
+          {
+            "original": "{{compare::200::>=::500}}",
+            "expanded": "false",
+            "macroName": "compare",
+            "depth": 12
+          },
+          {
+            "original": "{{getvar::phase}}",
+            "expanded": "Marathon",
+            "macroName": "getvar",
+            "depth": 13
+          }
+        ],
+        "errors": [],
+        "sideEffects": [
+          {
+            "type": "setLocalVar",
+            "key": "t",
+            "value": 200,
+            "cause": "setvar"
+          },
+          {
+            "type": "setLocalVar",
+            "key": "phase",
+            "value": "Opening",
+            "cause": "setvar"
+          },
+          {
+            "type": "setLocalVar",
+            "key": "phase",
+            "value": "Rising",
+            "cause": "setvar"
+          },
+          {
+            "type": "setLocalVar",
+            "key": "phase",
+            "value": "Cruising",
+            "cause": "setvar"
+          },
+          {
+            "type": "setLocalVar",
+            "key": "phase",
+            "value": "Marathon",
+            "cause": "setvar"
+          }
+        ],
+        "touchedVariables": [
+          "local:phase",
+          "local:t"
+        ],
+        "cacheable": false,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "template-threadbare-mode",
+      "category": "template",
+      "input": "{{if::{{getvar::mode}} == solo}}SOLO{{else if::{{getvar::mode}} == swap}}SWAP{{else if::{{getvar::mode}} == ensemble}}ENSEMBLE{{else}}UNKNOWN{{/if}}",
+      "note": "Lumiverse else-if chain on mode",
+      "seed": 177,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "getvar",
+              "rawContent": "getvar::mode",
+              "args": [
+                [
+                  {
+                    "type": "text",
+                    "value": "mode"
+                  }
+                ]
+              ]
+            },
+            {
+              "type": "text",
+              "value": " == solo"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "SOLO"
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "blockIf",
+              "condition": [
+                {
+                  "type": "macro",
+                  "name": "getvar",
+                  "rawContent": "getvar::mode",
+                  "args": [
+                    [
+                      {
+                        "type": "text",
+                        "value": "mode"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " == swap"
+                }
+              ],
+              "thenBranch": [
+                {
+                  "type": "text",
+                  "value": "SWAP"
+                }
+              ],
+              "elseBranch": [
+                {
+                  "type": "blockIf",
+                  "condition": [
+                    {
+                      "type": "macro",
+                      "name": "getvar",
+                      "rawContent": "getvar::mode",
+                      "args": [
+                        [
+                          {
+                            "type": "text",
+                            "value": "mode"
+                          }
+                        ]
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "value": " == ensemble"
+                    }
+                  ],
+                  "thenBranch": [
+                    {
+                      "type": "text",
+                      "value": "ENSEMBLE"
+                    }
+                  ],
+                  "elseBranch": [
+                    {
+                      "type": "text",
+                      "value": "UNKNOWN"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "UNKNOWN",
+        "expansions": [
+          {
+            "original": "{{getvar::mode}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 0
+          },
+          {
+            "original": "{{getvar::mode}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 1
+          },
+          {
+            "original": "{{getvar::mode}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 2
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:mode"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "template-group-card-branch",
+      "category": "template",
+      "input": "{{if::{{groupCardMode}} == solo}}SOLO:{{char}}{{else}}FOCUS:{{charGroupFocused}}{{/if}}",
+      "note": "group card solo/focus branch",
+      "seed": 178,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "macro",
+              "name": "groupcardmode",
+              "rawContent": "groupCardMode",
+              "args": []
+            },
+            {
+              "type": "text",
+              "value": " == solo"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "SOLO:"
+            },
+            {
+              "type": "macro",
+              "name": "char",
+              "rawContent": "char",
+              "args": []
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "FOCUS:"
+            },
+            {
+              "type": "macro",
+              "name": "chargroupfocused",
+              "rawContent": "charGroupFocused",
+              "args": []
+            }
+          ]
+        }
+      ],
+      "result": {
+        "text": "SOLO:TestChar",
+        "expansions": [
+          {
+            "original": "{{groupcardmode}}",
+            "expanded": "solo",
+            "macroName": "groupcardmode",
+            "depth": 0
+          },
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 1
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    },
+    {
+      "id": "template-roster-snippet",
+      "category": "template",
+      "input": "{{// roster block}}\nYou are {{char}}, talking to {{user}}.\n{{if .nsfw_on}}Adult content enabled.{{else}}Keep it clean.{{/if}}\nMood today: {{upper::{{getvar::mood}}}}",
+      "note": "roster intro with nested formatting + comment",
+      "seed": 179,
+      "volatile": false,
+      "ast": [
+        {
+          "type": "macro",
+          "name": "//",
+          "rawContent": "// roster block",
+          "args": [
+            [
+              {
+                "type": "text",
+                "value": "roster block"
+              }
+            ]
+          ]
+        },
+        {
+          "type": "text",
+          "value": "\nYou are "
+        },
+        {
+          "type": "macro",
+          "name": "char",
+          "rawContent": "char",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": ", talking to "
+        },
+        {
+          "type": "macro",
+          "name": "user",
+          "rawContent": "user",
+          "args": []
+        },
+        {
+          "type": "text",
+          "value": ".\n"
+        },
+        {
+          "type": "blockIf",
+          "condition": [
+            {
+              "type": "text",
+              "value": ".nsfw_on"
+            }
+          ],
+          "thenBranch": [
+            {
+              "type": "text",
+              "value": "Adult content enabled."
+            }
+          ],
+          "elseBranch": [
+            {
+              "type": "text",
+              "value": "Keep it clean."
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "value": "\nMood today: "
+        },
+        {
+          "type": "macro",
+          "name": "upper",
+          "rawContent": "upper::{{getvar::mood}}",
+          "args": [
+            [
+              {
+                "type": "macro",
+                "name": "getvar",
+                "rawContent": "getvar::mood",
+                "args": [
+                  [
+                    {
+                      "type": "text",
+                      "value": "mood"
+                    }
+                  ]
+                ]
+              }
+            ]
+          ]
+        }
+      ],
+      "result": {
+        "text": "\nYou are TestChar, talking to TestUser.\nKeep it clean.\nMood today: ",
+        "expansions": [
+          {
+            "original": "{{//::roster block}}",
+            "expanded": "",
+            "macroName": "//",
+            "depth": 0
+          },
+          {
+            "original": "{{char}}",
+            "expanded": "TestChar",
+            "macroName": "char",
+            "depth": 1
+          },
+          {
+            "original": "{{user}}",
+            "expanded": "TestUser",
+            "macroName": "user",
+            "depth": 2
+          },
+          {
+            "original": "{{getvar::mood}}",
+            "expanded": "",
+            "macroName": "getvar",
+            "depth": 3
+          },
+          {
+            "original": "{{upper::}}",
+            "expanded": "",
+            "macroName": "upper",
+            "depth": 4
+          }
+        ],
+        "errors": [],
+        "sideEffects": [],
+        "touchedVariables": [
+          "local:mood",
+          "local:nsfw_on"
+        ],
+        "cacheable": true,
+        "randomDraws": 0
+      }
+    }
+  ]
+}

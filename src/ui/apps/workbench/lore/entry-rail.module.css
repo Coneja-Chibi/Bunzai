@@ -1,0 +1,223 @@
+/**
+ * The binder's fine-print rail (vs-lorebook-binder-2): Order & survival label/value rows for the
+ * focused entry, the try-a-line tester, quiet health tips.
+ */
+
+.rail {
+  border-left: 2px solid var(--stage-seam);
+  padding: 0.75rem 0.7rem;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+}
+
+@container (max-width: 74rem) {
+  .rail {
+    border-left: 0;
+    border-top: 2px solid var(--stage-seam);
+    height: auto;
+  }
+}
+
+.railTitle {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  margin: 0 0 0.5rem;
+}
+
+.rcard {
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-panel);
+  margin-bottom: 0.7rem;
+}
+
+.rhead {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 2px solid var(--stage-seam);
+}
+
+.rhead b {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+}
+
+.rhead i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.rbody {
+  padding: 0.5rem 0.6rem 0.6rem;
+}
+
+.healthTip {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  line-height: 1.55;
+  color: var(--stage-warn);
+  padding: 0.15rem 0;
+}
+
+.healthOk {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  line-height: 1.55;
+  color: var(--stage-ok);
+  padding: 0.15rem 0;
+}
+
+.textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  line-height: 1.4;
+  padding: 0.4rem 0.45rem;
+  resize: vertical;
+  min-height: 3.2rem;
+}
+
+.hint {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  line-height: 1.45;
+  color: var(--stage-text-dim);
+}
+
+.chip {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  border: 1px solid var(--stage-seam);
+  padding: 0.12rem 0.3rem;
+}
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+
+.chipRow .chip {
+  margin-top: 0;
+}
+
+.matchList {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+}
+
+.matchHit {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  line-height: 1.45;
+  color: var(--stage-soft);
+  padding: 0.12rem 0;
+  border-bottom: 1px solid var(--stage-seam);
+}
+
+.matchHit span {
+  color: var(--stage-text-dim);
+}
+
+.focusHit,
+.focusMiss {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  margin-top: 0.4rem;
+  padding: 0.35rem 0.4rem;
+  border-left: 3px solid var(--stage-ok);
+  background: var(--stage-row);
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--stage-soft);
+}
+
+.focusMiss {
+  border-left-color: var(--stage-warn);
+}
+
+.focusLbl {
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.wakeBlock {
+  margin-top: 0.4rem;
+}
+
+.wakeLbl {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  margin-bottom: 0.15rem;
+}
+
+.linkish {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-weight: 700;
+  color: var(--stage-card);
+  cursor: pointer;
+  text-align: left;
+}
+
+.linkish:hover {
+  color: var(--a, var(--accent));
+}
+
+.texpBtn {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  padding: 0.28rem 0.35rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.texpBtn:hover {
+  border-color: var(--stage-line);
+  color: var(--stage-card);
+}

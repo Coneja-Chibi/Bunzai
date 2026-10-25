@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/marinara",
+  "sourcePath": "docs/reference/formats/marinara.md",
+  "sourceHash": "sha256:63cc089c8e24f33d57081c0b345c620559704256913df28fef3c5a2b4460669a",
+  "summary": "Developer reference for four Marinara adapters: bare API data for regex scripts and personas plus native export envelopes for lorebooks and prompt presets. Tavern-shaped characters use SillyTavern while Marinara-only fields remain in the editor lens. Regex detection rejects overlapping ST rows before bidding 0.95; persona detection requires identity, authored text, and a theming/stat signal; unique lorebook and preset envelopes have structural gates. Field maps cover RegexRule, PersonaBody, native lorebook book/entry/folder semantics, and preset sections/groups/choices/parameters. Regex export rebuilds from canonical rules and extras. Persona, lorebook, and preset export overlay mapped changes onto sealed twins, retaining engine-only data. Empty persona sections are omitted on import, explicit clears survive export, and avatarPath is neither fabricated nor retained after an explicit clear. Lorebook nested folders and native entry exotica remain escrowed; preset string-encoded booleans, JSON fields, and unmapped variables/parameters survive.",
+  "topics": [
+    "Marinara-Engine API dump",
+    "marinara-regex codec",
+    "marinara-persona codec",
+    "marinara-lorebook codec",
+    "marinara-preset codec",
+    "no character adapter",
+    "detect 0.95 ST firewall",
+    "regex field map",
+    "persona field map",
+    "escrow original twin",
+    "round-trip inverse vs overlay",
+    "Marinara lens extensions"
+  ],
+  "sections": [
+    {
+      "slug": "detection",
+      "title": "Detection",
+      "level": 2,
+      "sourceHash": "sha256:93038f6f7f2e8763ac4b797c3c56ba70a163e3b00ff3fe4aec8f3118ea86ac5e",
+      "summary": "Detection follows the registry rule that every adapter's detect runs and the highest score above 0.5 wins. Regex bids 0.95 after four ordered gates over a non-empty object array: reject ST scriptName, require id and findRegex on every row, and require a Marinara signal among targetCharacterIds, order, or string placement. Persona bids 0.95 only with string identity and text plus nameColor, boxColor, or personaStats. Lorebook bids 1.0 for the unique marinara_lorebook envelope with data.entries. Preset bids 0.95 for marinara_preset with data.preset and data.sections; groups and choiceBlocks are optional, and raw database string encodings are accepted.",
+      "topics": [
+        "registry detect threshold",
+        "regex 0.95 gates",
+        "scriptName hard reject",
+        "persona theming signals",
+        "outbid ST 0.9"
+      ],
+      "children": [
+        {
+          "slug": "regex",
+          "title": "Regex",
+          "level": 3,
+          "sourceHash": "sha256:97b76e70ed5b45e03c04e53f472baf7e8611cbe2f79ef91822f61ac00fe387e7",
+          "summary": "detect returns 0.95 for a recognizable Marinara dump and 0 otherwise. The score is 0.95 not lower because SillyTavern's regex codec claims 0.9 on the shared findRegex replaceString shape, and even the ST-form fixture is named marinara-essentials. readMarinaraRows fails closed on the first of four gates: non-empty plain-object array; any scriptName rejects the whole file as ST dialect; every row needs string id and findRegex; at least one row needs targetCharacterIds, order, or placement ai_output or user_input. Real ST rows always carry scriptName so this adapter scores 0 and ST keeps its files.",
+          "topics": [
+            "detect 0.95",
+            "four gates null",
+            "scriptName ST reject",
+            "placement string signal",
+            "findRegex replaceString"
+          ],
+          "children": []
+        },
+        {
+          "slug": "persona",
+          "title": "Persona",
+          "level": 3,
+          "sourceHash": "sha256:24a72aa990269a77e11bd5c506839cadd715ba75c53d1084a100b7cf5492dc7b",
+          "summary": "detect returns 0.95 for a recognizable Marinara persona object and 0 otherwise. readMarinaraPersona requires all three: string id and name; string description and personality; and at least one theming or stat signal among nameColor, boxColor, or personaStats. The codec comment calls this combination disjoint from Lumi ST and RoleCall so a plain id name description object fails before any name-based disambiguation is needed.",
+          "topics": [
+            "detect 0.95 persona",
+            "id name description personality",
+            "nameColor boxColor personaStats",
+            "disjoint from Lumi ST RC"
+          ],
+          "children": []
+        },
+        {
+          "slug": "lorebook",
+          "title": "Lorebook",
+          "level": 3,
+          "sourceHash": "sha256:0f2d80f6ada04ac7467d7b357054307108a25f417bf41c999c00c7bcead0e07c",
+          "summary": "marinara-lorebook scores 1.0 only for the unique marinara_lorebook envelope with object data and an entries array. Version, metadata, and folders remain tolerant payload fields rather than detection requirements.",
+          "topics": [
+            "marinara_lorebook envelope",
+            "data entries array",
+            "detect 1.0",
+            "tolerant version metadata folders"
+          ],
+          "children": [],
+          "shortSource": true
+        },
+        {
+          "slug": "preset",
+          "title": "Preset",
+          "level": 3,
+          "sourceHash": "sha256:ce5e7e315abac47fe2bc75459e018a9d75492e891d340171b211f78e36375d1b",
+          "summary": "marinara-preset scores 0.95 only for marinara_preset with object data.preset and array data.sections. Groups and choices are optional; string booleans and JSON-string nested fields match the engine export.",
+          "topics": [
+            "marinara_preset envelope",
+            "preset object sections array",
+            "optional groups choices",
+            "database string encoding"
+          ],
+          "children": [],
+          "shortSource": true
+        }
+      ]
+    },
+    {
+      "slug": "field-map",
+      "title": "Field map",
+      "level": 2,
+      "sourceHash": "sha256:1dba4f47b886a1eb3570b989beb632a5fec9adcb1dbd2c67d00817c09bc89f63",
+      "summary": "Field map covers all four codecs. Regex maps each row to one RegexRule and derives set name from filename. Persona maps authored text, optional sections, brief, and image while sealing ids, themes, stats, crop, tags, and timestamps. Lorebook maps book budgets and recursion, plain-string keys with one useRegex flag, selective/matching/injection/timing/group/filter/source fields, order to sortOrder, and folder rows to flat categories while preserving nested parents. Preset maps sections to prompts, groups, choice blocks, supported samplers, and API options; string booleans and JSON strings are decoded, while conversation/game prompts, variables, metadata, and unmapped parameters remain in escrow.",
+      "topics": [
+        "MarinaraRegexScript map",
+        "placement to phases",
+        "set name from filename",
+        "PersonaBody sections",
+        "attribution.source marinara"
+      ],
+      "children": [
+        {
+          "slug": "regex-1",
+          "title": "Regex",
+          "level": 3,
+          "sourceHash": "sha256:41deff27fb8a372a0e305265fb91562073ec8eb97377499c0d43b565f2f3e59c",
+          "summary": "The wire row is MarinaraRegexScript, one row per canonical RegexRule. id maps to id, name to label, findRegex to find as bare pattern without delimiters, flags and replaceString to flags and replace, trimStrings empty as undefined, placement ai_output user_input to phases output input with dedup order preserved, promptOnly true to targets prompt, depths passthrough, targetCharacterIds to characterIds empty as undefined, enabled and order to enabled and sortOrder, createdAt updatedAt to extras only. The regex set itself has no Marinara wire home: name derives from filename; description and set-level enabled never touch a Marinara file.",
+          "topics": [
+            "findRegex bare pattern",
+            "placement phases map",
+            "promptOnly targets",
+            "extras timestamps",
+            "setNameFromFilename"
+          ],
+          "children": []
+        },
+        {
+          "slug": "persona-1",
+          "title": "Persona",
+          "level": 3,
+          "sourceHash": "sha256:196fdc3e0a45a7614c30bfc2ce2b60a8f5bf17235574791bd3d3036bd2b7d4be",
+          "summary": "The wire object has no spec or envelope name; shape recognition is the Detection gate. name maps to name, description to content as the full first-person user voice, comment to brief when non-empty after trim, appearance personality backstory to sections appearance personality history when non-empty, avatarPath to presentation.imageUrl when truthy, and attribution.source is always synthesized as the literal marinara because the wire has no attribution field. id scenario theming stats crop tags timestamps have no canonical slot and ride sealed in escrow.",
+          "topics": [
+            "description to content",
+            "backstory sections.history",
+            "trim non-empty sections",
+            "attribution.source stamp",
+            "unmapped escrow fields"
+          ],
+          "children": []
+        },
+        {
+          "slug": "lorebook-1",
+          "title": "Lorebook",
+          "level": 3,
+          "sourceHash": "sha256:809b7d5916083145accdde78a328402530629695fc623f4e4e4a7a3a8e0bef3c",
+          "summary": "The native lorebook envelope carries one book row, entry rows, and folder rows. Book mapping covers name, description, category, tags, enabled state, scan depth, recursion, token budget, and entry limit. Entries map plain primary and secondary keys plus one useRegex flag, selective logic, match settings, position/depth/role, order as canonical sortOrder rather than priority, timing, groups, folder, probability, recursion, character filters, and additional scan sources. Folder rows project to categories; nested parentFolderId and other engine-only fields survive in escrow.",
+          "topics": [
+            "book entries folders",
+            "plain keys useRegex",
+            "order to sortOrder",
+            "nested folders escrow",
+            "budgets recursion filters"
+          ],
+          "children": []
+        },
+        {
+          "slug": "preset-1",
+          "title": "Preset",
+          "level": 3,
+          "sourceHash": "sha256:f832a8d8e3c127a23699247ddb0a30207a260a9b70d2e3f006e807bb8a1b46a6",
+          "summary": "Preset section rows map to prompts with role, enable and marker state, group, ordered or depth placement, XML wrapping, override refusal, and marker slot. Group rows carry parent, order, and enabled. Choice blocks carry question, variable, cardinality, JSON-string options, separator, random pick, and sort order. The parameters JSON string maps supported samplers and squash-system, show-thoughts, and reasoning-effort API options. Conversation/game prompts, variables, author metadata, and unsupported parameters remain on the raw twin.",
+          "topics": [
+            "sections to prompts",
+            "groups and choice blocks",
+            "parameters JSON samplers",
+            "API options",
+            "unmapped twin fields"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "escrow-and-round-trip",
+      "title": "Escrow and round-trip",
+      "level": 2,
+      "sourceHash": "sha256:fecb2f56ab5a48f406f9429c3495b853e1948c38fdf8dd237ab29c878013b121",
+      "summary": "Escrow is the canonical wrapper original field keyed by format id. Regex seals the imported row array but rebuilds output from canonical rules and extras. Persona clones its twin and overwrites mapped fields; hub ids and Marinara business ids remain separate. Lorebook and preset also clone complete native envelopes, match rows by stable ids, and patch only mapped differences, retaining nested folder state, engine-only entry fields, preset variables, unsupported parameters, and metadata. Fresh entities emit minimal native envelopes. These are structural JSON round trips; whitespace and object-key order are not promised.",
+      "topics": [
+        "original format keyed",
+        "regex no twin overlay",
+        "persona twin overlay",
+        "structurally lossless persona",
+        "wire id vs hub id"
+      ],
+      "children": []
+    },
+    {
+      "slug": "quirks",
+      "title": "Quirks",
+      "level": 2,
+      "sourceHash": "sha256:94a0c42018f020ed869d027c7ad70e2da299a254b8e15709b12b771f408b67a5",
+      "summary": "Quirks pin behavioral edges. Marinara regex detection outbids the overlapping SillyTavern shape through four gates. Whitespace-only persona sections are omitted on import, while an explicit empty section survives export. A fresh persona does not fabricate avatarPath; clearing an imported canonical image deletes the twin's key, while unchanged absence stays absent. Character cards still use the SillyTavern adapter and expose Marinara extras only through the editor lens. No dedicated Marinara design spec exists in this checkout.",
+      "topics": [
+        "ST detection firewall",
+        "omit empty sections",
+        "clear section empty string",
+        "avatarPath optional key",
+        "character lens not codec"
+      ],
+      "children": []
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:4981047af5d4b194b7bef31f38124c8a48bbe16caa2876a08769cdee07e4e15f",
+      "summary": "Source of truth table maps regex to index.ts, persona to persona.ts, lorebooks to lorebook.ts, and presets to preset.ts. Shared regex mapping, filename naming, JSON readers, the character-side editor lens, canonical escrow, entity schemas, format tests, and the SillyTavern-dialect regression fixture are also listed.",
+      "topics": [
+        "marinara index.ts",
+        "persona lorebook preset adapters",
+        "marinara-regex shared",
+        "extension-platforms lens",
+        "marinara tests fixtures"
+      ],
+      "children": []
+    }
+  ]
+}

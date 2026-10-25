@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opening lines wireframe</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../../rc-bridge.css">
+<script src="../../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">03 Your opening lines (in-between)</div>
+      <p class="wf-lede">RoleCall's recovery words flow, almost line for line: Act 0 shows the words, Act 1 is the audition where they are typed back. The copy is RoleCall's where it is true for Bunraku, and changed where it is not.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">Act 0: the words, shown once</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Act 0, Prologue</div>
+          <div class="marquee">Your opening <em>lines</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>The <b>PLAYER</b> is presented with twelve words. Spoken in order, they open this library on any computer, even when every other key is lost.<span class="p">)</span></p>
+        <div class="lines">
+          <div class="lines-head">&#9656; Your lines</div>
+          <div class="line-grid">
+            <div class="line"><i>1.</i><span>velvet</span></div><div class="line"><i>2.</i><span>harbor</span></div><div class="line"><i>3.</i><span>lantern</span></div>
+            <div class="line"><i>4.</i><span>orchard</span></div><div class="line"><i>5.</i><span>silent</span></div><div class="line"><i>6.</i><span>marble</span></div>
+            <div class="line"><i>7.</i><span>tunnel</span></div><div class="line"><i>8.</i><span>crisp</span></div><div class="line"><i>9.</i><span>ribbon</span></div>
+            <div class="line"><i>10.</i><span>ember</span></div><div class="line"><i>11.</i><span>shadow</span></div><div class="line"><i>12.</i><span>violin</span></div>
+          </div>
+        </div>
+        <div class="stage-note">
+          <div class="stage-note-label">Stage direction</div>
+          <p>Lose these lines, and the show cannot go on. Bunraku keeps no copy it can show you again, and nobody can prompt you.</p>
+        </div>
+        <button class="stamp stamp-btn cta">Print the script</button>
+        <div class="pledge"><span class="box">&#10003;</span><span>"I have <b>written down my lines</b> and stored them somewhere safe, lest they be forgotten."</span></div>
+        <button class="stamp stamp-btn primary cta">On to the audition &rarr;</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Act 1: the audition (a word is off)</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Act 1, The Audition</div>
+          <div class="marquee">Recite your <em>lines</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>Your old lines, if you had any, keep working until these are confirmed.<span class="p">)</span></p>
+        <div class="lines">
+          <div class="lines-head">&#9656; Your cues</div>
+          <div class="line-grid">
+            <div class="cue"><i>1.</i><input value="velvet"></div><div class="cue"><i>2.</i><input value="harbor"></div><div class="cue"><i>3.</i><input value="lantern"></div>
+            <div class="cue"><i>4.</i><input value="orchard"></div><div class="cue"><i>5.</i><input value="silent"></div><div class="cue"><i>6.</i><input value="marble"></div>
+            <div class="cue"><i>7.</i><input value="tunnel"></div><div class="cue"><i>8.</i><input value="crisp"></div><div class="cue flubbed"><i>9.</i><input value="ribon"></div>
+            <div class="cue"><i>10.</i><input value="ember"></div><div class="cue"><i>11.</i><input value="shadow"></div><div class="cue"><i>12.</i><input value="violin"></div>
+          </div>
+          <div class="cues-count">12 / 12 cues delivered</div>
+        </div>
+        <div class="stage-note">
+          <div class="stage-note-label">Line flub</div>
+          <p>Cue 9 is off. Check your script.</p>
+        </div>
+        <button class="stamp stamp-btn primary cta">Take the stage &rarr;</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Now and then: a rehearsal</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Rehearsal</div>
+          <div class="marquee">Still know your <em>lines</em>?</div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.<span class="p">)</span></p>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta">Run my lines &rarr;</button>
+          <button class="btn-ghost">Not tonight</button>
+          <button class="btn-ghost">Write new lines</button>
+        </div>
+      </div>
+      <p class="wf-comp">shown as a card in Settings, never over the person's work</p>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>One real difference from RoleCall:</b> RoleCall has a "Copy to clipboard" button. This version swaps it for "Print the script", because the clipboard is shared with every app and often synced, and on a local app the words are the only master key. If you would rather match RoleCall exactly, the copy button comes back.</p>
+  <p class="wf-note"><b>Also changed:</b> "memorized my lines" became "written down my lines", since remembering twelve words is not the advice we want to give.</p>
+</div>
+</body>
+</html>

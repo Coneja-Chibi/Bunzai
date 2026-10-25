@@ -1,0 +1,50 @@
+/*
+ * Landing concepts: a simplified Bunraku shell (the dock, the top bar) shared by all ten, plus the
+ * wireframe chrome. Each concept fills .main with its own layout. Tokens and the bundled fonts only
+ * (src/ui/theme/tokens.css). These are app screens: aligned, readable, one clear primary action.
+ */
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body { background: var(--canvas); color: var(--text); font-family: var(--font-body); }
+
+/* the shell */
+.app { display: grid; grid-template-columns: 4.2rem 1fr; grid-template-rows: 3.2rem 1fr; min-height: 100vh; }
+.dock { grid-row: 1 / 3; background: var(--shell-panel); border-right: 3px solid var(--edge); display: flex; flex-direction: column; align-items: center; gap: 0.7rem; padding: 0.8rem 0; }
+.dock .mark { font-family: var(--font-fancy); font-weight: 900; font-size: 1.5rem; color: var(--accent); margin-bottom: 0.6rem; }
+.dock .app-btn { width: 2.6rem; height: 2.6rem; border: 2px solid var(--edge); background: var(--face); display: grid; place-items: center; font-family: var(--font-mono); font-weight: 800; font-size: 0.72rem; color: var(--text-soft); }
+.dock .app-btn.on { background: var(--accent-deep); color: var(--stage-white); }
+.dock .spacer { flex: 1; }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0 1.2rem; border-bottom: 3px solid var(--edge); background: var(--face); }
+.topbar .crumb { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); }
+.topbar .crumb b { color: var(--text); }
+.topbar .search { flex: 1; max-width: 26rem; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-dim); border: 2px solid var(--seam); background: var(--canvas); padding: 0.35rem 0.6rem; }
+.main { overflow: auto; padding: 1.6rem; }
+
+/* shared pieces */
+.kicker { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-dim); }
+.marquee { font-family: var(--font-fancy); font-weight: 900; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1.05; }
+.marquee em { font-style: normal; color: var(--accent-deep); }
+:root[data-theme="stage"] .marquee em { color: var(--accent); }
+.voice { font-family: var(--font-body); font-style: italic; font-weight: 600; }
+.panel { background: var(--face); border: 3px solid var(--edge); box-shadow: 6px 6px 0 var(--edge); }
+.btn { font-family: var(--font-big); font-weight: 900; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.7rem 1rem; border: 3px solid var(--edge); background: var(--accent-deep); color: var(--stage-white); cursor: pointer; box-shadow: 4px 4px 0 var(--edge); }
+.btn.quiet { background: var(--face); color: var(--text); box-shadow: none; }
+.btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--edge); }
+.chip { display: inline-block; font-family: var(--font-mono); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.12rem 0.45rem; border: 2px solid var(--edge); }
+.chip.wait { background: var(--accent-deep); color: var(--stage-white); border-color: var(--accent-deep); }
+.chip.cold { color: var(--text-dim); border-style: dashed; }
+.avatar { width: 2.6rem; height: 2.6rem; flex: none; background: var(--tone); border: 2px solid var(--edge); display: grid; place-items: center; font-family: var(--font-fancy); font-weight: 900; color: var(--stage-white); }
+/* the one motion every concept shares: whatever is waiting on you breathes, gently */
+.waiting { animation: breathe 2.4s ease-in-out infinite; }
+@keyframes breathe { 50% { box-shadow: 0 0 0 4px var(--accent); } }
+@media (prefers-reduced-motion: reduce) { .waiting { animation: none; } }
+.reply { display: flex; gap: 0.6rem; margin-top: 1rem; }
+.reply input { flex: 1; font-family: var(--font-mono); font-size: 0.85rem; padding: 0.7rem 0.8rem; border: 3px solid var(--edge); background: var(--panel); color: var(--text); }
+
+/* wireframe chrome */
+.wf-chip { position: fixed; top: 0.45rem; right: 0.8rem; z-index: 1000; display: flex; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.wf-chip span, .wf-chip a, .wf-chip button { background: var(--face); color: var(--text); border: 2px solid var(--edge); padding: 0.28rem 0.55rem; text-decoration: none; font: inherit; cursor: pointer; }
+.wf-chip span { background: var(--accent-deep); color: var(--stage-white); }
+.wf-note { position: fixed; right: 0.8rem; bottom: 0.8rem; z-index: 1000; max-width: 28rem; max-height: 1.75rem; overflow: hidden; background: var(--face); color: var(--text-soft); border: 2px solid var(--edge); font-family: var(--font-mono); font-size: 0.66rem; line-height: 1.5; padding: 0.3rem 0.7rem; cursor: help; transition: max-height 0.25s; }
+.wf-note:hover { max-height: 20rem; }
+.wf-note b { color: var(--text); }

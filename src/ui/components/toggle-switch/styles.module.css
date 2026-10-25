@@ -1,0 +1,84 @@
+/*
+ * ToggleSwitch styles - RoleCall's pill: bg-zinc-600 off, the accent on, a white knob that slides 200ms
+ * (SamplerPanel.tsx:172-180 for 44x24 / 20px knob at 2px and 22px; LorebookPanel.tsx:3516-3525 for 32x16 /
+ * 12px knob at 2px and 18px). --toggle-on re-tones the on state without forking the control.
+ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex: none;
+  font-family: var(--font-ui, var(--font-body));
+  font-size: var(--rc-text-ctl, 0.78rem);
+  color: var(--rc-zinc-400, var(--stage-mute));
+}
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.track {
+  position: relative;
+  flex: none;
+  width: 2.75rem;
+  height: 1.5rem;
+  border-radius: var(--rc-radius-full, 0);
+  background: var(--rc-zinc-600, var(--stage-line));
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+.on .track {
+  background: var(--toggle-on, var(--accent));
+}
+.mixed .track {
+  background: color-mix(in srgb, var(--toggle-on, var(--accent)) 55%, var(--rc-zinc-600, var(--stage-line)));
+}
+.mixed .knob {
+  left: 0.75rem;
+}
+.sm.mixed .knob {
+  left: 0.5rem;
+}
+.btn:focus-visible .track {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.knob {
+  position: absolute;
+  top: 0.125rem;
+  left: 0.125rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--rc-radius-full, 0);
+  background: var(--stage-white);
+  box-shadow: 0 4px 6px -1px color-mix(in srgb, var(--stage-black) 30%, transparent);
+  transition: left 0.2s;
+}
+.on .knob {
+  left: 1.375rem;
+}
+.sm .track {
+  width: 2rem;
+  height: 1rem;
+}
+.sm .knob {
+  width: 0.75rem;
+  height: 0.75rem;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--stage-black) 30%, transparent);
+}
+.sm.on .knob {
+  left: 18px;
+}
+.label {
+  user-select: none;
+}

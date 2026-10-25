@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/extending/make-a-theme",
+  "sourcePath": "docs/reference/extending/make-a-theme.md",
+  "sourceHash": "sha256:8498b03b98dc495f45b2bbfa1b10751f61257568fbf8fc2dff10568f0ff542aa",
+  "semanticSummaryHash": "sha256:5cdc3d9bafe2c0001900d9c8c0003b2f1866bce48886d58de8a4e00afec78ff1",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Surface count 30 matches SURFACES, shell.nav/shell.overlay variants match the variant CSS, shell.overlay.widget and data-overlay-app exist, extensions tests pass (141).",
+  "reviewedAt": "2026-10-25T02:20:05.224Z"
+}

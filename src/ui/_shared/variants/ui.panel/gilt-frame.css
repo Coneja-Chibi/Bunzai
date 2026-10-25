@@ -1,0 +1,4 @@
+/** ui.panel gilt-frame: a double gold rule, a thin line outside and a thin line within, like a framed bill. */
+html[data-surface-ui-panel="gilt-frame"] :is(.scn .plaque, .lib.rc .lrail-head):not(.host-protected, .host-protected *) {
+  border: 0; box-shadow: 0 0 0 1px var(--bk-line-strong), inset 0 0 0 4px var(--bk-surface-panel), inset 0 0 0 5px var(--bk-line);
+}

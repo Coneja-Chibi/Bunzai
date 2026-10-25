@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Soft Bunraku</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..800,100,1&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/*
+ * No theme: cute and soft, dark, square corners. Softness comes from color, type, space and slow
+ * motion, not from rounding. Theater shows up only as small nods: ticket notches, a dotted cast list,
+ * a row of marquee dots, "act" numbers.
+ */
+:root {
+  --bg: #1a1620; --bg2: #211c29; --card: #26202f; --line: #352d40; --fg: #f5ecf0; --fg2: #c2b5c4; --dim: #85798a;
+  --pink: #ffb3c7; --peach: #ffc9ae; --butter: #ffeaa8; --mint: #bfead7; --sky: #bcd7ff; --ink: #1a1620;
+  --disp: "Fraunces", serif; --body: "Atkinson Hyperlegible", sans-serif; --mono: "IBM Plex Mono", monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; border-radius: 0 !important; }
+html, body { background: var(--bg); }
+body { color: var(--fg); font: 400 17px/1.6 var(--body); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 48px); }
+h1, h2, h3 { font-family: var(--disp); font-variation-settings: "SOFT" 100, "WONK" 1; font-weight: 600; }
+.act { font: 500 12px/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--dim); margin-bottom: 14px; }
+.act b { color: var(--pink); font-weight: 500; }
+
+/* nav */
+.nav { display: flex; align-items: center; gap: 28px; padding: 22px 0; }
+.brand { display: flex; align-items: center; gap: 10px; font: 700 1.4rem var(--disp); font-variation-settings: "SOFT" 100, "WONK" 1; margin-right: auto; }
+.nav > a:not(.brand):not(.btn) { color: var(--fg2); font-size: .98rem; }
+.nav > a:not(.brand):not(.btn):hover { color: var(--fg); }
+.btn { display: inline-block; padding: 12px 20px; background: var(--peach); color: var(--ink); font: 700 1rem var(--body); transition: transform .2s, background .2s; }
+.btn:hover { transform: translateY(-2px); background: var(--pink); }
+.btn.ghost { background: none; color: var(--fg); box-shadow: inset 0 0 0 1px var(--line); }
+.btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--pink); background: none; }
+
+/* hero */
+.hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: clamp(28px, 5vw, 72px); align-items: center; padding: clamp(40px, 8vw, 110px) 0 clamp(48px, 7vw, 90px); }
+.hero h1 { font-size: clamp(2.8rem, 6.4vw, 5.2rem); line-height: 1; letter-spacing: -.01em; }
+.hero h1 em { font-style: italic; color: var(--pink); }
+.hero p { margin: 22px 0 30px; font-size: 1.2rem; color: var(--fg2); max-width: 32rem; }
+.hero .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.hero .small { font: 500 12px var(--mono); color: var(--dim); letter-spacing: .1em; }
+.peek { position: relative; }
+.bun { position: absolute; right: -10px; top: -46px; width: 120px; animation: bob 5s ease-in-out infinite; z-index: 2; }
+@keyframes bob { 50% { transform: translateY(-8px) rotate(3deg); } }
+.win { background: var(--card); box-shadow: 0 0 0 1px var(--line), 18px 18px 0 #14111a; }
+.win .bar { display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); font: 500 12px var(--mono); color: var(--dim); letter-spacing: .08em; }
+.win .bar i { width: 10px; height: 10px; background: var(--line); }
+.msg { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 18px 20px; }
+.msg + .msg { border-top: 1px solid var(--line); }
+.av { width: 44px; height: 56px; background: var(--c); }
+.msg b { display: block; font: 700 .95rem var(--body); color: var(--c); }
+.msg p { color: var(--fg); font-size: 1rem; margin-top: 2px; }
+.msg.you p { color: var(--fg2); }
+.typing { display: flex; gap: 5px; padding: 0 20px 20px 78px; }
+.typing i { width: 7px; height: 7px; background: var(--pink); animation: t 1.2s infinite; }
+.typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
+@keyframes t { 50% { opacity: .2; transform: translateY(-3px); } }
+
+/* marquee dots: the one row of "bulbs" */
+.dots { height: 8px; background: radial-gradient(circle, var(--butter) 0 2.5px, transparent 3px) 0 0/22px 8px; opacity: .5; }
+
+section.s { padding: clamp(56px, 8vw, 100px) 0; }
+.s h2 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.05; max-width: 32ch; }
+.s .lede { color: var(--fg2); margin-top: 12px; max-width: 40rem; font-size: 1.1rem; }
+
+/* the cast: feature list */
+.cast { margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.cast a { display: block; background: var(--card); padding: 22px 20px 24px; border-top: 4px solid var(--c); transition: transform .25s, background .25s; }
+.cast a:hover { transform: translateY(-4px); background: #2c2536; }
+.cast h3 { font-size: 1.5rem; }
+.cast .role { font: 500 12px var(--mono); color: var(--c); letter-spacing: .14em; text-transform: uppercase; display: flex; gap: 6px; margin-bottom: 10px; }
+.cast .role i { flex: 1; border-bottom: 1px dotted var(--line); transform: translateY(-4px); }
+.cast p { color: var(--fg2); font-size: .98rem; margin-top: 6px; }
+
+/* two columns: what's new + download ticket */
+.pair { display: grid; grid-template-columns: 1.2fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: start; }
+.news { margin-top: 28px; list-style: none; }
+.news li { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); }
+.news .v { font: 500 12px/1.6 var(--mono); color: var(--dim); }
+.news .v b { display: block; color: var(--mint); font-weight: 500; }
+.news h3 { font-size: 1.2rem; } .news p { color: var(--fg2); font-size: .98rem; }
+.ticket { position: relative; background: var(--pink); color: var(--ink); padding: 30px 28px; margin-top: 12px;
+  -webkit-mask: radial-gradient(circle 14px at 0 58%, #0000 97%, #000) left/51% 100% no-repeat, radial-gradient(circle 14px at 100% 58%, #0000 97%, #000) right/51% 100% no-repeat;
+  mask: radial-gradient(circle 14px at 0 58%, #0000 97%, #000) left/51% 100% no-repeat, radial-gradient(circle 14px at 100% 58%, #0000 97%, #000) right/51% 100% no-repeat; }
+.ticket .adm { font: 500 12px var(--mono); letter-spacing: .24em; }
+.ticket h3 { font-size: 2.2rem; line-height: 1.05; margin: 6px 0 4px; }
+.ticket p { font-size: .98rem; }
+.ticket .tear { border-top: 2px dashed #1a162055; margin: 22px -28px 18px; }
+.os { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.os a { background: var(--ink); color: var(--fg); padding: 12px 8px; text-align: center; font: 700 .95rem var(--body); transition: background .2s, color .2s; }
+.os a:hover { background: #fff; color: var(--ink); }
+.ticket small { display: block; margin-top: 12px; font: 500 12px var(--mono); letter-spacing: .06em; }
+
+/* guides */
+.guides { margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.guides a { padding: 22px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; gap: 12px; transition: background .2s; }
+.guides a:hover { background: var(--bg2); }
+.guides a:hover span { color: var(--butter); transform: translateX(4px); }
+.guides h3 { font-size: 1.15rem; } .guides p { color: var(--dim); font-size: .92rem; }
+.guides span { color: var(--dim); transition: transform .2s, color .2s; }
+
+/* try it */
+.try { background: var(--bg2); padding: clamp(36px, 6vw, 64px); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+.try h2 em { font-style: italic; color: var(--mint); }
+
+footer { padding: 36px 0 60px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--dim); font-size: .92rem; border-top: 1px solid var(--line); }
+
+/* the notes under the mock */
+.notes { background: #141119; padding: clamp(48px, 7vw, 90px) 0; margin-top: 40px; }
+.notes .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 36px; margin-top: 28px; }
+.notes h3 { font-size: 1.25rem; margin-bottom: 10px; }
+.notes ul { list-style: none; color: var(--fg2); } .notes li { padding: 5px 0; }
+.sw { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); margin-top: 28px; }
+.sw div { height: 120px; padding: 10px; display: flex; align-items: flex-end; font: 500 12px var(--mono); }
+@media (max-width: 860px) { .hero, .pair, .try { grid-template-columns: 1fr; } .nav > a:not(.brand):not(.btn) { display: none; } .bun { width: 90px; right: 0; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="#ffb3c7" stroke="#1a1620" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="#1a1620" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="#1a1620"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="#1a1620"/>
+    <circle cx="78" cy="50" r="6" fill="#1a1620"/>
+  </g></symbol>
+</defs></svg>
+
+<div class="wrap">
+  <nav class="nav">
+    <a class="brand" href="#"><svg width="36" height="36"><use href="#bun"/></svg>bunraku</a>
+    <a href="#tour">Tour</a><a href="#guides">Guides</a><a href="#new">What's new</a><a href="#try">Try it</a>
+    <a class="btn" href="#get">Download</a>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="act"><b>Act I</b> &middot; hello</div>
+      <h1>A little theater for your <em>stories</em>.</h1>
+      <p>Make characters, build their worlds, and play scenes with them. It all lives on your computer, and nothing leaves it.</p>
+      <div class="row"><a class="btn" href="#get">Get Bunraku</a><a class="btn ghost" href="#try">Try it in your browser</a></div>
+      <p class="small" style="margin:18px 0 0">FREE &middot; WINDOWS, MAC, LINUX &middot; V0.1.42</p>
+    </div>
+    <div class="peek">
+      <svg class="bun"><use href="#bun"/></svg>
+      <div class="win">
+        <div class="bar"><i></i><i></i><i></i><span style="margin-left:8px">THE LIGHTHOUSE &middot; SCENE 3</span></div>
+        <div class="msg" style="--c:var(--pink)"><div class="av"></div><div><b>Vera</b><p>You came up the stairs without a lantern. Brave, or a little foolish?</p></div></div>
+        <div class="msg you" style="--c:var(--sky)"><div class="av"></div><div><b>You</b><p>A little of both.</p></div></div>
+        <div class="msg" style="--c:var(--pink)"><div class="av"></div><div><b>Vera</b><p>Then sit. The storm holds till midnight, and I have tea.</p></div></div>
+        <div class="typing"><i></i><i></i><i></i></div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<div class="dots"></div>
+
+<div class="wrap">
+  <section class="s" id="tour">
+    <div class="act"><b>Act II</b> &middot; the cast</div>
+    <h2>Everything you need to tell a story, and nothing you don't.</h2>
+    <div class="cast">
+      <a href="#" style="--c:var(--pink)"><div class="role">Scenes<i></i>play</div><h3>Scenes</h3><p>Chat with one character or a whole group. Rewind, branch, keep going.</p></a>
+      <a href="#" style="--c:var(--peach)"><div class="role">Workbench<i></i>make</div><h3>Workbench</h3><p>Build characters, presets and personas. Import the ones you already have.</p></a>
+      <a href="#" style="--c:var(--butter)"><div class="role">Library<i></i>keep</div><h3>Library</h3><p>Every character, lorebook and scene in one tidy place.</p></a>
+      <a href="#" style="--c:var(--mint)"><div class="role">Press<i></i>share</div><h3>Press</h3><p>Pack up a character to give to a friend. Only when you say so.</p></a>
+      <a href="#" style="--c:var(--sky)"><div class="role">Agent<i></i>help</div><h3>Agent</h3><p>A helper that can tidy, fix and set things up for you.</p></a>
+    </div>
+  </section>
+
+  <section class="s" id="new" style="padding-top:0">
+    <div class="pair">
+      <div>
+        <div class="act"><b>Act III</b> &middot; what's new</div>
+        <h2>Fresh from rehearsal.</h2>
+        <ul class="news">
+          <li><div class="v"><b>v0.1.42</b>Sep 28</div><div><h3>Presets are here</h3><p>Pick how a scene talks to the model, then tweak it per scene.</p></div></li>
+          <li><div class="v"><b>v0.1.40</b>Sep 24</div><div><h3>Macros</h3><p>Little placeholders that fill themselves in: names, dates, dice.</p></div></li>
+          <li><div class="v"><b>v0.1.36</b>Sep 20</div><div><h3>Group scenes</h3><p>Put a few characters in a room and see what happens.</p></div></li>
+        </ul>
+      </div>
+      <div id="get">
+        <div class="act"><b>Act IV</b> &middot; your ticket</div>
+        <div class="ticket">
+          <div class="adm">ADMIT ONE &middot; ANY NIGHT</div>
+          <h3>Bunraku</h3>
+          <p>Free, and yours to keep. No account needed.</p>
+          <div class="tear"></div>
+          <div class="os"><a href="#">Windows</a><a href="#">Mac</a><a href="#">Linux</a></div>
+          <small>v0.1.42 &middot; about 60 MB</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="s" id="guides" style="padding-top:0">
+    <div class="act"><b>Act V</b> &middot; guides</div>
+    <h2>New here? Start with these.</h2>
+    <div class="guides">
+      <a href="#"><div><h3>Your first scene</h3><p>Five minutes, start to finish.</p></div><span>&rarr;</span></a>
+      <a href="#"><div><h3>Connecting a model</h3><p>Use the one you already pay for.</p></div><span>&rarr;</span></a>
+      <a href="#"><div><h3>Bringing your characters</h3><p>Import cards from other apps.</p></div><span>&rarr;</span></a>
+      <a href="#"><div><h3>Lorebooks, gently</h3><p>Keep your world straight.</p></div><span>&rarr;</span></a>
+    </div>
+  </section>
+
+  <section class="s" id="try" style="padding-top:0">
+    <div class="try"><div><div class="act"><b>Encore</b></div><h2>Not sure yet? <em>Try a scene</em> right here.</h2><p class="lede">No download, no account. Just say hi.</p></div><a class="btn" href="#">Play a scene</a></div>
+  </section>
+
+  <footer><span>bunraku &middot; made with love by a tiny team</span><span>Guides &middot; GitHub &middot; Discord</span></footer>
+</div>
+
+<div class="notes">
+  <div class="wrap">
+    <div class="act"><b>Notes</b> &middot; how this one works</div>
+    <h2>No theme. Cute from color and type, theater only in the corners.</h2>
+    <div class="sw">
+      <div style="background:#1a1620;color:#c2b5c4;outline:1px solid #352d40">night</div>
+      <div style="background:#26202f;color:#c2b5c4">card</div>
+      <div style="background:#ffb3c7;color:#1a1620">pink</div>
+      <div style="background:#ffc9ae;color:#1a1620">peach</div>
+      <div style="background:#ffeaa8;color:#1a1620">butter</div>
+      <div style="background:#bfead7;color:#1a1620">mint</div>
+      <div style="background:#bcd7ff;color:#1a1620">sky</div>
+    </div>
+    <div class="grid">
+      <div><h3>What makes it soft</h3><ul><li>Dusky plum dark, never black</li><li>Five pastel accents, one per feature</li><li>A soft, slightly wonky serif (Fraunces)</li><li>Slow, small motion: a bobbing bun, a lifting card</li><li>Lots of breathing room</li></ul></div>
+      <div><h3>The theater nods</h3><ul><li>Sections are "acts"</li><li>Features are "the cast", with dotted leaders</li><li>Download is a notched ticket with a tear line</li><li>One row of marquee dots</li><li>The ticket bun logo</li></ul></div>
+      <div><h3>Kept out on purpose</h3><ul><li>Rounded corners (only dots and the logo are round)</li><li>Gradients, glows, glass</li><li>Script fonts</li><li>Emoji and sparkle icons</li><li>Big dark-and-red drama</li></ul></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

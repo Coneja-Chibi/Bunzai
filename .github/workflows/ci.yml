@@ -1,0 +1,179 @@
+# Release gate: the same complete wall documented in AGENTS.md and package.json.
+name: ci
+
+on:
+  push:
+    branches: [Mainstage]
+  pull_request:
+    branches: [Mainstage]
+  workflow_dispatch:
+    inputs:
+      performance_evidence:
+        description: Produce and strictly consume the bounded S21 low-end release evidence
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  scale-evidence:
+    if: github.event_name == 'workflow_dispatch' && inputs.performance_evidence == true
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Build exact Windows desktop and CLI artifacts
+        run: bun run scripts/build-desktop.ts --cli-targets=bun-windows-x64
+      - name: Install the isolated CDP browser
+        run: bunx playwright install chromium
+      - name: Produce bounded 10k S21 evidence
+        shell: pwsh
+        run: bun run scale:timed -- --release-evidence --profile low-end --n 10000 --artifact "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunraku-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunraku.exe"
+      - name: Consume evidence against exact build artifacts
+        shell: pwsh
+        run: bun run scale:release-evidence -- "$env:RUNNER_TEMP\s21-release-evidence.json" --packaged-cli "$PWD\dist\bunraku-cli-windows-x64.exe" --packaged-desktop "$PWD\dist\Bunraku.exe"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: s21-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}\s21-release-evidence.json
+          if-no-files-found: error
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: sidecar/go.mod
+          cache-dependency-path: sidecar/go.sum
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Vet sidecar
+        run: go vet -mod=readonly ./...
+        working-directory: sidecar
+      - name: Test sidecar
+        run: go test -mod=readonly ./... -count=1
+        working-directory: sidecar
+      - name: Build sidecar
+        run: go build -mod=readonly ./...
+        working-directory: sidecar
+      - name: Complete verification wall
+        run: bun run verify:ci
+
+  tests-per-os:
+    # The whole test suite on Windows and macOS. The wall above runs on ubuntu only, and the library
+    # (SQLite, folded ids, file paths, the folder import and export) must be proven on every system
+    # the app ships to, not assumed from one. Tests and typecheck only: the wall's scans and the Go
+    # sidecar steps are platform-neutral and already run above.
+    name: tests (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - windows-latest
+          - macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Tests
+        run: bun run test
+
+  keychain:
+    # The macOS Keychain and Linux Secret Service keystore backends against the REAL tools. The unit
+    # tests prove them only against fakes; this job is the proof that they work on those systems.
+    name: keychain backends (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-latest
+          - macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - run: bun install --frozen-lockfile
+      - name: Prepare a keyring (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y gnome-keyring libsecret-tools dbus-x11
+      - name: Probe (Linux)
+        if: runner.os == 'Linux'
+        run: dbus-run-session -- sh -c 'printf "" | gnome-keyring-daemon --unlock --components=secrets >/dev/null && bun scripts/probe-keychain.ts'
+      - name: Prepare a keychain (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          security create-keychain -p ci bunraku-ci.keychain
+          security default-keychain -s bunraku-ci.keychain
+          security unlock-keychain -p ci bunraku-ci.keychain
+          security set-keychain-settings bunraku-ci.keychain
+      - name: Probe (macOS)
+        if: runner.os == 'macOS'
+        run: bun scripts/probe-keychain.ts
+
+  # Decision D4 puts the library and the chat store in one SQLite database. `bun:sqlite` is a runtime
+  # built-in rather than a package, so passing under `bun run` says nothing about the single-file
+  # binary users actually receive (ADR-001, ADR-003). This job compiles the probe and runs the
+  # artifact natively on every platform we ship, which is the only proof that counts.
+  #
+  # No `bun install` on purpose: the probe imports nothing but `bun:sqlite` and node builtins, so the
+  # run cannot be rescued by anything in node_modules.
+  packaged-sqlite:
+    name: packaged sqlite (${{ matrix.runner }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # darwin x64 is absent on purpose: release.yml cross-compiles that target from macos-14 and
+        # never executes it either, and an Intel runner is the one line here nothing in this repo has
+        # ever exercised. That target keeps build proof only until someone runs it on real hardware.
+        runner:
+          - ubuntu-latest # linux x64
+          - ubuntu-24.04-arm # linux arm64
+          - windows-latest # windows x64
+          - macos-14 # darwin arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Compile the probe
+        run: bun build --compile scripts/probe-sqlite-runtime.ts --outfile probe-sqlite
+      - name: Run the compiled probe
+        shell: bash
+        run: |
+          if [ -f ./probe-sqlite.exe ]; then ./probe-sqlite.exe; else ./probe-sqlite; fi
+      # The background lane (a worker thread) must work inside the single-file binary, built with the
+      # desktop app's root; a worker path that only works from source ships a broken app.
+      - name: Compile the background-lane probe
+        run: bun build --compile --root src src/stage/store/sqlite/lane-probe.ts src/stage/store/sqlite/maintenance-worker.ts src/stage/crypto/password-worker.ts src/stage/store/cold-read-worker.ts --outfile probe-lane
+      - name: Run the compiled background-lane probe
+        shell: bash
+        run: |
+          if [ -f ./probe-lane.exe ]; then ./probe-lane.exe; else ./probe-lane; fi

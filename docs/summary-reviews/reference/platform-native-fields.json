@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platform-native-fields",
+  "sourcePath": "docs/reference/platform-native-fields.md",
+  "sourceHash": "sha256:c63fbbc38f1ebb45377f9bbe2f45c841ae65d9aa75ab476a5580d946239cabc6",
+  "semanticSummaryHash": "sha256:b43cec1be24be0176e3d6e9df4272c69be3515ce29971dfbcc16f54074e87276",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Heading, sidecar slug, title and summary agree; the LoRA section keeps the dual-storage claims and the never-auto-fetch rule; page matches the exported formats it describes; summary fresh.",
+  "reviewedAt": "2026-10-24T21:56:34.269Z"
+}

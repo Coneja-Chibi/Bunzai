@@ -1,0 +1,62 @@
+/**
+ * FieldForm styles - a flowing grid of labeled controls; `half` fields pair up. Tokens only.
+ */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.6rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1 1 100%;
+  min-width: 0;
+}
+.half {
+  flex: 1 1 calc(50% - 0.3rem);
+}
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-mute, var(--muted));
+}
+.text,
+.num,
+.sel,
+.rmax,
+.ta {
+  background: var(--stage-well, var(--field, var(--paper)));
+  border: 2px solid var(--stage-seam, var(--seam));
+  color: var(--stage-soft, var(--text-soft));
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  padding: 0.32rem 0.45rem;
+}
+.num,
+.sel,
+.rmax {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+}
+/* a value/max resource bar: the value slider takes the space, a compact max sits beside it */
+.resource {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.resource > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+.rmax {
+  width: 3.6rem;
+  flex: none;
+  text-align: center;
+}
+.ta {
+  min-height: 2.6rem;
+  resize: vertical;
+}

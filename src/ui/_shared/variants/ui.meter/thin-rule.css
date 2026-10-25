@@ -1,0 +1,3 @@
+/** ui.meter thin-rule: progress as a hairline with a heavier stroke over the part done. */
+html[data-surface-ui-meter="thin-rule"] [role="progressbar"]:not(.host-protected, .host-protected *) { position: relative; display: block; height: 2px; border: 0; background: var(--bk-line-control); overflow: visible; }
+html[data-surface-ui-meter="thin-rule"] [role="progressbar"]:not(.host-protected, .host-protected *) > i { height: 4px; top: -1px; bottom: auto; background: var(--bk-line-strong); }

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene reasoning options</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Slice S5, fresh look. Behaviour is RoleCall's and unchanged (two blocks, native first, "Reasoned for" and
+ * "Thought for", collapsed by default, open while streaming, the two settings). Only the look is new.
+ * Rules: sharp frames, no glow, no gradient, no shadow, flat fills, high contrast, square corners, 12px floor.
+ * Colour: one role per meaning, straight from the role tokens.
+ *   info   = the model's own reasoning channel (native). It comes from the provider, outside the story text.
+ *   select = thinking written inside the reply text between tags. It is the model's text, picked out of the reply.
+ * Each option also separates the two by structure (rule, inset, chip, typeface), not hue alone.
+ */
+.wf {
+  --z-well: var(--bk-surface-well); --z-panel: var(--bk-surface-panel); --z-sunken: var(--bk-surface-sunken); --z-ink: var(--bk-surface-ink);
+  --z-line: var(--bk-line); --z-strong: var(--bk-line-strong); --z-ctl: var(--bk-line-control);
+  --z-text: var(--bk-text); --z-soft: var(--bk-text-soft); --z-dim: var(--bk-text-dim);
+  --z-nat: var(--bk-role-info); --z-nat-t: var(--bk-role-info-text); --z-nat-d: var(--bk-role-info-deep);
+  --z-tag: var(--bk-role-select); --z-tag-t: var(--bk-role-select-text); --z-tag-d: var(--bk-role-select-deep);
+  --z-ondeep: var(--bk-text-on-deep);
+  --z-sans: var(--bk-font-body); --z-serif: var(--bk-font-name); --z-mono: var(--bk-font-mono); --z-disp: var(--bk-font-display);
+  --tone: var(--deck-character);
+}
+body { font-size: 14px; }
+.page { max-width: 1280px; margin: 0 auto; padding: 28px 28px 120px; color: var(--z-soft); }
+.page h1 { font-family: var(--bk-font-display); font-size: 24px; letter-spacing: .06em; text-transform: uppercase; color: var(--z-text); font-weight: 600; }
+.lede { margin-top: 8px; max-width: 78ch; line-height: 1.6; }
+.page h2 { margin: 38px 0 4px; font-family: var(--bk-font-mono); font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--z-text); font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.page h2 .k { display: inline-grid; place-items: center; width: 26px; height: 26px; background: var(--z-text); color: var(--z-panel); }
+.idea { margin-bottom: 14px; color: var(--z-soft); font-size: 14px; line-height: 1.55; max-width: 90ch; }
+.idea b { color: var(--z-text); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 960px) { .pair { grid-template-columns: 1fr; } }
+.pane { background: var(--z-well); border: 1px solid var(--z-strong); min-width: 0; color: var(--z-soft); }
+.pane .ph { padding: 8px 12px; border-bottom: 1px solid var(--z-strong); background: var(--z-sunken); font-family: var(--bk-font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--z-text); font-weight: 700; }
+.pane .pb { padding: 16px; display: flex; flex-direction: column; gap: 22px; }
+.cap { font-family: var(--bk-font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--z-dim); margin-bottom: 8px; }
+
+/* the reply the blocks sit in */
+.spk { font-family: var(--z-disp); font-weight: 600; font-size: 15px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); margin-bottom: 8px; }
+.bub { background: var(--z-panel); border: 1px solid var(--z-line); padding: 14px 18px; font-family: var(--z-serif); font-size: 16px; line-height: 1.75; color: var(--z-text); }
+.bub q { quotes: '"' '"'; color: var(--tone); }
+.bub .cur { display: inline-block; width: 9px; height: 16px; margin-left: 2px; background: var(--z-text); vertical-align: -2px; }
+.stack { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+/* shared parts */
+.rb button.hd { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; }
+.rb button.hd:focus-visible { outline: 2px solid var(--bk-focus-color); outline-offset: 2px; }
+.rb .chip { font-family: var(--z-mono); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; line-height: 20px; padding: 0 8px; white-space: nowrap; }
+.rb .dur { font-family: var(--z-sans); font-size: 13px; color: var(--z-soft); white-space: nowrap; }
+.rb .snip { flex: 1; min-width: 0; font-size: 13px; color: var(--z-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rb .fill { flex: 1; }
+.rb .cv { width: 14px; height: 14px; flex: none; transition: transform .15s; }
+.rb.open .cv { transform: rotate(180deg); }
+.rb .bd { display: none; font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+.rb.open .bd { display: block; }
+.rb.open .snip { display: none; }
+.rb.open .fill { display: block; }
+.rb .snip.s { display: block; }
+.rb.nat .bd { font-family: var(--z-mono); font-size: 13px; line-height: 1.65; color: var(--z-text); }
+.rb.tag .bd { font-family: var(--z-serif); font-style: italic; color: var(--z-text); }
+.rb .copy { font-family: var(--z-mono); font-size: 12px; color: var(--z-dim); border: 1px solid var(--z-ctl); padding: 0 6px; line-height: 20px; display: none; }
+.rb.open .copy { display: inline-block; }
+
+/* ===== Option A: Margin rules. No box. A bar down the left edge carries the colour; native is flush, tags are inset. ===== */
+.oa.nat { border-left: 4px solid var(--z-nat-d); background: var(--z-panel); }
+.oa.tag { margin-left: 28px; border-left: 2px dashed var(--z-tag-d); background: var(--z-panel); }
+.oa .chip { }
+.oa.nat .chip { background: var(--z-nat-d); color: var(--z-ondeep); }
+.oa.tag .chip { background: none; color: var(--z-tag-t); border: 1px solid var(--z-tag-d); line-height: 18px; }
+.oa .cv { color: var(--z-dim); }
+.oa .bd { padding: 4px 14px 14px 14px; }
+.oa.open.nat .bd { border-top: 1px solid var(--z-line); padding-top: 12px; margin: 0 10px; padding-left: 4px; }
+.oa.open.tag .bd { border-top: 1px solid var(--z-line); padding-top: 12px; margin: 0 10px; padding-left: 4px; }
+
+/* ===== Option B: Slab and plain. Native is a solid-headed slab; tags are a quiet outlined card. ===== */
+.ob.nat { border: 1px solid var(--z-nat-d); background: var(--z-panel); }
+.ob.nat button.hd { background: var(--z-nat-d); color: var(--z-ondeep); }
+.ob.nat .chip { background: none; color: var(--z-ondeep); padding: 0; }
+.ob.nat .dur, .ob.nat .snip, .ob.nat .cv { color: var(--z-ondeep); }
+.ob.nat .snip { opacity: .9; }
+.ob.nat .copy { color: var(--z-text); border-color: var(--z-nat-d); }
+.ob.tag { margin-right: 56px; border: 1px solid var(--z-tag-d); background: var(--z-panel); }
+.ob.tag button.hd { background: var(--z-panel); }
+.ob.tag .chip { background: none; padding: 0; color: var(--z-tag-t); }
+.ob.tag .cv { color: var(--z-tag-t); }
+.ob .bd { padding: 12px 14px 14px; }
+
+/* ===== Option C: Tabs. A label tab sits on the top-left of a thin frame, like a folder tab; native is a solid frame, tags a dashed one. ===== */
+.oc { position: relative; margin-top: 12px; background: var(--z-panel); }
+.oc.nat { border: 2px solid var(--z-nat-d); }
+.oc.tag { border: 1px dashed var(--z-tag-d); margin-left: 28px; }
+.oc .chip { position: absolute; top: -12px; left: 10px; }
+.oc.nat .chip { background: var(--z-nat-d); color: var(--z-ondeep); }
+.oc.tag .chip { background: var(--z-panel); color: var(--z-tag-t); border: 1px solid var(--z-tag-d); line-height: 18px; }
+.oc button.hd { padding: 12px 10px 8px 10px; }
+.oc .cv { color: var(--z-dim); }
+.oc .bd { padding: 2px 14px 14px; }
+.oc.open .snip { display: none; }
+
+.rec { margin-top: 36px; border: 2px solid var(--z-text); background: var(--z-panel); padding: 16px 18px; color: var(--z-soft); line-height: 1.6; }
+.rec h3 { font-family: var(--bk-font-mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--z-text); margin-bottom: 8px; }
+.rec b { color: var(--z-text); }
+.key { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+.key span { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.key i { width: 14px; height: 14px; display: inline-block; }
+code { font-family: var(--bk-font-mono); font-size: 12px; color: var(--z-text); }
+</style>
+</head>
+<body class="wf">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="m6 9 6 6 6-6"/></symbol>
+</defs></svg>
+
+<div class="page">
+  <h1>Reasoning blocks, three looks</h1>
+  <p class="lede">Behaviour is RoleCall's and does not change: two separate blocks on a reply, native first, then the think-tag block; "Reasoned for N s" and "Thought for N s"; collapsed by default; open while streaming; the two settings. Only the look is new. Each option shows the pair on one reply, collapsed and then open, in paper (left) and stage (right). Click a header to open or close it. The Theme chip also cycles the page through theater.</p>
+  <div class="key">
+    <span><i style="background:var(--bk-role-info-deep)"></i>info = native: the model's own reasoning channel, delivered by the provider outside the story text</span>
+    <span><i style="background:var(--bk-role-select-deep)"></i>select = think tags: thinking the model wrote inside the reply, picked out by its tags</span>
+  </div>
+
+  <h2><span class="k">A</span>Margin rules</h2>
+  <p class="idea"><b>Idea:</b> no boxes at all, just a bar down the left edge, like a margin note in a script. <b>Told apart by:</b> native is flush with a solid 4px bar and a filled chip; tags are indented 28px with a dashed 2px bar and an outlined chip; native body is mono, tag body is serif italic. The quietest of the three.</p>
+  <div class="pair" data-opt="oa"></div>
+
+  <h2><span class="k">B</span>Slab and plain</h2>
+  <p class="idea"><b>Idea:</b> the native channel is a solid colour header bar over a flat panel, the tags are a plain outlined card with no fill. <b>Told apart by:</b> filled versus empty header, full width versus stopping 56px short, mono versus serif italic. The strongest at a glance, and the loudest when both are open.</p>
+  <div class="pair" data-opt="ob"></div>
+
+  <h2><span class="k">C</span>Tabs</h2>
+  <p class="idea"><b>Idea:</b> each block is a thin frame with its label as a tab breaking the top edge, like an index card. <b>Told apart by:</b> native frame is solid 2px with a filled tab; tags are a 1px dashed frame, indented, with an outlined tab; mono versus serif italic. Reads as a labelled note, not a panel.</p>
+  <div class="pair" data-opt="oc"></div>
+
+  <div class="rec">
+    <h3>Recommendation: A, Margin rules</h3>
+    <p><b>Why:</b> reasoning is secondary to the reply, and A is the only option that never competes with the bubble. It has no filled area bigger than a chip, so two open blocks above a reply still read as notes, not as three equal panels. The difference between the two is structural before it is coloured: flush solid bar versus indented dashed bar, filled chip versus outlined chip, mono versus serif italic. That survives paper, stage and theater, and survives colour blindness. <b>Second choice: C</b>, if each block should to feel like a labelled card. <b>B</b> is the most legible on a glance, and the heaviest; two open slabs dominate the reply.</p>
+    <p style="margin-top:8px"><b>Role choice:</b> info for native and select for tags are kept the same in all three so the options compare on structure. Native is info because it arrives on a separate channel from the provider and is not part of the story text. Tags are select because they are text the model wrote into the reply and the app picks out, the same hue the app already uses for macros and picked text. Warn and danger are left free for finish reasons and failures.</p>
+  </div>
+</div>
+
+<div class="wf-chip" id="wf"><button data-theme-switch>Theme</button><a href="../index.html">All</a></div>
+
+<script>
+(function () {
+  /* Capture each theme's --bk-* values from theme.js (no values are written in this file), then paint them onto the panes. */
+  var root = document.documentElement, sw = document.querySelector("[data-theme-switch]");
+  var got = {}, start = root.getAttribute("data-theme");
+  function snap() {
+    var o = {};
+    for (var i = 0; i < root.style.length; i++) { var n = root.style[i]; if (n.indexOf("--bk-") === 0) o[n] = root.style.getPropertyValue(n); }
+    got[root.getAttribute("data-theme")] = o;
+  }
+  snap();
+  for (var k = 0; k < 3; k++) { sw.click(); snap(); }
+  while (root.getAttribute("data-theme") !== start) sw.click();
+  try { localStorage.setItem("bunraku-wf-theme", start); } catch (e) {}
+
+  var NAT = "I read the last three turns. She has deflected twice. The radio is dead and she will not say so, so the honest middle is a partial truth about the boat.\n\nKeep it short and physical: the beam, the brass. End on a question so the player carries the next turn.";
+  var TAG = "Plan from the preset: one beat, one line, one question. Do not mention the radio.";
+  function block(opt, kind, open) {
+    var nat = kind === "nat";
+    var label = nat ? "Native reasoning" : "Think tags";
+    var dur = nat ? "Reasoned for 8.4s" : "Thought for 3.1s";
+    var snip = nat ? "I read the last three turns. She has deflected twice..." : "Plan from the preset: one beat, one line, one question...";
+    var d = document.createElement("div");
+    d.className = "rb " + opt + " " + kind + (open ? " open" : "");
+    d.innerHTML = '<button class="hd" type="button" aria-expanded="' + open + '"><span class="chip">' + label + '</span><span class="dur">' + dur + '</span><span class="snip">' + snip + '</span><span class="fill"></span><span class="copy">Copy</span><svg class="cv"><use href="#cv"/></svg></button><div class="bd">' + (nat ? NAT : TAG) + '</div>';
+    d.querySelector(".hd").addEventListener("click", function () { var o = d.classList.toggle("open"); this.setAttribute("aria-expanded", o); });
+    return d;
+  }
+  function reply(opt, open) {
+    var w = document.createElement("div");
+    var cap = document.createElement("div"); cap.className = "cap"; cap.textContent = open ? "Both open" : "Both collapsed (the default)";
+    var sp = document.createElement("div"); sp.className = "spk"; sp.textContent = "Marguerite Vane";
+    var st = document.createElement("div"); st.className = "stack";
+    st.appendChild(block(opt, "nat", open)); st.appendChild(block(opt, "tag", open));
+    var b = document.createElement("div"); b.className = "bub"; b.innerHTML = "<em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q>";
+    w.appendChild(cap); w.appendChild(sp); w.appendChild(st); w.appendChild(b);
+    return w;
+  }
+  document.querySelectorAll(".pair").forEach(function (pair) {
+    var opt = pair.getAttribute("data-opt");
+    [["paper", "Paper"], ["stage", "Stage"]].forEach(function (t) {
+      var p = document.createElement("div"); p.className = "pane wf";
+      Object.keys(got[t[0]] || {}).forEach(function (n) { p.style.setProperty(n, got[t[0]][n]); });
+      p.style.color = "var(--bk-text-soft)";
+      var h = document.createElement("div"); h.className = "ph"; h.textContent = t[1];
+      var b = document.createElement("div"); b.className = "pb";
+      b.appendChild(reply(opt, false)); b.appendChild(reply(opt, true));
+      p.appendChild(h); p.appendChild(b); pair.appendChild(p);
+    });
+  });
+})();
+</script>
+</body>
+</html>

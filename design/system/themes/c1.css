@@ -1,0 +1,53 @@
+/*
+ * Theme "c1": JRPG Menu + Arcade HUD (ships as an example UI mod).
+ * From design/wireframes/game/tokens-c1.css and c1-jrpg-hud.html. The frame and selection grammar
+ * is the JRPG window: a crisp double-line frame, two corner ticks, a tinted title bar, a cursor
+ * triangle beside whatever is chosen. The HUD readouts (meters, key chips, slot tags) are G3's and
+ * need no override. Cinzel takes every display role. Dark only. Overrides tokens only.
+ */
+:root[data-theme="c1"] {
+  color-scheme: dark;
+
+  /* color: G1's deeper plum; the brand keeps the softer original rose. Roles are the shared map. */
+  --bk-role-brand: #ff9ebb;   --bk-role-brand-text: #ff9ebb;   --bk-role-brand-deep: #854256;
+  --bk-surface-well: #120c17;
+  --bk-surface-base: #150f1c;
+  --bk-surface-sunken: #170f1e;
+  --bk-surface-field: #1c1624;
+  --bk-surface-panel: #201829;
+  --bk-surface-raised: #2a2133;
+  --bk-surface-ink: #0f0b15;
+  --bk-scrim: rgb(10 7 14 / 0.92);
+  --bk-shadow: #0f0b15;
+  --bk-line-strong: #7e6b95;
+  --bk-line: #3d3249;
+  --bk-line-track: #4e3d4e;
+  --bk-text-soft: #cabdcc;
+  --bk-text-dim: #ab9bae;
+  --bk-text-faint: #988a9b;
+  --bk-text-disabled: #59495f;
+
+  /* type: Cinzel on every display role, Fraunces drops out */
+  --bk-font-name: "Cinzel", serif;
+  --bk-font-axes: normal;
+
+  /* frame: the double-line window and two diagonal corner ticks on every frame */
+  --bk-frame-gap: 3px;
+  --bk-frame-inner-w: 1px;
+  --bk-crown-w: 0px;
+  --bk-bracket-len: 6px;
+  --bk-bracket-w: 6px;
+  --bk-bracket-len-alt: 0px;
+  --bk-bracket-rest: 1;
+  --bk-head-fill-mix: 22%;
+  --bk-head-rule-w: 2px;
+  --bk-dot-radius: 0;
+
+  /* selection: a 22% tint wash, a 2px tint ring, and the cursor triangle */
+  --bk-select-ring-w: 2px;
+  --bk-select-fill-mix: 22%;
+  --bk-select-ink: var(--bk-text);
+  --bk-cursor-display: inline-block;
+  --bk-lift-y: 0px;
+  --bk-press-y: 0px;
+}

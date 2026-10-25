@@ -1,0 +1,9 @@
+/** app.room hud-console, Agent (the docked room; the floating panel keeps the base arrangement): the model, title and screen become a status column down the left edge; the conversation and its prompt take the rest. Every part stays, kit bands and spines included. */
+html[data-surface-app-room="hud-console"] .agent-room[data-room="docked"] {
+  padding-left: 15.5rem;
+  & .agent-room__head { position: absolute; inset: 0 auto 0 0; width: 15rem; overflow: auto; border-bottom: 0; border-right: 1px solid var(--bk-line-strong); padding: 1rem .8rem; outline: 1px solid var(--bk-line); outline-offset: -6px; }
+  & .agent-room__head h1 { margin-top: .7rem; font-size: 1.4rem; text-transform: uppercase; letter-spacing: .08em; }
+  & .agent-room__talk { padding-block: .8rem; }
+  & .agent-room__compose { border-top: 2px solid var(--bk-line-strong); }
+  & .agent-room__composer textarea { min-height: 3.4rem; }
+}

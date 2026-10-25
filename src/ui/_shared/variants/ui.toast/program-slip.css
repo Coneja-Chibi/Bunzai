@@ -1,0 +1,5 @@
+/** ui.toast program-slip: the status note is a slip of paper laid over the middle of the footer line (never over the page), with a double gold rule. */
+html[data-surface-ui-toast="program-slip"] #status .seg.note[data-toast="live"] { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); z-index: 90; box-sizing: border-box; display: flex; flex-direction: row; align-items: center; height: calc(var(--bk-status-reserve, 1.9rem) - .25rem); max-width: min(36rem, 90vw);
+  padding: 0 1.3rem; background: var(--bk-surface-panel); box-shadow: inset 0 0 0 1px var(--bk-line-strong), inset 0 0 0 3px var(--bk-surface-panel), inset 0 0 0 4px var(--bk-line); font: italic 400 1rem var(--font-big); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html[data-surface-ui-toast="program-slip"] #status .seg.note[data-toast="live"] .sep { display: none; }
+html[data-surface-ui-toast="program-slip"] #status .seg.note[data-toast="live"] .k { color: var(--bk-text); font-weight: 400; min-width: 0; overflow: hidden; text-overflow: ellipsis; }

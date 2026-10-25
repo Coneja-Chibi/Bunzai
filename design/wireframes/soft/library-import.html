@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Import</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * The Library's import overlay, soft identity. Ported from src/ui/apps/library/import-sheet.tsx,
+ * import-flow.tsx, and import-triage.ts, plus docs/guide/importing.md. The overlay is a modal
+ * (InkDialog) over the Library shelves (library-shelves.html); this page shows it as the room,
+ * since the underlying shelf is already covered elsewhere.
+ */
+body { background: var(--canvas); }
+.stage { min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 6vh 20px 6vh; }
+.dropzone { position: fixed; inset: 0; z-index: 5; display: none; place-items: center; background: color-mix(in srgb, var(--accent) 10%, var(--scrim)); }
+.dropzone.show { display: grid; }
+.dropzone .hint { padding: 30px 40px; background: var(--face); box-shadow: 0 0 0 2px var(--accent); font: 600 1.1rem var(--font-big); color: var(--text); }
+
+.sheet { width: min(40rem, 100%); background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); padding: 26px 28px 24px; }
+.impkick { margin: 0; }
+.imptitle { display: block; font: 600 1.4rem var(--font-big); font-variation-settings: var(--soft-axes); color: var(--text); margin-top: 6px; }
+.impsub { color: var(--text-dim); font-size: .88rem; margin-top: 6px; }
+
+/* progress state */
+.impbar { display: block; height: 6px; background: var(--stage-row); box-shadow: inset 0 0 0 1px var(--seam); margin-top: 16px; }
+.impbar i { display: block; height: 100%; background: var(--accent); transition: width .2s; }
+.impprog { font: 500 .8rem var(--font-mono); color: var(--text-dim); margin-top: 8px; }
+.impacts { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+
+/* receipt rows */
+.improws { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; max-height: 50vh; overflow-y: auto; }
+.improw { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; box-shadow: inset 0 0 0 1px var(--seam); cursor: pointer; }
+.improw.dupe, .improw.bad { cursor: default; opacity: .8; }
+.improw.bad { box-shadow: inset 0 0 0 1px var(--stage-danger-edge); background: var(--stage-danger-bg); }
+.improw input[type=checkbox] { margin-top: 3px; accent-color: var(--accent); width: 16px; height: 16px; }
+.impbody { flex: 1; min-width: 0; }
+.impname { display: block; font: 600 .9rem var(--font-big); color: var(--text); }
+.impkind { font-size: .78rem; color: var(--text-dim); margin: 2px 0 0; }
+.impmeta { font-size: .76rem; color: var(--text-faint); margin: 2px 0 0; }
+.impflag { font: 600 10px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--stage-danger-text); }
+.imperr { font-size: .8rem; color: var(--stage-danger-text); margin: 2px 0 0; }
+.impreport { padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--seam); background: var(--stage-row); }
+.impreport ul { margin: 6px 0 0; padding-left: 1.1rem; font-size: .76rem; color: var(--text-dim); }
+
+/* the button row */
+.impbtn { padding: 9px 16px; font: 600 .85rem var(--font-body); background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); cursor: pointer; border: 0; }
+.impbtn.primary { background: var(--stamp-bg); color: var(--stamp-fg); box-shadow: none; }
+.impbtn.primary:disabled { opacity: .5; cursor: default; }
+.impbtn:hover:not(:disabled) { transform: translateY(-2px); }
+
+/* damaged-file mini demo, standalone (also on the Library shelves) */
+.damage-note { max-width: 40rem; margin: 20px auto 0; padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--stage-danger-edge); background: var(--stage-danger-bg); position: relative; }
+.damage-note strong { color: var(--stage-danger-text); font: 600 .88rem var(--font-body); }
+.damage-note p { font-size: .8rem; color: var(--text-soft); margin: 6px 0 0; }
+.damage-note details { margin-top: 10px; font-size: .8rem; color: var(--text-soft); }
+.damage-note code { font-family: var(--font-mono); font-size: .78rem; }
+
+@media (max-width: 30rem) {
+  .stage { padding: 4vh 12px; }
+  .sheet { padding: 18px 16px; }
+  .improw { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- reading state -->
+  <div class="sheet" data-view="reading">
+    <p class="impkick s-act">The Library · Import</p>
+    <b class="imptitle">Reading your files…</b>
+    <span class="impbar" role="progressbar" aria-valuemin="0" aria-valuemax="14" aria-valuenow="9"><i style="width:64%"></i></span>
+    <p class="impprog" role="status">Read 9 of 14</p>
+    <div class="impacts"><button type="button" class="impbtn">Cancel</button></div>
+  </div>
+
+  <!-- saving state -->
+  <div class="sheet" data-view="saving">
+    <p class="impkick s-act">The Library · Import</p>
+    <b class="imptitle">Shelving…</b>
+    <span class="impbar" role="progressbar" aria-valuemin="0" aria-valuemax="11" aria-valuenow="7"><i style="width:64%"></i></span>
+    <p class="impprog" role="status">Shelving 7 of 11…</p>
+  </div>
+
+  <!-- clean receipt: everything read cleanly -->
+  <div class="sheet" data-view="clean">
+    <p class="impkick s-act">The Library · Import</p>
+    <b class="imptitle">Pick what to keep.</b>
+    <p class="impsub">3 readable. Uncheck anything you do not want. Import only writes the checked ones.</p>
+    <div class="improws">
+      <label class="improw on"><input type="checkbox" checked>
+        <div class="impbody"><b class="impname">Vera Lune</b><p class="impkind">A character card, made for SillyTavern.</p></div></label>
+      <label class="improw on"><input type="checkbox" checked>
+        <div class="impbody"><b class="impname">Harbor Town</b><p class="impkind">A lorebook, made for SillyTavern.</p><p class="impmeta">213 entries</p></div></label>
+      <label class="improw on"><input type="checkbox" checked>
+        <div class="impbody"><b class="impname">Velvet Quill</b><p class="impkind">A persona, made for RoleCall.</p></div></label>
+    </div>
+    <div class="impacts">
+      <button type="button" class="impbtn">Select all</button>
+      <button type="button" class="impbtn">Add more files</button>
+      <button type="button" class="impbtn primary">Import 3</button>
+      <button type="button" class="impbtn">Not now</button>
+    </div>
+  </div>
+
+  <!-- mixed receipt: some unreadable, healed notes, shelf/batch dupes, archive report -->
+  <div class="sheet" data-view="mixed">
+    <p class="impkick s-act">The Library · Import</p>
+    <b class="imptitle">Here is what we read.</b>
+    <p class="impsub">4 readable · 1 already on your shelf · 1 identical copy · 2 skipped. Uncheck anything you do not want. Import only writes the checked ones.</p>
+    <div class="improws">
+      <div class="impreport">
+        <b class="impname">Backup report: harbor-town-backup.lvbak</b>
+        <p class="impkind">3 character cards, 2 lorebooks imported.</p>
+        <p class="impmeta">3 chats, 12 messages did not come along.</p>
+        <p class="impmeta">1 referenced file (avatars, images) could not be found.</p>
+      </div>
+      <label class="improw on"><input type="checkbox" checked>
+        <div class="impbody"><b class="impname">Marguerite Vane</b><p class="impkind">A character card, made for RoleCall V3.</p>
+          <p class="impmeta">Healed: entries missing a name · +1 more</p>
+          <p class="impkind">Carries an embedded lorebook.</p>
+          <p class="impkind">Carries trigger scripts, saved as text and never run.</p></div></label>
+      <label class="improw on"><input type="checkbox" checked>
+        <div class="impbody"><b class="impname">Keeper's Log</b><p class="impkind">A lorebook, made for Risu.</p>
+          <p class="impmeta">Healed: missing name, 2 entries not quite the right shape · kept 54 entries</p></div></label>
+      <label class="improw"><input type="checkbox">
+        <div class="impbody"><b class="impname">Velvet Quill</b><p class="impkind">A persona, made for SillyTavern.</p>
+          <p class="impmeta">Already on your shelf as Velvet Quill. Importing keeps both.</p></div></label>
+      <div class="improw dupe"><div class="impbody"><b class="impname">Vera Lune</b><p class="impmeta">Identical to vera-lune.png in this drop. We keep one.</p></div></div>
+      <div class="improw bad"><div class="impbody"><span class="impflag">Could not read</span><b class="impname">notes.txt</b><p class="imperr">not a file type Bunraku reads (.txt)</p></div></div>
+      <div class="improw bad"><div class="impbody"><span class="impflag">Skipped</span><b class="impname">3 files</b>
+        <p class="imperr">a chat log, and Bunraku does not eat chats</p><p class="impmeta">chat-2026-01.jsonl · chat-2026-02.jsonl · +1 more</p></div></div>
+    </div>
+    <div class="impacts">
+      <button type="button" class="impbtn">Select all</button>
+      <button type="button" class="impbtn">Add more files</button>
+      <button type="button" class="impbtn primary">Import 4</button>
+      <button type="button" class="impbtn">Not now</button>
+    </div>
+  </div>
+
+  <!-- brand-new empty studio: the drop zone is also a button -->
+  <div class="sheet" data-view="empty" style="text-align:center">
+    <p class="impkick s-act">The Library</p>
+    <b class="imptitle">Nothing here yet</b>
+    <p class="impsub" style="max-width:24rem;margin-inline:auto">Drag a file onto the shelves, or click below. On a brand-new studio, this is the one place Import opens a real file browser.</p>
+    <div class="impacts" style="justify-content:center"><button type="button" class="impbtn primary" id="openBrowser">Click here to import</button></div>
+  </div>
+
+  <!-- damaged files, standalone reference -->
+  <div class="damage-note" data-view="damage">
+    <strong>2 files in your studio folder could not be read</strong>
+    <p>The files are still on disk and Bunraku did not change them.</p>
+    <details open>
+      <summary>Show files and recovery details</summary>
+      <ul>
+        <li><code>character/9f2a-old-vera.json</code> is not readable JSON.</li>
+        <li><code>lorebook/harbor-town-2.json</code> holds a different piece id than its filename.</li>
+      </ul>
+      <p><code>~/Bunraku/studio/</code></p>
+      <p>Restore a file from backup, or remove it yourself to clear this notice.</p>
+    </details>
+  </div>
+</div>
+
+<div class="dropzone" id="dropzone"><div class="hint">Drop your files on the shelves</div></div>
+
+<div class="wf-bar" id="wfBar">
+  <button data-s="clean">Clean receipt</button>
+  <button data-s="mixed">Mixed receipt</button>
+  <button data-s="reading">Reading…</button>
+  <button data-s="saving">Shelving…</button>
+  <button data-s="empty">Brand-new studio</button>
+  <button data-s="dropover">Drag-over anywhere</button>
+  <button data-s="damage">Damaged files</button>
+</div>
+<div class="wf-note" id="wfNote">
+  <b>Import, soft identity.</b> Ported from import-sheet.tsx / import-flow.tsx / import-triage.ts and
+  docs/guide/importing.md. States: reading (live count, a real Cancel), shelving (the save pass),
+  the clean receipt ("Pick what to keep", every file starts checked), the mixed receipt ("Here is
+  what we read": an archive's own report card, healed-lorebook notes, embedded-lorebook and script
+  extras, a shelf duplicate offered unchecked, a batch duplicate that cannot be checked, grouped
+  unreadable files), the brand-new empty studio (Import opens a real file browser only here), the
+  drop-anywhere overlay, and the damaged-file notice (unreadable studio JSON, still on disk, dismiss
+  is per file). Add more files and Not now sit beside Import N on every receipt.
+</div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.body.classList.add("embed");
+  function apply(s) {
+    document.querySelectorAll("#wfBar button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+    document.querySelectorAll("[data-view]").forEach(function (el) { el.style.display = el.getAttribute("data-view") === s ? "" : "none"; });
+    document.getElementById("dropzone").classList.toggle("show", s === "dropover");
+    if (s === "dropover") document.querySelector('[data-view="clean"]').style.display = "";
+  }
+  apply(q.get("state") || "clean");
+  document.getElementById("wfBar").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-s")); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+/**
+ * The binder chassis (vs-lorebook-binder-2, 1:1): header with the spine chip, the toc|page|rail
+ * columns, the book-rules sheet, and the shared form pieces the lore leaves reuse (SampleMatch,
+ * BookSettings). Page/toc/rail skins live in their own modules; LorebookEditor merges them - a
+ * class name lives in exactly ONE module. Stage-chrome surface, dark in both themes; lore identity
+ * rides the entity accent (--a), stage-macro as the fallback.
+ */
+
+.root {
+  --wb-selection: var(--rose);
+  --wb-primary: var(--rose-deep);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  background: var(--stage-well);
+  color: var(--stage-soft);
+}
+
+/* header: the shared EditorEhead (components/editor-ehead) owns the spine + save.
+   These two are lore's own middle controls, passed into the ehead as meta/children. */
+
+.rulesLink {
+  font: inherit;
+  border: 0;
+  background: none;
+  color: var(--stage-text-dim);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.rulesLink:hover {
+  color: var(--a, var(--accent));
+}
+
+.lensSel {
+  font: inherit;
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-row);
+  color: var(--stage-card);
+  padding: 0.3rem 0.45rem;
+  max-width: 18rem;
+}
+
+/* ---------- toc | page | rail ---------- */
+
+.cols {
+  display: grid;
+  grid-template-columns: minmax(14rem, 17rem) minmax(0, 1fr) minmax(15rem, 17.5rem);
+  align-items: start;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.pageCol {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* fluid law: collapse by the pane's width, never the viewport's.
+   Stacked mode leaves grid entirely: a definite-height grid distributes its height across the
+   auto rows while the percentage-height columns overflow them, and the three sections draw on
+   top of each other. Block flow sizes each section by its content and lets .cols scroll. */
+@container (max-width: 74rem) {
+  .cols {
+    display: block;
+    overflow-y: auto;
+  }
+  .pageCol {
+    height: auto;
+    overflow-y: visible;
+  }
+}
+
+/* ---------- book rules sheet ---------- */
+
+.rulesSheet {
+  width: min(34rem, 88vw);
+  max-height: 78vh;
+  overflow-y: auto;
+  background: var(--stage-panel);
+  color: var(--stage-soft);
+  padding: 0.9rem 1rem 1.1rem;
+}
+
+.rulesHead {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.7rem;
+  border-bottom: 2px solid var(--stage-seam);
+}
+
+.rulesHead b {
+  font-family: var(--font-big);
+  font-weight: 900;
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+}
+
+.rulesHead i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  flex: 1;
+}
+
+/* ---------- shared form pieces (book rules sheet, sample match) ---------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  min-width: 0;
+}
+
+.field > .label {
+  margin-top: 0;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  display: block;
+  margin-top: 0.55rem;
+}
+
+.input,
+.textarea,
+.select {
+  font: inherit;
+  color: var(--stage-soft);
+  background: var(--stage-sunken);
+  border: 2px solid var(--stage-seam);
+  padding: 0.4rem 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.textarea {
+  min-height: 5rem;
+  resize: vertical;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.empty {
+  color: var(--stage-text-dim);
+  font-size: var(--text-control);
+  padding: 1.2rem 1rem;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--stage-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.matchList {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 8rem;
+  overflow: auto;
+}
+
+.matchHit {
+  font-size: var(--text-control);
+  color: var(--stage-ok);
+}
+
+.matchMiss {
+  font-size: var(--text-control);
+  color: var(--stage-text-dim);
+}
+
+/* ---------- mobile grammar (design/vs-mobile-editors.html frames 3-4) ----------
+   Lives at the FILE END: container queries add no specificity; a later base rule would win. */
+
+.mBar {
+  display: none;
+}
+
+/* mobile-only render gate: hosts the Contents sheet so a sheet left open while the pane widens
+   (window resize, split closed) vanishes instead of shadowing the desktop columns */
+.mGate {
+  display: none;
+}
+
+/* wrapper exists so the desktop TOC column can fold away without hiding the same TOC when it
+   rides inside the mobile Contents sheet (.toc's hash belongs to entry-toc.module.css) */
+.tocCol {
+  display: contents;
+}
+
+.mContents {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border: 2px solid var(--stage-black);
+  background: var(--stage-row);
+  color: var(--stage-paper);
+  box-shadow: 2px 2px 0 0 var(--stage-black);
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  min-height: 2.2rem;
+}
+
+.mPageNo {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--a, var(--accent));
+}
+
+.mPg {
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-row);
+  color: var(--stage-soft);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  flex: none;
+}
+
+.mPg:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+@container (max-width: 34rem) {
+  .mBar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.6rem;
+    border-bottom: 2px solid var(--stage-seam);
+  }
+  .mGate {
+    display: contents;
+  }
+  .tocCol {
+    display: none;
+  }
+  /* header: the meta line and the long select yield to the name */
+  .spineMeta {
+    display: none;
+  }
+  .lensSel {
+    max-width: 9rem;
+  }
+}
+
+/* view switch Pages / Cards / Web (vs-lore-lenses) */
+.viewSwitch {
+  display: inline-flex;
+  border: 2px solid var(--stage-black);
+  box-shadow: 2px 2px 0 0 var(--stage-black);
+}
+.viewBtn {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 0;
+  background: var(--stage-row);
+  color: var(--stage-text-dim);
+  padding: 0.28rem 0.5rem;
+  cursor: pointer;
+}
+.viewBtn + .viewBtn {
+  border-left: 2px solid var(--stage-black);
+}
+.viewBtnOn {
+  background: var(--selection);
+  color: var(--selection-fg);
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root {
+  --wb-selection: var(--selection);
+  --wb-primary: var(--action-primary);
+}
+
+
+:global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

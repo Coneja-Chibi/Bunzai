@@ -1,0 +1,22 @@
+/**
+ * library.decks chapter-index (Paper): the deck sidebar as a book's contents. Roman chapter numerals, titles in serif,
+ * the count in italics at the margin, hairlines between. Same decks, same collections, same Add button.
+ */
+html[data-surface-library-decks="chapter-index"] {
+  & .lib.rc .lrail { width: 15.5rem; background: var(--bk-surface-sunken); border-right: 1px solid var(--bk-line-control); }
+  & .lib.rc .lrail-head { text-align: left; padding: 1.2rem 1.2rem .9rem; background: transparent; border-bottom: 1px solid var(--bk-line-control); }
+  & .lib.rc .lrail-head .ey { font: italic 400 .875rem var(--font-big); letter-spacing: 0; text-transform: none; color: var(--bk-text-soft); }
+  & .lib.rc .lrail-head .ttl { font: 600 1.6rem var(--font-big); letter-spacing: .01em; text-transform: none; }
+  & .lib.rc .lrail-head .ttl em { color: inherit; }
+  & .lib.rc .lrail-div { font: italic 400 .875rem var(--font-big); letter-spacing: 0; text-transform: none; color: var(--bk-text-soft); }
+  & .lib.rc .lrail-rows { counter-reset: chapter; padding: 0 .6rem .5rem; }
+  & .lib.rc .lrail .lrow { counter-increment: chapter; padding: .45rem .5rem; border-left: 0; border-bottom: 1px solid var(--bk-line-track); }
+  & .lib.rc .lrail .lrow::before { content: counter(chapter, upper-roman) "."; flex: none; width: 1.7rem; font: 500 .8125rem var(--font-big); color: var(--bk-text-dim); }
+  & .lib.rc .lrail .lrow.on { background: transparent; box-shadow: inset 2px 0 0 var(--bk-text); }
+  & .lib.rc .lrail .lrow.on .n { font-weight: 700; }
+  & .lib.rc .lrail .tile { border: 0; background: transparent; width: 1.5rem; }
+  & .lib.rc .lrail .cnt { border: 0; background: transparent; font: italic 400 .9375rem var(--font-big); color: var(--bk-text-soft); }
+  & .lib.rc .lrail-add { background: transparent; border-top: 1px solid var(--bk-line-control); }
+  & .lib.rc .lrail-add button { border: 1px solid var(--bk-text); box-shadow: none; background: transparent; color: var(--bk-text); }
+  @container (max-width: 48rem) { & .lib.rc .lrail { width: auto; flex: none; } & .lib.rc .lrail .lrow::before { display: none; } }
+}

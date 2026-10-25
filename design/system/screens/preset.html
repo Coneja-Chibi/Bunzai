@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Preset editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="preset.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Preset editor</h1>
+    <p>The preset editor: a depth-first category tree of prompts, and a rail that switches Edit, Live Preview, Live Build, Linked Sets and Macros.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="preset.editor">
+    <header>
+      <h2 class="bk-heading">Preset editor</h2>
+      <span class="bk-tag">PresetEditor, body.groups tree</span>
+      <p class="bk-meta">Parts: editor.toc, editor.toc.item, editor.rail, editor.save, preset.samplers, preset.group</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="preset.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Block list</h3>
+          <p>The category tree as rows (group, subgroup, block), the rail beside it.</p></header>
+        <div class="spec-screen ps-screen" data-state="loaded">
+<div class="ps-app" data-part="shell.app">
+  <header class="ps-hud" data-part="shell.hud">
+    <div class="ps-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="ps-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="ps-hud-mid">
+      <div class="ps-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ps-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="ps-body">
+    <nav class="ps-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="ps-dock-brand" data-part="shell.dock.brand">
+        <svg class="ps-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="ps-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="ps-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="ps-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="ps-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="ps-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="ps-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="ps-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ps-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="ps-dock-app ps-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="ps-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="ps-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="ps-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="ps-stage bk-stage" data-part="shell.stage">
+
+        <header class="ps-phead">
+          <span class="bk-tag" data-deck="preset"><b>PSET</b></span>
+          <h3 class="bk-name">Velvet Quill</h3>
+          <button type="button" class="bk-item ps-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="ps-samplebar" data-part="preset.samplers">
+          <label class="ps-samp"><span class="bk-label">Temperature</span><input class="ps-input-sm" value="0.90"></label>
+          <label class="ps-samp"><span class="bk-label">Top P</span><input class="ps-input-sm" value="0.95"></label>
+          <label class="ps-samp"><span class="bk-label">Top K</span><input class="ps-input-sm" value="40"></label>
+          <label class="ps-samp"><span class="bk-label">Rep. penalty</span><input class="ps-input-sm" value="1.05"></label>
+          <label class="ps-samp ps-samp-wide"><span class="bk-label">Description</span><input class="ps-input" value="A slow, literary preset for gothic scenes"></label>
+        </div>
+        <div class="ps-grid" data-part="editor.toc">
+          <div class="ps-leftcol">
+        <div class="ps-listtoolbar">
+          <input class="ps-input" placeholder="Search prompts...">
+          <button type="button" class="bk-item ps-iconbtn" title="Expand all" aria-label="Expand all">&#9660;</button>
+          <button type="button" class="bk-item ps-iconbtn" title="Collapse all" aria-label="Collapse all">&#9650;</button>
+          <button type="button" class="bk-item ps-iconbtn" title="New category" aria-label="New category">+</button>
+        </div>
+        <div class="ps-filtertabs" role="tablist" aria-label="Filter prompts">
+          <button type="button" class="bk-item ps-filtertab" role="tab" aria-selected="true">All</button>
+          <button type="button" class="bk-item ps-filtertab" role="tab">On</button>
+          <button type="button" class="bk-item ps-filtertab" role="tab">Off</button>
+        </div>
+        <div class="ps-bulkbar" data-part="editor.toc" role="status">
+          <span class="bk-meta">3 selected</span>
+          <button type="button" class="bk-item ps-btn-ghost">Turn on</button>
+          <button type="button" class="bk-item ps-btn-ghost">Turn off</button>
+          <button type="button" class="bk-item ps-btn-danger" data-tone="danger">Delete</button>
+        </div>
+          <div class="ps-grouprow ps-indent0" data-part="preset.group">
+            <label class="ps-switch" data-tone="ok"><input type="checkbox" checked aria-label="Astrolabes on"></label>
+            <span class="bk-name">Astrolabes</span><span class="bk-meta ps-count">6</span>
+          </div>
+          <div class="ps-grouprow ps-indent1" data-part="preset.group">
+            <label class="ps-switch" data-tone="ok"><input type="checkbox" checked aria-label="Difficulty on"></label>
+            <span class="bk-name">Difficulty</span><span class="bk-meta ps-count">2</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent2" aria-selected="true" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">01</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Grim tone on"></label>
+            <span class="bk-name ps-rowname">Grim tone</span>
+            <span class="bk-meta">~40t</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent2" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">02</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" aria-label="Cozy tone on"></label>
+            <span class="bk-name ps-rowname">Cozy tone</span>
+            <span class="bk-meta">~38t</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent1" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">03</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Scene pacing on"></label>
+            <span class="bk-name ps-rowname">Scene pacing</span>
+            <span class="bk-meta">~62t</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent1" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">04</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Sensory detail on"></label>
+            <span class="bk-name ps-rowname">Sensory detail</span>
+            <span class="bk-meta">~54t</span>
+          </div>
+          <div class="ps-grouprow ps-indent0" data-part="preset.group">
+            <label class="ps-switch" data-tone="ok"><input type="checkbox" checked aria-label="Guardrails on"></label>
+            <span class="bk-name">Guardrails</span><span class="bk-meta ps-count">3</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent1" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">05</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="No repetition on"></label>
+            <span class="bk-name ps-rowname">No repetition</span>
+            <span class="bk-meta">~21t</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent1" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">06</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Stay in character on"></label>
+            <span class="bk-name ps-rowname">Stay in character</span>
+            <span class="bk-meta">~30t</span>
+          </div>
+          <div class="bk-item ps-blockrow ps-indent1" data-part="editor.toc.item">
+            <span class="ps-ord bk-num">07</span>
+            <span class="ps-grip" aria-hidden="true">&#8942;&#8942;</span>
+            <label class="ps-switch"><input type="checkbox" aria-label="No modern slang on"></label>
+            <span class="bk-name ps-rowname">No modern slang</span>
+            <span class="bk-meta">~18t</span>
+          </div>
+          </div>
+          <aside class="ps-rail" data-part="editor.rail">
+          <nav class="ps-railtabs" role="tablist" aria-label="Rail view">
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="edit" aria-selected="true">Edit</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="preview">Live Preview</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="build">Live Build</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="links">Linked Sets</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="macros">Macros</button>
+          </nav>
+
+          <div class="ps-railview" data-rail="edit">
+            <label class="ps-field"><span class="bk-label">Name</span><input class="ps-input" value="Grim tone"></label>
+            <label class="ps-field"><span class="bk-label">Role</span>
+              <div class="ps-selwrap"><select class="ps-input"><option>System</option><option>User</option><option>Assistant</option></select></div>
+            </label>
+            <label class="ps-field"><span class="bk-label">Category</span>
+              <div class="ps-selwrap"><select class="ps-input"><option>Astrolabes / Difficulty</option><option>Astrolabes</option><option>Guardrails</option></select></div>
+              <span class="bk-meta">Astrolabes / Difficulty</span>
+            </label>
+            <label class="ps-field"><span class="bk-label">Position</span>
+              <div class="ps-selwrap"><select class="ps-input"><option>Relative (in list order)</option><option>In-chat depth</option></select></div>
+            </label>
+            <div class="ps-field"><span class="bk-label">Token count</span><span class="bk-meta">~40 tokens</span></div>
+            <details class="ps-fold"><summary class="bk-meta">Advanced</summary>
+              <label class="ps-check"><input type="checkbox">Forbid overrides</label>
+            </details>
+          </div>
+
+          <div class="ps-railview" data-rail="preview" hidden>
+            <div class="ps-rerollrow"><span class="bk-meta">resolved build</span><button type="button" class="bk-item ps-btn-ghost">Reroll</button></div>
+            <div class="ps-lpline"><span class="ps-ord bk-num">01</span><span class="bk-name">Grim tone</span><span class="bk-meta">system</span>
+              <p class="bk-meta">Write with a slow, gothic patience. Let dread <code class="ps-mac">{{roll:2d4}}</code> gather before anything happens.</p></div>
+            <div class="ps-lpline"><span class="ps-ord bk-num">02</span><span class="bk-name">Scene pacing</span><span class="bk-meta">system</span>
+              <p class="bk-meta">One beat per paragraph. Never rush the reveal.</p></div>
+            <p class="bk-meta">Click rendered text to edit it where it lives; click a macro to see its source and branches.</p>
+          </div>
+
+          <div class="ps-railview" data-rail="build" hidden>
+            <p class="bk-meta">The editable half: patch a block's raw content directly, without resolving macros.</p>
+            <textarea class="ps-input ps-textarea">Write with a slow, gothic patience. Let dread {{roll:2d4}} gather before anything happens.</textarea>
+          </div>
+
+          <div class="ps-railview" data-rail="links" hidden>
+            <div class="ps-linkgroup"><h4 class="bk-name">Regex sets</h4>
+              <label class="ps-check"><input type="checkbox" checked>Cleanup pass</label>
+              <label class="ps-check"><input type="checkbox">Archaic speech</label>
+            </div>
+            <div class="ps-linkgroup"><h4 class="bk-name">Quick replies</h4>
+              <label class="ps-check"><input type="checkbox" checked>Scene starters</label>
+            </div>
+            <p class="bk-meta">Checking a row saves only its id; the linked piece stays separately editable.</p>
+          </div>
+
+          <div class="ps-railview" data-rail="macros" hidden>
+            <p class="bk-meta">Click to copy</p>
+            <div class="ps-macroref">
+              <span class="bk-tag">{{user}}</span><span class="bk-tag">{{char}}</span><span class="bk-tag">{{roll:XdY}}</span>
+              <span class="bk-tag">{{random:a,b}}</span><span class="bk-tag">{{time}}</span><span class="bk-tag">{{date}}</span>
+            </div>
+          </div>
+          </aside>
+        </div>    </main>
+  </div>
+  <footer class="ps-status" data-part="shell.status">
+    <span class="ps-status-item" data-part="shell.status.item">Velvet Quill · preset</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Block list">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Edit</button>
+          <button type="button" class="spec-chip" data-set-state="preview">Live Preview</button>
+          <button type="button" class="spec-chip" data-set-state="build">Live Build</button>
+          <button type="button" class="spec-chip" data-set-state="links">Linked Sets</button>
+          <button type="button" class="spec-chip" data-set-state="macros">Macros</button>
+          <button type="button" class="spec-chip" data-set-state="select">Select mode</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="preset.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Order rail</h3>
+          <p>Blocks as a numbered rail emphasizing evaluation order top to bottom, the rail beside it.</p></header>
+        <div class="spec-screen ps-screen" data-state="loaded">
+<div class="ps-app" data-part="shell.app">
+  <header class="ps-hud" data-part="shell.hud">
+    <div class="ps-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="ps-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="ps-hud-mid">
+      <div class="ps-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ps-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="ps-body">
+    <nav class="ps-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="ps-dock-brand" data-part="shell.dock.brand">
+        <svg class="ps-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="ps-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="ps-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="ps-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="ps-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="ps-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="ps-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="ps-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="ps-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="ps-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ps-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="ps-dock-app ps-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="ps-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="ps-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="ps-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="ps-stage bk-stage" data-part="shell.stage">
+
+        <header class="ps-phead">
+          <span class="bk-tag" data-deck="preset"><b>PSET</b></span>
+          <h3 class="bk-name">Velvet Quill</h3>
+          <button type="button" class="bk-item ps-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="ps-samplebar" data-part="preset.samplers">
+          <label class="ps-samp"><span class="bk-label">Temperature</span><input class="ps-input-sm" value="0.90"></label>
+          <label class="ps-samp"><span class="bk-label">Top P</span><input class="ps-input-sm" value="0.95"></label>
+          <label class="ps-samp"><span class="bk-label">Top K</span><input class="ps-input-sm" value="40"></label>
+          <label class="ps-samp"><span class="bk-label">Rep. penalty</span><input class="ps-input-sm" value="1.05"></label>
+          <label class="ps-samp ps-samp-wide"><span class="bk-label">Description</span><input class="ps-input" value="A slow, literary preset for gothic scenes"></label>
+        </div>
+        <div class="ps-grid ps-grid-order" data-part="editor.toc">
+          <div class="ps-leftcol">
+        <div class="ps-listtoolbar">
+          <input class="ps-input" placeholder="Search prompts...">
+          <button type="button" class="bk-item ps-iconbtn" title="Expand all" aria-label="Expand all">&#9660;</button>
+          <button type="button" class="bk-item ps-iconbtn" title="Collapse all" aria-label="Collapse all">&#9650;</button>
+          <button type="button" class="bk-item ps-iconbtn" title="New category" aria-label="New category">+</button>
+        </div>
+        <div class="ps-filtertabs" role="tablist" aria-label="Filter prompts">
+          <button type="button" class="bk-item ps-filtertab" role="tab" aria-selected="true">All</button>
+          <button type="button" class="bk-item ps-filtertab" role="tab">On</button>
+          <button type="button" class="bk-item ps-filtertab" role="tab">Off</button>
+        </div>
+        <div class="ps-bulkbar" data-part="editor.toc" role="status">
+          <span class="bk-meta">3 selected</span>
+          <button type="button" class="bk-item ps-btn-ghost">Turn on</button>
+          <button type="button" class="bk-item ps-btn-ghost">Turn off</button>
+          <button type="button" class="bk-item ps-btn-danger" data-tone="danger">Delete</button>
+        </div>
+            <div class="ps-orderlist">
+          <div class="bk-item ps-orderrow" aria-selected="true" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">01</span>
+            <span class="ps-ordtext"><span class="bk-name">Grim tone</span><span class="bk-meta">Astrolabes / Difficulty</span></span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Grim tone on"></label>
+          </div>
+          <div class="bk-item ps-orderrow" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">02</span>
+            <span class="ps-ordtext"><span class="bk-name">Scene pacing</span><span class="bk-meta">Astrolabes</span></span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Scene pacing on"></label>
+          </div>
+          <div class="bk-item ps-orderrow" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">03</span>
+            <span class="ps-ordtext"><span class="bk-name">Sensory detail</span><span class="bk-meta">Astrolabes</span></span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Sensory detail on"></label>
+          </div>
+          <div class="bk-item ps-orderrow" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">04</span>
+            <span class="ps-ordtext"><span class="bk-name">No repetition</span><span class="bk-meta">Guardrails</span></span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="No repetition on"></label>
+          </div>
+          <div class="bk-item ps-orderrow" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">05</span>
+            <span class="ps-ordtext"><span class="bk-name">Stay in character</span><span class="bk-meta">Guardrails</span></span>
+            <label class="ps-switch"><input type="checkbox" checked aria-label="Stay in character on"></label>
+          </div>
+          <div class="bk-item ps-orderrow" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">06</span>
+            <span class="ps-ordtext"><span class="bk-name">No modern slang</span><span class="bk-meta">Guardrails</span></span>
+            <label class="ps-switch"><input type="checkbox" aria-label="No modern slang on"></label>
+          </div>
+          <div class="bk-item ps-orderrow" data-part="editor.toc.item">
+            <span class="ps-ord bk-num" data-part="ui.readout">--</span>
+            <span class="ps-ordtext"><span class="bk-name">Cozy tone (off)</span><span class="bk-meta">Astrolabes / Difficulty</span></span>
+            <label class="ps-switch"><input type="checkbox" aria-label="Cozy tone (off) on"></label>
+          </div>
+            </div>
+          </div>
+          <aside class="ps-rail" data-part="editor.rail">
+          <nav class="ps-railtabs" role="tablist" aria-label="Rail view">
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="edit" aria-selected="true">Edit</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="preview">Live Preview</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="build">Live Build</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="links">Linked Sets</button>
+            <button type="button" class="bk-item ps-railtab" role="tab" data-r="macros">Macros</button>
+          </nav>
+
+          <div class="ps-railview" data-rail="edit">
+            <label class="ps-field"><span class="bk-label">Name</span><input class="ps-input" value="Grim tone"></label>
+            <label class="ps-field"><span class="bk-label">Role</span>
+              <div class="ps-selwrap"><select class="ps-input"><option>System</option><option>User</option><option>Assistant</option></select></div>
+            </label>
+            <label class="ps-field"><span class="bk-label">Category</span>
+              <div class="ps-selwrap"><select class="ps-input"><option>Astrolabes / Difficulty</option><option>Astrolabes</option><option>Guardrails</option></select></div>
+              <span class="bk-meta">Astrolabes / Difficulty</span>
+            </label>
+            <label class="ps-field"><span class="bk-label">Position</span>
+              <div class="ps-selwrap"><select class="ps-input"><option>Relative (in list order)</option><option>In-chat depth</option></select></div>
+            </label>
+            <div class="ps-field"><span class="bk-label">Token count</span><span class="bk-meta">~40 tokens</span></div>
+            <details class="ps-fold"><summary class="bk-meta">Advanced</summary>
+              <label class="ps-check"><input type="checkbox">Forbid overrides</label>
+            </details>
+          </div>
+
+          <div class="ps-railview" data-rail="preview" hidden>
+            <div class="ps-rerollrow"><span class="bk-meta">resolved build</span><button type="button" class="bk-item ps-btn-ghost">Reroll</button></div>
+            <div class="ps-lpline"><span class="ps-ord bk-num">01</span><span class="bk-name">Grim tone</span><span class="bk-meta">system</span>
+              <p class="bk-meta">Write with a slow, gothic patience. Let dread <code class="ps-mac">{{roll:2d4}}</code> gather before anything happens.</p></div>
+            <div class="ps-lpline"><span class="ps-ord bk-num">02</span><span class="bk-name">Scene pacing</span><span class="bk-meta">system</span>
+              <p class="bk-meta">One beat per paragraph. Never rush the reveal.</p></div>
+            <p class="bk-meta">Click rendered text to edit it where it lives; click a macro to see its source and branches.</p>
+          </div>
+
+          <div class="ps-railview" data-rail="build" hidden>
+            <p class="bk-meta">The editable half: patch a block's raw content directly, without resolving macros.</p>
+            <textarea class="ps-input ps-textarea">Write with a slow, gothic patience. Let dread {{roll:2d4}} gather before anything happens.</textarea>
+          </div>
+
+          <div class="ps-railview" data-rail="links" hidden>
+            <div class="ps-linkgroup"><h4 class="bk-name">Regex sets</h4>
+              <label class="ps-check"><input type="checkbox" checked>Cleanup pass</label>
+              <label class="ps-check"><input type="checkbox">Archaic speech</label>
+            </div>
+            <div class="ps-linkgroup"><h4 class="bk-name">Quick replies</h4>
+              <label class="ps-check"><input type="checkbox" checked>Scene starters</label>
+            </div>
+            <p class="bk-meta">Checking a row saves only its id; the linked piece stays separately editable.</p>
+          </div>
+
+          <div class="ps-railview" data-rail="macros" hidden>
+            <p class="bk-meta">Click to copy</p>
+            <div class="ps-macroref">
+              <span class="bk-tag">{{user}}</span><span class="bk-tag">{{char}}</span><span class="bk-tag">{{roll:XdY}}</span>
+              <span class="bk-tag">{{random:a,b}}</span><span class="bk-tag">{{time}}</span><span class="bk-tag">{{date}}</span>
+            </div>
+          </div>
+          </aside>
+        </div>    </main>
+  </div>
+  <footer class="ps-status" data-part="shell.status">
+    <span class="ps-status-item" data-part="shell.status.item">Velvet Quill · preset</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Order rail">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Edit</button>
+          <button type="button" class="spec-chip" data-set-state="preview">Live Preview</button>
+          <button type="button" class="spec-chip" data-set-state="build">Live Build</button>
+          <button type="button" class="spec-chip" data-set-state="links">Linked Sets</button>
+          <button type="button" class="spec-chip" data-set-state="macros">Macros</button>
+          <button type="button" class="spec-chip" data-set-state="select">Select mode</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the sampler bar, search and expand/collapse toolbar, On/Off filter tabs, the bulk-select bar, the depth-first group/block tree with per-row switch and token estimate, and the five rail views (Edit with its Category/Position fields and Advanced fold, Live Preview with reroll, Live Build raw textarea, Linked Sets checkboxes, and the Macros reference). Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

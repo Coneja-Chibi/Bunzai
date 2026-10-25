@@ -1,0 +1,335 @@
+/**
+ * Rehearsal pane (vs-lore-rehearsal). Theme tokens only.
+ */
+
+.pane {
+  border-left: 2px solid var(--stage-seam);
+  background: var(--stage-panel);
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding: 0.65rem 0.7rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.head b {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+}
+
+.head i {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.x {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  color: var(--stage-text-dim);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.chat {
+  flex: 1;
+  min-height: 8rem;
+  max-height: 14rem;
+  overflow-y: auto;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.user,
+.bot {
+  max-width: 90%;
+  padding: 0.35rem 0.5rem;
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  font-weight: 600;
+}
+
+.user {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--a, var(--accent)) 22%, transparent);
+  color: var(--stage-card);
+  border: 1px solid var(--stage-seam);
+}
+
+.bot {
+  align-self: flex-start;
+  background: var(--stage-row);
+  color: var(--stage-soft);
+  border: 1px solid var(--stage-seam);
+}
+
+.empty {
+  margin: 0;
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--stage-text-dim);
+  font-size: var(--text-control);
+}
+
+.composer {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.composer input {
+  flex: 1;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  padding: 0.35rem 0.5rem;
+}
+
+.composer button {
+  border: 2px solid var(--stage-black);
+  background: var(--action-primary);
+  color: var(--action-primary-fg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.results {
+  border-top: 2px solid var(--stage-seam);
+  padding-top: 0.45rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.rhead {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.hit,
+.skip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  border: 0;
+  background: var(--stage-row);
+  border-left: 3px solid var(--stage-ok);
+  color: var(--stage-soft);
+  text-align: left;
+  padding: 0.3rem 0.45rem;
+  cursor: pointer;
+  font-family: var(--font-body);
+}
+
+.skip {
+  border-left-color: var(--stage-warn);
+}
+
+.hit b,
+.skip b {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+}
+
+.hit span,
+.skip span {
+  font-size: var(--text-control);
+  color: var(--stage-text-dim);
+}
+
+.budget {
+  margin: 0.2rem 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--stage-text-dim);
+}
+
+.cuts,
+.miss {
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  color: var(--stage-soft);
+}
+
+.cuts summary,
+.miss summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+@container (max-width: 34rem) {
+  .pane {
+    border-left: 0;
+    border-top: 2px solid var(--stage-seam);
+  }
+}
+
+/* tabs + playback */
+.tabs {
+  display: inline-flex;
+  border: 2px solid var(--stage-black);
+  box-shadow: 2px 2px 0 0 var(--stage-black);
+}
+
+.tab {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 0;
+  background: var(--stage-row);
+  color: var(--stage-text-dim);
+  padding: 0.28rem 0.5rem;
+  cursor: pointer;
+}
+
+.tab + .tab {
+  border-left: 2px solid var(--stage-black);
+}
+
+.tabOn {
+  background: var(--selection);
+  color: var(--selection-fg);
+}
+
+.playback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-height: 0;
+  flex: 1;
+}
+
+.drop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--stage-seam);
+  color: var(--stage-text-dim);
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 600;
+  font-size: var(--text-control);
+  padding: 0.7rem;
+  cursor: pointer;
+}
+
+.drop input {
+  display: none;
+}
+
+.exact {
+  background: color-mix(in srgb, var(--stage-ok) 35%, transparent);
+  color: var(--stage-card);
+  padding: 0 0.1rem;
+}
+
+.close {
+  border: 0;
+  background: color-mix(in srgb, var(--stage-warn) 35%, transparent);
+  color: var(--stage-card);
+  font: inherit;
+  padding: 0 0.1rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.firedList {
+  margin-top: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--stage-ok);
+}
+
+.budgetBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.budgetLbl {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  margin-right: 0.25rem;
+}
+
+.hitRow {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.hitRow .hit {
+  flex: 1;
+  min-width: 0;
+}
+
+.addKey {
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.35rem;
+  cursor: pointer;
+  flex: none;
+}
+
+.addKey:hover {
+  border-color: var(--stage-ok);
+  color: var(--stage-ok);
+}

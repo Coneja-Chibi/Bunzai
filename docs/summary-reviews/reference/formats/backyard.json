@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/backyard",
+  "sourcePath": "docs/reference/formats/backyard.md",
+  "sourceHash": "sha256:de85d33c3e4d2175fcce4f82c167484dfd37daee32cc86ef37d3ebdd7a947c31",
+  "semanticSummaryHash": "sha256:2fc6ccaa6e7bac677dc8d1a1d866861a4e8c050d0b8840fbe792bfcba67e80f6",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:52.401Z"
+}

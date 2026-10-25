@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-009-sandbox-origin",
+  "sourcePath": "docs/decisions/ADR-009-sandbox-origin.md",
+  "sourceHash": "sha256:cc098d6c36790acec182932685af9118d989ba16b31efe06303ae1161bc247cb",
+  "semanticSummaryHash": "sha256:a013d04e175eb62a38ff81d18cf3f34685a0a1ab724bffa10bf4b9d1c29027aa",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:11.555Z"
+}

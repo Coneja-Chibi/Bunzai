@@ -1,0 +1,15 @@
+{
+  "tool": "built-in image_gen",
+  "wide": {
+    "source": "docs/media/velvet-premiere-wide.png",
+    "output": "docs/media/velvet-premiere-wide-unlit.png",
+    "prompt": "Use case: lighting-weather edit. Edit target: the provided panoramic velvet theater stage artwork. Produce this same stage as an UNLIT, shadowy base plate for live software spotlights. Remove all painted overhead rose/pink/violet spotlight beams, shafts, top source glows, cones and their vivid pink/purple floor pools/reflections. Remove baked fog/haze as it will be animated in code. Deepen the ambient shadows moderately, particularly hanging scenery and floor, with very dim neutral ambient illumination so the rich burgundy velvet texture, gold curtain ties, painted moon/mountain/pagoda panels and wood floor remain legible rather than crushed to black. Retain the warm small footlight bulbs along the front edge and their restrained local amber glow. Preserve the exact panoramic framing, stage geometry, hanging panels, full curtains, cords, moon illustration and original cinematic material detail; change ONLY illumination, no new scenery, no zoom/crop, no text, no logo, no UI. The dark central backdrop should remain open. Same wide panoramic aspect ratio as the target."
+  },
+  "responsive": {
+    "prompt": "Use case: lighting-weather edit. Image 1 is the EDIT TARGET; image 2 is a lighting reference only. Keep image 1's exact framing, aspect ratio, curtain geometry, hanging painted scenery, cords, mountain/moon/pagoda illustrations and wood stage floor. Remove ALL painted rose/pink/violet overhead spotlight cones, shafts, top-source glows and pink/purple floor illumination/reflections. Remove baked fog. Match image 2's shadowy unlit atmosphere: dim neutral ambient illumination, deep shadows on scenery and floor, rich burgundy velvet and gold ties still legible, not crushed black. Keep the small warm footlight bulbs at the front and their restrained local amber glow. This is a dark base plate for live software spotlights and fog. Change ONLY lighting; no new scenery, no zoom/crop, no UI, no text, no logos. Retain the target's original aspect ratio.",
+    "outputs": [
+      "docs/media/velvet-premiere-tablet-unlit.png",
+      "docs/media/velvet-premiere-phone-unlit.png"
+    ]
+  }
+}

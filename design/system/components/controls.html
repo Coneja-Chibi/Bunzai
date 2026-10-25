@@ -1,0 +1,1245 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Controls</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="controls.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>components</b></p>
+    <h1 class="bk-title">Controls</h1>
+    <p>Buttons, key chips, fields, selects, search, switches, checks, segments and tabs, sliders,
+      chips and tags, menus, tooltips and swatches. Every item shows three ideas on the same tokens;
+      variant A is always the closest reading of the approved G3 wireframe.</p>
+  </header>
+
+  <!-- ================= controls.button ================= -->
+  <section class="spec-item" data-taste-item="controls.button">
+    <header>
+      <h2 class="bk-heading">Buttons</h2>
+      <span class="bk-tag">Stamp, GhostButton</span>
+      <p class="bk-meta">Parts: ui.button, ui.button.label, ui.button.icon, ui.button.key, ui.icon-button, ui.icon-button.icon</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.button.a" data-taste-title="Flush plate">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Flush plate</h3>
+          <p>G3 as approved: a solid action fill, a hairline ghost, a tinted quiet fill, flat.</p></header>
+        <div class="spec-demo ctl-a">
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary"><span data-part="ui.button.label">Continue story</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="ghost"><span data-part="ui.button.label">Cancel</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="quiet" data-deck="lorebook"><span data-part="ui.button.label">Split</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="danger"><span data-part="ui.button.label">Delete story</span></button>
+          </div>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary"><svg class="ctl-icon" data-part="ui.button.icon" aria-hidden="true"><use href="#ctl-i-plus"/></svg><span data-part="ui.button.label">New folder</span></button>
+            <button type="button" class="ctl-icon-btn" data-part="ui.icon-button" aria-label="Favorite"><svg class="ctl-icon" data-part="ui.icon-button.icon" aria-hidden="true"><use href="#ctl-i-star"/></svg></button>
+          </div>
+          <p class="bk-label">States</p>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary" data-demo-state="hover"><span data-part="ui.button.label">Hover</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary" data-demo-state="active"><span data-part="ui.button.label">Active</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary"><span data-part="ui.button.label">Focus (tab)</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary" disabled><span data-part="ui.button.label">Disabled</span></button>
+            <button type="button" class="ctl-btn" data-part="ui.button" data-variant="primary" aria-busy="true"><span data-part="ui.button.label">Saving</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.button.b" data-taste-title="Bracketed command">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Bracketed command</h3>
+          <p>Primary is a small framed plate whose corner brackets light on hover and focus. Ghost is
+            bracket-only: no boundary at rest, brackets mark it on hover and focus.</p></header>
+        <div class="spec-demo ctl-b">
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="accent" data-part="ui.button" data-variant="primary"><span data-part="ui.button.label">Continue story</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame ctl-btn--frame-ghost bk-frame" data-lift data-deck="accent" data-part="ui.button" data-variant="ghost"><span data-part="ui.button.label">Cancel</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="lorebook" data-part="ui.button" data-variant="quiet"><span data-part="ui.button.label">Split</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-tone="danger" data-part="ui.button" data-variant="danger"><span data-part="ui.button.label">Delete story</span></button>
+          </div>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="accent" data-part="ui.button" data-variant="primary"><svg class="ctl-icon" data-part="ui.button.icon" aria-hidden="true"><use href="#ctl-i-plus"/></svg><span data-part="ui.button.label">New folder</span></button>
+            <button type="button" class="ctl-icon-btn ctl-icon-btn--frame bk-frame" data-lift data-deck="accent" data-part="ui.icon-button" aria-label="Favorite"><svg class="ctl-icon" data-part="ui.icon-button.icon" aria-hidden="true"><use href="#ctl-i-star"/></svg></button>
+          </div>
+          <p class="bk-label">States</p>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="accent" data-mark data-part="ui.button" data-variant="primary"><span data-part="ui.button.label">Hover (marked)</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="accent" data-part="ui.button" data-variant="primary" data-demo-state="active"><span data-part="ui.button.label">Active</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="accent" data-part="ui.button" data-variant="primary"><span data-part="ui.button.label">Focus (tab)</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-deck="accent" data-part="ui.button" data-variant="primary" disabled><span data-part="ui.button.label">Disabled</span></button>
+            <button type="button" class="ctl-btn ctl-btn--frame bk-frame" data-lift data-deck="accent" data-part="ui.button" data-variant="primary" aria-busy="true"><span data-part="ui.button.label">Saving</span></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.button.c" data-taste-title="Key-cap command">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Key-cap command</h3>
+          <p>Every button carries its shortcut in a key cap at its left edge, like a game prompt.</p></header>
+        <div class="spec-demo ctl-c">
+          <p class="ctl-approval"><span class="bk-tag" data-tone="warn" data-mark>New: needs approval</span><span class="bk-meta">Only Enter and Esc are confirmed shortcuts (g3-hud.html); the rest show the idea with placeholder caps.</span></p>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary"><span class="ctl-key" data-part="ui.button.key">Enter</span><span data-part="ui.button.label">Continue story</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="ghost"><span class="ctl-key" data-part="ui.button.key">Esc</span><span data-part="ui.button.label">Cancel</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="quiet" data-deck="lorebook"><span class="ctl-key" data-part="ui.button.key">&middot;</span><span data-part="ui.button.label">Split</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="danger"><span class="ctl-key" data-part="ui.button.key">&middot;</span><span data-part="ui.button.label">Delete story</span></button>
+          </div>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary"><span class="ctl-key" data-part="ui.button.key">&middot;</span><svg class="ctl-icon" data-part="ui.button.icon" aria-hidden="true"><use href="#ctl-i-plus"/></svg><span data-part="ui.button.label">New folder</span></button>
+            <button type="button" class="ctl-icon-btn" data-part="ui.icon-button" aria-label="Favorite"><svg class="ctl-icon" data-part="ui.icon-button.icon" aria-hidden="true"><use href="#ctl-i-star"/></svg></button>
+          </div>
+          <p class="bk-label">States</p>
+          <div class="ctl-row">
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary" data-demo-state="hover"><span class="ctl-key" data-part="ui.button.key">Enter</span><span data-part="ui.button.label">Hover</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary" data-demo-state="active"><span class="ctl-key" data-part="ui.button.key">Enter</span><span data-part="ui.button.label">Active</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary"><span class="ctl-key" data-part="ui.button.key">Enter</span><span data-part="ui.button.label">Focus (tab)</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary" disabled><span class="ctl-key" data-part="ui.button.key">Enter</span><span data-part="ui.button.label">Disabled</span></button>
+            <button type="button" class="ctl-btn ctl-btn--keycap" data-part="ui.button" data-variant="primary" aria-busy="true"><span class="ctl-key" data-part="ui.button.key">Enter</span><span data-part="ui.button.label">Saving</span></button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <svg class="ctl-defs" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+      <symbol id="ctl-i-plus" viewBox="0 0 16 16"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
+      <symbol id="ctl-i-star" viewBox="0 0 16 16"><path d="M8 1l2 5 5 .5-4 3.5 1 5-4-3-4 3 1-5-4-3.5L6 6z" fill="currentColor"/></symbol>
+      <symbol id="ctl-i-chevron" viewBox="0 0 16 16"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
+      <symbol id="ctl-i-check" viewBox="0 0 16 16"><path d="M3 8.5l3.5 3.5L13 4" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
+      <symbol id="ctl-i-x" viewBox="0 0 16 16"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="2"/></symbol>
+    </svg>
+    <script>
+      // Small, bounded enhancements so this static spec page proves real states rather than faked
+      // ones. Lives in this section so the taste page, which copies spec-item blocks verbatim,
+      // carries both the icon defs and this script along with the rest of the page's markup.
+      // One delegated listener on document, not per-element binding: this script tag sits in the
+      // FIRST section, so it runs while the parser is still on controls.button, before every later
+      // section's .ctl-swatches, .ctl-cells and [data-step] elements exist in the DOM. Delegation
+      // resolves the target at click time, so load order never matters here or on the taste page.
+      (function () {
+        document.addEventListener("click", function (e) {
+          var step = e.target.closest("[data-step]");
+          if (step) {
+            var row = step.closest(".ctl-stepper");
+            var input = row && row.querySelector("input[type=range]");
+            var out = row && row.querySelector("[data-live-value]");
+            if (input) {
+              var d = parseFloat(step.getAttribute("data-step"));
+              var next = Math.min(parseFloat(input.max), Math.max(parseFloat(input.min), parseFloat(input.value) + d));
+              input.value = next.toFixed(2);
+              if (out) out.textContent = next.toFixed(2);
+            }
+            return;
+          }
+          var swatch = e.target.closest(".ctl-swatch");
+          if (swatch && !swatch.disabled) {
+            var group = swatch.closest(".ctl-swatches, .ctl-palette");
+            if (group) {
+              group.querySelectorAll(".ctl-swatch").forEach(function (s) {
+                s.setAttribute("aria-pressed", "false");
+                var mark = s.querySelector(".ctl-swatch__check");
+                if (mark) mark.remove();
+              });
+              swatch.setAttribute("aria-pressed", "true");
+              var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+              svg.setAttribute("class", "ctl-swatch__check");
+              svg.setAttribute("aria-hidden", "true");
+              var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+              use.setAttribute("href", "#ctl-i-check");
+              svg.appendChild(use);
+              swatch.appendChild(svg);
+            }
+            return;
+          }
+          var cell = e.target.closest(".ctl-cell");
+          if (cell) {
+            var cellGroup = cell.closest(".ctl-cells");
+            if (cellGroup && !cellGroup.hasAttribute("aria-disabled")) {
+              cellGroup.querySelectorAll(".ctl-cell").forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+              cell.setAttribute("aria-pressed", "true");
+            }
+          }
+        });
+      })();
+    </script>
+  </section>
+
+  <!-- ================= controls.key-chip ================= -->
+  <section class="spec-item" data-taste-item="controls.key-chip">
+    <header>
+      <h2 class="bk-heading">Key chips</h2>
+      <span class="bk-tag">KeyHints, .hud-key</span>
+      <p class="bk-meta">Parts: ui.key-chip, ui.key-chip.key, ui.key-chip.label</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.key-chip.a" data-taste-title="Inset cap">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Inset cap</h3>
+          <p>G3's chip: the key cap sits in the tint, the verb reads beside it.</p></header>
+        <div class="spec-demo ctl-a">
+          <div class="ctl-row">
+            <span class="ctl-keychip" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span>
+            <span class="ctl-keychip" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">Ctrl</kbd><kbd class="ctl-key" data-part="ui.key-chip.key">S</kbd><span data-part="ui.key-chip.label">Save</span></span>
+            <span class="ctl-keychip" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">Click</kbd><span data-part="ui.key-chip.label">Open</span></span>
+            <span class="ctl-keychip" aria-disabled="true" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">F</kbd><span data-part="ui.key-chip.label">Favorite</span></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.key-chip.b" data-taste-title="Legend bar">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Legend bar</h3>
+          <p>A single row of keys and verbs along the bottom of a pane, divided by hairlines.</p></header>
+        <div class="spec-demo ctl-b">
+          <div class="ctl-legend" role="group" aria-label="Keyboard legend">
+            <span class="ctl-legenditem" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span>
+            <span class="bk-divider" aria-orientation="vertical"></span>
+            <span class="ctl-legenditem" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">Ctrl</kbd><kbd class="ctl-key" data-part="ui.key-chip.key">S</kbd><span data-part="ui.key-chip.label">Save</span></span>
+            <span class="bk-divider" aria-orientation="vertical"></span>
+            <span class="ctl-legenditem" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">Click</kbd><span data-part="ui.key-chip.label">Open</span></span>
+            <span class="bk-divider" aria-orientation="vertical"></span>
+            <span class="ctl-legenditem" aria-disabled="true" data-part="ui.key-chip"><kbd class="ctl-key" data-part="ui.key-chip.key">F</kbd><span data-part="ui.key-chip.label">Favorite</span></span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.field ================= -->
+  <section class="spec-item" data-taste-item="controls.field">
+    <header>
+      <h2 class="bk-heading">Fields</h2>
+      <span class="bk-tag">FieldForm, ExpandTextarea, .s-input</span>
+      <p class="bk-meta">Parts: ui.field, ui.field.label, ui.field.control, ui.field.hint, ui.field.error</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.field.a" data-taste-title="Hairline well">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Hairline well</h3>
+          <p>A mono label above a filled control with a control-line boundary.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <label class="ctl-field" data-part="ui.field">
+            <span class="bk-label" data-part="ui.field.label">Scene name</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="The long storm">
+          </label>
+          <label class="ctl-field" data-part="ui.field">
+            <span class="bk-label" data-part="ui.field.label">Author's note</span>
+            <textarea class="ctl-input" data-part="ui.field.control" rows="2">Keep the storm building through the next three replies.</textarea>
+          </label>
+          <label class="ctl-field" data-part="ui.field">
+            <span class="bk-label" data-part="ui.field.label">SillyTavern</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="">
+            <span class="bk-meta ctl-hint" data-part="ui.field.hint">The folder holding SillyTavern's public/ tree. Kit uses it too.</span>
+          </label>
+          <label class="ctl-field" data-part="ui.field">
+            <span class="bk-label" data-part="ui.field.label">System prompt</span>
+            <textarea class="ctl-input" data-part="ui.field.control" rows="2">Stay in character. Never break the fourth wall.</textarea>
+            <span class="bk-meta ctl-hint" data-part="ui.field.hint">~128 tokens</span>
+          </label>
+          <label class="ctl-field" data-part="ui.field" aria-invalid="true">
+            <span class="bk-label" data-part="ui.field.label">Lorebook key</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="">
+            <span class="bk-meta ctl-error" data-part="ui.field.error" role="alert">A key is required</span>
+          </label>
+          <label class="ctl-field" data-part="ui.field">
+            <span class="bk-label" data-part="ui.field.label">Marinara root</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="" disabled>
+            <span class="bk-meta ctl-hint" data-part="ui.field.hint">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</span>
+          </label>
+          <label class="ctl-field" data-part="ui.field">
+            <span class="bk-label" data-part="ui.field.label">Provider</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="OpenRouter" readonly>
+          </label>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.field.b" data-taste-title="Label tab">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Label tab</h3>
+          <p>The label is a tag fused to the field's top-left edge; a counter tag sits at top-right.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <div class="ctl-field ctl-field--tab" data-part="ui.field">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">Scene name</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="The long storm">
+          </div>
+          <div class="ctl-field ctl-field--tab" data-part="ui.field">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">Author's note</span>
+            <textarea class="ctl-input" data-part="ui.field.control" rows="2">Keep the storm building through the next three replies.</textarea>
+          </div>
+          <div class="ctl-field ctl-field--tab" data-part="ui.field">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">SillyTavern</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="">
+            <span class="bk-meta ctl-hint" data-part="ui.field.hint">The folder holding SillyTavern's public/ tree. Kit uses it too.</span>
+          </div>
+          <div class="ctl-field ctl-field--tab" data-part="ui.field">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">System prompt</span>
+            <span class="bk-tag ctl-countertab" data-part="ui.field.hint">~128 tok</span>
+            <textarea class="ctl-input" data-part="ui.field.control" rows="2">Stay in character. Never break the fourth wall.</textarea>
+          </div>
+          <div class="ctl-field ctl-field--tab" data-part="ui.field" aria-invalid="true">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">Lorebook key</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="">
+            <span class="bk-meta ctl-error" data-part="ui.field.error" role="alert">A key is required</span>
+          </div>
+          <div class="ctl-field ctl-field--tab" data-part="ui.field">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">Marinara root</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="" disabled>
+            <span class="bk-meta ctl-hint" data-part="ui.field.hint">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</span>
+          </div>
+          <div class="ctl-field ctl-field--tab" data-part="ui.field">
+            <span class="bk-tag ctl-labeltab" data-part="ui.field.label">Provider</span>
+            <input type="text" class="ctl-input" data-part="ui.field.control" value="OpenRouter" readonly>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.field.c" data-taste-title="Framed console">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Framed console</h3>
+          <p>The field is a frame that marks (brackets on) when focused; hint and counter sit in its foot.</p></header>
+        <div class="spec-demo ctl-c ctl-col">
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">Scene name</span>
+              <input type="text" class="ctl-input ctl-input--flush" data-part="ui.field.control" value="The long storm">
+            </div>
+          </div>
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">Author's note</span>
+              <textarea class="ctl-input ctl-input--flush" data-part="ui.field.control" rows="2">Keep the storm building through the next three replies.</textarea>
+            </div>
+          </div>
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">SillyTavern</span>
+              <input type="text" class="ctl-input ctl-input--flush" data-part="ui.field.control" value="">
+            </div>
+            <div class="bk-panel__foot">
+              <span class="bk-meta" data-part="ui.field.hint">The folder holding SillyTavern's public/ tree. Kit uses it too.</span>
+            </div>
+          </div>
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">System prompt</span>
+              <textarea class="ctl-input ctl-input--flush" data-part="ui.field.control" rows="2">Stay in character. Never break the fourth wall.</textarea>
+            </div>
+            <div class="bk-panel__foot">
+              <span class="bk-meta" data-part="ui.field.hint">~128 tokens</span>
+            </div>
+          </div>
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field" aria-invalid="true" data-tone="danger">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">Lorebook key</span>
+              <input type="text" class="ctl-input ctl-input--flush" data-part="ui.field.control" value="">
+            </div>
+            <div class="bk-panel__foot">
+              <span class="bk-meta ctl-error" data-part="ui.field.error" role="alert">A key is required</span>
+            </div>
+          </div>
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">Marinara root</span>
+              <input type="text" class="ctl-input ctl-input--flush" data-part="ui.field.control" value="" disabled>
+            </div>
+            <div class="bk-panel__foot">
+              <span class="bk-meta" data-part="ui.field.hint">Set by BUNRAKU_MARINARA_ROOT for this run, so the folder below is not being used.</span>
+            </div>
+          </div>
+          <div class="ctl-field ctl-field--console bk-frame" data-part="ui.field">
+            <div class="bk-panel__body">
+              <span class="bk-label" data-part="ui.field.label">Provider</span>
+              <input type="text" class="ctl-input ctl-input--flush" data-part="ui.field.control" value="OpenRouter" readonly>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.select ================= -->
+  <section class="spec-item" data-taste-item="controls.select">
+    <header>
+      <h2 class="bk-heading">Selects</h2>
+      <span class="bk-tag">MiniSelect, ModeSelect</span>
+      <p class="bk-meta">Parts: ui.select, ui.select.control, ui.select.chevron. Added: ui.select.group (a group header inside the open list, not yet in the registry).</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.select.a" data-taste-title="Drop list">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Drop list</h3>
+          <p>A field with a chevron that opens a framed list of chosen rows. Both lists below are
+            rendered open (the native disclosure element) so the state is visible without a
+            screenshot of a hover, and flow in the page instead of popping over it.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <button type="button" class="ctl-select__control" data-part="ui.select ui.select.control" aria-haspopup="listbox" aria-expanded="false"><span>Take 2</span><svg class="ctl-chevron" data-part="ui.select.chevron" aria-hidden="true"><use href="#ctl-i-chevron"/></svg></button>
+          <details class="ctl-select" data-part="ui.select" open>
+            <summary class="ctl-select__control" data-part="ui.select.control" aria-haspopup="listbox"><span>Take 2</span><svg class="ctl-chevron" data-part="ui.select.chevron" aria-hidden="true"><use href="#ctl-i-chevron"/></svg></summary>
+            <div class="ctl-select__list bk-frame" role="listbox" aria-label="Active take">
+              <div class="bk-item" role="option" aria-selected="false">Original</div>
+              <div class="bk-item" role="option" aria-selected="true">Take 2</div>
+              <div class="bk-item" role="option" aria-selected="false">Take 3</div>
+            </div>
+          </details>
+          <details class="ctl-select" data-part="ui.select" open>
+            <summary class="ctl-select__control" data-part="ui.select.control" aria-haspopup="listbox"><span>Workbench</span><svg class="ctl-chevron" data-part="ui.select.chevron" aria-hidden="true"><use href="#ctl-i-chevron"/></svg></summary>
+            <div class="ctl-select__list bk-frame" role="listbox" aria-label="Open with">
+              <div class="bk-label ctl-select__group" data-part="ui.select.group">Apps</div>
+              <div class="bk-item" role="option" aria-selected="true">Workbench</div>
+              <div class="bk-item" role="option" aria-selected="false">Press</div>
+              <div class="bk-label ctl-select__group" data-part="ui.select.group">Tools</div>
+              <div class="bk-item" role="option" aria-selected="false">CSS Workshop</div>
+            </div>
+          </details>
+          <button type="button" class="ctl-select__control" data-part="ui.select ui.select.control" disabled><span>Archived</span><svg class="ctl-chevron" data-part="ui.select.chevron" aria-hidden="true"><use href="#ctl-i-chevron"/></svg></button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.select.b" data-taste-title="Option cycler">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Option cycler</h3>
+          <p>Arrows step through options in place; a click on the value still opens the full list.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <div class="ctl-cycler" data-part="ui.select">
+            <button type="button" class="ctl-cycler__arrow" aria-label="Previous take">&lsaquo;</button>
+            <span class="ctl-cycler__value" data-part="ui.select.control">Take 2</span>
+            <button type="button" class="ctl-cycler__arrow" aria-label="Next take">&rsaquo;</button>
+          </div>
+          <details class="ctl-cycler--open" data-part="ui.select" open>
+            <summary class="ctl-cycler__row">
+              <span class="ctl-cycler__arrow" aria-hidden="true">&lsaquo;</span>
+              <span class="ctl-cycler__value" data-part="ui.select.control">Take 2</span>
+              <span class="ctl-cycler__arrow" aria-hidden="true">&rsaquo;</span>
+            </summary>
+            <div class="ctl-select__list bk-frame" role="listbox" aria-label="Active take">
+              <div class="bk-item" role="option" aria-selected="false">Original</div>
+              <div class="bk-item" role="option" aria-selected="true">Take 2</div>
+              <div class="bk-item" role="option" aria-selected="false">Take 3</div>
+            </div>
+          </details>
+          <details class="ctl-cycler--open" data-part="ui.select" open>
+            <summary class="ctl-cycler__row">
+              <span class="ctl-cycler__arrow" aria-hidden="true">&lsaquo;</span>
+              <span class="ctl-cycler__value" data-part="ui.select.control">Workbench</span>
+              <span class="ctl-cycler__arrow" aria-hidden="true">&rsaquo;</span>
+            </summary>
+            <div class="ctl-select__list bk-frame" role="listbox" aria-label="Open with">
+              <div class="bk-label ctl-select__group" data-part="ui.select.group">Apps</div>
+              <div class="bk-item" role="option" aria-selected="true">Workbench</div>
+              <div class="bk-item" role="option" aria-selected="false">Press</div>
+              <div class="bk-label ctl-select__group" data-part="ui.select.group">Tools</div>
+              <div class="bk-item" role="option" aria-selected="false">CSS Workshop</div>
+            </div>
+          </details>
+          <div class="ctl-cycler" data-part="ui.select" aria-disabled="true">
+            <button type="button" class="ctl-cycler__arrow" aria-label="Previous" disabled>&lsaquo;</button>
+            <span class="ctl-cycler__value" data-part="ui.select.control">Archived</span>
+            <button type="button" class="ctl-cycler__arrow" aria-label="Next" disabled>&rsaquo;</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.search ================= -->
+  <section class="spec-item" data-taste-item="controls.search">
+    <header>
+      <h2 class="bk-heading">Search</h2>
+      <span class="bk-tag">SearchBox, .shelf-find</span>
+      <p class="bk-meta">Parts: ui.search, ui.search.icon, ui.search.control, ui.search.clear</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.search.a" data-taste-title="Find well">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Find well</h3>
+          <p>A mono "Find" tag sits inside the left edge of the well.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <label class="ctl-search" data-part="ui.search">
+            <span class="ctl-search__tag" data-part="ui.search.icon">Find</span>
+            <input type="search" class="ctl-search__control" data-part="ui.search.control" placeholder="Name, key, or tag&hellip;" aria-label="Search">
+          </label>
+          <label class="ctl-search" data-part="ui.search">
+            <span class="ctl-search__tag" data-part="ui.search.icon">Find</span>
+            <input type="search" class="ctl-search__control" data-part="ui.search.control" value="harbor" aria-label="Search">
+            <button type="button" class="ctl-search__clear" data-part="ui.search.clear" aria-label="Clear search"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button>
+          </label>
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <label class="ctl-search" data-part="ui.search">
+              <span class="ctl-search__tag" data-part="ui.search.icon">Find</span>
+              <input type="search" class="ctl-search__control" data-part="ui.search.control" value="storm" aria-label="Search">
+              <button type="button" class="ctl-search__clear" data-part="ui.search.clear" aria-label="Clear search"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button>
+            </label>
+            <span class="bk-meta">12 of 48</span>
+          </div>
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <label class="ctl-search" data-part="ui.search" aria-invalid="true">
+              <span class="ctl-search__tag" data-part="ui.search.icon">Find</span>
+              <input type="search" class="ctl-search__control" data-part="ui.search.control" value="zzyzx" aria-label="Search">
+              <button type="button" class="ctl-search__clear" data-part="ui.search.clear" aria-label="Clear search"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button>
+            </label>
+            <span class="bk-meta" data-tone="danger" style="color:var(--bk-danger)">No match for &ldquo;zzyzx&rdquo;</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.search.b" data-taste-title="Command field">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Command field</h3>
+          <p>The search shows a slash key cap and a live result readout at its right.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <label class="ctl-search ctl-search--cmd" data-part="ui.search">
+            <kbd class="ctl-key" data-part="ui.search.icon">/</kbd>
+            <input type="search" class="ctl-search__control" data-part="ui.search.control" placeholder="Name, key, or tag&hellip;" aria-label="Search">
+          </label>
+          <label class="ctl-search ctl-search--cmd" data-part="ui.search">
+            <kbd class="ctl-key" data-part="ui.search.icon">/</kbd>
+            <input type="search" class="ctl-search__control" data-part="ui.search.control" value="harbor" aria-label="Search">
+            <button type="button" class="ctl-search__clear" data-part="ui.search.clear" aria-label="Clear search"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button>
+          </label>
+          <label class="ctl-search ctl-search--cmd" data-part="ui.search">
+            <kbd class="ctl-key" data-part="ui.search.icon">/</kbd>
+            <input type="search" class="ctl-search__control" data-part="ui.search.control" value="storm" aria-label="Search">
+            <span class="bk-num ctl-search__count">12 of 48</span>
+            <button type="button" class="ctl-search__clear" data-part="ui.search.clear" aria-label="Clear search"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button>
+          </label>
+          <label class="ctl-search ctl-search--cmd" data-part="ui.search" aria-invalid="true">
+            <kbd class="ctl-key" data-part="ui.search.icon">/</kbd>
+            <input type="search" class="ctl-search__control" data-part="ui.search.control" value="zzyzx" aria-label="Search">
+            <span class="bk-num ctl-search__count" data-tone="danger" style="color:var(--bk-danger)">0 of 48</span>
+            <button type="button" class="ctl-search__clear" data-part="ui.search.clear" aria-label="Clear search"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button>
+          </label>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.switch ================= -->
+  <section class="spec-item" data-taste-item="controls.switch">
+    <header>
+      <h2 class="bk-heading">Switches</h2>
+      <span class="bk-tag">ToggleSwitch, ConfirmSwitch, .s-switch</span>
+      <p class="bk-meta">Parts: ui.switch, ui.switch.track, ui.switch.knob, ui.switch.label</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.switch.a" data-taste-title="Square knob">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Square knob</h3>
+          <p>G3's track and knob, square and flat.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <label class="ctl-switch" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input">
+            <span class="ctl-switch__track" data-part="ui.switch.track"><span class="ctl-switch__knob" data-part="ui.switch.knob"></span></span>
+            <span data-part="ui.switch.label">Live typing sounds</span>
+          </label>
+          <label class="ctl-switch" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input" checked>
+            <span class="ctl-switch__track" data-part="ui.switch.track"><span class="ctl-switch__knob" data-part="ui.switch.knob"></span></span>
+            <span data-part="ui.switch.label">Live typing sounds</span>
+          </label>
+          <label class="ctl-switch" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input" checked>
+            <span class="ctl-switch__track" data-part="ui.switch.track"><span class="ctl-switch__knob" data-part="ui.switch.knob"></span></span>
+            <span data-part="ui.switch.label">Focus (tab)</span>
+          </label>
+          <label class="ctl-switch" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input" disabled>
+            <span class="ctl-switch__track" data-part="ui.switch.track"><span class="ctl-switch__knob" data-part="ui.switch.knob"></span></span>
+            <span data-part="ui.switch.label">Disabled</span>
+          </label>
+          <label class="ctl-switch" data-part="ui.switch" data-deck="lorebook">
+            <input type="checkbox" class="ctl-switch__input" checked>
+            <span class="ctl-switch__track" data-part="ui.switch.track"><span class="ctl-switch__knob" data-part="ui.switch.knob"></span></span>
+            <span data-part="ui.switch.label">On, tinted by deck</span>
+          </label>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.switch.b" data-taste-title="On/Off cells">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">On/Off cells</h3>
+          <p>Two fused cells reading OFF and ON; the live one fills, so the word itself carries the state.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <div class="ctl-row">
+            <span class="bk-meta">Live typing sounds</span>
+            <div class="ctl-cells" role="group" aria-label="Live typing sounds" data-part="ui.switch">
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="true">Off</button>
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="false">On</button>
+            </div>
+          </div>
+          <div class="ctl-row">
+            <span class="bk-meta">Reopen where you left off</span>
+            <div class="ctl-cells" role="group" aria-label="Reopen where you left off" data-part="ui.switch">
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="false">Off</button>
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="true">On</button>
+            </div>
+          </div>
+          <div class="ctl-row">
+            <span class="bk-meta">Focus (tab)</span>
+            <div class="ctl-cells" role="group" aria-label="Focus demo" data-part="ui.switch">
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="false">Off</button>
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="true">On</button>
+            </div>
+          </div>
+          <div class="ctl-row">
+            <span class="bk-meta" style="color:var(--bk-text-disabled)">Disabled</span>
+            <div class="ctl-cells" role="group" aria-label="Disabled demo" data-part="ui.switch" aria-disabled="true">
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="true" disabled>Off</button>
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="false" disabled>On</button>
+            </div>
+          </div>
+          <div class="ctl-row">
+            <span class="bk-meta">On, tinted by deck</span>
+            <div class="ctl-cells" role="group" aria-label="Tinted demo" data-part="ui.switch" data-deck="lorebook">
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="false">Off</button>
+              <button type="button" class="ctl-cell" data-part="ui.switch.track" aria-pressed="true">On</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.switch.c" data-taste-title="Lamp">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Lamp</h3>
+          <p>A square pip lamp plus the word On or Off beside the label.</p></header>
+        <div class="spec-demo ctl-c ctl-col">
+          <label class="ctl-lamp" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input">
+            <span class="ctl-lamp__pip" data-part="ui.switch.track" aria-hidden="true"></span>
+            <span data-part="ui.switch.label">Live typing sounds <b class="ctl-lamp__word">Off</b></span>
+          </label>
+          <label class="ctl-lamp" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input" checked>
+            <span class="ctl-lamp__pip" data-part="ui.switch.track" aria-hidden="true"></span>
+            <span data-part="ui.switch.label">Live typing sounds <b class="ctl-lamp__word">On</b></span>
+          </label>
+          <label class="ctl-lamp" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input" checked>
+            <span class="ctl-lamp__pip" data-part="ui.switch.track" aria-hidden="true"></span>
+            <span data-part="ui.switch.label">Focus (tab) <b class="ctl-lamp__word">On</b></span>
+          </label>
+          <label class="ctl-lamp" data-part="ui.switch">
+            <input type="checkbox" class="ctl-switch__input" disabled>
+            <span class="ctl-lamp__pip" data-part="ui.switch.track" aria-hidden="true"></span>
+            <span data-part="ui.switch.label">Disabled <b class="ctl-lamp__word">Off</b></span>
+          </label>
+          <label class="ctl-lamp" data-part="ui.switch" data-deck="lorebook">
+            <input type="checkbox" class="ctl-switch__input" checked>
+            <span class="ctl-lamp__pip" data-part="ui.switch.track" aria-hidden="true"></span>
+            <span data-part="ui.switch.label">On, tinted by deck <b class="ctl-lamp__word">On</b></span>
+          </label>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.check ================= -->
+  <section class="spec-item" data-taste-item="controls.check">
+    <header>
+      <h2 class="bk-heading">Checks</h2>
+      <span class="bk-tag">checkbox rows, OptionCards, ChoiceList</span>
+      <p class="bk-meta">Parts: ui.check, ui.check.box, ui.check.label</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.check.a" data-taste-title="Box and tick">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Box and tick</h3>
+          <p>A square box with a drawn tick; radios are square with a filled center; option cards for a
+            bigger choice.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <div class="ctl-col" style="gap:var(--bk-space-2)">
+            <label class="ctl-check" data-part="ui.check">
+              <input type="checkbox" class="ctl-check__input">
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Autosave</span>
+            </label>
+            <label class="ctl-check" data-part="ui.check">
+              <input type="checkbox" class="ctl-check__input" checked>
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Reopen where you left off</span>
+            </label>
+            <label class="ctl-check" data-part="ui.check" data-mixed="true">
+              <input type="checkbox" class="ctl-check__input">
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Select all (some selected)</span>
+            </label>
+            <label class="ctl-check" data-part="ui.check">
+              <input type="checkbox" class="ctl-check__input" disabled>
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Disabled</span>
+            </label>
+          </div>
+          <div class="ctl-row" role="radiogroup" aria-label="Editor layout">
+            <label class="ctl-check ctl-check--radio" data-part="ui.check">
+              <input type="radio" name="ctl-a-layout" class="ctl-check__input" checked>
+              <span class="ctl-check__box ctl-check__box--radio" data-part="ui.check.box"></span>
+              <span data-part="ui.check.label">Bento</span>
+            </label>
+            <label class="ctl-check ctl-check--radio" data-part="ui.check">
+              <input type="radio" name="ctl-a-layout" class="ctl-check__input">
+              <span class="ctl-check__box ctl-check__box--radio" data-part="ui.check.box"></span>
+              <span data-part="ui.check.label">Playbill</span>
+            </label>
+          </div>
+          <div class="ctl-optioncards" role="radiogroup" aria-label="How you fill it in">
+            <label class="ctl-optioncard bk-frame" data-lift aria-selected="true" data-part="ui.check">
+              <input type="radio" name="ctl-a-fill" class="ctl-check__input" checked>
+              <span class="bk-name">Grid</span>
+              <span class="bk-meta">Every field to edit directly</span>
+            </label>
+            <label class="ctl-optioncard bk-frame" data-lift data-part="ui.check">
+              <input type="radio" name="ctl-a-fill" class="ctl-check__input">
+              <span class="bk-name">Steps</span>
+              <span class="bk-meta">Walks you through like a quiz</span>
+            </label>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.check.b" data-taste-title="Slot choice">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Slot choice</h3>
+          <p>Options render as chosen rows with the theme's selection grammar and a mono index.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <div class="ctl-col" style="gap:var(--bk-space-2)">
+            <label class="bk-item ctl-slotcheck" data-part="ui.check">
+              <input type="checkbox" class="ctl-check__input">
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Autosave</span>
+            </label>
+            <label class="bk-item ctl-slotcheck" data-selected data-part="ui.check">
+              <input type="checkbox" class="ctl-check__input" checked>
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Reopen where you left off</span>
+            </label>
+            <label class="bk-item ctl-slotcheck" data-part="ui.check" data-mixed="true">
+              <input type="checkbox" class="ctl-check__input">
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Select all (some selected)</span>
+            </label>
+            <label class="bk-item ctl-slotcheck" aria-disabled="true" data-part="ui.check">
+              <input type="checkbox" class="ctl-check__input" disabled>
+              <span class="ctl-check__box" data-part="ui.check.box"><svg class="ctl-check__tick" aria-hidden="true"><use href="#ctl-i-check"/></svg></span>
+              <span data-part="ui.check.label">Disabled</span>
+            </label>
+          </div>
+          <div class="ctl-slotchoice bk-frame" role="radiogroup" aria-label="Editor layout" data-part="ui.check">
+            <label class="bk-item" data-selected data-part="ui.check.label">
+              <input type="radio" name="ctl-b-layout" class="ctl-check__input" checked>
+              <span class="bk-num ctl-slotchoice__idx">01</span>
+              <span>Bento</span>
+            </label>
+            <label class="bk-item" data-part="ui.check.label">
+              <input type="radio" name="ctl-b-layout" class="ctl-check__input">
+              <span class="bk-num ctl-slotchoice__idx">02</span>
+              <span>Playbill</span>
+            </label>
+          </div>
+          <div class="ctl-slotchoice bk-frame" role="radiogroup" aria-label="How you fill it in" data-part="ui.check">
+            <label class="bk-item" data-selected data-part="ui.check.label">
+              <input type="radio" name="ctl-b-fill" class="ctl-check__input" checked>
+              <span class="bk-num ctl-slotchoice__idx">01</span>
+              <span>Grid</span>
+            </label>
+            <label class="bk-item" data-part="ui.check.label">
+              <input type="radio" name="ctl-b-fill" class="ctl-check__input">
+              <span class="bk-num ctl-slotchoice__idx">02</span>
+              <span>Steps</span>
+            </label>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.segments ================= -->
+  <section class="spec-item" data-taste-item="controls.segments">
+    <header>
+      <h2 class="bk-heading">Segments and tabs</h2>
+      <span class="bk-tag">SegControl, .s-tabs, view switch, Workbench piece tabs</span>
+      <p class="bk-meta">Parts: ui.segments, ui.segments.item, ui.tabs, ui.tabs.tab, ui.tabs.count</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.segments.a" data-taste-title="Underline and plate">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Underline and plate</h3>
+          <p>Tabs underline in the tint; segments sit as plates.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <div class="ctl-segments" role="tablist" aria-label="View" data-part="ui.segments">
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="true">Cards</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false">Tiles</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false">Show</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false">List</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false" disabled>Shelf</button>
+          </div>
+          <p class="ctl-approval"><span class="bk-tag" data-tone="warn" data-mark>New: needs approval</span><span class="bk-meta">Per-tab counts here are illustrative; no confirmed source gives the Workbench's open pieces a count.</span></p>
+          <div class="ctl-tabs" role="tablist" aria-label="Workbench pieces" data-part="ui.tabs">
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="true">Nuit <span class="bk-num ctl-tabs__count" data-part="ui.tabs.count">3</span></button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Harbor Town <span class="bk-num ctl-tabs__count" data-part="ui.tabs.count">42</span></button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false" disabled>Regex set</button>
+          </div>
+          <div class="ctl-tabs ctl-tabs--overflow" role="tablist" aria-label="Workbench pieces, overflowing" data-part="ui.tabs">
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Velvet Quill</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="true">The long storm</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Harbor Town</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">The Lighthouse</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false" disabled>Main preset</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Regex set</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Nuit</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.segments.b" data-taste-title="Bracketed active">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Bracketed active</h3>
+          <p>The active tab or segment is a marked frame.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <div class="ctl-segments ctl-segments--frame" role="tablist" aria-label="View" data-part="ui.segments">
+            <button type="button" class="ctl-segments__item bk-frame" data-mark data-part="ui.segments.item" role="tab" aria-selected="true">Cards</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false">Tiles</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false">Show</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false">List</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false" disabled>Shelf</button>
+          </div>
+          <p class="ctl-approval"><span class="bk-tag" data-tone="warn" data-mark>New: needs approval</span><span class="bk-meta">Per-tab counts here are illustrative; no confirmed source gives the Workbench's open pieces a count.</span></p>
+          <div class="ctl-tabs ctl-tabs--frame" role="tablist" aria-label="Workbench pieces" data-part="ui.tabs">
+            <button type="button" class="ctl-tabs__tab bk-frame" data-mark data-part="ui.tabs.tab" role="tab" aria-selected="true">Nuit <span class="bk-num ctl-tabs__count" data-part="ui.tabs.count">3</span></button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Harbor Town <span class="bk-num ctl-tabs__count" data-part="ui.tabs.count">42</span></button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false" disabled>Regex set</button>
+          </div>
+          <div class="ctl-tabs ctl-tabs--frame ctl-tabs--overflow" role="tablist" aria-label="Workbench pieces, overflowing" data-part="ui.tabs">
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Velvet Quill</button>
+            <button type="button" class="ctl-tabs__tab bk-frame" data-mark data-part="ui.tabs.tab" role="tab" aria-selected="true">The long storm</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Harbor Town</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">The Lighthouse</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false" disabled>Main preset</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Regex set</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false">Nuit</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.segments.c" data-taste-title="Numbered">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Numbered</h3>
+          <p>Each tab shows its number key as a cap; the active one fills.</p></header>
+        <div class="spec-demo ctl-c ctl-col">
+          <p class="ctl-approval"><span class="bk-tag" data-tone="warn" data-mark>New: needs approval</span><span class="bk-meta">Number-key shortcuts for these rows are not a confirmed feature, and the per-tab counts shown are illustrative.</span></p>
+          <div class="ctl-segments ctl-segments--num" role="tablist" aria-label="View" data-part="ui.segments">
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="true"><kbd class="ctl-key">1</kbd>Cards</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false"><kbd class="ctl-key">2</kbd>Tiles</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false"><kbd class="ctl-key">3</kbd>Show</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false"><kbd class="ctl-key">4</kbd>List</button>
+            <button type="button" class="ctl-segments__item" data-part="ui.segments.item" role="tab" aria-selected="false" disabled><kbd class="ctl-key">5</kbd>Shelf</button>
+          </div>
+          <div class="ctl-tabs ctl-tabs--num" role="tablist" aria-label="Workbench pieces" data-part="ui.tabs">
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="true"><kbd class="ctl-key">1</kbd>Nuit <span class="bk-num ctl-tabs__count" data-part="ui.tabs.count">3</span></button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false"><kbd class="ctl-key">2</kbd>Harbor Town <span class="bk-num ctl-tabs__count" data-part="ui.tabs.count">42</span></button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false" disabled><kbd class="ctl-key">3</kbd>Regex set</button>
+          </div>
+          <div class="ctl-tabs ctl-tabs--num ctl-tabs--overflow" role="tablist" aria-label="Workbench pieces, overflowing" data-part="ui.tabs">
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false"><kbd class="ctl-key">1</kbd>Velvet Quill</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="true"><kbd class="ctl-key">2</kbd>The long storm</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false"><kbd class="ctl-key">3</kbd>Harbor Town</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false"><kbd class="ctl-key">4</kbd>The Lighthouse</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false" disabled><kbd class="ctl-key">5</kbd>Main preset</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false"><kbd class="ctl-key">6</kbd>Regex set</button>
+            <button type="button" class="ctl-tabs__tab" data-part="ui.tabs.tab" role="tab" aria-selected="false"><kbd class="ctl-key">7</kbd>Nuit</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.slider ================= -->
+  <section class="spec-item" data-taste-item="controls.slider">
+    <header>
+      <h2 class="bk-heading">Sliders</h2>
+      <span class="bk-tag">Slider, the Library art dial, sampler values</span>
+      <p class="bk-meta">Parts: ui.slider, ui.slider.track, ui.slider.fill, ui.slider.thumb, ui.slider.value. Added: ui.slider.label (the mono label above the track, not yet in the registry).</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.slider.a" data-taste-title="Segmented track">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Segmented track</h3>
+          <p>The meter track with a square thumb and a mono value.</p></header>
+        <div class="spec-demo ctl-a ctl-col">
+          <div class="ctl-slider" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, at min</span>
+            <div class="ctl-slider__row">
+              <input type="range" class="ctl-slider__input" data-part="ui.slider.track ui.slider.fill ui.slider.thumb" min="0" max="100" value="0" aria-label="Art size">
+              <span class="bk-num ctl-slider__value" data-part="ui.slider.value">9rem</span>
+            </div>
+          </div>
+          <div class="ctl-slider" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, mid, focus with arrow keys</span>
+            <div class="ctl-slider__row">
+              <input type="range" class="ctl-slider__input" data-part="ui.slider.track ui.slider.fill ui.slider.thumb" min="0" max="100" value="50" aria-label="Art size">
+              <span class="bk-num ctl-slider__value" data-part="ui.slider.value">16rem</span>
+            </div>
+          </div>
+          <div class="ctl-slider" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, at max</span>
+            <div class="ctl-slider__row">
+              <input type="range" class="ctl-slider__input" data-part="ui.slider.track ui.slider.fill ui.slider.thumb" min="0" max="100" value="100" aria-label="Art size">
+              <span class="bk-num ctl-slider__value" data-part="ui.slider.value">24rem</span>
+            </div>
+          </div>
+          <div class="ctl-slider" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, disabled</span>
+            <div class="ctl-slider__row">
+              <input type="range" class="ctl-slider__input" data-part="ui.slider.track ui.slider.fill ui.slider.thumb" min="0" max="100" value="30" disabled aria-label="Art size">
+              <span class="bk-num ctl-slider__value" data-part="ui.slider.value">12rem</span>
+            </div>
+          </div>
+          <div class="ctl-slider" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Temperature, sampler value 0.00 to 2.00</span>
+            <div class="ctl-slider__row">
+              <input type="range" class="ctl-slider__input" data-part="ui.slider.track ui.slider.fill ui.slider.thumb" min="0" max="2" step="0.01" value="0.9" aria-label="Temperature">
+              <span class="bk-num ctl-slider__value" data-part="ui.slider.value">0.90</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.slider.b" data-taste-title="Stepper readout">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Stepper readout</h3>
+          <p>Minus, a big mono value, plus; dragging on the value scrubs it.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <span class="bk-label">Art size, at min</span>
+            <div class="ctl-stepper" data-part="ui.slider">
+              <button type="button" class="ctl-stepper__btn" aria-label="Decrease">&minus;</button>
+              <span class="bk-num ctl-stepper__value" data-part="ui.slider.value ui.slider.thumb">9rem</span>
+              <button type="button" class="ctl-stepper__btn" aria-label="Increase">+</button>
+              <input type="range" class="ctl-slider__input ctl-slider__input--linked" data-part="ui.slider.track ui.slider.fill" min="0" max="100" value="0" aria-label="Art size, at min">
+            </div>
+          </div>
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <span class="bk-label">Art size, mid, focus with arrow keys</span>
+            <div class="ctl-stepper" data-part="ui.slider">
+              <button type="button" class="ctl-stepper__btn" aria-label="Decrease">&minus;</button>
+              <span class="bk-num ctl-stepper__value" data-part="ui.slider.value ui.slider.thumb">16rem</span>
+              <button type="button" class="ctl-stepper__btn" aria-label="Increase">+</button>
+              <input type="range" class="ctl-slider__input ctl-slider__input--linked" data-part="ui.slider.track ui.slider.fill" min="0" max="100" value="50" aria-label="Art size, mid">
+            </div>
+          </div>
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <span class="bk-label">Art size, at max</span>
+            <div class="ctl-stepper" data-part="ui.slider">
+              <button type="button" class="ctl-stepper__btn" aria-label="Decrease">&minus;</button>
+              <span class="bk-num ctl-stepper__value" data-part="ui.slider.value ui.slider.thumb">24rem</span>
+              <button type="button" class="ctl-stepper__btn" aria-label="Increase">+</button>
+              <input type="range" class="ctl-slider__input ctl-slider__input--linked" data-part="ui.slider.track ui.slider.fill" min="0" max="100" value="100" aria-label="Art size, at max">
+            </div>
+          </div>
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <span class="bk-label">Art size, disabled</span>
+            <div class="ctl-stepper" data-part="ui.slider">
+              <button type="button" class="ctl-stepper__btn" disabled aria-label="Decrease">&minus;</button>
+              <span class="bk-num ctl-stepper__value" data-part="ui.slider.value ui.slider.thumb">12rem</span>
+              <button type="button" class="ctl-stepper__btn" disabled aria-label="Increase">+</button>
+              <input type="range" class="ctl-slider__input ctl-slider__input--linked" data-part="ui.slider.track ui.slider.fill" min="0" max="100" value="30" disabled aria-label="Art size, disabled">
+            </div>
+          </div>
+          <div class="ctl-col" style="gap:var(--bk-space-1)">
+            <span class="bk-label">Temperature, sampler value 0.00 to 2.00</span>
+            <div class="ctl-stepper" data-part="ui.slider">
+              <button type="button" class="ctl-stepper__btn" data-step="-0.1" aria-label="Decrease temperature">&minus;</button>
+              <span class="bk-num ctl-stepper__value" data-part="ui.slider.value ui.slider.thumb" data-live-value="ctl-temp">0.90</span>
+              <button type="button" class="ctl-stepper__btn" data-step="0.1" aria-label="Increase temperature">+</button>
+              <input type="range" class="ctl-slider__input ctl-slider__input--linked" id="ctl-temp" data-part="ui.slider.track ui.slider.fill" min="0" max="2" step="0.01" value="0.9" aria-label="Temperature">
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.slider.c" data-taste-title="Notched rail">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Notched rail</h3>
+          <p>Tick marks at every step, labels at the ends, a value tag riding the thumb.</p></header>
+        <div class="spec-demo ctl-c ctl-col">
+          <div class="ctl-notchrail" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, at min</span>
+            <div class="ctl-notchrail__row">
+              <span class="bk-meta">9rem</span>
+              <div class="ctl-notchrail__track" data-part="ui.slider.track">
+                <span class="ctl-notchrail__ticks" aria-hidden="true"></span>
+                <input type="range" class="ctl-slider__input ctl-notchrail__input" min="0" max="100" value="0" aria-label="Art size, at min">
+                <span class="bk-tag ctl-notchrail__value" data-part="ui.slider.value" style="--pos:0%">9rem</span>
+              </div>
+              <span class="bk-meta">24rem</span>
+            </div>
+          </div>
+          <div class="ctl-notchrail" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, mid, focus with arrow keys</span>
+            <div class="ctl-notchrail__row">
+              <span class="bk-meta">9rem</span>
+              <div class="ctl-notchrail__track" data-part="ui.slider.track">
+                <span class="ctl-notchrail__ticks" aria-hidden="true"></span>
+                <input type="range" class="ctl-slider__input ctl-notchrail__input" min="0" max="100" value="50" aria-label="Art size, mid">
+                <span class="bk-tag ctl-notchrail__value" data-part="ui.slider.value" style="--pos:50%">16rem</span>
+              </div>
+              <span class="bk-meta">24rem</span>
+            </div>
+          </div>
+          <div class="ctl-notchrail" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Art size, at max</span>
+            <div class="ctl-notchrail__row">
+              <span class="bk-meta">9rem</span>
+              <div class="ctl-notchrail__track" data-part="ui.slider.track">
+                <span class="ctl-notchrail__ticks" aria-hidden="true"></span>
+                <input type="range" class="ctl-slider__input ctl-notchrail__input" min="0" max="100" value="100" aria-label="Art size, at max">
+                <span class="bk-tag ctl-notchrail__value" data-part="ui.slider.value" style="--pos:100%">24rem</span>
+              </div>
+              <span class="bk-meta">24rem</span>
+            </div>
+          </div>
+          <div class="ctl-notchrail" data-part="ui.slider">
+            <span class="bk-label" data-part="ui.slider.label">Temperature, disabled</span>
+            <div class="ctl-notchrail__row">
+              <span class="bk-meta">0.00</span>
+              <div class="ctl-notchrail__track" data-part="ui.slider.track">
+                <span class="ctl-notchrail__ticks" aria-hidden="true"></span>
+                <input type="range" class="ctl-slider__input ctl-notchrail__input" min="0" max="2" step="0.1" value="0.3" disabled aria-label="Temperature, disabled">
+                <span class="bk-tag ctl-notchrail__value" data-part="ui.slider.value" style="--pos:15%;color:var(--bk-text-disabled)">0.30</span>
+              </div>
+              <span class="bk-meta">2.00</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.chip ================= -->
+  <section class="spec-item" data-taste-item="controls.chip">
+    <header>
+      <h2 class="bk-heading">Chips and tags</h2>
+      <span class="bk-tag">KeywordChips, MonoTag, .s-chip</span>
+      <p class="bk-meta">Parts: ui.chip, ui.chip.label, ui.chip.remove, ui.tag, ui.tag.value</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.chip.a" data-taste-title="Hairline mono">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Hairline mono</h3>
+          <p>The boxed mono tag, with a remove button for keywords.</p></header>
+        <div class="spec-demo ctl-a ctl-row">
+          <span class="bk-tag" data-part="ui.chip" data-deck="lorebook"><span data-part="ui.chip.label">bittersweet</span><button type="button" class="ctl-chip__remove" data-part="ui.chip.remove" aria-label="Remove bittersweet"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button></span>
+          <span class="bk-tag" data-part="ui.tag"><span data-part="ui.tag.value">RoleCall &middot; V3</span></span>
+          <span class="bk-tag" data-part="ui.tag"><span data-part="ui.tag.value">213 entries &middot; <b>Lv 9</b></span></span>
+          <span class="bk-tag" data-mark data-deck="character" data-part="ui.chip"><span data-part="ui.chip.label">selected</span></span>
+          <span class="bk-tag" aria-disabled="true" style="color:var(--bk-text-disabled)" data-part="ui.chip"><span data-part="ui.chip.label">archived</span><button type="button" class="ctl-chip__remove" disabled data-part="ui.chip.remove" aria-label="Remove archived"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button></span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.chip.b" data-taste-title="Wash chip">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Wash chip</h3>
+          <p>A tint fill strong enough to carry dark ink directly, with a square remove button.</p></header>
+        <div class="spec-demo ctl-b ctl-row">
+          <span class="ctl-washchip" data-part="ui.chip" data-deck="lorebook"><span data-part="ui.chip.label">bittersweet</span><button type="button" class="ctl-washchip__remove" data-part="ui.chip.remove" aria-label="Remove bittersweet"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button></span>
+          <span class="ctl-washchip" data-part="ui.tag" data-deck="pack"><span data-part="ui.tag.value">RoleCall &middot; V3</span></span>
+          <span class="ctl-washchip" data-part="ui.tag" data-deck="regex"><span data-part="ui.tag.value">213 entries &middot; Lv 9</span></span>
+          <span class="ctl-washchip ctl-washchip--selected" data-deck="character" data-part="ui.chip"><svg class="ctl-washchip__check" aria-hidden="true"><use href="#ctl-i-check"/></svg><span data-part="ui.chip.label">selected</span></span>
+          <span class="ctl-washchip" aria-disabled="true" style="opacity:.5" data-part="ui.chip"><span data-part="ui.chip.label">archived</span><button type="button" class="ctl-washchip__remove" disabled data-part="ui.chip.remove" aria-label="Remove archived"><svg class="ctl-icon-sm" aria-hidden="true"><use href="#ctl-i-x"/></svg></button></span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.menu ================= -->
+  <section class="spec-item" data-taste-item="controls.menu">
+    <header>
+      <h2 class="bk-heading">Menus</h2>
+      <span class="bk-tag">Menu (right-click), DeleteMenu, TakesMenu</span>
+      <p class="bk-meta">Parts: ui.menu, ui.menu.item, ui.menu.section, ui.menu.divider, ui.menu.key</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.menu.a" data-taste-title="Window list">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Window list</h3>
+          <p>A framed list of chosen rows: the shell's three right-click targets (shell-app.html).</p></header>
+        <div class="spec-demo ctl-a">
+          <div class="ctl-row" style="align-items:flex-start">
+            <div class="ctl-menu bk-frame" role="menu" aria-label="Dock tile: Scenes" data-part="ui.menu">
+              <div class="bk-label ctl-menu__head" data-part="ui.menu.section">Scenes</div>
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item">Open Scenes</button>
+            </div>
+            <div class="ctl-menu bk-frame" role="menu" aria-label="Open piece: Velvet Quill" data-part="ui.menu">
+              <div class="bk-label ctl-menu__head" data-part="ui.menu.section">Velvet Quill</div>
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item">Show on the Workbench</button>
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item">Open beside</button>
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item">Stage for the Press</button>
+              <hr class="bk-divider" data-part="ui.menu.divider">
+              <button type="button" class="bk-item ctl-menu__item--danger" role="menuitem" data-part="ui.menu.item">Remove from the Workbench</button>
+            </div>
+            <div class="ctl-menu bk-frame" role="menu" aria-label="Empty canvas" data-part="ui.menu">
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item">Go home</button>
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item">Import files</button>
+              <button type="button" class="bk-item" role="menuitem" data-part="ui.menu.item" data-demo-state="focus">Switch theme</button>
+              <button type="button" class="bk-item" role="menuitem" aria-disabled="true" disabled data-part="ui.menu.item">Replay tutorials</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.menu.b" data-taste-title="Command list">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Command list</h3>
+          <p>Rows carry a right-hand key column; mono section labels sit between groups.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <p class="ctl-approval"><span class="bk-tag" data-tone="warn" data-mark>New: needs approval</span><span class="bk-meta">The shell's right-click items have no confirmed per-row shortcut today; the key column shows the idea with blank caps.</span></p>
+          <div class="ctl-row" style="align-items:flex-start">
+            <div class="ctl-cmdmenu bk-frame" role="menu" aria-label="Dock tile: Scenes" data-part="ui.menu">
+              <div class="ctl-cmdmenu__section" data-part="ui.menu.section">Scenes</div>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item"><span>Open Scenes</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+            </div>
+            <div class="ctl-cmdmenu bk-frame" role="menu" aria-label="Open piece: Velvet Quill" data-part="ui.menu">
+              <div class="ctl-cmdmenu__section" data-part="ui.menu.section">Velvet Quill</div>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item"><span>Show on the Workbench</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item"><span>Open beside</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item" data-demo-state="focus"><span>Stage for the Press</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+              <hr class="bk-divider" data-part="ui.menu.divider">
+              <button type="button" class="ctl-cmdmenu__item ctl-cmdmenu__item--danger" role="menuitem" data-part="ui.menu.item"><span>Remove from the Workbench</span><span class="ctl-key" data-part="ui.menu.key">Del</span></button>
+            </div>
+            <div class="ctl-cmdmenu bk-frame" role="menu" aria-label="Empty canvas" data-part="ui.menu">
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item"><span>Go home</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item"><span>Import files</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" data-part="ui.menu.item"><span>Switch theme</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+              <button type="button" class="ctl-cmdmenu__item" role="menuitem" aria-disabled="true" disabled data-part="ui.menu.item"><span>Replay tutorials</span><span class="ctl-key" data-part="ui.menu.key">&middot;</span></button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.tooltip ================= -->
+  <section class="spec-item" data-taste-item="controls.tooltip">
+    <header>
+      <h2 class="bk-heading">Tooltips</h2>
+      <span class="bk-tag">HelpDot, title hovers</span>
+      <p class="bk-meta">Parts: ui.tooltip, ui.tooltip.body</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.tooltip.a" data-taste-title="Ink plate">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Ink plate</h3>
+          <p>A small ink plate opens on hover and focus. Hover or tab to the dots to see it.</p></header>
+        <div class="spec-demo ctl-a ctl-row">
+          <span class="ctl-tooltip" data-part="ui.tooltip">
+            <button type="button" class="ctl-helpdot" aria-describedby="ctl-tip-short">?</button>
+            <span class="ctl-tooltip__body" role="tooltip" id="ctl-tip-short" data-part="ui.tooltip.body">Injection order: when prompts share a position, the lower number goes first.</span>
+          </span>
+          <span class="ctl-tooltip" data-part="ui.tooltip">
+            <button type="button" class="ctl-helpdot" aria-describedby="ctl-tip-long">?</button>
+            <span class="ctl-tooltip__body" role="tooltip" id="ctl-tip-long" data-part="ui.tooltip.body">Save half a second after you stop typing. <kbd class="ctl-key">Ctrl</kbd><kbd class="ctl-key">S</kbd> still works, and still saves at once.</span>
+          </span>
+          <span class="ctl-tooltip ctl-tooltip--open" data-part="ui.tooltip">
+            <button type="button" class="ctl-helpdot" aria-describedby="ctl-tip-demo">?</button>
+            <span class="ctl-tooltip__body" role="tooltip" id="ctl-tip-demo" data-part="ui.tooltip.body">Open (demo): rendered in flow rather than popped over, so it is not clipped by this page's scrolling demo box.</span>
+          </span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.tooltip.b" data-taste-title="Help line">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Help line</h3>
+          <p>The hint opens as a full-width line under the control, overlaying its own reserved row.</p></header>
+        <div class="spec-demo ctl-b ctl-col">
+          <span class="ctl-helpline" data-part="ui.tooltip">
+            <button type="button" class="ctl-helpdot" aria-describedby="ctl-tip-row-1">?</button>
+            <span class="bk-meta">Injection order</span>
+            <span class="ctl-helpline__body" role="tooltip" id="ctl-tip-row-1" data-part="ui.tooltip.body">Injection order: when prompts share a position, the lower number goes first.</span>
+          </span>
+          <span class="ctl-helpline" data-part="ui.tooltip">
+            <button type="button" class="ctl-helpdot" aria-describedby="ctl-tip-row-2">?</button>
+            <span class="bk-meta">Autosave</span>
+            <span class="ctl-helpline__body" role="tooltip" id="ctl-tip-row-2" data-part="ui.tooltip.body">Save half a second after you stop typing. <kbd class="ctl-key">Ctrl</kbd><kbd class="ctl-key">S</kbd> still works, and still saves at once.</span>
+          </span>
+          <span class="ctl-helpline ctl-helpline--open" data-part="ui.tooltip">
+            <button type="button" class="ctl-helpdot" aria-describedby="ctl-tip-row-3">?</button>
+            <span class="bk-meta">Open (demo)</span>
+            <span class="ctl-helpline__body" role="tooltip" id="ctl-tip-row-3" data-part="ui.tooltip.body">Open (demo): flows in its reserved row for the screenshot.</span>
+          </span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ================= controls.swatches ================= -->
+  <section class="spec-item" data-taste-item="controls.swatches">
+    <header>
+      <h2 class="bk-heading">Swatches</h2>
+      <span class="bk-tag">SwatchRow, ColorPicker entry</span>
+      <p class="bk-meta">Parts: ui.swatches, ui.swatches.swatch</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="controls.swatches.a" data-taste-title="Squares">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Squares</h3>
+          <p>Square swatches; the chosen one carries a check mark, never color alone. Each swatch sets
+            the tint trio through <code>data-deck</code>, never a deck token directly.</p></header>
+        <div class="spec-demo ctl-a">
+          <div class="ctl-swatches" role="radiogroup" aria-label="Accent color" data-part="ui.swatches">
+            <button type="button" class="ctl-swatch" data-deck="character" data-part="ui.swatches.swatch" aria-label="Character" aria-pressed="false"></button>
+            <button type="button" class="ctl-swatch" data-deck="lorebook" data-part="ui.swatches.swatch" aria-label="Lorebook" aria-pressed="false"></button>
+            <button type="button" class="ctl-swatch" data-deck="persona" data-part="ui.swatches.swatch" aria-label="Persona" aria-pressed="false"></button>
+            <button type="button" class="ctl-swatch" data-deck="pack" data-part="ui.swatches.swatch" aria-label="Pack" aria-pressed="true"><svg class="ctl-swatch__check" aria-hidden="true"><use href="#ctl-i-check"/></svg></button>
+            <button type="button" class="ctl-swatch" data-deck="preset" data-part="ui.swatches.swatch" aria-label="Preset" aria-pressed="false"></button>
+            <button type="button" class="ctl-swatch" data-deck="regex" data-part="ui.swatches.swatch" aria-label="Regex" aria-pressed="false"></button>
+            <button type="button" class="ctl-swatch ctl-swatch--custom" data-part="ui.swatches.swatch" aria-label="Custom color">+</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="controls.swatches.b" data-taste-title="Palette slots">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Palette slots</h3>
+          <p>Numbered slots; the selected one shows its hex value in mono underneath. The six house
+            pastels are byte-identical in every theme including paper, so the value printed is true
+            everywhere.</p></header>
+        <div class="spec-demo ctl-b">
+          <div class="ctl-palette" role="radiogroup" aria-label="Accent color" data-part="ui.swatches">
+            <div class="ctl-palette__slot">
+              <button type="button" class="ctl-swatch" data-deck="character" data-part="ui.swatches.swatch" aria-label="Character" aria-pressed="false"></button>
+              <span class="bk-num ctl-palette__index">01</span>
+            </div>
+            <div class="ctl-palette__slot">
+              <button type="button" class="ctl-swatch" data-deck="lorebook" data-part="ui.swatches.swatch" aria-label="Lorebook" aria-pressed="false"></button>
+              <span class="bk-num ctl-palette__index">02</span>
+            </div>
+            <div class="ctl-palette__slot">
+              <button type="button" class="ctl-swatch" data-deck="persona" data-part="ui.swatches.swatch" aria-label="Persona" aria-pressed="false"></button>
+              <span class="bk-num ctl-palette__index">03</span>
+            </div>
+            <div class="ctl-palette__slot ctl-palette__slot--selected">
+              <button type="button" class="ctl-swatch" data-deck="pack" data-part="ui.swatches.swatch" aria-label="Pack" aria-pressed="true"><svg class="ctl-swatch__check" aria-hidden="true"><use href="#ctl-i-check"/></svg></button>
+              <span class="bk-num ctl-palette__index">04</span>
+              <span class="bk-num ctl-palette__readout">#FFB3C7</span>
+            </div>
+            <div class="ctl-palette__slot">
+              <button type="button" class="ctl-swatch" data-deck="preset" data-part="ui.swatches.swatch" aria-label="Preset" aria-pressed="false"></button>
+              <span class="bk-num ctl-palette__index">05</span>
+            </div>
+            <div class="ctl-palette__slot">
+              <button type="button" class="ctl-swatch" data-deck="regex" data-part="ui.swatches.swatch" aria-label="Regex" aria-pressed="false"></button>
+              <span class="bk-num ctl-palette__index">06</span>
+            </div>
+            <div class="ctl-palette__slot">
+              <button type="button" class="ctl-swatch ctl-swatch--custom" data-part="ui.swatches.swatch" aria-label="Custom color"></button>
+              <span class="bk-num ctl-palette__index">07</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

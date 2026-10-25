@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security notices wireframe</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">05 Notices and hard moments</div>
+      <p class="wf-lede">The rare states: a weak lock, a cleanup that could not finish, forgetting a computer, and the moves Bunraku refuses because they would lock the person out. Notices sit at the top of Settings, Security; a small dot on the Settings tile tells the person one is waiting. Nothing pops up over their work.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid">
+    <div>
+      <div class="wf-state">Weak lock: this computer has only a key file</div>
+      <div class="notice">
+        <div class="tx">
+          <div class="notice-title">This computer's lock is weak</div>
+          <p class="notice-body">No system keychain was available, so the key sits in a file beside your library. Someone who copies both can open it. A stronger lock is available now.</p>
+        </div>
+        <div class="actions">
+          <button class="stamp stamp-btn primary">Move to the stronger lock</button>
+          <button class="btn-ghost">Set a password instead</button>
+        </div>
+      </div>
+      <p class="wf-comp">notice = DamageNotice / WorkshopNotice grammar (amber plate, spine)</p>
+    </div>
+
+    <div>
+      <div class="wf-state">Cleanup still owed</div>
+      <div class="notice">
+        <div class="tx">
+          <div class="notice-title">The old key has not been fully erased yet</div>
+          <p class="notice-body">After your last change, Bunraku could not finish rebuilding the library file, so an old copy of the key may still be on disk. Reason: the nightly backup was reading the file. Bunraku is trying again in the background.</p>
+        </div>
+        <div class="actions">
+          <button class="stamp stamp-btn">Try again now</button>
+        </div>
+      </div>
+      <p class="wf-comp">the reason text is the one the keyring records (it names the reader that blocked it)</p>
+    </div>
+
+    <div>
+      <div class="wf-state">Forget a computer: confirm</div>
+      <div class="scrim">
+        <div class="dialog">
+          <div class="card-title">Forget studio-laptop?</div>
+          <p class="card-body">It will no longer open the library by itself. To open it there again, you will need your recovery words.</p>
+          <div class="actions">
+            <button class="stamp stamp-btn primary">Forget it</button>
+            <button class="btn-ghost">Keep it</button>
+          </div>
+        </div>
+      </div>
+      <p class="wf-comp">InkDialog</p>
+    </div>
+
+    <div>
+      <div class="wf-state">Refused: it is the last way in</div>
+      <div class="scrim">
+        <div class="dialog">
+          <div class="card-title">This is the only way into your library</div>
+          <p class="card-body">You have no password and no recovery words, so forgetting this computer would lock you out for good. Make recovery words first, then you can forget it.</p>
+          <div class="actions">
+            <button class="stamp stamp-btn primary">Make recovery words</button>
+            <button class="btn-ghost">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Changed elsewhere: another window got there first</div>
+      <div class="notice danger">
+        <div class="tx">
+          <div class="notice-title">Nothing was changed</div>
+          <p class="notice-body">A password was set in another Bunraku window a moment ago, so this computer was not remembered. Your library is safe. Try again if you still want to.</p>
+        </div>
+      </div>
+      <p class="wf-comp">shown for the keyring's "changed meanwhile" result</p>
+    </div>
+
+    <div>
+      <div class="wf-state">Out of disk space: refused before anything changes</div>
+      <div class="notice danger">
+        <div class="tx">
+          <div class="notice-title">Not enough free space to change your key safely</div>
+          <p class="notice-body">Changing it rebuilds the library file, which needs about 140 MB free. Free some space and try again. Nothing was changed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Tone:</b> every hard moment says what happened, that the library is safe (when it is), and the one thing to do next. No codes, no stack traces; the technical reason goes to the health check and the log.</p>
+</div>
+</body>
+</html>

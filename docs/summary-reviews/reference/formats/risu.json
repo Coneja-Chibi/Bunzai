@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/risu",
+  "sourcePath": "docs/reference/formats/risu.md",
+  "sourceHash": "sha256:f0ce79c5c74ae60e2d274250030d4cd1c18f6be7d39df9a05dfd7c50ec59fc8f",
+  "semanticSummaryHash": "sha256:73324ecfec18c4d330997e8e60093250ebb6c1b9bed4aa86092e8f0b99c232ea",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Mixed-unit sample line now describes the synthetic fixture (matches samples/risu/SOURCES.md); samples path matches; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:25:45.452Z"
+}

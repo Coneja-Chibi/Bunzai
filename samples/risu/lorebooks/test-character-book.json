@@ -1,0 +1,68 @@
+{
+  "scan_depth": 2,
+  "token_budget": 2000,
+  "recursive_scanning": false,
+  "extensions": {
+    "risu_fullWordMatching": false
+  },
+  "entries": [
+    {
+      "keys": [
+        ""
+      ],
+      "content": "##### the workshop\n- a made-up place used in synthetic tests",
+      "extensions": {
+        "risu_case_sensitive": false,
+        "risu_loreCache": null
+      },
+      "enabled": true,
+      "insertion_order": 100,
+      "constant": true,
+      "selective": false,
+      "name": "workshop",
+      "comment": "workshop",
+      "case_sensitive": false,
+      "use_regex": false
+    },
+    {
+      "keys": [
+        "lamp",
+        "lantern"
+      ],
+      "content": "##### the lamp\n- a brass lamp on the desk",
+      "extensions": {
+        "risu_case_sensitive": false,
+        "risu_loreCache": null
+      },
+      "enabled": true,
+      "insertion_order": 90,
+      "constant": false,
+      "selective": false,
+      "name": "lamp",
+      "comment": "lamp",
+      "case_sensitive": false,
+      "use_regex": false
+    },
+    {
+      "keys": [
+        "^key\\d+$"
+      ],
+      "secondary_keys": [
+        "box"
+      ],
+      "content": "##### the box\n- opens with any numbered key",
+      "extensions": {
+        "risu_case_sensitive": true,
+        "risu_loreCache": null
+      },
+      "enabled": true,
+      "insertion_order": 80,
+      "constant": false,
+      "selective": true,
+      "name": "box",
+      "comment": "box",
+      "case_sensitive": true,
+      "use_regex": true
+    }
+  ]
+}

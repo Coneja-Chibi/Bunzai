@@ -1,0 +1,6 @@
+{
+    "name": "DeepSeek",
+    "prefix": "<think>",
+    "suffix": "</think>",
+    "separator": ""
+}

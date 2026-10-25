@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stage door wireframe</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../../rc-bridge.css">
+<script src="../../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">01 The stage door (in-between)</div>
+      <p class="wf-lede">The lock screen, dressed like RoleCall's encryption flow: an act label, a Cinzel marquee, a stage direction, and the words as cues. Only seen when a password is set, or on a computer the library does not know yet.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">A password is set</div>
+      <div class="lockstage">
+        <div class="dossier">
+          <div class="dossier-head">
+            <div class="act">The stage door</div>
+            <div class="marquee">Welcome <em>back</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <p class="direction"><span class="p">(</span>The house is locked. Speak the password and the lights come up.<span class="p">)</span></p>
+          <div class="field">
+            <label for="pw">Password</label>
+            <input id="pw" class="input" type="password" value="moonlit harbor">
+          </div>
+          <div class="cta-row">
+            <button class="stamp stamp-btn primary cta">Enter stage right &rarr;</button>
+            <button class="btn-ghost">I forgot it: use my lines</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Wrong password</div>
+      <div class="lockstage">
+        <div class="dossier">
+          <div class="dossier-head">
+            <div class="act">The stage door</div>
+            <div class="marquee">Welcome <em>back</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <div class="field">
+            <label for="pw2">Password</label>
+            <input id="pw2" class="input bad" type="password" value="moonlit harbour">
+          </div>
+          <div class="stage-note">
+            <div class="stage-note-label">Line flub</div>
+            <p>That password does not open this library. Check caps lock, or use your recovery words.</p>
+          </div>
+          <div class="cta-row">
+            <button class="stamp stamp-btn primary cta">Enter stage right &rarr;</button>
+            <button class="btn-ghost">I forgot it: use my lines</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">With the recovery words (new computer, or password forgotten)</div>
+      <div class="lockstage">
+        <div class="dossier">
+          <div class="dossier-head">
+            <div class="act">The stage door</div>
+            <div class="marquee">Recite your <em>lines</em></div>
+            <div class="flourish">&#10022;</div>
+          </div>
+          <p class="direction"><span class="p">(</span>The <b>PLAYER</b> gives all twelve words, in order. Paste them into the first cue, or type them one by one.<span class="p">)</span></p>
+          <div class="lines">
+            <div class="lines-head">&#9656; Your cues</div>
+            <div class="line-grid">
+              <div class="cue"><i>1.</i><input value="velvet"></div><div class="cue"><i>2.</i><input value="harbor"></div><div class="cue"><i>3.</i><input value="lantern"></div>
+              <div class="cue"><i>4.</i><input value="orchard"></div><div class="cue"><i>5.</i><input value=""></div><div class="cue"><i>6.</i><input value=""></div>
+              <div class="cue"><i>7.</i><input value=""></div><div class="cue"><i>8.</i><input value=""></div><div class="cue"><i>9.</i><input value=""></div>
+              <div class="cue"><i>10.</i><input value=""></div><div class="cue"><i>11.</i><input value=""></div><div class="cue"><i>12.</i><input value=""></div>
+            </div>
+            <div class="cues-count">4 / 12 cues delivered</div>
+          </div>
+          <div class="row">
+            <div class="tx">
+              <div class="label">Remember this computer</div>
+              <div class="hint">Next time it opens without asking. Only while no password is set.</div>
+            </div>
+            <div class="toggle on"><span class="track"><span class="knob"></span></span>Remember</div>
+          </div>
+          <button class="stamp stamp-btn primary cta">Take the stage &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>From RoleCall:</b> the act label, the marquee with a hard shadow (dropped on the paper theme, per the design system's paper rules), the flourish, the stage direction in parentheses, the cue grid with "n / 12 cues delivered", LINE FLUB, and the "Enter stage right" and "Take the stage" buttons. <b>From Bunraku:</b> the tokens, both themes, the stamp buttons, and the settings switch.</p>
+</div>
+</body>
+</html>

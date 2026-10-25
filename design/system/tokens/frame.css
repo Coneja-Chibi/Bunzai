@@ -1,0 +1,51 @@
+/*
+ * Bunraku design system: frames and borders, the HUD chrome language, contract v1 (G3 base).
+ * One name, one meaning: every structural difference between G3, C1 and C3 is one of these numbers.
+ * A value of 0 turns a feature off. The .bk-frame primitive in parts.css reads only these.
+ *
+ *   G3  flush 2px bright edge, 14x2 corner brackets on marked frames, a 4px tint crown, slab selection
+ *   C1  2px edge + 3px gap + 1px inner line, two 6px corner ticks, a tinted head bar, cursor selection
+ *   C3  3px edge + 7px hard offset shadow, brackets on every frame, slab selection
+ */
+:root {
+  --bk-radius: 0px;                 /* square, always; listed so nobody invents one */
+  --bk-dot-radius: 50%;             /* status dots are the one round thing (and the logo) */
+
+  /* the outer frame */
+  --bk-frame-w: 2px;
+  --bk-frame-color: var(--bk-line-strong);
+  --bk-frame-gap: 0px;              /* a surface-colored gap inside the outer line (double frame) */
+  --bk-frame-inner-w: 0px;          /* the inner line of a double frame */
+  --bk-frame-inner-color: var(--bk-line-track);
+  --bk-frame-shadow-x: 0px;         /* hard offset block shadow, never blurred */
+  --bk-frame-shadow-y: 0px;
+
+  /* the crown: a tint stripe across the top edge of cards, plaques and dialogs */
+  --bk-crown-w: 4px;
+
+  /* corner brackets, drawn in the item's tint. -len-alt sizes the top-right and bottom-left pair,
+     so a theme can draw two diagonal ticks (C1) instead of four brackets. */
+  --bk-bracket-len: 14px;
+  --bk-bracket-w: 2px;
+  --bk-bracket-len-alt: 14px;
+  --bk-bracket-rest: 0;             /* bracket opacity on a resting frame; marked frames show 1 */
+
+  /* a panel's head bar */
+  --bk-head-fill-mix: 0%;           /* how much tint floods the head bar */
+  --bk-head-rule-w: 0px;            /* the tint rule under the head bar */
+
+  /* dividers */
+  --bk-divider-w: 1px;
+  --bk-divider-color: var(--bk-line);
+
+  /* controls (buttons, fields, switches) have their own lighter frame */
+  --bk-control-frame-w: 1px;
+  --bk-control-shadow-x: 0px;
+  --bk-control-shadow-y: 0px;
+
+  /* selection: how a chosen item looks. Solid slab (G3, C3), wash + ring + cursor (C1). */
+  --bk-select-ring-w: 0px;
+  --bk-select-fill-mix: 100%;       /* 0% none, 12% a wash, 100% a solid tint slab (G3: slab) */
+  --bk-select-ink: var(--bk-text-on-tint); /* text color on a selected item (a slab needs dark ink) */
+  --bk-cursor-display: none;        /* the menu cursor triangle: none or inline-block */
+}

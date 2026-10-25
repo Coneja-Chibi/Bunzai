@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene lorebook wing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<link rel="stylesheet" href="rc-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
+ * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
+ * composer-shell-styles). Colors are Bunraku tokens:
+ *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
+ *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
+ *   RC user accent (violet)                       ->  --accent
+ *   the character's signature color               ->  --deck-character;  the user's persona  ->  --deck-persona
+ *   greeting gold #D4AF37                         ->  --stage-warn (gilt)
+ *   Cinzel -> --font-fancy;  Inter -> --font-big (as port.css does for the Library)
+ */
+.app { grid-template-columns: 4.2rem 1fr; }
+.dock .app-btn { cursor: default; }
+
+.scene { position: relative; height: 100vh; overflow: hidden; background: var(--stage-well); }
+/* BackgroundMedia + vignette: no scene art set, so the dark floor with RC's faint accent lift */
+.bgm { position: absolute; inset: 0; background:
+  radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%), var(--stage-well); }
+.bgm::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--stage-black) 65%, transparent)); }
+
+/* ---- the blurred layer: everything a wing pauses ---- */
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.scene.paused .play { filter: blur(6px) brightness(.55); pointer-events: none; }
+
+/* SceneHeader (fixed, 44px): black-to-clear gradient, left-aligned name, tagline, branch pill, tools right */
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 35; display: flex; align-items: center; gap: 10px; padding: 0 18px;
+  background: linear-gradient(var(--stage-black) 0%, color-mix(in srgb, var(--stage-black) 95%, transparent) 80%, color-mix(in srgb, var(--stage-black) 70%, transparent) 90%, transparent 100%); }
+.sh .back { width: 26px; height: 26px; display: grid; place-items: center; color: var(--stage-text-dim); border-radius: 50%; flex: none; }
+.sh .nm { font-family: var(--font-fancy); font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-soft); white-space: nowrap; flex: none; }
+.sh .tag { font-family: var(--font-big); font-style: italic; font-size: 9px; color: var(--stage-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 640px; }
+.sh .branch { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 8px; font-family: var(--font-big); font-size: 12px; font-weight: 500;
+  color: color-mix(in srgb, var(--accent) 80%, transparent); background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
+.sh .grow { flex: 1; }
+.sh .live { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.sh .gear { color: var(--stage-line); display: grid; place-items: center; }
+
+/* WingRail (fixed, top 80, 80px; 50px when a panel is open): glass column, masked top and bottom,
+   a 1px neon inner edge in the accent, 40px glyphs 32px apart */
+.rail { position: absolute; top: 80px; bottom: 0; width: 80px; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 32px 0 16px; opacity: .8; transition: width .5s, opacity .2s; }
+.rail:hover { opacity: 1; }
+.rail.l { left: 0; } .rail.r { right: 0; }
+.rail::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.rail.l::after, .rail.r::after { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 30%, transparent); }
+.rail.l::after { right: 0; } .rail.r::after { left: 0; }
+.scene.open-l .rail.l, .scene.open-r .rail.r { width: 50px; }
+/* WingItem: white/45 glyph; hover charges to the wing's color; active is white with a bloom */
+.wi { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: color-mix(in srgb, var(--stage-card) 45%, transparent); cursor: pointer; }
+.wi svg { width: 20px; height: 20px; position: relative; z-index: 1; transition: transform .3s, color .3s; }
+.wi::before { content: ""; position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--w) 25%, transparent) 0%, transparent 70%); opacity: 0; transform: scale(.5); transition: all .5s; }
+.wi:hover { color: var(--w); } .wi:hover svg { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--w)); } .wi:hover::before { opacity: .3; transform: scale(.75); }
+.wi.on { color: var(--stage-card); } .wi.on svg { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--w)); } .wi.on::before { opacity: 1; transform: none; }
+/* the rail-hover map label: 260px, 3px black border, hard 6px shadow in the wing's color, Cinzel 900 */
+.tip { position: absolute; top: 50%; width: 260px; padding: 12px 16px; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--w);
+  opacity: 0; transform: translateY(-60%); transition: opacity .2s, transform .2s; pointer-events: none; z-index: 20; text-align: left; }
+.rail.l .tip { left: 60px; } .rail.r .tip { right: 60px; }
+.rail:hover .tip, .scene.labels .tip { opacity: 1; transform: translateY(-50%); }
+.tip b { display: block; font-family: var(--font-fancy); font-weight: 900; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--w); text-shadow: 3px 3px 0 var(--stage-black); line-height: 1.05; }
+.tip span { display: block; margin-top: 6px; font-family: var(--font-big); font-size: .76rem; font-weight: 600; color: var(--stage-card); line-height: 1.35; }
+
+/* ---- the message scroll: x 80..(right-80), padding 96 48 24 64 ---- */
+.scroll { position: absolute; top: 0; bottom: 0; left: 80px; right: 80px; overflow-y: auto; padding: 96px 48px 150px 64px; }
+.scroll::-webkit-scrollbar { width: 6px; } .scroll::-webkit-scrollbar-thumb { background: var(--stage-seam); }
+
+/* GreetingSelector: max-w-3xl card, gilt dots, italic 4-line preview */
+.greet { max-width: 768px; margin: 0 auto 24px; padding: 16px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(8px); border-radius: 2px; }
+.greet .hd { display: flex; align-items: center; gap: 8px; font-family: var(--font-big); font-size: 14px; font-weight: 500; color: var(--stage-soft); margin-bottom: 12px; }
+.greet .hd svg { width: 16px; height: 16px; color: var(--stage-warn); }
+.greet .hd small { font-size: 12px; font-weight: 400; color: var(--stage-mute); }
+.dots { display: flex; gap: 8px; margin-bottom: 12px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--stage-line); cursor: pointer; }
+.dots i.on { background: var(--stage-warn); box-shadow: 0 0 0 2px var(--stage-black), 0 0 0 4px var(--stage-warn); }
+.greet .pv { padding: 12px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 40%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent);
+  font-family: var(--font-big); font-size: 14px; font-style: italic; line-height: 1.65; color: var(--stage-text-dim); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.greet .help { margin-top: 8px; font-family: var(--font-big); font-size: 12px; color: var(--stage-mute); }
+
+/* ImmersiveMessage: sticky 260x380 portrait (16px outer corners), 12px gutter, post badge, Cinzel name, dark bubble */
+.msg { display: flex; position: relative; margin-bottom: 40px; }
+.msg.user { flex-direction: row-reverse; }
+.por { flex: none; width: 260px; height: 380px; position: sticky; top: 60px; overflow: hidden; border-radius: 16px 0 0 16px; box-shadow: 0 0 20px color-mix(in srgb, var(--tone) 8%, transparent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 55%, var(--stage-panel)), var(--stage-panel) 85%); display: grid; place-items: center; }
+.msg.user .por { border-radius: 0 16px 16px 0; background: linear-gradient(170deg, color-mix(in srgb, var(--tone) 70%, var(--stage-panel)) 0%, color-mix(in srgb, var(--tone) 30%, var(--stage-panel)) 70%, var(--stage-panel)); }
+.por .ini { position: relative; font-family: var(--font-fancy); font-size: 34px; color: color-mix(in srgb, var(--stage-card) 55%, transparent); }
+.por .art { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 38% 30% at 50% 34%, color-mix(in srgb, var(--stage-paper) 45%, transparent), transparent 70%),
+  radial-gradient(ellipse 60% 45% at 50% 92%, color-mix(in srgb, var(--stage-black) 80%, transparent), transparent 75%); }
+.body { flex: 1; min-width: 0; padding-left: 12px; }
+.msg.user .body { padding-left: 0; padding-right: 12px; }
+.badge { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 45%, transparent);
+  padding: 2px 6px; font-family: var(--font-mono); font-size: 10px; line-height: 1; color: var(--stage-soft); box-shadow: 2px 2px 0 var(--stage-black); border-radius: 2px; }
+.msg.user .badge { float: right; }
+.spk { clear: both; font-family: var(--font-fancy); font-weight: 600; font-size: 19px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); line-height: 1.5; margin: 4px 0 6px; }
+.msg.user .spk { text-align: right; }
+.bub { position: relative; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); border-radius: 4px; padding: 14px 18px; }
+.msg.user .bub { padding: 12px 16px; }
+.prose { font-family: var(--font-big); font-size: 16px; line-height: 29.6px; color: color-mix(in srgb, var(--stage-card) 95%, transparent); }
+.prose p + p { margin-top: 20px; }
+.prose em { font-style: italic; }
+.prose q { quotes: '"' '"'; color: var(--tone); }
+/* the hover action bar: bottom-right, 28px buttons in groups */
+.acts { position: absolute; right: 6px; bottom: 6px; z-index: 20; display: flex; gap: 4px; padding: 4px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s; }
+.msg:hover .acts, .scene.hover-acts .msg.char .acts { opacity: 1; }
+.acts button { width: 28px; height: 28px; display: grid; place-items: center; border: 0; background: none; color: var(--tone); cursor: pointer; border-radius: 2px; }
+.acts button:hover { background: color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.acts button svg { width: 16px; height: 16px; }
+.acts .sep { width: 1px; margin: 4px; background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .del { color: var(--stage-danger-text); }
+.acts .dim { color: var(--stage-warn); }
+
+/* while a turn is starting and reasoning streams */
+.think { max-width: 1020px; margin: 0 0 40px; padding: 14px 16px; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 10%, transparent);
+  font-family: var(--font-big); font-size: 16px; line-height: 1.6; color: var(--stage-soft); }
+.think .caret { display: inline-block; width: 9px; height: 16px; background: var(--accent); vertical-align: -2px; }
+.starting { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--stage-panel); font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); margin-bottom: 16px; }
+
+/* the failure card: sits above the composer, 880 wide */
+.fail { position: absolute; left: 50%; transform: translateX(-50%); bottom: 90px; width: min(880px, calc(100% - 96px)); z-index: 30; background: var(--stage-panel); border-top: 2px solid var(--stage-danger-edge); box-shadow: 0 8px 32px var(--shadow-ink); }
+.fail .top { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--stage-seam); }
+.fail .ic { width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-danger-bg); border: 1px solid var(--stage-danger-edge); color: var(--stage-danger-text); flex: none; }
+.fail .tt { font-family: var(--font-big); font-weight: 600; font-size: 14px; color: var(--stage-card); }
+.fail .ln { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-family: var(--font-big); font-size: 13px; color: var(--stage-text-dim); flex-wrap: wrap; }
+.fail code { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.fail .dis { margin-left: auto; padding: 10px 16px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-card); font-family: var(--font-big); font-size: 13px; }
+.fail .dr { padding: 16px 16px 12px; font-family: var(--font-big); font-size: 13px; color: var(--stage-soft); }
+.fail textarea { display: block; margin-top: 10px; width: 100%; height: 110px; background: var(--stage-well); color: var(--stage-card); border: 1px solid var(--stage-line); padding: 8px 10px; font-family: var(--font-big); font-size: 15px; line-height: 1.6; resize: vertical; }
+.fail .nb { margin-top: 8px; font-size: 11px; color: var(--stage-mute); }
+
+/* ImmersiveInputBar + capsule: max-w 880, glass, 2px corners, 12/16 padding, 32px plus and send */
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 48px; pointer-events: none; }
+.cap { pointer-events: auto; max-width: 880px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px; border-radius: 2px;
+  background: color-mix(in srgb, var(--stage-floor) 50%, transparent); backdrop-filter: blur(20px); border: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); box-shadow: 0 8px 32px color-mix(in srgb, var(--stage-black) 40%, transparent); }
+.cap .plus, .cap .send, .cap .stop { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 2px; }
+.cap .plus { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
+.cap .send { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--stage-dim); }
+.cap .stop { background: var(--stage-danger-hot); color: var(--stage-card); display: none; }
+.scene.streaming .cap .stop { display: grid; } .scene.streaming .cap .send { display: none; }
+.cap .ta { flex: 1; min-width: 0; align-self: center; font-family: var(--font-big); font-size: 14px; line-height: 20px; color: color-mix(in srgb, var(--stage-card) 25%, transparent); }
+.cap svg { width: 16px; height: 16px; }
+/* the floating Compendium book and the /BTW tab, bottom-right of the stage */
+.book { position: absolute; right: 96px; bottom: 145px; z-index: 40; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--stage-soft);
+  background: var(--stage-row); border: 1px solid color-mix(in srgb, var(--stage-card) 12%, transparent); box-shadow: 0 4px 14px var(--shadow-ink); }
+.book svg { width: 18px; height: 18px; }
+.btw { position: absolute; right: 19px; bottom: 73px; z-index: 40; width: 90px; height: 34px; display: grid; place-items: center; background: var(--accent); color: var(--stage-black);
+  font-family: var(--font-fancy); font-weight: 900; font-size: 10px; letter-spacing: .3em; }
+
+/* ---- wing panels: open beside their rail, pause and blur the scene ---- */
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 45; display: none; text-align: center; cursor: pointer; }
+.scene.paused .paused-mark { display: block; }
+.scene.open-l .paused-mark { left: 78%; } .scene.open-r .paused-mark { left: 27%; }
+.paused-mark .sq { width: 64px; height: 64px; margin: 0 auto; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.paused-mark .sq svg { width: 26px; height: 26px; }
+.paused-mark small { display: block; margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .3em; color: var(--accent); }
+.wing-panel { position: absolute; top: 0; bottom: 0; z-index: 48; display: none; flex-direction: column; background: var(--stage-well); color: var(--stage-soft); font-family: var(--font-big); }
+.wing-panel.l { left: 0; width: min(1000px, 56%); padding-left: 50px; border-right: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.r { right: 0; width: min(830px, 46%); padding-right: 50px; border-left: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.show { display: flex; }
+/* FoldoutTabs: breadcrumb, then equal bordered tabs with a meta line */
+.fold { position: sticky; top: 0; z-index: 3; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-well) 95%, transparent); }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font-size: .62rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--stage-mute); }
+.crumb b { color: var(--stage-card); font-weight: 600; } .crumb i { font-style: normal; color: var(--stage-faint); }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; min-width: 0; text-align: left; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-card) 3%, transparent); color: var(--stage-text-dim); font-family: var(--font-big); cursor: pointer; }
+.tabs button.on { border-color: color-mix(in srgb, var(--stage-card) 30%, transparent); background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tabs b { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.tabs small { display: block; margin-top: 4px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; opacity: .6; }
+.wbody { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+/* WingHero: accent-edged card, radial wash top-left, 6px soft offset shadow, square icon, eyebrow, Cinzel 900 title with the accent word */
+.hero { position: relative; border: 1px solid color-mix(in srgb, var(--w) 35%, transparent); padding: 24px; box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--w) 12%, transparent);
+  background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--w) 12%, transparent), transparent 55%), linear-gradient(135deg, var(--stage-row), var(--stage-well)); display: flex; gap: 16px; align-items: flex-start; }
+.hero .hi { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--w) 70%, transparent); background: var(--stage-black); color: var(--w); }
+.hero .hi svg { width: 20px; height: 20px; }
+.hero .eb { font-size: .74rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+/* RC asks for Cinzel here but the live page renders a black-weight sans; the port follows what users see */
+.hero h2 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 2rem; line-height: .95; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-card); text-shadow: 3px 3px 0 var(--stage-black); }
+.hero h2 em { font-style: normal; color: var(--w); }
+.hero p { margin-top: 10px; max-width: 42rem; font-size: .95rem; line-height: 1.6; color: var(--stage-soft); }
+/* Cast body: the character card left, the stage-name block right */
+.dossier { display: grid; grid-template-columns: 380px 1fr; gap: 12px; }
+.dcard { position: relative; min-height: 560px; background: linear-gradient(170deg, color-mix(in srgb, var(--deck-character) 40%, var(--stage-panel)), var(--stage-panel) 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+.dcard .np { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 15%, transparent); border: 1px solid color-mix(in srgb, var(--deck-lorebook) 50%, transparent); padding: 3px 8px; }
+.dcard h3 { margin-top: 10px; font-family: var(--font-big); font-weight: 800; font-size: 24px; color: var(--stage-card); }
+.dcard p { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--stage-soft); }
+.fields { border: 2px solid color-mix(in srgb, var(--w) 55%, transparent); padding: 14px; display: flex; flex-direction: column; gap: 14px; align-self: start; }
+.fl { font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); margin-bottom: 6px; }
+.fv { background: var(--stage-row); border: 1px solid var(--stage-seam); padding: 10px 12px; font-size: 14px; color: var(--stage-mute); }
+.fv.set { color: var(--stage-card); font-weight: 700; font-size: 17px; background: none; border: 0; border-bottom: 1px solid var(--stage-seam); padding: 0 0 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.save { margin-top: 4px; padding: 12px; background: var(--w); color: var(--stage-black); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+/* Context body: nested tabs and the empty state */
+.empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--stage-text-dim); font-size: 14px; }
+.empty svg { width: 34px; height: 34px; color: var(--stage-warn); margin-bottom: 12px; }
+.empty small { display: block; margin-top: 10px; font-size: 11px; color: var(--stage-mute); }
+.ptitle .eb { font-size: .62rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+.ptitle h3 { margin-top: 6px; font-family: var(--font-fancy); font-weight: 700; font-size: 20px; font-variant: small-caps; color: var(--stage-card); }
+.ptitle p { margin-top: 6px; font-size: 12px; color: var(--w); }
+
+/* ---- phone (RC: rails hide below lg; collapsed edge handles take their place) ---- */
+.edge { display: none; position: absolute; top: 50%; width: 3px; height: 44px; transform: translateY(-50%); background: linear-gradient(transparent, var(--accent), transparent); z-index: 50; }
+.edge.l { left: 2px; } .edge.r { right: 2px; }
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; } .dock { display: none; }
+  .rail { display: none; } .edge { display: block; }
+  .scroll { left: 0; right: 0; padding: 60px 12px 110px; }
+  .sh { padding: 0 10px; } .sh .tag { display: none; } .sh .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+  .por { width: 88px; height: 118px; border-radius: 8px 0 0 8px; }
+  .msg.user .por { border-radius: 0 8px 8px 0; }
+  .spk { font-size: 15px; letter-spacing: 2px; }
+  .prose { font-size: 15px; line-height: 27px; font-weight: 500; }
+  .bub { padding: 12px 14px; }
+  .dockbar { padding: 12px; } .book { right: 110px; bottom: 100px; } .btw { right: 10px; bottom: 96px; width: 44px; height: 28px; font-size: 8px; letter-spacing: .15em; }
+  .fail { width: calc(100% - 24px); }
+  .wing-panel.l, .wing-panel.r { width: 100%; padding: 0; }
+  .dossier { grid-template-columns: 1fr; } .dcard { min-height: 280px; }
+  .scene.open-l .paused-mark, .scene.open-r .paused-mark { display: none; }
+}
+
+/* wireframe-only control strip (not part of the design) */
+.wf { position: fixed; left: 50%; top: 52px; transform: translateX(-50%); z-index: 999; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--stage-black); border: 1px dashed var(--stage-line); font-family: var(--font-mono); font-size: 10px; }
+.wf button { background: none; border: 1px solid var(--stage-seam); color: var(--stage-mute); padding: 3px 7px; cursor: pointer; font: inherit; }
+.wf button.on { color: var(--stage-card); border-color: var(--accent); }
+body.embed .wf { display: none; }
+.wf-note { bottom: 6.4rem; }
+.wf-chip { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 2rem); }
+/* a cut line left in place (option B): no RC equivalent, so it borrows RC's amber-notice shape in the danger tone */
+.stub { display: flex; align-items: center; gap: 12px; max-width: 1020px; margin: 0 0 24px; padding: 8px 12px; border-left: 4px solid var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-text) 8%, transparent); font: 14px/1.5rem var(--font-big); color: var(--stage-soft); }
+.stub svg { width: 14px; height: 14px; color: var(--stage-danger-text); flex: none; }
+.stub .grow { flex: 1; }
+.stub small { color: var(--stage-mute); font-size: 12px; }
+.stub button { padding: 4px 10px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 12px var(--font-big); text-transform: uppercase; cursor: pointer; }
+body[data-view="delb1"] .m1, body[data-view="delb2"] .m1, body[data-view="delb2"] .m2 { display: none !important; }
+body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-view="forkb"] .sh .branch .bn span { display: none; }
+.acts .more-wrap, .acts .del-wrap { position: relative; display: inline-flex; }
+.acts .on { background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .rc-menu { bottom: calc(100% + 8px); right: -40px; }
+.acts .rc-dd { left: auto; right: -6px; transform: none; }
+/* the menus sit inside the action bar; undo its 28px icon-button rule for their rows */
+.acts .rc-menu button, .acts .rc-dd button { width: 100%; height: auto; display: flex; place-items: initial; border-radius: 0; }
+.acts .rc-menu button { color: var(--stage-card); } .acts .rc-dd button { color: var(--stage-soft); } .acts .rc-dd button.red { color: var(--stage-danger-text); }
+.acts .rc-menu button svg, .acts .rc-dd button svg { width: 14px; height: 14px; }
+.rc-takes.at { top: 40px; left: 390px; }
+[data-o]:not(.show) { display: none !important; }
+
+
+/* ---- Prompting wing: RoleCall's PresetPanel (scene/wings/panels/PresetPanel.tsx) ----
+ * RoleCall tints the panel with --wing-accent (the preset's accent, else the wing's); here that is
+ * --w, the preset deck color. RC emerald switch -> --stage-ok; zinc-600 off -> --stage-line;
+ * role badges blue/green/purple -> --deck-persona / --stage-ok / --deck-lorebook. */
+.wing-panel.l .wbody.pp { gap: 0; padding: 0; }
+.pp > .hero { margin: 20px 20px 12px; }
+.hero-tools { margin-left: auto; display: flex; gap: 6px; align-self: flex-start; }
+.tbtn { width: 28px; height: 28px; display: grid; place-items: center; background: color-mix(in srgb, var(--stage-card) 5%, transparent); color: var(--stage-soft); cursor: pointer; border-radius: 2px; flex: none; }
+.tbtn:hover { background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tbtn.red:hover { background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.tbtn svg { width: 14px; height: 14px; }
+.hero.bad { --w: var(--stage-danger-text); }
+/* CollapsibleSamplerBar */
+.sbar { border-top: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); background: color-mix(in srgb, var(--stage-panel) 50%, transparent); }
+.sbar-row { display: flex; align-items: center; gap: 16px; padding: 8px 16px; font-size: .82rem; cursor: pointer; flex-wrap: wrap; }
+.sbar-row:hover { background: color-mix(in srgb, var(--stage-row) 30%, transparent); }
+.sbar .lbl { color: var(--stage-soft); }
+.qv { color: var(--stage-mute); white-space: nowrap; }
+.qv b { color: var(--c); font-weight: 600; margin-left: 4px; font-family: var(--font-mono); font-size: .78rem; }
+.ov { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--w); margin-left: 5px; vertical-align: 1px; }
+.sbar .chev { margin-left: auto; width: 16px; height: 16px; color: var(--stage-soft); }
+.sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 16px 16px; }
+.sl .slh { display: flex; align-items: baseline; gap: 8px; font-size: .78rem; color: var(--stage-soft); margin-bottom: 6px; }
+.sl .slh b { margin-left: auto; font-family: var(--font-mono); color: var(--stage-card); }
+.sl .reset { font-family: var(--font-mono); font-size: .7rem; color: var(--stage-mute); text-decoration: line-through; cursor: pointer; }
+.track { height: 4px; background: var(--stage-seam); border-radius: 2px; }
+.track i { display: block; height: 100%; background: var(--w); border-radius: 2px; }
+.sl small { display: block; margin-top: 6px; font-size: .7rem; color: var(--stage-mute); }
+.sel { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--stage-row); border: 1px solid var(--stage-seam); font-size: .8rem; color: var(--stage-card); }
+.sel svg { width: 14px; height: 14px; color: var(--stage-mute); }
+/* the split view */
+.split { flex: 1; min-height: 480px; display: flex; }
+.side { width: 240px; flex: none; display: flex; flex-direction: column; background: color-mix(in srgb, var(--stage-black) 90%, transparent); border-right: 1px solid color-mix(in srgb, var(--w) 30%, transparent); }
+.side-hd { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid var(--stage-seam); font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; color: var(--stage-soft); }
+.side-hd span + span { text-transform: none; letter-spacing: 0; color: var(--stage-text-dim); }
+.side-search { position: relative; padding: 6px 8px; border-bottom: 1px solid var(--stage-seam); }
+.side-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; color: var(--stage-soft); }
+.side-search .in { display: block; padding: 5px 8px 5px 26px; background: var(--stage-row); border: 1px solid var(--stage-seam); border-radius: 2px; font-size: .78rem; color: var(--stage-mute); }
+.side-search .in.typed { color: var(--stage-card); border-color: var(--w); }
+.cat { display: flex; align-items: center; gap: 6px; padding: 8px; font-size: .82rem; color: var(--stage-text-dim); border-bottom: 1px solid color-mix(in srgb, var(--stage-seam) 50%, transparent); cursor: pointer; }
+.cat.acc { color: color-mix(in srgb, var(--w) 80%, transparent); }
+.cat.mute { color: var(--stage-soft); padding-left: 10px; }
+.cat .cn { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat .cc { color: var(--stage-soft); }
+.cat .cv { width: 12px; height: 12px; flex: none; }
+.cat .cv.r { transform: rotate(-90deg); }
+/* category switch: 24x14, emerald all / accent some / grey none */
+.sw { position: relative; width: 24px; height: 14px; border-radius: 7px; background: var(--stage-line); flex: none; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--stage-white); }
+.sw.on { background: var(--stage-ok); } .sw.on::after { left: 12px; }
+.sw.some { background: var(--w); }
+/* MiniPromptItem: 32x16 switch, name + tokens or slot label, role badge; selected has an accent left edge */
+.pi { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-left: 2px solid transparent; cursor: pointer; }
+.pi:hover { background: color-mix(in srgb, var(--stage-row) 50%, transparent); }
+.pi.sel { border-left-color: var(--w); background: color-mix(in srgb, var(--w) 12%, transparent); }
+.pi.off { opacity: .5; }
+.tg { position: relative; width: 32px; height: 16px; border-radius: 8px; background: var(--stage-line); flex: none; }
+.tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--stage-white); }
+.tg.on { background: var(--stage-ok); } .tg.on::after { left: 18px; }
+.pn { flex: 1; min-width: 0; }
+.pn span { display: block; font-size: .82rem; color: var(--stage-text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pi.sel .pn span { color: var(--stage-white); }
+.pn small { display: block; font-size: .72rem; color: var(--stage-mute); }
+.pn small.mk { color: color-mix(in srgb, var(--deck-lorebook) 70%, transparent); }
+.role { font-size: .68rem; font-weight: 600; padding: 2px 5px; border-radius: 2px; flex: none; }
+.role.sys { background: color-mix(in srgb, var(--deck-persona) 20%, transparent); color: var(--deck-persona); }
+.role.usr { background: color-mix(in srgb, var(--stage-ok) 20%, transparent); color: var(--stage-ok); }
+.role.ast { background: color-mix(in srgb, var(--deck-lorebook) 20%, transparent); color: var(--deck-lorebook); }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; padding: 8px; border-top: 1px solid var(--stage-seam); font-size: .78rem; color: var(--stage-soft); }
+.side-foot b { margin-left: auto; font-family: var(--font-mono); color: var(--stage-card); font-weight: 500; }
+.info { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--stage-mute); display: grid; place-items: center; font-size: .6rem; color: var(--stage-mute); cursor: help; }
+.grip { width: 4px; flex: none; cursor: col-resize; background: transparent; }
+.grip:hover { background: color-mix(in srgb, var(--w) 40%, transparent); }
+/* PromptEditPane */
+.ed { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ed-empty { flex: 1; display: grid; place-items: center; font-size: .9rem; color: var(--stage-mute); }
+.ed-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 0 0 16px; }
+.ed-hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); }
+.ed-hd .nmx { flex: 1; font-size: .9rem; font-weight: 600; color: var(--stage-white); border-bottom: 1px solid transparent; }
+.ed-hd .tk { font-size: .78rem; color: var(--stage-soft); }
+.ed-meta { display: flex; gap: 6px; padding: 0 16px; flex-wrap: wrap; }
+.chip { padding: 3px 8px; font-size: .72rem; border: 1px solid color-mix(in srgb, var(--w) 40%, transparent); color: var(--w); background: color-mix(in srgb, var(--w) 8%, transparent); }
+.chip.dim { border-color: var(--stage-seam); color: var(--stage-mute); background: none; }
+.ta { margin: 0 16px; flex: 1; min-height: 220px; padding: 12px; background: color-mix(in srgb, var(--stage-black) 60%, transparent); border: 2px solid var(--stage-line); box-shadow: inset 2px 2px 0 0 color-mix(in srgb, var(--stage-black) 40%, transparent); font-family: var(--font-mono); font-size: .92rem; line-height: 1.55; color: var(--stage-card); white-space: pre-wrap; }
+.ta .caret { display: inline-block; width: 8px; height: 15px; background: var(--w); vertical-align: -2px; }
+body:has([data-s="editing"][style*="outline"]) .ta { border-color: var(--w); }
+.ed-note { margin: 0 16px; display: flex; gap: 8px; align-items: flex-start; font-size: .78rem; line-height: 1.5; color: var(--stage-mute); }
+.ed-note svg { width: 14px; height: 14px; color: var(--stage-ok); flex: none; margin-top: 2px; }
+/* PresetPicker */
+.picker { padding: 12px 20px 24px; display: flex; flex-direction: column; gap: 8px; }
+.picker .side-search { padding: 0 0 8px; border: 0; }
+.picker .side-search svg { left: 8px; top: 13px; transform: none; }
+.pk-hd { margin-top: 6px; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--stage-soft); }
+.pk-hd small { color: var(--stage-mute); font-weight: 400; }
+.pk { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); cursor: pointer; }
+.pk:hover { background: var(--stage-row); border-color: color-mix(in srgb, var(--w) 40%, transparent); }
+.pk b { display: block; font-size: .9rem; color: var(--stage-white); font-weight: 500; }
+.pk small { display: block; margin-top: 2px; font-size: .74rem; color: var(--stage-text-dim); }
+.pk-ic { width: 36px; height: 36px; flex: none; display: grid; place-items: center; font-family: var(--font-fancy); font-size: .8rem; color: var(--stage-black); background: var(--c); }
+.pk.none { border-style: dashed; }
+@media (max-width: 1023px) {
+  .split { flex-direction: column; } .side { width: 100%; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--w) 30%, transparent); }
+  .grip { display: none; } .sliders { grid-template-columns: 1fr; }
+  .pp > .hero { margin: 12px; padding: 16px; flex-wrap: wrap; } .pp > .hero > div { min-width: 0; flex: 1 1 200px; } .pp > .hero h2 { font-size: 1.5rem; }
+  .hero-tools { margin-left: 0; order: 3; }
+  .app { grid-template-columns: minmax(0, 1fr) !important; } .scene { min-width: 0; }
+  .wing-panel.l { overflow-x: hidden; } .wing-panel.l .wbody.pp { min-width: 0; } .split, .side, .ed { min-width: 0; max-width: 100%; }
+}
+
+.wf-chip { bottom: auto; top: 52px; left: auto; right: 96px; transform: none; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - min(1000px, 56vw) - 140px); }
+.wf-note { left: auto; right: 84px; bottom: 96px; max-width: min(28rem, calc(100vw - 1100px)); }
+@media (max-width: 900px) { .wf-chip, .wf-note { left: 8px; right: auto; max-width: calc(100vw - 16px); } }
+
+/* ---- World wing: RoleCall's LorebookPanel (scene/wings/panels/LorebookPanel.tsx) and EntryPanel.tsx ----
+ * --w is the lorebook deck color (RC: --wing-accent, amber). RC constant = accent, selective = violet ->
+ * here --w and --deck-persona; RC enabled pill green -> --stage-ok; disabled gray at 50% -> --stage-line.
+ * B's "why it fired" colors follow RC's ActiveLorePanel map: constant, key match, sticky, over budget. */
+.b-only { display: none !important; }
+body.vb .b-only { display: revert !important; }
+body.vb span.b-only, body.vb em.b-only { display: inline-block !important; }
+body.vb .side-foot.b-only { display: flex !important; }
+.lh { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.lh-ic { width: 16px; height: 16px; color: var(--w); }
+.lh b { font-size: .92rem; font-weight: 600; color: var(--stage-card); }
+.lh-st { font-family: var(--font-mono); font-size: .72rem; color: var(--stage-mute); }
+.lh .grow { flex: 1; }
+.bk { display: flex; align-items: center; gap: 8px; padding: 8px; border-left: 2px solid transparent; cursor: pointer; }
+.bk:hover { background: color-mix(in srgb, var(--stage-row) 50%, transparent); }
+.bk.sel { border-left-color: var(--w); background: color-mix(in srgb, var(--w) 12%, transparent); }
+.bk.off { opacity: .5; }
+.bd { width: 8px; height: 8px; border-radius: 50%; background: var(--stage-line); flex: none; }
+.bd.on { background: var(--w); box-shadow: 0 0 8px var(--w); }
+.bd.sel { background: var(--deck-persona); }
+.bk .pn small { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.src { font-style: normal; font-size: .66rem; padding: 1px 5px; color: var(--w); border: 1px solid color-mix(in srgb, var(--w) 40%, transparent); }
+.bt { width: 22px; height: 22px; display: grid; place-items: center; color: var(--stage-mute); opacity: 0; }
+.bk:hover .bt, .bk.sel .bt { opacity: 1; }
+.bt svg { width: 13px; height: 13px; }
+.bt.red:hover { color: var(--stage-danger-text); }
+.addbk { margin: 10px 8px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px dashed color-mix(in srgb, var(--w) 45%, transparent); color: var(--w); font-size: .8rem; cursor: pointer; }
+.addbk svg { width: 13px; height: 13px; }
+.addbk.solo { margin: 16px auto 0; width: 180px; }
+.eh { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--stage-seam); }
+.eh .grow { flex: 1; }
+.saved { display: inline-flex; align-items: center; gap: 4px; font-size: .74rem; color: var(--stage-ok); }
+.saved svg { width: 12px; height: 12px; }
+.nbtn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; font-size: .78rem; color: var(--stage-black); background: var(--w); cursor: pointer; }
+.nbtn svg { width: 12px; height: 12px; }
+.ed .side-search { border-bottom: 1px solid var(--stage-seam); }
+.grp { display: flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid color-mix(in srgb, var(--stage-seam) 50%, transparent); }
+.grp.acc { color: var(--w); } .grp.sel2 { color: var(--deck-persona); }
+.grp .cv { width: 12px; height: 12px; }
+.grp .cnt { margin-left: 4px; padding: 0 6px; font-family: var(--font-mono); font-size: .7rem; background: color-mix(in srgb, currentColor 15%, transparent); }
+.en { display: flex; align-items: center; gap: 8px; padding: 7px 12px 7px 26px; border-left: 2px solid transparent; cursor: pointer; }
+.en:hover { background: color-mix(in srgb, var(--stage-row) 50%, transparent); }
+.en.sel { border-left-color: var(--deck-persona); background: color-mix(in srgb, var(--deck-persona) 10%, transparent); }
+.en.off { opacity: .5; }
+.en .tbtn { width: 24px; height: 24px; opacity: .6; }
+.why { font-size: .68rem; padding: 2px 6px; white-space: nowrap; border: 1px solid; }
+.c-con { color: var(--w); border-color: color-mix(in srgb, var(--w) 45%, transparent); }
+.c-key { color: var(--stage-ok); border-color: color-mix(in srgb, var(--stage-ok) 45%, transparent); }
+.c-stk { color: var(--stage-danger-text); border-color: color-mix(in srgb, var(--stage-danger-text) 45%, transparent); }
+.c-cut { color: var(--stage-mute); border-color: var(--stage-seam); text-decoration: line-through; }
+/* EntryPanel */
+.entry { display: flex; flex-direction: column; gap: 14px; padding-bottom: 20px; }
+.ex-hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.ex-hd .nmx { font-size: 1rem; font-weight: 600; color: var(--stage-white); }
+.ex-hd .grow { flex: 1; }
+.pill { padding: 2px 10px; font-size: .7rem; font-weight: 700; text-transform: uppercase; background: var(--stage-line); color: var(--stage-black); }
+.pill.on { background: var(--stage-ok); }
+.adv { display: inline-flex; align-items: center; gap: 4px; font-size: .76rem; color: var(--stage-soft); }
+.adv svg { width: 12px; height: 12px; }
+.ex-adv { display: flex; align-items: flex-end; gap: 12px; padding: 0 16px; flex-wrap: wrap; }
+.ex-adv label { display: flex; flex-direction: column; gap: 4px; font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--stage-mute); }
+.num { display: inline-block; min-width: 56px; padding: 5px 8px; background: var(--stage-row); border: 1px solid var(--stage-seam); font-family: var(--font-mono); font-size: .8rem; color: var(--stage-card); text-transform: none; letter-spacing: 0; }
+.ex-adv .sel { min-width: 120px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+.lock { display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border: 1px solid var(--stage-seam); font-size: .76rem; color: var(--stage-soft); }
+.lock svg { width: 12px; height: 12px; }
+.tok { margin-left: auto; font-family: var(--font-mono); font-size: .76rem; color: var(--stage-soft); }
+.ex-sec { padding: 0 16px; display: flex; flex-direction: column; gap: 8px; }
+.ex-sec.row3 { flex-direction: row; gap: 14px; flex-wrap: wrap; }
+.ex-l { font-size: .68rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--stage-soft); display: flex; gap: 10px; align-items: center; margin-bottom: 4px; }
+.mode { font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--stage-mute); }
+.mode b { color: var(--w); font-weight: 600; }
+.keys { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px; background: color-mix(in srgb, var(--stage-black) 50%, transparent); border: 1px solid var(--stage-seam); }
+.keys span { padding: 3px 8px; font-size: .78rem; color: var(--stage-card); background: color-mix(in srgb, var(--w) 18%, transparent); border: 1px solid color-mix(in srgb, var(--w) 40%, transparent); }
+.keys.two span { background: color-mix(in srgb, var(--deck-persona) 18%, transparent); border-color: color-mix(in srgb, var(--deck-persona) 40%, transparent); }
+.keys .add { background: none; border-style: dashed; color: var(--stage-mute); }
+.logic .sel { width: 160px; }
+.pos { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.pos span { padding: 10px 4px; text-align: center; font-size: .76rem; color: var(--stage-soft); background: var(--stage-row); border: 1px solid var(--stage-seam); }
+.pos span.on { color: var(--stage-black); background: var(--w); border-color: var(--w); font-weight: 600; }
+.ex-more { margin: 0 16px; font-size: .78rem; color: var(--stage-mute); }
+.entry .ta { min-height: 150px; font-family: var(--font-big); }
+.pk.on { border-color: color-mix(in srgb, var(--w) 50%, transparent); }
+@media (max-width: 1023px) { .pos { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+</style>
+<script>if (new URLSearchParams(location.search).get("embed")) document.documentElement.classList.add("wf-embed");</script>
+<style>.wf-embed .wf-chip, .wf-embed .wf-chip2, .wf-embed .wf-note, .wf-embed .wf { display: none !important; }</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2z"/><path d="M6 11c1.5 0 2.5.5 3 2"/><path d="M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+    <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.570a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.020.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.020a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M2 8h5M2 16h5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 14 9-14 9V3z"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+
+    <symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2L7 14.2 2 9.3l6.9-1z"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+    <symbol id="i-power" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn">Lb</div><div class="app-btn on">Sc</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn" data-theme-switch title="Paper or stage">St</div></nav>
+
+  <main class="scene paused open-l" id="scene">
+    <div class="play">
+      <div class="bgm"></div>
+      <header class="sh">
+        <span class="back"><svg width="16" height="16"><use href="#i-back"/></svg></span>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+        <span class="branch"><svg width="14" height="14"><use href="#i-film"/></svg><span class="bn"><span>Director's Cut</span></span><svg width="12" height="12"><use href="#i-down"/></svg></span>
+        <span class="grow"></span><span class="live"></span><span class="gear"><svg width="15" height="15"><use href="#i-gear"/></svg></span>
+      </header>
+      <div class="scroll">
+        <div class="msg char" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body"><span class="badge">#1</span><div class="spk">Marguerite Vane</div>
+            <div class="bub"><div class="prose"><p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em></p></div></div></div>
+        </div>
+      </div>
+      <div class="dockbar"><div class="cap"><span class="plus"><svg><use href="#i-plus"/></svg></span><span class="ta">Message Marguerite Vane...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div>
+    </div>
+
+
+    <nav class="rail l" aria-label="Scene wings">
+      <div class="wi" style="--w: var(--accent)"><svg><use href="#i-zap"/></svg></div>
+      <div class="wi" style="--w: var(--deck-character)"><svg><use href="#i-mask"/></svg></div>
+      <div class="wi" style="--w: var(--deck-preset)"><svg><use href="#i-wand"/></svg></div>
+      <div class="wi on" style="--w: var(--deck-lorebook)"><svg><use href="#i-globe"/></svg><div class="tip"><b>World</b><span>The lorebooks this scene reads from, and every entry in them</span></div></div>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <div class="wi" style="--w: var(--stage-var)"><svg><use href="#i-cpu"/></svg></div>
+      <div class="wi" style="--w: var(--stage-warn)"><svg><use href="#i-eye"/></svg></div>
+    </nav>
+    <div class="paused-mark"><div class="sq"><svg><use href="#i-pause"/></svg></div><small>SCENE PAUSED</small></div>
+
+    <!-- The World wing: RoleCall's left World group, its Lorebook tab (LorebookPanel.tsx + EntryPanel.tsx) -->
+    <section class="wing-panel l show" style="--w: var(--deck-lorebook)">
+      <nav class="fold">
+        <div class="crumb">World <i>/</i> <b>Lorebook</b></div>
+        <div class="tabs"><button class="on"><b>Lorebook</b><small data-only="list entry fired phone">3 books on</small><small data-only="empty add">None yet</small></button></div>
+      </nav>
+      <div class="wbody pp">
+
+        <!-- the compact header RoleCall uses in place of a big hero -->
+        <header class="lh">
+          <span class="tbtn" data-only="entry add" title="Back"><svg><use href="#i-back"/></svg></span>
+          <svg class="lh-ic"><use href="#i-book"/></svg>
+          <b data-only="list fired phone empty">World Info</b><b data-only="entry">Keeper's Log</b><b data-only="add">Add Lorebook</b>
+          <span class="lh-st" data-only="list fired phone">&middot; 3 books &middot; 42 entries &middot; ~6.1k tok</span>
+          <span class="lh-st" data-only="entry">&middot; 18 entries &middot; ~2.4k tok</span>
+          <span class="grow"></span>
+          <span class="tbtn" data-only="list fired phone empty" title="Browse and add lorebooks"><svg><use href="#i-plus"/></svg></span>
+        </header>
+
+        <!-- Edit view: active books left, the selected book's entries right -->
+        <div class="split" data-only="list fired phone">
+          <aside class="side">
+            <div class="side-hd"><span>Active lorebooks</span><span>3</span></div>
+            <div class="bk sel"><i class="bd on"></i><div class="pn"><span>Keeper's Log</span><small>18 entries <em class="src b-only">From Marguerite</em></small></div><span class="bt"><svg><use href="#i-power"/></svg></span></div>
+            <div class="bk"><i class="bd on"></i><div class="pn"><span>The Drowned Coast</span><small>21 entries <em class="src b-only">Added here</em></small></div><span class="bt"><svg><use href="#i-power"/></svg></span><span class="bt red"><svg><use href="#i-trash"/></svg></span></div>
+            <div class="bk off"><i class="bd"></i><div class="pn"><span>My quirks</span><small>3 entries <em class="src b-only">From your persona</em></small></div><span class="bt"><svg><use href="#i-power"/></svg></span></div>
+            <div class="addbk"><svg><use href="#i-plus"/></svg> Add Lorebook</div>
+            <div class="side-foot b-only"><span>Last turn</span><b>5 fired &middot; ~740 tok</b><span class="info" title="From the last reply's trace: which entries went into the prompt and why.">?</span></div>
+          </aside>
+          <div class="grip" title="Resize"></div>
+          <section class="ed">
+            <div class="eh">
+              <span class="saved"><svg><use href="#i-check"/></svg> saved</span><span class="grow"></span>
+              <span class="nbtn"><svg><use href="#i-plus"/></svg> New entry</span>
+              <span class="tbtn" title="Open in Workbench"><svg><use href="#i-pen"/></svg></span>
+            </div>
+            <div class="side-search"><svg><use href="#i-search"/></svg><span class="in">Search entries, text, or triggers...</span></div>
+            <div class="grp acc"><svg class="cv"><use href="#i-down"/></svg><span class="cn">Constant</span><span class="cnt">3</span></div>
+            <div class="en"><div class="pn"><span>The lighthouse</span><small>~120 tok</small></div><span class="why b-only c-con" data-only="fired">always</span><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="en"><div class="pn"><span>Marguerite's rules</span><small>~210 tok</small></div><span class="why b-only c-con" data-only="fired">always</span><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="en off"><div class="pn"><span>Old keeper (retired)</span><small>~90 tok</small></div><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="grp sel2"><svg class="cv"><use href="#i-down"/></svg><span class="cn">Selective</span><span class="cnt">15</span></div>
+            <div class="en sel"><div class="pn"><span>The storm of '09</span><small>~180 tok</small></div><span class="why b-only c-key" data-only="fired">"storm"</span><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="en"><div class="pn"><span>The lantern</span><small>~95 tok</small></div><span class="why b-only c-key" data-only="fired">"lantern"</span><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="en"><div class="pn"><span>Her brother</span><small>~140 tok</small></div><span class="why b-only c-stk" data-only="fired">sticky, 2 left</span><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="en"><div class="pn"><span>The tide tables</span><small>~60 tok</small></div><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+            <div class="en"><div class="pn"><span>Shipwrecks</span><small>~200 tok</small></div><span class="why b-only c-cut" data-only="fired">matched, over budget</span><span class="tbtn"><svg><use href="#i-more"/></svg></span></div>
+          </section>
+        </div>
+
+        <!-- Entry editor: RoleCall's EntryPanel (the amber pane), advanced open -->
+        <div class="entry" data-only="entry">
+          <div class="ex-hd"><i class="bd sel"></i><span class="pill on">On</span><span class="nmx">The storm of '09</span><span class="grow"></span><span class="adv">Advanced <svg><use href="#i-down"/></svg></span></div>
+          <div class="ex-adv">
+            <label>Type<span class="sel">Selective <svg><use href="#i-down"/></svg></span></label>
+            <label>Order<span class="num">120</span></label>
+            <label>Scan<span class="num">4</span></label>
+            <span class="lock" title="Keep this entry as written when the book is tidied"><svg><use href="#i-lock"/></svg> Preserve</span>
+            <span class="tok">~180 tok</span>
+          </div>
+          <div class="ex-sec"><div class="ex-l">Triggers <span class="mode">Simple <b>Advanced</b></span></div>
+            <div class="keys"><span>storm</span><span>'09</span><span>the flood</span><span class="add">+ key</span></div>
+            <div class="logic"><span class="sel">AND ANY <svg><use href="#i-down"/></svg></span></div>
+            <div class="keys two"><span>Marguerite</span><span>keeper</span><span class="add">+ key</span></div>
+          </div>
+          <div class="ex-sec"><div class="ex-l">Injection</div>
+            <div class="pos"><span>World</span><span class="on">Character</span><span>Scene</span><span>@ Depth</span><span>Append</span><span>Pin top</span><span>Pin bottom</span></div>
+          </div>
+          <div class="ex-sec row3"><div><div class="ex-l">Sticky</div><span class="num">3</span></div><div><div class="ex-l">Cooldown</div><span class="num">0</span></div><div><div class="ex-l">Delay</div><span class="num">0</span></div><div><div class="ex-l">Recursion</div><span class="sel">Normal <svg><use href="#i-down"/></svg></span></div></div>
+          <div class="ex-l" style="margin: 0 16px">Content</div>
+          <div class="ta">In the autumn of '09 a storm took the supply boat and both men aboard. Marguerite kept the light burning three nights without sleep. She does not speak of it unless {{user}} earns it.<span class="caret"></span></div>
+          <div class="ed-note"><svg><use href="#i-check"/></svg> Saved to Keeper's Log. Every scene reading this book uses the new text from its next turn.</div>
+          <div class="ex-more">Group, character filter, and side effects sit under <b>More</b>, as in RoleCall.</div>
+        </div>
+
+        <!-- Picker: RoleCall's LorebookPicker, library only -->
+        <div class="picker" data-only="add">
+          <div class="side-search"><svg><use href="#i-search"/></svg><span class="in">Search my library...</span></div>
+          <div class="pk-hd">My Library <small>(5)</small></div>
+          <div class="pk"><span class="pk-ic" style="--c: var(--deck-lorebook)">TW</span><div><b>Tidewater Folk</b><small>34 entries &middot; Updated Sep 22</small></div></div>
+          <div class="pk"><span class="pk-ic" style="--c: var(--deck-regex)">SR</span><div><b>Sea Reckoning</b><small>12 entries &middot; Updated Sep 14</small></div></div>
+          <div class="pk on"><span class="pk-ic" style="--c: var(--deck-preset)">DC</span><div><b>The Drowned Coast</b><small>21 entries &middot; In this scene</small></div></div>
+          <div class="pk none"><div><b>+ New Lorebook</b><small>Name it, and it opens here empty</small></div></div>
+        </div>
+
+        <!-- Empty -->
+        <div class="empty" data-only="empty"><div><svg><use href="#i-book"/></svg><div>No lorebooks</div><small>Add one to begin</small><div class="addbk solo"><svg><use href="#i-plus"/></svg> Add Lorebook</div></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-chip" id="wf">
+  <span>Lorebook wing</span><button data-s="list">Books and entries</button><button data-s="fired">Last turn (B)</button><button data-s="entry">Editing an entry</button><button data-s="add">Add a book</button><button data-s="empty">None yet</button>
+  <span>|</span><button data-v="a">A: RoleCall</button><button data-v="b">B: with Bunraku touches</button>
+  <button data-theme-switch>Theme</button><a href="../index.html">All</a>
+</div>
+<div class="wf-note"><b>RoleCall's Lorebook tab (LorebookPanel + EntryPanel), part for part:</b> the World wing on the left, a compact header with the book and token counts, active books on the left (dot, name, entries, switch and remove on hover, Add Lorebook), the selected book's entries on the right split into Constant and Selective, and RoleCall's entry editor with triggers, the seven injection spots, sticky, cooldown, delay, and recursion. Switching or removing a book here is this scene's alone; entry edits save to the book in your library after a pause, like RoleCall. The picker lists your library only (no Plotlight, no forks or drafts: Bunraku's library already keeps versions).
+<br><br><b>B adds two touches:</b> each book says where it came from (the character's own books arrive switched on, your persona's too, and you can switch them off here without unlinking them), and <b>Last turn</b> marks which entries went into the last reply and why (always on, the word that matched, still sticky, or matched but cut by the budget). RoleCall keeps that in a separate debug wing.</div>
+
+<script>
+(function () {
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.style.display = el.getAttribute("data-only").split(" ").indexOf(s) >= 0 ? "" : "none"; });
+    document.body.classList.toggle("phone", s === "phone");
+    if (s === "fired") document.body.classList.add("vb");
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.style.outline = b.getAttribute("data-s") === s ? "2px solid var(--accent)" : ""; });
+    mark();
+  }
+  function variant(v) { document.body.classList.toggle("vb", v === "b"); mark(); }
+  function mark() { var b = document.body.classList.contains("vb"); document.querySelectorAll("#wf [data-v]").forEach(function (x) { x.style.outline = (x.getAttribute("data-v") === "b") === b ? "2px solid var(--accent)" : ""; }); }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s"));
+    var v = e.target.closest("[data-v]"); if (v) variant(v.getAttribute("data-v"));
+  });
+  var q = new URLSearchParams(location.search);
+  if (q.get("v") === "b") document.body.classList.add("vb");
+  set(q.get("state") || "list");
+})();
+</script>
+</body>
+</html>

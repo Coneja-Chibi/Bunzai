@@ -1,0 +1,370 @@
+/**
+ * The Workbench room styles - transcribed 1:1 from the deleted vanilla index.ts's injected CSS
+ * block. Class names renamed to camelCase for CSS Modules; visual rules unchanged. The vanilla
+ * `body.focus-editor` cross-cutting rules become a `.focused` modifier applied directly by the
+ * room component (it already knows the live focus state via useFocusMode) instead of depending on
+ * an ambient body-class selector inside a scoped module.
+ */
+.room {
+  /* flush: the editor's own bars are the chrome; every gutter here was dead space (the prosc
+     wrapper is deleted outright - its frame framed nothing) */
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+}
+.newPackBtn {
+  font-family: var(--font-body);
+  font-size: var(--text-control);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--control-boundary, var(--edge));
+  background: var(--face, var(--panel));
+  color: var(--text);
+  min-height: 2.25rem;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+  margin: 0;
+}
+.newPackBtn:hover {
+  border-color: var(--focus-ring, var(--accent));
+  color: var(--text);
+}
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  background: var(--stage-well);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 3px solid var(--stage-black);
+  background: var(--stage-sunken);
+  padding: 0.5rem 0.75rem;
+  flex: none;
+}
+.crumb .pip {
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--stage-black);
+  background: var(--a, var(--accent));
+}
+.crumb .cn {
+  font-family: var(--font-big);
+  font-weight: 900;
+  font-size: var(--text-control, 0.875rem);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-paper);
+}
+.crumb .cc {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-mute);
+  margin-left: auto;
+}
+.pane {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: clamp(0.8rem, 2vw, 1.4rem);
+  padding: clamp(0.8rem, 2vw, 1.4rem);
+  overflow-y: auto;
+}
+.art {
+  flex: none;
+  width: clamp(9rem, 22vw, 16rem);
+  align-self: flex-start;
+  background: var(--a, var(--rose));
+  border: 3px solid var(--stage-black);
+  aspect-ratio: 2 / 3;
+  background-size: cover;
+  background-position: center top;
+  box-shadow: 0 24px 38px -14px var(--shadow-ink-deep);
+  display: flex;
+  align-items: flex-end;
+  padding: 0.5rem;
+}
+.art b {
+  font-family: var(--font-big);
+  font-weight: 900;
+  font-size: 3rem;
+  line-height: 0.72;
+  color: var(--stage-ink);
+  opacity: 0.82;
+}
+.sheet {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.nm {
+  font-family: var(--font-big);
+  font-weight: 900;
+  font-size: clamp(1.3rem, 2.6vw, 2rem);
+  letter-spacing: -0.01em;
+  color: var(--stage-card);
+  line-height: 1;
+}
+.meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+.field {
+  background: var(--stage-row);
+  border: 3px solid var(--stage-black);
+  padding: 0.6rem 0.8rem;
+}
+.field .fk {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--stage-mute);
+  margin-bottom: 0.3rem;
+}
+.field .fv {
+  font-size: var(--text-body);
+  line-height: 1.55;
+  color: var(--stage-soft);
+  white-space: pre-line;
+}
+.soon {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--text-soft);
+  border: 1px solid var(--control-boundary, var(--stage-line));
+  padding: 1rem;
+  margin: auto;
+  max-width: 34rem;
+}
+.ghostRoom {
+  margin: auto;
+  width: min(100% - 2rem, 38rem);
+  max-width: 38rem;
+  border: 1px solid var(--control-boundary, var(--stage-line));
+  background: var(--face, var(--stage-panel));
+  box-shadow: 0 1rem 3rem var(--shadow-ink);
+  padding: clamp(1.25rem, 4cqi, 2rem);
+  text-align: center;
+  font-family: var(--font-body);
+  color: var(--text);
+}
+.ghostRoom h2 {
+  margin: 0;
+  font: 600 1.5rem/1.25 var(--font-fancy);
+  color: var(--text);
+}
+.ghostRoom p {
+  margin: 0.6rem auto 0;
+  max-width: 34rem;
+  font: 400 var(--text-body)/1.6 var(--font-body);
+  color: var(--text-soft);
+}
+.ghostActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+.libraryBtn {
+  min-height: 2.25rem;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--action-primary);
+  background: var(--action-primary);
+  color: var(--action-primary-fg);
+  font: 600 var(--text-control)/1.2 var(--font-body);
+  cursor: pointer;
+}
+/* the recents rail: a low deck of recently imported/opened pieces, offered as "bring one up" */
+.recents {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.rlabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: none;
+  border: none;
+  padding: 0;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+}
+.rlabel:hover {
+  color: var(--text-soft);
+}
+.rlabel .rtog {
+  margin-left: auto;
+  color: var(--text-soft, var(--text-dim));
+  font-weight: 600;
+}
+.rlabel:hover .rtog {
+  color: var(--text-dim);
+}
+.rlabel .pip {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border: 2px solid var(--edge);
+}
+.strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.1rem 0 0.35rem;
+}
+.rcard {
+  flex: none;
+  width: clamp(3rem, 7vw, 4.4rem);
+  cursor: pointer;
+  background: var(--stage-panel);
+  border: 3px solid var(--stage-black);
+  box-shadow: 3px 3px 0 0 var(--a, var(--rose));
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
+}
+.rcard:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--a, var(--rose));
+}
+.rcov {
+  aspect-ratio: 2 / 3;
+  background: var(--a, var(--rose));
+  border-bottom: 3px solid var(--stage-black);
+  background-size: cover;
+  background-position: center top;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.2rem;
+}
+.rcov b {
+  font-family: var(--font-big);
+  font-weight: 900;
+  font-size: 1.05rem;
+  color: var(--stage-ink);
+  opacity: 0.82;
+  line-height: 0.7;
+}
+.rnm {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control, 0.875rem);
+  color: var(--stage-card);
+  padding: 0.22rem 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@container (max-width: 40rem) {
+  .prosc {
+    padding: 0.3rem;
+    box-shadow: 4px 4px 0 0 var(--edge);
+  }
+  .pane {
+    flex-wrap: wrap;
+  }
+  .art {
+    width: clamp(8rem, 52vw, 12rem);
+  }
+  .sheet {
+    flex: 1 1 100%;
+  }
+}
+
+/* keep-mounted piece panes: the wrapper fills the stage so the pane inside can actually scroll;
+   hidden panes stay mounted (drafts live in their React state) but take no layout */
+.paneWrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.paneWrapHidden {
+  display: none;
+}
+
+/* the split stage: two panes share the row, active left, the pinned piece right of the seam.
+   THE FLUID LAW SEAM: the stage and each pane are size containers, so editors respond to the
+   PANE they live in (a half-width split, a future drawer) via @container - never the viewport. */
+.stage {
+  container-type: inline-size;
+}
+.paneRow {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.paneRowSplit {
+  flex-direction: row;
+}
+.paneRowSplit > .paneWrap {
+  min-width: 0;
+  flex: 1 1 0;
+}
+.paneWrap {
+  container-type: inline-size;
+  /* positioned ancestor for pane-scoped overlays (BottomSheet docks to the pane, not the window) */
+  position: relative;
+}
+.paneWrapBeside {
+  border-left: 3px solid var(--seam);
+}
+/* a stage too narrow for two readable panes stacks them instead (queries the stage, not the window) */
+@container (max-width: 60rem) {
+  .paneRowSplit {
+    flex-direction: column;
+  }
+  .paneRowSplit > .paneWrapBeside {
+    border-left: 0;
+    border-top: 3px solid var(--seam);
+  }
+}
+
+/* flat room: no crumb, no prosc wrapper - the editor's own bars are the chrome. paneFlush scrolls
+   with zero padding so those bars run edge to edge; the inspector keeps the padded .pane. */
+.paneFlush {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.ghostFocus {
+  margin-top: 0.8rem;
+  display: flex;
+  justify-content: center;
+}

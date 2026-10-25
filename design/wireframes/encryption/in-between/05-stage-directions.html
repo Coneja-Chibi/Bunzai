@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notices wireframe (in-between)</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../../rc-bridge.css">
+<script src="../../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">05 Stage directions (in-between)</div>
+      <p class="wf-lede">The rare moments, named the way RoleCall names its own: a theatrical title, then one plain sentence saying what happened, that the library is safe, and what to do next.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">Weak lock</div>
+      <div class="stage-note gilt">
+        <div class="stage-note-label">Stage direction: a weak lock</div>
+        <p>No system keychain was available, so this computer's key sits in a file beside your library. Someone who copies both can open it. A stronger lock is available now.</p>
+      </div>
+      <div class="actions after-note">
+        <button class="stamp stamp-btn primary">Move to the stronger lock</button>
+        <button class="btn-ghost">Set a password instead</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Cleanup still owed</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">After the change</div>
+          <div class="marquee">Striking the <em>set</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>The old key is still being cleared from the library file. The nightly backup was reading it, so Bunraku will try again in the background.<span class="p">)</span></p>
+        <button class="stamp stamp-btn cta">Try again now</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Forget a computer</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Recast</div>
+          <div class="marquee">Forget <em>studio-laptop</em>?</div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>It will no longer open the library by itself. To open it there again, you will need your lines.<span class="p">)</span></p>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta">Forget it</button>
+          <button class="btn-ghost">Keep it</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Refused: the last way in</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Not tonight</div>
+          <div class="marquee">The only <em>way in</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>You have no password and no lines, so forgetting this computer would lock the stage door for good. Write your lines first.<span class="p">)</span></p>
+        <button class="stamp stamp-btn primary cta">Write my opening lines &rarr;</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Changed in another window</div>
+      <div class="stage-note">
+        <div class="stage-note-label">Missed cue</div>
+        <p>A password was set in another Bunraku window a moment ago, so this computer was not remembered. Nothing was changed. Try again if you still want to.</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">Out of disk space</div>
+      <div class="stage-note">
+        <div class="stage-note-label">No room in the wings</div>
+        <p>Changing your key rebuilds the library file, which needs about 140 MB free. Free some space and try again. Nothing was changed.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Rule:</b> the theatrical name is the label; the sentence under it is always plain. A person under stress reads the sentence, not the joke.</p>
+</div>
+</body>
+</html>

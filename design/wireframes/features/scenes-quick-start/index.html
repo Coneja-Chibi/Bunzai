@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenes quick start</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../soft/tokens-soft.css">
+<link rel="stylesheet" href="../../soft/soft-parts.css">
+<script src="../../theme.js"></script>
+<style>
+/*
+ * Scenes quick start. PROPOSAL, awaiting approval; nothing here is built.
+ * Today the only starts are Library > Start Scene under a character card, and the "Start New Story"
+ * card on a character's own page in Scenes. The All view has no start control. This adds one
+ * "New scene" button to the Scenes plaque that opens a panel inside the surface (no dialog, no new
+ * screen): pick a character, optionally a persona and a preset, Start. After RoleCall's configure
+ * stepper (Your Stage, Preset, then "Raise the Curtain", with a "start now" shortcut), flattened to
+ * one panel because Bunraku scenes carry their persona, preset and lorebooks as wings once open.
+ * Tokens and the soft catalog parts only (.s-btn .s-input .s-chip .s-card .s-act .s-title .s-lede).
+ */
+body { margin: 0; background: var(--stage-well); color: var(--text); font: 400 1rem var(--font-body); padding: 24px 28px 120px; }
+.stage { max-width: 960px; margin: 0 auto; }
+.plaque { padding: 18px 22px; background: var(--face); box-shadow: 0 0 0 1px var(--edge); border-top: 4px solid var(--accent); margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+.plaque h1 { margin-top: 6px; }
+.plaque-actions { display: flex; align-items: center; gap: 10px; }
+.s-btn[disabled] { opacity: .45; cursor: not-allowed; transform: none; }
+.s-btn[disabled]:hover { background: var(--stamp-bg); transform: none; }
+
+.qs { --c: var(--deck-character); padding: 18px 20px 16px; margin-bottom: 18px; }
+.qs[hidden] { display: none; }
+.qs-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.qs-head h2 { font: 700 1.15rem var(--font-big); color: var(--text); margin: 4px 0 0; }
+.qs-x { background: none; border: 0; color: var(--text-dim); font: 500 12px var(--font-mono); cursor: pointer; padding: 4px 6px; }
+.qs-x:hover { color: var(--text); }
+.qs-find { margin: 12px 0; }
+.qs-chars { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.qs-char { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; background: var(--stage-row); border: 0; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); font: 600 .9rem var(--font-body); cursor: pointer; text-align: center; }
+.qs-char:hover { box-shadow: inset 0 0 0 1px var(--accent); }
+.qs-char[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--t); background: color-mix(in srgb, var(--t) 14%, var(--stage-row)); }
+.qs-art { width: 56px; height: 72px; display: grid; place-items: center; background: color-mix(in srgb, var(--t) 40%, var(--stage-panel)); color: var(--stage-ink); font: 700 1.4rem var(--font-big); }
+.qs-char small { font: 400 12px var(--font-body); color: var(--text-dim); }
+.qs-more { margin-top: 16px; padding-top: 14px; box-shadow: inset 0 1px 0 var(--seam); display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.qs-more[hidden] { display: none; }
+.qs-more label { display: block; font: 500 12px var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text-dim); }
+.qs-more select { margin-top: 6px; }
+.qs-opt { grid-column: 1 / -1; font: 400 12px var(--font-body); color: var(--text-dim); margin: 0; }
+.qs-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.qs-foot .s-lede { margin: 0; font-size: .9rem; }
+.qs-err { margin-top: 10px; padding: 8px 12px; background: var(--stage-danger-bg); color: var(--stage-danger-text); box-shadow: inset 0 0 0 1px var(--stage-danger-edge); font-size: .9rem; }
+.qs-err[hidden] { display: none; }
+.grid-note { color: var(--text-dim); font: 400 .9rem var(--font-body); padding: 14px 4px; }
+@media (max-width: 560px) { .qs-more { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="plaque" data-part="scenes.header">
+    <div>
+      <div class="s-act"><b>Your Stage</b></div>
+      <h1 class="s-title">Scenes</h1>
+      <p class="s-lede">1 story across 1 character</p>
+    </div>
+    <div class="plaque-actions">
+      <button type="button" class="s-btn" id="newBtn" aria-expanded="false" aria-controls="qs">New scene</button>
+      <button type="button" class="s-btn ghost">Select</button>
+      <button type="button" class="s-btn ghost">Trash</button>
+    </div>
+  </header>
+
+  <section class="s-card qs" id="qs" hidden aria-label="Start a new scene" data-part="scenes.quickstart">
+    <div class="qs-head">
+      <div><span class="s-act"><b>New scene</b></span><h2>Who is it with?</h2></div>
+      <button type="button" class="qs-x" id="closeBtn">Close</button>
+    </div>
+    <input class="s-input qs-find" placeholder="Search your cast..." aria-label="Search characters">
+    <div class="qs-chars" id="chars">
+      <button type="button" class="qs-char" aria-pressed="false" data-name="Vera" style="--t: var(--deck-character)"><span class="qs-art">V</span>Vera<small>1 scene</small></button>
+      <button type="button" class="qs-char" aria-pressed="false" data-name="Nuit" style="--t: var(--deck-persona)"><span class="qs-art">N</span>Nuit<small>no scenes yet</small></button>
+      <button type="button" class="qs-char" aria-pressed="false" data-name="Magpie" style="--t: var(--deck-lorebook)"><span class="qs-art">M</span>Magpie<small>no scenes yet</small></button>
+      <button type="button" class="qs-char" aria-pressed="false" data-name="Marguerite" style="--t: var(--deck-regex)"><span class="qs-art">M</span>Marguerite<small>no scenes yet</small></button>
+      <button type="button" class="qs-char" aria-pressed="false" data-name="Corvin" style="--t: var(--deck-preset)"><span class="qs-art">C</span>Corvin<small>no scenes yet</small></button>
+    </div>
+
+    <div class="qs-more" id="more" hidden>
+      <p class="qs-opt">Optional. Both can be changed later from the scene's wings.</p>
+      <div><label for="persona">Play as</label>
+        <select class="s-input" id="persona"><option>Your default persona (Nuit)</option><option>No persona</option><option>Corvin</option></select></div>
+      <div><label for="preset">Prompting preset</label>
+        <select class="s-input" id="preset"><option>Studio default</option><option>Cinematic narrator</option><option>Slow burn</option></select></div>
+    </div>
+
+    <div class="qs-err" id="err" hidden role="alert">Could not start the scene: the studio is busy. Nothing was created. Try again.</div>
+
+    <div class="qs-foot">
+      <p class="s-lede" id="hint">Pick a character to begin.</p>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="s-btn ghost" id="cancelBtn">Cancel</button>
+        <button type="button" class="s-btn" id="startBtn" disabled>Start scene</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="grid-note">The rest of the Scenes list (hero, filters, cards) sits below, unchanged.</p>
+</div>
+
+<div class="wf-note"><b>Proposal.</b> One new button on the plaque; the panel opens in place. Pick a character (required), then persona and preset appear (optional, defaults shown). Start creates the scene and opens it, same as Library &gt; Start Scene. Needs approval before any code. Build note: <code>startScene</code> takes only a character today, so persona and preset would be new optional inputs.</div>
+<div class="wf-bar" id="wfbar">
+  <button type="button" data-s="closed" class="on">Closed</button>
+  <button type="button" data-s="choose">Choosing</button>
+  <button type="button" data-s="ready">Character picked</button>
+  <button type="button" data-s="error">Start failed</button>
+  <button type="button" data-theme-switch>Theme</button>
+</div>
+<script>
+(function () {
+  var qs = document.getElementById("qs"), newBtn = document.getElementById("newBtn"), more = document.getElementById("more");
+  var start = document.getElementById("startBtn"), hint = document.getElementById("hint"), err = document.getElementById("err");
+  var chars = [].slice.call(document.querySelectorAll(".qs-char"));
+  function hintFor(name) { return "Starts with " + name + "'s opening line. You can pick another before the first send."; }
+  function show(state) {
+    var open = state !== "closed", picked = state === "ready" || state === "error";
+    qs.hidden = !open; newBtn.setAttribute("aria-expanded", String(open));
+    chars.forEach(function (c, i) { c.setAttribute("aria-pressed", String(picked && i === 0)); });
+    more.hidden = !picked; start.disabled = !picked; err.hidden = state !== "error";
+    hint.textContent = picked ? hintFor("Vera") : "Pick a character to begin.";
+    [].forEach.call(document.querySelectorAll("#wfbar [data-s]"), function (b) { b.classList.toggle("on", b.dataset.s === state); });
+  }
+  document.getElementById("wfbar").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) show(b.dataset.s); });
+  newBtn.addEventListener("click", function () { show(qs.hidden ? "choose" : "closed"); });
+  document.getElementById("closeBtn").addEventListener("click", function () { show("closed"); });
+  document.getElementById("cancelBtn").addEventListener("click", function () { show("closed"); });
+  chars.forEach(function (c) {
+    c.addEventListener("click", function () {
+      chars.forEach(function (o) { o.setAttribute("aria-pressed", "false"); });
+      c.setAttribute("aria-pressed", "true"); more.hidden = false; start.disabled = false; err.hidden = true;
+      hint.textContent = hintFor(c.dataset.name);
+    });
+  });
+  show("closed");
+})();
+</script>
+</body>
+</html>

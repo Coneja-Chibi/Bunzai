@@ -1,0 +1,8 @@
+/** ui.panel bracket-frame: a hairline box with four tint corner brackets, the HUD frame. */
+html[data-surface-ui-panel="bracket-frame"] :is(.scn .plaque, .lib.rc .lrail-head):not(.host-protected, .host-protected *) {
+  border: 0; box-shadow: inset 0 0 0 1px var(--bk-line); background-repeat: no-repeat; background-color: var(--bk-surface-panel);
+  background-image: linear-gradient(var(--bk-role-brand), var(--bk-role-brand)), linear-gradient(var(--bk-role-brand), var(--bk-role-brand)), linear-gradient(var(--bk-role-brand), var(--bk-role-brand)), linear-gradient(var(--bk-role-brand), var(--bk-role-brand)),
+    linear-gradient(var(--bk-role-brand), var(--bk-role-brand)), linear-gradient(var(--bk-role-brand), var(--bk-role-brand)), linear-gradient(var(--bk-role-brand), var(--bk-role-brand)), linear-gradient(var(--bk-role-brand), var(--bk-role-brand));
+  background-size: 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px;
+  background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+}

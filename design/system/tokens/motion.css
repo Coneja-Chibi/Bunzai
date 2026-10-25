@@ -1,0 +1,26 @@
+/*
+ * Bunraku design system: motion, contract v1.
+ * Motion says something changed or something is waiting. It never decorates: no shake, jitter,
+ * glitch, flicker, spin or parallax. Movement is at most a 2px lift, opacity, or a short slide of a
+ * sheet into place. Every transition and animation reads these tokens, so access.css can stop them.
+ */
+:root {
+  --bk-dur-instant: 80ms;    /* press feedback */
+  --bk-dur-fast: 120ms;      /* hover, toggles, selection */
+  --bk-dur-base: 200ms;      /* panels, menus, dialogs appearing */
+  --bk-dur-slow: 320ms;      /* sheets, the title screen fade, theme reveal */
+  --bk-dur-pulse: 1.6s;      /* one cycle of a "waiting on you" pulse */
+  --bk-dur-ambient: 46s;     /* the title screen backdrop drift */
+
+  --bk-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --bk-ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --bk-ease-move: var(--bk-ease-out);   /* what lifts and presses use; C3 sets steps(2) */
+
+  --bk-pulse-min: 0.45;      /* a pulse never fades below this opacity */
+
+  /* the hover lift and the press, in px, read by every lifting part */
+  --bk-lift-x: 0px;
+  --bk-lift-y: -2px;
+  --bk-press-x: 0px;
+  --bk-press-y: 1px;
+}

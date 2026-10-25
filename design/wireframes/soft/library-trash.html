@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trash</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * The Library's Trash, soft identity. Ported from src/ui/apps/library/trash-panel.tsx and
+ * delete-flow.tsx, plus docs/reference/ui.md's Trash section. Holds deleted pieces, cut scenes,
+ * and deleted takes together (rc-port/trash.html + scene-trash.html, merged as the source has them).
+ * The rail's own Trash row lives on library-shelves.html; this page is the panel it opens.
+ */
+.page { container-type: inline-size; display: flex; min-height: 100vh; background: var(--canvas); }
+.main { flex: 1; min-width: 0; padding: 8vh 24px 10vh; display: flex; justify-content: center; }
+
+.ltrash { width: min(46rem, 100%); }
+.thead { display: flex; gap: 12px; align-items: flex-start; }
+.thead svg { flex: none; width: 26px; height: 26px; color: var(--stage-danger-text); margin-top: 4px; }
+.thead p { color: var(--text-soft); font-size: .88rem; line-height: 1.55; margin-top: 6px; max-width: 34rem; }
+.tfilter { margin: 18px 0 14px; display: inline-flex; }
+.tfilter button { padding: 8px 16px; background: none; border: 0; font: 600 .8rem var(--font-body); color: var(--text-dim); cursor: pointer; box-shadow: inset 0 0 0 1px var(--seam); }
+.tfilter button.on { background: var(--stage-danger-bg); color: var(--stage-danger-text); box-shadow: inset 0 0 0 1px var(--stage-danger-edge); }
+.trow { display: flex; align-items: center; gap: 14px; padding: 12px 16px; margin-top: 8px; box-shadow: inset 0 0 0 1px var(--seam); }
+.trow .who { flex: 1; min-width: 0; }
+.trow .nm { font: 600 .9rem var(--font-big); color: var(--text); }
+.trow .ty { font-size: .76rem; color: var(--text-dim); text-transform: capitalize; margin-top: 2px; }
+.trow .ty.scene { color: var(--deck-pack); text-transform: none; }
+.trow .ago { color: var(--text-faint); text-transform: none; margin-left: 6px; }
+.trow button { flex: none; padding: 7px 14px; font: 600 .78rem var(--font-body); background: none; box-shadow: inset 0 0 0 1px var(--accent); color: var(--accent); cursor: pointer; border: 0; }
+.trow button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+.empty { max-width: 26rem; margin: 14vh auto 0; text-align: center; }
+.empty svg { width: 30px; height: 30px; color: var(--text-faint); }
+.empty h2 { margin-top: 14px; }
+.empty p { color: var(--text-soft); font-size: .88rem; margin-top: 6px; }
+.empty .s-btn { margin-top: 18px; }
+
+/* delete confirm dialog */
+.scrim { position: fixed; inset: 0; z-index: 90; display: none; place-items: center; background: var(--scrim); padding: 20px; }
+.scrim.show { display: grid; }
+.dlg { width: min(24rem, 100%); background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); padding: 22px 22px 20px; text-align: center; }
+.dlg svg { width: 26px; height: 26px; color: var(--stage-danger-text); }
+.dlg h3 { margin-top: 10px; }
+.dlg p { font-size: .85rem; color: var(--text-soft); margin-top: 8px; line-height: 1.55; }
+.dlg .acts { display: flex; gap: 10px; margin-top: 18px; }
+.dlg .acts .s-btn { flex: 1; justify-content: center; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
+  <symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+    <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+    <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+    <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+</defs></svg>
+
+<div class="page">
+  <nav class="s-dock">
+    <div class="brand" style="--pink: var(--deck-pack); --ink: var(--stage-ink)"><svg width="26" height="26"><use href="#bun"/></svg>bunraku</div>
+    <a class="s-app c-workbench" href="#"><i>Wb</i><b>Workbench</b><small>home</small></a>
+    <a class="s-app c-scenes" href="#"><i>Sc</i><b>Scenes</b></a>
+    <a class="s-app c-library on" href="#"><i>Lb</i><b>Library</b></a>
+    <a class="s-app c-press" href="#"><i>Pr</i><b>Press</b></a>
+    <a class="s-app c-agent" href="#"><i>Ag</i><b>Agent</b></a>
+    <a class="s-app c-kit" href="#"><i>Kt</i><b>Kit</b></a>
+    <a class="s-app c-settings" href="#"><i>St</i><b>Settings</b></a>
+  </nav>
+
+  <main class="main">
+    <!-- full trash: pieces + cut scenes + deleted takes, All/Pieces/Scenes toggle -->
+    <div class="ltrash" data-view="full">
+      <div class="thead">
+        <svg><use href="#i-trash"/></svg>
+        <div>
+          <h1 class="s-title">Trash</h1>
+          <p>Deleted pieces and scenes stay here for 3 days. They no longer appear in your Library,
+          your Scenes, or selection menus while in Trash. Restoring returns a piece with its history
+          under its own name, and a scene or take with every message.</p>
+        </div>
+      </div>
+      <div class="tfilter" role="group" aria-label="Show">
+        <button type="button" class="on" data-f="all">All 6</button>
+        <button type="button" data-f="pieces">Pieces 3</button>
+        <button type="button" data-f="scenes">Scenes 3</button>
+      </div>
+      <div id="rows">
+        <div class="trow" data-f="pieces"><div class="who"><div class="nm">Vera the Bard</div><div class="ty">character <span class="ago">2d left</span></div></div><button type="button">Restore</button></div>
+        <div class="trow" data-f="scenes"><div class="who"><div class="nm">The long storm</div><div class="ty scene">scene with Marguerite Vane, 42 messages <span class="ago">3d left</span></div></div><button type="button">Restore</button></div>
+        <div class="trow" data-f="pieces"><div class="who"><div class="nm">Paramnesia VI, GLM</div><div class="ty">preset <span class="ago">1d left</span></div></div><button type="button">Restore</button></div>
+        <div class="trow" data-f="scenes"><div class="who"><div class="nm">Take 2</div><div class="ty scene">take of Cut the deck, 18 messages <span class="ago">under 1h left</span></div></div><button type="button">Restore</button></div>
+        <div class="trow" data-f="pieces"><div class="who"><div class="nm">Harbor Town</div><div class="ty">lorebook <span class="ago">3d left</span></div></div><button type="button">Restore</button></div>
+        <div class="trow" data-f="scenes"><div class="who"><div class="nm">Untitled Story</div><div class="ty scene">scene with Nuit, 3 messages <span class="ago">5h left</span></div></div><button type="button">Restore</button></div>
+      </div>
+    </div>
+
+    <!-- empty trash -->
+    <div class="empty" data-view="empty">
+      <svg><use href="#i-trash"/></svg>
+      <h2 class="s-h2">Trash is empty</h2>
+      <p>Deleted pieces and scenes remain here for 3 days, ready to restore.</p>
+      <button type="button" class="s-btn">Back to library</button>
+    </div>
+  </main>
+</div>
+
+<!-- Move to Trash? confirm, opened from the Library's Delete -->
+<div class="scrim" id="confirmScrim">
+  <div class="dlg">
+    <svg><use href="#i-trash"/></svg>
+    <h3 class="s-h3">Move "Vera the Bard" to Trash?</h3>
+    <p>You can restore it from Trash for 3 days. It will no longer appear in your Library or
+    selection menus while deleted.</p>
+    <div class="acts"><button type="button" class="s-btn ghost">Keep</button><button type="button" class="s-btn danger">Delete</button></div>
+  </div>
+</div>
+
+<div class="wf-bar" id="wfBar">
+  <button data-s="full">Trash: All</button>
+  <button data-s="pieces">Trash: Pieces</button>
+  <button data-s="scenes">Trash: Scenes</button>
+  <button data-s="empty">Trash is empty</button>
+  <button data-s="confirm">Move to Trash? dialog</button>
+</div>
+<div class="wf-note" id="wfNote">
+  <b>The Library's Trash, soft identity.</b> Ported from trash-panel.tsx. One list holds deleted
+  pieces, cut scenes, and deleted takes together, filtered by the All / Pieces / Scenes toggle; each
+  row shows its type, its time left ("2d left", "under 1h left" under an hour), and Restore, which
+  brings a piece back under its own id and history, or a scene/take back with every message. Trash
+  is empty is its own state. Move to Trash? is the confirm dialog the Library's Delete opens (one
+  piece or a batch); it is not on this page's own Trash flow, which restores rather than deletes.
+</div>
+
+<script>
+(function () {
+  var q = new URLSearchParams(location.search);
+  if (q.get("embed")) document.body.classList.add("embed");
+  function apply(s) {
+    document.querySelectorAll("#wfBar button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-s") === s); });
+    var showFull = s === "full" || s === "pieces" || s === "scenes";
+    document.querySelector('[data-view="full"]').style.display = showFull ? "" : "none";
+    document.querySelector('[data-view="empty"]').style.display = s === "empty" ? "" : "none";
+    document.getElementById("confirmScrim").classList.toggle("show", s === "confirm");
+    if (showFull) {
+      document.querySelectorAll(".tfilter button").forEach(function (b) { b.classList.toggle("on", b.getAttribute("data-f") === s || (s === "full" && b.getAttribute("data-f") === "all")); });
+      document.querySelectorAll("#rows .trow").forEach(function (r) {
+        r.style.display = (s === "full" || r.getAttribute("data-f") === s) ? "" : "none";
+      });
+    }
+  }
+  apply(q.get("state") || "full");
+  document.getElementById("wfBar").addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-s")); });
+  document.querySelectorAll(".tfilter button").forEach(function (b) {
+    b.addEventListener("click", function () { apply(b.getAttribute("data-f") === "all" ? "full" : b.getAttribute("data-f")); });
+  });
+})();
+</script>
+</body>
+</html>

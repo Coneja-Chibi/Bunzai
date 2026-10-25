@@ -1,0 +1,137 @@
+{
+  "entries": {
+    "0": {
+      "uid": 0,
+      "key": [
+        "Harbor",
+        "docks"
+      ],
+      "keysecondary": [],
+      "comment": "Harbor",
+      "content": "[ Harbor: an invented port town used only in tests ]",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "addMemo": true,
+      "order": 100,
+      "position": 0,
+      "disable": false,
+      "excludeRecursion": false,
+      "probability": 100,
+      "useProbability": true,
+      "depth": 4,
+      "group": "",
+      "scanDepth": null,
+      "caseSensitive": null,
+      "matchWholeWords": null,
+      "displayIndex": 0,
+      "preventRecursion": false
+    },
+    "1": {
+      "uid": 1,
+      "key": [
+        "Lighthouse"
+      ],
+      "keysecondary": [
+        "lamp"
+      ],
+      "comment": "Lighthouse",
+      "content": "[ Lighthouse: stands above the invented harbor ]",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "addMemo": true,
+      "order": 90,
+      "position": 1,
+      "disable": false,
+      "excludeRecursion": false,
+      "probability": 100,
+      "useProbability": true,
+      "depth": 4,
+      "group": "",
+      "scanDepth": null,
+      "caseSensitive": null,
+      "matchWholeWords": null,
+      "displayIndex": 1,
+      "preventRecursion": false
+    },
+    "2": {
+      "uid": 2,
+      "key": [
+        "Guild"
+      ],
+      "keysecondary": [],
+      "comment": "Guild",
+      "content": "[ Guild: a made-up trading guild ]",
+      "constant": true,
+      "selective": false,
+      "selectiveLogic": 0,
+      "addMemo": true,
+      "order": 100,
+      "position": 2,
+      "disable": false,
+      "excludeRecursion": false,
+      "probability": 100,
+      "useProbability": true,
+      "depth": 4,
+      "group": "",
+      "scanDepth": null,
+      "caseSensitive": null,
+      "matchWholeWords": null,
+      "displayIndex": 2,
+      "preventRecursion": false
+    },
+    "3": {
+      "uid": 3,
+      "key": [
+        "Ferry"
+      ],
+      "keysecondary": [],
+      "comment": "Ferry",
+      "content": "[ Ferry: runs between two invented islands ]",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "addMemo": true,
+      "order": 100,
+      "position": 3,
+      "disable": false,
+      "excludeRecursion": false,
+      "probability": 75,
+      "useProbability": true,
+      "depth": 2,
+      "group": "",
+      "scanDepth": null,
+      "caseSensitive": true,
+      "matchWholeWords": true,
+      "displayIndex": 3,
+      "preventRecursion": false
+    },
+    "4": {
+      "uid": 4,
+      "key": [
+        "Archive"
+      ],
+      "keysecondary": [],
+      "comment": "Archive",
+      "content": "[ Archive: switched off ]",
+      "constant": false,
+      "selective": true,
+      "selectiveLogic": 0,
+      "addMemo": true,
+      "order": 100,
+      "position": 0,
+      "disable": true,
+      "excludeRecursion": false,
+      "probability": 100,
+      "useProbability": true,
+      "depth": 4,
+      "group": "",
+      "scanDepth": null,
+      "caseSensitive": null,
+      "matchWholeWords": null,
+      "displayIndex": 4,
+      "preventRecursion": false
+    }
+  }
+}

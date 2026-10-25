@@ -1,0 +1,72 @@
+name: auto-release
+
+# The release train: every push to Mainstage bumps the patch version, tags it, and hands the tag
+# to release.yml, so downloads and the in-app update check always track the latest work with no
+# manual step. Escape hatch: put [skip release] anywhere in the head commit message.
+#
+# No loop: the bump commit is pushed with GITHUB_TOKEN, and GitHub never triggers workflows from
+# GITHUB_TOKEN pushes; the actor/message guards are belt and suspenders for a future PAT.
+
+on:
+  push:
+    branches:
+      - Mainstage
+  # hand-crank: cut a release from the current Mainstage without waiting for a push
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-train
+  cancel-in-progress: false
+
+jobs:
+  cut:
+    if: github.actor != 'github-actions[bot]' && !contains(github.event.head_commit.message, '[skip release]')
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.bump.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+      - name: Bump patch version, commit, tag, push
+        id: bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # serialize against a racing train run that already pushed a bump
+          git pull --rebase origin Mainstage
+          # bump BOTH version homes: package.json and src/version.ts (the constant the compiled
+          # exe reads). The parity test in update-check.test.ts fails the train if they drift -
+          # it did exactly that on the first run, by design.
+          NEXT="$(bun -e '
+            const pkg = JSON.parse(await Bun.file("package.json").text());
+            const [maj, min, pat] = pkg.version.split(".").map(Number);
+            pkg.version = `${maj}.${min}.${pat + 1}`;
+            await Bun.write("package.json", JSON.stringify(pkg, null, 2) + "\n");
+            const vPath = "src/version.ts";
+            const src = await Bun.file(vPath).text();
+            const out = src.replace(/APP_VERSION = "[^"]+"/, `APP_VERSION = "${pkg.version}"`);
+            if (out === src) throw new Error("bump: APP_VERSION not found in src/version.ts");
+            await Bun.write(vPath, out);
+            console.log(pkg.version);
+          ')"
+          TAG="v${NEXT}"
+          git add package.json src/version.ts
+          git commit -m "release: ${TAG} [skip release]"
+          git tag "${TAG}"
+          git push origin "HEAD:${GITHUB_REF_NAME}" "${TAG}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+  release:
+    needs: cut
+    uses: ./.github/workflows/release.yml
+    permissions:
+      contents: write
+    with:
+      tag: ${{ needs.cut.outputs.tag }}

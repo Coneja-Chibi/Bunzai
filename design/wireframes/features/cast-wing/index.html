@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cast wing</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../play-shared/play.css">
+<script src="../play-shared/palettes.js"></script>
+<script src="../play-shared/play.js"></script>
+<style>
+/* ---- the Cast wing, after RoleCall's CharacterPanel and PersonaPanel (v2) ---- */
+.cw { --acc: var(--deck-character); flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.cw.persona { --acc: var(--deck-persona); }
+.cw .tabs button small { display: block; }
+.cwb { flex: 1; min-height: 0; display: flex; }
+.cwb > .pcol { width: 15rem; flex: none; position: relative; overflow: hidden; background: linear-gradient(170deg, color-mix(in srgb, var(--acc) 55%, var(--stage-panel)), var(--stage-black) 92%); }
+.cwb > .fcol { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--stage-panel); }
+.fcol > .scrl { flex: 1; min-height: 0; overflow: hidden; padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+.fcol > .scrl.fade { -webkit-mask-image: linear-gradient(#000 85%, transparent); mask-image: linear-gradient(#000 85%, transparent); }
+@container (max-width: 34rem) { .cwb { flex-direction: column; overflow: hidden; } .cwb > .pcol { width: auto; height: 11rem; } }
+
+/* WingHero */
+.wh { display: flex; gap: 12px; align-items: flex-start; margin: 12px 12px 0; padding: 14px; border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 12%, var(--stage-panel)), var(--stage-panel) 60%); box-shadow: 5px 5px 0 0 color-mix(in srgb, var(--acc) 14%, transparent); }
+.wh .ic { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent); color: var(--acc); background: color-mix(in srgb, var(--acc) 10%, transparent); }
+.wh .ic svg { width: 18px; height: 18px; }
+.wh .eb { font-family: var(--font-mono); font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--stage-mute); }
+.wh h3 { margin-top: 3px; font-family: var(--font-big); font-weight: 800; font-size: 22px; letter-spacing: .03em; text-transform: uppercase; color: var(--stage-card); line-height: 1.1; }
+.wh h3 em { font-style: normal; color: var(--acc); }
+.wh p { margin-top: 5px; font-size: 12px; line-height: 1.5; color: var(--stage-soft); }
+
+/* the portrait column */
+.pcol .img { position: absolute; inset: 0; display: grid; place-items: center; color: color-mix(in srgb, var(--stage-card) 18%, transparent); }
+.pcol .img svg { width: 4.5rem; height: 4.5rem; }
+.pcol .fadeb { position: absolute; left: 0; right: 0; bottom: 0; height: 60%; background: linear-gradient(to top, var(--stage-black) 0%, color-mix(in srgb, var(--stage-black) 80%, transparent) 40%, transparent); }
+.pcol .tr, .pcol .tl { position: absolute; top: 10px; z-index: 3; display: flex; gap: 6px; }
+.pcol .tr { right: 10px; } .pcol .tl { left: 10px; }
+.sqb { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--acc) 55%, transparent); background: color-mix(in srgb, var(--stage-black) 65%, transparent); color: var(--acc); cursor: pointer; }
+.sqb svg { width: 16px; height: 16px; }
+.pass { width: 44px; height: 58px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 1px solid color-mix(in srgb, var(--acc) 55%, transparent); background: color-mix(in srgb, var(--acc) 16%, var(--stage-black)); color: var(--acc); font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+.pass svg { width: 18px; height: 18px; }
+.pcol .info { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px; z-index: 2; }
+.nowchip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; margin-bottom: 8px; font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--acc); background: color-mix(in srgb, var(--acc) 20%, var(--stage-black)); border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); }
+.nowchip i { width: 6px; height: 6px; background: var(--acc); }
+.pcol h1 { font-family: var(--font-big); font-weight: 800; font-size: 22px; line-height: 1.1; color: var(--stage-card); }
+.pcol .tg { margin-top: 4px; font-size: 12.5px; color: var(--stage-soft); line-height: 1.4; }
+.pcol .badges { margin-top: 8px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.vb { padding: 1px 6px; font-family: var(--font-mono); font-size: 10px; color: var(--stage-soft); border: 1px solid var(--stage-line); background: color-mix(in srgb, var(--stage-black) 50%, transparent); }
+.vth { margin-top: 8px; display: flex; gap: 5px; }
+.vth span { width: 34px; height: 34px; display: grid; place-items: center; font-family: var(--font-mono); font-size: 9px; color: var(--stage-card); border: 2px solid color-mix(in srgb, var(--stage-card) 12%, transparent); background: linear-gradient(160deg, color-mix(in srgb, var(--v) 55%, var(--stage-panel)), var(--stage-panel)); opacity: .65; }
+.vth span.on { opacity: 1; border-color: color-mix(in srgb, var(--stage-card) 65%, transparent); }
+.pstats { margin-top: 6px; display: flex; gap: 14px; font-family: var(--font-mono); font-size: 12px; color: var(--stage-soft); align-items: center; }
+.pstats svg { width: 14px; height: 14px; margin-right: 5px; vertical-align: -2px; }
+
+/* form cards */
+.fc { border: 1px solid color-mix(in srgb, var(--acc) 30%, transparent); background: linear-gradient(135deg, color-mix(in srgb, var(--acc) 9%, var(--stage-panel)), var(--stage-panel) 55%); padding: 12px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+.fs { border: 2px solid var(--stage-seam); border-left: 4px solid var(--c, var(--acc)); background: var(--stage-well); box-shadow: 3px 3px 0 0 var(--stage-black); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.fs > .h { display: flex; align-items: center; gap: 8px; font-family: var(--font-fancy); font-weight: 600; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--c, var(--acc)); }
+.fs > .h svg { width: 15px; height: 15px; }
+.fs > .h .n { font-family: var(--font-body); font-size: 11.5px; letter-spacing: 0; text-transform: none; font-weight: 400; color: var(--stage-mute); }
+.fs > .h .xp { margin-left: auto; width: 26px; height: 26px; display: grid; place-items: center; border: 2px solid var(--stage-line); background: var(--stage-row); color: var(--stage-soft); }
+.fs > .h .xp svg { width: 13px; height: 13px; }
+.fs.closed { box-shadow: none; }
+.fs.closed > .h .n { margin-left: auto; }
+.lb { font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); }
+.idr { display: flex; gap: 12px; align-items: flex-start; }
+.theme { text-align: center; flex: none; }
+.theme .sw0 { position: relative; width: 48px; height: 48px; margin: 0 auto 4px; border: 2px solid color-mix(in srgb, var(--stage-card) 35%, transparent); background: linear-gradient(135deg, var(--deck-character), var(--deck-pack)); }
+.theme .sw0 i { position: absolute; right: -6px; bottom: -6px; width: 18px; height: 18px; display: grid; place-items: center; background: var(--stage-warn); color: var(--stage-ink); }
+.theme .sw0 i svg { width: 11px; height: 11px; }
+.ul { border-bottom: 1px solid var(--stage-line); padding: 3px 0; color: var(--stage-card); font-size: 14px; }
+.ul.big { font-size: 18px; font-weight: 700; }
+.ul.ph { color: var(--stage-mute); }
+.f2 { display: flex; gap: 10px; } .f2 > * { flex: 1; min-width: 0; }
+.fld .inp.ac { color: var(--acc); }
+.sgr { display: flex; gap: 8px; align-items: center; }
+.sq { width: 34px; height: 34px; flex: none; border: 2px solid color-mix(in srgb, var(--stage-card) 25%, transparent); background: var(--s); }
+.sq.plus { display: grid; place-items: center; border-style: dashed; background: transparent; color: var(--stage-mute); }
+.sq.plus svg { width: 14px; height: 14px; }
+.gbar { height: 10px; border: 1px solid var(--stage-line); background: linear-gradient(90deg, var(--deck-character), var(--deck-pack), var(--deck-lorebook)); }
+.nc { display: flex; flex-wrap: wrap; gap: 14px 12px; align-items: flex-start; }
+.nc .c { text-align: center; width: 62px; position: relative; }
+.nc .c .sq { width: 38px; height: 38px; margin: 0 auto 4px; position: relative; }
+.nc .c.sig .sq { width: 48px; height: 48px; border-color: var(--stage-warn); }
+.nc .c.sig .sq i { position: absolute; top: -7px; right: -7px; width: 16px; height: 16px; display: grid; place-items: center; background: var(--stage-warn); color: var(--stage-ink); }
+.nc .c.sig .sq i svg { width: 10px; height: 10px; }
+.nc .c .nm { font-size: 12px; color: var(--stage-card); line-height: 1.2; }
+.nc .c .cp { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--stage-mute); }
+.nc .c.sig .cp { color: var(--stage-warn); font-weight: 700; }
+.nc .c .rm { position: absolute; top: -6px; right: 4px; width: 16px; height: 16px; display: grid; place-items: center; background: var(--stage-black); border: 1px solid var(--stage-line); color: var(--stage-soft); }
+.nc .c .rm svg { width: 9px; height: 9px; }
+.nc .c .ar { display: flex; justify-content: center; gap: 2px; margin-top: 2px; color: var(--stage-mute); }
+.nc .c .ar svg { width: 11px; height: 11px; }
+.nc .c.add .sq { margin-bottom: 4px; }
+.tx { padding: 8px 10px; min-height: 3.6rem; background: var(--stage-black); border: 2px solid var(--stage-line); box-shadow: inset 2px 2px 0 0 color-mix(in srgb, var(--stage-black) 60%, transparent); font-size: 13px; line-height: 1.5; color: var(--stage-card); }
+.tx.ph { color: var(--stage-mute); } .tx.dirty { border-color: var(--stage-warn); }
+.starr { text-align: center; padding: 4px 8px 2px; }
+.starr .t { display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-big); font-weight: 800; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--acc); }
+.starr .t::before, .starr .t::after { content: ""; width: 24px; height: 1px; background: color-mix(in srgb, var(--acc) 60%, transparent); }
+.starr .t svg { width: 13px; height: 13px; }
+.starr .nm2 { margin-top: 6px; display: flex; gap: 10px; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--stage-card); }
+.starr .nm2 .ic2 { width: 34px; height: 34px; display: grid; place-items: center; border: 1px dashed color-mix(in srgb, var(--acc) 50%, transparent); color: var(--acc); }
+.starr .nm2 .ic2 svg { width: 16px; height: 16px; }
+.starr .tg2 { margin-top: 4px; font-size: 13px; color: var(--stage-mute); }
+.starr .pr2 { margin-top: 4px; font-family: var(--font-mono); font-size: 11px; color: var(--stage-soft); letter-spacing: .04em; }
+.foot { padding: 10px 12px; border-top: 1px solid var(--stage-seam); display: flex; flex-direction: column; gap: 8px; background: var(--stage-panel); }
+.foot .nt { padding: 6px 10px; }
+.bigb { width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-family: var(--font-big); font-weight: 800; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-soft); cursor: pointer; }
+.bigb svg { width: 15px; height: 15px; }
+.bigb.go { background: var(--acc); border-color: var(--acc); color: var(--stage-ink); }
+.bigb.on { border-color: var(--acc); background: color-mix(in srgb, var(--acc) 14%, transparent); color: var(--acc); }
+.bigb[disabled] { opacity: .55; cursor: not-allowed; }
+
+/* Casting Call (SatelliteOrbiters PersonaQuickSwap) */
+.cc { position: absolute; right: 14px; top: 56px; width: 17.5rem; z-index: 70; background: var(--stage-black); border: 2px solid var(--stage-black); box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--stage-black) 60%, transparent), 0 0 0 1px var(--stage-line); padding: 14px; }
+.cc .hd { text-align: center; padding-bottom: 8px; margin-bottom: 10px; border-bottom: 1px dashed var(--stage-line); }
+.cc .hd b { display: block; font-family: var(--font-fancy); font-weight: 500; font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: var(--acc); }
+.cc .hd span { display: block; margin-top: 3px; font-size: 10px; color: var(--stage-mute); }
+.cc .srch { display: flex; align-items: center; gap: 8px; padding: 8px 10px; margin-bottom: 10px; background: var(--stage-row); border: 1px solid var(--stage-seam); font-size: 12px; color: var(--stage-mute); }
+.cc .srch svg { width: 13px; height: 13px; }
+.cc .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+.cc .tile { aspect-ratio: 3/4; position: relative; display: flex; flex-direction: column; border: 1px solid var(--stage-seam); background: var(--stage-well); }
+.cc .tile .ph { flex: 1; background: linear-gradient(160deg, color-mix(in srgb, var(--p) 55%, var(--stage-panel)), var(--stage-panel)); }
+.cc .tile .cap { padding: 3px 2px; text-align: center; font-family: var(--font-mono); font-size: 8px; letter-spacing: .04em; text-transform: uppercase; color: var(--stage-mute); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: color-mix(in srgb, var(--stage-black) 50%, transparent); }
+.cc .tile.sel { outline: 2px solid var(--acc); outline-offset: 1px; }
+.cc .tile.sel .cap { color: var(--acc); }
+.cc .tile .dd { position: absolute; top: 4px; right: 4px; width: 7px; height: 7px; background: var(--stage-warn); }
+.cc .lead { display: flex; gap: 10px; padding: 10px; margin-bottom: 10px; background: var(--stage-well); border: 1px solid var(--stage-seam); }
+.cc .lead .ph { width: 40px; height: 54px; flex: none; background: linear-gradient(160deg, color-mix(in srgb, var(--p) 55%, var(--stage-panel)), var(--stage-panel)); border: 1px solid var(--stage-line); }
+.cc .lead .k { font-family: var(--font-mono); font-size: 8px; letter-spacing: .2em; text-transform: uppercase; color: var(--stage-mute); }
+.cc .lead .n { margin-top: 3px; font-family: var(--font-fancy); font-size: 13px; color: var(--stage-card); }
+.cc .lead .s { margin-top: 3px; font-size: 10.5px; color: var(--stage-mute); }
+.cc .lead .s b { color: var(--acc); }
+.cc .acts { display: flex; gap: 8px; }
+.cc .acts button { flex: 1; padding: 9px 6px; font-family: var(--font-big); font-weight: 700; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-soft); cursor: pointer; }
+.cc .acts button.go { background: var(--acc); border-color: var(--acc); color: var(--stage-ink); }
+.cc .acts button[disabled] { opacity: .5; }
+
+.dlg { width: min(26rem, 100%); background: var(--stage-panel); border: 2px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--stage-black); }
+.dlg header { padding: 12px 14px; border-bottom: 1px solid var(--stage-seam); font-family: var(--font-big); font-weight: 800; font-size: 1.05rem; color: var(--stage-card); }
+.dlg .bd { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; font-size: 13px; line-height: 1.55; color: var(--stage-soft); }
+.dlg footer { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 14px; border-top: 1px solid var(--stage-seam); }
+.dlg ul { margin: 0; padding-left: 1.1rem; }
+.scr { position: absolute; inset: 0; background: color-mix(in srgb, var(--stage-black) 70%, transparent); display: grid; place-items: center; padding: 12px; z-index: 80; }
+.swapline { display: flex; align-items: center; gap: 10px; margin: 6px 0 14px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--stage-mute); }
+.swapline::before, .swapline::after { content: ""; flex: 1; height: 1px; background: var(--stage-seam); }
+.swapline b { color: var(--deck-persona); }
+.roster { display: flex; flex-direction: column; border: 1px solid var(--stage-seam); }
+.roster .rr { display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid var(--stage-seam); }
+.roster .rr:last-child { border-bottom: 0; }
+.roster .rr .av2 { width: 30px; height: 30px; font-size: 13px; }
+.roster .rr .t { font-size: 13.5px; color: var(--stage-card); } .roster .rr .s { font-size: 11.5px; color: var(--stage-mute); }
+.mini .wh h3 { font-size: 17px; } .mini .wh p { display: none; }
+</style>
+</head>
+<body>
+<script src="../play-shared/icons.js"></script>
+<div class="page">
+  <div class="themebar"></div>
+  <header class="wf-head"><div>
+    <h1 class="wf-title">Cast wing</h1>
+    <p class="wf-lede">v2, matched to RoleCall's real Cast wing (CharacterPanel, PersonaPanel, the Casting Call picker; left-wing-groups). Three tabs: Character, Persona, Participants. Each editing tab is a hero card, a tall portrait on the left and a scrolling form on the right with a pinned footer. The forms are the Workbench's own character and persona editors, so one editor each. Square corners and Bunraku tokens throughout; RoleCall's round swatches and glyph marks become square swatches and the icon set.</p>
+  </div></header>
+
+  <div class="wf-note"><b>How saving works.</b> Save writes the Library card, then moves this scene onto the new version; other scenes show Update available. There is no override or fork layer. <b>A swap is this scene only</b>: it never changes your default for new scenes. Only the Default persona button does. Swap, card save and revert all wait while a reply is being written.</div>
+
+  <div class="states">
+
+    <!-- 1 character, clean -->
+    <div class="pn wide">
+      <div class="wf-state">Character tab: nothing unsaved (the form scrolls; the footer stays)</div>
+      <div class="fr paused" style="--h:68rem" data-part="scene.page">
+        <div class="bgm"></div>
+        <div class="play"><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div></div>
+        <nav class="rail l" data-part="scene.wings"><div class="wi" style="--w:var(--accent)"><svg><use href="#i-zap"/></svg></div><div class="wi on" style="--w:var(--deck-character)"><svg><use href="#i-mask"/></svg></div></nav>
+        <div class="pausedmark" style="left:80%"><i><svg><use href="#i-pause"/></svg></i>SCENE PAUSED</div>
+        <section class="wp l" data-part="scene.wings.panel" aria-label="Cast">
+          <nav class="fold" data-fold="character"></nav>
+          <div class="cw" data-part="scene.cast.character">
+            <div class="wh"><span class="ic"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h3>Identity &amp; <em>Details</em></h3><p>Stage name, casting card, prompts, lorebooks: every page in this character's dossier.</p></div></div>
+            <div class="cwb" style="margin-top:12px">
+              <div class="pcol">
+                <div class="img"><svg><use href="#i-user"/></svg></div>
+                <div class="tr"><span class="sqb" title="Change image"><svg><use href="#i-image"/></svg></span></div>
+                <div class="fadeb"></div>
+                <div class="info"><span class="nowchip"><i></i>Now playing</span><h1>Marguerite Vane</h1><p class="tg">Keeper of the north light</p>
+                  <div class="badges"><span class="vb">V4</span></div>
+                  <div class="vth" data-part="scene.cast.variants"><span class="on" style="--v:var(--deck-character)">Base</span><span style="--v:var(--deck-lorebook)">Storm</span><span style="--v:var(--deck-pack)">Dawn</span></div></div>
+              </div>
+              <div class="fcol">
+                <div class="scrl fade">
+                  <div class="fc">
+                    <div class="idr"><div class="theme"><div class="sw0"><i><svg><use href="#i-star"/></svg></i></div><div class="lb">Theme</div></div>
+                      <div class="grow" style="flex:1;display:flex;flex-direction:column;gap:8px"><div><div class="lb">Stage name</div><div class="ul big">Marguerite Vane</div></div><div><div class="lb">Full name</div><div class="ul ph">Legal or birth name...</div></div></div></div>
+                    <div class="fld"><label>Title / epithet</label><div class="inp ac"><span class="grow">Keeper of the north light</span></div></div>
+                    <div class="f2"><div class="fld"><label>Age</label><div class="inp"><span class="grow">Sixty-one</span></div></div><div class="fld"><label>Pronouns</label><div class="inp"><span class="grow">she/her</span></div></div></div>
+                    <div class="fld"><label>Tagline</label><div class="inp"><span class="grow">Keeps the lighthouse lit through the long storm</span></div></div>
+                  </div>
+                  <div class="fs">
+                    <div class="h"><svg><use href="#i-sliders"/></svg>Color palette<span class="n">(becomes XML tags for AI)</span></div>
+                    <div><div class="lb" style="margin-bottom:6px">Signature colors (theme)</div><div class="sgr"><span class="sq" style="--s:var(--deck-character)"></span><span class="sq" style="--s:var(--deck-pack)"></span><span class="sq plus"><svg><use href="#i-plus"/></svg></span></div><div class="gbar" style="margin-top:8px"></div></div>
+                    <div><div class="lb" style="margin-bottom:8px">Named colors</div>
+                      <div class="nc">
+                        <div class="c sig"><div class="sq" style="--s:var(--deck-character)"><i><svg><use href="#i-star"/></svg></i></div><div class="nm">Theme</div><div class="cp">Signature</div></div>
+                        <div class="c"><div class="sq" style="--s:var(--deck-lorebook)"></div><div class="nm">Silver</div><div class="cp">Hair</div><div class="ar"><svg><use href="#i-left"/></svg><svg><use href="#i-right"/></svg></div></div>
+                        <div class="c"><div class="sq" style="--s:var(--deck-preset)"></div><div class="nm">Slate</div><div class="cp">Eyes</div><div class="ar"><svg><use href="#i-left"/></svg><svg><use href="#i-right"/></svg></div></div>
+                        <div class="c add"><div class="sq plus"><svg><use href="#i-plus"/></svg></div><div class="nm">Add</div></div>
+                      </div></div>
+                  </div>
+                  <div class="fs" style="--c:var(--deck-pack)"><div class="h"><svg><use href="#i-scroll"/></svg>Description<span class="xp"><svg><use href="#i-ext"/></svg></span></div><div class="tx">Keeps the lighthouse on the north rock. Weathered, precise, slow to trust.</div></div>
+                  <div class="fs" style="--c:var(--deck-lorebook)"><div class="h"><svg><use href="#i-bulb"/></svg>Personality<span class="xp"><svg><use href="#i-ext"/></svg></span></div><div class="tx">Dry humor. Answers a question with the shortest true sentence.</div></div>
+                  <div class="fs" style="--c:var(--deck-regex)"><div class="h"><svg><use href="#i-film"/></svg>Scenario<span class="xp"><svg><use href="#i-ext"/></svg></span></div><div class="tx">A storm has closed the harbor for the third night.</div></div>
+                </div>
+                <div class="foot"><button class="bigb" disabled><svg><use href="#i-check"/></svg>Saved</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div class="wf-comp">WingPanel + FoldoutTabs (scene-wings.tsx) &middot; hero = the wing's WingHero card &middot; the form is CharacterEditorView's sections through EditorLayout, stacked as cards (card-stack frame) &middot; portrait column = PortraitCard + VariantStrip &middot; below Scenario the same stack continues: Prompts, Greetings, Examples, Lorebooks, Discovery, Attribution, Presentation, Settings (editor-layout-data.ts) &middot; parts <code>scene.cast</code>, <code>scene.cast.character</code>, <code>scene.cast.variants</code></div>
+    </div>
+
+    <!-- 2 character, dirty, rest of dossier -->
+    <div class="pn">
+      <div class="wf-state">Character tab, unsaved change, the rest of the dossier below</div>
+      <div class="fr" style="--h:44rem" data-part="scene.cast.character">
+        <section class="wp solo">
+          <nav class="fold" data-fold="character"></nav>
+          <div class="cw">
+            <div class="cwb">
+              <div class="pcol" style="width:11rem"><div class="img"><svg><use href="#i-user"/></svg></div><div class="fadeb"></div><div class="info" style="padding:10px"><span class="nowchip"><i></i>Now playing</span><h1 style="font-size:18px">Marguerite Vane</h1><div class="badges"><span class="vb">V4</span></div></div></div>
+              <div class="fcol">
+                <div class="scrl">
+                  <div class="fs" style="--c:var(--deck-regex)"><div class="h"><svg><use href="#i-film"/></svg>Scenario<span class="xp"><svg><use href="#i-ext"/></svg></span></div><div class="tx dirty">A storm has closed the harbor for the fourth night.</div></div>
+                  <div class="fs closed" style="--c:var(--deck-preset)"><div class="h"><svg><use href="#i-chat"/></svg>Prompts<span class="n">3 of 5 filled</span></div></div>
+                  <div class="fs closed" style="--c:var(--deck-persona)"><div class="h"><svg><use href="#i-chat"/></svg>Greetings<span class="n">1 + 2 alternates</span></div></div>
+                  <div class="fs closed" style="--c:var(--deck-lorebook)"><div class="h"><svg><use href="#i-layers"/></svg>Lorebooks<span class="n">2 linked</span></div></div>
+                  <div class="fs closed"><div class="h"><svg><use href="#i-scroll"/></svg>Examples, Discovery, Attribution, Presentation, Settings</div></div>
+                </div>
+                <div class="foot"><div class="nt" style="--c:var(--stage-warn)"><div class="grow">Saves the Library card, then moves this scene to the new version. Other scenes show Update available.</div></div><button class="bigb go"><svg><use href="#i-check"/></svg>Save card</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 3 character narrow -->
+    <div class="pn">
+      <div class="wf-state">Character tab, narrow: the portrait becomes a banner, the form follows</div>
+      <div class="fr" style="max-width:24rem;--h:44rem" data-part="scene.cast.character">
+        <section class="wp solo">
+          <nav class="fold" data-fold="character"></nav>
+          <div class="cw"><div class="wh"><span class="ic"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h3>Identity &amp; <em>Details</em></h3></div></div>
+            <div class="cwb" style="margin-top:12px">
+              <div class="pcol"><div class="img"><svg><use href="#i-user"/></svg></div><div class="fadeb"></div><div class="info" style="padding:10px"><span class="nowchip"><i></i>Now playing</span><h1 style="font-size:18px">Marguerite Vane</h1><div class="vth" style="margin-top:6px"><span class="on" style="--v:var(--deck-character)">Base</span><span style="--v:var(--deck-lorebook)">Storm</span></div></div></div>
+              <div class="fcol"><div class="scrl fade"><div class="fc"><div class="idr"><div class="theme"><div class="sw0"><i><svg><use href="#i-star"/></svg></i></div><div class="lb">Theme</div></div><div style="flex:1"><div class="lb">Stage name</div><div class="ul big">Marguerite Vane</div></div></div><div class="fld"><label>Title / epithet</label><div class="inp ac"><span class="grow">Keeper of the north light</span></div></div></div></div>
+              <div class="foot"><button class="bigb" disabled><svg><use href="#i-check"/></svg>Saved</button></div></div>
+            </div></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- 4 notices: moved / busy / error -->
+    <div class="pn">
+      <div class="wf-state">Character tab, saved to the Library but the scene did not move</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="character"></nav><div class="cw mini"><div class="wh"><span class="ic"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h3>Identity &amp; <em>Details</em></h3></div></div>
+        <div style="padding:12px"><div class="nt"><svg><use href="#i-alert"/></svg><div class="grow">The card is saved to the Library as version 5, but this scene is still on version 4.<small>A reply started while you were saving, so the scene was left alone. Press Update available when it finishes.</small></div><button class="b2 go">Update available</button></div></div></div></section></div>
+      <div class="wf-comp">saveSceneMember returns <code>applied: false</code>; the Library write and the scene move are two writes and the second can lose to a turn</div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Character tab, busy: a reply is being written, so Save waits (edits are kept)</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="character"></nav><div class="cw mini"><div class="wh"><span class="ic"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h3>Identity &amp; <em>Details</em></h3></div></div>
+        <div style="padding:12px;flex:1"><div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">A reply is being written. You can save the card when it finishes.<small>The reply in progress was built from version 4.</small></div></div></div>
+        <div class="foot"><button class="bigb go" disabled><svg><use href="#i-check"/></svg>Save card</button></div></div></section></div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Character tab, save error: the card changed in the Library while you edited</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="character"></nav><div class="cw mini"><div class="wh"><span class="ic"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h3>Identity &amp; <em>Details</em></h3></div></div>
+        <div style="padding:12px;flex:1"><div class="nt bad"><svg><use href="#i-alert"/></svg><div class="grow">Not saved. This card was changed in the Library after you opened it.<small>Nothing was written and this scene is unchanged. Your edits are still here.</small></div><button class="b2">Review changes</button></div></div>
+        <div class="foot"><button class="bigb go"><svg><use href="#i-check"/></svg>Save card</button></div></div></section></div>
+      <div class="wf-comp">the Workbench conflict panel (editor-conflict.tsx) is reused for Review changes; a stale save writes nothing</div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Character tab, the Library has a newer version (approved notice)</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="character"></nav><div class="cw mini"><div class="wh"><span class="ic"><svg><use href="#i-mask"/></svg></span><div><div class="eb">Edit character</div><h3>Identity &amp; <em>Details</em></h3></div></div>
+        <div style="padding:12px"><div class="nt"><svg><use href="#i-refresh"/></svg><div class="grow">This scene plays version 4 of Marguerite Vane. The Library has version 5.<small>Editing opens the Library's version 5; saving moves this scene onto the result.</small></div><button class="b2 go">Update available</button></div></div></div></section></div>
+    </div>
+
+    <!-- 5 persona, with casting call -->
+    <div class="pn wide">
+      <div class="wf-state">Persona tab, with the Casting Call picker open from the Pass ticket</div>
+      <div class="fr paused" style="--h:60rem" data-part="scene.page">
+        <div class="bgm"></div>
+        <div class="play"><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div></div>
+        <nav class="rail l" data-part="scene.wings"><div class="wi" style="--w:var(--accent)"><svg><use href="#i-zap"/></svg></div><div class="wi on" style="--w:var(--deck-persona)"><svg><use href="#i-mask"/></svg></div></nav>
+        <section class="wp l" data-part="scene.wings.panel" aria-label="Cast">
+          <nav class="fold" data-fold="persona"></nav>
+          <div class="cw persona" data-part="scene.cast.persona">
+            <div class="wh"><span class="ic"><svg><use href="#i-user"/></svg></span><div><div class="eb">Identity &amp; details</div><h3>Your <em>Persona</em></h3><p>The character you play opposite the cast: name, look, voice, history, and how it's injected into the prompt.</p></div></div>
+            <div class="cwb" style="margin-top:12px">
+              <div class="pcol">
+                <div class="img"><svg><use href="#i-user"/></svg></div>
+                <div class="tl"><span class="pass" data-part="scene.cast.pass" title="Casting Call"><svg><use href="#i-bookmark"/></svg>Pass</span></div>
+                <div class="tr"><span class="sqb" title="Change image"><svg><use href="#i-image"/></svg></span></div>
+                <div class="fadeb"></div>
+                <div class="info"><span class="nowchip"><i></i>Now live</span><h1>Nuit</h1><p class="tg">Keeps a notebook</p><p class="tg" style="color:var(--stage-mute)">They / Them</p>
+                  <div class="pstats" data-part="scene.cast.persona.stats"><span><svg><use href="#i-film"/></svg>6 scenes</span></div></div>
+              </div>
+              <div class="fcol">
+                <div class="scrl fade">
+                  <div class="starr"><div class="t"><svg><use href="#i-star"/></svg>Starring<svg><use href="#i-star"/></svg></div><div class="nm2"><span class="ic2"><svg><use href="#i-user"/></svg></span>Nuit</div><div class="tg2">Keeps a notebook</div><div class="pr2">they / them &bull; 5'6" &bull; 29</div></div>
+                  <div class="fs" style="--c:var(--deck-pack)"><div class="h"><svg><use href="#i-sliders"/></svg>Appearance<span class="n">color palette</span></div>
+                    <div class="nc"><div class="c sig"><div class="sq" style="--s:var(--deck-persona)"><i><svg><use href="#i-star"/></svg></i></div><div class="nm">Accent</div><div class="cp">Signature</div></div>
+                      <div class="c"><div class="sq" style="--s:var(--deck-character)"></div><div class="rm"><svg><use href="#i-x"/></svg></div><div class="nm">Warm</div><div class="cp">Skin</div></div>
+                      <div class="c"><div class="sq" style="--s:var(--deck-regex)"></div><div class="rm"><svg><use href="#i-x"/></svg></div><div class="nm">Straw</div><div class="cp">Hair</div></div>
+                      <div class="c"><div class="sq" style="--s:var(--deck-preset)"></div><div class="rm"><svg><use href="#i-x"/></svg></div><div class="nm">Gray</div><div class="cp">Eyes</div></div>
+                      <div class="c add"><div class="sq plus"><svg><use href="#i-plus"/></svg></div><div class="nm">Add</div></div></div>
+                    <div class="tx">Small, ink-stained hands. A coat two sizes too large.</div></div>
+                  <div class="fs" style="--c:var(--deck-lorebook)"><div class="h"><svg><use href="#i-bulb"/></svg>Personality<span class="xp"><svg><use href="#i-ext"/></svg></span></div><div class="tx">Answers questions with questions. Writes everything down.</div></div>
+                  <div class="fs" style="--c:var(--deck-regex)"><div class="h"><svg><use href="#i-scroll"/></svg>Quirks<span class="xp"><svg><use href="#i-ext"/></svg></span></div><div class="tx">Counts stairs.</div></div>
+                </div>
+                <div class="foot"><button class="bigb on"><svg><use href="#i-check"/></svg>Default persona</button><button class="bigb" disabled><svg><use href="#i-check"/></svg>Saved</button></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- the Casting Call -->
+        <aside class="cc cw persona" role="dialog" aria-label="Casting Call" data-part="scene.cast.picker" style="display:block;flex:none;min-height:0">
+          <div class="hd"><b>Casting Call</b><span>Select your role</span></div>
+          <div class="srch"><svg><use href="#i-search"/></svg>Search talent...</div>
+          <div class="grid">
+            <div class="tile sel" style="--p:var(--deck-persona)"><div class="ph"></div><div class="cap">Nuit</div></div>
+            <div class="tile" style="--p:var(--deck-lorebook)"><div class="ph"></div><div class="cap">Corvin</div></div>
+            <div class="tile" style="--p:var(--deck-pack)"><span class="dd"></span><div class="ph"></div><div class="cap">Rue</div></div>
+            <div class="tile" style="--p:var(--deck-preset)"><div class="ph"></div><div class="cap">Ines</div></div>
+            <div class="tile" style="--p:var(--deck-regex)"><div class="ph"></div><div class="cap">Tam</div></div>
+            <div class="tile" style="--p:var(--deck-character)"><div class="ph"></div><div class="cap">Odile</div></div>
+            <div class="tile" style="--p:var(--deck-fog)"><div class="ph"></div><div class="cap">Wren</div></div>
+            <div class="tile" style="--p:var(--deck-lorebook)"><div class="ph"></div><div class="cap">Bram</div></div>
+          </div>
+          <div class="lead" style="--p:var(--deck-persona)"><div class="ph"></div><div><div class="k">Lead role</div><div class="n">Nuit</div><div class="s"><b>6</b> scenes</div></div></div>
+          <div class="acts"><button>Clear role</button><button class="go">Cast</button></div>
+        </aside>
+      </div>
+      <div class="wf-comp">Casting Call = SatelliteOrbiters PersonaQuickSwap: the same module the composer's persona chip opens (scene-persona-picker), one component, two doors &middot; search shows with 4 or more personas, as RoleCall does &middot; the small square marks the default persona; the outlined tile is the pick &middot; Cast opens the swap confirm below; Clear role plays no persona (also confirmed) &middot; stats are the scene count only (messages and streak dropped) &middot; image generation and emoji dropped &middot; parts <code>scene.cast.persona</code>, <code>scene.cast.picker</code></div>
+    </div>
+
+    <!-- 6 swap confirm -->
+    <div class="pn">
+      <div class="wf-state">Cast pressed: the swap is confirmed first</div>
+      <div class="fr" style="--h:22rem"><div class="bgm"></div>
+        <div class="scr"><div class="dlg" role="dialog" aria-label="Play as Corvin"><header>Play as Corvin?</header>
+          <div class="bd"><span>From your next message on, the AI sees Corvin instead of Nuit. This scene only.</span><ul><li>Everything you already wrote stays under Nuit.</li><li>Corvin's lorebooks join the scene, Nuit's leave it.</li><li>Your default for new scenes is not changed.</li></ul></div>
+          <footer><button class="b2 ghost">Cancel</button><button class="b2 go">Play as Corvin</button></footer></div></div></div>
+      <div class="wf-comp">InkDialog, the shell UpdateCardDialog uses (scene-card.tsx); lorebook order follows resolveBooks (scene-lore.ts)</div>
+    </div>
+
+    <!-- 7 after swap -->
+    <div class="pn">
+      <div class="wf-state">After the swap: each message keeps its persona, and a line marks the change</div>
+      <div class="fr" style="--h:22rem"><div class="bgm"></div><div class="sh"><span class="nm">Marguerite Vane</span><span class="tk">Director's Cut</span></div>
+        <div class="scroll" style="padding-bottom:20px">
+          <div class="msg user" style="--tone:var(--deck-persona)"><div class="av">N</div><div class="bd"><div class="spk">Nuit</div><div class="bub"><q>Then we keep the light for whoever else is out there.</q></div></div></div>
+          <div class="msg" style="--tone:var(--deck-character)"><div class="av">M</div><div class="bd"><div class="spk">Marguerite Vane</div><div class="bub">She nods at the second rail.</div></div></div>
+          <div class="swapline" data-part="scene.cast.line"><span>You now play <b>Corvin</b></span></div>
+          <div class="msg user" style="--tone:var(--deck-lorebook)"><div class="av">C</div><div class="bd"><div class="spk">Corvin</div><div class="bub"><q>The ferry is back. Both of you, get in.</q></div></div></div>
+        </div></div>
+      <div class="wf-comp">new part <code>scene.cast.line</code>, derived from stamps (personaSwaps); unstamped older messages show the current persona</div>
+    </div>
+
+    <!-- 8 persona notices -->
+    <div class="pn">
+      <div class="wf-state">Persona tab, no persona: you play "User"</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="persona"></nav><div class="cw persona mini"><div class="wh"><span class="ic"><svg><use href="#i-user"/></svg></span><div><div class="eb">Identity &amp; details</div><h3>Your <em>Persona</em></h3></div></div>
+        <div style="padding:12px"><div class="empty2"><b>You play as User</b>No persona is set, so the AI calls you User. Open the Pass to choose one, or make a new one.<div style="margin-top:10px;display:flex;gap:8px;justify-content:center"><button class="b2 go">Casting Call</button><button class="b2">New persona</button></div></div></div></div></section></div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Persona tab, creating: a name and the identity text, then Create or Create and cast</div>
+      <div class="fr" style="--h:23rem"><section class="wp solo"><nav class="fold" data-fold="persona"></nav><div class="cw persona mini"><div class="wh"><span class="ic"><svg><use href="#i-user"/></svg></span><div><div class="eb">New persona</div><h3>Who will you <em>play</em>?</h3></div></div>
+        <div class="fcol" style="flex:1"><div class="scrl"><div class="fld"><label>Stage name</label><div class="inp bad"><span class="grow mut">Name</span></div><span class="note-s" style="font-size:11.5px;color:var(--stage-danger-text)">A name is required.</span></div><div class="fld"><label>Identity text</label><div class="tx ph" style="min-height:4.5rem">Who they are, in your words. This is what the AI reads.</div></div></div>
+        <div class="foot"><div class="row2"><button class="bigb">Create</button><button class="bigb go" disabled>Create and cast</button></div></div></div></div></section></div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Persona tab, busy: the Pass, Cast and Save wait for the reply</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="persona"></nav><div class="cw persona mini"><div class="wh"><span class="ic"><svg><use href="#i-user"/></svg></span><div><div class="eb">Identity &amp; details</div><h3>Your <em>Persona</em></h3></div></div>
+        <div style="padding:12px;flex:1"><div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">A reply is being written. You can swap persona or save when it finishes.<small>The reply in progress was built with Nuit.</small></div></div></div>
+        <div class="foot"><button class="bigb on" disabled><svg><use href="#i-check"/></svg>Default persona</button></div></div></section></div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Persona tab, the persona was deleted from the Library: the scene keeps its copy</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="persona"></nav><div class="cw persona mini"><div class="wh"><span class="ic"><svg><use href="#i-user"/></svg></span><div><div class="eb">Identity &amp; details</div><h3>Your <em>Persona</em></h3></div></div>
+        <div style="padding:12px"><div class="nt"><svg><use href="#i-alert"/></svg><div class="grow">Nuit is in the Trash. This scene keeps playing its own copy.<small>Editing is off. Cast another persona, or restore Nuit from the Library's Trash.</small></div></div></div></div></section></div>
+    </div>
+    <div class="pn">
+      <div class="wf-state">Persona tab, error: the cast did not go through (the scene changed in another window)</div>
+      <div class="fr" style="--h:17rem"><section class="wp solo"><nav class="fold" data-fold="persona"></nav><div class="cw persona mini"><div class="wh"><span class="ic"><svg><use href="#i-user"/></svg></span><div><div class="eb">Identity &amp; details</div><h3>Your <em>Persona</em></h3></div></div>
+        <div style="padding:12px"><div class="nt bad"><svg><use href="#i-alert"/></svg><div class="grow">Could not switch to Corvin: this scene changed in another window while you were choosing.<small>Nothing was changed. You still play Nuit. Try again.</small></div><button class="b2 go">Try again</button></div></div></div></section></div>
+    </div>
+
+    <!-- 9 participants -->
+    <div class="pn">
+      <div class="wf-state">Participants tab: kept in the bar, honest about what is not built yet</div>
+      <div class="fr" style="--h:25rem" data-part="scene.cast.participants"><section class="wp solo"><nav class="fold" data-fold="participants"></nav><div class="cw mini"><div class="wh"><span class="ic"><svg><use href="#i-chat"/></svg></span><div><div class="eb">Registry</div><h3>Scene <em>Participants</em></h3></div></div>
+        <div style="padding:12px;display:flex;flex-direction:column;gap:12px"><div class="nt info"><svg><use href="#i-info"/></svg><div class="grow">Speakers in this scene appear here once group scenes arrive.<small>Today a scene has one character and your persona.</small></div></div>
+          <div class="roster"><div class="rr"><span class="av2" style="background:var(--deck-character)">M</span><div class="grow"><div class="t">Marguerite Vane</div><div class="s">Character</div></div><span class="ch">in scene</span></div><div class="rr"><span class="av2" style="background:var(--deck-persona)">N</span><div class="grow"><div class="t">Nuit</div><div class="s">You, persona</div></div><span class="ch ok">you</span></div></div></div></div></section></div>
+      <div class="wf-comp">RoleCall's roster is an AI-extracted registry (Character Minds, a model picker, "reconcile recent messages"). That engine is outside 1.0, so nothing is drawn that implies it; the tab shows only what a scene truly holds</div>
+    </div>
+  </div>
+
+  <div class="legend2"><span>Left out on purpose:</span><span>persona emoji and image generation; RoleCall's card override, republish and fork routes (Bunraku has no owners); persona message count and streak (scene count only); the AI participant registry.</span></div>
+  <div class="legend2"><span>Decided:</span><span>the alt-art look is saved on the scene and the prompt uses it; revert, swap and card save all wait for a reply in progress.</span></div>
+</div>
+<script>
+/* tab strips are the same on every frame: build them once */
+(function () {
+  var TABS = [["character", "Character", "Marguerite Vane"], ["persona", "Persona", "Nuit"], ["participants", "Participants", "Registry"]];
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("[data-fold]").forEach(function (n) {
+      var on = n.getAttribute("data-fold");
+      n.innerHTML = '<div class="crumb">Scene <i>/</i> <b>Cast</b></div><div class="tabs">' + TABS.map(function (t) {
+        return '<button' + (t[0] === on ? ' class="on"' : "") + "><b>" + t[1] + "</b><small>" + t[2] + "</small></button>";
+      }).join("") + "</div>";
+    });
+    var h = location.hash.slice(1).split(",");
+    if (h[0]) { var b = document.querySelector('.themebar [data-t="' + h[0] + '"]'); if (b) b.click(); }
+    /* "#theme,N" shows only the Nth state, for screenshots */
+    if (h[1]) { document.querySelectorAll(".pn").forEach(function (p, i) { if (i !== Number(h[1])) p.style.display = "none"; }); document.querySelectorAll(".wf-head,.wf-note,.legend2").forEach(function (p) { p.style.display = "none"; }); document.querySelector(".themebar").style.position = "static"; }
+  });
+})();
+</script>
+</body>
+</html>

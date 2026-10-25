@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku start page options</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+/*
+ * Start page and dock: three layouts for the first screen Bunraku opens to. The house look (rose on
+ * ink, stamped 3px borders, Archivo / Cinzel / Crimson Pro / JetBrains Mono) with about 30% cute:
+ * a bunny that peeks, softened corners on cards, a pink tint, sparkles. Every color is a token.
+ */
+:root { --pink: color-mix(in srgb, var(--rose) 30%, var(--stage-paper)); --ink: var(--stage-ink); }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--stage-floor); color: var(--stage-soft); font-family: var(--font-body); height: 100vh; overflow: hidden; }
+.app { display: grid; grid-template-columns: 232px 1fr; height: 100vh; }
+/* ---- the dock: today's list of apps, softened ---- */
+.dock { background: var(--stage-well); border-right: 3px solid var(--ink); display: flex; flex-direction: column; padding: 14px 12px; gap: 8px; }
+.brand { display: flex; align-items: center; gap: 10px; padding: 4px 6px 14px; border-bottom: 1px solid var(--stage-seam); margin-bottom: 6px; }
+.brand svg { width: 34px; height: 34px; }
+.brand b { font: 900 1.15rem var(--font-big); color: var(--stage-card); }
+.brand b i { font-style: normal; color: var(--rose); }
+.dk { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 2px solid transparent; border-radius: 12px; cursor: pointer; font: 800 .82rem var(--font-big); text-transform: uppercase; letter-spacing: .03em; color: var(--stage-soft); position: relative; }
+.dk .ic { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: var(--stage-panel); border: 2px solid var(--stage-seam); font-size: .95rem; flex: none; }
+.dk small { display: block; font: 500 .62rem var(--font-mono); color: var(--stage-mute); letter-spacing: .06em; }
+.dk:hover { background: var(--stage-panel); }
+.dk.on { background: var(--stage-rose-well); border-color: var(--rose); color: var(--stage-card); box-shadow: 3px 3px 0 var(--ink); }
+.dk.on .ic { background: var(--rose); border-color: var(--ink); color: var(--stage-white); }
+/* the active app wears two tiny ears */
+.dk.on::before { content: ""; position: absolute; top: -9px; left: 16px; width: 22px; height: 12px;
+  background: radial-gradient(ellipse 4px 7px at 5px 7px, var(--rose) 98%, transparent), radial-gradient(ellipse 4px 7px at 16px 7px, var(--rose) 98%, transparent); }
+.dock .spacer { flex: 1; }
+.dk.add { border: 2px dashed var(--stage-line); color: var(--stage-mute); justify-content: center; }
+.dock.slim { width: 76px; } .app.slimdock { grid-template-columns: 76px 1fr; }
+.dock.slim .dk span, .dock.slim .brand b { display: none; } .dock.slim .dk { justify-content: center; padding: 8px; }
+/* ---- shared stage ---- */
+.main { overflow-y: auto; padding: 32px 40px 60px; background: radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--rose) 8%, transparent), transparent 55%), var(--stage-floor); }
+.hello { display: flex; align-items: center; gap: 18px; margin-bottom: 26px; }
+.hello h1 { font: 900 2.4rem/1 var(--font-big); text-transform: uppercase; color: var(--stage-card); letter-spacing: .01em; }
+.hello h1 em { font-style: normal; color: var(--rose); }
+.hello p { margin-top: 6px; font-size: 1.1rem; color: var(--stage-text-dim); font-style: italic; }
+.peek { width: 70px; height: 70px; flex: none; }
+.kicker { font: 600 .72rem var(--font-mono); text-transform: uppercase; letter-spacing: .14em; color: var(--stage-mute); margin: 26px 0 10px; display: flex; align-items: center; gap: 10px; }
+.kicker::after { content: ""; flex: 1; height: 1px; background: var(--stage-seam); }
+.kicker b { color: var(--rose); }
+/* cards: stamped, corners softened */
+.card { background: var(--stage-panel); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 5px 5px 0 var(--ink); }
+.continue { display: grid; grid-template-columns: 180px 1fr; overflow: hidden; }
+.por { background: linear-gradient(160deg, color-mix(in srgb, var(--tone, var(--deck-character)) 60%, var(--stage-panel)), var(--stage-panel)); display: grid; place-items: center; font: 400 3rem var(--font-fancy); color: color-mix(in srgb, var(--stage-card) 55%, transparent); min-height: 200px; }
+.continue .bd { padding: 20px 22px; display: flex; flex-direction: column; gap: 8px; }
+.continue h2 { font: 900 1.6rem var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+.continue q { font-size: 1.05rem; line-height: 1.5; color: var(--stage-soft); font-style: italic; quotes: '"' '"'; }
+.meta { font: 500 .72rem var(--font-mono); color: var(--stage-mute); }
+.btn { align-self: flex-start; margin-top: auto; padding: 10px 18px; border: 3px solid var(--ink); border-radius: 10px; background: var(--rose); color: var(--stage-white); font: 900 .85rem var(--font-big); text-transform: uppercase; letter-spacing: .04em; box-shadow: 4px 4px 0 var(--ink); cursor: pointer; }
+.btn.ghost { background: var(--stage-panel); color: var(--stage-card); }
+.cast { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
+.pc { overflow: hidden; } .pc .por { min-height: 150px; font-size: 2rem; }
+.pc b { display: block; padding: 8px 10px 2px; font: 800 .9rem var(--font-big); color: var(--stage-card); }
+.pc small { display: block; padding: 0 10px 10px; font: 500 .66rem var(--font-mono); color: var(--stage-mute); }
+.pc.new { border-style: dashed; display: grid; place-items: center; min-height: 210px; color: var(--stage-mute); font: 800 .85rem var(--font-big); text-transform: uppercase; box-shadow: none; }
+/* ticket-stub actions */
+.stubs { display: flex; gap: 14px; flex-wrap: wrap; }
+.stub { position: relative; display: flex; align-items: center; gap: 12px; padding: 14px 22px 14px 18px; background: var(--stage-paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 8px; box-shadow: 4px 4px 0 var(--ink); font: 900 .9rem var(--font-big); text-transform: uppercase; cursor: pointer;
+  -webkit-mask: radial-gradient(circle 9px at 0 50%, transparent 98%, #000) , radial-gradient(circle 9px at 100% 50%, transparent 98%, #000); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.stub small { display: block; font: 500 .7rem var(--font-body); text-transform: none; color: var(--muted, var(--stage-line)); font-style: italic; }
+.stub .em { font-size: 1.4rem; }
+.tip { margin-top: 24px; display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 14px; background: var(--stage-rose-well); border: 2px dashed color-mix(in srgb, var(--rose) 50%, transparent); }
+.tip svg { width: 46px; height: 46px; flex: none; }
+.tip p { font-size: 1rem; line-height: 1.45; color: var(--stage-soft); }
+.tip b { color: var(--stage-card); }
+/* layout B: the green room */
+.cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.col { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.col h3 { font: 900 1rem var(--font-big); text-transform: uppercase; color: var(--stage-card); display: flex; align-items: center; gap: 8px; }
+.col h3 i { width: 12px; height: 12px; border-radius: 50%; background: var(--tone); }
+.li { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 10px; background: var(--stage-row); }
+.li .av { width: 36px; height: 36px; border-radius: 9px; background: color-mix(in srgb, var(--tone) 55%, var(--stage-panel)); flex: none; display: grid; place-items: center; font: 400 1rem var(--font-fancy); color: var(--stage-card); }
+.li b { font: 700 .88rem var(--font-big); color: var(--stage-card); display: block; }
+.li small { font: 500 .66rem var(--font-mono); color: var(--stage-mute); }
+/* layout C: the stage door */
+.door { text-align: center; padding: 30px 20px 26px; position: relative; overflow: hidden; }
+.door .spot { position: absolute; inset: -40% 20% auto; height: 140%; background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--stage-warn) 16%, transparent), transparent 60%); pointer-events: none; }
+.door h1 { position: relative; font: 900 2.8rem/1 var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+.door h1 em { font-style: normal; color: var(--rose); }
+.door p { position: relative; margin: 10px auto 18px; max-width: 34rem; font-size: 1.1rem; color: var(--stage-text-dim); font-style: italic; }
+.carousel { position: relative; display: flex; justify-content: center; gap: 14px; margin: 8px 0 18px; }
+.carousel .pc { width: 140px; } .carousel .pc.pick { transform: translateY(-8px); border-color: var(--rose); box-shadow: 5px 5px 0 var(--rose-deep); }
+.sparkle { color: var(--stage-warn); }
+/* wireframe-only strip */
+.wf { position: fixed; top: 10px; right: 12px; z-index: 9; display: flex; gap: 6px; font: 600 .7rem var(--font-mono); text-transform: uppercase; }
+.wf button { border: 2px solid var(--ink); background: var(--stage-panel); color: var(--stage-soft); padding: 6px 10px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); font: inherit; }
+.wf button.on { background: var(--rose); color: var(--stage-white); }
+.wf-note { position: fixed; right: 12px; bottom: 12px; z-index: 9; max-width: 30rem; padding: 10px 14px; background: var(--stage-panel); border: 2px solid var(--ink); border-left: 4px solid var(--rose); font: 400 .92rem/1.45 var(--font-body); color: var(--stage-soft); }
+.wf-note b { color: var(--stage-card); }
+[data-only]:not(.show) { display: none !important; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="bun" viewBox="0 0 100 100">
+      <path d="M36 50 C31 28 34 14 40 14 C46 14 47 30 45 50 Z M56 50 C56 30 60 16 66 18 C72 20 68 34 62 51 Z" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M38 46 C36 32 38 22 40 22 C43 22 43 34 42 46 Z M58 46 C59 34 62 25 64 26 C66 27 63 36 60 46 Z" fill="var(--pink)"/>
+      <path d="M22 76 C22 58 34 48 50 48 C66 48 78 58 78 76 C78 88 66 94 50 94 C34 94 22 88 22 76 Z" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <circle cx="41" cy="70" r="3.6" fill="var(--stage-ink)"/><circle cx="59" cy="70" r="3.6" fill="var(--stage-ink)"/>
+      <path d="M47 77 q3 3 6 0" stroke="var(--stage-ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="33" cy="77" rx="4.5" ry="2.6" fill="var(--pink)"/><ellipse cx="67" cy="77" rx="4.5" ry="2.6" fill="var(--pink)"/>
+    </symbol>
+    <symbol id="mark" viewBox="0 0 100 100">
+      <circle cx="50" cy="64" r="26" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5"/>
+      <path d="M34 46 C27 22 30 6 38 6 C46 6 48 24 45 44 Z M55 44 C54 22 60 7 67 9 C75 11 70 30 64 47 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5"/>
+      <circle cx="50" cy="64" r="9" fill="var(--stage-paper)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="app" id="app">
+  <nav class="dock" id="dock">
+    <div class="brand"><svg><use href="#mark"/></svg><b>bunraku<i>.</i></b></div>
+    <div class="dk on"><span class="ic">&#9733;</span><span>Home<small>start here</small></span></div>
+    <div class="dk"><span class="ic">&#9998;</span><span>Workbench<small>edit</small></span></div>
+    <div class="dk"><span class="ic">&#9636;</span><span>Library<small>your pieces</small></span></div>
+    <div class="dk"><span class="ic">&#10070;</span><span>Scenes<small>play</small></span></div>
+    <div class="dk"><span class="ic">&#9113;</span><span>Press<small>export</small></span></div>
+    <div class="dk"><span class="ic">&#9786;</span><span>Agent<small>helper</small></span></div>
+    <div class="spacer"></div>
+    <div class="dk"><span class="ic">&#9881;</span><span>Settings<small>&nbsp;</small></span></div>
+  </nav>
+
+  <main class="main">
+    <!-- A: Tonight's program -->
+    <section data-only="a" class="show">
+      <div class="hello"><svg class="peek"><use href="#bun"/></svg><div><h1>Welcome <em>back</em><span class="sparkle"> &#10022;</span></h1><p>The stage is set. Pick up where you left off, or start something new.</p></div></div>
+      <div class="kicker"><b>&#9679;</b> Last night&apos;s show</div>
+      <div class="card continue"><div class="por" style="--tone: var(--deck-character)">V</div>
+        <div class="bd"><div class="meta">SCENE &middot; 42 messages &middot; 2 hours ago</div><h2>Vera, the long storm</h2><q>You picked a bad night to come up the stairs. The storm will not care either way, but I might.</q><button class="btn">Continue the scene</button></div></div>
+      <div class="kicker">Your cast</div>
+      <div class="cast">
+        <div class="card pc"><div class="por" style="--tone: var(--deck-character)">V</div><b>Vera</b><small>3 scenes</small></div>
+        <div class="card pc"><div class="por" style="--tone: var(--deck-lorebook)">M</div><b>Marguerite</b><small>1 scene</small></div>
+        <div class="card pc"><div class="por" style="--tone: var(--deck-persona)">O</div><b>Oslo</b><small>new</small></div>
+        <div class="card pc new">+ New character</div>
+      </div>
+      <div class="kicker">Make something</div>
+      <div class="stubs">
+        <div class="stub"><span class="em">&#10022;</span><div>Import a card<small>SillyTavern, RoleCall, and more</small></div></div>
+        <div class="stub"><span class="em">&#9998;</span><div>Write a character<small>from a blank page</small></div></div>
+        <div class="stub"><span class="em">&#127915;</span><div>Start a scene<small>with anyone in your cast</small></div></div>
+      </div>
+      <div class="tip"><svg><use href="#bun"/></svg><p><b>Little tip:</b> presets live in the Prompting wing of any scene. Flip prompts on and off for just that scene without touching the preset.</p></div>
+    </section>
+
+    <!-- B: The green room -->
+    <section data-only="b">
+      <div class="hello"><svg class="peek"><use href="#bun"/></svg><div><h1>The <em>green room</em></h1><p>Everything that&apos;s in progress, in one place.</p></div></div>
+      <div class="cols">
+        <div class="card col" style="--tone: var(--rose)"><h3><i></i>Scenes</h3>
+          <div class="li" style="--tone: var(--deck-character)"><span class="av">V</span><div><b>Vera, the long storm</b><small>2 hours ago</small></div></div>
+          <div class="li" style="--tone: var(--deck-lorebook)"><span class="av">M</span><div><b>Marguerite at dawn</b><small>yesterday</small></div></div>
+          <div class="li" style="--tone: var(--deck-persona)"><span class="av">O</span><div><b>Oslo meets the crew</b><small>last week</small></div></div>
+          <button class="btn">Start a scene</button></div>
+        <div class="card col" style="--tone: var(--deck-preset)"><h3><i></i>On the workbench</h3>
+          <div class="li" style="--tone: var(--deck-preset)"><span class="av">P</span><div><b>Velvet Quill</b><small>preset &middot; edited today</small></div></div>
+          <div class="li" style="--tone: var(--deck-lorebook)"><span class="av">L</span><div><b>Gull Point lore</b><small>lorebook &middot; 34 entries</small></div></div>
+          <button class="btn ghost">Open the Workbench</button></div>
+        <div class="card col" style="--tone: var(--deck-character)"><h3><i></i>New in the library</h3>
+          <div class="li" style="--tone: var(--deck-character)"><span class="av">V</span><div><b>Vera</b><small>character &middot; imported</small></div></div>
+          <div class="li" style="--tone: var(--deck-persona)"><span class="av">W</span><div><b>Wren</b><small>persona</small></div></div>
+          <button class="btn ghost">Import something</button></div>
+      </div>
+      <div class="tip"><svg><use href="#bun"/></svg><p><b>Little tip:</b> drop a character card anywhere on this page to import it.</p></div>
+    </section>
+
+    <!-- C: The stage door -->
+    <section data-only="c">
+      <div class="card door"><div class="spot"></div>
+        <h1>Who&apos;s on <em>tonight</em>?</h1>
+        <p>Pick someone from your cast and start a scene. Everything else is one click away.</p>
+        <div class="carousel">
+          <div class="card pc"><div class="por" style="--tone: var(--deck-lorebook)">M</div><b>Marguerite</b><small>1 scene</small></div>
+          <div class="card pc pick"><div class="por" style="--tone: var(--deck-character)">V</div><b>Vera</b><small>3 scenes</small></div>
+          <div class="card pc"><div class="por" style="--tone: var(--deck-persona)">O</div><b>Oslo</b><small>new</small></div>
+        </div>
+        <button class="btn">Start a scene with Vera</button> &nbsp; <button class="btn ghost">Continue last scene</button>
+      </div>
+      <div class="kicker">Or</div>
+      <div class="stubs">
+        <div class="stub"><span class="em">&#10022;</span><div>Import a card<small>SillyTavern, RoleCall, and more</small></div></div>
+        <div class="stub"><span class="em">&#9998;</span><div>Write a character<small>from a blank page</small></div></div>
+        <div class="stub"><span class="em">&#9636;</span><div>Open the library<small>everything you have</small></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="wf" id="wf">
+  <button data-s="a" class="on">A: Tonight&apos;s program</button><button data-s="b">B: Green room</button><button data-s="c">C: Stage door</button>
+  <button data-dock>Dock: full / slim</button>
+</div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var NOTES = {
+    a: "<b>A: Tonight's program.</b> A welcome with a bunny, then your last scene as a big card with Continue, your cast as portrait cards, and ticket-stub buttons to make something. A small tip at the bottom. Warmest and most guided.",
+    b: "<b>B: Green room.</b> Three columns of what is in progress: scenes, pieces on the Workbench, and new things in the library. Densest; best if you juggle a lot at once.",
+    c: "<b>C: Stage door.</b> One big question, who is on tonight, with your cast in a row and a Start button. Everything else sits below as ticket stubs. The most focused on playing.",
+  };
+  var dock = document.getElementById("dock"), app = document.getElementById("app");
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.classList.toggle("show", el.dataset.only === s); });
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = NOTES[s] + " <b>Dock:</b> today's app list, softened: rounded tiles, and the open app wears two tiny ears. Home is new, first in the list. Try the slim dock too.";
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.hasAttribute("data-dock")) { dock.classList.toggle("slim"); app.classList.toggle("slimdock"); return; }
+    set(b.dataset.s);
+  });
+  set(new URLSearchParams(location.search).get("state") || "a");
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Workbench</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="workbench.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Workbench</h1>
+    <p>The Workbench room: open pieces as tabs or a loadout, the active editor, split view, and the recents rail.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="workbench.room">
+    <header>
+      <h2 class="bk-heading">Workbench room</h2>
+      <span class="bk-tag">WorkbenchShell, EditorTabs, SplitView, RecentsRail</span>
+      <p class="bk-meta">Parts: workbench.room, workbench.tabs, workbench.pane, workbench.split, workbench.recents, workbench.recents.item, workbench.empty, editor.card, editor.save</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="workbench.room.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Tabs and bench</h3>
+          <p>The approved reading: a tab strip across the top, one active editor pane, and the recents rail along the bottom.</p></header>
+        <div class="spec-screen wb-screen" data-state="loaded">
+<div class="wb-app" data-part="shell.app">
+  <header class="wb-hud" data-part="shell.hud">
+    <div class="wb-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="wb-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="wb-hud-mid">
+      <div class="wb-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="wb-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close tab</span></span>
+    </div>
+  </header>
+  <div class="wb-body">
+    <nav class="wb-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="wb-dock-brand" data-part="shell.dock.brand">
+        <svg class="wb-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="wb-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="wb-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="wb-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="wb-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="wb-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="wb-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="wb-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="wb-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="wb-dock-app wb-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="wb-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="wb-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="wb-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="wb-stage bk-stage" data-part="shell.stage">
+
+      <nav class="wb-tabstrip" data-part="workbench.tabs" role="tablist" aria-label="Open pieces">
+          <button type="button" class="bk-item wb-tab" role="tab" data-deck="character" data-part="workbench.tabs" aria-selected="true">
+            <span class="bk-bullet"></span><span>Marguerite Vane</span><span class="bk-dot wb-dirty" data-tone="warn" title="unsaved changes"></span>
+            <span class="bk-tag">CHAR</span>
+          </button>
+          <button type="button" class="bk-item wb-tab" role="tab" data-deck="lorebook" data-part="workbench.tabs" data-beside="true">
+            <span class="bk-bullet"></span><span>Keeper's Log</span>
+            <span class="bk-tag">LORE</span>
+          </button>
+          <button type="button" class="bk-item wb-tab" role="tab" data-deck="persona" data-part="workbench.tabs">
+            <span class="bk-bullet"></span><span>Vera Lune</span>
+            <span class="bk-tag">PERS</span>
+          </button>
+          <button type="button" class="bk-item wb-tab" role="tab" data-deck="preset" data-part="workbench.tabs">
+            <span class="bk-bullet"></span><span>Velvet Quill</span>
+            <span class="bk-tag">PSET</span>
+          </button>
+        <button type="button" class="bk-item wb-tab-add" aria-label="Open another piece">+</button>
+        <span class="wb-tabfill"></span>
+        <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">Import</button>
+      </nav>
+
+          <section class="bk-panel bk-frame wb-editorcard" data-part="editor.card" data-deck="character" data-crown>
+            <div class="bk-panel__head wb-ehead">
+              <span class="bk-tag" data-deck="character"><b>CHAR</b></span>
+              <h3 class="bk-name" data-part="editor.card.head">Marguerite Vane</h3>
+              <button type="button" class="bk-item wb-btn" data-part="editor.save">Save</button>
+            </div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">The active tab's own editor fills this space (see <code>character.editor</code> and its siblings for what each kind actually shows). Save is always the one clear action in its header.</p>
+            </div>
+          </section>
+          <p class="bk-meta wb-besidehint">Keeper's Log is pinned beside from a card's "Open beside" menu. Focusing its tab swaps which pane is active; see the Split view state.</p>
+          <div class="wb-panes" data-part="workbench.split">
+            <section class="wb-pane" data-part="workbench.pane">
+              <div class="wb-rowhead">
+                <span class="bk-tag" data-deck="character"><b>CHAR</b></span>
+                <span class="bk-name">Marguerite Vane</span>
+                <span class="bk-meta">active</span>
+              </div>
+              <p class="bk-meta">The active pane, same as the One editor state.</p>
+            </section>
+            <section class="wb-pane wb-pane-beside" data-part="workbench.pane" data-deck="lorebook">
+              <div class="wb-rowhead">
+                <span class="bk-tag" data-deck="lorebook"><b>LORE</b></span>
+                <span class="bk-name">Keeper's Log</span>
+                <span class="bk-meta">pinned beside</span>
+                <button type="button" class="bk-item wb-btn-ghost wb-swap" data-part="ui.button">Swap</button>
+              </div>
+              <p class="bk-meta">Closing the primary pane promotes this one; Swap exchanges which side is active. Both stay visible until one is closed.</p>
+            </section>
+          </div>
+          <div class="wb-conflict" data-part="ui.notice" data-tone="danger" role="alert">
+            <h3 class="bk-heading" data-part="ui.notice.title">Changed on disk</h3>
+            <p class="bk-meta" data-part="ui.notice.body">Keeper's Log was written by something else, probably the agent, while you had unsaved edits open, so your last save was refused rather than overwriting it. Nothing has been lost yet.</p>
+            <div class="wb-dlgrow" data-part="ui.notice.actions">
+              <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">Discard my edits</button>
+              <button type="button" class="bk-item wb-btn" data-part="ui.button">Keep mine, overwrite</button>
+            </div>
+          </div>
+          <div class="wb-restoring" data-part="ui.progress" aria-busy="true">
+            <p class="bk-meta" data-part="ui.progress.step">Restoring your bench&hellip;</p>
+            <div class="bk-meter" data-part="ui.progress.bar" data-continuous role="meter" aria-valuetext="working">
+              <span class="bk-meter__track"><span class="bk-meter__fill wb-pulse" style="--bk-value:40%"></span></span>
+            </div>
+          </div>
+          <div class="wb-empty" data-part="ui.empty">
+            <p class="bk-label">Workbench</p>
+            <h3 class="bk-heading" data-part="ui.empty.title">Nothing open yet</h3>
+            <p class="bk-meta" data-part="ui.empty.body">Send a piece here from the Library, or bring one back up below.</p>
+            <div data-part="ui.empty.actions"><button type="button" class="bk-item wb-btn" data-part="ui.button">Open the Library</button></div>
+          </div>
+          <div class="wb-recents" data-part="workbench.recents">
+            <button type="button" class="wb-rlabel" data-part="workbench.recents.toggle" aria-expanded="true">
+              <span class="bk-bullet"></span>
+              <span class="bk-label">Recent &middot; bring one up</span>
+              <span class="bk-meta wb-rtoggle-text">hide</span>
+            </button>
+            <div class="wb-rrow">
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="character" data-part="workbench.recents.item">
+              <span class="bk-name">Marguerite Vane</span>
+              <span class="bk-meta">character</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="lorebook" data-part="workbench.recents.item">
+              <span class="bk-name">The Magpie's Ledger</span>
+              <span class="bk-meta">lorebook</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="persona" data-part="workbench.recents.item">
+              <span class="bk-name">Nuit</span>
+              <span class="bk-meta">persona</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="regex" data-part="workbench.recents.item">
+              <span class="bk-name">Cleanup pass</span>
+              <span class="bk-meta">regex set</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="preset" data-part="workbench.recents.item">
+              <span class="bk-name">Velvet Quill</span>
+              <span class="bk-meta">preset</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="pack" data-part="workbench.recents.item">
+              <span class="bk-name">Marguerite: sprites</span>
+              <span class="bk-meta">pack</span>
+            </button>
+            </div>
+          </div>
+        <div class="wb-scrim" data-part="ui.dialog" role="alertdialog" aria-label="Follow to the Workbench">
+          <div class="bk-frame wb-dlg" data-crown>
+            <h3 class="bk-heading" data-part="ui.dialog.title">Follow to the Workbench?</h3>
+            <p class="bk-meta" data-part="ui.dialog.body">3 items were sent to the Workbench. Follow?</p>
+            <label class="wb-check"><input type="checkbox" data-part="ui.check">Never ask me this again</label>
+            <div class="wb-dlgrow" data-part="ui.dialog.actions">
+              <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">No</button>
+              <button type="button" class="bk-item wb-btn" data-part="ui.button">Yes</button>
+            </div>
+          </div>
+        </div>
+        <div class="wb-scrim" data-part="ui.dialog" role="alertdialog" aria-label="Discard unsaved changes">
+          <div class="bk-frame wb-dlg" data-crown data-tone="danger">
+            <h3 class="bk-heading" data-part="ui.dialog.title">Discard unsaved changes?</h3>
+            <p class="bk-meta" data-part="ui.dialog.body">Keeper's Log has unsaved changes. Close this tab and discard them?</p>
+            <div class="wb-dlgrow" data-part="ui.dialog.actions">
+              <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">Keep editing</button>
+              <button type="button" class="bk-item wb-btn-danger" data-part="ui.button" data-tone="danger">Discard changes</button>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="wb-status" data-part="shell.status">
+    <span class="wb-status-item" data-part="shell.status.item">Library open · autosaved</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Tabs and bench">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">One editor</button>
+          <button type="button" class="spec-chip" data-set-state="split">Split view</button>
+          <button type="button" class="spec-chip" data-set-state="conflict">Disk conflict</button>
+          <button type="button" class="spec-chip" data-set-state="restoring">Restoring bench</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty bench</button>
+          <button type="button" class="spec-chip" data-set-state="follow">Follow prompt</button>
+          <button type="button" class="spec-chip" data-set-state="close">Close prompt</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="workbench.room.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Loadout bar</h3>
+          <p>Open pieces as portrait-style slots in a left column (name, kind, dirty pip) instead of tabs; recents stay at the bottom.</p></header>
+        <div class="spec-screen wb-screen" data-state="loaded">
+<div class="wb-app" data-part="shell.app">
+  <header class="wb-hud" data-part="shell.hud">
+    <div class="wb-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="wb-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="wb-hud-mid">
+      <div class="wb-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="wb-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close tab</span></span>
+    </div>
+  </header>
+  <div class="wb-body">
+    <nav class="wb-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="wb-dock-brand" data-part="shell.dock.brand">
+        <svg class="wb-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="wb-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="wb-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="wb-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="wb-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="wb-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="wb-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="wb-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="wb-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="wb-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="wb-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="wb-dock-app wb-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="wb-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="wb-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="wb-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="wb-stage bk-stage" data-part="shell.stage">
+
+      <div class="wb-loadoutwrap">
+        <nav class="wb-loadout" data-part="workbench.tabs" aria-label="Open pieces">
+          <button type="button" class="bk-item wb-slot" data-deck="character" data-part="workbench.tabs" aria-selected="true">
+            <span class="wb-slot-swatch" data-deck="character"></span>
+            <span class="wb-slot-text"><b class="bk-name">Marguerite Vane</b><span class="bk-meta">character</span></span>
+            <span class="bk-dot wb-dirty" data-tone="warn" title="unsaved changes"></span>
+          </button>
+          <button type="button" class="bk-item wb-slot" data-deck="lorebook" data-part="workbench.tabs" data-beside="true">
+            <span class="wb-slot-swatch" data-deck="lorebook"></span>
+            <span class="wb-slot-text"><b class="bk-name">Keeper's Log</b><span class="bk-meta">lorebook</span></span>
+            
+          </button>
+          <button type="button" class="bk-item wb-slot" data-deck="persona" data-part="workbench.tabs">
+            <span class="wb-slot-swatch" data-deck="persona"></span>
+            <span class="wb-slot-text"><b class="bk-name">Vera Lune</b><span class="bk-meta">persona</span></span>
+            
+          </button>
+          <button type="button" class="bk-item wb-slot" data-deck="preset" data-part="workbench.tabs">
+            <span class="wb-slot-swatch" data-deck="preset"></span>
+            <span class="wb-slot-text"><b class="bk-name">Velvet Quill</b><span class="bk-meta">preset</span></span>
+            
+          </button>
+          <button type="button" class="bk-item wb-slot-add" aria-label="Open another piece">+ Open another</button>
+        </nav>
+        <div class="wb-loadoutmain">
+          <section class="bk-panel bk-frame wb-editorcard" data-part="editor.card" data-mark data-deck="character" data-crown>
+            <div class="bk-panel__head wb-ehead">
+              <span class="bk-tag" data-deck="character"><b>CHAR</b></span>
+              <h3 class="bk-name" data-part="editor.card.head">Marguerite Vane</h3>
+              <button type="button" class="bk-item wb-btn" data-part="editor.save">Save</button>
+            </div>
+            <div class="bk-panel__body">
+              <p class="bk-meta">The active tab's own editor fills this space (see <code>character.editor</code> and its siblings for what each kind actually shows). Save is always the one clear action in its header.</p>
+            </div>
+          </section>
+          <p class="bk-meta wb-besidehint">Keeper's Log is pinned beside from a card's "Open beside" menu. Focusing its tab swaps which pane is active; see the Split view state.</p>
+        </div>
+      </div>
+          <div class="wb-panes" data-part="workbench.split">
+            <section class="wb-pane" data-part="workbench.pane">
+              <div class="wb-rowhead">
+                <span class="bk-tag" data-deck="character"><b>CHAR</b></span>
+                <span class="bk-name">Marguerite Vane</span>
+                <span class="bk-meta">active</span>
+              </div>
+              <p class="bk-meta">The active pane, same as the One editor state.</p>
+            </section>
+            <section class="wb-pane wb-pane-beside" data-part="workbench.pane" data-deck="lorebook">
+              <div class="wb-rowhead">
+                <span class="bk-tag" data-deck="lorebook"><b>LORE</b></span>
+                <span class="bk-name">Keeper's Log</span>
+                <span class="bk-meta">pinned beside</span>
+                <button type="button" class="bk-item wb-btn-ghost wb-swap" data-part="ui.button">Swap</button>
+              </div>
+              <p class="bk-meta">Closing the primary pane promotes this one; Swap exchanges which side is active. Both stay visible until one is closed.</p>
+            </section>
+          </div>
+          <div class="wb-conflict" data-part="ui.notice" data-tone="danger" role="alert">
+            <h3 class="bk-heading" data-part="ui.notice.title">Changed on disk</h3>
+            <p class="bk-meta" data-part="ui.notice.body">Keeper's Log was written by something else, probably the agent, while you had unsaved edits open, so your last save was refused rather than overwriting it. Nothing has been lost yet.</p>
+            <div class="wb-dlgrow" data-part="ui.notice.actions">
+              <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">Discard my edits</button>
+              <button type="button" class="bk-item wb-btn" data-part="ui.button">Keep mine, overwrite</button>
+            </div>
+          </div>
+          <div class="wb-restoring" data-part="ui.progress" aria-busy="true">
+            <p class="bk-meta" data-part="ui.progress.step">Restoring your bench&hellip;</p>
+            <div class="bk-meter" data-part="ui.progress.bar" data-continuous role="meter" aria-valuetext="working">
+              <span class="bk-meter__track"><span class="bk-meter__fill wb-pulse" style="--bk-value:40%"></span></span>
+            </div>
+          </div>
+          <div class="wb-empty" data-part="ui.empty">
+            <p class="bk-label">Workbench</p>
+            <h3 class="bk-heading" data-part="ui.empty.title">Nothing open yet</h3>
+            <p class="bk-meta" data-part="ui.empty.body">Send a piece here from the Library, or bring one back up below.</p>
+            <div data-part="ui.empty.actions"><button type="button" class="bk-item wb-btn" data-part="ui.button">Open the Library</button></div>
+          </div>
+          <div class="wb-recents" data-part="workbench.recents">
+            <button type="button" class="wb-rlabel" data-part="workbench.recents.toggle" aria-expanded="true">
+              <span class="bk-bullet"></span>
+              <span class="bk-label">Recent &middot; bring one up</span>
+              <span class="bk-meta wb-rtoggle-text">hide</span>
+            </button>
+            <div class="wb-rrow">
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="character" data-part="workbench.recents.item">
+              <span class="bk-name">Marguerite Vane</span>
+              <span class="bk-meta">character</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="lorebook" data-part="workbench.recents.item">
+              <span class="bk-name">The Magpie's Ledger</span>
+              <span class="bk-meta">lorebook</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="persona" data-part="workbench.recents.item">
+              <span class="bk-name">Nuit</span>
+              <span class="bk-meta">persona</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="regex" data-part="workbench.recents.item">
+              <span class="bk-name">Cleanup pass</span>
+              <span class="bk-meta">regex set</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="preset" data-part="workbench.recents.item">
+              <span class="bk-name">Velvet Quill</span>
+              <span class="bk-meta">preset</span>
+            </button>
+            <button type="button" class="bk-frame wb-rcard" data-lift data-deck="pack" data-part="workbench.recents.item">
+              <span class="bk-name">Marguerite: sprites</span>
+              <span class="bk-meta">pack</span>
+            </button>
+            </div>
+          </div>
+        <div class="wb-scrim" data-part="ui.dialog" role="alertdialog" aria-label="Follow to the Workbench">
+          <div class="bk-frame wb-dlg" data-crown>
+            <h3 class="bk-heading" data-part="ui.dialog.title">Follow to the Workbench?</h3>
+            <p class="bk-meta" data-part="ui.dialog.body">3 items were sent to the Workbench. Follow?</p>
+            <label class="wb-check"><input type="checkbox" data-part="ui.check">Never ask me this again</label>
+            <div class="wb-dlgrow" data-part="ui.dialog.actions">
+              <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">No</button>
+              <button type="button" class="bk-item wb-btn" data-part="ui.button">Yes</button>
+            </div>
+          </div>
+        </div>
+        <div class="wb-scrim" data-part="ui.dialog" role="alertdialog" aria-label="Discard unsaved changes">
+          <div class="bk-frame wb-dlg" data-crown data-tone="danger">
+            <h3 class="bk-heading" data-part="ui.dialog.title">Discard unsaved changes?</h3>
+            <p class="bk-meta" data-part="ui.dialog.body">Keeper's Log has unsaved changes. Close this tab and discard them?</p>
+            <div class="wb-dlgrow" data-part="ui.dialog.actions">
+              <button type="button" class="bk-item wb-btn-ghost" data-part="ui.button">Keep editing</button>
+              <button type="button" class="bk-item wb-btn-danger" data-part="ui.button" data-tone="danger">Discard changes</button>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="wb-status" data-part="shell.status">
+    <span class="wb-status-item" data-part="shell.status.item">Library open · autosaved</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Loadout bar">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">One editor</button>
+          <button type="button" class="spec-chip" data-set-state="split">Split view</button>
+          <button type="button" class="spec-chip" data-set-state="conflict">Disk conflict</button>
+          <button type="button" class="spec-chip" data-set-state="restoring">Restoring bench</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty bench</button>
+          <button type="button" class="spec-chip" data-set-state="follow">Follow prompt</button>
+          <button type="button" class="spec-chip" data-set-state="close">Close prompt</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: tabs with dirty pip and pinned-beside marker, Save-only editor header, split view with Swap, disk-conflict bar, empty bench, recents rail with hide toggle, Follow and Discard-Keep dialogs. New: a "Restoring your bench..." state (named in BUILD-BRIEF, not drawn in the soft source) as an indeterminate ui.progress row. Phone width is covered by the page-wide Width switch, not a separate state, so it is not repeated in the state strip.</p>
+  </section>
+</main>
+</body>
+</html>

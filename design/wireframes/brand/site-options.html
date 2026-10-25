@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku site options</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+/*
+ * The GitHub Pages site: three concepts, each built as one physical theater object (the
+ * standing direction: marketing assets are objects, not SaaS layouts). House look with about 30%
+ * cute: the ticket bun, a pink blush, sparkles, soft corners on paper pieces. Every color is a token.
+ */
+:root { --pink: color-mix(in srgb, var(--rose) 30%, var(--stage-paper)); --blush: color-mix(in srgb, var(--rose) 10%, var(--stage-paper)); --ink: var(--stage-ink); }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--stage-floor); color: var(--stage-soft); font-family: var(--font-body); }
+.wf { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9; display: flex; gap: 6px; font: 600 .7rem var(--font-mono); text-transform: uppercase; flex-wrap: wrap; justify-content: center; }
+.wf button { border: 2px solid var(--ink); background: var(--stage-panel); color: var(--stage-soft); padding: 6px 10px; cursor: pointer; box-shadow: 3px 3px 0 var(--ink); font: inherit; }
+.wf button.on { background: var(--rose); color: var(--stage-white); }
+.wf-note { position: fixed; right: 12px; bottom: 12px; z-index: 9; max-width: 28rem; padding: 10px 14px; background: var(--stage-panel); border: 2px solid var(--ink); border-left: 4px solid var(--rose); font: 400 .9rem/1.45 var(--font-body); color: var(--stage-soft); }
+.wf-note b { color: var(--stage-card); }
+[data-only]:not(.show) { display: none !important; }
+.btn { display: inline-block; padding: 12px 22px; border: 3px solid var(--ink); border-radius: 10px; background: var(--rose); color: var(--stage-white); font: 900 .95rem var(--font-big); text-transform: uppercase; letter-spacing: .04em; box-shadow: 4px 4px 0 var(--ink); text-decoration: none; }
+.btn.paper { background: var(--stage-paper); color: var(--ink); }
+.sparkle { color: var(--stage-warn); }
+.mark { width: 64px; height: 64px; }
+
+/* ---------- A: the playbill ---------- */
+.stage-a { min-height: 100vh; padding: 70px 20px 90px; background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--stage-warn) 12%, transparent), transparent 50%), var(--stage-floor); }
+.bill { max-width: 760px; margin: 0 auto; background: var(--blush); color: var(--ink); border: 3px solid var(--ink); box-shadow: 10px 10px 0 var(--ink); padding: 44px 48px 40px; position: relative; }
+.bill::before { content: ""; position: absolute; inset: 10px; border: 2px solid color-mix(in srgb, var(--rose) 45%, transparent); pointer-events: none; }
+.bill .top { text-align: center; font: 600 .74rem var(--font-mono); letter-spacing: .3em; text-transform: uppercase; color: var(--rose-deep); }
+.bill h1 { text-align: center; margin: 14px 0 6px; font: 900 4.6rem/1 var(--font-fancy); letter-spacing: .06em; }
+.bill .sub { text-align: center; font: italic 600 1.35rem var(--font-body); color: var(--rose-deep); }
+.bill .mark { display: block; margin: 18px auto; }
+.rule { height: 3px; background: var(--ink); margin: 22px 0; position: relative; }
+.rule::after { content: "\2726"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -54%); background: var(--blush); padding: 0 10px; color: var(--rose); font-size: 1.1rem; }
+.acts { display: grid; gap: 16px; }
+.act { display: grid; grid-template-columns: 90px 1fr; gap: 16px; align-items: baseline; }
+.act b { font: 900 .8rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--rose-deep); }
+.act h3 { font: 900 1.25rem var(--font-big); text-transform: uppercase; }
+.act p { font-size: 1.1rem; line-height: 1.5; margin-top: 4px; }
+.cast-list { columns: 2; column-gap: 28px; font-size: 1.05rem; line-height: 1.8; }
+.cast-list span { font-family: var(--font-mono); font-size: .8rem; color: var(--rose-deep); }
+.bill .cta { text-align: center; margin-top: 26px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.bill small { display: block; text-align: center; margin-top: 16px; font: 500 .74rem var(--font-mono); color: var(--muted, var(--stage-line)); }
+
+/* ---------- B: the ticket booth ---------- */
+.stage-b { min-height: 100vh; padding: 80px 20px 90px; display: flex; flex-direction: column; align-items: center; gap: 34px; background: repeating-linear-gradient(90deg, var(--rose-deep) 0 36px, color-mix(in srgb, var(--rose-deep) 80%, var(--stage-black)) 36px 72px); }
+.booth { background: var(--stage-well); border: 3px solid var(--ink); box-shadow: 8px 8px 0 var(--ink); border-radius: 18px 18px 6px 6px; padding: 26px 30px; text-align: center; max-width: 620px; }
+.booth .marquee { display: inline-flex; gap: 10px; align-items: center; padding: 8px 18px; border: 3px solid var(--stage-warn); border-radius: 999px; font: 900 1.1rem var(--font-big); text-transform: uppercase; color: var(--stage-warn); letter-spacing: .1em; }
+.booth h1 { margin: 14px 0 8px; font: 900 3.4rem/1 var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+.booth h1 em { font-style: normal; color: var(--rose); }
+.booth p { font-size: 1.2rem; color: var(--stage-text-dim); font-style: italic; }
+.ticket { width: min(720px, 100%); display: grid; grid-template-columns: 1fr 190px; background: var(--stage-paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 12px; box-shadow: 8px 8px 0 var(--ink); transform: rotate(-2deg);
+  -webkit-mask: radial-gradient(circle 16px at 0 50%, transparent 98%, #000), radial-gradient(circle 16px at 100% 50%, transparent 98%, #000); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.ticket .main { padding: 24px 30px; border-right: 3px dashed var(--ink); }
+.ticket .adm { font: 600 .74rem var(--font-mono); letter-spacing: .3em; color: var(--rose-deep); }
+.ticket h2 { font: 900 2.4rem/1 var(--font-fancy); margin: 8px 0; }
+.ticket ul { list-style: none; padding: 0; display: grid; gap: 6px; font-size: 1.1rem; }
+.ticket li::before { content: "\2665  "; color: var(--rose); }
+.ticket .stub { padding: 22px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.ticket .stub small { font: 500 .7rem var(--font-mono); }
+.row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 220px)); gap: 18px; }
+.mini { background: var(--stage-well); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 5px 5px 0 var(--ink); padding: 16px; color: var(--stage-soft); }
+.mini h3 { font: 900 1rem var(--font-big); text-transform: uppercase; color: var(--stage-card); margin-bottom: 6px; }
+.mini p { font-size: 1rem; line-height: 1.45; }
+
+/* ---------- C: the tarot spread ---------- */
+.stage-c { min-height: 100vh; padding: 80px 20px 90px; background: radial-gradient(ellipse at 50% 30%, var(--stage-rose-well), var(--stage-floor) 70%); text-align: center; }
+.stage-c h1 { font: 900 3.6rem/1 var(--font-fancy); color: var(--stage-card); letter-spacing: .05em; }
+.stage-c .sub { margin: 10px auto 34px; max-width: 36rem; font: italic 600 1.3rem var(--font-body); color: var(--pink); }
+.spread { display: flex; justify-content: center; gap: 26px; flex-wrap: wrap; }
+.tarot { width: 230px; height: 380px; background: var(--stage-paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 16px; box-shadow: 7px 7px 0 var(--ink); padding: 14px; display: flex; flex-direction: column; position: relative; }
+.tarot:nth-child(1) { transform: rotate(-5deg) translateY(10px); } .tarot:nth-child(3) { transform: rotate(5deg) translateY(10px); }
+.tarot .frame { flex: 1; border: 2px solid var(--ink); border-radius: 10px; display: flex; flex-direction: column; align-items: center; padding: 10px; gap: 8px; background: var(--blush); }
+.tarot .num { font: 900 .9rem var(--font-fancy); letter-spacing: .2em; color: var(--rose-deep); }
+.tarot .art { flex: 1; width: 100%; display: grid; place-items: center; font-size: 4rem; }
+.tarot h3 { font: 900 1.25rem var(--font-fancy); letter-spacing: .1em; }
+.tarot p { font-size: .98rem; line-height: 1.4; }
+.stage-c .cta { margin-top: 44px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.stage-c small { display: block; margin-top: 14px; font: 500 .75rem var(--font-mono); color: var(--stage-mute); }
+@media (max-width: 700px) { .bill { padding: 28px 20px; } .bill h1 { font-size: 3rem; } .act { grid-template-columns: 1fr; } .cast-list { columns: 1; } .ticket { grid-template-columns: 1fr; } .ticket .main { border-right: 0; border-bottom: 3px dashed var(--ink); } .row3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="tk" viewBox="0 0 100 100">
+      <g transform="rotate(-8 50 50)">
+        <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M64 30 V70" stroke="var(--stage-ink)" stroke-width="2" stroke-dasharray="4 4"/>
+        <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--stage-ink)"/>
+        <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--stage-ink)"/>
+        <circle cx="78" cy="50" r="6" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="2.5"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- A: the playbill -->
+<section class="stage-a" data-only="a">
+  <article class="bill">
+    <div class="top">Now playing on your own computer</div>
+    <h1>BUNRAKU</h1>
+    <div class="sub">a cozy little stage for your AI characters <span class="sparkle">&#10022;</span></div>
+    <svg class="mark"><use href="#tk"/></svg>
+    <div class="rule"></div>
+    <div class="acts">
+      <div class="act"><b>Act I</b><div><h3>Bring your cast</h3><p>Drop in character cards from SillyTavern, RoleCall, Chub, and more. They all live together in one library on your computer.</p></div></div>
+      <div class="act"><b>Act II</b><div><h3>Play a scene</h3><p>Chat with any character using your own AI key. Swipe, retry, branch the story, and keep every version.</p></div></div>
+      <div class="act"><b>Act III</b><div><h3>Take a bow</h3><p>Edit anything, then send it back out in whatever format you need. Your work is yours, and it never leaves your machine unless you say so.</p></div></div>
+    </div>
+    <div class="rule"></div>
+    <div class="cast-list">
+      <div>Your characters <span>&middot; lead roles</span></div><div>Lorebooks <span>&middot; the world</span></div><div>Personas <span>&middot; you</span></div>
+      <div>Presets <span>&middot; the direction</span></div><div>Regex <span>&middot; stagehands</span></div><div>Sprite packs <span>&middot; costumes</span></div>
+    </div>
+    <div class="cta"><a class="btn">Get Bunraku for Windows</a><a class="btn paper">Try it in your browser</a></div>
+    <small>Free and open source &middot; also for Mac and Linux &middot; made by Coneja-Chibi</small>
+  </article>
+</section>
+
+<!-- B: the ticket booth -->
+<section class="stage-b" data-only="b">
+  <div class="booth"><span class="marquee">&#10022; Tonight &#10022;</span><h1>Your stories,<br><em>your stage</em></h1><p>Bunraku is a cozy app for playing and making AI characters, right on your own computer.</p></div>
+  <div class="ticket">
+    <div class="main"><div class="adm">ADMIT ONE &middot; FREE FOREVER</div><h2>Bunraku</h2>
+      <ul><li>Chat with any character, with your own AI key</li><li>Import cards from SillyTavern, RoleCall, and more</li><li>Everything saved privately on your computer</li></ul></div>
+    <div class="stub"><svg class="mark"><use href="#tk"/></svg><a class="btn">Download</a><small>Windows &middot; Mac &middot; Linux</small></div>
+  </div>
+  <div class="row3">
+    <div class="mini"><h3>Play</h3><p>Swipe, retry, and branch any scene. Nothing is ever lost.</p></div>
+    <div class="mini"><h3>Make</h3><p>Write characters, worlds, and presets in a proper editor.</p></div>
+    <div class="mini"><h3>Keep</h3><p>Your library is encrypted and stays on your machine.</p></div>
+  </div>
+</section>
+
+<!-- C: the tarot spread -->
+<section class="stage-c" data-only="c">
+  <svg class="mark"><use href="#tk"/></svg>
+  <h1>BUNRAKU</h1>
+  <p class="sub">Draw three cards. They all say the same thing: your characters, your stage, your computer.</p>
+  <div class="spread">
+    <div class="tarot"><div class="frame"><span class="num">I</span><div class="art"><svg viewBox="0 0 64 64" width="96" height="96" fill="none" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 30 C20 16 22 8 26 8 C30 8 30 20 29 30 Z M34 30 C34 17 38 9 42 10 C46 12 42 22 38 31 Z" fill="var(--rose)"/><circle cx="32" cy="42" r="14" fill="var(--rose)"/><path d="M26 42 q2 -3 4 0 M34 42 q2 -3 4 0"/><path d="M30 48 q2 2 4 0"/></svg></div><h3>THE PLAYER</h3><p>Chat with any character using your own AI. Swipe, branch, and keep every take.</p></div></div>
+    <div class="tarot"><div class="frame"><span class="num">II</span><div class="art"><svg viewBox="0 0 64 64" width="96" height="96" fill="none" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 52 L16 38 L42 12 L52 22 L26 48 Z" fill="var(--stage-warn)"/><path d="M38 16 L48 26"/><path d="M12 52 L20 50"/><path d="M50 44 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" fill="var(--rose)" stroke-width="2"/></svg></div><h3>THE MAKER</h3><p>Write characters, lorebooks, and presets, with everything in one library.</p></div></div>
+    <div class="tarot"><div class="frame"><span class="num">III</span><div class="art"><svg viewBox="0 0 64 64" width="96" height="96" fill="none" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="28" width="36" height="26" rx="6" fill="var(--rose)"/><path d="M22 28 V20 a10 10 0 0 1 20 0 V28"/><path d="M32 38 v8"/><path d="M26 10 C24 4 26 2 28 2 M38 10 C40 4 38 2 36 2" stroke-width="2.5"/></svg></div><h3>THE KEEPER</h3><p>Encrypted, private, and yours. Export to any format whenever you like.</p></div></div>
+  </div>
+  <div class="cta"><a class="btn">Download Bunraku</a><a class="btn paper">Try it in your browser</a></div>
+  <small>Free and open source &middot; Windows, Mac, and Linux</small>
+</section>
+
+<div class="wf" id="wf"><button data-s="a" class="on">A: Playbill</button><button data-s="b">B: Ticket booth</button><button data-s="c">C: Tarot spread</button></div>
+<div class="wf-note" id="note"></div>
+
+<script>
+(function () {
+  var NOTES = {
+    a: "<b>A: Playbill.</b> The whole page is one theater program on blush paper: title, the ticket bun, three acts (bring your cast, play a scene, take a bow), a cast list of what Bunraku holds, and two buttons. Calm, readable, most \"theater\".",
+    b: "<b>B: Ticket booth.</b> A marquee over striped curtains, then one big admit-one ticket that is the download button, then three small cards. The most \"click here\" of the three.",
+    c: "<b>C: Tarot spread.</b> Three tilted cards (the Player, the Maker, the Keeper) on a soft rose glow. The cutest and most memorable; a little less plain about what the app is.",
+  };
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.classList.toggle("show", el.dataset.only === s); });
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.classList.toggle("on", b.dataset.s === s); });
+    document.getElementById("note").innerHTML = NOTES[s] + " <b>Where it lives:</b> this becomes the front page of coneja-chibi.github.io/Bunraku; the browser Studio that lives there today moves to /studio/, behind \"Try it in your browser\".";
+  }
+  document.getElementById("wf").addEventListener("click", function (e) { var b = e.target.closest("[data-s]"); if (b) set(b.dataset.s); });
+  set(new URLSearchParams(location.search).get("state") || "a");
+})();
+</script>
+</body>
+</html>

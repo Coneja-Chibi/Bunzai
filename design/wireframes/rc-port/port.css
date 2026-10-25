@@ -1,0 +1,50 @@
+/*
+ * RoleCall's /scenes and /library, ported to Bunraku (wireframes). Shapes, sizes, borders, shadows,
+ * gradients, and type follow RC's own components (ChatCard, StageCard, RecentChatsList,
+ * SceneTabNav, library-client-v2, LibrarySectionHeader, ContentPresetCard, AssetCard,
+ * HorizontalAssetRow). Colors come from Bunraku's tokens: RC's user accent is Bunraku's --accent,
+ * a character's signature color is its deck tone, and RC's Inter body text is Bunraku's Archivo.
+ */
+* { box-sizing: border-box; margin: 0; }
+html, body { height: 100%; }
+body {
+  --bg: var(--stage-well);          /* RC #0a0a0b */
+  --raise: var(--stage-sunken);     /* RC #0f0f10 */
+  --hard: var(--stage-black);       /* RC's black borders and offset shadows */
+  --ui: var(--font-big);            /* RC Inter */
+  background: var(--bg); color: var(--text); font-family: var(--ui); font-weight: 400;
+}
+/* accent helpers: RC writes rgba(accent, n); color-mix does the same with a token */
+.tone { --t: var(--tone, var(--accent)); }
+
+/* Bunraku's shell dock (RC's own floating dock is replaced by this) */
+.app { display: grid; grid-template-columns: 4.2rem auto 1fr; min-height: 100vh; }
+.dock { background: var(--raise); border-right: 2px solid var(--hard); display: flex; flex-direction: column; align-items: center; gap: 0.7rem; padding: 0.8rem 0; }
+.dock .mark { font-family: var(--font-fancy); font-weight: 900; font-size: 1.5rem; color: var(--accent); margin-bottom: 0.6rem; }
+.dock .app-btn { width: 2.6rem; height: 2.6rem; border: 2px solid var(--hard); background: color-mix(in srgb, var(--text) 3%, transparent); display: grid; place-items: center; font-family: var(--font-mono); font-weight: 700; font-size: 0.68rem; color: var(--text-soft); }
+.dock .app-btn.on { background: color-mix(in srgb, var(--accent) 18%, transparent); border-color: var(--accent); box-shadow: 2px 2px 0 var(--hard); color: var(--text); }
+.dock .spacer { flex: 1; }
+
+/* RC's mono eyebrow with its square sigil */
+.eyebrow { display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); }
+.eyebrow .sig { width: 10px; height: 10px; background: var(--accent); box-shadow: 2px 2px 0 color-mix(in srgb, var(--accent) 33%, transparent); }
+.eyebrow .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.25; } }
+.subhead { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: 0.30em; text-transform: uppercase; color: var(--text-soft); }
+.subhead .sig { width: 8px; height: 8px; background: var(--accent); box-shadow: 2px 2px 0 color-mix(in srgb, var(--accent) 35%, transparent); }
+.cinzel { font-family: var(--font-fancy); }
+.mono { font-family: var(--font-mono); }
+.italic-voice { font-family: var(--font-body); font-style: italic; }
+
+/* RC's corner brackets */
+.br { position: absolute; width: 24px; height: 24px; border-style: solid; border-color: var(--t); opacity: 0.85; pointer-events: none; z-index: 5; transition: all 0.2s; }
+.br.tl { top: 0; left: 0; border-width: 4px 0 0 4px; }
+.br.brc { bottom: 0; right: 0; border-width: 0 4px 4px 0; }
+
+/* wireframe chrome */
+.wf-chip { position: fixed; bottom: 0.8rem; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.wf-chip span, .wf-chip a, .wf-chip button { background: var(--raise); color: var(--text); border: 2px solid var(--hard); padding: 0.28rem 0.55rem; text-decoration: none; font: inherit; cursor: pointer; }
+.wf-chip span { background: var(--accent-deep); color: var(--stage-white); }
+.wf-note { position: fixed; right: 0.8rem; bottom: 0.8rem; z-index: 1000; max-width: 30rem; max-height: 1.75rem; overflow: hidden; background: var(--raise); color: var(--text-soft); border: 2px solid var(--hard); font-family: var(--font-mono); font-size: 0.66rem; line-height: 1.5; padding: 0.3rem 0.7rem; cursor: help; transition: max-height 0.25s; }
+.wf-note:hover { max-height: 26rem; }
+.wf-note b { color: var(--text); }

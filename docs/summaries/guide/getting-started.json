@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/getting-started",
+  "sourcePath": "docs/guide/getting-started.md",
+  "sourceHash": "sha256:9a42438ab6f0c294ad8900c8bfba390e67a7a2e870cccd857cd8a1ac845607cc",
+  "summary": "Getting started covers release or source installation, the one-time first-run wizard, everyday Dock rooms, specialist catalog apps, and the Library's import and blank-character paths. Release builds are the shortest install; source use requires Bun 1.3+, clone, install, and bun run dev for the primary loopback server at 127.0.0.1:8321. Optional remote listeners stay off until enabled. The studio folder defaults to Documents/Bunraku Studio or a custom bunraku ui path. Wizard asks theme, one or more kinds to make, publish targets, and a palette or custom accent; Skip all uses defaults. Settings retains theme, the first selected kind as the initial Library deck, publish targets, and accent rather than the complete ordered make selection. Dock rooms are Workbench, Library, and Press with Settings pinned below; Docs and CSS Workshop are catalog tools. Import receipts write only checked pieces, while Start fresh creates, saves, and opens a blank character.",
+  "topics": [
+    "release or Bun source install",
+    "first-run wizard four questions",
+    "Dock Workbench Library Press",
+    "loopback 8321 studio folder",
+    "first import receipt",
+    "Skip all defaults Settings",
+    "Company not open yet"
+  ],
+  "sections": [
+    {
+      "slug": "the-short-version",
+      "title": "The short version",
+      "level": 2,
+      "sourceHash": "sha256:de4eb77df87ea10a4a9e0d4f5f429c4e06f9a4b82a168f3f9ddec2ac6979d413",
+      "summary": "Download a platform build from GitHub Releases, or install Bun 1.3+, clone Bunraku, and run bun install for source use. Open the app or use bun run dev for the primary loopback address at 127.0.0.1:8321. Studio JSON defaults under Documents/Bunraku Studio or a custom path. Complete or skip the wizard, then import through the Library door or create a blank character through Start fresh.",
+      "topics": [
+        "release or Bun install",
+        "bun run dev",
+        "wizard or skip",
+        "Library first import"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "the-first-run-wizard",
+      "title": "The first-run wizard",
+      "level": 2,
+      "sourceHash": "sha256:dc66f208105821f7cf1defce74fc291dc04ae149b3fb7c9412d4ac6bd02226ab",
+      "summary": "Wizard appears once when the Studio finds no completed setup; after finish or skip it never returns on its own. Four questions: light or dark, default Dark; one or more kinds to make, where the first pick controls the first Library deck and an empty choice falls back to Characters; publish targets as a multi-select populated from known formats, with Not sure as default; and a house-palette or custom accent, default Rose. Skip all fills remaining defaults and jumps to the You're set recap. Theme, the initial Library deck, publish targets, and accent remain editable afterward; the complete ordered kind selection is not a Settings field.",
+      "topics": [
+        "wizard once only",
+        "theme first deck",
+        "publish targets",
+        "accent Rose default",
+        "Skip all Settings later"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-dock",
+      "title": "The Dock",
+      "level": 2,
+      "sourceHash": "sha256:510e7aa4bf1bbdb33ac19f4c2cb0da7d2b38234bd2e45aa0a0167ca07a4e5ddd",
+      "summary": "Dock is the side column of everyday app tiles. Workbench edits character lorebook persona regex preset or pack; Library browses every deck's cards in rows or a grid, with a rail of live counts that shows one deck alone with its views, and the import door; Press ships only a staged queue to one selected target. Settings is pinned in the foot. The app catalog exposes included specialist tools such as Docs and CSS Workshop plus future apps such as Company; catalog-only tools are not ordinary Dock tiles. The configured home app controls normal launch, while a reload restores the active room when possible.",
+      "topics": [
+        "configurable home app",
+        "Library six decks",
+        "Press staged export",
+        "CSS Workshop",
+        "catalog specialists and future apps",
+        "reload restores active room"
+      ],
+      "children": []
+    },
+    {
+      "slug": "bringing-in-your-first-file",
+      "title": "Bringing in your first file",
+      "level": 2,
+      "sourceHash": "sha256:17898adc712b5efab9b0d646e187f6609b4c4599b2c47a9b83281091d498f8e7",
+      "summary": "Empty studio primary door accepts drop or click file picker; after pieces exist drop anywhere on Library for the same flow. Files are read before write. Headings are Pick what to keep when all clean or Here is what we read when some fail. Readable files show receipt with name, kind, and default-checked checkbox; unreadable files show a plain reason without a checkbox. Add more files appends the batch, Import N writes only checked pieces, and Not now writes nothing. The second empty-studio door creates and saves a blank character, then opens it in the Workbench.",
+      "topics": [
+        "empty studio door",
+        "receipt before write",
+        "Import N checked",
+        "Add more files",
+        "start fresh blank character"
+      ],
+      "children": []
+    },
+    {
+      "slug": "tips",
+      "title": "Tips",
+      "level": 2,
+      "sourceHash": "sha256:2cc029fec71030837e9c97165687b25773602916c93bd694af03f3b8b2c63341",
+      "summary": "Release builds are the shortest installation path; Bun 1.3+ is required only for a source checkout. Skip all fills defaults, and retained setup choices remain editable. The first selected make kind chooses the initial Library deck; later the Library remembers the last open deck. Attached character lorebooks arrive in one bundle receipt. An unreadable receipt means safe parsing failed because the file may be unsupported, malformed, or damaged; bunraku formats lists adapters. bunraku ui port path selects another studio folder.",
+      "topics": [
+        "release build or Bun source",
+        "Skip all fine",
+        "remember last deck",
+        "bunraku formats",
+        "custom studio path"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Regex editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="regex.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Regex editor</h1>
+    <p>The regex set editor: Guided, Plain words or Pattern mode for one rule, with Health and a whole-set test bench.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="regex.editor">
+    <header>
+      <h2 class="bk-heading">Regex editor</h2>
+      <span class="bk-tag">RegexEditor, regex set</span>
+      <p class="bk-meta">Parts: regex.editor, editor.toc, editor.toc.item, editor.lens, editor.rail, editor.save</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="regex.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Rule list</h3>
+          <p>TOC of rules, the rule page, the rail beside it.</p></header>
+        <div class="spec-screen rx-screen" data-state="loaded">
+<div class="rx-app" data-part="shell.app">
+  <header class="rx-hud" data-part="shell.hud">
+    <div class="rx-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="rx-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="rx-hud-mid">
+      <div class="rx-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="rx-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="rx-body">
+    <nav class="rx-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="rx-dock-brand" data-part="shell.dock.brand">
+        <svg class="rx-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="rx-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="rx-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="rx-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="rx-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="rx-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="rx-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="rx-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="rx-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="rx-dock-app rx-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="rx-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="rx-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="rx-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="rx-stage bk-stage" data-part="shell.stage">
+
+        <header class="rx-phead">
+          <span class="bk-tag" data-deck="regex"><b>RGX</b></span>
+          <h3 class="bk-name">Cleanup pass</h3>
+          <nav class="rx-writefor" role="group" aria-label="Write for">
+            <button type="button" class="bk-item rx-wfbtn" aria-selected="true">Bunraku</button>
+            <button type="button" class="bk-item rx-wfbtn">SillyTavern</button>
+            <button type="button" class="bk-item rx-wfbtn">RoleCall</button>
+          </nav>
+          <button type="button" class="bk-item rx-btn-ghost" data-set-state="gallery">+ New rule</button>
+          <button type="button" class="bk-item rx-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="rx-grid" data-part="regex.editor">
+          <div class="rx-toc" data-part="editor.toc">
+            <input class="rx-input" placeholder="Search rules...">
+          <button type="button" class="bk-item rx-ruleitem" aria-selected="true" data-part="editor.toc.item">
+            <span class="bk-name">Strip asterisk actions</span>
+            
+            
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Italicize *word*</span>
+            <span class="bk-tag" data-tone="warn">slow</span>
+            
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Collapse double spaces</span>
+            
+            
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Smart quotes</span>
+            
+            
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Trim trailing whitespace</span>
+            
+            
+          </button>
+          </div>
+        <div class="rx-rpage" data-part="editor.lens">
+          <div class="rx-ruletop">
+            <input class="rx-input rx-rulename" value="Strip asterisk actions">
+            <nav class="rx-modeset" role="group" aria-label="Authoring mode">
+              <button type="button" class="bk-item rx-modebtn" aria-selected="true">Guided</button>
+              <button type="button" class="bk-item rx-modebtn">Plain words</button>
+              <button type="button" class="bk-item rx-modebtn">Pattern</button>
+            </nav>
+          </div>
+
+          <div class="rx-rmode">
+            <p class="bk-meta">Guided asks three questions and builds the pattern from real examples you give it.</p>
+            <label class="rx-field"><span class="bk-label">What should it catch?</span><textarea class="rx-input" placeholder="*looks around*, *sighs*"></textarea></label>
+            <label class="rx-field"><span class="bk-label">What should it become?</span><input class="rx-input" placeholder="(leave empty to remove it)"></label>
+            <p class="bk-meta">It only knows words you showed it. <button type="button" class="rx-link">I know patterns, take me to Pattern mode</button></p>
+          </div>
+
+          <section class="bk-panel bk-frame rx-rcard" data-deck="regex">
+            <div class="bk-panel__head"><h4 class="bk-name">Replace with</h4></div>
+            <div class="bk-panel__body"><input class="rx-input" placeholder="(removes the match)"></div>
+          </section>
+
+          <section class="bk-panel bk-frame rx-rcard">
+            <div class="bk-panel__head"><h4 class="bk-name">Where it runs</h4></div>
+            <div class="bk-panel__body rx-phasepills">
+              <span class="bk-tag" aria-selected="true">User input</span><span class="bk-tag" aria-selected="true">Model output</span>
+              <span class="bk-tag">Display</span><span class="bk-tag">Slash command</span>
+              <span class="bk-tag rx-foreign" data-tone="warn" title="Set under a different platform">World info</span>
+            </div>
+          </section>
+
+          <details class="rx-fold">
+            <summary class="bk-meta">Fine print</summary>
+            <div class="rx-finebody">
+              <label class="rx-field"><span class="bk-label">Only messages deeper than</span><input class="rx-input" placeholder="any"></label>
+              <label class="rx-field"><span class="bk-label">Only messages shallower than</span><input class="rx-input" placeholder="any"></label>
+              <label class="rx-field"><span class="bk-label">Only for these characters</span><input class="rx-input" placeholder="everyone"></label>
+              <label class="rx-field"><span class="bk-label">Only run after another rule</span>
+                <div class="rx-selwrap"><select class="rx-input"><option>Always run</option><option>Italicize *word* fired</option><option>Italicize *word* did not fire</option></select></div>
+              </label>
+              <label class="rx-check rx-span2"><input type="checkbox" checked>Run again when a message is edited</label>
+              <label class="rx-check rx-span2"><input type="checkbox">Replace only the first match</label>
+              <label class="rx-check rx-span2"><input type="checkbox">Draw over the text instead of changing it</label>
+            </div>
+          </details>
+        </div>
+        <aside class="rx-rail" data-part="editor.rail">
+          <div class="rx-raildefault">
+            <section class="bk-panel bk-frame rx-rcard">
+              <div class="bk-panel__head"><h4 class="bk-name">Quick try</h4></div>
+              <div class="bk-panel__body"><input class="rx-input" value="*sighs* Fine, come in."><p class="bk-meta">Result: Fine, come in.</p></div>
+            </section>
+            <section class="bk-panel bk-frame rx-rcard">
+              <div class="bk-panel__head"><h4 class="bk-name">Health</h4></div>
+              <div class="bk-panel__body">
+                <p class="bk-meta">Runs before "Italicize *word*" and removes its match first.</p>
+                <button type="button" class="bk-item rx-btn-ghost" data-set-state="health" style="width:100%">Open the full check</button>
+                <button type="button" class="bk-item rx-btn-ghost" data-set-state="bench" style="width:100%">Open the test bench</button>
+              </div>
+            </section>
+          </div>
+          <div class="rx-railhealth">
+            <div class="rx-sph"><h3 class="bk-heading">Full check</h3><span class="bk-meta">2 findings</span></div>
+            <div class="rx-findgroup">
+              <b class="bk-meta" data-tone="warn">Worth a look</b>
+              <p class="bk-meta">"Italicize *word*" never fires on its own examples: this rule runs first and removes the text it was looking for.</p>
+              <p class="bk-meta">"Trim trailing whitespace" is an exact duplicate of a built-in cleanup step. <button type="button" class="rx-link">Fix: switch it off</button></p>
+            </div>
+            <button type="button" class="bk-item rx-btn-ghost" data-set-state="loaded" style="width:100%">Back to the rule</button>
+          </div>
+        </aside>
+        </div>
+        <div class="rx-galleryov" data-part="ui.card">
+          <h3 class="bk-heading">Starter recipes</h3>
+          <div class="rx-recipecats">
+            <span class="bk-tag">Cleanup</span><span class="bk-tag">Guardrails</span><span class="bk-tag">Formatting</span><span class="bk-tag">Style</span><span class="bk-tag">Compatibility</span><span class="bk-tag">Roleplay</span>
+          </div>
+          <div class="rx-recipegrid">          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Strip asterisk actions</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>*sighs* Fine.</div><div><span class="bk-label">After</span><br>Fine.</div></div>
+          </article>
+          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Italicize *word*</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>*sighs*</div><div><span class="bk-label">After</span><br>(italic) sighs</div></div>
+          </article>
+          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Smart quotes</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>"Fine."</div><div><span class="bk-label">After</span><br>“Fine.”</div></div>
+          </article>
+          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Collapse double spaces</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>Fine.  Come.</div><div><span class="bk-label">After</span><br>Fine. Come.</div></div>
+          </article>
+          </div>
+          <div class="rx-dlgrow">
+            <button type="button" class="bk-item rx-btn-ghost">Start blank</button>
+            <button type="button" class="bk-item rx-btn" data-set-state="loaded">Use this recipe</button>
+          </div>
+        </div>
+        <div class="rx-benchov">
+          <nav class="rx-benchtabs" role="tablist">
+            <button type="button" class="bk-item rx-benchtab" role="tab" aria-selected="true">Try text</button>
+            <button type="button" class="bk-item rx-benchtab" role="tab">Import preview</button>
+            <button type="button" class="bk-item rx-benchtab" role="tab">Escape a literal</button>
+          </nav>
+          <textarea class="rx-input rx-bt-try">*sighs* "Fine," she said,  quietly.</textarea>
+          <div class="rx-benchstep"><span class="rx-n bk-num">1</span><div><b class="bk-name">Strip asterisk actions</b><p class="bk-meta"><span class="rx-skip">*sighs*</span> removed &middot; "Fine," she said, quietly.</p></div></div>
+          <div class="rx-benchstep"><span class="rx-n bk-num">2</span><div><b class="bk-name">Italicize *word*</b><p class="bk-meta">skipped &middot; nothing left to catch, the earlier rule already removed it</p></div></div>
+          <div class="rx-benchstep"><span class="rx-n bk-num">3</span><div><b class="bk-name">Smart quotes</b><p class="bk-meta">"Fine," &rarr; <mark class="rx-add">&ldquo;Fine,&rdquo;</mark></p></div></div>
+          <div class="rx-benchstep"><span class="rx-n bk-num">4</span><div><b class="bk-name">Collapse double spaces</b><p class="bk-meta">said,  quietly &rarr; <mark class="rx-add">said, quietly</mark></p></div></div>
+          <p class="bk-meta"><b>What comes out:</b> &ldquo;Fine,&rdquo; she said, quietly.</p>
+          <button type="button" class="bk-item rx-btn-ghost" data-set-state="loaded">Back to the rule</button>
+        </div>    </main>
+  </div>
+  <footer class="rx-status" data-part="shell.status">
+    <span class="rx-status-item" data-part="shell.status.item">Cleanup pass · regex set</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Rule list">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Rule: Guided</button>
+          <button type="button" class="spec-chip" data-set-state="health">Full check</button>
+          <button type="button" class="spec-chip" data-set-state="gallery">Recipe gallery</button>
+          <button type="button" class="spec-chip" data-set-state="bench">Test bench</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="regex.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Test bench first</h3>
+          <p>The try-a-line bench sits on top of the page; rules below show their hit counts.</p></header>
+        <div class="spec-screen rx-screen" data-state="loaded">
+<div class="rx-app" data-part="shell.app">
+  <header class="rx-hud" data-part="shell.hud">
+    <div class="rx-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="rx-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="rx-hud-mid">
+      <div class="rx-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="rx-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+    </div>
+  </header>
+  <div class="rx-body">
+    <nav class="rx-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="rx-dock-brand" data-part="shell.dock.brand">
+        <svg class="rx-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="rx-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="rx-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="rx-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="rx-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="rx-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="rx-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="rx-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="rx-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="rx-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="rx-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="rx-dock-app rx-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="rx-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="rx-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="rx-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="rx-stage bk-stage" data-part="shell.stage">
+
+        <header class="rx-phead">
+          <span class="bk-tag" data-deck="regex"><b>RGX</b></span>
+          <h3 class="bk-name">Cleanup pass</h3>
+          <nav class="rx-writefor" role="group" aria-label="Write for">
+            <button type="button" class="bk-item rx-wfbtn" aria-selected="true">Bunraku</button>
+            <button type="button" class="bk-item rx-wfbtn">SillyTavern</button>
+            <button type="button" class="bk-item rx-wfbtn">RoleCall</button>
+          </nav>
+          <button type="button" class="bk-item rx-btn-ghost" data-set-state="gallery">+ New rule</button>
+          <button type="button" class="bk-item rx-btn" data-part="editor.save">Save</button>
+        </header>
+        <section class="bk-panel bk-frame rx-benchtop" data-crown>
+          <div class="bk-panel__head"><h4 class="bk-name">Test bench</h4><span class="bk-meta">try a line against the whole set</span></div>
+          <div class="bk-panel__body">
+            <textarea class="rx-input rx-bt-try">*sighs* "Fine," she said,  quietly.</textarea>
+            <p class="bk-meta"><b>What comes out:</b> &ldquo;Fine,&rdquo; she said, quietly.</p>
+          </div>
+        </section>
+        <div class="rx-grid" data-part="regex.editor">
+          <div class="rx-toc" data-part="editor.toc">
+            <input class="rx-input" placeholder="Search rules...">
+          <button type="button" class="bk-item rx-ruleitem" aria-selected="true" data-part="editor.toc.item">
+            <span class="bk-name">Strip asterisk actions</span>
+            
+            <span class="bk-meta rx-hits">12 hits</span>
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Italicize *word*</span>
+            <span class="bk-tag" data-tone="warn">slow</span>
+            <span class="bk-meta rx-hits">3 hits</span>
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Collapse double spaces</span>
+            
+            <span class="bk-meta rx-hits">40 hits</span>
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Smart quotes</span>
+            
+            <span class="bk-meta rx-hits">21 hits</span>
+          </button>
+          <button type="button" class="bk-item rx-ruleitem" data-part="editor.toc.item">
+            <span class="bk-name">Trim trailing whitespace</span>
+            
+            <span class="bk-meta rx-hits">8 hits</span>
+          </button>
+          </div>
+        <div class="rx-rpage" data-part="editor.lens">
+          <div class="rx-ruletop">
+            <input class="rx-input rx-rulename" value="Strip asterisk actions">
+            <nav class="rx-modeset" role="group" aria-label="Authoring mode">
+              <button type="button" class="bk-item rx-modebtn" aria-selected="true">Guided</button>
+              <button type="button" class="bk-item rx-modebtn">Plain words</button>
+              <button type="button" class="bk-item rx-modebtn">Pattern</button>
+            </nav>
+          </div>
+
+          <div class="rx-rmode">
+            <p class="bk-meta">Guided asks three questions and builds the pattern from real examples you give it.</p>
+            <label class="rx-field"><span class="bk-label">What should it catch?</span><textarea class="rx-input" placeholder="*looks around*, *sighs*"></textarea></label>
+            <label class="rx-field"><span class="bk-label">What should it become?</span><input class="rx-input" placeholder="(leave empty to remove it)"></label>
+            <p class="bk-meta">It only knows words you showed it. <button type="button" class="rx-link">I know patterns, take me to Pattern mode</button></p>
+          </div>
+
+          <section class="bk-panel bk-frame rx-rcard" data-deck="regex">
+            <div class="bk-panel__head"><h4 class="bk-name">Replace with</h4></div>
+            <div class="bk-panel__body"><input class="rx-input" placeholder="(removes the match)"></div>
+          </section>
+
+          <section class="bk-panel bk-frame rx-rcard">
+            <div class="bk-panel__head"><h4 class="bk-name">Where it runs</h4></div>
+            <div class="bk-panel__body rx-phasepills">
+              <span class="bk-tag" aria-selected="true">User input</span><span class="bk-tag" aria-selected="true">Model output</span>
+              <span class="bk-tag">Display</span><span class="bk-tag">Slash command</span>
+              <span class="bk-tag rx-foreign" data-tone="warn" title="Set under a different platform">World info</span>
+            </div>
+          </section>
+
+          <details class="rx-fold">
+            <summary class="bk-meta">Fine print</summary>
+            <div class="rx-finebody">
+              <label class="rx-field"><span class="bk-label">Only messages deeper than</span><input class="rx-input" placeholder="any"></label>
+              <label class="rx-field"><span class="bk-label">Only messages shallower than</span><input class="rx-input" placeholder="any"></label>
+              <label class="rx-field"><span class="bk-label">Only for these characters</span><input class="rx-input" placeholder="everyone"></label>
+              <label class="rx-field"><span class="bk-label">Only run after another rule</span>
+                <div class="rx-selwrap"><select class="rx-input"><option>Always run</option><option>Italicize *word* fired</option><option>Italicize *word* did not fire</option></select></div>
+              </label>
+              <label class="rx-check rx-span2"><input type="checkbox" checked>Run again when a message is edited</label>
+              <label class="rx-check rx-span2"><input type="checkbox">Replace only the first match</label>
+              <label class="rx-check rx-span2"><input type="checkbox">Draw over the text instead of changing it</label>
+            </div>
+          </details>
+        </div>
+        <aside class="rx-rail" data-part="editor.rail">
+          <div class="rx-raildefault">
+            <section class="bk-panel bk-frame rx-rcard">
+              <div class="bk-panel__head"><h4 class="bk-name">Quick try</h4></div>
+              <div class="bk-panel__body"><input class="rx-input" value="*sighs* Fine, come in."><p class="bk-meta">Result: Fine, come in.</p></div>
+            </section>
+            <section class="bk-panel bk-frame rx-rcard">
+              <div class="bk-panel__head"><h4 class="bk-name">Health</h4></div>
+              <div class="bk-panel__body">
+                <p class="bk-meta">Runs before "Italicize *word*" and removes its match first.</p>
+                <button type="button" class="bk-item rx-btn-ghost" data-set-state="health" style="width:100%">Open the full check</button>
+                <button type="button" class="bk-item rx-btn-ghost" data-set-state="bench" style="width:100%">Open the test bench</button>
+              </div>
+            </section>
+          </div>
+          <div class="rx-railhealth">
+            <div class="rx-sph"><h3 class="bk-heading">Full check</h3><span class="bk-meta">2 findings</span></div>
+            <div class="rx-findgroup">
+              <b class="bk-meta" data-tone="warn">Worth a look</b>
+              <p class="bk-meta">"Italicize *word*" never fires on its own examples: this rule runs first and removes the text it was looking for.</p>
+              <p class="bk-meta">"Trim trailing whitespace" is an exact duplicate of a built-in cleanup step. <button type="button" class="rx-link">Fix: switch it off</button></p>
+            </div>
+            <button type="button" class="bk-item rx-btn-ghost" data-set-state="loaded" style="width:100%">Back to the rule</button>
+          </div>
+        </aside>
+        </div>
+        <div class="rx-galleryov" data-part="ui.card">
+          <h3 class="bk-heading">Starter recipes</h3>
+          <div class="rx-recipecats">
+            <span class="bk-tag">Cleanup</span><span class="bk-tag">Guardrails</span><span class="bk-tag">Formatting</span><span class="bk-tag">Style</span><span class="bk-tag">Compatibility</span><span class="bk-tag">Roleplay</span>
+          </div>
+          <div class="rx-recipegrid">          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Strip asterisk actions</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>*sighs* Fine.</div><div><span class="bk-label">After</span><br>Fine.</div></div>
+          </article>
+          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Italicize *word*</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>*sighs*</div><div><span class="bk-label">After</span><br>(italic) sighs</div></div>
+          </article>
+          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Smart quotes</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>"Fine."</div><div><span class="bk-label">After</span><br>“Fine.”</div></div>
+          </article>
+          <article class="bk-panel bk-frame rx-recipecard" data-deck="regex" data-part="ui.card">
+            <h4 class="bk-name">Collapse double spaces</h4>
+            <div class="rx-ba"><div><span class="bk-label">Before</span><br>Fine.  Come.</div><div><span class="bk-label">After</span><br>Fine. Come.</div></div>
+          </article>
+          </div>
+          <div class="rx-dlgrow">
+            <button type="button" class="bk-item rx-btn-ghost">Start blank</button>
+            <button type="button" class="bk-item rx-btn" data-set-state="loaded">Use this recipe</button>
+          </div>
+        </div>
+        <div class="rx-benchov">
+          <nav class="rx-benchtabs" role="tablist">
+            <button type="button" class="bk-item rx-benchtab" role="tab" aria-selected="true">Try text</button>
+            <button type="button" class="bk-item rx-benchtab" role="tab">Import preview</button>
+            <button type="button" class="bk-item rx-benchtab" role="tab">Escape a literal</button>
+          </nav>
+          <textarea class="rx-input rx-bt-try">*sighs* "Fine," she said,  quietly.</textarea>
+          <div class="rx-benchstep"><span class="rx-n bk-num">1</span><div><b class="bk-name">Strip asterisk actions</b><p class="bk-meta"><span class="rx-skip">*sighs*</span> removed &middot; "Fine," she said, quietly.</p></div></div>
+          <div class="rx-benchstep"><span class="rx-n bk-num">2</span><div><b class="bk-name">Italicize *word*</b><p class="bk-meta">skipped &middot; nothing left to catch, the earlier rule already removed it</p></div></div>
+          <div class="rx-benchstep"><span class="rx-n bk-num">3</span><div><b class="bk-name">Smart quotes</b><p class="bk-meta">"Fine," &rarr; <mark class="rx-add">&ldquo;Fine,&rdquo;</mark></p></div></div>
+          <div class="rx-benchstep"><span class="rx-n bk-num">4</span><div><b class="bk-name">Collapse double spaces</b><p class="bk-meta">said,  quietly &rarr; <mark class="rx-add">said, quietly</mark></p></div></div>
+          <p class="bk-meta"><b>What comes out:</b> &ldquo;Fine,&rdquo; she said, quietly.</p>
+          <button type="button" class="bk-item rx-btn-ghost" data-set-state="loaded">Back to the rule</button>
+        </div>    </main>
+  </div>
+  <footer class="rx-status" data-part="shell.status">
+    <span class="rx-status-item" data-part="shell.status.item">Cleanup pass · regex set</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Test bench first">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Rule: Guided</button>
+          <button type="button" class="spec-chip" data-set-state="health">Full check</button>
+          <button type="button" class="spec-chip" data-set-state="gallery">Recipe gallery</button>
+          <button type="button" class="spec-chip" data-set-state="bench">Test bench</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the write-for switch, New rule and Save, the rule list, the name field with Guided/Plain words/Pattern mode switch (Guided shown; the other two modes are the same card family, kept to one in the default view per the acceptance rule), Replace with, Where it runs phase pills (with a foreign-platform pill), the Fine print fold, the Quick try and Health rail, the full check findings, the starter-recipe gallery, and the test bench (try text, with its per-rule diff steps). New: a "Full check" entry in the state strip (named in BUILD-BRIEF’s source wireframe as its own data-s, folded out of BUILD-BRIEF’s shorter state list; kept for fidelity). Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,141 @@
+/*
+ * Bunraku design system, Builder B: feedback.html area CSS. Prefix .fb-, area ids "feedback" and
+ * "protected". Tokens only: every selector starts with .fb- or [data-taste-id^="feedback."] /
+ * [data-taste-id^="protected."]. Variant CSS hangs off [data-taste-id="..."].
+ *
+ * Protected rules (scoped under .fb-protected) read ONLY --bk-protected-*, plus the spacing, size,
+ * fs and hit-min tokens, which no theme touches. They never use .bk-frame, .bk-panel, .bk-item,
+ * .bk-tag, .bk-meter, .bk-label, .bk-pips or any --bk-type-* composite, since those read themed
+ * tokens (frame-w, bracket-rest, select-*, fw-display, case-*).
+ */
+
+.fb-pane { position: relative; min-height: 20rem; background: var(--bk-surface-well); box-shadow: inset 0 0 0 1px var(--bk-line); overflow: hidden; }
+.fb-pane-tall { min-height: 24rem; }
+.fb-scrim { position: absolute; inset: 0; background: var(--bk-scrim); display: flex; align-items: center; justify-content: center; padding: var(--bk-space-4); }
+.fb-scrim[data-dock="bottom"] { align-items: flex-end; }
+.fb-row { display: flex; flex-wrap: wrap; gap: var(--bk-gap-cards); align-items: flex-start; }
+.fb-col { display: flex; flex-direction: column; gap: var(--bk-space-3); }
+.fb-kind { display: flex; flex-direction: column; gap: var(--bk-space-2); }
+
+.fb-btn {
+  display: inline-flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-control-h-md);
+  padding: 0 var(--bk-space-4); font: var(--bk-type-action); text-transform: var(--bk-case-action);
+  color: var(--bk-action-text); background: var(--bk-action-bg); border: 0; cursor: pointer;
+}
+.fb-btn:hover { background: var(--bk-action-bg-hover); }
+.fb-btn[data-ghost] { color: var(--bk-text); background: none; box-shadow: inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control); }
+.fb-btn[data-danger] { color: var(--bk-text-on-deep); background: var(--bk-danger-strong); }
+.fb-btn[data-text] { min-height: auto; padding: 0; color: var(--bk-text-link); background: none; }
+
+/* ================= feedback.dialog ================= */
+.fb-dlg { width: 24rem; max-width: calc(100% - var(--bk-space-4)); padding: var(--bk-space-5); background: var(--bk-surface-panel); }
+.fb-dlg p { margin: var(--bk-space-2) 0 0; color: var(--bk-text-soft); font: var(--bk-type-small); }
+.fb-dlg-actions { margin-top: var(--bk-space-5); display: flex; justify-content: flex-end; gap: var(--bk-space-2); flex-wrap: wrap; }
+.fb-dlg-field { margin-top: var(--bk-space-4); display: flex; flex-direction: column; gap: var(--bk-space-1); }
+.fb-dlg-input { min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-3); font: var(--bk-type-body); color: var(--bk-text); background: var(--bk-surface-field); border: 0; box-shadow: inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control); }
+.fb-dlg-check { margin-top: var(--bk-space-3); display: flex; align-items: center; gap: var(--bk-space-2); font: var(--bk-type-small); color: var(--bk-text-soft); }
+
+/* b: choice menu - answers as a vertical bk-item list with Y/N key caps */
+[data-taste-id$=".dialog.b"] .fb-dlg-actions { flex-direction: column; align-items: stretch; gap: 0; margin-top: var(--bk-space-4); }
+[data-taste-id$=".dialog.b"] .fb-dlg-choice { justify-content: space-between; }
+
+/* c: prompt bar - the dialog docks to the bottom of the pane, content above stays visible dimmed */
+.fb-dlg-bar { width: 100%; max-width: none; box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-line); }
+.fb-stage-behind { position: absolute; inset: 0; padding: var(--bk-space-4); opacity: 0.5; }
+
+/* ================= feedback.sheet ================= */
+.fb-sheet { position: absolute; left: 0; right: 0; bottom: 0; max-height: 80%; display: flex; flex-direction: column; background: var(--bk-surface-panel); box-shadow: 0 0 0 1px var(--bk-line); }
+.fb-sheet-grab { flex: none; align-self: center; width: var(--bk-space-8); height: var(--bk-space-1); margin: var(--bk-space-2) 0; background: var(--bk-line-control); }
+.fb-sheet-title { flex: none; display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-4) var(--bk-space-3); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.fb-sheet-body { flex: 1; overflow: auto; padding: var(--bk-space-4); max-height: 10rem; }
+.fb-sheet-foot { flex: none; padding: var(--bk-space-3) var(--bk-space-4); box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-line); display: flex; justify-content: flex-end; }
+
+/* b: side drawer - slides from the left with a title bar and a readout */
+.fb-drawer { position: absolute; left: 0; top: 0; bottom: 0; width: 16rem; max-width: 80%; display: flex; flex-direction: column; background: var(--bk-surface-panel); box-shadow: 1px 0 0 var(--bk-line); }
+.fb-drawer-title { flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--bk-space-2); padding: var(--bk-space-3) var(--bk-space-4); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.fb-drawer-body { flex: 1; overflow: auto; padding: var(--bk-space-4); }
+
+/* ================= feedback.toast ================= */
+.fb-toast-corner { position: absolute; right: var(--bk-space-3); bottom: var(--bk-space-3); display: flex; align-items: center; gap: var(--bk-space-2); max-width: 18rem; padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-surface-panel); box-shadow: 0 0 0 1px var(--bk-line); }
+.fb-toast-corner .bk-dot { flex: none; }
+.fb-toast-action { margin-left: auto; }
+.fb-status-ticker { display: flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-status-h); padding: 0 var(--bk-space-3); background: var(--bk-surface-ink); }
+
+/* ================= feedback.notice ================= */
+.fb-notice-panel { padding: var(--bk-space-4); background: var(--bk-surface-panel); }
+.fb-notice-panel[data-tone="ok"] { box-shadow: inset var(--bk-crown-w) 0 0 0 var(--bk-ok); }
+.fb-notice-panel[data-tone="warn"] { box-shadow: inset var(--bk-crown-w) 0 0 0 var(--bk-warn); }
+.fb-notice-panel[data-tone="danger"] { box-shadow: inset var(--bk-crown-w) 0 0 0 var(--bk-danger); }
+.fb-notice-head { display: flex; align-items: center; gap: var(--bk-space-2); }
+.fb-notice-body { margin-top: var(--bk-space-2); color: var(--bk-text-soft); font: var(--bk-type-small); }
+.fb-notice-actions { margin-top: var(--bk-space-3); display: flex; gap: var(--bk-space-2); flex-wrap: wrap; }
+.fb-notice-detail { margin-top: var(--bk-space-3); padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-surface-ink); font: var(--bk-type-meta); color: var(--bk-text-dim); }
+
+/* b: inline strip */
+.fb-notice-strip { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-surface-panel); }
+.fb-notice-strip .bk-dot { flex: none; }
+.fb-notice-strip-text { flex: 1; min-width: 0; font: var(--bk-type-small); }
+
+/* ================= feedback.empty ================= */
+.fb-empty-slot { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--bk-space-2); min-height: 10rem; padding: var(--bk-space-6); text-align: center; box-shadow: inset 0 0 0 1px var(--bk-line); }
+.fb-empty-slot p { margin: 0; color: var(--bk-text-dim); max-width: 22rem; }
+.fb-empty-prompt { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--bk-space-3); min-height: 10rem; padding: var(--bk-space-6); text-align: center; }
+.fb-empty-doors { display: flex; gap: var(--bk-space-4); flex-wrap: wrap; justify-content: center; }
+.fb-empty-door { width: 11rem; padding: var(--bk-space-4); display: flex; flex-direction: column; gap: var(--bk-space-2); align-items: center; text-align: center; background: var(--bk-surface-panel); box-shadow: 0 0 0 1px var(--bk-line); cursor: pointer; }
+
+/* ================= feedback.progress ================= */
+.fb-progress-steps { display: flex; flex-direction: column; gap: var(--bk-space-1); margin-top: var(--bk-space-3); }
+.fb-progress-step { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-1) 0; font: var(--bk-type-small); color: var(--bk-text-soft); }
+.fb-progress-step[data-done] { color: var(--bk-text-dim); }
+.fb-progress-step[data-current] { color: var(--bk-text); }
+.fb-progress-step[data-failed] { color: var(--bk-danger); }
+.fb-progress-pulse { background: var(--bk-tint-text); animation: fb-pulse var(--bk-dur-pulse) var(--bk-ease-in-out) infinite; }
+@keyframes fb-pulse { 50% { opacity: var(--bk-pulse-min); } }
+
+/* ================= feedback.error ================= */
+.fb-error-win { padding: var(--bk-space-4); background: var(--bk-surface-panel); box-shadow: inset var(--bk-crown-w) 0 0 0 var(--bk-danger); }
+.fb-error-draft { margin-top: var(--bk-space-3); padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-surface-ink); color: var(--bk-text-dim); font: var(--bk-type-small); }
+.fb-error-line { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-surface-panel); }
+
+/* ================= protected.gate and protected.secret: protected tokens only ================= */
+.fb-protected-root {
+  background: var(--bk-protected-surface); color: var(--bk-protected-text);
+  font: var(--bk-fw-body) var(--bk-fs-md) / var(--bk-lh-body) var(--bk-protected-font);
+}
+.fb-protected-root :focus-visible { outline-color: var(--bk-protected-accent); }
+.fb-pbtn {
+  display: inline-flex; align-items: center; min-height: var(--bk-hit-min); padding: 0 var(--bk-space-4);
+  font: var(--bk-fw-strong) var(--bk-fs-sm) / 1 var(--bk-protected-font); color: var(--bk-protected-surface);
+  background: var(--bk-protected-accent); border: 0; cursor: pointer;
+}
+.fb-pbtn[data-ghost] { color: var(--bk-protected-text); background: none; box-shadow: inset 0 0 0 1px var(--bk-protected-line); }
+.fb-pbtn[data-danger] { color: var(--bk-protected-text); background: none; box-shadow: inset 0 0 0 1px var(--bk-protected-danger); }
+
+/* gate: a: docked card at the bottom; b: a full panel */
+.fb-gate { padding: var(--bk-space-4) var(--bk-space-5); background: var(--bk-protected-panel); box-shadow: inset 0 0 0 1px var(--bk-protected-line); }
+.fb-gate-kick { font: var(--bk-fw-mono) var(--bk-fs-xs) / 1.2 var(--bk-protected-font-mono); letter-spacing: var(--bk-track-label); text-transform: uppercase; color: var(--bk-protected-text-dim); }
+.fb-gate-title { display: block; margin-top: var(--bk-space-1); font: var(--bk-fw-strong) var(--bk-fs-lg) / var(--bk-lh-snug) var(--bk-protected-font); }
+.fb-gate-why { margin-top: var(--bk-space-2); color: var(--bk-protected-text-dim); font: var(--bk-fw-body) var(--bk-fs-sm) / var(--bk-lh-body) var(--bk-protected-font); }
+.fb-gate-warn { margin: var(--bk-space-2) 0 0; padding-left: var(--bk-space-5); color: var(--bk-protected-text); font: var(--bk-fw-body) var(--bk-fs-sm) / var(--bk-lh-body) var(--bk-protected-font); }
+.fb-gate-detail { margin-top: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); background: var(--bk-protected-surface); box-shadow: inset 0 0 0 1px var(--bk-protected-line); font: var(--bk-fw-mono) var(--bk-fs-xs) / 1.6 var(--bk-protected-font-mono); color: var(--bk-protected-text-dim); white-space: pre-wrap; }
+.fb-gate-row { display: flex; flex-wrap: wrap; gap: var(--bk-space-2); margin-top: var(--bk-space-4); }
+.fb-gate-receipt { display: flex; align-items: center; gap: var(--bk-space-2); margin-top: var(--bk-space-3); font: var(--bk-fw-mono) var(--bk-fs-xs) / 1.2 var(--bk-protected-font-mono); color: var(--bk-protected-text-dim); }
+.fb-gate-crossing { display: flex; flex-direction: column; gap: var(--bk-space-1); margin-top: var(--bk-space-3); }
+.fb-gate-crossing-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--bk-space-2); padding: var(--bk-space-1) var(--bk-space-2); font: var(--bk-fw-body) var(--bk-fs-sm) / 1.4 var(--bk-protected-font); }
+.fb-gate-crossing-row[data-sev="danger"] { box-shadow: inset var(--bk-space-1) 0 0 0 var(--bk-protected-danger); }
+.fb-gate-crossing-row[data-sev="ok"] { box-shadow: inset var(--bk-space-1) 0 0 0 var(--bk-protected-ok); }
+.fb-gate-crossing-row[data-sev="accent"] { box-shadow: inset var(--bk-space-1) 0 0 0 var(--bk-protected-accent); }
+[data-taste-id="protected.gate.b"] .fb-gate { max-width: 34rem; }
+
+/* secret: a: plain fields + word grid; b: a mono ledger with leaders */
+.fb-secret-field { display: flex; flex-direction: column; gap: var(--bk-space-1); margin-top: var(--bk-space-3); }
+.fb-secret-label { font: var(--bk-fw-mono) var(--bk-fs-xs) / 1.2 var(--bk-protected-font-mono); letter-spacing: var(--bk-track-label); text-transform: uppercase; color: var(--bk-protected-text-dim); }
+.fb-secret-input { min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-3); font: var(--bk-fw-body) var(--bk-fs-md) / 1 var(--bk-protected-font-mono); color: var(--bk-protected-text); background: var(--bk-protected-surface); border: 0; box-shadow: inset 0 0 0 1px var(--bk-protected-line); }
+.fb-secret-words { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--bk-space-2); margin-top: var(--bk-space-3); }
+.fb-secret-word { display: flex; align-items: baseline; gap: var(--bk-space-1); padding: var(--bk-space-1) var(--bk-space-2); background: var(--bk-protected-surface); box-shadow: inset 0 0 0 1px var(--bk-protected-line); font: var(--bk-fw-mono) var(--bk-fs-sm) / 1.4 var(--bk-protected-font-mono); color: var(--bk-protected-text); }
+.fb-secret-word i { font-style: normal; color: var(--bk-protected-text-dim); }
+.fb-secret-word[data-bad] { box-shadow: inset 0 0 0 1px var(--bk-protected-danger); color: var(--bk-protected-danger); }
+.fb-secret-ledger { display: flex; flex-direction: column; gap: var(--bk-space-1); margin-top: var(--bk-space-3); background: var(--bk-protected-surface); padding: var(--bk-space-3); }
+.fb-secret-ledger-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--bk-space-2); font: var(--bk-fw-mono) var(--bk-fs-sm) / 1.6 var(--bk-protected-font-mono); color: var(--bk-protected-text); background-image: radial-gradient(circle, var(--bk-protected-line) 1px, transparent 1px); background-position: bottom 0.4em left 0; background-size: 6px 1px; background-repeat: repeat-x; }
+.fb-secret-ledger-row span:first-child { background: var(--bk-protected-surface); padding-right: var(--bk-space-1); color: var(--bk-protected-text-dim); }
+.fb-secret-ledger-row span:last-child { background: var(--bk-protected-surface); padding-left: var(--bk-space-1); }

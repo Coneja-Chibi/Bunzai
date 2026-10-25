@@ -1,0 +1,40 @@
+/* Settings > Memory & Summaries: the number boxes and the notes the shared rows do not have. Tokens only. */
+.num {
+  width: 6rem;
+  padding: 0.4rem 0.5rem;
+  border: 2px solid var(--edge);
+  background: var(--stage-row, var(--panel));
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--text);
+}
+.num:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.note {
+  margin: 0 0 1rem;
+  font-size: var(--text-control);
+  color: var(--text-soft);
+}
+.alert {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--edge);
+  font-size: var(--text-control);
+  color: var(--text);
+}
+.reset {
+  margin-top: 1rem;
+  padding: 0.4rem 0.9rem;
+  border: 2px solid var(--edge);
+  background: var(--panel);
+  font-family: inherit;
+  font-size: var(--text-control);
+  color: var(--text);
+  cursor: pointer;
+}
+.reset:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

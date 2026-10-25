@@ -1,0 +1,200 @@
+/*
+ * Bunraku's G1 "JRPG Menu" identity: same token NAMES as design/wireframes/soft/tokens-soft.css
+ * (load it in place of tokens-soft.css, after tokens.css), meanings pushed gamier
+ * 2026-09-29 note ("a bit less soft and a bit more video-game'y, done legible"). Final Fantasy /
+ * Dragon Quest / Octopath menu energy, done modern: a crisp double/inset window frame instead of a
+ * soft offset lean, a title-bar strip instead of a bare heading, dotted stat leaders, a small
+ * blinking cursor triangle beside the focused row. Dark only - no [data-theme="paper"] reachable
+ * page loads it (the block stays, unused, so every source token name is still present). Every deck
+ * keeps its exact pastel hex; only the chrome and frame grammar around them gets gamier.
+ */
+@font-face { font-family: "Cinzel"; font-weight: 400 900; font-display: swap; src: url("../../../src/ui/theme/fonts/cinzel-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-400.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-700.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("../../../src/site/fonts/ibm-plex-mono-latin-normal-500.woff2") format("woff2"); }
+
+:root {
+  /* brand: the same ticket-bun pink, undiluted - G1 reframes it as a menu-window accent, not a
+     recolor */
+  --rose: #ff9ebb;
+  --rose-deep: #a8385e;
+  --accent: var(--rose);
+  --accent-deep: var(--rose-deep);
+
+  /* type roles: Cinzel takes over EVERY display role (window titles, card names, stat labels) so
+     nothing reads as a hand-lettered curl; Fraunces drops out entirely; soft-axes goes inert */
+  --font-big: "Cinzel", serif;
+  --font-fancy: "Cinzel", serif;
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --soft-axes: normal;
+
+  /* ornament: a crisp 2px line (was 1px) for every frame; --stamp-x/-y stop being a shadow offset
+     and become the window frame's inset gap + corner-tick size (see .stamp below) */
+  --ink-border: 2px solid var(--edge);
+  --stamp-x: 6px;
+  --stamp-y: 6px;
+  --stamp-shadow: var(--stage-black);
+
+  /* the stage well, pushed a shade deeper than soft's for a crisper panel-to-line contrast */
+  --stage-floor: #150f1c;
+  --stage-deck: #1c1624;
+  --stage-dim: #6d6172;
+  --stage-faint: #362c40;
+  --stage-paper: #f5ecf0;
+  --stage-black: #0f0b15;
+  --stage-white: #ffffff;
+  --stage-panel: #201829;
+  --stage-row: #1c1624;
+  --stage-sunken: #170f1e;
+  --stage-ink: #150f1c;
+  --stage-well: #120c17;
+  --stage-seam: #3d3249;
+  --stage-line: #59495f;
+  --stage-mute: #8a7d8c;
+  --stage-soft: #cabdcc;
+  --stage-text-dim: #ab9bae;
+  --stage-card: #f5ecf0;
+  --stage-kicker: #8a7d8c;
+  --stage-ok: #8fe0b8;
+  --stage-macro: #d9c8ff;
+  --stage-var: #bcd7ff;
+  --stage-warn: #ffe08a;
+  --stage-warn-ink: #3a2f12;
+  --stage-danger-bg: #3a1d2a;
+  --stage-danger-edge: #8a4560;
+  --stage-danger-text: #ff9fb1;
+  --stage-danger-hot: #ff8f9f;
+  --stage-danger-deep: #22101a;
+  --stage-link: #bcd7ff;
+  --stage-rose-well: #2e1b2a;
+  --stage-ok-bg: #173026;
+  --shadow-ink: rgba(15, 11, 21, 0.7);
+  --shadow-ink-deep: rgba(15, 11, 21, 0.9);
+  --scrim: rgba(10, 7, 14, 0.92);
+
+  /* deck identity: KEPT byte-identical - the six pastels, untouched */
+  --deck-character: #ffc9ae;
+  --deck-lorebook: #d9c8ff;
+  --deck-persona: #bfead7;
+  --deck-pack: #ffb3c7;
+  --deck-preset: #bcd7ff;
+  --deck-regex: #ffeaa8;
+  --deck-fog: #a898ab;
+  --deck-character-deep: #8a4a2c;
+  --deck-lorebook-deep: #5b4596;
+  --deck-persona-deep: #2c6e55;
+  --deck-pack-deep: #a8385e;
+  --deck-preset-deep: #33588f;
+  --deck-regex-deep: #7a6214;
+  --deck-fog-deep: #5e5263;
+}
+
+/* DARK ONLY: dusky plum deepened a shade further so the double-line window frame
+   reads crisply against every panel */
+:root[data-theme="stage"] {
+  --ink: #f5ecf0;
+  --paper: #150f1c;
+  --paper-2: #1c1624;
+  --panel: #201829;
+  --stage: #120c17;
+  --stage-2: #170f1e;
+  --muted: #8a7d8c;
+  --ghost: #362c40;
+  --canvas: #150f1c;
+  --chrome: #120c17;
+  --shell-panel: #1a1421;
+  --shell-panel-2: #201829;
+  --face: #201829;
+  --edge: #3d3249;
+  --seam: #3d3249;
+  --text: #f5ecf0;
+  --text-soft: #cabdcc;
+  --text-dim: #ab9bae;
+  --text-faint: #59495f;
+  --link: #ffb3c7;
+  --stamp-bg: #ffc9ae;
+  --stamp-fg: #150f1c;
+  --status-bg: #0f0b15;
+  --status-fg: #cabdcc;
+  --status-dim: #8a7d8c;
+  --tooth: rgba(255, 255, 255, 0.015);
+  --q-stage: #120c17;
+  --q-stage-deck: #170f1e;
+}
+
+/* LIGHT: kept only so every token NAME from tokens-soft.css still exists here (the rule is dark
+   only for G1 - the page below hardcodes data-theme="stage" and never loads a theme switch, so this
+   block is never reachable) */
+:root[data-theme="paper"] {
+  --ink: #2a2230;
+  --paper: #f8f2f5;
+  --paper-2: #f1e8ee;
+  --panel: #fffafc;
+  --stage: #eee3ea;
+  --stage-2: #e6d8e1;
+  --muted: #6e5f70;
+  --ghost: #d9cbd6;
+  --canvas: #f8f2f5;
+  --chrome: #f3eaf0;
+  --shell-panel: #f1e8ee;
+  --shell-panel-2: #e9dde6;
+  --face: #fffafc;
+  --edge: #d9cbd6;
+  --seam: #e3d6df;
+  --text: #2a2230;
+  --text-soft: #4d4050;
+  --text-dim: #6e5f70;
+  --text-faint: #b6a6b3;
+  --link: #a8385e;
+  --stamp-bg: #2a2230;
+  --stamp-fg: #f8f2f5;
+  --status-bg: #2a2230;
+  --status-fg: #f1e8ee;
+  --status-dim: #b6a6b3;
+  --tooth: rgba(42, 34, 48, 0.02);
+  --q-stage: #eee3ea;
+  --q-stage-deck: #e6d8e1;
+  --stage-floor: #eee3ea;
+  --stage-deck: #e6d8e1;
+  --stage-panel: #fffafc;
+  --stage-row: #f8f2f5;
+  --stage-sunken: #efe4eb;
+  --stage-well: #e3d4de;
+  --stage-black: #c9b6c5;
+  --stage-seam: #e3d6df;
+  --stage-line: #b6a6b3;
+  --stage-mute: #6e5f70;
+  --stage-soft: #4d4050;
+  --stage-text-dim: #5e5063;
+  --stage-card: #2a2230;
+  --stage-paper: #2a2230;
+  --stage-kicker: #6e5f70;
+  --stage-ok: #2c6e55;
+  --stage-ok-bg: #dcf1e7;
+  --stage-macro: #5b4596;
+  --stage-var: #33588f;
+  --stage-warn: #7a6214;
+  --stage-warn-ink: #fdf1c9;
+  --stage-danger-bg: #fbe1e8;
+  --stage-danger-edge: #d58ca3;
+  --stage-danger-text: #a8385e;
+  --stage-danger-hot: #b8412f;
+  --stage-danger-deep: #f6d6df;
+  --stage-link: #33588f;
+  --stage-rose-well: #f7e2ea;
+}
+
+/* the stamp: a crisp double-line window frame (outer edge, a panel-color gap, an inner line) plus
+   two small corner ticks in the caller's own color - the JRPG dialog-box frame, not a soft offset
+   lean. Hover brightens the inner line to the accent instead of drifting the card. */
+.stamp { position: relative; border: var(--ink-border); box-shadow: inset 0 0 0 3px var(--panel), inset 0 0 0 4px var(--stage-line); transition: box-shadow .15s, transform .15s; }
+.stamp::before, .stamp::after { content: ""; position: absolute; width: var(--stamp-x); height: var(--stamp-y); background: var(--c, var(--accent)); pointer-events: none; }
+.stamp::before { top: -2px; left: -2px; }
+.stamp::after { bottom: -2px; right: -2px; }
+.stamp:hover { box-shadow: inset 0 0 0 3px var(--panel), inset 0 0 0 4px var(--accent); transform: translateY(-2px); }
+.stamp:active, .stamp.pressed { transform: translateY(0); box-shadow: inset 0 0 0 3px var(--panel), inset 0 0 0 5px var(--accent); }
+.seam { background: var(--stage); box-shadow: inset 0 0 0 1px var(--seam); }
+/* display type: soft-axes is inert (normal) now, so this rule is a structural no-op - kept so the
+   selector list still matches the source file line for line */
+h1, h2, h3, [class*="title"], [class*="marquee"] { font-variation-settings: var(--soft-axes); }

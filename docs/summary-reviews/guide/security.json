@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/security",
+  "sourcePath": "docs/guide/security.md",
+  "sourceHash": "sha256:2bb35c9dde382215a1a7370e66a21d939ba9328714b4518091e42ac11c181b12",
+  "semanticSummaryHash": "sha256:bc5cd541e900028f7770e213619216a2c66c711ef925412b47cbba608270a565",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Owner approved 2026-09-24: encryption screens, password and recovery words, library gate",
+  "reviewedAt": "2026-09-24T04:27:59.616Z"
+}

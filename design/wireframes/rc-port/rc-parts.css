@@ -1,0 +1,107 @@
+/*
+ * RoleCall's scene-side parts, copied class for class from RC source and mapped to Bunraku tokens.
+ * Used by the scene-trash, scene-latest-card and scene-messages wireframes.
+ *   RC #1c1a22 / #17161b panels -> --stage-panel;  #211f27 header band -> panel lifted 5% toward --stage-card
+ *   RC #26232d / #302d36 buttons -> --stage-faint;  #0d0d10 / #111114 wells -> --stage-sunken / --stage-row
+ *   RC zinc-200 / zinc-400 / zinc-500 / zinc-700 -> --stage-soft / --stage-text-dim / --stage-mute / --stage-seam
+ *   RC rose #e11d48 -> --rose;  gilt #eab308 and amber -> --stage-warn;  red-400/500 and rose-300 -> --stage-danger-text
+ *   RC Cinzel and font-serif -> --font-fancy;  Inter -> --font-big
+ */
+
+/* ConfirmDialog + DeleteConfirmDialog (conversations/ConfirmDialog.tsx, scene/primitives/DeleteConfirmDialog.tsx):
+   "The Cutting Room" eyebrow, Cinzel 900 title with a 4px black punch, neobrutalist buttons */
+.rc-scrim { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 16px; background: color-mix(in srgb, var(--stage-black) 75%, transparent); }
+.rc-confirm { position: relative; width: 100%; max-width: 28rem; padding: 24px; background: var(--stage-panel);
+  background-image: radial-gradient(ellipse 80% 60% at 50% -20%, color-mix(in srgb, var(--tone, var(--rose)) 8%, transparent), transparent);
+  border: 3px solid var(--stage-black); box-shadow: 8px 8px 0 0 var(--stage-black); font-family: var(--font-big); }
+.rc-confirm.sm { max-width: 24rem; }
+.rc-confirm .eb { margin-bottom: 8px; font-size: .7rem; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--tone, var(--rose)); }
+.rc-confirm h3 { margin-bottom: 12px; font-family: var(--font-fancy); font-weight: 900; font-size: 1.4rem; line-height: 1.05; letter-spacing: .04em; text-transform: uppercase; color: var(--stage-card); text-shadow: 4px 4px 0 var(--stage-black); }
+.rc-confirm.sm h3 { font-size: 1.6rem; }
+.rc-confirm h3 em { font-style: normal; color: var(--tone, var(--rose)); }
+.rc-confirm p { margin-bottom: 24px; font-size: .9rem; line-height: 1.5; color: var(--stage-text-dim); white-space: pre-line; }
+.rc-confirm .rc-row { display: flex; justify-content: flex-end; gap: 12px; }
+.rc-btn { padding: 10px 20px; border: 3px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); font: 700 .82rem var(--font-big); letter-spacing: .04em; text-transform: uppercase; cursor: pointer; transition: transform .1s ease-out, box-shadow .1s ease-out; }
+.rc-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 0 var(--stage-black); }
+.rc-btn.cancel { background: var(--stage-faint); color: var(--stage-soft); }
+.rc-btn.go { font-weight: 800; background: var(--tone, var(--rose)); color: var(--stage-white); }
+.rc-btn.go.gilt { color: var(--stage-black); }
+
+/* The section dialogs (branches/ForkSceneModal.tsx and BranchIndicator's "Delete this take"):
+   header band, body, footer band, 2px black rules, 7px offset shadow */
+.rc-sheet { width: 100%; max-width: 36rem; background: var(--stage-panel); color: var(--stage-card); border: 3px solid var(--stage-black); box-shadow: 7px 7px 0 0 var(--stage-black); font-family: var(--font-big); }
+.rc-sheet.sm { max-width: 32rem; }
+.rc-sheet.accent { border-top-color: var(--accent); }
+.rc-sheet .hd { padding: 16px 20px; border-bottom: 2px solid var(--stage-black); background: color-mix(in srgb, var(--stage-card) 5%, var(--stage-panel)); }
+.rc-sheet .hd .eb { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 11px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; color: var(--stage-danger-text); }
+.rc-sheet.accent .hd .eb { color: var(--accent); }
+.rc-sheet .hd .eb svg { width: 16px; height: 16px; }
+.rc-sheet h2 { font-family: var(--font-fancy); font-weight: 900; font-size: 1.5rem; letter-spacing: .04em; text-transform: uppercase; color: var(--stage-white); }
+.rc-sheet .hd p { margin-top: 6px; font-size: 14px; line-height: 1.5rem; color: var(--stage-soft); }
+.rc-sheet .bd { padding: 20px; display: flex; flex-direction: column; gap: 20px; font-size: 14px; line-height: 1.5rem; color: var(--stage-soft); }
+.rc-sheet .bd.tight { gap: 12px; }
+.rc-sheet label.lb { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; color: var(--stage-soft); }
+.rc-sheet .in { padding: 12px; border: 2px solid var(--stage-black); background: var(--stage-sunken); font-size: 16px; color: var(--stage-white); }
+.rc-sheet .box { padding: 16px; border: 2px solid var(--stage-black); background: var(--stage-row); }
+.rc-sheet .box .t { margin-bottom: 12px; font-size: 12px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; color: var(--stage-soft); }
+.rc-sheet .box li { display: flex; gap: 8px; list-style: none; margin-top: 8px; }
+.rc-sheet .box li::before { content: "\25A0"; color: var(--accent); }
+.rc-sheet .ft { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; padding: 16px 20px; border-top: 2px solid var(--stage-black); background: color-mix(in srgb, var(--stage-card) 5%, var(--stage-panel)); }
+.rc-sheet .ft button { padding: 8px 16px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); font: 900 14px var(--font-big); text-transform: uppercase; background: var(--stage-faint); color: var(--stage-white); cursor: pointer; }
+.rc-sheet .ft .go { background: var(--accent); color: var(--stage-black); }
+.rc-sheet .ft .red { background: var(--rose); color: var(--stage-white); }
+
+/* MessageActionOverflow's menu: 3px black border, 5px shadow, xs rows */
+.rc-menu { position: absolute; z-index: 60; min-width: 13rem; padding: 4px 0; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 5px 5px 0 0 var(--stage-black); font-family: var(--font-big); }
+.rc-menu button { display: flex; width: 100%; align-items: center; gap: 10px; white-space: nowrap; padding: 8px 12px; border: 0; background: none; text-align: left; font-size: 12px; color: var(--stage-card); cursor: pointer; }
+.rc-menu button:hover { background: color-mix(in srgb, var(--stage-white) 5%, transparent); }
+.rc-menu button svg { width: 14px; height: 14px; flex: none; color: var(--stage-text-dim); }
+.rc-menu button.danger { color: var(--stage-danger-text); }
+
+/* EditableMessage's desktop delete dropdown: above the trash button, zinc-800 plate */
+.rc-dd { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px; z-index: 60; min-width: 180px; padding: 4px 0; background: var(--stage-row); border: 1px solid var(--stage-seam); border-radius: 2px; box-shadow: 0 20px 25px -5px color-mix(in srgb, var(--stage-black) 50%, transparent); font-family: var(--font-big); }
+.rc-dd button { display: flex; width: 100%; align-items: center; gap: 8px; padding: 8px 12px; border: 0; background: none; text-align: left; font-size: 14px; color: var(--stage-soft); cursor: pointer; }
+.rc-dd button:hover { background: var(--stage-seam); }
+.rc-dd button svg { width: 14px; height: 14px; color: var(--stage-text-dim); }
+.rc-dd button.red, .rc-dd button.red svg { color: var(--stage-danger-text); }
+
+/* BranchIndicator's Scene Takes dropdown: 260px, glass zinc-900, accent header */
+.rc-takes { position: absolute; z-index: 60; width: 260px; overflow: hidden; background: color-mix(in srgb, var(--stage-panel) 98%, transparent); backdrop-filter: blur(24px); border: 1px solid color-mix(in srgb, var(--stage-seam) 80%, transparent); border-radius: 2px; box-shadow: 0 25px 50px -12px color-mix(in srgb, var(--stage-black) 60%, transparent); font-family: var(--font-big); }
+.rc-takes .hd { padding: 8px 12px; border-bottom: 1px solid color-mix(in srgb, var(--stage-seam) 50%, transparent); background: color-mix(in srgb, var(--stage-row) 30%, transparent); }
+.rc-takes .hd b { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: color-mix(in srgb, var(--accent) 80%, transparent); }
+.rc-takes .hd b svg { width: 12px; height: 12px; }
+.rc-takes .hd small { display: block; margin-top: 2px; font-size: 10px; color: var(--stage-mute); }
+.rc-takes .pad { padding: 6px; }
+.rc-takes .sep { display: flex; align-items: center; gap: 6px; padding: 4px 12px; font-size: 9px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-mute); }
+.rc-takes .sep::before, .rc-takes .sep::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--stage-seam) 50%, transparent); }
+.rc-take { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 1px solid transparent; border-radius: 2px; cursor: pointer; }
+.rc-take:hover { background: color-mix(in srgb, var(--stage-row) 70%, transparent); }
+.rc-take .ic { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 2px; background: color-mix(in srgb, var(--stage-seam) 60%, transparent); color: var(--stage-text-dim); }
+.rc-take .ic svg { width: 14px; height: 14px; }
+.rc-take .tx { flex: 1; min-width: 0; }
+.rc-take .nm { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: var(--stage-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-take .main { font-size: 9px; font-weight: 700; padding: 2px 4px; border-radius: 3px; background: color-mix(in srgb, var(--stage-seam) 80%, transparent); color: var(--stage-text-dim); text-transform: uppercase; }
+.rc-take .meta { margin-top: 2px; font-size: 10px; color: var(--stage-mute); }
+.rc-take .meta i { font-style: normal; color: var(--stage-line); margin: 0 3px; }
+.rc-take .act { padding: 4px; border-radius: 3px; color: var(--stage-mute); display: grid; place-items: center; }
+.rc-take .act svg { width: 12px; height: 12px; }
+.rc-take .act.x { color: var(--stage-danger-text); }
+.rc-take .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.rc-take.onmain { background: color-mix(in srgb, var(--accent) 15%, transparent); border-color: color-mix(in srgb, var(--accent) 20%, transparent); }
+.rc-take.onmain .ic { background: color-mix(in srgb, var(--accent) 35%, transparent); color: color-mix(in srgb, var(--accent) 80%, transparent); }
+.rc-take.onmain .nm { color: color-mix(in srgb, var(--accent) 95%, transparent); }
+.rc-takes .foot { border-top: 1px solid color-mix(in srgb, var(--stage-seam) 50%, transparent); background: color-mix(in srgb, var(--stage-row) 20%, transparent); padding: 8px 12px; font-size: 10px; color: var(--stage-mute); display: flex; align-items: center; gap: 4px; }
+.rc-takes .foot svg { width: 12px; height: 12px; color: color-mix(in srgb, var(--stage-warn) 70%, transparent); }
+
+/* Library's Repertoire "Update available" badge (HorizontalAssetRow.tsx): gilt, 10px, RefreshCw 10 */
+.rc-update { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border: 0; border-radius: 2px; font: 500 10px var(--font-big); background: color-mix(in srgb, var(--stage-warn) 90%, var(--stage-black)); color: var(--stage-white); cursor: pointer; }
+.rc-update svg { width: 10px; height: 10px; }
+.rc-update:hover { filter: brightness(1.1); }
+
+/* ForkSceneModal's amber notice (border-l-4 amber-400, amber-400/10 wash) */
+.rc-notice { padding: 8px 12px; border-left: 4px solid var(--stage-warn); background: color-mix(in srgb, var(--stage-warn) 10%, transparent); font: 14px/1.5rem var(--font-big); color: var(--stage-card); }
+
+/* sonner's dark toast, top-right, with an action button (RC's <Toaster position="top-right" theme="dark">) */
+.rc-toast { position: fixed; top: 16px; right: 16px; z-index: 300; display: flex; align-items: center; gap: 12px; width: 356px; padding: 16px; border: 1px solid var(--stage-seam); border-radius: 8px; background: var(--stage-black); box-shadow: 0 4px 12px color-mix(in srgb, var(--stage-black) 10%, transparent); font: 500 13px var(--font-big); color: var(--stage-card); }
+.rc-toast .grow { flex: 1; }
+.rc-toast button { padding: 0 8px; height: 24px; border: 0; border-radius: 4px; background: var(--stage-card); color: var(--stage-black); font: 500 12px var(--font-big); cursor: pointer; }

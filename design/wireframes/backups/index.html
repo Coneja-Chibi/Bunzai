@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backups wireframe (Settings, spare copies)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<link rel="stylesheet" href="../rc-bridge.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">Settings, Backups (spare copies)</div>
+      <p class="wf-lede">A new Settings section beside Security, in the same grammar: the hero, stat tiles, the mono proof block, then rows. Restore is one dialog that shows what will change, then does it, then leaves a visible Undo. No "are you sure" gate: the undo copy is the safety.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <!-- 1. the section, the usual case -->
+  <div class="stack">
+    <div class="wf-state">1. The section, running normally</div>
+    <div class="marquee-hero">
+      <div class="eyebrow">Settings &middot; Backups</div>
+      <div class="marquee">Spare <em>copies</em></div>
+      <div class="voice">Your library, copied while you work.</div>
+    </div>
+
+    <div class="tiles">
+      <div class="card"><div class="kicker">Last copy</div><div class="label">12 minutes ago</div></div>
+      <div class="card"><div class="kicker">Copies kept</div><div class="label">31 copies, 4.2 GB</div></div>
+      <div class="card"><div class="kicker">Next copy</div><div class="label">Within the hour</div></div>
+    </div>
+
+    <div class="proof">
+      + A copy is made every hour while Bunraku is open, with no pause in your work.<br>
+      + Copies are encrypted exactly like your library, so a stolen copy shows nothing.<br>
+      + A copy opens on a new computer with your lines (recovery words).<br>
+      - Copies sit beside your library on this disk. They protect the file, not the machine.<br>
+      - A copy made before you changed your password or lines still opens with the old ones.
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <div class="tx"><div class="label">Back up now</div><div class="hint">Makes a copy right away. Hourly copies carry on as usual.</div></div>
+        <button class="stamp stamp-btn primary">Back up now</button>
+      </div>
+      <div class="row">
+        <div class="tx"><div class="label">What is kept</div><div class="hint">The last 24 hourly copies, 7 daily, and 4 weekly. Older ones are cleared automatically. Copies use 4.2 GB of this disk.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Copies</div>
+      <div class="pc">
+        <div><div class="pc-name">Today, 3:12 pm <span class="chip">Hourly</span></div><div class="pc-meta">Mon 5 Oct 2026 &middot; 138 MB</div></div>
+        <button class="btn-ghost">Restore</button>
+      </div>
+      <div class="pc">
+        <div><div class="pc-name">Today, 2:10 pm <span class="chip">Hourly</span></div><div class="pc-meta">Mon 5 Oct 2026 &middot; 138 MB</div></div>
+        <button class="btn-ghost">Restore</button>
+      </div>
+      <div class="pc">
+        <div><div class="pc-name">Today, 1:47 pm <span class="chip ok">Made by you</span></div><div class="pc-meta">Mon 5 Oct 2026 &middot; 137 MB</div></div>
+        <button class="btn-ghost">Restore</button>
+      </div>
+      <div class="pc">
+        <div><div class="pc-name">Today, 1:02 pm <span class="chip warn">Before a restore</span></div><div class="pc-meta">Mon 5 Oct 2026 &middot; 137 MB &middot; the undo copy for the restore at 1:03 pm</div></div>
+        <button class="btn-ghost">Restore</button>
+      </div>
+      <div class="pc">
+        <div><div class="pc-name">Sun 4 Oct, 11:00 pm <span class="chip">Hourly</span></div><div class="pc-meta">Sun 4 Oct 2026 &middot; 131 MB</div></div>
+        <button class="btn-ghost">Restore</button>
+      </div>
+      <p class="subtle">Showing the newest five of 31. Newest first; a copy is named by when it was made.</p>
+      <button class="btn-ghost">Show all copies</button>
+    </div>
+    <p class="wf-comp">Reuses: the Security hero, stat tiles and proof block, Card rows, the computer-list row (name, meta, action), chips, GhostButton, stamp button.</p>
+  </div>
+
+  <!-- 2. states of the section -->
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">2. Before recovery words exist (as built)</div>
+      <div class="stage-note gilt">
+        <div class="stage-note-label">Stage direction: your lines</div>
+        <p>Copies already run. Until you write your lines, a copy can only be restored here, on this computer. Write them in Security.</p>
+      </div>
+      <p class="wf-comp">Decided after this drawing: copies are NOT held back until the words exist (the first draft held them). The proof block's third line turns into a minus line saying the same. The words flow stays in Security.</p>
+    </div>
+
+    <div>
+      <div class="wf-state">3. The last copy could not be made</div>
+      <div class="stage-note">
+        <div class="stage-note-label">No room in the wings</div>
+        <p>The last hourly copy was skipped: this disk has about 90 MB free and a copy needs about 160 MB. Free some space and Bunraku will try again within the hour. Nothing was changed.</p>
+      </div>
+      <div class="actions after-note">
+        <button class="stamp stamp-btn primary">Try again now</button>
+      </div>
+      <p class="wf-comp">Same note as the key-change "out of disk space" one. Other failures show the plain reason in the same place.</p>
+    </div>
+
+    <div>
+      <div class="wf-state">4. The library is locked</div>
+      <div class="stage-note gilt">
+        <div class="stage-note-label">Stage direction: locked</div>
+        <p>Copies carry on while the library is locked. To restore one, unlock the library first.</p>
+      </div>
+      <p class="wf-comp">The list is visible; Restore buttons are disabled until unlocked.</p>
+    </div>
+  </div>
+
+  <!-- 3. the restore dialog -->
+  <div class="stack">
+    <div class="wf-state">5. Restore, step one: what would change</div>
+    <div class="scrim">
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">Restore</div>
+          <div class="marquee">Back to <em>Sunday 11:00 pm</em>?</div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <p class="direction"><span class="p">(</span>Your whole library goes back to how it was in this copy. Your password, your lines, and the computers that can open it stay exactly as they are.<span class="p">)</span></p>
+
+        <div class="card">
+          <div class="pc">
+            <div><div class="pc-name">Chats</div><div class="pc-meta">12 now, 11 in the copy</div></div>
+            <div class="status">1 would be set aside &middot; 2 would be rewound</div>
+          </div>
+          <div class="pc">
+            <div><div class="pc-name">Cards</div><div class="pc-meta">94 now, 94 in the copy</div></div>
+            <div class="status">3 would be rewound</div>
+          </div>
+          <div class="pc">
+            <div><div class="pc-name">Messages</div><div class="pc-meta">2,410 now, 2,288 in the copy</div></div>
+            <div class="status">122 would be set aside</div>
+          </div>
+          <div class="pc">
+            <div><div class="pc-name">Other pieces</div><div class="pc-meta">Lorebooks, personas, presets and the rest</div></div>
+            <div class="status">no change</div>
+          </div>
+        </div>
+
+        <div class="stage-note gilt">
+          <div class="stage-note-label">Nothing is lost</div>
+          <p>First, Bunraku saves your library as it is right now as its own copy. Anything this restore sets aside is in that copy, and one button undoes the restore.</p>
+        </div>
+        <div class="cta-row">
+          <button class="stamp stamp-btn primary cta">Restore this copy</button>
+          <button class="btn-ghost">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <p class="wf-comp">Reuses: ProtectedDialog around the Dossier (as the Security dialogs), the computer-list rows for the three counts, StageNote, stamp button. "Set aside" = in the library now, not in the copy. "Rewound" = in both, but changed since.</p>
+  </div>
+
+  <div class="wf-grid wide">
+    <div>
+      <div class="wf-state">6. Restore, step two: working (as built: one step)</div>
+      <div class="dossier">
+        <div class="dossier-head">
+          <div class="act">One moment</div>
+          <div class="marquee">Changing the <em>set</em></div>
+          <div class="flourish">&#10022;</div>
+        </div>
+        <div class="stack">
+          <div class="status"><span class="dot"></span>Saving your library as it is now (the undo copy), checking the copy opens with your key, then swapping it in. Saving new changes waits a moment.</div>
+        </div>
+        <p class="direction"><span class="p">(</span>This can take a minute for a big library. You can leave this window open; the swap happens all at once, so it is either done or not started.<span class="p">)</span></p>
+      </div>
+    </div>
+
+    <div>
+      <div class="wf-state">7. Restore, step three: done, with Undo</div>
+      <div class="stage-note gilt">
+        <div class="stage-note-label">Stage direction: restored</div>
+        <p>Your library is back to Sunday 4 October, 11:00 pm. The page will reload to show it. If that was not what you wanted, you can undo it now or any time from the list.</p>
+      </div>
+      <div class="actions after-note">
+        <button class="stamp stamp-btn primary">Undo this restore</button>
+        <button class="btn-ghost">Keep it</button>
+      </div>
+      <p class="wf-comp">Undo restores the "before a restore" copy through this same dialog, so it shows its own preview first. It stays in the list afterwards.</p>
+    </div>
+
+    <div>
+      <div class="wf-state">8. Refused (nothing changed)</div>
+      <div class="stage-note">
+        <div class="stage-note-label">No room in the wings</div>
+        <p>Restoring needs about 420 MB free for the undo copy and the swap; this disk has 300 MB. Free some space and try again. Nothing was changed.</p>
+      </div>
+      <div class="stage-note">
+        <div class="stage-note-label">Not this library</div>
+        <p>This copy does not open with this library's key: it is from another library, or damaged. Nothing was changed.</p>
+      </div>
+      <div class="stage-note">
+        <div class="stage-note-label">Made by another version</div>
+        <p>This copy was made by a different version of Bunraku and cannot be restored here. Nothing was changed.</p>
+      </div>
+      <p class="wf-comp">Same note component, the plain sentence always says what happened and that nothing changed.</p>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Rule kept:</b> the theatrical name is the label; the sentence under it is always plain.</p>
+  <p class="wf-note"><b>New, called out:</b> one Settings section (Backups) and one dialog. Every control in them is an existing one. Nothing new is invented.</p>
+  <p class="wf-note"><b>Answered (2026-10-05):</b> the section is called Backups (the hero keeps "Spare copies"); copies do not wait for recovery words; an unchanged library skips the hourly copy. The restore shows one "working" step, because the swap reports no progress between its parts.</p>
+  <p class="wf-note"><b>Questions for you (first draft):</b> (1) Name: "Spare copies" for the section, or plain "Backups"? (2) Library of several GB: 31 full copies is a lot of disk. Skip an hourly copy when nothing changed since the last one? (3) Entry point for a new computer: a "Start from a backup" button on the first-run screen (not wireframed here, not asked for).</p>
+</div>
+</body>
+</html>

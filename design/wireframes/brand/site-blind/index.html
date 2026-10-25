@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku · AI roleplay on your own computer</title>
+<meta name="description" content="Bunraku is a free, open-source desktop app for playing and making AI roleplay characters on your own computer.">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 72'%3E%3Cpath d='M13,4H107A9,9 0 0 0 116,13V28A8,8 0 0 0 116,44V59A9,9 0 0 0 107,68H13A9,9 0 0 0 4,59V44A8,8 0 0 0 4,28V13A9,9 0 0 0 13,4Z' fill='%23e11d48' stroke='%23000' stroke-width='5'/%3E%3Cg fill='%23000' transform='translate(38,12) scale(0.44)'%3E%3Ccircle cx='50' cy='64' r='24'/%3E%3Cellipse cx='38' cy='30' rx='9' ry='24' transform='rotate(-14 38 30)'/%3E%3Cellipse cx='63' cy='31' rx='9' ry='24' transform='rotate(18 63 31)'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+<!-- Shared marks: the admit-one ticket with a bunny punched out, and the bunny alone. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <mask id="m-bunny" maskUnits="userSpaceOnUse" x="0" y="0" width="124" height="76">
+      <rect x="0" y="0" width="124" height="76" fill="#fff"/>
+      <g fill="#000" transform="translate(21,12) scale(0.44)">
+        <circle cx="50" cy="64" r="24"/>
+        <ellipse cx="38" cy="30" rx="9" ry="24" transform="rotate(-14 38 30)"/>
+        <ellipse cx="63" cy="31" rx="9" ry="24" transform="rotate(18 63 31)"/>
+      </g>
+    </mask>
+  </defs>
+  <symbol id="mark" viewBox="0 0 124 76">
+    <path transform="translate(3,3)" style="fill:#000" d="M13,4H107A9,9 0 0 0 116,13V28A8,8 0 0 0 116,44V59A9,9 0 0 0 107,68H13A9,9 0 0 0 4,59V44A8,8 0 0 0 4,28V13A9,9 0 0 0 13,4Z"/>
+    <path mask="url(#m-bunny)" style="fill:var(--brand,#e11d48);stroke:#000;stroke-width:4" d="M13,4H107A9,9 0 0 0 116,13V28A8,8 0 0 0 116,44V59A9,9 0 0 0 107,68H13A9,9 0 0 0 4,59V44A8,8 0 0 0 4,28V13A9,9 0 0 0 13,4Z"/>
+    <line x1="86" y1="12" x2="86" y2="61" style="stroke:#000;stroke-width:3;stroke-dasharray:5 4"/>
+    <circle cx="101" cy="36" r="5" style="fill:#000"/>
+  </symbol>
+  <symbol id="bunny" viewBox="0 0 100 100">
+    <circle cx="50" cy="64" r="24"/>
+    <ellipse cx="38" cy="30" rx="9" ry="24" transform="rotate(-14 38 30)"/>
+    <ellipse cx="63" cy="31" rx="9" ry="24" transform="rotate(18 63 31)"/>
+  </symbol>
+</svg>
+
+<a class="skip" href="#app">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar__inner">
+    <a class="brand" href="#/" aria-label="Bunraku home">
+      <svg class="brand__mark" viewBox="0 0 124 76" aria-hidden="true"><use href="#mark"/></svg>
+      <span class="brand__word">Bunraku</span>
+      <span class="brand__ver" data-version></span>
+    </a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <a data-nav="tour" href="#/tour">Tour</a>
+      <a data-nav="help" href="#/help">Guides</a>
+      <a data-nav="news" href="#/news">What's new</a>
+      <a data-nav="try" href="#/try">Try it</a>
+      <a data-nav="download" class="btn btn--rose btn--sm nav-cta" href="#/download">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="app" class="page" tabindex="-1">
+  <noscript><p class="lede">This site needs JavaScript to show its pages. You can still get Bunraku from the <a href="https://github.com/Coneja-Chibi/Bunraku/releases">releases page on GitHub</a>.</p></noscript>
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__brand">
+      <svg class="footer__mark" viewBox="0 0 124 76" aria-hidden="true"><use href="#mark"/></svg>
+      <div>
+        <p class="footer__word">Bunraku</p>
+        <p class="serif">Made with care by Coneja-Chibi.</p>
+        <p class="footer__small">Free and open source. <span id="footer-src"></span></p>
+      </div>
+    </div>
+    <nav class="footer__cols" aria-label="Footer">
+      <div>
+        <p class="field-label">The app</p>
+        <a href="#/tour/scenes">Scenes</a><a href="#/tour/workbench">Workbench</a><a href="#/tour/library">Library</a><a href="#/tour/press">Press</a><a href="#/tour/agent">Agent</a>
+      </div>
+      <div>
+        <p class="field-label">Help</p>
+        <a href="#/help/first-scene">Your first scene</a><a href="#/help/importing">Importing cards</a><a href="#/help/something-wrong">Something went wrong</a><a href="#/help">All guides</a>
+      </div>
+      <div>
+        <p class="field-label">Get it</p>
+        <a href="#/download">Download</a><a href="#/news">What's new</a><a href="#/try">Try it in your browser</a><a href="https://github.com/Coneja-Chibi/Bunraku" rel="noopener">Source on GitHub</a>
+      </div>
+    </nav>
+  </div>
+</footer>
+
+<script src="js/content.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

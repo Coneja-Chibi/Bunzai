@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/platforms/rolecall",
+  "sourcePath": "docs/guide/platforms/rolecall.md",
+  "sourceHash": "sha256:b1c929e7949a01585cade3965495d984279f185dc39ef08e059267f90c857d08",
+  "summary": "User guide for RoleCall, Vaudeville's own roleplay client, covering character cards and lorebooks in Bunraku. RoleCall cards carry more than a plain sheet: casting card identity details, presentation layer colors background spoilers, and sprite pack ride with usual fields. What Bunraku reads: character cards as PNG with embedded text or plain JSON holding CCv2 or CCv3 plus RoleCall extras, and lorebooks as RoleCall JSON. Drop on Library for a plain-words receipt; character vs persona is told by inside-file marks not filename. What comes across cleanly: full original kept, editable fields include name tagline description casting details personality scenario greetings examples prompts creator notes tags rating genre fandom presentation depth injections sprites and embedded lorebook. What changes when you convert to another app: same-app RoleCall round-trip keeps everything including private casting and presentation; cross-app drops RoleCall-only layers on purpose never blind-copies them. Editing on the Workbench rewrites the whole card so untouched parts stay. Exporting back out stages through the Press as RoleCall JSON; linked lorebook rides along; other targets apply the drop story. Common questions cover exact return JSON not PNG portrait retention casting stay-private and embedded lorebook pull-edit-put-back.",
+  "topics": [
+    "RoleCall character lorebook",
+    "PNG JSON card import",
+    "casting presentation sprites",
+    "same-app round-trip keep",
+    "cross-app private drop",
+    "Workbench whole-card save",
+    "Press RoleCall JSON export",
+    "embedded lorebook ride"
+  ],
+  "sections": [
+    {
+      "slug": "what-bunraku-reads",
+      "title": "What Bunraku reads",
+      "level": 2,
+      "sourceHash": "sha256:addc1666cbe3920a9b5a1864af233cd28b547e1f932c017b1048553ddc9648d7",
+      "summary": "Bunraku reads the two file types RoleCall gives you. Character cards arrive as PNG where RoleCall tucks card text inside the image or as plain JSON; both hold Character Card v2 or v3 with an extra block for casting card, presentation layer, and sprite pack. Lorebooks arrive as JSON in RoleCall's own export format. Drag the file onto the Library and drop anywhere in the room; Bunraku reads and shows a plain-words receipt of what it read and kept. It tells a RoleCall character card from a RoleCall persona card even though shapes are almost identical by reading inside the file for what marks a card as a character, not the filename or a guess. Full walkthrough lives in the importing guide.",
+      "topics": [
+        "PNG or JSON character",
+        "RoleCall lorebook JSON",
+        "Library drop receipt",
+        "character vs persona detect",
+        "casting presentation sprites"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-comes-across-cleanly",
+      "title": "What comes across cleanly",
+      "level": 2,
+      "sourceHash": "sha256:9092f01c0876652ab192661d8645311caa62b998bea3fd987dd2d3a5c75f3df5",
+      "summary": "Importing loses nothing. Bunraku keeps a complete copy of the original card, then lifts editable parts into fields you see directly: name tagline description; casting card full name title age pronouns; personality and scenario; first message and titled alternate greetings; example messages; system prompt and post-history instructions; creator creator notes source link and public creator note; tags content rating as all hours late night or after dark genre and fandom; presentation signature and gradient colors named palette curated background field order and spoiler settings; depth-position prompt injections; sprite expression pack; embedded lorebook with entries keywords and placement if present. Card picture is kept and shown as the piece portrait. After import everything that was in the card is still there: listed fields ready to edit and the rest held safely in the background.",
+      "topics": [
+        "original card complete",
+        "casting card fields",
+        "presentation layer",
+        "depth injections sprites",
+        "embedded lorebook",
+        "portrait kept"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-changes-when-you-convert-to-another-app",
+      "title": "What changes when you convert to another app",
+      "level": 2,
+      "sourceHash": "sha256:97de2cf809022cc629eba29c8a1e8458c80f456ca555083cabf6e2c82d26741e",
+      "summary": "Same-app round-trip keeps everything: import RoleCall, edit, export to RoleCall returns everything down to the byte because Bunraku kept the original and only rewrote changed fields. Converting to a different app drops RoleCall private extras: casting card full name title age pronouns, presentation colors palette background field order spoilers, content rating genre fandom, and internal ids with no shared home. Core character name description personality scenario greetings examples system prompt post-history notes tags come across as far as the other app can hold them. Depth injections sprites and linked lorebook come across only if the target has places for them. Another app means SillyTavern Agnai Backyard Risu Pygmalion and similar. The drop is deliberate: Bunraku never blind-copies RoleCall private casting and presentation into another app file. Where the other app has fewer slots whatever it cannot hold is dropped on its side not yours.",
+      "topics": [
+        "same-app byte keep",
+        "cross-app shared only",
+        "casting presentation drop",
+        "never blind-copy private",
+        "depth sprites lorebook conditional"
+      ],
+      "children": []
+    },
+    {
+      "slug": "editing-on-the-workbench",
+      "title": "Editing on the Workbench",
+      "level": 2,
+      "sourceHash": "sha256:a5dfb64a6af751383eb92ccef7953b9213232e02042dd64650471d669cd724df",
+      "summary": "Send a piece from the Library to the Workbench and it opens as a tab. There you can edit name description personality scenario first message and example messages. When you save Bunraku writes the whole card back so the parts you did not touch stay exactly as they were including casting presentation and escrowed original layers.",
+      "topics": [
+        "Workbench tab edit",
+        "whole card save",
+        "untouched parts stay"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "exporting-back-out",
+      "title": "Exporting back out",
+      "level": 2,
+      "sourceHash": "sha256:99dee029f3de64ac9a19686209d52dea24029452b92cf51230d42797d8afc6ab",
+      "summary": "When a piece is ready to leave stage it for the Press: right-click Stage for the Press or drop from the Press rail. The Press works only staged pieces and each run exports to one target format you pick. Bunraku writes RoleCall cards as JSON; RoleCall reads JSON the same as PNG so import is fine. Linked lorebook rides with the character automatically. You can also ask for plain txt or md when you only want to read the text. Choosing a different app as target applies the convert drop story: shared character only RoleCall private layers left behind.",
+      "topics": [
+        "Press stage one target",
+        "RoleCall JSON write",
+        "lorebook rides along",
+        "txt md text copy",
+        "other app drop story"
+      ],
+      "children": []
+    },
+    {
+      "slug": "common-questions",
+      "title": "Common questions",
+      "level": 2,
+      "sourceHash": "sha256:1c602cdc678032a16d1a596676cacc96d68e39a6a1b4dd208c6bdbed36177d89",
+      "summary": "Will the card come back exactly as it was? Yes when exported back to RoleCall: same app in same app out nothing lost. Imported PNG returns as JSON; RoleCall reads JSON like a picture so it loads fine you just get a file not an image. Character picture comes along: Bunraku keeps card art as piece portrait and holds the original imported file. Casting card and presentation colors stay with the RoleCall card and are not copied into another app file because Bunraku does not move one app private layer into another. Lorebook inside the card is still there: Bunraku pulls the embedded lorebook for solo edit and puts it back when exporting to an app that supports lorebooks.",
+      "topics": [
+        "exact RoleCall return",
+        "JSON not PNG write",
+        "portrait original kept",
+        "casting stay private",
+        "embedded lorebook put-back"
+      ],
+      "children": []
+    }
+  ]
+}

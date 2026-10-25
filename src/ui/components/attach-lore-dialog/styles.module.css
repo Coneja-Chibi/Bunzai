@@ -1,0 +1,124 @@
+/**
+ * AttachLoreDialog styles - the letterpress dialog grammar on the InkDialog seed: mono kicker,
+ * display title, hard-bordered pick rows with offset shadows that press flat when picked, stamp
+ * buttons. Shell token family (face/edge/accent), same as the sheet it sits in, both themes.
+ */
+.sheet {
+  max-width: 30rem;
+}
+
+.body {
+  color: var(--text);
+}
+
+.kick {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.35rem;
+}
+
+.h {
+  margin: 0 0 0.45rem;
+  font-size: 1.3rem;
+  font-family: var(--font-big);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.p {
+  margin: 0 0 0.85rem;
+  font-size: var(--text-body);
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.empty {
+  margin: 0.5rem 0 1rem;
+  color: var(--text-dim);
+  font-size: var(--text-body);
+}
+
+.list {
+  list-style: none;
+  margin: 0 0 1.1rem;
+  padding: 0.15rem 0.25rem 0.35rem 0.15rem;
+  max-height: 16rem;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.5rem 0.6rem;
+  border: 2px solid var(--edge);
+  box-shadow: 3px 3px 0 0 var(--edge);
+  background: var(--face);
+  cursor: pointer;
+}
+
+/* picked rows press into the page: the shadow collapses and the accent edge takes over */
+.rowOn {
+  border-color: var(--accent);
+  box-shadow: 1px 1px 0 0 var(--accent);
+  transform: translate(2px, 2px);
+}
+
+.check {
+  appearance: auto;
+  accent-color: var(--accent);
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  flex: none;
+}
+
+.name {
+  font-size: var(--text-control);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.btn {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.85rem;
+  border: 2px solid var(--edge);
+  box-shadow: 2px 2px 0 0 var(--edge);
+  background: var(--face);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.btn:active {
+  box-shadow: none;
+  transform: translate(2px, 2px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  box-shadow: none;
+}
+
+.primary {
+  background: var(--accent-deep); /* deep companion: a bright or dark accent pick breaks ink labels */
+  color: var(--stage-white);
+  border-color: var(--edge);
+}

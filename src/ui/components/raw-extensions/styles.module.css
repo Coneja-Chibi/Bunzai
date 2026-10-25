@@ -1,0 +1,61 @@
+/**
+ * RawExtensions styles - a quiet framed list of the leftover extension keys. Tokens only.
+ */
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 2px dashed var(--stage-seam, var(--seam));
+  padding: 0.55rem 0.6rem;
+}
+.head {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--stage-mute, var(--muted));
+}
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.key {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--stage-soft, var(--text-soft));
+  word-break: break-all;
+}
+.text,
+.num {
+  background: var(--stage-well, var(--field, var(--paper)));
+  border: 2px solid var(--stage-seam, var(--seam));
+  color: var(--stage-soft, var(--text-soft));
+  font-family: var(--font-body);
+  font-size: var(--text-meta);
+  padding: 0.35rem 0.5rem;
+}
+.num {
+  width: 6rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  text-align: center;
+}
+.json {
+  width: 100%;
+  min-height: 4rem;
+  resize: vertical;
+  background: var(--stage-well, var(--field, var(--paper)));
+  border: 2px solid var(--stage-seam, var(--seam));
+  color: var(--stage-soft, var(--text-soft));
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  line-height: 1.5;
+  padding: 0.4rem 0.5rem;
+}
+.bad {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--stage-danger-text);
+  margin-top: 0.2rem;
+}

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-010-content-capabilities",
+  "sourcePath": "docs/decisions/ADR-010-content-capabilities.md",
+  "sourceHash": "sha256:8562f81107a0a7c932f2427ac713d7f291b17a2ba1e8ac3bb28327ce59cffea1",
+  "semanticSummaryHash": "sha256:747395c0878f1d2d936edecaa03d1569ef7fa1e2efe00cdb92ddd1e15a5ef9ee",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:42.939Z"
+}

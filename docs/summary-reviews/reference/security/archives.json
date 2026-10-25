@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/archives",
+  "sourcePath": "docs/reference/security/archives.md",
+  "sourceHash": "sha256:7d44869d6fcef69ad3534a1d805da5ea0219e1898ee024417267de8aec826f9c",
+  "semanticSummaryHash": "sha256:42bd58e543e5a06d7886680b0a7daf19a4aef4820a228effabcf80af38e22a81",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "unzipCard pins CARD_ARCHIVE_BOUNDS for Risu, BYAF and Lumiverse; bounds, guard and detection claims match code; nit: archive.ts line cites are stale",
+  "reviewedAt": "2026-10-09T11:41:22.252Z"
+}

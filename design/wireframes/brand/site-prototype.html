@@ -1,0 +1,444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku site prototype</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+/*
+ * The Bunraku website, as a clickable prototype of the chosen Ticket booth direction: every page,
+ * real navigation (hash routes), and the moving parts working (marquee bulbs, the curtain, the
+ * self-typing scene, guide search, the OS-picked download). Release data here is sample data; the
+ * real site reads GitHub's releases in the browser and builds the guides from the repo's docs.
+ * House look with about 30% cute. Every color is a theme token.
+ */
+:root { --pink: color-mix(in srgb, var(--rose) 30%, var(--stage-paper)); --blush: color-mix(in srgb, var(--rose) 10%, var(--stage-paper)); --ink: var(--stage-ink); --bulb: var(--stage-warn); }
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--stage-floor); color: var(--stage-soft); font-family: var(--font-body); font-size: 1.05rem; min-height: 100vh; }
+a { color: inherit; }
+.sparkle { color: var(--stage-warn); }
+/* ---------- the marquee header ---------- */
+.marq { position: sticky; top: 0; z-index: 20; background: var(--stage-well); border-bottom: 3px solid var(--ink); }
+.bulbs { height: 10px; background: radial-gradient(circle 3px at 8px 5px, var(--bulb) 90%, transparent) 0 0 / 16px 10px repeat-x; animation: chase 1.2s steps(2) infinite; opacity: .95; }
+@keyframes chase { to { background-position: 16px 0; } }
+.nav { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 22px; padding: 10px 22px; }
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo svg { width: 44px; height: 44px; transition: transform .3s; }
+.logo:hover svg { transform: rotate(-12deg) scale(1.08); }
+.logo b { font: 900 1.35rem var(--font-big); color: var(--stage-card); }
+.logo b i { font-style: normal; color: var(--rose); }
+.links { display: flex; gap: 6px; margin-left: auto; flex-wrap: wrap; }
+.links a { text-decoration: none; padding: 8px 12px; border-radius: 10px; font: 800 .82rem var(--font-big); text-transform: uppercase; letter-spacing: .05em; color: var(--stage-soft); border: 2px solid transparent; }
+.links a:hover { color: var(--stage-card); background: var(--stage-panel); }
+.links a.on { color: var(--stage-card); border-color: var(--rose); background: var(--stage-rose-well); }
+.links a.cta { background: var(--rose); color: var(--stage-white); border-color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.live { display: inline-flex; align-items: center; gap: 6px; font: 600 .7rem var(--font-mono); color: var(--stage-ok); }
+.live i { width: 7px; height: 7px; border-radius: 50%; background: var(--stage-ok); animation: pulse 1.6s infinite; }
+@keyframes pulse { 50% { opacity: .3; } }
+/* ---------- shared bits ---------- */
+.wrap { max-width: 1180px; margin: 0 auto; padding: 40px 22px 80px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 22px; border: 3px solid var(--ink); border-radius: 12px; background: var(--rose); color: var(--stage-white); font: 900 .95rem var(--font-big); text-transform: uppercase; letter-spacing: .04em; box-shadow: 4px 4px 0 var(--ink); text-decoration: none; cursor: pointer; transition: transform .12s, box-shadow .12s; }
+.btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); }
+.btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
+.btn.paper { background: var(--stage-paper); color: var(--ink); }
+.h1 { font: 900 clamp(2.4rem, 5vw, 4rem)/1 var(--font-big); text-transform: uppercase; color: var(--stage-card); }
+.h1 em { font-style: normal; color: var(--rose); }
+.lede { margin-top: 12px; font-size: 1.25rem; font-style: italic; color: var(--stage-text-dim); max-width: 40rem; }
+.card { background: var(--stage-well); border: 3px solid var(--ink); border-radius: 16px; box-shadow: 6px 6px 0 var(--ink); }
+.kicker { font: 600 .74rem var(--font-mono); letter-spacing: .24em; text-transform: uppercase; color: var(--stage-warn); }
+.page { display: none; } .page.show { display: block; animation: rise .35s ease-out; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+/* ---------- home ---------- */
+.curtains { position: relative; overflow: hidden; background: repeating-linear-gradient(90deg, var(--rose-deep) 0 36px, color-mix(in srgb, var(--rose-deep) 78%, var(--stage-black)) 36px 72px); border-bottom: 3px solid var(--ink); }
+.curtain { position: absolute; top: 0; bottom: 0; width: 51%; z-index: 5; background: repeating-linear-gradient(90deg, var(--rose) 0 30px, var(--rose-deep) 30px 60px); border: 3px solid var(--ink); transition: transform 1.3s cubic-bezier(.7, 0, .2, 1); }
+.curtain.l { left: 0; } .curtain.r { right: 0; }
+.curtains.open .curtain.l { transform: translateX(-102%); } .curtains.open .curtain.r { transform: translateX(102%); }
+.hero { max-width: 1180px; margin: 0 auto; padding: 60px 22px 70px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+.booth { padding: 30px 32px; border-radius: 22px 22px 8px 8px; }
+.booth .marquee-pill { display: inline-flex; gap: 10px; align-items: center; padding: 8px 18px; border: 3px solid var(--stage-warn); border-radius: 999px; font: 900 1rem var(--font-big); text-transform: uppercase; color: var(--stage-warn); letter-spacing: .12em; }
+.booth .h1 { margin-top: 16px; }
+.booth .row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 24px; align-items: center; }
+.small { font: 500 .78rem var(--font-mono); color: var(--stage-mute); }
+.ticket { display: grid; grid-template-columns: 1fr 170px; background: var(--stage-paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 8px 8px 0 var(--ink); transform: rotate(-2deg); transition: transform .3s;
+  -webkit-mask: radial-gradient(circle 14px at 0 50%, transparent 98%, #000), radial-gradient(circle 14px at 100% 50%, transparent 98%, #000); -webkit-mask-composite: source-in; mask-composite: intersect; }
+.ticket:hover { transform: rotate(0deg) scale(1.02); }
+.ticket .main { padding: 22px 26px; border-right: 3px dashed var(--ink); }
+.ticket .adm { font: 600 .72rem var(--font-mono); letter-spacing: .3em; color: var(--rose-deep); }
+.ticket h2 { font: 900 2.2rem/1 var(--font-fancy); margin: 8px 0; }
+.ticket ul { list-style: none; padding: 0; display: grid; gap: 6px; }
+.ticket li::before { content: "\2665  "; color: var(--rose); }
+.ticket .stub { padding: 18px 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.ticket .stub svg { width: 64px; height: 64px; }
+.ticket .stub .btn { padding: 10px 14px; font-size: .82rem; }
+/* the self-typing scene */
+.demo { max-width: 1180px; margin: 0 auto; padding: 56px 22px; display: grid; grid-template-columns: .9fr 1.1fr; gap: 36px; align-items: center; }
+.chat { padding: 18px; display: flex; flex-direction: column; gap: 14px; min-height: 330px; }
+.msg { display: flex; gap: 12px; align-items: flex-start; }
+.msg.me { flex-direction: row-reverse; }
+.av { width: 46px; height: 60px; border-radius: 10px; flex: none; display: grid; place-items: center; font: 400 1.3rem var(--font-fancy); color: var(--stage-card); background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 65%, var(--stage-panel)), var(--stage-panel)); border: 2px solid var(--ink); }
+.bub { padding: 10px 14px; border-radius: 14px; background: var(--stage-panel); border: 2px solid var(--stage-seam); line-height: 1.5; max-width: 34rem; }
+.msg.me .bub { background: var(--stage-rose-well); border-color: color-mix(in srgb, var(--rose) 40%, transparent); }
+.bub b { display: block; font: 900 .8rem var(--font-big); text-transform: uppercase; letter-spacing: .12em; color: var(--tone); margin-bottom: 4px; }
+.caret { display: inline-block; width: 8px; height: 1em; background: var(--rose); vertical-align: -2px; animation: pulse .8s infinite; }
+.acts3 { max-width: 1180px; margin: 0 auto; padding: 10px 22px 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.act { padding: 22px; transition: transform .2s; }
+.act:hover { transform: translateY(-4px) rotate(-.6deg); }
+.act h3 { font: 900 1.3rem var(--font-big); text-transform: uppercase; color: var(--stage-card); margin: 8px 0; }
+.act .num { font: 900 .9rem var(--font-fancy); letter-spacing: .2em; color: var(--rose); }
+/* ---------- tour ---------- */
+.feat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; margin-top: 30px; }
+.feat { padding: 0; overflow: hidden; text-decoration: none; display: block; transition: transform .2s; }
+.feat:hover { transform: translateY(-5px); }
+.shot { height: 150px; display: grid; place-items: center; background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 35%, var(--stage-panel)), var(--stage-panel)); border-bottom: 3px solid var(--ink); font: 600 .72rem var(--font-mono); color: var(--stage-mute); }
+.feat .bd { padding: 16px 18px 20px; }
+.feat h3 { font: 900 1.2rem var(--font-big); text-transform: uppercase; color: var(--stage-card); display: flex; align-items: center; gap: 8px; }
+.feat h3 i { width: 12px; height: 12px; border-radius: 50%; background: var(--tone); }
+.feat p { margin-top: 6px; line-height: 1.5; }
+.fpage { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; margin-top: 26px; }
+.fpage .shot { height: 320px; border: 3px solid var(--ink); border-radius: 16px; box-shadow: 6px 6px 0 var(--ink); }
+.bullets { list-style: none; padding: 0; display: grid; gap: 12px; margin-top: 18px; }
+.bullets li { display: flex; gap: 10px; line-height: 1.5; }
+.bullets li::before { content: "\2726"; color: var(--rose); flex: none; }
+.pager { display: flex; justify-content: space-between; margin-top: 36px; }
+/* ---------- guides ---------- */
+.search { display: flex; align-items: center; gap: 10px; margin-top: 22px; padding: 12px 16px; background: var(--stage-paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 5px 5px 0 var(--ink); max-width: 640px; }
+.search input { flex: 1; border: 0; background: none; font: 500 1.1rem var(--font-body); outline: none; color: var(--ink); }
+.cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; margin-top: 28px; }
+.stubcard { padding: 16px 18px; background: var(--stage-paper); color: var(--ink); border: 3px solid var(--ink); border-radius: 10px; box-shadow: 4px 4px 0 var(--ink); text-decoration: none; display: block;
+  -webkit-mask: radial-gradient(circle 9px at 0 50%, transparent 98%, #000), radial-gradient(circle 9px at 100% 50%, transparent 98%, #000); -webkit-mask-composite: source-in; mask-composite: intersect; transition: transform .15s; }
+.stubcard:hover { transform: rotate(-1.5deg) translateY(-3px); }
+.stubcard b { display: block; font: 900 1.05rem var(--font-big); text-transform: uppercase; }
+.stubcard small { display: block; margin-top: 4px; font-style: italic; }
+.results { margin-top: 18px; display: grid; gap: 8px; max-width: 640px; }
+.res { padding: 12px 14px; border-radius: 10px; background: var(--stage-panel); border: 2px solid var(--stage-seam); text-decoration: none; display: block; }
+.res b { color: var(--stage-card); } .res small { display: block; color: var(--stage-mute); font-size: .85rem; }
+.res mark { background: var(--pink); color: var(--ink); border-radius: 3px; padding: 0 2px; }
+.article { display: grid; grid-template-columns: 220px 1fr; gap: 36px; margin-top: 20px; }
+.toc { position: sticky; top: 100px; align-self: start; display: grid; gap: 6px; font: 600 .82rem var(--font-big); }
+.toc a { text-decoration: none; color: var(--stage-mute); padding: 4px 8px; border-left: 3px solid var(--stage-seam); }
+.toc a.on, .toc a:hover { color: var(--stage-card); border-color: var(--rose); }
+.prose h2 { font: 900 1.5rem var(--font-big); text-transform: uppercase; color: var(--stage-card); margin: 26px 0 8px; }
+.prose p { line-height: 1.65; margin: 8px 0; max-width: 42rem; }
+.tipbox { margin: 16px 0; padding: 12px 14px; border-radius: 12px; background: var(--stage-rose-well); border: 2px dashed color-mix(in srgb, var(--rose) 50%, transparent); display: flex; gap: 12px; align-items: center; }
+.tipbox svg { width: 44px; height: 44px; flex: none; }
+.crumbs { font: 600 .74rem var(--font-mono); color: var(--stage-mute); text-transform: uppercase; letter-spacing: .12em; }
+.crumbs a { text-decoration: none; color: var(--stage-warn); }
+/* ---------- download ---------- */
+.dl { display: grid; grid-template-columns: 1.2fr .8fr; gap: 34px; align-items: start; margin-top: 28px; }
+.plats { display: grid; gap: 12px; }
+.plat { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; background: var(--stage-panel); border: 2px solid var(--stage-seam); }
+.plat b { color: var(--stage-card); } .plat .grow { flex: 1; } .plat small { display: block; color: var(--stage-mute); font: 500 .74rem var(--font-mono); }
+.plat .tag { font: 700 .66rem var(--font-mono); text-transform: uppercase; padding: 3px 8px; border-radius: 999px; background: var(--rose); color: var(--stage-white); }
+.checks { margin-top: 20px; padding: 16px; line-height: 1.55; }
+/* ---------- what's new ---------- */
+.timeline { margin-top: 30px; display: grid; gap: 26px; position: relative; padding-left: 34px; }
+.timeline::before { content: ""; position: absolute; left: 10px; top: 8px; bottom: 8px; width: 3px; background: repeating-linear-gradient(var(--rose) 0 8px, transparent 8px 14px); }
+.rel { position: relative; }
+.rel::before { content: ""; position: absolute; left: -30px; top: 16px; width: 16px; height: 16px; border-radius: 50%; background: var(--rose); border: 3px solid var(--ink); }
+.rel .stubcard { max-width: 720px; }
+.rel .stubcard b { font-size: 1.2rem; }
+.rel ul { margin: 8px 0 0 18px; line-height: 1.6; }
+.rel .when { font: 600 .72rem var(--font-mono); color: var(--rose-deep); letter-spacing: .1em; }
+/* ---------- try it ---------- */
+.tryit { text-align: center; padding: 50px 24px; margin-top: 26px; }
+.tryit .h1 { margin: 10px 0; }
+.tryit p { max-width: 36rem; margin: 10px auto 22px; line-height: 1.6; }
+/* ---------- footer ---------- */
+footer { border-top: 3px solid var(--ink); background: var(--stage-well); }
+footer .wrap { padding: 30px 22px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+footer .grow { flex: 1; }
+footer a { color: var(--stage-soft); text-decoration: none; margin-right: 14px; font: 700 .85rem var(--font-big); text-transform: uppercase; }
+/* ---------- wireframe note ---------- */
+.wf-note { position: fixed; right: 12px; bottom: 12px; z-index: 30; max-width: 26rem; padding: 10px 14px; background: var(--stage-panel); border: 2px solid var(--ink); border-left: 4px solid var(--rose); font: 400 .88rem/1.45 var(--font-body); color: var(--stage-soft); }
+.wf-note b { color: var(--stage-card); }
+.wf-note button { float: right; border: 0; background: none; color: var(--stage-mute); cursor: pointer; font: 600 .8rem var(--font-mono); }
+@media (max-width: 860px) { .hero, .demo, .fpage, .dl, .article { grid-template-columns: 1fr; } .acts3 { grid-template-columns: 1fr; } .toc { position: static; } .ticket { grid-template-columns: 1fr; } .ticket .main { border-right: 0; border-bottom: 3px dashed var(--ink); } .links { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="tk" viewBox="0 0 100 100">
+      <g transform="rotate(-8 50 50)">
+        <path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M64 30 V70" stroke="var(--stage-ink)" stroke-width="2" stroke-dasharray="4 4"/>
+        <path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--stage-ink)"/>
+        <ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--stage-ink)"/>
+        <circle cx="78" cy="50" r="6" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="2.5"/>
+      </g>
+    </symbol>
+    <symbol id="bun" viewBox="0 0 100 100">
+      <path d="M36 50 C31 28 34 14 40 14 C46 14 47 30 45 50 Z M56 50 C56 30 60 16 66 18 C72 20 68 34 62 51 Z" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M22 76 C22 58 34 48 50 48 C66 48 78 58 78 76 C78 88 66 94 50 94 C34 94 22 88 22 76 Z" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <circle cx="41" cy="70" r="3.6" fill="var(--stage-ink)"/><circle cx="59" cy="70" r="3.6" fill="var(--stage-ink)"/>
+      <path d="M47 77 q3 3 6 0" stroke="var(--stage-ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="33" cy="77" rx="4.5" ry="2.6" fill="var(--pink)"/><ellipse cx="67" cy="77" rx="4.5" ry="2.6" fill="var(--pink)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="marq">
+  <div class="bulbs"></div>
+  <nav class="nav">
+    <a class="logo" href="#/"><svg><use href="#tk"/></svg><b>bunraku<i>.</i></b></a>
+    <span class="live" title="Read live from GitHub on the real site"><i></i><span id="ver">v0.1.42</span></span>
+    <div class="links">
+      <a href="#/tour" data-nav="tour">Tour</a>
+      <a href="#/guides" data-nav="guides">Guides</a>
+      <a href="#/whats-new" data-nav="whats-new">What&apos;s new</a>
+      <a href="#/try" data-nav="try">Try it</a>
+      <a href="#/download" data-nav="download" class="cta">Download</a>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ HOME ============ -->
+<main class="page" data-page="home">
+  <section class="curtains" id="curtains">
+    <div class="curtain l"></div><div class="curtain r"></div>
+    <div class="hero">
+      <div class="card booth">
+        <span class="marquee-pill"><span class="sparkle">&#10022;</span> Tonight <span class="sparkle">&#10022;</span></span>
+        <h1 class="h1">Your stories,<br><em>your stage</em></h1>
+        <p class="lede">Bunraku is a cozy app for playing and making AI characters, right on your own computer.</p>
+        <div class="row"><a class="btn" href="#/download">Get Bunraku</a><a class="btn paper" href="#/tour">Take the tour</a></div>
+      </div>
+      <div class="ticket">
+        <div class="main"><div class="adm">ADMIT ONE &middot; FREE FOREVER</div><h2>Bunraku</h2>
+          <ul><li>Chat with any character, with your own AI key</li><li>Import cards from SillyTavern, RoleCall, and more</li><li>Everything saved privately on your computer</li></ul></div>
+        <div class="stub"><svg><use href="#tk"/></svg><a class="btn" href="#/download" id="dlQuick">Download</a><span class="small" id="osLine">for Windows</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <div><div class="kicker">Now playing</div><h2 class="h1" style="font-size:2.6rem">Talk to <em>anyone</em></h2>
+      <p class="lede">Bring a character, pick any AI model you like, and play. Swipe for another reply, branch the story, and never lose a version.</p>
+      <div style="margin-top:18px"><a class="btn paper" href="#/tour/scenes">See how scenes work</a></div></div>
+    <div class="card chat" id="chat" aria-live="polite"></div>
+  </section>
+
+  <section class="acts3">
+    <a class="card act" href="#/tour/scenes" style="text-decoration:none"><span class="num">ACT I</span><h3>Play</h3><p>Swipe, retry, and branch any scene. Nothing is ever lost.</p></a>
+    <a class="card act" href="#/tour/workbench" style="text-decoration:none"><span class="num">ACT II</span><h3>Make</h3><p>Write characters, worlds, and presets in a proper editor.</p></a>
+    <a class="card act" href="#/tour/library" style="text-decoration:none"><span class="num">ACT III</span><h3>Keep</h3><p>Your library is encrypted and stays on your machine.</p></a>
+  </section>
+</main>
+
+<!-- ============ TOUR ============ -->
+<main class="page" data-page="tour"><div class="wrap">
+  <div class="kicker">The tour</div><h1 class="h1">Meet the <em>company</em></h1>
+  <p class="lede">Bunraku is a few rooms under one roof. Each one does one thing well.</p>
+  <div class="feat-grid" id="featGrid"></div>
+</div></main>
+
+<main class="page" data-page="feature"><div class="wrap" id="featPage"></div></main>
+
+<!-- ============ GUIDES ============ -->
+<main class="page" data-page="guides"><div class="wrap">
+  <div class="kicker">Guides &amp; help</div><h1 class="h1">How do I <em>...?</em></h1>
+  <label class="search"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><input id="q" placeholder="Search the guides: import, preset, swipe, backup..." aria-label="Search the guides"></label>
+  <div class="results" id="results"></div>
+  <div class="cats" id="cats"></div>
+</div></main>
+
+<main class="page" data-page="article"><div class="wrap" id="articlePage"></div></main>
+
+<!-- ============ DOWNLOAD ============ -->
+<main class="page" data-page="download"><div class="wrap">
+  <div class="kicker">Download</div><h1 class="h1">Grab your <em>ticket</em></h1>
+  <p class="lede">Free, open source, and yours to keep. We picked the right one for your computer.</p>
+  <div class="dl">
+    <div>
+      <div class="ticket" style="transform:rotate(-1deg)">
+        <div class="main"><div class="adm" id="dlAdm">ADMIT ONE &middot; WINDOWS</div><h2 id="dlTitle">Bunraku for Windows</h2>
+          <ul><li id="dlVer">Version 0.1.42 &middot; released 3 days ago</li><li id="dlSize">One file, about 140 MB</li><li>Your library lives in Documents/Bunraku Studio</li></ul></div>
+        <div class="stub"><svg><use href="#tk"/></svg><a class="btn" id="dlBtn">Download</a><span class="small">free forever</span></div>
+      </div>
+      <div class="card checks"><b style="color:var(--stage-card)">First time opening it?</b> Windows may say it does not recognize the app, because it is new and not yet signed. Click <i>More info</i>, then <i>Run anyway</i>. Bunraku adds itself to your Start menu the first time it opens.</div>
+    </div>
+    <div class="plats" id="plats"></div>
+  </div>
+</div></main>
+
+<!-- ============ WHAT'S NEW ============ -->
+<main class="page" data-page="whats-new"><div class="wrap">
+  <div class="kicker">What&apos;s new</div><h1 class="h1">Fresh from <em>rehearsal</em></h1>
+  <p class="lede">Every release, newest first. This list updates itself whenever a new version ships.</p>
+  <div class="timeline" id="timeline"></div>
+</div></main>
+
+<!-- ============ TRY IT ============ -->
+<main class="page" data-page="try"><div class="wrap">
+  <div class="card tryit">
+    <svg width="90" height="90"><use href="#bun"/></svg>
+    <h1 class="h1">Try it in your <em>browser</em></h1>
+    <p>Open the Studio right here, no install and no account. Import a card, poke around, edit things. It keeps your work only while the tab is open, so export anything you want to keep. Chatting with AI needs the app.</p>
+    <a class="btn">Open the browser Studio</a> &nbsp; <a class="btn paper" href="#/download">Get the full app</a>
+  </div>
+</div></main>
+
+<footer><div class="wrap">
+  <a class="logo" href="#/"><svg><use href="#tk"/></svg><b>bunraku<i>.</i></b></a>
+  <span class="grow"></span>
+  <a href="#/guides">Guides</a><a href="#/whats-new">What&apos;s new</a><a href="https://github.com/Coneja-Chibi/Bunraku">GitHub</a>
+  <span class="small">made by Coneja-Chibi &middot; free and open source</span>
+</div></footer>
+
+<div class="wf-note" id="wfNote"><button type="button" onclick="this.parentNode.remove()">close</button><b>Clickable prototype.</b> Every link works. Moving parts: marquee bulbs, the curtain opening on the home page, the scene typing itself, live-looking version badge, guide search, and the download picking your computer&apos;s system. Release data is sample data here; the real site reads it live from GitHub, and the guides are built from the repo&apos;s own docs, rewritten for users.</div>
+
+<script>
+(function () {
+  // ---------------- sample data (the real site fetches releases from api.github.com) ----------------
+  var RELEASES = [
+    { v: "0.1.42", when: "3 days ago", notes: ["Scenes follow their preset: pick one in the new Prompting wing", "Switch prompts and samplers per scene without touching the preset", "Imported presets keep your character's example dialogue"] },
+    { v: "0.1.41", when: "last week", notes: ["Chat with any character in the Scenes app", "Swipes, retries, and a Retry button when a reply fails", "Replies that a crash cut off come back when you reopen"] },
+    { v: "0.1.40", when: "2 weeks ago", notes: ["Take a scene in a new direction with takes", "Cut messages and restore them for 3 days", "A cleaner Library with portrait cards"] },
+  ];
+  var FEATURES = [
+    { id: "scenes", name: "Scenes", tone: "var(--rose)", blurb: "Chat with your characters, with any AI you like.", bullets: ["Swipe for another reply, and flip back to any version", "Branch the story into takes and switch between them", "Pick presets and switch prompts per scene", "Stop a reply mid-sentence and keep what was written"] },
+    { id: "workbench", name: "Workbench", tone: "var(--deck-preset)", blurb: "Write and edit characters, lorebooks, and presets.", bullets: ["An editor for every kind of piece", "See your preset's prompt as it will be sent", "Macros with live previews", "Two pieces side by side"] },
+    { id: "library", name: "Library", tone: "var(--deck-character)", blurb: "Everything you have, in one private place.", bullets: ["Import cards from SillyTavern, RoleCall, Chub, and more", "Portrait cards, shelves, and search", "Encrypted on your computer", "A Trash that keeps things for 3 days"] },
+    { id: "press", name: "Press", tone: "var(--deck-lorebook)", blurb: "Send your work out in any format.", bullets: ["Export to 11 platforms", "A report of anything a format cannot carry", "Bundles that keep linked pieces together"] },
+    { id: "agent", name: "Agent", tone: "var(--deck-persona)", blurb: "A helper that knows your library.", bullets: ["Ask it to find, fix, or draft things", "It asks before changing anything", "Works with your own AI connection"] },
+  ];
+  var GUIDES = [
+    { id: "start", cat: "Getting started", title: "Your first scene", about: "Install, import a character, connect an AI, and say hello.", body: ["Install Bunraku", "Bring in a character", "Connect an AI", "Say hello"] },
+    { id: "import", cat: "Getting started", title: "Importing cards", about: "Bring characters in from SillyTavern, RoleCall, Chub, and more.", body: ["Drag and drop", "What comes along", "If something did not import"] },
+    { id: "presets", cat: "Scenes", title: "Presets and the Prompting wing", about: "Choose a preset for a scene and switch prompts on and off.", body: ["Pick a preset", "Switch prompts for one scene", "Change samplers", "Edit the preset itself"] },
+    { id: "swipes", cat: "Scenes", title: "Swipes, retries, and takes", about: "Get another reply, go back, and branch your story.", body: ["Swipe for another reply", "Retry after a failure", "Takes: branching a scene"] },
+    { id: "lore", cat: "Making things", title: "Lorebooks", about: "Give your world facts that show up when they matter.", body: ["Entries and keywords", "Where entries go", "Testing your lore"] },
+    { id: "backup", cat: "Your library", title: "Backups and moving computers", about: "Keep your library safe, and take it with you.", body: ["Where your library lives", "Making a backup", "Moving to a new computer"] },
+    { id: "trouble", cat: "Help", title: "Something went wrong", about: "Replies that fail, windows that do not open, and what to do.", body: ["A reply failed", "The window does not open", "Asking for help"] },
+  ];
+
+  // ---------------- routing ----------------
+  var pages = document.querySelectorAll(".page");
+  function show(name) { pages.forEach(function (p) { p.classList.toggle("show", p.dataset.page === name); }); window.scrollTo(0, 0); }
+  function route() {
+    var parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+    var top = parts[0] || "home";
+    document.querySelectorAll("[data-nav]").forEach(function (a) { a.classList.toggle("on", a.dataset.nav === top); });
+    if (top === "tour" && parts[1]) return feature(parts[1]);
+    if (top === "guides" && parts[1]) return article(parts[1]);
+    show(top === "home" ? "home" : top);
+    if (top === "home") openCurtains();
+  }
+  window.addEventListener("hashchange", route);
+
+  // ---------------- home: curtains + the self-typing scene ----------------
+  var curtainsOpened = false;
+  function openCurtains() {
+    if (curtainsOpened) return; curtainsOpened = true;
+    setTimeout(function () { document.getElementById("curtains").classList.add("open"); }, 250);
+    setTimeout(playScene, 900);
+  }
+  var SCRIPT = [
+    { who: "Vera", me: false, tone: "var(--deck-character)", text: "*Vera looks up from the lamp.* You came up the stairs without a lantern. Brave, or foolish?" },
+    { who: "You", me: true, tone: "var(--rose)", text: "A little of both. Is the storm going to hold?" },
+    { who: "Vera", me: false, tone: "var(--deck-character)", text: "*She taps the glass.* It will hold until midnight. After that, you had better like my company." },
+  ];
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text !== undefined) e.textContent = text; return e; }
+  function playScene() {
+    var chat = document.getElementById("chat"); chat.textContent = "";
+    var i = 0;
+    (function next() {
+      if (i >= SCRIPT.length) { setTimeout(playScene, 6000); return; }
+      var line = SCRIPT[i++];
+      var m = el("div", "msg" + (line.me ? " me" : "")); m.style.setProperty("--tone", line.tone);
+      m.appendChild(el("div", "av", line.who[0]));
+      var bub = el("div", "bub"); bub.appendChild(el("b", "", line.who)); var span = el("span"); bub.appendChild(span); var caret = el("i", "caret"); bub.appendChild(caret);
+      m.appendChild(bub); chat.appendChild(m);
+      var k = 0;
+      var t = setInterval(function () { span.textContent = line.text.slice(0, ++k); if (k >= line.text.length) { clearInterval(t); caret.remove(); setTimeout(next, 700); } }, line.me ? 28 : 22);
+    })();
+  }
+
+  // ---------------- tour ----------------
+  var grid = document.getElementById("featGrid");
+  FEATURES.forEach(function (f) {
+    var a = el("a", "card feat"); a.href = "#/tour/" + f.id; a.style.setProperty("--tone", f.tone);
+    a.appendChild(el("div", "shot", "screenshot: " + f.name));
+    var bd = el("div", "bd"); var h = el("h3"); h.appendChild(el("i")); h.appendChild(document.createTextNode(f.name)); bd.appendChild(h); bd.appendChild(el("p", "", f.blurb)); a.appendChild(bd);
+    grid.appendChild(a);
+  });
+  function feature(id) {
+    var idx = FEATURES.findIndex(function (f) { return f.id === id; }); var f = FEATURES[idx] || FEATURES[0];
+    var root = document.getElementById("featPage"); root.textContent = "";
+    var crumbs = el("div", "crumbs"); var back = el("a", "", "Tour"); back.href = "#/tour"; crumbs.appendChild(back); crumbs.appendChild(document.createTextNode(" / " + f.name)); root.appendChild(crumbs);
+    var wrap = el("div", "fpage"); wrap.style.setProperty("--tone", f.tone);
+    var left = el("div"); var h = el("h1", "h1"); h.textContent = f.name; left.appendChild(h); left.appendChild(el("p", "lede", f.blurb));
+    var ul = el("ul", "bullets"); f.bullets.forEach(function (b) { ul.appendChild(el("li", "", b)); }); left.appendChild(ul);
+    wrap.appendChild(left); wrap.appendChild(el("div", "shot", "screenshot or short looping video: " + f.name));
+    root.appendChild(wrap);
+    var pager = el("div", "pager"); var prev = FEATURES[(idx + FEATURES.length - 1) % FEATURES.length], nxt = FEATURES[(idx + 1) % FEATURES.length];
+    var pa = el("a", "btn paper", "< " + prev.name); pa.href = "#/tour/" + prev.id; var na = el("a", "btn", nxt.name + " >"); na.href = "#/tour/" + nxt.id;
+    pager.appendChild(pa); pager.appendChild(na); root.appendChild(pager);
+    show("feature");
+  }
+
+  // ---------------- guides: categories, instant search, articles ----------------
+  var cats = document.getElementById("cats");
+  GUIDES.forEach(function (g) { var a = el("a", "stubcard"); a.href = "#/guides/" + g.id; a.appendChild(el("b", "", g.title)); a.appendChild(el("small", "", g.cat + " · " + g.about)); cats.appendChild(a); });
+  var q = document.getElementById("q"), results = document.getElementById("results");
+  q.addEventListener("input", function () {
+    var term = q.value.trim().toLowerCase(); results.textContent = "";
+    cats.style.display = term ? "none" : "";
+    if (!term) return;
+    var hits = GUIDES.filter(function (g) { return (g.title + " " + g.about + " " + g.body.join(" ")).toLowerCase().indexOf(term) >= 0; });
+    if (!hits.length) { results.appendChild(el("div", "res", "Nothing yet for “" + q.value + "”. Try another word, or ask on GitHub.")); return; }
+    hits.forEach(function (g) {
+      var a = el("a", "res"); a.href = "#/guides/" + g.id;
+      var b = el("b"); var t = g.title, at = t.toLowerCase().indexOf(term);
+      if (at >= 0) { b.appendChild(document.createTextNode(t.slice(0, at))); b.appendChild(el("mark", "", t.slice(at, at + term.length))); b.appendChild(document.createTextNode(t.slice(at + term.length))); } else b.textContent = t;
+      a.appendChild(b); a.appendChild(el("small", "", g.about)); results.appendChild(a);
+    });
+  });
+  function article(id) {
+    var g = GUIDES.find(function (x) { return x.id === id; }) || GUIDES[0];
+    var root = document.getElementById("articlePage"); root.textContent = "";
+    var crumbs = el("div", "crumbs"); var back = el("a", "", "Guides"); back.href = "#/guides"; crumbs.appendChild(back); crumbs.appendChild(document.createTextNode(" / " + g.cat)); root.appendChild(crumbs);
+    var h = el("h1", "h1"); h.textContent = g.title; root.appendChild(h); root.appendChild(el("p", "lede", g.about));
+    var art = el("div", "article"); var toc = el("nav", "toc"); var prose = el("div", "prose");
+    g.body.forEach(function (sec, n) {
+      var sid = "s" + n; var a = el("a", n === 0 ? "on" : "", sec); a.href = "javascript:void(0)"; a.onclick = function () { document.getElementById(sid).scrollIntoView({ block: "start" }); }; toc.appendChild(a);
+      var h2 = el("h2", "", sec); h2.id = sid; prose.appendChild(h2);
+      prose.appendChild(el("p", "", "A short, friendly explanation goes here, written for people, not developers: what to click, what you will see, and what to do if it looks different."));
+      if (n === 0) { var tip = el("div", "tipbox"); tip.innerHTML = '<svg><use href="#bun"/></svg>'; tip.appendChild(el("p", "", "Little tip: every guide page has screenshots from the real app, taken fresh for each release.")); prose.appendChild(tip); }
+    });
+    art.appendChild(toc); art.appendChild(prose); root.appendChild(art);
+    show("article");
+  }
+
+  // ---------------- download: pick the visitor's system ----------------
+  var ua = navigator.userAgent, os = /Mac/.test(ua) ? "mac" : /Linux|X11/.test(ua) && !/Android/.test(ua) ? "linux" : "windows";
+  var PLATS = { windows: { name: "Windows", file: "Bunraku.exe", size: "about 140 MB" }, mac: { name: "Mac", file: "bunraku-mac (Apple chip or Intel)", size: "about 90 MB" }, linux: { name: "Linux", file: "bunraku-linux (x64 or ARM)", size: "about 90 MB" } };
+  var mine = PLATS[os];
+  document.getElementById("osLine").textContent = "for " + mine.name;
+  document.getElementById("dlAdm").textContent = "ADMIT ONE · " + mine.name.toUpperCase();
+  document.getElementById("dlTitle").textContent = "Bunraku for " + mine.name;
+  document.getElementById("dlVer").textContent = "Version " + RELEASES[0].v + " · released " + RELEASES[0].when;
+  document.getElementById("dlSize").textContent = "One file, " + mine.size;
+  document.getElementById("ver").textContent = "v" + RELEASES[0].v;
+  var plats = document.getElementById("plats");
+  Object.keys(PLATS).forEach(function (k) {
+    var p = PLATS[k], row = el("div", "plat"); var box = el("div", "grow"); box.appendChild(el("b", "", p.name)); box.appendChild(el("small", "", p.file + " · " + p.size)); row.appendChild(box);
+    if (k === os) row.appendChild(el("span", "tag", "your computer"));
+    var b = el("a", "btn paper", "Get"); b.style.padding = "8px 14px"; row.appendChild(b); plats.appendChild(row);
+  });
+
+  // ---------------- what's new ----------------
+  var tl = document.getElementById("timeline");
+  RELEASES.forEach(function (r) {
+    var wrap = el("div", "rel"); var s = el("div", "stubcard"); s.appendChild(el("span", "when", "VERSION " + r.v + " · " + r.when.toUpperCase())); s.appendChild(el("b", "", r.notes[0]));
+    var ul = el("ul"); r.notes.slice(1).forEach(function (n) { ul.appendChild(el("li", "", n)); }); s.appendChild(ul); wrap.appendChild(s); tl.appendChild(wrap);
+  });
+
+  route();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/platforms/marinara/sprites-and-galleries",
+  "sourcePath": "docs/reference/platforms/marinara/sprites-and-galleries.md",
+  "sourceHash": "sha256:a0ae259249ff934692ca7e84a70226e073ef1917fae518f9452811fe7ca047af",
+  "semanticSummaryHash": "sha256:3dec808e272937e5448c8827d0868dcc906b23a251ca2f24d45b4dc0ae5edf62",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:57.957Z"
+}

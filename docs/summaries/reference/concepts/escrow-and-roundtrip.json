@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/escrow-and-roundtrip",
+  "sourcePath": "docs/reference/concepts/escrow-and-roundtrip.md",
+  "sourceHash": "sha256:2d4f5bd6f8786cd9c7ec3cb9349059399885c81ccb7bfb218c68f687b0761955",
+  "summary": "Escrow and round-trip document how every canonical entity carries a parsed import twin in original so same-format fields are preserved and cross-format conversion loses only non-portable residue by design. The envelope holds raw, unmapped, and optional sourceMedia per adapter key, with primaryOriginalRaw selecting the source twin. A three-state overlay re-encodes edited fields while retaining other parsed fields; it does not promise byte-identical containers. PNG pixels remain available to PNG export, which regenerates card chunks. Cross-format targets read only their own original key and full-encode from the body without blind-copying foreign extensions or scripts.",
+  "topics": [
+    "escrow original envelope",
+    "same-format field fidelity",
+    "cross-format contained loss",
+    "OriginalEntry raw unmapped",
+    "three-state twin overlay",
+    "primaryOriginalRaw",
+    "sourceMedia PNG carrier",
+    "deny by absence"
+  ],
+  "sections": [
+    {
+      "slug": "the-escrow-envelope",
+      "title": "The escrow envelope",
+      "level": 2,
+      "sourceHash": "sha256:f4102a91f0778d6c8fa55dab39edd224bbd23802e09a19c650a9b831e5346ba3",
+      "summary": "Escrow is per-source original on the wrapper: Record of FormatId to OriginalEntry. raw is the entire parsed source payload untouched as the exporter twin. unmapped holds source facts canonical does not first-class such as Tavern round-trip variant. sourceMedia is the binary carrier such as PNG card pixels kept as a raw-bytes twin, not body content. original fills automatically on import and is never hand-edited; each adapter stores under its own format id. primaryOriginalRaw reads the first entry raw so labeler and bundle layers cannot drift. Superset rule sends non-wire residue here rather than inventing body fields.",
+      "topics": [
+        "OriginalEntry fields",
+        "raw twin payload",
+        "unmapped residue",
+        "sourceMedia carrier",
+        "per-format-id keys"
+      ],
+      "children": []
+    },
+    {
+      "slug": "same-format-round-trips-preserve-fields",
+      "title": "Same-format round-trips preserve fields",
+      "level": 2,
+      "sourceHash": "sha256:6303d9b57804d77d7178c7482d0fda85aa6659a91f365e7511e9b1b824cb4606",
+      "summary": "Adapter symmetry: toCanonical stashes the parsed payload while reading; fromCanonical re-emits from that original for the round trip. SillyTavern character stores the whole card twin, variant, and PNG carrier, then overlays the body onto a twin clone in the original variant. applyBodyToData is three-state: equal values leave parsed wire values untouched, changed values write exact wire homes, and values the twin had but canonical dropped clear those homes. Absent on both sides leaves raw alone, protecting unrepresentable shapes and unknown keys. This is field-level fidelity; JSON serialization may normalize formatting. PNG pixels remain available to the PNG export path, which regenerates card chunks. Byte identity applies only where a format specification and fixture establish that tier.",
+      "topics": [
+        "toCanonical fromCanonical",
+        "SillyTavern twin overlay",
+        "three-state applyBodyToData",
+        "fields not container bits",
+        "unknown keys protected"
+      ],
+      "children": []
+    },
+    {
+      "slug": "a-cross-format-conversion-is-contained-loss-by-design",
+      "title": "A cross-format conversion is contained loss by design",
+      "level": 2,
+      "sourceHash": "sha256:53ae1122502f6bb1b8ffc39b63b59d8b4e49b09a88fecd2f461a864358f4e782",
+      "summary": "convertFile same-kind paths pass the full entity but only the canonical body plus re-embedded lorebooks project into the target file. Per-id keying keeps the source twin under original source while the target adapter looks for original target, finds none on a fresh conversion, and full-encodes from body alone. Private extensions scripts layout and internal ids stay in escrow and are not written into another app file. PNG carrier pixels remain available as the entity portrait and to the PNG export path, but are not written into unrelated target formats. Loss is bounded to non-portable extras while the portable core crosses.",
+      "topics": [
+        "body only crosses",
+        "no foreign original twin",
+        "deny by absence safety",
+        "carrier stays escrowed",
+        "portable core crosses"
+      ],
+      "children": []
+    },
+    {
+      "slug": "per-kind-coverage-of-the-same-idea",
+      "title": "Per-kind coverage of the same idea",
+      "level": 2,
+      "sourceHash": "sha256:cfa6d145c343985e95073614b09028d30cd7247415ea043ef90111c27404cc25",
+      "summary": "Every entity kind carries escrow the same way. Format pages document same-format field fidelity and cross-format collapses. SillyTavern covers character and lorebook twins, injection-slot collapse on cross-format lorebooks, and persona plus regex codecs that seal multi-record files so untouched parsed records retain their fields. Entity pages define what each canonical slot means for character and lorebook bodies.",
+      "topics": [
+        "all kinds share escrow",
+        "format page round-trip",
+        "persona regex multi-record",
+        "entity slot meanings"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "source-of-truth",
+      "title": "Source of truth",
+      "level": 2,
+      "sourceHash": "sha256:ea24a10f2938ac07a2e872e461b163558e18d71754abb971dc9f79f28f3c00d3",
+      "summary": "canonical.ts owns original OriginalEntry and primaryOriginalRaw. adapter.ts states the stash and re-emit contract. convert.ts projects only body across formats. tavern-fields applyBodyToData is the three-state overlay example. sillytavern index stores and re-emits twins. architecture.md maps escrow in the whole engine diagram.",
+      "topics": [
+        "canonical original",
+        "adapter contract",
+        "convert body only",
+        "tavern-fields overlay"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

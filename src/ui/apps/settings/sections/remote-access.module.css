@@ -1,0 +1,157 @@
+/*
+ * Remote-access section: the rich neobrutalist card look from the approved wireframe. The shared
+ * card/status/button vocabulary is composed from section-card.module.css (defined once, reused by
+ * Updates and future sections); only the remote-specific pieces (the eye toggle, the URL bar, the
+ * device list, the connect code) live here. Tokens only. lan-card.tsx imports THIS module, so it gets
+ * the shared vocabulary transitively.
+ */
+.wrap {
+  composes: wrap from "./section-card.module.css";
+}
+.title {
+  composes: title from "./section-card.module.css";
+}
+.blurb {
+  composes: blurb from "./section-card.module.css";
+  max-width: 40rem;
+}
+.card {
+  composes: card from "./section-card.module.css";
+}
+.hero {
+  composes: cardHero from "./section-card.module.css";
+}
+.cardTitle {
+  composes: cardTitle from "./section-card.module.css";
+}
+.cardBody {
+  composes: cardBody from "./section-card.module.css";
+}
+.subtle {
+  composes: subtle from "./section-card.module.css";
+}
+.actions {
+  composes: actions from "./section-card.module.css";
+}
+.btn {
+  composes: btn from "./section-card.module.css";
+}
+.btnGhost {
+  composes: btnGhost from "./section-card.module.css";
+}
+.btnDanger {
+  composes: btnDanger from "./section-card.module.css";
+}
+.status {
+  composes: status from "./section-card.module.css";
+}
+.bad {
+  composes: statusBad from "./section-card.module.css";
+}
+.dot {
+  composes: dot from "./section-card.module.css";
+}
+.on {
+  composes: dotOn from "./section-card.module.css";
+}
+.busy {
+  composes: dotBusy from "./section-card.module.css";
+}
+
+/* remote-specific: the title row + screenshot-redaction eye toggle */
+.titleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+.eyeBtn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  background: transparent;
+  border: 2px solid var(--edge);
+  box-shadow: 3px 3px 0 0 var(--edge);
+  padding: 0.32rem;
+  cursor: pointer;
+}
+.eyeBtn:hover {
+  color: var(--text);
+}
+.eyeBtn[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* remote-specific: the URL bar + lock icon */
+.urlbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--accent);
+  border: 2px solid var(--edge);
+  background: var(--shell-panel);
+  padding: 0.45rem 0.7rem;
+  word-break: break-all;
+  max-width: 100%;
+}
+.lock {
+  color: var(--accent);
+  flex: none;
+}
+.note {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--text-dim);
+  line-height: 1.6;
+  max-width: 42rem;
+}
+
+/* remote-specific: the connected-device list + connect code */
+.devices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-top: 2px solid var(--seam);
+  padding-top: 0.8rem;
+}
+.devicesTitle {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.deviceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+  border: 2px solid var(--edge);
+  background: var(--shell-panel);
+  padding: 0.4rem 0.6rem;
+}
+.deviceName {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 600;
+  color: var(--text);
+  word-break: break-all;
+}
+.code {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-align: center;
+  color: var(--text);
+  border: 3px solid var(--edge);
+  background: var(--shell-panel);
+  padding: 0.7rem;
+}

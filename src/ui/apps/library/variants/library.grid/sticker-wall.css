@@ -1,0 +1,10 @@
+/**
+ * library.grid sticker-wall: cards set on a dotted scrapbook wall with wide gaps. (Carousel or Grid is still the person's
+ * choice; first run opens on Grid. The rail, section headers, toolbar and tabs belong to their own surfaces.)
+ */
+html[data-surface-library-grid="sticker-wall"] {
+  & .lib.rc { --cw: min(calc(8rem + (var(--card-w, 8.5rem) - 4rem) * 2.6), 85cqi); background-color: var(--bk-surface-base); background-image: radial-gradient(var(--bk-line-track) 1.5px, transparent 1.5px); background-size: 22px 22px; }
+  & .lib.rc .lrow-cards { gap: 1.75rem; padding-right: 1.5rem; padding-bottom: 2rem; }
+  & .lib.rc .rgrid-row { gap: 1.75rem; }
+  & .lib.rc .rnewtile { border: var(--bk-frame-w) dashed var(--bk-line-control); background: var(--bk-surface-panel); }
+}

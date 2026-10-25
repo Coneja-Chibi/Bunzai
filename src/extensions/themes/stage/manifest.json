@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 2,
+  "id": "stage",
+  "version": "2.0.0",
+  "name": "GirliePop",
+  "requests": [
+    "appearance.accent",
+    "appearance.assets",
+    "appearance.palette",
+    "appearance.shape",
+    "appearance.surfaces",
+    "appearance.type"
+  ],
+  "appearance": {
+    "surfaces": {
+      "shell.nav": "tab-bar",
+      "shell.overlay": "sticker-widgets",
+      "shell.title": "sticker-splash",
+      "shell.status": "chip",
+      "library.grid": "sticker-wall",
+      "library.card": "sticker-card",
+      "scenes.list": "chat-list",
+      "ui.dialog": "pop-card",
+      "ui.toast": "bubble",
+      "ui.empty": "doodle",
+      "ui.panel": "slab-frame",
+      "ui.meter": "chunky-pill-bar",
+      "ui.icons": "filled-cute",
+      "ui.toolbar": "sticker-shelf",
+      "library.decks": "sticker-stack",
+      "ui.section-header": "banner-tag",
+      "ui.tabs": "pill-row",
+      "ui.label-type": "rounded-sentence",
+      "scene.layout": "chat-thread",
+      "scene.message": "bubble",
+      "scene.composer": "chat-input",
+      "scene.swipes": "dots",
+      "scene.wings": "drawer",
+      "scene.hud": "chips",
+      "scene.reasoning": "slab-note",
+      "editor.frame": "card-stack",
+      "editor.fields": "cards",
+      "settings.shape": "big-toggles",
+      "app.room": "sticker-tray",
+      "ui.controls": "sticker"
+    },
+    "palette": {
+      "surface": {
+        "well": "#16121c",
+        "base": "#1a1620",
+        "sunken": "#1c1723",
+        "field": "#211c29",
+        "panel": "#26202f",
+        "raised": "#302839",
+        "ink": "#14111a"
+      },
+      "line": {
+        "strong": "#ffc9ae",
+        "line": "#4a3f55",
+        "track": "#3d3347",
+        "control": "#a898ab",
+        "focus": "#f4d387"
+      },
+      "text": {
+        "text": "#f5ecf0",
+        "soft": "#c2b5c4",
+        "dim": "#a898ab",
+        "faint": "#a3959f",
+        "onTint": "#1a1620",
+        "onDeep": "#ffffff"
+      },
+      "roles": {
+        "brand": {
+          "fill": "#ffb3c7",
+          "text": "#ffb3c7",
+          "deep": "#7c4958"
+        },
+        "action": {
+          "fill": "#bcd7ff",
+          "text": "#bcd7ff",
+          "deep": "#0876b5"
+        },
+        "select": {
+          "fill": "#d9c8ff",
+          "text": "#d9c8ff",
+          "deep": "#7f52c4"
+        },
+        "ok": {
+          "fill": "#bfead7",
+          "text": "#8fe0b8",
+          "deep": "#178356"
+        },
+        "warn": {
+          "fill": "#ffeaa8",
+          "text": "#ffe08a",
+          "deep": "#9a6b12"
+        },
+        "danger": {
+          "fill": "#ffb3c1",
+          "text": "#ff9fb1",
+          "deep": "#a52a43"
+        },
+        "info": {
+          "fill": "#a6e2ff",
+          "text": "#a6e2ff",
+          "deep": "#0b5e85"
+        }
+      }
+    },
+    "type": {
+      "display": "fredoka",
+      "ui": "fredoka",
+      "body": "atkinson",
+      "mono": "plex-mono",
+      "scale": 1
+    },
+    "shape": {
+      "frame": "stamp",
+      "frameWidth": 3,
+      "density": "comfortable",
+      "motion": "bouncy",
+      "chrome": "bunraku"
+    },
+    "accent": {
+      "follows": "user"
+    },
+    "marks": {
+      "bookFrame": "game-frame"
+    }
+  },
+  "assets": [
+    {
+      "id": "game-frame",
+      "path": "assets/game-frame.svg",
+      "mediaType": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+/** ui.panel ruled-frame: no box at all, only a heavy rule above and a hairline below, like a ruled heading on a page. */
+html[data-surface-ui-panel="ruled-frame"] :is(.scn .plaque, .lib.rc .lrail-head):not(.host-protected, .host-protected *) {
+  border: 0; border-top: 3px double var(--bk-text); border-bottom: 1px solid var(--bk-line-control); box-shadow: none; background: transparent;
+}

@@ -1,0 +1,148 @@
+/*
+ * Bunraku design system, Builder B: hud.html area CSS. Prefix .hud-, area id "hud" (plus "cards").
+ * Tokens only: every selector starts with .hud- or [data-taste-id^="hud."] / [data-taste-id^="cards."].
+ * Variant CSS hangs off [data-taste-id="..."].
+ */
+
+.hud-row { display: flex; flex-wrap: wrap; gap: var(--bk-gap-cards); align-items: flex-start; }
+.hud-col { display: flex; flex-direction: column; gap: var(--bk-space-3); }
+.hud-kind { display: flex; flex-direction: column; gap: var(--bk-space-2); align-items: flex-start; }
+.hud-kind > .bk-meta { order: 2; }
+
+/* a plain button drawn from tokens, since Builder A's controls.css cannot be linked here */
+.hud-btn {
+  display: inline-flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-control-h-md);
+  padding: 0 var(--bk-space-4); font: var(--bk-type-action); text-transform: var(--bk-case-action);
+  color: var(--bk-action-text); background: var(--bk-action-bg); border: 0; cursor: pointer;
+  box-shadow: var(--bk-control-shadow-x) var(--bk-control-shadow-y) 0 0 var(--bk-shadow);
+}
+.hud-btn:hover { background: var(--bk-action-bg-hover); }
+.hud-btn[data-ghost] { color: var(--bk-text); background: none; box-shadow: inset 0 0 0 var(--bk-control-frame-w) var(--bk-line-control); }
+.hud-icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; width: var(--bk-control-h-sm); height: var(--bk-control-h-sm);
+  color: var(--bk-text-dim); background: var(--bk-surface-raised); border: 0; cursor: pointer; flex: none;
+}
+.hud-icon-btn:hover { color: var(--bk-text); }
+.hud-icon-btn svg { width: var(--bk-icon-sm); height: var(--bk-icon-sm); }
+
+/* ================= hud.panel ================= */
+.hud-panel-demo { width: 15rem; }
+.hud-panel-demo .bk-panel__body { gap: var(--bk-space-3); display: flex; flex-direction: column; }
+.hud-panel-facts { display: flex; flex-wrap: wrap; gap: var(--bk-space-1); }
+.hud-panel-foot-live { display: inline-flex; align-items: center; gap: var(--bk-space-1); color: var(--bk-ok); font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label); }
+.hud-panel-foot-live .bk-dot { background: var(--bk-ok); }
+
+/* a: crowned plate - the default .bk-frame[data-crown] reading needs no extra CSS */
+
+/* b: title-bar window - the head bar carries a readout at its end, no crown */
+[data-taste-id="hud.panel.b"] .hud-panel-demo .bk-panel__head { justify-content: space-between; }
+[data-taste-id="hud.panel.b"] .hud-panel-demo .bk-panel__head .bk-readout { margin-left: auto; }
+
+/* c: bracket corners - the outer line is dropped (brackets and the offset shadow, where the theme
+   draws one, still show); a hairline sits under the head via the panel head's own rule shadow */
+[data-taste-id="hud.panel.c"] .hud-panel-demo.bk-frame { --bk-frame-color: transparent; }
+[data-taste-id="hud.panel.c"] .hud-panel-demo .bk-panel__head { box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+
+/* ================= hud.strip ================= */
+.hud-strip-wrap { container-type: inline-size; background: var(--bk-surface-base); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.hud-strip-wrap[data-width="phone"] { width: 24.375rem; max-width: 100%; }
+.hud-strip { display: flex; align-items: center; gap: var(--bk-space-6); padding: var(--bk-space-3) var(--bk-space-5); background: var(--bk-surface-well); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); min-height: var(--bk-hud-h); flex-wrap: wrap; }
+.hud-strip-mark { display: flex; align-items: center; gap: var(--bk-space-3); flex: none; }
+.hud-strip-mark .hud-bun { width: var(--bk-icon-lg); height: var(--bk-icon-lg); flex: none; background: var(--bk-tint); }
+.hud-strip-mid { flex: 1; min-width: 0; display: flex; align-items: center; gap: var(--bk-space-6); justify-content: center; flex-wrap: wrap; }
+.hud-strip-score { display: flex; align-items: center; gap: var(--bk-space-5); }
+.hud-strip-right { flex: none; display: flex; align-items: center; gap: var(--bk-space-5); }
+@container (max-width: 30rem) {
+  .hud-strip { gap: var(--bk-space-3); justify-content: flex-start; }
+  .hud-strip-mid { justify-content: flex-start; order: 3; flex-basis: 100%; }
+  .hud-strip-right { order: 2; }
+}
+
+/* b: corner readouts - the mid group empties, the meter moves into the right group */
+[data-taste-id="hud.strip.b"] .hud-strip-mid { justify-content: flex-start; }
+[data-taste-id="hud.strip.b"] .hud-strip-mid .hud-strip-score { display: none; }
+
+/* c: status rail - the readouts move to a bottom status bar; the top strip keeps only the brand */
+.hud-status-rail { display: flex; align-items: center; gap: var(--bk-space-5); padding: 0 var(--bk-space-5); min-height: var(--bk-status-h); background: var(--bk-surface-ink); flex-wrap: wrap; }
+[data-taste-id="hud.strip.c"] .hud-strip-top { min-height: calc(var(--bk-hud-h) * 0.6); }
+[data-taste-id="hud.strip.c"] .hud-strip-top .hud-strip-mid,
+[data-taste-id="hud.strip.c"] .hud-strip-top .hud-strip-right { display: none; }
+
+/* ================= hud.readout ================= */
+.hud-readout-leader { display: flex; justify-content: space-between; align-items: baseline; gap: var(--bk-space-2); min-width: 12rem; padding: var(--bk-space-1) 0; background-image: radial-gradient(circle, var(--bk-line) 1px, transparent 1px); background-position: bottom 0.4em left 0; background-size: 6px 1px; background-repeat: repeat-x; }
+.hud-readout-leader .bk-meta { background: var(--bk-surface-well); padding-right: var(--bk-space-1); }
+.hud-readout-leader .bk-num { background: var(--bk-surface-well); padding-left: var(--bk-space-1); color: var(--bk-tint-text); font-weight: var(--bk-fw-mono-strong); }
+.hud-readout-leader-list { display: flex; flex-direction: column; gap: var(--bk-space-1); background: var(--bk-surface-well); padding: var(--bk-space-2); }
+.hud-readout-gauge { display: flex; flex-direction: column; gap: var(--bk-space-1); width: 7rem; }
+.hud-readout-gauge .bk-meter__track { height: calc(var(--bk-meter-h) * 0.6); }
+
+/* ================= hud.meter ================= */
+.hud-meter-ladder { display: flex; align-items: center; gap: var(--bk-space-3); min-width: 0; }
+.hud-meter-ladder[data-stacked] { flex-direction: column; align-items: stretch; gap: var(--bk-space-1); }
+.hud-meter-ladder .bk-meter__row { display: flex; justify-content: space-between; gap: var(--bk-space-2); }
+.hud-meter-ladder-blocks { display: flex; gap: var(--bk-space-half); flex: 1; min-width: 4rem; }
+.hud-meter-ladder-blocks i { flex: 1; height: var(--bk-meter-h-lg); background: var(--bk-viz-track); display: block; }
+.hud-meter-ladder-blocks i[data-on] { background: var(--bk-tint-text); }
+.hud-meter-first { display: flex; flex-direction: column; gap: var(--bk-space-1); min-width: 8rem; }
+.hud-meter-first .bk-readout__value { font-size: var(--bk-fs-2xl); color: var(--bk-tint-text); }
+.hud-meter-first .bk-meter__track { height: calc(var(--bk-meter-h) * 0.7); }
+.hud-meter-strength { display: flex; flex-direction: column; gap: var(--bk-space-1); width: 12rem; }
+
+/* ================= hud.tag ================= */
+.hud-tag-edge { position: relative; width: 8rem; height: 4rem; background: var(--bk-surface-panel); box-shadow: inset 0 0 0 1px var(--bk-line); }
+.hud-tag-edge-tab {
+  position: absolute; top: 0; left: var(--bk-space-2); transform: translateY(-50%);
+  padding: var(--bk-space-half) var(--bk-space-2); font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label);
+  background: var(--bk-tint); color: var(--bk-text-on-tint);
+}
+.hud-tag-edge-tab[data-plate="ok"] { background: var(--bk-ok-bg); color: var(--bk-ok); }
+.hud-tag-edge-tab[data-plate="warn"] { background: var(--bk-warn-bg); color: var(--bk-warn); }
+.hud-tag-edge-tab[data-plate="danger"] { background: var(--bk-danger-bg); color: var(--bk-danger); }
+
+/* ================= cards.portrait ================= */
+.hud-card { position: relative; width: var(--bk-card-w-sm); aspect-ratio: var(--bk-card-ratio); overflow: visible; color: var(--bk-text); text-decoration: none; display: block; }
+.hud-card[data-w="lg"] { width: var(--bk-card-w-lg); }
+.hud-card-art {
+  position: absolute; overflow: hidden;
+  inset: calc(var(--bk-crown-w) + var(--bk-frame-gap) + var(--bk-frame-inner-w)) calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)) calc(var(--bk-frame-gap) + var(--bk-frame-inner-w));
+  background: linear-gradient(170deg, color-mix(in srgb, var(--bk-tint) 50%, var(--bk-surface-panel)), var(--bk-surface-panel) 88%);
+}
+.hud-card-mono { position: absolute; inset: 0; display: grid; place-items: center; font: var(--bk-fw-name) var(--bk-fs-4xl)/1 var(--bk-font-name); font-variation-settings: var(--bk-font-axes); color: color-mix(in srgb, var(--bk-text) 35%, transparent); }
+.hud-card-badge { position: absolute; top: var(--bk-space-2); left: var(--bk-space-2); z-index: var(--bk-z-mark); display: inline-flex; align-items: center; gap: var(--bk-space-1); padding: var(--bk-space-half) var(--bk-space-2); background: var(--bk-ok-bg); color: var(--bk-ok); font: var(--bk-type-label); text-transform: var(--bk-case-label); }
+.hud-card-slot { position: absolute; top: var(--bk-space-2); right: var(--bk-space-2); z-index: var(--bk-z-mark); }
+.hud-card-marker { position: absolute; top: 2.4rem; left: 50%; transform: translateX(-50%); z-index: var(--bk-z-mark); padding: var(--bk-space-half) var(--bk-space-2); background: var(--bk-tint); color: var(--bk-text-on-tint); font: var(--bk-type-label); text-transform: var(--bk-case-label); }
+.hud-card-ov { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: var(--bk-space-3); background: linear-gradient(transparent, color-mix(in srgb, var(--bk-surface-ink) 85%, transparent) 50%); }
+.hud-card-who { font: var(--bk-type-small); color: var(--bk-tint-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hud-card-title { margin-top: var(--bk-space-1); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.hud-card-meta { margin-top: var(--bk-space-2); display: flex; gap: var(--bk-space-1); flex-wrap: wrap; }
+.hud-card-takes { display: flex; align-items: center; gap: var(--bk-space-2); position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; height: 1.9rem; padding: 0 var(--bk-space-3); background: color-mix(in srgb, var(--bk-surface-ink) 90%, var(--bk-tint)); box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-line); }
+.hud-card[data-hastakes] .hud-card-ov { bottom: 1.9rem; }
+.hud-card-newtile { display: flex; align-items: center; justify-content: center; color: var(--bk-text-dim); background: var(--bk-surface-sunken); box-shadow: inset 0 0 0 1px var(--bk-line); cursor: pointer; }
+
+/* b: art and plate - art fills the top two thirds, a solid info plate sits below with a title bar */
+[data-taste-id="cards.portrait.b"] .hud-card-art { inset: calc(var(--bk-crown-w) + var(--bk-frame-gap) + var(--bk-frame-inner-w)) calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)) 40% calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)); }
+[data-taste-id="cards.portrait.b"] .hud-card-plate { position: absolute; left: calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)); right: calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)); bottom: calc(var(--bk-frame-gap) + var(--bk-frame-inner-w)); top: 60%; background: var(--bk-surface-raised); display: flex; flex-direction: column; }
+[data-taste-id="cards.portrait.b"] .hud-card-plate-head { padding: var(--bk-space-2) var(--bk-space-2) 0; }
+[data-taste-id="cards.portrait.b"] .hud-card-plate-body { padding: var(--bk-space-1) var(--bk-space-2) var(--bk-space-2); flex: 1; }
+[data-taste-id="cards.portrait.b"] .hud-card-ov,
+[data-taste-id="cards.portrait.b"] .hud-card-takes { display: none; }
+
+/* c: art and stat column - art fills, a narrow right-hand column of mono readouts rides over it */
+[data-taste-id="cards.portrait.c"] .hud-card-stats { position: absolute; top: calc(var(--bk-crown-w) + var(--bk-space-2)); right: var(--bk-space-2); bottom: var(--bk-space-2); z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: var(--bk-space-2); align-items: flex-end; }
+[data-taste-id="cards.portrait.c"] .hud-card-stats .bk-readout { background: color-mix(in srgb, var(--bk-surface-ink) 70%, transparent); padding: var(--bk-space-1); }
+[data-taste-id="cards.portrait.c"] .hud-card-ov { right: 3.4rem; }
+
+/* ================= cards.asset ================= */
+.hud-asset { position: relative; width: 16rem; display: flex; flex-direction: column; background: var(--bk-surface-panel); }
+.hud-asset-spine { padding-left: var(--bk-space-3); }
+.hud-asset-spine::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: var(--bk-space-2); background: var(--bk-tint); }
+.hud-asset-body { padding: var(--bk-space-3) var(--bk-space-3) var(--bk-space-2); }
+.hud-asset-lv { font: var(--bk-type-label); letter-spacing: var(--bk-track-label); text-transform: var(--bk-case-label); color: var(--bk-tint-text); margin-top: var(--bk-space-1); }
+.hud-asset-facts { display: flex; gap: var(--bk-space-1); flex-wrap: wrap; margin-top: var(--bk-space-2); }
+.hud-asset-foot { display: flex; align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-divider-color); }
+.hud-asset-foot .hud-asset-spacer { flex: 1; }
+
+/* b: cartridge - a top label strip with the name and a level readout, facts below, tools in the foot */
+[data-taste-id="cards.asset.b"] .hud-asset-cart-head { display: flex; align-items: center; justify-content: space-between; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); background: color-mix(in srgb, var(--bk-tint) var(--bk-head-fill-mix), var(--bk-surface-raised)); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+[data-taste-id="cards.asset.b"] .hud-asset-spine::before { content: none; }
+[data-taste-id="cards.asset.b"] .hud-asset-spine { padding-left: 0; }

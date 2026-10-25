@@ -1,0 +1,71 @@
+:global(html[data-surface-scenes-list="marquee-hero"]) .room {
+  --stage-well: var(--premiere-canvas); --stage-sunken: var(--premiere-hard); --stage-panel: var(--premiere-panel);
+  --stage-row: var(--premiere-panel);
+  --stage-line: var(--stage-seam);
+  --stage-black: var(--premiere-hard); --stage-card: var(--premiere-text); --stage-white: var(--premiere-text);
+  --stage-soft: color-mix(in srgb, var(--premiere-text) 82%, var(--premiere-gold));
+  --stage-mute: var(--text-dim);
+  --stage-text-dim: var(--stage-mute); --stage-kicker: var(--premiere-gold);
+  --stage-seam: var(--control-boundary);
+  --face: var(--premiere-panel); --chrome: var(--premiere-hard); --text: var(--premiere-text);
+  --text-soft: var(--stage-soft); --edge: var(--stage-seam); --seam: var(--stage-seam);
+  --shell-panel: var(--premiere-panel); --shell-panel-2: var(--premiere-canvas);
+  --stamp-bg: var(--premiere-panel); --stamp-fg: var(--premiere-text); --stamp-shadow: transparent;
+}
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.lib.rc) { --cw: min(calc(7rem + (var(--card-w, 8.5rem) - 4rem) * 1.6), 85cqi); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lrail) { width: 17rem; border-right: 1px solid var(--stage-seam); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lrail-head) { padding: 1rem; border-bottom: 1px solid var(--stage-seam); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lrail-head .ttl) { font-size: 1.15rem; letter-spacing: .06em; }
+@container (max-width: 48rem) { :global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lrail) { width: auto; flex: none; } }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lrail .tile) { border: 1px solid var(--stage-seam); background: transparent; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lsec) { background: transparent; border: 0; border-bottom: 1px solid var(--stage-seam); box-shadow: none; padding: .5rem 0; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lsec::before), :global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lsec .num) { display: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lsec .stitle) { text-transform: none; font-size: 1.3rem; text-shadow: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rcard) { border: 1px solid var(--stage-seam); box-shadow: none; border-radius: 0; background: var(--premiere-panel); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rcard::before), :global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rcard::after) { display: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rcard:hover) { transform: translateY(-2px); box-shadow: 0 5px 18px var(--premiere-hard); border-color: var(--premiere-gold); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rasset.book) { aspect-ratio: auto; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rasset.book > .rart) { padding: 0; aspect-ratio: 2 / 3; flex-shrink: 0; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rasset.book .rart::before) { display: none; }
+.room:global(.lib.rc)[data-book-details="minimal"] :global(.rasset.book .rstats), .room:global(.lib.rc)[data-book-details="minimal"] :global(.rasset.book .rabody) { display: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.ltb), :global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.lfilter) { border: 1px solid var(--stage-seam); box-shadow: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.rstart), :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero-ov .s-btn) { background: var(--accent-deep); color: var(--bk-text-on-deep); box-shadow: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.stagerow) { gap: 0; border: 1px solid var(--stage-seam); border-radius: 0; overflow: hidden; background: var(--premiere-panel); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero) { width: 55%; height: 16rem; border: 0; box-shadow: none; background: var(--premiere-panel); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero > .art) { width: 36%; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero-ov) { left: 38%; right: 1rem; top: 1rem; bottom: 1rem; padding: 0; background: transparent; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero-ov h2) { font-size: 1.45rem; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero .badge) { display: none; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.preview) { height: 16rem; border: 0; box-shadow: none; background: var(--premiere-canvas); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.sc) { border: 1px solid var(--stage-seam); border-radius: 0; box-shadow: none; }
+.room :global(.scene-view-switch) { display: flex; gap: .4rem; }
+.room :global(.scene-list .grid) { display: flex; flex-direction: column; }
+.room :global(.scene-entry) { position: relative; }
+.room :global(.scene-entry > .sc) { display: block; }
+.room :global(.scene-more) { position: absolute; z-index: 4; right: .4rem; top: 50%; transform: translateY(-50%); background: var(--canvas); color: var(--chrome-structure); border: 1px solid var(--control-boundary); border-radius: 0; padding: .4rem; }
+.room :global(.scene-period) { margin: .5rem 0; font: 500 1.3rem var(--font-fancy); color: var(--chrome-structure); }
+.room :global(.scene-list .sc) { width: 100%; height: 4.5rem; aspect-ratio: auto; }
+.room :global(.scene-list .sc .art) { height: 100%; background: var(--stage-panel); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.sc .who), :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.sc .meta b), :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.takestrip .active), :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero-stats b), :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.pv-msg-tx b) { color: var(--premiere-gold); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.takestrip .pips span) { width: .55rem; height: .55rem; border-radius: 50%; border: 1px solid var(--premiere-gold); background: transparent; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.takestrip .pips span.on) { background: var(--accent); }
+.room :global(.scene-list .sc .art > img) { width: 8rem; object-fit: cover; }
+.room :global(.scene-list .sc .ini) { left: 0; top: 0; width: 8rem; height: 100%; transform: none; display: grid; place-items: center; color: var(--chrome-structure); font-size: 1.5rem; }
+.room :global(.scene-list .sc .ov) { inset: .5rem 35% .5rem 9rem; padding: 0; background: transparent; }
+.room :global(.scene-list .sc h3) { font-size: 1rem; margin: .2rem 0; -webkit-line-clamp: 1; }
+.room :global(.scene-list .sc .who) { font-size: var(--text-meta); }
+.room :global(.scene-list .takestrip) { left: auto; right: 3rem; top: 50%; bottom: auto; transform: translateY(-50%); width: 30%; background: transparent; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.favorites-shelf) { margin-bottom: 1.5rem; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.favorites-shelf h2) { font: 500 1.4rem var(--font-fancy); color: var(--premiere-gold); }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.favorites-shelf .grid-scroll) { height: 10rem; max-height: 10rem; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.favorites-shelf .grid) { grid-auto-rows: 9rem; }
+:global(html[data-surface-scenes-list="marquee-hero"]) .room :global(.favorites-shelf .sc) { height: 9rem; }
+@container (max-width: 42rem) {
+  :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.stagerow) { flex-direction: column; }
+  :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.hero), :global(html[data-surface-scenes-list="marquee-hero"]) .room:global(.scn) :global(.preview) { width: 100%; }
+  .room :global(.scene-list .sc .art > img) { width: 4rem; }
+  .room :global(.scene-list .sc .ini) { width: 4rem; }
+  .room :global(.scene-list .sc) { height: 6.5rem; }
+  .room :global(.scene-list .sc .ov) { left: 4.5rem; right: .5rem; bottom: 2.5rem; }
+  .room :global(.scene-list .takestrip) { left: 4.5rem; right: .5rem; top: auto; bottom: .4rem; transform: none; width: auto; height: 1.5rem; padding: 0; }
+}

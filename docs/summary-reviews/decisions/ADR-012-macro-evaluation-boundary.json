@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-012-macro-evaluation-boundary",
+  "sourcePath": "docs/decisions/ADR-012-macro-evaluation-boundary.md",
+  "sourceHash": "sha256:074d60c06a62311017e5f9c3b5cd25f20b2b15239580a968070a56852dc2e4d3",
+  "semanticSummaryHash": "sha256:9e4ef9bc2a46772dd8df34fb818f82e3d0e2e88bce88b544466940a040de7dfe",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:11.724Z"
+}

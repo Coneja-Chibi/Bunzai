@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pairing landing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  .main { display: flex; flex-direction: column; gap: 1.4rem; }
+  .pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 1.2rem; align-items: stretch; }
+  .side { padding: 1.4rem; display: flex; flex-direction: column; gap: 0.8rem; }
+  .side .big { display: flex; gap: 1rem; align-items: center; }
+  .side .big .avatar { width: 5rem; height: 5rem; font-size: 2.2rem; }
+  .side .name { font-family: var(--font-fancy); font-weight: 900; font-size: 1.8rem; text-transform: uppercase; line-height: 1.05; }
+  .side .desc { font-size: 1.05rem; color: var(--text-soft); }
+  .picker { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .pick { display: flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.5rem 0.3rem 0.3rem; border: 2px solid var(--edge); background: var(--panel); cursor: pointer; font-family: var(--font-mono); font-size: 0.7rem; }
+  .pick .avatar { width: 1.7rem; height: 1.7rem; font-size: 0.7rem; }
+  .pick.on { background: var(--accent-deep); color: var(--stage-white); border-color: var(--accent-deep); }
+  .amp { display: grid; place-items: center; font-family: var(--font-fancy); font-weight: 900; font-size: 2.4rem; color: var(--accent-deep); }
+  .premise { padding: 1.2rem 1.4rem; display: grid; grid-template-columns: 1fr auto; gap: 0.8rem; align-items: end; }
+  .premise label { display: block; font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 0.4rem; }
+  .premise input { width: 100%; font-family: var(--font-body); font-style: italic; font-size: 1.15rem; padding: 0.6rem 0.8rem; border: 3px solid var(--edge); background: var(--panel); color: var(--text); }
+  .recent { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.8rem; }
+  .combo { display: flex; align-items: center; gap: 0.5rem; padding: 0.7rem; background: var(--face); border: 2px solid var(--edge); cursor: pointer; }
+  .combo .x { font-family: var(--font-fancy); font-weight: 900; color: var(--accent-deep); }
+  .combo .t { font-family: var(--font-big); font-weight: 800; font-size: 0.78rem; text-transform: uppercase; margin-left: 0.3rem; }
+  .combo .s { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); margin-left: 0.3rem; }
+  @media (max-width: 60rem) { .pair { grid-template-columns: 1fr; } .amp { display: none; } }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>05 The Pairing</span><button data-theme-switch>Theme</button><a href="index.html">All ten</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Hm</div><div class="app-btn">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+  <header class="topbar"><div class="crumb"><b>Home</b> / start a scene</div><div class="search">Find a character...</div></header>
+  <main class="main">
+    <div><div class="kicker">Before the curtain</div><h1 class="marquee" style="font-size: clamp(1.8rem, 3.4vw, 2.8rem);">Who are you <em>tonight?</em></h1></div>
+    <div class="pair">
+      <section class="panel side">
+        <div class="kicker">You</div>
+        <div class="big"><div class="avatar" style="--tone: var(--stage-dim)" id="youAv">W</div><div><div class="name" id="youName">Wren</div><div class="desc voice" id="youDesc">a courier who reads other people's letters</div></div></div>
+        <div class="picker" data-side="you">
+          <div class="pick on" data-g="W" data-n="Wren" data-d="a courier who reads other people's letters"><div class="avatar" style="--tone: var(--stage-dim)">W</div>Wren</div>
+          <div class="pick" data-g="H" data-n="Hale" data-d="the new lighthouse inspector"><div class="avatar" style="--tone: var(--stage-dim)">H</div>Hale</div>
+          <div class="pick" data-g="+" data-n="New persona" data-d="make someone to be"><div class="avatar" style="--tone: var(--stage-dim)">+</div>New</div>
+        </div>
+      </section>
+      <div class="amp">&amp;</div>
+      <section class="panel side">
+        <div class="kicker">Opposite you</div>
+        <div class="big"><div class="avatar" style="--tone: var(--deck-character)" id="themAv">V</div><div><div class="name" id="themName">Vera Lune</div><div class="desc voice" id="themDesc">keeper of the lamp, who has not slept since the storm</div></div></div>
+        <div class="picker" data-side="them">
+          <div class="pick on" data-g="V" data-n="Vera Lune" data-d="keeper of the lamp, who has not slept since the storm" data-t="--deck-character"><div class="avatar" style="--tone: var(--deck-character)">V</div>Vera</div>
+          <div class="pick" data-g="M" data-n="The Magpie" data-d="a thief who returns things, eventually" data-t="--deck-preset"><div class="avatar" style="--tone: var(--deck-preset)">M</div>Magpie</div>
+          <div class="pick" data-g="N" data-n="Nuit" data-d="reads cards and lies about them" data-t="--deck-persona"><div class="avatar" style="--tone: var(--deck-persona)">N</div>Nuit</div>
+          <div class="pick" data-g="I" data-n="Iris Vane" data-d="a duelist who keeps her appointments" data-t="--deck-regex"><div class="avatar" style="--tone: var(--deck-regex)">I</div>Iris</div>
+        </div>
+      </section>
+    </div>
+    <section class="panel premise">
+      <div><label for="p">Where it starts (optional)</label><input id="p" placeholder="The storm has passed, but the lamp is still out..."></div>
+      <button class="btn">Begin &rarr;</button>
+    </section>
+    <div class="kicker">Recent pairings</div>
+    <div class="recent">
+      <div class="combo"><div class="avatar" style="--tone: var(--stage-dim)">W</div><span class="x">&amp;</span><div class="avatar" style="--tone: var(--deck-character)">V</div><div><div class="t">Wren &amp; Vera</div><div class="s">The Drowned Lamp &middot; continue</div></div></div>
+      <div class="combo"><div class="avatar" style="--tone: var(--stage-dim)">W</div><span class="x">&amp;</span><div class="avatar" style="--tone: var(--deck-persona)">N</div><div><div class="t">Wren &amp; Nuit</div><div class="s">A Card for Nuit &middot; continue</div></div></div>
+      <div class="combo"><div class="avatar" style="--tone: var(--stage-dim)">H</div><span class="x">&amp;</span><div class="avatar" style="--tone: var(--deck-regex)">I</div><div><div class="t">Hale &amp; Iris</div><div class="s">new pairing idea</div></div></div>
+    </div>
+  </main>
+</div>
+
+<div class="wf-note"><b>The idea:</b> the app opens on starting something. Two aligned panels: who you are (your persona) and who is opposite you (a character), each with a quick picker. An optional one-line premise, then Begin. Recent pairings below restart a favorite combination or continue its scene. Best for people who begin new scenes often.</div>
+
+<script>
+  document.querySelectorAll(".picker").forEach((row) => row.addEventListener("click", (e) => {
+    const p = e.target.closest(".pick"); if (!p) return;
+    row.querySelectorAll(".pick").forEach((x) => x.classList.remove("on")); p.classList.add("on");
+    const side = row.dataset.side;
+    document.getElementById(`${side}Av`).textContent = p.dataset.g;
+    document.getElementById(`${side}Name`).textContent = p.dataset.n;
+    document.getElementById(`${side}Desc`).textContent = p.dataset.d;
+    if (p.dataset.t) document.getElementById(`${side}Av`).style.setProperty("--tone", `var(${p.dataset.t})`);
+  }));
+</script>
+</body>
+</html>

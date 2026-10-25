@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-008-react-ui",
+  "sourcePath": "docs/decisions/ADR-008-react-ui.md",
+  "sourceHash": "sha256:a71e59b73fda43fa4c1bb3e7d8aa49d163768f141de28b3018733f6931425681",
+  "semanticSummaryHash": "sha256:21e0e5cbef4e094df71cd5b69a81d7a03dc4432fe0c83ea808769e7bed7bc276",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text is accurate against the current sources; summary fresh, scans clean.",
+  "reviewedAt": "2026-10-24T21:56:33.857Z"
+}

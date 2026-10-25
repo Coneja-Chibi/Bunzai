@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Library, combined</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+  body { --bg: var(--stage-well); --raise: var(--stage-sunken); --hard: var(--stage-black); }
+  .app { grid-template-columns: 4.2rem 20rem 1fr; }
+  /* the rail (unchanged from the approved port) */
+  .side { background: var(--bg); border-right: 2px solid var(--hard); display: flex; flex-direction: column; height: 100vh; position: sticky; top: 0; }
+  .side-head { padding: 22px 22px 14px; text-align: center; background: var(--raise); border-bottom: 2px solid var(--hard); }
+  .side-head .ey { font-family: var(--font-fancy); font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--stage-kicker); margin-bottom: 8px; }
+  .side-head .ttl { font-family: var(--font-fancy); font-size: 24px; letter-spacing: 6px; font-weight: 600; color: var(--stage-card); }
+  .side-head .ttl em { font-style: normal; color: var(--accent); }
+  .toggle { margin-top: 12px; display: inline-flex; border: 2px solid var(--hard); background: var(--hard); gap: 1px; }
+  .toggle button { padding: 6px 12px; font-family: var(--font-fancy); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; border: none; background: var(--bg); color: var(--stage-mute); cursor: pointer; }
+  .toggle button.on { background: var(--accent-deep); color: var(--stage-white); }
+  .scroll { flex: 1; overflow-y: auto; padding-top: 14px; }
+  .divider { display: flex; align-items: center; gap: 10px; padding: 0 20px 8px; font-family: var(--font-fancy); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-kicker); }
+  .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--stage-seam); }
+  .rows { padding: 0 16px 8px; }
+  .row-d { display: flex; align-items: center; gap: 12px; padding: 9px 12px; border-left: 3px solid transparent; cursor: pointer; }
+  .row-d.on { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent); border-left-color: var(--accent); }
+  .tile { width: 38px; height: 38px; flex: none; display: grid; place-items: center; background: var(--raise); border: 2px solid var(--hard); color: var(--stage-mute); font-size: 15px; }
+  .row-d .n { font-size: 15px; color: var(--stage-soft); } .row-d .d { font-size: 12px; color: var(--stage-text-dim); }
+  .row-d .tx { flex: 1; }
+  .cnt { min-width: 32px; padding: 3px 9px; text-align: center; font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; background: var(--raise); border: 1.5px solid color-mix(in srgb, var(--accent) 50%, transparent); color: var(--stage-soft); }
+  .add { padding: 18px; background: var(--raise); border-top: 2px solid var(--hard); }
+  .add button { width: 100%; padding: 13px; font-family: var(--font-fancy); font-weight: 800; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-white); background: var(--accent-deep); border: 2px solid var(--hard); box-shadow: 4px 4px 0 var(--hard); }
+
+  .main { padding: 14px 26px 80px; min-width: 0; }
+  .topbar { display: flex; gap: 10px; align-items: stretch; margin-bottom: 12px; flex-wrap: wrap; }
+  .search { flex: 1; min-width: 14rem; display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: var(--raise); border: 3px solid var(--hard); box-shadow: 3px 3px 0 var(--hard); font-family: var(--font-mono); font-size: 12px; color: var(--stage-text-dim); }
+  .search b { color: var(--stage-soft); font-size: 10px; letter-spacing: 0.12em; }
+  .seg { display: inline-flex; border: 3px solid var(--hard); box-shadow: 3px 3px 0 var(--hard); }
+  .seg button { font-family: var(--font-fancy); font-weight: 700; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 0 14px; min-height: 36px; background: var(--raise); color: var(--stage-soft); border: none; border-left: 2px solid var(--hard); cursor: pointer; }
+  .seg button:first-child { border-left: none; }
+  .seg button.on { background: var(--accent-deep); color: var(--stage-white); }
+  .dial { display: flex; align-items: center; gap: 8px; padding: 0 12px; border: 3px solid var(--hard); background: var(--raise); font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--stage-text-dim); }
+  .dial input { width: 7rem; accent-color: var(--accent); }
+  .tb { font-family: var(--font-fancy); font-weight: 700; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; padding: 0 14px; background: var(--raise); color: var(--stage-soft); border: 3px solid var(--hard); box-shadow: 3px 3px 0 var(--hard); }
+  .groups { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--stage-text-dim); }
+  .groups span.c { border: 2px solid var(--stage-line); padding: 3px 8px; color: var(--stage-soft); }
+  .sendbar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 8px; background: var(--stage-paper); color: var(--stage-ink); border: 3px solid var(--hard); box-shadow: 4px 4px 0 var(--accent); font-family: var(--font-big); font-weight: 900; font-size: 12px; }
+  .sendbar button { font: inherit; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 12px; border: 3px solid var(--hard); cursor: pointer; }
+  .sendbar .go { background: var(--accent-deep); color: var(--stage-white); }
+  .sendbar .del { background: var(--rose-deep); color: var(--stage-white); }
+  .sendbar .q { background: transparent; border-width: 2px; font-family: var(--font-mono); font-size: 10px; }
+
+  /* LibrarySectionHeader + the section's own view switch */
+  .section { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 22px; margin: 36px 0 14px; padding: 20px 24px 20px 32px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 13%, transparent), transparent 75%), var(--stage-panel); border: 2px solid var(--hard); box-shadow: 4px 4px 0 var(--hard); }
+  .section::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--accent); }
+  .num { font-family: var(--font-fancy); font-weight: 900; font-size: 2.4rem; color: var(--accent); min-width: 52px; }
+  .stitle { font-family: var(--font-fancy); font-weight: 900; font-size: 2rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stage-card); line-height: 1; }
+  .stitle em { font-style: normal; color: var(--accent); }
+  .ssub { margin-top: 6px; font-size: 15px; color: var(--stage-soft); }
+  .sside { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+  .scount { padding: 6px 14px; font-family: var(--font-mono); font-size: 0.95rem; font-weight: 700; color: var(--stage-card); background: var(--raise); border: 2px solid color-mix(in srgb, var(--accent) 52%, transparent); }
+  .scount em { font-style: normal; color: var(--accent); margin-left: 8px; }
+  .views { display: flex; gap: 6px; align-items: center; }
+  .views .seg button { min-height: 28px; font-size: 10px; padding: 0 10px; }
+  .new { font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: var(--stage-text-dim); border: 2px solid var(--stage-line); padding: 5px 9px; }
+
+  .row { display: flex; gap: 20px; overflow-x: auto; padding: 6px 10px 18px 4px; scrollbar-width: none; align-items: stretch; }
+  .scrub { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, transparent); margin: 0 8px; }
+  .scrub i { display: block; height: 100%; width: 55%; border-radius: 999px; background: color-mix(in srgb, var(--accent) 60%, transparent); }
+
+  /* the card shell and its states */
+  .card { position: relative; flex: none; width: 23.75rem; display: flex; flex-direction: column; overflow: hidden; background: var(--stage-panel); border: 3px solid var(--hard); box-shadow: 6px 6px 0 var(--hard); color: var(--stage-soft); cursor: pointer; }
+  .card::after { content: ""; position: absolute; inset: 4px; border: 1px solid var(--t); opacity: 0.4; pointer-events: none; z-index: 3; }
+  .card.pick { outline: 3px solid var(--accent); outline-offset: -3px; box-shadow: 9px 9px 0 var(--accent); transform: translate(-3px, -3px); }
+  .check { position: absolute; top: 0; right: 0; z-index: 6; width: 1.4rem; height: 1.4rem; background: var(--accent); border-left: 3px solid var(--hard); border-bottom: 3px solid var(--hard); }
+  .bench { position: absolute; top: 0; right: 0; z-index: 6; background: var(--t); color: var(--stage-ink); font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 6px; border-left: 3px solid var(--hard); border-bottom: 3px solid var(--hard); }
+  .foot { margin-top: auto; padding: 12px 18px; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--stage-seam); font-size: 12px; color: var(--stage-text-dim); flex-wrap: wrap; }
+  .foot .grow { flex: 1; }
+  .more { width: 32px; height: 32px; display: grid; place-items: center; background: var(--raise); border: 2px solid var(--stage-seam); color: var(--stage-card); font-weight: 900; }
+  /* the shelf tools, now on the card itself */
+  .tools { display: flex; gap: 6px; align-items: center; padding: 10px 18px; border-top: 1px dashed var(--stage-seam); background: var(--stage-row); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stage-text-dim); }
+  .sw { width: 28px; height: 15px; border: 2px solid var(--hard); background: var(--stage-ok); position: relative; }
+  .sw::after { content: ""; position: absolute; right: 1px; top: 1px; width: 9px; height: 9px; background: var(--stage-card); }
+  .sw.off { background: var(--stage-faint); } .sw.off::after { left: 1px; right: auto; }
+  .act { border: 1px solid var(--stage-line); padding: 3px 7px; color: var(--stage-card); background: transparent; font: inherit; }
+  .fact { border: 1px solid var(--stage-line); padding: 2px 6px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--stage-soft); }
+  .slow { background: var(--stage-warn-ink); color: var(--stage-warn); border: 1px solid var(--stage-warn); padding: 2px 6px; font-family: var(--font-mono); font-size: 9px; }
+  .dropnote { outline: 3px dashed var(--accent); outline-offset: 4px; }
+  .droptip { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); z-index: 7; background: var(--accent-deep); color: var(--stage-white); font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 10px; border: 2px solid var(--hard); white-space: nowrap; }
+
+  /* ContentCharacterCard: tall portrait */
+  .char { min-height: 40rem; border-color: var(--t); box-shadow: 6px 6px 0 color-mix(in srgb, var(--t) 67%, transparent); }
+  .char .art { flex: 1; min-height: 26rem; position: relative; background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--t) 40%, transparent), transparent 60%), var(--stage-well);
+    -webkit-mask-image: linear-gradient(to bottom, black 67%, transparent); mask-image: linear-gradient(to bottom, black 67%, transparent); display: grid; place-items: center; font-family: var(--font-fancy); font-size: 4rem; color: var(--t); }
+  .char .body { padding: 14px 16px 0; }
+  .badges { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .genre { background: var(--t); color: var(--stage-ink); font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; }
+  .def { background: var(--accent-deep); color: var(--stage-white); font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 2px 7px; }
+  .cname { font-family: var(--font-fancy); font-weight: 700; font-size: 15px; letter-spacing: 0.03em; color: var(--stage-card); }
+  .line { font-family: var(--font-body); font-style: italic; font-size: 15px; color: var(--stage-soft); margin: 4px 0 8px; }
+  /* ContentPresetCard */
+  .strip { padding: 8px 16px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; background: color-mix(in srgb, var(--t) 7%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--t) 12%, transparent); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stage-text-dim); }
+  .strip b { font-size: 12px; color: var(--stage-card); margin-right: 3px; }
+  .pbody { padding: 18px 18px 0; display: flex; gap: 14px; }
+  .picon { width: 56px; height: 56px; flex: none; display: grid; place-items: center; background: color-mix(in srgb, var(--t) 15%, transparent); border: 1px solid color-mix(in srgb, var(--t) 30%, transparent); color: var(--t); font-size: 22px; }
+  .plabel { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stage-text-dim); }
+  .ptitle { font-family: var(--font-fancy); font-weight: 600; font-size: 1rem; color: var(--stage-card); }
+  .pdesc { padding: 10px 18px 12px; font-size: 13px; line-height: 1.6; color: var(--stage-text-dim); }
+  /* AssetCard lorebook */
+  .lore { height: 34rem; }
+  .cover { flex: none; aspect-ratio: 1 / 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--t) 18%, transparent), var(--stage-well)), repeating-linear-gradient(90deg, transparent 0 2px, color-mix(in srgb, var(--t) 6%, transparent) 2px 4px); }
+  .cover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: linear-gradient(90deg, color-mix(in srgb, var(--t) 50%, transparent), transparent); }
+  .cover .g { font-size: 3rem; color: var(--t); }
+  .pill { padding: 6px 12px; border-radius: 20px; font-size: 12px; background: color-mix(in srgb, var(--t) 25%, var(--stage-sunken)); color: var(--stage-card); }
+  .ahead { padding: 16px 18px 4px; }
+  .atitle { font-family: var(--font-fancy); font-weight: 700; font-size: 20px; color: var(--stage-card); }
+  .ameta { font-size: 12px; color: var(--stage-text-dim); }
+  .off .cover { filter: grayscale(0.7); }
+  /* ContentRegexCard */
+  .regex { border: 1px solid color-mix(in srgb, var(--t) 30%, transparent); box-shadow: none; min-height: 17rem; }
+  .regex::after { display: none; }
+  .rhead { padding: 10px 16px; display: flex; gap: 12px; background: color-mix(in srgb, var(--t) 10%, transparent); font-size: 12px; font-weight: 600; color: var(--stage-soft); }
+  .rbody { padding: 14px 16px; flex: 1; }
+  .rtitle { font-size: 16px; font-weight: 500; color: var(--stage-card); }
+  .rdoes { font-size: 13px; color: var(--stage-text-dim); margin-top: 8px; line-height: 1.5; }
+  /* the New tile that closes a row, as the shelves had */
+  .newtile { flex: none; width: 14rem; border: 3px dashed var(--stage-line); display: grid; place-items: center; font-family: var(--font-big); font-weight: 900; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stage-text-dim); background: transparent; }
+
+  /* a section switched to List, and to Show: the Hoplight views, per deck, right here */
+  .listv { border: 3px solid var(--hard); background: var(--stage-panel); }
+  .lrow { display: grid; grid-template-columns: 40px 1fr auto auto auto; gap: 12px; align-items: center; padding: 8px 14px; border-top: 1px solid var(--stage-seam); font-size: 14px; color: var(--stage-card); }
+  .lrow:first-child { border-top: none; }
+  .th { width: 40px; height: 40px; background: color-mix(in srgb, var(--t) 50%, var(--stage-well)); }
+  .kd { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stage-text-dim); border: 1px solid var(--stage-line); padding: 2px 6px; }
+
+  /* the checklist */
+  .check-panel { position: fixed; right: 16px; top: 16px; width: 22rem; max-height: calc(100vh - 32px); overflow: auto; z-index: 50; background: var(--stage-paper); color: var(--stage-ink); border: 3px solid var(--hard); box-shadow: 6px 6px 0 var(--hard); padding: 14px 16px; font-size: 12px; }
+  .check-panel h3 { font-family: var(--font-big); font-size: 14px; margin: 0 0 8px; }
+  .check-panel table { border-collapse: collapse; width: 100%; }
+  .check-panel td { border-top: 1px solid color-mix(in srgb, var(--stage-ink) 20%, transparent); padding: 4px 4px 4px 0; vertical-align: top; }
+  .check-panel td:first-child { font-weight: 700; width: 45%; }
+  .check-panel .hide { float: right; font: inherit; font-size: 11px; background: transparent; border: 1px solid; cursor: pointer; }
+  .check-panel.min table { display: none; }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>Library, combined</span><button data-theme-switch>Theme</button><a href="library.html">Old port</a><a href="../index.html">All wireframes</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn on">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+
+  <aside class="side">
+    <div class="side-head">
+      <div class="ey">Your collection</div>
+      <div class="ttl">THE <em>LIBRARY</em></div>
+      <div class="toggle"><button class="on">Carousel</button><button>Grid</button></div>
+    </div>
+    <div class="scroll">
+      <div class="divider">Decks</div>
+      <div class="rows">
+        <div class="row-d"><span class="tile">&#9786;</span><div class="tx"><div class="n">Characters</div><div class="d">Your cast</div></div><span class="cnt">41</span></div>
+        <div class="row-d"><span class="tile">&#9636;</span><div class="tx"><div class="n">Lorebooks</div><div class="d">World knowledge</div></div><span class="cnt">18</span></div>
+        <div class="row-d"><span class="tile">&#9787;</span><div class="tx"><div class="n">Personas</div><div class="d">Who you play</div></div><span class="cnt">4</span></div>
+        <div class="row-d"><span class="tile">&#9707;</span><div class="tx"><div class="n">Sprite packs</div><div class="d">Expressions and art</div></div><span class="cnt">2</span></div>
+        <div class="row-d"><span class="tile">&#9881;</span><div class="tx"><div class="n">Presets</div><div class="d">Prompts and samplers</div></div><span class="cnt">12</span></div>
+        <div class="row-d"><span class="tile">&#8651;</span><div class="tx"><div class="n">Regex sets</div><div class="d">Text transformations</div></div><span class="cnt">9</span></div>
+        <div class="row-d"><span class="tile">&#10148;</span><div class="tx"><div class="n">Quick replies</div><div class="d">One-tap lines</div></div><span class="cnt">0</span></div>
+      </div>
+      <div class="divider">Collections</div>
+      <div class="rows"><div class="row-d"><span class="tile">&#9707;</span><div class="tx"><div class="n">Harbor Town</div><div class="d">7 pieces</div></div></div></div>
+    </div>
+    <div class="add"><button>+ Add to the library</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="search"><b>FIND</b> name, kind:preset, from:sillytavern, has:art</div>
+      <div class="seg"><button class="on">All</button><button>Recent</button></div>
+      <div class="dial">art <input type="range" value="60"></div>
+      <button class="tb">Select all</button>
+    </div>
+    <div class="groups">groups <span class="c">Harbor Town</span><span class="c">+ new group</span></div>
+    <div class="sendbar">2 pieces staged <button class="go">Send all 2 to the Workbench</button><button class="del">Delete all 2</button><button class="q">Clear</button></div>
+
+    <!-- Characters: Cards -->
+    <section class="section"><div class="num">I.</div><div><div class="stitle">Charac<em>ters</em></div><div class="ssub">Your cast</div></div>
+      <div class="sside"><div class="scount">41<em>characters</em></div>
+        <div class="views"><div class="seg"><button class="on">Cards</button><button>Tiles</button><button>List</button><button>Show</button><button>Shelf</button></div><button class="new">+ New</button></div></div></section>
+    <div class="row">
+      <article class="card char pick" style="--t: var(--deck-character)"><div class="art">V</div><div class="body"><div class="badges"><span class="genre">SillyTavern V3</span></div><div class="cname">Vera Lune</div><div class="line">"Who did you let up the stairs?"</div></div>
+        <div class="foot"><span class="fact">9/9 fields</span><span class="fact">~2.4K tok</span><span class="grow"></span><span class="more">&middot;&middot;&middot;</span></div><span class="check"></span></article>
+      <article class="card char" style="--t: var(--deck-persona)"><div class="art">N</div><div class="body"><div class="badges"><span class="genre">CC V2</span></div><div class="cname">Nuit</div><div class="line">"Cut the deck."</div></div>
+        <div class="foot"><span class="fact">5/9 fields</span><span class="fact">~900 tok</span><span class="grow"></span><span class="more">&middot;&middot;&middot;</span></div><span class="bench">on the workbench</span></article>
+      <article class="card char" style="--t: var(--deck-preset)"><div class="art">M</div><div class="body"><div class="badges"><span class="genre">RoleCall V3</span></div><div class="cname">The Magpie</div><div class="line">"The lock gave on the third try."</div></div>
+        <div class="foot"><span class="fact">7/9 fields</span><span class="fact">~1.8K tok</span><span class="grow"></span><span class="more">&middot;&middot;&middot;</span></div></article>
+    </div>
+    <div class="scrub"><i></i></div>
+
+    <!-- Lorebooks: Cards, with the shelf tools on each card -->
+    <section class="section"><div class="num">II.</div><div><div class="stitle">Lore<em>books</em></div><div class="ssub">World knowledge</div></div>
+      <div class="sside"><div class="scount">18<em>lorebooks</em></div>
+        <div class="views"><div class="seg"><button class="on">Cards</button><button>Tiles</button><button>List</button><button>Show</button><button>Shelf</button></div><button class="new">+ New</button></div></div></section>
+    <div class="row">
+      <article class="card lore dropnote" style="--t: var(--deck-lorebook)"><div class="cover"><span class="g">&#9636;</span><span class="pill">213 entries</span></div>
+        <div class="ahead"><div class="atitle">Harbor Town</div><div class="ameta">Imported 1 week ago &middot; SillyTavern &middot; ~92.6K tok</div></div>
+        <div class="tools"><span class="sw"></span>On<span class="grow" style="flex:1"></span><button class="act">Split</button><button class="act">Copy</button><span class="more">&middot;&middot;&middot;</span></div>
+        <span class="droptip">Drop to merge into Harbor Town</span></article>
+      <article class="card lore off" style="--t: var(--deck-lorebook)"><div class="cover"><span class="g">&#9636;</span><span class="pill">12 entries</span></div>
+        <div class="ahead"><div class="atitle">The Lighthouse</div><div class="ameta">Imported 2 days ago &middot; Risu &middot; ~3.4K tok</div></div>
+        <div class="tools"><span class="sw off"></span>Off, skipped on export<span class="grow" style="flex:1"></span><button class="act">Split</button><button class="act">Copy</button><span class="more">&middot;&middot;&middot;</span></div></article>
+      <div class="newtile">+ New lorebook</div>
+    </div>
+
+    <!-- Regex: Cards with the Sets tools -->
+    <section class="section"><div class="num">III.</div><div><div class="stitle">Regex <em>sets</em></div><div class="ssub">Text transformations</div></div>
+      <div class="sside"><div class="scount">9<em>regex sets</em></div>
+        <div class="views"><div class="seg"><button class="on">Cards</button><button>Tiles</button><button>List</button><button>Show</button><button>Sets</button><button>Shelf</button></div><button class="new">+ New</button></div></div></section>
+    <div class="row">
+      <article class="card regex" style="--t: var(--deck-regex)"><div class="rhead"><span>4 of 5 rules on</span><span>SillyTavern</span></div>
+        <div class="rbody"><div class="rtitle">Tidy asterisks</div><div class="ameta">Imported today</div><div class="rdoes">Collapses doubled asterisks and trims stray spaces around dialogue.</div></div>
+        <div class="tools"><span class="sw"></span>On<span class="slow">1 slow</span><span class="grow" style="flex:1"></span><button class="act">Split</button><button class="act">Copy</button><span class="more">&middot;&middot;&middot;</span></div></article>
+      <div class="newtile">+ New set</div>
+    </div>
+
+    <!-- Personas: Cards with the persona-shelf facts -->
+    <section class="section"><div class="num">IV.</div><div><div class="stitle">Pers<em>onas</em></div><div class="ssub">Who you play</div></div>
+      <div class="sside"><div class="scount">4<em>personas</em></div>
+        <div class="views"><div class="seg"><button class="on">Cards</button><button>Tiles</button><button>List</button><button>Show</button><button>Shelf</button></div><button class="new">+ New</button></div></div></section>
+    <div class="row">
+      <article class="card char" style="--t: var(--deck-persona); min-height: 34rem"><div class="art" style="min-height: 20rem">W</div><div class="body"><div class="badges"><span class="def">Default</span><span class="genre">she/her</span></div><div class="cname">Wren</div><div class="line">"A night keeper with a short fuse."</div></div>
+        <div class="foot"><span class="fact">3 sections</span><span class="fact">has a lorebook</span><span class="grow"></span><span class="more">&middot;&middot;&middot;</span></div></article>
+      <div class="newtile">+ New persona</div>
+    </div>
+
+    <!-- Presets switched to List, right in the section -->
+    <section class="section"><div class="num">V.</div><div><div class="stitle">Pre<em>sets</em></div><div class="ssub">Prompts and samplers</div></div>
+      <div class="sside"><div class="scount">12<em>presets</em></div>
+        <div class="views"><div class="seg"><button>Cards</button><button>Tiles</button><button class="on">List</button><button>Show</button><button>Shelf</button></div><button class="new">+ New</button></div></div></section>
+    <div class="listv">
+      <div class="lrow" style="--t: var(--deck-preset)"><span class="th"></span><span>Chibi Gram Pacer</span><span class="kd">preset</span><span class="kd">SillyTavern</span><span class="kd">1.0 temp &middot; 47 prompts</span></div>
+      <div class="lrow" style="--t: var(--deck-preset)"><span class="th"></span><span>H.T. Case Files, Milquetoast</span><span class="kd">preset</span><span class="kd">SillyTavern</span><span class="kd">0.9 temp &middot; 88 prompts</span></div>
+      <div class="lrow" style="--t: var(--deck-preset)"><span class="th"></span><span>Paramnesia VI RC</span><span class="kd">preset</span><span class="kd">RoleCall</span><span class="kd">1.0 temp &middot; 134 prompts</span></div>
+    </div>
+  </main>
+</div>
+
+<aside class="check-panel" id="cp"><h3>Where every Hoplight control lives <button class="hide" onclick="document.getElementById('cp').classList.toggle('min')">hide</button></h3>
+<table>
+  <tr><td>Deck chips + counts</td><td>Rail rows (click one to show it alone; again for all)</td></tr>
+  <tr><td>Search, filter terms, no-match notice</td><td>Top bar, unchanged</td></tr>
+  <tr><td>View switch (Grid, Show, List, Shelf, Sets)</td><td>On every section header, per deck, no deck-picking needed. Grid is named Tiles.</td></tr>
+  <tr><td>Art size dial</td><td>Top bar, sizes Cards and Tiles</td></tr>
+  <tr><td>Select all, send bar, collections, delete</td><td>Top bar and bars below it, unchanged</td></tr>
+  <tr><td>New per deck + New set / New persona cards</td><td>Header "+ New", and a New tile closing each row</td></tr>
+  <tr><td>Drag a box to select</td><td>Grid layout and Tiles</td></tr>
+  <tr><td>Lorebook on/off, Split, Copy</td><td>On the lorebook card itself</td></tr>
+  <tr><td>Drag a book onto a book to merge</td><td>Drag one lorebook card onto another</td></tr>
+  <tr><td>Regex on/off, Split, Copy, merge, slow flag, rules on of total, what it does</td><td>On the regex card itself</td></tr>
+  <tr><td>Persona Default, brief, pronouns, sections, lorebook</td><td>On the persona card itself</td></tr>
+  <tr><td>Shelf facts: format, tokens, fields</td><td>Card footers</td></tr>
+  <tr><td>Shelf search by name, key, tag</td><td>Top search (it already reads names, ids, lorebook keys; tags get added)</td></tr>
+  <tr><td>Show: hero, words, prev/next, thumb rail</td><td>Section switched to Show</td></tr>
+  <tr><td>List rows</td><td>Section switched to List (Presets shown here)</td></tr>
+  <tr><td>On the workbench tick, staged check, right-click menu</td><td>Every card</td></tr>
+  <tr><td>Damage notice, import, drop anywhere</td><td>Unchanged</td></tr>
+</table></aside>
+
+<div class="wf-note"><b>The Library, combined:</b> RoleCall's /library page with every control Hoplight's Library had, placed on the page itself instead of behind picking a deck. Each section header carries that deck's view switch and New; each card carries its own tools (on/off, Split, Copy, drag-to-merge, Default, facts); the art dial sits in the top bar. The checklist on the right names where each old control went.</div>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Director automatic updates</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<link rel="stylesheet" href="../play-shared/play.css">
+<script src="../play-shared/palettes.js"></script>
+<script src="../play-shared/play.js"></script>
+<style>
+/* Bunraku part: the real Director, Props and tracker styles copied from tracker-updates.html (generated from director-style.ts, props-style.ts, tracker-style.ts). Theme tokens only. */
+.ds{--w:var(--deck-persona);display:flex;flex-direction:column;gap:12px}
+.ds-block{display:flex;flex-direction:column;gap:6px}
+.ds-h{font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-text-dim)}
+.ds-help{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.ds-amber{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-warn)}
+.ds-err{margin:0;font:var(--text-meta)/1.5 var(--font-body);color:var(--stage-danger-text)}
+.ds-quiet{align-self:flex-start;padding:0;border:0;background:none;color:var(--stage-soft);font:var(--text-meta)/1.4 var(--font-body);text-decoration:underline;cursor:pointer}
+.ds-box{display:flex;flex-direction:column;gap:6px;padding:12px;border:2px solid var(--stage-black);background:var(--stage-well);box-shadow:2px 2px 0 0 var(--stage-black)}
+.ds-box .ds-h{color:var(--stage-card);letter-spacing:.14em}
+.ds-seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+.ds-seg button{padding:4px 10px;border:1px solid var(--stage-line);background:transparent;color:var(--stage-text-dim);font:600 var(--text-meta)/1.3 var(--font-body);cursor:pointer}
+.ds-seg button.on{border-color:var(--w);background:color-mix(in srgb,var(--w) 15%,transparent);color:var(--stage-card)}
+.ds-modes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.ds-modes button{display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--stage-seam);background:var(--stage-row);color:var(--stage-soft);text-align:left;font:var(--text-meta)/1.45 var(--font-body);cursor:pointer}
+.ds-modes button.on{border-color:var(--w);background:color-mix(in srgb,var(--w) 12%,transparent)}
+.ds-modes b{display:flex;align-items:center;gap:6px;font:600 var(--text-control)/1.4 var(--font-body);color:var(--stage-card)}
+@container (max-width:30rem){.ds-modes{grid-template-columns:1fr}}
+.ds-cap{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid color-mix(in srgb,var(--c) 25%,transparent);background:color-mix(in srgb,var(--c) 6%,transparent);color:var(--c);font:var(--text-meta)/1.4 var(--font-body)}
+.ds-cap.ok{--c:var(--stage-ok)}.ds-cap.warn{--c:var(--stage-warn)}.ds-cap.info{--c:var(--bk-role-info-text)}
+.ds-runtime{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.ds-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent);font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-text-dim)}
+.ds-row>span:first-child{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.ds-row svg{color:var(--stage-soft)}
+.ds-row input{width:4.5rem;padding:4px 6px;border:1px solid var(--stage-line);background:var(--stage-row);color:var(--stage-soft);text-align:center;font:var(--text-meta) var(--font-body)}
+.ds-row input:focus{outline:none;border-color:var(--w)}
+.ds-instr{padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent)}
+.ds-instr label{display:flex;align-items:center;gap:6px;margin-bottom:4px;font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-text-dim)}
+.ds-instr textarea{width:100%;padding:6px 8px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:var(--text-meta)/1.6 var(--font-body);resize:vertical}
+.ds-instr textarea:focus{outline:none;border-color:var(--w)}
+.ds-instr p{display:flex;justify-content:space-between;margin:4px 0 0;font:var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
+.pw{gap:16px}
+.pw-heroWrap{position:relative}
+.pw-tipbtn{position:absolute;top:12px;right:12px;padding:6px 10px;border:1px solid color-mix(in srgb,var(--stage-card) 15%,transparent);background:var(--stage-black);color:var(--stage-soft);font:700 var(--text-meta)/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.pw-tipbtn:hover{border-color:var(--w);color:var(--stage-card)}
+.pw-label{padding:0 4px;margin-bottom:-8px;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:var(--stage-soft)}
+.pw-list{display:flex;flex-direction:column;gap:8px}
+.pw-row{position:relative;display:flex;align-items:center;gap:12px;padding:10px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-panel) 50%,transparent);cursor:pointer}
+.pw-row:hover{border-color:color-mix(in srgb,var(--stage-card) 20%,transparent)}
+.pw-row:focus-visible{outline:2px solid color-mix(in srgb,var(--stage-card) 20%,transparent);outline-offset:0}
+.pw-row.soon{cursor:default;opacity:.55;background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.pw-ic{width:32px;height:32px;flex:none;display:grid;place-items:center;background:color-mix(in srgb,var(--tone) 12%,transparent);color:var(--tone)}
+.pw-text{min-width:0;flex:1}
+.pw-name{font-size:14px;font-weight:600;color:var(--stage-card);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pw-tier{font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--stage-mute)}
+.pw-end{display:flex;align-items:center;gap:6px}
+.pw-gear{padding:6px;border:0;background:none;color:var(--stage-soft);cursor:pointer;display:grid;place-items:center}
+.pw-gear:hover{color:var(--stage-card)}
+.pw-row.soon .pw-gear{cursor:default;color:var(--stage-line)}
+.pw-row .tg.on{background:var(--tone)}
+.pw-sub{margin:8px 0 0 20px;padding-left:12px;border-left:1px solid color-mix(in srgb,var(--tone,var(--w)) 25%,transparent)}
+.pw-tip{display:none;position:absolute;left:44px;top:calc(100% + 4px);z-index:5;width:min(320px,90%);padding:10px 12px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-soft);font:400 var(--text-body)/1.5 var(--font-body);pointer-events:none}
+.pw-tip b{color:var(--stage-card)}
+.pw-tip p{margin:4px 0 0}
+.pw-tip ul{margin:6px 0 0;padding-left:16px}
+.pw-row:hover .pw-tip,.pw-row:focus-visible .pw-tip{display:block}
+.pw-subrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px;border:1px solid color-mix(in srgb,var(--stage-card) 8%,transparent);background:color-mix(in srgb,var(--stage-panel) 50%,transparent)}
+.pw-subrow b{display:block;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.15em;text-transform:uppercase;color:var(--tone,var(--stage-card))}
+.pw-subrow small{display:block;margin-top:2px;font:400 var(--text-meta)/1.5 var(--font-body);color:var(--stage-mute)}
+.wing-panel.l.props-wing:has(.pw[data-open]){width:min(900px,100%)}
+.pw-back{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-soft);font:700 var(--text-meta)/1 var(--font-body);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.pw-back:hover{border-color:var(--w);color:var(--stage-card)}
+.pw-box{padding:10px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.pw-box.story{border-color:color-mix(in srgb,var(--stage-ok) 25%,transparent);background:color-mix(in srgb,var(--stage-ok) 4%,transparent)}
+.pw-box-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pw-box h4{margin:0;font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.2em;text-transform:uppercase;color:var(--stage-soft)}
+.pw-box.story h4{color:var(--stage-ok)}
+.pw-box-head p{margin:4px 0 0;font:400 var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.pw-chip{flex:none;padding:3px 8px;border:1px solid var(--stage-line);font:700 var(--text-meta)/1.2 var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--stage-mute)}
+.pw-box.story .pw-chip{border-color:color-mix(in srgb,var(--stage-ok) 35%,transparent);color:var(--stage-ok)}
+.pw-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.pw-tile{position:relative;display:flex;flex-direction:column;gap:8px;padding:6px 8px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-panel) 50%,transparent);cursor:pointer}
+.pw-span2{grid-column:span 2;display:flex;flex-direction:column;gap:4px}
+.pw-dots{display:flex;align-items:center;gap:3px;margin-left:auto}
+.pw-dots i{width:5px;height:5px;background:var(--stage-line)}
+.pw-dots i.up{background:color-mix(in srgb,var(--tone) 40%,transparent)}
+.pw-dots i.on{background:var(--tone)}
+.pw-subs{display:flex;flex-direction:column;gap:2px;margin:0 0 2px 12px;padding:2px 0 2px 10px;border-left:2px solid color-mix(in srgb,var(--tone) 40%,transparent)}
+.pw-subs button{display:flex;align-items:center;gap:8px;padding:2px 0;border:0;background:none;color:var(--stage-soft);font:400 var(--text-meta)/1.4 var(--font-body);text-align:left;cursor:pointer}
+.pw-subs button:hover{color:var(--stage-card)}
+.pw-subs i{width:12px;height:12px;border:1.5px solid var(--stage-line);border-radius:50%;display:grid;place-items:center;flex:none}
+.pw-subs i.on{border-color:var(--tone)}
+.pw-subs i.on::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--tone)}
+.pw-tile:hover{border-color:color-mix(in srgb,var(--stage-card) 20%,transparent)}
+.pw-tile.on{border-color:color-mix(in srgb,var(--tone) 44%,transparent);background:color-mix(in srgb,var(--tone) 8%,transparent)}
+.pw-tile.story{min-height:96px;padding:12px}
+.pw-tile-head{display:flex;align-items:center;gap:8px;color:var(--stage-mute)}
+.pw-tile.on .pw-tile-head{color:var(--tone)}
+.pw-tile.soon{cursor:default;opacity:.55}
+.pw-tile.soon:hover{border-color:color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.pw-tile-name{flex:1;min-width:0;font:400 var(--text-meta)/1.3 var(--font-body);color:var(--stage-mute)}
+.pw-tile.on .pw-tile-name{color:var(--stage-card)}
+.pw-tile.story .pw-tile-name{font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.pw-tile-blurb{margin:0;font:400 var(--text-meta)/1.5 var(--font-body);color:var(--stage-soft)}
+.pw-tile .pw-chip{margin-left:auto}
+.pw-tile.on .pw-chip{border-color:color-mix(in srgb,var(--stage-card) 30%,transparent);color:var(--stage-card)}
+.pw-tile .pw-tip{left:8px;top:calc(100% + 4px)}
+.pw-tile:hover .pw-tip,.pw-tile:focus-visible .pw-tip{display:block}
+.prop-note{font:400 var(--text-body)/1.4 var(--font-body);color:var(--stage-mute)}
+.trk{display:flex;flex-direction:column;min-height:0}
+.trk>.hero{margin:16px 16px 0}
+.trk-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:10px 16px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.trk-badges,.trk-actions{display:flex;align-items:center;gap:6px;min-width:0}
+.trk-tokens{padding:2px 8px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 60%,transparent);font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-soft)}
+.trk-btn{display:grid;place-items:center;padding:6px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 40%,transparent);color:var(--stage-soft);box-shadow:2px 2px 0 0 var(--stage-black);cursor:pointer}
+.trk-btn:hover,.trk-btn.on{border-color:var(--w);color:var(--w)}
+.trk-settings{display:flex;flex-direction:column;gap:10px;padding:12px 16px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent)}
+.trk-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font:400 var(--text-control)/1.4 var(--font-body);color:var(--stage-soft)}
+.trk-row span{display:inline-flex;align-items:center;gap:6px}
+.trk-row select{padding:2px 6px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer}
+.trk-row select:focus{outline:none;border-color:var(--w)}
+.trk-rule{border-top:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent)}
+.trk-clear{display:inline-flex;align-items:center;gap:6px;padding:4px 0;border:0;background:none;color:var(--stage-danger-text);font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer;text-align:left}
+.trk-confirm p{margin:0 0 6px;color:var(--stage-danger-text);font:400 var(--text-control)/1.4 var(--font-body)}
+.trk-confirm div{display:flex;gap:8px}
+.trk-yes,.trk-no{padding:4px 10px;border:0;font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer}
+.trk-yes{background:var(--stage-danger-bg);color:var(--stage-danger-text)}
+.trk-no{background:var(--stage-black);color:var(--stage-soft)}
+.trk-error{margin:0;padding:8px 16px;background:var(--stage-danger-bg);color:var(--stage-danger-text);font:400 var(--text-control)/1.4 var(--font-body)}
+.trk-undo{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;background:var(--stage-panel);color:var(--stage-soft);font:400 var(--text-control)/1.4 var(--font-body)}
+.trk-undo button{padding:2px 10px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-card);font:700 var(--text-meta)/1.4 var(--font-body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.trk-body{flex:1;min-height:0}
+.tg{position:relative;flex:none;border:0;padding:0;background:var(--stage-line);cursor:pointer;width:32px;height:16px}.tg::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;background:var(--stage-white)}.tg.on{background:var(--stage-ok)}.tg.on::after{left:18px}
+/* wireframe-only helpers */
+.fr svg { width: 1em; height: 1em; }
+.fr .dr-ico svg, .fr .ds-row svg, .fr .dr-sub svg { width: 12px; height: 12px; }
+.fr .trk-btn svg { width: 14px; height: 14px; }
+.ds-row small.unit { font: var(--text-meta) var(--font-body); color: var(--stage-soft); margin-left: 6px; }
+.ds-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ds-hint { margin: 0; padding: 0 8px 4px; font: var(--text-meta)/1.45 var(--font-body); color: var(--stage-soft); }
+.ds-hint.warn { color: var(--stage-warn); }
+.ds-aware { display: flex; flex-direction: column; gap: 2px; }
+.ds-aware > .ds-row { margin: 0; }
+.ds-row.off { opacity: .5; pointer-events: none; }
+.ds-row .scene-default { font: var(--text-meta) var(--font-body); color: var(--stage-mute); }
+.ds-row .linkish { padding: 0; border: 0; background: none; color: var(--w); font: var(--text-meta) var(--font-body); text-decoration: underline; cursor: pointer; }
+.trk-set { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); }
+.trk-set .ds-row { padding: 0; border: 0; background: none; font: var(--text-control)/1.4 var(--font-body); color: var(--stage-soft); }
+.trk-set .ds-row select { padding: 2px 6px; border: 1px solid var(--stage-line); background: var(--stage-black); color: var(--stage-card); font: var(--text-meta) var(--font-body); }
+.trk-set .ds-row input { width: 3rem; }
+.trk-set .ds-row .stack { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.pw-tip.on { display: block; position: relative; left: 0; top: 0; width: auto; max-width: 22rem; margin-top: 6px; }
+.dr-pane.flush { padding: 0; }
+.cap-note { font-family: var(--font-mono); font-size: .68rem; line-height: 1.55; color: var(--text-dim); max-width: 60rem; }
+.cap-note b { color: var(--text); }
+
+/* new in this wireframe (Bunraku) */
+.cmp { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-items: start; }
+@media (max-width: 56rem) { .cmp { grid-template-columns: 1fr; } }
+.col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.col > h3 { margin: 0; font-family: var(--font-mono); font-size: var(--text-meta); letter-spacing: .14em; text-transform: uppercase; color: var(--text); border-bottom: 2px solid var(--accent); padding-bottom: 4px; }
+.col > h3.today { border-bottom-color: var(--text-faint); color: var(--text-dim); }
+.sec-h { margin: 0; font-family: var(--font-big); font-size: 1rem; }
+.sub-cap { margin: 0; font-family: var(--font-mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.bpad { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.stp { display: inline-flex; align-items: center; gap: 4px; }
+.stp button { width: 24px; height: 24px; padding: 0; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-soft); font: 700 var(--text-control)/1 var(--font-body); cursor: pointer; }
+.stp button:hover:not(:disabled) { border-color: var(--w); color: var(--stage-card); }
+.stp button:disabled { opacity: .35; cursor: default; }
+.stp input { width: 2.6rem; }
+.ds-list { display: flex; flex-direction: column; gap: 4px; }
+.ds-trow { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); font: var(--text-meta)/1.4 var(--font-body); color: var(--stage-text-dim); }
+.ds-trow b { flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 6px; font-weight: 500; color: var(--stage-soft); }
+.ds-trow .ev { display: inline-flex; align-items: center; gap: 6px; }
+.ds-trow.off .ev { opacity: .35; pointer-events: none; }
+.ds-trow.off b { color: var(--stage-mute); }
+.ds-trow input { width: 2.6rem; padding: 3px 4px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-soft); text-align: center; font: var(--text-meta) var(--font-body); }
+.ds-trow svg { width: 12px; height: 12px; color: var(--stage-soft); }
+.ds-list-h { margin: 4px 0 0; font: 700 var(--text-meta)/1.4 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--stage-text-dim); }
+.ds-row.def { background: color-mix(in srgb, var(--w) 8%, transparent); border-color: color-mix(in srgb, var(--w) 30%, transparent); }
+.trk-ro { display: flex; flex-direction: column; gap: 2px; font: var(--text-control)/1.4 var(--font-body); color: var(--stage-soft); }
+.trk-ro > span { display: inline-flex; align-items: center; gap: 6px; }
+.trk-ro.dim > span { color: var(--stage-mute); }
+.trk-ro .linkish { align-self: flex-start; margin-left: 20px; }
+.ds-trow .linkish, .ds-hint .linkish { padding: 0; border: 0; background: none; color: var(--w); font: var(--text-meta) var(--font-body); text-decoration: underline; cursor: pointer; }
+.fr .ds, .fr .trk { --w: var(--deck-persona); }
+
+/* RoleCall part: a mock of RC's own look. These values restate RC's Tailwind zinc scale and wing accent for this mock only; they are not Bunraku tokens and must not be copied into Bunraku code. */
+.rcm { --z950: #09090b; --z900: #18181b; --z800: #27272a; --z700: #3f3f46; --z600: #52525b; --z500: #71717a; --z400: #a1a1aa; --z300: #d4d4d8; --z200: #e4e4e7; --z100: #f4f4f5; --acc: #a78bfa; --acc-soft: rgba(167,139,250,.15);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--z300); background: #0b0b0d; border: 1px solid var(--z800); padding: 14px; display: flex; flex-direction: column; gap: 10px; border-radius: 2px; }
+.rcm * { box-sizing: border-box; }
+.rcm .i { width: 12px; height: 12px; flex: none; color: var(--z300); }
+.rcm .box { display: flex; flex-direction: column; gap: 8px; padding: 10px; border: 1px solid var(--z800); background: rgba(9,9,11,.4); border-radius: 2px; }
+.rcm .cell { display: flex; flex-direction: column; gap: 4px; padding: 6px 4px; border: 1px solid rgba(39,39,42,.5); background: rgba(24,24,27,.5); border-radius: 2px; }
+.rcm .line { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rcm .lab { display: inline-flex; align-items: center; gap: 6px; padding-left: 8px; font-size: 10px; color: var(--z400); }
+.rcm .num { width: 40px; padding: 4px 6px; background: var(--z800); border: 1px solid var(--z700); color: var(--z300); font-size: 10px; text-align: center; border-radius: 4px; }
+.rcm .unit { font-size: 9px; color: var(--z300); margin-right: 4px; }
+.rcm .hint { padding-left: 8px; font-size: 9px; color: var(--z400); }
+.rcm .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rcm .mt { position: relative; flex: none; width: 28px; height: 16px; border-radius: 999px; background: var(--z700); border: 0; padding: 0; margin-right: 4px; }
+.rcm .mt::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+.rcm .mt.on { background: var(--acc); } .rcm .mt.on::after { left: 14px; }
+.rcm .stp2 { display: inline-flex; align-items: center; gap: 3px; margin-right: 4px; }
+.rcm .stp2 button { width: 20px; height: 20px; padding: 0; background: var(--z800); border: 1px solid var(--z700); color: var(--z300); font-size: 11px; line-height: 1; border-radius: 4px; }
+.rcm .stp2 button:disabled { opacity: .35; }
+.rcm .stp2 .num { width: 30px; padding: 3px 2px; }
+.rcm .h4 { margin: 2px 0 0; padding-left: 2px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--z300); }
+.rcm .trow { display: flex; align-items: center; gap: 8px; padding: 5px 4px 5px 8px; border: 1px solid rgba(39,39,42,.5); background: rgba(24,24,27,.5); border-radius: 2px; font-size: 10px; color: var(--z300); }
+.rcm .trow .nm { flex: 1; display: inline-flex; align-items: center; gap: 6px; }
+.rcm .trow .ev { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; color: var(--z400); }
+.rcm .trow .ev .num { width: 30px; padding: 2px; }
+.rcm .trow.off .nm { color: var(--z500); } .rcm .trow.off .ev { opacity: .35; }
+.rcm .btn { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px 12px; font-size: 10px; font-weight: 500; border: 1px solid var(--acc); background: var(--acc-soft); color: var(--acc); border-radius: 2px; }
+.rcm .btn .i { color: var(--acc); }
+.rcm .tip { padding: 8px 10px; border: 1px solid var(--z700); background: #000; border-radius: 2px; font-size: 11px; line-height: 1.5; color: var(--z300); max-width: 22rem; }
+.rcm .tip b { color: var(--z100); } .rcm .tip ul { margin: 4px 0 0; padding-left: 16px; } .rcm .tip p { margin: 3px 0 0; }
+.rcm .lk2 { font-size: 9px; color: var(--acc); text-decoration: underline; }
+.rcm.flat { padding: 0; }
+.rcm .set { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px; background: rgba(24,24,27,.6); }
+.rcm .set .row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.rcm .set .row.dim { opacity: .5; pointer-events: none; }
+.rcm .set .t { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--z300); }
+.rcm .set .i { width: 14px; height: 14px; }
+.rcm .set .n { display: inline-block; width: 48px; padding: 2px 6px; background: var(--z800); border: 1px solid var(--z700); color: var(--z100); font-size: 13px; text-align: center; border-radius: 4px; }
+.rcm .set .u { font-size: 12.5px; color: var(--z400); margin-left: 6px; }
+.rcm .set select { background: var(--z800); border: 1px solid var(--z700); color: var(--z100); font-size: 13px; padding: 2px 6px; border-radius: 4px; }
+.rcm .set .ro { display: flex; flex-direction: column; gap: 3px; }
+.rcm .set .ro.dim .t { color: var(--z500); }
+.rcm .set .lk { align-self: flex-start; margin-left: 20px; font-size: 12.5px; color: var(--acc); text-decoration: underline; }
+.rcm .num.inl { display: inline-block; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M8 16H3v5"/></symbol><symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol><symbol id="i-thermometer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></symbol><symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72M14 7l3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9"/></symbol><symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol><symbol id="i-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18ZM12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18ZM15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4M17.599 6.5a3 3 0 0 0 .399-1.375M6.003 5.125A3 3 0 0 0 6.401 6.5M3.477 10.896a4 4 0 0 1 .585-.396M19.938 10.5a4 4 0 0 1 .585.396M6 18a4 4 0 0 1-1.967-.516M19.967 17.484A4 4 0 0 1 18 18"/></symbol><symbol id="i-bookmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></symbol><symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></symbol><symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3ZM6.2 5.3l3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol><symbol id="i-activity" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol><symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></symbol><symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol><symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 8v4M12 16h.01"/></symbol><symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 16v-4M12 8h.01"/></symbol><symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol><symbol id="i-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></symbol><symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol><symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol><symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5M12 7v5l4 2"/></symbol><symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol><symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10ZM2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol><symbol id="i-scroll" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4M19 17V5a2 2 0 0 0-2-2H4"/></symbol></defs></svg>
+<script src="../play-shared/icons.js"></script>
+<div class="page">
+  <div class="themebar"></div>
+  <header class="wf-head"><div>
+    <h1 class="wf-title">Story Director: one switch for automatic tracker updates</h1>
+    <p class="wf-lede">Drawn twice, once in Bunraku's own look and once as a mock of RoleCall's. Each block has a Today column and a Proposed column. The change: no number hides "off". One switch in the Story Director settings turns automatic tracker updates on or off. When it is on, a short list shows every tracker that is switched on in the scene, each with its own switch and its own "every N replies". A tracker's own settings menu has no control for this; it only says what happens and links to the list. The call budget sits inside the same section and shows only while the switch is on.</p>
+  </div></header>
+
+  <div class="wf-note"><b>What each old number hid.</b> Default AI Awareness: 0 meant manual only. Max Tool Rounds: 1 meant trackers never update. A tracker's DM Updates number: 0 meant never, and an empty value meant follow the scene. Now off is a switch and the smallest N is 1. The call budget is called "Model calls per reply", runs 1 to 5, and has no hidden off value: 1 means one call, not "never".</div>
+
+  <section class="pn wide">
+    <h2 class="sec-h">Part 1. Bunraku</h2>
+    <p class="cap2">Square corners, theme tokens only, the app's real Director, Props and tracker styles. The Today frames show the trap values (0 and 1) on purpose.</p>
+
+    <p class="sub-cap">1a. Story Director settings block (Props wing)</p>
+    <div class="cmp">
+      <div class="col"><h3 class="today">Today</h3>
+        <div class="fr auto"><div class="bpad ds" data-part="props.story-director.runtime"><div class="ds-runtime">
+          <div class="ds-aware"><label class="ds-row"><span><svg><use href="#i-refresh"/></svg>Default AI Awareness</span><span><input type="number" value="0" aria-label="Default AI Awareness"><small class="unit">turns</small></span></label>
+            <p class="ds-hint">0 = manual only. Per-panel overrides live in each tracker's settings menu.</p></div>
+          <div class="ds-pair"><div><label class="ds-row"><span><svg><use href="#i-wrench"/></svg>Max Tool Rounds</span><input type="number" value="1" aria-label="Max Tool Rounds"></label>
+            <p class="ds-hint warn" style="padding-top:4px">At 1 the Director only plans. Trackers are not updated by it.</p></div>
+            <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label></div>
+          <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="tg on" aria-label="Auto-retry"></button></div>
+        </div></div></div>
+      </div>
+      <div class="col"><h3>Proposed: switch on</h3>
+        <div class="fr auto"><div class="bpad ds" data-part="props.story-director.runtime"><div class="ds-runtime">
+          <div class="ds-aware" data-part="props.story-director.auto-update">
+            <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Update trackers automatically</span><button class="tg on" aria-label="Update trackers automatically"></button></div>
+            <label class="ds-row def"><span>Every</span><span class="stp"><button type="button" aria-label="Fewer">-</button><input type="number" value="2" min="1" max="99" aria-label="Every N replies, default for all trackers"><button type="button" aria-label="More">+</button><small class="unit">replies</small></span></label>
+            <p class="ds-hint">The default for every tracker below. Change a row to give that tracker its own number.</p>
+            <p class="ds-list-h">Trackers in this scene</p>
+            <div class="ds-list" data-part="props.story-director.auto-update.list">
+              <div class="ds-trow"><b><svg><use href="#i-folder"/></svg>Inventory</b><span class="ev"><span>every</span><input type="number" value="2" aria-label="Inventory, every N replies"><span>replies</span></span><button class="tg on" aria-label="Inventory automatic updates"></button></div>
+              <div class="ds-trow"><b><svg><use href="#i-activity"/></svg>Resources</b><span class="ev"><span>every</span><input type="number" value="1" aria-label="Resources, every N replies"><span>reply</span><button class="linkish" type="button">Use default</button></span><button class="tg on" aria-label="Resources automatic updates"></button></div>
+              <div class="ds-trow"><b><svg><use href="#i-leaf"/></svg>Party</b><span class="ev"><span>every</span><input type="number" value="5" aria-label="Party, every N replies"><span>replies</span><button class="linkish" type="button">Use default</button></span><button class="tg on" aria-label="Party automatic updates"></button></div>
+              <div class="ds-trow off"><b><svg><use href="#i-wrench"/></svg>Battle</b><span class="ev"><span>every</span><input type="number" value="2" aria-label="Battle, every N replies" disabled><span>replies</span></span><button class="tg" aria-label="Battle automatic updates"></button></div>
+            </div>
+            <label class="ds-row" data-part="props.story-director.auto-update.calls"><span><svg><use href="#i-wrench"/></svg>Model calls per reply</span><span class="stp"><span>up to</span><button type="button" aria-label="Fewer" disabled>-</button><input type="number" value="1" min="1" max="5" aria-label="Model calls per reply"><button type="button" aria-label="More">+</button></span></label>
+            <p class="ds-hint">More calls let it handle many trackers and retry a bad answer. Each call costs tokens.</p>
+          </div>
+          <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label>
+          <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="tg on" aria-label="Auto-retry"></button></div>
+        </div></div></div>
+        <h3>Proposed: switch off</h3>
+        <div class="fr auto"><div class="bpad ds"><div class="ds-runtime">
+          <div class="ds-aware">
+            <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Update trackers automatically</span><button class="tg" aria-label="Update trackers automatically"></button></div>
+            <p class="ds-hint">Trackers change only when you edit or Refresh them.</p>
+          </div>
+          <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label>
+        </div></div></div>
+      </div>
+    </div>
+    <p class="cap2"><b>Behavior.</b> The list has one row for each tracker switched on in the scene; switch a tracker on in the scene and it joins the list, switch it off and it leaves. A row's number starts as the default at the top. Typing in a row changes only that row. The smallest number is 1, so there is no zero and no manual number. A row whose number differs from the default shows a small "Use default" link that puts it back. A row switched off keeps its number but dims it. With the switch off, the section is only the switch and one line; the list and the call budget are hidden. Hover text (RoleCall's first sentence kept, storyboards dropped until they use this): <b>Update trackers automatically.</b> Controls how often enabled trackers ask Story Director to refresh state. Off means trackers change only when you edit or Refresh them.</p>
+    <div class="wf-comp">Toggle row + InputField with steppers (rows 1 to 99; calls 1 to 5) &middot; parts: props.story-director.auto-update, .auto-update.list, .auto-update.calls &middot; saved when a field loses focus, like DM Temperature</div>
+
+    <p class="sub-cap">1b. Control Booth, Narrator section (quick access)</p>
+    <div class="cmp">
+      <div class="col"><h3 class="today">Today</h3>
+        <div class="fr auto"><div class="bpad"><div class="ds-runtime" data-part="scene.booth.narrator.runtime">
+          <div class="ds-aware"><label class="ds-row"><span><svg><use href="#i-refresh"/></svg>Default AI Awareness</span><span><input type="number" value="1" aria-label="Default AI Awareness"><small class="unit">turns</small></span></label>
+            <p class="ds-hint">0 = manual only. Per-panel overrides live in each tracker's settings menu.</p></div>
+          <div class="ds-pair"><label class="ds-row"><span><svg><use href="#i-wrench"/></svg>Max Tool Rounds</span><input type="number" value="2" aria-label="Max Tool Rounds"></label>
+            <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label></div>
+          <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="tg on" aria-label="Auto-retry"></button></div>
+        </div></div></div>
+      </div>
+      <div class="col"><h3>Proposed</h3>
+        <div class="fr auto"><div class="bpad ds"><div class="ds-runtime" data-part="scene.booth.narrator.runtime">
+          <div class="ds-aware">
+            <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Update trackers automatically</span><button class="tg on" aria-label="Update trackers automatically"></button></div>
+            <p class="ds-hint">Every 2 replies. <button class="linkish" type="button">Change in Story Director</button></p>
+          </div>
+          <label class="ds-row"><span><svg><use href="#i-thermometer"/></svg>DM Temperature</span><input type="number" value="0.7" aria-label="DM Temperature"></label>
+          <div class="ds-row"><span><svg><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="tg on" aria-label="Auto-retry"></button></div>
+        </div></div></div>
+      </div>
+    </div>
+    <p class="cap2"><b>Fit.</b> Only the switch and one quiet line live here. The line shows the default number and links to the Story Director settings. No trackers and no call budget in the Booth. Both screens write the same stored value.</p>
+
+    <p class="sub-cap">1c. A tracker's own settings menu</p>
+    <div class="cmp">
+      <div class="col"><h3 class="today">Today</h3>
+        <div class="fr auto"><div class="trk"><div class="trk-set">
+          <label class="ds-row"><span><svg><use href="#i-refresh"/></svg>DM Updates</span><span class="stack"><span><input type="number" value="1" aria-label="DM Updates"><small class="unit">turns</small></span><span class="scene-default">Scene default</span></span></label>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+        <div class="fr auto"><div class="trk"><div class="trk-set">
+          <label class="ds-row"><span><svg><use href="#i-refresh"/></svg>DM Updates</span><span class="stack"><span><input type="number" value="3" aria-label="DM Updates"><small class="unit">turns</small></span><button class="linkish" type="button">Use scene default (1)</button></span></label>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+        <div class="fr auto"><div class="trk"><div class="trk-set">
+          <label class="ds-row off"><span><svg><use href="#i-refresh"/></svg>DM Updates</span><span class="stack"><span><input type="number" value="1" aria-label="DM Updates" disabled><small class="unit">turns</small></span></span></label>
+          <p class="ds-hint" style="padding:0">The Story Director is off, so nothing updates this tracker by itself.</p>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+      </div>
+      <div class="col"><h3>Proposed: no control, one line</h3>
+        <p class="sub-cap">Updates on, default number</p>
+        <div class="fr auto"><div class="trk"><div class="trk-set" data-part="props.tracker.auto-update">
+          <div class="trk-ro"><span><svg><use href="#i-refresh"/></svg>Updates automatically every 2 replies</span><button class="linkish" type="button">Change in Story Director</button></div>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+        <p class="sub-cap">This tracker has its own number</p>
+        <div class="fr auto"><div class="trk"><div class="trk-set">
+          <div class="trk-ro"><span><svg><use href="#i-refresh"/></svg>Updates automatically every 5 replies</span><button class="linkish" type="button">Change in Story Director</button></div>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+        <p class="sub-cap">Switched off for this tracker, or the master switch is off</p>
+        <div class="fr auto"><div class="trk"><div class="trk-set">
+          <div class="trk-ro dim"><span><svg><use href="#i-refresh"/></svg>Not updated automatically</span><button class="linkish" type="button">Change in Story Director</button></div>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+        <p class="sub-cap">Story Director off</p>
+        <div class="fr auto"><div class="trk"><div class="trk-set">
+          <div class="trk-ro dim"><span><svg><use href="#i-refresh"/></svg>Story Director is off</span><button class="linkish" type="button">Change in Story Director</button></div>
+          <label class="ds-row"><span><svg><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></label></div></div></div>
+      </div>
+    </div>
+    <p class="cap2"><b>Read-only on purpose.</b> The line is text, not a control, so there is nothing to set to zero or to forget. The link opens the Story Director settings.</p>
+  </section>
+
+  <section class="pn wide">
+    <h2 class="sec-h">Part 2. RoleCall</h2>
+    <p class="cap2">A mock of RoleCall's look (dark zinc, small type, rounded-sm boxes, pill switches) following the StagecraftExtensions and QuickPlayPanel runtime boxes and the immersion panel settings menu. RoleCall has no stepper and no per-tracker list today; those are drawn in the same zinc style.</p>
+
+    <p class="sub-cap">2a. Story Director settings block (Props wing runtime box)</p>
+    <div class="cmp">
+      <div class="col"><h3 class="today">Today</h3>
+        <div class="rcm"><div class="box">
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Default AI Awareness</span><span><span class="num inl">0</span> <span class="unit">turns</span></span></div></div>
+          <div class="pair">
+            <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-wrench"/></svg>Max Tool Rounds</span><span class="num" style="margin-right:4px">1</span></div></div>
+            <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-thermometer"/></svg>DM Temperature</span><span class="num" style="margin-right:4px">0.7</span></div></div>
+          </div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="mt on" aria-label="Auto-retry"></button></div></div>
+          <div class="btn"><svg class="i"><use href="#i-refresh"/></svg>Refresh Enabled Boards</div>
+        </div>
+        <div class="tip"><b>Default AI Awareness</b><p>Controls how often enabled storyboards and trackers ask Story Director to refresh state.</p><ul><li>0 means manual only.</li><li>1 means every user turn.</li><li>Higher numbers reduce token use but update less often.</li></ul></div></div>
+      </div>
+      <div class="col"><h3>Proposed: switch on</h3>
+        <div class="rcm"><div class="box">
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Update trackers automatically</span><button class="mt on" aria-label="Update trackers automatically"></button></div>
+            <div class="line"><span class="lab">Every</span><span class="stp2"><button>-</button><span class="num">2</span><button>+</button><span class="unit" style="margin-left:4px">replies</span></span></div>
+            <span class="hint">The default for every tracker below.</span></div>
+          <p class="h4">Trackers in this scene</p>
+          <div class="trow"><span class="nm"><svg class="i"><use href="#i-folder"/></svg>Inventory</span><span class="ev">every <span class="num">2</span> replies</span><button class="mt on" aria-label="Inventory"></button></div>
+          <div class="trow"><span class="nm"><svg class="i"><use href="#i-activity"/></svg>Resources</span><span class="ev">every <span class="num">1</span> reply <span class="lk2">Use default</span></span><button class="mt on" aria-label="Resources"></button></div>
+          <div class="trow"><span class="nm"><svg class="i"><use href="#i-leaf"/></svg>Party</span><span class="ev">every <span class="num">5</span> replies <span class="lk2">Use default</span></span><button class="mt on" aria-label="Party"></button></div>
+          <div class="trow off"><span class="nm"><svg class="i"><use href="#i-wrench"/></svg>Battle</span><span class="ev">every <span class="num">2</span> replies</span><button class="mt" aria-label="Battle"></button></div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-wrench"/></svg>Model calls per reply</span><span class="stp2"><span class="unit">up to</span><button disabled>-</button><span class="num">1</span><button>+</button></span></div><span class="hint">More calls let it handle many trackers and retry a bad answer. Each call costs tokens.</span></div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-thermometer"/></svg>DM Temperature</span><span class="num" style="margin-right:4px">0.7</span></div></div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="mt on" aria-label="Auto-retry"></button></div></div>
+          <div class="btn"><svg class="i"><use href="#i-refresh"/></svg>Refresh Enabled Boards</div>
+        </div></div>
+        <h3>Proposed: switch off</h3>
+        <div class="rcm"><div class="box">
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Update trackers automatically</span><button class="mt" aria-label="Update trackers automatically"></button></div>
+            <span class="hint">Trackers change only when you edit or Refresh them.</span></div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-thermometer"/></svg>DM Temperature</span><span class="num" style="margin-right:4px">0.7</span></div></div>
+          <div class="btn"><svg class="i"><use href="#i-refresh"/></svg>Refresh Enabled Boards</div>
+        </div>
+        <div class="tip"><b>Update trackers automatically</b><p>Controls how often enabled storyboards and trackers ask Story Director to refresh state.</p><ul><li>Off means trackers change only when you edit or Refresh them.</li><li>Every 1 reply means after each reply. Higher numbers use fewer tokens but update less often.</li></ul></div></div>
+      </div>
+    </div>
+    <p class="cap2"><b>Kept from RoleCall.</b> The box, the row style, the pill switch, the tooltip sentence and the Refresh Enabled Boards button stay. The list and the call budget are new; their rows reuse the same row style, and only trackers switched on in the scene appear. Storyboards join the same list if they use this setting.</p>
+
+    <p class="sub-cap">2b. Control Booth (QuickPlayPanel runtime box)</p>
+    <div class="cmp">
+      <div class="col"><h3 class="today">Today</h3>
+        <div class="rcm"><div class="box">
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Default AI Awareness</span><span><span class="num inl">1</span> <span class="unit">turns</span></span></div><span class="hint">0 = manual only. Per-panel overrides live in each wing panel settings menu.</span></div>
+          <div class="pair">
+            <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-wrench"/></svg>Max Tool Rounds</span><span class="num" style="margin-right:4px">4</span></div></div>
+            <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-thermometer"/></svg>DM Temperature</span><span class="num" style="margin-right:4px">0.7</span></div></div>
+          </div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="mt on" aria-label="Auto-retry"></button></div></div>
+          <div class="btn"><svg class="i"><use href="#i-refresh"/></svg>Refresh Enabled Boards</div>
+        </div></div>
+      </div>
+      <div class="col"><h3>Proposed</h3>
+        <div class="rcm"><div class="box">
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Update trackers automatically</span><button class="mt on" aria-label="Update trackers automatically"></button></div><span class="hint">Every 2 replies. <span class="lk2">Change in Story Director</span></span></div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-thermometer"/></svg>DM Temperature</span><span class="num" style="margin-right:4px">0.7</span></div></div>
+          <div class="cell"><div class="line"><span class="lab"><svg class="i"><use href="#i-refresh"/></svg>Auto-retry invalid tool responses</span><button class="mt on" aria-label="Auto-retry"></button></div></div>
+          <div class="btn"><svg class="i"><use href="#i-refresh"/></svg>Refresh Enabled Boards</div>
+        </div></div>
+      </div>
+    </div>
+    <p class="cap2"><b>Fit.</b> Only the switch and one quiet line. No trackers and no call budget in the Booth. The Booth keeps no call-budget control.</p>
+
+    <p class="sub-cap">2c. A tracker's own settings menu (immersion panel AI settings)</p>
+    <div class="cmp">
+      <div class="col"><h3 class="today">Today</h3>
+        <div class="rcm flat"><div class="set">
+          <div class="row"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>DM Updates</span><span><span class="n">1</span><span class="u">turns</span></span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+        <div class="rcm flat"><div class="set">
+          <div class="row"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>DM Updates</span><span><span class="n">3</span><span class="u">turns</span></span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+        <div class="rcm flat"><div class="set">
+          <div class="row dim"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>DM Updates</span><span><span class="n">1</span><span class="u">turns</span></span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+        <p class="cap2">RoleCall shows only the number, dimmed when the Director is off, with no sentence saying why and no use-scene-default control. Frames: following the scene, its own number, Director off.</p>
+      </div>
+      <div class="col"><h3>Proposed: no control, one line</h3>
+        <p class="sub-cap">Updates on, default number</p>
+        <div class="rcm flat"><div class="set"><div class="ro"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>Updates automatically every 2 replies</span><span class="lk">Change in Story Director</span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+        <p class="sub-cap">This tracker has its own number</p>
+        <div class="rcm flat"><div class="set"><div class="ro"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>Updates automatically every 5 replies</span><span class="lk">Change in Story Director</span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+        <p class="sub-cap">Switched off for this tracker, or the master switch is off</p>
+        <div class="rcm flat"><div class="set"><div class="ro dim"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>Not updated automatically</span><span class="lk">Change in Story Director</span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+        <p class="sub-cap">Story Director off</p>
+        <div class="rcm flat"><div class="set"><div class="ro dim"><span class="t"><svg class="i"><use href="#i-refresh"/></svg>Story Director is off</span><span class="lk">Change in Story Director</span></div>
+          <div class="row"><span class="t"><svg class="i"><use href="#i-brain"/></svg>AI Context</span><select><option>Always Include</option></select></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="q"><b>Needs your eye</b>
+    A row you typed in keeps its number when the default changes; its Use default link is the only way back. The Booth shows only the switch and one line, as asked.
+    <span class="rec">Recommendation: as drawn.</span></section>
+</div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+/** Creation workflow coverage for every canonical kind and media-field schema guidance. */
+import { afterEach, expect, test } from "bun:test";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { applyChangeDraft } from "../changes/apply";
+import { createBridge } from "../bridge";
+import { createChangeSession } from "../changes/session";
+import { discoverCapabilities } from "../capabilities/discover";
+import { createCapabilityRuntime } from "../capabilities/runtime";
+import { toolSpecs } from "../loop/dispatch";
+import type { KitBridge } from "../bridge";
+import characterCreate from "./character-create";
+import lorebookCreate from "./lorebook-create";
+import packCreate from "./pack-create";
+import personaCreate from "./persona-create";
+import presetCreate from "./preset-create";
+import htmlDocCreate from "./htmldoc-create";
+import regexCreate from "./regex-create";
+import quickReplyCreate from "./quickreply-create";
+import type { HarnessTool } from "./tool";
+import { createCapabilityFindTool } from "./capability-find";
+
+const bridge: KitBridge = {
+  studioDir: "/fake",
+  async deckCounts() { return []; },
+  async list() { return []; },
+  async read() { return null; },
+  async save() { throw new Error("create preview must not write"); },
+  async delete() { return false; },
+};
+
+const cases = [
+  [characterCreate, { name: "Eros" }, "character"],
+  [lorebookCreate, { name: "Olympus" }, "lorebook"],
+  [personaCreate, { name: "Chi", content: "I build worlds." }, "persona"],
+  [presetCreate, { name: "Mythic prose" }, "preset"],
+  [regexCreate, { name: "Cleanup" }, "regex"],
+  [quickReplyCreate, { name: "Commands", replies: [{ id: "go", label: "Go", message: "/send go" }] }, "quickreply"],
+  // A drawing is a piece like any other, and this table is what proves it: same draft, same gate,
+  // same refusal to write during a preview.
+  [htmlDocCreate, { name: "Login wireframe", html: "<h1>Sign in</h1>" }, "htmldoc"],
+  [packCreate, {
+    name: "Eros expressions",
+    items: [{
+      id: "neutral",
+      label: "neutral",
+      ref: "data:image/png;base64,AA",
+      mime: "image/png",
+    }],
+  }, "pack"],
+] as const;
+
+test("every canonical kind has a discoverable preview-only create workflow", async () => {
+  for (const [tool, rawArgs, kind] of cases) {
+    expect(tool.exposure).toBe("deferred");
+    expect(tool.effect).toBe("draft");
+    expect(tool.discovery).toMatchObject({
+      id: `studio.${kind}.create`,
+      domain: "studio",
+      kind,
+      area: "lifecycle",
+      action: "create",
+    });
+    const generic = tool as HarnessTool<unknown>;
+    const args = generic.input.parse(rawArgs);
+    const result = await generic.execute(args, {
+      bridge,
+      changes: createChangeSession(),
+    });
+    expect(result.outcome).toBe("draft");
+    expect(result.review?.target.kind).toBe(kind);
+  }
+});
+
+const studios: string[] = [];
+afterEach(() => {
+  for (const d of studios.splice(0)) rmSync(d, { recursive: true, force: true });
+});
+
+test("after a delete the name is free at once: a create from the name takes the next id, one asking for the deleted id is refused", async () => {
+  for (const [tool, rawArgs, kind] of cases) {
+    const dir = mkdtempSync(join(tmpdir(), "bunraku-create-retired-"));
+    studios.push(dir);
+    const real = createBridge(dir);
+    const changes = createChangeSession();
+    const generic = tool as HarnessTool<unknown>;
+    const first = await generic.execute(generic.input.parse(rawArgs), { bridge: real, changes });
+    const id = first.review!.target.id;
+    expect((await applyChangeDraft(changes, real, first.review!.draftId)).status).toBe("applied");
+    expect(await real.delete(kind, id)).toBe(true);
+
+    const again = await generic.execute(generic.input.parse(rawArgs), { bridge: real, changes });
+    expect(again.outcome).toBe("draft");
+    expect(again.review?.target.id).toBe(`${id}-2`);
+    expect((await applyChangeDraft(changes, real, again.review!.draftId)).status).toBe("applied");
+
+    const named = await generic.execute(generic.input.parse({ ...rawArgs, id }), { bridge: real, changes });
+    expect(named.outcome).toBe("stale");
+    expect(named.output).toContain("was deleted, and ids are never reused");
+  }
+});
+
+test("creation schemas explain media refs and MIME fields to the model", () => {
+  const schemas = JSON.stringify(toolSpecs([characterCreate, personaCreate, packCreate]));
+  expect(schemas).toContain("data URI");
+  expect(schemas).toContain("MIME");
+  expect(schemas).toContain("image/png");
+  expect(schemas).toContain("portrait");
+  expect(schemas).toContain("expression");
+});
+
+test("studio lifecycle browse exposes creation for every canonical kind", async () => {
+  const createTools = cases.map(([tool]) => tool as HarnessTool);
+  const runtime = createCapabilityRuntime({
+    capabilities: await discoverCapabilities(),
+    directTools: createTools,
+    changes: createChangeSession(),
+  });
+  const found = await createCapabilityFindTool(runtime).execute({
+    action: "browse",
+    domain: "studio",
+    area: "lifecycle",
+  }, { bridge });
+  const output = JSON.parse(found.output) as {
+    capabilities: Array<{ id: string }>;
+  };
+  expect(output.capabilities.map((item) => item.id)).toEqual([
+    "studio.character.create",
+    "studio.htmldoc.create",
+    "studio.lorebook.create",
+    "studio.pack.create",
+    "studio.persona.create",
+    "studio.preset.create",
+    "studio.quickreply.create",
+    "studio.regex.create",
+  ]);
+});

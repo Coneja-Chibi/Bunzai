@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inbox landing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  .main { padding: 0; display: grid; grid-template-columns: 22rem 1fr; min-height: 0; }
+  .list { border-right: 3px solid var(--edge); background: var(--face); overflow: auto; }
+  .list .top { padding: 1rem 1rem 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+  .list .top .marquee { font-size: 1.4rem; }
+  .convo { display: flex; gap: 0.7rem; padding: 0.8rem 1rem; border-top: 2px solid var(--seam); cursor: pointer; }
+  .convo:hover { background: var(--panel); }
+  .convo.sel { background: var(--canvas); box-shadow: inset 5px 0 0 var(--accent); }
+  .convo .tx { flex: 1; min-width: 0; }
+  .convo .row1 { display: flex; justify-content: space-between; gap: 0.5rem; }
+  .convo .t { font-family: var(--font-big); font-weight: 800; font-size: 0.82rem; text-transform: uppercase; }
+  .convo .when { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); }
+  .convo .l { font-family: var(--font-body); font-size: 0.98rem; color: var(--text-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.15rem; }
+  .convo.unread .l { color: var(--text); font-weight: 600; }
+  .dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--accent); display: inline-block; margin-left: 0.3rem; }
+  .pane { display: flex; flex-direction: column; min-height: calc(100vh - 3.2rem); }
+  .pane .head { padding: 1rem 1.4rem; border-bottom: 3px solid var(--edge); display: flex; gap: 0.8rem; align-items: center; background: var(--face); }
+  .pane .head .t { font-family: var(--font-big); font-weight: 900; text-transform: uppercase; }
+  .msgs { flex: 1; padding: 1.4rem; display: flex; flex-direction: column; gap: 1rem; max-width: 50rem; }
+  .msg .by { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); }
+  .msg .t { font-family: var(--font-body); font-size: 1.12rem; line-height: 1.5; margin-top: 0.15rem; }
+  .msg.you { align-self: flex-end; text-align: right; max-width: 80%; }
+  .msg.you .t { color: var(--text-soft); }
+  .compose { padding: 1rem 1.4rem; border-top: 3px solid var(--edge); background: var(--face); }
+  .compose .reply { margin: 0; }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>06 The Inbox</span><button data-theme-switch>Theme</button><a href="index.html">All ten</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Hm</div><div class="app-btn">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+  <header class="topbar"><div class="crumb"><b>Home</b> / scenes</div><div class="search">Search every scene...</div></header>
+  <main class="main">
+    <aside class="list">
+      <div class="top"><h1 class="marquee">Scenes</h1><button class="btn quiet" style="padding: 0.4rem 0.6rem;">+ New</button></div>
+      <div class="convo sel unread"><div class="avatar" style="--tone: var(--deck-character)">V</div><div class="tx"><div class="row1"><span class="t">The Drowned Lamp<span class="dot"></span></span><span class="when">4 min</span></div><div class="l">Vera: Tell me, Wren, who did you let up the stairs?</div></div></div>
+      <div class="convo unread"><div class="avatar" style="--tone: var(--deck-lorebook)">O</div><div class="tx"><div class="row1"><span class="t">Salt &amp; Ledger<span class="dot"></span></span><span class="when">1 day</span></div><div class="l">Magpie: It'll still be short one page.</div></div></div>
+      <div class="convo"><div class="avatar" style="--tone: var(--deck-persona)">N</div><div class="tx"><div class="row1"><span class="t">A Card for Nuit</span><span class="when">2 days</span></div><div class="l">You: I turned the Tower over.</div></div></div>
+      <div class="convo"><div class="avatar" style="--tone: var(--deck-preset)">M</div><div class="tx"><div class="row1"><span class="t">The Magpie's Errand</span><span class="when">5 days</span></div><div class="l">You: The lock gave on the third try.</div></div></div>
+      <div class="convo"><div class="avatar" style="--tone: var(--deck-regex)">I</div><div class="tx"><div class="row1"><span class="t">The Duel at Dawn</span><span class="when">4 mo</span></div><div class="l">Iris: You're late.</div></div></div>
+    </aside>
+    <section class="pane">
+      <div class="head"><div class="avatar" style="--tone: var(--deck-character)">V</div><div><div class="t">The Drowned Lamp</div><div class="kicker">Vera Lune &middot; your turn</div></div></div>
+      <div class="msgs">
+        <div class="msg them"><div class="by">Vera</div><div class="t">The storm had taken the last ferry and most of the power. She met you at the foot of the tower with the lamp already lit.</div></div>
+        <div class="msg you"><div class="by">Wren</div><div class="t">I kept the door shut. Mostly.</div></div>
+        <div class="msg them"><div class="by">Vera</div><div class="t voice">"Mostly. Tell me, Wren, who did you let up the stairs?"</div></div>
+      </div>
+      <div class="compose"><div class="reply"><input placeholder="Reply to Vera..."><button class="btn">Send</button></div></div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-note"><b>The idea:</b> the most familiar pattern there is, used on purpose. Every scene is a conversation in the left list with its latest line, a dot where it's your turn, and the time. The right pane is the selected scene, readable, with the reply box always at the bottom. No learning curve; the theatre lives in the type and the palette, not the layout.</div>
+
+<script>
+  document.querySelector(".list").addEventListener("click", (e) => {
+    const c = e.target.closest(".convo"); if (!c) return;
+    document.querySelectorAll(".convo.sel").forEach((x) => x.classList.remove("sel")); c.classList.add("sel");
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "03-CONVENTIONS",
+  "sourcePath": "docs/03-CONVENTIONS.md",
+  "sourceHash": "sha256:23771c08bd83fdf229fe88553159db51bac2719c042d22ba6c3028fa45fce61a",
+  "semanticSummaryHash": "sha256:962ef91d4ec70829488ab85e9601081a0aa2a7799b8680c4ee04d3ece5cf5222",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:11.063Z"
+}

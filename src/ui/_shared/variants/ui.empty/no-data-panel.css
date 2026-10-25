@@ -1,0 +1,6 @@
+/** ui.empty no-data-panel: an empty space as a HUD panel headed NO DATA, hairline frame. */
+html[data-surface-ui-empty="no-data-panel"] :is(.scn .emptyroot, .ltrash-empty, [data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { position: relative; max-width: 30rem; margin-inline: auto; padding-top: 3rem; background: var(--bk-surface-panel); box-shadow: inset 0 0 0 1px var(--bk-line); }
+html[data-surface-ui-empty="no-data-panel"] :is(.scn .emptyroot, .ltrash-empty, [data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *)::before { content: "NO DATA"; position: absolute; inset: 0 0 auto 0; padding: .4rem 1rem; background: var(--bk-role-brand-deep); color: var(--bk-text-on-deep); font: 700 .75rem var(--font-mono); letter-spacing: .2em; text-align: left; }
+html[data-surface-ui-empty="no-data-panel"] .ghost-shelf:not(.host-protected, .host-protected *) { border: 1px solid var(--bk-line-control); background: var(--bk-surface-panel); }
+/* A whole-room empty is a HUD readout anchored to the left: a full frame under the NO DATA band. */
+html[data-surface-ui-empty="no-data-panel"] :is([data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { min-height: 15rem; max-width: 38rem; margin-inline: 0 auto; border: 1px solid var(--bk-line-strong); }

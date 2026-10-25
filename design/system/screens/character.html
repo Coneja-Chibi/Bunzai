@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Character editor</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="character.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Character editor</h1>
+    <p>The character editor: Bento grid or paged Playbill, guided Steps, the Workshop trigger/script switch, and Export.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="character.editor">
+    <header>
+      <h2 class="bk-heading">Character editor</h2>
+      <span class="bk-tag">CharacterEditor, Editor.tsx</span>
+      <p class="bk-meta">Parts: character.editor (editor.header, editor.mode, editor.save, editor.card, editor.card.head, editor.toc), ui.dialog, ui.pips</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="character.editor.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Bento</h3>
+          <p>The fixed Identity card plus reorderable prose cards as framed panels, everything at once.</p></header>
+        <div class="spec-screen ch-screen" data-state="loaded">
+<div class="ch-app" data-part="shell.app">
+  <header class="ch-hud" data-part="shell.hud">
+    <div class="ch-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="ch-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="ch-hud-mid">
+      <div class="ch-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ch-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Back</span></span>
+    </div>
+  </header>
+  <div class="ch-body">
+    <nav class="ch-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="ch-dock-brand" data-part="shell.dock.brand">
+        <svg class="ch-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="ch-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="ch-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="ch-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="ch-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="ch-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="ch-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="ch-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ch-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="ch-dock-app ch-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="ch-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="ch-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="ch-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="ch-stage bk-stage" data-part="shell.stage">
+
+        <nav class="ch-lens" data-part="character.lens" aria-label="Write-for lens"><button type="button" class="bk-item ch-lens-btn" aria-selected="true">Bunraku <span class="bk-meta">full card</span></button><button type="button" class="bk-item ch-lens-btn">SillyTavern</button><button type="button" class="bk-item ch-lens-btn">RoleCall</button><button type="button" class="bk-item ch-lens-btn">RisuAI</button><button type="button" class="bk-item ch-lens-btn">Lumiverse</button><button type="button" class="bk-item ch-lens-btn">Backyard</button><button type="button" class="bk-item ch-lens-btn">Agnai</button><button type="button" class="bk-item ch-lens-btn">Marinara</button><button type="button" class="bk-item ch-lens-btn">Chub</button><button type="button" class="bk-item ch-lens-btn">Default</button>
+          <span class="ch-lensfill"></span>
+          <span class="bk-meta">6 of 6 fields kept</span>
+        </nav>
+        <header class="ch-ehead" data-part="editor.header">
+          <button type="button" class="bk-item ch-back" aria-label="Back to the Library">&larr;</button>
+          <h3 class="bk-name ch-ename">Marguerite Vane <span class="bk-meta">1.0.0</span></h3>
+          <div class="ch-chips"><span class="bk-tag" data-tone="ok">Portrait</span><span class="bk-tag" data-tone="ok">Name</span><span class="bk-tag" data-tone="warn">Core Prompts</span><span class="bk-tag" data-tone="ok">Greeting</span><span class="bk-tag" data-tone="warn">Tags</span><span class="bk-tag" data-tone="warn">Lens Check</span></div>
+          <span class="ch-dirtymark bk-dot" data-tone="warn" title="unsaved changes"></span>
+          <button type="button" class="bk-item ch-btn-ghost" data-part="editor.mode">Saved locally</button>
+          <button type="button" class="bk-item ch-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="ch-modebar">
+          <div class="bk-item ch-seg" role="group" aria-label="Layout" data-part="ui.segments">
+            <button type="button" class="ch-segbtn" aria-pressed="true">Bento</button>
+            <button type="button" class="ch-segbtn">Playbill</button>
+          </div>
+          <div class="bk-item ch-seg" role="group" aria-label="Authoring mode" data-part="ui.segments">
+            <button type="button" class="ch-segbtn" aria-pressed="true">Fields</button>
+            <button type="button" class="ch-segbtn">Steps</button>
+            <button type="button" class="ch-segbtn">Workshop</button>
+          </div>
+        </div>
+        <div class="ch-bento" data-part="character.bento">
+          <div class="ch-left">
+            <div class="ch-portrait" data-deck="character"><span class="bk-name">M</span></div>
+            <button type="button" class="bk-item ch-btn-ghost">Manage sprites &middot; 4</button>
+            <section class="bk-panel bk-frame ch-card" data-deck="lorebook">
+              <div class="bk-panel__head"><h4 class="bk-name">Knowledge</h4></div>
+              <div class="bk-panel__body">
+                <p class="bk-meta">Attached lorebooks</p>
+                <div class="ch-leader"><span>Keeper's Log</span><span class="bk-meta">40 entries</span></div>
+                <button type="button" class="bk-item ch-btn-ghost" style="width:100%">Attach lorebook</button>
+              </div>
+            </section>
+          </div>
+          <section class="bk-panel bk-frame ch-card ch-span2" data-part="character.identity" data-deck="character" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Identity</h4><span class="bk-meta">fixed &middot; always first</span></div>
+            <div class="bk-panel__body ch-identity-grid">
+              <label class="ch-field"><span class="bk-label">Name</span><input class="ch-input" value="Marguerite Vane"></label>
+              <label class="ch-field"><span class="bk-label">Tagline</span><input class="ch-input" value="Keeper of the lighthouse"></label>
+              <label class="ch-field"><span class="bk-label">Full name</span><input class="ch-input" value="Marguerite Elodie Vane"></label>
+              <label class="ch-field"><span class="bk-label">Title</span><input class="ch-input" value="The Lighthouse's Keeper"></label>
+              <label class="ch-field"><span class="bk-label">Age</span><input class="ch-input" value="34"></label>
+              <label class="ch-field"><span class="bk-label">Pronouns</span><input class="ch-input" value="she/her"></label>
+            </div>
+          </section>
+          <section class="bk-panel bk-frame ch-card ch-span2" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Description</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">Tall, sea-worn, hands stained with lamp oil. She keeps the light burning and asks no one why they came up the stairs.</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Personality</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">Patient, watchful, dry-humored. Trusts the sea more than most people.</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Scenario</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">A storm has grounded every boat but yours.</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card ch-span2" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">First message</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">You came up the stairs without a lantern. Brave, or a little foolish?</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card ch-span2" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Example messages</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">{{user}}: Who lit the lamp before you?<br>{{char}}: My mother. And hers before that.</p></div>
+          </section>
+        </div>
+        <details class="ch-advanced" data-part="character.advanced">
+          <summary class="bk-label">Advanced: Variables, Sealed Cargo, and fields not shown above</summary>
+          <div class="ch-advbody">
+            <section class="bk-panel bk-frame ch-card" data-deck="regex">
+              <div class="bk-panel__head"><h4 class="bk-name">Variables &middot; Macro inventory</h4></div>
+              <div class="bk-panel__body"><p class="bk-meta">{{user}} &middot; 4 uses<br>{{char}} &middot; 6 uses<br>{{random}} &middot; 1 use</p></div>
+            </section>
+            <section class="bk-panel bk-frame ch-card" data-deck="fog">
+              <div class="bk-panel__head"><h4 class="bk-name">Sealed Cargo</h4><span class="bk-meta">read only</span></div>
+              <div class="bk-panel__body"><p class="bk-meta">The original SillyTavern V3 file, whole and untouched, so a round-trip export loses nothing it carried in.</p></div>
+            </section>
+            <p class="bk-meta ch-tail"><b class="bk-name">Fields this editor does not write yet</b>creatorNotes, extensions.regen_prompt. Visible here, read only, so nothing you imported quietly disappears.</p>
+          </div>
+        </details>
+        <div class="ch-playbill" data-part="character.playbill">
+          <div class="ch-acts" role="tablist" aria-label="Acts">
+            <button type="button" class="bk-item ch-actbtn" role="tab" aria-selected="true">Act I &middot; Identity</button>
+            <button type="button" class="bk-item ch-actbtn" role="tab">Act II &middot; Voice</button>
+            <button type="button" class="bk-item ch-actbtn" role="tab">Act III &middot; Opening</button>
+          </div>
+          <section class="bk-panel bk-frame ch-card" data-deck="character" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Identity</h4></div>
+            <div class="bk-panel__body ch-identity-grid">
+              <label class="ch-field"><span class="bk-label">Name</span><input class="ch-input" value="Marguerite Vane"></label>
+              <label class="ch-field"><span class="bk-label">Tagline</span><input class="ch-input" value="Keeper of the lighthouse"></label>
+            </div>
+          </section>
+          <p class="bk-meta">Playbill turns the same fields into acts you page through, one card at a time, instead of Bento's everything-at-once grid.</p>
+        </div>
+        <div class="ch-steps" data-part="character.steps">
+          <section class="bk-panel bk-frame ch-qcard" data-crown>
+            <p class="bk-label">Casting</p>
+            <div class="bk-pips" data-part="ui.pips" aria-label="2 of 49 answered"><span data-on></span><span data-on></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <p class="bk-meta">2 of 49</p>
+            <h2 class="bk-heading">What do we call them?</h2>
+            <p class="bk-meta ch-hint">The name people see first. You can change it anytime.</p>
+            <input class="ch-input ch-input-lg" value="Marguerite Vane">
+            <div class="ch-qrow">
+              <button type="button" class="bk-item ch-btn-ghost" data-part="ui.key-chip">Back</button>
+              <button type="button" class="bk-item ch-btn" data-part="ui.key-chip">Next</button>
+            </div>
+          </section>
+          <aside class="bk-panel bk-frame ch-qside">
+            <p class="bk-label">Your character <span>taking shape</span></p>
+            <div class="ch-portrait" data-deck="character"></div>
+            <p class="bk-name">Marguerite Vane</p>
+            <p class="bk-meta">~909 tokens &middot; 7 of 49 answered</p>
+          </aside>
+        </div>
+        <div class="ch-workshop" data-part="character.workshop">
+          <section class="bk-panel bk-frame ch-wpane">
+            <h4 class="bk-name">Triggers</h4>
+            <p class="bk-meta">on greeting &middot; on user turn &middot; on tool call</p>
+          </section>
+          <section class="bk-panel bk-frame ch-wpane">
+            <h4 class="bk-name">Behavior script</h4>
+            <pre class="ch-code">on("greeting", function(ctx)
+  ctx.setVar("mood", "watchful")
+end)</pre>
+          </section>
+        </div>
+        <div class="ch-scrim" data-part="ui.dialog" role="dialog" aria-label="Export Marguerite Vane">
+          <div class="bk-frame ch-dlg" data-crown>
+            <h3 class="bk-heading" data-part="ui.dialog.title">Export Marguerite Vane</h3>
+            <p class="bk-meta" data-part="ui.dialog.body">Pick a target platform. Fields it cannot carry are named, not silently dropped.</p>
+            <div class="ch-platgrid"><button type="button" class="bk-item ch-platbtn" aria-selected="true">SillyTavern</button><button type="button" class="bk-item ch-platbtn">RoleCall</button><button type="button" class="bk-item ch-platbtn">RisuAI</button><button type="button" class="bk-item ch-platbtn">Lumiverse</button><button type="button" class="bk-item ch-platbtn">Chub</button><button type="button" class="bk-item ch-platbtn">PNG card</button></div>
+            <div class="ch-dlgrow" data-part="ui.dialog.actions">
+              <button type="button" class="bk-item ch-btn-ghost">Cancel</button>
+              <button type="button" class="bk-item ch-btn">Export</button>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="ch-status" data-part="shell.status">
+    <span class="ch-status-item" data-part="shell.status.item">Marguerite Vane · character</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Bento">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Grid: Bento</button>
+          <button type="button" class="spec-chip" data-set-state="playbill">Grid: Playbill</button>
+          <button type="button" class="spec-chip" data-set-state="steps">Steps</button>
+          <button type="button" class="spec-chip" data-set-state="workshop">Workshop</button>
+          <button type="button" class="spec-chip" data-set-state="export">Export dialog</button>
+          <button type="button" class="spec-chip" data-set-state="dirty">Dirty, unsaved</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="character.editor.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Character sheet</h3>
+          <p>A portrait left with identity readouts under it, like a stat sheet; prose cards sit to the right.</p></header>
+        <div class="spec-screen ch-screen" data-state="loaded">
+<div class="ch-app" data-part="shell.app">
+  <header class="ch-hud" data-part="shell.hud">
+    <div class="ch-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="ch-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="ch-hud-mid">
+      <div class="ch-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="ch-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Ctrl+S</b> <span data-part="ui.key-chip.label">Save</span></span>
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Back</span></span>
+    </div>
+  </header>
+  <div class="ch-body">
+    <nav class="ch-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="ch-dock-brand" data-part="shell.dock.brand">
+        <svg class="ch-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="ch-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="ch-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="ch-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="ch-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="ch-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="ch-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="ch-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="ch-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="ch-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="ch-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="ch-dock-app ch-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="ch-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="ch-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="ch-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="ch-stage bk-stage" data-part="shell.stage">
+
+        <nav class="ch-lens" data-part="character.lens" aria-label="Write-for lens"><button type="button" class="bk-item ch-lens-btn" aria-selected="true">Bunraku <span class="bk-meta">full card</span></button><button type="button" class="bk-item ch-lens-btn">SillyTavern</button><button type="button" class="bk-item ch-lens-btn">RoleCall</button><button type="button" class="bk-item ch-lens-btn">RisuAI</button><button type="button" class="bk-item ch-lens-btn">Lumiverse</button><button type="button" class="bk-item ch-lens-btn">Backyard</button><button type="button" class="bk-item ch-lens-btn">Agnai</button><button type="button" class="bk-item ch-lens-btn">Marinara</button><button type="button" class="bk-item ch-lens-btn">Chub</button><button type="button" class="bk-item ch-lens-btn">Default</button>
+          <span class="ch-lensfill"></span>
+          <span class="bk-meta">6 of 6 fields kept</span>
+        </nav>
+        <header class="ch-ehead" data-part="editor.header">
+          <button type="button" class="bk-item ch-back" aria-label="Back to the Library">&larr;</button>
+          <h3 class="bk-name ch-ename">Marguerite Vane <span class="bk-meta">1.0.0</span></h3>
+          <div class="ch-chips"><span class="bk-tag" data-tone="ok">Portrait</span><span class="bk-tag" data-tone="ok">Name</span><span class="bk-tag" data-tone="warn">Core Prompts</span><span class="bk-tag" data-tone="ok">Greeting</span><span class="bk-tag" data-tone="warn">Tags</span><span class="bk-tag" data-tone="warn">Lens Check</span></div>
+          <span class="ch-dirtymark bk-dot" data-tone="warn" title="unsaved changes"></span>
+          <button type="button" class="bk-item ch-btn-ghost" data-part="editor.mode">Saved locally</button>
+          <button type="button" class="bk-item ch-btn" data-part="editor.save">Save</button>
+        </header>
+        <div class="ch-modebar">
+          <div class="bk-item ch-seg" role="group" aria-label="Layout" data-part="ui.segments">
+            <button type="button" class="ch-segbtn" aria-pressed="true">Bento</button>
+            <button type="button" class="ch-segbtn">Playbill</button>
+          </div>
+          <div class="bk-item ch-seg" role="group" aria-label="Authoring mode" data-part="ui.segments">
+            <button type="button" class="ch-segbtn" aria-pressed="true">Fields</button>
+            <button type="button" class="ch-segbtn">Steps</button>
+            <button type="button" class="ch-segbtn">Workshop</button>
+          </div>
+        </div>
+        <div class="ch-sheet" data-part="character.bento">
+          <aside class="ch-sheetleft">
+            <div class="ch-portrait ch-portrait-lg" data-deck="character"><span class="bk-name">M</span></div>
+            <dl class="ch-statlist">
+              <div><dt class="bk-label">Full name</dt><dd class="bk-meta">Marguerite Elodie Vane</dd></div>
+              <div><dt class="bk-label">Title</dt><dd class="bk-meta">The Lighthouse's Keeper</dd></div>
+              <div><dt class="bk-label">Age</dt><dd class="bk-meta">34</dd></div>
+              <div><dt class="bk-label">Pronouns</dt><dd class="bk-meta">she/her</dd></div>
+            </dl>
+            <button type="button" class="bk-item ch-btn-ghost">Manage sprites &middot; 4</button>
+          </aside>
+          <div class="ch-sheetright">
+            <section class="bk-panel bk-frame ch-card" data-part="character.identity" data-deck="character" data-mark>
+              <div class="bk-panel__head"><h4 class="bk-name">Identity</h4><span class="bk-meta">fixed &middot; always first</span></div>
+              <div class="bk-panel__body ch-identity-grid">
+                <label class="ch-field"><span class="bk-label">Name</span><input class="ch-input" value="Marguerite Vane"></label>
+                <label class="ch-field"><span class="bk-label">Tagline</span><input class="ch-input" value="Keeper of the lighthouse"></label>
+              </div>
+            </section>
+          <section class="bk-panel bk-frame ch-card" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Description</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">Tall, sea-worn, hands stained with lamp oil. She keeps the light burning and asks no one why they came up the stairs.</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Personality</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">Patient, watchful, dry-humored. Trusts the sea more than most people.</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">Scenario</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">A storm has grounded every boat but yours.</p></div>
+          </section>
+          <section class="bk-panel bk-frame ch-card" data-part="character.prose-card" data-deck="character">
+            <div class="bk-panel__head"><span class="ch-dragh" aria-hidden="true">&#8942;&#8942;</span><h4 class="bk-name">First message</h4></div>
+            <div class="bk-panel__body"><p class="bk-meta">You came up the stairs without a lantern. Brave, or a little foolish?</p></div>
+          </section>
+          </div>
+        </div>
+        <div class="ch-playbill" data-part="character.playbill">
+          <div class="ch-acts" role="tablist" aria-label="Acts">
+            <button type="button" class="bk-item ch-actbtn" role="tab" aria-selected="true">Act I &middot; Identity</button>
+            <button type="button" class="bk-item ch-actbtn" role="tab">Act II &middot; Voice</button>
+            <button type="button" class="bk-item ch-actbtn" role="tab">Act III &middot; Opening</button>
+          </div>
+          <section class="bk-panel bk-frame ch-card" data-deck="character" data-crown>
+            <div class="bk-panel__head"><h4 class="bk-name">Identity</h4></div>
+            <div class="bk-panel__body ch-identity-grid">
+              <label class="ch-field"><span class="bk-label">Name</span><input class="ch-input" value="Marguerite Vane"></label>
+              <label class="ch-field"><span class="bk-label">Tagline</span><input class="ch-input" value="Keeper of the lighthouse"></label>
+            </div>
+          </section>
+          <p class="bk-meta">Playbill turns the same fields into acts you page through, one card at a time, instead of Bento's everything-at-once grid.</p>
+        </div>
+        <div class="ch-steps" data-part="character.steps">
+          <section class="bk-panel bk-frame ch-qcard" data-crown>
+            <p class="bk-label">Casting</p>
+            <div class="bk-pips" data-part="ui.pips" aria-label="2 of 49 answered"><span data-on></span><span data-on></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+            <p class="bk-meta">2 of 49</p>
+            <h2 class="bk-heading">What do we call them?</h2>
+            <p class="bk-meta ch-hint">The name people see first. You can change it anytime.</p>
+            <input class="ch-input ch-input-lg" value="Marguerite Vane">
+            <div class="ch-qrow">
+              <button type="button" class="bk-item ch-btn-ghost" data-part="ui.key-chip">Back</button>
+              <button type="button" class="bk-item ch-btn" data-part="ui.key-chip">Next</button>
+            </div>
+          </section>
+          <aside class="bk-panel bk-frame ch-qside">
+            <p class="bk-label">Your character <span>taking shape</span></p>
+            <div class="ch-portrait" data-deck="character"></div>
+            <p class="bk-name">Marguerite Vane</p>
+            <p class="bk-meta">~909 tokens &middot; 7 of 49 answered</p>
+          </aside>
+        </div>
+        <div class="ch-workshop" data-part="character.workshop">
+          <section class="bk-panel bk-frame ch-wpane">
+            <h4 class="bk-name">Triggers</h4>
+            <p class="bk-meta">on greeting &middot; on user turn &middot; on tool call</p>
+          </section>
+          <section class="bk-panel bk-frame ch-wpane">
+            <h4 class="bk-name">Behavior script</h4>
+            <pre class="ch-code">on("greeting", function(ctx)
+  ctx.setVar("mood", "watchful")
+end)</pre>
+          </section>
+        </div>
+        <div class="ch-scrim" data-part="ui.dialog" role="dialog" aria-label="Export Marguerite Vane">
+          <div class="bk-frame ch-dlg" data-crown>
+            <h3 class="bk-heading" data-part="ui.dialog.title">Export Marguerite Vane</h3>
+            <p class="bk-meta" data-part="ui.dialog.body">Pick a target platform. Fields it cannot carry are named, not silently dropped.</p>
+            <div class="ch-platgrid"><button type="button" class="bk-item ch-platbtn" aria-selected="true">SillyTavern</button><button type="button" class="bk-item ch-platbtn">RoleCall</button><button type="button" class="bk-item ch-platbtn">RisuAI</button><button type="button" class="bk-item ch-platbtn">Lumiverse</button><button type="button" class="bk-item ch-platbtn">Chub</button><button type="button" class="bk-item ch-platbtn">PNG card</button></div>
+            <div class="ch-dlgrow" data-part="ui.dialog.actions">
+              <button type="button" class="bk-item ch-btn-ghost">Cancel</button>
+              <button type="button" class="bk-item ch-btn">Export</button>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="ch-status" data-part="shell.status">
+    <span class="ch-status-item" data-part="shell.status.item">Marguerite Vane · character</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Character sheet">
+          <button type="button" class="spec-chip" data-set-state="loaded" aria-pressed="true">Grid: Bento</button>
+          <button type="button" class="spec-chip" data-set-state="playbill">Grid: Playbill</button>
+          <button type="button" class="spec-chip" data-set-state="steps">Steps</button>
+          <button type="button" class="spec-chip" data-set-state="workshop">Workshop</button>
+          <button type="button" class="spec-chip" data-set-state="export">Export dialog</button>
+          <button type="button" class="spec-chip" data-set-state="dirty">Dirty, unsaved</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the lens strip with field-coverage count, chip row (ok/need), the fixed Identity card, reorderable prose cards, the Advanced fold (Variables, Sealed Cargo, unwritten fields), Playbill acts, the guided Steps question with its side preview, the Workshop triggers/script split, and the Export dialog with its platform grid. New: an explicit dirty/unsaved state on the header (named in BUILD-BRIEF as "dirty with Save", not its own soft-source state). Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

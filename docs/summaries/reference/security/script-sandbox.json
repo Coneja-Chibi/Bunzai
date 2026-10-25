@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/script-sandbox",
+  "sourcePath": "docs/reference/security/script-sandbox.md",
+  "sourceHash": "sha256:5c5efecf5feda658202426455a41bf3e2049745ed42cf4ea94ad862c673b26d8",
+  "summary": "How installed Bunraku runs untrusted card scripts only when the operator deliberately stages them on the Workshop Test Bench, never on import. Static GitHub Pages keeps script text editable but refuses execution before worker creation and omits worker and wasm artifacts because it cannot provide ADR-009's separate loopback origin. Installed execution layers a terminable worker, distinct loopback origin, value-only versioned protocol, and downward-only resource budgets. Worker termination and in-VM functionTimeout form the kill switch; stale runId responses are dropped. The sandbox origin serves only workers and wasm, never api or the session token; missing metadata is a degraded same-origin fallback outside Pages. The value-only wire uses key allowlists and forbidden credential/prototype keys. Lua opens SAFE_LIBS only, strips host-reaching globals, and exposes no DOM, fetch, filesystem, or network. lowLevelAccess is a warning, never a trigger. Packaged WebView2 origin measurements remain incomplete, so full isolation is not claimed.",
+  "topics": [
+    "Lua Test Bench only",
+    "never run on import",
+    "worker terminate kill switch",
+    "ADR-009 distinct origin",
+    "value-only wire protocol",
+    "resource budgets clamp down",
+    "deny by absence engine",
+    "lowLevelAccess warning only",
+    "no full isolation claim",
+    "FORBIDDEN_KEYS credentials"
+  ],
+  "sections": [
+    {
+      "slug": "scripts-are-data-until-you-stage-them",
+      "title": "Scripts are data until you stage them",
+      "level": 2,
+      "sourceHash": "sha256:c9927c72b01add9f1490d14c8a9b7d3d0648e4222704582a9fed6847fb55e2c0",
+      "summary": "Card behavior rows are classified, never executed. The classifier only splits a condition or effect into known or advanced data, and import receipts state that scripts are saved as text rather than auto-run. Installed Bunraku can run them only after deliberate staging on the Workshop Test Bench. Static GitHub Pages preserves editing but refuses execution because it has no separate sandbox origin.",
+      "topics": [
+        "rows are data",
+        "never execute on import",
+        "receipt test stage only",
+        "behavior classifier"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "worker-isolation-the-kill-switch",
+      "title": "Worker isolation (the kill switch)",
+      "level": 2,
+      "sourceHash": "sha256:ddb29d2bbeaafac161e07d2a6c8374601715aebac6ed8d37a2920f5e11b648ca",
+      "summary": "Each run happens in its own Worker and the real stop mechanism is termination. runLuaSandboxed is documented never hang never throw: it spawns a module worker, arms a host wall-clock timer, and on completion or deadline calls worker.terminate before resolving. If the deadline fires first the worker is terminated mid-run and the result is timeout. Timeout is enforced twice: inside the VM wasmoon functionTimeout aborts a pure-Lua infinite loop with LuaTimeoutError; outside the host timer terminates the whole worker thread regardless of what Lua is doing. Per ADR-009 a same-origin worker is an availability boundary killable thread not an origin boundary; the termination path holds independently of the origin question. Each run carries a monotonic run id; a response whose runId does not match the run in flight is dropped as stale or spoofed generation.",
+      "topics": [
+        "worker.terminate kill",
+        "never hang never throw",
+        "functionTimeout plus host timer",
+        "availability not origin",
+        "runId drop stale spoofed"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-distinct-sandbox-origin-adr-009",
+      "title": "The distinct sandbox origin (ADR-009)",
+      "level": 2,
+      "sourceHash": "sha256:f9e8719b4b732cf312706829844f9eae440d84ff3f47f5f869d79e0e4f184c90",
+      "summary": "Installed Bunraku serves worker bundles and wasm from a second ephemeral loopback listener, distinct from the UI and api origin. That server allowlists only the Lua worker, regex worker, and glue wasm; it excludes api routes, studio paths, token-bearing HTML, and source maps. The UI receives the origin through vaude-sandbox-origin while the API token stays in vaude-session and trusted apiFetch. readSandboxOrigin accepts only http loopback values. Missing metadata retains a degraded same-origin fallback outside Pages. Static Pages is explicitly different: its runtime marker refuses before worker resolution, and its build omits worker and wasm artifacts. The distinct origin reduces future blast radius but packaged WebView2 measurements remain incomplete.",
+      "topics": [
+        "ephemeral sandbox origin",
+        "only worker wasm routes",
+        "no api no session meta",
+        "127.0.0.1 only accept",
+        "same-origin degraded fallback",
+        "WebView2 not measured"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-wire-protocol-versioned-value-only",
+      "title": "The wire protocol (versioned, value only)",
+      "level": 2,
+      "sourceHash": "sha256:4cc9e50fa48e877d8c2006f6f648474328fe9ab05d42e1d91f68db1e27183c46",
+      "summary": "Only JSON-like values cross the worker boundary. Protocol is a versioned tagged union SANDBOX_PROTOCOL_VERSION 1; wrong version is rejected. Every message is runtime-validated both ways and fails closed on any schema violation via parseRunRequest and parseRunResponse. Three checks: value-only assertJsonLike allows null finite numbers strings booleans arrays and plain objects only and rejects functions symbols bigint undefined non-finite non-plain prototypes and nesting deeper than 32 so no functions DOM handles ports proxies object URLs or app objects ride across; key allowlists per message type via assertAllowlistKeys with state restricted to chatVars chat meta log; credential keys forbidden including token authorization cookie password secret vaude-session bearer and siblings plus assertNoForbiddenKeys against __proto__ constructor prototype. Before post the host runs messageContainsForbiddenKeys as a second pass and refuses to send. API token is never placed on a message and the protocol has no field that could carry it, enforced by construction and unit-tested per ADR-009.",
+      "topics": [
+        "SANDBOX_PROTOCOL_VERSION 1",
+        "fail closed schema",
+        "assertJsonLike value only",
+        "FORBIDDEN_KEYS credentials",
+        "token never on wire",
+        "depth max 32"
+      ],
+      "children": []
+    },
+    {
+      "slug": "resource-budgets-clamped-never-upward",
+      "title": "Resource budgets (clamped, never upward)",
+      "level": 2,
+      "sourceHash": "sha256:593dc74b17dd8018345718d4c14f07bf57947c80dac5ec8aa7885cbd118a3404",
+      "summary": "RELEASE_LUA_LIMITS is the authoritative ceiling: wall-clock timeout 5000 ms, Lua heap 64 MiB via setMemoryMax, script source 2 MiB, request and response wire 4 MiB each, aggregate host state 2 MiB with per-field caps under it. Byte caps are UTF-8 via TextEncoder inclusive: exactly maxBytes accepted, maxBytes plus one rejected. Heap is VM-only so separate source wire and host-state caps exist for host JS. Budgets clamp downward only: resolveLuaRunLimits merges overrides under the release ceiling via clampInt so higher requests clamp to max and lower adversarial values pass; missing fields take release defaults. Clamp applies independently at three layers so a hostile postMessage cannot raise a ceiling: host before send, worker re-resolve documented re-clamped, engine again when built. Worker runs Lua on the same authoritative deadline as the host kill switch with no 120s leash above release max. Enforcement at edges: source host-state and request wire asserted before post, re-asserted in worker, response wire before parent accept. Over-budget yields bounded resource result with machine reason and never allocates attacker-sized state first.",
+      "topics": [
+        "RELEASE_LUA_LIMITS ceiling",
+        "clampInt never upward",
+        "three-layer re-clamp",
+        "UTF-8 inclusive caps",
+        "resource result no pre-alloc",
+        "5000 ms 64 MiB"
+      ],
+      "children": []
+    },
+    {
+      "slug": "lua-engine-hardening-deny-by-absence",
+      "title": "Lua engine hardening (deny by absence)",
+      "level": 2,
+      "sourceHash": "sha256:668cae9c515f0164a828ce86b34b1ee0c872a99f07c4139a84338030fd70f282",
+      "summary": "Lua VM is wasmoon PUC-Lua 5.4 built fresh per run and hardened by opening nothing by default. Created with openStandardLibs false and injectObjects false, then only pure side-effect-free SAFE_LIBS load: base table string math coroutine utf8. io os debug and package are never opened. After safe libs load, base globals that reach the host or load bytecode are deleted: load loadfile dofile loadstring require collectgarbage as STRIPPED_GLOBALS. Memory ceiling uses setMemoryMax with traceAllocations true. Host capabilities are the only things a card can reach, injected as named Lua globals; anything not injected does not exist deny-by-absence. On the Test Bench the injected surface is JSON helpers plus the Risu host API bound to the run state and budgets. There is no DOM fetch filesystem or network global; those were explicitly out of scope for the sandbox per ADR-009.",
+      "topics": [
+        "openStandardLibs false",
+        "SAFE_LIBS only",
+        "STRIPPED_GLOBALS deleted",
+        "deny by absence",
+        "no DOM fetch filesystem",
+        "wasmoon per-run build"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-privileged-flag-a-warning-not-a-trigger",
+      "title": "The privileged flag (a warning, not a trigger)",
+      "level": 2,
+      "sourceHash": "sha256:62d15cadf774416b21d9e8fe5234c40e3d4d6f7227779e30af42e88e15d58c74",
+      "summary": "A Risu card can request low-level script API lowLevelAccess. Bunraku surfaces that as a boolean and does nothing else with it. The canonical field is a warning marker for the UI and a sandbox gating input, never an execution trigger. The reader states scripts must never auto-run; the import receipt says deep access is not granted. Surfaced never honored: the flag grants no capability and starts no execution.",
+      "topics": [
+        "lowLevelAccess warning only",
+        "never execution trigger",
+        "must never auto-run",
+        "deep access not granted"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "what-is-not-yet-proven",
+      "title": "What is not yet proven",
+      "level": 2,
+      "sourceHash": "sha256:08eb415d3552a409696f6df344d35f4713b83039c5f48abc1a12a06bfb225cc1",
+      "summary": "No full-isolation claim is made. Proven layers are worker termination plus in-VM timeout, three-layer resource clamps and byte caps, the value-only protocol, absence of token fields, and the sandbox-host allowlist with api and traversal refused. Not yet measured are the packaged WebView2 origin probe, crossOriginIsolated and storage visibility, and a credentialed API fetch from the packaged sandbox worker. The distinct origin is tested at Bun HTTP and handler boundaries only; missing-origin fallback is degraded, while static Pages refuses before execution. ADR-009 therefore keeps packaged-host proof BLOCKED. Token and resource controls remain load-bearing; origin separation is additive defense in depth.",
+      "topics": [
+        "no full isolation claim",
+        "WebView2 probe not run",
+        "packaged-host BLOCKED",
+        "token resource load-bearing",
+        "origin additive defense-in-depth"
+      ],
+      "children": []
+    }
+  ]
+}

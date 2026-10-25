@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrackHare prop</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../rc-port/port.css">
+<link rel="stylesheet" href="../rc-port/rc-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * RoleCall's scene page (StandardLayout, Immersive theme), ported to Bunraku. Every size below was
+ * read off the running page on 2026-09-24 (computed styles at 1920x945 and 390x844) or from the
+ * component source (WingRail, WingItem, WingShell, FoldoutTabs, GreetingSelector,
+ * composer-shell-styles). Colors are Bunraku tokens:
+ *   RC zinc-300 / zinc-400 / zinc-500 / zinc-600  ->  --stage-soft / --stage-text-dim / --stage-mute / --stage-line
+ *   RC black/55 bubble, white/8 edge              ->  color-mix of --stage-black and --stage-card
+ *   RC user accent (violet)                       ->  --accent
+ *   the character's signature color               ->  --deck-character;  the user's persona  ->  --deck-persona
+ *   greeting gold #D4AF37                         ->  --stage-warn (gilt)
+ *   Cinzel -> --font-fancy;  Inter -> --font-big (as port.css does for the Library)
+ */
+.app { grid-template-columns: 4.2rem 1fr; }
+.dock .app-btn { cursor: default; }
+
+.scene { position: relative; height: 100vh; overflow: hidden; background: var(--stage-well); }
+/* BackgroundMedia + vignette: no scene art set, so the dark floor with RC's faint accent lift */
+.bgm { position: absolute; inset: 0; background:
+  radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%), var(--stage-well); }
+.bgm::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 50%, color-mix(in srgb, var(--stage-black) 65%, transparent)); }
+
+/* ---- the blurred layer: everything a wing pauses ---- */
+.play { position: absolute; inset: 0; transition: filter .3s; }
+.scene.paused .play { filter: blur(6px) brightness(.55); pointer-events: none; }
+
+/* SceneHeader (fixed, 44px): black-to-clear gradient, left-aligned name, tagline, branch pill, tools right */
+.sh { position: absolute; top: 0; left: 0; right: 0; height: 44px; z-index: 35; display: flex; align-items: center; gap: 10px; padding: 0 18px;
+  background: linear-gradient(var(--stage-black) 0%, color-mix(in srgb, var(--stage-black) 95%, transparent) 80%, color-mix(in srgb, var(--stage-black) 70%, transparent) 90%, transparent 100%); }
+.sh .back { width: 26px; height: 26px; display: grid; place-items: center; color: var(--stage-text-dim); border-radius: 50%; flex: none; }
+.sh .nm { font-family: var(--font-fancy); font-weight: 500; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--stage-soft); white-space: nowrap; flex: none; }
+.sh .tag { font-family: var(--font-big); font-style: italic; font-size: 9px; color: var(--stage-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; max-width: 640px; }
+.sh .branch { flex: none; display: flex; align-items: center; gap: 6px; padding: 4px 8px; font-family: var(--font-big); font-size: 12px; font-weight: 500;
+  color: color-mix(in srgb, var(--accent) 80%, transparent); background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent); }
+.sh .grow { flex: 1; }
+.sh .live { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+.sh .gear { color: var(--stage-line); display: grid; place-items: center; }
+
+/* WingRail (fixed, top 80, 80px; 50px when a panel is open): glass column, masked top and bottom,
+   a 1px neon inner edge in the accent, 40px glyphs 32px apart */
+.rail { position: absolute; top: 80px; bottom: 0; width: 80px; z-index: 50; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 32px 0 16px; opacity: .8; transition: width .5s, opacity .2s; }
+.rail:hover { opacity: 1; }
+.rail.l { left: 0; } .rail.r { right: 0; }
+.rail::before { content: ""; position: absolute; inset: 0; z-index: -1; background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(24px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.rail.l::after, .rail.r::after { content: ""; position: absolute; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 40%, transparent), transparent); box-shadow: 0 0 15px color-mix(in srgb, var(--accent) 30%, transparent); }
+.rail.l::after { right: 0; } .rail.r::after { left: 0; }
+.scene.open-l .rail.l, .scene.open-r .rail.r { width: 50px; }
+/* WingItem: white/45 glyph; hover charges to the wing's color; active is white with a bloom */
+.wi { position: relative; width: 40px; height: 40px; display: grid; place-items: center; color: color-mix(in srgb, var(--stage-card) 45%, transparent); cursor: pointer; }
+.wi svg { width: 20px; height: 20px; position: relative; z-index: 1; transition: transform .3s, color .3s; }
+.wi::before { content: ""; position: absolute; inset: -20px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--w) 25%, transparent) 0%, transparent 70%); opacity: 0; transform: scale(.5); transition: all .5s; }
+.wi:hover { color: var(--w); } .wi:hover svg { transform: scale(1.1); filter: drop-shadow(0 0 8px var(--w)); } .wi:hover::before { opacity: .3; transform: scale(.75); }
+.wi.on { color: var(--stage-card); } .wi.on svg { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--w)); } .wi.on::before { opacity: 1; transform: none; }
+/* the rail-hover map label: 260px, 3px black border, hard 6px shadow in the wing's color, Cinzel 900 */
+.tip { position: absolute; top: 50%; width: 260px; padding: 12px 16px; background: var(--stage-panel); border: 3px solid var(--stage-black); box-shadow: 6px 6px 0 0 var(--w);
+  opacity: 0; transform: translateY(-60%); transition: opacity .2s, transform .2s; pointer-events: none; z-index: 20; text-align: left; }
+.rail.l .tip { left: 60px; } .rail.r .tip { right: 60px; }
+.rail:hover .tip, .scene.labels .tip { opacity: 1; transform: translateY(-50%); }
+.tip b { display: block; font-family: var(--font-fancy); font-weight: 900; font-size: .95rem; letter-spacing: .04em; text-transform: uppercase; color: var(--w); text-shadow: 3px 3px 0 var(--stage-black); line-height: 1.05; }
+.tip span { display: block; margin-top: 6px; font-family: var(--font-big); font-size: .76rem; font-weight: 600; color: var(--stage-card); line-height: 1.35; }
+
+/* ---- the message scroll: x 80..(right-80), padding 96 48 24 64 ---- */
+.scroll { position: absolute; top: 0; bottom: 0; left: 80px; right: 80px; overflow-y: auto; padding: 96px 48px 150px 64px; }
+.scroll::-webkit-scrollbar { width: 6px; } .scroll::-webkit-scrollbar-thumb { background: var(--stage-seam); }
+
+/* GreetingSelector: max-w-3xl card, gilt dots, italic 4-line preview */
+.greet { max-width: 768px; margin: 0 auto 24px; padding: 16px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 20%, transparent); backdrop-filter: blur(8px); border-radius: 2px; }
+.greet .hd { display: flex; align-items: center; gap: 8px; font-family: var(--font-big); font-size: 14px; font-weight: 500; color: var(--stage-soft); margin-bottom: 12px; }
+.greet .hd svg { width: 16px; height: 16px; color: var(--stage-warn); }
+.greet .hd small { font-size: 12px; font-weight: 400; color: var(--stage-mute); }
+.dots { display: flex; gap: 8px; margin-bottom: 12px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--stage-line); cursor: pointer; }
+.dots i.on { background: var(--stage-warn); box-shadow: 0 0 0 2px var(--stage-black), 0 0 0 4px var(--stage-warn); }
+.greet .pv { padding: 12px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 40%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent);
+  font-family: var(--font-big); font-size: 14px; font-style: italic; line-height: 1.65; color: var(--stage-text-dim); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.greet .help { margin-top: 8px; font-family: var(--font-big); font-size: 12px; color: var(--stage-mute); }
+
+/* ImmersiveMessage: sticky 260x380 portrait (16px outer corners), 12px gutter, post badge, Cinzel name, dark bubble */
+.msg { display: flex; position: relative; margin-bottom: 40px; }
+.msg.user { flex-direction: row-reverse; }
+.por { flex: none; width: 260px; height: 380px; position: sticky; top: 60px; overflow: hidden; border-radius: 16px 0 0 16px; box-shadow: 0 0 20px color-mix(in srgb, var(--tone) 8%, transparent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--tone) 55%, var(--stage-panel)), var(--stage-panel) 85%); display: grid; place-items: center; }
+.msg.user .por { border-radius: 0 16px 16px 0; background: linear-gradient(170deg, color-mix(in srgb, var(--tone) 70%, var(--stage-panel)) 0%, color-mix(in srgb, var(--tone) 30%, var(--stage-panel)) 70%, var(--stage-panel)); }
+.por .ini { position: relative; font-family: var(--font-fancy); font-size: 34px; color: color-mix(in srgb, var(--stage-card) 55%, transparent); }
+.por .art { position: absolute; inset: 0; background:
+  radial-gradient(ellipse 38% 30% at 50% 34%, color-mix(in srgb, var(--stage-paper) 45%, transparent), transparent 70%),
+  radial-gradient(ellipse 60% 45% at 50% 92%, color-mix(in srgb, var(--stage-black) 80%, transparent), transparent 75%); }
+.body { flex: 1; min-width: 0; padding-left: 12px; }
+.msg.user .body { padding-left: 0; padding-right: 12px; }
+.badge { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-black) 45%, transparent);
+  padding: 2px 6px; font-family: var(--font-mono); font-size: 10px; line-height: 1; color: var(--stage-soft); box-shadow: 2px 2px 0 var(--stage-black); border-radius: 2px; }
+.msg.user .badge { float: right; }
+.spk { clear: both; font-family: var(--font-fancy); font-weight: 600; font-size: 19px; letter-spacing: 3px; text-transform: uppercase; color: var(--tone); line-height: 1.5; margin: 4px 0 6px; }
+.msg.user .spk { text-align: right; }
+.bub { position: relative; background: color-mix(in srgb, var(--stage-black) 55%, transparent); border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); border-radius: 4px; padding: 14px 18px; }
+.msg.user .bub { padding: 12px 16px; }
+.prose { font-family: var(--font-big); font-size: 16px; line-height: 29.6px; color: color-mix(in srgb, var(--stage-card) 95%, transparent); }
+.prose p + p { margin-top: 20px; }
+.prose em { font-style: italic; }
+.prose q { quotes: '"' '"'; color: var(--tone); }
+/* the hover action bar: bottom-right, 28px buttons in groups */
+.acts { position: absolute; right: 6px; bottom: 6px; z-index: 20; display: flex; gap: 4px; padding: 4px; border-radius: 2px; background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--stage-card) 8%, transparent); backdrop-filter: blur(4px); opacity: 0; transition: opacity .3s; }
+.msg:hover .acts, .scene.hover-acts .msg.char .acts { opacity: 1; }
+.acts button { width: 28px; height: 28px; display: grid; place-items: center; border: 0; background: none; color: var(--tone); cursor: pointer; border-radius: 2px; }
+.acts button:hover { background: color-mix(in srgb, var(--stage-card) 8%, transparent); }
+.acts button svg { width: 16px; height: 16px; }
+.acts .sep { width: 1px; margin: 4px; background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .del { color: var(--stage-danger-text); }
+.acts .dim { color: var(--stage-warn); }
+
+/* while a turn is starting and reasoning streams */
+.think { max-width: 1020px; margin: 0 0 40px; padding: 14px 16px; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); box-shadow: 0 0 30px color-mix(in srgb, var(--accent) 10%, transparent);
+  font-family: var(--font-big); font-size: 16px; line-height: 1.6; color: var(--stage-soft); }
+.think .caret { display: inline-block; width: 9px; height: 16px; background: var(--accent); vertical-align: -2px; }
+.starting { display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--stage-panel); font-family: var(--font-big); font-size: 14px; color: var(--stage-text-dim); margin-bottom: 16px; }
+
+/* the failure card: sits above the composer, 880 wide */
+.fail { position: absolute; left: 50%; transform: translateX(-50%); bottom: 90px; width: min(880px, calc(100% - 96px)); z-index: 30; background: var(--stage-panel); border-top: 2px solid var(--stage-danger-edge); box-shadow: 0 8px 32px var(--shadow-ink); }
+.fail .top { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--stage-seam); }
+.fail .ic { width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-danger-bg); border: 1px solid var(--stage-danger-edge); color: var(--stage-danger-text); flex: none; }
+.fail .tt { font-family: var(--font-big); font-weight: 600; font-size: 14px; color: var(--stage-card); }
+.fail .ln { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-family: var(--font-big); font-size: 13px; color: var(--stage-text-dim); flex-wrap: wrap; }
+.fail code { font-family: var(--font-mono); font-size: 10px; padding: 2px 8px; background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.fail .dis { margin-left: auto; padding: 10px 16px; border: 1px solid var(--stage-line); background: var(--stage-row); color: var(--stage-card); font-family: var(--font-big); font-size: 13px; }
+.fail .dr { padding: 16px 16px 12px; font-family: var(--font-big); font-size: 13px; color: var(--stage-soft); }
+.fail textarea { display: block; margin-top: 10px; width: 100%; height: 110px; background: var(--stage-well); color: var(--stage-card); border: 1px solid var(--stage-line); padding: 8px 10px; font-family: var(--font-big); font-size: 15px; line-height: 1.6; resize: vertical; }
+.fail .nb { margin-top: 8px; font-size: 11px; color: var(--stage-mute); }
+
+/* ImmersiveInputBar + capsule: max-w 880, glass, 2px corners, 12/16 padding, 32px plus and send */
+.dockbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 40; padding: 12px 48px; pointer-events: none; }
+.cap { pointer-events: auto; max-width: 880px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; padding: 12px 16px; border-radius: 2px;
+  background: color-mix(in srgb, var(--stage-floor) 50%, transparent); backdrop-filter: blur(20px); border: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); box-shadow: 0 8px 32px color-mix(in srgb, var(--stage-black) 40%, transparent); }
+.cap .plus, .cap .send, .cap .stop { width: 32px; height: 32px; flex: none; display: grid; place-items: center; border-radius: 2px; }
+.cap .plus { background: color-mix(in srgb, var(--accent) 15%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent); }
+.cap .send { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--stage-dim); }
+.cap .stop { background: var(--stage-danger-hot); color: var(--stage-card); display: none; }
+.scene.streaming .cap .stop { display: grid; } .scene.streaming .cap .send { display: none; }
+.cap .ta { flex: 1; min-width: 0; align-self: center; font-family: var(--font-big); font-size: 14px; line-height: 20px; color: color-mix(in srgb, var(--stage-card) 25%, transparent); }
+.cap svg { width: 16px; height: 16px; }
+/* the floating Compendium book and the /BTW tab, bottom-right of the stage */
+.book { position: absolute; right: 96px; bottom: 145px; z-index: 40; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--stage-soft);
+  background: var(--stage-row); border: 1px solid color-mix(in srgb, var(--stage-card) 12%, transparent); box-shadow: 0 4px 14px var(--shadow-ink); }
+.book svg { width: 18px; height: 18px; }
+.btw { position: absolute; right: 19px; bottom: 73px; z-index: 40; width: 90px; height: 34px; display: grid; place-items: center; background: var(--accent); color: var(--stage-black);
+  font-family: var(--font-fancy); font-weight: 900; font-size: 10px; letter-spacing: .3em; }
+
+/* ---- wing panels: open beside their rail, pause and blur the scene ---- */
+.paused-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 45; display: none; text-align: center; cursor: pointer; }
+.scene.paused .paused-mark { display: block; }
+.scene.open-l .paused-mark { left: 78%; } .scene.open-r .paused-mark { left: 27%; }
+.paused-mark .sq { width: 64px; height: 64px; margin: 0 auto; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+.paused-mark .sq svg { width: 26px; height: 26px; }
+.paused-mark small { display: block; margin-top: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: .3em; color: var(--accent); }
+.wing-panel { position: absolute; top: 0; bottom: 0; z-index: 48; display: none; flex-direction: column; background: var(--stage-well); color: var(--stage-soft); font-family: var(--font-big); }
+.wing-panel.l { left: 0; width: min(1000px, 56%); padding-left: 50px; border-right: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.r { right: 0; width: min(830px, 46%); padding-right: 50px; border-left: 1px solid color-mix(in srgb, var(--stage-card) 6%, transparent); }
+.wing-panel.show { display: flex; }
+/* FoldoutTabs: breadcrumb, then equal bordered tabs with a meta line */
+.fold { position: sticky; top: 0; z-index: 3; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-well) 95%, transparent); }
+.crumb { display: flex; gap: 8px; margin-bottom: 8px; font-size: .62rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--stage-mute); }
+.crumb b { color: var(--stage-card); font-weight: 600; } .crumb i { font-style: normal; color: var(--stage-faint); }
+.tabs { display: flex; gap: 8px; }
+.tabs button { flex: 1; min-width: 0; text-align: left; padding: 8px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 10%, transparent); background: color-mix(in srgb, var(--stage-card) 3%, transparent); color: var(--stage-text-dim); font-family: var(--font-big); cursor: pointer; }
+.tabs button.on { border-color: color-mix(in srgb, var(--stage-card) 30%, transparent); background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tabs b { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.tabs small { display: block; margin-top: 4px; font-size: 10px; letter-spacing: .05em; text-transform: uppercase; opacity: .6; }
+.wbody { flex: 1; min-height: 0; overflow-y: auto; padding: 20px 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+/* WingHero: accent-edged card, radial wash top-left, 6px soft offset shadow, square icon, eyebrow, Cinzel 900 title with the accent word */
+.hero { position: relative; border: 1px solid color-mix(in srgb, var(--w) 35%, transparent); padding: 24px; box-shadow: 6px 6px 0 0 color-mix(in srgb, var(--w) 12%, transparent);
+  background: radial-gradient(ellipse at top left, color-mix(in srgb, var(--w) 12%, transparent), transparent 55%), linear-gradient(135deg, var(--stage-row), var(--stage-well)); display: flex; gap: 16px; align-items: flex-start; }
+.hero .hi { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--w) 70%, transparent); background: var(--stage-black); color: var(--w); }
+.hero .hi svg { width: 20px; height: 20px; }
+.hero .eb { font-size: .74rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+/* RC asks for Cinzel here but the live page renders a black-weight sans; the port follows what users see */
+.hero h2 { margin-top: 8px; font-family: var(--font-big); font-weight: 900; font-size: 2rem; line-height: .95; letter-spacing: .05em; text-transform: uppercase; color: var(--stage-card); text-shadow: 3px 3px 0 var(--stage-black); }
+.hero h2 em { font-style: normal; color: var(--w); }
+.hero p { margin-top: 10px; max-width: 42rem; font-size: .95rem; line-height: 1.6; color: var(--stage-soft); }
+/* Cast body: the character card left, the stage-name block right */
+.dossier { display: grid; grid-template-columns: 380px 1fr; gap: 12px; }
+.dcard { position: relative; min-height: 560px; background: linear-gradient(170deg, color-mix(in srgb, var(--deck-character) 40%, var(--stage-panel)), var(--stage-panel) 80%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+.dcard .np { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--deck-lorebook); background: color-mix(in srgb, var(--deck-lorebook) 15%, transparent); border: 1px solid color-mix(in srgb, var(--deck-lorebook) 50%, transparent); padding: 3px 8px; }
+.dcard h3 { margin-top: 10px; font-family: var(--font-big); font-weight: 800; font-size: 24px; color: var(--stage-card); }
+.dcard p { margin-top: 6px; font-size: 14px; line-height: 1.45; color: var(--stage-soft); }
+.fields { border: 2px solid color-mix(in srgb, var(--w) 55%, transparent); padding: 14px; display: flex; flex-direction: column; gap: 14px; align-self: start; }
+.fl { font-size: 10px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); margin-bottom: 6px; }
+.fv { background: var(--stage-row); border: 1px solid var(--stage-seam); padding: 10px 12px; font-size: 14px; color: var(--stage-mute); }
+.fv.set { color: var(--stage-card); font-weight: 700; font-size: 17px; background: none; border: 0; border-bottom: 1px solid var(--stage-seam); padding: 0 0 8px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.save { margin-top: 4px; padding: 12px; background: var(--w); color: var(--stage-black); font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; text-align: center; }
+/* Context body: nested tabs and the empty state */
+.empty { flex: 1; display: grid; place-items: center; text-align: center; color: var(--stage-text-dim); font-size: 14px; }
+.empty svg { width: 34px; height: 34px; color: var(--stage-warn); margin-bottom: 12px; }
+.empty small { display: block; margin-top: 10px; font-size: 11px; color: var(--stage-mute); }
+.ptitle .eb { font-size: .62rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--w); }
+.ptitle h3 { margin-top: 6px; font-family: var(--font-fancy); font-weight: 700; font-size: 20px; font-variant: small-caps; color: var(--stage-card); }
+.ptitle p { margin-top: 6px; font-size: 12px; color: var(--w); }
+
+/* ---- phone (RC: rails hide below lg; collapsed edge handles take their place) ---- */
+.edge { display: none; position: absolute; top: 50%; width: 3px; height: 44px; transform: translateY(-50%); background: linear-gradient(transparent, var(--accent), transparent); z-index: 50; }
+.edge.l { left: 2px; } .edge.r { right: 2px; }
+@media (max-width: 1023px) {
+  .app { grid-template-columns: 1fr; } .dock { display: none; }
+  .rail { display: none; } .edge { display: block; }
+  .scroll { left: 0; right: 0; padding: 60px 12px 110px; }
+  .sh { padding: 0 10px; } .sh .tag { display: none; } .sh .nm { overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
+  .por { width: 88px; height: 118px; border-radius: 8px 0 0 8px; }
+  .msg.user .por { border-radius: 0 8px 8px 0; }
+  .spk { font-size: 15px; letter-spacing: 2px; }
+  .prose { font-size: 15px; line-height: 27px; font-weight: 500; }
+  .bub { padding: 12px 14px; }
+  .dockbar { padding: 12px; } .book { right: 110px; bottom: 100px; } .btw { right: 10px; bottom: 96px; width: 44px; height: 28px; font-size: 8px; letter-spacing: .15em; }
+  .fail { width: calc(100% - 24px); }
+  .wing-panel.l, .wing-panel.r { width: 100%; padding: 0; }
+  .dossier { grid-template-columns: 1fr; } .dcard { min-height: 280px; }
+  .scene.open-l .paused-mark, .scene.open-r .paused-mark { display: none; }
+}
+
+/* wireframe-only control strip (not part of the design) */
+.wf { position: fixed; left: 50%; top: 52px; transform: translateX(-50%); z-index: 999; display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--stage-black); border: 1px dashed var(--stage-line); font-family: var(--font-mono); font-size: 10px; }
+.wf button { background: none; border: 1px solid var(--stage-seam); color: var(--stage-mute); padding: 3px 7px; cursor: pointer; font: inherit; }
+.wf button.on { color: var(--stage-card); border-color: var(--accent); }
+body.embed .wf { display: none; }
+.wf-note { bottom: 6.4rem; }
+.wf-chip { flex-wrap: wrap; justify-content: center; max-width: calc(100vw - 2rem); }
+/* a cut line left in place (option B): no RC equivalent, so it borrows RC's amber-notice shape in the danger tone */
+.stub { display: flex; align-items: center; gap: 12px; max-width: 1020px; margin: 0 0 24px; padding: 8px 12px; border-left: 4px solid var(--stage-danger-text); background: color-mix(in srgb, var(--stage-danger-text) 8%, transparent); font: 14px/1.5rem var(--font-big); color: var(--stage-soft); }
+.stub svg { width: 14px; height: 14px; color: var(--stage-danger-text); flex: none; }
+.stub .grow { flex: 1; }
+.stub small { color: var(--stage-mute); font-size: 12px; }
+.stub button { padding: 4px 10px; border: 2px solid var(--stage-black); box-shadow: 3px 3px 0 0 var(--stage-black); background: var(--stage-faint); color: var(--stage-white); font: 900 12px var(--font-big); text-transform: uppercase; cursor: pointer; }
+body[data-view="delb1"] .m1, body[data-view="delb2"] .m1, body[data-view="delb2"] .m2 { display: none !important; }
+body[data-view="forkb"] .sh .branch .bn::after { content: "Take 2"; } body[data-view="forkb"] .sh .branch .bn span { display: none; }
+.acts .more-wrap, .acts .del-wrap { position: relative; display: inline-flex; }
+.acts .on { background: color-mix(in srgb, var(--stage-card) 10%, transparent); }
+.acts .rc-menu { bottom: calc(100% + 8px); right: -40px; }
+.acts .rc-dd { left: auto; right: -6px; transform: none; }
+/* the menus sit inside the action bar; undo its 28px icon-button rule for their rows */
+.acts .rc-menu button, .acts .rc-dd button { width: 100%; height: auto; display: flex; place-items: initial; border-radius: 0; }
+.acts .rc-menu button { color: var(--stage-card); } .acts .rc-dd button { color: var(--stage-soft); } .acts .rc-dd button.red { color: var(--stage-danger-text); }
+.acts .rc-menu button svg, .acts .rc-dd button svg { width: 14px; height: 14px; }
+.rc-takes.at { top: 40px; left: 390px; }
+[data-o]:not(.show) { display: none !important; }
+
+
+/* ---- Prompting wing: RoleCall's PresetPanel (scene/wings/panels/PresetPanel.tsx) ----
+ * RoleCall tints the panel with --wing-accent (the preset's accent, else the wing's); here that is
+ * --w, the preset deck color. RC emerald switch -> --stage-ok; zinc-600 off -> --stage-line;
+ * role badges blue/green/purple -> --deck-persona / --stage-ok / --deck-lorebook. */
+.wing-panel.l .wbody.pp { gap: 0; padding: 0; }
+.pp > .hero { margin: 20px 20px 12px; }
+.hero-tools { margin-left: auto; display: flex; gap: 6px; align-self: flex-start; }
+.tbtn { width: 28px; height: 28px; display: grid; place-items: center; background: color-mix(in srgb, var(--stage-card) 5%, transparent); color: var(--stage-soft); cursor: pointer; border-radius: 2px; flex: none; }
+.tbtn:hover { background: color-mix(in srgb, var(--stage-card) 10%, transparent); color: var(--stage-card); }
+.tbtn.red:hover { background: var(--stage-danger-bg); color: var(--stage-danger-text); }
+.tbtn svg { width: 14px; height: 14px; }
+.hero.bad { --w: var(--stage-danger-text); }
+/* CollapsibleSamplerBar */
+.sbar { border-top: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); background: color-mix(in srgb, var(--stage-panel) 50%, transparent); }
+.sbar-row { display: flex; align-items: center; gap: 16px; padding: 8px 16px; font-size: .82rem; cursor: pointer; flex-wrap: wrap; }
+.sbar-row:hover { background: color-mix(in srgb, var(--stage-row) 30%, transparent); }
+.sbar .lbl { color: var(--stage-soft); }
+.qv { color: var(--stage-mute); white-space: nowrap; }
+.qv b { color: var(--c); font-weight: 600; margin-left: 4px; font-family: var(--font-mono); font-size: .78rem; }
+.ov { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--w); margin-left: 5px; vertical-align: 1px; }
+.sbar .chev { margin-left: auto; width: 16px; height: 16px; color: var(--stage-soft); }
+.sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 16px 16px; }
+.sl .slh { display: flex; align-items: baseline; gap: 8px; font-size: .78rem; color: var(--stage-soft); margin-bottom: 6px; }
+.sl .slh b { margin-left: auto; font-family: var(--font-mono); color: var(--stage-card); }
+.sl .reset { font-family: var(--font-mono); font-size: .7rem; color: var(--stage-mute); text-decoration: line-through; cursor: pointer; }
+.track { height: 4px; background: var(--stage-seam); border-radius: 2px; }
+.track i { display: block; height: 100%; background: var(--w); border-radius: 2px; }
+.sl small { display: block; margin-top: 6px; font-size: .7rem; color: var(--stage-mute); }
+.sel { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--stage-row); border: 1px solid var(--stage-seam); font-size: .8rem; color: var(--stage-card); }
+.sel svg { width: 14px; height: 14px; color: var(--stage-mute); }
+/* the split view */
+.split { flex: 1; min-height: 480px; display: flex; }
+.side { width: 240px; flex: none; display: flex; flex-direction: column; background: color-mix(in srgb, var(--stage-black) 90%, transparent); border-right: 1px solid color-mix(in srgb, var(--w) 30%, transparent); }
+.side-hd { display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid var(--stage-seam); font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; color: var(--stage-soft); }
+.side-hd span + span { text-transform: none; letter-spacing: 0; color: var(--stage-text-dim); }
+.side-search { position: relative; padding: 6px 8px; border-bottom: 1px solid var(--stage-seam); }
+.side-search svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; color: var(--stage-soft); }
+.side-search .in { display: block; padding: 5px 8px 5px 26px; background: var(--stage-row); border: 1px solid var(--stage-seam); border-radius: 2px; font-size: .78rem; color: var(--stage-mute); }
+.side-search .in.typed { color: var(--stage-card); border-color: var(--w); }
+.cat { display: flex; align-items: center; gap: 6px; padding: 8px; font-size: .82rem; color: var(--stage-text-dim); border-bottom: 1px solid color-mix(in srgb, var(--stage-seam) 50%, transparent); cursor: pointer; }
+.cat.acc { color: color-mix(in srgb, var(--w) 80%, transparent); }
+.cat.mute { color: var(--stage-soft); padding-left: 10px; }
+.cat .cn { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat .cc { color: var(--stage-soft); }
+.cat .cv { width: 12px; height: 12px; flex: none; }
+.cat .cv.r { transform: rotate(-90deg); }
+/* category switch: 24x14, emerald all / accent some / grey none */
+.sw { position: relative; width: 24px; height: 14px; border-radius: 7px; background: var(--stage-line); flex: none; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 10px; height: 10px; border-radius: 50%; background: var(--stage-white); }
+.sw.on { background: var(--stage-ok); } .sw.on::after { left: 12px; }
+.sw.some { background: var(--w); }
+/* MiniPromptItem: 32x16 switch, name + tokens or slot label, role badge; selected has an accent left edge */
+.pi { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-left: 2px solid transparent; cursor: pointer; }
+.pi:hover { background: color-mix(in srgb, var(--stage-row) 50%, transparent); }
+.pi.sel { border-left-color: var(--w); background: color-mix(in srgb, var(--w) 12%, transparent); }
+.pi.off { opacity: .5; }
+.tg { position: relative; width: 32px; height: 16px; border-radius: 8px; background: var(--stage-line); flex: none; }
+.tg::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--stage-white); }
+.tg.on { background: var(--stage-ok); } .tg.on::after { left: 18px; }
+.pn { flex: 1; min-width: 0; }
+.pn span { display: block; font-size: .82rem; color: var(--stage-text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pi.sel .pn span { color: var(--stage-white); }
+.pn small { display: block; font-size: .72rem; color: var(--stage-mute); }
+.pn small.mk { color: color-mix(in srgb, var(--deck-lorebook) 70%, transparent); }
+.role { font-size: .68rem; font-weight: 600; padding: 2px 5px; border-radius: 2px; flex: none; }
+.role.sys { background: color-mix(in srgb, var(--deck-persona) 20%, transparent); color: var(--deck-persona); }
+.role.usr { background: color-mix(in srgb, var(--stage-ok) 20%, transparent); color: var(--stage-ok); }
+.role.ast { background: color-mix(in srgb, var(--deck-lorebook) 20%, transparent); color: var(--deck-lorebook); }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 6px; padding: 8px; border-top: 1px solid var(--stage-seam); font-size: .78rem; color: var(--stage-soft); }
+.side-foot b { margin-left: auto; font-family: var(--font-mono); color: var(--stage-card); font-weight: 500; }
+.info { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--stage-mute); display: grid; place-items: center; font-size: .6rem; color: var(--stage-mute); cursor: help; }
+.grip { width: 4px; flex: none; cursor: col-resize; background: transparent; }
+.grip:hover { background: color-mix(in srgb, var(--w) 40%, transparent); }
+/* PromptEditPane */
+.ed { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.ed-empty { flex: 1; display: grid; place-items: center; font-size: .9rem; color: var(--stage-mute); }
+.ed-body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 0 0 16px; }
+.ed-hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); }
+.ed-hd .nmx { flex: 1; font-size: .9rem; font-weight: 600; color: var(--stage-white); border-bottom: 1px solid transparent; }
+.ed-hd .tk { font-size: .78rem; color: var(--stage-soft); }
+.ed-meta { display: flex; gap: 6px; padding: 0 16px; flex-wrap: wrap; }
+.chip { padding: 3px 8px; font-size: .72rem; border: 1px solid color-mix(in srgb, var(--w) 40%, transparent); color: var(--w); background: color-mix(in srgb, var(--w) 8%, transparent); }
+.chip.dim { border-color: var(--stage-seam); color: var(--stage-mute); background: none; }
+.ta { margin: 0 16px; flex: 1; min-height: 220px; padding: 12px; background: color-mix(in srgb, var(--stage-black) 60%, transparent); border: 2px solid var(--stage-line); box-shadow: inset 2px 2px 0 0 color-mix(in srgb, var(--stage-black) 40%, transparent); font-family: var(--font-mono); font-size: .92rem; line-height: 1.55; color: var(--stage-card); white-space: pre-wrap; }
+.ta .caret { display: inline-block; width: 8px; height: 15px; background: var(--w); vertical-align: -2px; }
+body:has([data-s="editing"][style*="outline"]) .ta { border-color: var(--w); }
+.ed-note { margin: 0 16px; display: flex; gap: 8px; align-items: flex-start; font-size: .78rem; line-height: 1.5; color: var(--stage-mute); }
+.ed-note svg { width: 14px; height: 14px; color: var(--stage-ok); flex: none; margin-top: 2px; }
+/* PresetPicker */
+.picker { padding: 12px 20px 24px; display: flex; flex-direction: column; gap: 8px; }
+.picker .side-search { padding: 0 0 8px; border: 0; }
+.picker .side-search svg { left: 8px; top: 13px; transform: none; }
+.pk-hd { margin-top: 6px; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--stage-soft); }
+.pk-hd small { color: var(--stage-mute); font-weight: 400; }
+.pk { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid color-mix(in srgb, var(--stage-card) 5%, transparent); background: color-mix(in srgb, var(--stage-panel) 60%, transparent); cursor: pointer; }
+.pk:hover { background: var(--stage-row); border-color: color-mix(in srgb, var(--w) 40%, transparent); }
+.pk b { display: block; font-size: .9rem; color: var(--stage-white); font-weight: 500; }
+.pk small { display: block; margin-top: 2px; font-size: .74rem; color: var(--stage-text-dim); }
+.pk-ic { width: 36px; height: 36px; flex: none; display: grid; place-items: center; font-family: var(--font-fancy); font-size: .8rem; color: var(--stage-black); background: var(--c); }
+.pk.none { border-style: dashed; }
+@media (max-width: 1023px) {
+  .split { flex-direction: column; } .side { width: 100%; border-right: 0; border-bottom: 1px solid color-mix(in srgb, var(--w) 30%, transparent); }
+  .grip { display: none; } .sliders { grid-template-columns: 1fr; }
+  .pp > .hero { margin: 12px; padding: 16px; flex-wrap: wrap; } .pp > .hero > div { min-width: 0; flex: 1 1 200px; } .pp > .hero h2 { font-size: 1.5rem; }
+  .hero-tools { margin-left: 0; order: 3; }
+  .app { grid-template-columns: minmax(0, 1fr) !important; } .scene { min-width: 0; }
+  .wing-panel.l { overflow-x: hidden; } .wing-panel.l .wbody.pp { min-width: 0; } .split, .side, .ed { min-width: 0; max-width: 100%; }
+}
+
+.wf-chip { bottom: auto; top: 52px; left: auto; right: 96px; transform: none; flex-wrap: wrap; justify-content: flex-end; max-width: calc(100vw - min(1000px, 56vw) - 140px); }
+.wf-note { left: auto; right: 84px; bottom: 96px; max-width: min(28rem, calc(100vw - 1100px)); }
+@media (max-width: 900px) { .wf-chip, .wf-note { left: 8px; right: auto; max-width: calc(100vw - 16px); } }
+
+/* ---- TrackHare, a Prop (ported from the SillyTavern extension, github Coneja-Chibi/TrackHare) ----
+ * Proposed new token (not yet in tokens.css): --prop-hare, TrackHare's own orange (#ff6b35 in ST).
+ * Everything else is Bunraku's stage tokens. No glass, no emoji: TrackHare's emoji icons become
+ * the icon set, its blur panels become Bunraku's flat stage panels. */
+:root { --prop-hare: #ff6b35; /* PROPOSED TOKEN */ }
+.hare-btn { position: absolute; left: 96px; bottom: 28px; z-index: 44; width: 48px; height: 48px; display: grid; place-items: center; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--prop-hare) 45%, transparent); color: var(--prop-hare); cursor: pointer; box-shadow: 4px 4px 0 var(--stage-black); }
+.hare-btn svg { width: 26px; height: 30px; }
+.hare-btn .n { position: absolute; top: -8px; right: -8px; min-width: 20px; height: 20px; padding: 0 5px; display: grid; place-items: center; background: var(--prop-hare); color: var(--stage-black); font: 700 11px var(--font-mono); }
+.hare-line { position: absolute; left: 119px; bottom: 76px; width: 2px; height: 16px; background: var(--prop-hare); z-index: 44; }
+.hare-pop { position: absolute; left: 96px; bottom: 92px; z-index: 44; width: 440px; max-height: calc(100% - 150px); overflow: auto; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--prop-hare) 40%, transparent); box-shadow: 6px 6px 0 var(--stage-black); font-family: var(--font-big); }
+.hp-hd { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--stage-seam); }
+.hp-hd svg.logo { width: 16px; height: 18px; color: var(--prop-hare); }
+.hp-hd b { font-size: .92rem; color: var(--stage-card); }
+.hp-hd .cnt { font: 600 .72rem var(--font-mono); color: var(--stage-black); background: var(--prop-hare); padding: 1px 6px; }
+.hp-hd .grow { flex: 1; }
+.seg2 { display: inline-flex; border: 1px solid var(--stage-seam); }
+.seg2 span { padding: 3px 8px; font-size: .7rem; color: var(--stage-mute); cursor: pointer; }
+.seg2 span.on { background: var(--stage-row); color: var(--stage-card); }
+.hp-sub { display: flex; justify-content: space-between; padding: 6px 12px; font: 500 .7rem var(--font-mono); color: var(--stage-mute); letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--stage-seam); }
+.bkh { display: flex; align-items: center; gap: 6px; padding: 8px 12px 4px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--deck-lorebook); }
+.bkh svg { width: 13px; height: 13px; }
+.he { margin: 4px 10px; padding: 8px 10px; background: var(--stage-row); border-left: 3px solid var(--c); display: grid; grid-template-columns: 18px 1fr auto; gap: 8px; align-items: start; cursor: pointer; }
+.he:hover { background: color-mix(in srgb, var(--stage-row) 70%, var(--stage-card) 6%); }
+.he svg { width: 15px; height: 15px; color: var(--c); margin-top: 2px; }
+.he b { display: block; font-size: .86rem; font-weight: 600; color: var(--stage-card); }
+.he .rs { display: inline-block; margin-top: 4px; padding: 1px 6px; font: 600 .68rem var(--font-mono); color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 50%, transparent); }
+.he .tk { font: 500 .72rem var(--font-mono); color: var(--stage-mute); }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.tags span { font-size: .66rem; padding: 1px 5px; color: var(--stage-soft); background: color-mix(in srgb, var(--stage-black) 40%, transparent); }
+body.compact .tags, body.compact .he .tk { display: none; }
+.miss { margin: 8px 10px 4px; border: 1px dashed var(--stage-seam); }
+.miss-hd { display: flex; justify-content: space-between; padding: 8px 10px; font-size: .74rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--stage-soft); }
+.mi { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 6px 10px; border-top: 1px solid var(--stage-seam); font-size: .82rem; color: var(--stage-text-dim); }
+.mi em { font-style: normal; font: 500 .7rem var(--font-mono); color: var(--stage-mute); }
+.hp-ft { display: flex; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--stage-seam); position: sticky; bottom: 0; background: var(--stage-panel); }
+.hbtn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; font-size: .78rem; color: var(--stage-card); background: var(--stage-row); border: 1px solid var(--stage-seam); cursor: pointer; }
+.hbtn svg { width: 13px; height: 13px; color: var(--prop-hare); }
+.hbtn.pri { background: var(--prop-hare); color: var(--stage-black); border-color: var(--prop-hare); }
+.hbtn.pri svg { color: var(--stage-black); }
+/* full-stage sheets: Tokens and Chains */
+.sheet { position: absolute; inset: 24px 96px; z-index: 60; background: var(--stage-well); border: 1px solid color-mix(in srgb, var(--prop-hare) 40%, transparent); box-shadow: 8px 8px 0 var(--stage-black); display: flex; flex-direction: column; font-family: var(--font-big); }
+.sh-hd { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--stage-seam); }
+.sh-hd b { font-size: 1rem; color: var(--stage-card); } .sh-hd small { font-size: .78rem; color: var(--stage-mute); }
+.sh-hd .grow { flex: 1; }
+.sh-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 320px 1fr; }
+.sh-side { border-right: 1px solid var(--stage-seam); padding: 16px; display: flex; flex-direction: column; gap: 16px; overflow: auto; }
+.donut { width: 200px; height: 200px; margin: 0 auto; border-radius: 50% !important; position: relative;
+  background: conic-gradient(var(--deck-preset) 0 18%, var(--deck-character) 18% 34%, var(--deck-persona) 34% 40%, var(--deck-lorebook) 40% 52%, var(--stage-var) 52% 92%, var(--stage-card) 92% 100%); }
+.donut::after { content: ""; position: absolute; inset: 42px; border-radius: 50%; background: var(--stage-well); }
+.donut b { position: absolute; inset: 0; display: grid; place-items: center; z-index: 1; font: 700 1.4rem var(--font-mono); color: var(--stage-card); }
+.donut b small { display: block; font: 500 .66rem var(--font-big); color: var(--stage-mute); text-align: center; }
+.leg { display: flex; flex-direction: column; gap: 4px; }
+.leg div { display: grid; grid-template-columns: 12px 1fr auto auto; gap: 8px; align-items: center; padding: 4px 6px; font-size: .8rem; color: var(--stage-soft); cursor: pointer; }
+.leg div:hover { background: var(--stage-row); }
+.leg i { width: 12px; height: 12px; background: var(--c); }
+.leg em { font-style: normal; font: 500 .72rem var(--font-mono); color: var(--stage-mute); }
+.leg .grip2 { color: var(--stage-faint); font-size: .7rem; }
+.leg .x { opacity: .4; text-decoration: line-through; }
+.bud small { display: block; font-size: .72rem; color: var(--stage-mute); margin-bottom: 6px; }
+.bar { display: flex; height: 12px; background: var(--stage-seam); }
+.bar i { display: block; height: 100%; background: var(--c); }
+.bud .bl { display: flex; justify-content: space-between; margin-top: 6px; font: 500 .72rem var(--font-mono); color: var(--stage-soft); }
+.sh-main { overflow: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.cat2 { border-left: 3px solid var(--c); background: var(--stage-panel); }
+.cat2 > .ch { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: .86rem; font-weight: 600; color: var(--stage-card); cursor: pointer; }
+.cat2 > .ch em { margin-left: auto; font-style: normal; font: 500 .74rem var(--font-mono); color: var(--stage-soft); }
+.cat2 > .ch svg { width: 12px; height: 12px; color: var(--stage-mute); }
+.sec { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; padding: 7px 12px 7px 32px; border-top: 1px solid var(--stage-seam); font-size: .8rem; color: var(--stage-text-dim); }
+.sec em { font-style: normal; font: 500 .72rem var(--font-mono); color: var(--stage-mute); }
+.raw { margin: 0 12px 10px 32px; padding: 10px; background: var(--stage-black); font: 500 .76rem/1.5 var(--font-mono); color: var(--stage-soft); white-space: pre-wrap; }
+.sh-ft { display: flex; gap: 6px; padding: 10px 16px; border-top: 1px solid var(--stage-seam); }
+.chains { padding: 16px; overflow: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.cg { border-top: 3px solid var(--c); background: var(--stage-panel); }
+.cg h4 { padding: 10px 12px 4px; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--c); }
+.cg p { padding: 0 12px 8px; font-size: .74rem; color: var(--stage-mute); }
+.cl { padding: 8px 12px; border-top: 1px solid var(--stage-seam); font-size: .82rem; color: var(--stage-card); }
+.cl small { display: block; margin-top: 3px; font-size: .72rem; color: var(--stage-soft); }
+.cl a { color: var(--deck-lorebook); text-decoration: underline; cursor: pointer; }
+/* Props wing row */
+.prop-row { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center; padding: 14px 16px; background: var(--stage-panel); border-left: 3px solid var(--prop-hare); }
+.prop-ic { width: 44px; height: 44px; display: grid; place-items: center; background: var(--stage-black); color: var(--prop-hare); }
+.prop-ic svg { width: 22px; height: 26px; }
+.prop-row b { display: block; font-size: .95rem; color: var(--stage-card); }
+.prop-row small { display: block; margin-top: 3px; font-size: .8rem; line-height: 1.4; color: var(--stage-soft); }
+.prop-note { font-size: .78rem; color: var(--stage-mute); }
+/* settings card */
+.cfg { position: absolute; left: 96px; bottom: 92px; z-index: 44; width: 300px; background: var(--stage-panel); border: 1px solid color-mix(in srgb, var(--prop-hare) 40%, transparent); box-shadow: 6px 6px 0 var(--stage-black); font-family: var(--font-big); }
+.cfg .r { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--stage-seam); font-size: .84rem; color: var(--stage-card); }
+.cfg .r small { display: block; font-size: .72rem; color: var(--stage-mute); }
+</style>
+<script>if (new URLSearchParams(location.search).get("embed")) document.documentElement.classList.add("wf-embed");</script>
+<style>.wf-embed .wf-chip, .wf-embed .wf-chip2, .wf-embed .wf-note, .wf-embed .wf { display: none !important; }</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 0-2 2v4a5 5 0 0 0 5 5 8 8 0 0 1 5 2 8 8 0 0 1 5-2 5 5 0 0 0 5-5V8a2 2 0 0 0-2-2h-3a8 8 0 0 0-5 2 8 8 0 0 0-5-2z"/><path d="M6 11c1.5 0 2.5.5 3 2"/><path d="M18 11c-1.5 0-2.5.5-3 2"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12z"/></symbol>
+    <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></symbol>
+    <symbol id="i-puzzle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19.44 7.85c-.05.32.06.65.29.88l1.57 1.57a2.4 2.4 0 0 1 0 3.4l-1.61 1.61a.98.98 0 0 1-.84.28c-.47-.07-.8-.48-.97-.93a2.5 2.5 0 1 0-3.21 3.21c.45.17.86.5.93.97a.98.98 0 0 1-.28.84l-1.61 1.61a2.4 2.4 0 0 1-3.4 0l-1.57-1.570a1.03 1.03 0 0 0-.88-.29c-.49.07-.84.5-1.020.97a2.5 2.5 0 1 1-3.24-3.24c.46-.18.9-.53.97-1.020a1.03 1.03 0 0 0-.29-.88L2.7 13.7a2.4 2.4 0 0 1 0-3.4l1.53-1.53c.24-.24.58-.35.92-.3.51.08.88.53 1.07 1.01a2.5 2.5 0 1 0 3.26-3.26c-.48-.2-.93-.56-1.01-1.07-.05-.34.06-.68.3-.92L10.3 2.7a2.4 2.4 0 0 1 3.4 0l1.57 1.57c.23.23.56.34.88.29.49-.07.84-.5 1.02-.97a2.5 2.5 0 1 1 3.24 3.24c-.46.18-.9.53-.97 1.02Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7M19 12H5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></symbol>
+    <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M2 8h5M2 16h5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="14" height="14" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+    <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 3 14 9-14 9V3z"/></symbol>
+    <symbol id="i-eyeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="m2 2 20 20"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></symbol>
+
+    <symbol id="i-branch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v12"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></symbol>
+    <symbol id="i-clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5M9 18h6M10 22h4"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2L7 14.2 2 9.3l6.9-1z"/></symbol>
+    <symbol id="i-hare" viewBox="0 0 30 34.286"><path fill="currentColor" d="m6.316 -0.028 0.256 -0.002c0.232 -0.001 0.464 -0.002 0.696 -0.002 0.251 0 0.503 -0.002 0.754 -0.003 0.548 -0.002 1.096 -0.003 1.645 -0.004q0.515 -0.001 1.029 -0.002c0.952 -0.002 1.904 -0.004 2.856 -0.004l0.184 0 0.555 0 0.185 0c0.991 0 1.982 -0.003 2.973 -0.008q1.531 -0.006 3.061 -0.006c0.572 0 1.144 -0.001 1.715 -0.004Q22.956 -0.067 23.686 -0.065c0.248 0.001 0.496 0.001 0.743 -0.002C25.835 -0.08 27.082 0.066 28.192 1.004l0.11 0.092a34.152 34.152 0 0 1 0.713 0.613 5.156 5.156 0 0 0 0.233 0.189c0.39 0.305 0.698 0.687 0.789 1.184 0.014 0.233 0.016 0.463 0.013 0.697q0.001 0.135 0.002 0.269c0.001 0.245 0 0.49 -0.001 0.734 -0.001 0.265 0 0.529 0.001 0.794 0.001 0.518 0 1.036 -0.001 1.553a517.299 517.299 0 0 0 -0.001 1.81c0 1.077 -0.001 2.153 -0.004 3.229a993.147 993.147 0 0 0 -0.003 3.132 1664.129 1664.129 0 0 1 -0.001 3.777l0 0.181q-0.001 0.63 0 1.261 0.001 0.768 -0.002 1.537c-0.001 0.261 -0.002 0.523 -0.001 0.784q0.001 0.359 -0.002 0.718c-0.001 0.127 0 0.254 0.001 0.382 -0.005 0.466 -0.051 0.775 -0.304 1.17l-0.18 0.167c-0.581 0.628 -0.298 2.533 -0.268 3.34l0.007 0.201c0.024 0.934 0.024 0.934 0.412 1.754 0.341 0.431 0.316 0.796 0.321 1.335q0.002 0.137 0.005 0.274c0.016 0.589 -0.003 1.081 -0.364 1.567 -0.379 0.357 -0.745 0.552 -1.273 0.553l-0.246 0.001 -0.27 -0.001 -0.287 0.001c-0.263 0.001 -0.526 0.001 -0.789 0 -0.284 0 -0.567 0 -0.851 0.001q-0.834 0.001 -1.668 0.001 -0.678 0 -1.356 0l-0.195 0 -0.392 0q-1.84 0.001 -3.68 0c-1.121 0 -2.242 0 -3.363 0.002q-1.727 0.002 -3.454 0.002c-0.646 0 -1.292 0 -1.939 0.001q-0.826 0.001 -1.652 0c-0.281 0 -0.561 -0.001 -0.842 0q-0.386 0.001 -0.773 0c-0.136 0 -0.272 0 -0.408 0.001C4.452 34.302 2.913 33.596 1.674 32.344l-0.152 -0.148c-1.102 -1.139 -1.555 -2.786 -1.548 -4.329q0 -0.145 -0.001 -0.29c-0.001 -0.263 -0.001 -0.526 0 -0.789 0 -0.285 -0.001 -0.569 -0.001 -0.854 -0.001 -0.557 -0.001 -1.113 -0.001 -1.67q0 -0.679 0 -1.358l0 -0.196 0 -0.394c-0.001 -1.229 -0.001 -2.458 0 -3.687 0.001 -1.122 0 -2.245 -0.002 -3.367q-0.002 -1.732 -0.002 -3.464c0 -0.647 0 -1.295 -0.001 -1.942q-0.001 -0.827 0 -1.653c0.001 -0.281 0.001 -0.561 0 -0.842C-0.042 5.195 -0.042 5.195 0.268 4.286l0.058 -0.173C0.677 3.162 1.235 2.391 1.942 1.674l0.148 -0.151C3.205 0.462 4.807 -0.032 6.316 -0.028M21.362 2.679c-0.741 0.365 -1.234 0.866 -1.54 1.644 -0.252 0.784 -0.269 1.591 0.1 2.347C20.34 7.336 20.935 7.893 21.496 8.438l0.167 0.169c0.691 0.68 1.372 1.161 2.361 1.191 0.74 -0.017 1.283 -0.182 1.825 -0.691l0.096 -0.089c0.403 -0.353 0.403 -0.353 0.707 -0.783 0 -0.359 -0.335 -0.63 -0.573 -0.869 -0.333 -0.333 -0.653 -0.575 -1.101 -0.737l-0.132 -0.049C24.14 6.364 23.44 6.499 22.768 6.763l-0.201 0.134 0.071 -0.167c0.355 -0.872 0.439 -1.657 0.092 -2.558C22.458 3.619 21.966 3.197 21.496 2.813zm-8.571 6.629c0.058 0.31 0.244 0.468 0.464 0.68l0.12 0.119c0.127 0.125 0.254 0.249 0.382 0.373a118.862 118.862 0 0 1 0.381 0.373 37.098 37.098 0 0 0 0.238 0.232c0.233 0.228 0.405 0.401 0.441 0.73L14.816 11.987l0.001 0.172c-0.019 0.176 -0.053 0.284 -0.152 0.431 -0.19 0.063 -0.325 0.082 -0.523 0.088l-0.169 0.008c-0.53 -0.085 -0.911 -0.612 -1.267 -0.974l-0.185 -0.186A235.313 235.313 0 0 1 12.054 11.049l-0.134 -0.134c-0.187 0.219 -0.314 0.413 -0.417 0.681 -0.141 0.352 -0.292 0.696 -0.451 1.04l-0.072 0.157q-0.112 0.241 -0.223 0.482c-0.302 0.653 -0.603 1.305 -0.888 1.966 -0.126 0.29 -0.257 0.577 -0.392 0.863a36.563 36.563 0 0 0 -0.469 1.038c-0.225 0.518 -0.462 1.03 -0.703 1.54l-0.154 0.327 -0.16 0.339 -0.075 0.158 -0.073 0.153 -0.071 0.149c-0.071 0.146 -0.145 0.289 -0.22 0.433 -0.146 0.293 -0.193 0.528 -0.118 0.851 0.188 0.363 0.448 0.603 0.804 0.804l0.138 0.088c0.353 0.125 0.755 -0.143 1.071 -0.289l0.366 -0.167 0.187 -0.086c0.213 -0.097 0.427 -0.193 0.64 -0.289 0.161 -0.072 0.321 -0.145 0.482 -0.217a117.522 117.522 0 0 1 0.815 -0.364c0.202 -0.09 0.404 -0.18 0.606 -0.27q0.151 -0.067 0.303 -0.134c0.143 -0.063 0.285 -0.126 0.427 -0.19l0.13 -0.057c0.24 -0.109 0.39 -0.208 0.526 -0.436 -0.092 -0.103 -0.092 -0.103 -0.201 -0.201h-0.134l-0.053 -0.119c-0.087 -0.159 -0.179 -0.258 -0.309 -0.383l-0.134 -0.13q-0.14 -0.134 -0.28 -0.267c-0.488 -0.474 -0.488 -0.474 -0.502 -0.866l0.018 -0.152 0.015 -0.153c0.046 -0.166 0.107 -0.232 0.24 -0.341 0.152 -0.076 0.249 -0.082 0.419 -0.088l0.152 -0.008c0.407 0.07 0.705 0.415 0.984 0.699l0.114 0.115c0.119 0.12 0.238 0.241 0.357 0.362l0.243 0.245a231.027 231.027 0 0 1 0.442 0.447q0.151 0.153 0.303 0.305l0.199 -0.101c0.717 -0.361 1.437 -0.714 2.174 -1.033C19.584 17.106 20.89 16.228 21.563 14.531c0.081 -0.242 0.151 -0.486 0.218 -0.732l0.054 -0.188c0.184 -0.671 0.157 -1.228 -0.021 -1.897l-0.042 -0.169c-0.099 -0.387 -0.24 -0.738 -0.41 -1.099l-0.06 -0.139c-0.281 -0.644 -0.802 -1.171 -1.346 -1.602l-0.127 -0.104C19.214 8.117 18.564 7.84 17.813 7.634l-0.225 -0.073c-1.806 -0.453 -3.53 0.559 -4.797 1.747M4.796 26.472Q4.704 26.592 4.621 26.719l-0.084 0.126c-0.284 0.518 -0.268 1.185 -0.138 1.749 0.198 0.543 0.529 0.941 1.048 1.199 0.565 0.23 1.199 0.226 1.8 0.222l0.237 0q0.322 0 0.645 -0.001c0.233 -0.001 0.466 0 0.698 0q0.604 0 1.208 -0.001c0.582 -0.001 1.164 -0.001 1.746 -0.002q1.416 0 2.833 -0.002a3807.924 3807.924 0 0 1 3.774 -0.003c2.353 -0.001 4.705 -0.004 7.058 -0.007v-4.286a11307.589 11307.589 0 0 0 -8.085 -0.007l-0.172 0q-1.376 -0.001 -2.751 -0.003 -1.412 -0.002 -2.824 -0.002 -0.871 0 -1.742 -0.002 -0.598 -0.001 -1.195 -0.001c-0.23 0 -0.459 0 -0.689 -0.001 -0.25 -0.001 -0.499 -0.001 -0.749 0l-0.218 -0.001c-0.856 0.003 -1.618 0.121 -2.225 0.775"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.8V4h6v6.8l3 3.2H6z"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-dice" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.2 15.9A10 10 0 1 1 8 2.8"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn">Wb</div><div class="app-btn">Lb</div><div class="app-btn on">Sc</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn" data-theme-switch title="Paper or stage">St</div></nav>
+
+  <main class="scene paused open-l" id="scene">
+    <div class="play">
+      <div class="bgm"></div>
+      <header class="sh">
+        <span class="back"><svg width="16" height="16"><use href="#i-back"/></svg></span>
+        <span class="nm">Marguerite Vane</span>
+        <span class="tag">Keep the lighthouse lit through the long storm while the keeper's past comes up with the tide.</span>
+        <span class="branch"><svg width="14" height="14"><use href="#i-film"/></svg><span class="bn"><span>Director's Cut</span></span><svg width="12" height="12"><use href="#i-down"/></svg></span>
+        <span class="grow"></span><span class="live"></span><span class="gear"><svg width="15" height="15"><use href="#i-gear"/></svg></span>
+      </header>
+      <div class="scroll">
+        <div class="msg char" style="--tone: var(--deck-character)">
+          <div class="por"><div class="art"></div><span class="ini">M</span></div>
+          <div class="body"><span class="badge">#1</span><div class="spk">Marguerite Vane</div>
+            <div class="bub"><div class="prose"><p><q>You came up the stairs without a lantern.</q> <em>She does not turn around.</em></p></div></div></div>
+        </div>
+      </div>
+      <div class="dockbar"><div class="cap"><span class="plus"><svg><use href="#i-plus"/></svg></span><span class="ta">Message Marguerite Vane...</span><span class="send"><svg><use href="#i-send"/></svg></span></div></div>
+    </div>
+
+
+    <nav class="rail l" aria-label="Scene wings">
+      <div class="wi" style="--w: var(--accent)"><svg><use href="#i-zap"/></svg></div>
+      <div class="wi" style="--w: var(--deck-character)"><svg><use href="#i-mask"/></svg></div>
+      <div class="wi" style="--w: var(--deck-preset)"><svg><use href="#i-wand"/></svg></div>
+      <div class="wi" style="--w: var(--deck-lorebook)"><svg><use href="#i-globe"/></svg></div>
+      <div class="wi" style="--w: var(--deck-regex)" data-only="props"><svg><use href="#i-puzzle"/></svg></div>
+    </nav>
+    <nav class="rail r" aria-label="Tool wings">
+      <div class="wi" style="--w: var(--stage-var)"><svg><use href="#i-cpu"/></svg></div>
+      <div class="wi" style="--w: var(--stage-warn)"><svg><use href="#i-eye"/></svg></div>
+    </nav>
+
+    <!-- The Props wing: TrackHare switched on for this scene -->
+    <section class="wing-panel l show" style="--w: var(--deck-regex)" data-only="props">
+      <nav class="fold"><div class="crumb">Scene <i>/</i> <b>Props</b></div><div class="tabs"><button class="on"><b>Props</b><small>1 on</small></button></div></nav>
+      <div class="wbody">
+        <div class="prop-row"><span class="prop-ic"><svg><use href="#i-hare"/></svg></span><div><b>TrackHare</b><small>See which lorebook entries went into each reply and why, which ones did not and why not, how the prompt's tokens were spent, and which entries woke which.</small></div><span class="tg on"></span></div>
+        <p class="prop-note">Props are optional. TrackHare only watches; it never changes what is sent. Its button appears on the stage while it is on.</p>
+      </div>
+    </section>
+
+    <!-- the stage button, TrackHare's own entry point -->
+    <div class="hare-btn" data-only="stage panel miss settings" title="TrackHare (right-click for options)"><svg><use href="#i-hare"/></svg><span class="n">5</span></div>
+    <div class="hare-line" data-only="panel miss settings"></div>
+
+    <!-- the popover: what fired on the last reply -->
+    <div class="hare-pop" data-only="panel miss">
+      <div class="hp-hd"><svg class="logo"><use href="#i-hare"/></svg><b>TrackHare</b><span class="cnt">5</span><span class="grow"></span><span class="seg2"><span class="on">Detailed</span><span>Compact</span></span></div>
+      <div class="hp-sub"><span>Reply #14 &middot; take 2</span><span>~740 lore tok</span></div>
+      <div class="bkh"><svg><use href="#i-book"/></svg> Keeper's Log</div>
+      <div class="he" style="--c: var(--stage-macro)"><svg><use href="#i-pin"/></svg><div><b>The lighthouse</b><span class="rs">ALWAYS ON</span><div class="tags"><span>World</span><span>order 10</span></div></div><span class="tk">~120</span></div>
+      <div class="he" style="--c: var(--stage-ok)"><svg><use href="#i-key"/></svg><div><b>The storm of '09</b><span class="rs">KEY: "storm"</span><div class="tags"><span>Character</span><span>sticky 3</span><span>scan 4</span></div></div><span class="tk">~180</span></div>
+      <div class="he" style="--c: var(--deck-lorebook)"><svg><use href="#i-link"/></svg><div><b>The lantern</b><span class="rs">WOKEN BY: The storm of '09 (loop 1)</span><div class="tags"><span>World</span><span>recursion</span></div></div><span class="tk">~95</span></div>
+      <div class="he" style="--c: var(--stage-danger-text)"><svg><use href="#i-clock"/></svg><div><b>Her brother</b><span class="rs">STICKY: 2 turns left</span><div class="tags"><span>@ Depth 4</span></div></div><span class="tk">~140</span></div>
+      <div class="he" style="--c: var(--stage-warn)"><svg><use href="#i-dice"/></svg><div><b>Tidewater gossip</b><span class="rs">CHANCE: rolled 34, needed 60</span><div class="tags"><span>group: rumors (won)</span></div></div><span class="tk">~205</span></div>
+      <div class="bkh"><svg><use href="#i-book"/></svg> The Drowned Coast</div>
+      <div class="miss" data-only="panel"><div class="miss-hd"><span>Didn't fire (3)</span><span>show</span></div></div>
+      <div class="miss" data-only="miss"><div class="miss-hd"><span>Didn't fire (3)</span><span>hide</span></div>
+        <div class="mi"><span>Shipwrecks</span><em>matched "wreck", over budget: 200 tok, 90 left</em></div>
+        <div class="mi"><span>The tide tables</span><em>chance: rolled 71, needed 50</em></div>
+        <div class="mi"><span>Old keeper</span><em>cooling down: 1 turn left</em></div>
+      </div>
+      <div class="hp-ft"><span class="hbtn pri"><svg><use href="#i-chart"/></svg> Tokens</span><span class="hbtn"><svg><use href="#i-link"/></svg> Chains</span><span class="hbtn"><svg><use href="#i-back"/></svg> Earlier replies</span></div>
+    </div>
+
+    <!-- settings: right-click the button -->
+    <div class="cfg" data-only="settings">
+      <div class="hp-hd"><svg class="logo"><use href="#i-hare"/></svg><b>TrackHare options</b></div>
+      <div class="r"><div>Group by book</div><span class="tg on"></span></div>
+      <div class="r"><div>Sort<small>Placement order, A to Z, or size</small></div><span class="sel">Placement <svg><use href="#i-down"/></svg></span></div>
+      <div class="r"><div>Show "Didn't fire"</div><span class="tg on"></span></div>
+      <div class="r"><div>Button<small>Drag it anywhere; drag the corner to resize</small></div><span class="hbtn">Reset place</span></div>
+    </div>
+
+    <!-- Tokens: the itemizer, as a sheet over the stage -->
+    <section class="sheet" data-only="tokens">
+      <div class="sh-hd"><svg style="width:18px;height:20px;color:var(--prop-hare)"><use href="#i-hare"/></svg><b>Tokens</b><small>Reply #14 &middot; exactly what was sent, section by section</small><span class="grow"></span><span class="tbtn" title="Close"><svg><use href="#i-x"/></svg></span></div>
+      <div class="sh-body">
+        <aside class="sh-side">
+          <div class="donut"><b><span>6,184<small>tokens sent</small></span></b></div>
+          <div class="leg">
+            <div style="--c: var(--deck-preset)"><i></i>Preset prompts<em>1,113</em><span class="grip2">::</span></div>
+            <div style="--c: var(--deck-character)"><i></i>Character card<em>989</em><span class="grip2">::</span></div>
+            <div style="--c: var(--deck-persona)"><i></i>Persona<em>371</em><span class="grip2">::</span></div>
+            <div style="--c: var(--deck-lorebook)"><i></i>Lore<em>740</em><span class="grip2">::</span></div>
+            <div style="--c: var(--stage-var)"><i></i>Chat history<em>2,474</em><span class="grip2">::</span></div>
+            <div style="--c: var(--stage-card)" class="x"><i></i><span class="x">Current message</span><em>497</em><span class="grip2">::</span></div>
+          </div>
+          <div class="bud"><small>Context: 6,184 of 32,000 (reply keeps 1,200)</small>
+            <div class="bar"><i style="--c: var(--deck-preset); width: 3.5%"></i><i style="--c: var(--deck-character); width: 3.1%"></i><i style="--c: var(--deck-persona); width: 1.2%"></i><i style="--c: var(--deck-lorebook); width: 2.3%"></i><i style="--c: var(--stage-var); width: 7.7%"></i><i style="--c: var(--stage-card); width: 1.5%"></i></div>
+            <div class="bl"><span>19% used</span><span>lore share: 740 of 8,000</span></div></div>
+          <div class="bud"><small>Counting with</small><span class="sel">This scene's model (Claude Sonnet) <svg><use href="#i-down"/></svg></span></div>
+        </aside>
+        <div class="sh-main">
+          <div class="cat2" style="--c: var(--deck-preset)"><div class="ch"><svg><use href="#i-down"/></svg>Preset prompts (Velvet Quill)<em>1,113</em></div>
+            <div class="sec"><span>Main Prompt</span><em>420</em><span class="hbtn">Copy</span></div>
+            <div class="sec"><span>Prose: literary</span><em>210</em><span class="hbtn">Copy</span></div>
+            <div class="raw">Write in a literary register. Favor concrete sensory detail over summary, let silences carry weight...</div>
+            <div class="sec"><span>Jailbreak</span><em>180</em><span class="hbtn">Copy</span></div></div>
+          <div class="cat2" style="--c: var(--deck-lorebook)"><div class="ch"><svg><use href="#i-down"/></svg>Lore (5 entries)<em>740</em></div>
+            <div class="sec"><span>The lighthouse &middot; World</span><em>120</em><span class="hbtn">Copy</span></div>
+            <div class="sec"><span>The storm of '09 &middot; after the character</span><em>180</em><span class="hbtn">Copy</span></div></div>
+          <div class="cat2" style="--c: var(--stage-var)"><div class="ch"><svg class="r" style="transform:rotate(-90deg)"><use href="#i-down"/></svg>Chat history (22 messages, 6 left out for space)<em>2,474</em></div></div>
+          <div class="cat2" style="--c: var(--deck-character)"><div class="ch"><svg style="transform:rotate(-90deg)"><use href="#i-down"/></svg>Character card<em>989</em></div></div>
+        </div>
+      </div>
+      <div class="sh-ft"><span class="hbtn">Copy as JSON</span><span class="hbtn">Copy the raw request</span><span class="hbtn">Export .json</span><span class="hbtn">Export .txt</span><span class="grow"></span><span class="hbtn">Reset what-if</span></div>
+    </section>
+
+    <!-- Chains: which entries woke which -->
+    <section class="sheet" data-only="chains">
+      <div class="sh-hd"><svg style="width:18px;height:20px;color:var(--prop-hare)"><use href="#i-hare"/></svg><b>Chains</b><small>Reply #14 &middot; an entry's text can wake another entry's keys</small><span class="grow"></span><span class="tbtn" title="Close"><svg><use href="#i-x"/></svg></span></div>
+      <div class="chains">
+        <div class="cg" style="--c: var(--stage-ok)"><h4>Starters</h4><p>Fired from the chat, then woke others</p>
+          <div class="cl">The storm of '09<small>woke <a>The lantern</a> with "lantern"</small></div></div>
+        <div class="cg" style="--c: var(--deck-lorebook)"><h4>Links</h4><p>Woken, then woke others</p>
+          <div class="cl">The lantern<small>woken by The storm of '09 (loop 1); woke <a>Her brother</a> with "brother"</small></div></div>
+        <div class="cg" style="--c: var(--stage-warn)"><h4>Ends</h4><p>Woken, woke nothing</p>
+          <div class="cl">Her brother<small>woken by The lantern (loop 2)</small></div></div>
+        <div class="cg" style="--c: var(--stage-mute)"><h4>Standalone</h4><p>Fired alone</p>
+          <div class="cl">The lighthouse<small>always on</small></div><div class="cl">Tidewater gossip<small>chance, group rumors</small></div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="wf-chip" id="wf">
+  <span>TrackHare</span><button data-s="props">Props wing</button><button data-s="stage">On the stage</button><button data-s="panel">What fired</button><button data-s="miss">Didn't fire</button><button data-s="tokens">Tokens</button><button data-s="chains">Chains</button><button data-s="settings">Options</button>
+  <span>|</span><button data-c="1">Compact</button>
+  <button data-theme-switch>Theme</button><a href="../index.html">All</a>
+</div>
+<div class="wf-note"><b>TrackHare, ported from your SillyTavern extension as a Prop.</b> Switch it on per scene in the Props wing; its button sits on the stage with a count of what fired, click opens what fired on the last reply, right-click opens options, and it drags and resizes like it did in ST. <b>Kept from ST:</b> the button and badge, the popover grouped by book with Detailed and Compact, reason badges, sticky countdowns, the Tokens itemizer (chart, legend with click-to-leave-out what-if and drag to reorder, context budget bar, sections with raw text, copy and export), and the Chains view (starters, links, ends, standalone). <b>Now possible because Bunraku owns the data (no log scraping or patching):</b> exact reasons with recursion loop, the actual chance roll, <b>Didn't fire</b> with why not (budget, chance, cooldown), any earlier reply (the seeded turn replays exactly), the lore share of the budget, and the raw request. <b>Left out:</b> VectHare (Bunraku has no vector search yet), Potato Mode (no glass or blur to strip), and the 18-tokenizer picker (it counts with the scene's model).</div>
+
+<script>
+(function () {
+  function set(s) {
+    document.querySelectorAll("[data-only]").forEach(function (el) { el.style.display = el.getAttribute("data-only").split(" ").indexOf(s) >= 0 ? "" : "none"; });
+    document.getElementById("scene").classList.toggle("paused", s === "props");
+    document.querySelectorAll("#wf [data-s]").forEach(function (b) { b.style.outline = b.getAttribute("data-s") === s ? "2px solid var(--accent)" : ""; });
+  }
+  document.getElementById("wf").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-s]"); if (b) set(b.getAttribute("data-s"));
+    if (e.target.closest("[data-c]")) document.body.classList.toggle("compact");
+  });
+  set(new URLSearchParams(location.search).get("state") || "panel");
+})();
+</script>
+</body>
+</html>

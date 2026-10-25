@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Scenes</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="scenes.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Scenes</h1>
+    <p>The cast rail and stage panel, the Continue hero and preview, the scene grid, the character
+    and folder headers, the empty stage, the card menu and cut confirm, and the attract overlay.
+    No tabs: Bunraku has no group scenes (ui.md overrides g3-hud.html here).</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="scenes.list">
+    <header>
+      <h2 class="bk-heading">Scenes: the list</h2>
+      <span class="bk-tag">src/ui/apps/scenes</span>
+      <p class="bk-meta">Parts: scenes.rail (.tile), scenes.side, scenes.favorites, scenes.recent
+      (.row), scenes.folders, scenes.folder, scenes.plaque, scenes.filters, scenes.hero,
+      scenes.preview, scenes.grid, scenes.card (.takes)</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="scenes.list.a" data-taste-title="As approved">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">As approved</h3>
+          <p>G3's layout: the cast rail and stage panel beside the stage, as scenes-game.html.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen scn-root" data-part="scenes.list" data-variant="a" data-state="scenes">
+            <div class="scn-body">
+                <nav class="scn-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="scn-dock-brand" data-part="shell.dock.brand">
+                    <svg class="scn-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="scn-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" aria-current="page">
+                    <span class="scn-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Scenes</b><small class="scn-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Workbench</b><small class="scn-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="library" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Library</b><small class="scn-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="press" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Press</b><small class="scn-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Agent</b><small class="scn-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Kit</b><small class="scn-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Settings</b></span>
+                  </button>
+                  <div class="scn-dock-foot">
+                    <button type="button" class="scn-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="scn-dock-tx"><b class="scn-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="scn-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="scn-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <div class="scn-main">
+                <div class="scn-side" data-part="scenes.side">
+                  <nav class="scn-rail" data-part="scenes.rail" aria-label="Cast">
+                    <button type="button" class="scn-rail-all bk-item" aria-current="false" title="All Scenes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/></svg></button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="character" aria-current="true" title="Vera Lune, 12 scenes">V<span class="bk-dot" title="Now playing"></span></button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="persona" aria-current="false" title="Nuit, 4 scenes">N</button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="lorebook" aria-current="false" title="The Magpie, 3 scenes">M</button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="regex" aria-current="false" title="Marguerite, 6 scenes">M</button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="preset" aria-current="false" title="Corvin Ashe, 2 scenes">C</button>
+                  </nav>
+                  <aside class="scn-panel" data-part="scenes.favorites">
+                    <div class="scn-panel-head"><p class="bk-label"><span class="bk-bullet"></span>Fan Favorites</p></div>
+                    <div class="scn-panel-body">
+                      <div class="scn-fav" data-deck="character">
+                        <a class="scn-fav-art bk-frame" data-lift href="#" data-slot="scenes.favorites">
+                          <div class="scn-fav-ov"><div class="scn-fav-who"><span class="scn-fav-av">V</span><b class="bk-name" style="font-size:var(--bk-fs-sm);color:var(--bk-tint-text)">Vera Lune</b><span class="bk-meta" style="margin-left:auto">2h ago</span></div><div class="scn-fav-title bk-name">The long storm</div></div>
+                        </a>
+                        <span class="bk-pips" aria-label="2 of 3 takes favorited"><i data-on></i><i data-on></i><i></i></span>
+                        <p class="bk-meta">42 msgs &middot; 3 takes</p>
+                        <button type="button" class="bk-tag" data-mark data-part="ui.button" style="justify-content:center">Continue Story</button>
+                        <div class="scn-fav-nav">
+                          <button type="button" class="scn-fav-arrow" aria-label="Previous favorite">&lsaquo;</button>
+                          <span class="bk-pips" aria-label="favorite 1 of 2"><i data-on></i><i></i></span>
+                          <button type="button" class="scn-fav-arrow" aria-label="Next favorite">&rsaquo;</button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="scn-panel-body" data-part="scenes.recent">
+                      <p class="bk-label"><span class="bk-bullet"></span>This Week</p>
+                      <button type="button" class="bk-item scn-rec" data-part="scenes.recent.row" data-deck="persona"><span class="scn-rec-av">N</span><span class="scn-rec-tx"><b>Cut the deck</b><small>Nuit pulled her hand back.</small></span><time class="bk-meta">3d</time></button>
+                      <button type="button" class="bk-item scn-rec" data-part="scenes.recent.row" data-deck="lorebook"><span class="scn-rec-av">M</span><span class="scn-rec-tx"><b>The lock gave on the third try</b><small>It clicked open at last.</small></span><time class="bk-meta">6d</time></button>
+                      <p class="bk-label" style="margin-top:var(--bk-space-4)"><span class="bk-bullet"></span>Earlier</p>
+                      <button type="button" class="bk-item scn-rec" data-part="scenes.recent.row" data-deck="regex"><span class="scn-rec-av">M</span><span class="scn-rec-tx"><b>Untitled Scene</b><small>No messages yet.</small></span><time class="bk-meta">21d</time></button>
+                      <button type="button" class="bk-item scn-rec" data-part="scenes.recent.row" data-deck="preset"><span class="scn-rec-av">C</span><span class="scn-rec-tx"><b>The debt comes due</b><small>Corvin counted the coins twice.</small></span><time class="bk-meta">30d</time></button>
+                      <p class="bk-label scn-cut-label" style="margin-top:var(--bk-space-4)" data-part="scenes.cut-list"><span class="bk-bullet"></span>Cut (2d left)</p>
+                      <button type="button" class="bk-item scn-rec" data-part="scenes.cut-list" data-deck="fog"><span class="scn-rec-av">C</span><span class="scn-rec-tx"><b>Restore &middot; The old bridge</b><small>cut 1 day ago</small></span></button>
+                    </div>
+                    <div class="scn-panel-body" data-part="scenes.folders">
+                      <p class="bk-label"><span class="bk-bullet"></span>Smart Folders</p>
+                      <button type="button" class="bk-item" data-part="scenes.folder"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg><span style="flex:1">Longest Stories</span><span class="bk-meta">6</span></button>
+                      <p class="bk-label" style="margin-top:var(--bk-space-4)"><span class="bk-bullet"></span>Folders</p>
+                      <button type="button" class="bk-item" data-part="scenes.folder" data-tone="info"><span class="bk-dot"></span><span style="flex:1">Main Plot</span><span class="bk-meta">4</span></button>
+                      <button type="button" class="bk-item" data-part="scenes.folder" data-deck="preset"><span class="bk-dot"></span><span style="flex:1">Side Quests</span><span class="bk-meta">2</span></button>
+                      <button type="button" class="bk-item" style="color:var(--bk-text-dim)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>New Folder&hellip;</button>
+                    </div>
+                  </aside>
+                </div>
+
+                <main class="bk-stage scn-stage" data-slot="shell.hud.end">
+                  <div class="scn-attract">
+                    <div><svg class="scn-attract-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <h2 class="bk-title">bunraku</h2><p class="bk-meta">a little theater for your characters</p>
+                    <p class="scn-attract-prompt">Press any key</p></div>
+                  </div>
+
+                  <div class="scn-panel-default">
+                    <header class="scn-plaque bk-panel bk-frame" data-crown data-deck="pack" data-part="scenes.plaque">
+                      <div><p class="bk-label"><b>Your Stage</b></p><h2 class="bk-heading">Scenes</h2><p class="bk-meta">6 stories across 5 characters</p></div>
+                      <div class="scn-plaque-actions">
+                        <button type="button" class="bk-tag" data-part="ui.button">Select</button>
+                        <button type="button" class="bk-tag" data-part="ui.button">Trash</button>
+                        <label class="bk-tag" style="padding-right:var(--bk-space-3)"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input style="background:none;border:0;color:inherit;font:inherit;width:8rem" placeholder="Search" aria-label="Search scenes"></label>
+                      </div>
+                    </header>
+                    <div class="scn-filters" data-part="scenes.filters">
+                      <div class="scn-segs" role="radiogroup" aria-label="Time range"><button type="button" aria-pressed="true">All Time</button><button type="button" aria-pressed="false">Week</button><button type="button" aria-pressed="false">Month</button><button type="button" aria-pressed="false">Year</button></div>
+                      <div class="scn-segs" role="radiogroup" aria-label="Sort"><button type="button" aria-pressed="true">Recent</button><button type="button" aria-pressed="false">Messages</button></div>
+                    </div>
+
+                    <div class="scn-stagerow" data-deck="character">
+                      <a class="scn-hero bk-frame" data-lift data-crown data-mark href="#" data-part="scenes.hero">
+                        <span class="scn-art"></span>
+                        <span class="bk-tag" data-mark data-tone="ok" style="position:relative;z-index:1;align-self:flex-start;margin:var(--bk-space-3)"><span class="bk-dot"></span>Live</span>
+                        <div class="scn-hero-ov">
+                          <p class="bk-label">Continue your story</p>
+                          <h3 class="bk-heading">The long storm</h3>
+                          <p class="bk-meta">Vera Lune &middot; picks up on Take 2</p>
+                          <div class="bk-meter" role="meter" aria-label="Scene length" aria-valuemin="0" aria-valuemax="60" aria-valuenow="42"><span class="bk-meter__label">Length</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:70%"></span></span><span class="bk-meter__value">42</span></div>
+                          <div class="bk-meter" role="meter" aria-label="Takes" aria-valuemin="0" aria-valuemax="3" aria-valuenow="2"><span class="bk-meter__label">Takes</span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:66%"></span></span><span class="bk-meter__value">2/3</span></div>
+                          <span class="bk-tag" data-mark data-part="ui.button" style="justify-content:center" role="button" tabindex="0">Continue Story</span>
+                        </div>
+                      </a>
+                      <a class="scn-preview bk-frame" data-lift href="#" data-part="scenes.preview" data-deck="character">
+                        <span class="scn-art"></span>
+                        <div class="scn-pv-pips"><span class="bk-pips" aria-label="slide 1 of 2"><i data-on></i><i></i></span></div>
+                        <div class="scn-pv-slide">
+                          <div class="scn-pv-msg"><span class="scn-pv-av" data-you>Y</span><div class="scn-pv-tx"><b>You</b><p>Deal. Just don't let it go out this time.</p></div></div>
+                          <div class="scn-pv-msg"><span class="scn-pv-av">V</span><div class="scn-pv-tx"><b>Vera Lune</b><p>She strikes the match, cupping the flame against the wind.</p></div></div>
+                        </div>
+                      </a>
+                    </div>
+
+                    <div class="scn-grid" data-part="scenes.grid" role="list">
+                      <article class="scn-card bk-frame" data-lift data-mark data-crown data-deck="character" data-part="scenes.card" aria-selected="true" data-taste-takes role="listitem">
+                        <span class="scn-art"></span>
+                        <span class="bk-tag" data-mark data-tone="ok" style="position:relative;z-index:1;align-self:flex-start;margin:var(--bk-space-2)"><span class="bk-dot"></span>Live</span>
+                        <span class="bk-tag" style="position:absolute;z-index:1;right:var(--bk-space-2);top:var(--bk-space-2)">SLOT 02</span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Vera Lune</p><h3>The long storm</h3><p class="scn-card-meta"><b class="bk-num">42 msgs</b> &middot; 2h ago</p></div>
+                        <div class="scn-takes" data-part="scenes.card.takes"><span class="bk-pips" aria-label="take 2 of 3"><i data-on></i><i data-on></i><i></i></span><span class="bk-num">Take 2</span></div>
+                      </article>
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="persona" data-part="scenes.card" role="listitem">
+                        <span class="scn-art"></span><span class="bk-tag" style="position:absolute;z-index:1;right:var(--bk-space-2);top:var(--bk-space-2)">SLOT 03</span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Nuit</p><h3>Cut the deck</h3><p class="scn-card-meta"><b class="bk-num">18 msgs</b> &middot; 3 days</p></div>
+                      </article>
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="lorebook" data-part="scenes.card" role="listitem">
+                        <span class="scn-art"></span><span class="bk-tag" style="position:absolute;z-index:1;right:var(--bk-space-2);top:var(--bk-space-2)">SLOT 04</span>
+                        <div class="scn-card-ov"><p class="scn-card-who">The Magpie</p><h3>The lock gave on the third try</h3><p class="scn-card-meta"><b class="bk-num">7 msgs</b> &middot; 10 days</p></div>
+                      </article>
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="regex" data-part="scenes.card" role="listitem">
+                        <span class="scn-art"></span><span class="bk-tag" style="position:absolute;z-index:1;right:var(--bk-space-2);top:var(--bk-space-2)">SLOT 05</span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Marguerite</p><h3>Untitled Scene</h3><p class="scn-card-meta"><b class="bk-num">1 msg</b> &middot; 21 days</p></div>
+                      </article>
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="character" data-part="scenes.card" data-menu-target data-taste-takes role="listitem">
+                        <span class="scn-art"></span><span class="bk-tag" style="position:absolute;z-index:1;right:var(--bk-space-2);top:var(--bk-space-2)">SLOT 06</span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Vera Lune</p><h3>Who did you let up the stairs?</h3><p class="scn-card-meta"><b class="bk-num">64 msgs</b> &middot; 23 days</p></div>
+                        <div class="scn-takes" data-part="scenes.card.takes"><span class="bk-pips" aria-label="take 1 of 2"><i data-on></i><i></i></span><span class="bk-num">Original</span></div>
+                      </article>
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="preset" data-part="scenes.card" role="listitem">
+                        <span class="scn-art"></span><span class="bk-tag" style="position:absolute;z-index:1;right:var(--bk-space-2);top:var(--bk-space-2)">SLOT 07</span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Corvin Ashe</p><h3>The debt comes due</h3><p class="scn-card-meta"><b class="bk-num">9 msgs</b> &middot; 30 days</p></div>
+                      </article>
+                    </div>
+                  </div>
+
+                  <div class="scn-detail scn-detail-character">
+                    <button type="button" class="scn-back">&lsaquo; All scenes</button>
+                    <div class="scn-dhead" data-deck="character">
+                      <span class="scn-dhead-avatar">V</span>
+                      <div><p class="bk-label">Starring</p><h2 class="bk-heading">Vera Lune</h2><p class="bk-meta">12 scenes played &middot; 5 total takes</p></div>
+                      <div class="scn-sort"><span class="bk-meta">Sort</span><button type="button" class="bk-tag" data-mark>Recent</button><button type="button" class="bk-tag">A-Z</button><button type="button" class="bk-tag">Messages</button></div>
+                    </div>
+                    <div class="scn-grid" data-part="scenes.grid" role="list">
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="character" data-part="scenes.card" data-taste-takes role="listitem">
+                        <span class="scn-art"></span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Vera Lune</p><h3>The long storm</h3><p class="scn-card-meta"><b class="bk-num">42 msgs</b> &middot; 2h ago</p></div>
+                        <div class="scn-takes" data-part="scenes.card.takes"><span class="bk-pips"><i data-on></i><i data-on></i><i></i></span><span class="bk-num">Take 2</span></div>
+                      </article>
+                      <article class="scn-new bk-frame" data-lift role="listitem">
+                        <span class="scn-new-plus"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                        <b class="bk-label">Start New Story</b><span class="bk-meta">with Vera Lune</span>
+                      </article>
+                    </div>
+                  </div>
+
+                  <div class="scn-detail scn-detail-folder">
+                    <button type="button" class="scn-back">&lsaquo; All scenes</button>
+                    <div class="scn-dhead" data-deck="pack">
+                      <span class="scn-dhead-dot"></span>
+                      <div><p class="bk-label">Chapter</p><h2 class="bk-heading">Main Plot</h2><p class="bk-meta">4 stories in this chapter</p>
+                        <div class="scn-progress"><span class="bk-meter" role="meter" aria-label="Chapter progress" aria-valuemin="0" aria-valuemax="6" aria-valuenow="4"><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:66%"></span></span></span><span class="bk-meta">4 of ~6 expected</span></div>
+                      </div>
+                    </div>
+                    <div class="scn-grid" data-part="scenes.grid" role="list">
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="character" data-part="scenes.card" role="listitem">
+                        <span class="scn-art"></span><div class="scn-card-ov"><p class="scn-card-who">Vera Lune</p><h3>The long storm</h3><p class="scn-card-meta"><b class="bk-num">42 msgs</b> &middot; 2h ago</p></div>
+                      </article>
+                    </div>
+                  </div>
+
+                  <div class="scn-empty-panel" data-part="ui.empty">
+                    <div class="scn-empty-mark"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/></svg></div>
+                    <p class="bk-heading" style="font-size:var(--bk-fs-xl)">Your stage is empty</p>
+                    <p class="bk-meta" style="max-width:30rem;margin:var(--bk-space-3) auto">Discover a character in the Library and start your first scene. Every scene you play shows up here, gathered by cast member and chapter.</p>
+                    <button type="button" class="bk-tag" data-mark data-part="ui.button">Discover Characters</button>
+                  </div>
+
+                  <div class="scn-menu bk-panel bk-frame" data-part="ui.menu" data-mark role="menu" aria-label="Cut the deck">
+                    <div class="scn-menu-head">Cut the deck &middot; Nuit</div>
+                    <div class="bk-item" role="menuitem" tabindex="0">Rename Scene</div>
+                    <div class="bk-item" role="menuitem" tabindex="0" data-tone="info"><span class="bk-dot"></span>Move to Main Plot</div>
+                    <div class="bk-item" role="menuitem" tabindex="0">Add to Fan Favorites</div>
+                    <div class="bk-item" role="menuitem" tabindex="0" data-tone="danger">Delete Story</div>
+                  </div>
+                  <div class="scn-scrim">
+                    <div class="bk-panel bk-frame scn-dialog" data-tone="danger" data-crown role="alertdialog" aria-label="Cut this story">
+                      <p class="bk-label">Cut this story?</p>
+                      <h3 class="bk-heading" style="font-size:var(--bk-fs-lg)">Cut the deck</h3>
+                      <p class="bk-meta">"Cut the deck" and every message in it, permanently. There is no undo.</p>
+                      <div class="scn-dialog-actions"><button type="button" class="bk-tag" data-part="ui.button">Cancel</button><button type="button" class="bk-tag" data-mark data-tone="danger" data-part="ui.button">Delete</button></div>
+                    </div>
+                  </div>
+                </main>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="scenes" aria-pressed="true">Scenes</button>
+          <button type="button" class="spec-chip" data-set-state="attract">Attract</button>
+          <button type="button" class="spec-chip" data-set-state="collapsed">Dock folded</button>
+          <button type="button" class="spec-chip" data-set-state="character">Character</button>
+          <button type="button" class="spec-chip" data-set-state="folder">Folder</button>
+          <button type="button" class="spec-chip" data-set-state="menu">Card menu</button>
+          <button type="button" class="spec-chip" data-set-state="cut">Cut confirm</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty stage</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="scenes.list.b" data-taste-title="Stage-first">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Stage-first</h3>
+          <p>The hero and preview span the top as one wide panel; the cast rail and side panel fold
+          into a single left column of sections.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen scn-root" data-part="scenes.list" data-variant="b" data-state="scenes">
+            <div class="scn-body">
+                <nav class="scn-dock" data-part="shell.dock" aria-label="Apps">
+                  <div class="scn-dock-brand" data-part="shell.dock.brand">
+                    <svg class="scn-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <span class="scn-dock-word bk-name">bunraku</span>
+                  </div>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="scenes" aria-current="page">
+                    <span class="scn-dock-icon" data-part="shell.dock.icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Scenes</b><small class="scn-dock-sub bk-meta">play</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Workbench</b><small class="scn-dock-sub bk-meta">make</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="library" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Library</b><small class="scn-dock-sub bk-meta">keep</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="press" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Press</b><small class="scn-dock-sub bk-meta">share</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="agent" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Agent</b><small class="scn-dock-sub bk-meta">help</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="kit" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Kit</b><small class="scn-dock-sub bk-meta">terminal</small></span>
+                  </button>
+                  <button type="button" class="scn-dock-app bk-item" data-part="shell.dock.app" data-app="settings" >
+                    <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><rect x="4" y="4" width="16" height="16"/></svg></span>
+                    <span class="scn-dock-tx"><b class="scn-dock-label">Settings</b></span>
+                  </button>
+                  <div class="scn-dock-foot">
+                    <button type="button" class="scn-dock-add bk-item" data-part="shell.dock.add">
+                      <span class="scn-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+                      <span class="scn-dock-tx"><b class="scn-dock-label">Add app</b></span>
+                    </button>
+                    <button type="button" class="scn-dock-fold" data-part="shell.dock.fold" aria-pressed="false" aria-label="Collapse the Dock to icons">
+                      <span aria-hidden="true">&laquo;</span><span class="scn-dock-fold-label">Collapse</span>
+                    </button>
+                  </div>
+                </nav>
+              <div class="scn-main">
+                <div class="scn-side" data-part="scenes.side">
+                  <nav class="scn-rail" data-part="scenes.rail" aria-label="Cast">
+                    <button type="button" class="scn-rail-all bk-item" aria-current="false" title="All Scenes"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/></svg></button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="character" aria-current="true" title="Vera Lune">V<span class="bk-dot"></span></button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="persona" aria-current="false" title="Nuit">N</button>
+                    <button type="button" class="scn-rail-tile" data-part="scenes.rail.tile" data-deck="lorebook" aria-current="false" title="The Magpie">M</button>
+                  </nav>
+                  <aside class="scn-panel" data-part="scenes.favorites">
+                    <div class="scn-panel-body" data-part="scenes.recent">
+                      <p class="bk-label"><span class="bk-bullet"></span>This Week</p>
+                      <button type="button" class="bk-item scn-rec" data-part="scenes.recent.row" data-deck="persona"><span class="scn-rec-av">N</span><span class="scn-rec-tx"><b>Cut the deck</b><small>Nuit pulled her hand back.</small></span><time class="bk-meta">3d</time></button>
+                    </div>
+                    <div class="scn-panel-body" data-part="scenes.folders">
+                      <p class="bk-label"><span class="bk-bullet"></span>Folders</p>
+                      <button type="button" class="bk-item" data-part="scenes.folder" data-tone="info"><span class="bk-dot"></span><span style="flex:1">Main Plot</span><span class="bk-meta">4</span></button>
+                      <button type="button" class="bk-item" data-part="scenes.folder" data-deck="preset"><span class="bk-dot"></span><span style="flex:1">Side Quests</span><span class="bk-meta">2</span></button>
+                    </div>
+                  </aside>
+                </div>
+                <main class="bk-stage scn-stage">
+                  <div class="scn-attract">
+                    <div><svg class="scn-attract-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg>
+                    <h2 class="bk-title">bunraku</h2><p class="scn-attract-prompt">Press any key</p></div>
+                  </div>
+                  <div class="scn-panel-default">
+                    <header class="scn-plaque bk-panel bk-frame" data-crown data-deck="pack" data-part="scenes.plaque">
+                      <div><p class="bk-label"><b>Your Stage</b></p><h2 class="bk-heading">Scenes</h2></div>
+                      <div class="scn-plaque-actions"><button type="button" class="bk-tag" data-part="ui.button">Select</button><button type="button" class="bk-tag" data-part="ui.button">Trash</button></div>
+                    </header>
+                    <div class="scn-stagerow" data-deck="character">
+                      <a class="scn-hero bk-frame" data-lift data-crown data-mark href="#" data-part="scenes.hero">
+                        <span class="scn-art"></span>
+                        <div class="scn-hero-ov">
+                          <p class="bk-label">Continue your story</p><h3 class="bk-heading">The long storm</h3>
+                          <p class="bk-meta">Vera Lune &middot; picks up on Take 2</p>
+                          <span class="bk-tag" data-mark data-part="ui.button" style="justify-content:center" role="button" tabindex="0">Continue Story</span>
+                        </div>
+                      </a>
+                    </div>
+                    <div class="scn-grid" data-part="scenes.grid" role="list">
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="character" data-part="scenes.card" aria-selected="true" role="listitem">
+                        <span class="scn-art"></span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Vera Lune</p><h3>The long storm</h3><p class="scn-card-meta"><b class="bk-num">42 msgs</b> &middot; 2h ago</p></div>
+                      </article>
+                      <article class="scn-card bk-frame" data-lift data-crown data-deck="persona" data-part="scenes.card" role="listitem">
+                        <span class="scn-art"></span>
+                        <div class="scn-card-ov"><p class="scn-card-who">Nuit</p><h3>Cut the deck</h3><p class="scn-card-meta"><b class="bk-num">18 msgs</b> &middot; 3 days</p></div>
+                      </article>
+                    </div>
+                  </div>
+                  <div class="scn-empty-panel" data-part="ui.empty">
+                    <div class="scn-empty-mark"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/></svg></div>
+                    <p class="bk-heading" style="font-size:var(--bk-fs-xl)">Your stage is empty</p>
+                    <button type="button" class="bk-tag" data-mark data-part="ui.button">Discover Characters</button>
+                  </div>
+                </main>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="scenes" aria-pressed="true">Scenes</button>
+          <button type="button" class="spec-chip" data-set-state="attract">Attract</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Empty stage</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> cast rail with now-playing
+    marker, Fan Favorites carousel, This Week/Earlier recents, the cut list, Smart Folders, Folders +
+    New Folder, Your Stage plaque with Select/search/Trash, both filter segment rows, the Continue
+    hero + preview (recent-message slide), the grid with take strips, character and folder headers,
+    empty stage, card menu and cut confirm, and the attract overlay. <b>Left out (per ui.md, not
+    g3-hud.html):</b> the One-on-One/Group tabs and the ensemble "Heist Crew" card -- Bunraku has no
+    group scenes. <b>Simplified:</b> below 30rem the side column hides rather than becoming a drawer
+    (no dedicated state in the brief's list for a drawer toggle); the preview carousel shows one
+    message slide only, its second "Previously on" slide and the no-summary variant are not drawn as
+    separate reachable states here.</p>
+  </section>
+</main>
+</body>
+</html>

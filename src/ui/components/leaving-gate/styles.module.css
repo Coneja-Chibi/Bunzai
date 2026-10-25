@@ -1,0 +1,116 @@
+/* LeavingGate - a full-window takeover (fixed inset 0, above all shell chrome) that reads as a page,
+   not a modal: it fills the viewport and covers the dock/tabs/footer. Neobrutalist card centered on a
+   near-opaque forge scrim. */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--scrim);
+}
+.card {
+  width: 100%;
+  max-width: 34rem;
+  background: var(--stage-panel);
+  border: 3px solid var(--stage-black);
+  border-top: 6px solid var(--rose);
+  box-shadow: 10px 10px 0 var(--shadow-ink);
+  padding: 1.6rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.kicker {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--stage-paper);
+}
+.lede {
+  margin: 0;
+  font-size: var(--text-meta);
+  line-height: 1.5;
+  color: var(--stage-mute);
+}
+/* the recognized-site badge: a colored monogram tile + the site name. Recognition is LOCAL only
+   (platform-registry), so this never fetches a favicon or thumbnail from the destination. */
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+.tile {
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: 1.15rem;
+  border: 3px solid var(--stage-black);
+  box-shadow: 3px 3px 0 var(--shadow-ink);
+}
+.globe {
+  background: var(--stage-seam);
+  color: var(--stage-soft);
+}
+.globe svg {
+  display: block;
+}
+.pname {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  color: var(--stage-paper);
+  word-break: break-word;
+}
+.url {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--stage-mute);
+  word-break: break-all;
+  padding: 0.5rem 0.6rem;
+  background: var(--stage-2);
+  border: 2px solid var(--stage-seam);
+}
+.warn {
+  font-size: var(--text-meta);
+  line-height: 1.45;
+  color: var(--stage-warn);
+  border: 2px solid var(--stage-warn-ink);
+  background: color-mix(in srgb, var(--stage-warn) 8%, transparent);
+  padding: 0.5rem 0.6rem;
+}
+.row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+.back,
+.go {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.5rem 0.9rem;
+}
+.go {
+  color: var(--stage-white);
+  background: var(--rose-deep); /* deep companion: cream --paper on bright rose measured 4.43, under AA */
+}
+.back:disabled,
+.go:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

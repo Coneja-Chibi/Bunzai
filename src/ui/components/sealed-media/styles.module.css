@@ -1,0 +1,38 @@
+.box {
+  border: 2px solid var(--edge);
+  background: var(--stage-well, var(--paper));
+  padding: 0.35rem;
+  max-width: 100%;
+}
+.img {
+  max-width: 100%;
+  max-height: 6rem;
+  display: block;
+  object-fit: contain;
+}
+.audio {
+  width: 100%;
+  max-width: 16rem;
+  height: 2rem;
+}
+.video {
+  width: 100%;
+  max-width: 16rem;
+  max-height: 8rem;
+  display: block;
+  background: var(--stage-black);
+}
+.none {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0;
+}
+
+.font {
+  border: 1px solid var(--edge);
+  padding: 0.4rem;
+  font-size: 1rem;
+}

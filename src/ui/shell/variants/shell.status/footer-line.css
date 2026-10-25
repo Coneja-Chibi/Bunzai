@@ -1,0 +1,8 @@
+/** shell.status footer-line: the playbill footer, one quiet mono line under a gold rule. */
+html[data-surface-shell-status="footer-line"] {
+  --bk-status-reserve: 1.9rem; /* keeps the replay ? clear of the bar */
+  & #status { border-top: 1px solid var(--bk-line-strong); background: var(--bk-surface-ink); letter-spacing: .06em; }
+  & #status .k { color: var(--bk-line-strong); font-weight: 500; text-transform: uppercase; letter-spacing: .12em; }
+  & #status .b { color: var(--bk-text-soft); }
+  & #status .sep { color: var(--bk-line-strong); }
+}

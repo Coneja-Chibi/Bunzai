@@ -1,0 +1,2 @@
+/* shell.nav hud-bar: square double-weight frame on the shared bottom dock. */
+html[data-surface-shell-nav="hud-bar"] [data-part="shell.nav"] > nav { border-width: 2px; border-radius: 0; }

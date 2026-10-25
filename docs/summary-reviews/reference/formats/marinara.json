@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/formats/marinara",
+  "sourcePath": "docs/reference/formats/marinara.md",
+  "sourceHash": "sha256:63cc089c8e24f33d57081c0b345c620559704256913df28fef3c5a2b4460669a",
+  "semanticSummaryHash": "sha256:ae426126476dce7556ae1f2682d0b836223a49de34a82241a1c15074f8e83dcb",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:13.494Z"
+}

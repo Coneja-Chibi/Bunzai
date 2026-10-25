@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 2,
+  "id": "theater",
+  "version": "2.0.0",
+  "name": "Theater",
+  "requests": [
+    "appearance.accent",
+    "appearance.palette",
+    "appearance.shape",
+    "appearance.surfaces",
+    "appearance.type"
+  ],
+  "appearance": {
+    "surfaces": {
+      "shell.nav": "playbill-rail",
+      "shell.overlay": "gilt-widgets",
+      "shell.title": "proscenium",
+      "shell.status": "footer-line",
+      "library.grid": "covers",
+      "library.card": "playbill-cover",
+      "scenes.list": "marquee-hero",
+      "ui.dialog": "curtain-card",
+      "ui.toast": "program-slip",
+      "ui.empty": "spotlight",
+      "ui.panel": "gilt-frame",
+      "ui.meter": "thin-rule",
+      "ui.icons": "engraved",
+      "ui.toolbar": "playbill-bar",
+      "library.decks": "program-list",
+      "ui.section-header": "engraved-title",
+      "ui.tabs": "rule-tabs",
+      "ui.label-type": "small-caps-serif",
+      "scene.layout": "stage-column",
+      "scene.message": "prose",
+      "scene.composer": "prompt-line",
+      "scene.swipes": "arrows-count",
+      "scene.wings": "side-curtain",
+      "scene.hud": "quiet-line",
+      "scene.reasoning": "program-note",
+      "editor.frame": "two-pane",
+      "editor.fields": "labeled-rows",
+      "settings.shape": "program-sections",
+      "app.room": "ledger-rail",
+      "ui.controls": "quiet"
+    },
+    "palette": {
+      "surface": {
+        "well": "#000000",
+        "base": "#0a0a0b",
+        "sunken": "#060607",
+        "field": "#0e0c0f",
+        "panel": "#141216",
+        "raised": "#1b181b",
+        "ink": "#000000"
+      },
+      "line": {
+        "strong": "#e3bd65",
+        "line": "#755c2c",
+        "track": "#5b4725",
+        "control": "#a9905d",
+        "focus": "#f0cb72"
+      },
+      "text": {
+        "text": "#fafaf9",
+        "soft": "#e0dcda",
+        "dim": "#c5c1c2",
+        "faint": "#aca5a8",
+        "onTint": "#0a0a0b",
+        "onDeep": "#ffffff"
+      },
+      "roles": {
+        "brand": {
+          "fill": "#e3bd65",
+          "text": "#e3bd65",
+          "deep": "#755719"
+        },
+        "action": {
+          "fill": "#4aa3e8",
+          "text": "#a9d8ff",
+          "deep": "#086eae"
+        },
+        "select": {
+          "fill": "#b79bff",
+          "text": "#d9c8ff",
+          "deep": "#613da0"
+        },
+        "ok": {
+          "fill": "#5fe3a1",
+          "text": "#76e3a8",
+          "deep": "#176b43"
+        },
+        "warn": {
+          "fill": "#ffc65a",
+          "text": "#ffe08a",
+          "deep": "#805300"
+        },
+        "danger": {
+          "fill": "#ff7a8c",
+          "text": "#ffb4c2",
+          "deep": "#9e203b"
+        },
+        "info": {
+          "fill": "#2fd9cf",
+          "text": "#5fe6dd",
+          "deep": "#006963"
+        }
+      }
+    },
+    "type": {
+      "display": "cinzel",
+      "ui": "cinzel",
+      "body": "archivo",
+      "mono": "plex-mono",
+      "scale": 0
+    },
+    "shape": {
+      "frame": "double",
+      "frameWidth": 1,
+      "density": "roomy",
+      "motion": "calm",
+      "chrome": "bunraku"
+    },
+    "accent": {
+      "follows": "user"
+    },
+    "marks": {}
+  },
+  "assets": []
+}

@@ -1,0 +1,195 @@
+/**
+ * Cards lens - transcribed from design/vs-lore-lenses.html.
+ * Title + mode, 3-line peek, key chips, tok/on foot. Fixed min height.
+ */
+
+.grid {
+  display: block;
+  padding: 1rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  height: 100%;
+  max-height: 42rem;
+  width: 100%;
+}
+
+.gridSpace {
+  position: relative;
+  width: 100%;
+}
+
+.gridRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+  gap: 0.9rem;
+}
+
+.ecard {
+  border: 2px solid var(--stage-black);
+  background: var(--stage-panel);
+  display: flex;
+  flex-direction: column;
+  min-height: 10.5rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ecard:hover {
+  box-shadow: 4px 4px 0 0 var(--stage-black);
+  transform: translate(-2px, -2px);
+}
+
+.ecardOff {
+  opacity: 0.55;
+}
+
+.echead {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.65rem 0.3rem;
+  min-width: 0;
+}
+
+.etitle {
+  font-family: var(--font-big);
+  font-weight: 900;
+  font-size: var(--text-control);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+  flex: 1;
+  min-width: 0;
+}
+
+.mode {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 2px solid;
+  background: transparent;
+  padding: 0.14rem 0.34rem;
+  flex: none;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.mKey {
+  border-color: var(--stage-ok);
+  color: var(--stage-ok);
+}
+
+.mAlways {
+  border-color: var(--stage-var);
+  color: var(--stage-var);
+}
+
+.mMeaning {
+  border-color: var(--a, var(--accent));
+  color: var(--a, var(--accent));
+}
+
+.esnip {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-control);
+  line-height: 1.5;
+  color: var(--stage-mute);
+  padding: 0 0.65rem;
+  margin: 0;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ekeys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  padding: 0.45rem 0.6rem;
+  min-height: 0;
+}
+
+.ekey {
+  border: 1px solid var(--a, var(--accent));
+  color: var(--a, var(--accent));
+  opacity: 0.92;
+  padding: 0.08rem 0.32rem;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-control);
+  max-width: 8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ekeyMore {
+  border-color: var(--stage-faint, var(--stage-seam));
+  color: var(--stage-text-dim, var(--stage-mute));
+}
+
+.ecfoot {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.65rem 0.55rem;
+  border-top: 1px solid var(--stage-faint, var(--stage-seam));
+  margin-top: auto;
+}
+
+.tok {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-control);
+  color: var(--stage-text-dim, var(--stage-mute));
+}
+
+.onoff {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border: 2px solid var(--stage-ok);
+  color: var(--stage-ok);
+  padding: 0.1rem 0.3rem;
+  background: transparent;
+}
+
+.onoffOff {
+  border-color: var(--stage-faint, var(--stage-seam));
+  color: var(--stage-text-dim, var(--stage-mute));
+}
+
+.ghost {
+  border: 2px dashed var(--stage-seam);
+  background: transparent;
+  color: var(--stage-mute);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  min-height: 10.5rem;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.ghost:hover {
+  border-color: var(--a, var(--accent));
+  color: var(--stage-card);
+}

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku site styles</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,600..900,100&family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&family=DM+Serif+Display:ital@0;1&family=Quicksand:wght@500;700&display=swap">
+<style>
+/*
+ * Three homepage styles for Bunraku, each adjacent to RoleCall (outlines, a theatre feel, rose)
+ * but its own thing. One hero + one strip each, so the styles can be compared side by side.
+ * Wireframe-only: colors are set per style below, not from any shared token sheet.
+ */
+* { box-sizing: border-box; margin: 0; }
+body { font-family: Nunito, sans-serif; }
+.pick { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 99; display: flex; gap: 6px; padding: 6px; background: #111; border-radius: 999px; }
+.pick button { border: 0; border-radius: 999px; padding: 8px 14px; font: 800 .8rem Nunito, sans-serif; cursor: pointer; background: #2a2a2e; color: #ddd; }
+.pick button.on { background: #fff; color: #111; }
+.style { display: none; min-height: 100vh; } .style.show { display: block; }
+.hero { min-height: 92vh; display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; padding: 90px clamp(20px, 6vw, 90px) 40px; position: relative; overflow: hidden; }
+.strip { padding: 50px clamp(20px, 6vw, 90px) 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.bun { width: min(420px, 90%); margin: 0 auto; }
+.bun .earR { transform-origin: 138px 96px; transition: transform .3s; }
+.bun:hover .earR { transform: rotate(22deg); }
+@keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+.bun .eye { transform-box: fill-box; transform-origin: center; animation: blink 4s infinite; }
+@keyframes floaty { 50% { transform: translateY(-10px); } }
+@media (max-width: 860px) { .hero, .strip { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ============ 1. CREAM PLAYBILL ============ */
+.s1 { background: #fbf5ec; color: #2a1d1f; }
+.s1 .hero { background: radial-gradient(ellipse at 80% 20%, #ffd9e2 0, transparent 55%), #fbf5ec; }
+.s1 .kick { font: 800 .8rem Nunito; letter-spacing: .24em; text-transform: uppercase; color: #d6336c; }
+.s1 h1 { font-family: Fraunces, serif; font-variation-settings: "SOFT" 100, "opsz" 144; font-weight: 900; font-size: clamp(3.2rem, 7vw, 6.4rem); line-height: .95; margin-top: 14px; letter-spacing: -.01em; }
+.s1 h1 em { font-style: italic; color: #d6336c; }
+.s1 p.lede { font: 500 1.25rem/1.55 Nunito; margin-top: 18px; max-width: 34rem; color: #5b4548; }
+.s1 .btns { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+.s1 .btn { padding: 16px 26px; border: 3px solid #2a1d1f; border-radius: 16px; font: 800 1rem Nunito; background: #fff; color: #2a1d1f; box-shadow: 5px 5px 0 #2a1d1f; text-decoration: none; transition: transform .12s, box-shadow .12s; }
+.s1 .btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #2a1d1f; }
+.s1 .btn.main { background: #d6336c; color: #fff; }
+.s1 .ticket { position: absolute; right: 7%; bottom: 10%; width: 220px; padding: 14px 18px; background: #fff; border: 3px solid #2a1d1f; border-radius: 12px; transform: rotate(6deg); box-shadow: 5px 5px 0 #f4a3bb; font: 800 .8rem Nunito; letter-spacing: .12em; }
+.s1 .ticket b { display: block; font: 900 1.6rem Fraunces, serif; letter-spacing: 0; color: #d6336c; }
+.s1 .card { padding: 26px; background: #fff; border: 3px solid #2a1d1f; border-radius: 20px; box-shadow: 6px 6px 0 var(--c); }
+.s1 .card .n { font: italic 900 2.6rem Fraunces, serif; color: var(--c); }
+.s1 .card h3 { font: 900 1.6rem Fraunces, serif; margin: 6px 0; }
+.s1 .card p { font: 500 1.02rem/1.55 Nunito; color: #5b4548; }
+
+/* ============ 2. CANDY STAGE ============ */
+.s2 { background: #f3e8ff; color: #1b1030; }
+.s2 .hero { background: linear-gradient(135deg, #ffe0f0 0%, #f3e8ff 45%, #dcfff3 100%); }
+.s2 .kick { display: inline-block; padding: 8px 14px; border: 3px solid #1b1030; border-radius: 999px; background: #fff36b; font: 800 .82rem "Baloo 2"; letter-spacing: .06em; box-shadow: 3px 3px 0 #1b1030; transform: rotate(-2deg); }
+.s2 h1 { font: 800 clamp(3.2rem, 7.4vw, 6.6rem)/.92 "Baloo 2", sans-serif; margin-top: 18px; }
+.s2 h1 span { display: inline-block; padding: 0 12px; background: #ff5fa2; color: #fff; border: 4px solid #1b1030; border-radius: 22px; box-shadow: 6px 6px 0 #1b1030; transform: rotate(-2deg); }
+.s2 p.lede { font: 700 1.22rem/1.55 Nunito; margin-top: 20px; max-width: 34rem; color: #3d2d5c; }
+.s2 .btns { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+.s2 .btn { padding: 16px 28px; border: 4px solid #1b1030; border-radius: 999px; font: 800 1.08rem "Baloo 2"; background: #fff; color: #1b1030; box-shadow: 0 6px 0 #1b1030; text-decoration: none; transition: transform .1s, box-shadow .1s; }
+.s2 .btn:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #1b1030; }
+.s2 .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #1b1030; }
+.s2 .btn.main { background: #7c5cff; color: #fff; }
+.s2 .blob { position: absolute; border: 4px solid #1b1030; border-radius: 50%; }
+.s2 .card { padding: 26px; background: #fff; border: 4px solid #1b1030; border-radius: 28px; box-shadow: 0 8px 0 #1b1030; }
+.s2 .card .n { width: 54px; height: 54px; display: grid; place-items: center; border: 4px solid #1b1030; border-radius: 50%; background: var(--c); font: 800 1.4rem "Baloo 2"; }
+.s2 .card h3 { font: 800 1.7rem "Baloo 2"; margin: 12px 0 4px; }
+.s2 .card p { font: 700 1rem/1.5 Nunito; color: #3d2d5c; }
+
+/* ============ 3. MIDNIGHT PLUSH ============ */
+.s3 { background: #1a1233; color: #f6ecff; }
+.s3 .hero { background: radial-gradient(ellipse at 20% 10%, #3b2170 0, transparent 50%), radial-gradient(ellipse at 90% 90%, #5a1f4f 0, transparent 50%), #1a1233; }
+.s3 .stars { position: absolute; inset: 0; pointer-events: none; background-image: radial-gradient(2px 2px at 10% 20%, #fff8 50%, transparent), radial-gradient(1.5px 1.5px at 30% 70%, #fff6 50%, transparent), radial-gradient(2px 2px at 60% 30%, #ffd6f5 50%, transparent), radial-gradient(1.5px 1.5px at 80% 60%, #fff7 50%, transparent), radial-gradient(2px 2px at 45% 88%, #cdb8ff 50%, transparent); animation: twinkle 5s ease-in-out infinite; }
+@keyframes twinkle { 50% { opacity: .5; } }
+.s3 .kick { font: 700 .95rem Quicksand; letter-spacing: .3em; text-transform: uppercase; color: #ffb3dd; }
+.s3 h1 { font: 400 clamp(3.4rem, 7.6vw, 6.8rem)/.98 "DM Serif Display", serif; margin-top: 14px; text-shadow: 0 0 40px #ff7ac655; }
+.s3 h1 em { color: #ffb3dd; }
+.s3 p.lede { font: 500 1.25rem/1.6 Quicksand; margin-top: 18px; max-width: 34rem; color: #d9c9f2; }
+.s3 .btns { display: flex; gap: 14px; margin-top: 30px; flex-wrap: wrap; }
+.s3 .btn { padding: 16px 28px; border-radius: 999px; font: 700 1.05rem Quicksand; background: #2b1f4d; color: #f6ecff; border: 2px solid #6b56a8; text-decoration: none; transition: transform .2s, box-shadow .2s; }
+.s3 .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px #ff7ac644; }
+.s3 .btn.main { background: linear-gradient(135deg, #ff7ac6, #b58bff); border-color: transparent; color: #1a1233; }
+.s3 .moon { position: absolute; right: 8%; top: 14%; width: 90px; height: 90px; border-radius: 50%; box-shadow: -18px 8px 0 0 #ffe9b8; transform: rotate(-20deg); opacity: .9; }
+.s3 .card { padding: 28px; border-radius: 26px; background: linear-gradient(160deg, #2b1f4d, #22183f); border: 1px solid #4a3a7a; box-shadow: 0 20px 50px #0006; }
+.s3 .card .n { font: 400 2.6rem "DM Serif Display"; color: var(--c); }
+.s3 .card h3 { font: 400 1.9rem "DM Serif Display"; margin: 4px 0 6px; }
+.s3 .card p { font: 500 1.02rem/1.6 Quicksand; color: #cbbbe6; }
+.s3 .bun { animation: floaty 4s ease-in-out infinite; filter: drop-shadow(0 20px 40px #ff7ac633); }
+</style>
+</head>
+<body>
+<div class="pick" id="pick"><button data-s="1" class="on">1 &middot; Cream Playbill</button><button data-s="2">2 &middot; Candy Stage</button><button data-s="3">3 &middot; Midnight Plush</button></div>
+
+<!-- 1 -->
+<section class="style s1 show" data-style="1">
+  <div class="hero">
+    <div><span class="kick">Now playing on your computer</span>
+      <h1>Your cast,<br>your <em>stage.</em></h1>
+      <p class="lede">A cozy little app for playing and making AI characters. Everything stays on your own computer.</p>
+      <div class="btns"><a class="btn main" href="#">Download for Windows</a><a class="btn" href="#">Take the tour</a></div></div>
+    <div data-bun="#fff" data-ink="#2a1d1f" data-pink="#ffb6c8" data-bow="#d6336c"></div>
+    <div class="ticket">ADMIT ONE<b>v0.1.42</b>free forever</div>
+  </div>
+  <div class="strip">
+    <div class="card" style="--c:#d6336c"><span class="n">i.</span><h3>Play</h3><p>Chat with any character. Swipe, branch, and keep every version.</p></div>
+    <div class="card" style="--c:#8e5bd8"><span class="n">ii.</span><h3>Make</h3><p>Write characters, worlds, and presets in a proper editor.</p></div>
+    <div class="card" style="--c:#e08a2e"><span class="n">iii.</span><h3>Keep</h3><p>Your library is private and encrypted, right on your machine.</p></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="style s2" data-style="2">
+  <div class="hero">
+    <div class="blob" style="width:120px;height:120px;left:-30px;bottom:12%;background:#8ef0c9"></div>
+    <div class="blob" style="width:70px;height:70px;left:46%;top:14%;background:#fff36b"></div>
+    <div><span class="kick">free forever &middot; no account</span>
+      <h1>Your cast,<br>your <span>stage!</span></h1>
+      <p class="lede">A cozy little app for playing and making AI characters. Everything stays on your own computer.</p>
+      <div class="btns"><a class="btn main" href="#">Download for Windows</a><a class="btn" href="#">Take the tour</a></div></div>
+    <div data-bun="#fff" data-ink="#1b1030" data-pink="#ff9ccb" data-bow="#7c5cff"></div>
+  </div>
+  <div class="strip">
+    <div class="card" style="--c:#ff9ccb"><span class="n">1</span><h3>Play</h3><p>Chat with any character. Swipe, branch, and keep every version.</p></div>
+    <div class="card" style="--c:#b8a6ff"><span class="n">2</span><h3>Make</h3><p>Write characters, worlds, and presets in a proper editor.</p></div>
+    <div class="card" style="--c:#8ef0c9"><span class="n">3</span><h3>Keep</h3><p>Your library is private and encrypted, right on your machine.</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="style s3" data-style="3">
+  <div class="hero"><div class="stars"></div><div class="moon"></div>
+    <div><span class="kick">tonight, on your computer</span>
+      <h1>Your cast,<br>your <em>stage.</em></h1>
+      <p class="lede">A cozy little app for playing and making AI characters. Everything stays on your own computer.</p>
+      <div class="btns"><a class="btn main" href="#">Download for Windows</a><a class="btn" href="#">Take the tour</a></div></div>
+    <div data-bun="#f7eefe" data-ink="#1a1233" data-pink="#ffb3dd" data-bow="#b58bff"></div>
+  </div>
+  <div class="strip">
+    <div class="card" style="--c:#ffb3dd"><span class="n">i</span><h3>Play</h3><p>Chat with any character. Swipe, branch, and keep every version.</p></div>
+    <div class="card" style="--c:#cdb8ff"><span class="n">ii</span><h3>Make</h3><p>Write characters, worlds, and presets in a proper editor.</p></div>
+    <div class="card" style="--c:#ffd99a"><span class="n">iii</span><h3>Keep</h3><p>Your library is private and encrypted, right on your machine.</p></div>
+  </div>
+</section>
+
+<script>
+(function () {
+  // one bunny drawing, recolored per style (constants only, so innerHTML is safe here)
+  function bun(body, ink, pink, bow) {
+    return '<svg class="bun" viewBox="0 0 200 230" aria-hidden="true">' +
+      '<path d="M62 98 C48 42 58 8 76 8 C94 8 98 50 90 98 Z" fill="' + body + '" stroke="' + ink + '" stroke-width="6" stroke-linejoin="round"/><path d="M68 90 C62 54 66 26 76 26 C86 26 86 58 82 90 Z" fill="' + pink + '"/>' +
+      '<g class="earR"><path d="M110 98 C112 46 124 12 142 16 C160 20 150 60 130 100 Z" fill="' + body + '" stroke="' + ink + '" stroke-width="6" stroke-linejoin="round"/><path d="M116 90 C120 58 128 34 138 36 C148 38 140 64 126 92 Z" fill="' + pink + '"/></g>' +
+      '<path d="M30 160 C30 114 62 90 100 90 C138 90 170 114 170 160 C170 198 140 220 100 220 C60 220 30 198 30 160 Z" fill="' + body + '" stroke="' + ink + '" stroke-width="6"/>' +
+      '<g class="eye"><ellipse cx="76" cy="150" rx="9" ry="11" fill="' + ink + '"/><circle cx="79" cy="145" r="3.2" fill="#fff"/></g><g class="eye"><ellipse cx="124" cy="150" rx="9" ry="11" fill="' + ink + '"/><circle cx="127" cy="145" r="3.2" fill="#fff"/></g>' +
+      '<ellipse cx="58" cy="172" rx="11" ry="6.5" fill="' + pink + '"/><ellipse cx="142" cy="172" rx="11" ry="6.5" fill="' + pink + '"/>' +
+      '<path d="M94 164 L106 164 L100 171 Z" fill="' + bow + '" stroke="' + ink + '" stroke-width="3" stroke-linejoin="round"/><path d="M88 178 Q94 184 100 178 Q106 184 112 178" fill="none" stroke="' + ink + '" stroke-width="4" stroke-linecap="round"/>' +
+      '<g transform="translate(100 98)"><path d="M0 0 L-26 -14 L-26 14 Z M0 0 L26 -14 L26 14 Z" fill="' + bow + '" stroke="' + ink + '" stroke-width="5" stroke-linejoin="round"/><circle r="8" fill="' + bow + '" stroke="' + ink + '" stroke-width="5"/></g></svg>';
+  }
+  document.querySelectorAll("[data-bun]").forEach(function (el) { el.innerHTML = bun(el.dataset.bun, el.dataset.ink, el.dataset.pink, el.dataset.bow); });
+  document.getElementById("pick").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    document.querySelectorAll(".style").forEach(function (s) { s.classList.toggle("show", s.dataset.style === b.dataset.s); });
+    document.querySelectorAll("#pick button").forEach(function (x) { x.classList.toggle("on", x === b); });
+  });
+})();
+</script>
+</body>
+</html>

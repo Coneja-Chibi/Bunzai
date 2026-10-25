@@ -1,0 +1,3 @@
+/* shell.nav index-rail: flat square panel on the shared bottom dock. */
+html[data-surface-shell-nav="index-rail"] [data-part="shell.nav"] { --bk-dock-font: var(--bk-font-body); --bk-dock-muted: var(--bk-text-dim); --bk-dock-top: var(--bk-surface-panel); --bk-dock-bottom: var(--bk-surface-panel); --bk-dock-pill-top: var(--bk-surface-panel); --bk-dock-pill-bottom: var(--bk-surface-panel); }
+html[data-surface-shell-nav="index-rail"] [data-part="shell.nav"] > nav { border-radius: 0; box-shadow: none; }

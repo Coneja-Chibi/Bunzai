@@ -1,0 +1,4 @@
+/** ui.panel slab-frame: a thick square edge with a hard offset shadow, a card pinned to the wall. */
+html[data-surface-ui-panel="slab-frame"] :is(.scn .plaque, .lib.rc .lrail-head):not(.host-protected, .host-protected *) {
+  border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line);
+}

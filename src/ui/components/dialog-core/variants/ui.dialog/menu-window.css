@@ -1,0 +1,17 @@
+/** ui.dialog menu-window: a game menu window. A flat frame with an inner keyline, a grip strip across the top, snappy in. */
+@keyframes bk-window-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+html[data-surface-ui-dialog="menu-window"] [data-dialog-overlay="center"]:not(:has(.host-protected)) {
+  background: color-mix(in srgb, var(--bk-surface-ink) 80%, transparent);
+  & [data-dialog-sheet]:has(> .scn-sheet) { padding: 0; background: none; border: 0; box-shadow: none; max-width: none; width: auto; }
+  & :is([data-dialog-sheet]:not(:has(> .scn-sheet)), [data-dialog-sheet] > .scn-sheet) {
+    position: relative; background: var(--bk-surface-panel); color: var(--bk-text); border: 0;
+    box-shadow: 0 0 0 var(--bk-frame-w) var(--bk-line-strong), inset 0 0 0 1px var(--bk-surface-panel), inset 0 0 0 2px var(--bk-line-track);
+    animation: bk-window-in var(--bk-dur-fast) var(--bk-ease-move) both; }
+  & [data-dialog-sheet]:not(:has(> .scn-sheet)) { padding: 2.2rem 1.4rem 1.2rem; }
+  /* the grip strip: a tint bar with three notches, like a window handle */
+  & :is([data-dialog-sheet]:not(:has(> .scn-sheet)), [data-dialog-sheet] > .scn-sheet)::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: .9rem; background: var(--bk-role-brand);
+    background-image: linear-gradient(var(--bk-text-on-tint), var(--bk-text-on-tint)), linear-gradient(var(--bk-text-on-tint), var(--bk-text-on-tint)), linear-gradient(var(--bk-text-on-tint), var(--bk-text-on-tint));
+    background-size: .4rem .4rem; background-repeat: no-repeat; background-position: .7rem 50%, 1.5rem 50%, 2.3rem 50%; }
+  & [data-dialog-sheet] > .scn-sheet { padding-top: .9rem; }
+}

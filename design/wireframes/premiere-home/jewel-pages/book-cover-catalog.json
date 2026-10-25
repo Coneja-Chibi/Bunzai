@@ -1,0 +1,426 @@
+{
+  "designs": [
+    {
+      "slug": "airship-voyage",
+      "label": "Airship voyage",
+      "category": "technology",
+      "path": "docs/media/book-covers/designs/airship-voyage/layer.png"
+    },
+    {
+      "slug": "alchemy-vessel",
+      "label": "Alchemy vessel",
+      "category": "magic",
+      "path": "docs/media/book-covers/designs/alchemy-vessel/layer.png"
+    },
+    {
+      "slug": "ancient-chronicle",
+      "label": "Ancient chronicle",
+      "category": "history",
+      "path": "docs/media/book-covers/designs/ancient-chronicle/layer.png"
+    },
+    {
+      "slug": "ancient-forest",
+      "label": "Ancient forest",
+      "category": "nature",
+      "path": "docs/media/book-covers/designs/ancient-forest/layer.png"
+    },
+    {
+      "slug": "arcane-sigil",
+      "label": "Arcane sigil",
+      "category": "magic",
+      "path": "docs/media/book-covers/designs/arcane-sigil/layer.png"
+    },
+    {
+      "slug": "astral-observatory",
+      "label": "Astral observatory",
+      "category": "technology",
+      "path": "docs/media/book-covers/designs/astral-observatory/layer.png"
+    },
+    {
+      "slug": "bamboo-grove",
+      "label": "Bamboo grove",
+      "category": "nature",
+      "path": "docs/media/book-covers/designs/bamboo-grove/layer.png"
+    },
+    {
+      "slug": "butterfly-flight",
+      "label": "Butterfly flight",
+      "category": "creatures",
+      "path": "docs/media/book-covers/designs/butterfly-flight/layer.png"
+    },
+    {
+      "slug": "celestial-dragon",
+      "label": "Celestial dragon",
+      "category": "creatures",
+      "path": "docs/media/book-covers/designs/celestial-dragon/layer.png"
+    },
+    {
+      "slug": "cherry-blossoms",
+      "label": "Cherry blossoms",
+      "category": "nature",
+      "path": "docs/media/book-covers/designs/cherry-blossoms/layer.png"
+    },
+    {
+      "slug": "clockwork-gears",
+      "label": "Clockwork gears",
+      "category": "technology",
+      "path": "docs/media/book-covers/designs/clockwork-gears/layer.png"
+    },
+    {
+      "slug": "comet-trail",
+      "label": "Comet trail",
+      "category": "celestial",
+      "path": "docs/media/book-covers/designs/comet-trail/layer.png"
+    },
+    {
+      "slug": "constellations",
+      "label": "Constellations",
+      "category": "celestial",
+      "path": "docs/media/book-covers/designs/constellations/layer.png"
+    },
+    {
+      "slug": "crossed-quills",
+      "label": "Crossed quills",
+      "category": "stories",
+      "path": "docs/media/book-covers/designs/crossed-quills/layer.png"
+    },
+    {
+      "slug": "crystal-circle",
+      "label": "Crystal circle",
+      "category": "magic",
+      "path": "docs/media/book-covers/designs/crystal-circle/layer.png"
+    },
+    {
+      "slug": "detectives-lantern",
+      "label": "Detectives lantern",
+      "category": "mystery",
+      "path": "docs/media/book-covers/designs/detectives-lantern/layer.png"
+    },
+    {
+      "slug": "dynasty-crest",
+      "label": "Dynasty crest",
+      "category": "history",
+      "path": "docs/media/book-covers/designs/dynasty-crest/layer.png"
+    },
+    {
+      "slug": "eclipse",
+      "label": "Eclipse",
+      "category": "celestial",
+      "path": "docs/media/book-covers/designs/eclipse/layer.png"
+    },
+    {
+      "slug": "enchanted-mirror",
+      "label": "Enchanted mirror",
+      "category": "magic",
+      "path": "docs/media/book-covers/designs/enchanted-mirror/layer.png"
+    },
+    {
+      "slug": "final-chapter",
+      "label": "Final chapter",
+      "category": "stories",
+      "path": "docs/media/book-covers/designs/final-chapter/layer.png"
+    },
+    {
+      "slug": "floating-city",
+      "label": "Floating city",
+      "category": "places",
+      "path": "docs/media/book-covers/designs/floating-city/layer.png"
+    },
+    {
+      "slug": "forgotten-war",
+      "label": "Forgotten war",
+      "category": "history",
+      "path": "docs/media/book-covers/designs/forgotten-war/layer.png"
+    },
+    {
+      "slug": "found-family",
+      "label": "Found family",
+      "category": "people",
+      "path": "docs/media/book-covers/designs/found-family/layer.png"
+    },
+    {
+      "slug": "fox-spirit",
+      "label": "Fox spirit",
+      "category": "creatures",
+      "path": "docs/media/book-covers/designs/fox-spirit/layer.png"
+    },
+    {
+      "slug": "hidden-key",
+      "label": "Hidden key",
+      "category": "mystery",
+      "path": "docs/media/book-covers/designs/hidden-key/layer.png"
+    },
+    {
+      "slug": "hidden-temple",
+      "label": "Hidden temple",
+      "category": "places",
+      "path": "docs/media/book-covers/designs/hidden-temple/layer.png"
+    },
+    {
+      "slug": "inventors-workshop",
+      "label": "Inventors workshop",
+      "category": "technology",
+      "path": "docs/media/book-covers/designs/inventors-workshop/layer.png"
+    },
+    {
+      "slug": "labyrinth",
+      "label": "Labyrinth",
+      "category": "mystery",
+      "path": "docs/media/book-covers/designs/labyrinth/layer.png"
+    },
+    {
+      "slug": "lantern-district",
+      "label": "Lantern district",
+      "category": "places",
+      "path": "docs/media/book-covers/designs/lantern-district/layer.png"
+    },
+    {
+      "slug": "locked-door",
+      "label": "Locked door",
+      "category": "mystery",
+      "path": "docs/media/book-covers/designs/locked-door/layer.png"
+    },
+    {
+      "slug": "lost-empire",
+      "label": "Lost empire",
+      "category": "history",
+      "path": "docs/media/book-covers/designs/lost-empire/layer.png"
+    },
+    {
+      "slug": "lotus-garden",
+      "label": "Lotus garden",
+      "category": "nature",
+      "path": "docs/media/book-covers/designs/lotus-garden/layer.png"
+    },
+    {
+      "slug": "lovers-promise",
+      "label": "Lovers promise",
+      "category": "people",
+      "path": "docs/media/book-covers/designs/lovers-promise/layer.png"
+    },
+    {
+      "slug": "masked-court",
+      "label": "Masked court",
+      "category": "people",
+      "path": "docs/media/book-covers/designs/masked-court/layer.png"
+    },
+    {
+      "slug": "mechanical-bird",
+      "label": "Mechanical bird",
+      "category": "technology",
+      "path": "docs/media/book-covers/designs/mechanical-bird/layer.png"
+    },
+    {
+      "slug": "moonlit-valley",
+      "label": "Moonlit valley",
+      "category": "celestial",
+      "path": "docs/media/book-covers/designs/moonlit-valley/layer.png"
+    },
+    {
+      "slug": "mountain-peaks",
+      "label": "Mountain peaks",
+      "category": "nature",
+      "path": "docs/media/book-covers/designs/mountain-peaks/layer.png"
+    },
+    {
+      "slug": "noble-houses",
+      "label": "Noble houses",
+      "category": "people",
+      "path": "docs/media/book-covers/designs/noble-houses/layer.png"
+    },
+    {
+      "slug": "ocean-tides",
+      "label": "Ocean tides",
+      "category": "nature",
+      "path": "docs/media/book-covers/designs/ocean-tides/layer.png"
+    },
+    {
+      "slug": "open-road",
+      "label": "Open road",
+      "category": "stories",
+      "path": "docs/media/book-covers/designs/open-road/layer.png"
+    },
+    {
+      "slug": "phoenix-wings",
+      "label": "Phoenix wings",
+      "category": "creatures",
+      "path": "docs/media/book-covers/designs/phoenix-wings/layer.png"
+    },
+    {
+      "slug": "puppet-strings",
+      "label": "Puppet strings",
+      "category": "stories",
+      "path": "docs/media/book-covers/designs/puppet-strings/layer.png"
+    },
+    {
+      "slug": "raven-flock",
+      "label": "Raven flock",
+      "category": "creatures",
+      "path": "docs/media/book-covers/designs/raven-flock/layer.png"
+    },
+    {
+      "slug": "royal-palace",
+      "label": "Royal palace",
+      "category": "places",
+      "path": "docs/media/book-covers/designs/royal-palace/layer.png"
+    },
+    {
+      "slug": "ruined-citadel",
+      "label": "Ruined citadel",
+      "category": "places",
+      "path": "docs/media/book-covers/designs/ruined-citadel/layer.png"
+    },
+    {
+      "slug": "sacred-manuscript",
+      "label": "Sacred manuscript",
+      "category": "history",
+      "path": "docs/media/book-covers/designs/sacred-manuscript/layer.png"
+    },
+    {
+      "slug": "secret-society",
+      "label": "Secret society",
+      "category": "mystery",
+      "path": "docs/media/book-covers/designs/secret-society/layer.png"
+    },
+    {
+      "slug": "signal-tower",
+      "label": "Signal tower",
+      "category": "technology",
+      "path": "docs/media/book-covers/designs/signal-tower/layer.png"
+    },
+    {
+      "slug": "spell-grimoire",
+      "label": "Spell grimoire",
+      "category": "magic",
+      "path": "docs/media/book-covers/designs/spell-grimoire/layer.png"
+    },
+    {
+      "slug": "star-atlas",
+      "label": "Star atlas",
+      "category": "celestial",
+      "path": "docs/media/book-covers/designs/star-atlas/layer.png"
+    },
+    {
+      "slug": "storybook-tree",
+      "label": "Storybook tree",
+      "category": "stories",
+      "path": "docs/media/book-covers/designs/storybook-tree/layer.png"
+    },
+    {
+      "slug": "sun-shrine",
+      "label": "Sun shrine",
+      "category": "celestial",
+      "path": "docs/media/book-covers/designs/sun-shrine/layer.png"
+    },
+    {
+      "slug": "theater-curtains",
+      "label": "Theater curtains",
+      "category": "stories",
+      "path": "docs/media/book-covers/designs/theater-curtains/layer.png"
+    },
+    {
+      "slug": "trade-routes",
+      "label": "Trade routes",
+      "category": "history",
+      "path": "docs/media/book-covers/designs/trade-routes/layer.png"
+    },
+    {
+      "slug": "veiled-truth",
+      "label": "Veiled truth",
+      "category": "mystery",
+      "path": "docs/media/book-covers/designs/veiled-truth/layer.png"
+    },
+    {
+      "slug": "village-rooftops",
+      "label": "Village rooftops",
+      "category": "places",
+      "path": "docs/media/book-covers/designs/village-rooftops/layer.png"
+    },
+    {
+      "slug": "wandering-traveler",
+      "label": "Wandering traveler",
+      "category": "people",
+      "path": "docs/media/book-covers/designs/wandering-traveler/layer.png"
+    },
+    {
+      "slug": "warrior-clan",
+      "label": "Warrior clan",
+      "category": "people",
+      "path": "docs/media/book-covers/designs/warrior-clan/layer.png"
+    },
+    {
+      "slug": "white-stag",
+      "label": "White stag",
+      "category": "creatures",
+      "path": "docs/media/book-covers/designs/white-stag/layer.png"
+    },
+    {
+      "slug": "witch-garden",
+      "label": "Witch garden",
+      "category": "magic",
+      "path": "docs/media/book-covers/designs/witch-garden/layer.png"
+    }
+  ],
+  "backgrounds": [
+    {
+      "slug": "amethyst",
+      "label": "Deep amethyst violet and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/amethyst/layer.png"
+    },
+    {
+      "slug": "aquamarine",
+      "label": "Deep aquamarine teal and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/aquamarine/layer.png"
+    },
+    {
+      "slug": "bronze",
+      "label": "Dark bronze brown with warm black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/bronze/layer.png"
+    },
+    {
+      "slug": "emerald",
+      "label": "Deep emerald green and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/emerald/layer.png"
+    },
+    {
+      "slug": "midnight",
+      "label": "Midnight indigo and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/midnight/layer.png"
+    },
+    {
+      "slug": "moss",
+      "label": "Dark moss green with subtle warm umber",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/moss/layer.png"
+    },
+    {
+      "slug": "obsidian-gold",
+      "label": "Obsidian black and restrained antique gold",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/obsidian-gold/layer.png"
+    },
+    {
+      "slug": "ruby",
+      "label": "Deep ruby crimson and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/ruby/layer.png"
+    },
+    {
+      "slug": "sapphire",
+      "label": "Rich sapphire blue and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/sapphire/layer.png"
+    },
+    {
+      "slug": "topaz",
+      "label": "Burnished topaz amber and black",
+      "category": "color",
+      "path": "docs/media/book-covers/backgrounds/topaz/layer.png"
+    }
+  ]
+}

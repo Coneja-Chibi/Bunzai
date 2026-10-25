@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Switchboard landing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .head .marquee { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+  .board { position: relative; display: grid; grid-template-columns: 1fr 9rem 1fr; padding: 1.4rem; }
+  .col { display: flex; flex-direction: column; gap: 0.7rem; position: relative; z-index: 2; }
+  .col h2 { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.22em; color: var(--text-dim); font-weight: 400; margin-bottom: 0.2rem; }
+  .node { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0.7rem; background: var(--face); border: 2px solid var(--edge); cursor: pointer; transition: opacity 0.2s, border-color 0.2s; }
+  .col.right .node { flex-direction: row-reverse; text-align: right; }
+  .node .t { font-family: var(--font-big); font-weight: 800; font-size: 0.82rem; text-transform: uppercase; }
+  .node .s { font-family: var(--font-mono); font-size: 0.62rem; color: var(--text-dim); }
+  .node .tx { flex: 1; }
+  .lamp { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--seam); flex: none; }
+  .lamp.on { background: var(--stage-warn); box-shadow: 0 0 0 3px var(--stage-warn-ink); }
+  .node.open { border-style: dashed; color: var(--text-dim); }
+  .board.focusing .node { opacity: 0.35; }
+  .board.focusing .node.hot { opacity: 1; border-color: var(--accent); }
+  svg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+  path { fill: none; stroke-width: 3; transition: opacity 0.2s; }
+  .board.focusing path { opacity: 0.12; }
+  .board.focusing path.hot { opacity: 1; }
+  .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; gap: 1rem; flex-wrap: wrap; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-soft); }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>04 The Switchboard</span><button data-theme-switch>Theme</button><a href="index.html">All ten</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Hm</div><div class="app-btn">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+  <header class="topbar"><div class="crumb"><b>Home</b> / the switchboard</div><div class="search">Find a character or scene...</div></header>
+  <main class="main">
+    <div class="head">
+      <div><div class="kicker">Who's in what</div><h1 class="marquee">The <em>switchboard</em></h1></div>
+      <button class="btn">Pick up The Drowned Lamp &rarr;</button>
+    </div>
+    <section class="panel board" id="board">
+      <svg id="lines"></svg>
+      <div class="col left">
+        <h2>CAST</h2>
+        <div class="node" data-id="vera"><div class="avatar" style="--tone: var(--deck-character)">V</div><div class="tx"><div class="t">Vera Lune</div><div class="s">1 scene</div></div></div>
+        <div class="node" data-id="oriel"><div class="avatar" style="--tone: var(--deck-lorebook)">O</div><div class="tx"><div class="t">Oriel Maas</div><div class="s">1 scene</div></div></div>
+        <div class="node" data-id="magpie"><div class="avatar" style="--tone: var(--deck-preset)">M</div><div class="tx"><div class="t">The Magpie</div><div class="s">2 scenes</div></div></div>
+        <div class="node" data-id="nuit"><div class="avatar" style="--tone: var(--deck-persona)">N</div><div class="tx"><div class="t">Nuit</div><div class="s">1 scene</div></div></div>
+        <div class="node" data-id="iris"><div class="avatar" style="--tone: var(--deck-regex)">I</div><div class="tx"><div class="t">Iris Vane</div><div class="s">resting</div></div></div>
+      </div>
+      <div></div>
+      <div class="col right">
+        <h2>SCENES</h2>
+        <div class="node" data-id="lamp"><div class="lamp on"></div><div class="tx"><div class="t">The Drowned Lamp</div><div class="s">your turn &middot; 4 min</div></div></div>
+        <div class="node" data-id="ledger"><div class="lamp on"></div><div class="tx"><div class="t">Salt &amp; Ledger</div><div class="s">your turn &middot; group</div></div></div>
+        <div class="node" data-id="errand"><div class="lamp"></div><div class="tx"><div class="t">The Magpie's Errand</div><div class="s">5 days</div></div></div>
+        <div class="node" data-id="card"><div class="lamp"></div><div class="tx"><div class="t">A Card for Nuit</div><div class="s">2 days</div></div></div>
+        <div class="node open" data-id="open"><div class="lamp"></div><div class="tx"><div class="t">+ Open line</div><div class="s">connect anyone to start</div></div></div>
+      </div>
+    </section>
+    <div class="foot"><span>Amber lamp: a character spoke and is waiting on you. Select anyone to see only their lines.</span><button class="btn quiet">Start a group scene</button></div>
+  </main>
+</div>
+
+<div class="wf-note"><b>The idea:</b> a map of your story's wiring. Characters on the left, scenes on the right, clean lines showing who is in what, so group scenes and shared characters are obvious at a glance. Amber lamps mark scenes waiting on you. Select a character or scene and everything unrelated fades back. Starting a scene is picking characters and the open line.</div>
+
+<script>
+  const board = document.getElementById("board");
+  const svg = document.getElementById("lines");
+  const links = [["vera", "lamp", "--deck-character"], ["oriel", "ledger", "--deck-lorebook"], ["magpie", "ledger", "--deck-preset"], ["magpie", "errand", "--deck-preset"], ["nuit", "card", "--deck-persona"]];
+  const edge = (id, side) => { const r = board.querySelector(`[data-id="${id}"]`).getBoundingClientRect(); const b = board.getBoundingClientRect(); return [side === "r" ? r.right - b.left : r.left - b.left, r.top + r.height / 2 - b.top]; };
+  function draw() {
+    svg.replaceChildren();
+    for (const [a, z, tone] of links) {
+      const [x1, y1] = edge(a, "r"), [x2, y2] = edge(z, "l");
+      const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      const mx = (x1 + x2) / 2;
+      p.setAttribute("d", `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+      p.style.stroke = `var(${tone})`;
+      p.dataset.a = a; p.dataset.z = z;
+      svg.appendChild(p);
+    }
+  }
+  board.addEventListener("click", (e) => {
+    const n = e.target.closest(".node"); if (!n) return;
+    const id = n.dataset.id;
+    const hot = new Set([id]);
+    links.forEach(([a, z]) => { if (a === id || z === id) { hot.add(a); hot.add(z); } });
+    const already = n.classList.contains("hot") && board.classList.contains("focusing");
+    board.classList.toggle("focusing", !already);
+    board.querySelectorAll(".node").forEach((x) => x.classList.toggle("hot", !already && hot.has(x.dataset.id)));
+    svg.querySelectorAll("path").forEach((p) => p.classList.toggle("hot", !already && (p.dataset.a === id || p.dataset.z === id)));
+  });
+  addEventListener("resize", draw);
+  draw();
+</script>
+</body>
+</html>

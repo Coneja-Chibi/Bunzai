@@ -1,0 +1,288 @@
+/**
+ * When & where: one related panel (shared chrome, hairline seams), compact height.
+ */
+
+.wwGrid {
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--stage-seam);
+  background: var(--stage-row);
+  min-width: 0;
+}
+
+/* One collapsible instrument band */
+.wwFold {
+  border-top: 1px solid var(--stage-seam);
+  background: transparent;
+  min-width: 0;
+}
+
+.wwGrid > :first-child {
+  border-top: 0;
+}
+
+.wwFoldH {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.38rem 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.wwFoldH::-webkit-details-marker {
+  display: none;
+}
+
+.wwFoldH::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.35rem;
+  border-right: 1.5px solid var(--stage-text-dim);
+  border-bottom: 1.5px solid var(--stage-text-dim);
+  transform: rotate(-45deg);
+  flex: none;
+  margin-top: -0.05rem;
+  opacity: 0.7;
+}
+
+.wwFold[open] > .wwFoldH::before {
+  transform: rotate(45deg);
+  margin-top: -0.15rem;
+}
+
+.wwFoldH b {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--stage-card);
+  flex: none;
+}
+
+.wwFoldH em {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--text-control);
+  color: var(--stage-soft);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wwFoldH span {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-control);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+  flex: none;
+}
+
+.wwFoldH:hover b {
+  color: var(--a, var(--accent));
+}
+
+.wwFoldBody {
+  padding: 0 0.5rem 0.45rem;
+}
+
+/* Three equal dials (Order/Priority/Scan and Sticky/Cool/Delay share this) */
+.wwTri {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  min-height: 2.35rem;
+}
+
+.wwDial {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  padding: 0.28rem 0.35rem 0.32rem;
+  min-width: 0;
+  border-right: 1px solid var(--stage-seam);
+}
+
+.wwDial:last-child {
+  border-right: 0;
+}
+
+.wwDial span {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim);
+}
+
+.wwDial input {
+  width: 100%;
+  max-width: 4.5rem;
+  border: 0;
+  background: none;
+  color: var(--stage-card);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 0;
+  line-height: 1.1;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.wwDial input::-webkit-outer-spin-button,
+.wwDial input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.wwDial input:focus {
+  outline: none;
+  color: var(--stage-card);
+  box-shadow: 0 1px 0 0 var(--a, var(--accent));
+}
+
+.wwCtrl {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.35rem;
+}
+
+.wwChanceRow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.35rem;
+}
+
+.wwPct {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--stage-card);
+  min-width: 2.8rem;
+  letter-spacing: 0.02em;
+}
+
+.wwSeg {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  min-height: 2.35rem;
+  align-items: stretch;
+}
+
+.wwSegBtn {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 0;
+  background: transparent;
+  color: var(--stage-mute);
+  padding: 0.35rem 0.2rem;
+  cursor: pointer;
+}
+
+.wwSegBtn + .wwSegBtn {
+  border-left: 1px solid var(--stage-seam);
+}
+
+.wwSegOn {
+  background: var(--selection);
+  color: var(--selection-fg);
+}
+
+/* a number field labelled by an EditorField (the dial markup that styled it is not there) */
+.wwNum {
+  width: 100%;
+  min-height: 2.35rem;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  padding: 0.35rem 0.5rem;
+}
+
+.wwRecLevel {
+  width: 2.6rem;
+  flex: none;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  font-weight: 700;
+  text-align: center;
+  padding: 0.35rem 0.15rem;
+  min-height: 2.35rem;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.wwRecLevel::-webkit-outer-spin-button,
+.wwRecLevel::-webkit-inner-spin-button,
+.wwWeight::-webkit-outer-spin-button,
+.wwWeight::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.wwGroupIn {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.35rem;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  padding: 0.35rem 0.4rem;
+}
+
+.wwW {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--stage-text-dim, var(--stage-mute));
+  flex: none;
+}
+
+.wwWeight {
+  width: 2.6rem;
+  flex: none;
+  min-height: 2.35rem;
+  border: 1px solid var(--stage-seam);
+  background: var(--stage-sunken);
+  color: var(--stage-soft);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-control);
+  text-align: center;
+  padding: 0.35rem 0.15rem;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}

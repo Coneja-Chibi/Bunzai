@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/kit/tools",
+  "sourcePath": "docs/reference/kit/tools.md",
+  "sourceHash": "sha256:2f3989ddf182678b12f339e5d9dd98961d08e77d9a4650b638c2139580cf379a",
+  "summary": "Kit content tools separates model-facing runtime tools from terminal slash commands. Its lifecycle covers all eight canonical kinds through pure previews, one four-domain discovery catalog, complete draft evidence, guarded semantic review, documentation query, whole-piece reads, and bounded result handles. Twenty-six direct tools start a turn, or twenty-five without an engine checkout; search reveals up to five deferred schemas, browse reveals none, and exact describe reveals one. Typed creation covers character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document without an existing target. Duplicate retains escrow, delete is explicitly classified, and transfer previews adapter costs without writing. External MCP tools join the same exact-name egress gate and bounded result store, and connection changes invalidate the cached session. Guarded apply uses the application review card; atomic create-only apply refuses occupied IDs and verifies storage. Unit and integration proof exists, while a real-provider terminal run remains outstanding.",
+  "topics": [
+    "runtime tools vs slash",
+    "workflow discovery lifecycle",
+    "capability contract pure",
+    "apply Gate authorization",
+    "twenty direct five deferred",
+    "duplicate carries escrow",
+    "delete danger floor",
+    "transfer writes no file",
+    "macro check name level",
+    "docs_query four actions"
+  ],
+  "sections": [
+    {
+      "slug": "built-lifecycle",
+      "title": "Built lifecycle",
+      "level": 2,
+      "sourceHash": "sha256:59dd4f1488836c32bc252ee483bcf775ad6dcdc6caf87fa0ff267aae5165e6c0",
+      "summary": "Built lifecycle connects all eight canonical content kinds to Kit. Entity capability folders own stable IDs, search, exposure, and pure semantic operations; Kit discovers and adapts them into one registry. Eight typed create workflows draft without writing: character, lorebook, persona, preset, regex, pack, quick-reply set, and HTML document. Duplicate carries body, profiles, and escrow. studio_delete alone destroys canonical content and remains direct because deferred apply workflows are rejected. studio_transfer previews another adapter without writing. Preset verification, regex diagnostics, drawing-to-regex transcription, shared-folder search and import, rail opening, whole-piece reads, and HTML document update complete the live lifecycle. The change session retains one baseline, composed operations, warnings, platform impact, and escrow until a separately authorized apply.",
+      "topics": [
+        "six content bundles",
+        "duplicate carries escrow",
+        "delete danger floor",
+        "transfer writes no file",
+        "read outside write inside",
+        "bundle drafts all or none",
+        "change_apply Gate",
+        "serial draft batches"
+      ],
+      "children": []
+    },
+    {
+      "slug": "capability-contract",
+      "title": "Capability contract",
+      "level": 2,
+      "sourceHash": "sha256:30b76128e775b15614b7e50c610596361896cf89137b15b97422e11fa285b6dd",
+      "summary": "A content capability is a pure semantic operation declaring a stable dotted ID, kind, navigation metadata, platform applicability, Zod input, effect, exposure, concurrency key, and preview. Preview returns a complete canonical entity, changes, warnings, platform impact, and optionally a deterministic read observation. It never writes. The composer rejects identity or original escrow changes. The read adapter also requires a canonically identical entity and empty changes, preventing analysis from creating a mutation draft.",
+      "topics": [
+        "stable dotted ID",
+        "Zod input schema",
+        "read or draft effect",
+        "read observation isolation",
+        "preview never writes",
+        "reject escrow change"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "apply-and-authorization",
+      "title": "Apply and authorization",
+      "level": 2,
+      "sourceHash": "sha256:fad2e488866df4241e1fc97fb0337b08f5417484c551ebee21f0b2896eb6a853",
+      "summary": "The safety subsystem owns exact-name access classification and never trusts prefixes, discovery metadata, or a claimed runtime effect. Pure content capabilities derive read or preview-only draft access from validated catalog metadata. Each of the eight creation workflows has a separate safety-owned exact-name draft classification. Guarded apply pauses in an application-owned semantic review card. Update apply compares the expected revision under a per-path lock. Create apply uses a distinct atomic create-only operation that refuses an occupied ID rather than overwriting or minting a sibling. Stale state and collisions write nothing. Both modes re-read and verify canonical fields and non-Studio escrow. Unreadable or mismatched verification reports failure without retry.",
+      "topics": [
+        "catalog name classify",
+        "read vs draft least privilege",
+        "Gate guarded apply",
+        "per-path write lock",
+        "post-save verify"
+      ],
+      "children": []
+    },
+    {
+      "slug": "progressive-exposure",
+      "title": "Progressive exposure",
+      "level": 2,
+      "sourceHash": "sha256:8e3a3eb152adf13cbf13763d13ffbd80441fe90229894826277d5c47286d1e1f",
+      "summary": "Progressive exposure keeps a large catalog out of every prompt. The runtime registry holds every adapted capability and deferred workflow so dispatch can resolve a selection, and twenty-six direct tools begin each turn, among them html_will_draw, regex_from_drawing, regex_lab, studio_delete and studio_export; preset_verify is the one conditional entry, taking itself out where no engine checkout exists. Delete and export are direct for a structural reason: the deferred path classifies a tool from discovery metadata and the runtime refuses to let that path describe an apply effect, so a destructive or file-writing workflow cannot be discovered into existence and must be granted by exact name in the trust map. Routing removal through draft and apply would need ChangeDraftMode to grow a remove arm, deferred to its own pass. One catalog accepts content, studio, transfer, and diagnostics domains; transfer is populated by studio_transfer while diagnostics remains an empty slot. Only pure-content capabilities derive safe access from catalog metadata. Search reveals at most five ranked matches, browse none, describe one. The deferred set clears each turn while drafts persist.",
+      "topics": [
+        "twenty direct tools",
+        "delete granted by name",
+        "no deferred apply",
+        "transfer domain populated",
+        "diagnostics still empty",
+        "five deferred maximum",
+        "hidden never surfaces"
+      ],
+      "children": [
+        {
+          "slug": "canonical-reads-and-result-handles",
+          "title": "Canonical reads and result handles",
+          "level": 3,
+          "sourceHash": "sha256:b23f07bd89892cd1959dc40f37f557054522881726d76245a72b2f3fa84fe645",
+          "summary": "studio_read defaults to one complete canonical entity. A normal piece up to 64,000 characters returns inline in one observation, avoiding forced section traversal. It can still outline immediate children as RFC 6901 JSON Pointers or read one selected value with offsets and limits. Invalid pointers fail closed. Larger whole pieces enter a session-local store and return an opaque result-N handle plus a 4,096-character peek. Other result-producing tools retain the shared 4,096-character inline threshold. result_query provides stat, bounded read, and literal case-insensitive search. Handles reveal no path and expire with the session. Storage caps are 24 entries, 1,000,000 UTF-8 bytes per entry, and 4,000,000 UTF-8 bytes total with oldest-first eviction. Content beyond the store cap remains recoverable through direct studio_read offsets.",
+          "topics": [
+            "RFC 6901 outline read",
+            "offset limit continuation",
+            "opaque result-N handle",
+            "bounded store eviction",
+            "oversize direct paging"
+          ],
+          "children": []
+        },
+        {
+          "slug": "complete-draft-review",
+          "title": "Complete draft review",
+          "level": 3,
+          "sourceHash": "sha256:9e2e019ca353eaec426c2010e1f1f4364da6a6a6ca40d05d2a7e30fc38d17aca",
+          "summary": "Every composed operation retains validated input, changes, warnings, and platform impact, while the draft aggregates warning and impact evidence over one immutable baseline. change_query list returns compact state and counts. show returns operations, baseline, complete proposed entity, warnings, and platform impact, using a result handle or explicit offsets for large proposals. validate re-parses canonical shape and compares the live stored revision without mutating draft state or writing. Per-operation rollback remains excluded until deterministic replay is specified.",
+          "topics": [
+            "operation evidence retained",
+            "list show validate",
+            "complete proposed entity",
+            "revision check no write",
+            "rollback deferred"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "character-slice",
+      "title": "Character slice",
+      "level": 2,
+      "sourceHash": "sha256:5a88aab93615c39c25707c2df66733d15ce6682c53b071915852e9314eb873cf",
+      "summary": "studio.character.create needs no existing target. It accepts a safe optional ID or derives one, then builds a canonical character from identity, persona, scenario, greeting, examples, tags, portrait, and additional media. Portrait and media schemas describe data URI, HTTP(S), and existing asset references, MIME types, roles, labels, and primary selection. It returns structured application-Gate review and uses atomic create-only verified apply. Existing characters retain ten preview-only capabilities covering identity, prompts, greetings, metadata, presentation, media, links, variants, settings, and embedded behavior scripts. Script payloads remain sealed data and original escrow remains non-editable.",
+      "topics": [
+        "ten character ops",
+        "preview-only drafts",
+        "sealed behavior scripts",
+        "no original escrow edit",
+        "format-owned later"
+      ],
+      "children": []
+    },
+    {
+      "slug": "lorebook-slice",
+      "title": "Lorebook slice",
+      "level": 2,
+      "sourceHash": "sha256:41a2f3ea33bea70d205f1af6641b8f54d0daa2549cf138f1ea719e4f5862d6db",
+      "summary": "studio.lorebook.create builds a new book and optionally typed initial entries with content, literal or regex triggers, selective logic, insertion position, depth, role, and defaults for the remaining canonical activation fields. Existing drop-ins are settings.update, entries.update, entries.reorder, entries.enable, and entries.remove. Duplicate, separate entry-create, trigger-specific update, placement-specific update, and broad bulk operations remain future additions. The Web UI retains local selection, focus, generated-ID, and undo behavior.",
+      "topics": [
+        "settings and entries",
+        "update reorder enable",
+        "remove multi entry",
+        "future create bulk",
+        "UI local undo"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "other-canonical-bundles",
+      "title": "Other canonical bundles",
+      "level": 2,
+      "sourceHash": "sha256:e70e81b77de7fb0211af68e76fdd95dde056eab2bdd5d5f78da3bb62e6eee31f",
+      "summary": "Persona creation separates shelf brief from injected content and accepts sections, traits, identity, rating, and portrait. Preset creation accepts prompt blocks, samplers, and media settings. Regex creation accepts stored rules but never executes them. Pack creation accepts expression items and groups. Quick-reply creation accepts labeled messages, and Workbench owns later editing. HTML-document creation stores sealed markup, while htmldoc.document.update edits an existing drawing. Existing semantic capabilities edit supported kinds through shared entity reducers.",
+      "topics": [
+        "persona identity profile",
+        "preset blocks samplers",
+        "regex rule lifecycle",
+        "pack media groups",
+        "sealed never execute"
+      ],
+      "children": [],
+      "shortSource": true
+    },
+    {
+      "slug": "macro-translation-across-engines",
+      "title": "Macro translation across engines",
+      "level": 2,
+      "sourceHash": "sha256:9f19f165483b2d1c4a05ec9d0fc5dd617b53a26e99c4b49cf4b1b131555f4752",
+      "summary": "Macro translation across engines states that a preset crossing to another engine is translated rather than only reported on, because refusing over one imperfect token leaves the job unfinished and authored prose outweighs a macro that was never going to fire. The engine computes every equivalence and the model explains it, never the reverse, since a model reasoning from names alone is confidently wrong when names collide but meanings do not follow them. There is no engine-pair table: project rule 1 forbids format-to-format conversion for macros as it does for codecs, because five engines would mean twenty directed pairs. Each catalog instead declares what its own macros mean through canonical operations, and every cross-engine answer is a join on that meaning. Crossings produce portable, collision, absent or flatten verdicts. A gate asserts no shared name diverges in shape without a declared operation. Risu, Agnai and unverified SillyTavern annotations are named as honest limits.",
+      "topics": [
+        "translate not report",
+        "engine computes model explains",
+        "no engine pair table",
+        "canonical operations hub",
+        "ops attach per entry",
+        "portable collision absent flatten",
+        "annotation gate empty",
+        "honest limits named"
+      ],
+      "children": [
+        {
+          "slug": "hub-and-spoke-the-same-as-formats",
+          "title": "Hub and spoke, the same as formats",
+          "level": 3,
+          "sourceHash": "sha256:6851bf8b99c04efd74d5d5f15e7fb0b4846f353d1506bd3ed3442a308cd08f1b",
+          "summary": "Hub and spoke explains why macros have no engine-pair table. Project rule 1 forbids format-to-format conversion for macros as it does for codecs, because five engines would mean twenty directed pairs and each new engine would multiply the work. Each catalog instead declares what its own macros mean through canonical operations, and every cross-engine answer is a join on that meaning. Adding an engine is one annotation pass. Operations attach per entry rather than per name, because one name can mean different things at different argument counts: RoleCall reads random as a range at two arguments and a pick at three or more. Annotation is partial by design, since unannotated entries fall back to name matching.",
+          "topics": [
+            "rule 1 applies to macros",
+            "twenty pairs avoided",
+            "catalogs describe themselves",
+            "ops per entry not name",
+            "partial annotation is correct"
+          ],
+          "children": []
+        },
+        {
+          "slug": "what-a-crossing-produces",
+          "title": "What a crossing produces",
+          "level": 3,
+          "sourceHash": "sha256:37a486363afddba9c7adb90fbdb1b1e0a2c849d3e88630fffe55accb687424a6",
+          "summary": "A crossing produces one of four verdicts. Portable means both engines perform the operation and the token is re-spelled in the target's punctuation. Collision means the same name performs a different operation, so it is left as authored and flagged rather than silently kept. Absent means the target has no macro for the operation, so it is removed with same-family candidates. Flatten means a block the target cannot express, where the body is kept and only the scaffolding removed. Random with two arguments crossing RoleCall to SillyTavern is the worked example: a range meets a pick, and the collision is derived rather than listed anywhere.",
+          "topics": [
+            "four verdicts",
+            "collision never silent",
+            "candidates offered",
+            "body kept on flatten",
+            "condition kept as comment"
+          ],
+          "children": []
+        },
+        {
+          "slug": "the-gate-that-keeps-it-honest",
+          "title": "The gate that keeps it honest",
+          "level": 3,
+          "sourceHash": "sha256:e70bc5f876c8885cc154cfc04c089f2733aab123f3164f899ffa7f55d2d6d166",
+          "summary": "The gate is a function returning any macro name that several engines share with differing argument shapes where at least one side has not declared an operation, paired with a test asserting that list stays empty. This is what keeps the hub trustworthy as engines are added: a shared name spelled differently, whose meaning nobody has written down, is exactly where a silent mistranslation hides. Because divergence is detected mechanically rather than by reading, the system reports which annotations are owed instead of leaving a person to hunt for them, and a contributor cannot introduce a silent mistranslation by adding an engine and forgetting to declare what one of its macros means.",
+          "topics": [
+            "divergence detected mechanically",
+            "list must stay empty",
+            "annotations owed are reported",
+            "cannot forget silently"
+          ],
+          "children": []
+        },
+        {
+          "slug": "honest-limits",
+          "title": "Honest limits",
+          "level": 3,
+          "sourceHash": "sha256:92fdf5a725ca6b036298b4b2451ac80abcf66ed1ae646a594989dcf55dcd9c2d",
+          "summary": "Honest limits names what the translation layer cannot currently prove. Risu with its bracket CBS dialect and Agnai with its named-slot templates are not modeled at all, so an unmodeled target reports unchecked, which a caller must render as unknown and never as clean. SillyTavern's catalog is the only one with no oracle to verify against, so its annotations are the least grounded of the four, while RoleCall, Lumiverse and Marinara are machine-checked against their real registries by the macro oracle. Flag-prefixed tokens resolve to no name and are therefore never flagged, because the same prefix character means different things on different engines and stripping it would trade a false negative for a false positive.",
+          "topics": [
+            "Risu Agnai unmodeled",
+            "unchecked never clean",
+            "SillyTavern lacks an oracle",
+            "flag prefixes stay lenient"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "bunraku-documentation-query",
+      "title": "Bunraku documentation query",
+      "level": 2,
+      "sourceHash": "sha256:6fb804504764510b33ddf834b93f98635801c4b5d0f3116aad4b4623f93b3fd0",
+      "summary": "docs_query is a direct read-only meta-tool with four actions. browse lists collections and pages from index metadata only, with root or immediate children, limit 12 cap 25, offset pagination, and slash-separated collection ids that never path-escape. outline returns a semantic page overview and collapsed H2 map without loading Markdown; a returned section slug expands only that branch and its H3 summaries. search ranks body text plus title, short summary, semantic summary, topics, and headings with in-memory BM25. read alone returns authoritative source prose: omit the section for a whole document or select a slug for a targeted nugget. Bounded responses provide continuation offsets so long documents can be read completely across calls. Whole-document reads are preferred around located answers to preserve qualifications, failure conditions, and current-versus-planned distinctions. Semantic navigation merges only from docs/summaries sidecars with current independent APPROVE receipts bound to source and semantic-summary hashes. Authoring discovery is folder-derived from docs/. New and edited pages require authoring, stamping, focused checking, and independent review. Global check requires every page APPROVED. No embeddings or network.",
+      "topics": [
+        "collapsed browse outline expand search read",
+        "APPROVE-only catalog merge",
+        "folder-derived discovery",
+        "new and edit document flows",
+        "whole document and targeted nugget reads",
+        "bounded continuation offsets",
+        "no embeddings network",
+        "hash-bound review"
+      ],
+      "children": []
+    },
+    {
+      "slug": "serving-the-belt-to-another-client",
+      "title": "Serving the belt to another client",
+      "level": 2,
+      "sourceHash": "sha256:f0801ed2015e95cef9e5a33723a15a07092311b28a4c393ba8fcf98d351f4e17",
+      "summary": "bunraku mcp serves the same tools over MCP on stdio, so Claude Code, Cursor, Zed or Codex can read and edit the studio; register it once with the client own command. A studio directory is the first non-flag argument. The subcommand exists so nothing needs to know where the source lives: a compiled binary has no main file to point at, and a path that worked from a checkout failed silently for an installed copy, answering without tools. Two postures differ only in who holds the gate. Registered by a person, their client prompts before every call, so the full belt is safe and is the default. Spawned by Kit for the Claude subscription provider the client prompt is off and Kit gate cannot cross a process, so that path passes --read-only and gets read-effect tools only, filtered by building the dispatcher from the reduced set so a filtered name is unknown rather than run. The belt comes from discoverTools and the schemas from the tools own Zod, with no MCP SDK dependency.",
+      "topics": [
+        "bunraku mcp stdio",
+        "client holds the gate",
+        "read-only for no prompt",
+        "fails closed on filter",
+        "folders-as-schema belt"
+      ],
+      "children": []
+    },
+    {
+      "slug": "wearing-other-peoples-belts",
+      "title": "Wearing other people's belts",
+      "level": 2,
+      "sourceHash": "sha256:9705b5675be20c04f2dff4944bf79cbdd8101918f0a1c6ee084f4a1adec487f6",
+      "summary": "MCP servers configured in Settings Connections join Kit's belt. The host-only API writes fail-closed machine-local mcp.json entries; environment values never return, and omitting env preserves stored values. Saving, disabling, or removing a server synchronizes the shared connection manager and invalidates the cached Kit session, so the next turn sees the exact new belt without restarting. One manager per process reuses enabled servers, restarts changed recipes, and kills children on exit. External names and schemas come from the server, collisions are dropped, and every enumerated name receives exact egress classification in the same assembly step. Unknown names remain denied, external tools cannot gain write, delete, or exec classification, and Bunraku does not re-export them. Large external results use the shared bounded store, returning a handle and peek or a named omission beyond its cap.",
+      "topics": [
+        "mcp.json home-keyed",
+        "host-only api mcp",
+        "env write-only",
+        "one manager per process",
+        "egress by enumeration",
+        "schemaOverride to the model",
+        "no re-export echo"
+      ],
+      "children": []
+    },
+    {
+      "slug": "verification-status",
+      "title": "Verification status",
+      "level": 2,
+      "sourceHash": "sha256:f074f59996bdf21319dc4c79ea66f880075a89bdc11bf2eaf4dd4ad2a599b396",
+      "summary": "Unit and integration tests cover catalog parity, discovery for all eight create workflows, whole-card reads, bounded first-party and MCP results, draft evidence, stale and collision refusal, verified apply, and a fake-provider rename through the real store. Lifecycle tests cover delete, escrow-preserving duplicate, export containment, and a real-filesystem preset transfer. Macro catalogs are checked against available engine registries; SillyTavern lacks an oracle. A running Kit session against a real provider remains outstanding.",
+      "topics": [
+        "proof separated from gaps",
+        "lifecycle and transfer covered",
+        "export containment structural",
+        "preset journey end to end",
+        "oracle backed macro claims",
+        "SillyTavern unverified",
+        "live session still owed"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

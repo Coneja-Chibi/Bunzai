@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>After Hours mood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Bodoni+Moda:opsz,wght@6..96,600;6..96,800&family=IBM+Plex+Mono:wght@500&family=Public+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="board.css">
+<style>
+:root {
+  --bg: #070506; --fg: #f4e8de; --fg2: #b3a19a; --dim: #6a5752; --rule: #211417; --accent: #ffc76b;
+  --body: "Public Sans", sans-serif; --mono: "IBM Plex Mono", monospace;
+  --display: 900 clamp(4rem, 11vw, 10rem) "Big Shoulders Display", sans-serif;
+  --h3: 800 1.4rem/1.1 "Bodoni Moda", serif; --quote: 600 1.55rem/1.3 "Bodoni Moda", serif;
+  --bulb: #ffc76b; --glow: #fff4d6; --lip: #e8254f; --brass: #d9b26a; --velvet: #2a0c12;
+  --t-pink: #ff2d87; --t-cyan: #2ee6ff; --t-yel: #f4ff2e;
+  --x: 30%; --y: 55%;
+}
+/* the building after close: a ghost light on the stage, your mirror still lit down the hall */
+.hero { background: radial-gradient(ellipse 50% 60% at 72% 40%, #3a0f1a66, transparent 70%), #070506; cursor: crosshair; }
+.floor { position: absolute; left: -20%; right: -20%; bottom: -8%; height: 60%; transform: perspective(700px) rotateX(62deg); transform-origin: bottom; background: repeating-linear-gradient(90deg, #17110d 0 58px, #0e0a08 58px 60px); }
+.ghost { position: absolute; left: 20%; bottom: 12%; width: 120px; }
+.gglow { position: absolute; left: calc(20% + 60px); top: 30%; width: 900px; height: 900px; margin: -450px 0 0 -450px; background: radial-gradient(circle, #ffc76b2e 0, #ffc76b10 25%, transparent 55%); pointer-events: none; animation: flick 7s infinite; }
+@keyframes flick { 0%, 41%, 43%, 71%, 73%, 100% { opacity: 1; } 42% { opacity: .5; } 72% { opacity: .65; } }
+.mirror { position: absolute; right: 7%; top: 12%; width: min(520px, 44vw); height: 66vh; border: 16px solid #24140c; outline: 2px solid var(--brass); outline-offset: -10px; background: linear-gradient(115deg, #1f2428 0 30%, #2b3338 38%, #181c20 46% 100%); box-shadow: 0 40px 80px #000; }
+.reflect { position: absolute; left: 18%; bottom: 10%; width: 60px; height: 160px; opacity: .35; }
+.reflect::before { content: ""; position: absolute; left: 50%; top: 0; width: 22px; height: 28px; margin-left: -11px; background: var(--glow); box-shadow: 0 0 30px 12px #ffc76b66; border-radius: 50% !important; }
+.reflect::after { content: ""; position: absolute; left: 50%; top: 30px; bottom: 0; width: 4px; margin-left: -2px; background: #3a3632; }
+.glass { position: absolute; left: 8%; top: 8%; right: 8%; font: 900 clamp(3rem, 7vw, 6.4rem)/.85 "Big Shoulders Display"; color: var(--lip); letter-spacing: .01em; opacity: .92; text-shadow: 2px 1px 0 #7a0d27; }
+.glass small { display: block; font-size: .32em; letter-spacing: .12em; margin-top: 12px; color: var(--lip); }
+.tuck { position: absolute; background: #eee4d8; padding: 7px 7px 26px; box-shadow: 3px 8px 14px #000a; transition: transform .25s; cursor: pointer; }
+.tuck:hover { transform: translateY(-16px) rotate(0) !important; }
+.tuck i { display: block; width: 96px; height: 80px; background: var(--img); }
+.tuck span { position: absolute; left: 0; right: 0; bottom: 5px; text-align: center; font: 600 .8rem "Bodoni Moda"; letter-spacing: .08em; color: #24140c; text-transform: uppercase; }
+.bulb { position: absolute; z-index: 20; width: 22px; height: 22px; border-radius: 50% !important; background: #3a2e26; transition: background .3s, box-shadow .3s; cursor: pointer; }
+.bulb.on { background: var(--glow); box-shadow: 0 0 20px 7px #ffd98a88; }
+.spike { position: absolute; z-index: 20; font: 500 12px/1 var(--mono); letter-spacing: .2em; color: var(--c); text-transform: uppercase; text-decoration: none; }
+.spike::before { content: ""; position: absolute; left: 50%; top: -22px; width: 44px; height: 7px; margin-left: -22px; background: var(--c); box-shadow: 0 0 10px var(--c); }
+.title { position: absolute; left: clamp(16px, 4vw, 64px); top: 12%; z-index: 1; font: 900 clamp(4rem, 12vw, 11rem)/.8 "Big Shoulders Display"; }
+.title small { display: block; font: 600 clamp(1rem, 1.8vw, 1.4rem) "Bodoni Moda"; margin-top: 16px; color: var(--accent); }
+.dark { position: absolute; inset: 0; z-index: 10; pointer-events: none; background: radial-gradient(circle 260px at var(--x) var(--y), #0000 0, #0000 40%, #070506ee 100%); }
+.hint { position: absolute; z-index: 20; bottom: 16px; left: 0; right: 0; text-align: center; font: 500 12px/1 var(--mono); letter-spacing: .2em; color: #8a7a74; }
+@media (max-width: 760px) { .mirror { width: 60vw; right: 4%; } .ghost { left: 6%; } }
+
+/* pieces */
+.k-nav { display: flex; gap: 12px; flex-wrap: wrap; }
+.k-nav span { padding: 10px 16px; background: linear-gradient(#e6c887, #b98d45); color: #24140c; font: 800 .9rem "Bodoni Moda"; letter-spacing: .14em; text-transform: uppercase; border: 1px solid #7a5a2a; border-bottom: 5px solid var(--c); }
+.k-btn { display: inline-block; padding: 16px 26px; background: var(--bulb); color: #140a06; font: 900 1.5rem/1 "Big Shoulders Display"; letter-spacing: .08em; text-transform: uppercase; transition: box-shadow .2s; }
+.k-btn:hover { box-shadow: 0 0 0 3px #070506, 0 0 0 5px var(--bulb), 0 0 34px #ffc76b99; }
+.k-btn.alt { background: none; color: var(--fg); outline: 1px solid var(--brass); }
+.k-card { position: relative; background: #120a0b; padding: 24px; border-top: 3px solid var(--brass); }
+.k-card::after { content: ""; position: absolute; left: 0; bottom: 0; width: 26px; height: 26px; border: 5px solid var(--t-cyan); border-top: 0; border-right: 0; }
+.k-card h4 { font: var(--h3); } .k-card p { color: var(--fg2); margin-top: 6px; }
+.k-in { padding: 10px 14px; background: #1c2125; border: 1px solid #33292a; font: 900 2rem/1 "Big Shoulders Display"; color: var(--lip); letter-spacing: .02em; }
+.k-in small { display: block; font: 500 12px var(--mono); letter-spacing: .16em; color: var(--dim); margin-bottom: 4px; }
+.tape { display: inline-block; padding: 5px 9px; font: 500 12px/1 var(--mono); letter-spacing: .14em; color: #070506; background: var(--c); margin: 0 8px 8px 0; }
+.star { display: inline-grid; place-items: center; width: 70px; height: 66px; margin: 0 8px 8px 0; background: var(--brass); color: #24140c; font: 800 .7rem "Bodoni Moda"; letter-spacing: .1em; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); vertical-align: middle; }
+.k-toast { font: 500 13px/1.5 var(--mono); letter-spacing: .12em; text-transform: uppercase; border-left: 6px solid var(--bulb); padding: 12px 16px; background: #120a0b; }
+</style>
+</head>
+<body>
+<nav class="top"><a href="6-road-case.html">prev</a><span>7 &middot; After Hours (Ghost Light + Dressing Room)</span><a href="index.html">all</a></nav>
+
+<header class="hero" id="stage">
+  <div class="floor"></div>
+  <div class="gglow"></div>
+  <div class="title">BUNRAKU<small>The house is dark. Your room is still lit.</small></div>
+  <svg class="ghost" viewBox="0 0 140 420" aria-hidden="true">
+    <rect x="66" y="120" width="8" height="270" fill="#2a2724"/><rect x="30" y="386" width="80" height="12" fill="#2a2724"/>
+    <rect x="42" y="40" width="56" height="84" fill="none" stroke="#3a3632" stroke-width="3"/>
+    <line x1="56" y1="40" x2="56" y2="124" stroke="#3a3632" stroke-width="2"/><line x1="70" y1="40" x2="70" y2="124" stroke="#3a3632" stroke-width="2"/><line x1="84" y1="40" x2="84" y2="124" stroke="#3a3632" stroke-width="2"/>
+    <ellipse cx="70" cy="80" rx="18" ry="24" fill="#fff4d6"/><ellipse cx="70" cy="80" rx="30" ry="36" fill="#ffc76b" opacity=".25"/>
+  </svg>
+  <div class="mirror" id="mirror">
+    <div class="glass">BREAK A LEG, BUN<small>CALL: WHENEVER YOU OPEN IT</small></div>
+    <div class="reflect"></div>
+    <div class="tuck" style="right:6%;top:36%;transform:rotate(6deg);--img:linear-gradient(135deg,#5a1a2a,#e8254f)"><i></i><span>Scenes</span></div>
+    <div class="tuck" style="right:24%;bottom:6%;transform:rotate(-5deg);--img:linear-gradient(135deg,#2a3a4a,#d9b26a)"><i></i><span>Library</span></div>
+    <div class="tuck" style="left:44%;top:46%;transform:rotate(-3deg);--img:linear-gradient(135deg,#d9b26a,#3a0f1a)"><i></i><span>Workbench</span></div>
+  </div>
+  <a class="spike" style="--c:var(--t-pink);left:8%;bottom:9%" href="#">Download</a>
+  <a class="spike" style="--c:var(--t-yel);left:34%;bottom:16%" href="#">Tour</a>
+  <a class="spike" style="--c:var(--t-cyan);left:48%;bottom:6%" href="#">Guides</a>
+  <div class="dark"></div>
+  <div class="hint">carry the light / click a bulb / pull a photo</div>
+</header>
+
+<main class="wrap">
+  <section class="b"><div class="label"><b>01</b>The idea</div>
+    <div class="pitch"><div><h1>After Hours</h1><div class="line">The house is dark. Your room is still lit.</div></div>
+      <div><p>The show is over and everyone went home. <b>Two lights are left on in the building:</b> the ghost light on the empty stage, and the mirror bulbs in your dressing room down the hall.</p>
+      <p>RoleCall is the show at full brightness. Bunraku is the same theater after close: <b>the stage is yours to rehearse on, and the room is yours to live in.</b> Dark, warm, a little spooky, completely private.</p>
+      <p>Two places, two jobs. <b>The stage</b> is the public part: tour, guides, download, marked with glow tape and found with your light. <b>The dressing room</b> is the personal part: your library, your characters and your notes, tucked into the mirror frame.</p></div></div>
+  </section>
+
+  <section class="b"><div class="label"><b>02</b>Palette: pitch dark, two warm lights, brass, lipstick, glow tape</div>
+    <div class="sw">
+      <div style="background:#070506;color:#b3a19a;outline:1px solid #211417"><b>After close</b>#070506</div>
+      <div style="background:#2a0c12;color:#f0c9c4"><b>Velvet</b>#2A0C12</div>
+      <div style="background:#17110d;color:#c9b9a3"><b>Stage floor</b>#17110D</div>
+      <div style="background:#1f2428;color:#c7cdd2"><b>Mirror</b>#1F2428</div>
+      <div style="background:#ffc76b;color:#140a06"><b>Bulb</b>#FFC76B</div>
+      <div style="background:#d9b26a;color:#24140c"><b>Brass</b>#D9B26A</div>
+      <div style="background:#e8254f;color:#fff"><b>Lipstick</b>#E8254F</div>
+      <div style="background:#ff2d87;color:#111"><b>Tape pink</b>#FF2D87</div>
+      <div style="background:#2ee6ff;color:#111"><b>Tape cyan</b>#2EE6FF</div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>03</b>Type: tall stage caps, a glamour serif, a console mono. No script.</div>
+    <div class="type">
+      <div class="row"><small>BIG SHOULDERS DISPLAY<br>titles, writing on the mirror</small><div style="font:900 clamp(3rem,8vw,7rem)/.85 'Big Shoulders Display'">BREAK A LEG, BUN</div></div>
+      <div class="row"><small>BODONI MODA<br>door plates, the voice</small><div style="font:600 2rem/1.25 'Bodoni Moda'">The house is dark. Your room is still lit.</div></div>
+      <div class="row"><small>IBM PLEX MONO<br>tape labels, versions, calls</small><div style="font:500 1rem 'IBM Plex Mono';letter-spacing:.2em">DOWNLOAD &middot; TOUR &middot; GUIDES &middot; V0.1.42</div></div>
+      <div class="row"><small>PUBLIC SANS<br>reading text</small><div style="font:400 1.15rem/1.6 'Public Sans';max-width:40rem;color:var(--fg2)">Lorebooks keep your world straight: every fact about your characters pinned where the story can find it.</div></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>04</b>Materials</div>
+    <div class="mats">
+      <div style="background:radial-gradient(circle at 50% 45%,#fff4d6 0 14px,#ffc76b66 15px,transparent 90px),#070506"><span>Ghost light</span></div>
+      <div style="background:linear-gradient(115deg,#1f2428 0 30%,#2b3338 38%,#181c20 46%)"><span>Old mirror</span></div>
+      <div style="background:repeating-linear-gradient(90deg,#17110d 0 38px,#0e0a08 38px 40px)"><span>Stage floor</span></div>
+      <div style="background:repeating-linear-gradient(90deg,#2a0c12 0 3px,#220a0f 3px 6px)"><span>Velvet</span></div>
+      <div style="background:linear-gradient(#e6c887,#b98d45)"><span>Brass plate</span></div>
+      <div style="background:#070506;display:grid;place-items:center"><i style="display:block;width:70%;height:14px;background:#ff2d87;box-shadow:0 0 16px #ff2d87"></i><span>Glow tape</span></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>05</b>Pieces</div>
+    <div class="kit">
+      <figure><div class="k-nav"><span style="--c:var(--t-pink)">Download</span><span style="--c:var(--t-yel)">Tour</span><span style="--c:var(--t-cyan)">Guides</span></div><figcaption>Nav: brass plates with a strip of glow tape</figcaption></figure>
+      <figure><div style="display:flex;gap:16px;flex-wrap:wrap"><span class="k-btn">Get Bunraku</span><span class="k-btn alt">Read guides</span></div><figcaption>Buttons: a bulb that lights on hover, a brass outline</figcaption></figure>
+      <figure><div class="k-card"><h4>Lorebooks</h4><p>Every fact about your world, pinned where the story can find it.</p></div><figcaption>Card: brass edge, a spike corner</figcaption></figure>
+      <figure><div class="k-in"><small>WRITE ON THE MIRROR</small>THE LIGHTHOUSE, 2AM</div><figcaption>Input: lipstick caps on glass</figcaption></figure>
+      <figure><div><span class="tape" style="--c:var(--t-pink)">NEW</span><span class="tape" style="--c:var(--t-cyan)">BETA</span><span class="star">V0.1</span></div><figcaption>Tags: glow tape, the star on your door</figcaption></figure>
+      <figure><div class="k-toast">Saved. The light stays on.</div><figcaption>Toast: a quiet call</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>06</b>How the site is built</div>
+    <div class="map">
+      <div><h3>Home</h3><strong>The dark stage</strong><p>You carry a light. The ghost light stands center; glow tape marks where each section is; your mirror glows off to the side.</p></div>
+      <div><h3>Feature tour</h3><strong>Walking the marks</strong><p>Step onto a mark and a single special lights that feature. Step off and it goes dark again.</p></div>
+      <div><h3>Guides and help</h3><strong>Blocking notes</strong><p>Floor plans with numbered tape marks: stand here, then here. Help is the number taped to the mirror.</p></div>
+      <div><h3>Download</h3><strong>The star on your door</strong><p>Your name goes on the door. Pick your platform; the room is yours.</p></div>
+      <div><h3>What's new</h3><strong>Cards on the counter</strong><p>Each release is a card left on the dressing table, live from GitHub.</p></div>
+      <div><h3>Try it</h3><strong>Sit at the mirror</strong><p>The bulbs come up full and the mirror becomes a scene you can play right there.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>07</b>Signature moves</div>
+    <div class="moves">
+      <div><h3>You hold the light <span class="live">LIVE ABOVE</span></h3><p>The stage is dark except around your pointer. On phones the light follows your scroll.</p></div>
+      <div><h3>The mirror stays on <span class="live">LIVE ABOVE</span></h3><p>Mirror bulbs glow through the dark, warm up one by one on load, and click on and off.</p></div>
+      <div><h3>Pull a photo <span class="live">LIVE ABOVE</span></h3><p>Tucked photos slide out of the frame on hover; each is a part of your library.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>08</b>Voice</div>
+    <div class="voice">
+      <div><h3>Say it like this</h3><ul><li>The house is dark. Your room is still lit.</li><li>The stage is yours tonight.</li><li>Nothing leaves this building.</li><li>Break a leg, bun.</li></ul></div>
+      <div class="no"><h3>Never this</h3><ul><li>Next-gen roleplay experience</li><li>Your personal AI studio</li><li>Powered by cutting-edge AI</li><li>Sign up now</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Not this: script fonts, rounded cards, purple glows, glass. The only round things are bulbs.</span><a href="index.html">Back to all</a></footer>
+</main>
+
+<script>
+// Flashlight follows the pointer; mirror bulbs sit above the dark, warm up in order, and toggle on click.
+const stage = document.getElementById("stage");
+stage.addEventListener("pointermove", (e) => {
+  const r = stage.getBoundingClientRect();
+  stage.style.setProperty("--x", (e.clientX - r.left) + "px");
+  stage.style.setProperty("--y", (e.clientY - r.top) + "px");
+});
+const m = document.getElementById("mirror");
+const place = () => {
+  document.querySelectorAll(".bulb").forEach((b) => b.remove());
+  const r = m.getBoundingClientRect(), s = stage.getBoundingClientRect();
+  const spots = [];
+  for (let i = 0; i < 6; i++) spots.push([r.left + 20 + i * (r.width - 40) / 5, r.top - 26]);
+  for (let i = 0; i < 5; i++) { const y = r.top + 20 + i * (r.height - 40) / 4; spots.push([r.left - 26, y], [r.right + 4, y]); }
+  spots.forEach(([x, y], i) => {
+    const el = document.createElement("span");
+    el.className = "bulb";
+    el.style.left = (x - s.left - 11) + "px"; el.style.top = (y - s.top) + "px";
+    el.addEventListener("click", () => el.classList.toggle("on"));
+    stage.append(el);
+    setTimeout(() => el.classList.add("on"), 300 + i * 110);
+  });
+};
+place(); addEventListener("resize", place);
+</script>
+</body>
+</html>

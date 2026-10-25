@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "decisions/ADR-005-canonical-model",
+  "sourcePath": "docs/decisions/ADR-005-canonical-model.md",
+  "sourceHash": "sha256:3f2cdf786538048a6048e99d5664097cdc58e2418b02e3fa30352aafefa55916",
+  "semanticSummaryHash": "sha256:b799653b20be8fcaf3e23a12f014b3703758d1dd7905df01993788a91ada6992",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:11.388Z"
+}

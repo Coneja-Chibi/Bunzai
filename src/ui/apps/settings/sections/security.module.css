@@ -1,0 +1,293 @@
+/*
+ * Settings, Security: the approved in-between wireframe (design/wireframes/encryption/in-between/
+ * 04-security-desk.html). The card, button, and chip vocabulary is composed from
+ * section-card.module.css; only the design system's hero, its stat tiles, its mono proof block, the
+ * strength meter, and the printed script live here. Tokens only.
+ */
+.wrap {
+  composes: wrap from "./section-card.module.css";
+  /* Security stays host-typeset even while an appearance contribution is selected. */
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-big: "Fraunces", serif;
+  --font-fancy: "Cinzel", serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  font-family: "Atkinson Hyperlegible", sans-serif;
+  font-size: 1rem;
+  color: var(--text);
+}
+.card {
+  composes: card from "./section-card.module.css";
+}
+.cardTitle {
+  composes: cardTitle from "./section-card.module.css";
+}
+.cardBody {
+  composes: cardBody from "./section-card.module.css";
+}
+.subtle {
+  composes: subtle from "./section-card.module.css";
+}
+.actions {
+  composes: actions from "./section-card.module.css";
+}
+.btn {
+  composes: btn from "./section-card.module.css";
+}
+.btnGhost {
+  composes: btnGhost from "./section-card.module.css";
+}
+.btnDanger {
+  composes: btnDanger from "./section-card.module.css";
+}
+.chip {
+  composes: chip from "./section-card.module.css";
+}
+.chipOk {
+  composes: chip;
+  color: var(--stage-ok);
+  border-color: var(--stage-ok);
+}
+.chipWarn {
+  composes: chip;
+  color: var(--stage-warn);
+  border-color: var(--stage-warn);
+}
+/* a plain progress line in a dialog or card */
+.status {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+/* a finding of the health check: the amber plate with its spine; danger when content is lost */
+.notice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 2px solid var(--stage-warn);
+  border-left-width: 6px;
+  background: var(--face);
+}
+.noticeDanger {
+  border-color: var(--stage-danger-edge);
+  background: var(--stage-danger-bg);
+}
+.noticeTitle {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.noticeBody {
+  margin: 0.25rem 0 0;
+  color: var(--text);
+}
+.error {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--stage-danger-text);
+}
+
+/* the design system's hero: eyebrow, marquee with one colored word, one line of voice */
+.hero {
+  border: 2px solid var(--accent);
+  background: var(--face);
+  padding: 1.6rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--text-meta);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--chrome-structure);
+}
+.marquee {
+  font-family: var(--font-fancy);
+  font-weight: 900;
+  font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.3rem);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: var(--text);
+  margin: 0;
+}
+.marquee em {
+  font-style: normal;
+  color: var(--chrome-structure);
+}
+.voice {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text);
+  margin: 0;
+}
+
+/* the stat tiles: passive readouts */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--gap-m);
+}
+.tile {
+  composes: card from "./section-card.module.css";
+  gap: 0.35rem;
+}
+.tileLabel {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.tileValue {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+/* the mono proof block: plain, checkable lines about what the encryption does, and does not */
+.proof {
+  background: var(--stage-black);
+  color: var(--stage-ok);
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  line-height: 1.6;
+  padding: 0.9rem 1.1rem;
+  border: 2px solid var(--edge);
+  margin: 0;
+  white-space: pre-wrap;
+}
+.proofNot {
+  color: var(--stage-warn);
+}
+
+/* a remembered-computer row */
+.pc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  border-bottom: 2px solid var(--seam);
+  padding: 0.6rem 0;
+}
+.pc:last-child {
+  border-bottom: none;
+}
+.pcName {
+  font-family: var(--font-big);
+  font-weight: 800;
+  font-size: var(--text-control);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.pcMeta {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--text-dim);
+  margin-top: 0.15rem;
+}
+
+/* the dialogs: a dossier on the scrim, with its own sheet chrome dropped. Scoped to the dialog role so it
+   outranks InkDialog's own sheet rule whichever stylesheet loads last. */
+[role="dialog"].sheet {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  /* room for the dossier's hard shadow; a tall act scrolls inside the window instead of spilling off it */
+  padding: 0 10px 10px 0;
+  max-width: 35rem;
+  width: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+/* fields inside a dossier */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.field label {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* the strength meter: four segments (the wireframe's MeterBar grown into a meter) */
+.meter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.25rem;
+}
+.meter span {
+  height: 0.55rem;
+  border: 2px solid var(--edge);
+  background: var(--seam);
+}
+.weakLit {
+  background: var(--stage-warn) !important;
+}
+.strongLit {
+  background: var(--stage-ok) !important;
+}
+.meterWords {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  color: var(--text-soft);
+}
+
+/* the script, printed: only the words, on plain paper */
+.script {
+  display: none;
+}
+@media print {
+  :global(body) {
+    background: var(--stage-white) !important;
+  }
+  :global(body > *) {
+    display: none !important;
+  }
+  .script {
+    display: block !important;
+    color: var(--stage-black);
+    background: var(--stage-white);
+    font-family: var(--font-mono);
+    padding: 2rem;
+  }
+  .script ol {
+    columns: 2;
+    font-size: 1.2rem;
+    line-height: 2;
+  }
+}
+
+/* a quiet line of help under a field's label */
+.hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  line-height: 1.6;
+  color: var(--text-soft);
+}
+:global(html[data-surface-settings-shape="program-sections"]) .hint {
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+:global(html[data-surface-settings-shape="program-sections"]) .marquee,
+:global(html[data-surface-settings-shape="program-sections"]) .tileValue {
+  font-weight: 600;
+}

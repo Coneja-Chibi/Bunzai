@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/concepts/regex-engine",
+  "sourcePath": "docs/reference/concepts/regex-engine.md",
+  "sourceHash": "sha256:ca345fecfae4705db7154061036b77c91ef801af6f3adfe3b8ffd2c5e03f12da",
+  "semanticSummaryHash": "sha256:688ae5967caca6d206f58a3fdcd7513713d768d33a78ed8dd7cd3182c26e7e55",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:50.736Z"
+}

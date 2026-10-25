@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security settings wireframe</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">04 Settings, Security</div>
+      <p class="wf-lede">A new section in Settings, beside Connections and Updates, built from the same section cards. One place for the password, the recovery words, and the computers that open the library by themselves.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid">
+    <div>
+      <div class="wf-state">No password (the default)</div>
+      <div class="stack">
+        <div class="card hero">
+          <div class="card-title">Your library is encrypted</div>
+          <p class="card-body">Everything you make is stored encrypted. <b>This computer opens it by itself</b>, using Windows' own protection, so a stolen disk shows nothing. Add a password if other people use this computer.</p>
+          <div class="status"><span class="dot on"></span>Protected by Windows</div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <div class="tx">
+              <div class="label">Password</div>
+              <div class="hint">Off. This computer unlocks by itself.</div>
+            </div>
+            <button class="stamp stamp-btn">Set a password</button>
+          </div>
+          <div class="row">
+            <div class="tx">
+              <div class="label">Recovery words</div>
+              <div class="hint">Made on 23 September 2026. Checked 23 September 2026.</div>
+            </div>
+            <div class="actions">
+              <button class="btn-ghost">Check my words</button>
+              <button class="btn-ghost">Make new words</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Computers that open this library by themselves</div>
+          <div class="pc">
+            <div>
+              <div class="pc-name">DESKTOP-STUDIO <span class="chip ok">This computer</span></div>
+              <div class="pc-meta">Since 23 September 2026 / Windows protection</div>
+            </div>
+            <button class="btn-ghost btn-danger">Forget</button>
+          </div>
+          <div class="pc">
+            <div>
+              <div class="pc-name">studio-laptop</div>
+              <div class="pc-meta">Since 20 September 2026 / macOS Keychain</div>
+            </div>
+            <button class="btn-ghost btn-danger">Forget</button>
+          </div>
+          <p class="subtle">A computer you forget will need the recovery words (or the password, if you set one) to open the library again.</p>
+        </div>
+      </div>
+      <p class="wf-comp">cards = section-card (hero for the summary) / rows = SettingsRow / status = section-card status + dot</p>
+    </div>
+
+    <div>
+      <div class="wf-state">With a password</div>
+      <div class="stack">
+        <div class="card hero">
+          <div class="card-title">Your library is encrypted and password-locked</div>
+          <p class="card-body">Every open asks for your password. No computer opens it by itself. <b>If you forget the password, your recovery words still open it.</b></p>
+          <div class="status"><span class="dot on"></span>Password on</div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <div class="tx">
+              <div class="label">Password</div>
+              <div class="hint">On. Asked each time the app opens, and after 15 minutes idle.</div>
+            </div>
+            <div class="actions">
+              <button class="stamp stamp-btn">Change</button>
+              <button class="btn-ghost">Remove password</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="tx">
+              <div class="label">When to ask</div>
+              <div class="hint">Every open, or also after you step away.</div>
+            </div>
+            <div class="seg"><button>Each open</button><button class="on">Also after 15 min idle</button></div>
+          </div>
+          <div class="row">
+            <div class="tx">
+              <div class="label">Lock now</div>
+              <div class="hint">Closes the library until the password is entered again.</div>
+            </div>
+            <button class="stamp stamp-btn">Lock</button>
+          </div>
+          <div class="row">
+            <div class="tx">
+              <div class="label">Recovery words</div>
+              <div class="hint">Made on 23 September 2026.</div>
+            </div>
+            <div class="actions">
+              <button class="btn-ghost">Check my words</button>
+              <button class="btn-ghost">Make new words</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="wf-note"><b>Why "Protected by Windows":</b> the status names the lock actually used on this computer (Windows protection, macOS Keychain, the Linux keyring, or a key file). A key file is the weak case and gets its own notice (page 05).</p>
+  <p class="wf-note"><b>Question for you:</b> should "Lock now" also live somewhere always visible (the Dock or the status bar), or is Settings enough?</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku</title>
+<meta name="description" content="Bunraku is a free, open-source desktop app for playing and making AI roleplay characters on your own computer.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 40'%3E%3Cpath fill='%23c43d2b' fill-rule='evenodd' d='M4 0H60a4 4 0 0 1 4 4V14a6 6 0 0 0 0 12V36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V26a6 6 0 0 0 0-12V4a4 4 0 0 1 4-4ZM19.25 6.73A2.4 6 -12 1 0 21.75 18.47A2.4 6 -12 1 0 19.25 6.73ZM28.75 6.73A2.4 6 12 1 1 26.25 18.47A2.4 6 12 1 1 28.75 6.73ZM17.5 25a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Figtree:wght@400;500;600;700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,500..700,0..100,0..1;1,9..144,500..700,0..100,0..1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Admit-one ticket, bunny punched through as a real hole (evenodd), perforation before the stub. -->
+    <symbol id="logo" viewBox="0 0 64 40">
+      <path fill="currentColor" fill-rule="evenodd" d="M4 0H60a4 4 0 0 1 4 4V14a6 6 0 0 0 0 12V36a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V26a6 6 0 0 0 0-12V4a4 4 0 0 1 4-4Z
+        M19.25 6.73A2.4 6 -12 1 0 21.75 18.47A2.4 6 -12 1 0 19.25 6.73Z
+        M28.75 6.73A2.4 6 12 1 1 26.25 18.47A2.4 6 12 1 1 28.75 6.73Z
+        M17.5 25a6.5 6.5 0 1 0 13 0a6.5 6.5 0 1 0-13 0Z
+        M49.1 5a.9.9 0 1 0 1.8 0a.9.9 0 1 0-1.8 0Z M49.1 11a.9.9 0 1 0 1.8 0a.9.9 0 1 0-1.8 0Z
+        M49.1 29a.9.9 0 1 0 1.8 0a.9.9 0 1 0-1.8 0Z M49.1 35a.9.9 0 1 0 1.8 0a.9.9 0 1 0-1.8 0Z"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor" opacity=".15"/><path d="M12 11v6M12 7.5v.1" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l4-1 11-11-3-3L5 16zM14 7l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-shelf" viewBox="0 0 24 24"><path d="M5 4h4v16H5zM10 4h4v16h-4zM15.5 5l3.5-1 2.5 15.5-3.5 1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.5l7.5-1v7H3zM11.5 4.3L21 3v8.5h-9.5zM3 12.5h7.5v7L3 18.5zM11.5 12.5H21V21l-9.5-1.3z" fill="currentColor"/></symbol>
+    <symbol id="i-mac" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 20h6M12 16v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-linux" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M7 9l3 3-3 3M12 15h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 18h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-browser" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9h18" stroke="currentColor" stroke-width="2"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap head-row">
+    <a class="brand" href="#/" aria-label="Bunraku home">
+      <svg class="logo" aria-hidden="true"><use href="#logo"/></svg>
+      Bunraku
+    </a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav"><svg aria-hidden="true"><use href="#i-menu"/></svg>Menu</button>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#/features" data-nav="features">Features</a>
+      <a href="#/help" data-nav="help">Guides</a>
+      <a href="#/whats-new" data-nav="whats-new">What's new</a>
+      <a href="#/try" data-nav="try">Try it</a>
+      <a href="#/download" data-nav="download" class="nav-cta">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" tabindex="-1"></main>
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <div>
+      <div class="foot-brand"><svg class="logo" aria-hidden="true"><use href="#logo"/></svg><b>Bunraku</b></div>
+      <p class="small" style="margin:10px 0 0">Free and open source. Made by <a href="https://github.com/Coneja-Chibi">Coneja-Chibi</a>.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="#/features">Features</a>
+      <a href="#/help">Guides</a>
+      <a href="#/download">Download</a>
+      <a href="#/whats-new">What's new</a>
+      <a href="#/try">Try it</a>
+      <a href="https://github.com/Coneja-Chibi/Bunraku">Source code</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>

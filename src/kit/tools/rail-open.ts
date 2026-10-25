@@ -1,0 +1,175 @@
+/**
+ * `/rail`, from Kit's side.
+ *
+ * ONE SURFACE, TWO DOORS. There is exactly one rail. A person opens it by typing `/rail`; Kit opens
+ * it by calling this. Named to say so, after a shorter-lived name that described what it did to a
+ * preset instead - which read as a second feature, and had to be explained rather than recognised.
+ *
+ * WHY A TOOL AND NOT PROSE. Kit can already say "I have opened Paramnesia for you", and a shell that
+ * had to read that out of a sentence would eventually open the wrong thing. Worse, a model able to
+ * open a view by CLAIMING to have opened it can be wrong without anything catching it. So the shell
+ * acts on a structured `show`, and the sentence is only ever a description of something that did
+ * happen.
+ *
+ * READ-ONLY, AND THAT IS LOAD-BEARING. Opening a view changes nothing on disk, so it needs no
+ * confirmation, and needing none is what makes it usable in the middle of a sentence. That is a
+ * property of this door, not of the rail: the rail is a write surface whichever way it was opened,
+ * and every edit made there meets the gate. Kit's own block edits go through `preset.blocks.manage`,
+ * which is a draft and a gate like everything else. This tool cannot move a block.
+ *
+ * IT REFUSES TO GUESS. Two presets matching one word is a question, not a coin toss: opening the
+ * wrong one and rearranging it is the failure this whole surface exists to prevent.
+ */
+import { z } from "zod";
+import type { HarnessTool, ToolContext } from "./tool";
+import { findPreset } from "./_shared/find-preset";
+
+/**
+ * What this app calls the place a preset opens: Kit's rail, or the window's Workbench.
+ *
+ * Defaulted rather than required, so a context that never says keeps the terminal's word - the
+ * surface Kit has had all along and every existing transcript refers to.
+ */
+const surfaceOf = (ctx: ToolContext): string => ctx.surface ?? "the rail";
+
+/**
+ * The kinds a name might belong to when it is not a preset, in the order worth checking.
+ *
+ * Drawings first because that is the one somebody reaches for here: the rail and a drawing are both
+ * "a thing you look at", and the model that asked for one had just made it.
+ */
+const OTHER_KINDS = ["htmldoc", "character", "lorebook", "persona", "regex", "pack"] as const;
+
+/** The piece this name really is, if it is a piece of some other kind. */
+async function otherKind(
+  ctx: ToolContext,
+  query: string,
+): Promise<{ kind: string; id: string; name: string } | null> {
+  const needle = query.trim().toLowerCase();
+  if (!needle) return null;
+  for (const kind of OTHER_KINDS) {
+    const pieces = await ctx.bridge.list(kind);
+    const hit = pieces.find(
+      (piece) => piece.id.toLowerCase() === needle
+        || piece.name.toLowerCase() === needle
+        || piece.id.toLowerCase().includes(needle),
+    );
+    if (hit) return { kind, id: hit.id, name: hit.name };
+  }
+  return null;
+}
+
+/**
+ * `show` REQUIRES a preset, enforced here rather than in execute.
+ *
+ * Making `preset` optional for `status` quietly let `{}` parse, which moved a fail-closed refusal
+ * from the schema boundary into a branch - the same guarantee, one layer further from where it can
+ * be relied on. The refinement keeps the boundary where the doctrine puts it: parse untrusted input
+ * once, at the edge, into something that cannot be wrong later.
+ */
+const input = z.strictObject({
+  action: z.enum(["show", "status"]).default("show")
+    .describe("show puts a preset on the rail; status reports what is on it right now"),
+  preset: z.string().trim().min(1).max(120).optional()
+    .describe("a preset's studio id, or part of its name; required for show"),
+}).refine((value) => value.action !== "show" || (value.preset ?? "") !== "", {
+  message: "show needs a preset to put on the rail",
+  path: ["preset"],
+});
+
+const railOpen: HarnessTool<z.infer<typeof input>> = {
+  name: "rail_open",
+  /**
+   * NAMES BOTH SURFACES, because a description is static and this tool runs in two apps. Saying
+   * only "the rail" made the sentence false in the window; saying neither would leave the model
+   * guessing what it had just done to the person's screen.
+   */
+  description:
+    "Open a preset where this app shows presets - the rail in the terminal, the Workbench in the "
+    + "desktop window - the same view the user gets from /rail. They can watch its block order while "
+    + "you work and rearrange it themselves. Use it when they ask to see a preset and after creating "
+    + "one. Opening it writes nothing.",
+  exposure: "direct",
+  effect: "read",
+  input,
+  concurrencyKey: () => "rail-open",
+  async execute(args, ctx) {
+    /**
+     * READ THE RAIL, do not remember it.
+     *
+     * Asked "which preset do I have up?", Kit used to answer from what it had opened earlier in the
+     * conversation - and was wrong the moment the person opened a different one themselves. The rail
+     * said Paramnesia; Kit said Empty Base, with no hedging, because nothing had ever let it look.
+     */
+    if (args.action === "status") {
+      const open = ctx.rail?.() ?? null;
+      if (!open) {
+        return {
+          summary: "rail_open status: nothing on the rail",
+          output: "The rail is not showing a preset right now.",
+        };
+      }
+      const unsaved = open.pending > 0
+        // Naming the gap matters: reading the preset from storage would describe a file the person
+        // can SEE is out of date on their own screen.
+        ? ` There ${open.pending === 1 ? "is" : "are"} ${open.pending} unsaved change`
+          + `${open.pending === 1 ? "" : "s"} on the rail, so the stored preset is behind what they see.`
+        : "";
+      return {
+        summary: `rail_open status: ${open.presetId}`,
+        output: `${open.title} (${open.presetId}) is on the rail: ${open.blocks} blocks, `
+          + `${open.enabled} enabled.${unsaved}`,
+      };
+    }
+
+    if (!args.preset) {
+      return {
+        summary: "rail_open: no preset named",
+        output: "Name a preset to show, or use action \"status\" to see what is already on the rail.",
+      };
+    }
+    const picked = findPreset(await ctx.bridge.list("preset"), args.preset);
+    if (!picked.ok) {
+      /**
+       * A NAME THAT IS A REAL PIECE OF ANOTHER KIND DESERVES BETTER THAN "no preset matches".
+       *
+       * Asked to put a drawing on the rail, this listed every preset in the studio and said none of
+       * them matched - true, useless, and easy to read as "that piece cannot be opened at all". The
+       * rail holds a PRESET's blocks in evaluation order; nothing else has blocks. Saying which
+       * kind the name actually is, and where that kind opens, turns a dead end into a direction.
+       */
+      const elsewhere = await otherKind(ctx, args.preset);
+      if (elsewhere) {
+        return {
+          summary: `rail_open: ${args.preset} is a ${elsewhere.kind}, not a preset`,
+          output: `"${elsewhere.name || elsewhere.id}" is a ${elsewhere.kind}, and the rail holds a `
+            + "preset's blocks in evaluation order - nothing else has blocks to show. "
+            + (elsewhere.kind === "htmldoc"
+              ? "A drawing opens in the HTML View tab, and the person opens it: from the Library, or "
+                + "from the reply it came in. No tool opens a tab. To CHANGE it, find the drawing "
+                + "update operation (search \"edit the wireframe\")."
+              : "Open it from the Library, or read it with studio_read.")
+            + " Nothing was opened.",
+        };
+      }
+      return { summary: `rail_open: ${args.preset} did not resolve`, output: picked.detail };
+    }
+
+    const piece = picked.piece;
+    return {
+      summary: `rail_open ${piece.id}`,
+      // The shell opens it from this, not from anything said about it.
+      show: { kind: "preset", id: piece.id },
+      /**
+       * THE SURFACE NAMES ITSELF. This used to say "on the rail" wherever it ran, including in the
+       * desktop window, which has no rail - so the model told somebody their preset was open on a
+       * column that does not exist there, while nothing had opened at all. A sentence about a
+       * surface is only true where that surface is, so the surface supplies the words.
+       */
+      output: `${piece.name || piece.id} is now open on ${surfaceOf(ctx)}. The user can see its`
+        + " blocks in evaluation order and rearrange them there.",
+    };
+  },
+};
+
+export default railOpen;

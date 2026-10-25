@@ -1,0 +1,11 @@
+/** scenes.list chat-list: the row shell. Hairline-separated rows, no frames, a soft wash on hover. */
+html[data-surface-scenes-list="chat-list"] .scn .scene-list {
+  & .grid { gap: 0; }
+  & .sc { height: 4.6rem; background: transparent; border: 0; border-bottom: 1px solid var(--bk-line-track); box-shadow: none; transform: none; }
+  & .sc:hover { background: var(--bk-surface-raised); transform: none; box-shadow: none; }
+  & .sc.picked { background: var(--bk-surface-raised); box-shadow: inset 4px 0 0 var(--a); }
+  & .scene-period { font: 800 .8125rem var(--font-body); color: var(--bk-text-dim); padding: .8rem .9rem .3rem; text-transform: uppercase; letter-spacing: .08em; }
+  & .grid-scroll { padding-right: .2rem; }
+}
+html[data-surface-scenes-list="chat-list"] .scn .stagerow { height: 13.5rem; }
+html[data-surface-scenes-list="chat-list"] .scn .stagerow :is(.hero, .preview) { height: 13.5rem; }

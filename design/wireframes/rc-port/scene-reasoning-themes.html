@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene reasoning by theme</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="port.css">
+<script src="../theme.js"></script>
+<style>
+/*
+ * Slice S5 as a theme surface: scene.reasoning. Behaviour is RoleCall's and identical in every column (two blocks, native
+ * first, "Reasoned for" and "Thought for", collapsed by default, open while streaming). A theme only picks the look.
+ * One role per meaning: info = the model's own reasoning channel (native); select = thinking written inside the reply text
+ * (think tags); the character tone only tints the default. All colour is a --bk-* token; the five palettes below are
+ * generated from the bundled manifests (bun run scripts/wireframe-theme.ts writes the same properties) and painted on each column.
+ * No blur, no glow, no gradient, no translucent fill. Square corners. 12px type floor.
+ */
+.col { --z-well: var(--bk-surface-well); --z-base: var(--bk-surface-base); --z-panel: var(--bk-surface-panel); --z-sunken: var(--bk-surface-sunken); --z-field: var(--bk-surface-field); --z-ink: var(--bk-surface-ink);
+  --z-line: var(--bk-line); --z-strong: var(--bk-line-strong); --z-ctl: var(--bk-line-control);
+  --z-text: var(--bk-text); --z-soft: var(--bk-text-soft); --z-dim: var(--bk-text-dim);
+  --z-nat: var(--bk-role-info); --z-nat-t: var(--bk-role-info-text); --z-nat-d: var(--bk-role-info-deep);
+  --z-tag: var(--bk-role-select); --z-tag-t: var(--bk-role-select-text); --z-tag-d: var(--bk-role-select-deep);
+  --z-ondeep: var(--bk-text-on-deep);
+  --z-sans: var(--bk-font-body); --z-serif: var(--bk-font-name); --z-mono: var(--bk-font-mono); --z-disp: var(--bk-font-display);
+  --tone: var(--deck-character);
+  background: var(--z-well); color: var(--z-soft); font-family: var(--z-sans); min-width: 0; border: 1px solid var(--z-strong); }
+body { font-size: 14px; }
+.page { max-width: 1760px; margin: 0 auto; padding: 28px 24px 120px; color: var(--text-soft); }
+.page h1 { font-family: var(--font-fancy); font-size: 24px; letter-spacing: .06em; text-transform: uppercase; color: var(--text); font-weight: 600; }
+.lede { margin-top: 8px; max-width: 90ch; line-height: 1.6; }
+.lede b { color: var(--text); }
+.cols { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+@media (max-width: 1500px) { .cols { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1000px) { .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .cols { grid-template-columns: 1fr; } }
+.col .ch { padding: 10px 12px; border-bottom: 1px solid var(--z-strong); background: var(--z-sunken); }
+.col .ch b { display: block; font-family: var(--z-disp); font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: var(--z-text); }
+.col .ch code { font-family: var(--z-mono); font-size: 12px; color: var(--z-text); background: var(--z-field); border: 1px solid var(--z-line); padding: 0 6px; }
+.col .ch span { display: block; margin-top: 6px; font-size: 13px; line-height: 1.45; color: var(--z-soft); }
+.col .cb { padding: 14px; display: flex; flex-direction: column; gap: 22px; }
+.cap { font-family: var(--z-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--z-dim); margin-bottom: 8px; }
+.spk { font-family: var(--z-disp); font-weight: 600; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: var(--tone); margin-bottom: 8px; }
+.bub { background: var(--z-panel); border: var(--bk-frame-w) solid var(--z-line); padding: 12px 14px; font-family: var(--z-sans); font-size: 16px; line-height: 1.7; color: var(--z-text); }
+.bub q { quotes: '"' '"'; color: var(--tone); }
+.stack { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+
+/* ---- shared anatomy (every variant keeps all of it: label, duration, snippet, copy, toggle, body) ---- */
+.rb button.hd { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; width: 100%; padding: 8px 10px; }
+.rb button.hd:focus-visible { outline: 2px solid var(--bk-focus-color); outline-offset: 2px; }
+.rb .chip { font-family: var(--z-mono); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; line-height: 20px; padding: 0 8px; }
+.rb .no { font-family: var(--z-mono); font-weight: 700; margin-right: 6px; }
+.rb .dur { font-size: 13px; color: var(--z-soft); white-space: nowrap; }
+.rb .snip { order: 5; flex: 1 1 100%; min-width: 0; font-size: 13px; color: var(--z-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rb .fill { flex: 1; }
+.rb.open:not(.core) .dur { order: 4; flex: 1 1 100%; }
+.rb .end { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; flex: none; }
+.rb .cv { width: 14px; height: 14px; flex: none; transition: transform .15s; }
+.rb.open .cv { transform: rotate(180deg); }
+.rb .bd { display: none; font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+.rb.open .bd { display: block; }
+.rb.open .snip { display: none; }
+.rb .ico { display: none; width: 28px; height: 28px; flex: none; place-items: center; }
+.rb .ico svg { width: 15px; height: 15px; }
+.col.paper-tone { --tone: var(--deck-character-deep); }
+.rb .copy { font-family: var(--z-mono); font-size: 12px; color: var(--z-dim); border: 1px solid var(--z-ctl); padding: 0 6px; line-height: 20px; display: none; }
+.rb.open .copy { display: inline-block; }
+.rb .cur { display: none; font-family: var(--z-disp); font-size: 12px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; margin-bottom: 8px; }
+.rb.nat .bd { font-family: var(--z-mono); font-size: 13px; line-height: 1.65; color: var(--z-text); }
+.rb.tag .bd { font-family: var(--z-sans); font-style: italic; color: var(--z-text); }
+
+/* ===== core: RoleCall's own cards, de-glassed. Solid fills, crisp borders, no blur, no glow, no gradient. ===== */
+.v-core .ico { display: grid; }
+.v-core .rb.open .dur { order: 0; flex: none; }
+.v-core .rb.tag { --a: var(--tone); border: 1px solid color-mix(in srgb, var(--a) 60%, var(--z-well)); background: color-mix(in srgb, var(--a) 12%, var(--z-panel)); }
+.v-core .rb.tag button.hd { padding: 10px 12px; flex-wrap: nowrap; }
+.v-core .rb.tag .ico { border: 1px solid color-mix(in srgb, var(--a) 60%, var(--z-well)); background: color-mix(in srgb, var(--a) 22%, var(--z-panel)); color: var(--z-text); }
+.v-core .rb.tag .chip { font-family: var(--z-sans); font-weight: 600; letter-spacing: .1em; padding: 0; color: var(--z-text); }
+.v-core .rb.tag .cv { color: var(--z-text); }
+.v-core .rb.tag .snip { font-style: italic; }
+.v-core .rb.tag .info, .v-core .rb.nat .info { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 10px; }
+.v-core .rb.tag.open .bd { border-top: 1px solid var(--a); padding: 12px 14px; }
+.v-core .rb.nat { --a: var(--tone); border: 2px solid color-mix(in srgb, var(--a) 70%, var(--z-well)); background: color-mix(in srgb, var(--a) 7%, var(--z-ink)); margin: 0 4px 4px 0; box-shadow: 4px 4px 0 color-mix(in srgb, var(--a) 40%, var(--z-well)); }
+.v-core .rb.nat button.hd { padding: 10px 12px; flex-wrap: nowrap; background: color-mix(in srgb, var(--a) 16%, var(--z-ink)); }
+.v-core .rb.nat .ico { border: 1px solid color-mix(in srgb, var(--a) 70%, var(--z-well)); background: color-mix(in srgb, var(--a) 14%, var(--z-ink)); color: var(--z-text); }
+.v-core .rb.nat .chip { font-family: var(--z-sans); font-weight: 600; letter-spacing: .08em; padding: 0; color: var(--z-text); }
+.v-core .rb.nat .cv { color: var(--z-text); }
+.v-core .rb.nat .snip { font-family: var(--z-sans); font-style: italic; color: var(--z-soft); }
+.v-core .rb.nat .cur { display: block; color: var(--z-text); }
+.v-core .rb.nat.open .bd { border-top: 1px solid color-mix(in srgb, var(--a) 70%, var(--z-well)); padding: 12px 14px 14px; }
+.v-core .rb.nat.open .cur { }
+
+/* ===== program-note (Theater): margin rules. A bar down the left edge, thin and quiet like a program note. ===== */
+.v-program-note .rb { background: var(--z-panel); }
+.v-program-note .rb.nat { border-left: 4px solid var(--z-nat-d); }
+.v-program-note .rb.tag { margin-left: 24px; border-left: 2px dashed var(--z-tag-d); }
+.v-program-note .rb.nat .chip { background: var(--z-nat-d); color: var(--z-ondeep); }
+.v-program-note .rb.tag .chip { color: var(--z-tag-t); border: 1px solid var(--z-tag-d); line-height: 18px; }
+.v-program-note .cv { color: var(--z-dim); }
+.v-program-note .rb.open .bd { border-top: 1px solid var(--z-line); margin: 0 10px; padding: 12px 4px 14px; }
+
+/* ===== slot-tab (Encore): a numbered label tab breaks the top edge of a thin frame, like a save slot. ===== */
+.v-slot-tab .rb { position: relative; margin-top: 12px; background: var(--z-panel); }
+.v-slot-tab .rb.nat { border: 2px solid var(--z-nat-d); }
+.v-slot-tab .rb.tag { border: 1px dashed var(--z-tag-d); margin-left: 24px; }
+.v-slot-tab .rb .chip { position: absolute; top: -12px; left: 10px; }
+.v-slot-tab .rb.nat .chip { background: var(--z-nat-d); color: var(--z-ondeep); }
+.v-slot-tab .rb.tag .chip { background: var(--z-panel); color: var(--z-tag-t); border: 1px solid var(--z-tag-d); line-height: 18px; }
+.v-slot-tab button.hd { padding: 14px 10px 8px; }
+.v-slot-tab .cv { color: var(--z-dim); }
+.v-slot-tab .rb.open .bd { padding: 2px 14px 14px; }
+
+/* ===== slab-note (GirliePop): a solid-headed slab for native, a plain outlined card for tags. ===== */
+.v-slab-note .rb.nat { border: var(--bk-frame-w) solid var(--z-nat-d); background: var(--z-panel); }
+.v-slab-note .rb.nat button.hd { background: var(--z-nat-d); color: var(--z-ondeep); }
+.v-slab-note .rb.nat .chip, .v-slab-note .rb.nat .dur, .v-slab-note .rb.nat .snip, .v-slab-note .rb.nat .cv { color: var(--z-ondeep); padding-left: 0; padding-right: 0; }
+.v-slab-note .rb.nat .chip { font-family: var(--z-disp); font-size: 13px; letter-spacing: .04em; text-transform: none; }
+.v-slab-note .rb.tag { margin-right: 36px; border: 1px solid var(--z-tag-d); background: var(--z-panel); }
+.v-slab-note .rb.tag .chip { color: var(--z-tag-t); padding: 0; font-family: var(--z-disp); font-size: 13px; letter-spacing: .04em; text-transform: none; }
+.v-slab-note .rb.tag .cv { color: var(--z-tag-t); }
+.v-slab-note .rb.open .bd { padding: 12px 14px 14px; }
+
+/* ===== footnote (Paper): no frame, no fill. A hairline rule and a numeral, like notes at the foot of a page. ===== */
+.v-footnote .rb { background: none; border-top: 1px solid var(--z-strong); }
+.v-footnote .rb.nat { border-top: 3px double var(--z-strong); }
+.v-footnote button.hd { padding: 8px 0; }
+.v-footnote .chip { padding: 0; text-transform: none; letter-spacing: 0; font-family: var(--z-serif); font-size: 14px; font-weight: 700; color: var(--z-text); }
+.v-footnote .no { display: inline-grid; place-items: center; min-width: 20px; height: 20px; border: 1px solid var(--z-strong); margin-right: 8px; font-size: 12px; }
+.v-footnote .rb.nat .no { background: var(--z-nat-d); border-color: var(--z-nat-d); color: var(--z-ondeep); }
+.v-footnote .rb.tag .no { background: none; border-color: var(--z-tag-d); color: var(--z-tag-t); border-style: dashed; }
+.v-footnote .cv { color: var(--z-dim); }
+.v-footnote .rb.open .bd { padding: 4px 0 14px 28px; }
+
+.note { margin-top: 28px; border: 1px solid var(--line-strong, var(--text-dim)); background: var(--bg-panel, transparent); padding: 16px 18px; line-height: 1.6; }
+.plan { margin-top: 36px; border: 2px solid var(--text); padding: 18px 20px; line-height: 1.65; }
+.plan h2 { font-family: var(--font-mono); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--text); margin-bottom: 10px; }
+.plan h3 { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--text); margin: 14px 0 4px; }
+.plan ol, .plan ul { padding-left: 22px; } .plan li { margin: 3px 0; }
+.plan b { color: var(--text); }
+.plan code { font-family: var(--font-mono); font-size: 12px; color: var(--text); background: var(--stage-row, transparent); padding: 0 4px; border: 1px solid var(--stage-seam, var(--text-dim)); }
+table.map { border-collapse: collapse; width: 100%; font-size: 13px; margin-top: 6px; }
+table.map th, table.map td { border: 1px solid var(--stage-seam, var(--text-dim)); padding: 6px 8px; text-align: left; vertical-align: top; }
+table.map th { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--text); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <symbol id="cv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="clap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3Z"/><path d="m6.2 5.3 3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="mask" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M2 10s3-3 3-8"/><path d="M22 10s-3-3-3-8"/><path d="M10 2c0 4.4-3.6 8-8 8"/><path d="M14 2c0 4.4 3.6 8 8 8"/><path d="M2 10s2 11 10 11 10-11 10-11"/><path d="M9 13h.01M15 13h.01"/><path d="M9.5 16.5a3.5 3.5 0 0 0 5 0"/></symbol>
+</defs></svg>
+
+<div class="page">
+  <h1>Reasoning block, one surface, five looks</h1>
+  <p class="lede">A new theme surface, <b><code>scene.reasoning</code></b>. The host builds the variants; a theme manifest only picks one. Behaviour never changes between columns: two separate blocks on a reply (native reasoning first, then the think-tag block), "Reasoned for N s" and "Thought for N s", collapsed by default, open while streaming, the two settings. Every column shows the pair on one reply, collapsed then open, in that theme's own palette. Click a header to toggle it. <b>Default first</b>: RoleCall's own design with the glass taken out. Then the four shipped themes, each with the look that fits its identity.</p>
+  <div class="cols" id="cols"></div>
+
+  <div class="note">
+    <b>Role colours, same in every column.</b> <b>info</b> marks the model's own reasoning channel (native): it arrives from the provider, outside the story text. <b>select</b> marks thinking the model wrote inside the reply and the app picked out by its tags. The default also uses the character's tone, as RoleCall does. Warn and danger stay free for finish reasons and failures. In every variant the two blocks differ by structure as well as hue: rule weight, solid versus dashed, filled versus outlined label, mono versus italic serif body.
+  </div>
+
+  <div class="plan">
+    <h2>Build plan for the doer (new surface <code>scene.reasoning</code>, no app code in this slice of work)</h2>
+    <h3>Which look goes where</h3>
+    <table class="map">
+      <tr><th>Variant id</th><th>Theme</th><th>Why it fits the identity (theme-v2-plan.md)</th></tr>
+      <tr><td><code>core</code></td><td>core, and <code>greenroom</code> (RoleCall)</td><td>RoleCall's own two cards, de-glassed: solid tinted card with the clapper and italic body; heavier native card with the mask, mono body, "Before the curtain". Not a registry id: a theme that names no variant renders core.</td></tr>
+      <tr><td><code>program-note</code></td><td>Theater</td><td>Playbill: thin rules and roomy prose. A margin bar reads as a program note and never competes with the story.</td></tr>
+      <tr><td><code>slot-tab</code></td><td>Encore</td><td>Game HUD: numbered tabs and a bracket-like frame read as save slots (01 native, 02 tags).</td></tr>
+      <tr><td><code>slab-note</code></td><td>GirliePop</td><td>Sticker scrapbook: thick slab borders and a rounded display face. A solid header slab for native, a plain card for tags.</td></tr>
+      <tr><td><code>footnote</code> (new, a fourth look in the same spirit)</td><td>Paper</td><td>Manuscript: hairline rules and footnote-style meta. A double rule and a numeral for native, a single rule and a dashed numeral for tags; no fill at all.</td></tr>
+    </table>
+    <h3>Steps</h3>
+    <ol>
+      <li>Add <code>"scene.reasoning": ["program-note", "slot-tab", "slab-note", "footnote"]</code> to <code>src/extensions/surface-registry.ts</code>, in the order Theater, Encore, GirliePop, Paper. The comment there already says a variant not built renders as core.</li>
+      <li>Create the variant folder <code>src/ui/apps/scenes/variants/scene.reasoning/</code> (match the existing folder naming in that directory), one file per variant: <code>program-note</code>, <code>slot-tab</code>, <code>slab-note</code>, <code>footnote</code>, plus the core rendering in the surface itself. <code>surface-registry.test.ts</code> fails if a folder names an id that is missing from the registry.</li>
+      <li>One logic module: <code>splitReasoning</code> (beside <code>stripReasoningTags</code>), open state, durations and the two settings (<code>scenes.autoOpenReasoning</code>, <code>scenes.capLongReasoning</code>) live once. Variants differ in markup and CSS only, never in data handling.</li>
+      <li>Read the variant with <code>useSurfaceVariant("scene.reasoning")</code>, as <code>scene-meta.tsx</code> and <code>scene-page.tsx</code> do for their surfaces. The painter already writes <code>data-surface-scene-reasoning</code>.</li>
+      <li>Add the picks to the four bundled manifests: <code>theater</code>: <code>program-note</code>; <code>stage</code> (GirliePop): <code>slab-note</code>; <code>paper</code>: <code>footnote</code>; and to the Encore example (<code>src/extensions/examples/bunraku.theme.encore/manifest.json</code>): <code>slot-tab</code>. <code>greenroom</code> names none, so it renders core. Run <code>scripts/wireframe-theme.ts</code> if palettes change, and the theme-difference test: it counts this surface.</li>
+      <li>Keep every variant to the same anatomy: label, duration, snippet (collapsed), copy and toggle in the header, body when open; native first. Native label "Backstage - Native Reasoning", tag label "Behind the Scene"; durations "Reasoned for" and "Thought for". Square corners, 12px floor, tokens only, no blur, glow, gradient or translucent fill, and a contrast check in all five palettes (the same check the other variants carry).</li>
+      <li>Render tests per variant (all parts present, native before tags, hidden when empty), a keyboard and focus check on the header button, and screenshots in the four themes.</li>
+    </ol>
+    <h3>Parts a mod can target (<code>data-part</code> names)</h3>
+    <p>Names must be added to the generated parts page the way the other parts are (a mod stylesheet may only aim at parts that exist).</p>
+    <ul>
+      <li><code>reasoning-block</code> on the block root, with <code>data-kind="native"</code> or <code>data-kind="tags"</code> and <code>data-open="true|false"</code></li>
+      <li><code>reasoning-header</code> (the toggle button), <code>reasoning-icon</code>, <code>reasoning-label</code>, <code>reasoning-number</code>, <code>reasoning-duration</code>, <code>reasoning-snippet</code>, <code>reasoning-copy</code>, <code>reasoning-chevron</code></li>
+      <li><code>reasoning-body</code>, and <code>reasoning-curtain</code> (the "Before the curtain" line, core native only)</li>
+    </ul>
+    <p style="margin-top:8px">The markup in this wireframe already carries these names as <code>data-part</code> attributes.</p>
+  </div>
+</div>
+
+<div class="wf-chip" id="wf"><a href="../index.html">All wireframes</a></div>
+
+<script>
+/*palettes:start*/var PALETTES = {"greenroom":{"--bk-surface-well":"#050506","--bk-surface-base":"#0a0a0b","--bk-surface-sunken":"#09090b","--bk-surface-field":"#141318","--bk-surface-panel":"#1c1a22","--bk-surface-raised":"#26232d","--bk-surface-ink":"#000000","--bk-line-strong":"#a1a1aa","--bk-line":"#27272a","--bk-line-track":"#27272a","--bk-line-control":"#71717a","--bk-focus-color":"#e11d48","--bk-text":"#fafaf9","--bk-text-soft":"#e4e4e7","--bk-text-dim":"#a1a1aa","--bk-text-faint":"#8a8a91","--bk-text-on-tint":"#000000","--bk-text-on-deep":"#ffffff","--bk-role-brand":"#e32e56","--bk-role-brand-text":"#fb7185","--bk-role-brand-deep":"#e11d48","--bk-role-action":"#a78bfa","--bk-role-action-text":"#a78bfa","--bk-role-action-deep":"#7c3aed","--bk-role-select":"#f472b6","--bk-role-select-text":"#f9a8d4","--bk-role-select-deep":"#be185d","--bk-role-ok":"#10b981","--bk-role-ok-text":"#6ee7b7","--bk-role-ok-deep":"#047857","--bk-role-warn":"#f59e0b","--bk-role-warn-text":"#fbbf24","--bk-role-warn-deep":"#b45309","--bk-role-danger":"#ef4444","--bk-role-danger-text":"#fca5a5","--bk-role-danger-deep":"#dc2626","--bk-role-info":"#22d3ee","--bk-role-info-text":"#67e8f9","--bk-role-info-deep":"#0e7490","--bk-font-name":"\"Cinzel\", serif","--bk-font-display":"\"Cinzel\", serif","--bk-font-body":"\"Inter\", sans-serif","--bk-font-mono":"\"IBM Plex Mono\", monospace","--bk-type-scale":"1","--bk-frame-w":"3px","--bk-frame-gap":"0px","--bk-frame-inner-w":"0px","--bk-frame-shadow-x":"6px","--bk-frame-shadow-y":"6px","--bk-bracket-rest":"0","--bk-density":"1","--bk-dur-instant":"120ms","--bk-dur-fast":"180ms","--bk-dur-base":"300ms","--bk-dur-slow":"480ms","--bk-ease-move":"cubic-bezier(0.45, 0, 0.55, 1)","--bk-lift-y":"-2px"},"theater":{"--bk-surface-well":"#000000","--bk-surface-base":"#0a0a0b","--bk-surface-sunken":"#060607","--bk-surface-field":"#0e0c0f","--bk-surface-panel":"#141216","--bk-surface-raised":"#1b181b","--bk-surface-ink":"#000000","--bk-line-strong":"#e3bd65","--bk-line":"#755c2c","--bk-line-track":"#5b4725","--bk-line-control":"#a9905d","--bk-focus-color":"#f0cb72","--bk-text":"#fafaf9","--bk-text-soft":"#e0dcda","--bk-text-dim":"#c5c1c2","--bk-text-faint":"#aca5a8","--bk-text-on-tint":"#0a0a0b","--bk-text-on-deep":"#ffffff","--bk-role-brand":"#e3bd65","--bk-role-brand-text":"#e3bd65","--bk-role-brand-deep":"#755719","--bk-role-action":"#4aa3e8","--bk-role-action-text":"#a9d8ff","--bk-role-action-deep":"#086eae","--bk-role-select":"#b79bff","--bk-role-select-text":"#d9c8ff","--bk-role-select-deep":"#613da0","--bk-role-ok":"#5fe3a1","--bk-role-ok-text":"#76e3a8","--bk-role-ok-deep":"#176b43","--bk-role-warn":"#ffc65a","--bk-role-warn-text":"#ffe08a","--bk-role-warn-deep":"#805300","--bk-role-danger":"#ff7a8c","--bk-role-danger-text":"#ffb4c2","--bk-role-danger-deep":"#9e203b","--bk-role-info":"#2fd9cf","--bk-role-info-text":"#5fe6dd","--bk-role-info-deep":"#006963","--bk-font-name":"\"Cinzel\", serif","--bk-font-display":"\"Cinzel\", serif","--bk-font-body":"\"Archivo\", sans-serif","--bk-font-mono":"\"IBM Plex Mono\", monospace","--bk-type-scale":"1","--bk-frame-w":"1px","--bk-frame-gap":"3px","--bk-frame-inner-w":"1px","--bk-frame-shadow-x":"0px","--bk-frame-shadow-y":"0px","--bk-bracket-rest":"0","--bk-density":"1.15","--bk-dur-instant":"120ms","--bk-dur-fast":"180ms","--bk-dur-base":"300ms","--bk-dur-slow":"480ms","--bk-ease-move":"cubic-bezier(0.45, 0, 0.55, 1)","--bk-lift-y":"-2px"},"encore":{"--bk-surface-well":"#03060f","--bk-surface-base":"#070b18","--bk-surface-sunken":"#0b1124","--bk-surface-field":"#060a15","--bk-surface-panel":"#111a33","--bk-surface-raised":"#1a2547","--bk-surface-ink":"#02040a","--bk-line-strong":"#7d9cf0","--bk-line":"#28365e","--bk-line-track":"#232f55","--bk-line-control":"#8aa4e6","--bk-focus-color":"#ffd23f","--bk-text":"#f4f7ff","--bk-text-soft":"#d9e2fb","--bk-text-dim":"#b9c6e8","--bk-text-faint":"#9aa9d0","--bk-text-on-tint":"#06091a","--bk-text-on-deep":"#ffffff","--bk-role-brand":"#ff7a45","--bk-role-brand-text":"#ff9a6b","--bk-role-brand-deep":"#a8420f","--bk-role-action":"#5c9dff","--bk-role-action-text":"#82b4ff","--bk-role-action-deep":"#2758a6","--bk-role-select":"#b48cff","--bk-role-select-text":"#c4a3ff","--bk-role-select-deep":"#6a4ca6","--bk-role-ok":"#3ee08f","--bk-role-ok-text":"#3ee08f","--bk-role-ok-deep":"#036b39","--bk-role-warn":"#ffb83d","--bk-role-warn-text":"#ffb83d","--bk-role-warn-deep":"#7c4d00","--bk-role-danger":"#ff5a67","--bk-role-danger-text":"#ff7a85","--bk-role-danger-deep":"#a62530","--bk-role-info":"#2fd9cf","--bk-role-info-text":"#2fd9cf","--bk-role-info-deep":"#006963","--bk-font-name":"\"Archivo\", sans-serif","--bk-font-display":"\"Archivo\", sans-serif","--bk-font-body":"\"Archivo\", sans-serif","--bk-font-mono":"\"IBM Plex Mono\", monospace","--bk-type-scale":"1","--bk-frame-w":"2px","--bk-frame-gap":"0px","--bk-frame-inner-w":"0px","--bk-frame-shadow-x":"0px","--bk-frame-shadow-y":"0px","--bk-bracket-rest":"1","--bk-density":"0.85","--bk-dur-instant":"50ms","--bk-dur-fast":"80ms","--bk-dur-base":"120ms","--bk-dur-slow":"200ms","--bk-ease-move":"steps(2)","--bk-lift-y":"-2px"},"stage":{"--bk-surface-well":"#16121c","--bk-surface-base":"#1a1620","--bk-surface-sunken":"#1c1723","--bk-surface-field":"#211c29","--bk-surface-panel":"#26202f","--bk-surface-raised":"#302839","--bk-surface-ink":"#14111a","--bk-line-strong":"#ffc9ae","--bk-line":"#4a3f55","--bk-line-track":"#3d3347","--bk-line-control":"#a898ab","--bk-focus-color":"#f4d387","--bk-text":"#f5ecf0","--bk-text-soft":"#c2b5c4","--bk-text-dim":"#a898ab","--bk-text-faint":"#a3959f","--bk-text-on-tint":"#1a1620","--bk-text-on-deep":"#ffffff","--bk-role-brand":"#ffb3c7","--bk-role-brand-text":"#ffb3c7","--bk-role-brand-deep":"#7c4958","--bk-role-action":"#bcd7ff","--bk-role-action-text":"#bcd7ff","--bk-role-action-deep":"#0876b5","--bk-role-select":"#d9c8ff","--bk-role-select-text":"#d9c8ff","--bk-role-select-deep":"#7f52c4","--bk-role-ok":"#bfead7","--bk-role-ok-text":"#8fe0b8","--bk-role-ok-deep":"#178356","--bk-role-warn":"#ffeaa8","--bk-role-warn-text":"#ffe08a","--bk-role-warn-deep":"#9a6b12","--bk-role-danger":"#ffb3c1","--bk-role-danger-text":"#ff9fb1","--bk-role-danger-deep":"#a52a43","--bk-role-info":"#a6e2ff","--bk-role-info-text":"#a6e2ff","--bk-role-info-deep":"#0b5e85","--bk-font-name":"\"Fredoka\", sans-serif","--bk-font-display":"\"Fredoka\", sans-serif","--bk-font-body":"\"Atkinson Hyperlegible\", sans-serif","--bk-font-mono":"\"IBM Plex Mono\", monospace","--bk-type-scale":"1.0625","--bk-frame-w":"3px","--bk-frame-gap":"0px","--bk-frame-inner-w":"0px","--bk-frame-shadow-x":"6px","--bk-frame-shadow-y":"6px","--bk-bracket-rest":"0","--bk-density":"1","--bk-dur-instant":"80ms","--bk-dur-fast":"140ms","--bk-dur-base":"220ms","--bk-dur-slow":"340ms","--bk-ease-move":"cubic-bezier(0.34, 1.56, 0.64, 1)","--bk-lift-y":"-2px"},"paper":{"--bk-surface-well":"#ece4d3","--bk-surface-base":"#f7f1e3","--bk-surface-sunken":"#f0e8d6","--bk-surface-field":"#fffdf7","--bk-surface-panel":"#fffdf7","--bk-surface-raised":"#f3ecdc","--bk-surface-ink":"#efe6d2","--bk-line-strong":"#6b5d48","--bk-line":"#d8ccb4","--bk-line-track":"#e2d8c2","--bk-line-control":"#766850","--bk-focus-color":"#5a3fa0","--bk-text":"#231f1a","--bk-text-soft":"#433c33","--bk-text-dim":"#4a4238","--bk-text-faint":"#5a5145","--bk-text-on-tint":"#231f1a","--bk-text-on-deep":"#ffffff","--bk-role-brand":"#ffa7d1","--bk-role-brand-text":"#a61d5e","--bk-role-brand-deep":"#a61d5e","--bk-role-action":"#aeceff","--bk-role-action-text":"#2758a6","--bk-role-action-deep":"#2758a6","--bk-role-select":"#dac6ff","--bk-role-select-text":"#6a4ca6","--bk-role-select-deep":"#6a4ca6","--bk-role-ok":"#9ff0c7","--bk-role-ok-text":"#036b39","--bk-role-ok-deep":"#036b39","--bk-role-warn":"#ffdc9e","--bk-role-warn-text":"#7c4d00","--bk-role-warn-deep":"#7c4d00","--bk-role-danger":"#ffadb3","--bk-role-danger-text":"#a62530","--bk-role-danger-deep":"#a62530","--bk-role-info":"#97ece7","--bk-role-info-text":"#006963","--bk-role-info-deep":"#006963","--bk-font-name":"\"Fraunces\", serif","--bk-font-display":"\"Fraunces\", serif","--bk-font-body":"\"Fraunces\", serif","--bk-font-mono":"\"Courier Prime\", \"Courier New\", monospace","--bk-type-scale":"1","--bk-frame-w":"1px","--bk-frame-gap":"0px","--bk-frame-inner-w":"0px","--bk-frame-shadow-x":"0px","--bk-frame-shadow-y":"0px","--bk-bracket-rest":"0","--bk-density":"1.3","--bk-dur-instant":"0ms","--bk-dur-fast":"0ms","--bk-dur-base":"0ms","--bk-dur-slow":"0ms","--bk-ease-move":"linear","--bk-lift-y":"0px"}};/*palettes:end*/
+(function () {
+  var COLS = [
+    { id: "greenroom", name: "Default", variant: "core", line: "Core and the RoleCall theme (greenroom). RoleCall's own cards, de-glassed: solid tint, crisp borders, one flat offset." },
+    { id: "theater", name: "Theater", variant: "program-note", line: "Playbill. A thin margin bar, flush for native, indented and dashed for tags." },
+    { id: "encore", name: "Encore", variant: "slot-tab", line: "Game HUD. A numbered tab on a thin frame: slot 01 native, slot 02 tags." },
+    { id: "stage", name: "GirliePop", variant: "slab-note", line: "Sticker scrapbook. A solid header slab for native, a plain outlined card for tags." },
+    { id: "paper", name: "Paper", variant: "footnote", line: "Manuscript. Hairline rules and numerals like notes at the foot of a page; no fill." }
+  ];
+  var NAT = "I read the last three turns. She has deflected twice. The radio is dead and she will not say so, so the honest middle is a partial truth about the boat.\n\nKeep it short and physical: the beam, the brass. End on a question so the player carries the next turn.";
+  var TAG = "Plan from the preset: one beat, one line, one question. Do not mention the radio.";
+  function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+  function block(variant, kind, open) {
+    var nat = kind === "nat";
+    var label = nat ? "Backstage - Native Reasoning" : "Behind the Scene";
+    var dur = nat ? "Reasoned for 8.4s" : "Thought for 3.1s";
+    var snip = nat ? "I read the last three turns. She has deflected twice..." : "Plan from the preset: one beat, one line, one question...";
+    var no = variant === "slot-tab" ? (nat ? "01" : "02") : variant === "footnote" ? (nat ? "1" : "2") : "";
+    var d = el("div", "rb " + kind + (open ? " open" : ""));
+    d.setAttribute("data-part", "reasoning-block"); d.setAttribute("data-kind", nat ? "native" : "tags"); d.setAttribute("data-open", open ? "true" : "false");
+    var core = variant === "core";
+    var chip = '<span class="chip" data-part="reasoning-label">' + (no ? '<b class="no" data-part="reasoning-number">' + no + '</b>' : "") + label + '</span>';
+    var parts = '<span class="ico" data-part="reasoning-icon"><svg><use href="#' + (nat ? "mask" : "clap") + '"/></svg></span>';
+    var meta = chip + '<span class="dur" data-part="reasoning-duration">' + dur + '</span><span class="snip" data-part="reasoning-snippet">' + snip + '</span>';
+    d.innerHTML = '<button class="hd" type="button" aria-expanded="' + open + '" data-part="reasoning-header">' + parts +
+      (core ? '<span class="info">' + meta + '</span>' : meta) +
+      (core ? "" : '<span class="end">') + '<span class="copy" data-part="reasoning-copy">Copy</span><svg class="cv" data-part="reasoning-chevron"><use href="#cv"/></svg>' + (core ? "" : '</span>') + '</button>' +
+      '<div class="bd" data-part="reasoning-body">' + (core && nat ? '<div class="cur" data-part="reasoning-curtain">Before the curtain</div>' : "") + (nat ? NAT : TAG) + '</div>';
+    d.querySelector(".hd").addEventListener("click", function () { var o = d.classList.toggle("open"); this.setAttribute("aria-expanded", o); d.setAttribute("data-open", o); });
+    return d;
+  }
+  function reply(variant, open) {
+    var w = el("div");
+    w.appendChild(el("div", "cap", open ? "Both open" : "Both collapsed (the default)"));
+    w.appendChild(el("div", "spk", "Marguerite Vane"));
+    var st = el("div", "stack"); st.appendChild(block(variant, "nat", open)); st.appendChild(block(variant, "tag", open)); w.appendChild(st);
+    w.appendChild(el("div", "bub", "<em>The beam swings out over the water and back.</em> <q>It turned round at noon.</q>"));
+    return w;
+  }
+  var host = document.getElementById("cols");
+  COLS.forEach(function (c) {
+    var col = el("div", "col v-" + c.variant + (c.id === "paper" ? " paper-tone" : ""));
+    var pal = PALETTES[c.id] || {};
+    Object.keys(pal).forEach(function (n) { col.style.setProperty(n, pal[n]); });
+    col.appendChild(el("div", "ch", "<b>" + c.name + "</b><code>" + (c.variant === "core" ? "core (no pick)" : c.variant) + "</code><span>" + c.line + "</span>"));
+    var cb = el("div", "cb"); cb.appendChild(reply(c.variant, false)); cb.appendChild(reply(c.variant, true));
+    col.appendChild(cb); host.appendChild(col);
+  });
+})();
+</script>
+</body>
+</html>

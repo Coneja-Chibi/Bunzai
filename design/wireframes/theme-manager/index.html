@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theme manager: difference score and mini preview (wireframe, awaiting approval)</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+/* Wireframe of the Appearance > Theme packages catalog row with two additions: the difference score and a
+   mini preview. It sits inside .host-protected, so every color is a host token; in the app the swatch colors
+   are the theme's own palette hex, passed inline from the catalog entry (not theme variables). */
+body { margin: 0; padding: 2rem; background: var(--canvas); color: var(--text); font: var(--text-body)/1.5 var(--font-body); }
+.manager { display: grid; gap: .75rem; max-width: 46rem; border-top: 1px solid var(--control-boundary); padding-top: 1rem; }
+h3 { margin: 0; font-family: var(--font-fancy); }
+.catalog { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.catalog li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) auto; gap: 1rem; align-items: center; border: 1px solid var(--control-boundary); padding: .75rem; background: var(--face); }
+.name { display: grid; gap: .2rem; }
+.name span, .score small { color: var(--text-soft); font-size: var(--text-control); }
+.score { display: grid; gap: .3rem; }
+.score b { font: 500 var(--text-control) var(--font-mono); }
+.bar { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; height: .75rem; }
+.bar i { background: var(--ghost); }
+.bar i.on { background: var(--action-primary); }
+.preview { display: grid; grid-template-rows: 1fr 1fr; width: 9.5rem; height: 4rem; border: 1px solid var(--control-boundary); }
+.preview .top, .preview .bot { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; }
+.preview em { display: block; }
+.actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.actions button { min-height: 2.25rem; border: 1px solid var(--control-boundary); background: var(--action-primary); color: var(--action-primary-fg); font: inherit; font-size: var(--text-control); font-weight: 650; padding: .35rem .65rem; }
+.note { color: var(--text-soft); max-width: 46rem; }
+@container (max-width: 38rem) { .catalog li { grid-template-columns: 1fr; } }
+/* wireframe-only swatch fills, standing in for the manifest hex that the app passes inline */
+.s1 { background: var(--stage-floor); } .s2 { background: var(--stage-panel); } .s3 { background: var(--text); }
+.s4 { background: var(--rose); } .s5 { background: var(--action-primary); } .s6 { background: var(--selection); } .s7 { background: var(--success); }
+</style>
+</head>
+<body>
+<section class="manager host-protected" aria-labelledby="h">
+  <h3 id="h">Theme packages</h3>
+  <ul class="catalog" aria-label="Installed and bundled theme packages">
+    <li>
+      <div class="name"><strong>Theater</strong><span>Bundled · enabled</span></div>
+      <div class="score" role="img" aria-label="Difference score 100 percent: 22 of 22 surfaces differ">
+        <b>22 of 22 surfaces differ</b>
+        <div class="bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <small>Picks its own variant on every surface</small>
+      </div>
+      <div class="preview" aria-hidden="true"><div class="top"><em class="s1"></em><em class="s2"></em><em class="s3"></em></div><div class="bot"><em class="s4"></em><em class="s5"></em><em class="s6"></em><em class="s7"></em></div></div>
+      <div class="actions"><button type="button">Disable</button><button type="button">Revoke grants</button></div>
+    </li>
+    <li>
+      <div class="name"><strong>Twin</strong><span>Imported · enabled</span></div>
+      <div class="score" role="img" aria-label="Difference score 0 percent: 0 of 22 surfaces differ">
+        <b>0 of 22 surfaces differ</b>
+        <div class="bar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <small>Same picks as another theme: a recolor</small>
+      </div>
+      <div class="preview" aria-hidden="true"><div class="top"><em class="s1"></em><em class="s2"></em><em class="s3"></em></div><div class="bot"><em class="s4"></em><em class="s5"></em><em class="s6"></em><em class="s7"></em></div></div>
+      <div class="actions"><button type="button">Disable</button><button type="button">Remove</button></div>
+    </li>
+  </ul>
+  <p class="note">Open question: the score line and the seven-swatch preview sit between the name and the actions of each catalog row. Approve, or say what to change, before the component is built. The shipped themes are gated at 11 of 22 or more in a test.</p>
+</section>
+</body>
+</html>

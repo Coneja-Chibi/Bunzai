@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/components",
+  "sourcePath": "docs/reference/components.md",
+  "sourceHash": "sha256:cfde663b13387f536816d0f696687b3a1ae8fd0a1ba4c7e2e1d2b0e067cabc62",
+  "semanticSummaryHash": "sha256:f99cba627a9f19380aa0ae33eb7084d71b9d059aaac84ef225a1876afce882ff",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Re-stamp only; catalog:check passes and no catalog rows changed.",
+  "reviewedAt": "2026-10-25T04:17:53.051Z"
+}

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku logo options</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<style>
+/*
+ * Logo concepts for Bunraku: the house look (rose on ink, 3px ink borders, stamped offset shadows,
+ * Archivo 900 / Cinzel / Crimson Pro / JetBrains Mono) with about 30% cute on top: bunny ears, a
+ * softer corner here and there, a sparkle, the rose-well pink. Every color is a theme token.
+ */
+:root { --pink: color-mix(in srgb, var(--rose) 30%, var(--stage-paper)); --blush: color-mix(in srgb, var(--rose) 14%, var(--stage-paper)); }
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--stage-floor); color: var(--stage-soft); font-family: var(--font-body); padding: 32px 24px 80px; }
+.top { max-width: 1240px; margin: 0 auto 24px; display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.top h1 { font: 900 2.2rem/1 var(--font-big); color: var(--stage-card); text-transform: uppercase; letter-spacing: .02em; }
+.top h1 em { font-style: normal; color: var(--rose); }
+.top p { font-size: 1.05rem; color: var(--stage-text-dim); max-width: 44rem; }
+.bg { margin-left: auto; display: flex; gap: 6px; font: 600 .72rem var(--font-mono); text-transform: uppercase; }
+.bg button { border: 2px solid var(--stage-ink); background: var(--stage-panel); color: var(--stage-soft); padding: 6px 10px; cursor: pointer; box-shadow: 3px 3px 0 var(--stage-ink); font: inherit; }
+.bg button.on { background: var(--rose); color: var(--stage-white); }
+.grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 22px; }
+.opt { background: var(--stage-panel); border: 3px solid var(--stage-ink); box-shadow: 6px 6px 0 var(--stage-ink); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+body.paper .opt { background: var(--stage-paper); color: var(--muted); }
+body.paper { background: var(--blush); }
+.opt h2 { font: 900 1.05rem var(--font-big); text-transform: uppercase; letter-spacing: .04em; color: var(--stage-card); display: flex; gap: 10px; align-items: baseline; }
+body.paper .opt h2 { color: var(--stage-ink); }
+.opt h2 b { color: var(--rose); font-family: var(--font-mono); font-size: .8rem; }
+.opt p { font-size: .98rem; line-height: 1.45; }
+.row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+/* app icon tile: the Windows/macOS square, softened 22% */
+.tile { width: 128px; height: 128px; border-radius: 28px; display: grid; place-items: center; background: var(--stage-well); border: 3px solid var(--stage-ink); box-shadow: 4px 4px 0 var(--rose-deep); flex: none; overflow: hidden; }
+.tile.small { width: 40px; height: 40px; border-radius: 10px; box-shadow: 2px 2px 0 var(--rose-deep); border-width: 2px; }
+.tile.fav { width: 20px; height: 20px; border-radius: 5px; box-shadow: none; border-width: 1px; }
+.tile svg { width: 82%; height: 82%; }
+.word { display: flex; align-items: center; gap: 10px; }
+.word svg { width: 44px; height: 44px; flex: none; }
+.wm { font: 900 2rem/1 var(--font-big); letter-spacing: .01em; color: var(--stage-card); }
+body.paper .wm { color: var(--stage-ink); }
+.wm.fancy { font-family: var(--font-fancy); letter-spacing: .08em; font-size: 1.7rem; }
+.wm .dot { color: var(--rose); }
+.search { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: color-mix(in srgb, var(--stage-card) 6%, transparent); border-radius: 6px; font: 500 .85rem system-ui, sans-serif; color: var(--stage-card); width: 100%; }
+body.paper .search { background: color-mix(in srgb, var(--stage-ink) 6%, transparent); color: var(--stage-ink); }
+.search small { display: block; color: var(--stage-mute); font-size: .72rem; }
+.tag { align-self: flex-start; font: 600 .66rem var(--font-mono); text-transform: uppercase; letter-spacing: .08em; padding: 3px 7px; border: 2px solid var(--stage-ink); background: var(--pink); color: var(--stage-ink); }
+.note { max-width: 1240px; margin: 28px auto 0; padding: 12px 16px; border-left: 4px solid var(--rose); background: var(--stage-rose-well); font-size: 1rem; line-height: 1.5; color: var(--stage-soft); }
+.note b { color: var(--stage-card); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- A: Ear B. A heavy B whose top bowl grows two bunny ears; the inner ears in pink. -->
+    <symbol id="lg-a" viewBox="0 0 100 100">
+      <path d="M30 34 C27 14 30 4 36 4 C42 4 44 16 42 34 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M46 34 C47 13 53 5 58 7 C63 9 60 22 55 36 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M34 30 C33 18 34 11 36 11 C39 11 39 20 38 30 Z" fill="var(--pink)"/>
+      <path d="M50 31 C51 19 54 13 56 14 C58 15 56 23 53 32 Z" fill="var(--pink)"/>
+      <path d="M26 32 H56 C70 32 74 40 74 47 C74 52 71 56 67 58 C73 60 78 65 78 73 C78 84 70 94 55 94 H26 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M40 44 H54 C58 44 60 46 60 49 C60 52 58 54 54 54 H40 Z M40 66 H57 C61 66 63 68 63 72 C63 76 61 79 57 79 H40 Z" fill="var(--stage-well)"/>
+      <path d="M84 16 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 z" fill="var(--stage-warn)"/>
+    </symbol>
+    <!-- B: Curtain peek. A bunny head peeking up from a stage floor between drawn curtains. -->
+    <symbol id="lg-b" viewBox="0 0 100 100">
+      <path d="M4 6 H96 V20 C84 26 76 22 68 16 C60 24 40 24 32 16 C24 22 16 26 4 20 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M4 20 C10 40 12 70 8 96 H4 Z M96 20 C90 40 88 70 92 96 H96 Z" fill="var(--rose-deep)"/>
+      <path d="M38 58 C33 38 35 26 41 26 C47 26 48 40 46 58 Z M54 58 C53 38 57 27 63 28 C69 30 64 44 60 58 Z" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M40 54 C38 40 39 32 41 32 C44 32 44 44 43 54 Z M57 54 C58 42 61 34 62 35 C64 36 61 46 59 54 Z" fill="var(--pink)"/>
+      <path d="M26 84 C26 66 36 56 50 56 C64 56 74 66 74 84 Z" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <circle cx="42" cy="72" r="3.4" fill="var(--stage-ink)"/><circle cx="58" cy="72" r="3.4" fill="var(--stage-ink)"/>
+      <path d="M47 78 q3 3 6 0" stroke="var(--stage-ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="35" cy="78" rx="4" ry="2.4" fill="var(--pink)"/><ellipse cx="65" cy="78" rx="4" ry="2.4" fill="var(--pink)"/>
+      <rect x="4" y="84" width="92" height="12" fill="var(--stage-warn)" stroke="var(--stage-ink)" stroke-width="3"/>
+    </symbol>
+    <!-- C: Ticket bun. An admit-one stub with notched sides; a bunny silhouette punched out of it. -->
+    <symbol id="lg-c" viewBox="0 0 100 100">
+      <path d="M10 24 H90 V40 A8 8 0 0 0 90 56 V76 H10 V56 A8 8 0 0 0 10 40 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linejoin="round" transform="rotate(-8 50 50)"/>
+      <g transform="rotate(-8 50 50)">
+        <path d="M62 30 V70" stroke="var(--stage-ink)" stroke-width="2" stroke-dasharray="4 4"/>
+        <path d="M30 46 C27 30 30 22 34 22 C38 22 38 34 37 46 Z M41 46 C41 31 45 23 49 24 C53 26 49 38 46 47 Z" fill="var(--stage-well)"/>
+        <ellipse cx="38" cy="58" rx="13" ry="11" fill="var(--stage-well)"/>
+        <circle cx="75" cy="50" r="6" fill="var(--stage-paper)" stroke="var(--stage-ink)" stroke-width="2.5"/>
+      </g>
+    </symbol>
+    <!-- D: Two ears. The simplest: two tall rounded ears over a dot, like a spotlight's shadow. -->
+    <symbol id="lg-d" viewBox="0 0 100 100">
+      <circle cx="50" cy="64" r="26" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5"/>
+      <path d="M34 46 C27 22 30 6 38 6 C46 6 48 24 45 44 Z M55 44 C54 22 60 7 67 9 C75 11 70 30 64 47 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M37 40 C33 24 35 13 38 13 C42 13 42 26 41 40 Z M58 40 C58 25 62 15 65 16 C68 17 65 30 61 42 Z" fill="var(--pink)"/>
+      <circle cx="50" cy="64" r="9" fill="var(--stage-paper)"/>
+    </symbol>
+    <!-- E: Little puppet. A bunny head hanging from a puppeteer's control bar on two strings. -->
+    <symbol id="lg-e" viewBox="0 0 100 100">
+      <rect x="18" y="6" width="64" height="9" rx="4.5" fill="var(--stage-warn)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M32 15 V46 M68 15 V46" stroke="var(--stage-paper)" stroke-width="2.4"/>
+      <path d="M36 50 C32 32 34 24 39 24 C44 24 45 36 44 50 Z M56 50 C56 34 60 25 65 26 C70 28 66 40 62 51 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3"/>
+      <path d="M22 72 C22 56 34 46 50 46 C66 46 78 56 78 72 C78 86 66 94 50 94 C34 94 22 86 22 72 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5"/>
+      <path d="M40 70 q3 -4 6 0 M54 70 q3 -4 6 0" stroke="var(--stage-ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M48 78 q2 2 4 0" stroke="var(--stage-ink)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="34" cy="78" rx="4.5" ry="2.6" fill="var(--pink)"/><ellipse cx="66" cy="78" rx="4.5" ry="2.6" fill="var(--pink)"/>
+    </symbol>
+    <!-- F: Mask bun. A comedy half-mask whose two top points are ears. -->
+    <symbol id="lg-f" viewBox="0 0 100 100">
+      <path d="M14 40 C12 24 16 8 24 8 C32 8 34 24 34 36 C44 32 56 32 66 36 C66 24 68 8 76 8 C84 8 88 24 86 40 C92 50 90 70 78 80 C64 92 36 92 22 80 C10 70 8 50 14 40 Z" fill="var(--rose)" stroke="var(--stage-ink)" stroke-width="3.5" stroke-linejoin="round"/>
+      <path d="M20 36 C19 24 21 15 24 15 C28 15 29 26 29 36 Z M71 36 C71 26 72 15 76 15 C79 15 81 24 80 36 Z" fill="var(--pink)"/>
+      <path d="M26 56 C30 48 42 48 46 56 C40 62 32 62 26 56 Z M54 56 C58 48 70 48 74 56 C68 62 60 62 54 56 Z" fill="var(--stage-well)"/>
+      <path d="M38 72 Q50 82 62 72" stroke="var(--stage-ink)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div><h1>Bunraku <em>logo</em> options</h1><p>Six marks, each as an app icon, a small taskbar size, a favicon, a wordmark, and in a Windows search result. House look first, with about 30% cute on top. Pick one or two to take further.</p></div>
+  <div class="bg"><button class="on" data-bg="dark">On stage</button><button data-bg="paper">On paper</button></div>
+</header>
+
+<main class="grid">
+  <section class="opt"><h2><b>A</b> Ear B</h2>
+    <div class="row"><div class="tile"><svg><use href="#lg-a"/></svg></div><div class="tile small"><svg><use href="#lg-a"/></svg></div><div class="tile fav"><svg><use href="#lg-a"/></svg></div></div>
+    <div class="word"><svg><use href="#lg-a"/></svg><span class="wm">bunraku<span class="dot">.</span></span></div>
+    <div class="search"><div class="tile small"><svg><use href="#lg-a"/></svg></div><div>Bunraku<small>App</small></div></div>
+    <p>The B itself grows ears. Keeps the current bold, stamped letter feel of the red V, so it reads as the same family, just softer. Strongest at small sizes.</p><span class="tag">Closest to today</span></section>
+
+  <section class="opt"><h2><b>B</b> Curtain peek</h2>
+    <div class="row"><div class="tile"><svg><use href="#lg-b"/></svg></div><div class="tile small"><svg><use href="#lg-b"/></svg></div><div class="tile fav"><svg><use href="#lg-b"/></svg></div></div>
+    <div class="word"><svg><use href="#lg-b"/></svg><span class="wm fancy">BUNRAKU</span></div>
+    <div class="search"><div class="tile small"><svg><use href="#lg-b"/></svg></div><div>Bunraku<small>App</small></div></div>
+    <p>A little bunny peeking up on stage between rose curtains. The cutest of the set, and the most "stage". Busy at favicon size; would want a simplified small version.</p><span class="tag">Most mascot</span></section>
+
+  <section class="opt"><h2><b>C</b> Ticket bun</h2>
+    <div class="row"><div class="tile"><svg><use href="#lg-c"/></svg></div><div class="tile small"><svg><use href="#lg-c"/></svg></div><div class="tile fav"><svg><use href="#lg-c"/></svg></div></div>
+    <div class="word"><svg><use href="#lg-c"/></svg><span class="wm">bunraku<span class="dot">.</span></span></div>
+    <div class="search"><div class="tile small"><svg><use href="#lg-c"/></svg></div><div>Bunraku<small>App</small></div></div>
+    <p>An admit-one ticket with a bunny punched out of it. Ties straight into the physical-object marketing (tickets, playbills) and the "this is your stage" idea.</p><span class="tag">Fits the website</span></section>
+
+  <section class="opt"><h2><b>D</b> Two ears</h2>
+    <div class="row"><div class="tile"><svg><use href="#lg-d"/></svg></div><div class="tile small"><svg><use href="#lg-d"/></svg></div><div class="tile fav"><svg><use href="#lg-d"/></svg></div></div>
+    <div class="word"><svg><use href="#lg-d"/></svg><span class="wm">bunraku<span class="dot">.</span></span></div>
+    <div class="search"><div class="tile small"><svg><use href="#lg-d"/></svg></div><div>Bunraku<small>App</small></div></div>
+    <p>Just ears over a spotlight dot. The most minimal, the easiest to recognize at 16 pixels, and the easiest to animate (the ears can flop when something loads).</p><span class="tag">Most iconic</span></section>
+
+  <section class="opt"><h2><b>E</b> Little puppet</h2>
+    <div class="row"><div class="tile"><svg><use href="#lg-e"/></svg></div><div class="tile small"><svg><use href="#lg-e"/></svg></div><div class="tile fav"><svg><use href="#lg-e"/></svg></div></div>
+    <div class="word"><svg><use href="#lg-e"/></svg><span class="wm">bunraku<span class="dot">.</span></span></div>
+    <div class="search"><div class="tile small"><svg><use href="#lg-e"/></svg></div><div>Bunraku<small>App</small></div></div>
+    <p>A happy bunny hanging from a puppeteer's gold control bar. The only one that nods to "you hold the strings" without leaning on the Japanese meaning.</p><span class="tag">Tells the story</span></section>
+
+  <section class="opt"><h2><b>F</b> Mask bun</h2>
+    <div class="row"><div class="tile"><svg><use href="#lg-f"/></svg></div><div class="tile small"><svg><use href="#lg-f"/></svg></div><div class="tile fav"><svg><use href="#lg-f"/></svg></div></div>
+    <div class="word"><svg><use href="#lg-f"/></svg><span class="wm fancy">BUNRAKU</span></div>
+    <div class="search"><div class="tile small"><svg><use href="#lg-f"/></svg></div><div>Bunraku<small>App</small></div></div>
+    <p>A theater comedy mask whose corners are ears. Roleplay-coded (masks, characters) and still reads as a bunny. Bold enough to stand next to RoleCall's marks.</p><span class="tag">Roleplay-coded</span></section>
+</main>
+
+<div class="note"><b>These are sketches, not final art.</b> Colors are the house rose, ink, and gilt, with the pink as the 30% cute. Pick a direction (or two to combine, like A's letter with D's ears), and I'll refine it into clean vector art, an .ico for Windows, and the wordmark.</div>
+
+<script>
+document.querySelectorAll("[data-bg]").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.body.classList.toggle("paper", b.dataset.bg === "paper");
+    document.querySelectorAll("[data-bg]").forEach(function (x) { x.classList.toggle("on", x === b); });
+  });
+});
+</script>
+</body>
+</html>

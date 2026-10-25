@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/glossary",
+  "sourcePath": "docs/reference/glossary.md",
+  "sourceHash": "sha256:2845bdcbdb3c18569b4a13273be5eaec4e3d5d84454d53524efe029c3b81b6d8",
+  "summary": "The glossary answers two questions an agent or new contributor meets first: what does this word mean here, and which folder owns it. It opens with a table explaining every top-level folder, including the ones whose names mislead: src/studio is the Studio's disk storage while its screens live in src/ui, and src/docs is code that checks documentation rather than the documentation itself. Five word tables follow, grouped as the engine and formats, the Studio and Kit, the Stage chat runtime, encryption, and process and docs. Each row gives the word, its meaning in plain language as used in this repository, the owning file or folder, and the trap to avoid, since several words carry two meanings: spoke (a format hub versus a Stage provider), gate (Kit's apply-or-discard pause versus the commit checks), doctor (Kit's self-check versus the planned card health check), keyring (Bunraku's key store versus the Linux Secret Service), and sidecar (a docs summary file versus the Go companion). For finding a single file, the page points to the generated code map at docs/generated/CODE-MAP.md, which lists every source file with the first sentence of its opening comment. The page is kept true by bun run glossary:check, part of verify:ci, which fails when a path the page names no longer exists or when a folder directly under src/ is missing from the folder table. New piece-part, derived-result, PieceStore, search, cold-fill and performance-evidence terms identify the current owner and proof traps. Snapshot, health check, row fingerprint, set aside and Compendium terms name their owners and traps.",
+  "topics": [
+    "glossary",
+    "vocabulary",
+    "source tree",
+    "code map",
+    "folder ownership",
+    "naming traps",
+    "snapshot",
+    "health check",
+    "set aside"
+  ],
+  "sections": [
+    {
+      "slug": "where-things-live",
+      "title": "Where things live",
+      "level": 2,
+      "sourceHash": "sha256:e600f0546f817e1387de20f10f431ebfd579d90ea04b7b0bfa3b445b7d312751",
+      "summary": "One row per top-level folder. core is the engine's pure center: canonical model, adapter contract, registry, and detection, importing no UI or storage. entities holds one folder per content kind with its schema, runtime check, and capabilities. formats holds one adapter folder per platform, found by folder name. studio is the Studio's disk storage (safe paths, atomic writes, settings, keep-both naming), not its screens, which are in ui, the Studio app with its server, shell, rooms, and desktop window. kit is the terminal agent; stage is the chat runtime being built; sandbox runs untrusted Lua, regex, and trigger scripts only inside isolated benches; site is the public website built into the Pages root; pocket is the in-memory browser build; mcp is protocol wire code; src/docs checks documentation rather than holding it; generated is script output never edited by hand; types holds declarations. specs, docs, scripts, and sidecar complete the map. The light-rays component folder owns the capped Vaudeville OGL spotlight and floor-fog renderer and CSS fallback; proscenium owns the reusable black theater frame, ruby curtains, hanging sign and artwork aperture.",
+      "topics": [
+        "source tree",
+        "folders",
+        "src/studio vs src/ui",
+        "src/docs vs docs",
+        "src/site"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-engine-and-formats",
+      "title": "The engine and formats",
+      "level": 2,
+      "sourceHash": "sha256:2ac71189da50b4212e5a1c4eb71e3d5cbfac8e5b8ebd19e9c1b1473fdb7606a6",
+      "summary": "The converter's vocabulary. The canonical entity is the one shared shape every format converts to and from. Hub and spoke means every conversion goes format to canonical to format, never directly between formats, and the word spoke also names a Stage provider. An adapter is one format's plug-in that detects its files and converts one kind of content. Escrow is the original field that keeps a format's own fields the canonical model has no place for, stored per source format. The superset rule admits a field to the canonical model only when a real format emits it. Folders-as-schema means adding a folder adds a format, app, or capability, with nothing listed centrally. A capability is a typed edit that previews a change and never writes by itself. The registry scores which format a file is, and the round-trip law keeps meaning on same-format export.",
+      "topics": [
+        "canonical entity",
+        "adapter",
+        "escrow",
+        "superset rule",
+        "folders-as-schema",
+        "capability"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-studio-and-kit",
+      "title": "The Studio and Kit",
+      "level": 2,
+      "sourceHash": "sha256:d1a3596d51e9633e167df2a7131659458eef58319a98f34c41d40da3ce2532de",
+      "summary": "The Studio is the app where content is made and kept; its storage folder is src/studio and its screens are in src/ui. Each app inside it is a room: the Library for importing and browsing, the Workbench as the editing home, and Press for export, with the Binder lorebook editor living inside the Workbench rather than as its own room. The Dock is the row of tiles that switches rooms. Kit is the terminal agent over the same content, included by release build commands; its bridge is its one trust-bounded way into Studio content, its belt is the tool list offered to the model, its gate is the pause where a draft is applied or discarded (not the commit checks), its rail shows a preset's prompt blocks in order, and its doctor is a self-check distinct from the planned card health check. The graveyard holds deleted content before purging, and keep-both saves beside an existing copy on a name clash.",
+      "topics": [
+        "Studio",
+        "rooms",
+        "Kit",
+        "bridge",
+        "gate",
+        "doctor",
+        "graveyard",
+        "keep-both"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-stage-the-chat-runtime",
+      "title": "The Stage (the chat runtime)",
+      "level": 2,
+      "sourceHash": "sha256:7ce79b03497852c2b3c37aa99a694309fdcd907e6517240a64f316e7bde2de1f",
+      "summary": "Stage is the encrypted chat/library runtime behind contracts and provider/pipeline owners. Cast is the frozen roster, branch/swipe are forks and alternate replies, and turn is a full generation. PieceStore shares accepted summaries without becoming body authority; portable search contracts differ from native worker/persistence owners. Cold fill is bounded reconstruction with logical admission rather than measured RSS. Performance evidence is revision/artifact-bound observations, currently source definitions without measured results. Background lanes and breathers keep expensive work off the UI path. The health check opens every sealed cell on the lane and sets damaged rows aside, never deleting; freeze gate adds perf-gate-health.ts. A loadout is a saved bundle of a scene's own settings kept as one sealed library document rather than a piece, and a loadout receipt is the record of an apply that lets Undo restore the changed settings for 15 minutes; it is not the delete or import receipt. The Compendium is a scene's typed-entry view of its lorebooks, with filing receipts that are not loadout or delete receipts.",
+      "topics": [
+        "Stage",
+        "contracts",
+        "spoke",
+        "cast",
+        "background lane",
+        "breather",
+        "freeze gate",
+        "Compendium"
+      ],
+      "children": []
+    },
+    {
+      "slug": "encryption",
+      "title": "Encryption",
+      "level": 2,
+      "sourceHash": "sha256:9870224b11a15b06bb7fcbc0f80515271e4e41aed229f6dd8e713d5c122535ea",
+      "summary": "The data key is the one key that encrypts everything in the library and never changes. The keyring is where that key is kept wrapped, together with every way to unlock it; it is not the Linux keyring, which is the Secret Service and only one of the key vault's locks. The key vault is Kit's store for secrets, locked by the operating system through DPAPI, the macOS Keychain, or the Linux Secret Service, or by a key file. The device vault is the keyring's use of that key vault to give this computer its own copy of the data key, and a remembered computer is one holding such a copy so it opens without a password. The recovery words are the twelve words that open the library when everything else is lost. A cell is one encrypted value in the database. A stand-in is a test-only fake file named fake-something that app code may never import. A snapshot is an hourly clean copy of the library file that a restore can undo.",
+      "topics": [
+        "data key",
+        "keyring",
+        "key vault",
+        "device vault",
+        "recovery words",
+        "stand-in",
+        "snapshot"
+      ],
+      "children": []
+    },
+    {
+      "slug": "process-and-docs",
+      "title": "Process and docs",
+      "level": 2,
+      "sourceHash": "sha256:13f1c3d097d8753207db2a8c025c4a7024d1d095fb67a3dc195c49d8c1f43987",
+      "summary": "How decisions and documentation are named. An ADR is an accepted decision record kept under docs/decisions. A docs sidecar is a documentation page's summary file under docs/summaries, which must be approved by an independent reviewer before it counts; the same word also names the Go remote-access companion that lives in the sidecar folder and is built separately. Hoplight is the parent project Bunraku forked from; it has no Stage, and Stage code never flows back to it, while format and entity code stays close to it.",
+      "topics": [
+        "D-number",
+        "ADR",
+        "sidecar",
+        "Hoplight"
+      ],
+      "children": []
+    }
+  ]
+}

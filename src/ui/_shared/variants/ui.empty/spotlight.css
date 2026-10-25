@@ -1,0 +1,5 @@
+/** ui.empty spotlight: the message set small and centered under a gilt rule. No glow or pleats behind it. */
+html[data-surface-ui-empty="spotlight"] :is(.scn .emptyroot, .ltrash-empty, [data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { border-top: 1px solid var(--bk-line); }
+html[data-surface-ui-empty="spotlight"] .ghost-shelf:not(.host-protected, .host-protected *) { border: 1px solid var(--bk-line); }
+/* A whole-room empty (workbench, HTML View, a search with no match) gets a gilt inner rule. */
+html[data-surface-ui-empty="spotlight"] :is([data-empty]:not([data-empty="room"])):not(.host-protected, .host-protected *) { min-height: 15rem; outline: 1px solid var(--bk-line-strong); outline-offset: -.6rem; }

@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="en" data-theme="stage">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>G3: Arcade HUD</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-g3.css">
+<link rel="stylesheet" href="../soft/soft-parts.css">
+<style>
+/*
+ * G3 "Arcade HUD" - a bit less soft, a bit more video-game'y, done tastefully
+ * (crisp framed panels, meters, key-prompt chips, slot/level labels, a top HUD strip), never
+ * retro-kitsch: no glow, no scanlines, no pixel font, nothing tilted, still a usable app. Same
+ * content as the approved soft screens (workbench-shell's Dock, scenes-game's Scenes page,
+ * library-shelves' Shelf view) so the two can be compared identity, not layout. tokens-g3.css carries
+ * every color/type decision; this block is layout plus the HUD-specific parts soft-parts.css has
+ * no opinion on.
+ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+/* container-type:inline-size lets the phone state's @container rules below key off body's own
+   width once the state switcher caps it via an inline max-width, the same technique
+   scenes-game.html uses - Chrome's headless=new mode enforces a ~500px minimum OS window on
+   Windows, so a real narrow --window-size screenshot can't get to 390px; shrinking body instead
+   and querying its container is what actually reaches phone width in a screenshot. */
+body { margin: 0; overflow-x: hidden; padding-bottom: 190px; container-type: inline-size; }
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+svg:not([width]) { width: 16px; height: 16px; flex: none; }
+
+/* ================= HUD FRAME: corner brackets on any positioned box, no extra markup ================= */
+.hud-frame { position: relative; }
+.hud-frame::before {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background-repeat: no-repeat;
+  background-image:
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))),
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))),
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))),
+    linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent))), linear-gradient(var(--hb, var(--accent)), var(--hb, var(--accent)));
+  background-size: 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px, 14px 2px, 2px 14px;
+  background-position: top left, top left, top right, top right, bottom left, bottom left, bottom right, bottom right;
+}
+
+/* ================= top HUD strip: brand slot, scoreboard, a lore-budget meter, status pips, key chips ================= */
+.hudstrip { flex: none; display: flex; align-items: center; gap: 22px; padding: 10px 20px; background: var(--stage-well); box-shadow: inset 0 -1px 0 var(--seam); --hb: var(--accent); }
+.hudstrip .slotmark { display: flex; align-items: center; gap: 10px; flex: none; }
+.hudstrip .slotmark svg { width: 22px; height: 22px; }
+.hud-tag { font: 700 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+.hud-tag b { color: var(--c, var(--accent)); font-weight: 700; }
+.hud-score { display: flex; align-items: center; gap: 18px; }
+.hud-stat { text-align: center; line-height: 1.1; }
+.hud-stat b { display: block; font: 700 1.15rem var(--font-mono); color: var(--text); }
+.hud-stat span { display: block; margin-top: 2px; font: 600 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.hud-div { width: 1px; align-self: stretch; background: var(--seam); flex: none; }
+.hud-pips { display: flex; align-items: center; gap: 5px; }
+.hud-pips span { width: 9px; height: 9px; background: var(--stage-line); flex: none; }
+.hud-pips span.on { background: var(--stage-ok); box-shadow: inset 0 0 0 1px var(--stage-ink); }
+.hudstrip .mid { flex: 1; min-width: 0; display: flex; align-items: center; gap: 22px; justify-content: center; }
+.hudstrip .right { flex: none; display: flex; align-items: center; gap: 20px; }
+
+/* ---- meters: a segmented bar (scene length / takes / lore budget), always mono-labeled ---- */
+.hud-meter { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.hud-meter .bar { position: relative; width: 108px; height: 9px; flex: none; background: var(--stage-line); overflow: hidden; }
+.hud-meter .bar i { display: block; height: 100%; background: var(--c, var(--accent)); }
+.hud-meter .bar::after { content: ""; position: absolute; inset: 0; background-image: repeating-linear-gradient(to right, transparent 0 12px, var(--stage-well) 12px 13px); pointer-events: none; }
+.hud-meter .lbl { font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+.hud-meter .val { font: 700 12px var(--font-mono); color: var(--c, var(--accent)); white-space: nowrap; }
+.hud-meter.stacked { flex-direction: column; align-items: flex-start; gap: 3px; }
+.hud-meter.stacked .bar { width: 100%; }
+.hud-meter.stacked .row { display: flex; justify-content: space-between; width: 100%; }
+
+/* ---- key-prompt chips: [Enter] Continue, [F] Favorite ---- */
+.hud-key { display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px 5px 6px; font: 600 12px var(--font-body); color: var(--text-soft); background: var(--shell-panel-2); box-shadow: inset 0 0 0 1px var(--edge); white-space: nowrap; }
+.hud-key kbd { font: 700 12px var(--font-mono); padding: 2px 6px; color: var(--c, var(--accent)); background: var(--stage-ink); box-shadow: inset 0 0 0 1px var(--c, var(--accent)); }
+.hud-keys { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+/* ================= shell: strip on top, Dock + sidebar + stage below ================= */
+.hudshell { display: flex; flex-direction: column; min-height: 100vh; }
+.app { flex: 1; display: flex; align-items: flex-start; min-height: 0; }
+.s-dock { flex: none; }
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+
+/* ---- Scenes sidebar (char rail + stage panel), same structure as scenes-game.html ---- */
+.scn-side { display: flex; flex: none; }
+body:not([data-state="scenes"]):not([data-state="phone"]):not([data-state="dialog"]) .scn-side { display: none; }
+.char-rail { width: 64px; flex: none; background: var(--chrome); box-shadow: inset -1px 0 0 var(--seam); display: flex; flex-direction: column; align-items: center; padding: 14px 0 10px; gap: 8px; }
+.cr-mark { width: 34px; height: 34px; flex: none; display: grid; place-items: center; background: none; border: 0; cursor: pointer; padding: 0; }
+.cr-mark svg { width: 22px; height: 22px; }
+.cr-div { width: 28px; height: 1px; flex: none; background: var(--seam); }
+.cr-all { width: 40px; height: 40px; flex: none; display: grid; place-items: center; background: var(--shell-panel); box-shadow: inset 0 0 0 1px var(--seam); border: 0; color: var(--text-dim); cursor: pointer; }
+.cr-all.on { background: var(--shell-panel-2); color: var(--accent); box-shadow: inset 0 0 0 1px var(--seam), inset 0 0 0 2px var(--accent); }
+.cr-list { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.cr-tile { position: relative; width: 40px; height: 40px; flex: none; display: block; background: none; border: 0; cursor: pointer; padding: 0; }
+.cr-art { width: 40px; height: 40px; display: grid; place-items: center; font: italic 600 15px var(--font-fancy); color: var(--stage-ink); background: var(--t, var(--accent)); }
+.cr-tile.on .cr-art { box-shadow: inset 0 0 0 2px var(--stage-card), 0 0 0 2px var(--chrome), 0 0 0 4px var(--t, var(--accent)); }
+.cr-tile .cr-playing { position: absolute; bottom: -3px; right: -3px; width: 14px; height: 14px; display: grid; place-items: center; background: var(--stage-ok); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--chrome); z-index: 2; }
+.cr-faces { position: relative; display: block; width: 40px; height: 40px; }
+.cr-faces span { position: absolute; top: 6px; width: 22px; height: 22px; display: grid; place-items: center; font: 700 12px var(--font-fancy); color: var(--stage-ink); box-shadow: 0 0 0 2px var(--chrome); }
+
+.stage-panel { width: 270px; flex: none; background: var(--chrome); box-shadow: inset -1px 0 0 var(--seam); display: flex; flex-direction: column; }
+.sp-top { padding: 16px 16px 8px; flex: none; }
+.sp-scroll { padding: 0 14px 24px; }
+
+.fav-card { display: block; text-decoration: none; color: var(--text); }
+.fav-art { position: relative; height: 118px; overflow: hidden; background: linear-gradient(165deg, color-mix(in srgb, var(--t) 50%, var(--face)), var(--face) 88%); box-shadow: 0 0 0 1px var(--edge); }
+.fav-art .ini { position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%); font: italic 600 28px var(--font-fancy); color: color-mix(in srgb, var(--text) 40%, transparent); }
+.fav-ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 9px 10px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 82%, transparent) 55%); }
+.fav-who { display: flex; align-items: center; gap: 6px; font: 500 12px var(--font-body); }
+.fav-av { width: 20px; height: 20px; flex: none; display: grid; place-items: center; font: 600 12px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.fav-who b { color: var(--t); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-who i { margin-left: auto; font-style: normal; font-size: 12px; color: var(--text-dim); white-space: nowrap; }
+.fav-title { margin-top: 4px; font: 600 14px var(--font-big); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fav-takepips { display: flex; gap: 3px; margin-top: 8px; }
+.fav-takepips span { width: 14px; height: 5px; background: var(--stage-line); }
+.fav-takepips span.on { background: var(--t); }
+.fav-stat { margin-top: 4px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.fav-continue { display: block; width: 100%; margin-top: 6px; padding: 8px 0; text-align: center; font: 600 12px var(--font-body); color: var(--accent); background: none; border: 0; cursor: pointer; }
+.fav-nav { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 8px; }
+.fav-arrow { flex: none; width: 24px; height: 24px; display: grid; place-items: center; background: none; box-shadow: inset 0 0 0 1px var(--edge); color: var(--text); border: 0; cursor: pointer; font-size: 15px; line-height: 1; }
+.fav-dots { display: flex; gap: 5px; }
+.fav-dots span { width: 6px; height: 6px; background: var(--stage-line); cursor: pointer; }
+.fav-dots span.on { background: var(--accent); }
+
+.sp-sec { margin-top: 16px; padding-top: 12px; box-shadow: inset 0 1px 0 var(--seam); }
+.sp-sec.fav-sec { margin-top: 4px; padding-top: 0; box-shadow: none; }
+.lab { display: flex; align-items: center; gap: 8px; padding: 0 6px 8px; font: 500 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
+.lab:not(:first-child) { margin-top: 14px; }
+.lab .sq { width: 6px; height: 6px; background: var(--accent); }
+.rec { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 6px; background: none; border: 0; text-align: left; cursor: pointer; }
+.rec:hover { background: var(--shell-panel); }
+.rec .rec-av { width: 26px; height: 26px; flex: none; display: grid; place-items: center; font: 600 12px var(--font-fancy); color: var(--stage-ink); background: var(--t, var(--accent)); }
+.rec .rec-tx { flex: 1; min-width: 0; }
+.rec .rec-tx b { display: block; font: 500 12.5px var(--font-big); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .rec-tx small { display: block; margin-top: 1px; font: 400 12px var(--font-body); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rec .rec-pip { flex: none; width: 6px; height: 6px; background: var(--t, var(--accent)); opacity: .75; }
+.rec time { flex: none; font: 500 12px var(--font-mono); color: var(--text-faint); }
+.chapter { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 8px; background: none; border: 0; color: var(--text-soft); font: 400 13px var(--font-body); cursor: pointer; text-align: left; }
+.chapter .ch-dot { width: 8px; height: 8px; flex: none; background: var(--c, var(--accent)); }
+.chapter .ch-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chapter .ch-count { flex: none; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.chapter.smart svg { color: var(--stage-warn); flex: none; }
+.newchapter { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 4px; padding: 7px 8px; background: none; border: 0; color: var(--text-dim); font: 400 13px var(--font-body); cursor: pointer; }
+
+/* ================= the stage: root panels per state ================= */
+.stage { flex: 1; min-width: 0; background: var(--stage-well); }
+.scenesroot, .libraryroot, .controlsroot { display: none; padding: 24px 32px 60px; }
+body[data-state="scenes"] .scenesroot, body[data-state="phone"] .scenesroot, body[data-state="dialog"] .scenesroot { display: block; }
+body[data-state="library"] .libraryroot { display: block; }
+body[data-state="controls"] .controlsroot { display: block; }
+
+.scn-tabs { display: flex; gap: 0; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 20px; }
+.scn-tabs button { display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 10px 16px; font: 600 .95rem var(--font-big); color: var(--text-dim); cursor: pointer; box-shadow: inset 0 -2px 0 transparent; }
+.scn-tabs button.on { color: var(--text); box-shadow: inset 0 -3px 0 var(--accent); }
+.scn-tabs .cnt { padding: 1px 7px; font: 600 12px var(--font-mono); background: var(--shell-panel-2); color: var(--text-dim); }
+.scn-tabs button.on .cnt { background: var(--accent); color: var(--stage-ink); }
+
+.plaque { position: relative; padding: 18px 22px; background: var(--face); box-shadow: 0 0 0 2px var(--edge); border-top: 4px solid var(--accent); margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+.plaque h1 { margin-top: 6px; }
+.plaque .s-lede { margin-top: 4px; font-size: .92rem; }
+.plaque-actions { display: flex; align-items: center; gap: 10px; }
+.search { display: flex; align-items: center; gap: 8px; padding: 8px 12px; width: 220px; box-shadow: inset 0 0 0 1px var(--edge); }
+.search input { flex: 1; min-width: 0; background: none; border: 0; color: var(--text); font: 400 13px var(--font-body); }
+.search input::placeholder { color: var(--text-faint); }
+.search svg { color: var(--text-dim); }
+.filters { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 22px; }
+.segs { display: flex; gap: 2px; padding: 3px; box-shadow: inset 0 0 0 1px var(--edge); }
+.segs button { padding: 6px 12px; font: 500 12px var(--font-body); color: var(--text-dim); background: none; border: 0; cursor: pointer; }
+.segs button.on { background: var(--shell-panel-2); color: var(--text); font-weight: 600; }
+
+/* ---- hero: "Continue your story" save-file card + its message preview ---- */
+.stagerow { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 26px; flex-wrap: wrap; }
+.hero { position: relative; flex: none; width: 320px; height: 480px; background: var(--face); box-shadow: 0 0 0 2px var(--edge); border-top: 4px solid var(--t); text-decoration: none; color: var(--text); overflow: hidden; display: block; cursor: pointer; --hb: var(--t); }
+.hero .art { position: absolute; inset: 0; background: linear-gradient(170deg, color-mix(in srgb, var(--t) 50%, var(--face)), var(--face) 88%); }
+.hero .ini { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%); font: italic 600 84px var(--font-fancy); color: color-mix(in srgb, var(--text) 35%, transparent); }
+.hero .badge { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; background: var(--stage-ok-bg); color: var(--stage-ok); font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; z-index: 2; }
+.hero .badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.hero .slotlv { position: absolute; top: 10px; right: 10px; z-index: 2; padding: 3px 8px; background: var(--stage-ink); box-shadow: inset 0 0 0 1px var(--t); font: 700 12px var(--font-mono); letter-spacing: .04em; color: var(--t); }
+.hero-ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 20px 20px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 90%, transparent) 38%); z-index: 1; }
+.hero-ov h2 { margin: 6px 0 0; font: 700 1.4rem var(--font-fancy); }
+.hero-ov .sub { margin-top: 4px; color: var(--text-soft); font-size: .92rem; }
+.hero .meters { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.hero .meters .hud-meter .bar { width: 100%; }
+.hero-ov .s-btn { margin-top: 14px; }
+
+.preview { position: relative; flex: 1; min-width: 280px; height: 480px; background: var(--face); box-shadow: 0 0 0 2px var(--edge); border-top: 4px solid var(--t); overflow: hidden; display: block; text-decoration: none; color: var(--text); cursor: pointer; }
+.preview .art { position: absolute; inset: 0; background: linear-gradient(175deg, color-mix(in srgb, var(--t) 42%, var(--face)), var(--face) 90%); }
+.pv-slide { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 30px 34px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 85%, transparent) 52%); }
+.pv-msg { display: flex; align-items: flex-end; gap: 14px; }
+.pv-msg + .pv-msg { margin-top: 14px; }
+.pv-msg .av { width: 42px; height: 42px; flex: none; display: grid; place-items: center; font: italic 600 18px var(--font-fancy); color: var(--stage-ink); background: var(--t); }
+.pv-msg .av.you { background: var(--text-dim); }
+.pv-msg-tx b { display: block; font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--t); margin-bottom: 4px; }
+.pv-msg-tx p { margin: 0; font: 500 1.1rem/1.4 var(--font-big); color: var(--text); }
+.preview .hint { position: absolute; left: 34px; top: 20px; z-index: 2; }
+
+/* ---- the scene grid: fixed-size portrait cards, one HUD frame reserved for the selected card ---- */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, 200px); grid-auto-rows: 300px; gap: 18px; justify-content: start; }
+.sc { position: relative; width: 200px; height: 300px; background: var(--face); box-shadow: 0 0 0 2px var(--edge); border-top: 4px solid var(--t); cursor: pointer; overflow: hidden; }
+.sc .art { position: absolute; inset: 0; background: linear-gradient(170deg, color-mix(in srgb, var(--t) 50%, var(--face)), var(--face) 88%); }
+.sc .badge { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 5px; padding: 3px 8px; background: var(--stage-ok-bg); color: var(--stage-ok); font: 600 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; z-index: 2; }
+.sc .badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.sc .slot { position: absolute; top: 10px; right: 10px; z-index: 2; padding: 2px 7px; background: var(--stage-ink); box-shadow: inset 0 0 0 1px var(--seam); font: 700 12px var(--font-mono); letter-spacing: .04em; color: var(--text-dim); }
+.sc.sel { --hb: var(--t); box-shadow: 0 0 0 2px var(--t); }
+.sc.sel .slot { box-shadow: inset 0 0 0 1px var(--t); color: var(--t); }
+.sc.sel .marker { position: absolute; top: 38px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; align-items: center; gap: 4px; padding: 2px 9px; background: var(--t); color: var(--stage-ink); font: 700 12px var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.sc .ov { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px; background: linear-gradient(transparent, color-mix(in srgb, var(--stage-black) 84%, transparent) 45%); z-index: 1; }
+.sc.hastakes .ov { bottom: 30px; }
+.sc .who { font: 500 12px var(--font-body); color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc h3 { margin-top: 3px; font: 600 14px/1.25 var(--font-big); color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.sc .meta { margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.sc .meta b { font-weight: 500; color: var(--t); }
+.sc .takestrip { display: none; position: absolute; left: 0; right: 0; bottom: 0; height: 30px; padding: 0 12px; align-items: center; gap: 6px; z-index: 2; background: color-mix(in srgb, var(--stage-black) 88%, var(--face)); box-shadow: inset 0 1px 0 var(--seam); }
+.sc.hastakes .takestrip { display: flex; }
+.takestrip .pips { display: flex; gap: 3px; flex: none; }
+.takestrip .pips span { width: 8px; height: 8px; background: var(--stage-line); }
+.takestrip .pips span.on { background: var(--t); }
+.takestrip .active { font: 600 12px var(--font-mono); color: var(--t); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc.grp .facegrid { display: flex; gap: 6px; margin-bottom: 6px; }
+.sc.grp .facegrid span { width: 30px; height: 30px; display: grid; place-items: center; font: 700 12px var(--font-fancy); color: var(--stage-ink); box-shadow: 0 0 0 2px color-mix(in srgb, var(--face) 60%, transparent); }
+
+/* ================= Library: a Shelf row, same content as library-shelves.html ================= */
+.lroom { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 16px; }
+.lroom .heads .ssub { color: var(--text-dim); font-size: .85rem; margin-top: 2px; }
+.lroom .sside { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.shelf-find { display: flex; align-items: center; gap: 8px; padding: 8px 12px; box-shadow: inset 0 0 0 1px var(--edge); margin-bottom: 14px; max-width: 24rem; }
+.shelf-find .sk { font: 600 12px var(--font-mono); text-transform: uppercase; color: var(--text-dim); }
+.shelf-find input { flex: 1; border: 0; background: none; color: var(--text); font: 400 .88rem var(--font-body); }
+.shelf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 14px; }
+.spine { position: relative; padding-left: .7rem; display: flex; flex-direction: column; min-height: 8rem; background: var(--face); box-shadow: 0 0 0 2px var(--edge); }
+.spine::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .5rem; background: var(--c); }
+.spine .body { padding: 10px 10px 8px 6px; }
+.spine .nm { display: block; width: 100%; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; font: 700 .88rem var(--font-big); color: var(--text); }
+.spine .lvmeta { font: 700 12px var(--font-mono); text-transform: uppercase; color: var(--c); margin-top: 3px; }
+.spine .facts { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+.spine .fact { font: 500 .75rem var(--font-mono); box-shadow: inset 0 0 0 1px var(--seam); padding: 1px 6px; color: var(--text-dim); }
+.spine .foot { display: flex; gap: 6px; align-items: center; padding: 6px 10px 8px 6px; margin-top: auto; box-shadow: inset 0 1px 0 var(--seam); }
+.spine .rswl { font: 500 .75rem var(--font-body); color: var(--text-dim); }
+.spine .ract { font: 600 .7rem var(--font-body); background: none; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text); padding: 4px 9px; cursor: pointer; border: 0; }
+.dragnote { text-align: center; font: 500 .75rem var(--font-mono); color: var(--text-faint); padding: 10px; }
+
+/* ================= Controls: buttons + a form row + the meter/chip showcase ================= */
+.ctrlpanel { max-width: 44rem; }
+.ctrlpanel .cblock { margin-bottom: 30px; }
+.ctrlpanel .cblock h3 { margin-bottom: 12px; }
+.btnrow { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.formrow { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: end; }
+.field label { display: block; font: 600 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; }
+.field .selwrap { position: relative; }
+.field .selwrap::after { content: "\25be"; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 12px; pointer-events: none; }
+.s-select { display: block; width: 100%; padding: 9px 30px 9px 12px; background: var(--stage-row); color: var(--text); border: 0; box-shadow: inset 0 0 0 1px var(--seam); font: 400 .95rem var(--font-body); appearance: none; }
+.s-select:focus { outline: none; box-shadow: inset 0 0 0 1px var(--accent); }
+.switchrow { display: flex; align-items: center; gap: 10px; padding: 9px 0; }
+.switchrow span.lbl2 { font: 400 .95rem var(--font-body); color: var(--text); }
+.meterstack { display: flex; flex-direction: column; gap: 14px; max-width: 26rem; }
+.meterstack .hud-meter .row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+.meterstack .hud-meter .bar { width: 100%; height: 10px; }
+
+/* ================= confirm dialog ================= */
+.scrim { position: fixed; inset: 0; z-index: 80; display: none; place-items: center; background: var(--scrim); }
+body[data-state="dialog"] .scrim { display: grid; }
+.dlg { width: 420px; max-width: calc(100vw - 32px); padding: 22px 24px; background: var(--face); box-shadow: 0 0 0 2px var(--stage-danger-edge); border-top: 4px solid var(--stage-danger-text); --hb: var(--stage-danger-text); }
+.dlg p { margin-top: 10px; color: var(--text-soft); font-size: .92rem; line-height: 1.55; }
+.dlg .row { margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ================= phone (390px): the Dock's own fold answers the true window width (see the
+   @media 46rem rule above - matching the soft identity, it stays a real @media, so it will not
+   fold in a wide-window screenshot; that is the honest tradeoff for testing this way, not a bug).
+   Everything below answers body's own shrunk width instead, via @container. ================= */
+@container (max-width: 30rem) {
+  /* the Dock's real fold is a true-window @media rule (see above) that a shrunk-body simulation
+     can never trigger; repeating it here as a container query is the one deliberate deviation from
+     that precedent, because without it the Dock's 220px eats most of a 390px phone box and nothing
+     below it is reviewable. */
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+  /* the Scenes sidebar (cast rail + Fan Favorites/folders) is secondary chrome; at phone width,
+     with the Dock still its full size (its fold is real-window-only, see above), there is no room
+     to keep it beside the stage too, so it steps aside the same way a phone build would put it
+     behind a drawer toggle - simpler than reproducing that drawer here, and it keeps the Scenes
+     content itself (the actual comparison target) legible instead of both being crushed thin. */
+  .scn-side { display: none; }
+  .scenesroot, .libraryroot, .controlsroot { padding: 16px 16px 40px; }
+  .plaque { flex-direction: column; align-items: flex-start; }
+  .search { width: 100%; }
+  .stagerow { flex-direction: column; }
+  .hero { width: 100%; max-width: 280px; height: 420px; }
+  /* flex:none is load-bearing: the base rule's flex:1 has a flex-basis of 0%, which in this now-
+     column stagerow is the MAIN axis (height) - with the row's own height auto (content-sized),
+     flex-grow has no definite free space to distribute, so the card collapsed to its 0% basis and
+     vanished until flex-grow/shrink are turned off and height is left to decide the size again. */
+  .preview { flex: none; width: 100%; min-width: 0; height: 260px; }
+  .grid { grid-template-columns: repeat(auto-fill, 160px); grid-auto-rows: 240px; gap: 12px; }
+  .sc { width: 160px; height: 240px; }
+  .hudstrip { flex-wrap: wrap; gap: 12px; }
+  .hudstrip .mid { justify-content: flex-start; }
+  .formrow { grid-template-columns: 1fr; }
+}
+
+.wf-bar { top: 8px; bottom: auto; }
+.wf-note { max-width: min(30rem, calc(100vw - 24px)); }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-find" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-cast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.8 2.7-5.8 6-5.8s6 2 6 5.8"/><circle cx="17.5" cy="9" r="2.4"/><path d="M15 20c.3-2.9 2-4.5 4.5-4.6"/></symbol>
+<symbol id="i-takes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+
+<div class="hudshell">
+  <header class="hudstrip hud-frame">
+    <div class="slotmark">
+      <svg width="22" height="22" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg>
+      <span class="hud-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="mid">
+      <div class="hud-score">
+        <div class="hud-stat"><b>07</b><span>Scenes</span></div>
+        <div class="hud-stat"><b>05</b><span>Cast</span></div>
+        <div class="hud-stat"><b>14</b><span>Takes</span></div>
+      </div>
+      <div class="hud-div"></div>
+      <div class="hud-meter" style="--c: var(--deck-lorebook)">
+        <span class="lbl">Lore budget</span>
+        <span class="bar"><i style="width:64%"></i></span>
+        <span class="val">64%</span>
+      </div>
+      <div class="hud-div"></div>
+      <div class="hud-pips" title="Cast online"><span class="on"></span><span class="on"></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="right">
+      <div class="hud-keys">
+        <span class="hud-key"><kbd>Enter</kbd>Continue</span>
+        <span class="hud-key"><kbd>F</kbd>Favorite</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app">
+    <nav class="s-dock" id="dock">
+      <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+      <div class="s-app c-scenes on" id="navScenes"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+      <div class="s-app c-workbench" id="navWorkbench"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+      <div class="s-app c-library" id="navLibrary"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+      <div class="s-app c-press" id="navPress"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+      <div class="s-app c-agent" id="navAgent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+      <div class="s-app c-kit" id="navKit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+      <div class="s-app c-settings" id="navSettings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+    </nav>
+
+    <div class="scn-side">
+      <aside class="char-rail">
+        <button type="button" class="cr-mark" title="Scenes"><svg width="22" height="22" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg></button>
+        <div class="cr-div"></div>
+        <button type="button" class="cr-all on" title="All Scenes"><svg width="18" height="18"><use href="#i-cast"/></svg></button>
+        <div class="cr-list">
+          <button type="button" class="cr-tile on" style="--t: var(--deck-character)">
+            <span class="cr-art">V</span>
+            <span class="cr-playing" title="Now playing"><svg width="8" height="8"><use href="#i-play"/></svg></span>
+          </button>
+          <button type="button" class="cr-tile" style="--t: var(--deck-persona)"><span class="cr-art">N</span></button>
+          <button type="button" class="cr-tile" style="--t: var(--deck-lorebook)"><span class="cr-art">M</span></button>
+          <button type="button" class="cr-tile" style="--t: var(--deck-regex)"><span class="cr-art">M</span></button>
+          <button type="button" class="cr-tile" style="--t: var(--deck-preset)"><span class="cr-art">C</span></button>
+          <button type="button" class="cr-tile group" title="Heist Crew">
+            <span class="cr-faces"><span style="left:0; background:var(--deck-character)">V</span><span style="left:14px; background:var(--deck-preset)">C</span></span>
+          </button>
+        </div>
+      </aside>
+
+      <aside class="stage-panel">
+        <div class="sp-top hud-frame" style="--hb: var(--deck-pack)">
+          <div class="s-act"><b>Fan Favorites</b></div>
+        </div>
+        <div class="sp-scroll">
+          <div class="sp-sec fav-sec">
+            <a class="fav-card" href="#" style="--t: var(--deck-character)">
+              <div class="fav-art">
+                <span class="ini">V</span>
+                <div class="fav-ov">
+                  <div class="fav-who"><span class="fav-av">V</span><b>Vera Lune</b><i>2h ago</i></div>
+                  <div class="fav-title">The long storm</div>
+                </div>
+              </div>
+            </a>
+            <div class="fav-takepips"><span class="on"></span><span class="on"></span><span></span></div>
+            <div class="fav-stat">42 msgs &middot; 3 takes</div>
+            <button type="button" class="fav-continue">Continue Story</button>
+            <div class="fav-nav">
+              <button type="button" class="fav-arrow" aria-label="Previous favorite">&lsaquo;</button>
+              <div class="fav-dots"><span class="on"></span><span></span></div>
+              <button type="button" class="fav-arrow" aria-label="Next favorite">&rsaquo;</button>
+            </div>
+          </div>
+
+          <div class="sp-sec">
+            <div class="lab"><span class="sq"></span>This Week</div>
+            <button type="button" class="rec" style="--t: var(--deck-persona)">
+              <span class="rec-av">N</span>
+              <span class="rec-tx"><b>Cut the deck</b><small>Nuit pulled her hand back.</small></span>
+              <span class="rec-pip"></span>
+              <time>3d</time>
+            </button>
+            <button type="button" class="rec" style="--t: var(--deck-lorebook)">
+              <span class="rec-av">M</span>
+              <span class="rec-tx"><b>The lock gave on the third try</b><small>It clicked open at last.</small></span>
+              <time>6d</time>
+            </button>
+
+            <div class="lab"><span class="sq"></span>Earlier</div>
+            <button type="button" class="rec" style="--t: var(--deck-character)">
+              <span class="rec-av">V</span>
+              <span class="rec-tx"><b>Who did you let up the stairs?</b><small>Vera didn't answer right away.</small></span>
+              <span class="rec-pip"></span>
+              <time>23d</time>
+            </button>
+            <button type="button" class="rec" style="--t: var(--deck-regex)">
+              <span class="rec-av">M</span>
+              <span class="rec-tx"><b>Untitled Scene</b><small>No messages yet.</small></span>
+              <time>21d</time>
+            </button>
+            <button type="button" class="rec" style="--t: var(--deck-preset)">
+              <span class="rec-av">C</span>
+              <span class="rec-tx"><b>The debt comes due</b><small>Corvin counted the coins twice.</small></span>
+              <time>30d</time>
+            </button>
+          </div>
+
+          <div class="sp-sec">
+            <div class="lab"><span class="sq"></span>Smart Folders</div>
+            <button type="button" class="chapter smart"><svg width="14" height="14"><use href="#i-takes"/></svg><span class="ch-name">Longest Stories</span><span class="ch-count">6</span></button>
+          </div>
+
+          <div class="sp-sec">
+            <div class="lab"><span class="sq"></span>Folders</div>
+            <button type="button" class="chapter" style="--c: var(--deck-pack)"><span class="ch-dot"></span><span class="ch-name">Main Plot</span><span class="ch-count">4</span></button>
+            <button type="button" class="chapter" style="--c: var(--deck-preset)"><span class="ch-dot"></span><span class="ch-name">Side Quests</span><span class="ch-count">2</span></button>
+            <button type="button" class="newchapter"><svg width="14" height="14"><use href="#i-plus"/></svg>New Folder&hellip;</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <main class="stage">
+      <!-- ================= SCENES ================= -->
+      <div class="scenesroot">
+        <div class="scn-tabs">
+          <button type="button" class="on">One-on-One <span class="cnt">6</span></button>
+          <button type="button">Group Performances <span class="cnt">1</span></button>
+          <button type="button">All <span class="cnt">7</span></button>
+        </div>
+
+        <div class="plaque">
+          <div>
+            <div class="s-act"><b>Your Stage</b></div>
+            <h1 class="s-title">Scenes</h1>
+            <p class="s-lede">6 stories across 5 characters</p>
+          </div>
+          <div class="plaque-actions">
+            <button type="button" class="s-btn ghost">Select</button>
+            <label class="search"><svg><use href="#i-find"/></svg><input placeholder="Search&hellip;" aria-label="Search scenes"></label>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="segs"><button type="button" class="on">All Time</button><button type="button">Week</button><button type="button">Month</button><button type="button">Year</button></div>
+          <div class="segs"><button type="button" class="on">Recent</button><button type="button">Messages</button></div>
+        </div>
+
+        <div class="stagerow" style="--t: var(--deck-character)">
+          <a class="hero hud-frame">
+            <div class="art"><span class="ini">V</span></div>
+            <span class="badge"><span class="dot"></span>Live</span>
+            <span class="slotlv">SLOT 01 / LV 12</span>
+            <div class="hero-ov">
+              <span class="s-act"><b>Continue your story</b></span>
+              <h2>The long storm</h2>
+              <p class="sub">Vera Lune &middot; picks up on Take 2</p>
+              <div class="meters">
+                <div class="hud-meter" style="--c: var(--deck-character)"><span class="lbl">Length</span><span class="bar"><i style="width:70%"></i></span><span class="val">42</span></div>
+                <div class="hud-meter" style="--c: var(--deck-character)"><span class="lbl">Takes</span><span class="bar"><i style="width:66%"></i></span><span class="val">2/3</span></div>
+              </div>
+              <span class="s-btn">Continue Story</span>
+            </div>
+          </a>
+
+          <a class="preview">
+            <div class="art"></div>
+            <div class="hint hud-keys">
+              <span class="hud-key"><kbd>Enter</kbd>Continue</span>
+              <span class="hud-key"><kbd>F</kbd>Favorite</span>
+            </div>
+            <div class="pv-slide">
+              <div class="pv-msg">
+                <span class="av you">Y</span>
+                <div class="pv-msg-tx"><b>You</b><p>Deal. Just don't let it go out this time.</p></div>
+              </div>
+              <div class="pv-msg">
+                <span class="av">V</span>
+                <div class="pv-msg-tx"><b>Vera Lune</b><p>*She strikes the match, cupping the flame against the wind.*</p></div>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <div class="grid">
+          <article class="sc sel hastakes" style="--t: var(--deck-character)">
+            <div class="art">
+              <span class="ini">V</span>
+              <span class="badge"><span class="dot"></span>Live</span>
+              <span class="slot">SLOT 02</span>
+              <span class="marker">&#9656; selected</span>
+              <div class="ov"><div class="who">Vera Lune</div><h3>The long storm</h3><div class="meta"><b>42 msgs</b><span>&middot;</span><span>2h ago</span></div></div>
+              <div class="takestrip"><span class="pips"><span class="on"></span><span class="on"></span><span></span></span><span class="active">Take 2</span></div>
+            </div>
+          </article>
+
+          <article class="sc" style="--t: var(--deck-persona)">
+            <div class="art">
+              <span class="slot">SLOT 03</span>
+              <div class="ov"><div class="who">Nuit</div><h3>Cut the deck</h3><div class="meta"><b>18 msgs</b><span>&middot;</span><span>3 days</span></div></div>
+            </div>
+          </article>
+
+          <article class="sc" style="--t: var(--deck-lorebook)">
+            <div class="art">
+              <span class="slot">SLOT 04</span>
+              <div class="ov"><div class="who">The Magpie</div><h3>The lock gave on the third try</h3><div class="meta"><b>7 msgs</b><span>&middot;</span><span>10 days</span></div></div>
+            </div>
+          </article>
+
+          <article class="sc" style="--t: var(--deck-regex)">
+            <div class="art">
+              <span class="slot">SLOT 05</span>
+              <div class="ov"><div class="who">Marguerite</div><h3>Untitled Scene</h3><div class="meta"><b>1 msg</b><span>&middot;</span><span>21 days</span></div></div>
+            </div>
+          </article>
+
+          <article class="sc hastakes" style="--t: var(--deck-character)">
+            <div class="art">
+              <span class="slot">SLOT 06</span>
+              <div class="ov"><div class="who">Vera Lune</div><h3>Who did you let up the stairs?</h3><div class="meta"><b>64 msgs</b><span>&middot;</span><span>23 days</span></div></div>
+              <div class="takestrip"><span class="pips"><span class="on"></span><span></span></span><span class="active">Original</span></div>
+            </div>
+          </article>
+
+          <article class="sc" style="--t: var(--deck-preset)">
+            <div class="art">
+              <span class="slot">SLOT 07</span>
+              <div class="ov"><div class="who">Corvin Ashe</div><h3>The debt comes due</h3><div class="meta"><b>9 msgs</b><span>&middot;</span><span>30 days</span></div></div>
+            </div>
+          </article>
+
+          <article class="sc grp" style="--t: var(--deck-pack)">
+            <div class="art">
+              <span class="badge"><span class="dot"></span>Live</span>
+              <span class="slot">SLOT 08</span>
+              <div class="ov">
+                <span class="facegrid"><span style="background:var(--deck-character)">V</span><span style="background:var(--deck-preset)">C</span><span style="background:var(--deck-regex)">M</span></span>
+                <div class="who">Ensemble &middot; 3 cast</div><h3>Heist Crew</h3><div class="meta"><b>118 msgs</b><span>&middot;</span><span>12 min ago</span></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <!-- ================= LIBRARY: a shelf row ================= -->
+      <div class="libraryroot">
+        <div class="lroom">
+          <div class="heads"><div class="s-act">Act II</div><h1 class="s-title">Lore<em>books</em></h1><div class="ssub">World knowledge</div></div>
+          <div class="sside"><span class="hud-stat"><b>18</b><span>Lorebooks</span></span></div>
+        </div>
+        <label class="shelf-find"><span class="sk">find</span><input placeholder="Name, key, or tag&hellip;" aria-label="Search by name, key, or tag"></label>
+        <div class="shelf-grid">
+          <div class="spine hud-frame" style="--c: var(--deck-lorebook); --hb: var(--deck-lorebook)">
+            <div class="body">
+              <button type="button" class="nm">Harbor Town</button>
+              <div class="lvmeta">213 entries &middot; LV 9</div>
+              <div class="facts"><span class="fact">SillyTavern</span><span class="fact">~92.6K tok</span><span class="fact">tide</span><span class="fact">smuggling</span></div>
+            </div>
+            <div class="foot"><span class="s-switch on" style="--c: var(--deck-lorebook)"></span><span class="rswl">On</span><span style="flex:1"></span><button class="ract">Split</button><button class="ract">Copy</button></div>
+          </div>
+          <div class="spine" style="--c: var(--deck-lorebook)">
+            <div class="body">
+              <button type="button" class="nm">The Lighthouse</button>
+              <div class="lvmeta">12 entries &middot; LV 3</div>
+              <div class="facts"><span class="fact">Risu</span><span class="fact">~3.4K tok</span></div>
+            </div>
+            <div class="foot"><span class="s-switch" style="--c: var(--deck-lorebook)"></span><span class="rswl">Off, skipped on export</span><span style="flex:1"></span><button class="ract">Split</button><button class="ract">Copy</button></div>
+          </div>
+          <div class="spine" style="--c: var(--deck-lorebook)">
+            <div class="body">
+              <button type="button" class="nm">Velvet Quill's Ledger</button>
+              <div class="lvmeta">54 entries &middot; LV 6</div>
+              <div class="facts"><span class="fact">RoleCall</span><span class="fact">~11K tok</span><span class="fact">debts</span></div>
+            </div>
+            <div class="foot"><span class="s-switch on" style="--c: var(--deck-lorebook)"></span><span class="rswl">On</span><span style="flex:1"></span><button class="ract">Split</button><button class="ract">Copy</button></div>
+          </div>
+        </div>
+        <p class="dragnote">Drag a book onto another book to merge</p>
+      </div>
+
+      <!-- ================= CONTROLS: buttons, a form row, the meter/chip showcase ================= -->
+      <div class="controlsroot">
+        <div class="ctrlpanel">
+          <div class="cblock">
+            <h3 class="s-h2">Buttons</h3>
+            <div class="btnrow">
+              <button type="button" class="s-btn">Continue Story</button>
+              <button type="button" class="s-btn ghost">Cancel</button>
+              <button type="button" class="s-btn danger">Delete Story</button>
+            </div>
+          </div>
+
+          <div class="cblock">
+            <h3 class="s-h2">Scene settings</h3>
+            <div class="formrow">
+              <div class="field">
+                <label for="fName">Scene name</label>
+                <input type="text" id="fName" class="s-input" value="The long storm">
+              </div>
+              <div class="field">
+                <label for="fTake">Active take</label>
+                <div class="selwrap">
+                  <select id="fTake" class="s-select">
+                    <option>Original</option>
+                    <option selected>Take 2</option>
+                    <option>Take 3</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="switchrow">
+              <span class="s-switch on" style="--c: var(--accent)"></span>
+              <span class="lbl2">Live typing sounds</span>
+            </div>
+          </div>
+
+          <div class="cblock">
+            <h3 class="s-h2">Meters</h3>
+            <div class="meterstack">
+              <div class="hud-meter stacked" style="--c: var(--deck-character)">
+                <span class="row"><span class="lbl">Scene length</span><span class="val">42 / 60 msgs</span></span>
+                <span class="bar"><i style="width:70%"></i></span>
+              </div>
+              <div class="hud-meter stacked" style="--c: var(--deck-pack)">
+                <span class="row"><span class="lbl">Takes</span><span class="val">2 of 3</span></span>
+                <span class="bar"><i style="width:66%"></i></span>
+              </div>
+              <div class="hud-meter stacked" style="--c: var(--deck-lorebook)">
+                <span class="row"><span class="lbl">Lore budget</span><span class="val">64%</span></span>
+                <span class="bar"><i style="width:64%"></i></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cblock">
+            <h3 class="s-h2">Key-prompt chips</h3>
+            <div class="hud-keys">
+              <span class="hud-key"><kbd>Enter</kbd>Continue</span>
+              <span class="hud-key"><kbd>F</kbd>Favorite</span>
+              <span class="hud-key"><kbd>Esc</kbd>Back</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="scrim" id="dlgScrim">
+  <div class="dlg hud-frame">
+    <div class="s-act"><b>Cut this story?</b></div>
+    <h3 class="s-h2" style="margin-top:6px">Cut the deck</h3>
+    <p>&ldquo;Cut the deck&rdquo; and every message in it, permanently. There is no undo.</p>
+    <div class="row"><button type="button" class="s-btn ghost">Cancel</button><button type="button" class="s-btn danger">Delete</button></div>
+  </div>
+</div>
+
+<div class="wf-note">
+  <b>G3 &middot; Arcade HUD.</b> Same tokens contract as the soft identity (tokens-g3.css keeps
+  every name from tokens-soft.css), same soft-parts.css components, same content as the approved
+  Dock / Scenes / Library-Shelf screens. New here: the top HUD strip, corner-bracket frames, meters,
+  key-prompt chips, and slot/level labels. Dark only; the six pastel app colors are untouched.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button type="button" data-s="scenes" class="on">Scenes</button>
+  <button type="button" data-s="library">Library</button>
+  <button type="button" data-s="dialog">Dialog</button>
+  <button type="button" data-s="controls">Controls</button>
+  <button type="button" data-s="phone">Phone</button>
+</div>
+
+<script>
+(function () {
+  var body = document.body;
+  var navMap = { scenes: 'navScenes', library: 'navLibrary', dialog: 'navScenes', controls: 'navScenes', phone: 'navScenes' };
+  function set(s) {
+    body.setAttribute('data-state', s);
+    document.querySelectorAll('.s-app').forEach(function (el) { el.classList.remove('on'); });
+    var navId = navMap[s] || 'navScenes';
+    var nav = document.getElementById(navId);
+    if (nav) nav.classList.add('on');
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+    // 'phone' shows the same Scenes content as the default state, capped to a 390px box; the
+    // @container (max-width: 30rem) rules answer THIS box, not the real window (see the CSS
+    // comment on body/container-type above for why a real narrow window isn't reachable here).
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+  }
+  var q = new URLSearchParams(location.search);
+  set(q.get('state') || 'scenes');
+  document.getElementById('wfbar').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b) set(b.getAttribute('data-s'));
+  });
+})();
+</script>
+</body>
+</html>

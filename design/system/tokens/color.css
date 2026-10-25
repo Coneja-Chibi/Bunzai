@@ -1,0 +1,168 @@
+/*
+ * Bunraku design system: color tokens, contract v1.
+ * The values here ARE the G3 "Arcade HUD" base (dark). Theme files override these same names.
+ * Jewel tones, one meaning per hue: the --bk-role-* triples below are the source of every UI color
+ * that means something. Older names (accent, ok, warn, danger, info, focus, link, action) are kept
+ * as aliases of the roles so nothing that already targets them breaks.
+ * Every pair a reader depends on is checked: primary text 7:1 and every other text role 4.5:1 on every surface,
+ * control boundaries and focus 3:1 (foundations.html measures them live per theme).
+ * Hex lives only in this file and in themes/. Derived washes at the bottom use color-mix and are
+ * never used for text.
+ */
+:root {
+  /* surfaces, deepest to highest */
+  --bk-surface-well: #070509;    /* the stage, Dock, rails, HUD strip */
+  --bk-surface-base: #0c0a11;    /* the app canvas */
+  --bk-surface-sunken: #14111b;  /* recessed rows, empty slots */
+  --bk-surface-field: #0f0c15;   /* inputs, selects, editable plates */
+  --bk-surface-panel: #201a2b;   /* cards, panels, plaques, dialogs */
+  --bk-surface-raised: #2d2539;  /* chips and plates that sit ON a panel */
+  --bk-surface-ink: #040306;     /* key caps, slot tags, status bar, tooltips */
+  --bk-scrim: rgb(5 4 7 / 0.9);
+  --bk-shadow: #050407;          /* the hard offset block shadow (never blurred) */
+  --bk-stage-backdrop: none;     /* a background-image stack painted behind the stage */
+
+  /* lines */
+  --bk-line-strong: #8a76a3;     /* frame edges: the HUD chrome */
+  --bk-line: #3a2f48;            /* dividers and seams */
+  --bk-line-track: #2f2740;      /* meter tracks, empty pips */
+  --bk-line-control: #a592ba;    /* the boundary of an input or switch: 3:1 on every surface */
+
+  /* text */
+  --bk-text: #fdf9fc;
+  --bk-text-soft: #e6dcea;
+  --bk-text-dim: #cdbfd4;        /* labels, meta: still 4.5:1 everywhere */
+  --bk-text-faint: #ab9cb4;      /* timestamps, placeholders: the 4.5:1 floor */
+  --bk-text-disabled: #5b4f68;   /* disabled only (exempt from contrast); never for live info */
+  --bk-text-on-tint: #0e0b13;    /* dark ink on any jewel fill */
+  --bk-text-on-deep: #ffffff;    /* white on any -deep fill */
+
+  /* ROLES: one jewel hue, one meaning. Each is a triple like the tint:
+       --bk-role-X        the fill (slabs, buttons, chips) under --bk-text-on-tint
+       --bk-role-X-text   the hue as text, or as a mark that must be seen
+       --bk-role-X-deep   a fill under --bk-text-on-deep (white)
+     brand    rose        the logo, the title screen, one brand highlight. Never a UI state.
+     action   sapphire    primary actions, links, focus
+     select   amethyst    the selected, current or active item
+     ok       emerald     success, saved, connected, on
+     warn     topaz       warning, cost, pending
+     danger   ruby        delete, destructive, errors
+     info     aquamarine  info, HUD readouts, meters, data (the default tint) */
+  --bk-role-brand: #ff4fa3;   --bk-role-brand-text: #ff6fb3;   --bk-role-brand-deep: #a61d5e;
+  --bk-role-action: #5c9dff;  --bk-role-action-text: #82b4ff;  --bk-role-action-deep: #2758a6;
+  --bk-role-select: #b48cff;  --bk-role-select-text: #c4a3ff;  --bk-role-select-deep: #6a4ca6;
+  --bk-role-ok: #3ee08f;      --bk-role-ok-text: #3ee08f;      --bk-role-ok-deep: #036b39;
+  --bk-role-warn: #ffb83d;    --bk-role-warn-text: #ffb83d;    --bk-role-warn-deep: #7c4d00;
+  --bk-role-danger: #ff5a67;  --bk-role-danger-text: #ff7a85;  --bk-role-danger-deep: #a62530;
+  --bk-role-info: #2fd9cf;    --bk-role-info-text: #2fd9cf;    --bk-role-info-deep: #006963;
+
+  /* aliases kept for the v1 contract (values come from the roles) */
+  --bk-accent: var(--bk-role-brand);             /* brand only now: logo, title, one highlight */
+  --bk-accent-text: var(--bk-role-brand-text);
+  --bk-accent-deep: var(--bk-role-brand-deep);
+  --bk-text-link: var(--bk-role-action-text);
+  --bk-focus-color: var(--bk-role-action-text);  /* an outline, so frames never hide it */
+  --bk-action-bg: var(--bk-role-action);
+  --bk-action-bg-hover: #86b6ff;
+  --bk-action-text: var(--bk-text-on-tint);
+
+  /* status plates and lines (the marks are the role -text colors) */
+  --bk-ok: var(--bk-role-ok-text);
+  --bk-ok-bg: #0a2a1a;
+  --bk-warn: var(--bk-role-warn-text);
+  --bk-warn-bg: #2e2108;
+  --bk-danger: var(--bk-role-danger-text);
+  --bk-danger-bg: #331016;
+  --bk-danger-line: #c23a47;
+  --bk-danger-strong: #ff6b77;   /* the destructive button's own fill edge */
+  --bk-info: var(--bk-role-info-text);
+  --bk-info-bg: #072a29;
+
+  /* workshop console semantics (macro lab, regex bench, lorebook traces) */
+  --bk-code-macro: #c9b8ff;
+  --bk-code-var: #9fd0ff;
+
+  /* deck and area identity: jewel tones, one per kind. Identity, not state: they color art,
+     spines, crowns and Dock marks, never a button, a selection or a status.
+       character carnelian (Workbench)   lorebook tanzanite (Kit)    persona peridot (Press)
+       pack      orchid (Scenes)         preset   topaz-blue (Agent)  regex   citrine (Library)
+     -text is the hue as text or a thin mark on a surface; -deep a fill under white text
+     (deepAccent() in color-math.ts). */
+  --bk-deck-character: #ff8a5b;  --bk-deck-character-text: #ff8a5b;  --bk-deck-character-deep: #9a4320;
+  --bk-deck-lorebook: #8f8cff;   --bk-deck-lorebook-text: #8f8cff;   --bk-deck-lorebook-deep: #4f4ca6;
+  --bk-deck-persona: #a6e35a;    --bk-deck-persona-text: #a6e35a;    --bk-deck-persona-deep: #406512;
+  --bk-deck-pack: #e873ff;       --bk-deck-pack-text: #e873ff;       --bk-deck-pack-deep: #87329a;
+  --bk-deck-preset: #4cc4ff;     --bk-deck-preset-text: #4cc4ff;     --bk-deck-preset-deep: #0b5e85;
+  --bk-deck-regex: #f5d33b;      --bk-deck-regex-text: #f5d33b;      --bk-deck-regex-deep: #6e5900;
+  --bk-deck-fog: #b0a3bb;        --bk-deck-fog-text: #b0a3bb;        --bk-deck-fog-deep: #605869;
+
+  /* fixed outside marks (minor use only: a rail, a dot, an on-state). Not recolored by themes. */
+  --bk-host-st: #c62828;
+  --bk-host-rc: #e11d48;
+  --bk-host-nai: #9773ff;
+  --bk-host-risu: #6ea8ff;
+
+  /* prop signature colors (minor use only). Themes MAY deepen these for legibility (paper does). */
+  --bk-prop-hare: #ff6b35;
+
+  /* the per-item tint: set on an element by [data-deck], [data-app], [data-tone] or inline (all
+     three at once). Defaults to the INFO role: HUD readouts, meters and marks are data. Parts read
+     only these three, never a deck token:
+       --bk-tint       FILLS: card art, slabs, chips that carry --bk-text-on-tint
+       --bk-tint-text  TEXT and every mark that must be seen: meter fills, pips, brackets
+       --bk-tint-deep  fills that carry --bk-text-on-deep (white)
+     Selection never reads the tint: it always wears the select role. */
+  --bk-tint: var(--bk-role-info);
+  --bk-tint-text: var(--bk-role-info-text);
+  --bk-tint-deep: var(--bk-role-info-deep);
+
+  /* data-viz: series order chosen so neighbors differ in hue AND lightness. Text-grade colors,
+     so a series line or a meter fill also reads on paper. */
+  --bk-viz-1: var(--bk-deck-preset-text);
+  --bk-viz-2: var(--bk-deck-character-text);
+  --bk-viz-3: var(--bk-deck-persona-text);
+  --bk-viz-4: var(--bk-deck-lorebook-text);
+  --bk-viz-5: var(--bk-deck-regex-text);
+  --bk-viz-6: var(--bk-deck-pack-text);
+  --bk-viz-track: var(--bk-line-track);
+  --bk-viz-gap: var(--bk-surface-well);   /* the 1px cut between meter segments */
+  --bk-viz-good: var(--bk-role-ok-text);
+  --bk-viz-caution: var(--bk-role-warn-text);
+  --bk-viz-bad: var(--bk-role-danger-text);
+
+  /* art placeholder: a SOLID --bk-tint fill with this crisp hard-stop hatch over it. Never a
+     gradient fade into the panel (it reads muddy). */
+  --bk-art-hatch: repeating-linear-gradient(135deg, transparent 0 9px, rgb(5 4 7 / 0.14) 9px 11px);
+
+  /* derived washes: hover and press tints that work on any surface. Not for text. */
+  --bk-wash-hover: color-mix(in srgb, var(--bk-text) 6%, transparent);
+  --bk-wash-press: color-mix(in srgb, var(--bk-text) 10%, transparent);
+}
+
+/* deck and app tints: one attribute sets all three tint slots for an element and its children */
+[data-deck="character"] { --bk-tint: var(--bk-deck-character); --bk-tint-text: var(--bk-deck-character-text); --bk-tint-deep: var(--bk-deck-character-deep); }
+[data-deck="lorebook"]  { --bk-tint: var(--bk-deck-lorebook);  --bk-tint-text: var(--bk-deck-lorebook-text);  --bk-tint-deep: var(--bk-deck-lorebook-deep); }
+[data-deck="persona"]   { --bk-tint: var(--bk-deck-persona);   --bk-tint-text: var(--bk-deck-persona-text);   --bk-tint-deep: var(--bk-deck-persona-deep); }
+[data-deck="pack"]      { --bk-tint: var(--bk-deck-pack);      --bk-tint-text: var(--bk-deck-pack-text);      --bk-tint-deep: var(--bk-deck-pack-deep); }
+[data-deck="preset"]    { --bk-tint: var(--bk-deck-preset);    --bk-tint-text: var(--bk-deck-preset-text);    --bk-tint-deep: var(--bk-deck-preset-deep); }
+[data-deck="regex"]     { --bk-tint: var(--bk-deck-regex);     --bk-tint-text: var(--bk-deck-regex-text);     --bk-tint-deep: var(--bk-deck-regex-deep); }
+[data-deck="fog"]       { --bk-tint: var(--bk-deck-fog);       --bk-tint-text: var(--bk-deck-fog-text);       --bk-tint-deep: var(--bk-deck-fog-deep); }
+[data-deck="accent"]    { --bk-tint: var(--bk-accent);         --bk-tint-text: var(--bk-accent-text);         --bk-tint-deep: var(--bk-accent-deep); }
+/* the seven Dock apps wear their area jewel */
+[data-app="scenes"]    { --bk-tint: var(--bk-deck-pack);      --bk-tint-text: var(--bk-deck-pack-text);      --bk-tint-deep: var(--bk-deck-pack-deep); }
+[data-app="workbench"] { --bk-tint: var(--bk-deck-character); --bk-tint-text: var(--bk-deck-character-text); --bk-tint-deep: var(--bk-deck-character-deep); }
+[data-app="library"]   { --bk-tint: var(--bk-deck-regex);     --bk-tint-text: var(--bk-deck-regex-text);     --bk-tint-deep: var(--bk-deck-regex-deep); }
+[data-app="press"]     { --bk-tint: var(--bk-deck-persona);   --bk-tint-text: var(--bk-deck-persona-text);   --bk-tint-deep: var(--bk-deck-persona-deep); }
+[data-app="agent"]     { --bk-tint: var(--bk-deck-preset);    --bk-tint-text: var(--bk-deck-preset-text);    --bk-tint-deep: var(--bk-deck-preset-deep); }
+[data-app="kit"]       { --bk-tint: var(--bk-deck-lorebook);  --bk-tint-text: var(--bk-deck-lorebook-text);  --bk-tint-deep: var(--bk-deck-lorebook-deep); }
+[data-app="settings"]  { --bk-tint: var(--bk-deck-fog);       --bk-tint-text: var(--bk-deck-fog-text);       --bk-tint-deep: var(--bk-deck-fog-deep); }
+/* role tones: data-tone points the tint slots at a role, so a meter, pip, badge or chip says what it
+   means. ok/warn/danger/info are statuses; action, select and brand exist for the rare chip that
+   must wear those roles. */
+[data-tone="ok"]     { --bk-tint: var(--bk-role-ok);     --bk-tint-text: var(--bk-role-ok-text);     --bk-tint-deep: var(--bk-role-ok-deep); }
+[data-tone="warn"]   { --bk-tint: var(--bk-role-warn);   --bk-tint-text: var(--bk-role-warn-text);   --bk-tint-deep: var(--bk-role-warn-deep); }
+[data-tone="danger"] { --bk-tint: var(--bk-role-danger); --bk-tint-text: var(--bk-role-danger-text); --bk-tint-deep: var(--bk-role-danger-deep); }
+[data-tone="info"]   { --bk-tint: var(--bk-role-info);   --bk-tint-text: var(--bk-role-info-text);   --bk-tint-deep: var(--bk-role-info-deep); }
+[data-tone="action"] { --bk-tint: var(--bk-role-action); --bk-tint-text: var(--bk-role-action-text); --bk-tint-deep: var(--bk-role-action-deep); }
+[data-tone="select"] { --bk-tint: var(--bk-role-select); --bk-tint-text: var(--bk-role-select-text); --bk-tint-deep: var(--bk-role-select-deep); }
+[data-tone="brand"]  { --bk-tint: var(--bk-role-brand);  --bk-tint-text: var(--bk-role-brand-text);  --bk-tint-deep: var(--bk-role-brand-deep); }

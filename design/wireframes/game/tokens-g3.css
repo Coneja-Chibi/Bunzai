@@ -1,0 +1,139 @@
+/*
+ * Bunraku's G3 "Arcade HUD" identity: less soft, more video-game'y. Loaded AFTER
+ * src/ui/theme/tokens.css, same as tokens-soft.css: keeps every token name from the soft
+ * identity and changes what they mean. Dark only (no paper block - the
+ * gamer pass to stay night-mode). Crisp framed panels instead of the soft offset shadow
+ * (stamp-x/-y drop to 0), a brighter edge/seam so frames read at a glance, and Fraunces'
+ * SOFT/WONK axes dialed down to 0 so display type is level and level-select-crisp instead of
+ * "a little wonky." Cinzel stays on titles, IBM Plex Mono stays on meta and now also carries
+ * every HUD numeral (slot/level tags, meters, scoreboard counters). The six pastel app/deck
+ * colors are untouched - they are the accent set, not something this pass recolors. Square
+ * corners, no glow, no scanlines, no pixel font, nothing tilted. Wireframe, 2026-09-29.
+ */
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../../../src/site/fonts/fraunces-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url("../../../src/site/fonts/fraunces-latin-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 400 900; font-display: swap; src: url("../../../src/ui/theme/fonts/cinzel-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-400.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-700.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("../../../src/site/fonts/ibm-plex-mono-latin-normal-500.woff2") format("woff2"); }
+
+:root {
+  /* brand: the ticket bun's pink, pushed more saturated for a gamer-HUD pop; deep companion kept
+     for text-bearing fills */
+  --rose: #ff5fa0;
+  --rose-deep: #83204c;
+  --accent: var(--rose);
+  --accent-deep: var(--rose-deep);
+
+  /* type roles: same three families as the soft identity. Fraunces' wonkiness is dialed to 0 below
+     (--soft-axes) instead of swapped out, so titles stay level and "gamey" without a new font. */
+  --font-big: "Fraunces", serif;
+  --font-fancy: "Cinzel", serif;          /* page and section titles, unchanged from soft */
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace; /* now also every HUD numeral: slot/level, meters, scores */
+  --soft-axes: "SOFT" 0, "WONK" 0;
+
+  /* ornament: a crisp flush frame instead of the soft offset shadow - HUD panels read as framed,
+     not "lifted." The hover/press motion in .stamp (soft-parts.css) still works off these same two
+     numbers, so a hover still grows a small crisp edge instead of a diagonal sticker shadow. */
+  --ink-border: 2px solid var(--edge);
+  --stamp-x: 0px;
+  --stamp-y: 0px;
+  --stamp-shadow: var(--stage-black);
+
+  /* the stage well: same dark plum family as soft (dark only, no paper track for this pass) */
+  --stage-floor: #150f1c;
+  --stage-deck: #1c1526;
+  --stage-dim: #6d6172;
+  --stage-faint: #3d3347;
+  --stage-paper: #f5ecf0;
+  --stage-black: #0e0b14;
+  --stage-white: #ffffff;
+  --stage-panel: #241d2d;
+  --stage-row: #1e1826;
+  --stage-sunken: #191320;
+  --stage-ink: #150f1c;
+  --stage-well: #120d18;
+  --stage-seam: #3d3348;
+  --stage-line: #4d4159;
+  --stage-mute: #8a7d8f;
+  --stage-soft: #c9bccb;
+  --stage-text-dim: #afa0b2;
+  --stage-card: #f5ecf0;
+  --stage-kicker: #8a7d8f;
+  --stage-ok: #7fe6ae;
+  --stage-macro: #d9c8ff;
+  --stage-var: #bcd7ff;
+  --stage-warn: #ffdd6e;
+  --stage-warn-ink: #3a2f12;
+  --stage-danger-bg: #3d1c2c;
+  --stage-danger-edge: #8a3f5a;
+  --stage-danger-text: #ff8fa8;
+  --stage-danger-hot: #ff7f92;
+  --stage-danger-deep: #200f19;
+  --stage-link: #bcd7ff;
+  --stage-rose-well: #33192c;
+  --stage-ok-bg: #123123;
+  --shadow-ink: rgba(14, 11, 20, 0.6);
+  --shadow-ink-deep: rgba(14, 11, 20, 0.85);
+  --scrim: rgba(14, 11, 20, 0.92);
+
+  /* deck identity: the six pastel accents, UNCHANGED - this pass recolors the frame, not
+     the cast */
+  --deck-character: #ffc9ae;  /* peach */
+  --deck-lorebook: #d9c8ff;   /* lilac */
+  --deck-persona: #bfead7;    /* mint */
+  --deck-pack: #ffb3c7;       /* pink */
+  --deck-preset: #bcd7ff;     /* sky */
+  --deck-regex: #ffeaa8;      /* butter */
+  --deck-fog: #a898ab;
+  --deck-character-deep: #8a4a2c;
+  --deck-lorebook-deep: #5b4596;
+  --deck-persona-deep: #2c6e55;
+  --deck-pack-deep: #a8385e;
+  --deck-preset-deep: #33588f;
+  --deck-regex-deep: #7a6214;
+  --deck-fog-deep: #5e5263;
+}
+
+/* DARK (the only theme this pass ships): the same dusky plum stage, edges and seams brightened so
+   a framed panel actually reads as framed at a glance instead of disappearing into the well. */
+:root[data-theme="stage"] {
+  --ink: #f5ecf0;
+  --paper: #150f1c;
+  --paper-2: #1c1526;
+  --panel: #241d2d;
+  --stage: #120d18;
+  --stage-2: #191320;
+  --muted: #8a7d8f;
+  --ghost: #3d3347;
+  --canvas: #150f1c;
+  --chrome: #120d18;
+  --shell-panel: #1c1623;
+  --shell-panel-2: #241d2d;
+  --face: #241d2d;
+  --edge: #5a4c68;
+  --seam: #5a4c68;
+  --text: #f5ecf0;
+  --text-soft: #c9bccb;
+  --text-dim: #b6a7b8;
+  --text-faint: #5e5263;
+  --link: #ff9ec6;
+  --stamp-bg: #ffc9ae;
+  --stamp-fg: #150f1c;
+  --status-bg: #0e0b14;
+  --status-fg: #c9bccb;
+  --status-dim: #8a7d8f;
+  --tooth: rgba(255, 255, 255, 0.018);
+  --q-stage: #120d18;
+  --q-stage-deck: #1c1526;
+}
+
+/* the stamp: with stamp-x/-y at 0, this is a flush edge that grows a small crisp shadow on
+   hover/press instead of a diagonal offset - see the comment on --stamp-x above. */
+.stamp { border: var(--ink-border); box-shadow: var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); transition: transform 0.2s, box-shadow 0.2s; }
+.stamp:hover { transform: translateY(-2px); box-shadow: var(--stamp-x) calc(var(--stamp-y) + 2px) 0 0 var(--stamp-shadow); }
+.stamp:active, .stamp.pressed { transform: translateY(1px); box-shadow: calc(var(--stamp-x) - 4px) calc(var(--stamp-y) - 4px) 0 0 var(--stamp-shadow); }
+.seam { background: var(--stage); box-shadow: inset 0 0 0 1px var(--seam); }
+/* display type keeps riding the soft axes wherever it's used; they're just flattened to 0 above */
+h1, h2, h3, [class*="title"], [class*="marquee"] { font-variation-settings: var(--soft-axes); }

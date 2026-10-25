@@ -1,0 +1,188 @@
+/*
+ * Bunraku's soft identity for the app (from the approved site look, design/wireframes/brand/moods/8-soft.html
+ * and src/site/site.css). Load it AFTER src/ui/theme/tokens.css: it keeps every token name and changes
+ * what they mean, so any wireframe (and later the app) wears it. Dusky plum, never black; one pastel
+ * per deck; Fraunces for display, Atkinson Hyperlegible for reading, IBM Plex Mono for meta; square
+ * corners; thin plum lines and one soft offset shadow instead of Hoplight's 3px black ink and stamps.
+ * Proposal for review. When approved, this becomes src/ui/theme/tokens.css.
+ */
+@font-face { font-family: "Fraunces"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../../../src/site/fonts/fraunces-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Fraunces"; font-style: italic; font-weight: 100 900; font-display: swap; src: url("../../../src/site/fonts/fraunces-latin-italic.woff2") format("woff2"); }
+@font-face { font-family: "Cinzel"; font-weight: 400 900; font-display: swap; src: url("../../../src/ui/theme/fonts/cinzel-latin-normal.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 400; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-400.woff2") format("woff2"); }
+@font-face { font-family: "Atkinson Hyperlegible"; font-weight: 700; font-display: swap; src: url("../../../src/site/fonts/atkinson-hyperlegible-latin-normal-700.woff2") format("woff2"); }
+@font-face { font-family: "IBM Plex Mono"; font-weight: 500; font-display: swap; src: url("../../../src/site/fonts/ibm-plex-mono-latin-normal-500.woff2") format("woff2"); }
+
+:root {
+  /* brand: the ticket bun's pink, with a deep companion for text-bearing fills */
+  --rose: #ff9ebb;
+  --rose-deep: #a8385e;
+  --accent: var(--rose);
+  --accent-deep: var(--rose-deep);
+
+  /* type roles: Fraunces (soft, a little wonky) replaces Archivo 900 and Cinzel */
+  --font-big: "Fraunces", serif;
+  --font-fancy: "Cinzel", serif;         /* page and section titles: RoleCall's signature (leaning back toward RC on font) */
+  --font-body: "Atkinson Hyperlegible", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --soft-axes: "SOFT" 100, "WONK" 1;
+
+  /* ornament: a thin line and one soft plum shadow, not 3px ink and a black stamp */
+  --ink-border: 1px solid var(--edge);
+  --stamp-x: 10px;
+  --stamp-y: 10px;
+  --stamp-shadow: var(--stage-black);
+
+  /* the stage well, now plum (dark in both themes still) */
+  --stage-floor: #1a1620;
+  --stage-deck: #211c29;
+  --stage-dim: #6d6172;
+  --stage-faint: #3d3347;
+  --stage-paper: #f5ecf0;
+  --stage-black: #14111a;   /* "black" is the deepest plum: shadows and wells */
+  --stage-white: #ffffff;
+  --stage-panel: #26202f;
+  --stage-row: #211c29;
+  --stage-sunken: #1c1723;
+  --stage-ink: #1a1620;
+  --stage-well: #16121c;
+  --stage-seam: #352d40;
+  --stage-line: #4a3f55;
+  --stage-mute: #85798a;
+  --stage-soft: #c2b5c4;
+  --stage-text-dim: #a898ab;
+  --stage-card: #f5ecf0;
+  --stage-kicker: #85798a;
+  --stage-ok: #8fe0b8;
+  --stage-macro: #d9c8ff;
+  --stage-var: #bcd7ff;
+  --stage-warn: #ffe08a;
+  --stage-warn-ink: #3a2f12;
+  --stage-danger-bg: #3a1d2a;
+  --stage-danger-edge: #7a3a52;
+  --stage-danger-text: #ff9fb1;
+  --stage-danger-hot: #ff8f9f;
+  --stage-danger-deep: #22101a;
+  --stage-link: #bcd7ff;
+  --stage-rose-well: #2e1b2a;
+  --stage-ok-bg: #173026;
+  --shadow-ink: rgba(20, 17, 26, 0.6);
+  --shadow-ink-deep: rgba(20, 17, 26, 0.85);
+  --scrim: rgba(22, 18, 28, 0.9);
+
+  /* deck identity: one pastel per kind (the site's five, plus lilac) */
+  --deck-character: #ffc9ae;  /* peach */
+  --deck-lorebook: #d9c8ff;   /* lilac */
+  --deck-persona: #bfead7;    /* mint */
+  --deck-pack: #ffb3c7;       /* pink */
+  --deck-preset: #bcd7ff;     /* sky */
+  --deck-regex: #ffeaa8;      /* butter */
+  --deck-fog: #a898ab;
+  --deck-character-deep: #8a4a2c;
+  --deck-lorebook-deep: #5b4596;
+  --deck-persona-deep: #2c6e55;
+  --deck-pack-deep: #a8385e;
+  --deck-preset-deep: #33588f;
+  --deck-regex-deep: #7a6214;
+  --deck-fog-deep: #5e5263;
+}
+
+/* DARK (the default): dusky plum */
+:root[data-theme="stage"] {
+  --ink: #f5ecf0;
+  --paper: #1a1620;
+  --paper-2: #211c29;
+  --panel: #26202f;
+  --stage: #16121c;
+  --stage-2: #1c1723;
+  --muted: #85798a;
+  --ghost: #3d3347;
+  --canvas: #1a1620;
+  --chrome: #16121c;
+  --shell-panel: #1f1a26;
+  --shell-panel-2: #26202f;
+  --face: #26202f;
+  --edge: #352d40;
+  --seam: #352d40;
+  --text: #f5ecf0;
+  --text-soft: #c2b5c4;
+  --text-dim: #a898ab;
+  --text-faint: #5e5263;
+  --link: #ffb3c7;
+  --stamp-bg: #ffc9ae;
+  --stamp-fg: #1a1620;
+  --status-bg: #14111a;
+  --status-fg: #c2b5c4;
+  --status-dim: #85798a;
+  --tooth: rgba(255, 255, 255, 0.015);
+  --q-stage: #16121c;
+  --q-stage-deck: #211c29;
+}
+
+/* LIGHT (kept for the theme switch): blush paper with plum ink, the same pastels deepened for text */
+:root[data-theme="paper"] {
+  --ink: #2a2230;
+  --paper: #f8f2f5;
+  --paper-2: #f1e8ee;
+  --panel: #fffafc;
+  --stage: #eee3ea;
+  --stage-2: #e6d8e1;
+  --muted: #6e5f70;
+  --ghost: #d9cbd6;
+  --canvas: #f8f2f5;
+  --chrome: #f3eaf0;
+  --shell-panel: #f1e8ee;
+  --shell-panel-2: #e9dde6;
+  --face: #fffafc;
+  --edge: #d9cbd6;
+  --seam: #e3d6df;
+  --text: #2a2230;
+  --text-soft: #4d4050;
+  --text-dim: #6e5f70;
+  --text-faint: #b6a6b3;
+  --link: #a8385e;
+  --stamp-bg: #2a2230;
+  --stamp-fg: #f8f2f5;
+  --status-bg: #2a2230;
+  --status-fg: #f1e8ee;
+  --status-dim: #b6a6b3;
+  --tooth: rgba(42, 34, 48, 0.02);
+  --q-stage: #eee3ea;
+  --q-stage-deck: #e6d8e1;
+  --stage-floor: #eee3ea;
+  --stage-deck: #e6d8e1;
+  --stage-panel: #fffafc;
+  --stage-row: #f8f2f5;
+  --stage-sunken: #efe4eb;
+  --stage-well: #e3d4de;
+  --stage-black: #c9b6c5;   /* the soft shadow on blush */
+  --stage-seam: #e3d6df;
+  --stage-line: #b6a6b3;
+  --stage-mute: #6e5f70;
+  --stage-soft: #4d4050;
+  --stage-text-dim: #5e5063;
+  --stage-card: #2a2230;
+  --stage-paper: #2a2230;
+  --stage-kicker: #6e5f70;
+  --stage-ok: #2c6e55;
+  --stage-ok-bg: #dcf1e7;
+  --stage-macro: #5b4596;
+  --stage-var: #33588f;
+  --stage-warn: #7a6214;
+  --stage-warn-ink: #fdf1c9;
+  --stage-danger-bg: #fbe1e8;
+  --stage-danger-edge: #d58ca3;
+  --stage-danger-text: #a8385e;
+  --stage-danger-hot: #b8412f;
+  --stage-danger-deep: #f6d6df;
+  --stage-link: #33588f;
+  --stage-rose-well: #f7e2ea;
+}
+
+/* the stamp becomes the soft lift: a thin line, one plum shadow, a gentle rise on hover */
+.stamp { border: var(--ink-border); box-shadow: var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); transition: transform 0.2s, box-shadow 0.2s; }
+.stamp:hover { transform: translateY(-2px); box-shadow: var(--stamp-x) calc(var(--stamp-y) + 2px) 0 0 var(--stamp-shadow); }
+.stamp:active, .stamp.pressed { transform: translateY(1px); box-shadow: calc(var(--stamp-x) - 4px) calc(var(--stamp-y) - 4px) 0 0 var(--stamp-shadow); }
+.seam { background: var(--stage); box-shadow: inset 0 0 0 1px var(--seam); }
+/* display type wears the soft axes wherever the display family is used */
+h1, h2, h3, [class*="title"], [class*="marquee"] { font-variation-settings: var(--soft-axes); }

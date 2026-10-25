@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cast First landing</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="landing.css">
+<script src="../theme.js"></script>
+<style>
+  .main { display: grid; grid-template-columns: 1fr 18rem; gap: 1.6rem; align-content: start; }
+  .head { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; flex-wrap: wrap; }
+  .head .marquee { font-size: clamp(1.8rem, 3.4vw, 2.8rem); }
+  .cast { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr)); gap: 1rem; }
+  .card { background: var(--face); border: 3px solid var(--edge); box-shadow: 5px 5px 0 var(--tone); cursor: pointer; transition: transform 0.15s; }
+  .card:hover { transform: translateY(-3px); }
+  .card.sel { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .portrait { aspect-ratio: 1; background: var(--tone); display: grid; place-items: center; font-family: var(--font-fancy); font-weight: 900; font-size: 3rem; color: var(--stage-white); border-bottom: 3px solid var(--edge); }
+  .card .body { padding: 0.6rem 0.7rem 0.7rem; }
+  .card .name { font-family: var(--font-big); font-weight: 900; font-size: 0.9rem; text-transform: uppercase; }
+  .card .meta { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-dim); margin-top: 0.2rem; }
+  .card.new { box-shadow: none; border-style: dashed; display: grid; place-items: center; min-height: 14rem; font-family: var(--font-big); font-weight: 900; text-transform: uppercase; color: var(--text-dim); }
+  .continue { padding: 1.4rem 1.6rem; }
+  .continue .line { font-size: 1.5rem; line-height: 1.35; margin: 0.8rem 0 0.2rem; }
+  .continue .scene { display: flex; gap: 0.6rem; align-items: center; }
+  .side { display: flex; flex-direction: column; gap: 0.6rem; }
+  .row { display: flex; gap: 0.6rem; align-items: center; padding: 0.6rem; background: var(--face); border: 2px solid var(--edge); cursor: pointer; }
+  .row .t { font-family: var(--font-big); font-weight: 800; font-size: 0.82rem; text-transform: uppercase; }
+  .row .s { font-family: var(--font-mono); font-size: 0.64rem; color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="wf-chip"><span>01 Cast first</span><button data-theme-switch>Theme</button><a href="index.html">All ten</a></div>
+<div class="app">
+  <nav class="dock"><div class="mark">B</div><div class="app-btn on">Hm</div><div class="app-btn">Lb</div><div class="app-btn">Pr</div><div class="app-btn">Ag</div><div class="spacer"></div><div class="app-btn">St</div></nav>
+  <header class="topbar"><div class="crumb"><b>Home</b> / your cast</div><div class="search">Find a character or scene...</div></header>
+  <main class="main">
+    <div class="head">
+      <div><div class="kicker">Good evening, Wren</div><h1 class="marquee">Who's on <em>tonight?</em></h1></div>
+      <button class="btn quiet">+ New character</button>
+    </div>
+
+    <div class="cast" id="cast">
+      <div class="card sel waiting" style="--tone: var(--deck-character)" data-i="0"><div class="portrait">V</div><div class="body"><div class="name">Vera Lune</div><div class="meta">4 min ago &middot; <span class="chip wait">your turn</span></div></div></div>
+      <div class="card" style="--tone: var(--deck-lorebook)" data-i="1"><div class="portrait">O</div><div class="body"><div class="name">Oriel Maas</div><div class="meta">yesterday</div></div></div>
+      <div class="card" style="--tone: var(--deck-preset)" data-i="2"><div class="portrait">M</div><div class="body"><div class="name">The Magpie</div><div class="meta">yesterday</div></div></div>
+      <div class="card" style="--tone: var(--deck-persona)" data-i="3"><div class="portrait">N</div><div class="body"><div class="name">Nuit</div><div class="meta">Tuesday</div></div></div>
+      <div class="card" style="--tone: var(--deck-regex)" data-i="4"><div class="portrait">I</div><div class="body"><div class="name">Iris Vane</div><div class="meta">4 months ago &middot; <span class="chip cold">resting</span></div></div></div>
+      <div class="card new">+ Cast someone</div>
+    </div>
+
+    <section class="panel continue">
+      <div class="scene"><div class="avatar" id="cAv" style="--tone: var(--deck-character)">V</div><div><div class="kicker" id="cScene">The Drowned Lamp</div><div class="name" style="font-family: var(--font-big); font-weight: 900; text-transform: uppercase;" id="cName">Vera Lune</div></div></div>
+      <p class="voice line" id="cLine">"Tell me, Wren, who did you let up the stairs?"</p>
+      <div class="reply"><input placeholder="Your line..." id="cInput"><button class="btn">Send</button></div>
+    </section>
+
+    <aside class="side">
+      <div class="kicker">Recent scenes</div>
+      <div class="row"><div class="avatar" style="--tone: var(--deck-character)">V</div><div><div class="t">The Drowned Lamp</div><div class="s">Vera &middot; your turn</div></div></div>
+      <div class="row"><div class="avatar" style="--tone: var(--deck-lorebook)">O</div><div><div class="t">Salt &amp; Ledger</div><div class="s">Oriel, Magpie &middot; group</div></div></div>
+      <div class="row"><div class="avatar" style="--tone: var(--deck-persona)">N</div><div><div class="t">A Card for Nuit</div><div class="s">Nuit &middot; Tuesday</div></div></div>
+      <button class="btn quiet">All scenes</button>
+    </aside>
+  </main>
+</div>
+
+<div class="wf-note"><b>The idea:</b> characters are the center of the app. The cast sits across the top in recency order; whoever is waiting on your reply breathes gently. Selecting a card swaps the Continue panel below to that character's latest scene and last line, with a reply box right there, so resuming is one click and typing. Recent scenes sit in a narrow column.</div>
+
+<script>
+  const cast = [
+    ["V", "Vera Lune", "The Drowned Lamp", "“Tell me, Wren, who did you let up the stairs?”", "--deck-character"],
+    ["O", "Oriel Maas", "Salt & Ledger", "“Count it again. Slowly.”", "--deck-lorebook"],
+    ["M", "The Magpie", "Salt & Ledger", "“It'll still be short one page.”", "--deck-preset"],
+    ["N", "Nuit", "A Card for Nuit", "“The Tower means nothing. Probably.”", "--deck-persona"],
+    ["I", "Iris Vane", "The Duel at Dawn", "“You're late.” (four months ago)", "--deck-regex"],
+  ];
+  document.getElementById("cast").addEventListener("click", (e) => {
+    const card = e.target.closest(".card[data-i]");
+    if (!card) return;
+    document.querySelectorAll(".card.sel").forEach((c) => c.classList.remove("sel"));
+    card.classList.add("sel");
+    const [g, n, s, l, t] = cast[Number(card.dataset.i)];
+    document.getElementById("cAv").textContent = g;
+    document.getElementById("cAv").style.setProperty("--tone", `var(${t})`);
+    document.getElementById("cName").textContent = n;
+    document.getElementById("cScene").textContent = s;
+    document.getElementById("cLine").textContent = l;
+    document.getElementById("cInput").focus();
+  });
+</script>
+</body>
+</html>

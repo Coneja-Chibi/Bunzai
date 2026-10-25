@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/library",
+  "sourcePath": "docs/guide/library.md",
+  "sourceHash": "sha256:4edf8a03f7c55d9cb65a024ff541c37fae8824cd71762f761eb01e011f045359",
+  "summary": "Browse the Library covers the shelves once pieces are in the studio: every deck's cards in rows or a grid, each deck's own views, each card's own tools, and staging one piece or a batch to the Workbench. Import is covered separately. The short version: pick Carousel or Grid at the top of the rail, click a deck to show it alone and again for every deck, stage by click with shift-click ranges across decks, then send with the send bar or right-click one piece. Each non-empty deck gets a numbered section of RC cards: tall portraits for characters and personas, presets with carried samplers and prompt count, lorebooks on a book cover, regex sets with rules on and what they do; the art slider in the top bar sizes them, Carousel rows scrub, Grid allows drag-select. Cards carry their tools: on/off, Split, Copy, and drag-to-merge for lorebooks and regex sets, a slow flag, a persona's default badge and sections, and a New tile ending each row. Every section header switches its own deck among Cards, Tiles, Show, List, Shelf, Sets, and Profiles. The top search finds pieces by name, id, lorebook keywords, tags, or source across every deck. Staging never opens on tap. Tips cover tray clearing, collections, the narrow-window chip strip, view fallback, Shelf search, and import-only decks.",
+  "topics": [
+    "Library shelves Carousel Grid",
+    "rail deck filter live counts",
+    "tools on the cards",
+    "per-deck view switch",
+    "stage tray send bar",
+    "art slider",
+    "off skipped on export"
+  ],
+  "sections": [
+    {
+      "slug": "the-short-version",
+      "title": "The short version",
+      "level": 2,
+      "sourceHash": "sha256:2ee57d25252ef8b927b6ad40251e8223046eaf3990209e844a783f1aaa9f9883",
+      "summary": "Pick a layout with the switch at the top of the rail: Carousel runs each deck in one row that scrolls sideways, Grid lets the cards wrap. Click a deck in the rail among Characters Lorebooks Personas Packs Presets Regex sets and Quick replies, each with a live count, to show that deck alone; click it again to see every deck. Stage by clicking a piece, or Stage for the Workbench in Show, for an accent ring and corner check; click again to drop; shift-click stages everything between two pieces, across decks while every deck shows; the tray stays full as you move around. Send with the send bar, Send it to the Workbench or Send all N, or right-click one piece to send it without staging or stage it for the Press.",
+      "topics": [
+        "pick deck chip",
+        "Grid Show List views",
+        "stage tray toggle",
+        "send bar batch",
+        "right-click Press"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-shelves",
+      "title": "The shelves",
+      "level": 2,
+      "sourceHash": "sha256:daab942345ae8b92073a672de9614d56b181bc64ff0cbcc824e3c693d3282789",
+      "summary": "Each deck holding anything gets a numbered section of cards. In Carousel they run in one sideways row with a bar to drag or click; in Grid they wrap and a dragged box stages several. The top-bar art slider sizes every card, down to small tiles of art, name, switch, and menu. Cards say what the studio knows: tall portraits for characters and personas, presets with carried samplers and prompt count, lorebooks with entries on a book cover, regex sets with rules on and what they do, plus the import date and a ... menu. Cards carry their tools: lorebooks and regex sets switch on or off, Split, Copy, and merge when dragged onto another of their kind, and the ... menu always holds them; regex sets flag slow rules; personas show default, pronouns, and sections. A New tile ends each row. The search box finds a piece by name, id, lorebook keywords, tags, or source across every deck; All and Recent set the order.",
+      "topics": [
+        "numbered deck sections",
+        "Carousel scrubber Grid drag-select",
+        "tools on the cards",
+        "New tiles",
+        "All Recent"
+      ],
+      "children": []
+    },
+    {
+      "slug": "each-decks-views",
+      "title": "Each deck's views",
+      "level": 2,
+      "sourceHash": "sha256:ee0c9663927d74b1da122666457541de702c374732b13fe2c4588152a2a9fd71",
+      "summary": "Every rail deck shows even at count 0 so the full studio shape stays visible; the status line reports one deck's share or every deck, and an empty deck appears when picked in the rail, where its shelf offers a way to start. Characters, Lorebooks, Regex sets, Personas, Presets, and Quick replies offer New on their section and a New tile; Packs are import-only. Every section header has its own view switch and each deck remembers its choice: Cards, then Tiles Show and List on every deck; Shelf also runs everywhere with a name, key, or tag search, lorebook spines carrying on/off, Split, Copy, and drag-to-merge, and regex Sets adding rule counts, a computed description, and slow flags. An off book or set is skipped on export.",
+      "topics": [
+        "per-deck view switch",
+        "Cards Tiles Show List",
+        "Shelf Sets Profiles",
+        "New on empty decks",
+        "off skipped on export"
+      ],
+      "children": []
+    },
+    {
+      "slug": "staging-and-sending",
+      "title": "Staging and sending",
+      "level": 2,
+      "sourceHash": "sha256:c23c0683500e8f9e29e4d385c2fae444096fbdc933252115fbf52c9f5d20cb9b",
+      "summary": "Tapping a piece anywhere in the Library stages it and does not open it. A staged piece wears an accent ring; a piece already open on the Workbench wears a quiet on the workbench tag instead, and tapping that one only repeats the tag rather than toggling. The tray survives switching decks so you can pick a character from one chip and a lorebook from another before sending. The send bar appears only once something is staged; it carries the live count, the Send button, and Clear that empties the tray without sending. Sending opens every staged piece as its own tab and, depending on Workbench follow setting changeable in Settings, may take you there right away. You do not have to stage to move a single piece: right-click Send to the Workbench opens immediately, or Stage for the Press queues it for export on a separate queue from this tray, covered in Convert a card.",
+      "topics": [
+        "tap stages not open",
+        "workbench tag no toggle",
+        "tray survives decks",
+        "send bar Clear",
+        "Workbench follow Settings",
+        "right-click Press queue"
+      ],
+      "children": []
+    },
+    {
+      "slug": "tips",
+      "title": "Tips",
+      "level": 2,
+      "sourceHash": "sha256:f98329f045be833cf2fbe2d5ae5bc3ea593a6d01b35d8654aa2fafe5ebc731c3",
+      "summary": "A piece already open on the Workbench cannot be re-staged; tapping it only tells you it is already there. The staged tray persists across deck, layout, and view switches and empties only on send or Clear. Collections sit in the rail under the decks and filter the shelf like their groups-bar chip; click again to stop. On a narrow window the rail folds into deck chips above the shelf. A view the current deck does not support falls back to Cards. The Shelf view's search narrows what is on screen without changing the rail count or deck total. Personas get their own Profiles view beside the plain Shelf, showing brief, pronouns, sections, and the default. Packs have no New button; import is the only way in.",
+      "topics": [
+        "no re-stage open",
+        "tray clear or send",
+        "view fallback Grid",
+        "Shelf search screen only",
+        "Personas dual Shelf icons",
+        "import-only decks"
+      ],
+      "children": []
+    }
+  ]
+}

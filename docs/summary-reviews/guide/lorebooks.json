@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/lorebooks",
+  "sourcePath": "docs/guide/lorebooks.md",
+  "sourceHash": "sha256:4d4290ed09924bd39228d830dab9056029a2e1f5495c9a2354e1b295f28726da",
+  "semanticSummaryHash": "sha256:7ffb199a2cd8ae04337868c0e5edc76072f558c1b2c25a3ca1c47644d74bb601",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:45.015Z"
+}

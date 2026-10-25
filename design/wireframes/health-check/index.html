@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Health check report wireframe</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../house.css">
+<script src="../theme.js"></script>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">Health check report</div>
+      <p class="wf-lede">Settings, Security, "Check my library". Nothing here changes anything until a person confirms one repair, and every repair sets things aside, never deletes. No backup is asked for first. The scan runs in the background; the app stays usable.</p>
+    </div>
+    <button class="stamp stamp-btn" data-theme-switch>Switch theme</button>
+  </div>
+
+  <div class="wf-grid">
+    <div>
+      <div class="wf-state">State A: checking</div>
+      <div class="card">
+        <div class="card-title">Checking your library</div>
+        <p class="card-body">Looking at your chats, then your characters and lorebooks. You can keep working.</p>
+        <div class="meter s2" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="4"><span></span><span></span><span></span><span></span></div>
+        <div class="status"><span class="dot on"></span> Chats, 3 of 8 parts looked at</div>
+        <div class="actions"><button class="btn-ghost">Stop</button></div>
+      </div>
+      <p class="wf-comp">card = Settings card / meter = four-segment meter grammar / button = ghost</p>
+    </div>
+
+    <div>
+      <div class="wf-state">State B: all well</div>
+      <div class="card">
+        <div class="card-title"><span class="chip ok">All well</span> Nothing is damaged</div>
+        <p class="card-body">Checked 412 saved pieces, 38 chats and 9,120 messages just now. Everything opens and matches what was saved. Rows saved before this check existed were marked as good.</p>
+        <div class="actions"><button class="stamp stamp-btn primary">Done</button><button class="btn-ghost">Check again</button></div>
+      </div>
+      <p class="wf-comp">chip = ok chip / button = Stamp</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="wf-state">State C: damage found, one list, plain words</div>
+    <div class="stack">
+      <div class="notice danger">
+        <div class="tx">
+          <div class="notice-title"><span class="chip warn">Needs a choice</span> The text of reply 1 on message 3 of the chat "Vera and me"</div>
+          <p class="notice-body">The text of this reply would not open. Everything else in the chat is fine. An earlier version of this reply is kept.</p>
+        </div>
+        <div class="actions">
+          <button class="stamp stamp-btn primary">Go back to the earlier text</button>
+          <button class="btn-ghost">Set this reply aside</button>
+          <button class="btn-ghost">Restore from a snapshot</button>
+        </div>
+      </div>
+
+      <div class="notice danger">
+        <div class="tx">
+          <div class="notice-title"><span class="chip warn">Needs a choice</span> The character "vera"</div>
+          <p class="notice-body">A part of this piece's content would not open. Three older versions are kept, and the newest one that reads is from yesterday at 4:12 pm.</p>
+        </div>
+        <div class="actions">
+          <button class="stamp stamp-btn primary">Go back to yesterday's version</button>
+          <button class="btn-ghost">Set it aside</button>
+          <button class="btn-ghost">Restore from a snapshot</button>
+        </div>
+      </div>
+
+      <div class="notice">
+        <div class="tx">
+          <div class="notice-title"><span class="chip warn">Changed</span> Message 1 of the chat "Vera and me"</div>
+          <p class="notice-body">Its contents are not what was saved: a value or a piece of text was changed or came from another row. It still opens.</p>
+        </div>
+        <div class="actions">
+          <button class="stamp stamp-btn">It looks right, keep it</button>
+          <button class="btn-ghost">Set it aside</button>
+        </div>
+      </div>
+
+      <div class="notice">
+        <div class="tx">
+          <div class="notice-title"><span class="chip warn">Left over</span> An image or file no piece uses</div>
+          <p class="notice-body">Nothing refers to it any more. It does no harm and can stay, or be set aside.</p>
+        </div>
+        <div class="actions"><button class="btn-ghost">Set it aside</button></div>
+      </div>
+
+      <div class="notice danger">
+        <div class="tx">
+          <div class="notice-title"><span class="chip warn">The file</span> The library file</div>
+          <p class="notice-body">SQLite found damage in the file's own pages. The safest repair is to go back to a snapshot. A copy of how things are now is kept first, so this can be undone.</p>
+        </div>
+        <div class="actions"><button class="stamp stamp-btn primary">Choose a snapshot</button></div>
+      </div>
+    </div>
+    <p class="wf-comp">notice = DamageNotice grammar (amber plate, spine; danger for lost content) / buttons = Stamp, ghost / chip = warn chip</p>
+  </div>
+
+  <div class="wf-grid">
+    <div>
+      <div class="wf-state">State D: before a set-aside (preview, then confirm)</div>
+      <div class="dialog">
+        <div class="card-title">Set this chat aside?</div>
+        <p class="card-body">1 chat, 2 takes, 5 messages, 7 replies and 1 content part will be set aside, not deleted. The chat leaves your list and stops opening. Your other chats are not touched. The set-aside copy is kept for good and is never purged.</p>
+        <div class="actions"><button class="stamp stamp-btn primary">Set aside</button><button class="btn-ghost">Cancel</button></div>
+      </div>
+      <p class="wf-comp">dialog = ProtectedDialog / buttons = Stamp, ghost</p>
+    </div>
+
+    <div>
+      <div class="wf-state">State E: result of a repair, re-checked</div>
+      <div class="card">
+        <div class="card-title"><span class="chip ok">Done</span> Rolled back</div>
+        <p class="card-body">Rolled back to the newest earlier version that reads; the item checks clean. The damaged copy is kept aside.</p>
+      </div>
+      <div class="card" style="margin-top:1rem">
+        <div class="card-title"><span class="chip warn">Not finished</span> Still reported</div>
+        <p class="card-body">Nothing was changed: none of this reply's earlier texts would open either. You can set it aside instead.</p>
+      </div>
+      <p class="wf-comp">card = Settings card / chips = ok, warn</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="wf-state">State F: scan could not finish</div>
+    <div class="notice">
+      <div class="tx">
+        <div class="notice-title">The check stopped at "chats"</div>
+        <p class="notice-body">Your library locked while it was checking. This is not a clean result. Unlock and check again.</p>
+      </div>
+      <div class="actions"><button class="stamp stamp-btn">Check again</button></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

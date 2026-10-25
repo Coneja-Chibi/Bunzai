@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench: lorebook editor</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="tokens-soft.css">
+<link rel="stylesheet" href="soft-parts.css">
+<script src="../theme.js"></script>
+<script>try { if (!localStorage.getItem("bunraku-wf-theme")) document.documentElement.setAttribute("data-theme", "stage"); } catch (e) {}</script>
+<style>
+/*
+ * Shared skeleton for every workbench-/agent- soft wireframe: the Dock (fluid, marks only under
+ * 46rem of window width - kept exactly as approved, reused unchanged on every page in this set) and
+ * the wf-bar/wf-note pattern. Page content sits in .stage.
+ * Known gap: soft-parts.css sets .s-app small/.s-app kbd and .wf-bar text at 11px,
+ * under this brief's 12px floor - overridden here and on every other page in this set.
+ */
+.s-app small, .s-app kbd, .wf-bar, .wf-bar button, .wf-bar a { font-size: 12px; }
+.app { display: flex; min-height: 100vh; }
+.s-dock { flex: none; }
+/* The Dock's mark-only collapse answers the WHOLE WINDOW, same as the app's real locked
+   narrow-screen mode and the user-driven slim-dock strip - so this one rule is @media, not
+   @container. Every pane-level fold below it (.pane, .stage) uses @container instead. */
+@media (max-width: 46rem) {
+  .s-dock { width: 64px; padding: 16px 10px; }
+  .s-dock .brand span.word, .s-app b, .s-app small, .s-app kbd { display: none; }
+  .s-app { grid-template-columns: 30px; justify-content: center; }
+}
+.stage { flex: 1; min-width: 0; container-type: inline-size; background: var(--canvas); }
+/* Fixed wf-bar/wf-note sit over the last ~170px of the page on purpose (wireframe-only chrome);
+   real content gets that much breathing room at the foot so nothing genuine hides under them. */
+body { padding-bottom: 190px; }
+@media (max-width: 560px) { body { padding-bottom: 260px; } }
+/* wf-bar/wf-note are fixed-position wireframe-only chrome; at phone width they must not float over
+   the content or each other, so they drop into normal flow and stack full width. */
+@media (max-width: 560px) {
+  .wf-bar, .wf-note { position: static; max-width: none; width: 100%; box-sizing: border-box; margin: 10px 0 0; left: auto; right: auto; bottom: auto; top: auto; }
+}
+
+
+/* ---- book head ---- */
+.bhead { display: flex; align-items: center; gap: 14px; padding: 14px 20px; box-shadow: inset 0 -1px 0 var(--seam); flex-wrap: wrap; }
+.bhead .mono-mark { width: 32px; height: 32px; display: grid; place-items: center; background: color-mix(in srgb, var(--deck-lorebook) 20%, transparent); color: var(--deck-lorebook); font: 700 1rem var(--font-fancy); }
+.bhead .spine { flex: 1; min-width: 12rem; }
+.bhead .spine .name { font-size: 1.3rem; }
+.bhead select.lensSel { width: auto; padding: 8px 10px; }
+.viewSwitch { display: flex; box-shadow: inset 0 0 0 1px var(--seam); }
+.viewSwitch button { background: none; border: 0; padding: 7px 14px; color: var(--text-dim); font: 600 .88rem var(--font-body); cursor: pointer; }
+.viewSwitch button.on { background: var(--shell-panel-2); color: var(--text); }
+
+/* ---- three columns ---- */
+.binder { display: grid; grid-template-columns: 260px 1fr 280px; gap: 1px; background: var(--seam); container-type: inline-size; min-height: 60vh; }
+@container (max-width: 68rem) { .binder { grid-template-columns: 240px 1fr; } .binder > .railcol { display: none; } }
+@container (max-width: 44rem) { .binder { grid-template-columns: 1fr; } .binder > .toccol { display: none; } }
+.toccol, .pagecol, .railcol { background: var(--canvas); overflow: auto; }
+.toccol { padding: 14px; }
+.pagecol { padding: 20px 24px; }
+.railcol { padding: 14px; }
+
+/* ---- toc ---- */
+.tocsearch { margin-bottom: 10px; }
+.tocgroup { margin-bottom: 6px; }
+.tocgroup .glabel { display: flex; justify-content: space-between; font: 500 12px var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); padding: 8px 6px 4px; }
+.tocrow { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; box-shadow: inset 3px 0 0 transparent; color: var(--text-soft); }
+.tocrow .pip { width: 6px; height: 6px; flex: none; }
+.pip.ok { background: var(--stage-ok); } .pip.warn { background: var(--stage-warn); } .pip.bad { background: var(--stage-danger-hot); } .pip.off { background: var(--text-faint); }
+.tocrow.on { background: var(--shell-panel-2); color: var(--text); box-shadow: inset 3px 0 0 var(--deck-lorebook); }
+.tocrow .disabled { text-decoration: line-through; color: var(--text-faint); }
+.tocaddrow { margin-top: 10px; width: 100%; }
+
+/* ---- entry page ---- */
+.emast { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+.emast .pager { font: 500 12px var(--font-mono); color: var(--text-dim); }
+.emast .ename { font-size: 1.6rem; flex: 1; min-width: 10rem; }
+.fireline { color: var(--text-dim); font-size: .85rem; font-style: italic; margin: 4px 0 18px; }
+.dcard { margin-bottom: 14px; }
+.dcard .dh { display: flex; align-items: center; gap: 10px; padding: 10px 14px; box-shadow: inset 0 -1px 0 var(--seam); }
+.dcard .db { padding: 14px; }
+.keysgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@container (max-width: 30rem) { .keysgrid { grid-template-columns: 1fr; } }
+.keybox .lbl { font: 500 12px var(--font-mono); color: var(--text-dim); margin-bottom: 6px; display: block; }
+.chiprow { display: flex; gap: 6px; flex-wrap: wrap; }
+.logicsel { width: auto; display: inline-block; padding: 6px 10px; margin-top: 8px; }
+.foldsum { cursor: pointer; padding: 10px 14px; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-soft); font: 600 .88rem var(--font-body); list-style: none; }
+.foldsum::-webkit-details-marker { display: none; }
+.pillrow { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { padding: 6px 12px; box-shadow: inset 0 0 0 1px var(--seam); color: var(--text-dim); font-size: .85rem; }
+.pill.on { box-shadow: inset 0 0 0 1px var(--deck-lorebook); color: var(--deck-lorebook); }
+.passage { min-height: 8rem; font-family: var(--font-big); font-variation-settings: var(--soft-axes); font-size: 1.02rem; }
+.platcard { box-shadow: inset 0 0 0 1px var(--seam); }
+
+/* ---- entry rail ---- */
+.rcard2 { margin-bottom: 14px; }
+.rcard2 .rh { display: flex; align-items: baseline; gap: 8px; padding: 10px 12px; box-shadow: inset 0 -1px 0 var(--seam); }
+.rcard2 .rh i { font-style: normal; color: var(--text-dim); font-size: .8rem; }
+.rcard2 .rb { padding: 10px 12px; font-size: .85rem; color: var(--text-soft); }
+.matchhit { display: block; padding: 4px 0; }
+.linkish { background: none; border: 0; color: var(--deck-lorebook); cursor: pointer; padding: 0; font: inherit; text-decoration: underline; }
+
+/* ---- health / rehearsal / changes overlays replace the rail ---- */
+.sidepane { display: none; }
+[data-state="health"] .railcol { display: none; }
+[data-state="health"] .sidepane.health { display: block; padding: 14px; }
+[data-state="rehearsal"] .railcol, [data-state="playback"] .railcol { display: none; }
+[data-state="rehearsal"] .sidepane.rehearsal, [data-state="playback"] .sidepane.rehearsal { display: block; padding: 14px; }
+[data-state="changes"] .railcol { display: none; }
+[data-state="changes"] .sidepane.changes { display: block; padding: 14px; }
+.findgroup { margin-bottom: 12px; }
+.findgroup .fgh { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.findgroup li { list-style: none; padding: 4px 0; font-size: .85rem; color: var(--text-soft); }
+.rtabs { display: flex; box-shadow: inset 0 -1px 0 var(--seam); margin-bottom: 10px; }
+.rtabs button { background: none; border: 0; padding: 8px 12px; color: var(--text-dim); cursor: pointer; font: 600 .85rem var(--font-body); }
+.rtabs button.on { color: var(--text); box-shadow: inset 0 -2px 0 var(--deck-lorebook); }
+.budgetbar { display: flex; gap: 6px; align-items: center; margin-bottom: 10px; font: 500 12px var(--font-mono); color: var(--text-dim); }
+.chatpreview { box-shadow: inset 0 0 0 1px var(--seam); padding: 10px; min-height: 4rem; font-size: .85rem; margin-bottom: 10px; }
+.changerow { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; box-shadow: inset 0 -1px 0 var(--seam); font-size: .85rem; }
+
+/* ---- cards view ---- */
+.cardsview { display: none; padding: 20px 24px; }
+[data-state="cards"] .binder { display: none; }
+[data-state="cards"] .cardsview { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.entrytile { padding: 14px; }
+.entrytile .et-h { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.entrytile p { color: var(--text-dim); font-size: .82rem; }
+
+/* ---- web view ---- */
+.webview { display: none; padding: 20px 24px; }
+[data-state="web"] .binder { display: none; }
+[data-state="web"] .webview { display: block; }
+.webfilters { display: flex; gap: 6px; margin-bottom: 12px; }
+.webfilters button { padding: 6px 12px; box-shadow: inset 0 0 0 1px var(--seam); background: none; color: var(--text-dim); cursor: pointer; }
+.webfilters button.on { box-shadow: inset 0 0 0 1px var(--deck-lorebook); color: var(--deck-lorebook); }
+.webcanvas { box-shadow: inset 0 0 0 1px var(--seam); padding: 20px; }
+.webhint { color: var(--text-dim); font-size: .8rem; margin-top: 10px; }
+
+/* ---- select mode bulk bar ---- */
+.bulkbar { display: none; align-items: center; gap: 10px; padding: 10px 14px; background: color-mix(in srgb, var(--deck-lorebook) 12%, transparent); box-shadow: inset 0 0 0 1px var(--deck-lorebook); margin-bottom: 10px; font-size: .85rem; }
+[data-state="select"] .bulkbar { display: flex; }
+
+/* ---- book rules dialog ---- */
+.scrim { position: fixed; inset: 0; z-index: 40; display: none; place-items: center; background: var(--scrim); }
+.scrim.show { display: grid; }
+.dlg { width: 480px; padding: 24px; background: var(--face); box-shadow: 0 0 0 1px var(--edge), var(--stamp-x) var(--stamp-y) 0 0 var(--stamp-shadow); }
+.dlg .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.dlg .row { margin-top: 18px; display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ---- empty book ---- */
+.emptybook { display: none; padding: 60px 24px; text-align: center; }
+[data-state="empty"] .binder, [data-state="empty"] .bulkbar { display: none; }
+[data-state="empty"] .emptybook { display: block; }
+
+/* ---- mobile bar ---- */
+.mbar { display: none; align-items: center; gap: 10px; padding: 10px 16px; box-shadow: inset 0 -1px 0 var(--seam); }
+@media (max-width: 60rem) {
+  .mbar { display: flex; }
+  .binder { grid-template-columns: 1fr !important; }
+  .binder > .toccol, .binder > .railcol { display: none !important; }
+}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="bun" viewBox="0 0 100 100"><g transform="rotate(-8 50 50)">
+<path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--pink)" stroke="var(--ink)" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M64 30 V70" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M28 46 C25 30 28 22 32 22 C36 22 36 34 35 46 Z M39 46 C39 31 43 23 47 24 C51 26 47 38 44 47 Z" fill="var(--ink)"/>
+<ellipse cx="36" cy="58" rx="13" ry="11" fill="var(--ink)"/><circle cx="78" cy="50" r="6" fill="var(--ink)"/></g></symbol>
+<symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l12 8-12 8V4z"/></symbol>
+<symbol id="i-make" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></symbol>
+<symbol id="i-keep" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></symbol>
+<symbol id="i-kit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M4 20h16"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></symbol>
+</defs></svg>
+<div class="app">
+  <nav class="s-dock">
+    <div class="brand"><svg width="26" height="26" style="--pink:var(--deck-pack); --ink:var(--stage-ink)"><use href="#bun"/></svg><span class="word">bunraku</span></div>
+    <div class="s-app c-scenes"><i><svg width="16" height="16"><use href="#i-play"/></svg></i><b>Scenes</b><small>play</small></div>
+    <div class="s-app c-workbench on"><i><svg width="16" height="16"><use href="#i-make"/></svg></i><b>Workbench</b><small>make</small></div>
+    <div class="s-app c-library"><i><svg width="16" height="16"><use href="#i-keep"/></svg></i><b>Library</b><small>keep</small></div>
+    <div class="s-app c-press"><i><svg width="16" height="16"><use href="#i-share"/></svg></i><b>Press</b><small>share</small></div>
+    <div class="s-app c-agent"><i><svg width="16" height="16"><use href="#i-help"/></svg></i><b>Agent</b><small>help</small></div>
+    <div class="s-app c-kit"><i><svg width="16" height="16"><use href="#i-kit"/></svg></i><b>Kit</b><small>terminal</small></div>
+    <div class="s-app c-settings"><i><svg width="16" height="16"><use href="#i-gear"/></svg></i><b>Settings</b><small></small></div>
+  </nav><div class="stage">
+
+    <header class="bhead">
+      <span class="mono-mark">K</span>
+      <span class="spine">
+        <span class="s-h3 name">Keeper's Log</span>
+        <span class="s-meta">40 entries &middot; ~612 / 2048 tok &middot; <a class="linkish" href="#" onclick="setState('rules');return false;">book rules</a></span>
+      </span>
+      <select class="s-input lensSel"><option>Writing for: Bunraku</option><option>Writing for: SillyTavern</option><option>Writing for: RoleCall</option></select>
+      <span class="viewSwitch">
+        <button class="on" onclick="setState('pages')">Pages</button>
+        <button onclick="setState('cards')">Cards</button>
+        <button onclick="setState('web')">Web</button>
+      </span>
+      <button type="button" class="s-btn" style="padding:8px 16px">Save</button>
+    </header>
+
+    <nav class="mbar">
+      <button type="button" class="s-btn ghost" style="padding:6px 12px">&#9776; Contents</button>
+      <span class="s-meta">3 of 40</span>
+      <button type="button" class="s-btn ghost" style="padding:6px 10px" aria-label="Previous entry">&lsaquo;</button>
+      <button type="button" class="s-btn ghost" style="padding:6px 10px" aria-label="Next entry">&rsaquo;</button>
+    </nav>
+
+    <div class="bulkbar">2 entries selected <button type="button" class="s-btn ghost" style="padding:6px 12px">Turn on</button><button type="button" class="s-btn ghost" style="padding:6px 12px">Turn off</button><button type="button" class="s-btn ghost" style="padding:6px 12px">Move to new book</button><button type="button" class="s-btn danger" style="padding:6px 12px">Delete</button></div>
+
+    <div class="binder">
+      <div class="toccol">
+        <input class="s-input tocsearch" placeholder="Search 40 entries...">
+        <div class="tocgroup">
+          <div class="glabel">Always on <span>1</span></div>
+          <div class="tocrow"><span class="pip ok"></span>The Lighthouse<span class="s-chip" style="margin-left:auto">always on</span></div>
+        </div>
+        <div class="tocgroup">
+          <div class="glabel">Entries <span>39</span></div>
+          <div class="tocrow on"><span class="pip warn"></span>The Long Storm<span class="s-chip" style="margin-left:auto">by meaning</span></div>
+          <div class="tocrow"><span class="pip ok"></span>Marguerite's Watch Log</div>
+          <div class="tocrow"><span class="pip bad"></span>The Fog Bell</div>
+          <div class="tocrow"><span class="pip off"></span><span class="disabled">The Old Keeper</span></div>
+          <div class="tocrow"><span class="pip ok"></span>The Third Stair</div>
+        </div>
+        <button type="button" class="s-btn ghost tocaddrow">+ New entry</button>
+      </div>
+
+      <div class="pagecol">
+        <div class="emast">
+          <span class="pager">ENTRY 3 OF 40</span>
+          <span class="ename s-h3">The Long Storm</span>
+          <span class="s-meta">~34 tok</span>
+          <span class="s-switch on" title="On"></span>
+        </div>
+        <p class="fireline">Fires on: similarity to the chat (by meaning), World placement.</p>
+
+        <div class="s-card dcard flat" style="--c: var(--deck-lorebook)">
+          <div class="dh"><span class="s-h3" style="font-size:1rem">Keys</span><span class="s-meta" style="margin-left:auto">Simple &middot; <b style="color:var(--deck-lorebook)">Advanced</b></span></div>
+          <div class="db">
+            <div class="keysgrid">
+              <div class="keybox">
+                <span class="lbl">Primary keys</span>
+                <div class="chiprow"><span class="s-chip" style="--c:var(--deck-lorebook)">storm</span><span class="s-chip" style="--c:var(--deck-lorebook)">lighthouse</span><span class="s-chip" style="--c:var(--deck-lorebook)">stairs</span></div>
+              </div>
+              <div class="keybox">
+                <span class="lbl">Only together with</span>
+                <div class="chiprow"><span class="s-chip">midnight</span></div>
+              </div>
+            </div>
+            <select class="s-input logicsel"><option>AND any</option><option>AND all</option><option>NOT any</option><option>NOT all</option></select>
+          </div>
+        </div>
+
+        <details class="foldwrap">
+          <summary class="foldsum">Timing &amp; chance: 100% chance, no cooldown, no delay, recursion on</summary>
+          <div class="s-card dcard flat" style="margin-top:6px">
+            <div class="db" style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+              <label class="s-meta">Chance<input class="s-input" value="100%"></label>
+              <label class="s-meta">Sticky (messages)<input class="s-input" value="0"></label>
+              <label class="s-meta">Cooldown (messages)<input class="s-input" value="0"></label>
+              <label class="s-meta">Delay (messages)<input class="s-input" value="0"></label>
+              <label class="s-meta">Recursion group<input class="s-input" value="none"></label>
+            </div>
+          </div>
+        </details>
+
+        <div class="s-card dcard flat">
+          <div class="dh"><span class="s-h3" style="font-size:1rem">Placement</span></div>
+          <div class="db pillrow">
+            <span class="pill on">World</span><span class="pill">Character</span><span class="pill">Scene</span>
+            <span class="pill">Depth</span><span class="pill">Append</span><span class="pill">Top</span><span class="pill">Bottom</span>
+          </div>
+        </div>
+
+        <div class="s-card dcard flat" style="--c: var(--deck-lorebook)">
+          <div class="dh"><span class="s-h3" style="font-size:1rem">The passage</span></div>
+          <div class="db"><textarea class="s-input passage">The storm that took the {{char}}'s father still comes back every autumn, and the light still has to be lit before it does.</textarea></div>
+        </div>
+
+        <details class="foldwrap">
+          <summary class="foldsum">Creator note</summary>
+          <div class="s-card dcard flat" style="margin-top:6px"><div class="db"><textarea class="s-input">Keep this one vague until the player has visited the lighthouse once.</textarea></div></div>
+        </details>
+
+        <details class="foldwrap">
+          <summary class="foldsum">SillyTavern fields</summary>
+          <div class="s-card dcard platcard flat" style="margin-top:6px"><div class="db"><p class="s-meta">useProbability &middot; selectiveLogic &middot; extensions.position</p></div></div>
+        </details>
+      </div>
+
+      <aside class="railcol">
+        <div class="s-card rcard2 flat">
+          <div class="rh"><span class="s-h3" style="font-size:.95rem">Try a line</span><i>real activation</i></div>
+          <div class="rb">
+            <input class="s-input" placeholder="Sample chat line..." style="margin-bottom:8px">
+            <p>Runs the real matcher: keys, chance, recursion, timed, budget.</p>
+          </div>
+        </div>
+        <div class="s-card rcard2 flat">
+          <div class="rh"><span class="s-h3" style="font-size:.95rem">Wake map</span><i>recursion</i></div>
+          <div class="rb">
+            <span class="matchhit"><b>Wakes this entry:</b> <button type="button" class="linkish">The Fog Bell</button> via "storm"</span>
+            <span class="matchhit"><b>This entry can wake:</b> nothing else yet</span>
+          </div>
+        </div>
+        <div class="s-card rcard2 flat">
+          <div class="rh"><span class="s-h3" style="font-size:.95rem">Health</span><i>quiet tips</i></div>
+          <div class="rb">
+            <p>&#9650; By meaning only survives for Bunraku or SillyTavern; check Writing for.</p>
+            <button type="button" class="s-btn ghost" style="margin-top:8px; width:100%" onclick="setState('health')">Open the full check</button>
+            <button type="button" class="s-btn ghost" style="margin-top:6px; width:100%" onclick="setState('changes')">Open Changes</button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="sidepane health">
+        <div class="rh" style="display:flex; justify-content:space-between; padding:0 0 10px"><span class="s-h3">Health</span><span class="s-meta">4 findings</span></div>
+        <div class="findgroup">
+          <div class="fgh"><span class="s-chip" style="--c:var(--stage-danger-hot)">Problem</span><b class="s-meta">Never fires &middot; 1</b><button type="button" class="s-btn ghost" style="padding:4px 10px; margin-left:auto">Fix all</button></div>
+          <ul><li>"The Old Keeper" is off and has no keywords.</li></ul>
+        </div>
+        <div class="findgroup">
+          <div class="fgh"><span class="s-chip" style="--c:var(--stage-warn)">Worth a look</span><b class="s-meta">Duplicate keys &middot; 2</b><span class="s-meta" style="margin-left:auto">fix by hand</span></div>
+          <ul><li>"storm" appears on both The Long Storm and The Fog Bell.</li><li>"stairs" appears on both The Long Storm and The Third Stair.</li></ul>
+        </div>
+        <div class="findgroup">
+          <div class="fgh"><span class="s-chip" style="--c:var(--stage-warn)">Worth a look</span><b class="s-meta">Wakes itself &middot; 1</b></div>
+          <ul><li>The Fog Bell's own text contains its own trigger key.</li></ul>
+        </div>
+      </div>
+
+      <div class="sidepane rehearsal">
+        <div class="rtabs">
+          <button class="on" onclick="setState('rehearsal')">Try lines</button>
+          <button onclick="setState('playback')">Playback</button>
+        </div>
+        <div id="rehearsalBody">
+          <div class="budgetbar">Budget <span class="s-chip">Off</span><span class="s-chip" style="--c:var(--deck-lorebook)">Book</span><span class="s-chip">512</span><span class="s-chip">1024</span></div>
+          <div class="chatpreview">
+            <p><b>You:</b> The storm's coming back, isn't it?</p>
+            <p style="margin-top:6px"><b>Vaude:</b> The air stills for a beat.</p>
+          </div>
+          <input class="s-input" placeholder="Type something to test..." style="margin-bottom:10px">
+          <p class="s-meta" style="margin-bottom:6px">Fired (2)</p>
+          <span class="matchhit"><button type="button" class="linkish">The Long Storm</button> &middot; by meaning &middot; ~34t</span>
+          <span class="matchhit"><button type="button" class="linkish">The Lighthouse</button> &middot; always on &middot; ~28t</span>
+        </div>
+        <div id="playbackBody" style="display:none">
+          <label class="s-btn ghost" style="display:flex; justify-content:center; margin-bottom:10px; cursor:pointer">Drop or pick a chat export (.jsonl)<input type="file" style="display:none"></label>
+          <div class="chatpreview">
+            <p>Replayed 12 lines. <mark style="background:var(--stage-ok-bg); color:var(--stage-ok)">storm</mark> matched exactly; <button type="button" class="linkish">stormy</button> was a near miss.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidepane changes">
+        <div class="rh" style="display:flex; justify-content:space-between; padding:0 0 10px"><span class="s-h3">Changes</span><span class="s-meta">since last save</span></div>
+        <div class="changerow"><span>The Long Storm &middot; Passage edited</span><button type="button" class="s-btn ghost" style="padding:4px 10px">Revert</button></div>
+        <div class="changerow"><span>The Fog Bell &middot; moved up one</span><button type="button" class="s-btn ghost" style="padding:4px 10px">Undo swap</button></div>
+        <div class="changerow"><span>The Old Keeper &middot; turned off</span><button type="button" class="s-btn ghost" style="padding:4px 10px">Restore</button></div>
+      </div>
+    </div>
+
+    <div class="cardsview">
+      <div class="s-card entrytile flat" style="--c: var(--deck-lorebook)"><div class="et-h"><span class="pip ok"></span><b class="s-h3" style="font-size:1rem">The Lighthouse</b></div><p>always on &middot; ~28 tok &middot; World</p></div>
+      <div class="s-card entrytile flat" style="--c: var(--deck-lorebook)"><div class="et-h"><span class="pip warn"></span><b class="s-h3" style="font-size:1rem">The Long Storm</b></div><p>by meaning &middot; ~34 tok &middot; World</p></div>
+      <div class="s-card entrytile flat" style="--c: var(--deck-lorebook)"><div class="et-h"><span class="pip ok"></span><b class="s-h3" style="font-size:1rem">Marguerite's Watch Log</b></div><p>2 keys &middot; ~52 tok &middot; Character</p></div>
+      <div class="s-card entrytile flat" style="--c: var(--deck-lorebook)"><div class="et-h"><span class="pip bad"></span><b class="s-h3" style="font-size:1rem">The Fog Bell</b></div><p>1 key &middot; ~19 tok &middot; World</p></div>
+      <div class="s-card entrytile flat" style="--c: var(--deck-lorebook)"><div class="et-h"><span class="pip off"></span><b class="s-h3" style="font-size:1rem">The Old Keeper</b></div><p>off &middot; no keys &middot; World</p></div>
+    </div>
+
+    <div class="webview">
+      <div class="webfilters"><button class="on">All</button><button>Connected</button><button>Loners</button></div>
+      <div class="webcanvas">
+        <svg viewBox="0 0 640 260" width="100%" height="260">
+          <line x1="120" y1="60" x2="300" y2="130" stroke="var(--seam)" stroke-width="2"/>
+          <line x1="300" y1="130" x2="480" y2="70" stroke="var(--seam)" stroke-width="2"/>
+          <line x1="300" y1="130" x2="300" y2="220" stroke="var(--seam)" stroke-width="2"/>
+          <g><rect x="104" y="44" width="32" height="32" fill="var(--deck-lorebook)" stroke="var(--stage-black)" stroke-width="2"/><text x="120" y="94" text-anchor="middle" class="s-meta">Lighthouse</text></g>
+          <g><rect x="284" y="114" width="32" height="32" fill="var(--stage-warn)" stroke="var(--stage-black)" stroke-width="2"/><text x="300" y="164" text-anchor="middle" class="s-meta">Long Storm</text></g>
+          <g><rect x="464" y="54" width="32" height="32" fill="var(--deck-lorebook)" stroke="var(--stage-black)" stroke-width="2"/><text x="480" y="104" text-anchor="middle" class="s-meta">Fog Bell</text></g>
+          <g><rect x="284" y="204" width="24" height="24" fill="var(--text-faint)" stroke="var(--stage-black)" stroke-width="2"/><text x="296" y="244" text-anchor="middle" class="s-meta">Third Stair</text></g>
+        </svg>
+      </div>
+      <p class="webhint">Drag to pin &middot; double-click opens Pages &middot; grey nodes wake nobody. Nodes are drawn square, matching this identity's no-round-corners rule; the real app's circular nodes are the one shape this port intentionally squares off.</p>
+    </div>
+
+    <div class="emptybook">
+      <span class="s-act"><b>Keeper's Log</b></span>
+      <h2 class="s-h2" style="margin-top:8px">The book is empty</h2>
+      <p class="s-meta" style="margin-top:8px">Add an entry from the contents to get started.</p>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrimRules"><div class="dlg">
+  <p class="s-h3">Book rules</p>
+  <p class="s-meta" style="margin-top:4px">Name, description, matching defaults, and budget every entry inherits.</p>
+  <div class="grid2">
+    <label class="s-meta">Name<input class="s-input" value="Keeper's Log"></label>
+    <label class="s-meta">Description<input class="s-input" value="Marguerite's lighthouse world"></label>
+    <label class="s-meta">Case sensitive<span class="s-switch" style="display:block; margin-top:6px"></span></label>
+    <label class="s-meta">Whole words only<span class="s-switch on" style="display:block; margin-top:6px"></span></label>
+    <label class="s-meta">Recursion<span class="s-switch on" style="display:block; margin-top:6px"></span></label>
+    <label class="s-meta">Global scan depth<input class="s-input" value="4"></label>
+    <label class="s-meta">Token budget<input class="s-input" value="2048"></label>
+    <label class="s-meta">Categories<input class="s-input" value="World, Characters"></label>
+  </div>
+  <div class="row"><button type="button" class="s-btn ghost" onclick="setState('pages')">Close</button><button type="button" class="s-btn">Save rules</button></div>
+</div></div>
+
+<div class="wf-note">
+  <b>Lorebook editor.</b> Contents on the left, one entry's dossier in the middle, live tools on the
+  right. Health, Rehearsal/Playback, and Changes swap in for the right rail; Cards and Web are whole
+  alternate views of the same book. Select mode adds the bulk bar above the contents.
+</div>
+<div class="wf-bar" id="wfbar">
+  <button data-s="pages" class="on">Pages</button>
+  <button data-s="cards">Cards</button>
+  <button data-s="web">Web</button>
+  <button data-s="rehearsal">Rehearsal: Try lines</button>
+  <button data-s="playback">Rehearsal: Playback</button>
+  <button data-s="health">Health</button>
+  <button data-s="changes">Changes</button>
+  <button data-s="rules">Book rules</button>
+  <button data-s="select">Select mode</button>
+  <button data-s="empty">Empty book</button>
+  <button data-s="phone">Phone width</button>
+</div>
+<script>
+(function () {
+  var body = document.body;
+  function setState(s) {
+    var real = (s === 'phone') ? 'pages' : s;
+    body.setAttribute('data-state', real);
+    document.getElementById('scrimRules').classList.toggle('show', s === 'rules');
+    document.getElementById('rehearsalBody').style.display = (real === 'playback') ? 'none' : '';
+    document.getElementById('playbackBody').style.display = (real === 'playback') ? '' : 'none';
+    document.documentElement.style.maxWidth = s === 'phone' ? '390px' : '';
+    document.querySelectorAll('#wfbar button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-s') === s); });
+  }
+  window.setState = setState;
+  var q = new URLSearchParams(location.search);
+  setState(q.get('state') || 'pages');
+  document.getElementById('wfbar').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setState(b.getAttribute('data-s')); });
+})();
+</script>
+</body>
+</html>

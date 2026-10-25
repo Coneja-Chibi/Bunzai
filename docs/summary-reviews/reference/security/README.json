@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/security/README",
+  "sourcePath": "docs/reference/security/README.md",
+  "sourceHash": "sha256:30e3b88b7e9cfa112afe3d5beb6f7ae9297a9b141c5d38e6a2a4ee11371a046e",
+  "semanticSummaryHash": "sha256:ec2b42e1910cac922de7c83b5b50119e5f73c8165df9121909d2e0ff172db631",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
+  "reviewedAt": "2026-10-25T01:23:14.298Z"
+}

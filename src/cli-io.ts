@@ -1,0 +1,259 @@
+/**
+ * Pure CLI convert IO policy: flag parse, path identity, container agreement, atomic publish.
+ * No adapter/format logic. Fail closed on in-place writes and container mismatches.
+ */
+import { basename, dirname, extname, isAbsolute, join, normalize, resolve } from "node:path";
+import { realpath, stat } from "node:fs/promises";
+import { StudioWriteError, writeAtomicReplace } from "./studio/atomic-file";
+import { isZipBytes } from "./core/bytes";
+
+export type ConvertFlags =
+  | { ok: true; yes: boolean; strict: boolean; to?: string; rest: string[] }
+  | { ok: false; error: string };
+
+/**
+ * Parse convert tail flags after `<in> <out>`. Accepts `--yes` and `--to <format>`.
+ * Rejects unknown flags, missing --to values, and duplicates.
+ */
+export function parseConvertFlags(args: string[]): ConvertFlags {
+  let yes = false;
+  let strict = false;
+  let to: string | undefined;
+  const rest: string[] = [];
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i]!;
+    if (a === "--yes" || a === "-y") {
+      if (yes) return { ok: false, error: "duplicate --yes" };
+      yes = true;
+      continue;
+    }
+    if (a === "--strict") {
+      if (strict) return { ok: false, error: "duplicate --strict" };
+      strict = true;
+      continue;
+    }
+    if (a === "--to") {
+      if (to !== undefined) return { ok: false, error: "duplicate --to" };
+      const v = args[i + 1];
+      if (!v || v.startsWith("-")) return { ok: false, error: "--to requires a format id" };
+      to = v;
+      i++;
+      continue;
+    }
+    if (a === "--json") {
+      // global flag already consumed by main for mode; allow as rest no-op positionally
+      rest.push(a);
+      continue;
+    }
+    if (a.startsWith("-")) return { ok: false, error: `unknown flag: ${a}` };
+    rest.push(a);
+  }
+  return { ok: true, yes, strict, to, rest };
+}
+
+/** Normalize extension: strip leading dots, lowercase. Empty if none. */
+export function normalizeExtension(pathOrExt: string): string {
+  const s = pathOrExt.trim();
+  if (!s) return "";
+  // Bare extension or ".json" / "json" without a path segment
+  if (!s.includes("/") && !s.includes("\\")) {
+    // "out.charx" still has a basename; use extname when there is a name before the last dot
+    const base = s.includes(".") && !s.startsWith(".") ? extname(s) : s;
+    return base.replace(/^\.+/, "").toLowerCase();
+  }
+  return extname(s).replace(/^\.+/, "").toLowerCase();
+}
+
+/** Windows-aware path normalize for identity compare (lowercase drive+path on win32). */
+export function normalizePathKey(p: string): string {
+  const abs = resolve(p);
+  const n = normalize(abs);
+  return process.platform === "win32" ? n.toLowerCase() : n;
+}
+
+/**
+ * True when input and output refer to the same filesystem target.
+ * Uses realpath when both exist; otherwise compares normalized absolute paths
+ * (parent + basename) so relative/case aliases still match on Windows.
+ */
+export async function pathsAreSame(inputPath: string, outputPath: string): Promise<boolean> {
+  const aKey = normalizePathKey(inputPath);
+  const bKey = normalizePathKey(outputPath);
+  if (aKey === bKey) return true;
+
+  try {
+    const [ra, rb] = await Promise.all([realpath(inputPath), realpath(outputPath)]);
+    const raKey = normalizePathKey(ra);
+    const rbKey = normalizePathKey(rb);
+    if (raKey === rbKey) return true;
+  } catch {
+    /* one or both missing: fall through to parent+name compare */
+  }
+
+  // Prospective output: compare resolved parent + filename
+  const aParent = normalizePathKey(dirname(resolve(inputPath)));
+  const bParent = normalizePathKey(dirname(resolve(outputPath)));
+  const aName = basename(inputPath);
+  const bName = basename(outputPath);
+  const nameEq =
+    process.platform === "win32" ? aName.toLowerCase() === bName.toLowerCase() : aName === bName;
+  return aParent === bParent && nameEq;
+}
+
+export async function pathExists(p: string): Promise<boolean> {
+  try {
+    await stat(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export type OutputGuard =
+  | { ok: true }
+  | { ok: false; error: string; code: "in-place" | "exists" };
+
+/**
+ * Guard convert output path: never in-place; existing output requires --yes.
+ */
+export async function guardConvertOutput(
+  inPath: string,
+  outPath: string,
+  yes: boolean,
+): Promise<OutputGuard> {
+  if (await pathsAreSame(inPath, outPath)) {
+    return {
+      ok: false,
+      code: "in-place",
+      error: "refusing in-place conversion (input and output are the same path)",
+    };
+  }
+  if (await pathExists(outPath) && !yes) {
+    return {
+      ok: false,
+      code: "exists",
+      error: `output already exists: ${outPath} (pass --yes to replace)`,
+    };
+  }
+  return { ok: true };
+}
+
+/** True when text parses as JSON (object or array). */
+export function isJsonText(text: string): boolean {
+  try {
+    const v = JSON.parse(text);
+    return v !== null && (typeof v === "object" || Array.isArray(v));
+  } catch {
+    return false;
+  }
+}
+
+export type ContainerCheck =
+  | { ok: true }
+  | { ok: false; error: string };
+
+/**
+ * Assert adapter output matches requested extension and actual payload shape.
+ * charx/zip: bytes with ZIP magic. json: text that parses as JSON (or bytes that are UTF-8 JSON).
+ */
+export function assertContainerAgreement(
+  requestedExt: string,
+  suggestedExt: string,
+  out: { bytes?: Uint8Array; text?: string },
+): ContainerCheck {
+  const req = normalizeExtension(requestedExt);
+  const sug = normalizeExtension(suggestedExt);
+  if (!req) return { ok: false, error: "output path has no extension" };
+  if (sug && sug !== req) {
+    return {
+      ok: false,
+      error: `adapter suggested .${sug} but output path requests .${req}`,
+    };
+  }
+
+  if (req === "charx" || req === "byaf" || req === "zip") {
+    if (!out.bytes || !isZipBytes(out.bytes)) {
+      return { ok: false, error: `expected ZIP bytes for .${req}` };
+    }
+    return { ok: true };
+  }
+
+  if (req === "json" || req === "lorebook" || req === "txt") {
+    if (out.text !== undefined) {
+      if (!isJsonText(out.text) && req === "json") {
+        return { ok: false, error: "expected JSON text for .json" };
+      }
+      return { ok: true };
+    }
+    if (out.bytes) {
+      try {
+        const text = new TextDecoder("utf-8", { fatal: true }).decode(out.bytes);
+        if (req === "json" && !isJsonText(text)) {
+          return { ok: false, error: "expected JSON bytes for .json" };
+        }
+        return { ok: true };
+      } catch {
+        return { ok: false, error: `expected text payload for .${req}` };
+      }
+    }
+    return { ok: false, error: `empty output for .${req}` };
+  }
+
+  // Other extensions: require non-empty bytes or text
+  if (!out.bytes && out.text === undefined) {
+    return { ok: false, error: "empty adapter output" };
+  }
+  return { ok: true };
+}
+
+/**
+ * Atomic publish: write temp sibling then rename over destination.
+ * On failure, prior destination is unchanged and temp is removed.
+ */
+export async function publishAtomic(
+  finalPath: string,
+  payload: Uint8Array | string,
+): Promise<void> {
+  try {
+    await writeAtomicReplace(finalPath, payload);
+  } catch (e) {
+    // The CLI prints the real OS failure (ENOSPC, EACCES, ...) to the terminal; unwrap
+    // writeAtomicReplace's generic StudioWriteError back to the cause it carries, same as before
+    // this called the shared implementation directly.
+    throw e instanceof StudioWriteError && e.cause !== undefined ? e.cause : e;
+  }
+}
+
+/** True when path is absolute (for callers that care). */
+/** The signals that distinguish a double-click from a shell invocation. */
+export interface LaunchSignals {
+  platform: string;
+  /** True when no command was given at all. `--help` does not count: that was typed on purpose. */
+  noArguments: boolean;
+  stdinIsTty: boolean;
+  stdoutIsTty: boolean;
+}
+
+/**
+ * Should the CLI hold the console open before exiting?
+ *
+ * Double-clicking a console executable in Explorer creates a console FOR that process, so when the
+ * process exits the window disappears with it. The help text renders and vanishes in the same
+ * frame, which reads as "the app flickered and closed" rather than "here is the usage". Holding the
+ * window is the difference between a bug report and an answer.
+ *
+ * Narrow on purpose. It fires only with NO arguments at all, so `--help` and every real command are
+ * untouched, and only when both streams are a terminal, so a pipe, a script, or CI can never hang
+ * on a prompt nobody is there to answer. Windows only: other platforms launch from a shell that
+ * outlives the process, so there is nothing to hold.
+ */
+export function shouldHoldConsole(signals: LaunchSignals): boolean {
+  return signals.platform === "win32"
+    && signals.noArguments
+    && signals.stdinIsTty
+    && signals.stdoutIsTty;
+}
+
+export const isAbs = (p: string): boolean => isAbsolute(p);
+
+/** Path separator for tests/docs. */

@@ -1,0 +1,30 @@
+/* EditorLayout pieces that no frame variant restyles: the platform-lens dim, the filled dot, the rail slot. */
+.dim {
+  opacity: 0.42;
+  filter: grayscale(0.5);
+}
+
+.dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 2px solid var(--bk-line-strong);
+  background: transparent;
+  flex: none;
+}
+
+.full {
+  background: var(--accent);
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.hint {
+  font-size: var(--text-meta);
+  color: var(--stage-text-dim);
+}

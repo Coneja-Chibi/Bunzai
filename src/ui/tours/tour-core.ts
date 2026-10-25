@@ -1,0 +1,99 @@
+/**
+ * Pure sequencing logic for the tour engine (the functional core the TourGuide shell wraps). No DOM,
+ * no prefs, no effects - just: where am I in the tour, what is the next/prev step, is it seen. Every
+ * function is a deterministic map over the tour data + an index, so tour-core.test.ts pins them
+ * directly. The imperative shell (components/tour-guide) supplies the real index state, the DOM
+ * highlight, and the pref read/write.
+ */
+import type { Tour, TourOpenOutcome, TourStep } from "./tour-contract";
+
+/** The settings key that records a tour as completed (namespaced by app, per the prefs convention). */
+export const tourSeenKey = (appId: string): string => `tour.${appId}.seen`;
+
+/** Has this tour been completed before? The shell auto-launches only when this is false. Tolerant:
+ * anything other than the literal `true` (unset, stale shapes) reads as not-yet-seen. */
+export const hasSeenTour = (prefValue: unknown): boolean => prefValue === true;
+
+/** Every tour-seen key currently in a settings record - the "replay all tutorials" reset clears
+ * these so every app's tour auto-launches again on its next visit. Pure: the shell does the write. */
+export const seenTourKeys = (settings: Record<string, unknown>): string[] =>
+  Object.keys(settings).filter((k) => /^tour\..+\.seen$/.test(k));
+
+/** Where the tour is right now, resolved from a raw (possibly out-of-range) index. */
+export interface TourPosition {
+  /** the active step, or null for an empty tour */
+  step: TourStep | null;
+  /** the index clamped into range */
+  index: number;
+  /** number of steps */
+  total: number;
+  /** human 1-based position for "N of M" */
+  human: number;
+  isFirst: boolean;
+  isLast: boolean;
+}
+
+/** Resolve the current position. Tolerant: an empty tour yields a null step; an out-of-range index
+ * clamps into [0, total) rather than throwing (a shell never has to guard the index itself). */
+export function positionAt(tour: Tour, rawIndex: number): TourPosition {
+  const total = tour.steps.length;
+  if (total === 0) return { step: null, index: 0, total: 0, human: 0, isFirst: true, isLast: true };
+  const index = Math.max(0, Math.min(Math.trunc(rawIndex) || 0, total - 1));
+  return {
+    step: tour.steps[index]!,
+    index,
+    total,
+    human: index + 1,
+    isFirst: index === 0,
+    isLast: index === total - 1,
+  };
+}
+
+/** The next index, clamped to the last step (advancing past the end is a no-op, not an overflow). */
+export const nextIndex = (tour: Tour, index: number): number =>
+  Math.min(Math.max(0, index) + 1, Math.max(0, tour.steps.length - 1));
+
+/** The previous index, clamped to the first step. */
+export const prevIndex = (index: number): number => Math.max(0, index - 1);
+
+/** A validity check a shell can use before mounting: a real tour has at least one step. */
+export const isRunnable = (tour: Tour | null | undefined): tour is Tour =>
+  !!tour && Array.isArray(tour.steps) && tour.steps.length > 0;
+
+/**
+ * What an `open: "piece"` act should DO given the live state - pure, so the truth table is pinned
+ * by tests: a piece on the bench wins (focus it), else open a library character, else the studio
+ * is empty and the tour starts a blank card (nothing to open is not nothing to say).
+ */
+export function planOpenAct(openPieceCount: number, libraryCharacterCount: number): TourOpenOutcome {
+  if (openPieceCount > 0) return "focused";
+  if (libraryCharacterCount > 0) return "opened";
+  return "created";
+}
+
+/** The body a step should speak: the outcome variant when one is known, else the base line. */
+export function stepBody(step: TourStep, outcome: TourOpenOutcome | null): string {
+  if (outcome !== null && step.bodyBy?.[outcome] !== undefined) return step.bodyBy[outcome]!;
+  return step.body;
+}
+
+/**
+ * Which tour ids to try for the current view, most specific first. On the Workbench with a piece
+ * open, the piece's KIND owns the "?" (`workbench-lorebook`, `workbench-regex`, ...) and the plain
+ * workbench tour is the fallback, so a kind without its own walkthrough still gets guidance (the
+ * character editor IS the base workbench tour). Everywhere else, the app's own id. Each id carries
+ * its own seen-flag, so first-opening a lorebook can auto-offer its walkthrough even though the
+ * workbench tour was seen long ago.
+ */
+export function tourIdCandidates(
+  activeAppId: string,
+  benchAppId: string | undefined,
+  activePieceKind: string | null,
+): string[] {
+  if (!activeAppId) return [];
+  if (benchAppId !== undefined && activeAppId === benchAppId && activePieceKind !== null) {
+    const kind = activePieceKind === "character" ? null : activePieceKind;
+    return kind ? [`${activeAppId}-${kind}`, activeAppId] : [activeAppId];
+  }
+  return [activeAppId];
+}

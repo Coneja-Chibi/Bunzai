@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/platforms/risu",
+  "sourcePath": "docs/guide/platforms/risu.md",
+  "sourceHash": "sha256:fbc05cf9866cddb57a6140a6b60515d18b681e0ad6b4c0ad3837111ea0a69831",
+  "semanticSummaryHash": "sha256:820bb40a0942f3d8f341bf260a380807ce63fd532eebad794297a4eb7a79ce42",
+  "verdict": "APPROVE",
+  "reviewer": "Coneja-Chibi",
+  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
+  "reviewedAt": "2026-09-22T12:47:47.275Z"
+}

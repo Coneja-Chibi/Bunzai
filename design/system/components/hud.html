@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: HUD and cards</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="hud.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>HUD and cards</b></p>
+    <h1 class="bk-title">HUD parts and cards</h1>
+    <p>Panels, the top HUD strip, readouts, meters, tags and the two card families. Same content in
+    every variant; the idea, not the palette, changes. Check all four themes before you call it done.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="hud.panel">
+    <header>
+      <h2 class="bk-heading">Panels</h2>
+      <span class="bk-tag">plaques, section cards, .s-card, BentoCard</span>
+      <p class="bk-meta">Parts: ui.panel, ui.panel.head, ui.panel.body, ui.panel.foot, ui.frame</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="hud.panel.a" data-taste-title="Crowned plate">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Crowned plate</h3><p>The G3 plaque: a tint crown along the top edge.</p></header>
+        <div class="spec-demo hud-row">
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-crown data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>World knowledge</span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">
+                <span class="bk-name">Harbor Town</span>
+                <div class="bk-meter" data-part="ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+                <div class="hud-panel-facts"><span class="bk-tag" data-part="ui.tag">SillyTavern</span><span class="bk-tag" data-part="ui.tag">~92.6K tok</span></div>
+              </div>
+              <footer class="bk-panel__foot" data-part="ui.panel.foot"><span class="hud-panel-foot-live" data-tone="ok"><span class="bk-dot"></span>Live</span></footer>
+            </div>
+            <span class="bk-meta">Plain</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-crown data-deck="lorebook" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>World knowledge</span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">
+                <span class="bk-name">Harbor Town</span>
+                <div class="bk-meter" data-part="ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+                <div class="hud-panel-facts"><span class="bk-tag" data-part="ui.tag">SillyTavern</span><span class="bk-tag" data-part="ui.tag">~92.6K tok</span></div>
+              </div>
+            </div>
+            <span class="bk-meta">Deck-tinted (lorebook)</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-crown data-deck="lorebook" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head">
+                <span class="bk-label"><span class="bk-bullet"></span>Harbor Town</span>
+                <button type="button" class="hud-icon-btn" aria-label="Split lorebook" data-part="ui.icon-button" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg></button>
+                <button type="button" class="hud-icon-btn" aria-label="Copy lorebook" data-part="ui.icon-button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12"/><rect x="4" y="4" width="12" height="12"/></svg></button>
+              </header>
+              <div class="bk-panel__body" data-part="ui.panel.body">213 entries &middot; <span class="bk-num">~92.6K tok</span></div>
+            </div>
+            <span class="bk-meta">With head actions</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-crown data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head">
+                <button type="button" class="hud-btn" data-ghost aria-expanded="false" aria-controls="hp-a-fold-body" data-part="ui.button" style="padding:0 var(--bk-space-2);min-height:var(--bk-hit-min)">&#9656;</button>
+                <span class="bk-label">Identity</span>
+              </header>
+              <div id="hp-a-fold-body" class="bk-panel__body" data-part="ui.panel.body" hidden>Folded: the body is hidden until the chevron expands it.</div>
+            </div>
+            <span class="bk-meta">Collapsed (BentoCard fold)</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-crown data-deck="character" data-part="ui.panel" aria-selected="true" tabindex="0">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Vera Lune</span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">On the workbench.</div>
+            </div>
+            <span class="bk-meta">Selected</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.panel.b" data-taste-title="Title-bar window">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Title-bar window</h3><p>A head bar carries the label and a readout; the body sits below it, no crown.</p></header>
+        <div class="spec-demo hud-row">
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Harbor Town</span><span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">213</span><span class="bk-readout__label" data-part="ui.readout.label">entries</span></span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">
+                <div class="bk-meter" data-part="ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+              </div>
+            </div>
+            <span class="bk-meta">Plain</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-deck="lorebook" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Harbor Town</span><span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">LV 09</span></span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">~92.6K tok &middot; tide &middot; smuggling</div>
+            </div>
+            <span class="bk-meta">Deck-tinted</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-deck="lorebook" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Harbor Town</span>
+                <button type="button" class="hud-icon-btn" aria-label="Split lorebook" data-part="ui.icon-button" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg></button>
+              </header>
+              <div class="bk-panel__body" data-part="ui.panel.body">213 entries</div>
+            </div>
+            <span class="bk-meta">With head actions</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label">Identity</span><button type="button" class="hud-btn" data-ghost aria-expanded="false" aria-controls="hp-b-fold-body" data-part="ui.button" style="margin-left:auto;padding:0 var(--bk-space-2);min-height:var(--bk-hit-min)">&#9656;</button></header>
+              <div id="hp-b-fold-body" class="bk-panel__body" data-part="ui.panel.body" hidden>Folded.</div>
+            </div>
+            <span class="bk-meta">Collapsed</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-deck="character" data-part="ui.panel" aria-selected="true" tabindex="0">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Vera Lune</span><span class="bk-tag" data-mark data-part="ui.tag">Slot <b>01</b></span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">On the workbench.</div>
+            </div>
+            <span class="bk-meta">Selected</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.panel.c" data-taste-title="Bracket corners">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Bracket corners</h3><p>No full outline: only the corner brackets and a hairline under the head.</p></header>
+        <div class="spec-demo hud-row">
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>World knowledge</span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">
+                <span class="bk-name">Harbor Town</span>
+                <div class="bk-meter" data-part="ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+              </div>
+            </div>
+            <span class="bk-meta">Plain</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-deck="lorebook" data-mark data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Harbor Town</span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">213 entries &middot; ~92.6K tok</div>
+            </div>
+            <span class="bk-meta">Deck-tinted (marked, brackets on)</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-deck="lorebook" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Harbor Town</span>
+                <button type="button" class="hud-icon-btn" aria-label="Copy lorebook" data-part="ui.icon-button" style="margin-left:auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="8" width="12" height="12"/><rect x="4" y="4" width="12" height="12"/></svg></button>
+              </header>
+              <div class="bk-panel__body" data-part="ui.panel.body">213 entries</div>
+            </div>
+            <span class="bk-meta">With head actions</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-part="ui.panel">
+              <header class="bk-panel__head" data-part="ui.panel.head"><button type="button" class="hud-btn" data-ghost aria-expanded="false" aria-controls="hp-c-fold-body" data-part="ui.button" style="padding:0 var(--bk-space-2);min-height:var(--bk-hit-min)">&#9656;</button><span class="bk-label">Identity</span></header>
+              <div id="hp-c-fold-body" class="bk-panel__body" data-part="ui.panel.body" hidden>Folded.</div>
+            </div>
+            <span class="bk-meta">Collapsed</span>
+          </div>
+          <div class="hud-kind">
+            <div class="bk-panel bk-frame hud-panel-demo" data-deck="character" data-part="ui.panel" aria-selected="true" tabindex="0">
+              <header class="bk-panel__head" data-part="ui.panel.head"><span class="bk-label"><span class="bk-bullet"></span>Vera Lune</span></header>
+              <div class="bk-panel__body" data-part="ui.panel.body">On the workbench.</div>
+            </div>
+            <span class="bk-meta">Selected</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="hud.strip">
+    <header>
+      <h2 class="bk-heading">The top HUD strip</h2>
+      <span class="bk-tag">new in G3, StatusBar</span>
+      <p class="bk-meta">Parts: shell.hud, shell.hud.brand, shell.hud.score, shell.hud.meter, shell.hud.keys; slots shell.hud.start, shell.hud.end</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="hud.strip.a" data-taste-title="Full strip">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Full strip</h3><p>G3 as approved: brand and slot, scoreboard, the lore-budget meter, cast pips, key chips.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-strip-wrap">
+            <header class="hud-strip" data-part="shell.hud">
+              <div class="hud-strip-mark" data-slot="shell.hud.start" data-part="shell.hud.brand"><span class="hud-bun" aria-hidden="true"></span><span class="bk-tag" data-part="ui.tag">SLOT <b>01</b> &middot; LV <b>12</b></span></div>
+              <div class="hud-strip-mid">
+                <div class="hud-strip-score" data-part="shell.hud.score">
+                  <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span>
+                  <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">05</span><span class="bk-readout__label" data-part="ui.readout.label">Cast</span></span>
+                  <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">14</span><span class="bk-readout__label" data-part="ui.readout.label">Takes</span></span>
+                </div>
+                <hr class="bk-divider" aria-orientation="vertical">
+                <div class="bk-meter" data-deck="lorebook" data-part="shell.hud.meter ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+                <hr class="bk-divider" aria-orientation="vertical">
+                <span class="bk-pips" data-tone="ok" data-part="ui.pips" aria-label="2 of 5 cast online"><i data-on data-part="ui.pips.pip"></i><i data-on data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i></span>
+              </div>
+              <div class="hud-strip-right" data-slot="shell.hud.end" data-part="shell.hud.keys"><span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span><span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">F</kbd><span data-part="ui.key-chip.label">Favorite</span></span></div>
+            </header>
+          </div>
+          <span class="bk-meta">Desktop width</span>
+          <div class="hud-strip-wrap" data-width="phone">
+            <header class="hud-strip" data-part="shell.hud">
+              <div class="hud-strip-mark" data-part="shell.hud.brand"><span class="hud-bun" aria-hidden="true"></span><span class="bk-tag" data-part="ui.tag">SLOT <b>01</b></span></div>
+              <div class="hud-strip-mid"><div class="hud-strip-score" data-part="shell.hud.score"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span></div></div>
+              <div class="hud-strip-right" data-part="shell.hud.keys"><span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span></div>
+            </header>
+          </div>
+          <span class="bk-meta">Phone width (24.375rem): the strip wraps to a second row</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.strip.b" data-taste-title="Corner readouts">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Corner readouts</h3><p>Brand and slot at left, keys at right; the middle stays empty so the stage breathes, and the meter joins the right group.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-strip-wrap">
+            <header class="hud-strip" data-part="shell.hud">
+              <div class="hud-strip-mark" data-slot="shell.hud.start" data-part="shell.hud.brand"><span class="hud-bun" aria-hidden="true"></span><span class="bk-tag" data-part="ui.tag">SLOT <b>01</b> &middot; LV <b>12</b></span></div>
+              <div class="hud-strip-mid"></div>
+              <div class="hud-strip-right" data-slot="shell.hud.end" data-part="shell.hud.keys">
+                <div class="bk-meter" data-deck="lorebook" data-part="shell.hud.meter ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+                <span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span>
+                <span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">F</kbd><span data-part="ui.key-chip.label">Favorite</span></span>
+              </div>
+            </header>
+          </div>
+          <span class="bk-meta">Desktop width</span>
+          <div class="hud-strip-wrap" data-width="phone">
+            <header class="hud-strip" data-part="shell.hud">
+              <div class="hud-strip-mark" data-part="shell.hud.brand"><span class="hud-bun" aria-hidden="true"></span><span class="bk-tag" data-part="ui.tag">SLOT <b>01</b></span></div>
+              <div class="hud-strip-mid"></div>
+              <div class="hud-strip-right" data-part="shell.hud.keys"><span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span></div>
+            </header>
+          </div>
+          <span class="bk-meta">Phone width</span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.strip.c" data-taste-title="Status rail">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Status rail</h3><p>The readouts live in the bottom status bar instead; the top strip keeps only the brand mark.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-strip-wrap">
+            <header class="hud-strip hud-strip-top" data-part="shell.hud">
+              <div class="hud-strip-mark" data-slot="shell.hud.start" data-part="shell.hud.brand"><span class="hud-bun" aria-hidden="true"></span><span class="bk-tag" data-part="ui.tag">SLOT <b>01</b> &middot; LV <b>12</b></span></div>
+              <div class="hud-strip-mid"></div>
+              <div class="hud-strip-right"></div>
+            </header>
+            <footer class="hud-status-rail" data-part="shell.status">
+              <div class="hud-strip-score" data-part="shell.hud.score">
+                <span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span>
+                <span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">05</span><span class="bk-readout__label" data-part="ui.readout.label">Cast</span></span>
+              </div>
+              <div class="bk-meter" data-deck="lorebook" data-part="shell.hud.meter ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-meter__label" data-part="ui.meter.label">Lore</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+              <span class="bk-pips" data-tone="ok" data-part="ui.pips" aria-label="2 of 5 cast online"><i data-on data-part="ui.pips.pip"></i><i data-on data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i></span>
+              <span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span>
+            </footer>
+          </div>
+          <span class="bk-meta">Desktop width</span>
+          <div class="hud-strip-wrap" data-width="phone">
+            <header class="hud-strip hud-strip-top" data-part="shell.hud">
+              <div class="hud-strip-mark" data-part="shell.hud.brand"><span class="hud-bun" aria-hidden="true"></span><span class="bk-tag" data-part="ui.tag">SLOT <b>01</b></span></div>
+              <div class="hud-strip-mid"></div>
+              <div class="hud-strip-right"></div>
+            </header>
+            <footer class="hud-status-rail" data-part="shell.status">
+              <span class="bk-readout" data-inline data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span>
+              <span class="bk-tag" data-part="ui.key-chip"><kbd data-part="ui.key-chip.key">Enter</kbd><span data-part="ui.key-chip.label">Continue</span></span>
+            </footer>
+          </div>
+          <span class="bk-meta">Phone width</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="hud.readout">
+    <header>
+      <h2 class="bk-heading">Readouts</h2>
+      <span class="bk-tag">.hud-stat, Security stat tiles, Press counts</span>
+      <p class="bk-meta">Parts: ui.readout, ui.readout.value, ui.readout.label</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="hud.readout.a" data-taste-title="Number over label">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Number over label</h3><p>G3's scoreboard stat: a mono number stacked over its label.</p></header>
+        <div class="spec-demo hud-row">
+          <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span>
+          <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">~92.6K</span><span class="bk-readout__label" data-part="ui.readout.label">Tokens</span></span>
+          <div style="display:flex;gap:var(--bk-space-5)">
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span>
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">05</span><span class="bk-readout__label" data-part="ui.readout.label">Cast</span></span>
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">14</span><span class="bk-readout__label" data-part="ui.readout.label">Takes</span></span>
+          </div>
+          <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">00</span><span class="bk-readout__label" data-part="ui.readout.label">Drafts</span></span>
+          <span class="bk-readout" data-part="ui.readout" aria-busy="true"><span class="bk-readout__value" data-part="ui.readout.value">&hellip;</span><span class="bk-readout__label" data-part="ui.readout.label">Loading</span></span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.readout.b" data-taste-title="Dotted leader">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Dotted leader</h3><p>A fact list: label, a dotted leader, the value at the right.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-readout-leader-list">
+            <span class="hud-readout-leader" data-part="ui.readout"><span class="bk-meta" data-part="ui.readout.label">Scenes</span><span class="bk-num" data-part="ui.readout.value">07</span></span>
+            <span class="hud-readout-leader" data-part="ui.readout"><span class="bk-meta" data-part="ui.readout.label">Tokens</span><span class="bk-num" data-part="ui.readout.value">~92.6K</span></span>
+            <span class="hud-readout-leader" data-part="ui.readout"><span class="bk-meta" data-part="ui.readout.label">Cast</span><span class="bk-num" data-part="ui.readout.value">05</span></span>
+            <span class="hud-readout-leader" data-part="ui.readout"><span class="bk-meta" data-part="ui.readout.label">Takes</span><span class="bk-num" data-part="ui.readout.value">14</span></span>
+            <span class="hud-readout-leader" data-part="ui.readout"><span class="bk-meta" data-part="ui.readout.label">Drafts</span><span class="bk-num" data-part="ui.readout.value">00</span></span>
+            <span class="hud-readout-leader" data-part="ui.readout" aria-busy="true"><span class="bk-meta" data-part="ui.readout.label">Release history</span><span class="bk-num" data-part="ui.readout.value">&hellip;</span></span>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.readout.c" data-taste-title="Tile with gauge">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Tile with gauge</h3><p>The number and its label, with a thin meter underneath when the value has a target.</p></header>
+        <div class="spec-demo hud-row">
+          <div class="hud-readout-gauge">
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">42</span><span class="bk-readout__label" data-part="ui.readout.label">Context</span></span>
+            <span class="bk-meter__track" data-part="ui.meter.track" role="meter" aria-label="Context used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:70%"></span></span>
+          </div>
+          <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">~92.6K</span><span class="bk-readout__label" data-part="ui.readout.label">Tokens</span></span>
+          <div style="display:flex;gap:var(--bk-space-5)">
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">07</span><span class="bk-readout__label" data-part="ui.readout.label">Scenes</span></span>
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">05</span><span class="bk-readout__label" data-part="ui.readout.label">Cast</span></span>
+            <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">14</span><span class="bk-readout__label" data-part="ui.readout.label">Takes</span></span>
+          </div>
+          <span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value">00</span><span class="bk-readout__label" data-part="ui.readout.label">Drafts</span></span>
+          <span class="bk-readout" data-part="ui.readout" aria-busy="true"><span class="bk-readout__value" data-part="ui.readout.value">&hellip;</span><span class="bk-readout__label" data-part="ui.readout.label">Loading</span></span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="hud.meter">
+    <header>
+      <h2 class="bk-heading">Meters</h2>
+      <span class="bk-tag">MeterBar, lore budget, take pips, zxcvbn strength</span>
+      <p class="bk-meta">Parts: ui.meter, ui.meter.label, ui.meter.track, ui.meter.fill, ui.meter.value, ui.pips</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="hud.meter.a" data-taste-title="Segmented bar">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Segmented bar</h3><p>G3's cut-segment track, always labeled and valued.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="bk-meter" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, inline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="max-width:20rem"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+          <div class="bk-meter" data-stacked data-deck="character" data-part="ui.meter" role="meter" aria-label="Scene length, stacked" aria-valuemin="0" aria-valuemax="60" aria-valuenow="42" style="max-width:20rem"><span class="bk-meter__row"><span class="bk-meter__label" data-part="ui.meter.label">Scene length</span><span class="bk-meter__value" data-part="ui.meter.value">42 / 60 msgs</span></span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:70%"></span></span></div>
+          <div class="bk-meter" data-size="lg" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, large" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="max-width:20rem"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+          <div style="display:flex;gap:var(--bk-space-4);flex-wrap:wrap">
+            <div class="bk-meter" data-tone="ok" data-part="ui.meter" role="meter" aria-label="Context, healthy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" style="width:11rem"><span class="bk-meter__label" data-part="ui.meter.label">Context</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:30%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">30%</span></div>
+            <div class="bk-meter" data-tone="warn" data-part="ui.meter" role="meter" aria-label="Context, caution" aria-valuemin="0" aria-valuemax="100" aria-valuenow="78" style="width:11rem"><span class="bk-meter__label" data-part="ui.meter.label">Context</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:78%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">78%</span></div>
+            <div class="bk-meter" data-tone="danger" data-part="ui.meter" role="meter" aria-label="Context, over" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width:11rem"><span class="bk-meter__label" data-part="ui.meter.label">Context</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:100%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">over</span></div>
+          </div>
+          <div class="bk-meter" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, empty" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="max-width:20rem"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:0%"></span></span><span class="bk-meter__value" data-part="ui.meter.value">0%</span></div>
+          <span class="bk-pips" data-tone="ok" data-part="ui.pips" aria-label="2 of 5 cast online"><i data-on data-part="ui.pips.pip"></i><i data-on data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i></span>
+          <div style="display:flex;flex-direction:column;gap:var(--bk-space-1);max-width:14rem"><div class="bk-meter" data-tone="warn" data-part="ui.meter" role="meter" aria-label="Password strength" aria-valuemin="0" aria-valuemax="4" aria-valuenow="3"><span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:75%"></span></span></div><span class="bk-meta">Strong. A few unrelated words make a good key.</span></div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.meter.b" data-taste-title="Block ladder">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Block ladder</h3><p>Discrete counted blocks, one per tenth, with the count spelled out beside it.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-meter-ladder" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, inline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="max-width:20rem"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i></i><i></i><i></i><i></i></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+          <div class="hud-meter-ladder" data-stacked data-deck="character" data-part="ui.meter" role="meter" aria-label="Scene length, stacked" aria-valuemin="0" aria-valuemax="60" aria-valuenow="42" style="max-width:20rem;flex-direction:column;align-items:stretch"><span class="bk-meter__row"><span class="bk-meter__label" data-part="ui.meter.label">Scene length</span><span class="bk-meter__value" data-part="ui.meter.value">42 of 60 msgs</span></span><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i></i><i></i><i></i></span></div>
+          <div class="hud-meter-ladder" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, large" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="max-width:20rem"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="hud-meter-ladder-blocks" style="height:var(--bk-meter-h-lg)" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i></i><i></i><i></i><i></i></span><span class="bk-meter__value" data-part="ui.meter.value">64%</span></div>
+          <div style="display:flex;gap:var(--bk-space-4);flex-wrap:wrap">
+            <div class="hud-meter-ladder" data-tone="ok" data-part="ui.meter" role="meter" aria-label="Context, healthy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" style="width:9rem"><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i></i><i></i></span><span class="bk-meter__value" data-part="ui.meter.value">30%</span></div>
+            <div class="hud-meter-ladder" data-tone="warn" data-part="ui.meter" role="meter" aria-label="Context, caution" aria-valuemin="0" aria-valuemax="100" aria-valuenow="78" style="width:9rem"><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i></i></span><span class="bk-meter__value" data-part="ui.meter.value">78%</span></div>
+            <div class="hud-meter-ladder" data-tone="danger" data-part="ui.meter" role="meter" aria-label="Context, over" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width:9rem"><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i></span><span class="bk-meter__value" data-part="ui.meter.value">over</span></div>
+          </div>
+          <div class="hud-meter-ladder" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, empty" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="max-width:20rem"><span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="bk-meter__value" data-part="ui.meter.value">0%</span></div>
+          <span class="bk-pips" data-tone="ok" data-part="ui.pips" aria-label="2 of 5 cast online"><i data-on data-part="ui.pips.pip"></i><i data-on data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i></span>
+          <div style="display:flex;flex-direction:column;gap:var(--bk-space-1);max-width:14rem"><div class="hud-meter-ladder" data-tone="warn" data-part="ui.meter" role="meter" aria-label="Password strength" aria-valuemin="0" aria-valuemax="4" aria-valuenow="3"><span class="hud-meter-ladder-blocks" data-part="ui.meter.track"><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i data-on data-part="ui.meter.fill"></i><i></i></span></div><span class="bk-meta">Strong. A few unrelated words make a good key.</span></div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.meter.c" data-taste-title="Readout first">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Readout first</h3><p>A large mono value leads, with a thin continuous bar underneath it.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-meter-first" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value">64%</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Lore budget</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span></div>
+          <div class="hud-meter-first" data-stacked data-deck="character" data-part="ui.meter" role="meter" aria-label="Scene length" aria-valuemin="0" aria-valuemax="60" aria-valuenow="42"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value">42/60</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Scene length</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:70%"></span></span></div>
+          <div class="hud-meter-first" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, large" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" style="width:12rem"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value" style="font-size:var(--bk-fs-3xl)">64%</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Lore budget</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track" style="height:var(--bk-meter-h-lg)"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span></div>
+          <div style="display:flex;gap:var(--bk-space-4);flex-wrap:wrap">
+            <div class="hud-meter-first" data-tone="ok" data-part="ui.meter" role="meter" aria-label="Context, healthy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" style="width:7rem"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value">30%</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Context</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:30%"></span></span></div>
+            <div class="hud-meter-first" data-tone="warn" data-part="ui.meter" role="meter" aria-label="Context, caution" aria-valuemin="0" aria-valuemax="100" aria-valuenow="78" style="width:7rem"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value">78%</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Context</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:78%"></span></span></div>
+            <div class="hud-meter-first" data-tone="danger" data-part="ui.meter" role="meter" aria-label="Context, over" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width:7rem"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value">over</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Context</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:100%"></span></span></div>
+          </div>
+          <div class="hud-meter-first" data-deck="lorebook" data-part="ui.meter" role="meter" aria-label="Lore budget, empty" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="bk-readout" data-part="ui.readout"><span class="bk-readout__value" data-part="ui.readout.value ui.meter.value">0%</span><span class="bk-readout__label" data-part="ui.readout.label ui.meter.label">Lore budget</span></span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:0%"></span></span></div>
+          <span class="bk-pips" data-tone="ok" data-part="ui.pips" aria-label="2 of 5 cast online"><i data-on data-part="ui.pips.pip"></i><i data-on data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i><i data-part="ui.pips.pip"></i></span>
+          <div class="hud-meter-strength" data-tone="warn" data-part="ui.meter" role="meter" aria-label="Password strength" aria-valuemin="0" aria-valuemax="4" aria-valuenow="3"><span class="bk-meta" data-part="ui.meter.label">Strong. A few unrelated words make a good key.</span><span class="bk-meter__track" data-continuous data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:75%"></span></span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="hud.tag">
+    <header>
+      <h2 class="bk-heading">Tags and badges</h2>
+      <span class="bk-tag">slot/level tags, Live badge, Update available, card-type chip</span>
+      <p class="bk-meta">Parts: ui.tag, ui.badge, ui.badge.dot, ui.badge.label</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="hud.tag.a" data-taste-title="Hairline tag">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Hairline tag</h3><p>G3's boxed mono readout.</p></header>
+        <div class="spec-demo hud-row">
+          <span class="bk-tag" data-part="ui.tag">SLOT <b>02</b></span>
+          <span class="bk-tag" data-part="ui.tag">LV <b>12</b></span>
+          <span class="bk-tag" data-tone="ok" data-part="ui.badge"><span class="bk-dot" data-part="ui.badge.dot"></span><span data-part="ui.badge.label">Live</span></span>
+          <span class="bk-tag" data-tone="warn" data-part="ui.badge"><span class="bk-dot" data-part="ui.badge.dot"></span><span data-part="ui.badge.label">Update available</span></span>
+          <span class="bk-tag" data-deck="character" data-mark data-part="ui.tag">on the workbench</span>
+          <span class="bk-tag" data-deck="character" data-part="ui.tag">staged</span>
+          <span class="bk-tag" data-tone="danger" data-part="ui.badge"><span class="bk-dot" data-part="ui.badge.dot"></span><span data-part="ui.badge.label">damaged</span></span>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="hud.tag.b" data-taste-title="Edge tab">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Edge tab</h3><p>A solid tint tab hangs from the card's top edge, dark ink on tint; status tones use their checked plate pair so paper still reads.</p></header>
+        <div class="spec-demo hud-row">
+          <div class="hud-tag-edge"><span class="hud-tag-edge-tab" data-part="ui.tag">SLOT <b>02</b></span></div>
+          <div class="hud-tag-edge"><span class="hud-tag-edge-tab" data-part="ui.tag">LV <b>12</b></span></div>
+          <div class="hud-tag-edge"><span class="hud-tag-edge-tab" data-plate="ok" data-part="ui.badge"><span class="bk-dot" data-part="ui.badge.dot"></span><span data-part="ui.badge.label">Live</span></span></div>
+          <div class="hud-tag-edge"><span class="hud-tag-edge-tab" data-plate="warn" data-part="ui.badge"><span class="bk-dot" data-part="ui.badge.dot"></span><span data-part="ui.badge.label">Update available</span></span></div>
+          <div class="hud-tag-edge" data-deck="character"><span class="hud-tag-edge-tab" data-part="ui.tag">on the workbench</span></div>
+          <div class="hud-tag-edge" data-deck="character"><span class="hud-tag-edge-tab" data-part="ui.tag">staged</span></div>
+          <div class="hud-tag-edge"><span class="hud-tag-edge-tab" data-plate="danger" data-part="ui.badge"><span class="bk-dot" data-part="ui.badge.dot"></span><span data-part="ui.badge.label">damaged</span></span></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="cards.portrait">
+    <header>
+      <h2 class="bk-heading">Portrait cards</h2>
+      <span class="bk-tag">ContentCharacterCard, SceneCard, PortraitCard, NewStoryCard</span>
+      <p class="bk-meta">Parts: ui.card, ui.card.art, ui.card.crown, ui.card.tag, ui.card.badge, ui.card.title, ui.card.subtitle, ui.card.meta, ui.card.marker, ui.card.actions, library.card.start, scenes.card.takes</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="cards.portrait.a" data-taste-title="Full-bleed art">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Full-bleed art</h3><p>G3's scene card: art fills the card, text sits over a fade at the bottom.</p></header>
+        <div class="spec-demo hud-row" style="gap:var(--bk-frame-reach)">
+          <a class="hud-card bk-frame" data-crown data-deck="character" data-hastakes href="#" data-part="ui.card" aria-current="true">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">V</span></span>
+            <span class="hud-card-badge" data-tone="ok" data-part="ui.card.badge"><span class="bk-dot" aria-hidden="true"></span>Live</span>
+            <span class="bk-tag hud-card-slot" data-part="ui.card.tag">Slot <b>02</b></span>
+            <span class="hud-card-ov">
+              <span class="hud-card-who" data-part="ui.card.subtitle">Vera Lune</span>
+              <h3 class="bk-name hud-card-title" data-part="ui.card.title">The long storm</h3>
+              <div class="hud-card-meta bk-meta" data-part="ui.card.meta"><b>42 msgs</b><span>&middot;</span><span>2h ago</span></div>
+            </span>
+            <span class="hud-card-takes" data-part="scenes.card.takes"><span class="bk-pips" aria-label="Take 2 of 3"><i data-on></i><i data-on></i><i></i></span><span class="bk-meta">Take 2</span></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="persona" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">N</span></span>
+            <span class="bk-tag hud-card-slot" data-part="ui.card.tag">Slot <b>03</b></span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Nuit</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">Cut the deck</h3><div class="hud-card-meta bk-meta" data-part="ui.card.meta"><b>18 msgs</b><span>&middot;</span><span>3 days</span></div></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="character" aria-selected="true" tabindex="0" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"></span>
+            <span class="hud-card-marker" data-part="ui.card.marker">&#9656; selected</span>
+            <span class="bk-tag hud-card-slot" data-mark data-part="ui.card.tag">Slot <b>06</b></span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Vera Lune</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">Who did you let up the stairs?</h3><div class="hud-card-meta bk-meta" data-part="ui.card.meta"><b>64 msgs</b><span>&middot;</span><span>23 days</span></div></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="preset" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"></span>
+            <span class="bk-tag hud-card-slot" data-deck="preset" data-mark data-part="ui.card.tag">on the workbench</span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Corvin Ashe</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">The debt comes due</h3><div class="hud-card-meta bk-meta" data-part="ui.card.meta"><b>9 msgs</b><span>&middot;</span><span>30 days</span></div></span>
+          </a>
+          <button type="button" class="hud-card hud-card-newtile bk-frame" data-part="library.card.start"><span class="bk-name">+ New Scene</span></button>
+          <a class="hud-card bk-frame" data-w="lg" data-crown data-deck="character" href="#" data-part="ui.card scenes.card">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">V</span></span>
+            <span class="hud-card-badge" data-tone="ok" data-part="ui.card.badge"><span class="bk-dot" aria-hidden="true"></span>Live</span>
+            <span class="bk-tag hud-card-slot" data-part="ui.card.tag">Slot <b>01</b> / LV <b>12</b></span>
+            <span class="hud-card-ov">
+              <span class="bk-label">Continue your story</span>
+              <h2 class="bk-name hud-card-title" style="font-size:var(--bk-fs-xl)" data-part="ui.card.title">The long storm</h2>
+              <span class="bk-meta" data-part="ui.card.subtitle">Vera Lune &middot; picks up on Take 2</span>
+              <div class="bk-meter" data-stacked data-deck="character" role="meter" aria-label="Scene length" aria-valuemin="0" aria-valuemax="60" aria-valuenow="42" style="margin-top:var(--bk-space-2)"><span class="bk-meter__row"><span class="bk-meter__label">Length</span><span class="bk-meter__value">42</span></span><span class="bk-meter__track"><span class="bk-meter__fill" style="--bk-value:70%"></span></span></div>
+              <button type="button" class="hud-btn" style="margin-top:var(--bk-space-3)" data-part="ui.card.actions ui.button">Continue Story</button>
+            </span>
+          </a>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="cards.portrait.b" data-taste-title="Art and plate">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Art and plate</h3><p>Art fills the top two thirds; a solid info plate with a title bar sits below it.</p></header>
+        <div class="spec-demo hud-row" style="gap:var(--bk-frame-reach)">
+          <a class="hud-card bk-frame" data-crown data-deck="character" href="#" data-part="ui.card" aria-current="true">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">V</span></span>
+            <span class="hud-card-badge" data-tone="ok" data-part="ui.card.badge"><span class="bk-dot" aria-hidden="true"></span>Live</span>
+            <span class="bk-tag hud-card-slot" data-part="ui.card.tag">Slot <b>02</b></span>
+            <span class="hud-card-plate">
+              <span class="hud-card-plate-head"><h3 class="bk-name" style="font-size:var(--bk-fs-sm)" data-part="ui.card.title">The long storm</h3><span class="bk-meta" data-part="ui.card.subtitle">Vera Lune</span></span>
+              <span class="hud-card-plate-body"><span class="bk-meta" data-part="ui.card.meta"><b>42 msgs</b> &middot; 2h ago</span></span>
+            </span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="persona" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">N</span></span>
+            <span class="bk-tag hud-card-slot" data-part="ui.card.tag">Slot <b>03</b></span>
+            <span class="hud-card-plate"><span class="hud-card-plate-head"><h3 class="bk-name" style="font-size:var(--bk-fs-sm)" data-part="ui.card.title">Cut the deck</h3><span class="bk-meta" data-part="ui.card.subtitle">Nuit</span></span><span class="hud-card-plate-body"><span class="bk-meta" data-part="ui.card.meta">18 msgs &middot; 3 days</span></span></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="character" aria-selected="true" tabindex="0" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"></span>
+            <span class="hud-card-marker" data-part="ui.card.marker">&#9656; selected</span>
+            <span class="bk-tag hud-card-slot" data-mark data-part="ui.card.tag">Slot <b>06</b></span>
+            <span class="hud-card-plate"><span class="hud-card-plate-head"><h3 class="bk-name" style="font-size:var(--bk-fs-sm)" data-part="ui.card.title">Who did you let up the stairs?</h3><span class="bk-meta" data-part="ui.card.subtitle">Vera Lune</span></span><span class="hud-card-plate-body"><span class="bk-meta" data-part="ui.card.meta">64 msgs &middot; 23 days</span></span></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="preset" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"></span>
+            <span class="bk-tag hud-card-slot" data-deck="preset" data-mark data-part="ui.card.tag">on the workbench</span>
+            <span class="hud-card-plate"><span class="hud-card-plate-head"><h3 class="bk-name" style="font-size:var(--bk-fs-sm)" data-part="ui.card.title">The debt comes due</h3><span class="bk-meta" data-part="ui.card.subtitle">Corvin Ashe</span></span><span class="hud-card-plate-body"><span class="bk-meta" data-part="ui.card.meta">9 msgs &middot; 30 days</span></span></span>
+          </a>
+          <button type="button" class="hud-card hud-card-newtile bk-frame" data-part="library.card.start"><span class="bk-name">+ New Scene</span></button>
+          <a class="hud-card bk-frame" data-w="lg" data-crown data-deck="character" href="#" data-part="ui.card scenes.card">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">V</span></span>
+            <span class="hud-card-badge" data-tone="ok" data-part="ui.card.badge"><span class="bk-dot" aria-hidden="true"></span>Live</span>
+            <span class="hud-card-plate"><span class="hud-card-plate-head"><h2 class="bk-name" style="font-size:var(--bk-fs-lg)" data-part="ui.card.title">The long storm</h2><span class="bk-meta" data-part="ui.card.subtitle">Vera Lune &middot; picks up on Take 2</span></span><span class="hud-card-plate-body"><button type="button" class="hud-btn" data-part="ui.card.actions ui.button">Continue Story</button></span></span>
+          </a>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="cards.portrait.c" data-taste-title="Art and stat column">
+        <header><span class="bk-label">Variant <b>C</b></span><h3 class="bk-name">Art and stat column</h3><p>Art fills the card; a narrow column of mono readouts rides over its right edge.</p></header>
+        <div class="spec-demo hud-row" style="gap:var(--bk-frame-reach)">
+          <a class="hud-card bk-frame" data-crown data-deck="character" data-hastakes href="#" data-part="ui.card" aria-current="true">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">V</span></span>
+            <span class="hud-card-badge" data-tone="ok" data-part="ui.card.badge"><span class="bk-dot" aria-hidden="true"></span>Live</span>
+            <span class="hud-card-stats" data-part="ui.card.meta"><span class="bk-readout"><span class="bk-readout__value">42</span><span class="bk-readout__label">msgs</span></span><span class="bk-readout"><span class="bk-readout__value">2h</span><span class="bk-readout__label">ago</span></span></span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Vera Lune</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">The long storm</h3></span>
+            <span class="hud-card-takes" data-part="scenes.card.takes"><span class="bk-pips" aria-label="Take 2 of 3"><i data-on></i><i data-on></i><i></i></span><span class="bk-meta">Take 2</span></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="persona" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">N</span></span>
+            <span class="hud-card-stats" data-part="ui.card.meta"><span class="bk-readout"><span class="bk-readout__value">18</span><span class="bk-readout__label">msgs</span></span></span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Nuit</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">Cut the deck</h3></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="character" aria-selected="true" tabindex="0" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"></span>
+            <span class="hud-card-marker" data-part="ui.card.marker">&#9656; selected</span>
+            <span class="hud-card-stats" data-part="ui.card.meta"><span class="bk-readout"><span class="bk-readout__value">64</span><span class="bk-readout__label">msgs</span></span></span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Vera Lune</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">Who did you let up the stairs?</h3></span>
+          </a>
+          <a class="hud-card bk-frame" data-deck="preset" href="#" data-part="ui.card">
+            <span class="hud-card-art" data-part="ui.card.art"></span>
+            <span class="bk-tag hud-card-slot" data-deck="preset" data-mark data-part="ui.card.tag">on the workbench</span>
+            <span class="hud-card-ov"><span class="hud-card-who" data-part="ui.card.subtitle">Corvin Ashe</span><h3 class="bk-name hud-card-title" data-part="ui.card.title">The debt comes due</h3></span>
+          </a>
+          <button type="button" class="hud-card hud-card-newtile bk-frame" data-part="library.card.start"><span class="bk-name">+ New Scene</span></button>
+          <a class="hud-card bk-frame" data-w="lg" data-crown data-deck="character" href="#" data-part="ui.card scenes.card">
+            <span class="hud-card-art" data-part="ui.card.art"><span class="hud-card-mono">V</span></span>
+            <span class="hud-card-badge" data-tone="ok" data-part="ui.card.badge"><span class="bk-dot" aria-hidden="true"></span>Live</span>
+            <span class="hud-card-stats" data-part="ui.card.meta"><span class="bk-readout"><span class="bk-readout__value">42</span><span class="bk-readout__label">msgs</span></span><span class="bk-readout"><span class="bk-readout__value">02</span><span class="bk-readout__label">takes</span></span></span>
+            <span class="hud-card-ov"><h2 class="bk-name hud-card-title" style="font-size:var(--bk-fs-lg)" data-part="ui.card.title">The long storm</h2><span class="bk-meta" data-part="ui.card.subtitle">Vera Lune &middot; picks up on Take 2</span><button type="button" class="hud-btn" style="margin-top:var(--bk-space-2)" data-part="ui.card.actions ui.button">Continue Story</button></span>
+          </a>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="spec-item" data-taste-item="cards.asset">
+    <header>
+      <h2 class="bk-heading">Asset cards</h2>
+      <span class="bk-tag">AssetCard (lorebook), PresetCard, RegexCard, persona Profiles card</span>
+      <p class="bk-meta">Parts: ui.card, library.card.switch, library.card.facts, library.card.menu</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="cards.asset.a" data-taste-title="Spine">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Spine</h3><p>G3's spine card: a tint bar runs down the left edge.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-asset hud-asset-spine" data-deck="lorebook" data-part="ui.card">
+            <div class="hud-asset-body">
+              <button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Harbor Town</button>
+              <div class="hud-asset-lv" data-part="ui.card.meta">213 entries &middot; LV 9</div>
+              <div class="hud-asset-facts" data-part="library.card.facts"><span class="bk-tag" data-part="ui.tag">SillyTavern</span><span class="bk-tag" data-part="ui.tag">~92.6K tok</span><span class="bk-tag" data-part="ui.tag">tide</span><span class="bk-tag" data-part="ui.tag">smuggling</span></div>
+            </div>
+            <div class="hud-asset-foot">
+              <button type="button" role="switch" aria-checked="true" class="bk-dot" data-tone="ok" data-part="library.card.switch" aria-label="Lorebook on"></button>
+              <span class="bk-meta">On</span>
+              <span class="hud-asset-spacer"></span>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Split</button>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Copy</button>
+            </div>
+          </div>
+          <div class="hud-asset hud-asset-spine" data-deck="preset" data-part="ui.card">
+            <div class="hud-asset-body">
+              <button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Moonlit</button>
+              <div class="hud-asset-lv" data-part="ui.card.meta">1.0 temp &middot; 47 prompts</div>
+              <div class="hud-asset-facts" data-part="library.card.facts"><span class="bk-tag" data-deck="preset" data-mark data-part="ui.tag">on the workbench</span></div>
+            </div>
+            <div class="hud-asset-foot"><button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Duplicate</button></div>
+          </div>
+          <div class="hud-asset hud-asset-spine" data-deck="regex" data-part="ui.card">
+            <div class="hud-asset-body">
+              <button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Narration Cleanup</button>
+              <div class="hud-asset-lv" data-part="ui.card.meta">5 rules &middot; 4 on</div>
+              <div class="hud-asset-facts" data-part="library.card.facts"><span class="bk-tag" data-tone="warn" data-part="ui.tag">1 slow</span></div>
+            </div>
+            <div class="hud-asset-foot">
+              <button type="button" role="switch" aria-checked="true" class="bk-dot" data-tone="ok" data-part="library.card.switch" aria-label="Regex set on"></button><span class="bk-meta">On</span>
+              <span class="hud-asset-spacer"></span>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Split</button>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Copy</button>
+            </div>
+          </div>
+          <div class="hud-asset hud-asset-spine" data-deck="persona" style="width:11rem" data-part="ui.card">
+            <div class="hud-asset-body">
+              <button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Wren</button>
+              <div class="hud-asset-facts" data-part="library.card.facts"><span class="bk-tag" data-part="ui.tag">Default</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="cards.asset.b" data-taste-title="Cartridge">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Cartridge</h3><p>A top label strip carries the name and a level readout; facts sit below, tools in the foot.</p></header>
+        <div class="spec-demo hud-col">
+          <div class="hud-asset hud-asset-spine" data-deck="lorebook" data-part="ui.card">
+            <div class="hud-asset-cart-head"><button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Harbor Town</button><span class="bk-tag" data-part="ui.tag">LV <b>09</b></span></div>
+            <div class="hud-asset-body">
+              <div class="hud-asset-lv" data-part="ui.card.meta">213 entries &middot; ~92.6K tok</div>
+              <div class="hud-asset-facts" data-part="library.card.facts"><span class="bk-tag" data-part="ui.tag">SillyTavern</span><span class="bk-tag" data-part="ui.tag">tide</span><span class="bk-tag" data-part="ui.tag">smuggling</span></div>
+            </div>
+            <div class="hud-asset-foot">
+              <button type="button" role="switch" aria-checked="true" class="bk-dot" data-tone="ok" data-part="library.card.switch" aria-label="Lorebook on"></button>
+              <span class="bk-meta">On</span>
+              <span class="hud-asset-spacer"></span>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Split</button>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Copy</button>
+            </div>
+          </div>
+          <div class="hud-asset hud-asset-spine" data-deck="preset" data-part="ui.card">
+            <div class="hud-asset-cart-head"><button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Moonlit</button><span class="bk-tag" data-deck="preset" data-mark data-part="ui.tag">on the workbench</span></div>
+            <div class="hud-asset-body"><div class="hud-asset-lv" data-part="ui.card.meta">1.0 temp &middot; 47 prompts</div></div>
+            <div class="hud-asset-foot"><button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Duplicate</button></div>
+          </div>
+          <div class="hud-asset hud-asset-spine" data-deck="regex" data-part="ui.card">
+            <div class="hud-asset-cart-head"><button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Narration Cleanup</button><span class="bk-tag" data-tone="warn" data-part="ui.tag">1 slow</span></div>
+            <div class="hud-asset-body"><div class="hud-asset-lv" data-part="ui.card.meta">5 rules &middot; 4 on</div></div>
+            <div class="hud-asset-foot">
+              <button type="button" role="switch" aria-checked="true" class="bk-dot" data-tone="ok" data-part="library.card.switch" aria-label="Regex set on"></button><span class="bk-meta">On</span>
+              <span class="hud-asset-spacer"></span>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Split</button>
+              <button type="button" class="hud-btn" data-ghost data-part="library.card.menu">Copy</button>
+            </div>
+          </div>
+          <div class="hud-asset hud-asset-spine" data-deck="persona" style="width:11rem" data-part="ui.card">
+            <div class="hud-asset-cart-head"><button type="button" class="bk-name" style="background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit" data-part="ui.card.title">Wren</button><span class="bk-tag" data-part="ui.tag">Default</span></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

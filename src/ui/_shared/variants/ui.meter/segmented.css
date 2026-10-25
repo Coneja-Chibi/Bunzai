@@ -1,0 +1,5 @@
+/** ui.meter segmented: progress in notched cells, the HUD gauge. */
+html[data-surface-ui-meter="segmented"] [role="progressbar"]:not(.host-protected, .host-protected *) { position: relative; display: block; height: .75rem; border: 1px solid var(--bk-line-control); background: var(--bk-surface-ink); overflow: hidden; }
+html[data-surface-ui-meter="segmented"] [role="progressbar"]:not(.host-protected, .host-protected *) > i { background: var(--bk-role-brand); }
+html[data-surface-ui-meter="segmented"] [role="progressbar"]:not(.host-protected, .host-protected *)::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(to right, transparent 0 9px, var(--bk-surface-ink) 9px 11px); }

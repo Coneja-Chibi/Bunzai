@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Tools catalog</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="tools.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Tools catalog</h1>
+    <p>The Apps catalog and its four catalog-only tools: CSS Workshop, Help / Docs, the Macro Lab, and HTML View.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="tools.catalog">
+    <header>
+      <h2 class="bk-heading">Tools catalog</h2>
+      <span class="bk-tag">Apps catalog, CssWorkshop, Docs, MacroLab, HtmlView</span>
+      <p class="bk-meta">Parts: catalog.room, catalog.card, docs.room, macrolab.*, css-workshop.*, htmlview.*</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="tools.catalog.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Rooms</h3>
+          <p>Each tool is drawn as its own room in the stage, reached from the catalog grid.</p></header>
+        <div class="spec-screen tl-screen" data-state="catalog">
+<div class="tl-app" data-part="shell.app">
+  <header class="tl-hud" data-part="shell.hud">
+    <div class="tl-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="tl-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="tl-hud-mid">
+      <div class="tl-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="tl-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close tool</span></span>
+    </div>
+  </header>
+  <div class="tl-body">
+    <nav class="tl-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="tl-dock-brand" data-part="shell.dock.brand">
+        <svg class="tl-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="tl-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="tl-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="tl-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="tl-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="tl-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="tl-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="tl-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="tl-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="tl-dock-app tl-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="tl-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="tl-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="tl-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="tl-stage bk-stage" data-part="shell.stage">
+
+        <div class="tl-shell" data-variant="room" data-part="catalog.room">
+        <div class="tl-catalog" data-part="catalog.room">
+          <p class="bk-label">Apps catalog</p>
+          <h2 class="bk-heading">Catalog-only tools</h2>
+          <p class="bk-meta">Opened from here, not the everyday Dock.</p>
+          <div class="tl-catgrid">          <article class="bk-panel bk-frame tl-cat-card" data-deck="fog" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">App style</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">CSS Workshop</h4></div>
+          </article>
+          <article class="bk-panel bk-frame tl-cat-card" data-deck="fog" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">App docs</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">Help / Docs</h4></div>
+          </article>
+          <article class="bk-panel bk-frame tl-cat-card" data-deck="lorebook" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">App macros</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">Macro Lab</h4></div>
+          </article>
+          <article class="bk-panel bk-frame tl-cat-card" data-deck="fog" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">A drawing at full size</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">HTML View</h4></div>
+          </article>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="css">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">App style · catalog-only</span><h2 class="bk-heading">CSS Workshop</h2></div>
+            
+            <nav class="tl-toolkeys"></nav>
+          </header>
+          <p class="bk-meta">Simple mode is the guided ladder. Advanced is code plus rule breakdown. Import a .css file to load it into Advanced.</p>
+          <div class="tl-toolacts">
+            <nav class="tl-modeset" role="group" aria-label="Mode">
+              <button type="button" class="bk-item tl-modebtn" aria-selected="true">Simple</button>
+              <button type="button" class="bk-item tl-modebtn">Advanced</button>
+            </nav>
+            <button type="button" class="bk-item tl-btn">Copy CSS</button>
+            <button type="button" class="bk-item tl-btn-ghost">Download .css</button>
+            <button type="button" class="bk-item tl-btn-ghost">Import .css</button>
+            <button type="button" class="bk-item tl-btn-ghost" data-set-state="css-clear">Clear draft</button>
+          </div>
+          <div class="tl-wkgrid">
+            <div class="tl-wksimple">
+              <section class="bk-panel bk-frame tl-wkcard" data-deck="fog">
+                <div class="bk-panel__head"><h4 class="bk-name">Starters</h4></div>
+                <div class="bk-panel__body tl-startergrid">
+                  <button type="button" class="bk-item tl-startercard">Rounded chat bubble</button>
+                  <button type="button" class="bk-item tl-startercard">Parchment card</button>
+                  <button type="button" class="bk-item tl-startercard">Neon frame</button>
+                  <button type="button" class="bk-item tl-startercard">Minimal quiet</button>
+                </div>
+              </section>
+            </div>
+            <div class="tl-wkadvanced">
+              <section class="bk-panel bk-frame tl-wkcard">
+                <div class="bk-panel__head"><h4 class="bk-name">Source</h4></div>
+                <div class="bk-panel__body"><textarea class="tl-code">.bubble {
+  border-radius: 12px;
+  background: #1a1620;
+  padding: 12px 16px;
+}</textarea></div>
+              </section>
+              <section class="bk-panel bk-frame tl-wkcard">
+                <div class="bk-panel__head"><h4 class="bk-name">Rules</h4><span class="bk-meta">1 rule</span></div>
+                <div class="bk-panel__body"><p class="bk-meta">.bubble &middot; 3 declarations</p></div>
+              </section>
+            </div>
+            <aside>
+              <section class="bk-panel bk-frame tl-wkcard" data-deck="lorebook">
+                <div class="bk-panel__head"><h4 class="bk-name">Sealed preview</h4></div>
+                <div class="bk-panel__body"><div class="tl-sealedbox">a bubble</div></div>
+              </section>
+              <p class="bk-meta">Standalone draft. Bunraku never applies this to the app chrome. Copy or download to paste on Chub, Janitor, Risu, or anywhere that takes CSS.</p>
+            </aside>
+          </div>
+          <div class="tl-scrim">
+            <div class="bk-frame tl-dlg" data-crown data-tone="danger">
+              <h3 class="bk-heading">Clear the draft?</h3>
+              <p class="bk-meta">Your unsaved CSS goes away.</p>
+              <div class="tl-dlgrow">
+                <button type="button" class="bk-item tl-btn-ghost" data-set-state="css-loaded">Keep</button>
+                <button type="button" class="bk-item tl-btn-danger" data-tone="danger">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="docs">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">App docs · catalog-only</span><h2 class="bk-heading">Help / Docs</h2></div>
+            
+            <nav class="tl-toolkeys"></nav>
+          </header>
+          <div class="tl-docsroom" data-part="docs.room">
+            <aside class="tl-docnav">
+              <input class="tl-input" placeholder="Search docs...">
+              <p class="bk-label">User docs</p>
+              <button type="button" class="bk-item tl-docrow">Getting started</button>
+              <button type="button" class="bk-item tl-docrow" aria-selected="true">Edit a piece</button>
+              <button type="button" class="bk-item tl-docrow">Build a lorebook</button>
+              <button type="button" class="bk-item tl-docrow">Create and manage personas</button>
+              <button type="button" class="bk-item tl-docrow">Edit a regex set</button>
+              <p class="bk-label">Developer docs</p>
+              <button type="button" class="bk-item tl-docrow">Architecture</button>
+              <button type="button" class="bk-item tl-docrow">Kit content tools</button>
+              <button type="button" class="bk-item tl-docrow">Decision records</button>
+            </aside>
+            <main class="tl-doccontent">
+              <span class="bk-label">User docs</span>
+              <h2 class="bk-heading">Edit a piece</h2>
+              <p class="bk-meta">Open a piece on the Workbench, change it through the Grid or Steps view, and save your draft explicitly before you close the tab.</p>
+              <h3 class="bk-name">The short version</h3>
+              <p class="bk-meta">Editing happens on the Workbench. A piece opens there as its own tab, already filled in with whatever your import carried, or with the blank template you started from, and it stays a private draft until you save it.</p>
+              <h3 class="bk-name">The editor panels</h3>
+              <p class="bk-meta">A character's editor opens with a strip of platform tabs above the fields. The first, labeled Bunraku, is the full card with nothing hidden.</p>
+              <h3 class="bk-name">Saving, and what happens if you don't</h3>
+              <p class="bk-meta">Every editor requires a name before Save does anything. Save writes your whole draft, not just what changed, so fields you haven't touched round-trip byte-for-byte.</p>
+            </main>
+            <aside class="tl-doctoc">
+              <a class="bk-item tl-tocrow" aria-current="true">The short version</a>
+              <a class="bk-item tl-tocrow">The editor panels</a>
+              <a class="bk-item tl-tocrow">Saving, and what happens if you don't</a>
+              <a class="bk-item tl-tocrow">Tips</a>
+            </aside>
+          </div>
+          <nav class="tl-mobiledocs">
+            <button type="button" class="bk-item tl-btn-ghost" data-set-state="docs-browse">Browse</button>
+            <span class="tl-mobilet"><b class="bk-name">Edit a piece</b><small class="bk-meta">User docs</small></span>
+            <button type="button" class="bk-item tl-btn-ghost" data-set-state="docs-sections">Sections</button>
+          </nav>
+          <div class="tl-sheet tl-sheet-browse">
+            <div class="tl-sheetpanel">
+              <p class="bk-heading">Browse docs</p>
+              <input class="tl-input" placeholder="Search docs...">
+              <p class="bk-label">User docs</p>
+              <a class="bk-item tl-docrow" aria-current="true">Edit a piece</a>
+              <a class="bk-item tl-docrow">Build a lorebook</a>
+              <a class="bk-item tl-docrow">Edit a regex set</a>
+            </div>
+          </div>
+          <div class="tl-sheet tl-sheet-sections">
+            <div class="tl-sheetpanel">
+              <p class="bk-heading">On this page</p>
+              <a class="bk-item tl-docrow" aria-current="true">The short version</a>
+              <a class="bk-item tl-docrow">The editor panels</a>
+              <a class="bk-item tl-docrow">Saving, and what happens if you don't</a>
+              <a class="bk-item tl-docrow">Tips</a>
+            </div>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="macro">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">App macros · catalog-only</span><h2 class="bk-heading">What does this macro actually do?</h2></div>
+            
+            <nav class="tl-toolkeys"></nav>
+          </header>
+          <p class="bk-meta">Write macro text on the left. The right tells you what each token means on the platform you picked, and, when you have that platform installed, what its own engine turns your text into.</p>
+          <nav class="tl-lensrow" role="radiogroup" aria-label="Platform"><button type="button" class="bk-item tl-lensbtn" aria-selected="true">RoleCall</button><button type="button" class="bk-item tl-lensbtn">SillyTavern</button><button type="button" class="bk-item tl-lensbtn">RisuAI</button><button type="button" class="bk-item tl-lensbtn">Lumiverse</button><button type="button" class="bk-item tl-lensbtn">Agnai</button></nav>
+          <div class="tl-mlgrid">
+            <section class="bk-panel bk-frame tl-wkcard" data-deck="lorebook">
+              <div class="bk-panel__head"><h4 class="bk-name">Your text</h4><span class="bk-meta">54 characters</span></div>
+              <div class="bk-panel__body">
+                <textarea class="tl-code">Hello {{char}}, I am {{user}}. Today is {{date}}.</textarea>
+                <p class="bk-name tl-sublabel">Pretend context</p>
+                <p class="bk-meta">A macro that names somebody needs somebody to name. Leave these empty and each engine falls back to its own placeholder.</p>
+                <div class="tl-whorow">
+                  <label class="bk-label">{{user}} is</label><input class="tl-input" placeholder="User">
+                  <label class="bk-label">{{char}} is</label><input class="tl-input" placeholder="Character">
+                </div>
+                <button type="button" class="bk-item tl-btn-ghost">Add a variable</button>
+              </div>
+            </section>
+            <div>
+              <section class="bk-panel bk-frame tl-wkcard tl-engbox">
+                <div class="bk-panel__body">
+                  <div class="tl-erow">
+                    <h4 class="bk-name">RoleCall engine</h4>
+                    <span class="bk-meta tl-engstatus">not installed</span>
+                    <button type="button" class="bk-item tl-btn" disabled aria-disabled="true">Resolve</button>
+                  </div>
+                  <p class="bk-meta">Point Settings &gt; Studio at a checkout, or set BUNRAKU_ROLECALL_ROOT, to resolve for real.</p>
+                </div>
+              </section>
+              <section class="bk-panel bk-frame tl-wkcard">
+                <nav class="tl-reftabs" role="tablist">
+                  <button type="button" class="bk-item tl-reftab" role="tab" aria-selected="true">Reading</button>
+                  <button type="button" class="bk-item tl-reftab" role="tab">Macro bible</button>
+                  <button type="button" class="bk-item tl-reftab" role="tab">Operations</button>
+                </nav>
+                <div class="tl-refview" data-ref="reading">
+                  <p class="bk-meta"><code>{{char}}</code> the character's name</p>
+                  <p class="bk-meta"><code>{{user}}</code> your persona's name</p>
+                  <p class="bk-meta"><code>{{date}}</code> today's date &middot; also works on all 5 platforms</p>
+                </div>
+                <div class="tl-refview" data-ref="bible" hidden>
+                  <p class="bk-meta">Click to copy</p>
+                  <div class="tl-macroref"><span class="bk-tag">{{char}}</span><span class="bk-tag">{{user}}</span><span class="bk-tag">{{time}}</span><span class="bk-tag">{{roll:XdY}}</span><span class="bk-tag">{{random:a,b}}</span></div>
+                </div>
+                <div class="tl-refview" data-ref="ops" hidden>
+                  <table class="tl-opstable">
+                    <tr><th class="bk-label">Operation</th><th class="bk-label">RoleCall</th><th class="bk-label">SillyTavern</th><th class="bk-label">RisuAI</th></tr>
+                    <tr><td class="bk-meta">Dice roll</td><td class="bk-meta">{{roll:XdY}}</td><td class="bk-meta">{{roll:XdY}}</td><td class="bk-meta tl-empty">none</td></tr>
+                    <tr><td class="bk-meta">Pick random</td><td class="bk-meta">{{random:a,b}}</td><td class="bk-meta">{{random:a,b}}</td><td class="bk-meta">{{pick:a,b}}</td></tr>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="html">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">A drawing at full size · catalog-only</span><h2 class="bk-heading">HTML View</h2></div>
+            
+            <nav class="tl-toolkeys"><span class="bk-tag" data-part="ui.key-chip"><b>Esc</b> Fullscreen exit</span></nav>
+          </header>
+          <div class="tl-htmldraw">
+            <div class="tl-sealed">
+              <div class="tl-letter"><h5 class="bk-heading">The Lighthouse</h5><p class="bk-meta">Keeper's Log, entry three.</p></div>
+            </div>
+          </div>
+          <button type="button" class="bk-item tl-btn-ghost" data-set-state="html-fullscreen">Fullscreen</button>
+          <div class="tl-fsview">
+            <div class="tl-fsbar"><span class="bk-meta">Lighthouse letterhead</span><button type="button" class="bk-item tl-btn-ghost" data-set-state="html-drawing">Exit fullscreen (Esc)</button></div>
+            <div class="tl-sealed tl-sealed-full">
+              <div class="tl-letter"><h5 class="bk-heading">The Lighthouse</h5><p class="bk-meta">Keeper's Log, entry three.</p></div>
+            </div>
+          </div>
+        </div>
+        </div>    </main>
+  </div>
+  <footer class="tl-status" data-part="shell.status">
+    <span class="tl-status-item" data-part="shell.status.item">Apps catalog</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Rooms">
+          <button type="button" class="spec-chip" data-set-state="catalog" aria-pressed="true">Apps catalog</button>
+          <button type="button" class="spec-chip" data-set-state="css-loaded">CSS Workshop: Simple</button>
+          <button type="button" class="spec-chip" data-set-state="css-advanced">CSS Workshop: Advanced</button>
+          <button type="button" class="spec-chip" data-set-state="css-clear">CSS Workshop: Clear dialog</button>
+          <button type="button" class="spec-chip" data-set-state="docs-loaded">Docs: desktop</button>
+          <button type="button" class="spec-chip" data-set-state="docs-browse">Docs: Browse sheet</button>
+          <button type="button" class="spec-chip" data-set-state="docs-sections">Docs: Sections sheet</button>
+          <button type="button" class="spec-chip" data-set-state="macro-loaded">Macro Lab: Reading</button>
+          <button type="button" class="spec-chip" data-set-state="macro-bible">Macro Lab: Bible</button>
+          <button type="button" class="spec-chip" data-set-state="macro-ops">Macro Lab: Operations</button>
+          <button type="button" class="spec-chip" data-set-state="macro-installed">Macro Lab: Engine installed</button>
+          <button type="button" class="spec-chip" data-set-state="html-drawing">HTML View: drawing</button>
+          <button type="button" class="spec-chip" data-set-state="html-fullscreen">HTML View: fullscreen</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="tools.catalog.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Cartridges</h3>
+          <p>The catalog shows tools as cartridge cards; each tool opens with a shared header (name, readouts, keys).</p></header>
+        <div class="spec-screen tl-screen" data-state="catalog">
+<div class="tl-app" data-part="shell.app">
+  <header class="tl-hud" data-part="shell.hud">
+    <div class="tl-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="tl-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="tl-hud-mid">
+      <div class="tl-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="tl-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close tool</span></span>
+    </div>
+  </header>
+  <div class="tl-body">
+    <nav class="tl-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="tl-dock-brand" data-part="shell.dock.brand">
+        <svg class="tl-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="tl-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="tl-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="workbench" aria-current="true">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="tl-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="library">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="tl-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="tl-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="tl-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="tl-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="tl-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="tl-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="tl-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="tl-dock-app tl-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="tl-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="tl-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="tl-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="tl-stage bk-stage" data-part="shell.stage">
+
+        <div class="tl-shell" data-variant="cartridge" data-part="catalog.room">
+        <div class="tl-catalog" data-part="catalog.room">
+          <p class="bk-label">Apps catalog</p>
+          <h2 class="bk-heading">Catalog-only tools</h2>
+          <p class="bk-meta">Opened from here, not the everyday Dock.</p>
+          <div class="tl-catgrid">          <article class="bk-panel bk-frame tl-cat-card" data-deck="fog" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">App style</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">CSS Workshop</h4></div>
+          </article>
+          <article class="bk-panel bk-frame tl-cat-card" data-deck="fog" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">App docs</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">Help / Docs</h4></div>
+          </article>
+          <article class="bk-panel bk-frame tl-cat-card" data-deck="lorebook" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">App macros</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">Macro Lab</h4></div>
+          </article>
+          <article class="bk-panel bk-frame tl-cat-card" data-deck="fog" data-lift data-part="catalog.card">
+            <div class="bk-panel__head"><span class="bk-label">A drawing at full size</span></div>
+            <div class="bk-panel__body"><h4 class="bk-name">HTML View</h4></div>
+          </article>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="css">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">App style · catalog-only</span><h2 class="bk-heading">CSS Workshop</h2></div>
+            
+            <nav class="tl-toolkeys"></nav>
+          </header>
+          <p class="bk-meta">Simple mode is the guided ladder. Advanced is code plus rule breakdown. Import a .css file to load it into Advanced.</p>
+          <div class="tl-toolacts">
+            <nav class="tl-modeset" role="group" aria-label="Mode">
+              <button type="button" class="bk-item tl-modebtn" aria-selected="true">Simple</button>
+              <button type="button" class="bk-item tl-modebtn">Advanced</button>
+            </nav>
+            <button type="button" class="bk-item tl-btn">Copy CSS</button>
+            <button type="button" class="bk-item tl-btn-ghost">Download .css</button>
+            <button type="button" class="bk-item tl-btn-ghost">Import .css</button>
+            <button type="button" class="bk-item tl-btn-ghost" data-set-state="css-clear">Clear draft</button>
+          </div>
+          <div class="tl-wkgrid">
+            <div class="tl-wksimple">
+              <section class="bk-panel bk-frame tl-wkcard" data-deck="fog">
+                <div class="bk-panel__head"><h4 class="bk-name">Starters</h4></div>
+                <div class="bk-panel__body tl-startergrid">
+                  <button type="button" class="bk-item tl-startercard">Rounded chat bubble</button>
+                  <button type="button" class="bk-item tl-startercard">Parchment card</button>
+                  <button type="button" class="bk-item tl-startercard">Neon frame</button>
+                  <button type="button" class="bk-item tl-startercard">Minimal quiet</button>
+                </div>
+              </section>
+            </div>
+            <div class="tl-wkadvanced">
+              <section class="bk-panel bk-frame tl-wkcard">
+                <div class="bk-panel__head"><h4 class="bk-name">Source</h4></div>
+                <div class="bk-panel__body"><textarea class="tl-code">.bubble {
+  border-radius: 12px;
+  background: #1a1620;
+  padding: 12px 16px;
+}</textarea></div>
+              </section>
+              <section class="bk-panel bk-frame tl-wkcard">
+                <div class="bk-panel__head"><h4 class="bk-name">Rules</h4><span class="bk-meta">1 rule</span></div>
+                <div class="bk-panel__body"><p class="bk-meta">.bubble &middot; 3 declarations</p></div>
+              </section>
+            </div>
+            <aside>
+              <section class="bk-panel bk-frame tl-wkcard" data-deck="lorebook">
+                <div class="bk-panel__head"><h4 class="bk-name">Sealed preview</h4></div>
+                <div class="bk-panel__body"><div class="tl-sealedbox">a bubble</div></div>
+              </section>
+              <p class="bk-meta">Standalone draft. Bunraku never applies this to the app chrome. Copy or download to paste on Chub, Janitor, Risu, or anywhere that takes CSS.</p>
+            </aside>
+          </div>
+          <div class="tl-scrim">
+            <div class="bk-frame tl-dlg" data-crown data-tone="danger">
+              <h3 class="bk-heading">Clear the draft?</h3>
+              <p class="bk-meta">Your unsaved CSS goes away.</p>
+              <div class="tl-dlgrow">
+                <button type="button" class="bk-item tl-btn-ghost" data-set-state="css-loaded">Keep</button>
+                <button type="button" class="bk-item tl-btn-danger" data-tone="danger">Clear</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="docs">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">App docs · catalog-only</span><h2 class="bk-heading">Help / Docs</h2></div>
+            
+            <nav class="tl-toolkeys"></nav>
+          </header>
+          <div class="tl-docsroom" data-part="docs.room">
+            <aside class="tl-docnav">
+              <input class="tl-input" placeholder="Search docs...">
+              <p class="bk-label">User docs</p>
+              <button type="button" class="bk-item tl-docrow">Getting started</button>
+              <button type="button" class="bk-item tl-docrow" aria-selected="true">Edit a piece</button>
+              <button type="button" class="bk-item tl-docrow">Build a lorebook</button>
+              <button type="button" class="bk-item tl-docrow">Create and manage personas</button>
+              <button type="button" class="bk-item tl-docrow">Edit a regex set</button>
+              <p class="bk-label">Developer docs</p>
+              <button type="button" class="bk-item tl-docrow">Architecture</button>
+              <button type="button" class="bk-item tl-docrow">Kit content tools</button>
+              <button type="button" class="bk-item tl-docrow">Decision records</button>
+            </aside>
+            <main class="tl-doccontent">
+              <span class="bk-label">User docs</span>
+              <h2 class="bk-heading">Edit a piece</h2>
+              <p class="bk-meta">Open a piece on the Workbench, change it through the Grid or Steps view, and save your draft explicitly before you close the tab.</p>
+              <h3 class="bk-name">The short version</h3>
+              <p class="bk-meta">Editing happens on the Workbench. A piece opens there as its own tab, already filled in with whatever your import carried, or with the blank template you started from, and it stays a private draft until you save it.</p>
+              <h3 class="bk-name">The editor panels</h3>
+              <p class="bk-meta">A character's editor opens with a strip of platform tabs above the fields. The first, labeled Bunraku, is the full card with nothing hidden.</p>
+              <h3 class="bk-name">Saving, and what happens if you don't</h3>
+              <p class="bk-meta">Every editor requires a name before Save does anything. Save writes your whole draft, not just what changed, so fields you haven't touched round-trip byte-for-byte.</p>
+            </main>
+            <aside class="tl-doctoc">
+              <a class="bk-item tl-tocrow" aria-current="true">The short version</a>
+              <a class="bk-item tl-tocrow">The editor panels</a>
+              <a class="bk-item tl-tocrow">Saving, and what happens if you don't</a>
+              <a class="bk-item tl-tocrow">Tips</a>
+            </aside>
+          </div>
+          <nav class="tl-mobiledocs">
+            <button type="button" class="bk-item tl-btn-ghost" data-set-state="docs-browse">Browse</button>
+            <span class="tl-mobilet"><b class="bk-name">Edit a piece</b><small class="bk-meta">User docs</small></span>
+            <button type="button" class="bk-item tl-btn-ghost" data-set-state="docs-sections">Sections</button>
+          </nav>
+          <div class="tl-sheet tl-sheet-browse">
+            <div class="tl-sheetpanel">
+              <p class="bk-heading">Browse docs</p>
+              <input class="tl-input" placeholder="Search docs...">
+              <p class="bk-label">User docs</p>
+              <a class="bk-item tl-docrow" aria-current="true">Edit a piece</a>
+              <a class="bk-item tl-docrow">Build a lorebook</a>
+              <a class="bk-item tl-docrow">Edit a regex set</a>
+            </div>
+          </div>
+          <div class="tl-sheet tl-sheet-sections">
+            <div class="tl-sheetpanel">
+              <p class="bk-heading">On this page</p>
+              <a class="bk-item tl-docrow" aria-current="true">The short version</a>
+              <a class="bk-item tl-docrow">The editor panels</a>
+              <a class="bk-item tl-docrow">Saving, and what happens if you don't</a>
+              <a class="bk-item tl-docrow">Tips</a>
+            </div>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="macro">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">App macros · catalog-only</span><h2 class="bk-heading">What does this macro actually do?</h2></div>
+            
+            <nav class="tl-toolkeys"></nav>
+          </header>
+          <p class="bk-meta">Write macro text on the left. The right tells you what each token means on the platform you picked, and, when you have that platform installed, what its own engine turns your text into.</p>
+          <nav class="tl-lensrow" role="radiogroup" aria-label="Platform"><button type="button" class="bk-item tl-lensbtn" aria-selected="true">RoleCall</button><button type="button" class="bk-item tl-lensbtn">SillyTavern</button><button type="button" class="bk-item tl-lensbtn">RisuAI</button><button type="button" class="bk-item tl-lensbtn">Lumiverse</button><button type="button" class="bk-item tl-lensbtn">Agnai</button></nav>
+          <div class="tl-mlgrid">
+            <section class="bk-panel bk-frame tl-wkcard" data-deck="lorebook">
+              <div class="bk-panel__head"><h4 class="bk-name">Your text</h4><span class="bk-meta">54 characters</span></div>
+              <div class="bk-panel__body">
+                <textarea class="tl-code">Hello {{char}}, I am {{user}}. Today is {{date}}.</textarea>
+                <p class="bk-name tl-sublabel">Pretend context</p>
+                <p class="bk-meta">A macro that names somebody needs somebody to name. Leave these empty and each engine falls back to its own placeholder.</p>
+                <div class="tl-whorow">
+                  <label class="bk-label">{{user}} is</label><input class="tl-input" placeholder="User">
+                  <label class="bk-label">{{char}} is</label><input class="tl-input" placeholder="Character">
+                </div>
+                <button type="button" class="bk-item tl-btn-ghost">Add a variable</button>
+              </div>
+            </section>
+            <div>
+              <section class="bk-panel bk-frame tl-wkcard tl-engbox">
+                <div class="bk-panel__body">
+                  <div class="tl-erow">
+                    <h4 class="bk-name">RoleCall engine</h4>
+                    <span class="bk-meta tl-engstatus">not installed</span>
+                    <button type="button" class="bk-item tl-btn" disabled aria-disabled="true">Resolve</button>
+                  </div>
+                  <p class="bk-meta">Point Settings &gt; Studio at a checkout, or set BUNRAKU_ROLECALL_ROOT, to resolve for real.</p>
+                </div>
+              </section>
+              <section class="bk-panel bk-frame tl-wkcard">
+                <nav class="tl-reftabs" role="tablist">
+                  <button type="button" class="bk-item tl-reftab" role="tab" aria-selected="true">Reading</button>
+                  <button type="button" class="bk-item tl-reftab" role="tab">Macro bible</button>
+                  <button type="button" class="bk-item tl-reftab" role="tab">Operations</button>
+                </nav>
+                <div class="tl-refview" data-ref="reading">
+                  <p class="bk-meta"><code>{{char}}</code> the character's name</p>
+                  <p class="bk-meta"><code>{{user}}</code> your persona's name</p>
+                  <p class="bk-meta"><code>{{date}}</code> today's date &middot; also works on all 5 platforms</p>
+                </div>
+                <div class="tl-refview" data-ref="bible" hidden>
+                  <p class="bk-meta">Click to copy</p>
+                  <div class="tl-macroref"><span class="bk-tag">{{char}}</span><span class="bk-tag">{{user}}</span><span class="bk-tag">{{time}}</span><span class="bk-tag">{{roll:XdY}}</span><span class="bk-tag">{{random:a,b}}</span></div>
+                </div>
+                <div class="tl-refview" data-ref="ops" hidden>
+                  <table class="tl-opstable">
+                    <tr><th class="bk-label">Operation</th><th class="bk-label">RoleCall</th><th class="bk-label">SillyTavern</th><th class="bk-label">RisuAI</th></tr>
+                    <tr><td class="bk-meta">Dice roll</td><td class="bk-meta">{{roll:XdY}}</td><td class="bk-meta">{{roll:XdY}}</td><td class="bk-meta tl-empty">none</td></tr>
+                    <tr><td class="bk-meta">Pick random</td><td class="bk-meta">{{random:a,b}}</td><td class="bk-meta">{{random:a,b}}</td><td class="bk-meta">{{pick:a,b}}</td></tr>
+                  </table>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div class="tl-room" data-tool="html">
+          <header class="tl-toolhead" data-part="ui.panel.head">
+            <div><span class="bk-label">A drawing at full size · catalog-only</span><h2 class="bk-heading">HTML View</h2></div>
+            
+            <nav class="tl-toolkeys"><span class="bk-tag" data-part="ui.key-chip"><b>Esc</b> Fullscreen exit</span></nav>
+          </header>
+          <div class="tl-htmldraw">
+            <div class="tl-sealed">
+              <div class="tl-letter"><h5 class="bk-heading">The Lighthouse</h5><p class="bk-meta">Keeper's Log, entry three.</p></div>
+            </div>
+          </div>
+          <button type="button" class="bk-item tl-btn-ghost" data-set-state="html-fullscreen">Fullscreen</button>
+          <div class="tl-fsview">
+            <div class="tl-fsbar"><span class="bk-meta">Lighthouse letterhead</span><button type="button" class="bk-item tl-btn-ghost" data-set-state="html-drawing">Exit fullscreen (Esc)</button></div>
+            <div class="tl-sealed tl-sealed-full">
+              <div class="tl-letter"><h5 class="bk-heading">The Lighthouse</h5><p class="bk-meta">Keeper's Log, entry three.</p></div>
+            </div>
+          </div>
+        </div>
+        </div>    </main>
+  </div>
+  <footer class="tl-status" data-part="shell.status">
+    <span class="tl-status-item" data-part="shell.status.item">Apps catalog</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Cartridges">
+          <button type="button" class="spec-chip" data-set-state="catalog" aria-pressed="true">Apps catalog</button>
+          <button type="button" class="spec-chip" data-set-state="css-loaded">CSS Workshop: Simple</button>
+          <button type="button" class="spec-chip" data-set-state="css-advanced">CSS Workshop: Advanced</button>
+          <button type="button" class="spec-chip" data-set-state="css-clear">CSS Workshop: Clear dialog</button>
+          <button type="button" class="spec-chip" data-set-state="docs-loaded">Docs: desktop</button>
+          <button type="button" class="spec-chip" data-set-state="docs-browse">Docs: Browse sheet</button>
+          <button type="button" class="spec-chip" data-set-state="docs-sections">Docs: Sections sheet</button>
+          <button type="button" class="spec-chip" data-set-state="macro-loaded">Macro Lab: Reading</button>
+          <button type="button" class="spec-chip" data-set-state="macro-bible">Macro Lab: Bible</button>
+          <button type="button" class="spec-chip" data-set-state="macro-ops">Macro Lab: Operations</button>
+          <button type="button" class="spec-chip" data-set-state="macro-installed">Macro Lab: Engine installed</button>
+          <button type="button" class="spec-chip" data-set-state="html-drawing">HTML View: drawing</button>
+          <button type="button" class="spec-chip" data-set-state="html-fullscreen">HTML View: fullscreen</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the Apps catalog grid; CSS Workshop’s Simple/Advanced switch, starters, source and rules cards, sealed preview, and Clear-draft dialog; Docs’ nav/content/table-of-contents three-rail layout plus its mobile Browse and Sections sheets; the Macro Lab’s platform lens, Your text card with pretend-context fields, the engine box (not-installed and installed states), and the Reading/Macro bible/Operations reference tabs; HTML View’s drawing and Fullscreen (the full editor with source is its own screen, htmldoc.editor; here it is the catalog-opened viewer only). Each tool opens with the shared tool header rule from BUILD-BRIEF variant B; variant A keeps each tool’s own plain header instead. Phone width is covered by the page-wide Width switch, not repeated per tool.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,68 @@
+/*
+ * Bunraku design system: htmldoc.editor screen. Prefix .hd-. Tokens only.
+ */
+
+/* ---- shared shell chrome: Dock + HUD strip + status bar (duplicated per screen by design: each
+   page under design/system/screens/ is self-contained, "CSS rules for your
+   area file") ---- */
+.hd-app { display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--bk-surface-base); }
+.hd-hud { flex: none; display: flex; align-items: center; gap: var(--bk-space-6); padding: 0 var(--bk-space-4); min-height: var(--bk-hud-h); background: var(--bk-surface-well); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.hd-hud-start, .hd-hud-end { display: flex; align-items: center; gap: var(--bk-space-3); flex: none; }
+.hd-mark { width: var(--bk-icon-md); height: var(--bk-icon-md); flex: none; color: var(--bk-tint-text); }
+.hd-hud-mid { flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: var(--bk-space-6); overflow: hidden; }
+.hd-hud-score { display: flex; align-items: center; gap: var(--bk-space-5); }
+.hd-body { flex: 1; min-height: 0; display: flex; align-items: stretch; }
+.hd-dock { flex: none; width: var(--bk-dock-w); display: flex; flex-direction: column; gap: var(--bk-space-1); padding: var(--bk-space-4) var(--bk-space-3); background: var(--bk-surface-well); box-shadow: inset calc(-1 * var(--bk-divider-w)) 0 0 0 var(--bk-line); overflow-y: auto; }
+.hd-dock-brand { display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-2) var(--bk-space-3); font: var(--bk-type-name); color: var(--bk-text); }
+.hd-dock-app { justify-content: flex-start; gap: var(--bk-space-3); }
+.hd-dock-icon { flex: none; color: var(--bk-tint-text); }
+.hd-dock-label { display: flex; flex-direction: column; min-width: 0; align-items: flex-start; }
+.hd-dock-label b { font: var(--bk-type-small); font-weight: var(--bk-fw-strong); color: inherit; }
+.hd-dock-label small { font: var(--bk-type-label); color: var(--bk-text-dim); min-height: 1em; }
+.hd-dock-add { margin-top: var(--bk-space-2); color: var(--bk-text-dim); }
+.hd-dock-add .hd-dock-icon { color: var(--bk-text-dim); }
+.hd-dock-fold { margin-top: auto; align-self: flex-start; min-height: var(--bk-hit-min); min-width: var(--bk-hit-min); color: var(--bk-text-dim); background: none; border: 0; cursor: pointer; }
+.hd-dock-fold:hover { color: var(--bk-text); }
+.hd-stage { flex: 1; min-width: 0; overflow: auto; padding: var(--bk-pad-page); }
+.hd-status { flex: none; display: flex; align-items: center; justify-content: space-between; min-height: var(--bk-status-h); padding: 0 var(--bk-space-4); font: var(--bk-type-label); color: var(--bk-text-dim); background: var(--bk-surface-ink); }
+
+@container (max-width: 46rem) {
+  .hd-dock { width: var(--bk-dock-w-slim); }
+  .hd-dock-word, .hd-dock-label b, .hd-dock-label small { display: none; }
+  .hd-dock-brand, .hd-dock-app, .hd-dock-add { justify-content: center; }
+}
+@container (max-width: 30rem) {
+  .hd-body { flex-direction: column-reverse; }
+  .hd-dock { width: 100%; flex-direction: row; align-items: center; padding: var(--bk-space-1) var(--bk-space-2); overflow-x: auto; overflow-y: visible; box-shadow: inset 0 var(--bk-divider-w) 0 0 var(--bk-line); gap: var(--bk-space-1); }
+  .hd-dock-brand, .hd-dock-add, .hd-dock-fold { display: none; }
+  .hd-dock-app { flex: none; flex-direction: column; gap: var(--bk-space-1); min-width: 3.25rem; justify-content: center; }
+  .hd-hud-score, .hd-hud-mid .bk-divider { display: none; }
+  .hd-hud { flex-wrap: wrap; min-height: auto; padding: var(--bk-space-2) var(--bk-space-3); gap: var(--bk-space-2); }
+  .hd-stage { padding: var(--bk-space-4); }
+}
+
+.hd-stage { padding: 0; }
+.hd-phead { display: flex; align-items: center; gap: var(--bk-space-3); padding: var(--bk-space-3) var(--bk-pad-page); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.hd-phead .bk-name { flex: 1; }
+.hd-split { display: grid; gap: var(--bk-divider-w); background: var(--bk-line); min-height: 26rem; container-type: inline-size; }
+.hd-split-side { grid-template-columns: 1fr 1fr; padding: var(--bk-space-4); margin: 0 var(--bk-pad-page); }
+.hd-split-stacked { grid-template-rows: 1fr auto 1fr; padding: var(--bk-space-4); margin: 0 var(--bk-pad-page); }
+@container (max-width: 46rem) { .hd-split-side { grid-template-columns: 1fr; } }
+.hd-pane { background: var(--bk-surface-base); display: flex; flex-direction: column; min-height: 0; }
+.hd-pane .bk-panel__body { flex: 1; min-height: 0; }
+.hd-code { width: 100%; height: 100%; min-height: 20rem; resize: none; background: var(--bk-surface-sunken); color: var(--bk-code-var); font: var(--bk-fw-mono) var(--bk-fs-sm)/var(--bk-lh-body) var(--bk-font-mono); padding: var(--bk-space-3); border: 0; }
+.hd-divider { height: var(--bk-space-2); background: var(--bk-surface-well); cursor: row-resize; }
+.hd-sealed { height: 100%; min-height: 20rem; overflow: auto; background: var(--bk-surface-ink); padding: var(--bk-space-4); }
+.hd-letter { background: var(--bk-text-on-deep); color: var(--bk-surface-base); padding: var(--bk-space-6); max-width: 28rem; }
+.hd-letter h5 { color: inherit; margin-bottom: var(--bk-space-2); }
+.hd-letter p { margin: 0; }
+
+.hd-fsview { display: none; position: absolute; inset: 0; background: var(--bk-surface-base); flex-direction: column; z-index: var(--bk-z-dialog, 50); }
+.hd-screen[data-state="fullscreen"] .hd-fsview { display: flex; }
+.hd-screen[data-state="fullscreen"] .hd-split, .hd-screen[data-state="fullscreen"] .hd-phead { display: none; }
+.hd-fsbar { display: flex; align-items: center; justify-content: space-between; padding: var(--bk-space-2) var(--bk-space-4); box-shadow: inset 0 calc(-1 * var(--bk-divider-w)) 0 0 var(--bk-line); }
+.hd-sealed-full { flex: 1; }
+
+.hd-btn, .hd-btn-ghost { width: auto; min-height: var(--bk-control-h-sm); padding: 0 var(--bk-space-3); justify-content: center; }
+.hd-btn { min-height: var(--bk-control-h-md); padding: 0 var(--bk-space-4); background: var(--bk-action-bg); color: var(--bk-action-text); }
+.hd-btn-ghost { background: none; box-shadow: inset 0 0 0 1px var(--bk-line-control); color: var(--bk-text); }

@@ -1,0 +1,18 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bunraku book cover collection</title>
+<link rel="stylesheet" href="/src/ui/theme/tokens.css">
+<style>
+body{margin:0;padding:2rem;background:var(--premiere-canvas);color:var(--premiere-text);font-family:var(--font-body)}
+h1{font-family:var(--font-fancy);color:var(--premiere-gold)}main{display:flex;flex-wrap:wrap;gap:2rem}.cover{position:relative;width:320px;aspect-ratio:2/3;background:var(--premiere-hard)}.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}.cover span{position:absolute;inset:34% 15%;display:grid;place-items:center;text-align:center;font:600 1.5rem/1.4 var(--font-fancy);overflow-wrap:anywhere;text-shadow:0 2px 6px var(--premiere-hard)}aside{flex:1;min-width:16rem;max-width:36rem}label{display:grid;gap:.5rem;margin-bottom:1rem}select,input{padding:.8rem;background:var(--premiere-panel);color:var(--premiere-text);border:1px solid var(--premiere-gold);font:inherit}a{color:var(--premiere-gold)}#themes{display:flex;flex-wrap:wrap;gap:.4rem}button{background:var(--premiere-panel);color:var(--premiere-text);border:1px solid var(--premiere-gold);padding:.5rem;cursor:pointer}button[aria-pressed=true]{background:var(--premiere-gold);color:var(--premiere-hard)}
+</style>
+<h1>The book cover collection</h1><p>60 semantic illustrations · 10 painterly papers · your own editable title</p>
+<main><div class="cover"><img id="paper" alt=""><img id="ornament" alt=""><span id="title">The Paper Moon</span></div>
+<aside><label>Illustration<select id="design"></select></label><label>Painted paper<select id="background"></select></label><label>Your title<input id="name" value="The Paper Moon" maxlength="120"></label>
+<p><a id="download-design" download>Download ornament PNG</a> · <a id="download-paper" download>Download paper PNG</a></p><div id="themes"></div><p>Each illustration is a transparent PNG. Mix any illustration with any paper; text is kept separate.</p><p><a href="index.html">Back to approved page designs</a></p></aside></main>
+<script type="module">
+const catalog=await(await fetch('book-cover-catalog.json')).json();
+const design=document.querySelector('#design'),background=document.querySelector('#background');
+for(const [select,items] of [[design,catalog.designs],[background,catalog.backgrounds]])for(const item of items){const option=new Option(item.label,item.slug);select.add(option)}
+const update=()=>{for(const [select,items,img,link] of [[design,catalog.designs,'ornament','download-design'],[background,catalog.backgrounds,'paper','download-paper']]){const item=items.find(a=>a.slug===select.value);document.getElementById(img).src='/'+item.path;document.getElementById(link).href='/'+item.path}document.querySelector('#title').textContent=document.querySelector('#name').value;for(const button of document.querySelectorAll('#themes button'))button.setAttribute('aria-pressed',button.dataset.slug===design.value)};
+for(const item of catalog.designs){const button=document.createElement('button');button.textContent=item.label;button.dataset.slug=item.slug;button.onclick=()=>{design.value=item.slug;update()};document.querySelector('#themes').append(button)}
+design.onchange=background.onchange=document.querySelector('#name').oninput=update;design.value='moonlit-valley';background.value='sapphire';update();
+</script></html>

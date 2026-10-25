@@ -1,0 +1,130 @@
+/*
+ * Bunraku design system: shell.html ("shell.app"). The always-on chrome: HUD strip, Dock, tab
+ * strip, stage, status bar, the three right-click menus, and the shell-owned overlays (Follow,
+ * Close piece, Drop veil, Boot error, the floating Agent). Prefix: sh-. Tokens only.
+ */
+.sh-root { position: relative; display: flex; flex-direction: column; min-height: 100%; container-type: inline-size; }
+
+/* ---------- HUD strip (variant a) ---------- */
+.sh-hud { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: var(--bk-space-2) var(--bk-space-5); padding: var(--bk-space-2) var(--bk-space-5); min-height: var(--bk-hud-h); background: var(--bk-surface-well); box-shadow: inset 0 -1px 0 var(--bk-line); }
+.sh-hud-mid { flex: 1 1 auto; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--bk-space-2) var(--bk-space-5); }
+.sh-hud-score { display: flex; align-items: center; gap: var(--bk-space-4); }
+.sh-hud-keys { flex: none; display: flex; align-items: center; gap: var(--bk-space-2); }
+.sh-key { display: inline-flex; align-items: center; gap: var(--bk-space-1); padding: var(--bk-space-1) var(--bk-space-2); font: var(--bk-type-label); color: var(--bk-text-dim); background: var(--bk-surface-raised); box-shadow: inset 0 0 0 1px var(--bk-line); white-space: nowrap; }
+.sh-key kbd { font: inherit; font-weight: var(--bk-fw-mono-strong); padding: 0 var(--bk-space-1); color: var(--bk-tint-text); background: var(--bk-surface-ink); box-shadow: inset 0 0 0 1px var(--bk-tint-text); }
+
+/* ---------- body: dock + main column ---------- */
+.sh-body { flex: 1; min-height: 0; display: flex; align-items: stretch; }
+.sh-dock { flex: none; width: var(--bk-dock-w); display: flex; flex-direction: column; padding: var(--bk-space-4) var(--bk-space-3); gap: var(--bk-space-1); background: var(--bk-surface-well); box-shadow: inset -1px 0 0 var(--bk-line); overflow-y: auto; }
+.sh-dock-brand { display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-1) var(--bk-space-3); }
+.sh-bun { width: var(--bk-icon-lg); height: var(--bk-icon-lg); flex: none; }
+.sh-dock-word { color: var(--bk-text); }
+.sh-dock-app { justify-content: flex-start; }
+.sh-dock-icon { flex: none; width: var(--bk-icon-md); height: var(--bk-icon-md); display: grid; place-items: center; color: var(--bk-tint-text); }
+.sh-dock-icon svg { width: 100%; height: 100%; }
+.sh-dock-tx { display: flex; flex-direction: column; min-width: 0; }
+.sh-dock-label { font: var(--bk-type-body); font-weight: var(--bk-fw-strong); color: inherit; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sh-dock-sub { text-transform: var(--bk-case-label); }
+.sh-dock-foot { margin-top: auto; display: flex; flex-direction: column; gap: var(--bk-space-1); padding-top: var(--bk-space-2); box-shadow: inset 0 1px 0 var(--bk-line); }
+.sh-dock-fold { display: flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-hit-min); padding: var(--bk-space-1) var(--bk-space-2); font: var(--bk-type-label); color: var(--bk-text-dim); background: none; border: 0; cursor: pointer; }
+.sh-dock-fold:hover { color: var(--bk-text); background: var(--bk-wash-hover); }
+.sh-dock-future { display: none; }
+.sh-root[data-state="future"] .sh-dock-future { display: flex; opacity: .55; }
+.sh-root[data-state="future"] .sh-dock-future .sh-dock-icon { color: var(--bk-text-dim); }
+
+/* manual slim (persisted dock fold, shell.dockSlim) and the container-driven fold answer the same
+   look: label/sub text hides, icons stay, the fold caret flips. */
+.sh-root[data-state="slim"] .sh-dock,
+.sh-root { }
+@container (max-width: 46rem) {
+  .sh-dock { width: var(--bk-dock-w-slim); align-items: center; }
+  .sh-dock-word, .sh-dock-tx, .sh-dock-fold-label { display: none; }
+  .sh-dock-brand, .sh-dock-app, .sh-dock-add, .sh-dock-fold { justify-content: center; }
+}
+.sh-root[data-state="slim"] .sh-dock { width: var(--bk-dock-w-slim); align-items: center; }
+.sh-root[data-state="slim"] .sh-dock-word,
+.sh-root[data-state="slim"] .sh-dock-tx,
+.sh-root[data-state="slim"] .sh-dock-fold-label { display: none; }
+.sh-root[data-state="slim"] .sh-dock-brand,
+.sh-root[data-state="slim"] .sh-dock-app,
+.sh-root[data-state="slim"] .sh-dock-add,
+.sh-root[data-state="slim"] .sh-dock-fold { justify-content: center; }
+
+@container (max-width: 30rem) {
+  .sh-body { flex-direction: column; }
+  .sh-dock { width: 100%; flex-direction: row; align-items: center; height: auto; order: 2; padding: var(--bk-space-2); box-shadow: inset 0 1px 0 var(--bk-line); overflow-x: auto; overflow-y: visible; }
+  .sh-dock-brand, .sh-dock-foot { display: none; }
+  .sh-dock-app, .sh-dock-add { flex-direction: column; flex: 1; min-height: var(--bk-hit-min); }
+}
+
+.sh-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* ---------- tab strip ---------- */
+.sh-tabs { flex: none; display: flex; align-items: stretch; background: var(--bk-surface-well); box-shadow: inset 0 -1px 0 var(--bk-line); overflow-x: auto; }
+.sh-tab { flex: none; display: flex; align-items: center; gap: var(--bk-space-2); min-height: var(--bk-hit-min); padding: var(--bk-space-2) var(--bk-space-3); font: var(--bk-type-body); font-weight: var(--bk-fw-strong); color: var(--bk-text-dim); background: var(--bk-surface-sunken); box-shadow: inset -1px 0 0 var(--bk-line), inset 0 2px 0 transparent; border: 0; cursor: pointer; }
+.sh-tab[aria-selected="true"] { color: var(--bk-text); background: var(--bk-surface-panel); box-shadow: inset -1px 0 0 var(--bk-line), inset 0 2px 0 var(--bk-tint-text); }
+.sh-tab .bk-dot { flex: none; }
+.sh-tab-dirty { color: var(--bk-tint-text); }
+.sh-tab-kind { font: var(--bk-type-label); color: var(--bk-text-dim); }
+.sh-tab-close { font: var(--bk-type-label); color: var(--bk-text-dim); }
+.sh-tab-add { flex: none; width: var(--bk-hit-min); min-height: var(--bk-hit-min); background: none; border: 0; color: var(--bk-text-dim); cursor: pointer; font-size: var(--bk-fs-lg); }
+.sh-tab-fill { flex: 1; }
+.sh-tab-actions { flex: none; display: flex; align-items: center; gap: var(--bk-space-2); padding: 0 var(--bk-space-3); }
+
+/* ---------- stage ---------- */
+.sh-stage { flex: 1; min-height: 20rem; display: grid; place-items: center; overflow: hidden; }
+.sh-ghost { font: var(--bk-type-body); font-style: normal; color: var(--bk-text-dim); }
+
+/* ---------- menus (plain draw: a framed .bk-item list) ---------- */
+.sh-menu { display: none; position: absolute; z-index: var(--bk-z-menu); width: 15rem; }
+.sh-root[data-state="menu-app"] .sh-menu-app,
+.sh-root[data-state="menu-entity"] .sh-menu-entity,
+.sh-root[data-state="menu-shell"] .sh-menu-shell,
+.sh-root[data-state="future"] .sh-menu-future { display: block; }
+.sh-menu-head { padding: var(--bk-space-2) var(--bk-space-3); font: var(--bk-type-label); color: var(--bk-text-dim); }
+
+/* ---------- overlays ---------- */
+.sh-scrim { display: none; position: absolute; inset: 0; z-index: var(--bk-z-dialog); place-items: center; background: var(--bk-scrim); }
+.sh-root[data-state="follow"] .sh-scrim-follow,
+.sh-root[data-state="close"] .sh-scrim-close { display: grid; }
+.sh-dialog { width: min(26rem, 92%); padding: var(--bk-pad-panel); display: flex; flex-direction: column; gap: var(--bk-space-3); }
+.sh-dialog-remember { display: flex; align-items: center; gap: var(--bk-space-2); font: var(--bk-type-small); color: var(--bk-text-soft); }
+.sh-dialog-actions { display: flex; justify-content: flex-end; gap: var(--bk-space-2); }
+
+.sh-veil { display: none; position: absolute; inset: 0; z-index: var(--bk-z-sheet); place-items: center; background: var(--bk-scrim); }
+.sh-root[data-state="dropveil"] .sh-veil { display: grid; }
+.sh-veil-box { padding: var(--bk-space-5) var(--bk-space-8); }
+
+.sh-boot { display: none; position: absolute; inset: 0; z-index: var(--bk-z-title); place-items: center; padding: var(--bk-space-8); background: var(--bk-surface-base); text-align: center; }
+.sh-root[data-state="boot-error"] .sh-boot { display: grid; }
+.sh-boot-box { width: min(30rem, 100%); display: flex; flex-direction: column; gap: var(--bk-space-3); }
+.sh-boot-links { display: flex; gap: var(--bk-space-2); justify-content: center; flex-wrap: wrap; }
+.sh-boot-code { padding: var(--bk-space-3); background: var(--bk-surface-sunken); box-shadow: inset 0 0 0 1px var(--bk-line); font: var(--bk-type-meta); text-align: left; overflow-wrap: anywhere; }
+
+/* ---------- catalog room ---------- */
+.sh-catalog { display: none; position: absolute; inset: 0; overflow: auto; padding: var(--bk-space-8); background: var(--bk-surface-base); }
+.sh-root[data-state="catalog"] .sh-catalog { display: block; }
+.sh-catalog-grid { margin-top: var(--bk-space-4); display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: var(--bk-gap-cards); }
+.sh-ccard-head { display: flex; align-items: center; gap: var(--bk-space-2); margin-bottom: var(--bk-space-2); }
+.sh-ccard-mark { flex: none; width: var(--bk-icon-lg); height: var(--bk-icon-lg); display: grid; place-items: center; color: var(--bk-tint-text); background: color-mix(in srgb, var(--bk-tint) 18%, transparent); }
+.sh-ccard-foot { margin-top: var(--bk-space-3); display: flex; align-items: center; justify-content: space-between; gap: var(--bk-space-2); }
+
+/* ---------- floating Agent ---------- */
+.sh-agent-tab { display: none; position: absolute; right: var(--bk-space-4); bottom: var(--bk-space-4); z-index: var(--bk-z-popover); align-items: center; gap: var(--bk-space-2); padding: var(--bk-space-2) var(--bk-space-3); }
+.sh-root[data-state="agent-min"] .sh-agent-tab { display: flex; }
+.sh-agent-panel { display: none; position: absolute; right: var(--bk-space-4); bottom: var(--bk-space-4); z-index: var(--bk-z-popover); width: 20rem; height: 18rem; flex-direction: column; }
+.sh-root[data-state="agent-open"] .sh-agent-panel { display: flex; }
+
+/* ---------- variant b: command column ---------- */
+.sh-root[data-variant="b"] .sh-hud { display: none; }
+.sh-root[data-variant="b"] .sh-body { align-items: stretch; }
+.sh-root[data-variant="b"] .sh-dock-score { display: flex; flex-direction: column; gap: var(--bk-space-3); padding-top: var(--bk-space-3); box-shadow: inset 0 1px 0 var(--bk-line); }
+.sh-dock-score { display: none; }
+/* above the phone fold only: below 30rem the Dock always becomes the bottom bar, for every
+   variant, so the fold rule (higher in the cascade, lower specificity) must win there instead. */
+@container (min-width: 30.0625rem) {
+  .sh-root[data-variant="b"] .sh-dock { flex-direction: column; justify-content: space-between; }
+}
+@container (max-width: 30rem) {
+  .sh-root[data-variant="b"] .sh-dock-score { display: none; }
+}

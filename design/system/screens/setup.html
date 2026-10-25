@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Setup</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="setup.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Setup</h1>
+    <p>The first-run wizard: theme, first-deck, publish, accent, shortcuts (Windows only), and the
+    closing recap.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="setup.wizard">
+    <header>
+      <h2 class="bk-heading">Setup wizard</h2>
+      <span class="bk-tag">src/ui/setup/wizard.tsx</span>
+      <p class="bk-meta">Parts: setup.wizard, setup.question, setup.option, setup.progress,
+      setup.stage, setup.recap</p>
+    </header>
+    <div class="spec-variants">
+
+      <article class="spec-variant" data-taste-id="setup.wizard.a" data-taste-title="One question">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">One question</h3>
+          <p>One question per screen, progress pips, Back and Next as key chips.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen su-root" data-part="setup.wizard" data-variant="a" data-state="t1">
+            <div class="su-body">
+              <div class="su-card bk-panel bk-frame" data-crown data-deck="pack" data-part="setup.question">
+
+                <div class="su-step su-step-t1">
+                  <header class="su-top">
+                    <span class="su-brand"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                    <span class="su-prog" data-part="setup.progress"><span class="su-dots"><i data-now></i><i></i><i></i><i></i><i></i></span><span class="bk-meta">1 of 5</span></span>
+                  </header>
+                  <h1 class="su-q">Light or dark?</h1>
+                  <p class="su-say">However you like your workspace. You can flip it any time.</p>
+                  <div class="su-pair">
+                    <button type="button" class="su-opt bk-frame" data-lift data-opt="light" data-part="setup.option" aria-pressed="false"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Light</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark data-opt="dark" data-part="setup.option" aria-pressed="true"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Dark<span class="bk-meta">default</span></div></button>
+                  </div>
+                  <div class="su-controls"><button type="button" class="su-back" hidden>&larr; Back</button><span class="bk-tag" data-mark><kbd>Enter</kbd> Next &rarr;</span></div>
+                  <div class="su-skip"><button type="button">Skip all &middot; you can change everything later</button></div>
+                </div>
+
+                <div class="su-step su-step-t2">
+                  <header class="su-top">
+                    <span class="su-brand"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-character)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                    <span class="su-prog" data-part="setup.progress"><span class="su-dots"><i data-done></i><i data-now style="background:var(--bk-deck-character)"></i><i></i><i></i><i></i></span><span class="bk-meta">2 of 5</span></span>
+                  </header>
+                  <h1 class="su-q">What do you want to make?</h1>
+                  <p class="su-say">Pick as many as you like. The first pick is where the Library opens.</p>
+                  <div class="su-stack" data-deck="character">
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Characters<span class="bk-meta">default</span></div><p class="su-opt-sub">The people you create.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Lorebooks</div><p class="su-opt-sub">The world facts they remember.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">Personas</div><p class="su-opt-sub">Who you are when you talk to them.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">Sprite packs</div><p class="su-opt-sub">Reusable face packs you open like folders.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Presets</div><p class="su-opt-sub">Saved settings that shape the writing.</p></button>
+                  </div>
+                  <div class="su-controls"><span class="bk-tag"><kbd>Esc</kbd> Back</span><span class="bk-tag" data-mark><kbd>Enter</kbd> Next &rarr;</span></div>
+                  <div class="su-skip"><button type="button">Skip all &middot; you can change everything later</button></div>
+                </div>
+
+                <div class="su-step su-step-t3">
+                  <header class="su-top">
+                    <span class="su-brand"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-preset)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                    <span class="su-prog" data-part="setup.progress"><span class="su-dots"><i data-done></i><i data-done></i><i data-now style="background:var(--bk-deck-preset)"></i><i></i><i></i></span><span class="bk-meta">3 of 5</span></span>
+                  </header>
+                  <h1 class="su-q">Where do you publish?</h1>
+                  <p class="su-say">Pick any that fit. We keep your work ready in each one.</p>
+                  <div class="su-stack" data-deck="preset">
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">SillyTavern</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">RoleCall</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">RisuAI</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">Not sure yet<span class="bk-meta">default</span></div><p class="su-opt-sub">Totally fine. We keep every format ready either way.</p></button>
+                  </div>
+                  <div class="su-controls"><span class="bk-tag"><kbd>Esc</kbd> Back</span><span class="bk-tag" data-mark><kbd>Enter</kbd> Next &rarr;</span></div>
+                  <div class="su-skip"><button type="button">Skip all &middot; you can change everything later</button></div>
+                </div>
+
+                <div class="su-step su-step-t4">
+                  <header class="su-top">
+                    <span class="su-brand"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-lorebook)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                    <span class="su-prog" data-part="setup.progress">
+                      <span class="su-dots su-dots-5"><i data-done></i><i data-done></i><i data-done></i><i data-now style="background:var(--bk-deck-lorebook)"></i><i></i></span>
+                      <span class="su-dots su-dots-4"><i data-done></i><i data-done></i><i data-done></i><i data-now style="background:var(--bk-deck-lorebook)"></i></span>
+                      <span class="bk-meta su-dots-5">4 of 5</span><span class="bk-meta su-dots-4">4 of 4</span>
+                    </span>
+                  </header>
+                  <h1 class="su-q">Pick your color.</h1>
+                  <p class="su-say">One accent for your workspace. Rose is a good place to start.</p>
+                  <div class="su-swatches" data-deck="lorebook">
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title"><span class="su-swatch-dot" data-deck="accent"></span>rose<span class="bk-meta">default</span></div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title"><span class="su-swatch-dot" data-deck="character"></span>amber</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title"><span class="su-swatch-dot" data-deck="persona"></span>emerald</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title"><span class="su-swatch-dot" data-deck="lorebook"></span>violet</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title"><span class="su-swatch-dot" data-deck="preset"></span>blue</div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">custom&hellip;</div></button>
+                  </div>
+                  <div class="su-controls"><span class="bk-tag"><kbd>Esc</kbd> Back</span><span class="bk-tag" data-mark><kbd>Enter</kbd> Next &rarr;</span></div>
+                  <div class="su-skip"><button type="button">Skip all &middot; you can change everything later</button></div>
+                </div>
+
+                <div class="su-step su-step-t5">
+                  <header class="su-top">
+                    <span class="su-brand"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-regex)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                    <span class="su-prog" data-part="setup.progress"><span class="su-dots"><i data-done></i><i data-done></i><i data-done></i><i data-done></i><i data-now style="background:var(--bk-deck-regex)"></i></span><span class="bk-meta">5 of 5</span></span>
+                  </header>
+                  <h1 class="su-q">Put Bunraku on your computer?</h1>
+                  <p class="su-say">A Start menu entry and a desktop shortcut, so it is always one click away.</p>
+                  <div class="su-pair" data-deck="regex">
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Yes, add both<span class="bk-meta">default</span></div></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">Not now</div><p class="su-opt-sub">change it in Settings</p></button>
+                  </div>
+                  <div class="su-controls"><span class="bk-tag"><kbd>Esc</kbd> Back</span><span class="bk-tag" data-mark><kbd>Enter</kbd> Next &rarr;</span></div>
+                  <div class="su-skip"><button type="button">Skip all &middot; you can change everything later</button></div>
+                </div>
+
+                <div class="su-step su-step-final su-final" data-part="setup.recap">
+                  <span class="su-brand" style="justify-content:center;width:100%"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-pack)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                  <h1 class="su-q">You're set.</h1>
+                  <p class="su-summary">A <b>dark</b> workspace, making <b>Characters</b> (+2 more), publishing to <b>SillyTavern and RoleCall</b>, in <b>violet</b>, with a <b>desktop shortcut</b>.</p>
+                  <div class="su-recap">
+                    <span class="bk-tag">theme <b>dark</b></span>
+                    <span class="bk-tag">making <b>character &middot; lorebook &middot; preset</b></span>
+                    <span class="bk-tag">publish <b>sillytavern, rolecall</b></span>
+                    <span class="bk-tag">color <b>violet</b></span>
+                    <span class="bk-tag">shortcut <b>added</b></span>
+                  </div>
+                  <button type="button" class="bk-tag" data-mark style="min-height:var(--bk-control-h-lg);padding:0 var(--bk-space-6);justify-content:center">Open Bunraku</button>
+                  <p class="bk-meta" style="margin-top:var(--bk-space-3);font-style:italic">Everything here can change later, whenever you want.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="t1" aria-pressed="true">1 Theme</button>
+          <button type="button" class="spec-chip" data-set-state="t1-light">1 Theme: light picked</button>
+          <button type="button" class="spec-chip" data-set-state="t2">2 First deck</button>
+          <button type="button" class="spec-chip" data-set-state="t3">3 Publish</button>
+          <button type="button" class="spec-chip" data-set-state="t4">4 Color (5 steps)</button>
+          <button type="button" class="spec-chip" data-set-state="t4-mac">4 Color (4 steps)</button>
+          <button type="button" class="spec-chip" data-set-state="t5">5 Shortcuts</button>
+          <button type="button" class="spec-chip" data-set-state="final">You're set</button>
+        </div>
+      </article>
+
+      <article class="spec-variant" data-taste-id="setup.wizard.b" data-taste-title="Builder split">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Builder split</h3>
+          <p>The question left, the step's live stage zone right, like a character creator.</p></header>
+        <div class="spec-demo">
+          <div class="spec-screen su-root" data-part="setup.wizard" data-variant="b" data-state="t2">
+            <div class="su-body">
+              <div class="su-card bk-panel bk-frame" data-crown data-deck="character" data-part="setup.question">
+                <div class="su-step su-step-t2">
+                  <header class="su-top">
+                    <span class="su-brand"><svg class="su-bun" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="var(--bk-deck-character)" stroke="var(--bk-text-on-tint)" stroke-width="3.5"/></svg><b class="bk-name" style="font-size:var(--bk-fs-md)">Bunraku</b></span>
+                    <span class="su-prog" data-part="setup.progress"><span class="su-dots"><i data-done></i><i data-now style="background:var(--bk-deck-character)"></i><i></i><i></i><i></i></span><span class="bk-meta">2 of 5</span></span>
+                  </header>
+                  <h1 class="su-q">What do you want to make?</h1>
+                  <p class="su-say">Pick as many as you like. The first pick is where the Library opens.</p>
+                  <div class="su-stack" data-deck="character">
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Characters<span class="bk-meta">default</span></div><p class="su-opt-sub">The people you create.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Lorebooks</div><p class="su-opt-sub">The world facts they remember.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift aria-pressed="false" data-part="setup.option"><div class="su-opt-title">Personas</div><p class="su-opt-sub">Who you are when you talk to them.</p></button>
+                    <button type="button" class="su-opt bk-frame" data-lift data-mark aria-pressed="true" data-part="setup.option"><span class="bk-tag su-opt-mark" data-mark>Picked</span><div class="su-opt-title">Presets</div><p class="su-opt-sub">Saved settings that shape the writing.</p></button>
+                  </div>
+                  <div class="su-controls"><button type="button" class="su-back">&larr; Back</button><button type="button" class="bk-tag" data-mark>Next &rarr;</button></div>
+                  <div class="su-skip"><button type="button">Skip all &middot; you can change everything later</button></div>
+                </div>
+              </div>
+
+              <aside class="su-house" data-part="setup.stage">
+                <div class="su-house-cap"><span class="bk-label">Your Stage</span><span class="bk-meta">decks standing up</span></div>
+                <div class="su-stagebox bk-panel bk-frame" data-crown>
+                  <div class="bk-stage su-stagewell">
+                    <div class="su-floor" style="box-shadow:inset 0 1px 0 var(--bk-deck-character)">
+                      <span class="su-fl-k">the floor</span>
+                      <div class="su-troupe">
+                        <div class="su-dcard"><div class="su-dcard-cov"><b>C</b><span class="su-dcard-ct" style="background:var(--bk-deck-character)">character</span><span class="su-dcard-mk" style="background:var(--bk-deck-character)">opens first</span></div><div class="su-dcard-dn">Characters</div></div>
+                        <div class="su-dcard"><div class="su-dcard-cov"><b>L</b><span class="su-dcard-ct" style="background:var(--bk-deck-character)">lorebook</span></div><div class="su-dcard-dn">Lorebooks</div></div>
+                        <div class="su-dcard"><div class="su-dcard-cov"><b>P</b><span class="su-dcard-ct" style="background:var(--bk-deck-character)">preset</span></div><div class="su-dcard-dn">Presets</div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div class="spec-states">
+          <button type="button" class="spec-chip" data-set-state="t2" aria-pressed="true">2 First deck</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta" style="margin-top:var(--bk-space-6)"><b>Carried:</b> all five steps in order
+    (theme, first-deck with the "opens first" mark, publish with its landed/await plates, accent
+    with the shared swatch row, the proposed Windows-only shortcuts step), the live theme flip on
+    Light, the 4-of-4 dot count on non-Windows builds, Skip all, and the closing recap sentence plus
+    its chips. <b>New (needs approval):</b> the shortcuts step (order 50) and its recap chip are
+    proposed per shell-setup.html's own note -- no phrase()/recap() exists for it in wizard-core.ts
+    yet. <b>Simplified:</b> the wizard normally forces the whole surface to the paper theme and
+    live-flips it on the theme step; here the page's own theme switcher governs every step instead,
+    so each one can be checked against all four themes.</p>
+  </section>
+</main>
+</body>
+</html>

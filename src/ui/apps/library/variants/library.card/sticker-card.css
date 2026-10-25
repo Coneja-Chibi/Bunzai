@@ -1,0 +1,30 @@
+/** library.card sticker-card: a sticker. The deck's pastel as the card, ink type on a paper-white label, a thick edge and a hard shadow. */
+html[data-surface-library-card="sticker-card"] {
+  & .lib.rc .rcard { --stage-card: var(--bk-text-on-tint); --stage-soft: var(--bk-text-on-tint); --stage-text-dim: var(--bk-text-on-tint); --stage-row: transparent; --stage-seam: var(--bk-line);
+    background: var(--t); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+  & .lib.rc .rcard:hover { transform: translate(-2px, -2px); box-shadow: calc(var(--bk-frame-shadow-x) + 3px) calc(var(--bk-frame-shadow-y) + 3px) 0 0 var(--bk-line); }
+  & .lib.rc .rcard.pick { outline: 3px solid var(--bk-focus-color); outline-offset: 2px; transform: translate(-2px, -2px); box-shadow: calc(var(--bk-frame-shadow-x) + 3px) calc(var(--bk-frame-shadow-y) + 3px) 0 0 var(--bk-line); }
+  & .lib.rc .rcard.cast { box-shadow: none; transform: translate(2px, 2px); }
+  & .lib.rc .rcard::before, & .lib.rc .rcard::after { display: none; }
+  & .lib.rc .rcard.rchar { aspect-ratio: 380 / 680; background: var(--t); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: var(--bk-frame-shadow-x) var(--bk-frame-shadow-y) 0 0 var(--bk-line); }
+  & .lib.rc .rcard.rchar:hover { transform: translate(-2px, -2px); box-shadow: calc(var(--bk-frame-shadow-x) + 3px) calc(var(--bk-frame-shadow-y) + 3px) 0 0 var(--bk-line); }
+  & .lib.rc .rcard.rchar .rcimg { -webkit-mask-image: none; mask-image: none; background-color: color-mix(in srgb, var(--t) 45%, var(--bk-text)); border-bottom: var(--bk-frame-w) solid var(--bk-line); color: var(--bk-text-on-tint); }
+  /* the label: a paper-white strip carries the name and the words */
+  & .lib.rc .rcbody, & .lib.rc .rahead, & .lib.rc .rpbody, & .lib.rc .rrbody { background: var(--bk-text); color: var(--bk-text-on-tint); margin: .5rem; box-shadow: inset 0 0 0 var(--bk-frame-w) var(--bk-line); }
+  & .lib.rc .rcbody { padding: .6rem .7rem; }
+  & .lib.rc .rahead { padding: .7rem; }
+  & .lib.rc .rabody { margin: 0 .5rem .5rem; padding: .5rem .7rem; background: var(--bk-text); color: var(--bk-text-on-tint); }
+  & .lib.rc .rcard.rasset.book { aspect-ratio: 380 / 840; }
+  & .lib.rc .rcard.rasset.book > .rart { aspect-ratio: 2 / 3; border-bottom: var(--bk-frame-w) solid var(--bk-line); }
+  & .lib.rc .rart { background-image: none; background-color: color-mix(in srgb, var(--t) 45%, var(--bk-text)); }
+  & .lib.rc .rart.has::after { display: none; }
+  & .lib.rc .rstats, & .lib.rc .rstrip, & .lib.rc .rrhead { background: transparent; border-bottom: var(--bk-frame-w) solid var(--bk-line); }
+  & .lib.rc .rfoot, & .lib.rc .rtools { background: var(--bk-surface-panel); color: var(--bk-text); border-top: var(--bk-frame-w) solid var(--bk-line); --stage-text-dim: var(--bk-text-soft); --stage-card: var(--bk-text); }
+  & .lib.rc .rcard .rcbody .rfoot { background: transparent; --stage-text-dim: var(--bk-text-on-tint); }
+  & .lib.rc .rcard :is(.ratitle, .rptitle, .rctitle, .rrtitle) { text-shadow: none; text-transform: none; letter-spacing: 0; font-weight: 800; }
+  & .lib.rc .rcard .rcgenre { background: var(--bk-text-on-tint); color: var(--bk-text); }
+  & .lib.rc .raicon, & .lib.rc .rpicon { border-radius: 0; background: var(--bk-surface-panel); border: var(--bk-frame-w) solid var(--bk-line); color: var(--bk-text); }
+  & .lib.rc .rtag { border-radius: 0; background: var(--bk-surface-panel); color: var(--bk-text); box-shadow: inset 0 0 0 1px var(--bk-line); }
+  & .lib.rc .rmore { background: var(--bk-surface-panel); border: var(--bk-frame-w) solid var(--bk-line); }
+  & .lib.rc .rstart { border-radius: 0; background: var(--bk-role-action); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: 2px 2px 0 0 var(--bk-line); }
+}

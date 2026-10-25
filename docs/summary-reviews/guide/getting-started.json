@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "guide/getting-started",
+  "sourcePath": "docs/guide/getting-started.md",
+  "sourceHash": "sha256:9a42438ab6f0c294ad8900c8bfba390e67a7a2e870cccd857cd8a1ac845607cc",
+  "semanticSummaryHash": "sha256:d5f0d31778e978bb824ae95fc672513917505997624be4e5f23d9d3ae1074def",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Backdrop (rule 36, /api/chats/backdrop, picker, link guard, image-pack, Packs rename) matches code",
+  "reviewedAt": "2026-10-09T06:34:04.203Z"
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt format</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+/* Prompt format viewer and editor, WIREFRAME ONLY (not built). Library card and raw view cover reading today. */
+.pf { --acc: var(--deck-preset); display: flex; flex-direction: column; gap: 14px; padding: 16px; background: var(--stage-panel); color: var(--stage-card); min-height: 100%; }
+.pf header { display: flex; gap: 12px; align-items: center; border: 1px solid color-mix(in srgb, var(--acc) 40%, transparent); padding: 12px 14px; }
+.pf header .eb { font-family: var(--font-mono); font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--stage-mute); }
+.pf header h3 { font-family: var(--font-big); font-weight: 800; font-size: 22px; letter-spacing: .03em; text-transform: uppercase; }
+.pf .note { padding: 8px 12px; border-left: 3px solid var(--acc); background: color-mix(in srgb, var(--acc) 10%, transparent); font-size: 12px; color: var(--stage-soft); }
+.pf .tabs { display: flex; gap: 6px; }
+.pf .tabs button { font-family: var(--font-big); font-weight: 700; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; padding: 8px 14px; border: 1px solid var(--stage-line); background: transparent; color: var(--stage-soft); }
+.pf .tabs button.on { color: var(--stage-card); border-color: var(--acc); background: color-mix(in srgb, var(--acc) 18%, transparent); }
+.pf .grid { display: grid; grid-template-columns: minmax(10rem, 14rem) 1fr; gap: 1px; border: 1px solid var(--stage-line); }
+.pf .grid > * { padding: 8px 10px; background: var(--stage-black); font-size: 12px; }
+.pf .grid .k { font-family: var(--font-mono); color: var(--stage-mute); }
+.pf .grid .v { font-family: var(--font-mono); white-space: pre-wrap; word-break: break-word; }
+.pf .grid .v.flag { color: var(--acc); }
+.pf .grid .raw { color: var(--stage-soft); }
+.pf footer { display: flex; gap: 8px; }
+.pf footer button { font-family: var(--font-big); font-weight: 700; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; padding: 8px 14px; border: 1px solid var(--stage-line); background: transparent; color: var(--stage-card); }
+</style>
+</head>
+<body>
+<!-- Shown: a paired format (Llama 3 Instruct). Instruct and Context are tabs; a one-half format shows one tab. -->
+<div class="pf">
+  <header>
+    <div>
+      <div class="eb">Prompt format &middot; from SillyTavern</div>
+      <h3>Llama 3 Instruct</h3>
+    </div>
+  </header>
+  <div class="note">Used by text-completion connections, which Bunraku does not have yet. Nothing sends this today; it is kept whole.</div>
+  <div class="tabs"><button class="on">Instruct</button><button>Context</button></div>
+  <div class="grid">
+    <div class="k">input_sequence</div><div class="v">&lt;|start_header_id|&gt;user&lt;|end_header_id|&gt;\n\n</div>
+    <div class="k">output_sequence</div><div class="v">&lt;|start_header_id|&gt;assistant&lt;|end_header_id|&gt;\n\n</div>
+    <div class="k">system_sequence</div><div class="v">&lt;|start_header_id|&gt;system&lt;|end_header_id|&gt;\n\n</div>
+    <div class="k">stop_sequence</div><div class="v">&lt;|eot_id|&gt;</div>
+    <div class="k">wrap</div><div class="v flag">off</div>
+    <div class="k">names_behavior</div><div class="v">force</div>
+    <div class="k">activation_regex</div><div class="v raw">(empty)</div>
+  </div>
+  <footer><button>Edit</button><button>Export file</button></footer>
+</div>
+</body>
+</html>

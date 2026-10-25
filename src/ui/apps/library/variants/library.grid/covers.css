@@ -1,0 +1,7 @@
+/**
+ * library.grid covers: shelves of portrait covers. (The user's Carousel or Grid choice still decides how the covers
+ * lie; this only sizes them. The rail, section headers, toolbar and tabs belong to their own surfaces.)
+ */
+html[data-surface-library-grid="covers"] {
+  & .lib.rc { --cw: min(calc(7rem + (var(--card-w, 8.5rem) - 4rem) * 1.6), 85cqi); }
+}

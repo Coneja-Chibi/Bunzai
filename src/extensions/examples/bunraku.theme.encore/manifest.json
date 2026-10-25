@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 2,
+  "id": "bunraku.theme.encore",
+  "version": "3.0.0",
+  "name": "Encore",
+  "requests": [
+    "appearance.accent",
+    "appearance.assets",
+    "appearance.fonts",
+    "appearance.palette",
+    "appearance.shape",
+    "appearance.styles",
+    "appearance.surfaces",
+    "appearance.type",
+    "ui.slots"
+  ],
+  "appearance": {
+    "surfaces": {
+      "shell.nav": "hud-bar",
+      "shell.overlay": "hud-widgets",
+      "shell.title": "attract",
+      "shell.status": "hud-strip",
+      "library.grid": "inventory-slots",
+      "library.card": "item-card",
+      "scenes.list": "save-file-slots",
+      "ui.dialog": "menu-window",
+      "ui.toast": "hud-ticker",
+      "ui.empty": "no-data-panel",
+      "ui.panel": "bracket-frame",
+      "ui.meter": "segmented",
+      "ui.icons": "pixel-crisp",
+      "ui.toolbar": "hud-command-bar",
+      "library.decks": "inventory-tabs",
+      "ui.section-header": "slot-header",
+      "ui.tabs": "menu-cursor",
+      "ui.label-type": "caps-mono",
+      "scene.layout": "vn-stage",
+      "scene.message": "vn-box",
+      "scene.composer": "command-box",
+      "scene.swipes": "key-chips",
+      "scene.wings": "pause-menu",
+      "scene.hud": "full-hud",
+      "scene.reasoning": "slot-tab",
+      "editor.frame": "tabbed-menu",
+      "editor.fields": "stat-sheet",
+      "settings.shape": "options-menu",
+      "app.room": "hud-console",
+      "ui.controls": "game"
+    },
+    "palette": {
+      "surface": {
+        "well": "#03060f",
+        "base": "#070b18",
+        "sunken": "#0b1124",
+        "field": "#060a15",
+        "panel": "#111a33",
+        "raised": "#1a2547",
+        "ink": "#02040a"
+      },
+      "line": {
+        "strong": "#7d9cf0",
+        "line": "#28365e",
+        "track": "#232f55",
+        "control": "#8aa4e6",
+        "focus": "#ffd23f"
+      },
+      "text": {
+        "text": "#f4f7ff",
+        "soft": "#d9e2fb",
+        "dim": "#b9c6e8",
+        "faint": "#9aa9d0",
+        "onTint": "#06091a",
+        "onDeep": "#ffffff"
+      },
+      "roles": {
+        "brand": {
+          "fill": "#ff7a45",
+          "text": "#ff9a6b",
+          "deep": "#a8420f"
+        },
+        "action": {
+          "fill": "#5c9dff",
+          "text": "#82b4ff",
+          "deep": "#2758a6"
+        },
+        "select": {
+          "fill": "#b48cff",
+          "text": "#c4a3ff",
+          "deep": "#6a4ca6"
+        },
+        "ok": {
+          "fill": "#3ee08f",
+          "text": "#3ee08f",
+          "deep": "#036b39"
+        },
+        "warn": {
+          "fill": "#ffb83d",
+          "text": "#ffb83d",
+          "deep": "#7c4d00"
+        },
+        "danger": {
+          "fill": "#ff5a67",
+          "text": "#ff7a85",
+          "deep": "#a62530"
+        },
+        "info": {
+          "fill": "#2fd9cf",
+          "text": "#2fd9cf",
+          "deep": "#006963"
+        }
+      }
+    },
+    "type": {
+      "display": "archivo",
+      "ui": "archivo",
+      "body": "archivo",
+      "mono": "plex-mono",
+      "scale": 0
+    },
+    "shape": {
+      "frame": "bracket",
+      "frameWidth": 2,
+      "density": "dense",
+      "motion": "snappy",
+      "chrome": "bunraku"
+    },
+    "accent": {
+      "follows": "user"
+    },
+    "marks": {
+      "dock": "ticket-bun",
+      "bookFrame": "ticket-frame"
+    }
+  },
+  "assets": [
+    {
+      "id": "ticket-bun",
+      "path": "assets/ticket-bun.svg",
+      "mediaType": "image/svg+xml"
+    },
+    {
+      "id": "ticket-frame",
+      "path": "assets/ticket-frame.svg",
+      "mediaType": "image/svg+xml"
+    },
+    {
+      "id": "crest",
+      "path": "assets/crest.png",
+      "mediaType": "image/png"
+    },
+    {
+      "id": "starfield",
+      "path": "assets/starfield.png",
+      "mediaType": "image/png"
+    }
+  ],
+  "fonts": [
+    {
+      "id": "silkscreen",
+      "path": "fonts/silkscreen-700.woff2",
+      "mediaType": "font/woff2"
+    }
+  ],
+  "styles": "styles.css",
+  "slots": {
+    "library.header": [
+      {
+        "kind": "image",
+        "asset": "crest",
+        "alt": "Encore crest, a pixel bunny on a shield"
+      },
+      {
+        "kind": "text",
+        "text": "Player one ready",
+        "class": "mod-banner"
+      }
+    ],
+    "scenes.header": [
+      {
+        "kind": "text",
+        "text": "Stage select",
+        "class": "mod-tip"
+      }
+    ],
+    "scene.backdrop": [
+      {
+        "kind": "image",
+        "asset": "crest",
+        "alt": ""
+      }
+    ],
+    "shell.status.end": [
+      {
+        "kind": "text",
+        "text": "Encore",
+        "class": "mod-tip"
+      }
+    ]
+  }
+}

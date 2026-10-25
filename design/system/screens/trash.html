@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en" data-theme="g3">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bunraku System: Trash</title>
+<link rel="stylesheet" href="../system.css">
+<link rel="stylesheet" href="../page.css">
+<link rel="stylesheet" href="trash.css">
+<script src="../page.js"></script>
+</head>
+<body>
+<main class="spec-page">
+  <header>
+    <p class="bk-label">Bunraku design system <b>screens</b></p>
+    <h1 class="bk-title">Trash</h1>
+    <p>The Library’s Trash: deleted pieces, cut scenes and deleted takes together, filtered by All / Pieces / Scenes, each with time left and Restore.</p>
+  </header>
+
+  <section class="spec-item" data-taste-item="trash.panel">
+    <header>
+      <h2 class="bk-heading">Trash panel</h2>
+      <span class="bk-tag">trash-panel.tsx, delete-flow.tsx</span>
+      <p class="bk-meta">Parts: trash.panel, trash.filter, trash.row, trash.row.time, trash.row.restore, trash.empty</p>
+    </header>
+    <div class="spec-variants">
+      <article class="spec-variant" data-taste-id="trash.panel.a">
+        <header><span class="bk-label">Variant <b>A</b></span><h3 class="bk-name">Ledger</h3>
+          <p>Rows with kind, name, time left as a meter, and Restore.</p></header>
+        <div class="spec-screen tr-screen" data-state="full">
+<div class="tr-app" data-part="shell.app">
+  <header class="tr-hud" data-part="shell.hud">
+    <div class="tr-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="tr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="tr-hud-mid">
+      <div class="tr-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="tr-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close Trash</span></span>
+    </div>
+  </header>
+  <div class="tr-body">
+    <nav class="tr-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="tr-dock-brand" data-part="shell.dock.brand">
+        <svg class="tr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="tr-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="tr-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="tr-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="library" aria-current="true">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="tr-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="tr-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="tr-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="tr-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="tr-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="tr-dock-app tr-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="tr-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="tr-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="tr-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="tr-stage bk-stage" data-part="shell.stage">
+
+        <div class="tr-wrap" data-part="trash.panel">
+        <header class="tr-thead" data-part="trash.panel">
+          <h2 class="bk-heading">Trash</h2>
+          <p class="bk-meta">Deleted pieces and scenes stay here for 3 days. They no longer appear in your Library, your Scenes, or selection menus while in Trash. Restoring returns a piece with its history under its own name, and a scene or take with every message.</p>
+        </header>
+        <nav class="tr-filter" role="group" aria-label="Show" data-part="trash.filter">
+          <button type="button" class="bk-item tr-fbtn" aria-selected="true">All <span class="bk-num">6</span></button>
+          <button type="button" class="bk-item tr-fbtn">Pieces <span class="bk-num">3</span></button>
+          <button type="button" class="bk-item tr-fbtn">Scenes <span class="bk-num">3</span></button>
+        </nav>
+          <div class="tr-rows">
+          <div class="tr-row" data-kind="pieces" data-part="trash.row">
+            <span class="bk-name tr-rowname">Vera the Bard</span>
+            <span class="bk-meta tr-rowkind">character</span>
+            <div class="bk-meter tr-rowmeter" data-part="ui.meter" role="meter" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100" aria-label="Time left">
+              <span class="bk-meter__track"><span class="bk-meter__fill" data-tone="danger" style="--bk-value:66%"></span></span>
+              <span class="bk-meter__value tr-ago" data-part="trash.row.time">2d left</span>
+            </div>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-row" data-kind="scenes" data-part="trash.row">
+            <span class="bk-name tr-rowname">The long storm</span>
+            <span class="bk-meta tr-rowkind">scene with Marguerite Vane, 42 messages</span>
+            <div class="bk-meter tr-rowmeter" data-part="ui.meter" role="meter" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-label="Time left">
+              <span class="bk-meter__track"><span class="bk-meter__fill" data-tone="danger" style="--bk-value:90%"></span></span>
+              <span class="bk-meter__value tr-ago" data-part="trash.row.time">3d left</span>
+            </div>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-row" data-kind="pieces" data-part="trash.row">
+            <span class="bk-name tr-rowname">Paramnesia VI, GLM</span>
+            <span class="bk-meta tr-rowkind">preset</span>
+            <div class="bk-meter tr-rowmeter" data-part="ui.meter" role="meter" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" aria-label="Time left">
+              <span class="bk-meter__track"><span class="bk-meter__fill" data-tone="danger" style="--bk-value:33%"></span></span>
+              <span class="bk-meter__value tr-ago" data-part="trash.row.time">1d left</span>
+            </div>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-row" data-kind="scenes" data-part="trash.row">
+            <span class="bk-name tr-rowname">Take 2</span>
+            <span class="bk-meta tr-rowkind">take of Cut the deck, 18 messages</span>
+            <div class="bk-meter tr-rowmeter" data-part="ui.meter" role="meter" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100" aria-label="Time left">
+              <span class="bk-meter__track"><span class="bk-meter__fill" data-tone="danger" style="--bk-value:2%"></span></span>
+              <span class="bk-meter__value tr-ago" data-part="trash.row.time">under 1h left</span>
+            </div>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-row" data-kind="pieces" data-part="trash.row">
+            <span class="bk-name tr-rowname">Harbor Town</span>
+            <span class="bk-meta tr-rowkind">lorebook</span>
+            <div class="bk-meter tr-rowmeter" data-part="ui.meter" role="meter" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-label="Time left">
+              <span class="bk-meter__track"><span class="bk-meter__fill" data-tone="danger" style="--bk-value:90%"></span></span>
+              <span class="bk-meter__value tr-ago" data-part="trash.row.time">3d left</span>
+            </div>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-row" data-kind="scenes" data-part="trash.row">
+            <span class="bk-name tr-rowname">Untitled Story</span>
+            <span class="bk-meta tr-rowkind">scene with Nuit, 3 messages</span>
+            <div class="bk-meter tr-rowmeter" data-part="ui.meter" role="meter" aria-valuenow="7" aria-valuemin="0" aria-valuemax="100" aria-label="Time left">
+              <span class="bk-meter__track"><span class="bk-meter__fill" data-tone="danger" style="--bk-value:7%"></span></span>
+              <span class="bk-meter__value tr-ago" data-part="trash.row.time">5h left</span>
+            </div>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          </div>
+        <div class="tr-empty" data-part="trash.empty">
+          <h3 class="bk-heading">Trash is empty</h3>
+          <p class="bk-meta">Deleted pieces and scenes remain here for 3 days, ready to restore.</p>
+          <button type="button" class="bk-item tr-btn">Back to library</button>
+        </div>
+        </div>
+        <div class="tr-scrim">
+          <div class="bk-frame tr-dlg" data-crown data-tone="danger">
+            <h3 class="bk-heading">Move "Vera the Bard" to Trash?</h3>
+            <p class="bk-meta">You can restore it from Trash for 3 days. It will no longer appear in your Library or selection menus while deleted.</p>
+            <div class="tr-dlgrow">
+              <button type="button" class="bk-item tr-btn-ghost">Keep</button>
+              <button type="button" class="bk-item tr-btn-danger" data-tone="danger">Delete</button>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="tr-status" data-part="shell.status">
+    <span class="tr-status-item" data-part="shell.status.item">Trash · 6 items</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Ledger">
+          <button type="button" class="spec-chip" data-set-state="full" aria-pressed="true">Trash: All</button>
+          <button type="button" class="spec-chip" data-set-state="pieces">Trash: Pieces</button>
+          <button type="button" class="spec-chip" data-set-state="scenes">Trash: Scenes</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Trash is empty</button>
+          <button type="button" class="spec-chip" data-set-state="confirm">Move to Trash? dialog</button>
+        </div>
+      </article>
+      <article class="spec-variant" data-taste-id="trash.panel.b">
+        <header><span class="bk-label">Variant <b>B</b></span><h3 class="bk-name">Slots</h3>
+          <p>Deleted items as dimmed portrait slots with a countdown tag and Restore.</p></header>
+        <div class="spec-screen tr-screen" data-state="full">
+<div class="tr-app" data-part="shell.app">
+  <header class="tr-hud" data-part="shell.hud">
+    <div class="tr-hud-start" data-part="shell.hud.brand" data-slot="shell.hud.start">
+      <svg class="tr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+      <span class="bk-tag">SLOT <b>01</b> &middot; LV <b>12</b></span>
+    </div>
+    <div class="tr-hud-mid">
+      <div class="tr-hud-score" data-part="shell.hud.score">
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">07</span><span class="bk-readout__label">Scenes</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">05</span><span class="bk-readout__label">Cast</span></div>
+        <div class="bk-readout" data-part="ui.readout" data-inline><span class="bk-readout__value">14</span><span class="bk-readout__label">Takes</span></div>
+      </div>
+      <div class="bk-divider" aria-orientation="vertical"></div>
+      <div class="bk-meter" data-part="shell.hud.meter ui.meter" data-deck="lorebook" role="meter" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100" aria-label="Lore budget">
+        <span class="bk-meter__label" data-part="ui.meter.label">Lore budget</span>
+        <span class="bk-meter__track" data-part="ui.meter.track"><span class="bk-meter__fill" data-part="ui.meter.fill" style="--bk-value:64%"></span></span>
+        <span class="bk-meter__value" data-part="ui.meter.value">64%</span>
+      </div>
+      <div class="bk-pips" data-part="ui.pips" role="img" aria-label="Cast online: 2 of 5"><span data-on></span><span data-on></span><span></span><span></span><span></span></div>
+    </div>
+    <div class="tr-hud-end" data-part="shell.hud.keys" data-slot="shell.hud.end">
+        <span class="bk-tag" data-part="ui.key-chip"><b data-part="ui.key-chip.key">Esc</b> <span data-part="ui.key-chip.label">Close Trash</span></span>
+    </div>
+  </header>
+  <div class="tr-body">
+    <nav class="tr-dock" data-part="shell.dock" aria-label="Apps">
+      <div class="tr-dock-brand" data-part="shell.dock.brand">
+        <svg class="tr-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 24 H92 V40 A8 8 0 0 0 92 56 V76 H8 V56 A8 8 0 0 0 8 40 Z" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="36" cy="58" rx="9" ry="8" fill="currentColor"/><circle cx="68" cy="50" r="4" fill="currentColor"/></svg>
+        <span class="tr-dock-word">bunraku</span>
+      </div>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="scenes">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 4l12 8-12 8V4z"/></svg>
+        <span class="tr-dock-label"><b>Scenes</b><small>play</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="workbench">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 20 L15 9 L18 12 L7 23z"/><path d="M14 8l2-2 4 4-2 2"/></svg>
+        <span class="tr-dock-label"><b>Workbench</b><small>make</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="library" aria-current="true">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 4v16"/></svg>
+        <span class="tr-dock-label"><b>Library</b><small>keep</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="press">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 16l4-8 4 8"/></svg>
+        <span class="tr-dock-label"><b>Press</b><small>share</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="agent">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M9 9c0-2 2-3 3-3s3 1 3 3-3 2-3 4M12 16h.01"/></svg>
+        <span class="tr-dock-label"><b>Agent</b><small>help</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="kit">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><path d="M8 9l3 3-3 3M13 15h4"/></svg>
+        <span class="tr-dock-label"><b>Kit</b><small>terminal</small></span>
+      </button>
+      <button type="button" class="tr-dock-app bk-item" data-part="shell.dock.app" data-app="settings">
+        <svg class="tr-dock-icon" data-part="shell.dock.icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16"/><circle cx="12" cy="12" r="3"/></svg>
+        <span class="tr-dock-label"><b>Settings</b><small></small></span>
+      </button>
+      <span data-slot="shell.dock.end"></span>
+      <button type="button" class="tr-dock-app tr-dock-add bk-item" data-part="shell.dock.add">
+        <svg class="tr-dock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="tr-dock-label"><b>Add app</b><small></small></span>
+      </button>
+      <button type="button" class="tr-dock-fold" data-part="shell.dock.fold" aria-label="Collapse dock" aria-pressed="false">&laquo;</button>
+    </nav>
+    <main class="tr-stage bk-stage" data-part="shell.stage">
+
+        <div class="tr-wrap" data-part="trash.panel">
+        <header class="tr-thead" data-part="trash.panel">
+          <h2 class="bk-heading">Trash</h2>
+          <p class="bk-meta">Deleted pieces and scenes stay here for 3 days. They no longer appear in your Library, your Scenes, or selection menus while in Trash. Restoring returns a piece with its history under its own name, and a scene or take with every message.</p>
+        </header>
+        <nav class="tr-filter" role="group" aria-label="Show" data-part="trash.filter">
+          <button type="button" class="bk-item tr-fbtn" aria-selected="true">All <span class="bk-num">6</span></button>
+          <button type="button" class="bk-item tr-fbtn">Pieces <span class="bk-num">3</span></button>
+          <button type="button" class="bk-item tr-fbtn">Scenes <span class="bk-num">3</span></button>
+        </nav>
+          <div class="tr-rows">
+          <div class="tr-slot" data-kind="pieces" data-part="trash.row">
+            <span class="tr-slotswatch" data-deck="character"></span>
+            <span class="bk-name tr-rowname">Vera the Bard</span>
+            <span class="bk-meta tr-rowkind">character</span>
+            <span class="bk-tag tr-countdown" data-tone="danger" data-part="trash.row.time">2d left</span>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-slot" data-kind="scenes" data-part="trash.row">
+            <span class="tr-slotswatch" data-deck="pack"></span>
+            <span class="bk-name tr-rowname">The long storm</span>
+            <span class="bk-meta tr-rowkind">scene with Marguerite Vane, 42 messages</span>
+            <span class="bk-tag tr-countdown" data-tone="danger" data-part="trash.row.time">3d left</span>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-slot" data-kind="pieces" data-part="trash.row">
+            <span class="tr-slotswatch" data-deck="character"></span>
+            <span class="bk-name tr-rowname">Paramnesia VI, GLM</span>
+            <span class="bk-meta tr-rowkind">preset</span>
+            <span class="bk-tag tr-countdown" data-tone="danger" data-part="trash.row.time">1d left</span>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-slot" data-kind="scenes" data-part="trash.row">
+            <span class="tr-slotswatch" data-deck="pack"></span>
+            <span class="bk-name tr-rowname">Take 2</span>
+            <span class="bk-meta tr-rowkind">take of Cut the deck, 18 messages</span>
+            <span class="bk-tag tr-countdown" data-tone="danger" data-part="trash.row.time">under 1h left</span>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-slot" data-kind="pieces" data-part="trash.row">
+            <span class="tr-slotswatch" data-deck="character"></span>
+            <span class="bk-name tr-rowname">Harbor Town</span>
+            <span class="bk-meta tr-rowkind">lorebook</span>
+            <span class="bk-tag tr-countdown" data-tone="danger" data-part="trash.row.time">3d left</span>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          <div class="tr-slot" data-kind="scenes" data-part="trash.row">
+            <span class="tr-slotswatch" data-deck="pack"></span>
+            <span class="bk-name tr-rowname">Untitled Story</span>
+            <span class="bk-meta tr-rowkind">scene with Nuit, 3 messages</span>
+            <span class="bk-tag tr-countdown" data-tone="danger" data-part="trash.row.time">5h left</span>
+            <button type="button" class="bk-item tr-restorebtn" data-part="trash.row.restore">Restore</button>
+          </div>
+          </div>
+        <div class="tr-empty" data-part="trash.empty">
+          <h3 class="bk-heading">Trash is empty</h3>
+          <p class="bk-meta">Deleted pieces and scenes remain here for 3 days, ready to restore.</p>
+          <button type="button" class="bk-item tr-btn">Back to library</button>
+        </div>
+        </div>
+        <div class="tr-scrim">
+          <div class="bk-frame tr-dlg" data-crown data-tone="danger">
+            <h3 class="bk-heading">Move "Vera the Bard" to Trash?</h3>
+            <p class="bk-meta">You can restore it from Trash for 3 days. It will no longer appear in your Library or selection menus while deleted.</p>
+            <div class="tr-dlgrow">
+              <button type="button" class="bk-item tr-btn-ghost">Keep</button>
+              <button type="button" class="bk-item tr-btn-danger" data-tone="danger">Delete</button>
+            </div>
+          </div>
+        </div>    </main>
+  </div>
+  <footer class="tr-status" data-part="shell.status">
+    <span class="tr-status-item" data-part="shell.status.item">Trash · 6 items</span>
+    <span data-slot="shell.status.end"></span>
+  </footer>
+</div>
+        </div>
+        <div class="spec-states" role="group" aria-label="States for Slots">
+          <button type="button" class="spec-chip" data-set-state="full" aria-pressed="true">Trash: All</button>
+          <button type="button" class="spec-chip" data-set-state="pieces">Trash: Pieces</button>
+          <button type="button" class="spec-chip" data-set-state="scenes">Trash: Scenes</button>
+          <button type="button" class="spec-chip" data-set-state="empty">Trash is empty</button>
+          <button type="button" class="spec-chip" data-set-state="confirm">Move to Trash? dialog</button>
+        </div>
+      </article>
+    </div>
+    <p class="bk-meta"><b>Carried / New:</b> Carried: the warning header, the All/Pieces/Scenes filter with counts, one list holding pieces and scenes together (each row’s kind, name and time left), Restore, the empty-trash state, and the Move to Trash? confirm dialog opened from the Library’s Delete (shown here since it is part of this flow, even though it is not reached from this page’s own Restore-only actions). Drawn inside the Library room (Library marked active in the Dock), since the Trash panel opens from the Library rail’s Trash row rather than being its own room. Phone width is covered by the page-wide Width switch, not repeated here.</p>
+  </section>
+</main>
+</body>
+</html>

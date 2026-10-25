@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Booth mood</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Courier+Prime:wght@400;700&family=Covered+By+Your+Grace&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<link rel="stylesheet" href="board.css">
+<style>
+:root {
+  --bg: #05070f; --fg: #d7defa; --fg2: #8e98bd; --dim: #4f587c; --rule: #141a30; --accent: #3c6bff;
+  --body: "IBM Plex Sans", sans-serif; --mono: "IBM Plex Mono", monospace;
+  --display: 800 clamp(4rem, 10vw, 9rem) "Barlow Condensed", sans-serif;
+  --h3: 800 1.6rem/1 "Barlow Condensed", sans-serif; --quote: 400 1.35rem/1.35 "Courier Prime", monospace;
+  --red: #ff3b2f; --green: #20e57d; --hi: #e3ff3f; --pencil: #9aa5c9; --page: #121a33;
+}
+/* the stage manager's desk under blue running lights */
+.hero { background: radial-gradient(ellipse 55% 60% at 45% 10%, #1b2c7a55, transparent 70%), #05070f; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: clamp(16px, 3vw, 40px); align-items: center; padding: 70px clamp(16px, 4vw, 64px) 40px; }
+.book { display: grid; grid-template-columns: 1fr 1fr; background: var(--page); box-shadow: 0 30px 70px #000; min-height: 72vh; border-left: 12px solid #0c1226; }
+.pg { position: relative; padding: clamp(18px, 3vw, 40px) clamp(18px, 3vw, 36px) 30px clamp(48px, 5vw, 70px); font: 400 clamp(.85rem, 1.1vw, 1rem)/1.9 "Courier Prime"; color: #c4cdef; }
+.pg + .pg { border-left: 1px solid #0a0f22; }
+.pg h4 { font: 700 1rem "Courier Prime"; letter-spacing: .2em; margin-bottom: 18px; }
+.who { display: block; margin-top: 12px; text-align: center; letter-spacing: .1em; }
+.cue { position: absolute; left: 8px; font: 400 1.2rem/1 "Covered By Your Grace"; color: var(--pencil); }
+.bracket { position: absolute; left: 36px; width: 8px; border: 2px solid var(--pencil); border-right: 0; opacity: .8; }
+mark { background: linear-gradient(transparent 20%, #e3ff3f55 20% 85%, transparent 85%); color: inherit; }
+.active { outline: 2px solid var(--accent); outline-offset: 4px; }
+.plan { position: relative; height: 60%; min-height: 260px; margin-top: 16px; border: 2px solid #3a4677; background: repeating-linear-gradient(0deg, #0000 0 29px, #1d2750 29px 30px), repeating-linear-gradient(90deg, #0000 0 29px, #1d2750 29px 30px); }
+.plan b { position: absolute; font: 400 1.1rem "Covered By Your Grace"; color: var(--hi); }
+.panel { background: #0a0e1c; border: 1px solid #1d2546; padding: 22px; display: grid; gap: 18px; }
+.lamps { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lamp { height: 70px; display: grid; place-items: center; font: 800 1.1rem "Barlow Condensed"; letter-spacing: .14em; color: #3a4260; background: #10152a; border: 1px solid #1d2546; transition: all .15s; }
+.lamp.r.on { background: var(--red); color: #1a0000; box-shadow: 0 0 30px #ff3b2f88; }
+.lamp.g.on { background: var(--green); color: #002010; box-shadow: 0 0 30px #20e57d88; }
+.go { font: 800 2.6rem/1 "Barlow Condensed"; letter-spacing: .1em; background: #10152a; color: var(--fg); border: 2px solid var(--accent); padding: 18px; cursor: pointer; }
+.go:hover { background: var(--accent); color: #05070f; }
+.qlist { list-style: none; font: 500 12px/1 var(--mono); letter-spacing: .1em; }
+.qlist li { display: grid; grid-template-columns: 44px 1fr; padding: 10px 8px; border-bottom: 1px solid #141a30; color: var(--dim); }
+.qlist li.now { color: var(--fg); background: #3c6bff22; border-left: 3px solid var(--accent); }
+.call { font: 400 1.05rem/1.4 "Courier Prime"; color: var(--hi); min-height: 3em; }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; } .book { grid-template-columns: 1fr; } }
+
+/* pieces */
+.k-nav { list-style: none; font: 800 1.2rem "Barlow Condensed"; letter-spacing: .08em; text-transform: uppercase; }
+.k-nav li { display: grid; grid-template-columns: 56px 1fr auto; padding: 10px 0; border-bottom: 1px solid var(--rule); color: var(--fg2); }
+.k-nav li b { color: var(--accent); } .k-nav li.now { color: var(--fg); } .k-nav li i { font: 500 12px var(--mono); font-style: normal; color: var(--green); }
+.k-btn { display: inline-flex; align-items: center; gap: 12px; padding: 14px 22px; background: var(--green); color: #002010; font: 800 1.5rem/1 "Barlow Condensed"; letter-spacing: .1em; }
+.k-btn.alt { background: none; color: var(--red); outline: 2px solid var(--red); outline-offset: -2px; }
+.k-card { display: grid; grid-template-columns: 70px 1fr; background: var(--page); }
+.k-card > b { background: #0c1226; display: grid; place-items: center; font: 800 1.6rem "Barlow Condensed"; color: var(--accent); }
+.k-card div { padding: 18px; } .k-card h4 { font: var(--h3); } .k-card p { font: 400 .95rem/1.5 "Courier Prime"; color: var(--fg2); margin-top: 4px; }
+.k-in { border-bottom: 2px solid var(--pencil); padding: 4px 0; font: 400 1.7rem "Covered By Your Grace"; color: var(--pencil); }
+.k-in small { display: block; font: 500 12px var(--mono); letter-spacing: .16em; color: var(--dim); }
+.hl { display: inline-block; padding: 3px 8px; margin: 0 8px 8px 0; font: 700 .95rem "Courier Prime"; color: #05070f; background: var(--c); }
+.k-toast { font: 400 1.1rem "Courier Prime"; color: var(--fg); border-left: 4px solid var(--green); padding: 10px 14px; background: #0a0e1c; }
+.k-toast b { color: var(--green); }
+</style>
+</head>
+<body>
+<nav class="top"><a href="3-gig-poster.html">prev</a><span>4 / 6 &middot; The Booth</span><a href="5-dressing-room.html">next</a></nav>
+
+<header class="hero">
+  <div class="book">
+    <div class="pg">
+      <h4>BUNRAKU. ACT ONE.</h4>
+      <span class="cue" style="top:84px">LX 1</span>
+      <span class="bracket" style="top:88px;height:64px"></span>
+      <p id="l1">A quiet room. One lamp. A library of characters waits on the shelf.</p>
+      <span class="who">VERA</span>
+      <p>You came up the stairs without a lantern. Brave, or foolish?</p>
+      <span class="cue" style="top:278px">SQ 3</span>
+      <span class="who">YOU</span>
+      <p><mark>A little of both.</mark></p>
+      <span class="cue" style="top:380px">LX 2<br>GO</span>
+      <p>The lamp swings. The whole room is a scene now, and nothing you say leaves it.</p>
+    </div>
+    <div class="pg">
+      <h4>BLOCKING</h4>
+      <p>DS: the scene. SR: the workbench, where cards and presets are made. SL: the library shelf.</p>
+      <div class="plan"><b style="left:44%;top:40%">X you</b><b style="left:12%;top:18%">library</b><b style="right:10%;top:22%">workbench</b><b style="left:34%;bottom:12%">the scene</b></div>
+    </div>
+  </div>
+  <aside class="panel">
+    <div class="lamps"><div class="lamp r" id="sb">STANDBY</div><div class="lamp g" id="gl">GO</div></div>
+    <button class="go" id="go">GO</button>
+    <div class="call" id="call">Standing by for cue 1.</div>
+    <ol class="qlist" id="ql"></ol>
+  </aside>
+</header>
+
+<main class="wrap">
+  <section class="b"><div class="label"><b>01</b>The idea</div>
+    <div class="pitch"><div><h1>The Booth</h1><div class="line">Standby cue 1. Cue 1, go.</div></div>
+      <div><p>Every show is run from a dark booth at the back. The stage manager sits under <b>blue running lights</b> (dim enough not to spill into the house) with the prompt book open, pencil cue marks down the margin, and calls the whole show on headset: <b>"Standby. Go."</b></p>
+      <p>RoleCall is what the audience sees. Bunraku is <b>the person running it</b>: the one who knows every cue, controls every light and makes the magic happen on time.</p>
+      <p>The site is calm, precise and blue. You move through it by calling cues. The script is the guide. The GO button is the most satisfying button on the internet.</p></div></div>
+  </section>
+
+  <section class="b"><div class="label"><b>02</b>Palette: running lights, cue lamps, highlighter</div>
+    <div class="sw">
+      <div style="background:#05070f;color:#8e98bd;outline:1px solid #141a30"><b>Booth dark</b>#05070F</div>
+      <div style="background:#121a33;color:#c4cdef"><b>Page under blue</b>#121A33</div>
+      <div style="background:#3c6bff;color:#05070f"><b>Running light</b>#3C6BFF</div>
+      <div style="background:#d7defa;color:#05070f"><b>Script</b>#D7DEFA</div>
+      <div style="background:#9aa5c9;color:#05070f"><b>Pencil</b>#9AA5C9</div>
+      <div style="background:#ff3b2f;color:#1a0000"><b>Standby</b>#FF3B2F</div>
+      <div style="background:#20e57d;color:#002010"><b>Go</b>#20E57D</div>
+      <div style="background:#e3ff3f;color:#05070f"><b>Highlighter</b>#E3FF3F</div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>03</b>Type: the script, the pencil, the console</div>
+    <div class="type">
+      <div class="row"><small>BARLOW CONDENSED<br>cue labels, titles</small><div style="font:800 clamp(3rem,8vw,7rem)/.85 'Barlow Condensed'">STANDBY LX 14</div></div>
+      <div class="row"><small>COURIER PRIME<br>the script, reading text</small><div style="font:400 1.4rem/1.5 'Courier Prime'">VERA: You came up the stairs without a lantern.</div></div>
+      <div class="row"><small>COVERED BY YOUR GRACE<br>pencil marks</small><div style="font:400 2.4rem/1 'Covered By Your Grace';color:var(--pencil)">LX 2 go on "swings"</div></div>
+      <div class="row"><small>IBM PLEX MONO<br>console readouts</small><div style="font:500 1rem 'IBM Plex Mono';letter-spacing:.18em">Q 07 / 3.0s / v0.1.42</div></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>04</b>Materials</div>
+    <div class="mats">
+      <div style="background:radial-gradient(ellipse at 50% 0,#3c6bff55,transparent 70%),#05070f"><span>Blue running light</span></div>
+      <div style="background:repeating-linear-gradient(0deg,#0000 0 19px,#1d2750 19px 20px),repeating-linear-gradient(90deg,#0000 0 19px,#1d2750 19px 20px),#121a33"><span>Ground plan grid</span></div>
+      <div style="background:#121a33;font:400 2rem 'Covered By Your Grace';color:#9aa5c9;padding:30px">Q7<br>&#x2502; go</div>
+      <div style="background:#0a0e1c;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:40px 20px 50px"><i style="background:#ff3b2f"></i><i style="background:#20e57d"></i><span>Cue light box</span></div>
+      <div style="background:repeating-linear-gradient(90deg,#1a1f33 0 2px,#0b0f1c 2px 5px)"><span>Console fader grille</span></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>05</b>Pieces</div>
+    <div class="kit">
+      <figure><ol class="k-nav"><li><b>Q1</b>Home<i>DONE</i></li><li class="now"><b>Q2</b>Feature tour<i>GO</i></li><li><b>Q3</b>Guides<i></i></li><li><b>Q4</b>Download<i></i></li></ol><figcaption>Nav: the cue list</figcaption></figure>
+      <figure><div style="display:flex;gap:16px;flex-wrap:wrap"><span class="k-btn">GO: DOWNLOAD</span><span class="k-btn alt">STANDBY</span></div><figcaption>Buttons: cue lamps</figcaption></figure>
+      <figure><div class="k-card"><b>Q9</b><div><h4>LOREBOOKS</h4><p>Every fact pinned where the story can find it.</p></div></div><figcaption>Card: a cue with its number</figcaption></figure>
+      <figure><div class="k-in"><small>CUE NOTE</small>fade on the kiss</div><figcaption>Input: a pencil note in the margin</figcaption></figure>
+      <figure><div><span class="hl" style="--c:var(--hi)">NEW</span><span class="hl" style="--c:var(--red)">BETA</span><span class="hl" style="--c:var(--accent)">v0.1.42</span></div><figcaption>Tags: highlighter swipes</figcaption></figure>
+      <figure><div class="k-toast"><b>Q12 complete.</b> Scene saved.</div><figcaption>Toast: a headset call</figcaption></figure>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>06</b>How the site is built</div>
+    <div class="map">
+      <div><h3>Home</h3><strong>The booth</strong><p>The prompt book open, the cue list beside it. Press GO (or space) to run the show.</p></div>
+      <div><h3>Feature tour</h3><strong>Running the cues</strong><p>Each GO lights a new feature on the page. You set the pace; nothing autoplays.</p></div>
+      <div><h3>Guides and help</h3><strong>The prompt book</strong><p>Guides written as scripts with pencil notes in the margin where people usually trip.</p></div>
+      <div><h3>Download</h3><strong>Places, please</strong><p>The call before the show. Your platform highlighted, one GO.</p></div>
+      <div><h3>What's new</h3><strong>Show reports</strong><p>Each release is the night's show report: what ran, what broke, what changed. Live from GitHub.</p></div>
+      <div><h3>Try it</h3><strong>Take the headset</strong><p>You call the next scene yourself, right in the browser.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>07</b>Signature moves</div>
+    <div class="moves">
+      <div><h3>Standby, go <span class="live">LIVE ABOVE</span></h3><p>Press GO: standby flashes red, go snaps green, the next cue lights up in the book.</p></div>
+      <div><h3>Pencil in the margin</h3><p>Notes draw themselves in the margin as the text scrolls past, like someone marking the book.</p></div>
+      <div><h3>Spacebar runs the site</h3><p>Keyboard-first. Space is GO, backspace is back a cue. Calm, exact, no surprises.</p></div>
+    </div>
+  </section>
+
+  <section class="b"><div class="label"><b>08</b>Voice</div>
+    <div class="voice">
+      <div><h3>Say it like this</h3><ul><li>Standby cue 1. Cue 1, go.</li><li>Places, please.</li><li>Q12 complete. Scene saved.</li><li>Holding. Something didn't load.</li></ul></div>
+      <div class="no"><h3>Never this</h3><ul><li>Oops! Something went wrong</li><li>Get started for free!</li><li>Magical AI experiences</li><li>Let's go!</li></ul></div>
+    </div>
+  </section>
+
+  <footer class="foot"><span>Not this: neon cyberpunk, dashboards with rounded widgets, glass. It's a quiet room with a pencil.</span><a href="5-dressing-room.html">Next: The Dressing Room</a></footer>
+</main>
+
+<script>
+// Calling the show: standby, then go, then the next cue becomes current.
+const cues = ["Home", "Feature tour", "Guides", "Download", "What's new", "Try it"];
+const ql = document.getElementById("ql"), sb = document.getElementById("sb"), gl = document.getElementById("gl"), call = document.getElementById("call");
+let at = 0, busy = false;
+const draw = () => { ql.innerHTML = cues.map((c, i) => `<li class="${i === at ? "now" : ""}"><span>Q${i + 1}</span>${c}</li>`).join(""); };
+draw(); sb.classList.add("on");
+const go = () => {
+  if (busy) return; busy = true;
+  call.textContent = `Cue ${at + 1}, go.`; sb.classList.remove("on"); gl.classList.add("on");
+  setTimeout(() => {
+    gl.classList.remove("on"); at = (at + 1) % cues.length; draw();
+    call.textContent = `Standby cue ${at + 1}: ${cues[at]}.`; sb.classList.add("on"); busy = false;
+  }, 700);
+};
+document.getElementById("go").addEventListener("click", go);
+addEventListener("keydown", (e) => { if (e.code === "Space" && e.target === document.body) { e.preventDefault(); go(); } });
+</script>
+</body>
+</html>

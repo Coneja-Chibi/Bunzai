@@ -1,0 +1,128 @@
+.sheet {
+  max-width: 36rem;
+  max-height: min(90dvh, 42rem);
+  overflow: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+}
+.assetScroll {
+  max-height: 28rem;
+  overflow: auto;
+}
+.thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--stage-well, var(--paper));
+}
+.tbody {
+  position: relative;
+}
+.spacer {
+  visibility: hidden;
+}
+.virtualRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.table th {
+  text-align: left;
+  font-size: var(--text-meta);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 2px solid var(--edge);
+  padding: 0.3rem 0.35rem;
+}
+.table td {
+  border-bottom: 2px solid var(--seam);
+  padding: 0.4rem 0.35rem;
+  vertical-align: middle;
+}
+.kind {
+  font-size: var(--text-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border: 2px solid var(--edge);
+  padding: 0.12rem 0.28rem;
+  white-space: nowrap;
+}
+.name {
+  width: 100%;
+  min-width: 5rem;
+  background: var(--panel);
+  border: 2px solid var(--seam);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  padding: 0.28rem 0.35rem;
+}
+.ops {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+.ops button {
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  text-transform: uppercase;
+  border: 2px solid var(--seam);
+  background: var(--panel);
+  color: var(--muted);
+  padding: 0.25rem 0.35rem;
+  cursor: pointer;
+}
+.ops button:hover {
+  border-color: var(--rose);
+  color: var(--rose);
+}
+.addRow {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.65rem;
+  align-items: center;
+}
+.macro {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--muted);
+  border: 2px dashed var(--seam);
+  background: var(--stage-well, var(--paper));
+  padding: 0.5rem 0.6rem;
+  margin-top: 0.65rem;
+  line-height: 1.55;
+}
+.macro code {
+  color: var(--stage-ok); /* --ok was never defined */
+  margin-right: 0.5rem;
+}
+.empty {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  color: var(--muted);
+  border: 2px dashed var(--seam);
+  padding: 0.85rem;
+  text-align: center;
+}
+.hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-meta);
+  color: var(--muted);
+}
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  clip: rect(0, 0, 0, 0);
+}
