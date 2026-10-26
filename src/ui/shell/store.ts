@@ -148,7 +148,7 @@ export const useShellStore = create<ShellState>((set, get, api) => ({
     const changedTheme = theme !== get().theme;
     if (changedTheme) get().invalidateAppearance();
     else if (next.houseAccent !== get().settings.houseAccent) paintTheme(get().appearance, next.houseAccent, get().appearanceAssetUrls);
-    set({ settings: next, theme, dockSlim: next[SETTING_KEYS.dockSlim] === true });
+    set({ settings: next, theme });
   },
 
   invalidateAppearance() {
@@ -236,9 +236,9 @@ export const useShellStore = create<ShellState>((set, get, api) => ({
     get().patchSettings({ [SETTING_KEYS.theme]: next });
   },
 
+  // Session-only: every launch starts with the dock showing.
   toggleDockSlim() {
-    const slim = !get().dockSlim;
-    get().patchSettings({ [SETTING_KEYS.dockSlim]: slim });
+    set({ dockSlim: !get().dockSlim });
   },
 
   setManifests(manifests) {

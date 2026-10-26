@@ -103,5 +103,5 @@ export function NavigationOverlay({ onNavigate, ctx, Widgets, onSurfaceTarget }:
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, openOverlay, closeOverlay]);
-  return <><TabStrip onOpenOverlay={openOverlay} />{open && <Overlay onClose={closeOverlay} onNavigate={onNavigate} onSurfaceTarget={onSurfaceTarget} ctx={ctx} Widgets={Widgets} />}</>;
+  return <><TabStrip />{open && <Overlay onClose={closeOverlay} onNavigate={onNavigate} onSurfaceTarget={onSurfaceTarget} ctx={ctx} Widgets={Widgets} />}</>;
 }

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-25",
+  "generated": "2026-10-26",
   "count": 119,
   "docs": [
     {
@@ -14791,7 +14791,7 @@
           "text": "Bottom app navigation",
           "slug": "bottom-app-navigation",
           "level": 2,
-          "summary": "The studio navigates through a bottom dock in shell/Dock.tsx that ports RoleCall's floating dock geometry, paint and motion: fixed near the bottom, centered, with native marks and labels, an accent glow, hover scale and a slide into an edge pill when collapsed. Every available discovered app appears, unavailable apps are left out and Settings ends the row. Clicking a tile opens the workspace directly. The shell reserves the dock's measured height while it is shown and releases it when collapsed or when editor focus hides it; hidden controls stay inert and out of the tab order. Arrow keys, Home and End move focus. The shell.nav theme variants change decoration only, and shell.nav.start and shell.nav.end stay decorative slots. The Overlay button and Ctrl+K or Cmd+K still open the optional temporary overlay, which carries the routine theme and piece counts. A contextual status line below the top chrome holds real messages, library-read failures, the Browser Studio export-before-reload warning and approved status slot content, and disappears when empty.",
+          "summary": "The studio navigates through a bottom dock in shell/Dock.tsx that ports RoleCall's floating dock geometry, paint and motion: centered near the bottom, with an accent glow and a slide into an edge pill when collapsed. Every available discovered app appears, unavailable apps are left out and Settings ends the row. Clicking a tile opens the workspace directly. The dock floats over the workspace, so the page keeps its full height whether the dock shows or hides; it sits above every app surface, under dialogs, and reserves no space, and hiding lasts only for the session; hidden controls stay inert and out of the tab order. Arrow keys, Home and End move focus. The shell.nav theme variants and the shell.nav.start and shell.nav.end slots are decorative only. The Overlay tile after Settings and Ctrl+K or Cmd+K open the optional temporary overlay, which shows the theme and piece counts. A status line below the top chrome holds real messages, library-read failures, the Browser Studio export-before-reload warning and approved status slot content, and disappears when empty.",
           "topics": [
             "bottom dock",
             "RoleCall dock geometry",
@@ -15076,6 +15076,20 @@
                 "editor frame",
                 "editor fields",
                 "data-editor hooks"
+              ],
+              "children": []
+            },
+            {
+              "text": "Nodes view",
+              "slug": "nodes-view",
+              "level": 3,
+              "summary": "A remembered Desk and Nodes switch shows the open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk editors stay mounted so drafts survive. Links come only from stored reference fields; dragging a port onto a compatible node links it and Delete or Unlink removes it, each a fresh single-field save, never for a piece with unsaved Desk edits. Pipeline opens a preset into its blocks in build order for toggling and reordering, wires the context character, persona and Lore pass into marker blocks, and a Request node previews the scene forecast or a labeled dry-run estimate. Board notes and frames live in settings, never in exports.",
+              "topics": [
+                "Nodes view",
+                "workbench canvas",
+                "link pieces",
+                "prompt pipeline",
+                "board notes"
               ],
               "children": []
             }

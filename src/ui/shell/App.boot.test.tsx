@@ -227,7 +227,7 @@ describe("boot paints before the piece list resolves", () => {
     // reads that as "your shelves are empty" - a false claim for a library nobody has asked about
     // yet, not merely an empty one.
     expect(useShellStore.getState().studioCount).toBeNull();
-    dom.window.document.getElementById("appMenuBtn")!.click();
+    dom.window.document.querySelector<HTMLButtonElement>('[data-part="shell.nav.overlay"]')!.click();
     await waitUntil(() => dom.window.document.querySelector('[aria-label="Studio summary"]') !== null);
     const piecesText = dom.window.document.querySelector('[aria-label="Studio summary"]')!.textContent!;
     expect(piecesText).toContain("Pieces loading");

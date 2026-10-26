@@ -58,7 +58,7 @@ test("a widget activation changes only the overlay destination", () => {
   const Widgets = ({ ctx, onActivate }: OverlayWidgetProps) => <button onClick={() => { ctx.openApp("new-room"); onActivate(); }}>Open widget destination</button>;
   flushSync(() => root.render(<NavigationOverlay ctx={ctx} Widgets={Widgets} onNavigate={() => { navigations++; }} />));
   expect(dom.window.document.querySelector('[data-part="shell.overlay.widgets"]')).toBeNull();
-  click("#appMenuBtn");
+  key("k", { ctrlKey: true });
   const shortcuts = dom.window.document.querySelector("details")!;
   flushSync(() => { shortcuts.open = true; shortcuts.dispatchEvent(new dom.window.Event("toggle")); });
   const button = [...dom.window.document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Open widget destination")!;
@@ -70,7 +70,7 @@ test("a widget activation changes only the overlay destination", () => {
 });
 
 test("discovered apps open inside the overlay; only the explicit workspace action dismisses it", () => {
-  click("#appMenuBtn");
+  key("k", { ctrlKey: true });
   key(",", { ctrlKey: true });
   expect(useShellStore.getState().activeAppId).toBe("library");
   const room = [...dom.window.document.querySelectorAll<HTMLButtonElement>('nav[aria-label="Launch an app"] button')].find((b) => b.textContent?.includes("Discovered room"))!;
@@ -89,7 +89,7 @@ test("discovered apps open inside the overlay; only the explicit workspace actio
 
 test("Choose files latches exactly one request for the Library inside the overlay", () => {
   useShellStore.setState({ activeAppId: "new-room" });
-  click("#appMenuBtn");
+  key("k", { ctrlKey: true });
   flushSync(() => [...dom.window.document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Import files")!.click());
   const button = [...dom.window.document.querySelectorAll<HTMLButtonElement>("button")].find((b) => b.textContent === "Choose files")!;
   flushSync(() => button.click());
@@ -103,7 +103,7 @@ test("Choose files latches exactly one request for the Library inside the overla
 });
 
 test("visiting another widget then Escape leaves the original workspace selected", () => {
-  click("#appMenuBtn");
+  key("k", { ctrlKey: true });
   const room = [...dom.window.document.querySelectorAll<HTMLButtonElement>('nav[aria-label="Launch an app"] button')].find((b) => b.textContent?.includes("Discovered room"))!;
   flushSync(() => room.click());
   expect(dom.window.document.querySelector('[aria-label="Discovered room widget"]')).not.toBeNull();
@@ -140,7 +140,7 @@ test("native protected dialogs own both launcher and room shortcuts", () => {
 });
 
 test("a native prompt above the open overlay owns Tab and Escape without the launcher spending either", () => {
-  click("#appMenuBtn");
+  key("k", { ctrlKey: true });
   const prompt = dom.window.document.createElement("dialog"); prompt.setAttribute("open", "");
   const input = dom.window.document.createElement("input"); input.setAttribute("aria-label", "Protected entry");
   const go = dom.window.document.createElement("button"); go.textContent = "Continue";

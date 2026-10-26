@@ -25,7 +25,7 @@ apertures and the controls move beneath the intact frame. Artwork uses the froze
 cache as Scenes; missing artwork shows the character initial. A portrait the server answers with 404 or 410 is fetched once per art identity and every mount shares that answer; any other failure is retried on the next ask. Quick Start combines a rose admission
 ticket with two smaller dark, notched tickets: Start a story opens Library, Import a piece uses the
 Library's existing request signal, and Browse stories opens Scenes with the selection cleared.
-The landing occupies the shell canvas. The bottom app dock, Overlay button, Ctrl+K/Cmd+K and existing app shortcuts remain usable. Explicit workspace navigation or Open full workspace leaves the landing; choosing an overlay app does not.
+The landing occupies the shell canvas. The bottom app dock, its Overlay tile, Ctrl+K/Cmd+K and existing app shortcuts remain usable. Explicit workspace navigation or Open full workspace leaves the landing; choosing an overlay app does not.
 The shell's temporary fullscreen overlay presents a working app in a floating window over a translucent scrim. Selecting an app changes only the overlay destination; the underlying workspace remains mounted. Escape, Close overlay and Ctrl+K/Cmd+K dismiss the overlay without changing the workspace app, focused editor, split arrangement, title-screen state or remembered app. Only Open full workspace promotes the chosen app and editor selection onto the canvas. The shell navigation slice owns separate workspace and transient overlay destinations, with one presented-app selector and one pane-selection selector. Reopening remembers the last overlay app and editor selection. AppSurface routes each app's one portal container to its host without remounting or copying drafts; choosing the same app as the workspace temporarily moves that one instance into the overlay. Workspace, last overlay and piece-editing app instances remain mounted as needed. Hidden outer surfaces contribute no layout; background apps cannot handle editing shortcuts or replace the active screen brief. Open pieces and their drafts remain shared, so opening or explicitly closing an editor affects the shared tab inventory; workspace restoration still persists that inventory under its existing policy. Late boot screen correction checks the navigation revision and cannot overwrite a subsequent overlay visit, even after dismissal. The overlay uses the shared DialogCore focus and Escape boundary. Its searchable app list comes from discovered manifests, includes catalog-only apps and excludes coming-soon entries. Import files reveals a floating panel; Choose files opens the Library widget and requests its existing picker through the shared pending import latch. Preferences and the theme toggle remain in quick actions. The bottom dock is the default workspace navigation; the overlay remains optional.
 The registered `shell.overlay` surface provides square cosmetic widget variants across themes, with unchanged panel positions and behavior. Existing appearance scopes and digest approval govern theme customization; themes gain no navigation or import authority. React and native modal prompts own the keyboard ahead of the launcher and room shortcuts; ordinary inline protected settings remain navigable.
 The primary widget contains the actual app: editable Workbench fields, Library browsing, scene controls, export setup, CSS editing, macro bench, sealed HTML preview, documentation, Agent, Settings or the app directory. Existing save, execution and approval boundaries still own these operations. Optional App shortcuts expands the app's smaller context cards: editor selection and split arrangement, Library counts/recent arrivals, recent scenes, the Press queue, CSS draft excerpt, engine availability, saved pages, reading bookmark, Agent brief, appearance readout or packaged-app directory. These shortcut actions keep the overlay open, including Library-to-editor selection.
@@ -63,17 +63,19 @@ Existing boot rules still skip the title for restored workspaces, reloads, direc
 fixed at bottom 24px (0 in compact landscape), centered, native 20px marks and 10px labels,
 charcoal gradient, accent glow, icon hover scale and 400ms slide into its edge pill. The source
 app's global sharp-radius overrides are included. Native small labels and grabber geometry are
-deliberate fidelity exceptions. Every available discovered app appears, including
+deliberate fidelity exceptions. Idle tiles and the hide chevron use a lighter gray than RoleCall's so the
+names stay readable. Every available discovered app appears, including
 catalog-only tools; unavailable apps are excluded and Settings ends the row. Clicking a tile
-navigates the workspace directly. Pending app loads use the native pulse and indicator. The
-shell reserves the measured dock height plus its bottom offset and 8px, releasing that space
-when collapsed or editor focus hides the dock. Narrow and landscape containers show scrollable
+navigates the workspace directly. An Overlay tile after Settings opens the temporary overlay.
+Pending app loads use the native pulse and indicator. The dock floats over the workspace: the
+page keeps its full height and nothing moves when the dock shows or hides. It sits above every app
+surface (z 145, under dialogs and toasts at 150) and reserves no space: app content runs underneath it. Narrow and landscape containers show scrollable
 icons with accessible names and hover titles. Both dock and pill stay mounted for the native
 slide; inertness, ARIA and tab order keep the hidden controls inaccessible.
 Arrow keys, Home and End move focus; existing app shortcuts use the same manifest order.
 There is no idle auto-hide. `shell.nav` theme variants change decoration, not placement or
 behavior; `shell.nav.start` and `shell.nav.end` remain decorative slots under existing appearance
-approval. The Overlay button and Ctrl+K/Cmd+K still open the optional temporary overlay.
+approval. The Overlay tile and Ctrl+K/Cmd+K open the optional temporary overlay.
 Routine theme and piece counts appear in that overlay, rather than a permanent footer. The
 contextual status line sits below the top chrome and disappears when empty. It retains real
 messages, library-read failures, the Browser Studio export-before-reload warning and approved
@@ -436,7 +438,7 @@ rather than an in-app copy. Each page's **view on GitHub** action uses the exist
 ## Dev live-reload
 `bunraku ui` (or `bun run dev`) watches all of `src/` (an app bundle imports core, stage, entities and studio; test files excluded) and announces updates over SSE (`/dev/reload`) to
 every open page. A source update or server restart never reloads the document automatically.
-The top bar offers a compact Reload Studio action with an accessible update announcement;
+The tab strip, which shows only while a piece is open or an update waits, offers a compact Reload Studio action with an accessible update announcement;
 the open overlay shows the full explanation and the same explicit reload action.
 The existing native beforeunload guard still protects unsaved editor drafts when that button is used.
 The pending notice is transient shell state, independent of ordinary status messages. Repeated
@@ -1258,7 +1260,7 @@ after responsive reflow, and Tab traversal continues through each measured windo
   `selectEntry`). The RC codec (`formats/rolecall/lorebook.ts`) remains the field-coverage
   checklist; token estimates are the core's honest gauge (`estimateEntryTokens`/
   `estimateBookTokens`, ~4 chars/token, always rendered with "~").
-- The bottom app dock collapses only through Hide dock, leaving a visible Show dock edge pill. The existing `shell.dockSlim` preference persists that choice. Focus follows the visible control and returns to the active app when expanded.
+- The bottom app dock collapses only through Hide dock, leaving a visible Show dock edge pill. Hiding lasts for the session only: every launch starts with the dock showing. Focus follows the visible control and returns to the active app when expanded.
 
 ### Editor theme variants
 
@@ -1271,6 +1273,39 @@ Picking a regex rule or lorebook entry opens its page section. With no pick, eac
 character editor's Bento and Playbill choice is shown but disabled while a theme frame is active. `editor.fields`
 (labeled-rows, stat-sheet, cards, form-on-paper) styles every field drawn through `EditorField`; the header name
 is excluded. Stylesheets live in `src/ui/apps/workbench/variants/<surface>/<variant>.ts`.
+
+### Nodes view
+
+A Desk / Nodes switch sits in every editor's header and in the empty room; the choice is remembered
+(`workbench.view`). Nodes (`src/ui/apps/workbench/nodes/`, wireframe `design/wireframes/features/nodes/`)
+draws the open pieces on a pannable, zoomable canvas with three layers you can switch on and off. Desk and
+Nodes share the same open pieces, and every Desk editor stays mounted while Nodes shows, so unsaved drafts
+survive the switch. The recent rail stays visible in Nodes view, since it is how more pieces come onto the
+canvas.
+
+- **Links.** Wires come only from stored reference fields (`LINK_PORTS` in `nodes/links.ts`): a character's
+  and a persona's lorebooks, a character's and a preset's regex sets, a preset's quick-reply sets. A piece
+  referenced by two others is one node with two wires; a referenced piece that is not open is a faded node
+  with Bring up. Dragging a port onto a compatible node links it; selecting a wire and pressing Delete, or
+  Unlink in the inspector, removes it. Each change reads the piece fresh and saves only that field
+  (`nodes/link-write.ts`), the same save the editor makes. A piece with unsaved Desk edits cannot be changed
+  from Nodes: its ports are disabled until it is saved or discarded. A revision conflict saves nothing and
+  says so. Characters have no stored sprite-pack reference, so there is no pack wire.
+- **Pipeline.** A preset on the canvas opens into every block in build order (`buildOrder` in
+  `core/preset/build.ts`; off blocks struck through) with per-block tokens. Clicking a block switches it on
+  or off and dragging one onto another reorders it, each a single preset save through the preset editor's
+  own helpers; a move that would not change the build order is refused with a sentence. Marker blocks take
+  derived wires from the context character, persona and a Lore pass step. The Request node picks a scene
+  and, with several presets on the canvas and no scene, which preset to build from; with a scene its totals
+  and Preview come from the scene forecast, otherwise from a dry run of the canvas pieces that is labeled an
+  estimate (empty slots show their placeholder and count as nothing).
+- **Board.** Notes and frames anywhere on the canvas; a frame moves what is inside it and a note can be
+  pinned to a node. Board items belong to the workbench (settings), not to pieces, so exports never carry
+  them. Pictures are not offered yet: an upload is only kept when a piece saves it.
+
+Positions, zoom, layers and the board persist in `workbench.nodes`, saved after a short pause and only when
+something changed; board items that fail to parse are kept and written back untouched. Tidy up lays the
+graph out again; Fit frames everything. Below 768px the canvas is look-only.
 
 ## The Press room (batch export - the staged set prints)
 The staging grammar applied to export: the Library browses, pieces get STAGED for the Press

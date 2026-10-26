@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:71639dae4b4d76126b646cd1964684b0a5a30fed7df3087a666f875177ecbf75",
+  "sourceHash": "sha256:d28f2413a0f585dcd48a9669347e684c2fad067bc916676bcec4d91db6f3a510",
   "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization, transcript previews, take metadata and real favorites. Other page proposals await approval. Prior storage delivery retains its documented focused-fixture evidence and pending live-proof limitations. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries.",
   "topics": [
     "Kit conversational terminal",
@@ -23,7 +23,7 @@
       "slug": "velvet-premiere-landing",
       "title": "Velvet premiere landing",
       "level": 2,
-      "sourceHash": "sha256:d2a4a02339298112857d3a65e3345101b6057e049c3438b5404351bc3f2be816",
+      "sourceHash": "sha256:5c3a06949ce2f4bd1479712400e8fdfd2ecd596547932ecac376340214742958",
       "summary": "Fresh launches show the approved velvet theater landing with locally shipped panoramic, standard and portrait artwork, selected by pane container queries. A 90% overlay dims the artwork beneath live HTML branding, navigation and actions. Continue resumes the most recently updated scene through the existing handoff; Now Playing reads the real scene API and handles empty or failed reads. A reusable transparent black-and-ruby proscenium surrounds frozen scene artwork and HTML controls. Quick Start routes to Library, its existing import signal and Scenes. The actual Dock and app shortcuts remain usable and leave the landing. Existing boot rules still skip the title for restored workspaces, reloads, direct links and setup. Two Vaudeville OGL beams and softly roiling fog share a canvas capped at 640 pixels per dimension and 24 frames per second, suspend while hidden and clean up GPU resources. Mouse following uses 35% influence; touch leaves beams alone, pulsation is disabled and shimmer is slowed. Unavailable WebGL and reduced motion use CSS fallbacks, with still effects for reduced motion.",
       "topics": [
         "theater landing",
@@ -36,8 +36,8 @@
       "slug": "bottom-app-navigation",
       "title": "Bottom app navigation",
       "level": 2,
-      "sourceHash": "sha256:ca79257b6cf901fe7b3683e9b8cb2080eea73c176b066096617b4d2dd9cad7f1",
-      "summary": "The studio navigates through a bottom dock in shell/Dock.tsx that ports RoleCall's floating dock geometry, paint and motion: fixed near the bottom, centered, with native marks and labels, an accent glow, hover scale and a slide into an edge pill when collapsed. Every available discovered app appears, unavailable apps are left out and Settings ends the row. Clicking a tile opens the workspace directly. The shell reserves the dock's measured height while it is shown and releases it when collapsed or when editor focus hides it; hidden controls stay inert and out of the tab order. Arrow keys, Home and End move focus. The shell.nav theme variants change decoration only, and shell.nav.start and shell.nav.end stay decorative slots. The Overlay button and Ctrl+K or Cmd+K still open the optional temporary overlay, which carries the routine theme and piece counts. A contextual status line below the top chrome holds real messages, library-read failures, the Browser Studio export-before-reload warning and approved status slot content, and disappears when empty.",
+      "sourceHash": "sha256:46220b4bcec0778e2d6b4966b296356c7ad845bf31b858aa03c79f3e3d75b49d",
+      "summary": "The studio navigates through a bottom dock in shell/Dock.tsx that ports RoleCall's floating dock geometry, paint and motion: centered near the bottom, with an accent glow and a slide into an edge pill when collapsed. Every available discovered app appears, unavailable apps are left out and Settings ends the row. Clicking a tile opens the workspace directly. The dock floats over the workspace, so the page keeps its full height whether the dock shows or hides; it sits above every app surface, under dialogs, and reserves no space, and hiding lasts only for the session; hidden controls stay inert and out of the tab order. Arrow keys, Home and End move focus. The shell.nav theme variants and the shell.nav.start and shell.nav.end slots are decorative only. The Overlay tile after Settings and Ctrl+K or Cmd+K open the optional temporary overlay, which shows the theme and piece counts. A status line below the top chrome holds real messages, library-read failures, the Browser Studio export-before-reload warning and approved status slot content, and disappears when empty.",
       "topics": [
         "bottom dock",
         "RoleCall dock geometry",
@@ -156,7 +156,7 @@
       "slug": "dev-live-reload",
       "title": "Dev live-reload",
       "level": 2,
-      "sourceHash": "sha256:75e2bef026deee3b4de032b80889ae021785342dc8e548b03787bfb15a5139d8",
+      "sourceHash": "sha256:28072b22ad260a788476cdabc8f1b0d1515cd519331c4afaa5fac111c19924d3",
       "summary": "Development Studio watches all of src (test files excluded) and broadcasts changes to every open page over the /dev/reload server-sent-event stream. Browser bundles are memoized and rebuilt only when the watcher sees an edit; the Browser shortcut serves production React while bun run dev keeps development React. Packaged executables serve baked assets, return 404 for the development stream, and let the client become quiet without a separate dependency.",
       "topics": [
         "whole-src watcher",
@@ -317,7 +317,7 @@
       "slug": "the-workbench-room-home-by-default---the-ide",
       "title": "The Workbench room (home by default - the IDE)",
       "level": 2,
-      "sourceHash": "sha256:5f8c2af0aec2fea2ee59a181575098630a6c2992669045fa10255396b55605b5",
+      "sourceHash": "sha256:503be75e97f882a8f20159fcd13b0db932e06554cede8b3f97258a0ed1a08c41",
       "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light coherent baselines and serialized revision-checked patches with captured occurrence/native/variant changes, conflict choices and bounded history. Lore native folders share undo/save ownership; character native escrow is deferred and named asset changes are captured with accepted submissions. Complete export explicitly reads the full entity. Local inert asset uploads use bounded session grants revoked on lock or close, with a picture limited to 10 MB. Large lists use measured windows preserving focused controls and selection. Timer autosaves retain explicit intent and five-minute grouping; manual saves keep version boundaries. Shared recents consume accepted PieceStore summaries. All new save, media and projection paths are source-reviewed; focused fixture results are recorded in delivery evidence and live proof remains pending.",
       "topics": [
         "shell-owned editor tabs",
@@ -340,6 +340,21 @@
             "editor frame",
             "editor fields",
             "data-editor hooks"
+          ],
+          "children": []
+        },
+        {
+          "slug": "nodes-view",
+          "title": "Nodes view",
+          "level": 3,
+          "sourceHash": "sha256:10989170f52dfe48ba0ae19ff357bd0a28aec6b383f230797b0d443bc7c0bdf5",
+          "summary": "A remembered Desk and Nodes switch shows the open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk editors stay mounted so drafts survive. Links come only from stored reference fields; dragging a port onto a compatible node links it and Delete or Unlink removes it, each a fresh single-field save, never for a piece with unsaved Desk edits. Pipeline opens a preset into its blocks in build order for toggling and reordering, wires the context character, persona and Lore pass into marker blocks, and a Request node previews the scene forecast or a labeled dry-run estimate. Board notes and frames live in settings, never in exports.",
+          "topics": [
+            "Nodes view",
+            "workbench canvas",
+            "link pieces",
+            "prompt pipeline",
+            "board notes"
           ],
           "children": []
         }

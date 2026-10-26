@@ -1,10 +1,10 @@
 /**
- * Open-piece tabs and the overlay launcher above the canvas.
+ * Open-piece tabs above the canvas. The strip only shows while a piece is open or an update waits; the overlay
+ * opens from the dock's Overlay tile or Ctrl+K.
  */
 import type { CSSProperties, JSX, MouseEvent } from "react";
 import type { StudioEntitySummary } from "../app-contract";
 import { deckMeta } from "../_shared/decks";
-import { Stamp } from "../components/stamp";
 import { StudioUpdate } from "./StudioUpdate";
 import { keyOf, paneKeyOf } from "./store-core";
 import { useContextMenu, useShellStore } from "./store";
@@ -51,18 +51,20 @@ function Tab({ piece, active, beside }: { piece: StudioEntitySummary; active: bo
   );
 }
 
-export function TabStrip({ onOpenOverlay }: { onOpenOverlay(): void }): JSX.Element {
+export function TabStrip(): JSX.Element | null {
   const openPieces = useShellStore((s) => s.openPieces);
   const activeKey = useShellStore((s) => s.activeKey);
   const splitKey = useShellStore((s) => s.splitKey);
   const manifests = useShellStore((s) => s.manifests);
   const mountApp = useShellStore((s) => s.mountApp);
+  const devUpdate = useShellStore((s) => s.devUpdate);
 
   const openAnother = (): void => {
     const lib = manifests.find((m) => m.firstRunLanding && !m.comingSoon);
     if (lib) mountApp(lib.id);
   };
 
+  if (openPieces.length === 0 && !devUpdate) return null;
   return (
     <nav id="tabstrip" data-part="shell.tabs" className={openPieces.length > 0 ? "hastabs" : undefined} aria-label="Open pieces">
       {openPieces.map((p) => (
@@ -79,9 +81,6 @@ export function TabStrip({ onOpenOverlay }: { onOpenOverlay(): void }): JSX.Elem
       <span className="tabfill" />
       <span id="topact">
         <StudioUpdate compact />
-        <Stamp id="appMenuBtn" onClick={onOpenOverlay}>
-          Overlay <kbd>Ctrl+K</kbd>
-        </Stamp>
       </span>
     </nav>
   );

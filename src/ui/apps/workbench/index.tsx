@@ -38,6 +38,9 @@ import { portraitUrl as storedPortraitUrl } from "../../_shared/asset-url";
 import { EDITOR_VARIANTS_STYLE } from "./variants-style";
 import styles from "./styles.module.css";
 import { icSvg } from "../../_shared/ic-svg";
+import { NodesView } from "./nodes/NodesView";
+import { ViewSwitch } from "./nodes/ViewSwitch";
+import { PREF_VIEW, parseView, type View } from "./nodes/canvas-state";
 
 const RECENTS_SHOWN = 14; // how many "bring one up" cards the rail offers at most
 const PREF_RAIL_OPEN = "workbench.recentsOpen"; // collapse survives sessions; only explicit false closes
@@ -175,7 +178,7 @@ function RecentCard({ ctx, entity }: { ctx: AppContext; entity: StudioEntitySumm
 
 /** The low deck of recently imported/opened pieces - the "wanna bring this one up?" offer. Renders
  * nothing when no entity qualifies (empty studio, or everything recent is already an open tab). */
-function RecentsRail({ ctx, entities }: { ctx: AppContext; entities: readonly StudioEntitySummary[] }): JSX.Element | null {
+function RecentsRail({ ctx, entities, foldOnEdit = true }: { ctx: AppContext; entities: readonly StudioEntitySummary[]; foldOnEdit?: boolean }): JSX.Element | null {
   const [open, setOpen] = useState<boolean>(() => ctx.prefs.get(PREF_RAIL_OPEN) !== false); // default open
 
   // editing takes the room: whenever the ACTIVE piece changes, the rail folds itself away
@@ -183,8 +186,8 @@ function RecentsRail({ ctx, entities }: { ctx: AppContext; entities: readonly St
   const active = ctx.workbench.active();
   const activeKey = active ? keyOf(active.id, active.kind) : "";
   useEffect(() => {
-    if (activeKey) setOpen(false);
-  }, [activeKey]);
+    if (activeKey && foldOnEdit) setOpen(false);
+  }, [activeKey, foldOnEdit]);
 
   const openKeys = new Set(ctx.workbench.pieces().map((p) => keyOf(p.id, p.kind)));
   const recent = rankRecents(entities, ctx.workbench.recents(), openKeys, RECENTS_SHOWN);
@@ -227,6 +230,12 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
   useWorkbenchTick(ctx);
   const entities = useSyncExternalStore(ctx.pieces.subscribeList.bind(ctx.pieces), ctx.pieces.listSnapshot.bind(ctx.pieces), () => []);
   const { focused, toggle } = useFocusMode();
+  const [view, setViewState] = useState<View>(() => parseView(ctx.prefs.get(PREF_VIEW)));
+  const setView = (next: View): void => {
+    setViewState(next);
+    ctx.prefs.set(PREF_VIEW, next);
+  };
+  const nodesOn = view === "nodes";
 
   const pieces = ctx.workbench.pieces();
   const active = ctx.workbench.active();
@@ -311,7 +320,8 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
     <div className={`${styles.room} scrollThin${focused ? ` ${styles.focused}` : ""}`} data-part="editor.root">
       <style>{EDITOR_VARIANTS_STYLE}</style>
       <div className={styles.stage} style={accentVars(active?.accent) as CSSProperties | undefined}>
-        {!active && (
+        {nodesOn && <NodesView ctx={ctx} pieces={pieces} onView={setView} />}
+        {!active && !nodesOn && (
           <section className={styles.ghostRoom} aria-live="polite" data-empty="editor">
             <h2>{restoreFailure ? "We couldn't restore the workbench" : restoring ? "Restoring your workbench…" : "Your workbench is empty"}</h2>
             <p>{restoreFailure ?? (restoring ? "Your open pieces will appear here when they are ready." : "Open a piece from your Library to start editing. Each piece opens in a tab above.")}</p>
@@ -323,11 +333,13 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
                   <button type="button" className={styles.newPackBtn} onClick={() => void newLorebook()}>New lorebook</button>
                 </>
               )}
+              <ViewSwitch view={view} onChange={setView} />
               {focusNode}
             </div>
           </section>
         )}
-        <div className={splitOn ? `${styles.paneRow} ${styles.paneRowSplit}` : styles.paneRow}>
+        {/* in Nodes view the row takes no room, but every pane stays mounted so unsaved drafts survive */}
+        <div className={splitOn ? `${styles.paneRow} ${styles.paneRowSplit}` : styles.paneRow} style={nodesOn ? { display: "none" } : undefined}>
           {editablePieces.map((p) => {
             const key = paneKeyOf(p);
             return (
@@ -335,9 +347,9 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
                 key={key}
                 ctx={ctx}
                 piece={p}
-                hidden={key !== activeKey && !(splitOn && key === besideKey)}
+                hidden={nodesOn || (key !== activeKey && !(splitOn && key === besideKey))}
                 beside={splitOn && key === besideKey}
-                topRight={<><ThemeSlot id="editor.header.end" />{focusNode}</>}
+                topRight={<><ViewSwitch view={view} onChange={setView} /><ThemeSlot id="editor.header.end" />{focusNode}</>}
               />
             );
           })}
@@ -345,7 +357,8 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
       </div>
       {/* the rail is an empty-bench amenity: while a piece is open, even its folded label is a
           dead row - it vanishes entirely and returns when the bench clears */}
-      {!focused && !active && <RecentsRail ctx={ctx} entities={entities} />}
+      {/* Nodes view keeps the rail: it is how more pieces come onto the canvas */}
+      {!focused && (!active || nodesOn) && <RecentsRail ctx={ctx} entities={entities} foldOnEdit={!nodesOn} />}
     </div>
   );
 }

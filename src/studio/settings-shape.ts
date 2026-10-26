@@ -22,8 +22,6 @@ export const SETTING_KEYS = {
   workbenchFollow: "workbench.follow",
   /** per-piece last-opened epoch-ms map ("kind:id" -> ms); feeds the Workbench recents rail */
   workbenchRecents: "workbench.recents",
-  /** user collapsed the app dock to marks-only (the same language as the locked narrow mode) */
-  dockSlim: "shell.dockSlim",
   /** remote access on/off (reach this studio from another device via the Tailscale sidecar) */
   remoteAccessEnabled: "remoteAccessEnabled",
 } as const;

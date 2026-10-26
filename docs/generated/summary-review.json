@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-25",
+  "generated": "2026-10-26",
   "count": 119,
   "pages": [
     {
@@ -359,8 +359,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:cfde663b13387f536816d0f696687b3a1ae8fd0a1ba4c7e2e1d2b0e067cabc62",
-      "semanticSummaryHash": "sha256:f99cba627a9f19380aa0ae33eb7084d71b9d059aaac84ef225a1876afce882ff"
+      "sourceHash": "sha256:6484ce474a775d034279c5c0796a295943f5036a883f3681e8ac5ce8c8e3d93c",
+      "semanticSummaryHash": "sha256:cc4c59371c53b631efe1de3a0042720bd5b0ac407281362175691147943689ed"
     },
     {
       "docId": "reference/concepts/bundles",
@@ -943,8 +943,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:71639dae4b4d76126b646cd1964684b0a5a30fed7df3087a666f875177ecbf75",
-      "semanticSummaryHash": "sha256:2e329031a3712265e6f171ba0e5bdfd8f07037151135e476c783379a7a31ed75"
+      "sourceHash": "sha256:d28f2413a0f585dcd48a9669347e684c2fad067bc916676bcec4d91db6f3a510",
+      "semanticSummaryHash": "sha256:73f742223e34dd62dd025914cc5bc1cac9425a436616f1715ee53b748cf65d8d"
     },
     {
       "docId": "reference/updates",

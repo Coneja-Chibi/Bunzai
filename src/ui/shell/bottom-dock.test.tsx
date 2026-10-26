@@ -1,9 +1,10 @@
-/** RoleCall-style dock at the public boundary: discovered apps navigate, while collapse remains an explicit preference. */
+/** RoleCall-style dock at the public boundary: discovered apps navigate, the Overlay tile opens the overlay, and Hide dock lasts only for the session. */
 import { afterAll, expect, test } from "bun:test";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import { installDom, teardownAllDoms } from "../_shared/test-dom";
 import { Dock } from "./Dock";
+import { TabStrip } from "./TabStrip";
 import { useShellStore } from "./store";
 
 afterAll(teardownAllDoms);
@@ -44,5 +45,42 @@ test("collapse removes app buttons from keyboard access and the visible handle r
     flushSync(() => show!.click()); expect(dom.window.document.querySelector('[data-app-id="library"]')).not.toBeNull();
     expect(dom.window.document.querySelector('nav')?.hasAttribute("inert")).toBe(false);
     expect(dom.window.document.activeElement === dom.window.document.querySelector('[data-app-id="library"]')).toBe(true);
+  } finally { flushSync(() => root.unmount()); useShellStore.setState(original); }
+});
+
+test("the Overlay tile opens the overlay without changing the active app", () => {
+  const { dom } = installDom('<!doctype html><div id="root"></div>', { extraGlobals: ["DOMParser", "SVGElement"], globals: { IS_REACT_ACT_ENVIRONMENT: false } });
+  const original = useShellStore.getState(); const root = createRoot(dom.window.document.getElementById("root")!);
+  try {
+    useShellStore.setState({ manifests: [{ id: "library", title: "The Library", markSvg: "<svg/>", accent: "var(--accent)", order: 1 }], activeAppId: "library", overlayOpen: false, dockSlim: false });
+    flushSync(() => root.render(<Dock />));
+    const tile = dom.window.document.querySelector<HTMLButtonElement>('[aria-label="Overlay"]'); expect(tile !== null).toBe(true);
+    flushSync(() => tile!.click());
+    expect(useShellStore.getState().overlayOpen).toBe(true); expect(useShellStore.getState().activeAppId).toBe("library");
+  } finally { flushSync(() => root.unmount()); useShellStore.setState(original); }
+});
+
+test("Hide dock is never saved, and a saved hidden flag from an older version does not hide it on launch", () => {
+  const original = useShellStore.getState(); const patches: unknown[] = [];
+  try {
+    useShellStore.setState({ dockSlim: false, patchSettings: (patch: unknown) => { patches.push(patch); } } as never);
+    useShellStore.getState().toggleDockSlim();
+    expect(useShellStore.getState().dockSlim).toBe(true); expect(patches).toEqual([]);
+    useShellStore.setState({ dockSlim: false });
+    useShellStore.getState().applySettings({ ...useShellStore.getState().settings, "shell.dockSlim": true });
+    expect(useShellStore.getState().dockSlim).toBe(false);
+  } finally { useShellStore.setState(original); }
+});
+
+test("the tab strip is absent with no open pieces and no pending update, and present once a piece opens", () => {
+  const { dom } = installDom('<!doctype html><div id="root"></div>', { extraGlobals: ["DOMParser", "SVGElement"], globals: { IS_REACT_ACT_ENVIRONMENT: false } });
+  const original = useShellStore.getState(); const root = createRoot(dom.window.document.getElementById("root")!);
+  try {
+    useShellStore.setState({ openPieces: [], devUpdate: null });
+    flushSync(() => root.render(<TabStrip />));
+    expect(dom.window.document.getElementById("tabstrip")).toBeNull();
+    flushSync(() => useShellStore.setState({ openPieces: [{ id: "c1", kind: "character", name: "Vera" } as never], activeKey: "" }));
+    expect(dom.window.document.getElementById("tabstrip")).not.toBeNull();
+    expect(dom.window.document.body.textContent).not.toContain("Overlay");
   } finally { flushSync(() => root.unmount()); useShellStore.setState(original); }
 });

@@ -7,8 +7,8 @@
 :global(.studio-app-surface) > * { flex: 1; min-height: 0; }
 :global(.studio-app-room:not([hidden])) { display: contents; }
 :global(.studio-app-room) > * { flex: 1; min-height: 0; }
-/* The bottom dock owns a layout row; legacy nav variants cannot move the workspace into a rail. */
-:global(html) :global(#shell[data-navigation="dock"]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) var(--bk-dock-reserve, 0px); }
+/* The bottom dock floats over the workspace (its row is empty); legacy nav variants cannot move the workspace into a rail. */
+:global(html) :global(#shell[data-navigation="dock"]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 0px; }
 :global(html) :global(#shell[data-navigation="dock"] #main) { grid-column: 1; grid-row: 1; }
 :global(html) :global(#shell[data-navigation="dock"] #status) { flex: none; }
 :global(html) :global(#shell[data-navigation="dock"] #status:empty) { display: none; }

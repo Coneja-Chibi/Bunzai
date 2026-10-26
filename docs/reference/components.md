@@ -19,6 +19,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | ActivityTab | src/ui/apps/scenes/props/story-director/tab-activity.tsx | ({ entries, now, onClear, locked }: { entries: readonly DirectorActivity[]; now: number; onClear(): void; locked: boo... |  |  |
 | AddByModel | src/ui/apps/scenes/props/trackers/items/generate-kit.tsx | ({ ctx, chatId, ask, label, noun, namePlaceholder, guidePlaceholder, labels, preview, accept }: AddProps<T>) | RoleCall's "Add ..." form: a dashed button that opens a name and a guide, then Generate. |  |
 | AddEnemy | src/ui/apps/scenes/props/trackers/battle/battle-parts.tsx | ({ onAdd, onCancel }: { onAdd(e: Omit<Enemy, "id">): void; onCancel(): void }) |  |  |
+| AddMenu | src/ui/apps/workbench/nodes/Board.tsx | ({ disabled, onAdd }: { disabled: boolean; onAdd(type: "note" \| "frame"): void }) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | AddPopover | src/ui/apps/scenes/scene-lore-books.tsx | ({ library, inScene, onPick, onCreate, onClose }: { library: StudioEntitySummary[] \| null; inScene: ReadonlySet<strin... | The dashed button's popover: "+ New Lorebook" (name it first, then Create) over the library list. |  |
 | AgentControls | src/ui/apps/scenes/final-cut/fc-agent.tsx | ({ ctx, pass, lib, onChange }: { ctx: AppContext; pass: FinalCutPass; lib: FinalCutLibrary; onChange: Change }) |  |  |
 | AgentRoom | src/ui/apps/agent/room.tsx | ({ ctx, onClose }: { ctx: AppContext; onClose?: () => void }) | Shows the screen the agent can see, and talks to whichever model the vault has. |  |
@@ -63,6 +64,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | BlockContent | src/ui/apps/workbench/preset/block-content.tsx | ({ block, onPatch }: BlockContentProps) |  | .root .listCol .list .listInner .listRow .autosaveStalled .empty .emptyTitle ... |
 | BlockList | src/ui/apps/workbench/preset/block-list.tsx | ({ blocks, groups = [], collapsedGroups, onToggleGroup, totalBlocks, tab, query, onClearQuery, onShowAll, selectedId,... |  | .root .listCol .list .listInner .listRow .autosaveStalled .empty .emptyTitle ... |
 | BlockRow | src/ui/apps/workbench/preset/block-row.tsx | ({ block, focusKey, index, depth, posinset, setsize, active, selected, expanded, onSelectRow, onToggleCheck, onToggle... | Memoized: editing one block must re-render only that block's row, not | .rowWrapOpen .prow .rowIndent .prowActive .prowSel .prowOff .chev .chevOpen ... |
+| BoardLayer | src/ui/apps/workbench/nodes/Board.tsx | (p: BoardLayerProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | BondsPanel | src/ui/apps/scenes/props/trackers/bonds/bonds-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
 | BookBar | src/ui/apps/scenes/compendium/compendium-shell.tsx | ({ books, bookId, onBook, access, chip }: { books: readonly SceneLoreBook[]; bookId: string; onBook(id: string): void... |  |  |
 | BookCover | src/ui/apps/library/book-cover.tsx | ({ title, choice }: { title: string; choice: BookCoverChoice }) |  | .cover .dialog .editor .fields |
@@ -306,6 +308,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | InjectionStatus | src/ui/apps/scenes/cast/cast-injection.tsx | ({ scan }: { scan: PresetScan }) | RoleCall's status over the stops: scanning, "Auto-injecting via <block>", or the plain invitation. |  |
 | InkDialog | src/ui/components/ink-dialog/index.tsx | ({ children, onDismiss, ariaLabel, sheetClassName }: InkDialogProps) | A centered modal sheet over a dark scrim; clicking the scrim or pressing Escape calls onDismiss. | .overlay .sheet |
 | Input | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) |  | .field .area .btn .sm .default .outline .ghost .danger ... |
+| Inspector | src/ui/apps/workbench/nodes/Inspector.tsx | (p: InspectorProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | InspectorShell | src/ui/apps/scenes/context/inspector-shell.tsx | ({ bodies, tab, onTab, onReview }: { bodies: InspectorBodies; tab: InspectorTab; onTab(tab: InspectorTab): void; onRe... |  |  |
 | InventoryPanel | src/ui/apps/scenes/props/trackers/inventory/inventory-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
 | ItemCard | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ color, icon, title, meta, right, preview, under, foot, chip, veil, mod, badge, open, onToggle, removed, children }... |  |  |
@@ -359,6 +362,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | LoreEntryToc | src/ui/apps/workbench/lore/entry-toc.tsx | ({ bookId, searchRevision, draftChanged, search, entries, focusedId, writeFor, styles, categories = [], onSelect, onA... |  |  |
 | LoreHeader | src/ui/apps/scenes/scene-lore-books.tsx | ({ title, stats, onBack, onLibrary }: { title: string; stats?: string; onBack?(): void; onLibrary?(): void; }) |  |  |
 | LoreHelp | src/ui/apps/scenes/lore-fields.tsx | ({ title, text }: { title: string; text: string }) | RoleCall's "?" help button: the title and its description ride the hover text. |  |
+| LoreNode | src/ui/apps/workbench/nodes/EngineNodes.tsx | (p: LoreNodeProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | LoreNum | src/ui/apps/scenes/lore-fields.tsx | ({ value, onChange, fallback, min, max, step, float, className, label }: { value: number; onChange(n: number): void; ... |  |  |
 | LoreSpecialTriggers | src/ui/components/lore-special-triggers/index.tsx | ({ triggers, onChange, advanced = false, }: LoreSpecialTriggersProps) |  | .wrap .trigger .triggerOn .menu .section .note .item .itemLabel ... |
 | LoreState | src/ui/apps/scenes/context/lore-state.tsx | ({ ctx, chat, state }: { ctx: AppContext; chat: Chat; state: TraceState }) |  |  |
@@ -405,6 +409,8 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | NewPersona | src/ui/apps/scenes/cast/cast-dialogs.tsx | ({ busy, onCreate, onCancel }: { busy: boolean; onCreate(input: { name: string; content: string }, cast: boolean): vo... | The New persona form: a name and the identity text, then Create or Create and cast. |  |
 | NewStoryCard | src/ui/apps/scenes/scenes-cards.tsx | ({ characterName, onStart }: { characterName: string; onStart(): void }) |  |  |
 | NextSend | src/ui/apps/scenes/context/next-send.tsx | ({ state }: { state: ForecastState }) |  |  |
+| NodeCanvas | src/ui/apps/workbench/nodes/NodeCanvas.tsx | (p: NodeCanvasProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
+| NodesView | src/ui/apps/workbench/nodes/NodesView.tsx | ({ ctx, pieces, onView }: { ctx: AppContext; pieces: readonly StudioEntitySummary[]; onView(view: View): void }) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | NoMatchNotice | src/ui/apps/library/search-bar.tsx | ({ query, deckPlural, deckTotal, elsewhere, onJump, onClear, }: NoMatchNoticeProps) |  |  |
 | NovelAiBiasBlock | src/ui/apps/workbench/lore/platforms/novelai-bias.tsx | ({ entry, styles, onPatch, }: { entry: LorebookEntry; styles: Readonly<Record<string, string>>; onPatch: (patch: Part... |  |  |
 | NumberBox | src/ui/apps/scenes/context/memory-controls.tsx | ({ value, label, min, step = 1, float = false, placeholder, onCommit }: { value: number \| undefined; label: string; m... | A whole-number box: what is typed stays until you leave it, then `onCommit` gets the number, or null for an empty or unusable box. |  |
@@ -445,7 +451,10 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | PerspectivePill | src/ui/apps/scenes/scene-draft-status.tsx | ({ onPick, disabled }: { onPick(perspective: Perspective): void; disabled?: boolean }) | Picking a segment fires the expansion at once, as RoleCall's does; 1ST is lit until another is picked. |  |
 | PhasePicker | src/ui/apps/workbench/regex/phase-picker.tsx | ({ phases, writeFor, styles, onToggle }: PhasePickerProps) |  |  |
 | PickHint | src/ui/apps/scenes/scene-lore-books.tsx | ({ hasBooks }: { hasBooks: boolean }) | The right pane while no book is open. |  |
+| PieceNode | src/ui/apps/workbench/nodes/PieceNode.tsx | (p: PieceNodeProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | PiecePreview | src/ui/apps/library/piece-preview.tsx | ({ peek, cardFacts, expanded = false }: { peek?: PiecePeek \| null; cardFacts?: CardFacts; expanded?: boolean }) |  | .preview .tagline .description .expanded .facts .tags |
+| PipelineLayer | src/ui/apps/workbench/nodes/PipelineLayer.tsx | (p: PipelineLayerProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
+| PipelineNode | src/ui/apps/workbench/nodes/PipelineNode.tsx | (p: PipelineNodeProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | PlatformTabs | src/ui/components/platform-tabs/index.tsx | ({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: PlatformTabsProps) | Multi-select platform lens tabs + the dim/hide off-target switch (vs-editor-2). | .strip .tab .offt .on .hint |
 | PlaybackTab | src/ui/apps/workbench/lore/playback-tab.tsx | ({ body, onJumpEntry }: PlaybackTabProps) |  | .pane .head .x .chat .user .bot .empty .composer ... |
 | PlaybillView | src/ui/apps/workbench/presenters/playbill-view.tsx | ({ leftCard, sealedCard, acts, actModules, lensHides, lensDims, wideKinds, panelKinds, controlFor, nativeItems, nativ... |  |  |
@@ -516,6 +525,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | RenameSceneDialog | src/ui/apps/scenes/scenes-dialogs.tsx | ({ title, onCancel, onSave }: { title: string; onCancel(): void; onSave(title: string): void }) |  |  |
 | RenderBox | src/ui/components/render-box/index.tsx | ({ value, format, children, defaultRendered = true, displayOnly = false, onLinkClick, }: RenderBoxProps) | A content box that toggles between a sanitized rendered view and its raw source. | .box .bar .toggle .out .src .plain |
 | RenownBody | src/ui/apps/scenes/compendium/storyboards/dossier-views.tsx | ({ d, open, ai }: { d: RenownDossier; open: Open; ai: JSX.Element }) |  |  |
+| RequestNode | src/ui/apps/workbench/nodes/EngineNodes.tsx | (p: RequestNodeProps) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | ResetLink | src/ui/apps/scenes/stage-controls.tsx | ({ onClick, label = "Reset" }: { onClick(): void; label?: string }) | Reset, shown once a value differs from the default (RoleCall shows it on the colour rows). |  |
 | ResponseSchema | src/ui/components/response-schema/index.tsx | ({ value, onChange }: ResponseSchemaProps) |  | .wrap .lbl .row .input .sel .ta .name .grid ... |
 | RestoreDialog | src/ui/apps/settings/sections/backups-dialogs.tsx | ({ copy, onClose, onUndo }: { copy: Copy; onClose: () => void; onUndo: (undo: Copy) => void }) |  | .wrap .module .css .card .cardTitle .cardBody .subtle .actions ... |
@@ -626,7 +636,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | Tabs | src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx | ({ tabs, active, onChange, label }: { tabs: readonly { id: T; label: string; count?: ReactNode }[]; active: T; onChan... |  |  |
 | Tabs | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ tabs, value, onChange }: { tabs: readonly TabDef<T>[]; value: T; onChange(v: T): void }) | The module's tab strip, drawn with the Stats panel's classes. |  |
 | TabStrip | src/ui/apps/scenes/compendium/compendium-shell.tsx | ({ tab, onTab }: { tab: TabId; onTab(t: TabId): void }) |  |  |
-| TabStrip | src/ui/shell/TabStrip.tsx | ({ onOpenOverlay }: { onOpenOverlay(): void }) |  |  |
+| TabStrip | src/ui/shell/TabStrip.tsx | () |  |  |
 | TagsSection | src/ui/apps/scenes/cast/cast-rating-tags.tsx | ({ tags, onChange }: { tags: readonly string[]; onChange(next: string[]): void }) |  |  |
 | TakeCompare | src/ui/apps/scenes/scene-tree-compare.tsx | ({ api, chatId, a, b, onClose }: { api: Pick<ScenesApi, "compareTakes">; chatId: string; a: string; b: string; onClos... |  |  |
 | TakesControl | src/ui/apps/scenes/scene-takes.tsx | ({ open, onToggle, ...menu }: TakesMenuProps & { open: boolean; onToggle(): void }) | The pill with its menu (RoleCall's BranchIndicator): the take you are on, a count of how many takes there are, and the sentence RoleCall reads out. |  |
@@ -673,6 +683,7 @@ pre-commit gate (`--check`) fails the commit when this file drifts from the real
 | Value | src/ui/apps/scenes/compendium/fields/blocks.tsx | ({ v }: { v: unknown }) |  |  |
 | VariableHistory | src/ui/apps/scenes/context/variable-history.tsx | ({ ctx, chatId, scope, storedKey }: { ctx: AppContext; chatId: string; scope: "local" \| "global"; storedKey: string }) |  |  |
 | VariantStrip | src/ui/components/variant-strip/index.tsx | ({ variants, activeId, artUrl, variantArt = {}, onSelect, onAdd, onRemove, onRename, onMode, }: VariantStripProps) |  | .wrap .row .thumb .on .add .editRow .name .mode ... |
+| ViewSwitch | src/ui/apps/workbench/nodes/ViewSwitch.tsx | ({ view, onChange }: { view: View; onChange(view: View): void }) |  | .view .head .grow .seg .segOn .chip .chipOn .addWrap ... |
 | Voice | src/ui/components/stage-dossier/index.tsx | ({ children }: { children: ReactNode }) | One line of voice, centered. | .dossier .hero .head .act .marquee .flourish .direction .paren ... |
 | VoiceSetup | src/ui/components/voice-setup/index.tsx | ({ value, onChange }: VoiceSetupProps) |  | .wrap .grid .lbl .sel .input .extras .exrow .rm ... |
 | WatchNote | src/ui/agent/kit-widgets.tsx | ({ kinds }: { kinds: readonly string[] }) | The watcher: something changed in the studio that Kit did not do. |  |

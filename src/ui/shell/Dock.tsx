@@ -23,6 +23,7 @@ export function Dock({ onNavigate, pendingAppId }: { onNavigate?: () => void; pe
   const manifests = useShellStore(state => state.manifests);
   const collapsed = useShellStore(state => state.dockSlim);
   const toggle = useShellStore(state => state.toggleDockSlim);
+  const openOverlay = useShellStore(state => state.openOverlay);
   const lane = useRef<HTMLDivElement>(null);
   const nav = useRef<HTMLElement>(null);
   const restoreFocus = useRef(false);
@@ -63,7 +64,11 @@ export function Dock({ onNavigate, pendingAppId }: { onNavigate?: () => void; pe
   return <div ref={lane} className={styles.lane} data-part="shell.nav" data-collapsed={collapsed}>
       <nav ref={nav} className={styles.bar} aria-label="Apps" aria-hidden={collapsed} inert={collapsed} onKeyDown={moveFocus}>
         <ThemeSlot id="shell.nav.start" />
-        <div className={styles.apps}>{groups.present.map(tile)}{groups.foot.length > 0 && <span className={styles.divider} aria-hidden="true" />}{groups.foot.map(tile)}</div>
+        <div className={styles.apps}>{groups.present.map(tile)}{groups.foot.length > 0 && <span className={styles.divider} aria-hidden="true" />}{groups.foot.map(tile)}
+          <button className={styles.app} data-part="shell.nav.overlay" tabIndex={collapsed ? -1 : 0} aria-label="Overlay" title="Overlay (Ctrl+K)" onClick={openOverlay}>
+            <span className={styles.mark}><Ic name="lucide:layers" size={20} /></span><span>Overlay</span>
+          </button>
+        </div>
         <ThemeSlot id="shell.nav.end" />
         <button className={styles.collapse} tabIndex={collapsed ? -1 : 0} data-part="shell.nav.toggle" aria-label="Hide dock" title="Hide dock" aria-expanded={!collapsed} onClick={toggleDock}>
           <Ic name="lucide:chevron-down" size={16} />

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench Nodes</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+/* Workbench Nodes view, WIREFRAME ONLY (not built). Colors are app tokens; node and wire parts are new components. */
+.page { max-width: 92rem; }
+.wb { overflow-x: auto; position: relative; display: flex; flex-direction: column; background: var(--stage-black); color: var(--stage-card); border: 1px solid var(--stage-line); }
+/* Workbench head: the view switch sits where the editor's layout switch (Bento / Playbill / Grid / Steps) sits today */
+.wb-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--stage-line); background: var(--stage-panel); flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--stage-line); }
+.seg b { font: 700 11px/1 var(--font-big); letter-spacing: .14em; text-transform: uppercase; padding: 8px 12px; color: var(--stage-soft); }
+.seg b.on { color: var(--stage-card); background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 0 -2px 0 var(--accent); }
+.chip { font: 600 10px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; padding: 7px 9px; border: 1px solid var(--stage-line); color: var(--stage-soft); display: inline-flex; gap: 6px; align-items: center; }
+.chip.on { color: var(--stage-card); border-color: var(--stage-soft); }
+.chip i { width: 8px; height: 8px; display: inline-block; }
+.wb-head .grow { flex: 1; }
+.tool { font: 700 11px/1 var(--font-big); letter-spacing: .12em; text-transform: uppercase; padding: 8px 11px; border: 1px solid var(--stage-line); color: var(--stage-card); background: transparent; }
+.tool.hot { background: var(--accent-deep); border-color: var(--accent-deep); color: var(--stage-white); }
+
+/* The canvas: pan with drag on empty space, zoom with wheel; a faint dot grid */
+.cv { position: relative; width: 1470px; flex: none; height: 860px; overflow: hidden; background-color: var(--stage-black); background-image: radial-gradient(color-mix(in srgb, var(--stage-line) 90%, transparent) 1px, transparent 1px); background-size: 22px 22px; }
+.cv svg.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.wire { fill: none; stroke-width: 2; }
+.wire.sel { stroke-width: 3.5; }
+.layer-tag { position: absolute; font: 700 10px/1 var(--font-mono); letter-spacing: .3em; text-transform: uppercase; color: var(--stage-mute); }
+
+/* A piece node: kind-colored top rule, portrait or kind mark, name, a meta line, then ports */
+.node { position: absolute; width: 210px; background: var(--stage-panel); border: 1px solid var(--stage-line); border-top: 3px solid var(--k); box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--k) 35%, transparent); }
+.node.sel { outline: 2px solid var(--accent); outline-offset: 2px; }
+.node .hd { display: flex; gap: 8px; align-items: center; padding: 8px 10px 6px; }
+.node .pic { width: 34px; height: 34px; flex: none; background: linear-gradient(160deg, color-mix(in srgb, var(--k) 60%, var(--stage-panel)), var(--stage-well)); display: grid; place-items: center; font: 800 14px var(--font-big); color: var(--stage-card); }
+.node .kind { font: 600 9px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--k); }
+.node .nm { font: 800 13px/1.2 var(--font-big); }
+.node .meta { padding: 0 10px 6px; font: 400 10.5px/1.4 var(--font-mono); color: var(--stage-mute); }
+.port { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 4px 10px; font: 500 11px/1.3 var(--font-body); color: var(--stage-soft); border-top: 1px solid color-mix(in srgb, var(--stage-line) 60%, transparent); }
+.port small { font: 400 10px var(--font-mono); color: var(--stage-mute); }
+.port::after, .port.in::before { content: ""; position: absolute; top: 50%; width: 10px; height: 10px; margin-top: -5px; border: 2px solid var(--pc, var(--stage-soft)); background: var(--stage-black); }
+.port::after { right: -6px; }
+.port.in::after { display: none; }
+.port.in::before { left: -6px; }
+.port.full::after, .port.in.full::before { background: var(--pc, var(--stage-soft)); }
+
+/* The pipeline: a preset node opened up into its ordered blocks; markers are inputs where pieces splice in */
+.pipe { position: absolute; width: 270px; background: var(--stage-panel); border: 1px solid var(--stage-line); border-top: 3px solid var(--deck-preset); }
+.pipe .hd { padding: 8px 10px; border-bottom: 1px solid var(--stage-line); }
+.blk { position: relative; display: grid; grid-template-columns: 14px 1fr auto; gap: 6px; align-items: center; padding: 6px 10px; font: 500 11.5px/1.3 var(--font-body); border-bottom: 1px solid color-mix(in srgb, var(--stage-line) 55%, transparent); }
+.blk .grip { color: var(--stage-mute); font: 400 11px var(--font-mono); }
+.blk small { font: 400 10px var(--font-mono); color: var(--stage-mute); }
+.blk.mark { color: var(--stage-macro); }
+.blk.mark::before { content: ""; position: absolute; left: -6px; top: 50%; margin-top: -5px; width: 10px; height: 10px; border: 2px solid var(--pc); background: var(--pc); }
+.blk.off { opacity: .45; text-decoration: line-through; }
+.pipe .ft { display: flex; justify-content: space-between; padding: 7px 10px; font: 400 10.5px var(--font-mono); color: var(--stage-mute); }
+.pipe .ft::after { content: ""; position: absolute; right: -6px; bottom: 12px; width: 10px; height: 10px; border: 2px solid var(--deck-preset); background: var(--deck-preset); }
+
+/* Engine nodes: steps that are not pieces (the lore pass, the request) */
+.eng { position: absolute; width: 200px; background: var(--stage-well); border: 1px dashed var(--stage-soft); padding: 8px 10px; }
+.eng .kind { font: 600 9px/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--stage-mute); }
+.eng .nm { font: 800 13px/1.3 var(--font-big); margin-top: 3px; }
+.eng .meta { font: 400 10.5px/1.5 var(--font-mono); color: var(--stage-soft); margin-top: 4px; }
+.eng .act { margin-top: 8px; display: flex; gap: 6px; }
+
+/* Board items: notes, an image, a frame that groups */
+.note { position: absolute; width: 170px; padding: 10px; background: color-mix(in srgb, var(--stage-warn) 18%, var(--stage-panel)); border: 1px solid color-mix(in srgb, var(--stage-warn) 45%, transparent); font: 400 12px/1.45 var(--font-body); color: var(--stage-card); }
+.note .by { display: block; margin-top: 6px; font: 400 9.5px var(--font-mono); color: var(--stage-mute); }
+.img { position: absolute; width: 160px; height: 110px; background: linear-gradient(150deg, color-mix(in srgb, var(--deck-character) 40%, var(--stage-panel)), var(--stage-well)); border: 1px solid var(--stage-line); display: grid; place-items: end start; padding: 6px; font: 400 10px var(--font-mono); color: var(--stage-soft); }
+.frame { position: absolute; border: 1.5px dashed var(--stage-soft); background: color-mix(in srgb, var(--stage-panel) 35%, transparent); }
+.frame > b { position: absolute; top: -9px; left: 10px; padding: 0 6px; background: var(--stage-black); font: 700 10px/1.4 var(--font-big); letter-spacing: .16em; text-transform: uppercase; color: var(--stage-soft); }
+
+/* Overlays on the canvas: inspector, minimap, zoom */
+.insp { position: absolute; right: 14px; top: 14px; width: 260px; background: var(--stage-panel); border: 1px solid var(--stage-line); border-top: 3px solid var(--deck-lorebook); }
+.insp .hd { padding: 9px 11px; border-bottom: 1px solid var(--stage-line); }
+.insp .row { display: flex; justify-content: space-between; padding: 6px 11px; font: 400 11px var(--font-mono); color: var(--stage-soft); border-bottom: 1px solid color-mix(in srgb, var(--stage-line) 55%, transparent); }
+.insp .row b { color: var(--stage-card); font-weight: 500; }
+.insp .acts { display: flex; gap: 6px; padding: 10px 11px; flex-wrap: wrap; }
+.mini { position: absolute; right: 14px; bottom: 120px; width: 170px; height: 104px; background: var(--stage-panel); border: 1px solid var(--stage-line); }
+.mini i { position: absolute; background: var(--stage-mute); }
+.mini .vp { position: absolute; border: 1.5px solid var(--accent); }
+.zoom { position: absolute; left: 14px; bottom: 120px; display: flex; flex-direction: column; border: 1px solid var(--stage-line); background: var(--stage-panel); }
+.zoom b { padding: 7px 10px; font: 600 11px var(--font-mono); color: var(--stage-card); border-bottom: 1px solid var(--stage-line); text-align: center; }
+.zoom b:last-child { border-bottom: 0; }
+.dockghost { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); width: 760px; height: 70px; border: 1px dashed var(--stage-line); display: grid; place-items: center; font: 400 10px var(--font-mono); color: var(--stage-mute); letter-spacing: .2em; text-transform: uppercase; }
+
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); gap: var(--gap-m); }
+.legend .card-body li { margin: 0 0 .35rem 1rem; }
+.small-wb .cv { height: 360px; }
+.empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.empty h3 { font: 800 18px var(--font-big); text-transform: uppercase; letter-spacing: .08em; }
+.empty p { font: 400 12px/1.6 var(--font-mono); color: var(--stage-mute); max-width: 30rem; margin: 8px auto 14px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="wf-head">
+    <div>
+      <div class="wf-title">Workbench: Nodes</div>
+      <p class="wf-lede">A second Workbench view beside the editor (Desk). The canvas holds the pieces you have up, wired by their real links, the prompt a preset builds from them, and a free board of notes and pictures. Three layers you can switch on and off. Wireframe only; nothing is built.</p>
+    </div>
+  </div>
+
+  <div>
+    <div class="wf-state">1 · Nodes view, all three layers on, the Velvet City lorebook selected</div>
+    <div class="wb">
+      <div class="wb-head">
+        <span class="seg"><b>Desk</b><b class="on">Nodes</b></span>
+        <span class="chip on"><i style="background:var(--deck-character)"></i>Links</span>
+        <span class="chip on"><i style="background:var(--deck-preset)"></i>Pipeline</span>
+        <span class="chip on"><i style="background:var(--stage-warn)"></i>Board</span>
+        <span class="grow"></span>
+        <button class="tool hot">+ Add</button>
+        <button class="tool">Tidy up</button>
+        <button class="tool">Fit</button>
+      </div>
+      <div class="cv">
+        <svg class="wires" id="wires"></svg>
+
+        <span class="layer-tag" style="left:24px;top:14px">Links</span>
+        <span class="layer-tag" style="left:640px;top:14px">Pipeline</span>
+        <span class="layer-tag" style="left:1250px;top:610px">Board</span>
+
+        <!-- LINKS -->
+        <div class="node" style="--k:var(--deck-character);left:36px;top:40px">
+          <div class="hd"><div class="pic">V</div><div><div class="kind">Character</div><div class="nm">Vera Quill</div></div></div>
+          <div class="meta">5 of 9 fields · ~1.2k tok</div>
+          <div class="port full" id="vl" style="--pc:var(--deck-lorebook)">Lorebooks <small>2</small></div>
+          <div class="port full" id="vb" style="--pc:var(--deck-regex)">Behavior <small>1</small></div>
+          <div class="port full" id="vp" style="--pc:var(--deck-pack)">Sprite pack <small>1</small></div>
+          <div class="port full" id="vd" style="--pc:var(--deck-character)">Description <small>to pipeline</small></div>
+        </div>
+        <div class="node sel" style="--k:var(--deck-lorebook);left:340px;top:58px">
+          <div class="hd"><div class="pic">L</div><div><div class="kind">Lorebook</div><div class="nm">Velvet City</div></div></div>
+          <div class="meta">40 entries · 2 linked</div>
+          <div class="port in full" id="velin" style="--pc:var(--deck-lorebook)">Linked by <small>Vera, Chi</small></div>
+        </div>
+        <div class="node" style="--k:var(--deck-lorebook);left:340px;top:174px">
+          <div class="hd"><div class="pic">L</div><div><div class="kind">Lorebook</div><div class="nm">Vera's Past</div></div></div>
+          <div class="meta">12 entries</div>
+          <div class="port in full" id="pastin" style="--pc:var(--deck-lorebook)">Linked by <small>Vera</small></div>
+        </div>
+        <div class="node" style="--k:var(--deck-regex);left:340px;top:296px">
+          <div class="hd"><div class="pic">R</div><div><div class="kind">Regex set</div><div class="nm">Tidy asterisks</div></div></div>
+          <div class="port in full" id="rin" style="--pc:var(--deck-regex)">Runs on <small>Vera</small></div>
+        </div>
+        <div class="node" style="--k:var(--deck-pack);left:340px;top:396px">
+          <div class="hd"><div class="pic">P</div><div><div class="kind">Pack</div><div class="nm">Vera expressions</div></div></div>
+          <div class="port in full" id="pin" style="--pc:var(--deck-pack)">Worn by <small>Vera</small></div>
+        </div>
+        <div class="node" style="--k:var(--deck-persona);left:36px;top:470px">
+          <div class="hd"><div class="pic">C</div><div><div class="kind">Persona</div><div class="nm">Chi</div></div></div>
+          <div class="port full" id="cl" style="--pc:var(--deck-lorebook)">Lorebooks <small>1</small></div>
+          <div class="port full" id="cd" style="--pc:var(--deck-persona)">Description <small>to pipeline</small></div>
+        </div>
+
+        <!-- PIPELINE -->
+        <div class="eng" id="lore" style="left:640px;top:130px">
+          <div class="kind">Engine step</div>
+          <div class="nm">Lore pass</div>
+          <div class="meta">14 of 52 entries fire · ~1.8k tok<br>split before / after</div>
+        </div>
+        <div class="pipe" style="left:904px;top:130px">
+          <div class="hd"><div class="kind" style="font:600 9px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--deck-preset)">Preset</div><div style="font:800 13px var(--font-big)">Director's Cut</div></div>
+          <div class="blk"><span class="grip">::</span>Main prompt<small>~310</small></div>
+          <div class="blk mark" style="--pc:var(--deck-lorebook)"><span class="grip" id="wib">::</span>World info (before)<small>~1.1k</small></div>
+          <div class="blk mark" style="--pc:var(--deck-character)"><span class="grip" id="cdesc">::</span>Character description<small>~820</small></div>
+          <div class="blk mark" style="--pc:var(--deck-character)"><span class="grip" id="cpers">::</span>Character personality<small>~140</small></div>
+          <div class="blk mark" style="--pc:var(--deck-persona)"><span class="grip" id="pdesc">::</span>Persona description<small>~90</small></div>
+          <div class="blk"><span class="grip">::</span>Scenario<small>~60</small></div>
+          <div class="blk off"><span class="grip">::</span>Jailbreak (off)<small>~200</small></div>
+          <div class="blk mark" style="--pc:var(--stage-soft)"><span class="grip">::</span>Chat history<small>sample</small></div>
+          <div class="blk mark" style="--pc:var(--deck-lorebook)"><span class="grip" id="wia">::</span>World info (after)<small>~700</small></div>
+          <div class="blk"><span class="grip">::</span>Post-history instructions<small>~120</small></div>
+          <div class="ft" id="pout">10 blocks · 1 off<span>~3.4k tok</span></div>
+        </div>
+        <div class="eng" id="req" style="left:1250px;top:500px">
+          <div class="kind">Output</div>
+          <div class="nm">The request</div>
+          <div class="meta">~3.4k tok of 32k<br>model: your default</div>
+          <div class="act"><button class="tool">Preview</button></div>
+        </div>
+
+        <!-- BOARD -->
+        <div class="frame" style="left:1020px;top:640px;width:420px;height:200px"><b>Act 2 ideas</b></div>
+        <div class="note" style="left:1036px;top:660px;transform:rotate(-1.5deg)">Vera never lies about her sister. She just never says her name.<span class="by">note · pinned to Vera</span></div>
+        <div class="note" style="left:1220px;top:668px">Velvet City needs a winter entry before the gala.<span class="by">note</span></div>
+        <div class="img" style="left:640px;top:640px">mood: rain on the canal.jpg</div>
+        <div class="note" style="left:820px;top:660px;width:150px">Try the darker preset for the betrayal scene?<span class="by">note</span></div>
+
+        <!-- OVERLAYS -->
+        <div class="insp">
+          <div class="hd"><div class="kind" style="font:600 9px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--deck-lorebook)">Lorebook</div><div style="font:800 14px var(--font-big)">Velvet City</div></div>
+          <div class="row">Entries <b>40</b></div>
+          <div class="row">Linked by <b>Vera Quill, Chi</b></div>
+          <div class="row">Fires this build <b>9 entries · ~1.1k</b></div>
+          <div class="acts"><button class="tool hot">Open in Desk</button><button class="tool">Unlink from Vera</button></div>
+        </div>
+        <div class="mini" style="right:auto;left:80px;bottom:auto;top:690px"><i style="left:8px;top:10px;width:30px;height:60px"></i><i style="left:44px;top:10px;width:24px;height:60px"></i><i style="left:84px;top:14px;width:30px;height:50px"></i><i style="left:120px;top:70px;width:40px;height:24px"></i><span class="vp" style="left:4px;top:4px;width:150px;height:90px"></span></div>
+        <div class="zoom"><b>+</b><b>100%</b><b>-</b></div>
+        <div class="dockghost">the dock floats here</div>
+      </div>
+    </div>
+    <p class="wf-comp">New parts: NodeCanvas (pan, zoom, minimap), PieceNode, PipelineNode, EngineNode, Wire, BoardNote, BoardFrame. Reused: the Workbench head's segmented switch, Stamp buttons, the kind colors (deck tokens), the Workbench recent rail as the drag source.</p>
+  </div>
+
+  <div class="legend">
+    <div class="card">
+      <div class="card-title">Links layer: what a gesture saves</div>
+      <ul class="card-body">
+        <li><b>Drag a port to a node</b> to link it: Lorebooks port to a lorebook adds it to the character's (or persona's) lorebooks; Behavior to a regex set; a preset's ports to regex sets and quick replies. Same saves the editor makes.</li>
+        <li><b>Select a wire, press Delete</b> (or Unlink in the inspector) to remove that link. The pieces stay.</li>
+        <li><b>Double-click a node</b> (or Open in Desk) opens it in the editor.</li>
+        <li>A link to a piece you have not brought up shows as a faded node you can click to bring up.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Pipeline layer: the prompt, built live</div>
+      <ul class="card-body">
+        <li>The preset opens up into its blocks in build order. <b>Drag a block</b> to reorder it, click it to switch it on or off. Those are the preset's own saves.</li>
+        <li>Marker blocks are inputs: the character's description, the persona's, the lore pass and the chat history wire in where they splice.</li>
+        <li>Token counts come from the same build the Context wing's forecast uses. <b>Preview</b> shows the finished request.</li>
+        <li>Pick which scene feeds it (cast, persona, history) from the Request node; with no scene it builds a dry run from the pieces on the canvas.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">Board layer: your own notes</div>
+      <ul class="card-body">
+        <li><b>Add</b> a note, a picture or a frame anywhere. Frames move what is inside them.</li>
+        <li>A note can be pinned to a node; it follows the node around.</li>
+        <li>Board items belong to this workbench, not to the pieces, so exporting a character never carries your notes.</li>
+        <li>Positions of everything on the canvas are remembered per workbench. <b>Tidy up</b> lays the links and pipeline out again.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div>
+    <div class="wf-state">2 · Empty Nodes view</div>
+    <div class="wb small-wb">
+      <div class="wb-head"><span class="seg"><b>Desk</b><b class="on">Nodes</b></span><span class="chip on">Links</span><span class="chip on">Pipeline</span><span class="chip on">Board</span><span class="grow"></span><button class="tool hot">+ Add</button></div>
+      <div class="cv"><div class="empty"><div><h3>Nothing on the canvas yet</h3><p>Bring pieces up from the Library or drag them in from the recent rail. Their links draw themselves. Add a preset to see the prompt it builds.</p><button class="tool hot">Open the Library</button></div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Questions for you</div>
+    <ul class="card-body">
+      <li><b>1. Desk and Nodes share the open pieces?</b> Proposed yes: bringing a piece up shows it in both; Nodes is another way to look at the same workbench.</li>
+      <li><b>2. A lorebook linked by two pieces</b> shows once with two wires (proposed), or once per link?</li>
+      <li><b>3. Scenes on the canvas?</b> Not proposed for the first version: a scene isn't a library piece. The Request node picks one to feed the pipeline instead.</li>
+      <li><b>4. Phone width:</b> proposed read-only canvas (pan, zoom, open in Desk); wiring needs a mouse or pen.</li>
+    </ul>
+  </div>
+</div>
+<script>
+/* Wireframe helper: draw each wire from the right edge of its source to the left edge of its target. */
+const W = [
+  ["vl", "velin", "--deck-lorebook", 0, 1], ["vl", "pastin", "--deck-lorebook"], ["vb", "rin", "--deck-regex"], ["vp", "pin", "--deck-pack"],
+  ["cl", "velin", "--deck-lorebook"],
+  ["velin", "lore", "--deck-lorebook", 1, 0, "box"], ["pastin", "lore", "--deck-lorebook", 1, 0, "box"],
+  ["lore", "wib", "--deck-lorebook"], ["lore", "wia", "--deck-lorebook"],
+  ["vd", "cdesc", "--deck-character"], ["vd", "cpers", "--deck-character"], ["cd", "pdesc", "--deck-persona"],
+  ["pout", "req", "--deck-preset"],
+];
+const cv = document.querySelector(".cv"), svg = document.getElementById("wires");
+const at = (id, side, box) => { const el = document.getElementById(id); const r = (box ? el.closest(".node,.eng") : el).getBoundingClientRect(), c = cv.getBoundingClientRect(); return [side ? r.right - c.left + (el.closest(".node") && !box ? 6 : 0) : r.left - c.left - 6, r.top - c.top + r.height / 2]; };
+svg.innerHTML = W.map(([a, b, color, dash, sel, box]) => { const [x1, y1] = at(a, 1, box), [x2, y2] = at(b, 0), m = Math.max(40, (x2 - x1) / 2); return '<path class="wire' + (sel ? " sel" : "") + '" stroke="var(' + color + ')"' + (dash ? ' stroke-dasharray="5 4"' : "") + ' d="M' + x1 + " " + y1 + " C" + (x1 + m) + " " + y1 + " " + (x2 - m) + " " + y2 + " " + x2 + " " + y2 + '"/>'; }).join("");
+</script>
+</body>
+</html>

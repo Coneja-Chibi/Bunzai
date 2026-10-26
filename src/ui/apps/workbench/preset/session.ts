@@ -160,3 +160,7 @@ export const moveBlock = (body: PresetBody, id: string, toIndex: number): Preset
     ? movePresetBlock(body, id, toIndex)
     : body;
 };
+
+/** Drop `fromId` onto `toId`: the block lands at the target's place in the real (unfiltered) list. The editor's drag and the Nodes pipeline both use this. */
+export const reorderBlock = (body: PresetBody, fromId: string, toId: string): PresetBody =>
+  moveBlock(body, fromId, body.prompts.findIndex((p) => p.id === toId));

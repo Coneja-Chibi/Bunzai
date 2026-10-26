@@ -90,14 +90,16 @@ export interface PresetBuild {
   weight: PresetWeight;
 }
 
+/** EVERY block (off ones too) in build order: placement rank, then injectionOrder, authoring order on a tie. */
+export const buildOrder = (body: PresetBody): PresetPrompt[] =>
+  [...body.prompts].sort((a, b) => rankOf(a.placement) - rankOf(b.placement) || a.injectionOrder - b.injectionOrder);
+
 /**
  * The built preview: enabled blocks in BUILD order (placement rank, then injectionOrder), each
  * rendered as engine-truth. Deterministic (stable sort preserves authoring order within a tie).
  */
 export function buildPreview(body: PresetBody): PresetBuild {
-  const ordered = body.prompts
-    .filter((b) => b.enabled)
-    .sort((a, b) => rankOf(a.placement) - rankOf(b.placement) || a.injectionOrder - b.injectionOrder);
+  const ordered = buildOrder(body).filter((b) => b.enabled);
   const lines: PresetBuildLine[] = ordered.map((b) => {
     const atDepth = b.placement === "in_chat" || b.placement === "append";
     return {

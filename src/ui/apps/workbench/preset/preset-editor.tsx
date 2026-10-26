@@ -46,7 +46,7 @@ import {
   bulkDuplicate,
   bulkSetEnabled,
   deleteBlock,
-  moveBlock,
+  reorderBlock,
   patchBlock,
   setBlockGroup,
   setSampler,
@@ -295,7 +295,7 @@ export function PresetEditorView({ entity, revision, ctx, piece, topRight }: Pre
    * the real (unfiltered) list by id, so no `shown`-lookup ever has to ride along in this closure. */
   const onReorderBlock = useCallback(
     (fromId: string, toId: string): void =>
-      editPreset((b) => moveBlock(b, fromId, b.prompts.findIndex((p) => p.id === toId))),
+      editPreset((b) => reorderBlock(b, fromId, toId)),
     [editPreset],
   );
 
