@@ -30,8 +30,8 @@ export function CrossRefCell({ m, onOpen }: { m: BookModel; onOpen(id: string): 
       <div className="cp-gwrap" role="button" tabIndex={0} title="Open full cross-reference graph" onClick={() => setOpen(true)} onKeyDown={key}>
         {nodes.length === 0 ? <Empty>No cross-references yet.</Empty> : (
           <svg className="cp-graph" viewBox="-100 -90 200 180" role="img" aria-label="Most referenced entry and its neighbours">
-            {around.map((n, i) => { const a = (i / around.length) * Math.PI * 2 - Math.PI / 2; return <line key={n.id} x1={0} y1={0} x2={Math.cos(a) * R} y2={Math.sin(a) * R} className="ed" />; })}
-            {around.map((n, i) => { const a = (i / around.length) * Math.PI * 2 - Math.PI / 2; return <g key={n.id} transform={`translate(${Math.cos(a) * R} ${Math.sin(a) * R})`} style={tc(n.type)}><title>{n.name}</title><circle r={14} /><text y={4}>{n.name.slice(0, 3)}</text></g>; })}
+            {around.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (n, i) => { const a = (i / around.length) * Math.PI * 2 - Math.PI / 2; return <line key={n.id} x1={0} y1={0} x2={Math.cos(a) * R} y2={Math.sin(a) * R} className="ed" />; })}
+            {around.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (n, i) => { const a = (i / around.length) * Math.PI * 2 - Math.PI / 2; return <g key={n.id} transform={`translate(${Math.cos(a) * R} ${Math.sin(a) * R})`} style={tc(n.type)}><title>{n.name}</title><circle r={14} /><text y={4}>{n.name.slice(0, 3)}</text></g>; })}
             {center && <g style={tc(center.type)}><title>{center.name}</title><circle r={22} /><text y={4}>{center.name.slice(0, 4)}</text></g>}
           </svg>
         )}

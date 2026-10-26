@@ -32,6 +32,7 @@ import type { ReasoningProps } from "./scene-reasoning-core";
 import { badgeLabel } from "../../../core/final-cut/trace";
 import { uniqueRange, type TextRange } from "../../../core/draft-prompts";
 import { WRITING_TOOLS, type ToolId } from "./writing-tools-core";
+import { useMessageMenu } from "./messenger/transcript/use-message-menu";
 
 const tool = (id: ToolId): string => WRITING_TOOLS.find((t) => t.id === id)!.label;
 const GUIDED = tool("guided");
@@ -116,6 +117,19 @@ export interface BubbleProps extends ReasoningProps {
   onVersion?(id: string, index: number): void;
   /** Open Compare versions for this message (more than one saved version). */
   onCompare?(id: string): void;
+  /** Messenger only (all optional, absent in Full Chat): right click and long press open the message menu. */
+  contextMenu?: boolean;
+  /** Continues the run above: no portrait or name, its time in the gutter on hover. */
+  grouped?: boolean;
+  /** Another message of this run follows: the meta line stays quiet unless it holds version controls. */
+  runMore?: boolean;
+  /** The message's own time of day, for the gutter. */
+  clock?: string;
+  /** The role pill after the name. */
+  badge?: string;
+  /** The user message this reply follows, quoted over the reply (derived, not a stored reply-to). */
+  replyWho?: string;
+  replyText?: string;
 }
 
 function BubbleImpl(p: BubbleProps): JSX.Element {
@@ -124,13 +138,16 @@ function BubbleImpl(p: BubbleProps): JSX.Element {
   const copyLabel = copied === "copied" ? "Copied" : copied === "failed" ? "Copy failed" : "Copy";
   const toggle = (menu: "more" | "delete" | "history"): void => p.onMenu?.(p.id, p.menu === menu ? null : menu);
   /** A finished reply with thinking and no text of its own: say so rather than draw an empty bubble. */
+  const menu = useMessageMenu(p, copy);
+  const hasVersions = p.vIndex !== undefined && p.vCount !== undefined && Boolean(p.onVersion);
   const noReply = !p.live && !p.text.trim() && Boolean(p.rNat || p.rTag);
   return (
-    <div className={`msg ${p.user ? "user" : "char"}${p.last ? " last" : ""}${p.hidden ? " hid" : ""}${tapped ? " tap" : ""}`} data-part="scene.message" data-mid={p.id} style={p.tone} onClick={onTap}>
-      <div className="pw">{p.art}{p.stamp && <span className="pstamp">{p.stamp}</span>}</div>
+    <div className={`msg ${p.user ? "user" : "char"}${p.last ? " last" : ""}${p.hidden ? " hid" : ""}${tapped ? " tap" : ""}${p.grouped ? " grp" : ""}${p.runMore ? " runmore" : ""}`} data-part="scene.message" data-mid={p.id} style={p.tone} onClick={onTap} {...menu.bind}>
+      <div className="pw">{p.art}{p.stamp && <span className="pstamp">{p.stamp}</span>}{p.grouped && p.stamp && p.clock && <span className="gt" data-part="scene.messenger.transcript.gutter-time">{p.clock}</span>}</div>
       <div className="body">
+        {p.replyWho && <div className="reply" data-part="scene.messenger.transcript.reply" title="The message just before this reply"><span className="cn" aria-hidden="true" /><b>{p.replyWho}</b><span className="rt">{p.replyText}</span></div>}
         <div className="bnum"><span className="badge" title={`Post #${p.n}`}>#{p.n}</span></div>
-        <div className="spk">{p.who}</div>{p.stamp && <span className="spk-time" hidden>{p.stamp}</span>}
+        <div className="spk">{p.who}</div>{p.badge && <span className="rb" data-part="scene.messenger.transcript.role">{p.badge}</span>}{p.stamp && <span className="spk-time" hidden>{p.stamp}</span>}
         <ReasoningBlocks {...p} only={noReply} onCopy={p.onCopy} />
         <div className={`bub${p.live ? " live" : ""}`}>
           {p.live ? (
@@ -203,7 +220,7 @@ function BubbleImpl(p: BubbleProps): JSX.Element {
         </div>
         {p.hidden && <span className="hidtag" title="Hidden from AI context">Hidden from AI</span>}
         {p.footer}
-        {!p.live && p.editing === undefined && (
+        {!p.live && p.editing === undefined && !(p.runMore && !hasVersions) && (
           <MetaRow stamp={p.stamp} model={p.model} genTime={p.genTime} finish={p.finish}
             versions={p.vIndex !== undefined && p.vCount !== undefined && p.onVersion ? {
               index: p.vIndex, count: p.vCount, isNew: p.vNew === true, busy: p.vBusy === true,
@@ -215,6 +232,7 @@ function BubbleImpl(p: BubbleProps): JSX.Element {
             } : undefined} />
         )}
       </div>
+      {menu.node}
     </div>
   );
 }

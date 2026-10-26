@@ -48,7 +48,7 @@ export function DiffSections({ diff, skipped }: { diff: ModuleDiff; skipped: rea
     <>
       <Section kind="added" title="Added" mark="+" rows={diff.added} detail={(c) => gist(c.after) || null} />
       <Section kind="changed" title="Changed" mark="~" rows={diff.changed}
-        detail={(c) => <>{fieldChanges(c.before, c.after).map((f) => <span key={f.key} className="rv-ch">{f.key && <i>{f.key}: </i>}<s>{f.was}</s> {"→"} <em>{f.now}</em></span>)}</>} />
+        detail={(c) => <>{fieldChanges(c.before, c.after).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (f) => <span key={f.key} className="rv-ch">{f.key && <i>{f.key}: </i>}<s>{f.was}</s> {"→"} <em>{f.now}</em></span>)}</>} />
       <Section kind="removed" title="Removed" mark="-" rows={diff.removed} detail={() => null} note="hidden, not erased" />
       {skipped.length > 0 && <p className="rv-skip" role="status" data-part="props.tracker.review.skipped">{skippedLine(skipped)}</p>}
     </>

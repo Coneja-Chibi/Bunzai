@@ -345,7 +345,10 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-26, the dock overlay (always open on launch): settings-shape.ts drops the `dockSlim` key name ("shell.dockSlim"); hiding the dock
 // is now session-only. COMPATIBLE: parseSettings keeps unknown keys, so a saved "shell.dockSlim" stays on disk untouched and is simply
 // not read; an older build still reads it. No SCHEMA_BUMPS entry. The pin was recomputed.
-const PINNED_SHAPE_HASH = "ac3e6af2475e9c3ba5a5a2570b0a94c7dedad6134c680867f739619932f5f0aa";
+// 2026-10-26, Messenger settings and accessibility: settings-shape.ts adds four key names, "scenes.characterDefaults" (a new scene's
+// starting setup per character) and "ui.textSize", "ui.reduceMotion", "ui.highContrast". ADDITIVE and COMPATIBLE: unset keys read as
+// their defaults and an older build keeps them as unknown keys. No migration, no SCHEMA_BUMPS entry. The pin was recomputed.
+const PINNED_SHAPE_HASH = "92c5461709ab9a9ac9024b2ace2656e1483790ea3cb71074a03570b0a8c79aba";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

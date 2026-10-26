@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { SpellbookPanel } from "./spellbook-panel";
+import { summaryLine } from "./summary";
 
 export const spellbookProp = trackerProp({
   module: "spellbook",
@@ -16,4 +17,5 @@ export const spellbookProp = trackerProp({
   title: "Spellbook",
   noun: "Spellbook",
   Panel: SpellbookPanel,
+  summary: summaryLine,
 });

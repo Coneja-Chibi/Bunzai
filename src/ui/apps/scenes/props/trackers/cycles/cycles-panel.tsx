@@ -13,7 +13,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Chips, Empty, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Block, Chips, Empty, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 
@@ -61,12 +61,11 @@ export function CyclesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
       <Tabs<Tab> tabs={tabs as never} value={tab} onChange={setTab} />
       <div className="st-body">
         {shown.length > 0 ? (
-          <div className="it-list">
-            {shown.map((c) => {
+          <ItemList items={shown} render={(c) => {
               const tone = TONE[c.cycleType];
               const p = c.pregnancyData;
               return (
-                <ItemCard key={c.id} color={tone} icon={null} title={c.characterName}
+                <ItemCard color={tone} icon={null} title={c.characterName}
                   meta={<span className="it-line"><span style={{ color: tone }}><Ic name={ICON[c.cycleType]} size={14} /></span><span className="it-tag" style={{ "--c": tone } as CSSProperties}>{typeName(c)}</span></span>}
                   under={(
                     <div className="cy-under">
@@ -115,18 +114,17 @@ export function CyclesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
                   ))}
                   {c.moodModifiers && c.moodModifiers.length > 0 && <Block title="Mood Effects"><Chips items={c.moodModifiers} /></Block>}
                   {c.statEffects && Object.keys(c.statEffects).length > 0 && (
-                    <Block title="Stat Effects"><div className="it-chips">{Object.entries(c.statEffects).map(([k, v]) => <span key={k} className={`it-chip${v > 0 ? "" : " bad"}`}>{v > 0 ? "+" : ""}{v} {k}</span>)}</div></Block>
+                    <Block title="Stat Effects"><div className="it-chips">{Object.entries(c.statEffects).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ([k, v]) => <span key={k} className={`it-chip${v > 0 ? "" : " bad"}`}>{v > 0 ? "+" : ""}{v} {k}</span>)}</div></Block>
                   )}
                   {c.totalDuration && <div className="it-line"><Ic name="lucide:clock" size={14} /><span>Total duration: {c.totalDuration}</span></div>}
                   {c.effects && c.effects.length > 0 && <Block title="Active Effects"><Chips items={c.effects} /></Block>}
-                  {c.symptoms && c.symptoms.length > 0 && <Block title="Symptoms"><ul className="cy-list">{c.symptoms.map((s, i) => <li key={`${s}${i}`}>{s}</li>)}</ul></Block>}
+                  {c.symptoms && c.symptoms.length > 0 && <Block title="Symptoms"><ul className="cy-list">{c.symptoms.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s, i) => <li key={`${s}${i}`}>{s}</li>)}</ul></Block>}
                   {c.description && <Block title="Description"><p><em>{c.description}</em></p></Block>}
                   {c.nextPhaseAt && <div className="it-line"><Ic name="lucide:calendar" size={14} /><span>Next phase: {new Date(c.nextPhaseAt).toLocaleString()}</span></div>}
                   <div className="it-fine"><div>Started: {new Date(c.startedAt ?? 0).toLocaleString()}</div></div>
                 </ItemCard>
               );
-            })}
-          </div>
+            }} />
         ) : <Empty icon="lucide:moon" title={tab === "lunar" ? "No lunar cycles tracked" : "No cycles tracked"} hint={tab === "lunar" ? "Add werewolf or lycanthropic characters to track their moon-linked transformations" : "Cycles will be added as the story progresses"} />}
         <AddByModel<Cyc> ctx={ctx} chatId={chat.id} ask={ASK} label="Add Biological Cycle" noun="cycle" namePlaceholder="Character name" guidePlaceholder="Guide the AI... (e.g., 'entering heat cycle')"
           preview={(x) => <Preview c={x} />} accept={(x) => act({ kind: "add", cycle: x, id: `cycle-${crypto.randomUUID()}`, at: Date.now() })} />

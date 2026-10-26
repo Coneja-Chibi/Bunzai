@@ -5,11 +5,14 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import { Button, IconButton } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import { copyFormat, filterMessages, highlightParts, statusLine } from "./next-send-core";
 import type { ForecastState } from "./use-forecast";
+
+const MESSAGE_ESTIMATE_PX = 120;
 
 export function NextSend({ state }: { state: ForecastState }): JSX.Element {
   const [query, setQuery] = useState("");
@@ -43,18 +46,18 @@ export function NextSend({ state }: { state: ForecastState }): JSX.Element {
         ) : forecast && shown.length === 0 ? (
           <div className="ns-empty"><Ic name="lucide:search" size={32} /><p>No matches found</p><small>Try a different search term</small></div>
         ) : (
-          shown.map((m, i) => (
-            <div className={`ns-msg ${m.role}`} key={i}>
+          <VirtualRows items={shown} keyOf={(_, i) => String(i)} estimate={MESSAGE_ESTIMATE_PX} gap={12} render={(m) => (
+            <div className={`ns-msg ${m.role}`}>
               <div><i />{m.role}<span>~{m.tokens.toLocaleString()} tokens</span></div>
               <pre>{highlightParts(m.content, query).map((p, j) => (p.hit ? <mark key={j}>{p.text}</mark> : <span key={j}>{p.text}</span>))}</pre>
             </div>
-          ))
+          )} />
         )}
       </div>
       {forecast && (
         <div className="ns-foot">
           <p><i />This is an assembly forecast and may change before dispatch. This turn records what was actually sent.</p>
-          {forecast.notes.map((n) => <p key={n}>{n}</p>)}
+          {forecast.notes.map(/* bounded-ok: per-turn bounded detail lines */ (n) => <p key={n}>{n}</p>)}
         </div>
       )}
     </div>

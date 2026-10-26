@@ -26,6 +26,9 @@ import { PromptEditor, PromptList, SamplerBar } from "./scene-preset-parts";
 import { TemplatesSection } from "./scene-preset-templates";
 import type { PresetText } from "./use-scene-preset-text";
 import { IconButton, ListRow } from "../../components/button";
+import { VirtualRows } from "../../_shared/virtual-list";
+
+const PRESET_ROW_PX = 52;
 
 /** How the tab reads in the fold: "14 of 22 on", or that none is chosen. */
 export function presetTabMeta(chat: Chat, body: PresetBody | null): string {
@@ -148,10 +151,10 @@ export function PresetWing({ ctx, chat, text, onChanged }: { ctx: AppContext; ch
         {library && shown.length === 0 && (
           <div className="pk-empty"><span><Ic name="lucide:sliders-horizontal" size={20} /></span><p>{q ? "No presets match your search" : "No presets found"}</p><small>{q ? "Try different keywords" : "Import one in the Library, or make one on the Workbench"}</small></div>
         )}
-        {shown.map((s) => (
-          <ListRow key={s.id} selected={s.id === presetId} onClick={() => void pick(s.id)} leading={initials(s.name)}
+        <VirtualRows items={shown} keyOf={(s) => s.id} estimate={PRESET_ROW_PX} render={(s) => (
+          <ListRow selected={s.id === presetId} onClick={() => void pick(s.id)} leading={initials(s.name)}
             label={s.name} subtitle={s.provenance || undefined} meta={s.id === presetId ? "Active" : undefined} />
-        ))}
+        )} />
       </div>
     </div>
   );

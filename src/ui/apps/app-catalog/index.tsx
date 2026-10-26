@@ -54,7 +54,7 @@ export function AppCatalog({ ctx }: { ctx: AppContext }): JSX.Element {
       </header>
 
       <section className={styles.grid} aria-label="Official packaged apps">
-        {apps.map((app) => <AppCard key={app.id} app={app} ctx={ctx} />)}
+        {apps.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (app) => <AppCard key={app.id} app={app} ctx={ctx} />)}
       </section>
     </div>
   );

@@ -66,6 +66,7 @@ const SHARED = `
 const ROLECALL = `
 .scs .trk{display:flex;flex-direction:column;min-height:0;font-family:var(--font-body)}
 .scs .trk-badges{display:flex;align-items:center;gap:8px;min-width:0}
+.scs .trk-sum{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--stage-soft);font:12px/1.4 var(--font-body)}
 .scs .trk-actions{display:flex;align-items:center;gap:6px;min-width:0}
 .scs .trk-tokens{padding:2px 8px;border:1px solid var(--rc-zinc-700);background:color-mix(in srgb,var(--stage-black) 60%,transparent);font:700 var(--rc-text-ctl)/1.43 var(--font-body);letter-spacing:.14em;text-transform:uppercase;color:var(--rc-zinc-300)}
 .scs .trk-settings{display:flex;flex-direction:column;gap:10px;padding:12px 16px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--rc-zinc-900) 60%,transparent)}

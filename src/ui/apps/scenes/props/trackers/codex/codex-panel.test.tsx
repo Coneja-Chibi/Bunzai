@@ -98,3 +98,12 @@ describe("Refresh and Delete", () => {
     expect(titles()).toEqual(["Gloomwing Moth", "Dusty"]);
   });
 });
+
+describe("a full tracker", () => {
+  test("500 items mount fewer than 60 cards", async () => {
+    await r.mount(panel(Array.from({ length: 500 }, (_, i) => i).reduce((c, i) => applyCodex(c, { kind: "addSpecies", species: sp({ name: `Species ${String(i)}` }), id: `s${String(i)}` }), DEFAULT_CODEX)));
+    const cards = r.qa(".it-card").length;
+    expect(cards).toBeGreaterThan(0);
+    expect(cards).toBeLessThan(60);
+  });
+});

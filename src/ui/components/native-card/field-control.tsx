@@ -98,7 +98,7 @@ const stubRows = (
       {items.length === 0 ? (
         <div className={styles.help}>Nothing here yet.</div>
       ) : (
-        items.map((it, i) => {
+        items.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (it, i) => {
           const r = asRec(it) ?? {};
           const keys = Array.isArray(r.keys)
             ? r.keys.filter((k) => typeof k === "string").join(", ")

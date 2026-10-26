@@ -71,7 +71,7 @@ function Span({ span }: { span: Inline }): JSX.Element {
 
 /** A line's spans, in order. */
 function Spans({ spans }: { spans: readonly Inline[] }): JSX.Element {
-  return <>{spans.map((span, i) => <Span key={`s${String(i)}`} span={span} />)}</>;
+  return <>{spans.map(/* bounded-ok: single message / fixed menu or glyph parts */ (span, i) => <Span key={`s${String(i)}`} span={span} />)}</>;
 }
 
 /**
@@ -157,7 +157,7 @@ function CodeBlock({ block }: { block: Extract<Block, { t: "code" }> }): JSX.Ele
         <span style={{ color: "var(--kit-alive)" }}>{`+${String(diff.additions)}`}</span>
         <span style={{ color: "var(--kit-red)" }}>{` -${String(diff.removals)}`}</span>
       </span>
-      {shown.map((line, i) => (
+      {shown.map(/* bounded-ok: diff lines are cut at DIFF_LINE_CAP */ (line, i) => (
         <span key={`d${String(i)}`} className="kit-md__diffline" style={{ color: diffInk(line.kind) }}>
           {line.text}
         </span>
@@ -216,11 +216,11 @@ function TableBlock({ block }: { block: Extract<Block, { t: "table" }> }): JSX.E
   const grid = (
     <table className="kit-md__table">
       <thead>
-        <tr>{block.head.map((cell, c) => <th key={c}><Spans spans={cell} /></th>)}</tr>
+        <tr>{block.head.map(/* bounded-ok: single message / fixed menu or glyph parts */ (cell, c) => <th key={c}><Spans spans={cell} /></th>)}</tr>
       </thead>
       <tbody>
         {block.rows.map((row, r) => (
-          <tr key={r}>{row.map((cell, c) => <td key={c}><Spans spans={cell} /></td>)}</tr>
+          <tr key={r}>{row.map(/* bounded-ok: single message / fixed menu or glyph parts */ (cell, c) => <td key={c}><Spans spans={cell} /></td>)}</tr>
         ))}
       </tbody>
     </table>

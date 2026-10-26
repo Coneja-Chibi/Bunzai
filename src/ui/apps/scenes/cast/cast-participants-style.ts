@@ -47,4 +47,10 @@ export const PARTICIPANTS_STYLE = `
 .scs .cw-reg .colors .box.off{opacity:.45}
 .scs .cw-reg .colors .stop{width:28px;height:20px;border:1px solid var(--stage-line)}
 .scs .cw-reg .colors small{font-size:10px;line-height:1.2;color:var(--stage-faint)}
+.scs .addp{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.scs .addp.open{align-items:stretch;border:1px solid var(--stage-line);background:var(--stage-sunken);padding:12px}
+.scs .addp input{background:var(--stage-row);border:1px solid var(--stage-line);padding:6px 8px;font:14px var(--font-ui);color:var(--stage-card)}
+.scs .addp input:focus{outline:0;border-color:var(--acc)}
+.scs .addp .addp-err{margin:0;font-size:12px;color:var(--stage-soft)}
+.scs .addp .acts{display:flex;gap:8px}
 `;

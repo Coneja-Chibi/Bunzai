@@ -89,7 +89,7 @@ export function WorkshopCodePane(props: WorkshopCodePaneProps): JSX.Element {
           Edited as source only. Runs only inside the sealed room (Run package scripts), never in the app chrome.
         </p>
         <div className={styles.hostPalette}>
-          {hostSnips.map((s) => (
+          {hostSnips.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (s) => (
             <Chip key={s.label} title={s.insert} onClick={() => onLua(`${luaCode}${luaCode.endsWith("\n") || !luaCode ? "" : "\n"}${s.insert}`)}>{s.label}</Chip>
           ))}
         </div>

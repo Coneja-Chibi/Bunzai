@@ -47,7 +47,7 @@ export default function StickerSplashTitle({ state, pieces }: { state: TitleStat
             )}
           </section>
           <nav className={styles.stickers} aria-label="Quick start">
-            {stickers.map(([action, label, hint, icon, tone, run]) => (
+            {stickers.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([action, label, hint, icon, tone, run]) => (
               <Card key={action} kind="entry" data-title-action={action} aria-label={label} heading={label} subtitle={hint} vars={{ "--sticker-tone": tone }} disabled={closing} onClick={run}>
                 <Ic name={icon} size={32} />
               </Card>

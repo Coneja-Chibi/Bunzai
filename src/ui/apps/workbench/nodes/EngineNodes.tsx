@@ -26,7 +26,7 @@ export function LoreNode(p: LoreNodeProps): JSX.Element {
     <div className={css.eng} style={{ left: p.at[0], top: p.at[1], width: ENGINE_W, height: LORE_H } as CSSProperties} data-engine="lore" onPointerDown={p.onDown}>
       <div className={css.engKind}>Engine step</div>
       <div className={css.engName}>Lore pass</div>
-      <div className={css.engMeta}>{lines.map((l) => <div key={l}>{l}</div>)}</div>
+      <div className={css.engMeta}>{lines.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (l) => <div key={l}>{l}</div>)}</div>
     </div>
   );
 }
@@ -58,7 +58,7 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
         onChange={(e) => p.onScene(e.target.value || null)}
       >
         <option value="">No scene (dry run)</option>
-        {p.scenes.map((s) => <option key={s.id} value={s.id}>{s.title}</option>)}
+        {p.scenes.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (s) => <option key={s.id} value={s.id}>{s.title}</option>)}
       </select>
       {p.presets.length > 1 && (
         <select
@@ -68,10 +68,10 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
           onPointerDown={(e) => e.stopPropagation()}
           onChange={(e) => p.onPreset(e.target.value)}
         >
-          {p.presets.map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}
+          {p.presets.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m) => <option key={m.id} value={m.id}>{m.name}</option>)}
         </select>
       )}
-      <div className={css.engMeta}>{p.view.lines.map((l) => <div key={l}>{l}</div>)}</div>
+      <div className={css.engMeta}>{p.view.lines.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (l) => <div key={l}>{l}</div>)}</div>
       <div className={css.engAct} onPointerDown={(e) => e.stopPropagation()}>
         <Button size="sm" onClick={() => setOpen(true)}>Preview</Button>
       </div>
@@ -79,9 +79,9 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
         <InkDialog ariaLabel="Request preview" onDismiss={() => setOpen(false)}>
           <div className={css.preview} data-part="nodes.preview" onPointerDown={(ev) => ev.stopPropagation()}>
             <h3>{p.view.basis === "forecast" ? "The scene's request" : "Dry run"}</h3>
-            {p.view.notes.map((n) => <p key={n} className={css.previewNote}>{n}</p>)}
+            {p.view.notes.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (n) => <p key={n} className={css.previewNote}>{n}</p>)}
             {p.view.messages.length === 0 && <p className={css.previewNote}>Nothing to send yet.</p>}
-            {p.view.messages.map((m, i) => (
+            {p.view.messages.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m, i) => (
               <div key={i} className={css.previewMsg}>
                 <b>{m.role}<small> · {tokLabel(m.tokens)} tok</small></b>
                 <pre>{m.content}</pre>

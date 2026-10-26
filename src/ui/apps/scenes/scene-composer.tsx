@@ -22,7 +22,7 @@ import { useComposerGrow } from "./composer-grow";
 import { ComposerTools, type ComposerToolsProps } from "./scene-composer-tools";
 import { DraftStatusStrip } from "./scene-draft-status";
 import { useComposerDrafts } from "./use-composer-drafts";
-import { publishDraft } from "./context/draft-bus";
+import { insertAtCaret, publishDraft, registerInserter } from "./context/draft-bus";
 import type { Steering } from "./use-scene-composer";
 
 export function SceneComposer({ api, chatId, prefs, persona, expandTick, name, connected, busy, showAiHint, tools, steering, onSteer, onCancelSteer, onStop, onOpenAiWing, onSend, onEditLast }: {
@@ -59,6 +59,19 @@ export function SceneComposer({ api, chatId, prefs, persona, expandTick, name, c
   const field = useRef<HTMLTextAreaElement>(null);
   useComposerGrow(field, steering ? steerText : draft);
   useEffect(() => { if (steering) field.current?.focus(); }, [steering]);
+  // Ping and suggested actions put text in the draft at the caret; a steering box is not the draft, so it declines.
+  const now = useRef({ draft, steering, edit });
+  now.current = { draft, steering, edit };
+  useEffect(() => registerInserter(chatId, (piece) => {
+    const cur = now.current;
+    if (cur.steering) return false;
+    const el = field.current;
+    const caret = el && document.activeElement === el ? { from: el.selectionStart, to: el.selectionEnd } : { from: cur.draft.length, to: cur.draft.length };
+    const next = insertAtCaret(cur.draft, piece, caret.from, caret.to);
+    cur.edit(next.text);
+    requestAnimationFrame(() => { el?.focus(); el?.setSelectionRange(next.caret, next.caret); });
+    return true;
+  }), [chatId]);
   // The message menu's Expand as character: the pill strip opens over the box, which takes the outline.
   useEffect(() => { if (expandTick > 0) { drafts.beginExpand(); field.current?.focus(); } }, [expandTick]); // eslint-disable-line react-hooks/exhaustive-deps -- fires on the request alone
   const menu: ComposerToolsProps = {

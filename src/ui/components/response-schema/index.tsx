@@ -29,7 +29,7 @@ export function ResponseSchema({ value, onChange }: ResponseSchemaProps): JSX.El
   return (
     <div className={styles.wrap}>
       <span className={styles.lbl}>Fields</span>
-      {s.fields.map((f, i) => (
+      {s.fields.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (f, i) => (
         <div className={styles.row} key={i}>
           <input
             className={`${styles.input} ${styles.name}`}

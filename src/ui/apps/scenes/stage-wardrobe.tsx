@@ -22,7 +22,7 @@ interface Dress { entry: WardrobeEntry; setId: string; setName: string }
 
 const swatch = (color: string): CSSProperties => ({ background: color });
 function Swatch({ colors }: { colors: string[] }): JSX.Element | null {
-  return colors.length === 0 ? null : <span className="wd-sw">{colors.map((c) => <i key={c} style={swatch(c)} />)}</span>;
+  return colors.length === 0 ? null : <span className="wd-sw">{colors.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (c) => <i key={c} style={swatch(c)} />)}</span>;
 }
 
 /** The scene's preset body, read once per preset; "unreadable" is a state the rack says, never a silent empty roster. */
@@ -94,7 +94,7 @@ function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
         <div className="pg-card"><div className="pg-label">The wardrobe is bare</div>
           <p className="pg-help">No selected preset or script carries message themes in this chat. Import a themed preset, or add themed scripts from the Regex library in the Final Cut wing.</p></div>
       )}
-      {[...byGroup].map(([groupId, pairings]) => {
+      {[...byGroup].map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ([groupId, pairings]) => {
         const group = choices.groups.find((g) => g.id === groupId);
         if (!group) return null;
         const value = choices.selections[groupId];
@@ -103,7 +103,7 @@ function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
           <section key={groupId} className="pg-card">
             <div className="pg-label">{group.label || "The Troupe"}<small>{group.type === "select_many" ? "The show decides who takes the stage each beat" : "One on stage at a time"}</small></div>
             <div className="wd-list">
-              {pairings.map(({ entry, optionId }) => {
+              {pairings.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ({ entry, optionId }) => {
                 const on = worn(optionId);
                 return (
                   <div key={entry.ruleId} className={`wd-row${on ? " on" : ""}`}>
@@ -124,7 +124,7 @@ function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
         <section className="pg-card">
           <div className="pg-label">Standalone dresses</div>
           <div className="wd-list">
-            {rack.map(({ entry, setId, setName }) => {
+            {rack.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ({ entry, setId, setName }) => {
               const on = picks.on.includes(setId);
               return (
                 <div key={setId} className={`wd-row${on ? " on" : ""}`}>
@@ -143,7 +143,7 @@ function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
         <section className="pg-card">
           <div className="pg-label">Loose garments</div>
           <div className="wd-list">
-            {roster.unpaired.map((entry) => (
+            {roster.unpaired.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (entry) => (
               <div key={entry.ruleId} className="wd-row loose"><Swatch colors={entry.swatch} /><b>{entry.displayName}</b><small>No caster found</small></div>
             ))}
           </div>

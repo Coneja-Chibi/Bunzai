@@ -12,7 +12,7 @@ import { Ic } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Empty, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Block, Empty, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 
@@ -57,9 +57,8 @@ export function EventsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
       <Tabs<Tab> tabs={tabs} value={tab} onChange={setTab} />
       <div className="st-body">
         {shown.length > 0 ? (
-          <div className="it-list">
-            {shown.map((e) => (
-              <ItemCard key={e.id} color={TONE[e.urgency]} icon={null} title={e.title}
+          <ItemList items={shown} render={(e) => (
+              <ItemCard color={TONE[e.urgency]} icon={null} title={e.title}
                 chip={e.canIntervene && e.isOngoing ? <span className="it-tag" style={{ "--c": "var(--stage-ok)" } as CSSProperties}>INTERVENE</span> : null}
                 meta={<span className="it-line"><Ic name="lucide:map-pin" size={12} /><span>{e.locationName}</span></span>}
                 veil={e.isHidden && e.playerAwareness !== "aware" ? <><Ic name="lucide:eye-off" size={20} /><span>{e.playerAwareness === "suspicious" ? "Something is happening..." : "Hidden Event"}</span></> : null}
@@ -73,13 +72,13 @@ export function EventsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
                 <Block title="Description"><p>{e.description}</p></Block>
                 {e.involvedNpcs.length > 0 && (
                   <Block title="Involved Characters">
-                    <div className="it-list">{e.involvedNpcs.map((n, i) => (
+                    <div className="it-list">{e.involvedNpcs.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (n, i) => (
                       <div key={`${n.name}${i}`} className="ev-npc"><Ic name="lucide:user" size={14} /><div><b>{n.name}</b>{n.role && <small>{n.role}</small>}</div>{n.status && <em>{n.status}</em>}</div>
                     ))}</div>
                   </Block>
                 )}
                 {e.estimatedDuration && <div className="it-line"><Ic name="lucide:clock" size={14} /><span>Duration: {e.estimatedDuration}</span></div>}
-                {e.potentialOutcomes && e.potentialOutcomes.length > 0 && e.isOngoing && <Block title="Potential Outcomes">{e.potentialOutcomes.map((o, i) => <div key={`${o}${i}`} className="it-line"><Ic name="lucide:circle" size={10} /><span>{o}</span></div>)}</Block>}
+                {e.potentialOutcomes && e.potentialOutcomes.length > 0 && e.isOngoing && <Block title="Potential Outcomes">{e.potentialOutcomes.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (o, i) => <div key={`${o}${i}`} className="it-line"><Ic name="lucide:circle" size={10} /><span>{o}</span></div>)}</Block>}
                 {e.actualOutcome && !e.isOngoing && <Block title="Outcome"><div className="ev-out"><p>{e.actualOutcome}</p></div></Block>}
                 <div className="it-fine"><div>Started: {new Date(e.startedAt).toLocaleString()}</div>{e.resolvedAt && <div>Resolved: {new Date(e.resolvedAt).toLocaleString()}</div>}</div>
                 {e.playerAwareness && e.playerAwareness !== "aware" && <div className="it-line"><Ic name={e.playerAwareness === "suspicious" ? "lucide:search" : "lucide:eye-off"} size={14} /><span>Player is {e.playerAwareness}</span></div>}
@@ -88,8 +87,7 @@ export function EventsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
                   extra={null} />
                 <div className="it-actions"><span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete event" onClick={inner(() => { act({ kind: "remove", id: e.id, at: Date.now() }, `Deleted ${e.title}`); setOpen(null); })}>Delete Event</Button></span></div>
               </ItemCard>
-            ))}
-          </div>
+            )} />
         ) : <Empty icon={tab === "all" ? "lucide:layers" : tab === "immediate" ? "lucide:zap" : tab === "looming" ? "lucide:clock" : "lucide:circle-check"} title={EMPTY[tab]} hint={tab === "resolved" ? "No events have concluded yet" : "The world is quiet... for now"} />}
         {tab !== "resolved" && (
           <AddByModel<Ev> ctx={ctx} chatId={chat.id} ask={ASK} label="Add Event" noun="event" namePlaceholder="Event Title" guidePlaceholder="Guide the AI... (e.g., 'a siege on the northern fortress')"

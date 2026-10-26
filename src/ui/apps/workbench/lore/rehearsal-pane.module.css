@@ -52,6 +52,15 @@
   gap: 0.35rem;
 }
 
+.rowUser,
+.rowBot {
+  display: flex;
+}
+
+.rowUser {
+  justify-content: flex-end;
+}
+
 .user,
 .bot {
   max-width: 90%;
@@ -62,14 +71,12 @@
 }
 
 .user {
-  align-self: flex-end;
   background: color-mix(in srgb, var(--a, var(--accent)) 22%, transparent);
   color: var(--stage-card);
   border: 1px solid var(--stage-seam);
 }
 
 .bot {
-  align-self: flex-start;
   background: var(--stage-row);
   color: var(--stage-soft);
   border: 1px solid var(--stage-seam);

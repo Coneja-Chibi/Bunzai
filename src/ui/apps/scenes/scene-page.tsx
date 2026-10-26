@@ -20,7 +20,7 @@
  * is what lets a finished bubble skip re-rendering while the composer is typed into or a reply
  * streams into its own LiveBubble (scene-turn-parts.tsx).
  */
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX } from "react";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { AppContext } from "../../app-contract";
 import { copyText } from "../../_shared/clipboard";
@@ -92,6 +92,7 @@ import { chatLayoutOf } from "./chat-layout";
 import { Messenger } from "./messenger/messenger";
 import { buildPrograms, useStablePrograms } from "./messenger/programs";
 import { wingPanels } from "./messenger/wing-props";
+import { authorOf, useTranscriptDecor } from "./messenger/transcript/use-transcript-decor";
 import type { MessengerRequest } from "./messenger/use-messenger-nav";
 import { Button, IconButton, Tile } from "../../components/button";
 const stale = (e: unknown): boolean => /\bversion\b|409/i.test(toErrorMessage(e));
@@ -149,7 +150,8 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
     });
   }, [api, chatId]);
   useEffect(load, [load]);
-  const turn = useSceneTurn(ctx, chatId, load);
+  const replyFrom = useRef<{ characterId: string; name: string } | null>(null);
+  const turn = useSceneTurn(ctx, chatId, load, replyFrom);
   useTrackersHeard(ctx.pieces, chatId, load);
   const busy = turn.live !== null;
   /** A version looked at while one is being written, or after it landed: local, never saved. */
@@ -178,6 +180,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const unsent = scene !== null && scene.messages.length === 0;
   const greetingDraft = useGreetingDraft(greetings, greeting, scene?.chat.opening, (opening) => void act("opening", { opening }));
   const name = str(identity["name"]) || "Character";
+  replyFrom.current = scene ? { characterId: scene.chat.cast.character.id, name } : null;
   const find = useSceneFind({ api, chatId, scene, scroller, busy, loadThrough: (seq) => loadOlder(seq), setStatus, names: { character: name, persona: personaName || "You" } });
   const card: CardState | null = scene && {
     name,
@@ -332,8 +335,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
     const m = findMsg(id);
     if (m) void liveRef.current.saveEdit(m);
   }, [findMsg]);
-  const dispatchEditCancel = useCallback(() => setEditing(null), []);
-  const dispatchCopy = useCallback((text: string) => copyText(text), []);
+  const dispatchEditCancel = useCallback(() => setEditing(null), []); const dispatchCopy = useCallback((text: string) => copyText(text), []);
   const dispatchBranch = useCallback((id: string, skip: boolean) => {
     const m = findMsg(id);
     const row = liveRef.current.rows.find((r): r is Extract<Row, { kind: "msg" }> => r.kind === "msg" && r.m.id === id);
@@ -355,11 +357,9 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   // Memoized elements, not a function called per row: calling a function to
   // build an element makes a fresh object every time, which alone would defeat Bubble's memo no
   // matter how stable its other props are. Above the early return below: hooks run unconditionally.
-  const timestamps = showTimestamps(ctx.prefs.get(SHOW_TIMESTAMPS_KEY));
-  const stampOf = useStampOf(displayContext);
-  const userInitial = (personaName || "You").charAt(0).toUpperCase();
-  const accents = useSceneAccents(scene, ctx.prefs);
-  const userArtFor = useUserArt();
+  const timestamps = showTimestamps(ctx.prefs.get(SHOW_TIMESTAMPS_KEY)); const stampOf = useStampOf(displayContext);
+  const userInitial = (personaName || "You").charAt(0).toUpperCase(); const accents = useSceneAccents(scene, ctx.prefs); const userArtFor = useUserArt();
+  const decor = useTranscriptDecor({ on: messenger, rows, prefs: ctx.prefs, chatId, personaName, characterName: name, shown: shown.byId, regexed });
   const charArt = useMemo<JSX.Element>(
     () => (
       <div className="por">
@@ -376,8 +376,9 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const side = wingOf(wing)?.side; const replaceScene = (next: OpenScene): void => { loadGeneration.current++; setMacroMessages(new Map()); setScene(next); };
   const takeName = scene?.takes.find((t) => t.id === scene.chat.activeBranchId);
   const painted = lookRoot(look);
+  const switchTake = (id: string): void => void act("take", { branchId: id });
   const takes = scene && <TakesControl open={takesOpen} onToggle={() => setTakesOpen(!takesOpen)} takes={scene.takes} activeId={scene.chat.activeBranchId} onTree={onTree && (() => onTree(chatId))}
-      onSwitch={(id) => void act("take", { branchId: id })} onRename={(id, n) => void act("rename-take", { branchId: id, name: n })}
+      onSwitch={switchTake} onRename={(id, n) => void act("rename-take", { branchId: id, name: n })}
       onDelete={(take, skip) => { setTakesOpen(false); if (skip) void act("delete-take", { branchId: take.id }); else setDialog({ kind: "delete-take", take }); }} />;
   const update = card && isNewer(card) && <UpdateBadge onClick={() => setDialog({ kind: "card" })} />;
   const wingArgs = scene && { ctx, scene, busy, card, name, charArt, cardPinned: cardBackdrop !== null, presetBody, setPresetBody, loreBooks, setLoreBooks, registeredProps, propsState, propsOn, stageRequest, setScene, replaceScene,
@@ -385,7 +386,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   /** One wing's panel: in its slot beside the chat (Full Chat), or bare as a Messenger program opened on `tab`. */
   const wingBody = (id: string, tab?: string, bare = false): JSX.Element => (
     <SamplerHistoryContext.Provider value={scene ? { messages: scene.messages, total: scene.messageCount } : undefined}>
-      <WingPanel id={id} {...(tab ? { tab } : {})} {...(bare ? { bare } : { resize: resizeOf(id) })} {...(wingArgs ? wingPanels(wingArgs, tab) : {})} />
+      <WingPanel id={id} {...(tab ? { tab } : {})} {...(bare ? { bare, single: true } : { resize: resizeOf(id) })} {...(wingArgs ? wingPanels(wingArgs, tab, bare) : {})} />
     </SamplerHistoryContext.Provider>
   );
   const chat = (
@@ -407,7 +408,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
             if (row.kind === "cut") return <CutLine key={row.id} count={row.count} onRestore={() => void act("restore-cut", versioned({ cutId: row.id }))} />;
             const { m, n } = row;
             const user = m.role === "user";
-            const author = user ? (m.persona === undefined ? personaName || "You" : m.persona?.name || "You") : name;
+            const author = authorOf(m, personaName, name); const deco = decor.get(m.id);
             const isLast = m === lastReply;
             const writing = isLast && turn.live?.kind === "swipe" && turn.live.messageId === m.id;
             const continuing = m === continueReply && turn.live?.kind === "continue" && turn.live.messageId === m.id;
@@ -426,7 +427,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
             const showVersions = m.role === "assistant" && n > 1 && (isLast || count > 1);
             const stamp = !onLive && timestamps && swipe ? stampOf(swipe.createdAt) : undefined;
             const facts = replyFacts(gen, !onLive && !user);
-            return (
+            return (<Fragment key={m.id}>{deco?.lead}
               <Bubble key={m.id} id={m.id} n={n} user={user} who={author} tone={user ? USER_TONE : CHAR_TONE}
                 live={onLive || continuing} {...think.props} last={isLast} footer={footer} stamp={stamp} {...facts}
                 {...(showVersions ? { vIndex: index, vCount: count, vNew: isLast && turn.landed === m.id && peek?.id === m.id, vBusy: busy, onVersion: dispatchVersion } : {})} {...(isLast ? { busy, onRegenerate: dispatchRegenerate } : {})} {...(showVersions && swipeCount(m) > 1 ? { onCompare: dispatchCompare } : {})} {...(m === continueReply && continuable ? { onContinue: dispatchContinue } : {})} {...(askable && m === lastRow?.m ? { onAskAgain: dispatchAskAgain } : {})} {...(!user && n > 1 ? { onGuided: dispatchGuided, guidance: gen?.guidance } : {})} {...(!user ? { onExpand: beginExpand } : {})} onCorrect={correct} {...(!user && gen?.finalCut ? { finalCut: gen.finalCut, onFinalCut: finalCut.open } : {})}
@@ -436,7 +437,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
                 onEdit={dispatchEdit} onEditChange={dispatchEditChange}
                 onEditSave={dispatchEditSave} onEditCancel={dispatchEditCancel} onCopy={dispatchCopy}
                 {...(n > 1 ? { onBranch: dispatchBranch } : {})} {...(connected && retakeAt.has(m.id) ? { onRetake: dispatchRetake } : {})}
-                onCut={dispatchCut} onHide={dispatchHide} hidden={m.hidden === true} speakers={user ? undefined : speakers} {...(!user && n > 1 ? { onRemoveVersion: versions.remove } : {})} />
+                onCut={dispatchCut} onHide={dispatchHide} hidden={m.hidden === true} speakers={user ? undefined : speakers} {...(!user && n > 1 ? { onRemoveVersion: versions.remove } : {})} contextMenu={messenger} {...deco?.props} /></Fragment>
             );
           })}
           {turn.live?.kind === "reply" && (turn.live.text || turn.live.reasoning
@@ -462,7 +463,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   return (
     <div ref={root} className={`scs${wing ? ` paused open-${side}` : ""}${busy ? " busy" : ""}`} style={{ ...accents, ...painted.style, ...(wing ? { "--wing-w": `${widthOf(wing)}px` } : {}) } as CSSProperties} {...painted.attrs}>
       {messenger ? (
-        <Messenger ctx={ctx} chatId={chatId} scene={scene} name={name} personaName={personaName || "Your persona"} programs={programs} request={msnRequest} actions={<>{takes}{update}</>}
+        <Messenger ctx={ctx} chatId={chatId} scene={scene} name={name} personaName={personaName || "Your persona"} programs={programs} request={msnRequest} actions={<>{takes}{update}</>} args={wingArgs ?? null} loreBooks={loreBooks} onTake={switchTake} onFind={find.open}
           onBack={onBack} onSurface={setMsnOpen} renderProgram={(p) => (p.panel && scene ? <PopoutSlot kind={p.panel} ctx={ctx} chat={scene.chat} onChat={(chat) => setScene((s) => (s ? { ...s, chat } : s))} /> : wingBody(p.wing, p.tab, true))}>{chat}</Messenger>
       ) : <>
       <div className="play" data-part="scene.root">

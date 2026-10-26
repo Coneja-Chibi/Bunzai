@@ -81,7 +81,7 @@ export function ChoiceList({
       </div>
       <p className="kit-ask__q">{choices.question}</p>
 
-      {rows.map((entry, at) => {
+      {rows.map(/* bounded-ok: single message / fixed menu or glyph parts */ (entry, at) => {
         // The rule separates answering the question from getting out of it.
         if (entry.row.kind === "rule") return <div key={`r${String(at)}`} className="kit-ask__rule" />;
         pickIndex += 1;

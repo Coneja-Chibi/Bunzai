@@ -35,7 +35,7 @@ function renderPattern(
   return (
     <>
       <span className={styles.pDelim}>/</span>
-      {spans.map((s, i) => (
+      {spans.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (s, i) => (
         <span key={i} className={styles[SPAN_CLASS[s.kind]]}>
           {s.text}
         </span>

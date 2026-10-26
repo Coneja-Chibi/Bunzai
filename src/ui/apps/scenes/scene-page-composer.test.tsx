@@ -4,6 +4,7 @@
  * draft kept per scene across a reopen. The scripted page is fake-scene-page-rig.ts.
  */
 import { beforeAll, beforeEach, describe, expect, test } from "bun:test";
+import { insertIntoDraft } from "./context/draft-bus";
 import { box, click, endsOnReply, installRigDom, key, menuRow, mount, msg, props, resetRig, rig, settle, toolsButton, type, unmount } from "./fake-scene-page-rig";
 
 beforeAll(installRigDom);
@@ -84,6 +85,19 @@ describe("ScenePage: Ctrl+Shift+R", () => {
     await settle(flushSync);
     expect(rig.turns).toEqual([]);
     unmount(flushSync);
+  });
+});
+
+describe("ScenePage: inserts from Ping and suggested actions", () => {
+  test("go into the draft after what is typed, keep it, and never send", async () => {
+    const flushSync = await mount(endsOnReply());
+    type(flushSync, "hello");
+    flushSync(() => { expect(insertIntoDraft("chat1", "@Vera")).toBe(true); });
+    await settle(flushSync);
+    expect(box().value).toBe("hello @Vera");
+    expect(rig.sent).toEqual([]);
+    unmount(flushSync);
+    expect(insertIntoDraft("chat1", "@Vera")).toBe(false);
   });
 });
 

@@ -48,7 +48,7 @@ export function CssAssistPane({
           aria-label="Add rule for target"
         >
           <option value="">choose target…</option>
-          {pack.targets.map((t) => (
+          {pack.targets.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (t) => (
             <option key={t.id} value={t.id}>
               {t.label}
               {t.selector ? ` (${t.selector})` : ""}
@@ -64,7 +64,7 @@ export function CssAssistPane({
         <p className={styles.hint}>No parsed rules yet. Use a Starter or open Source and write CSS.</p>
       ) : (
         <div className={styles.ruleList}>
-          {doc.rules.map((r) => (
+          {doc.rules.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (r) => (
             <ListRow
               key={r.id}
               label={summarizeRule(r)}

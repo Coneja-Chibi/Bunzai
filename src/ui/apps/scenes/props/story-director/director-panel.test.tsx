@@ -8,6 +8,7 @@ import { arcOf, stateOf } from "../../../../../core/director/fixtures";
 import type { DirectorState } from "../../../../../stage/contracts/director-types";
 import { installDom, type InstalledDom } from "../../../../_shared/test-dom";
 import { DirectorPanelView } from "./director-panel";
+import { insertIntoDraft, registerInserter } from "../../context/draft-bus";
 import { publishDirector } from "./director-live";
 import { CHAT, chapter, fakeDirector, line, mounted, panelOf, story, type Mounted } from "./fake-director-ui-rig";
 
@@ -51,7 +52,18 @@ describe("the panel", () => {
     await open(story({ chapters: [chapter, { ...chapter, id: "c0", number: 0, title: "Prologue", status: "complete" }] }));
     const t = text();
     for (const s of ["Current Chapter", "Ch. 1: The Keeper's Ledger", "Learn what the names share", "Reach the causeway", "inheritance", "Tone: slow dread", "9 turns elapsed", "Chapter History", "Ch. 0: Prologue", "Current Mood", "Tense and watchful", "Suggested Actions", "Ask about the third name.", "DM Intentions", "Let her find the torn page."]) expect(t).toContain(s);
-    expect(m!.host.querySelectorAll('[data-part="scene.director.actions"] button').length).toBe(0);
+  });
+
+  test("each suggested action is a button that fills the composer draft and sends nothing", async () => {
+    await open(story());
+    const got: string[] = [];
+    const off = registerInserter(CHAT.id, (p) => { got.push(p); return true; });
+    const buttons = [...m!.host.querySelectorAll<HTMLElement>('[data-part="scene.director.actions"] button')];
+    expect(buttons.map((b) => b.textContent)).toEqual(["Ask about the third name."]);
+    await m!.click(buttons[0]);
+    expect(got).toEqual(["Ask about the third name."]);
+    off();
+    expect(insertIntoDraft(CHAT.id, "x")).toBe(false);
   });
 
   test("the Arcs tab: Active and Completed, grouped by chapter, and the open card shows the next beat", async () => {
@@ -101,6 +113,14 @@ describe("the panel", () => {
     await m!.click(m!.host.querySelector(".dr-act.more"));
     expect(text()).toContain("gateway timeout");
     expect(text()).toContain("m1");
+  });
+
+  test("the Activity tab: 500 entries mount fewer than 60 lines", async () => {
+    await open(story({ activity: Array.from({ length: 500 }, (_, i) => line(`a${String(i)}`, "turn_start", Date.now() - i * 1000)) }));
+    await m!.click(tab("Activity"));
+    const lines = m!.host.querySelectorAll(".dr-feed [data-index]").length;
+    expect(lines).toBeGreaterThan(0);
+    expect(lines).toBeLessThan(60);
   });
 
   test("the Activity tab with nothing says so, even before any story", async () => {

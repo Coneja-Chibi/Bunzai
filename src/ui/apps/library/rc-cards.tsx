@@ -243,7 +243,7 @@ export function PresetCard(props: CardProps): JSX.Element {
         return (
           <>
             <div className="rstrip">
-              {stats.map(([label, value]) => (
+              {stats.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ ([label, value]) => (
                 <span className="rstat" key={label}><b>{value}</b><span>{label}</span></span>
               ))}
               <span className="grow" />
@@ -309,7 +309,7 @@ export function AssetCard(props: CardProps): JSX.Element {
             )}
             {stats.length > 0 && (
               <div className="rstats">
-                {stats.map((s) => <span key={s.label}>{s.label}<b>{s.value}</b></span>)}
+                {stats.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => <span key={s.label}>{s.label}<b>{s.value}</b></span>)}
               </div>
             )}
             <div className="rahead">

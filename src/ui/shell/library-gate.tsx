@@ -206,7 +206,7 @@ function AllAboard({ copied, onGo }: { copied: NonNullable<Status["copied"]>; on
           <>
             <Lines heading="Renamed to keep both">
               <ol className={styles.subtle}>
-                {copied.renamed.map((r) => (
+                {copied.renamed.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (r) => (
                   <li key={r.to}>{`${r.from} kept as ${r.to}`}</li>
                 ))}
               </ol>

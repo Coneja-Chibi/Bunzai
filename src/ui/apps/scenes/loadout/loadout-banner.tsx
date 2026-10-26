@@ -14,7 +14,7 @@ export function LoadoutBanner({ receipt, now, working, busy, onUndo }: { receipt
     <div className={`ldb-banner ${v.tone}`} role="status" data-part="scene.booth.loadouts.banner">
       <div className="pn">
         <b>{v.headline}</b><span>{v.detail}</span>
-        {v.lines.map((line) => <p key={line}>{line}</p>)}
+        {v.lines.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (line) => <p key={line}>{line}</p>)}
       </div>
       {v.undoable && <Button size="sm" disabled={working || busy} onClick={onUndo}>Undo apply</Button>}
     </div>

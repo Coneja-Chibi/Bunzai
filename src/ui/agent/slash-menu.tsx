@@ -51,7 +51,7 @@ export function SlashMenu({
   return (
     <div className="kit-slash" ref={setBox} role="listbox" aria-label={title}>
       <div className="kit-slash__head">{title}</div>
-      {choices.map((choice, at) => (
+      {choices.map(/* bounded-ok: single message / fixed menu or glyph parts */ (choice, at) => (
         <MenuItem
           key={`${choice.value}${String(at)}`}
           role="option"

@@ -12,6 +12,7 @@ import { Button, IconButton } from "../../../../components/button";
 import { Ic, type IconName } from "../../../../_shared/ic";
 import { RefreshButton, RefreshNotice, RefreshOverlay, RefreshSheet } from "./refresh/refresh-ui";
 import { useRefresh } from "./refresh/use-refresh";
+import { trackerSummary } from "./summary";
 import type { TrackerView } from "./use-tracker";
 import { useTrackerUpdate } from "../story-director/use-tracker-update";
 import { AutoUpdateLine, DirectorUpdateLine } from "../story-director/tracker-update-ui";
@@ -43,6 +44,7 @@ export function TrackerFrame({ label, title, description, icon, tone, tokens, vi
   const [confirm, setConfirm] = useState(false);
   const refresh = useRefresh(view, label);
   const dm = useTrackerUpdate(view, label);
+  const summary = trackerSummary(view.module, view.stored);
   return (
     <div className="trk" data-part={`props.tracker.${view.module}`} style={{ "--w": tone } as React.CSSProperties}>
       <header className="hero">
@@ -50,7 +52,7 @@ export function TrackerFrame({ label, title, description, icon, tone, tokens, vi
         <div><div className="eb">{label} module</div><h2>{title}</h2><p>{description}</p></div>
       </header>
       <div className="trk-strip">
-        <div className="trk-badges">{badge}{tokens > 0 && <span className="trk-tokens">~{tokens}t</span>}</div>
+        <div className="trk-badges">{badge}{summary && <span className="trk-sum" data-part={`props.tracker.${view.module}.summary`}>{summary}</span>}{tokens > 0 && <span className="trk-tokens">~{tokens}t</span>}</div>
         <div className="trk-actions">
           <RefreshButton r={refresh} label={label} />
           {actions}

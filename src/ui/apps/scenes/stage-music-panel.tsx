@@ -12,12 +12,12 @@ import { SegControl } from "../settings/section-contract";
 import { toErrorMessage } from "../../_shared/error-message";
 import { addLinkToPack, addToPack } from "./scene-backdrop-add";
 import { removeTrack, renameTrack } from "./stage-music-edit";
-import type { Track } from "./stage-music-core";
+import { AUTOPLAY_KEY, autoplayOn, type Track } from "./stage-music-core";
 import type { MusicPlayer } from "./stage-music-player";
 import { failureWords, soundFile } from "./stage-music-form";
 import { useMusicLibrary } from "./use-music-library";
 import { sharedMusic, useStageMusic } from "./use-stage-music";
-import { ListRow, IconButton, Button } from "../../components/button";
+import { ListRow, IconButton, Button, Toggle } from "../../components/button";
 
 export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; player?: MusicPlayer }): JSX.Element {
   const { state, setVolume } = useStageMusic(ctx, player);
@@ -27,6 +27,7 @@ export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; pla
   const [title, setTitle] = useState("");
   const [editing, setEditing] = useState<Track | null>(null);
   const [busy, setBusy] = useState(false);
+  const [autoplay, setAutoplay] = useState(() => autoplayOn(ctx.prefs.get(AUTOPLAY_KEY)));
   const [formError, setFormError] = useState<string | null>(null);
   const files = useRef<HTMLInputElement>(null);
 
@@ -95,6 +96,7 @@ export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; pla
             <Slider value={state.volume} min={0} max={1} step={0.01} onChange={setVolume} format={(v) => `${String(Math.round(v * 100))}%`} aria-label="Mood music volume" />
           </label>
         </div>
+        <Toggle on={autoplay} label="Play on scene open" onChange={(v) => { ctx.prefs.set(AUTOPLAY_KEY, v); setAutoplay(v); }} />
       </div>
 
       <div className="mm-add">
@@ -118,11 +120,11 @@ export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; pla
 
       <div className="mm-lib">
         {library.state === "ready" && total === 0 && <p className="mm-hint">No sound files yet. Add some above, and they appear here.</p>}
-        {library.groups.map((g) => (
+        {library.groups.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (g) => (
           <section key={g.packId} className="mm-cat">
             <div className="mm-cat-hd"><h3>{g.name}</h3><span>{g.tracks.length}</span></div>
             <div className="mm-list">
-              {g.tracks.map((t) => (
+              {g.tracks.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (t) => (
                 <div key={t.id} className={`mm-item${track?.id === t.id ? " on" : ""}`}>
                   <ListRow onClick={() => void player.play(t, g.tracks)} label={t.title} />
                   <IconButton variant="quiet" size="sm" icon="lucide:pencil" label={`Edit ${t.title}`} onClick={() => beginEdit(t)} />

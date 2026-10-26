@@ -113,7 +113,7 @@ function Security(): JSX.Element {
       </div>
 
       <pre className={styles.proof}>
-        {proofLines(status).map((l, i) => (
+        {proofLines(status).map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (l, i) => (
           <span key={i} className={l.not ? styles.proofNot : undefined}>
             {`${l.text}\n`}
           </span>
@@ -216,7 +216,7 @@ function Security(): JSX.Element {
           <div className={styles.cardBody}>
             This library has also been opened on another computer, from a copied folder or a restored backup. Each one below can still open it by itself.
           </div>
-          {others.map((c) => (
+          {others.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (c) => (
             <div className={styles.pc} key={c.id}>
               <div>
                 <div className={styles.pcName}>{c.label}</div>

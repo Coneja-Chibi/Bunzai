@@ -292,7 +292,7 @@ export function readJsonCappedOutsideHome(path: string, source: string): string 
 export function newJSDOMOutsideHome(path: string, source: string): string | null {
   const p = norm(path);
   if (!/^src\/ui\//.test(p) || !/\.test\.tsx?$/.test(p)) return null;
-  if (p === "src/ui/_shared/test-dom.ts" || p === "src/ui/_shared/test-dom.test.ts" || p === "src/ui/_shared/virtual-list.test.tsx") return null;
+  if (p === "src/ui/_shared/test-dom.ts" || p === "src/ui/_shared/test-dom.test.ts" || p === "src/ui/_shared/virtual-list/core.test.tsx") return null;
   if (!/\bnew\s+JSDOM\s*\(/.test(stripComments(source))) return null;
   return `${p}: constructs JSDOM directly. Install the shared test DOM from src/ui/_shared/test-dom.ts (the virtual-list test owns the one intentional secondary DOM).`;
 }

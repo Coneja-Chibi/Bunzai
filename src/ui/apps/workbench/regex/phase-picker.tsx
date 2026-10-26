@@ -38,7 +38,7 @@ export function PhasePicker({ phases, writeFor, styles, onToggle }: PhasePickerP
 
   return (
     <div className={styles.pillRow} role="group" aria-label="Where it runs">
-      {shown.map((phase) => {
+      {shown.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (phase) => {
         const on = phases.includes(phase);
         const isForeign = !lensPhases.includes(phase);
         const cls = [styles.pill, on ? styles.pillOn : "", isForeign ? styles.pillForeign : ""]

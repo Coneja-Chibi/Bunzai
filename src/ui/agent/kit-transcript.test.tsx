@@ -27,6 +27,15 @@ const draw = (lines: ChatLine[], extra?: { streaming?: string; problem?: string 
     />,
   );
 
+describe("a long conversation", () => {
+  test("500 lines mount fewer than 60 bands", () => {
+    const out = draw(Array.from({ length: 500 }, (_, i) => ({ role: "user", text: `line ${String(i)}` }) as ChatLine));
+    const bands = out.split("agent-room__line ").length - 1;
+    expect(bands).toBeGreaterThan(0);
+    expect(bands).toBeLessThan(60);
+  });
+});
+
 describe("what each role gets", () => {
   test("THE AGENT'S WORDS ARE MARKDOWN AND YOURS ARE NOT", () => {
     /**

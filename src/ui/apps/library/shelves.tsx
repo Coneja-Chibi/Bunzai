@@ -118,7 +118,7 @@ export function Shelves(props: ShelvesProps): JSX.Element {
 
   return (
     <div className="lcar">
-      {sections.map((s) => (
+      {sections.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
         <Section key={s.deck.kind} {...props} section={s} total={s.total} peeks={peeks} now={now} solo={false} />
       ))}
     </div>

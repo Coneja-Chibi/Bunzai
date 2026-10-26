@@ -77,7 +77,7 @@ export function EngineRoots(): JSX.Element {
 
   return (
     <>
-      {rows.map((row) => {
+      {rows.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (row) => {
         const { note, ok, locked } = engineState(row);
         return (
           <SettingsRow

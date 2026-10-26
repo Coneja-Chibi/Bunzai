@@ -1,7 +1,8 @@
 /**
- * Which program the Messenger shows and how (RoleCall DiscordChrome.tsx:119-157,186-191): a program opens as a TAB in place of the chat or as a MODAL dialog over it, the
- * programs visited stay mounted so their drafts survive, closing the dialog returns to the open tab, and a request from elsewhere on the page (the composer's AI hint, the Booth's
- * rows) opens the wing's first program. A program that leaves the list (its Prop switched off) drops out of every one of these.
+ * Which program the Messenger shows (RoleCall DiscordChrome.tsx:119-157,186-191, here with one open program at a time): opening one swaps whatever was open, closing returns to the chat,
+ * the programs visited stay in `visited` so the shell keeps them mounted and their drafts survive, and a request from elsewhere on the page (the composer's AI hint, the Booth's rows, the
+ * Story Director's settings link) opens the wing's first program. A program that leaves the list (its Prop switched off) drops out of every one of these. How a program is drawn
+ * (Side, Wide, Popout or Layer) is shell/surfaces.ts; this hook does not know.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Program } from "./programs";
@@ -10,38 +11,29 @@ import type { Program } from "./programs";
 export interface MessengerRequest { n: number; wing: string | null }
 
 export function useMessengerNav(programs: readonly Program[], request: MessengerRequest | null | undefined) {
-  const [tabId, setTabId] = useState<string | null>(null);
-  const [modalId, setModalId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const [visited, setVisited] = useState<string[]>([]);
   const [navOpen, setNavOpen] = useState(false);
   const handled = useRef(0);
   const has = useCallback((id: string | null): boolean => id !== null && programs.some((p) => p.id === id), [programs]);
-  const selectedId = modalId ?? tabId;
-  const selected = programs.find((p) => p.id === selectedId);
-  const open = useCallback((id: string, view: "tab" | "modal" = "tab"): void => {
+  const selected = programs.find((p) => p.id === openId);
+  const open = useCallback((id: string): void => {
     if (!has(id)) return;
     setVisited((v) => (v.includes(id) ? v : [...v, id]));
-    if (view === "modal") setModalId(id);
-    else { setTabId(id); setModalId(null); }
+    setOpenId(id);
     setNavOpen(false);
   }, [has]);
-  const showChat = useCallback((): void => { setTabId(null); setModalId(null); setNavOpen(false); }, []);
+  const close = useCallback((): void => setOpenId(null), []);
   useEffect(() => {
     setVisited((v) => v.filter(has));
-    setTabId((id) => (has(id) ? id : null));
-    setModalId((id) => (has(id) ? id : null));
+    setOpenId((id) => (has(id) ? id : null));
   }, [has]);
   useEffect(() => {
     if (!request || request.n <= handled.current) return;
     handled.current = request.n;
     const program = request.wing === null ? undefined : programs.find((p) => p.wing === request.wing);
     if (program) open(program.id);
-    else if (request.wing === null) showChat();
-  }, [request, programs, open, showChat]);
-  return {
-    tabId, selectedId, selected, visited, navOpen, setNavOpen, open, showChat,
-    closeSettings: useCallback((): void => setModalId(null), []),
-    overlayOpen: modalId !== null && selected !== undefined,
-    tabOpen: has(tabId),
-  };
+    else if (request.wing === null) close();
+  }, [request, programs, open, close]);
+  return { openId, selected, visited, navOpen, setNavOpen, open, close };
 }

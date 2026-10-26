@@ -1,13 +1,13 @@
 /**
  * The summary routes (rc-parity 08, the Context wing's Memory tab; RoleCall `api/user/chats/[characterId]/summary` and its `prompts` route): `GET /api/chats/summary` answers the saved settings, the active take's text and
  * how far it reaches, and whether a run is going; `POST /api/chats/summary-settings` changes the settings (ChatStore rule 45) and answers the same state; `POST /api/chats/summary` saves the person's own text;
- * `POST /api/chats/summary-backfill` rebuilds the text from the whole take and answers the new state, or the sentence that says why it could not (409). Bodies are parsed once into known types.
+ * `POST /api/chats/summary-backfill` rebuilds the text from the whole take and answers the new state, or the sentence that says why it could not (409); `POST /api/chats/summary-now` runs the automatic step once, the same way. Bodies are parsed once into known types.
  */
 import { isRecord, str } from "../core/guards";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import { StudioNotFoundError, StudioValidationError } from "../studio/errors";
 import type { StudioStoreLike } from "../studio/contracts";
-import { backfill, saveSummaryText, summaryState } from "../studio/scene-summary";
+import { backfill, saveSummaryText, summarizeNow, summaryState } from "../studio/scene-summary";
 import { connect } from "./server-chats-turn";
 import { err, json } from "./server-security";
 
@@ -37,6 +37,10 @@ export async function handleSummaryRoute(req: Request, url: URL, chats: ChatStor
   }
   if (p === "/api/chats/summary-backfill") {
     await backfill({ chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined }, chatId, req.signal);
+    return stateOr404(chats, chatId);
+  }
+  if (p === "/api/chats/summary-now") {
+    await summarizeNow({ chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined }, chatId);
     return stateOr404(chats, chatId);
   }
   return null;

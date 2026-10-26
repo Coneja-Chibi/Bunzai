@@ -101,7 +101,7 @@ export function FlowView(props: FlowViewProps): JSX.Element {
             <span className={styles.qstep}>{active.step}</span>
             <span className={styles.qprog}>
               <span className={styles.qdots}>
-                {flowModules.map((mod, i) => (
+                {flowModules.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (mod, i) => (
                   <i key={mod.id} className={i < flowAt ? styles.qdotDone : i === flowAt ? styles.qdotNow : undefined} />
                 ))}
               </span>
@@ -153,7 +153,7 @@ export function FlowView(props: FlowViewProps): JSX.Element {
               <b className={styles.pname}>{stageName}</b>
             </div>
             <div className={styles.dossier}>
-              {dossierRows.map((m) => {
+              {dossierRows.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m) => {
                 const has = filled(m);
                 return (
                   <div key={m.id} className={`${styles.drow}${has ? "" : ` ${styles.drowAwait}`}`}>

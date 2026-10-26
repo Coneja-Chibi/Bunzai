@@ -2,7 +2,8 @@
  * Health pane: inspectBook findings grouped by rule, Fix All with rescan proof (vs-lore-health).
  */
 import { Button, IconButton, ListRow } from "../../../components/button";
-import { useMemo, type JSX } from "react";
+import { useMemo, type JSX, type ReactNode } from "react";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import type { LorebookBody } from "../../../../entities/lorebook/schema";
 import {
   applyAllFixes,
@@ -35,6 +36,10 @@ const RULE_ORDER: LoreFindingRule[] = [
   "never-woken",
   "legacy-leftovers",
 ];
+
+/** One line of the windowed pane: a rule's heading or one of its findings. The edge says which border of the rule's box the line closes. */
+type HealthRow = { key: string; edge: "top" | "mid" | "bottom"; node: ReactNode };
+const ROW_ESTIMATE_PX = 40;
 
 export interface HealthPaneProps {
   body: LorebookBody;
@@ -74,6 +79,31 @@ export function HealthPane({
     }));
   }, [findings]);
 
+  const rows: HealthRow[] = groups.flatMap((g): HealthRow[] => [
+    { key: `head:${g.rule}`, edge: "top", node: (
+      <div className={styles.ghead}>
+        <span className={g.severity === "problem" ? styles.chipBad : styles.chipWarn}>
+          {g.severity === "problem" ? "Problem" : "Worth a look"}
+        </span>
+        <b>
+          {RULE_TITLE[g.rule]} · {g.items.length}
+        </b>
+        {g.fixable ? (
+          <Button size="sm" onClick={() => {
+              onTransform((b) => applyAllFixes(b, g.items));
+            }}>Fix all</Button>
+        ) : (
+          <span className={styles.byHand}>Fix by hand</span>
+        )}
+      </div>
+    ) },
+    ...g.items.map((f, i): HealthRow => ({ key: `${g.rule}-${f.entryId ?? "book"}-${String(i)}`, edge: i === g.items.length - 1 ? "bottom" : "mid", node: (
+      <div className={styles.gitem}>
+        <ListRow disabled={!f.entryId} title={f.message} onClick={() => { if (f.entryId) onJumpEntry(f.entryId); }} label={f.message} />
+      </div>
+    ) })),
+  ]);
+
   return (
     <aside className={styles.pane} aria-label="Health check">
       <div className={styles.head}>
@@ -88,43 +118,9 @@ export function HealthPane({
       {groups.length === 0 && (
         <p className={styles.clean}>Nothing to fix. This book looks healthy.</p>
       )}
-      {groups.map((g) => (
-        <section key={g.rule} className={styles.group}>
-          <div className={styles.ghead}>
-            <span
-              className={
-                g.severity === "problem" ? styles.chipBad : styles.chipWarn
-              }
-            >
-              {g.severity === "problem" ? "Problem" : "Worth a look"}
-            </span>
-            <b>
-              {RULE_TITLE[g.rule]} · {g.items.length}
-            </b>
-            {g.fixable ? (
-              <Button size="sm" onClick={() => {
-                  onTransform((b) => applyAllFixes(b, g.items));
-                }}>Fix all</Button>
-            ) : (
-              <span className={styles.byHand}>Fix by hand</span>
-            )}
-          </div>
-          <ul className={styles.list}>
-            {g.items.map((f, i) => (
-              <li key={`${f.rule}-${f.entryId ?? "book"}-${i}`}>
-                <ListRow
-                  disabled={!f.entryId}
-                  title={f.message}
-                  onClick={() => {
-                    if (f.entryId) onJumpEntry(f.entryId);
-                  }}
-                  label={f.message}
-                />
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
+      <VirtualRows items={rows} keyOf={(r) => r.key} estimate={ROW_ESTIMATE_PX} render={(r) => (
+        <div className={`${styles.gedge}${r.edge === "top" ? ` ${styles.gfirst}` : r.edge === "bottom" ? ` ${styles.glast}` : ""}`}>{r.node}</div>
+      )} />
     </aside>
   );
 }

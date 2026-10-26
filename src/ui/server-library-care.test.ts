@@ -7,7 +7,7 @@
 import { afterEach, expect, test } from "bun:test";
 import { existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { CANONICAL_SCHEMA_VERSION } from "../core/canonical";
 import { fakeComputer } from "../stage/crypto/fake-device-vault";
 import { fastPasswords } from "../stage/crypto/fake-password-lock";
@@ -159,4 +159,19 @@ test("a copy is removed into the trash folder over the route, and the list and t
   expect(after.snapshots).toEqual([]);
   expect(after.manual.count).toBe(0);
   expect(existsSync(join(r.dir, "library.db.snapshots", "trash", `${made.snapshot.id}.db`))).toBe(true); // moved, never deleted
+});
+
+test("export writes the library to a folder beside the studio, takes no path from the client, and needs the token and a GET is not an export", async () => {
+  const r = await rig();
+  await r.store.save(card("vera"));
+  const handler = createHandler(new StudioStore(r.dir), new SettingsStore(r.dir), undefined, filledSec(), undefined, undefined, undefined, undefined, undefined, undefined, undefined, r.library);
+  expect((await handler(apiReq("/api/library/export", { method: "POST", contentType: "application/json", body: "{}" }))).status).toBe(403);
+  expect((await r.get("/api/library/export")).status).not.toBe(200);
+  const res = await r.post("/api/library/export", { destination: "C:/elsewhere" });
+  expect(res.status).toBe(200);
+  const out = await r.json<{ folder: string; pieces: number }>(res);
+  expect(out.pieces).toBe(1);
+  expect(out.folder.startsWith(join(dirname(r.dir), "Bunraku exports"))).toBe(true);
+  expect(existsSync(join(out.folder, "character", "vera.json"))).toBe(true);
+  expect(existsSync(join(r.dir, "Bunraku exports"))).toBe(false);
 });

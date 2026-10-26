@@ -60,7 +60,7 @@ function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClo
             const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
             e.preventDefault(); buttons[(at + (e.key === "ArrowDown" ? 1 : -1) + buttons.length) % buttons.length]?.focus();
           }}>
-            {apps.map((m) => <ListRow key={m.id} label={m.title} subtitle={m.subtitle ?? "App"} leading={<AppMark markSvg={m.markSvg} className={styles.mark} />}
+            {apps.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (m) => <ListRow key={m.id} label={m.title} subtitle={m.subtitle ?? "App"} leading={<AppMark markSvg={m.markSvg} className={styles.mark} />}
               selected={activeAppId === m.id} aria-current={activeAppId === m.id ? "page" : undefined} onClick={() => navigate(m.id)} />)}
           </div>
           {!apps.length && <p>No matching apps</p>}

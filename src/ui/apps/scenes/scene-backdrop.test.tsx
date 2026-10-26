@@ -94,6 +94,18 @@ describe("the Stage wing's Backdrop row", () => {
 });
 
 describe("the picker", () => {
+  test("a 500-picture pack mounts fewer than 60 tiles", async () => {
+    const items = Array.from({ length: 500 }, (_, i) => ({ id: `p${String(i)}`, label: `Picture ${String(i)}`, ref: sentinel(i + 1) }));
+    const big = makeCtx({ entity: async () => ({ entity: { ...packEntity, body: { name: "Backdrops", pack: { items } } }, revision: "r1" }) });
+    const flushSync = await mount(big, chatOf());
+    flushSync(() => named("Pick")!.click());
+    await settle(flushSync);
+    const tiles = dom.window.document.querySelectorAll('[role="option"]').length;
+    expect(tiles).toBeGreaterThan(1);
+    expect(tiles).toBeLessThan(60);
+    unmount(flushSync);
+  });
+
   test("lists None first and the pack's pictures, and a pick is saved at once with its pack and item", async () => {
     const flushSync = await mount(makeCtx(), chatOf());
     flushSync(() => named("Pick")!.click());
@@ -145,6 +157,17 @@ describe("the picture behind the messages", () => {
     unmount(a.flushSync);
     const b = await layer(makeCtx(), { pack: "st", item: "a", dim: 0.25 });
     expect((host.querySelector(".veil") as HTMLElement).style.background).toContain("var(--stage-well) 25%");
+    unmount(b.flushSync);
+  });
+
+  test("a blurred picture carries a blur filter and grows past the frame so the edge stays covered; none means no filter", async () => {
+    const a = await layer(makeCtx(), { pack: "st", item: "a", blur: 10 });
+    const img = host.querySelector(".bdp img") as HTMLElement;
+    expect(img.style.filter).toBe("blur(10px)");
+    expect(img.style.inset).toBe("-20px");
+    unmount(a.flushSync);
+    const b = await layer(makeCtx(), { pack: "st", item: "a" });
+    expect((host.querySelector(".bdp img") as HTMLElement).style.filter).toBe("");
     unmount(b.flushSync);
   });
 

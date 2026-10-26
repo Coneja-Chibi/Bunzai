@@ -29,7 +29,7 @@ export function PopoutHost({ ctx, chat, kinds, onChat }: { ctx: AppContext; chat
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
-  return <div className="po-layer" ref={layer} data-part="scene.popout">{kinds.map((k) => <Floating key={`${chat.id}:${k.id}`} kind={k} ctx={ctx} chat={chat} view={view} {...(onChat ? { onChat } : {})} />)}</div>;
+  return <div className="po-layer" ref={layer} data-part="scene.popout">{kinds.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (k) => <Floating key={`${chat.id}:${k.id}`} kind={k} ctx={ctx} chat={chat} view={view} {...(onChat ? { onChat } : {})} />)}</div>;
 }
 
 export function PopoutSlot({ kind, ctx, chat, onChat }: { kind: PopoutKind; ctx: AppContext; chat: Chat; onChat?: (chat: Chat) => void }): JSX.Element {

@@ -45,10 +45,27 @@
   margin: 0.5rem 0;
 }
 
-.group {
-  border: 2px solid var(--stage-black);
+.gedge {
+  border: solid var(--stage-black);
+  border-width: 0 2px;
   background: var(--stage-row);
+}
+
+.gfirst {
+  border-top-width: 2px;
+}
+
+.glast {
+  border-bottom-width: 2px;
   margin-bottom: 0.65rem;
+}
+
+.gitem {
+  padding: 0.1rem 0.4rem;
+}
+
+.glast .gitem {
+  padding-bottom: 0.45rem;
 }
 
 .ghead {
@@ -98,12 +115,6 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--stage-text-dim);
-}
-
-.list {
-  list-style: none;
-  margin: 0;
-  padding: 0.25rem 0.4rem 0.45rem;
 }
 
 /* container collapse: full-width takeover under ~34rem (mobile grammar) */

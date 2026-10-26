@@ -16,7 +16,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Chips, Empty, Filters, ItemCard, Stepper, Tabs, inner } from "../items/item-parts";
+import { Block, Chips, Empty, Filters, ItemCard, ItemList, Stepper, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 
@@ -84,9 +84,8 @@ export function InventoryPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
           <>
             <Filters<Filter> options={FILTERS} value={filter} onChange={setFilter} icons={{ weapon: "lucide:swords", armor: "lucide:shield", consumable: "lucide:flask-conical", material: "lucide:package-open", quest: "lucide:scroll-text" }} />
             {shown.length > 0 ? (
-              <div className="it-list">
-                {shown.map((item) => (
-                  <ItemCard key={item.id} color={RARITY_TONE[item.rarity]} icon={<Ic name={CATEGORY_ICON[item.category]} size={24} />} title={item.name}
+              <ItemList items={shown} render={(item) => (
+                  <ItemCard color={RARITY_TONE[item.rarity]} icon={<Ic name={CATEGORY_ICON[item.category]} size={24} />} title={item.name}
                     meta={<><span className="cap">{item.rarity}</span><span>•</span><span className="cap">{item.category}</span></>}
                     right={item.quantity > 1 ? <Stepper value={item.quantity} label={item.name} onMinus={() => act({ kind: "qty", id: item.id, delta: -1 })} onPlus={() => act({ kind: "qty", id: item.id, delta: 1 })} /> : null}
                     {...(item.isEquipped ? { badge: "EQUIPPED" } : {})} open={open === item.id} onToggle={() => setOpen(open === item.id ? null : item.id)}>
@@ -99,8 +98,7 @@ export function InventoryPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
                     {item.effects && item.effects.length > 0 && <Block title="Effects"><Chips items={item.effects} /></Block>}
                     {item.value ? <div className="it-note">Value: {item.value}</div> : null}
                   </ItemCard>
-                ))}
-              </div>
+                )} />
             ) : <Empty icon="lucide:package-open" title="No items found" hint="Your inventory is empty" />}
             {note && <p className="it-error" role="alert">{note}</p>}
             <AddByModel<Made> ctx={ctx} chatId={chat.id} ask={ASK} label="Add Item" noun="item" namePlaceholder="Item Name" guidePlaceholder="Guide the AI... (e.g., 'a legendary fire sword')"
@@ -123,7 +121,7 @@ export function InventoryPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
         {tab === "stats" && (
           equipmentStats(inv).length > 0 ? (
             <div className="it-list">
-              {equipmentStats(inv).map((s) => (
+              {equipmentStats(inv).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s) => (
                 <div key={s.name} className="it-bonus"><span>{s.name}</span><b style={{ color: s.value > 0 ? "var(--stage-ok)" : s.value < 0 ? "var(--stage-danger-text)" : "var(--stage-mute)" }}>{s.value > 0 ? "+" : ""}{s.value}</b></div>
               ))}
             </div>

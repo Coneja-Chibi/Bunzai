@@ -81,10 +81,10 @@ export function Menu(): JSX.Element | null {
       }}
     >
       <div className="hd">{openMenu.target.label}</div>
-      {openMenu.sections.map((section, i) => (
+      {openMenu.sections.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (section, i) => (
         <div key={i}>
           {i > 0 && <div className="sep" />}
-          {section.map((item, j) => (
+          {section.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (item, j) => (
             <MenuItem
               key={j}
               danger={item.danger}

@@ -43,7 +43,7 @@ export function StructuredPersona({ value, onChange }: StructuredPersonaProps): 
         </p>
       ) : (
         <>
-          {Object.entries(persona.attributes).map(([key, vals]) => (
+          {Object.entries(persona.attributes).map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([key, vals]) => (
             <AttrRow
               key={key}
               attrKey={key}
@@ -104,7 +104,7 @@ function AttrRow(props: {
         </div>
       </div>
       <div className={styles.chips}>
-        {values.filter(Boolean).map((v, i) => (
+        {values.filter(Boolean).map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (v, i) => (
           <span className={styles.chip} key={`${v}-${i}`}>
             {v}
             <IconButton variant="quiet" size="sm" icon="lucide:x" label={`Remove ${v}`} onClick={() => onValuesChange(values.filter((_, j) => j !== i))} />

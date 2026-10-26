@@ -8,6 +8,7 @@ import type { IconName } from "../../../../_shared/ic";
 import { SUBFEATURES } from "../../../../../core/trackers/subfeatures";
 import type { PopoutContext } from "../../popout/popout-kind";
 import type { PropReach, SceneProp } from "../prop-contract";
+import { registerSummary, type SummaryLine } from "./summary";
 
 export interface TrackerPropDef {
   module: TrackerModule;
@@ -24,6 +25,8 @@ export interface TrackerPropDef {
   noun: string;
   width?: number;
   Panel: (c: PopoutContext) => JSX.Element;
+  /** The module's one-line card summary (its `summary.ts`). */
+  summary: SummaryLine;
 }
 
 const LEGACY_BULLETS = [
@@ -34,6 +37,7 @@ const LEGACY_BULLETS = [
 
 export function trackerProp(def: TrackerPropDef): SceneProp {
   const id = `${TRACKER_PROP_PREFIX}${def.module}`;
+  registerSummary(def.module, def.summary);
   return {
     id,
     name: def.name,

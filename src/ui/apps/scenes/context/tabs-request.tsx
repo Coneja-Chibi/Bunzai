@@ -3,13 +3,18 @@
  * that points Compose at it), Flow ("Token Distribution by Source") and Compose (the request in send order, a block opens to its text with a copy button). All three read
  * lore-state-core.ts, which reads the assembler's own block counts. RoleCall's "via macro" chips and macro contributions are left out: the trace keeps no macro expansions.
  */
-import { useState, type CSSProperties, type JSX } from "react";
+import { useState, type CSSProperties, type JSX, type ReactNode } from "react";
 import { Ic } from "../../../_shared/ic";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import { Chip, IconButton } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import type { SceneTrace } from "../../../app-contract-scenes";
 import { composeRows, flowBars, isHighlighted, sourceTree, totalTokens, type Highlight } from "./lore-state-core";
+
+/** One line of the windowed Sources list: a category, or one of its blocks. */
+type Line = { key: string; node: ReactNode };
+const ROW_ESTIMATE_PX = 40;
 
 const tone = (colorVar: string): CSSProperties => ({ "--c": `var(${colorVar})` } as CSSProperties);
 
@@ -17,30 +22,31 @@ export function Sources({ trace, onHighlight }: { trace: SceneTrace; onHighlight
   const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
   const tree = sourceTree(trace);
   const flip = (c: string): void => setOpen((s) => { const n = new Set(s); if (n.has(c)) n.delete(c); else n.add(c); return n; });
+  const lines: Line[] = tree.flatMap((n) => [
+    { key: n.category, node: (
+      <div className="ls-node" style={tone(n.colorVar)} onClick={() => flip(n.category)}>
+        <Ic name={open.has(n.category) ? "lucide:chevron-down" : "lucide:chevron-right"} size={12} />
+        <span className="ls-name">{n.label}<small>{n.children.length} {n.children.length === 1 ? "block" : "blocks"}</small></span>
+        <span className="ls-num">{n.tokens.toLocaleString()}<small>{n.percent}%</small></span>
+        <span className="ls-bar"><i style={{ width: `${n.percent}%` }} /></span>
+        <IconButton variant="quiet" size="sm" title="Highlight in Compose" label={`Highlight ${n.label} in Compose`} icon="lucide:target" onClick={(e) => { e.stopPropagation(); onHighlight({ category: n.category }); }} />
+      </div>
+    ) },
+    ...(open.has(n.category) ? n.children.map((c) => ({ key: `${n.category}:${String(c.index)}`, node: (
+      <div className="ls-node child" style={tone(n.colorVar)}>
+        <span className="ls-name">{c.label}<small>{c.role}</small></span>
+        <span className="ls-num">{c.tokens.toLocaleString()}<small>{c.percent}%</small></span>
+        <span className="ls-bar"><i style={{ width: `${c.percent}%` }} /></span>
+        <IconButton variant="quiet" size="sm" title="Highlight in Compose" label={`Highlight ${c.label} in Compose`} icon="lucide:target" onClick={() => onHighlight({ category: n.category, index: c.index })} />
+      </div>
+    ) })) : []),
+  ]);
   return (
     <div className="ls-pane">
       <div className="ls-hint"><Ic name="lucide:target" size={12} />Click to highlight in Compose</div>
       <div className="ls-list">
         {tree.length === 0 && <div className="ls-none"><Ic name="lucide:tree-deciduous" size={24} /><p>No source data</p></div>}
-        {tree.map((n) => (
-          <div key={n.category}>
-            <div className="ls-node" style={tone(n.colorVar)} onClick={() => flip(n.category)}>
-              <Ic name={open.has(n.category) ? "lucide:chevron-down" : "lucide:chevron-right"} size={12} />
-              <span className="ls-name">{n.label}<small>{n.children.length} {n.children.length === 1 ? "block" : "blocks"}</small></span>
-              <span className="ls-num">{n.tokens.toLocaleString()}<small>{n.percent}%</small></span>
-              <span className="ls-bar"><i style={{ width: `${n.percent}%` }} /></span>
-              <IconButton variant="quiet" size="sm" title="Highlight in Compose" label={`Highlight ${n.label} in Compose`} icon="lucide:target" onClick={(e) => { e.stopPropagation(); onHighlight({ category: n.category }); }} />
-            </div>
-            {open.has(n.category) && n.children.map((c) => (
-              <div key={c.index} className="ls-node child" style={tone(n.colorVar)}>
-                <span className="ls-name">{c.label}<small>{c.role}</small></span>
-                <span className="ls-num">{c.tokens.toLocaleString()}<small>{c.percent}%</small></span>
-                <span className="ls-bar"><i style={{ width: `${c.percent}%` }} /></span>
-                <IconButton variant="quiet" size="sm" title="Highlight in Compose" label={`Highlight ${c.label} in Compose`} icon="lucide:target" onClick={() => onHighlight({ category: n.category, index: c.index })} />
-              </div>
-            ))}
-          </div>
-        ))}
+        <VirtualRows items={lines} keyOf={(l) => l.key} estimate={ROW_ESTIMATE_PX} render={(l) => l.node} />
       </div>
       <div className="ls-foot"><span>{tree.length} sources</span><span>{totalTokens(trace).toLocaleString()} total tokens</span></div>
     </div>
@@ -53,7 +59,7 @@ export function Flow({ trace }: { trace: SceneTrace }): JSX.Element {
     <div className="ls-pane">
       <div className="ls-list">
         <div className="ls-cap">Token Distribution by Source</div>
-        {bars.map((b) => (
+        {bars.map(/* bounded-ok: per-turn bounded detail lines */ (b) => (
           <div className="ls-flow" key={b.category} style={tone(b.colorVar)}>
             <div><span>{b.label}</span><span className="ls-num">{b.tokens.toLocaleString()} ({b.percent}%)</span></div>
             <span className="ls-bar thick"><i style={{ width: `${b.percent}%` }} /></span>
@@ -77,10 +83,10 @@ export function Compose({ trace, highlight, onClear }: { trace: SceneTrace; high
     <div className="ls-pane">
       {highlight && <div className="ls-hint"><Chip onClick={onClear}><Ic name="lucide:target" size={12} />Highlighted<Ic name="lucide:x" size={12} /></Chip></div>}
       <div className="ls-list">
-        {rows.map((r) => {
+        <VirtualRows items={rows} keyOf={(r) => String(r.index)} estimate={ROW_ESTIMATE_PX} render={(r) => {
           const shown = open === r.index;
           return (
-            <div key={r.index} className={`ls-sec${isHighlighted(highlight, r) ? " lit" : ""}`} style={tone(r.colorVar)}>
+            <div className={`ls-sec${isHighlighted(highlight, r) ? " lit" : ""}`} style={tone(r.colorVar)}>
               <div className="ls-node" onClick={() => setOpen(shown ? null : r.index)}>
                 <span className="ls-pos">{r.position}</span>
                 <span className="ls-name">{r.label}<small>{r.role}</small></span>
@@ -100,7 +106,7 @@ export function Compose({ trace, highlight, onClear }: { trace: SceneTrace; high
               )}
             </div>
           );
-        })}
+        }} />
       </div>
       <div className="ls-foot"><span>{rows.length} sections</span><span>{totalTokens(trace).toLocaleString()} total</span></div>
     </div>

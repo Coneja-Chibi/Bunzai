@@ -44,3 +44,23 @@ export function nextOf(tracks: readonly Track[], current: Track): Track | null {
 }
 
 export const sourceOf = (track: Track): string => `/api/asset/${track.sha}`;
+
+/** "Play on scene open": a per-user pref, off unless set true. A scene whose Mood Music Prop is on starts the last track played when it opens. */
+export const AUTOPLAY_KEY = "scenes.stage.autoplay";
+export const autoplayOn = (pref: unknown): boolean => pref === true;
+/** The last track played, kept as the pack and item ids so it survives a restart and a rename. */
+export const LAST_TRACK_KEY = "scenes.stage.lastTrack";
+export interface TrackRef { packId: string; itemId: string }
+export function lastTrackOf(pref: unknown): TrackRef | null {
+  if (typeof pref !== "object" || pref === null) return null;
+  const { packId, itemId } = pref as Record<string, unknown>;
+  return typeof packId === "string" && typeof itemId === "string" && packId !== "" && itemId !== "" ? { packId, itemId } : null;
+}
+/** The group and track a saved reference points at; null when the pack or the sound is gone. */
+export function findTrack(groups: readonly TrackGroup[], ref: TrackRef): { track: Track; group: TrackGroup } | null {
+  for (const group of groups) {
+    const track = group.packId === ref.packId ? group.tracks.find((t) => t.itemId === ref.itemId) : undefined;
+    if (track) return { track, group };
+  }
+  return null;
+}

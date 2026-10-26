@@ -13,7 +13,7 @@ import type { SceneGeneration } from "../../../stage/params/scene";
 
 type Field = "customHeaders" | "customBody" | "customExclude";
 
-const FIELDS: readonly { key: Field; kind: "headers" | "body" | "exclude"; label: string; icon: IconName; rows: number; placeholder: string; note?: string }[] = [
+export const FIELDS: readonly { key: Field; kind: "headers" | "body" | "exclude"; label: string; icon: IconName; rows: number; placeholder: string; note?: string }[] = [
   { key: "customHeaders", kind: "headers", label: "Include Request Headers", icon: "mdi:web", rows: 3, placeholder: '{"x-custom-header": "my-value"}' },
   { key: "customBody", kind: "body", label: "Include Body Parameters", icon: "mdi:code-json", rows: 3, placeholder: '{"top_k": 40, "custom_param": "value"}' },
   { key: "customExclude", kind: "exclude", label: "Exclude Body Parameters", icon: "mdi:close-circle-outline", rows: 2, placeholder: "temperature\ntop_p", note: "List parameter names to remove from the request body, one per line." },

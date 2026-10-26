@@ -168,7 +168,8 @@
   border-bottom: 2px solid var(--seam);
   padding: 0.6rem 0;
 }
-.pc:last-child {
+.pc:last-child,
+.pcLast {
   border-bottom: none;
 }
 .pcName {

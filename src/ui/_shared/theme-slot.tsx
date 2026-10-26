@@ -42,7 +42,7 @@ export function ThemeSlot({ id }: { id: SlotId }): JSX.Element | null {
   if (!items) return null;
   return (
     <div data-part={`slot.${id}`}>
-      {items.map((item, at) => <Item key={at} item={item} />)}
+      {items.map(/* bounded-ok: single message / fixed menu or glyph parts */ (item, at) => <Item key={at} item={item} />)}
     </div>
   );
 }

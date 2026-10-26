@@ -96,7 +96,7 @@ export function NoMatchNotice({
       {elsewhere.length > 0 && (
         <div className="nmjumps">
           <span className="nmk">also matching</span>
-          {elsewhere.map(({ kind, count }) => (
+          {elsewhere.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ ({ kind, count }) => (
             <Chip key={kind} onClick={() => onJump(kind)}>
               {`${deckMeta(kind).plural} ${String(count)}`}
             </Chip>

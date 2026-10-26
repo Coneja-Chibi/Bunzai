@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:ea7b8bfbc71efa0575d4323418f70b5b18a4df81bfd8afa1b998a5472262e17d",
-  "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization, transcript previews, take metadata and real favorites. Other page proposals await approval. Prior storage delivery retains its documented focused-fixture evidence and pending live-proof limitations. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries.",
+  "sourceHash": "sha256:34213f3811c958b9fd99de5e5edfa0b1b1c2a357b2e19a7c61e8f3df88f68210",
+  "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Other page proposals await approval. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries.",
   "topics": [
     "Kit conversational terminal",
     "temporary browser Studio",
@@ -254,17 +254,17 @@
       "slug": "scenes-the-librarys-chats",
       "title": "Scenes (the library's chats)",
       "level": 2,
-      "sourceHash": "sha256:2bb9a4a469950ec496104f75df041352ca10ea3a4e21e0d90c81f2d69f709d72",
-      "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A scene opens only after a chat layout is chosen once in a first-open chooser (Full Chat or Messenger, also set in Settings); Messenger draws the same chat in a Discord-style shell whose programs open the wings' own tabs, with recents and a narrow-pane drawer. The take pill follows RoleCall's Scene Takes and links to the Branching Tree, with rename, soft delete and a read-only Compare. The Prompting wing has Preset, Guides, Scene Note and Writing Tools; Final Cut has the Final Cut tab (passes, Anti-Slop banks, Output Safety, per-tool models, a Custom tool, an Activity dialog with Undo and Rerun) and Regex; Stage has Appearance, Music, Spotify and a Wardrobe. The Control Booth composes the other wings' rows and applies loadouts with a receipt and Undo. The AI wing has Model and Generation cards, World has Lorebook, Compendium and Storyboards dossiers, and Props is RoleCall's StageProps panel with twelve tracker Props that dock or float and keep state in the scene. Participants is the Participant Registry.",
+      "sourceHash": "sha256:522eeb7c67df1595569081cc12319ae3b2ff3dbe266b47f27d66d4b6a5769d04",
+      "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants is the registry, with Reconcile and an Add participant form that refuses names already on the roster.",
       "topics": [
         "Start Scene from a card",
         "World wing, Compendium and Storyboards",
-        "Stage wing tabs, Music and Spotify Props",
+        "Stage wing tabs, backdrop blur, Music and Spotify Props",
         "Prompting presets, guides, note and writing tools",
         "Booth loadouts",
         "Final Cut passes, Activity and Regex",
         "Props wing and tracker Props",
-        "Take pill, Branching Tree, chat layout and Messenger"
+        "Take pill, Branching Tree, Messenger and Add participant"
       ],
       "children": [
         {
@@ -463,15 +463,15 @@
       "slug": "settings-drop-in-sections",
       "title": "Settings (drop-in sections)",
       "level": 2,
-      "sourceHash": "sha256:de1624962798df2813292091da1dba17d7c9d03d1f71b945bbaca0c149f59eed",
-      "summary": "Settings tabs derive from section modules exporting id, label, order, and a component that receives AppContext; the registry is the sole browser seam, so new configuration needs no central switch. Controls act on current persisted settings and repaint visual choices at once. Sections: Appearance (theme, accent and the studio-wide Chat layout), Models, Connections, Spotify (the person's own Client ID, the loopback redirect to register, Connect and Disconnect; the refresh token lives only in the key vault), Studio (home app, initial deck, publish targets, engine checkouts), Security (lock, words, password), Workbench, Remote access, Updates, and About. A shell library gate shows the stage door while locked and the load-in while a plain folder is imported; an import without room fails to the no-room screen and never runs on the folder. Connections manages MCP both ways, every external tool egress-gated and the api mcp surface host-only. Engine checkouts are machine facts: a root lives in engines.json, travels only over the host-only macro-lab roots route, is marker-checked before storage, and is what Kit reads at session build.",
+      "sourceHash": "sha256:004fed4cdbc89e74ba36e76cff133939e74391b3e88814277a0262fe2395dee6",
+      "summary": "Settings tabs derive from section modules exporting id, label, order and a component that receives AppContext; the registry is the sole browser seam. Controls act on persisted settings and repaint at once. Sections: Appearance (theme, house accent, studio-wide Chat layout), Models, Connections, Spotify (own Client ID, sign-in), Studio (home app, first deck, publish targets, engine checkouts), Security (lock, words, password, health check), Backups (Back up now, Export library as a plain unencrypted folder like the bunraku export command, kept copies, restore), Workbench, Memory & Summaries, Remote access, Updates and About. A library gate shows the stage door while locked. Connections manages MCP both ways, egress-gated. Engine checkout roots are machine facts in engines.json, marker-checked, and read by Kit.",
       "topics": [
         "drop-in SettingsSection",
         "registry-derived tabs",
-        "live call-and-response controls",
         "Appearance theme accent",
         "Spotify Client ID and loopback sign-in",
         "Studio home deck targets and engine checkouts",
+        "Backups and Export library",
         "engine roots not in settings.json",
         "the same folder Kit reads"
       ],

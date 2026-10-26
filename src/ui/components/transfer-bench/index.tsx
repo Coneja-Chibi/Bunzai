@@ -4,7 +4,10 @@
  */
 import { Button, IconButton, ListRow } from "../button";
 import { useState, type JSX } from "react";
+import { VirtualRows } from "../../_shared/virtual-list";
 import styles from "./styles.module.css";
+
+const ITEM_ROW_PX = 40;
 
 export interface TransferItem {
   id: string;
@@ -55,23 +58,18 @@ function List({
           </Button>
         </span>
       </div>
-      <ul className={styles.list}>
-        {items.length === 0 && <li className={styles.empty}>Empty</li>}
-        {items.map((it) => {
-          const on = selected.has(it.id);
-          return (
-            <li key={it.id}>
-              <ListRow
-                variant="option"
-                selected={on}
-                label={it.label}
-                meta={it.meta || undefined}
-                onClick={(ev) => onToggle(it.id, ev.ctrlKey || ev.metaKey)}
-              />
-            </li>
-          );
-        })}
-      </ul>
+      <div className={styles.list}>
+        {items.length === 0 && <div className={styles.empty}>Empty</div>}
+        <VirtualRows items={items} keyOf={(it) => it.id} estimate={ITEM_ROW_PX} render={(it) => (
+          <ListRow
+            variant="option"
+            selected={selected.has(it.id)}
+            label={it.label}
+            meta={it.meta || undefined}
+            onClick={(ev) => onToggle(it.id, ev.ctrlKey || ev.metaKey)}
+          />
+        )} />
+      </div>
     </div>
   );
 }

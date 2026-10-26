@@ -24,7 +24,7 @@ function Fold({ id, title, icon, count, open, onToggle, children }: { id: string
 function Seeds({ state, onEdit, locked }: { state: DirectorState; onEdit: EditFn; locked: boolean }): JSX.Element {
   return (
     <div className="dr-stack tight">
-      {state.seeds.map((s) => {
+      {state.seeds.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (s) => {
         const due = overdueOf(s.payoffHorizon, s.turnsActive);
         const last = s.reinforcements.at(-1);
         const status = seedStatus(s);

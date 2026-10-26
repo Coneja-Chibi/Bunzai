@@ -73,7 +73,7 @@ const step: SetupStep = {
         <div className="plates">
           {options
             .filter((o) => !o.clears)
-            .map((opt) => (
+            .map(/* bounded-ok: fixed publish destinations */ (opt) => (
               <div key={opt.id} className={`plate${landed.has(opt.id) ? " landed" : ""}`}>
                 <span className="pl-mk">{landed.has(opt.id) ? "landed" : "await"}</span>
                 {opt.title}

@@ -54,7 +54,7 @@ export function PipelineNode(p: PipelineNodeProps): JSX.Element {
         <div className={css.pipeName} title={p.name}>{p.name}</div>
       </div>
       {p.summary.rows.length === 0 && <div className={css.blk} style={{ height: BLOCK_H }}><span /><span>No blocks yet</span></div>}
-      {p.summary.rows.map((row, i) => {
+      {p.summary.rows.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (row, i) => {
         const color = row.owner ? ownerColor(row.owner) : undefined;
         const src = row.marker ? sourceOf(row, p.context, p.sceneName) : "";
         return (

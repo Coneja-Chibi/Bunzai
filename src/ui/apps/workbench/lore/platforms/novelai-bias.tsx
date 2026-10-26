@@ -42,7 +42,7 @@ export function NovelAiBiasBlock({
         <p className={styles.pcHint}>No bias groups. Add one to bias specific words or phrases.</p>
       )}
 
-      {groups.map((g, i) => {
+      {groups.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (g, i) => {
         const lines = g.phrases.map(biasPhraseLine).filter(Boolean).join("\n");
         return (
           <div key={i} className={styles.pcBiasCard}>

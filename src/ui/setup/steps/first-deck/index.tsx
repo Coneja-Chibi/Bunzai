@@ -99,7 +99,7 @@ const step: SetupStep = {
           {chosen.length === 0 ? (
             <div className="ghost-deck">your decks stand here</div>
           ) : (
-            chosen.map((opt, i) => (
+            chosen.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (opt, i) => (
               <div key={opt.id} className="fan-slot" style={fanVars(i, chosen.length)}>
                 <DeckCard opt={opt} first={i === 0} />
               </div>

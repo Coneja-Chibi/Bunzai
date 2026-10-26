@@ -22,8 +22,8 @@ export const LIBRARY_STYLE = `
 .damage-note details{margin-top:.45rem}
 .damage-note summary{cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);
   letter-spacing:.04em;text-transform:uppercase}
-.damage-note ul{margin:.55rem 0 0;padding-left:1.35rem}
-.damage-note li{margin:.25rem 0;font-size:var(--text-body)}
+.damage-note .dn-list{margin:.55rem 0 0 1.35rem}
+.damage-note .dn-row{display:list-item;list-style:disc;padding:.25rem 0;font-size:var(--text-body)}
 .damage-note code{overflow-wrap:anywhere}
 /* the import sheet (InkDialog owns overlay/sheet chrome; the delsheet/export-dialog grammar) */
 .impsheet{padding:1.1rem 1.3rem;width:min(94vw,44rem);max-width:min(94vw,44rem)}

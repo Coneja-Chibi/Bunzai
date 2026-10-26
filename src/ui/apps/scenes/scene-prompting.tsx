@@ -22,8 +22,10 @@ import { Tabs } from "../../components/button";
 
 type TabId = "preset" | "guides" | "note" | "tools";
 
-export function PromptingWing({ ctx, chat, presetBody, onChanged, onBody, initialTab }: {
+export function PromptingWing({ ctx, chat, presetBody, onChanged, onBody, initialTab, single }: {
   ctx: AppContext;
+  /** Draw only `initialTab`'s body (a Messenger section): no crumb, no tab bar. */
+  single?: boolean;
   /** The tab to open on (a Messenger program); Preset when absent or unknown. */
   initialTab?: string;
   chat: Chat;
@@ -49,12 +51,12 @@ export function PromptingWing({ ctx, chat, presetBody, onChanged, onBody, initia
   ];
   return (
     <>
-      <nav className="fold" data-part="scene.prompting">
+      {!single && <nav className="fold" data-part="scene.prompting">
         <div className="crumb">Prompting <i>/</i> <b>{tabs.find((t) => t.id === tab)!.label}</b></div>
         <div className="tabs" data-part="scene.prompting.tabs">
           <Tabs label="Prompting sections" items={tabs.map((t) => ({ value: t.id, label: <><b>{t.label}</b><small>{t.meta}</small></> }))} value={tab} onChange={setTab} />
         </div>
-      </nav>
+      </nav>}
       {tab === "preset" && <><ThemeSlot id="scene.wing.prompting.preset" /><PresetWing ctx={ctx} chat={chat} text={presetText} onChanged={onChanged} /></>}
       {tab === "guides" && <><ThemeSlot id="scene.wing.prompting.guides" /><SceneGuidesWing prompting={prompting} on={on} /></>}
       {tab === "note" && <><ThemeSlot id="scene.wing.prompting.note" /><SceneNoteWing saved={chat.prompting?.note} onSave={saveNote} /></>}

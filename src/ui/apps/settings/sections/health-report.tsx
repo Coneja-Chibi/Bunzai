@@ -15,7 +15,11 @@ import { allWell, chipOf, healthApi, isDanger, repairButton, stoppedWords, type 
 import { RESTORE_OPEN_ATTRIBUTE } from "./backups-dialogs";
 import { sentence } from "./security-flows";
 import { Button } from "../../../components/button";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import styles from "./security.module.css";
+
+const NOTICE_ROW_PX = 120;
+const NOTICE_GAP_PX = 10;
 
 type Done = Extract<ScanJob, { state: "done" }>;
 type Asking = null | { set: Finding; summary: string } | { restore: Finding; copies: Copy[] };
@@ -30,7 +34,7 @@ function Notice({ finding, busy, onRepair }: { finding: Finding; busy: boolean; 
         <p className={styles.noticeBody}>{sentence(finding.cause)}</p>
       </div>
       <div className={styles.actions}>
-        {finding.repairs.map((kind) => {
+        {finding.repairs.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (kind) => {
           const b = repairButton(kind, finding);
           return (
             <Button key={kind} size="sm" variant={b.primary ? "primary" : "secondary"} disabled={busy} onClick={() => onRepair(kind)}>
@@ -177,7 +181,7 @@ export function HealthReport(): JSX.Element {
                 <Dossier act="Restore" title="Choose a" accent="snapshot">
                   <Direction>The whole library goes back to the copy you pick. A copy of how things are now is kept first, so this can be undone.</Direction>
                   {asking.copies.length === 0 ? <StageNote label="No copies yet" tone="warn">There is no copy to restore from yet.</StageNote> : null}
-                  {asking.copies.map((c) => (
+                  {asking.copies.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (c) => (
                     <div className={styles.pc} key={c.id}>
                       <div>
                         <div className={styles.pcName}>{whenLabel(c.takenAt)}</div>
@@ -229,9 +233,9 @@ function Report({ job, busy, onCheck, onRepair }: { job: Done; busy: boolean; on
       ) : (
         <>
           <div className={styles.cardTitle}>{`${job.findings.length} ${job.findings.length === 1 ? "item needs" : "items need"} a look`}</div>
-          {job.findings.map((f) => (
-            <Notice key={f.id} finding={f} busy={busy} onRepair={(kind) => onRepair(f, kind)} />
-          ))}
+          <VirtualRows items={job.findings} keyOf={(f) => f.id} estimate={NOTICE_ROW_PX} gap={NOTICE_GAP_PX} render={(f) => (
+            <Notice finding={f} busy={busy} onRepair={(kind) => onRepair(f, kind)} />
+          )} />
         </>
       )}
       <div className={styles.actions}>

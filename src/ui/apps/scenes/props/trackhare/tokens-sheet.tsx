@@ -146,7 +146,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
             <b>{effective.toLocaleString()}<small>tokens sent</small></b>
           </div>
           <div className="tok-leg">
-            {order.map((cat) => (
+            {order.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (cat) => (
               <ListRow
                 key={cat}
                 data-excluded={excluded.has(cat) || undefined}
@@ -169,7 +169,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
               {!trace.window.stated && " (estimated window)"}
             </small>
             <div className="tok-bar">
-              {segments.map((s) => <i key={s.category} style={{ "--c": `var(${s.colorVar})`, width: `${s.widthPct}%` } as CSSProperties} />)}
+              {segments.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (s) => <i key={s.category} style={{ "--c": `var(${s.colorVar})`, width: `${s.widthPct}%` } as CSSProperties} />)}
             </div>
             <div className="tok-bl">
               <span>{usedPct.toFixed(0)}% used</span>
@@ -188,7 +188,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
               Raw text is kept for each take&apos;s latest reply; this one shows sizes only.
             </p>
           )}
-          {order.map((cat) => {
+          {order.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (cat) => {
             const rows = trace.blocks.map((b, i) => ({ b, i })).filter((r) => r.b.category === cat);
             const isCollapsed = collapsed.has(cat);
             // th-t4-gaps 4: the Preset prompts card names the scene's preset instead of a block count,
@@ -199,7 +199,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
                 <Disclosure open={!isCollapsed} onClick={() => toggleCollapsed(cat)} label={`${CATEGORY_LABELS[cat]} (${header})`} trailing={<em>{totals[cat].toLocaleString()}</em>} />
                 {!isCollapsed && (cat === "lore"
                   // th-t4-gaps 4: Lore sub-groups under the book each entry came from.
-                  ? loreBookGroups(trace.blocks, trace.lore).map((g) => (
+                  ? loreBookGroups(trace.blocks, trace.lore).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (g) => (
                     <div key={g.bookName || "_"}>
                       {g.bookName && <div className="tok-bkh">{g.bookName}</div>}
                       {g.rows.map((r) => row(r.block, r.index))}

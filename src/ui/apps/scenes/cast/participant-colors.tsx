@@ -4,12 +4,15 @@
  * Voices colours are, and says so.
  */
 import type { JSX } from "react";
-import { SwatchRow } from "../../../components/swatch-row";
+import { SwatchRow, type SwatchChoice } from "../../../components/swatch-row";
 import { Button } from "../../../components/button";
-import { pickPaletteHex } from "../../../../core/participants/palette";
+import { DIALOGUE_PALETTE, pickPaletteHex } from "../../../../core/participants/palette";
 import type { RosterRow } from "../../../../core/participants/roster";
 
-export function ColorEditor({ row, enabled, onColors }: { row: RosterRow; enabled: boolean; onColors(colors: string[] | null): void }): JSX.Element {
+/** Six quick picks from the dialogue palette (the Messenger profile card passes them; the Full Chat row keeps its custom-only swatch). */
+export const SIX_SWATCHES: SwatchChoice[] = DIALOGUE_PALETTE.slice(0, 6).map((p) => ({ id: p.id, label: p.id, hex: p.hex }));
+
+export function ColorEditor({ row, enabled, onColors, palette = [] }: { row: RosterRow; enabled: boolean; onColors(colors: string[] | null): void; palette?: SwatchChoice[] }): JSX.Element {
   // A participant with none shows one stop to start from, as RoleCall's editor does.
   const colors = (row.shown.length > 0 ? row.shown : [pickPaletteHex(row.id)]);
   const hint = enabled ? undefined : "Turn on Dialogue Colors in Props to edit participant colors";
@@ -19,7 +22,7 @@ export function ColorEditor({ row, enabled, onColors }: { row: RosterRow; enable
       <div className={`box${enabled ? "" : " off"}`} title={hint}>
         Colors
         {colors.map((c, i) => (enabled
-          ? <SwatchRow key={i} palette={[]} allowCustom value={c} onChange={(hex) => setAt(i, hex)} />
+          ? <SwatchRow key={i} palette={palette} allowCustom value={c} onChange={(hex) => setAt(i, hex)} />
           : <span key={i} className="stop" style={{ background: c }} title={hint} />))}
         {colors.length < 3 && <Button variant="quiet" size="sm" disabled={!enabled} title={enabled ? "Add gradient stop" : hint} onClick={() => onColors([...colors, colors[colors.length - 1]!])}>+ Gradient</Button>}
         {row.colors.length > 0 && <Button variant="quiet" size="sm" disabled={!enabled} title={enabled ? "Clear participant color" : hint} onClick={() => onColors(null)}>Clear</Button>}

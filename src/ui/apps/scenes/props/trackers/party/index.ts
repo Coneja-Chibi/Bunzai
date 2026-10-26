@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { PartyPanel } from "./party-panel";
+import { summaryLine } from "./summary";
 
 export const partyProp = trackerProp({
   module: "party",
@@ -16,4 +17,5 @@ export const partyProp = trackerProp({
   title: "Party",
   noun: "Party",
   Panel: PartyPanel,
+  summary: summaryLine,
 });

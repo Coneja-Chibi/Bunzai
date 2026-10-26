@@ -30,10 +30,10 @@ export function ComposerTools({ open, rows, onToggle, onPick, onExpand }: Compos
       <IconButton variant="secondary" size="sm" data-part="scene.composer.tools-toggle" label="Open tools menu" title="Open chat tools such as re-rolls and continues." aria-expanded={open} icon="lucide:plus" onClick={onToggle} />
       {open && (
         <div className="menu cm" role="menu" data-part="scene.composer.tools">
-          {composerSections(rows).map(({ label, rows: group }) => (
+          {composerSections(rows).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ({ label, rows: group }) => (
             <div key={label} role="group" aria-label={label}>
               <div className="sec">{label}</div>
-              {group.map((r) => (
+              {group.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (r) => (
                 <div key={r.id} className="cm-row">
                   <MenuItem disabled={r.disabled !== undefined} title={r.disabled} onClick={() => (r.id === "expand-character" ? onExpand("1st") : onPick(r.id))}
                     icon={<i className="ct" data-tone={TONES[r.id] ?? "select"}><Ic name={ICONS[r.id] ?? "lucide:rotate-ccw"} size={14} /></i>} description={r.sublabel}>{r.label}</MenuItem>

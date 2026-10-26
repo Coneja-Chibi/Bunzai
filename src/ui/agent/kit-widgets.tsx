@@ -138,7 +138,7 @@ export function Searchlight({ on }: { on: boolean }): JSX.Element | null {
 export function KeyHints({ hints }: { hints: readonly { key: string; label?: string }[] }): JSX.Element {
   return (
     <div className="kit-hints">
-      {hints.map((hint) => (
+      {hints.map(/* bounded-ok: single message / fixed menu or glyph parts */ (hint) => (
         <span key={hint.key} className="kit-hints__pair">
           <span className="kit-hints__key">{hint.key}</span>
           {hint.label !== undefined && <span className="kit-hints__label">{hint.label}</span>}

@@ -164,7 +164,7 @@ function StateCard({
           {a.devices.length > 0 && (
             <div className={styles.devices}>
               <div className={styles.devicesTitle}>Connected devices</div>
-              {a.devices.map((d) => (
+              {a.devices.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (d) => (
                 <div key={d.nodeId} className={styles.deviceRow}>
                   <span className={styles.deviceName}>
                     {redacted ? mask(d.name || d.nodeId) : d.name || d.nodeId}

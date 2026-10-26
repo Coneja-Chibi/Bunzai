@@ -51,7 +51,7 @@ function Control({ def, value, options, onChange }: Pick<SettingCardProps, "def"
     case "select":
       return (
         <select className="gn-in gn-sel" aria-label={def.label} value={text(value) || String(def.default ?? "")} onChange={(e) => onChange(e.target.value)}>
-          {(options ?? []).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          {(options ?? []).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       );
     default:

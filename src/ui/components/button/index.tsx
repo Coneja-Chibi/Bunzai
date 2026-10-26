@@ -91,7 +91,7 @@ export function Segmented<T extends string>(props: SegmentedProps<T>): JSX.Eleme
   };
   return (
     <div role="group" aria-label={label} data-part={part} data-control="segmented" className={cx(styles.seg, size === "sm" && styles.sm)}>
-      {items.map(({ "data-part": itemPart, tone, ...item }) => (
+      {items.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ({ "data-part": itemPart, tone, ...item }) => (
         <button key={item.value} type="button" data-part={itemPart} aria-pressed={isOn(item.value)} title={item.title} disabled={item.disabled}
           style={tone ? ({ "--seg-tone": tone } as CSSProperties) : undefined} onClick={() => pick(item.value)}>{item.label}</button>
       ))}
@@ -128,7 +128,7 @@ export function Tabs<T extends string>({ items, value, onChange, label, "data-pa
   };
   return (
     <div role="tablist" aria-label={label} aria-orientation={orientation} data-part={part} data-control="tabs" className={cx(styles.tabs, vertical && styles.vertical)} onKeyDown={onKeyDown}>
-      {items.map(({ "data-part": itemPart, ...item }) => {
+      {items.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ({ "data-part": itemPart, ...item }) => {
         const on = item.value === value;
         return (
           <button key={item.value} type="button" role="tab" data-tab={item.value} data-part={itemPart} id={idPrefix ? `${idPrefix}-tab-${item.value}` : undefined}

@@ -1,7 +1,7 @@
 /**
  * BlockList - the prompt list (RC PromptListV4 port), VIRTUALIZED (without windowing, 1,000-3,000 blocks
  * cost 17-51k DOM nodes and 143-675ms keystroke latency). `@tanstack/react-virtual` via the shared helper
- * (`_shared/virtual-list.tsx`, the same one the Library's Grid/List views use) renders one screen's
+ * (`_shared/virtual-list`, the same one the Library's Grid/List views use) renders one screen's
  * worth of rows regardless of preset size.
  *
  * `blocks` is the FILTERED view, so the empty state has to say which nothing it means (RC ships

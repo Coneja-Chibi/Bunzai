@@ -12,7 +12,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Empty, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Block, Empty, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 
@@ -59,12 +59,11 @@ export function BondsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
       <Tabs<Tab> tabs={tabs} value={tab} onChange={setTab} />
       <div className="st-body">
         {shown.length > 0 ? (
-          <div className="it-list">
-            {shown.map((b) => {
+          <ItemList items={shown} render={(b) => {
               const word = intensityOf(b.intensityValue);
               const color = TONE[word];
               return (
-                <ItemCard key={b.id} color={color} icon={<Ic name={TYPE_ICON[b.bondType]} size={16} />} title={b.partnerName}
+                <ItemCard color={color} icon={<Ic name={TYPE_ICON[b.bondType]} size={16} />} title={b.partnerName}
                   meta={<>{!b.isActive && <span className="it-tag" style={{ "--c": "var(--stage-mute)" } as CSSProperties}>BROKEN</span>}<span>{b.customTypeName || TYPE_NAME[b.bondType]}{b.playerRole ? ` • ${b.playerRole}` : ""}</span></>}
                   right={<span className="it-tag" style={{ "--c": color } as CSSProperties}>{word}</span>}
                   under={<div className="bd-bar"><div style={{ width: `${b.intensityValue}%`, background: color }} /></div>}
@@ -83,8 +82,8 @@ export function BondsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                       {b.playerRole && <div><small>You</small><b>{b.playerRole}</b></div>}
                     </div>
                   )}
-                  {b.activeEffects.length > 0 && <Block title="Active Effects">{b.activeEffects.map((e, i) => <div key={`${e}${i}`} className="bd-eff good"><Ic name="lucide:circle-plus" size={14} /><span>{e}</span></div>)}</Block>}
-                  {b.drawbacks && b.drawbacks.length > 0 && <Block title="Drawbacks">{b.drawbacks.map((e, i) => <div key={`${e}${i}`} className="bd-eff bad"><Ic name="lucide:circle-minus" size={14} /><span>{e}</span></div>)}</Block>}
+                  {b.activeEffects.length > 0 && <Block title="Active Effects">{b.activeEffects.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e, i) => <div key={`${e}${i}`} className="bd-eff good"><Ic name="lucide:circle-plus" size={14} /><span>{e}</span></div>)}</Block>}
+                  {b.drawbacks && b.drawbacks.length > 0 && <Block title="Drawbacks">{b.drawbacks.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e, i) => <div key={`${e}${i}`} className="bd-eff bad"><Ic name="lucide:circle-minus" size={14} /><span>{e}</span></div>)}</Block>}
                   <div className="it-chips"><span className={`it-chip${b.canBeBroken ? "" : " bad"}`}>{b.canBeBroken ? "Can be broken" : "Unbreakable"}</span></div>
                   <div className="it-fine">
                     <div>Formed: {new Date(b.formedAt).toLocaleString()}</div>
@@ -93,8 +92,7 @@ export function BondsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                   </div>
                 </ItemCard>
               );
-            })}
-          </div>
+            }} />
         ) : <Empty icon={tab === "active" ? "lucide:link" : "lucide:link-2-off"} title={tab === "active" ? "No active bonds" : "No broken bonds"} hint={tab === "active" ? "You walk this path alone... for now" : "No bonds have been severed"} />}
         {tab === "active" && (
           <AddByModel<Bond> ctx={ctx} chatId={chat.id} ask={ASK} label="Add Bond" noun="bond" namePlaceholder="Partner Name" guidePlaceholder="Guide the AI... (e.g., 'a blood bond with my sire')"

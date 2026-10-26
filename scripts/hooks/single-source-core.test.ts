@@ -78,7 +78,7 @@ describe("readJsonCappedOutsideHome", () => {
 describe("newJSDOMOutsideHome", () => {
   test("requires the shared setup, except the helper and intentional secondary DOM", () => {
     expect(newJSDOMOutsideHome("src/ui/_shared/test-dom.ts", "new JSDOM(\"\")")).toBeNull();
-    expect(newJSDOMOutsideHome("src/ui/_shared/virtual-list.test.tsx", "new JSDOM(\"\")")).toBeNull();
+    expect(newJSDOMOutsideHome("src/ui/_shared/virtual-list/core.test.tsx", "new JSDOM(\"\")")).toBeNull();
     expect(newJSDOMOutsideHome("src/ui/apps/example.test.tsx", "new JSDOM(\"\")")).toContain("test-dom.ts");
   });
   test("ignores comments", () => {

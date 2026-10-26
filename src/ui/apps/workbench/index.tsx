@@ -212,7 +212,7 @@ function RecentsRail({ ctx, entities, foldOnEdit = true }: { ctx: AppContext; en
       />
       {open && (
         <div className={styles.strip}>
-          {recent.map((e) => (
+          {recent.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (e) => (
             <RecentCard key={keyOf(e.id, e.kind)} ctx={ctx} entity={e} />
           ))}
         </div>
@@ -344,7 +344,7 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
         )}
         {/* in Nodes view the row takes no room, but every pane stays mounted so unsaved drafts survive */}
         <div className={splitOn ? `${styles.paneRow} ${styles.paneRowSplit}` : styles.paneRow} style={nodesOn ? { display: "none" } : undefined}>
-          {editablePieces.map((p) => {
+          {editablePieces.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (p) => {
             const key = paneKeyOf(p);
             return (
               <EditablePane

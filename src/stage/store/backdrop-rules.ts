@@ -4,9 +4,10 @@
  */
 import type { ChatBackdrop } from "../contracts/chat-store";
 import { checkText, fail } from "./chat-rules";
-import { isPlainObject } from "../../core/guards";
+import { checkNumber, onlyKeys } from "./scalar-rules";
 
 const MAX_ID = 200;
+const BACKDROP_KEYS = ["pack", "item", "dim", "rate", "blur"] as const;
 
 function checkId(value: unknown, what: string): string {
   const id = checkText(value, what);
@@ -14,21 +15,15 @@ function checkId(value: unknown, what: string): string {
   return id;
 }
 
-/** The scene's backdrop, or null to forget it (rule 36): a pack id, an item id and an optional dim from 0 to 1 and an optional playback rate from 0.25 to 2. */
+/** The scene's backdrop, or null to forget it (rule 36): a pack id, an item id and an optional dim from 0 to 1 an optional playback rate from 0.25 to 2 and an optional blur from 0 to 20 pixels. */
 export function checkBackdrop(value: unknown): ChatBackdrop | null {
   if (value === null) return null;
-  if (!isPlainObject(value)) fail("backdrop must be a plain object or null");
-  for (const key of Object.keys(value)) if (key !== "pack" && key !== "item" && key !== "dim" && key !== "rate") fail(`backdrop has an unknown field: ${key}`);
-  const pack = checkId(value.pack, "backdrop pack");
-  const item = checkId(value.item, "backdrop item");
+  const v = onlyKeys(value, BACKDROP_KEYS, "backdrop");
+  const pack = checkId(v.pack, "backdrop pack");
+  const item = checkId(v.item, "backdrop item");
   const out: ChatBackdrop = { pack, item };
-  if (value.dim !== undefined) {
-    if (typeof value.dim !== "number" || !Number.isFinite(value.dim) || value.dim < 0 || value.dim > 1) fail("backdrop dim must be a number from 0 to 1");
-    out.dim = value.dim;
-  }
-  if (value.rate !== undefined) {
-    if (typeof value.rate !== "number" || !Number.isFinite(value.rate) || value.rate < 0.25 || value.rate > 2) fail("backdrop rate must be a number from 0.25 to 2");
-    out.rate = value.rate;
-  }
+  if (v.dim !== undefined) out.dim = checkNumber(v.dim, "backdrop dim must be a number from 0 to 1", 0, 1);
+  if (v.rate !== undefined) out.rate = checkNumber(v.rate, "backdrop rate must be a number from 0.25 to 2", 0.25, 2);
+  if (v.blur !== undefined) out.blur = checkNumber(v.blur, "backdrop blur must be a number from 0 to 20", 0, 20);
   return out;
 }

@@ -132,6 +132,8 @@ export interface ChatBackdrop {
   dim?: number;
   /** Playback rate of a video backdrop from 0.25 to 2, as RoleCall's videoPlaybackRate slider. Absent means 1. */
   rate?: number;
+  /** Blur over the picture in pixels from 0 to 20. Absent means none. */
+  blur?: number;
 }
 
 /** What the Compendium may do with one book (spec rule 38): RoleCall's Disabled, Read-Only, Read + Write and Write-Only. Absent means `read_only`. */

@@ -28,12 +28,12 @@ function ArcCard({ arc, seeds, open, onToggle, dimmed, onResolve, locked }: { ar
               {beat.targetTurn !== undefined && <small>Planned for turn {beat.targetTurn}</small>}
             </div>
           )}
-          {arc.involvedCharacters.length > 0 && <div className="dr-chips">{arc.involvedCharacters.map((n, i) => <Badge key={i} tone="info">{n}</Badge>)}</div>}
+          {arc.involvedCharacters.length > 0 && <div className="dr-chips">{arc.involvedCharacters.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (n, i) => <Badge key={i} tone="info">{n}</Badge>)}</div>}
           {arc.stages.length > 0 && (
             <div>
               <div className="dr-sub"><Ic name="lucide:flag" size={12} />Stages ({arc.stages.length})</div>
               <div className="dr-stages">
-                {arc.stages.map((s, i) => (
+                {arc.stages.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s, i) => (
                   <div key={i} className={i === arc.stages.length - 1 ? "now" : ""}>
                     <span className="dr-stage-dot" />
                     <b>{s.title}</b>
@@ -48,7 +48,7 @@ function ArcCard({ arc, seeds, open, onToggle, dimmed, onResolve, locked }: { ar
             <div>
               <div className="dr-sub"><Ic name="lucide:leaf" size={12} />Planted Seeds ({planted.length})</div>
               <div className="dr-seeds">
-                {planted.map((s) => <div key={s.id} className={s.payoffDelivered ? "done" : ""}><Ic name="lucide:leaf" size={12} /><span>{s.hint}{!s.payoffDelivered && <small> ({s.payoffHorizon})</small>}</span></div>)}
+                {planted.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s) => <div key={s.id} className={s.payoffDelivered ? "done" : ""}><Ic name="lucide:leaf" size={12} /><span>{s.hint}{!s.payoffDelivered && <small> ({s.payoffHorizon})</small>}</span></div>)}
               </div>
             </div>
           )}
@@ -70,7 +70,7 @@ export function ArcsTab({ state, onResolve, locked }: { state: DirectorState; on
   const block = (title: string, icon: IconName, list: DirectorArc[], dimmed: boolean): JSX.Element | null => list.length === 0 ? null : (
     <div className="dr-stack">
       <div className={`dr-grp-h ${icon}`}><Ic name={icon} size={14} /><span>{title} ({list.length})</span></div>
-      {groupArcs(list, state.chapters).map((g) => (
+      {groupArcs(list, state.chapters).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (g) => (
         <div key={g.chapterId ?? "none"} className="dr-stack tight">
           <div className="dr-chap"><Ic name={g.chapterId ? "lucide:book-open" : "lucide:layers"} size={12} /><span>{g.label}</span><small>({g.arcs.length})</small></div>
           {g.arcs.map((a) => <ArcCard key={a.id} arc={a} seeds={state.seeds} open={open === a.id} onToggle={() => setOpen(open === a.id ? null : a.id)} dimmed={dimmed} locked={locked} {...(dimmed ? {} : { onResolve: () => onResolve(a.id) })} />)}

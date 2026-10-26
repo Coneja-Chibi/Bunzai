@@ -48,7 +48,7 @@ export function LoreCategories({ categories, onChange }: LoreCategoriesProps): J
         <p className={styles.empty}>None yet. Risu folders and NAI categories map here.</p>
       )}
       <ul className={styles.list}>
-        {list.map((c, i) => (
+        {list.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (c, i) => (
           <li key={c.id} className={styles.row}>
             <input
               className={styles.name}

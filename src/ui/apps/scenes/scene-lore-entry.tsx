@@ -23,7 +23,7 @@ import { CharacterFilter, CrossEntryBoost, Injection, SideEffects } from "./scen
 import { TriggerBox } from "./scene-lore-keys";
 import { Button, Chip, Disclosure, IconButton, MenuItem, Segmented } from "../../components/button";
 
-const LOGIC: readonly { value: SelectiveLogic; text: string }[] = [
+export const LOGIC: readonly { value: SelectiveLogic; text: string }[] = [
   { value: "and_any", text: "Primary + any secondary matches" },
   { value: "and_all", text: "Primary + all secondaries match" },
   { value: "not_any", text: "Primary + no secondaries match" },

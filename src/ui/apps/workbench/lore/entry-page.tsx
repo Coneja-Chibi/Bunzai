@@ -337,7 +337,7 @@ export function LoreEntryPage({
         </details>
       )}
 
-      {cardsForLens(writeFor).map((card) => {
+      {cardsForLens(writeFor).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (card) => {
         const host =
           card.id === "sillytavern"
             ? styles.pcHostSt

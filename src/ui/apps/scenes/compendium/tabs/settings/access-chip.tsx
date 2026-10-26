@@ -14,7 +14,7 @@ import { protect } from "../../../../../_shared/protected-control";
 import { useSceneCompendium } from "../../../use-scene-compendium";
 import { accessChange } from "./books";
 
-const CHOICES: readonly { value: CompendiumAccess; label: string; text: string }[] = [
+export const CHOICES: readonly { value: CompendiumAccess; label: string; text: string }[] = [
   { value: "read_write", label: "Read + Write", text: "AI can read entries and create/modify them." },
   { value: "read_only", label: "Read-Only", text: "AI can use entries as context but won't modify them. Use for curated lorebooks." },
   { value: "write_only", label: "Write-Only", text: "AI can create entries but won't see existing ones. Useful for capturing new world facts without polluting context." },

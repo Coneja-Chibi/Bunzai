@@ -354,7 +354,7 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
       if (starting.current) return; // one scene per click, however fast the clicks come
       starting.current = true;
       void ctx.api.startScene(e.id).then(
-        (chat) => { handOffScene(chat.id); ctx.openApp(SCENES_APP); },
+        (chat) => { handOffScene(chat.id); ctx.openApp(SCENES_APP); if (chat.startNotes?.length) ctx.setStatus(chat.startNotes.join(" ")); },
         (err: unknown) => ctx.setStatus(toErrorMessage(err, "could not start the scene")),
       ).finally(() => { starting.current = false; });
     },

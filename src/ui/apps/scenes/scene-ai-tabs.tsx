@@ -13,14 +13,14 @@ import { tabOr } from "./scene-wing-data";
 type Tab = "model" | "generation";
 const AI_TABS: readonly { value: Tab; label: string }[] = [{ value: "model", label: "Model" }, { value: "generation", label: "Generation" }];
 
-export function AiTabs({ model, generation, initialTab }: { model: JSX.Element; generation?: JSX.Element; initialTab?: string }): JSX.Element {
+export function AiTabs({ model, generation, initialTab, single }: { model: JSX.Element; generation?: JSX.Element; initialTab?: string; single?: boolean }): JSX.Element {
   const [tab, setTab] = useState<Tab>(() => tabOr(["model", "generation"], initialTab, "model"));
   return (
     <>
-      <nav className="fold wfold" data-part="scene.ai">
+      {!single && <nav className="fold wfold" data-part="scene.ai">
         <div className="crumb">Tools <i>/</i> <b>AI</b></div>
         <Tabs label="AI sections" items={AI_TABS} value={tab} onChange={setTab} />
-      </nav>
+      </nav>}
       <div className="wtab" hidden={tab !== "model"} data-part="scene.ai.model"><ThemeSlot id="scene.wing.ai.model" />{model}</div>
       {tab === "generation" && (
         <div className="wtab"><ThemeSlot id="scene.wing.ai.generation" />{generation ?? <div className="wbody"><div className="quiet"><div><Ic name="lucide:sliders-horizontal" size={32} /><div>Generation is not built yet.</div></div></div></div>}</div>

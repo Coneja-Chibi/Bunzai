@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { CyclesPanel } from "./cycles-panel";
+import { summaryLine } from "./summary";
 
 export const cyclesProp = trackerProp({
   module: "cycles",
@@ -16,4 +17,5 @@ export const cyclesProp = trackerProp({
   title: "Biological Cycles",
   noun: "Cycles",
   Panel: CyclesPanel,
+  summary: summaryLine,
 });

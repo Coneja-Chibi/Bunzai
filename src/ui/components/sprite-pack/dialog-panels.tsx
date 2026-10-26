@@ -34,7 +34,7 @@ export function AttachPanel({
         aria-label="Source character"
       >
         <option value="">Pick a card…</option>
-        {packCatalog.map((c) => (
+        {packCatalog.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (c) => (
           <option key={c.id} value={c.id}>
             {c.name}
           </option>

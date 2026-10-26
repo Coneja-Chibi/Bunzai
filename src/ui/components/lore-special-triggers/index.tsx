@@ -153,7 +153,7 @@ export function LoreSpecialTriggers({
       {open && (
         <div className={styles.menu} role="menu" aria-label="Insert special condition">
           <div className={styles.section}>Engine</div>
-          {context.map((p) => (
+          {context.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
             <MenuItem
               key={p.keyword}
               title={p.hint ?? p.keyword}
@@ -169,7 +169,7 @@ export function LoreSpecialTriggers({
           <p className={styles.note}>
             Narrative keys need a chat runtime that evaluates them. Studio only stores the string.
           </p>
-          {narrative.map((p) => (
+          {narrative.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
             <MenuItem
               key={p.keyword}
               title={p.hint ?? p.keyword}

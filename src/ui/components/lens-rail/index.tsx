@@ -25,7 +25,7 @@ export function LensRail({ platforms, selected, onToggle, onClear, offTarget, on
         <Chip pressed={selected.length === 0} onClick={onClear}>
           Bunraku
         </Chip>
-        {platforms.map((p) => (
+        {platforms.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
           <Chip key={p.id} pressed={selected.includes(p.id)} onClick={() => onToggle(p.id)}>
             {p.label}
           </Chip>

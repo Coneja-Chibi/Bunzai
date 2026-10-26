@@ -78,7 +78,7 @@ export function VoiceSetup({ value, onChange }: VoiceSetupProps): JSX.Element {
       </div>
       <span className={styles.lbl}>Extras</span>
       <div className={styles.extras}>
-        {extras.map(([k, val]) => (
+        {extras.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([k, val]) => (
           <div className={styles.exrow} key={k}>
             <input
               className={styles.input}

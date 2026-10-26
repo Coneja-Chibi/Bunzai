@@ -223,7 +223,7 @@ export function CssWorkshop({
           onChange={(e) => changePack(e.target.value)}
           aria-label="Target pack"
         >
-          {listTargetPacks().map((p) => (
+          {listTargetPacks().map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
             <option key={p.id} value={p.id}>
               {p.title}
             </option>

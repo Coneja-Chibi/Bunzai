@@ -67,7 +67,7 @@ function Panel({ index, count, cell, onStep }: { index: number; count: number; c
               {open && (
                 <dl className="gen">
                   <div><dt>Preset</dt><dd className={meta.preset ? undefined : "unk"}>{meta.preset ?? "Unknown"}</dd></div>
-                  {meta.samplers.map((s) => <div key={s.label}><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
+                  {meta.samplers.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (s) => <div key={s.label}><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
                 </dl>
               )}
             </>

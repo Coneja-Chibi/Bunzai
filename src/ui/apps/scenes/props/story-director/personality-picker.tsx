@@ -66,9 +66,9 @@ export function PersonalityPicker({ value, onPick, disabled }: { value: Director
                   <span className="dp-h">Philosophy</span>
                   <ul>{p.philosophy.coreBeliefs.slice(0, 3).map((b, i) => <li key={i}>{b}</li>)}</ul>
                   <span className="dp-h">Favorite Story Arcs</span>
-                  <span className="dp-chips arcs">{p.preferences.favoriteArcs.map((a, i) => <span key={i}>{a}</span>)}</span>
+                  <span className="dp-chips arcs">{p.preferences.favoriteArcs.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (a, i) => <span key={i}>{a}</span>)}</span>
                   <span className="dp-h">Emotional Focus</span>
-                  <span className="dp-chips">{p.preferences.emotionalFocus.map((a, i) => <span key={i}>{a}</span>)}</span>
+                  <span className="dp-chips">{p.preferences.emotionalFocus.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (a, i) => <span key={i}>{a}</span>)}</span>
                   <Style p={p} />
                 </span></span>
               </MenuItem></div>

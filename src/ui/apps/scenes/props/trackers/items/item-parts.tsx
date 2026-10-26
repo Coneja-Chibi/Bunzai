@@ -7,6 +7,7 @@
 import type { CSSProperties, JSX, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { IconButton, Segmented, Tabs as FamilyTabs } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
+import { VirtualRows } from "../../../../../_shared/virtual-list";
 
 export interface CardProps {
   /** The stripe and icon colour, a theme token. */
@@ -34,6 +35,13 @@ export interface CardProps {
   onToggle(): void;
   removed?: boolean;
   children: ReactNode;
+}
+
+const CARD_ESTIMATE_PX = 72;
+
+/** The cards of one tracker, windowed: a tracker holds up to 300 expandable cards. The cards keep their own open state in the panel. */
+export function ItemList<T extends { id: string }>({ items, render }: { items: readonly T[]; render: (item: T) => ReactNode }): JSX.Element {
+  return <VirtualRows className="it-list" items={items} keyOf={(item) => item.id} estimate={CARD_ESTIMATE_PX} gap={8} render={render} />;
 }
 
 export function ItemCard({ color, icon, title, meta, right, preview, under, foot, chip, veil, mod, badge, open, onToggle, removed, children }: CardProps): JSX.Element {
@@ -84,7 +92,7 @@ export function Filters<T extends string>({ options, value, onChange, icons }: {
 }
 
 export function Chips({ items, bad }: { items: readonly string[]; bad?: boolean }): JSX.Element | null {
-  return items.length === 0 ? null : <div className="it-chips">{items.map((s, i) => <span key={`${s}${i}`} className={`it-chip${bad ? " bad" : ""}`}>{s}</span>)}</div>;
+  return items.length === 0 ? null : <div className="it-chips">{items.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s, i) => <span key={`${s}${i}`} className={`it-chip${bad ? " bad" : ""}`}>{s}</span>)}</div>;
 }
 
 /** A labelled block of a card's body: a small heading over its content. */

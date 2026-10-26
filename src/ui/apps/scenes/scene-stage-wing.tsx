@@ -31,7 +31,7 @@ const honor = (request: StageOpenRequest | null | undefined): StageTabId | null 
   return request.tab;
 };
 
-export function StageWing({ host, initialTab, ...appearance }: StageProps & { initialTab?: string }): JSX.Element {
+export function StageWing({ host, initialTab, single, ...appearance }: StageProps & { initialTab?: string; single?: boolean }): JSX.Element {
   const [active, setActive] = useState<StageTabId>(() => { const asked = honor(host?.request); return initialTab ? tabOr(["appearance", ...STAGE_TABS.map((t) => t.id)], initialTab, "appearance") : asked ?? "appearance"; });
   useEffect(() => { const tab = honor(host?.request); if (tab) setActive(tab); }, [host?.request]);
   const shown = host ? STAGE_TABS.filter((t) => t.visible({ scene: host.scene, propsOn: host.propsOn, prefs: host.ctx.prefs })) : [];
@@ -40,7 +40,7 @@ export function StageWing({ host, initialTab, ...appearance }: StageProps & { in
   const tabs: FoldoutTab<StageTabId>[] = [{ id: "appearance", label: "Appearance" }, ...shown.map((t) => ({ id: t.id, label: t.label, ...metaOf(t, host?.scene) }))];
   return (
     <>
-      <FoldoutTabs<StageTabId> area="Tools" group="Stage" tabs={tabs} active={shownTab} onSelect={setActive} />
+      {!single && <FoldoutTabs<StageTabId> area="Tools" group="Stage" tabs={tabs} active={shownTab} onSelect={setActive} />}
       <div className="wtab" data-part="scene.stage">
         {shownTab === "appearance" && <ThemeSlot id="scene.wing.stage.appearance" />}
         {shownTab === "gallery" && <ThemeSlot id="scene.wing.stage.gallery" />}

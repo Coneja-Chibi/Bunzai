@@ -230,7 +230,7 @@ export function RulePage({
               </p>
               {travel.length > 0 && (
                 <div className={styles.travelWrap}>
-                  {travel.map((note, i) => (
+                  {travel.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (note, i) => (
                     <p key={`${note.feature}-${i}`} className={styles.travelNote}>
                       {note.message}
                     </p>

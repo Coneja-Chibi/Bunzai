@@ -88,8 +88,8 @@ function BankRow({ bankId, bank, pass, open, onOpen, edit }: { bankId: string; b
             <div className="block">
               <div className="bh"><span>{bank.kind === "wordbank" ? `Banned entries · ${bank.examples.length} total` : "Examples · what the agent watches for"}</span><span>{sent}/{bank.examples.length} in prompt</span></div>
               {bank.kind === "wordbank"
-                ? <div className="words">{bank.examples.map((e, i) => <span key={i} className={i < sent ? "in" : "out"} title={i < sent ? "In prompt at current depth" : "Skipped at current depth"}>{e}</span>)}</div>
-                : <ul>{bank.examples.map((e, i) => <li key={i} className={i < sent ? "in" : "out"}>{e}</li>)}</ul>}
+                ? <div className="words">{bank.examples.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (e, i) => <span key={i} className={i < sent ? "in" : "out"} title={i < sent ? "In prompt at current depth" : "Skipped at current depth"}>{e}</span>)}</div>
+                : <ul>{bank.examples.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (e, i) => <li key={i} className={i < sent ? "in" : "out"}>{e}</li>)}</ul>}
             </div>
           )}
           {bank.replace && (
@@ -112,7 +112,7 @@ function Results({ pass, query, onOpen, edit }: { pass: FinalCutPass; query: str
   return (
     <div className="fc-results">
       <div className="sum" role="status">{found.length} matching {found.length === 1 ? "bank" : "banks"} · {entries} matching {entries === 1 ? "entry" : "entries"}</div>
-      {found.map((r) => {
+      {found.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (r) => {
         const bank = BANKS[r.bankId]!;
         const pins = pass.pinnedBankExamples?.[r.bankId] ?? [];
         const on = enabled.has(r.bankId);
@@ -122,7 +122,7 @@ function Results({ pass, query, onOpen, edit }: { pass: FinalCutPass; query: str
               <Chip pressed={on} onClick={() => edit(toggleBank(r.bankId))}>{on ? "Enabled" : "Enable bank"}</Chip></div>
             <p>{stripMd(bank.why ?? bank.pattern)}</p>
             {r.matching.length > 0
-              ? <div className="hits" aria-label={`Matching entries in ${bank.label}`}>{r.matching.map((e, i) => (
+              ? <div className="hits" aria-label={`Matching entries in ${bank.label}`}>{r.matching.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (e, i) => (
                 <div key={i}><span>{e}</span>
                   <Chip pressed={pins.includes(e)} aria-label={`${pins.includes(e) ? "Unpin" : "Pin"} "${stripMd(e)}" ${pins.includes(e) ? "from" : "to"} the prompt`} onClick={() => edit(togglePin(r.bankId, e))}>{pins.includes(e) ? "Pinned" : "Pin entry"}</Chip></div>))}</div>
               : <small>The bank's name, rule, or replacement guidance matches this search.</small>}
@@ -159,7 +159,7 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
         <div className="fc-note">No sets attached. Pick one below to start filtering.</div>
       ) : (
         <div className="fc-setlist">
-          {attached.map((raw, idx) => {
+          {attached.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (raw, idx) => {
             const set = getSet(raw);
             if (!set) return null;
             const ids = bankIdsInSet(raw);
@@ -178,7 +178,7 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
                   {idx < attached.length - 1 && <Button size="sm" icon="lucide:chevron-down" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx, idx + 1) }))}>Down</Button>}
                   <Button variant="danger" size="sm" onClick={() => edit((c) => ({ ...drop(c), attachedSets: (c.attachedSets ?? []).filter((s) => s !== raw) }))}>Detach</Button>
                 </div>
-                {open && <div className="banks">{ids.map((id) => <BankRow key={id} bankId={id} bank={BANKS[id]!} pass={pass} open={openBanks.has(id)} onOpen={() => setOpenBanks(flip(openBanks, id))} edit={edit} />)}</div>}
+                {open && <div className="banks">{ids.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (id) => <BankRow key={id} bankId={id} bank={BANKS[id]!} pass={pass} open={openBanks.has(id)} onOpen={() => setOpenBanks(flip(openBanks, id))} edit={edit} />)}</div>}
               </div>
             );
           })}
@@ -192,7 +192,7 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
           edit((c) => ({ attachedSets: [...(c.attachedSets ?? []), id], enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...bankIdsInSet(id).slice(0, 3)])] }));
         }}>
           <option value="">+ Attach another set...</option>
-          {unattached.map((s) => <option key={s.id} value={s.id}>{s.label} ({s.banks.length} banks)</option>)}
+          {unattached.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (s) => <option key={s.id} value={s.id}>{s.label} ({s.banks.length} banks)</option>)}
         </select>
       ) : <div className="fc-note">All available sets are attached.</div>}
     </div>

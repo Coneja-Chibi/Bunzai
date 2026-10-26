@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messenger shell, Discord architecture</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+.page { max-width: 94rem; }
+.scroll-x { overflow-x: auto; padding-bottom: 0.5rem; }
+
+/* ---------- the app frame (1440 x 860): themed gradient behind translucent panels ---------- */
+.frame {
+  --glass: color-mix(in srgb, var(--bk-surface-base) 72%, transparent);
+  --glass-2: color-mix(in srgb, var(--bk-surface-well) 62%, transparent);
+  --glass-hi: color-mix(in srgb, var(--bk-surface-raised) 80%, transparent);
+  --hair: color-mix(in srgb, var(--text) 14%, transparent);
+  position: relative; width: 1440px; height: 860px; display: grid; grid-template-columns: 72px 264px minmax(0, 1fr) auto; overflow: hidden;
+  background: linear-gradient(135deg, var(--selection) 0%, var(--rose-deep) 52%, var(--premiere-rose) 100%);
+  border: 2px solid var(--edge); font-family: var(--font-body); font-size: 15px; color: var(--text);
+}
+.frame svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.frame button { font: inherit; color: inherit; cursor: pointer; }
+.cap { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); }
+
+/* the button family's look: 2px boundary, hard offset shadow; small radius so it sits in the rounded shell */
+.bk { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 32px; padding: 0 12px; font-family: var(--font-body); font-weight: 700; font-size: 13px; background: var(--glass-hi); color: var(--text); border: 2px solid var(--control-boundary); border-radius: 8px; box-shadow: 3px 3px 0 0 var(--stage-black); transition: transform .15s ease, box-shadow .15s ease; }
+.bk:hover { transform: translateY(-2px); box-shadow: 3px 5px 0 0 var(--stage-black); }
+.bk.icon { width: 32px; padding: 0; }
+.bk.primary { background: var(--premiere-rose); border-color: var(--premiere-rose); color: var(--premiere-text); }
+.bk.quiet { background: transparent; border-color: transparent; box-shadow: none; color: var(--text-soft); }
+.bk.quiet:hover { background: color-mix(in srgb, var(--text) 12%, transparent); color: var(--text); transform: none; }
+.bk.danger { border-color: var(--stage-danger-edge); color: var(--stage-danger-text); }
+.bk.quiet.danger { border-color: transparent; }
+.bk[aria-pressed="true"] { background: color-mix(in srgb, var(--text) 18%, transparent); color: var(--text); }
+.bk.warn { border-color: var(--stage-warn); color: var(--stage-warn); background: var(--stage-warn-ink); }
+
+.av { width: 40px; height: 40px; flex: none; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: var(--stage-ink); background: var(--deck-character); border-radius: 50%; position: relative; }
+.av.s { width: 32px; height: 32px; font-size: 12px; } .av.xs { width: 16px; height: 16px; font-size: 12px; font-size: 9px; }
+.av.l { background: var(--deck-lorebook); } .av.p { background: var(--deck-persona); } .av.k { background: var(--deck-pack); } .av.r { background: var(--deck-preset); } .av.b { background: var(--deck-regex); }
+.sdot { position: absolute; right: -3px; bottom: -3px; width: 12px; height: 12px; border-radius: 50%; background: var(--stage-ok); border: 3px solid var(--bk-surface-sunken); box-sizing: content-box; width: 8px; height: 8px; }
+.sdot.off { background: var(--text-faint); } .sdot.warn { background: var(--stage-warn); }
+.rb { display: inline-flex; align-items: center; height: 18px; padding: 0 6px; font: 800 12px/1 var(--font-body); border-radius: 4px; background: color-mix(in srgb, var(--text) 16%, transparent); color: var(--text); letter-spacing: .02em; }
+.rb.c { background: color-mix(in srgb, var(--deck-character) 30%, transparent); color: var(--deck-character); }
+.rb.p { background: color-mix(in srgb, var(--deck-persona) 30%, transparent); color: var(--deck-persona); }
+.nm-c { color: var(--deck-character); } .nm-p { color: var(--deck-persona); } .nm-l { color: var(--deck-lorebook); } .nm-k { color: var(--deck-pack); }
+
+/* ---------- far-left rail ---------- */
+.m-rail { background: var(--glass-2); display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 0; overflow: hidden; }
+.tile { position: relative; width: 48px; height: 48px; display: grid; place-items: center; background: var(--glass-hi); border: 0; border-radius: 16px; color: var(--text-soft); transition: border-radius .15s ease, background .15s ease; }
+.tile:hover { border-radius: 12px; color: var(--text); }
+.tile.on { border-radius: 12px; background: var(--premiere-rose); color: var(--premiere-text); }
+.tile::before { content: ""; position: absolute; left: -12px; top: 50%; translate: 0 -50%; width: 4px; height: 0; background: var(--text); border-radius: 0 4px 4px 0; transition: height .15s ease; }
+.tile.on::before { height: 36px; } .tile.unread::before { height: 8px; } .tile:hover::before { height: 20px; }
+.tile.on:hover::before { height: 36px; }
+.tile .badge { position: absolute; right: -4px; bottom: -4px; min-width: 18px; height: 18px; padding: 0 5px; background: var(--premiere-rose); color: var(--premiere-text); font: 800 12px/18px var(--font-body); border-radius: 9px; border: 3px solid var(--bk-surface-well); box-sizing: content-box; text-align: center; }
+.tile.add { background: transparent; border: 2px dashed var(--control-boundary); }
+.tile .art { width: 100%; height: 100%; border-radius: inherit; display: grid; place-items: center; font-weight: 800; font-size: 15px; color: var(--stage-ink); background: var(--deck-character); }
+.rsep { width: 32px; height: 2px; background: var(--hair); flex: none; border-radius: 2px; }
+.folder { width: 56px; background: color-mix(in srgb, var(--text) 14%, transparent); border-radius: 18px; padding: 4px 4px 4px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.folder .fh { width: 48px; height: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 6px; border-radius: 14px; background: var(--glass-hi); }
+.folder .fh i { border-radius: 5px; display: block; background: var(--deck-lorebook); } .folder .fh i:nth-child(2) { background: var(--deck-pack); } .folder .fh i:nth-child(3) { background: var(--deck-preset); } .folder .fh i:nth-child(4) { background: var(--deck-regex); }
+
+/* ---------- channel sidebar ---------- */
+.m-side { background: var(--glass); display: flex; flex-direction: column; min-height: 0; border-top-left-radius: 14px; }
+.m-side .sh { height: 56px; flex: none; display: flex; align-items: center; gap: 6px; padding: 0 8px 0 16px; border-bottom: 2px solid var(--hair); font: 900 16px var(--font-big); }
+.m-side .sh b { flex: 1; font-weight: 900; }
+.m-side .sc { flex: 1; min-height: 0; overflow: hidden; padding: 4px 8px 0; display: flex; flex-direction: column; gap: 2px; }
+.cat { display: flex; align-items: center; gap: 4px; margin: 14px 2px 2px 0; color: var(--text-dim); background: none; border: 0; padding: 0 0 0 2px; width: 100%; text-align: left; }
+.cat svg { width: 12px; height: 12px; } .cat .grow { flex: 1; } .cat:hover { color: var(--text); }
+.cat .bk { min-height: 20px; width: 20px; border-radius: 4px; }
+.ch { position: relative; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 8px; border-radius: 8px; color: var(--text-dim); background: none; border: 0; width: 100%; text-align: left; }
+.ch:hover { background: color-mix(in srgb, var(--text) 10%, transparent); color: var(--text-soft); }
+.ch.on { background: color-mix(in srgb, var(--text) 18%, transparent); color: var(--text); }
+.ch.unread { color: var(--text); font-weight: 800; }
+.ch .hash { font: 700 17px var(--font-mono); width: 16px; text-align: center; color: var(--text-dim); }
+.ch .sm { width: 16px; height: 16px; } .ch .nm { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 15px; }
+.ch .hov { display: none; gap: 2px; } .ch:hover .hov, .ch.on .hov { display: flex; }
+.ch .hov .bk { min-height: 22px; width: 22px; border-radius: 4px; }
+.ch .pip { min-width: 18px; height: 18px; padding: 0 5px; background: var(--premiere-rose); color: var(--premiere-text); font: 800 12px/18px var(--font-body); border-radius: 9px; text-align: center; }
+.ch.thr { margin-left: 18px; width: calc(100% - 18px); height: 30px; font-size: 14px; }
+.ch.thr::before { content: ""; position: absolute; left: -10px; top: -14px; width: 12px; height: 28px; border-left: 2px solid var(--hair); border-bottom: 2px solid var(--hair); border-bottom-left-radius: 8px; }
+.ch.thr + .ch.thr::before { height: 30px; top: -16px; }
+.ch .dotmark { width: 8px; height: 8px; border-radius: 50%; background: var(--stage-ok); display: block; }
+
+/* user panel pinned bottom-left */
+.m-user { display: flex; align-items: center; gap: 2px; padding: 0 8px; background: var(--glass-2); height: 60px; flex: none; }
+.m-user .who { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; background: none; border: 0; padding: 4px; border-radius: 8px; text-align: left; }
+.m-user .who:hover { background: color-mix(in srgb, var(--text) 10%, transparent); }
+.m-user .who .tx { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.m-user .who .tx b { font-size: 14px; display: flex; align-items: center; gap: 6px; } .m-user .who small { font-size: 12px; color: var(--text-dim); }
+.m-user .bk.icon { width: 30px; min-height: 30px; }
+
+/* ---------- main column ---------- */
+.m-main { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--glass); }
+.m-head { height: 56px; flex: none; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-bottom: 2px solid var(--hair); }
+.m-head .hashbig { font: 700 22px var(--font-mono); color: var(--text-dim); }
+.m-head .name { font: 900 16px var(--font-big); white-space: nowrap; }
+.m-head .vsep { width: 2px; height: 24px; background: var(--hair); }
+.m-head .topic { color: var(--text-dim); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-head .grow { flex: 1; }
+.m-head .tools { display: flex; align-items: center; gap: 4px; }
+.m-head .find { display: flex; align-items: center; gap: 6px; width: 170px; height: 28px; margin-left: 6px; padding: 0 8px; background: var(--glass-2); border-radius: 6px; color: var(--text-dim); font-size: 13px; }
+.m-head .find svg { width: 14px; height: 14px; }
+
+.m-list { flex: 1; min-height: 0; overflow: hidden; padding: 8px 0; display: flex; flex-direction: column; justify-content: flex-end; }
+.datesep { display: flex; align-items: center; gap: 12px; margin: 8px 16px 4px; font: 700 12px var(--font-body); color: var(--text-dim); }
+.datesep::before, .datesep::after { content: ""; flex: 1; height: 1px; background: var(--hair); }
+.datesep.new { color: var(--stage-danger-text); }
+.datesep.new::before, .datesep.new::after { background: var(--stage-danger-edge); }
+.msg { position: relative; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 0 14px; padding: 2px 24px 2px 16px; }
+.msg.first { margin-top: 12px; padding-top: 2px; }
+.msg:hover, .msg.hover { background: color-mix(in srgb, var(--text) 5%, transparent); }
+.msg .gut { display: flex; justify-content: center; padding-top: 2px; }
+.msg .gut .t { visibility: hidden; font: 12px var(--font-mono); color: var(--text-dim); padding-top: 4px; }
+.msg:hover .gut .t, .msg.hover .gut .t { visibility: visible; }
+.msg .hd { display: flex; align-items: center; gap: 8px; }
+.msg .hd b { font: 800 15px var(--font-big); }
+.msg .hd .ts { font-size: 12px; color: var(--text-dim); }
+.msg .hd .n { font: 12px var(--font-mono); color: var(--text-faint); }
+.msg p { margin: 2px 0 0; font-size: 16px; line-height: 1.55; color: var(--text); max-width: 62rem; }
+.msg p em { color: var(--text-dim); } .msg p q { color: var(--stage-macro); quotes: none; }
+.msg.hid p, .msg.hid .hd b { opacity: .55; }
+.hidtag { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font: 700 12px var(--font-body); color: var(--text-dim); border: 2px dashed var(--hair); border-radius: 6px; padding: 0 6px; }
+.hidtag svg { width: 12px; height: 12px; }
+.reply { grid-column: 1 / -1; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; align-items: center; font-size: 13px; color: var(--text-dim); margin-bottom: 2px; }
+.reply .cn { height: 14px; margin: 8px 0 0 20px; border-left: 2px solid var(--control-boundary); border-top: 2px solid var(--control-boundary); border-top-left-radius: 8px; }
+.reply .rw { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.reply .rw b { color: var(--text-soft); } .reply .rw span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.embed { margin-top: 6px; width: 300px; border-radius: 10px; overflow: hidden; border: 2px solid var(--hair); }
+.embed .img { height: 112px; background: linear-gradient(160deg, var(--deck-preset-deep), var(--deck-lorebook-deep) 60%, var(--deck-character-deep)); display: grid; place-items: center; color: var(--text-soft); font: 12px var(--font-mono); }
+.embed .cp { padding: 4px 10px; font-size: 12px; color: var(--text-dim); background: var(--glass-2); display: flex; justify-content: space-between; }
+.meta { display: flex; align-items: center; gap: 12px; margin-top: 6px; font-size: 12px; color: var(--text-dim); font-family: var(--font-mono); }
+.meta .pager { display: inline-flex; align-items: center; gap: 4px; }
+.meta .pager .bk { min-height: 24px; width: 24px; box-shadow: none; border-radius: 6px; }
+.meta .dts { display: inline-flex; gap: 4px; }
+.meta .dts i { width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--text) 25%, transparent); display: block; }
+.meta .dts i.cur { background: var(--text); }
+.meta .lk { color: var(--link); text-decoration: underline; background: none; border: 0; font-family: inherit; font-size: inherit; padding: 0; }
+
+/* hover action bar */
+.acts { display: none; position: absolute; top: -16px; right: 24px; z-index: 3; align-items: center; gap: 2px; padding: 2px; background: var(--glass-hi); backdrop-filter: blur(6px); border: 2px solid var(--control-boundary); border-radius: 8px; box-shadow: 3px 3px 0 0 var(--stage-black); }
+.msg:hover .acts, .msg.hover .acts { display: flex; }
+.acts .bk { min-height: 30px; width: 30px; border-radius: 6px; }
+.acts .bk.fc { width: auto; padding: 0 8px; gap: 4px; font-size: 12px; }
+.acts .sp { width: 2px; align-self: stretch; margin: 4px 2px; background: var(--hair); }
+.msg .tip { display: none; position: absolute; top: -54px; right: 24px; background: var(--stage-black); color: var(--text); font-size: 12px; padding: 3px 8px; border: 2px solid var(--control-boundary); border-radius: 6px; z-index: 4; }
+.frame[data-state="hover"] .msg.hover .tip { display: block; }
+
+/* menus */
+.menu { width: 292px; padding: 4px; background: var(--bk-surface-raised); border: 2px solid var(--control-boundary); border-radius: 10px; box-shadow: 4px 4px 0 0 var(--stage-black); z-index: 10; }
+.mi { display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 6px 8px; background: none; border: 0; border-radius: 6px; text-align: left; font-size: 13px; color: var(--text); }
+.mi:hover, .mi.hot { background: var(--selection); color: var(--selection-fg); }
+.mi small { color: var(--text-dim); font-size: 12px; font-family: var(--font-mono); }
+.mi.danger { color: var(--stage-danger-text); }
+.mi.danger:hover, .mi.danger.hot { background: var(--danger); color: var(--danger-fg); }
+.mi svg { width: 16px; height: 16px; }
+.mi .st { display: flex; flex-direction: column; line-height: 1.25; }
+.mi .st span { font-size: 12px; color: var(--text-dim); }
+.msep { height: 2px; margin: 4px 6px; background: var(--hair); }
+.menu .cap { padding: 6px 8px 2px; }
+.ctx { display: none; position: absolute; left: 330px; top: 108px; }
+.ctx .fly { position: absolute; left: 290px; bottom: 0; width: 230px; }
+.frame[data-state="menu"] .ctx { display: block; }
+.frame[data-state="menu"] .msg.target { background: color-mix(in srgb, var(--text) 8%, transparent); }
+
+/* ---------- composer: a wide rounded pill ---------- */
+.m-comp { flex: none; padding: 0 16px 16px; position: relative; }
+.m-comp .strip { display: flex; align-items: center; gap: 10px; padding: 6px 14px; margin: 0 6px; background: var(--glass-hi); border-radius: 10px 10px 0 0; font-size: 13px; color: var(--text-soft); }
+.m-comp .strip b { color: var(--text); } .m-comp .strip span { flex: 1; color: var(--text-dim); }
+.field-row { display: flex; align-items: center; gap: 4px; padding: 6px 8px; background: var(--glass-2); border: 2px solid var(--control-boundary); border-radius: 12px; min-height: 52px; }
+.field-row .ta { flex: 1; padding: 0 8px; color: var(--text-dim); font-size: 16px; }
+.field-row .ta.off { color: var(--text-faint); }
+.field-row .bk.icon { width: 36px; min-height: 36px; }
+.field-row .plus { background: var(--glass-hi); border-radius: 50%; box-shadow: none; }
+.tools-pop { display: none; position: absolute; left: 16px; bottom: 76px; }
+.tools-pop .menu { width: 330px; }
+.frame[data-state="tools"] .tools-pop { display: block; }
+.tgl { width: 40px; height: 22px; border: 2px solid var(--control-boundary); border-radius: 11px; background: var(--bk-surface-well); padding: 2px; display: flex; }
+.tgl i { width: 14px; height: 14px; border-radius: 50%; background: var(--text-dim); display: block; }
+
+/* ---------- right: member list (+ profile popout) ---------- */
+.m-right { display: none; width: 280px; background: var(--glass); flex-direction: column; min-height: 0; padding: 4px 8px 0; border-left: 2px solid var(--hair); }
+.frame[data-state="profile"] .m-right:not(.feat), .frame[data-state="cast"] .m-right:not(.feat) { display: flex; }
+.m-right .cat { margin-top: 18px; }
+.m-right .rtop { height: 52px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
+.mrow { position: relative; display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; overflow: hidden; }
+.mrow:hover, .mrow.sel { background: color-mix(in srgb, var(--text) 10%, transparent); }
+.mrow .tx { display: flex; flex-direction: column; line-height: 1.25; flex: 1; min-width: 0; position: relative; }
+.mrow .tx b { font-size: 14px; display: flex; align-items: center; gap: 6px; } .mrow .tx small { font-size: 12px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mrow .av { position: relative; z-index: 1; }
+.mrow.banner { padding: 8px; background: linear-gradient(90deg, var(--bk-surface-base) 0%, color-mix(in srgb, var(--deck-character-deep) 70%, transparent) 100%); }
+.mrow .rowacts { display: none; gap: 2px; position: relative; }
+.mrow:hover .rowacts { display: flex; }
+.mrow .rowacts .bk { min-height: 26px; width: 26px; border-radius: 6px; }
+.mrow.dim .tx, .mrow.dim .av { opacity: .5; }
+.rfoot { margin-top: auto; padding: 10px 0; display: flex; } .rfoot .bk { flex: 1; }
+.pop { display: none; position: absolute; right: 292px; top: 120px; width: 320px; background: var(--bk-surface-panel); border: 2px solid var(--control-boundary); border-radius: 14px; box-shadow: 5px 5px 0 0 var(--stage-black); overflow: hidden; z-index: 12; }
+.frame[data-state="profile"] .pop { display: block; }
+.pop .ban { height: 90px; background: linear-gradient(135deg, var(--deck-character-deep), var(--deck-lorebook-deep)); }
+.pop .top { padding: 0 14px; margin-top: -36px; display: flex; align-items: flex-end; justify-content: space-between; }
+.pop .top .av { width: 76px; height: 76px; font-size: 26px; border: 5px solid var(--bk-surface-panel); box-sizing: content-box; width: 66px; height: 66px; }
+.pop .inner { margin: 8px 12px 12px; padding: 10px 12px; background: var(--bk-surface-well); border-radius: 10px; }
+.pop h3 { margin: 0; font: 900 19px var(--font-big); display: flex; align-items: center; gap: 8px; }
+.pop .sub { font-size: 13px; color: var(--text-dim); }
+.pop .sec { margin-top: 10px; padding-top: 8px; border-top: 2px solid var(--hair); }
+.pop .sec p { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--text-soft); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; font: 600 12px var(--font-body); color: var(--text-soft); border: 2px solid var(--hair); border-radius: 6px; }
+.chip i { width: 10px; height: 10px; border-radius: 2px; display: block; background: var(--deck-lorebook); }
+.pop .foot { display: flex; gap: 8px; margin-top: 10px; } .pop .foot .bk { flex: 1; }
+
+/* ---------- page chrome ---------- */
+.states { display: flex; flex-direction: column; gap: var(--gap-l); }
+.mapt { border-collapse: collapse; width: 100%; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; }
+.mapt th { text-align: left; color: var(--text-dim); letter-spacing: .1em; text-transform: uppercase; font-size: .66rem; border-bottom: 2px solid var(--edge); padding: .4rem .6rem; }
+.mapt td { border-bottom: 2px solid var(--seam); padding: .45rem .6rem; vertical-align: top; color: var(--text-soft); }
+.mapt td:first-child { color: var(--text); width: 30%; }
+.cstrip { position: relative; width: 1000px; display: flex; flex-direction: column; gap: 14px; background: linear-gradient(135deg, var(--selection), var(--rose-deep)); border: 2px solid var(--edge); padding: 16px 0; --glass: color-mix(in srgb, var(--bk-surface-base) 72%, transparent); --glass-2: color-mix(in srgb, var(--bk-surface-well) 62%, transparent); --glass-hi: color-mix(in srgb, var(--bk-surface-raised) 80%, transparent); }
+.cstrip svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.cstrip .lab { font: 12px var(--font-mono); color: var(--text-soft); padding: 0 16px; margin-bottom: -8px; letter-spacing: .08em; text-transform: uppercase; }
+.cstrip button { font: inherit; color: inherit; cursor: pointer; }
+.m-side { position: relative; }
+.m-side .sh { background: none; border: 0; border-bottom: 2px solid var(--hair); width: 100%; text-align: left; color: var(--text); }
+.m-side .sh:hover { background: color-mix(in srgb, var(--text) 8%, transparent); }
+.menu.srv { display: none; position: absolute; left: 10px; top: 58px; width: 244px; z-index: 20; }
+.frame[data-state="charmenu"] .menu.srv { display: block; }
+.frame[data-state="charmenu"] .sh { background: color-mix(in srgb, var(--text) 12%, transparent); }
+.m-right.feat { display: none; } .frame[data-state="feature"] .m-right.feat { display: flex; }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="wf-head">
+    <div>
+      <div class="wf-title">Messenger shell, in Discord's architecture</div>
+      <p class="wf-lede">Rail of rounded character spaces with folders, a channel-style sidebar (scenes as channels, takes as threads, studio pages as a category) with the persona panel pinned under it, the conversation column (header, grouped messages with replies and picture embeds, hover action bar, rounded composer) and a member list on the right. Colors come from Bunraku tokens: the window gradient runs from the selection purple through the rose-deep to the premiere rose, behind translucent token panels. Every frame is live: hover a message, right-click it, press "+" or the people icon.</p>
+    </div>
+  </header>
+
+  <div class="states" id="states"></div>
+
+  <section class="wf-sec">
+    <div class="wf-state">Composer states (cropped)</div>
+    <div class="scroll-x"><div class="cstrip" id="cstrip"></div></div>
+    <p class="wf-note" style="margin-top:.7rem"><b>Composer states.</b> The steering strip sits on top of the pill like Discord's "Replying to" bar (today: Steering Vera's last reply, with Cancel; Send becomes Regenerate). With no connection the pill is dimmed and keeps the Open AI wing link (opens the AI page of the settings layer). While a reply streams, send is the Stop button.</p>
+  </section>
+
+  <section class="wf-sec">
+    <div class="wf-state">Where every current feature lives</div>
+    <div class="wf-frame"><table class="mapt">
+      <tr><th>Today</th><th>Now</th></tr>
+      <tr><td>Chat tab in the rail</td><td>Home tile at the top of the rail: back to your scenes and the open conversation.</td></tr>
+      <tr><td>Browse Characters</td><td>Compass tile at the foot of the character spaces, and the Discover row in the sidebar.</td></tr>
+      <tr><td>Recent characters (flat list, scene title as subtitle)</td><td>Rail spaces: the current character with the pill, today's recents in a folder, older ones in a collapsed folder. Unread count badges stay.</td></tr>
+      <tr><td>Scenes of a character</td><td>Sidebar "Scenes" category, one channel row per scene; the open scene is highlighted and carries hover actions (add participant, scene settings).</td></tr>
+      <tr><td>Takes pill (Scene Takes: switch, branch, tree)</td><td>Takes are threads: indented thread rows under the scene with an L connector, and the Takes pill in the header (the "threads" slot) opens the same switcher.</td></tr>
+      <tr><td>16 rail programs and the Stage tabs (Booth, Characters, Persona, Participants, Lorebooks, Compendium, Generation, Guides, Regex, Scene Note, Writing Helpers, Props, Final Cut, AI Connection, Samplers, Control Panel, Pictures, Music, Spotify, Wardrobe, Context Inspector, Memory)</td><td>No longer in the shell. They live in three settings layers split by scope (drawn in a separate wireframe): <b>Your settings</b> (gear in the persona panel), <b>Character settings</b> (first item of the character menu at the top of the sidebar), <b>Scene settings</b> (gear on a scene row). Scene Note and Memory keep their quick header icons, which open the matching Scene settings page.</td></tr>
+      <tr><td>Active-feature pills (Story Director, trackers, Regex count)</td><td>Sidebar "Active features" category, kept only because these are live panels: a click opens the Prop panel in the right side panel (see the Story Director frame). The + adds or removes features (Scene settings, Props page).</td></tr>
+      <tr><td>Sidebar heading "Bunraku"</td><td>Character name with a chevron: opens the character menu (Character settings, Invite participants, Notification settings, Hide muted scenes, Leave).</td></tr>
+      <tr><td>User bar: persona and gear</td><td>User panel: avatar with status dot, colored persona name with badge, status line, then AI connection, switch persona and the gear, which opens Your settings.</td></tr>
+      <tr><td>Header: avatar, name, "Character conversation", Update available, back arrow, portrait aside</td><td>Header: hash, scene name, dim topic, Takes pill, Update badge, icons (Scene Note as pins, Memory, members toggle), search. Back arrow dropped (the rail is the way out). Portrait becomes the member list's banner row and the profile popout.</td></tr>
+      <tr><td>Message actions: Edit, Copy, Regenerate, Continue, Ask again, Hide from AI, Final Cut, More, Delete</td><td>Hover bar with today's order and separators, and the right-click menu holding all of them.</td></tr>
+      <tr><td>More menu: Undo last edit, Edit history, Branch, Retake, Writing tools, Remove version, Delete scopes</td><td>Context menu rows; Writing tools and Delete are submenus.</td></tr>
+      <tr><td>Version pager, Compare, model, time, finish reason</td><td>Meta line under the last message of a run.</td></tr>
+      <tr><td>Hidden from AI tag, "cut here" lines</td><td>Kept in the list as the dimmed message with its tag; cut lines stay as list dividers.</td></tr>
+      <tr><td>Composer "+" menu (Change the reply, Write in character, Input, Debug)</td><td>"+" in the pill opens the same menu above it; Polish Input and Expand as character are also icon buttons on the right.</td></tr>
+      <tr><td>Participants tab, My Persona</td><td>Member list: Characters, Participants, Persona groups with counts, hover actions (profile, mute, more), Add participant.</td></tr>
+    </table></div>
+  </section>
+
+  <p class="wf-note"><b>Narrow widths.</b> Under 1024px the member list becomes a drawer over the conversation from the right with a scrim. Under 640px the rail and sidebar are one left drawer behind a menu button, the header keeps the name, the Takes pill and a three-dot menu holding Search, Scene Note, Memory and Members, the hover bar becomes tap to reveal and long press opens the context menu as a bottom sheet. The user panel stays pinned at the bottom of the drawer.</p>
+  <p class="wf-note"><b>Open questions.</b> (1) The reply connector (a message quoting the one it answers) is new: here it only shows which of your messages a reply answers, which the data already knows. Keep it, or drop it until replies exist as a feature? (2) Picture embeds show images from My Pictures that the scene used; today pictures appear nowhere in the transcript. (3) "Today / Earlier" folders need a last-activity time on each recent. (4) Search messages is new: keep the field or drop it? (5) Rounded corners here follow the owner's screenshot; the button family on the page stays on its 2px boundary and hard shadow.</p>
+</main>
+
+<script>
+const P = {
+  chat: '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>', plus: '<path d="M5 12h14M12 5v14"/>', zap: '<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', uplus: '<circle cx="10" cy="8" r="4"/><path d="M2 21a8 8 0 0 1 14 0M19 8v6M16 11h6"/>',
+  users: '<circle cx="9" cy="8" r="3.5"/><path d="M2 21a7 7 0 0 1 14 0M16 4.5a3.5 3.5 0 0 1 0 7M22 21a7 7 0 0 0-4-6.3"/>',
+  book: '<path d="M2 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2zM22 4h-7a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h8z"/>',
+  sliders: '<path d="M4 6h8M16 6h4M4 12h4M12 12h8M4 18h10M18 18h2"/><path d="M14 4v4M10 10v4M16 16v4"/>',
+  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/>',
+  grid: '<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
+  scan: '<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>',
+  plug: '<path d="M12 22v-5M9 8V2M15 8V2M18 8v5a6 6 0 0 1-12 0V8z"/>', search: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+  note: '<path d="M15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9z"/><path d="M15 3v6h6"/>',
+  history: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/>', pen: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  copy: '<rect x="9" y="9" width="12" height="12"/><path d="M5 15H4V4h11v1"/>', redo: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  play: '<path d="M6 4l14 8-14 8z"/>', eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M3 3l18 18"/>',
+  trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 11v6M14 11v6"/>', more: '<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+  branch: '<circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10M18 10c0 5-12 3-12 7"/>',
+  spark: '<path d="m12 3-1.9 5.8L4 10l6.1 1.2L12 17l1.9-5.8L20 10l-6.1-1.2z"/>', wand: '<path d="m15 4 5 5L9 20l-5-5zM13 6l5 5"/><path d="M4 4v3M2.5 5.5h3"/>',
+  down: '<path d="m6 9 6 6 6-6"/>', right: '<path d="m9 6 6 6-6 6"/>', left: '<path d="m15 6-6 6 6 6"/>', send: '<path d="m22 2-7 20-4-9-9-4z"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>', stop: '<rect x="6" y="6" width="12" height="12"/>', compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+  bug: '<path d="M8 8h8v8a4 4 0 0 1-8 0zM12 8V4M4 12h4M16 12h4"/>', mute: '<path d="M11 5 6 9H3v6h3l5 4zM22 9l-6 6M16 9l6 6"/>',
+  eyes: '<circle cx="8" cy="12" r="3"/><circle cx="16" cy="12" r="3"/>'
+};
+const I = (n) => `<svg viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
+const B = (n, label, cls = '', extra = '') => `<button class="bk icon ${cls}" aria-label="${label}" title="${label}" ${extra}>${I(n)}</button>`;
+
+const tile = (n, label, cls = '') => `<button class="tile ${cls}" aria-label="${label}" title="${label}">${I(n)}</button>`;
+const atile = (ini, label, cls, av = '', badge = '') => `<button class="tile ${cls}" aria-label="${label}" title="${label}"><span class="art" style="background:${{l:"var(--deck-lorebook)",k:"var(--deck-pack)"}[av] || "var(--deck-character)"}">${ini}</span>${badge}</button>`;
+
+const rail = () => `<nav class="m-rail" aria-label="Character spaces">
+  ${tile('chat', 'Home: your scenes')}
+  <div class="rsep"></div>
+  ${atile('VL', 'Vera Lindqvist, The flooded archive', 'on')}
+  <div class="folder" title="Today"><div class="fh"><i></i><i></i><i></i><i></i></div>
+    ${atile('CA', 'Corvin Ash, 3 new', 'unread', 'l', '<span class="badge">3</span>')}
+    ${atile('MD', 'Mara Dellacroix', 'unread', 'k')}</div>
+  <div class="folder" title="Earlier, collapsed"><div class="fh"><i></i><i></i><i></i><i></i></div></div>
+  ${tile('plus', 'Start a new scene', 'add')}
+  ${tile('compass', 'Browse Characters')}
+</nav>`;
+
+const ch = (inner, cls = '', hov = '', attr = '') => `<button class="ch ${cls}" ${attr}>${inner}${hov ? `<span class="hov">${hov}</span>` : ''}</button>`;
+const cat = (t, plus) => `<button class="cat cap" aria-expanded="true">${I('down')}<span class="grow">${t}</span>${plus ? `<span class="bk icon quiet" role="img" aria-label="${plus}" title="${plus}">${I('plus')}</span>` : ''}</button>`;
+const mini = (n) => `<span class="bk icon quiet" role="img" aria-label="${n[1]}" title="${n[1]}">${I(n[0])}</span>`;
+
+const side = () => `<aside class="m-side" aria-label="Scenes">
+  <button class="sh" data-toggle="charmenu" aria-haspopup="menu" aria-label="Vera Lindqvist: character menu"><b>Vera Lindqvist</b>${I('down')}${mini(['uplus', 'Invite participants'])}</button>
+  <div class="menu srv" role="menu" aria-label="Character menu">
+    ${mi('gear', 'Character settings', '', 'hot')}${mi('uplus', 'Invite participants', '')}
+    <div class="msep"></div>${mi('mute', 'Notification settings', '&rsaquo;')}${mi('eyeoff', 'Hide muted scenes', '')}
+    <div class="msep"></div>${mi('x', 'Leave', '', 'danger')}
+  </div>
+  <div class="sc">
+    ${cat('Scenes', 'New scene with Vera')}
+    ${ch(`<span class="hash">#</span><span class="nm">The flooded archive</span>`, 'on', mini(['uplus', 'Add participant']) + mini(['gear', 'Scene settings']))}
+    ${ch(`<span class="sm">${I('branch')}</span><span class="nm">Director's Cut</span><span class="dotmark"></span>`, 'thr on')}
+    ${ch(`<span class="sm">${I('branch')}</span><span class="nm">Take 2: skip the ledger</span>`, 'thr')}
+    ${ch(`<span class="hash">#</span><span class="nm">Rooftop at dusk</span>`, '', mini(['gear', 'Scene settings']))}
+    ${ch(`<span class="hash">#</span><span class="nm">The first lamp</span><span class="pip">2</span>`, 'unread', mini(['gear', 'Scene settings']))}
+    ${cat('Active features', 'Add or remove features')}
+    ${ch(`<span class="sm">${I('spark')}</span><span class="nm">Story Director</span><span class="dotmark"></span>`, '', '', 'data-toggle="feature"')}
+    ${ch(`<span class="sm">${I('scissors')}</span><span class="nm">Regex (2)</span><span class="dotmark"></span>`, '', '', 'data-toggle="feature"')}
+  </div>
+  <div class="m-user">
+    <button class="who" aria-label="Your persona, Ines Marlowe: open profile"><span class="av s p">IM<span class="sdot"></span></span><span class="tx"><b class="nm-p">Ines Marlowe <span class="rb p">Persona</span></b><small>Writing the flooded archive</small></span></button>
+    ${B('plug', 'AI connection: connected', 'quiet')}${B('user', 'Switch persona', 'quiet')}${B('gear', 'Your settings', 'quiet')}
+  </div>
+</aside>`;
+
+const head = (state) => `<header class="m-head">
+  <span class="hashbig">#</span><span class="name">The flooded archive</span><span class="vsep"></span>
+  <span class="topic">Vera Lindqvist &nbsp;·&nbsp; 48 messages &nbsp;·&nbsp; Canal District lorebook on &nbsp;·&nbsp; Story Director at arc 2</span>
+  <span class="grow"></span>
+  <div class="tools">
+    <button class="bk sm" title="Takes: switch or branch the story">${I('branch')}Director's Cut${I('down')}</button>
+    <button class="bk warn" title="The Library holds a newer card">Update available</button>
+    ${B('note', 'Scene Note', 'quiet')}${B('history', 'Memory', 'quiet')}
+    ${B('users', 'Member list', 'quiet', `data-toggle="members" aria-pressed="${state === 'profile' || state === 'cast'}"`)}
+    <span class="find">${I('search')}Search</span>
+  </div>
+</header>`;
+
+const actsFull = () => `<div class="acts" role="toolbar" aria-label="Message actions">
+  ${B('pen', 'Edit', 'quiet')}${B('copy', 'Copy', 'quiet')}<span class="sp"></span>
+  ${B('redo', 'Regenerate as a new version', 'quiet')}${B('play', 'Continue generation', 'quiet')}<span class="sp"></span>
+  ${B('eye', 'Hide from AI', 'quiet')}<button class="bk quiet fc" aria-label="Final Cut: 2 passes applied" title="Final Cut: 2 passes applied">${I('scissors')}2</button>
+  ${B('more', 'More message actions', 'quiet')}<span class="sp"></span>${B('trash', 'Delete', 'quiet danger')}
+</div><span class="tip">Regenerate as a new version</span>`;
+const actsUser = () => `<div class="acts" role="toolbar" aria-label="Message actions">
+  ${B('pen', 'Edit', 'quiet')}${B('copy', 'Copy', 'quiet')}<span class="sp"></span>${B('redo', 'Ask again for a reply', 'quiet')}<span class="sp"></span>
+  ${B('eye', 'Hide from AI', 'quiet')}${B('more', 'More message actions', 'quiet')}<span class="sp"></span>${B('trash', 'Delete', 'quiet danger')}
+</div>`;
+
+const list = (state) => `<div class="m-list">
+  <div class="datesep">Monday, October 26, 2026</div>
+  <div class="msg first"><div class="gut"><span class="av p">IM</span></div><div>
+    <div class="hd"><b class="nm-p">Ines Marlowe</b><span class="rb p">Persona</span><span class="ts">Today at 9:41 PM</span><span class="n">#44</span></div>
+    <p>I pull the green ledger off the shelf and wipe the silt from its spine. <q>"It says Canal District, but the binding is newer than the water line."</q></p></div>
+    ${actsUser()}</div>
+  <div class="msg"><div class="gut"><span class="t">9:41</span></div><div><p>I hold it up to the lantern. <em>The ink bleeds exactly where the map folds.</em></p></div></div>
+
+  <div class="msg first target ${state === 'hover' ? 'hover' : ''}" data-msg>
+    <div class="reply"><span class="cn"></span><span class="rw"><span class="av xs p">IM</span><b class="nm-p">Ines Marlowe</b><span>I pull the green ledger off the shelf and wipe the silt from its spine...</span></span></div>
+    <div class="gut"><span class="av">VL</span></div><div>
+    <div class="hd"><b class="nm-c">Vera Lindqvist</b><span class="rb c">Character</span><span class="ts">Today at 9:43 PM</span><span class="n">#45</span></div>
+    <p>The lantern gutters. Somewhere below the stacks, water is moving. <q>"Do not open that one,"</q> Vera says, and her voice is smaller than the room. <em>She has seen this binding before, on a map that should not exist.</em></p>
+    <div class="embed"><div class="img">archive-stacks.png</div><div class="cp"><span>My Pictures</span><span>The flooded archive</span></div></div>
+    <div class="meta"><span class="pager"><button class="bk quiet" aria-label="Previous version">${I('left')}</button>2 / 3<button class="bk quiet" aria-label="Next version">${I('right')}</button></span><span class="dts"><i></i><i class="cur"></i><i></i></span><button class="lk">Compare</button><span>Sonnet 4.5 · 4.1 s · stop</span></div></div>
+    ${actsFull()}</div>
+
+  <div class="datesep new">New messages</div>
+  <div class="msg first hid"><div class="gut"><span class="av p">IM</span></div><div>
+    <div class="hd"><b class="nm-p">Ines Marlowe</b><span class="rb p">Persona</span><span class="ts">Today at 9:47 PM</span><span class="n">#46</span></div>
+    <p>(Out of character) Skip the lecture about maps and let me find the hidden door instead.</p>
+    <span class="hidtag">${I('eyeoff')}Hidden from AI</span></div></div>
+  <div class="msg first"><div class="gut"><span class="av">VL</span></div><div>
+    <div class="hd"><b class="nm-c">Vera Lindqvist</b><span class="rb c">Character</span><span class="ts">Today at 9:48 PM</span><span class="n">#47</span></div>
+    <p><q>"The door is behind you,"</q> she says, without turning. <q>"It has been behind you since the lamp went out."</q></p>
+    <div class="meta"><span>Sonnet 4.5 · 2.8 s · stop</span></div></div></div>
+</div>`;
+
+const toolRow = (ic, label, sub, key) => `<button class="mi" role="menuitem">${I(ic)}<span class="st">${label}<span>${sub}</span></span><small>${key}</small></button>`;
+const toolsPop = () => `<div class="tools-pop"><div class="menu" role="menu" aria-label="Writing tools">
+  <div class="cap">Change the reply</div>
+  ${toolRow('redo', 'Regenerate', 're-roll last AI message', 'Ctrl+Shift+R')}
+  ${toolRow('spark', 'Guided re-roll', 're-run the last AI message with instructions', '')}
+  ${toolRow('play', 'Continue', 'extend last reply', 'Ctrl+Shift+C')}
+  ${toolRow('wand', 'Correct', 'fix last AI message in place', '')}
+  <div class="msep"></div><div class="cap">Write in character</div>
+  ${toolRow('user', 'Expand as character', 'turn your outline into a full in-character message', '')}
+  <div class="msep"></div><div class="cap">Input</div>
+  ${toolRow('pen', 'Polish Input', 'spellcheck what you typed', '')}
+  <div class="msep"></div><div class="cap">Debug</div>
+  <button class="mi" role="menuitemcheckbox" aria-checked="false">${I('bug')}<span>Prompt Inspector: Off</span><span class="tgl"><i></i></span></button>
+</div></div>`;
+
+const comp = (mode = 'ready') => `<div class="m-comp">
+  ${mode === 'steer' ? `<div class="strip">${I('redo')}<b>Steering Vera Lindqvist's last reply</b><span>Your next send becomes the regen instruction. Empty means re-roll without instruction.</span><button class="bk quiet" style="min-height:26px">${I('x')}Cancel</button></div>` : ''}
+  <div class="field-row">
+    <button class="bk icon plus" aria-label="Writing tools" title="Writing tools" data-toggle="tools">${I('plus')}</button>
+    <span class="ta ${mode === 'off' ? 'off' : ''}">${mode === 'off' ? 'Pick a connection to start the scene.' : mode === 'steer' ? 'Tell the AI how to retake the message, or send with no text to re-roll...' : 'Message The flooded archive'}</span>
+    ${mode === 'off' ? `<button class="bk quiet">Open AI wing</button>` : B('pen', 'Polish Input', 'quiet') + B('user', 'Expand as character', 'quiet')}
+    ${mode === 'busy' ? `<button class="bk icon danger" aria-label="Stop" title="Stop">${I('stop')}</button>` : `<button class="bk icon primary" aria-label="${mode === 'steer' ? 'Regenerate' : 'Send'}" title="${mode === 'steer' ? 'Regenerate (ESC to cancel)' : 'Send'}">${I(mode === 'steer' ? 'redo' : 'send')}</button>`}
+  </div>
+  ${mode === 'ready' ? toolsPop() : ''}
+</div>`;
+
+function mi(ic, label, key, cls = '') { return `<button class="mi ${cls}" role="menuitem">${I(ic)}<span>${label}</span><small>${key}</small></button>`; }
+const ctxMenu = () => `<div class="ctx"><div class="menu" role="menu" aria-label="Message menu">
+  ${mi('pen', 'Edit message', 'E')}${mi('copy', 'Copy text', 'C')}
+  <div class="msep"></div>
+  ${mi('redo', 'Regenerate as a new version', 'Ctrl+Shift+R')}${mi('play', 'Continue generation', 'Ctrl+Shift+C')}
+  <div class="msep"></div>
+  ${mi('eye', 'Hide from AI', '')}${mi('scissors', 'Final Cut: 2 passes', '')}
+  <div class="msep"></div>
+  ${mi('redo', 'Undo last edit', '')}${mi('history', 'Edit history', '2')}${mi('branch', 'Branch from here', '')}${mi('redo', 'Retake from here', '')}
+  <div class="msep"></div>
+  ${mi('spark', 'Writing tools', '&rsaquo;')}
+  <div class="msep"></div>
+  ${mi('redo', 'Remove version 2 of 3', '', 'danger')}${mi('trash', 'Delete', '&rsaquo;', 'danger hot')}
+  <div class="menu fly" role="menu" aria-label="Delete">
+    ${mi('trash', 'Delete this message', '')}<div class="msep"></div>${mi('trash', 'Delete this &amp; all after', '', 'danger')}
+  </div>
+</div></div>`;
+
+const mem = (cls, ini, av, name, nameCls, badge, sub, dot, acts) => `<div class="mrow ${cls}"><span class="av s ${av}">${ini}<span class="sdot ${dot}"></span></span><span class="tx"><b class="${nameCls}">${name}${badge}</b><small>${sub}</small></span><span class="rowacts">${acts}</span></div>`;
+const right = () => `<aside class="m-right" aria-label="Member list">
+  <div class="rtop"><span class="cap">Members</span>${B('x', 'Close member list', 'quiet', 'data-toggle="members"')}</div>
+  <button class="cat cap" aria-expanded="true">${I('down')}<span class="grow">Characters, 1</span></button>
+  ${mem('banner sel', 'VL', '', 'Vera Lindqvist', 'nm-c', '<span class="rb c">Character</span>', 'Speaking now', '', B('user', 'Open profile', 'quiet') + B('more', 'More', 'quiet'))}
+  <button class="cat cap" aria-expanded="true">${I('down')}<span class="grow">Participants, 2</span>${`<span class="bk icon quiet" role="img" aria-label="Add participant">${I('plus')}</span>`}</button>
+  ${mem('', 'CA', 'l', 'Corvin Ash', 'nm-l', '', 'Joins when mentioned', '', B('mute', 'Mute in this scene', 'quiet') + B('more', 'More', 'quiet'))}
+  ${mem('dim', 'MD', 'k', 'Mara Dellacroix', 'nm-k', '', 'Muted in this scene', 'off', B('mute', 'Unmute', 'quiet') + B('more', 'More', 'quiet'))}
+  <button class="cat cap" aria-expanded="true">${I('down')}<span class="grow">Persona, 1</span></button>
+  ${mem('', 'IM', 'p', 'Ines Marlowe', 'nm-p', '<span class="rb p">Persona</span>', 'Writing the flooded archive', '', B('pen', 'Edit persona', 'quiet'))}
+  <div class="rfoot"><button class="bk">${I('uplus')}Add participant</button></div>
+</aside>
+<div class="pop" role="dialog" aria-label="Vera Lindqvist profile"><div class="ban"></div>
+  <div class="top"><span class="av" style="font-size:24px">VL<span class="sdot"></span></span><button class="bk sm" style="margin-bottom:4px">${I('pen')}Edit card</button></div>
+  <div class="inner"><h3 class="nm-c">Vera Lindqvist <span class="rb c">Character</span></h3><div class="sub">Archivist of the drowned stacks</div>
+    <div class="sec"><div class="cap">About</div><p>Keeps the district's ledgers and has stopped trusting maps. Dry, watchful, never raises her voice.</p></div>
+    <div class="sec"><div class="cap">In this scene</div><p>The flooded archive, take "Director's Cut", 48 messages.</p>
+      <div class="chips"><span class="chip"><i></i>Canal District</span><span class="chip">Story Director</span><span class="chip">Regex (2)</span></div></div>
+    <div class="foot"><button class="bk">${I('book')}Lorebooks</button><button class="bk">${I('scan')}Memory</button></div></div>
+</div>`;
+
+const feat = () => `<aside class="m-right feat" aria-label="Story Director">
+  <div class="rtop"><span class="cap">Story Director</span>${B('x', 'Close panel', 'quiet', 'data-toggle="feature"')}</div>
+  <button class="cat cap" aria-expanded="true">${I('down')}<span class="grow">Arc 2: The forged maps</span></button>
+  <div class="mrow"><span class="tx"><b>Beat 1: The green ledger</b><small>Done</small></span></div>
+  <div class="mrow sel"><span class="tx"><b>Beat 3: The hidden door</b><small>Now, 2 messages in</small></span></div>
+  <div class="mrow"><span class="tx"><b>Beat 4: Who paid the forger</b><small>Next</small></span></div>
+  <button class="cat cap" aria-expanded="true">${I('down')}<span class="grow">Director's note</span></button>
+  <div class="mrow"><span class="tx"><small style="white-space:normal">Let Vera withhold what she saw on the old map until Ines asks twice.</small></span></div>
+  <div class="rfoot"><button class="bk">${I('pen')}Edit arc</button></div>
+</aside>`;
+const app = (state) => `<div class="frame" data-state="${state}">
+  ${rail()}${side()}
+  <section class="m-main" aria-label="Conversation">${head(state)}${list(state)}${comp()}${ctxMenu()}</section>
+  ${right()}${feat()}
+</div>`;
+
+const STATES = [
+  ['default', 'Default', '<b>Default.</b> Rail: Home, the open character with the pill and a red-filled tile, a folder of today\'s recents (unread dot and count badges), a collapsed folder of older ones, a dashed "+" for a new scene and Browse Characters (today\'s button and the Recent characters list). Sidebar: header with the character name and chevron (opens the character menu) and an Invite participants button; categories in small caps with a + at the right: Scenes (the open scene highlighted, with hover actions Invite and a gear that opens Scene settings, its takes as threads under an L connector), Active features (the Prop pills), User panel pinned at the bottom: persona avatar with status dot, colored name with a Persona badge, status line, then AI connection, switch persona and a gear that opens Your settings. Header: hash, scene name, dim topic, Takes pill and Update badge (today\'s header controls), Scene Note, Memory, member toggle and search.'],
+  ['hover', 'Hover action bar visible', '<b>Hover.</b> The bar floats on the message\'s top right edge and carries what a message offers today, in today\'s order and separators: Edit, Copy | Regenerate as a new version, Continue generation | Hide from AI, Final Cut (badge with pass count, red when a pass failed), More | Delete. Your own messages get Ask again for a reply instead of Regenerate and Continue. Versions, Compare, model and time stay on the meta line. Messages show a role badge pill after the colored name, a curved reply connector to the message it answers, and a picture embed.'],
+  ['profile', 'Right panel open with profile card', '<b>Member list and profile.</b> The member toggle in the header opens the list: Characters, Participants, Persona, each with a count, presence dot, colored name, badge pill and status line; the character row carries a banner background from its card art (replaces the portrait aside). Clicking a member (or an avatar in the list) opens the profile popout beside the panel: banner, avatar, name, role, About, "In this scene" chips and shortcuts to Lorebooks and Memory. Edit card opens the character page in the settings layer.'],
+  ['cast', 'Member list only', '<b>Member list.</b> Hover a row for its actions: open profile, mute in this scene, more. This is today\'s Participants tab and My Persona entry; the + in the header and the foot button both open the participant picker.'],
+  ['menu', 'Message context menu open', '<b>Context menu.</b> Right-click any message (here Vera\'s #45). One menu holds every message action: the hover bar items with their shortcuts, today\'s More items (Undo last edit, Edit history with its count, Branch from here, Retake from here), the Writing tools submenu (Guided re-roll, Correct, Expand as character), then the destructive rows: Remove version 2 of 3 and a Delete submenu with its two scopes (this message; this and all after). Disabled rows keep today\'s reasons as tooltips.'],
+  ['charmenu', 'Character menu open', '<b>Character menu.</b> The character name with its chevron at the top of the sidebar is Discord\'s server menu. First item Character settings opens the Character settings layer (the character\'s own pages: card, lorebooks it carries, regex, art and the like). Also: Invite participants (the participant picker), Notification settings, Hide muted scenes and Leave. Leave only hides the character from the rail; nothing is deleted.'],
+  ['feature', 'Active feature in the right panel', '<b>Active feature.</b> Story Director and Regex stay in the sidebar only because they are live panels: a click opens the Prop panel in the right side panel, in place of the member list (same toggle closes it). Everything else that used to be a rail program now sits in Scene settings or Character settings.'],
+  ['tools', 'Composer "+" tools menu open', '<b>Composer tools.</b> In the wide rounded pill the "+" (where Discord puts attachments) opens today\'s tool menu with its four sections (Change the reply, Write in character, Input, Debug), each tool\'s sublabel and shortcut, and the Prompt Inspector toggle. Polish Input and Expand as character repeat as icon buttons on the right, where Discord keeps gift, GIF and emoji. Send is the page\'s one primary button.']
+];
+
+const host = document.getElementById('states');
+STATES.forEach(([id, title, note]) => {
+  const sec = document.createElement('section'); sec.className = 'wf-sec';
+  sec.innerHTML = `<div class="wf-state">${title}</div><div class="scroll-x">${app(id)}</div><p class="wf-note" style="margin-top:.7rem">${note}</p>`;
+  host.appendChild(sec);
+});
+document.getElementById('cstrip').innerHTML =
+  ['steer', 'off', 'busy'].map((m) => `<div class="lab">${{ steer: 'Steering a retake', off: 'No connection', busy: 'Reply streaming' }[m]}</div>${comp(m)}`).join('');
+
+document.querySelectorAll('.frame').forEach((f) => {
+  f.addEventListener('click', (e) => {
+    const t = e.target.closest('[data-toggle]');
+    if (t) {
+      const k = t.dataset.toggle, s = f.dataset.state, open = s === 'profile' || s === 'cast';
+      if (k === 'members') f.dataset.state = open ? 'default' : 'profile';
+      if (k === 'charmenu') f.dataset.state = s === 'charmenu' ? 'default' : 'charmenu';
+      if (k === 'feature') f.dataset.state = s === 'feature' ? 'default' : 'feature';
+      if (k === 'tools') f.dataset.state = s === 'tools' ? 'default' : 'tools';
+      const pr = f.dataset.state === 'profile' || f.dataset.state === 'cast';
+      f.querySelector('.m-head [data-toggle=members]')?.setAttribute('aria-pressed', pr);
+      return;
+    }
+    if (e.target.closest('.mrow') && f.dataset.state === 'cast') { f.dataset.state = 'profile'; return; }
+    if (['menu', 'tools', 'charmenu'].includes(f.dataset.state)) f.dataset.state = 'default';
+  });
+  f.addEventListener('contextmenu', (e) => {
+    if (!e.target.closest('[data-msg]')) return;
+    e.preventDefault(); f.dataset.state = 'menu';
+  });
+});
+</script>
+</body>
+</html>

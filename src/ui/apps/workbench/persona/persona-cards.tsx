@@ -101,7 +101,7 @@ export function SectionCard({
         <>
           <p className={s.traitsHead}>Traits</p>
           <div className={s.traits}>
-            {(body.traits ?? []).map((t) => (
+            {(body.traits ?? []).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (t) => (
               <Chip key={t} title="Remove this trait" onClick={() => onBody((b) => toggleTrait(b, t), "traits")}>{t} &#215;</Chip>
             ))}
             {newTrait === null ? (

@@ -63,7 +63,7 @@ export function HarePopover({ panelRef, traceState, density, group, sort, showMi
           </div>
           {repliesOpen && (
             <div className="hare-replies">
-              {trace.replies.map((r) => (
+              {trace.replies.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (r) => (
                 <MenuItem key={r.messageId} onClick={() => { setRepliesOpen(false); onPickReply(r.messageId); }}>Reply #{r.number}</MenuItem>
               ))}
             </div>

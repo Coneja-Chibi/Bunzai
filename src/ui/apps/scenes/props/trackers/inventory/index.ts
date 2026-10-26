@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { InventoryPanel } from "./inventory-panel";
+import { summaryLine } from "./summary";
 
 export const inventoryProp = trackerProp({
   module: "inventory",
@@ -16,4 +17,5 @@ export const inventoryProp = trackerProp({
   title: "Inventory",
   noun: "Inventory",
   Panel: InventoryPanel,
+  summary: summaryLine,
 });

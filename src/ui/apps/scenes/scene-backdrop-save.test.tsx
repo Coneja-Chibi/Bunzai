@@ -83,6 +83,17 @@ describe("the backdrop picker's sliders", () => {
     flushSync(() => root.unmount());
   });
 
+  test("the blur slider saves with the dim it sits beside, and zero blur leaves the field out", async () => {
+    const flushSync = await open();
+    drag(flushSync, "Blur", 12);
+    await settle(flushSync, 450);
+    expect(saves).toEqual([{ pack: "st", item: "a", dim: 0.6, blur: 12 }]);
+    drag(flushSync, "Blur", 0);
+    await settle(flushSync, 450);
+    expect(saves[1]).toEqual({ pack: "st", item: "a", dim: 0.6 });
+    flushSync(() => root.unmount());
+  });
+
   test("closing the picker inside that window still saves the change", async () => {
     const flushSync = await open();
     drag(flushSync, "Overlay darkness", 0.8);

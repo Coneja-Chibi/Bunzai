@@ -11,7 +11,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Empty, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Block, Empty, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 
@@ -54,7 +54,7 @@ export function MemoriesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX
       <div className="it-search">
         <div className="it-filters" role="group" aria-label="NPC" style={{ paddingBottom: 0 }}>
           <Chip pressed={npc === null} onClick={() => setNpc(null)}><Ic name="lucide:users" size={14} /><span>All NPCs</span><span className="it-count">{all.length}</span></Chip>
-          {npcNames(j).map((n) => (
+          {npcNames(j).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (n) => (
             <Chip key={n} pressed={npc === n} onClick={() => setNpc(n)}><Ic name="lucide:user" size={14} /><span>{n}</span><span className="it-count">{all.filter((m) => m.npcName === n).length}</span></Chip>
           ))}
         </div>
@@ -62,9 +62,8 @@ export function MemoriesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX
       <Tabs<Tab> tabs={tabs} value={tab} onChange={setTab} />
       <div className="st-body">
         {shown.length > 0 ? (
-          <div className="it-list">
-            {shown.map((m) => (
-              <ItemCard key={m.id} color={CAT_TONE[m.category]} icon={<Ic name={CAT_ICON[m.category]} size={14} />} title={m.content.includes(": ") ? titleOf(m.content) : CAT_NAME[m.category]}
+          <ItemList items={shown} render={(m) => (
+              <ItemCard color={CAT_TONE[m.category]} icon={<Ic name={CAT_ICON[m.category]} size={14} />} title={m.content.includes(": ") ? titleOf(m.content) : CAT_NAME[m.category]}
                 meta={<>{m.content.includes(": ") && <span className="it-line">{CAT_NAME[m.category]}</span>}{npc === null && <span className="it-line"><Ic name="lucide:user" size={12} />{m.npcName}</span>}</>}
                 preview={body(m.content)}
                 right={<div className="it-pillcol"><Tag tone={WEIGHT_TONE[m.emotionalWeight]} icon={WEIGHT_ICON[m.emotionalWeight]}>{WEIGHT_NAME[m.emotionalWeight]}</Tag><Tag tone={SENT_TONE[m.sentiment]} icon={SENT_ICON[m.sentiment]}>{m.sentiment}</Tag></div>}
@@ -80,8 +79,7 @@ export function MemoriesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX
                 </div>
                 <div className="it-fine"><div>Formed: {new Date(m.timestamp).toLocaleString()}</div></div>
               </ItemCard>
-            ))}
-          </div>
+            )} />
         ) : <Empty icon="lucide:brain" title="No memories recorded" hint="NPC memories will form as the story progresses" />}
         {note && <p className="it-error" role="alert">{note}</p>}
         <AddByModel<Mem> ctx={ctx} chatId={chat.id} ask={ASK} label="Add Memory" noun="memory" namePlaceholder="NPC name" guidePlaceholder="Guide the AI... (e.g., 'a childhood trauma')"

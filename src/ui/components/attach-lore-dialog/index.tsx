@@ -7,7 +7,10 @@ import { Button } from "../button";
 import { useMemo, useState, type JSX } from "react";
 import type { StudioEntitySummary } from "../../app-contract";
 import { InkDialog } from "../ink-dialog";
+import { VirtualRows } from "../../_shared/virtual-list";
 import styles from "./styles.module.css";
+
+const BOOK_ROW_PX = 46;
 
 export interface AttachLoreDialogProps {
   books: readonly StudioEntitySummary[];
@@ -49,21 +52,19 @@ export function AttachLoreDialog({
         {available.length === 0 ? (
           <p className={styles.empty}>Every lorebook in your Library is already attached.</p>
         ) : (
-          <ul className={`${styles.list} scrollThin`}>
-            {available.map((b) => (
-              <li key={b.id}>
-                <label className={`${styles.row}${picked.has(b.id) ? ` ${styles.rowOn}` : ""}`}>
-                  <input
-                    type="checkbox"
-                    className={styles.check}
-                    checked={picked.has(b.id)}
-                    onChange={() => toggle(b.id)}
-                  />
-                  <span className={styles.name}>{b.name || "Untitled lorebook"}</span>
-                </label>
-              </li>
-            ))}
-          </ul>
+          <div className={`${styles.list} scrollThin`}>
+            <VirtualRows items={available} keyOf={(b) => b.id} estimate={BOOK_ROW_PX} gap={9} render={(b) => (
+              <label className={`${styles.row}${picked.has(b.id) ? ` ${styles.rowOn}` : ""}`}>
+                <input
+                  type="checkbox"
+                  className={styles.check}
+                  checked={picked.has(b.id)}
+                  onChange={() => toggle(b.id)}
+                />
+                <span className={styles.name}>{b.name || "Untitled lorebook"}</span>
+              </label>
+            )} />
+          </div>
         )}
         <div className={styles.actions}>
           <Button variant="quiet" onClick={onDismiss}>

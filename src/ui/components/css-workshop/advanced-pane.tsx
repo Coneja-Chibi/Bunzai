@@ -72,7 +72,7 @@ export function CssAdvancedPane({
             <p className={styles.hint}>No rules parsed yet. Type CSS on the left or import a file.</p>
           ) : null}
           <div className={styles.ruleList}>
-            {doc.rules.map((r) => (
+            {doc.rules.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (r) => (
               <ListRow
                 key={r.id}
                 label={summarizeRule(r)}

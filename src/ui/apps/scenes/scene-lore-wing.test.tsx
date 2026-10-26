@@ -7,6 +7,7 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from "bun:test";
 import { createElement } from "react";
+import type { StudioEntitySummary } from "../../app-contract";
 import { expectWindowed } from "../../_shared/test-dom";
 import {
   bodyOf, bookRow, BOOKS, byLabel, byText, entry, entryRow, installLoreDom, loreCtx, mountWing, openBook, openEntry, press, pressKey, q, qa, rig, resetLore, settle, text, typeInto, unmount, waitFor,
@@ -236,6 +237,14 @@ describe("adding a book", () => {
     await press(flushSync, rows[1]);
     expect(rig.setLore).toEqual([{ chatId: "chat1", lore: { added: ["b2", "b4"], off: ["b3"] } }]);
     await waitFor(flushSync, () => rig.loads.includes("b4") && q(".wl-ents"), "the added book to open");
+    unmount(flushSync);
+  });
+
+  test("a 500-book library mounts fewer than 60 rows", async () => {
+    rig.library = Array.from({ length: 500 }, (_, i) => ({ kind: "lorebook", id: `lib${String(i)}`, name: `Book ${String(i)}`, hasPortrait: false }) as StudioEntitySummary);
+    const flushSync = await mountWing();
+    await press(flushSync, byLabel("Browse / add lorebooks"));
+    expectWindowed(rig.host, "[data-part='scene.lore.book-row']", 500, 60);
     unmount(flushSync);
   });
 

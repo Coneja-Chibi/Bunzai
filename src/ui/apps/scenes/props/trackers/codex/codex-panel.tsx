@@ -12,7 +12,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Chips, Empty, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Block, Chips, Empty, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 import { CodexSections } from "./codex-parts";
@@ -48,17 +48,43 @@ export function CodexPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
   const speciesName = (c: Creature): string => cx.species.find((s) => s.id === c.speciesId)?.name ?? "Unknown species";
   const showSpecies = tab !== "creatures" ? species : [];
   const showCreatures = tab !== "species" ? creatures : [];
+  const entries = [...showSpecies.map((sp) => ({ id: `s:${sp.id}`, sp })), ...showCreatures.map((c) => ({ id: `c:${c.id}`, c }))];
   return (
     <TrackerFrame label="Creature Codex" title="Creature Codex" icon="lucide:paw-print" tone="color-mix(in srgb,var(--stage-link) 50%,var(--stage-ok))" tokens={tokensOf(codexLines(cx))} view={view} {...(popOut ? { popOut } : {})}
       description="Bestiary entries, creature stats, ecology, and weaknesses."
       onClear={() => view.apply((d) => ({ ...readCodex(undefined), subs: d.subs }), "Cleared")}>
       <Tabs<Tab> tabs={TABS(species.length, creatures.length)} value={tab} onChange={setTab} />
       <div className="st-body">
-        <div className="it-list">
-          {showSpecies.map((sp) => {
+        <ItemList items={entries} render={(row) => {
+          if ("c" in row) {
+            const c = row.c;
+            return (
+              <ItemCard color={STATUS_TONE[c.status]} icon={<Ic name="lucide:paw-print" size={16} />} title={c.nickname || `Unnamed ${speciesName(c)}`}
+                meta={<><span>{speciesName(c)}</span><span className="it-line"><Ic name="lucide:map-pin" size={12} />{c.location}</span></>}
+                preview={`${c.condition}. ${c.mood}.`}
+                right={<div className="it-pillcol"><Tag tone={STATUS_TONE[c.status]}>{c.status}</Tag></div>}
+                under={c.bond !== undefined || c.trust !== undefined ? <div className="cx-bt">{c.bond !== undefined && <div><small>Bond</small><div className="bd-bar thin"><div style={{ width: `${c.bond}%`, background: "var(--stage-danger-text)" }} /></div></div>}{c.trust !== undefined && <div><small>Trust</small><div className="bd-bar thin"><div style={{ width: `${c.trust}%`, background: "var(--stage-link)" }} /></div></div>}</div> : null}
+                open={open === c.id} onToggle={() => setOpen(open === c.id ? null : c.id)}>
+                <RefreshByModel<CreatureMade> ctx={ctx} chatId={chat.id} ask={CREATURE_ASK} noun="creature" existing={{ ...c, speciesName: speciesName(c) }} preview={(m) => <CreaturePreview c={m} known />} accept={(m) => act({ kind: "refreshCreature", id: c.id, creature: m })}
+                  extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete creature" onClick={inner(() => { act({ kind: "removeCreature", id: c.id, at: Date.now() }, `Deleted ${c.nickname || "the creature"}`); setOpen(null); })}>Delete</Button></span>} />
+                {c.temperament && <Block title="Temperament"><p>{c.temperament}</p></Block>}
+                {c.appearance && <Block title="Appearance"><p>{c.appearance}</p></Block>}
+                {c.traits && c.traits.length > 0 && <Block title="Traits"><Chips items={c.traits} /></Block>}
+                {c.behaviors && c.behaviors.length > 0 && <Block title="Behaviors"><Chips items={c.behaviors} /></Block>}
+                <CodexSections e={c} {...(c.currentStats ? { stats: { label: "Current Stats", s: c.currentStats } } : {})} />
+                {c.notes && <Block title="Notes"><p>{c.notes}</p></Block>}
+                {c.encounters.length > 0 && (
+                  <Block title={`Encounters (${c.encounters.length})`}>
+                    {c.encounters.map(/* bounded-ok: encounters are capped at MAX_ENCOUNTERS (30) */ (e, i) => <div key={`${e.date}${i}`} className="cx-item"><div><b>{e.date}</b><Tag tone="var(--stage-mute)">{e.outcome}</Tag></div><p>{e.description}</p>{e.notes && <small>{e.notes}</small>}</div>)}
+                  </Block>
+                )}
+              </ItemCard>
+            );
+          }
+          const sp = row.sp;
             const tone = RARITY_TONE[sp.rarity];
             return (
-              <ItemCard key={sp.id} color={tone} icon={<Ic name={RARITY_ICON[sp.rarity]} size={16} />} title={sp.name}
+              <ItemCard color={tone} icon={<Ic name={RARITY_ICON[sp.rarity]} size={16} />} title={sp.name}
                 meta={(
                   <div className="cx-tax">
                     {sp.taxonomy ? (
@@ -83,35 +109,12 @@ export function CodexPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                 <CodexSections e={sp} {...(sp.baseStats ? { stats: { label: "Stats", s: sp.baseStats } } : {})} />
                 {creaturesOf(cx, sp.id).length > 0 && (
                   <Block title={`Known Creatures (${creaturesOf(cx, sp.id).length})`}>
-                    {creaturesOf(cx, sp.id).map((c) => <div key={c.id} className="cx-item"><div><b>{c.nickname || "Unnamed"}</b><Tag tone={STATUS_TONE[c.status]}>{c.status}</Tag></div><small>{c.condition}, {c.mood}</small>{c.bond !== undefined && <small>Bond {c.bond}{c.trust !== undefined ? ` | Trust ${c.trust}` : ""}</small>}</div>)}
+                    {creaturesOf(cx, sp.id).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (c) => <div key={c.id} className="cx-item"><div><b>{c.nickname || "Unnamed"}</b><Tag tone={STATUS_TONE[c.status]}>{c.status}</Tag></div><small>{c.condition}, {c.mood}</small>{c.bond !== undefined && <small>Bond {c.bond}{c.trust !== undefined ? ` | Trust ${c.trust}` : ""}</small>}</div>)}
                   </Block>
                 )}
               </ItemCard>
             );
-          })}
-          {showCreatures.map((c) => (
-            <ItemCard key={c.id} color={STATUS_TONE[c.status]} icon={<Ic name="lucide:paw-print" size={16} />} title={c.nickname || `Unnamed ${speciesName(c)}`}
-              meta={<><span>{speciesName(c)}</span><span className="it-line"><Ic name="lucide:map-pin" size={12} />{c.location}</span></>}
-              preview={`${c.condition}. ${c.mood}.`}
-              right={<div className="it-pillcol"><Tag tone={STATUS_TONE[c.status]}>{c.status}</Tag></div>}
-              under={c.bond !== undefined || c.trust !== undefined ? <div className="cx-bt">{c.bond !== undefined && <div><small>Bond</small><div className="bd-bar thin"><div style={{ width: `${c.bond}%`, background: "var(--stage-danger-text)" }} /></div></div>}{c.trust !== undefined && <div><small>Trust</small><div className="bd-bar thin"><div style={{ width: `${c.trust}%`, background: "var(--stage-link)" }} /></div></div>}</div> : null}
-              open={open === c.id} onToggle={() => setOpen(open === c.id ? null : c.id)}>
-              <RefreshByModel<CreatureMade> ctx={ctx} chatId={chat.id} ask={CREATURE_ASK} noun="creature" existing={{ ...c, speciesName: speciesName(c) }} preview={(m) => <CreaturePreview c={m} known />} accept={(m) => act({ kind: "refreshCreature", id: c.id, creature: m })}
-                extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete creature" onClick={inner(() => { act({ kind: "removeCreature", id: c.id, at: Date.now() }, `Deleted ${c.nickname || "the creature"}`); setOpen(null); })}>Delete</Button></span>} />
-              {c.temperament && <Block title="Temperament"><p>{c.temperament}</p></Block>}
-              {c.appearance && <Block title="Appearance"><p>{c.appearance}</p></Block>}
-              {c.traits && c.traits.length > 0 && <Block title="Traits"><Chips items={c.traits} /></Block>}
-              {c.behaviors && c.behaviors.length > 0 && <Block title="Behaviors"><Chips items={c.behaviors} /></Block>}
-              <CodexSections e={c} {...(c.currentStats ? { stats: { label: "Current Stats", s: c.currentStats } } : {})} />
-              {c.notes && <Block title="Notes"><p>{c.notes}</p></Block>}
-              {c.encounters.length > 0 && (
-                <Block title={`Encounters (${c.encounters.length})`}>
-                  {c.encounters.map((e, i) => <div key={`${e.date}${i}`} className="cx-item"><div><b>{e.date}</b><Tag tone="var(--stage-mute)">{e.outcome}</Tag></div><p>{e.description}</p>{e.notes && <small>{e.notes}</small>}</div>)}
-                </Block>
-              )}
-            </ItemCard>
-          ))}
-        </div>
+        }} />
         {showSpecies.length === 0 && showCreatures.length === 0 && <Empty icon="lucide:paw-print" title="No creatures recorded" hint="Creatures will be logged as the story progresses" />}
         {note && <p className="it-error" role="alert">{note}</p>}
         {tab !== "creatures" && (

@@ -16,7 +16,7 @@ import { AutoRetryRow, RuntimeNumbers } from "./director-runtime";
 import { PersonalityPicker } from "./personality-picker";
 import { useDirectorPanel } from "./use-director-panel";
 
-const CREATIVITY_LABEL: Readonly<Record<DirectorCreativity, string>> = { subtle: "Subtle", moderate: "Moderate", dramatic: "Dramatic" };
+export const CREATIVITY_LABEL: Readonly<Record<DirectorCreativity, string>> = { subtle: "Subtle", moderate: "Moderate", dramatic: "Dramatic" };
 
 export function DirectorSettings({ ctx, chat, onChat }: { ctx: AppContext; chat: Chat; onChat?(chat: Chat): void }): JSX.Element {
   const data = useDirectorPanel(ctx, chat);

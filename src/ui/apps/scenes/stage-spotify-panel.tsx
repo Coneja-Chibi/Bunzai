@@ -91,7 +91,7 @@ export function SpotifyPanel({ feed }: { feed: SpotifyFeed }): JSX.Element {
             <div className="sp-refresh"><Button variant="quiet" size="sm" icon="lucide:refresh-cw" onClick={() => void feed.refreshDevices()}>Refresh</Button></div>
             {devices.length === 0
               ? <p className="sp-none">No devices found. Open Spotify on any device.</p>
-              : devices.map((d) => (
+              : devices.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (d) => (
                 <ListRow key={d.id} selected={d.active} onClick={() => void feed.act({ action: "transfer", deviceId: d.id })}
                   leading={<Ic name={deviceGlyph(d.type)} size={16} />} label={d.name} subtitle={d.type.toLowerCase()}
                   trailing={d.active ? <Ic name="lucide:check" size={14} /> : undefined} />

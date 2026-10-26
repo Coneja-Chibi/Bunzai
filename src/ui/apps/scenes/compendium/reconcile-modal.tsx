@@ -95,7 +95,7 @@ function ReconcileModal({ ctx, chatId, groups, onClose }: { ctx: AppContext; cha
               <div className="gh"><b>{target}</b><small>{initial.length > 1 ? g.name : ""}</small>
                 {unresolved(picks).length > 1 && <Button size="sm" disabled={busy} onClick={() => void apply("mirror", unresolved(picks))}>Mirror group</Button>}
               </div>
-              {picks.map((p) => {
+              {picks.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (p) => {
                 const mark = markOf(p);
                 return (
                   <div className="row" key={pairKey(p.row)}>

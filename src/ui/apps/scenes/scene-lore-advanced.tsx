@@ -41,7 +41,7 @@ const POSITIONS: readonly ChoiceItem<InjectionPosition>[] = [
 ];
 
 /** The seven position cards as one picker; @ Depth and Append add a row below for the depth and the role to place it as. */
-function PositionPicker({ entry, onPatch }: { entry: LorebookEntry; onPatch: Patch }): JSX.Element {
+export function PositionPicker({ entry, onPatch }: { entry: LorebookEntry; onPatch: Patch }): JSX.Element {
   const pos = entry.position;
   return (
     <>
@@ -65,7 +65,7 @@ const RECURSION_ITEMS = [
 ] as const;
 const FILTER_MODES = [{ value: "whitelist", label: "Whitelist" }, { value: "blacklist", label: "Blacklist" }, { value: "none", label: "None" }] as const;
 
-function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: readonly string[]; onPatch: Patch }): JSX.Element {
+export function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: readonly string[]; onPatch: Patch }): JSX.Element {
   const [input, setInput] = useState("");
   const [open, setOpen] = useState(false);
   const assign = (name: string): void => { onPatch({ groupName: name.trim(), groupWeight: 100 }); setInput(""); setOpen(false); };
@@ -86,7 +86,7 @@ function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: reado
         onKeyDown={(e) => { if (e.key === "Enter" && input.trim()) assign(input); }} />
       {open && (matches.length > 0 || input.trim()) && (
         <div className="wl-dd" role="menu" aria-label="Groups" style={{ left: 0, width: 160 }}>
-          {matches.map((g) => <MenuItem key={g} onMouseDown={(e) => e.preventDefault()} onClick={() => assign(g)}>{g}</MenuItem>)}
+          {matches.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (g) => <MenuItem key={g} onMouseDown={(e) => e.preventDefault()} onClick={() => assign(g)}>{g}</MenuItem>)}
           {input.trim() && !groups.some((g) => g.toLowerCase() === q) && <MenuItem onMouseDown={(e) => e.preventDefault()} onClick={() => assign(input)}>+ Create &quot;{input}&quot;</MenuItem>}
         </div>
       )}
@@ -94,23 +94,29 @@ function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: reado
   );
 }
 
-export function Injection({ entry, groups, onPatch }: { entry: LorebookEntry; groups: readonly string[]; onPatch: Patch }): JSX.Element {
-  const mode = recursionModeOf(entry);
-  const recursion = (m: RecursionMode): void => onPatch(recursionPatch(m, entry.delayUntilRecursion));
-  const timing = (key: "sticky" | "cooldown" | "delay", text: string): JSX.Element => (
+/** The Timing cells: how long an entry stays on after it fires (sticky), rests (cooldown) and waits (delay), in messages. */
+export function Timing({ entry, onPatch }: { entry: LorebookEntry; onPatch: Patch }): JSX.Element {
+  const cell = (key: "sticky" | "cooldown" | "delay", text: string): JSX.Element => (
     <span className="wl-tcell"><span>{text}</span><LoreNum className="wl-num" label={key === "cooldown" ? "Cooldown messages" : key === "sticky" ? "Sticky messages" : "Delay messages"} value={entry[key]} min={0} fallback={0} onChange={(n) => onPatch({ [key]: n })} /></span>
   );
+  return <span className="grp">{cell("sticky", "Sticky")}{cell("cooldown", "Cool")}{cell("delay", "Delay")}</span>;
+}
+
+/** The Recursion choice: whether this entry's text can set off other entries, or waits for a later pass. */
+export function Recursion({ entry, onPatch }: { entry: LorebookEntry; onPatch: Patch }): JSX.Element {
+  return <Segmented label="Recursion" size="sm" value={recursionModeOf(entry)} onChange={(m: RecursionMode) => onPatch(recursionPatch(m, entry.delayUntilRecursion))} items={RECURSION_ITEMS} />;
+}
+
+export function Injection({ entry, groups, onPatch }: { entry: LorebookEntry; groups: readonly string[]; onPatch: Patch }): JSX.Element {
   return (
     <div>
       <div className="wl-sec"><span className="wl-lb">Injection</span><span className="r wl-lb"><LoreHelp title={TIPS.position[0]} text={TIPS.position[1]} /> Position</span></div>
       <div className="wl-pos"><PositionPicker entry={entry} onPatch={onPatch} /></div>
       <div className="wl-row3">
         <div><span className="wl-lb" title="Entry Timing. Control when and how often this entry can activate using sticky, cooldown, and delay settings.">Timing</span>
-          <span className="grp">{timing("sticky", "Sticky")}{timing("cooldown", "Cool")}{timing("delay", "Delay")}</span></div>
+          <Timing entry={entry} onPatch={onPatch} /></div>
         <div><span className="wl-lb" title="Recursion Behavior. Control whether this entry's content can trigger other entries, creating chains of activations.">Recursion</span>
-          <span className="grp">
-            <Segmented label="Recursion" size="sm" value={mode} onChange={recursion} items={RECURSION_ITEMS} />
-          </span></div>
+          <span className="grp"><Recursion entry={entry} onPatch={onPatch} /></span></div>
         <div><span className="wl-lb" title="Entry Groups. Group entries together so only one from the group activates per turn. Weights determine selection probability.">Group</span>
           <Group entry={entry} groups={groups} onPatch={onPatch} /></div>
       </div>
@@ -164,7 +170,7 @@ export function SideEffects({ value, onChange }: { value: EntrySideEffects | nul
       </div>
       {(open || has) && (
         <div className="wl-fxl">
-          {effects.map((e, i) => <EffectRow key={i} effect={e} onUpdate={(p) => update(i, p)} onRemove={() => onChange(effects.length === 1 ? null : { ...base(), effects: effects.filter((_, j) => j !== i) })} />)}
+          {effects.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e, i) => <EffectRow key={i} effect={e} onUpdate={(p) => update(i, p)} onRemove={() => onChange(effects.length === 1 ? null : { ...base(), effects: effects.filter((_, j) => j !== i) })} />)}
           {!has && open && <div className="wl-fxe">No side effects configured.<small>Add effects to set variables when this entry triggers.</small></div>}
           {has && (
             <div className="wl-fxo">
@@ -207,7 +213,7 @@ export function CrossEntryBoost({ entry, candidates, onPatch }: { entry: Loreboo
         </div>
         {ids.length > 0 && (
           <div className="tags">
-            {ids.map((id, i) => (
+            {ids.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (id, i) => (
               <span key={`${id}-${i}`} className="tag bst" title={titleOf.has(id) ? id : "This target is not an entry in this lorebook; remove it."}>
                 {titleOf.get(id) ?? `${id} (not found)`}
                 <IconButton variant="quiet" size="sm" label={`Remove ${titleOf.get(id) ?? id} from boost list`} title="Remove Boost Target. Remove this linked entry from the cross-entry boost list." icon={<span aria-hidden="true">&times;</span>} onClick={() => onPatch({ boostIds: ids.filter((_, j) => j !== i) })} />

@@ -22,7 +22,7 @@ export function WorldConcepts({ d, onOpen }: { d: Dashboard } & Open): JSX.Eleme
     <Cell title="World Concepts" dot={typeRole("worldbuilding")}>
       {shown.length === 0 ? <Empty>{d.counts.worldbuilding ? `${d.counts.worldbuilding} concepts indexed.` : "No concepts yet."}</Empty> : (
         <div className="cp-rail" style={tc("worldbuilding")}>
-          {shown.map((w) => <ListRow key={w.id} label={str(w, "topic") || w.name || BLANK} subtitle={str(w, "category") || undefined} onClick={() => onOpen(w.id)} />)}
+          {shown.map(/* bounded-ok: sliced to 24 above */ (w) => <ListRow key={w.id} label={str(w, "topic") || w.name || BLANK} subtitle={str(w, "category") || undefined} onClick={() => onOpen(w.id)} />)}
           {d.worldConcepts.length > 24 && <span className="more">+{d.worldConcepts.length - 24} more</span>}
         </div>
       )}

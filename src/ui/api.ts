@@ -260,6 +260,8 @@ export const api: AppContext["api"] = {
   setSceneDirectorSettings: async (chatId, patch) => postJson("/api/chats/director-settings", { chatId, patch }),
   backfillSceneSummary: async (chatId, signal) =>
     apiFetchJson("/api/chats/summary-backfill", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId }), ...(signal ? { signal } : {}) }),
+  summarizeSceneNow: async (chatId, signal) =>
+    apiFetchJson("/api/chats/summary-now", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId }), ...(signal ? { signal } : {}) }),
   searchSceneSummaries: async (query) => apiFetchJson(`/api/chats/summary-search?q=${encodeURIComponent(query)}`, { requireToken: false }),
   getSceneVariables: async (chatId) => apiFetchJson(`/api/chats/variables?chatId=${encodeURIComponent(chatId)}`, { requireToken: false }),
   getSceneVariableHistory: async (chatId, scope, key) => apiFetchJson(`/api/chats/variable-history?chatId=${encodeURIComponent(chatId)}&scope=${scope}&key=${encodeURIComponent(key)}`, { requireToken: false }),

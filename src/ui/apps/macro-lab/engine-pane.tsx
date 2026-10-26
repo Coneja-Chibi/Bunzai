@@ -92,7 +92,7 @@ export function EnginePane({
                 {"actually see:"}
               </p>
               <div className={styles.tokens}>
-                {result.unresolved.map((u) => (
+                {result.unresolved.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (u) => (
                   <code key={u.token} className={styles.deadToken}>
                     {u.count > 1 ? `${u.token} ×${u.count}` : u.token}
                   </code>
@@ -103,7 +103,7 @@ export function EnginePane({
             <p className={styles.quiet}>Every macro resolved. Nothing was left unexpanded.</p>
           )}
 
-          {result.warnings.map((w) => (
+          {result.warnings.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (w) => (
             <p key={w} className={styles.problem}>{w}</p>
           ))}
         </>

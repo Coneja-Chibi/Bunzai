@@ -39,7 +39,7 @@ export function EnemyCard({ enemy, current, onDamage, onHeal, onRemove }: { enem
         <IconButton variant="danger" size="sm" label={`Remove ${enemy.name}`} title="Remove" icon="lucide:x" onClick={onRemove} />
       </header>
       <div className="bt-bar"><div style={{ width: `${Math.min(100, percent)}%`, background: tone }} /></div>
-      {enemy.statusEffects.length > 0 && <div className="bt-tags">{enemy.statusEffects.map((s) => <span className="bt-tag" key={s}>{s}</span>)}</div>}
+      {enemy.statusEffects.length > 0 && <div className="bt-tags">{enemy.statusEffects.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s) => <span className="bt-tag" key={s}>{s}</span>)}</div>}
       {open && (
         <div className="bt-dmg">
           <input type="number" value={value} placeholder="Damage (+) or Heal (-)" aria-label="Damage or heal" autoFocus onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") apply(); }} />
@@ -81,7 +81,7 @@ export function TurnList({ order, current, round, enemies, onNext }: { order: re
   return (
     <div className="bt-turns">
       <div className="bt-turns-head"><span><Ic name="lucide:list-ordered" size={16} /> Turn Order</span><span>Round {round}<Button size="sm" icon="lucide:skip-forward" onClick={onNext}>Next Turn</Button></span></div>
-      {order.length === 0 ? <p className="bt-empty">Nobody in the turn order.</p> : order.map((id) => {
+      {order.length === 0 ? <p className="bt-empty">Nobody in the turn order.</p> : order.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (id) => {
         const e = enemies.find((x) => x.id === id);
         return <div key={id} className={`bt-turn${id === current ? " now" : ""}${e && e.hp <= 0 ? " down" : ""}`}><i /> <b>{e?.name ?? "Unknown"}</b>{e?.isBoss && <span className="bt-tag boss">BOSS</span>}</div>;
       })}
@@ -93,7 +93,7 @@ export function CombatLog({ log, onClear }: { log: readonly string[]; onClear():
   return (
     <div className="bt-log">
       <div className="bt-log-head"><span>Combat Log</span>{log.length > 0 && <Button variant="quiet" size="sm" onClick={onClear}>Clear</Button>}</div>
-      {log.length === 0 ? <p className="bt-empty">No combat activity yet...</p> : <ul>{log.map((l, i) => <li key={i}>{l}</li>)}</ul>}
+      {log.length === 0 ? <p className="bt-empty">No combat activity yet...</p> : <ul>{log.map(/* bounded-ok: the log is capped at LOG_MAX (100) by core/trackers/battle */ (l, i) => <li key={i}>{l}</li>)}</ul>}
     </div>
   );
 }
@@ -121,7 +121,7 @@ export function Dice({ history, onRoll, onClear }: { history: readonly DiceRoll[
       )}
       {history.length > 0 && (
         <div className="bt-hist"><div className="bt-log-head"><span>History</span><Button variant="quiet" size="sm" onClick={onClear}>Clear</Button></div>
-          <ul>{[...history].reverse().map((h, i) => <li key={`${h.at}:${i}`}><span>{h.expression}</span><b>{h.total}</b></li>)}</ul></div>
+          <ul>{[...history].reverse().map(/* bounded-ok: dice history is capped at DICE_MAX (20) by core/trackers/battle */ (h, i) => <li key={`${h.at}:${i}`}><span>{h.expression}</span><b>{h.total}</b></li>)}</ul></div>
       )}
     </div>
   );

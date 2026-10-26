@@ -81,7 +81,7 @@ export function EntryPicker({ title, entries, exclude, onPick, onCancel }: { tit
       <label className="se"><Ic name="lucide:search" size={12} /><input type="search" autoFocus value={query} placeholder="Search by name..." aria-label="Search by name" onChange={(e) => setQuery(e.target.value)} /></label>
       <small className="ct">{pool.length} {pool.length === 1 ? "entry" : "entries"}</small>
       <div className="list">
-        {pool.slice(0, SHOWN).map((e) => (
+        {pool.slice(0, SHOWN).map(/* bounded-ok: sliced to SHOWN above */ (e) => (
           <ListRow key={e.id} onClick={() => onPick(e)} leading={<i style={e.type ? { background: `var(${ENTRY_TYPE_INFO[e.type].token})` } : undefined} />} label={e.name} meta={e.type ? ENTRY_TYPE_INFO[e.type].label : "Classic"} />
         ))}
         {pool.length === 0 && <p className="none">No entries match.</p>}

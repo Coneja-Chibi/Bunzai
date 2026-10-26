@@ -16,19 +16,21 @@ const MODE_HELP: Record<CaptureMode, string> = {
 };
 const MODE_LABEL: Record<CaptureMode, string> = { auto: "Auto", only: "Only these", off: "Off" };
 
+/** The capture policy after the mode is changed: Only these starts from the Start Reply With tag and the common built-in tags when nothing was kept (one rule, shared by the Generation tab and the Messenger settings). */
+export function captureWithMode(value: ReasoningCapture | undefined, prefill: string | undefined, mode: CaptureMode): ReasoningCapture {
+  const policy: ReasoningCapture = value ? { ...normalizeCapture(value), custom: value.custom } : normalizeCapture(undefined);
+  if (mode === "only" && policy.custom.length === 0 && policy.builtinTags.length === 0) {
+    const own = prefillTag(prefill);
+    return { mode, custom: own?.close ? [{ open: own.open, close: own.close }] : [], builtinTags: [...DEFAULT_ONLY_BUILTIN_TAGS] };
+  }
+  return { ...policy, mode };
+}
+
 export function CatchThinking({ value, prefill, onChange }: { value: ReasoningCapture | undefined; prefill: string | undefined; onChange(next: ReasoningCapture): void }): JSX.Element {
   // Own rows still being typed (blank) are kept, which normalizing would drop.
   const policy: ReasoningCapture = value ? { ...normalizeCapture(value), custom: value.custom } : normalizeCapture(undefined);
   const picked = new Set(policy.builtinTags);
-  const selectMode = (mode: CaptureMode): void => {
-    if (mode === policy.mode) return;
-    if (mode === "only" && policy.custom.length === 0 && policy.builtinTags.length === 0) {
-      const own = prefillTag(prefill);
-      onChange({ mode, custom: own?.close ? [{ open: own.open, close: own.close }] : [], builtinTags: [...DEFAULT_ONLY_BUILTIN_TAGS] });
-      return;
-    }
-    onChange({ ...policy, mode });
-  };
+  const selectMode = (mode: CaptureMode): void => { if (mode !== policy.mode) onChange(captureWithMode(value, prefill, mode)); };
   const setCustom = (custom: CaptureDelimiter[]): void => onChange({ ...policy, custom });
   const updateRow = (index: number, patch: Partial<CaptureDelimiter>): void => setCustom(policy.custom.map((row, i) => (i === index ? { ...row, ...patch } : row)));
   const toggle = (tag: string): void => {
@@ -46,7 +48,7 @@ export function CatchThinking({ value, prefill, onChange }: { value: ReasoningCa
           <div className="gn-own">
             <span className="gn-cap">Your own tags</span>
             {policy.custom.length > 0 && <div className="gn-row gn-colh"><span>Opens with</span><span>Closes with</span><span className="sr-only">Remove</span></div>}
-            {policy.custom.map((row, index) => (
+            {policy.custom.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (row, index) => (
               <div key={index} className="gn-row">
                 <input type="text" className="gn-in" value={row.open} maxLength={CAPTURE_MAX_LENGTH} aria-label={`Opening text ${index + 1}`} placeholder="<plan>"
                   onChange={(e) => {

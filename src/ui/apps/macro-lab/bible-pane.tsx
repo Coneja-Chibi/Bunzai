@@ -72,7 +72,7 @@ export function BiblePane({
         </p>
       ) : (
         <div className={styles.rows}>
-          {shown.map((group) => {
+          {shown.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (group) => {
             // A search is a request to SEE the results, so matches open themselves. Collapsing
             // straight back to headings after typing would hide the thing that was asked for.
             const isOpen = searching || open.has(group.name);
@@ -89,7 +89,7 @@ export function BiblePane({
                   <>
                     <p className={styles.meaning}>{group.description}</p>
                     <ul className={styles.entries}>
-                      {group.macros.map((m) => (
+                      {group.macros.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (m) => (
                         <li key={m.macro} className={styles.entry}>
                           <Chip
                             title={`Insert ${m.macro}`}

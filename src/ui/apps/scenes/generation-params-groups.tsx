@@ -18,7 +18,7 @@ import { ParamCard, type ProviderInfo } from "./generation-params-card";
 import { CustomRequestParams } from "./generation-params-custom";
 import type { ScenePresetOwn } from "./use-scene-preset-own";
 
-const GROUPS: readonly { group: ParamGroup; title: string; icon: IconName; purpose: string; open?: boolean }[] = [
+export const GROUPS: readonly { group: ParamGroup; title: string; icon: IconName; purpose: string; open?: boolean }[] = [
   { group: "nucleus", title: "Nucleus Sampling", icon: "mdi:target", purpose: "Fine-grained word choice filters: Min P, Typical P, TFS, Top A.", open: true },
   { group: "penalties", title: "Repetition Penalties", icon: "mdi:repeat-off", purpose: "Stop the AI repeating words and phrases." },
   { group: "constraints", title: "Output Constraints", icon: "mdi:shield-lock-outline", purpose: "Where replies stop and how their output is shaped." },
@@ -70,7 +70,7 @@ function Group({ id, title, icon, purpose, defs, samplers, typed, provider, open
         summary={query.trim() ? `${shown.length} found` : `${n}/${defs.length} enabled`} />
       {expanded && (
         <div className="gp-cards">
-          {shown.map((d) => <ParamCard key={d.id} def={d} state={cardState(d, samplers.params, typed)} provider={provider} greyed={!parentOn(d, samplers.params, typed, PARAMS)} model={model} onChange={(c) => onChange(d, c)} />)}
+          {shown.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (d) => <ParamCard key={d.id} def={d} state={cardState(d, samplers.params, typed)} provider={provider} greyed={!parentOn(d, samplers.params, typed, PARAMS)} model={model} onChange={(c) => onChange(d, c)} />)}
         </div>
       )}
     </section>

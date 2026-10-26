@@ -100,7 +100,7 @@ export function PropsWing({ list, load, onToggle, onRetry, prefs, host }: {
       </div>
       <div className="pw-label">Built-In Props</div>
       <div className="pw-list">
-        {rows.map((p) => (
+        {rows.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (p) => (
           <div key={p.id}>
             <PropRow prop={p} on={on.has(p.id)} tips={tips} onToggle={() => onToggle(p.id, !on.has(p.id))} {...(gearOf(p) ? { onGear: gearOf(p)! } : {})} />
             {on.has(p.id) && p.Sub && host && <div className="pw-sub"><p.Sub ctx={host.ctx} chat={host.chat} {...(host.onChat ? { onChat: host.onChat } : {})} /></div>}
@@ -141,7 +141,7 @@ export function PropsWing({ list, load, onToggle, onRetry, prefs, host }: {
           </div>
         );
       })}
-      {list.filter((p) => on.has(p.id) && p.note).map((p) => <p className="prop-note" key={p.id}>{p.note}</p>)}
+      {list.filter((p) => on.has(p.id) && p.note).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (p) => <p className="prop-note" key={p.id}>{p.note}</p>)}
       <div className="pw-label">Coming Soon</div>
       <div className="pw-list">{SOON_PROPS.map((r) => <SoonPropRow key={r.id} row={r} tips={tips} />)}</div>
     </div>

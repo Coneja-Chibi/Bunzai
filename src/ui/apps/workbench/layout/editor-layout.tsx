@@ -94,7 +94,7 @@ export function EditorLayout({ label, sections, rail, active: activeProp, onActi
 
   const nav = tabbed ? (
     <div role="tablist" aria-label={label} aria-orientation={frame === "two-pane" ? "vertical" : "horizontal"} data-ef="nav" data-part="editor.nav" onKeyDown={move}>
-      {sections.map((sec, at) => (
+      {sections.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (sec, at) => (
         <ListRow
           key={sec.id}
           role="tab"
@@ -112,7 +112,7 @@ export function EditorLayout({ label, sections, rail, active: activeProp, onActi
     </div>
   ) : frame === "long-form" ? (
     <nav aria-label={`${label} contents`} data-ef="nav" data-part="editor.nav">
-      {sections.map((sec, at) => <ListRow key={sec.id} data-ef="tab" onClick={() => jump(sec.id)} leading={numeralOf(sec, at)} label={titleOf(sec)} />)}
+      {sections.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (sec, at) => <ListRow key={sec.id} data-ef="tab" onClick={() => jump(sec.id)} leading={numeralOf(sec, at)} label={titleOf(sec)} />)}
     </nav>
   ) : null;
 

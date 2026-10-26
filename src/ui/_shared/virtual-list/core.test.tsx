@@ -8,8 +8,8 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } fr
 import { JSDOM } from "jsdom";
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { installDom, type InstalledDom } from "./test-dom";
-import { bridgeTabAcrossVirtualBoundary, keepFocusedInRange, rowsOf, useGridColumns } from "./virtual-list";
+import { installDom, type InstalledDom } from "../test-dom";
+import { bridgeTabAcrossVirtualBoundary, keepFocusedInRange, rowsOf, useGridColumns } from "./core";
 
 describe("rowsOf", () => {
   test("groups a flat list into rows of the given column count", () => {

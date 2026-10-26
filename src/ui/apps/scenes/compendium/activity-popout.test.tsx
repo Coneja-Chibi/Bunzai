@@ -20,11 +20,11 @@ const latest = { reply: { messageId: "m4", swipeId: "s4", number: 4, model: "n",
 let prefs: Record<string, unknown> = {};
 let flushSync: FlushSync;
 
-const ctx = (): AppContext => ({
+const ctx = (receipts: CompendiumReceipt[] = [filed]): AppContext => ({
   api: {
     getSceneLore: async () => ({ books: [BOOK], lastTurn: null }),
     getSceneTrace: async () => latest,
-    listCompendiumReceipts: async () => ({ receipts: [filed], feedClearedAt: 0 }),
+    listCompendiumReceipts: async () => ({ receipts, feedClearedAt: 0 }),
     getLightEditableEntity: async () => { throw new Error("no book"); },
   },
   pieces: { subscribe: () => () => undefined },
@@ -36,6 +36,21 @@ afterAll(async () => { await teardownAllDoms(); });
 beforeEach(() => { rig.installed?.reinstall(); prefs = {}; });
 
 describe("the Activity pop-out", () => {
+  test("500 receipts mount fewer than 60 feed rows", async () => {
+    const { createRoot } = await import("react-dom/client");
+    rig.host = rig.dom.window.document.createElement("div");
+    rig.dom.window.document.body.appendChild(rig.host);
+    rig.root = createRoot(rig.host);
+    const c = ctx(Array.from({ length: 500 }, (_, i) => ({ ...filed, id: `r${String(i)}`, at: Date.now() - i * 1_000 })));
+    flushSync(() => rig.root.render(createElement("div", null, createElement(PopoutSlot, { kind: activityPopout, ctx: c, chat: CHAT }), createElement(PopoutHost, { ctx: c, chat: CHAT, kinds: [activityPopout] }))));
+    for (let i = 0; i < 3; i++) await settle(flushSync);
+    const rows = qa(".cp-feed [data-index]").length;
+    expect(rows).toBeGreaterThan(0);
+    expect(rows).toBeLessThan(60);
+    flushSync(() => rig.root.unmount());
+    rig.host.remove();
+  });
+
   test("pops out into a floating Compendium Activity panel with the same feed, and Bring back docks it", async () => {
     const { createRoot } = await import("react-dom/client");
     rig.host = rig.dom.window.document.createElement("div");

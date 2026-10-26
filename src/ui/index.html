@@ -72,6 +72,7 @@ body.focus-editor #tabstrip{display:none}
 .vdialog .actions{display:flex;gap:.6rem}
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+:root[data-reduce-motion] *,:root[data-reduce-motion] *::before,:root[data-reduce-motion] *::after{transition:none!important;animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
 /* The crash screen (shell/error-boundary.tsx). Lives here, not in a module, because it must render
    when the React tree is already broken - it cannot depend on anything the app loads. */
 .shell-crash{height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;

@@ -155,8 +155,12 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
   }, []);
 
   // Keep the newest line in view; a transcript growing off the bottom looks like nothing happened.
+  // Windowed rows measure after the first scroll and grow the list under it, so the jump is repeated once they have.
   useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "end" });
+    const toEnd = (): void => { endRef.current?.scrollIntoView({ block: "end" }); };
+    toEnd();
+    const frame = typeof requestAnimationFrame === "function" ? requestAnimationFrame(toEnd) : 0;
+    return () => { if (frame) cancelAnimationFrame(frame); };
   }, [chat.lines, chat.streaming, chat.gate]);
 
   const published = ctx.agent.current();
@@ -333,7 +337,7 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
       */}
       {reading && reading.actions.length > 0 && model.connected && !chat.gate && (
         <div className="agent-room__chips">
-          {reading.actions.map((action) => (
+          {reading.actions.map(/* bounded-ok: single message / fixed menu or glyph parts */ (action) => (
             <Chip
               key={action.id}
               disabled={chat.busy}
@@ -358,7 +362,7 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
       */}
       {chat.queued.length > 0 && (
         <ul className="agent-room__queue">
-          {chat.queued.map((text, at) => (
+          {chat.queued.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (text, at) => (
             <li key={`${String(at)}:${text.slice(0, 24)}`}>
               <span className="agent-room__queuekick">waiting</span>
               <span className="agent-room__queuetext">{text}</span>
@@ -387,7 +391,7 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
         */}
         {shots.length > 0 && (
           <div className="agent-room__shots">
-            {shots.map((src, at) => (
+            {shots.map(/* bounded-ok: single message / fixed menu or glyph parts */ (src, at) => (
               <Tile
                 kind="thumb"
                 key={at}

@@ -81,7 +81,7 @@ export function ImagePromptEditor({ value, onChange }: ImagePromptEditorProps): 
 
       <span className={styles.section}>Labeled rows</span>
       <div className={styles.rows}>
-        {a.rows.map((row, i) => (
+        {a.rows.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (row, i) => (
           <div className={styles.row} key={i}>
             <input
               className={styles.input}

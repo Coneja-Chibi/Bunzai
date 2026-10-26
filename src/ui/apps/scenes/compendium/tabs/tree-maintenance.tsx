@@ -19,7 +19,7 @@ export function TreeMaintenance({ store }: { store: CompendiumTreeStore }): JSX.
         <Button variant="primary" size="sm" disabled={store.busy !== null} onClick={() => void store.build()}>{building ? "Repairing..." : "Repair tree from entries"}</Button>
         {store.layout && <Button size="sm" disabled={store.busy !== null} onClick={() => void store.undo()}>{store.busy === "undo" ? "Undoing..." : "Undo last build"}</Button>}
       </div>
-      {store.notes.length > 0 && <ul className="notes" aria-label="What the build repaired">{store.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
+      {store.notes.length > 0 && <ul className="notes" aria-label="What the build repaired">{store.notes.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (n) => <li key={n}>{n}</li>)}</ul>}
     </details>
   );
 }

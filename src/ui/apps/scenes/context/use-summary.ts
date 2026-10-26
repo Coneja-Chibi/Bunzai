@@ -25,6 +25,8 @@ export interface SummaryView {
   /** Saves the person's own text; resolves with the failure's sentence, or null when it was saved. */
   save(text: string): Promise<string | null>;
   backfill(): Promise<void>;
+  /** Runs the automatic summary step once now. */
+  summarizeNow(): Promise<void>;
 }
 
 /** The keys of a patch that would change what is saved. */
@@ -93,5 +95,14 @@ export function useSummary(ctx: AppContext, chat: Chat): SummaryView {
     finally { setBusy(false); }
   }), [after, ctx, chat.id, taken, readNow]);
 
-  return { load, busy, runError, patch, save, backfill };
+  const summarizeNow = useCallback((): Promise<void> => after(async () => {
+    setBusy(true);
+    setRunError(null);
+    setLoad((l) => (l.state === "ready" ? { state: "ready", s: { ...l.s, running: true } } : l));
+    try { taken(await ctx.api.summarizeSceneNow(chat.id)); }
+    catch (e) { setRunError(toErrorMessage(e, "The summary could not be written.")); readNow(); }
+    finally { setBusy(false); }
+  }), [after, ctx, chat.id, taken, readNow]);
+
+  return { load, busy, runError, patch, save, backfill, summarizeNow };
 }

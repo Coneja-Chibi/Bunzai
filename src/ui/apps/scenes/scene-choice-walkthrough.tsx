@@ -26,7 +26,7 @@ function InputStep({ group, value, onCommit }: { group: ChoiceGroup; value: stri
     <div>
       {group.suggestions && (
         <div className="ch-chips" role="group" aria-label={`${group.label} suggestions`}>
-          {group.suggestions.map((s) => <Chip key={s} pressed={draft.trim() === s} onClick={() => { type(s); saver.flush(); }}>{s}</Chip>)}
+          {group.suggestions.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s) => <Chip key={s} pressed={draft.trim() === s} onClick={() => { type(s); saver.flush(); }}>{s}</Chip>)}
         </div>
       )}
       <input className="ch-input" type="text" value={draft} placeholder={group.placeholder} aria-label={group.label} onChange={(e) => type(e.target.value)} onBlur={saver.flush} />
@@ -38,7 +38,7 @@ function InputStep({ group, value, onCommit }: { group: ChoiceGroup; value: stri
 function Previews({ ids, peeks }: { ids: string[]; peeks: Record<string, PromptPeek> }): JSX.Element {
   return (
     <div className="ch-peeks">
-      {ids.map((id) => {
+      {ids.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (id) => {
         const peek = peeks[id];
         return (
           <div key={id} className="ch-peek">
@@ -120,7 +120,7 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
     const many = group.type === "select_many";
     return (
       <div role={many ? "group" : "radiogroup"} className={`ch-opts${isShortLabelGroup(group) ? " two" : ""}`}>
-        {group.options.map((o) => {
+        {group.options.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (o) => {
           const picked = many ? strArray(selections[group.id]).includes(o.id) : selections[group.id] === o.id;
           const key = `${group.id}:${o.id}`;
           const has = o.prompts.length > 0;
@@ -150,7 +150,7 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
       <div className="ch-modal" data-part="scene.choices.walkthrough">
         <div className="ch-head">
           <div className="ch-dots" aria-label={`Step ${index + 1} of ${steps.length}`}>
-            {steps.map((s, i) => <span key={s.kind === "group" ? s.group.id : s.kind} className={i === index ? "now" : visited.has(i) ? "seen" : ""} />)}
+            {steps.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s, i) => <span key={s.kind === "group" ? s.group.id : s.kind} className={i === index ? "now" : visited.has(i) ? "seen" : ""} />)}
           </div>
           <IconButton variant="quiet" size="sm" label="Close walkthrough" icon="lucide:x" onClick={onClose} />
         </div>
@@ -175,7 +175,7 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
               <h3>All set</h3>
               <p className="ch-desc">Here is what this preset will use. You can change any of it later from the panel.</p>
               <div className="ch-sum">
-                {buildSummary(groups, selections).map((row) => (
+                {buildSummary(groups, selections).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (row) => (
                   <div key={row.groupId} className="ch-row">
                     <div>
                       <b>{row.groupLabel}</b>

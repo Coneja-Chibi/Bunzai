@@ -33,7 +33,7 @@ export function FeaturedCast({ m, onOpen }: { m: BookModel } & Open): JSX.Elemen
           <div className="ar">ARC</div>
           {arc.moments.length === 0 ? <div className="tg">No arc yet</div> : (
             <>
-              <div className="dots">{arc.moments.map((_, i) => <span key={i} className="seg"><i className={i === arc.current ? "cur" : ""} />{i < arc.moments.length - 1 && <u />}</span>)}</div>
+              <div className="dots">{arc.moments.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (_, i) => <span key={i} className="seg"><i className={i === arc.current ? "cur" : ""} />{i < arc.moments.length - 1 && <u />}</span>)}</div>
               <div className="now">Currently: {arc.label || BLANK}</div>
             </>
           )}
@@ -57,7 +57,7 @@ function TreeRow({ node, depth, m, onOpen }: { node: TreeNode; depth: number; m:
     <>
       <div className={`tn${has ? " go" : ""}`} style={{ paddingLeft: depth * 12 }} onClick={has ? () => setOpen(!open) : undefined}>{has ? (open ? "▾" : GLYPH.sep) : GLYPH.dot} {node.label}</div>
       {open && node.children.map((c) => <TreeRow key={c.id} node={c} depth={depth + 1} m={m} onOpen={onOpen} />)}
-      {open && node.entryIds.slice(0, LIMIT_ENTRIES).map((id) => <ListRow key={id} variant="tree" depth={depth + 1} leading={GLYPH.diamond} label={m.byId.get(id)?.name ?? id} onClick={() => onOpen(id)} />)}
+      {open && node.entryIds.slice(0, LIMIT_ENTRIES).map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (id) => <ListRow key={id} variant="tree" depth={depth + 1} leading={GLYPH.diamond} label={m.byId.get(id)?.name ?? id} onClick={() => onOpen(id)} />)}
       {open && node.entryIds.length > LIMIT_ENTRIES && <div className="tn" style={{ paddingLeft: depth * 12 + 12 }}>+{node.entryIds.length - LIMIT_ENTRIES} more</div>}
     </>
   );

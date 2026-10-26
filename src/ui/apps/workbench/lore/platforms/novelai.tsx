@@ -188,7 +188,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
                     onChange={(ev) => patchCc({ [key]: ev.target.value || undefined })}
                   >
                     <option value="">default</option>
-                    {openOptions(known, cc?.[key]).map((o) => (
+                    {openOptions(known, cc?.[key]).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (o) => (
                       <option key={o} value={o}>
                         {o}
                       </option>

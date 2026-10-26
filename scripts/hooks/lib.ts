@@ -111,7 +111,16 @@ export function shellImportTokens(path: string, source: string): string[] {
   const clean = stripComments(source);
   const out: string[] = [];
   const re = /from\s+["']([^"']*\/shell\/[^"']*|[^"']*\/shell)["']/g;
-  for (let m = re.exec(clean); m; m = re.exec(clean)) out.push(m[1]!);
+  const dir = p.slice(0, p.lastIndexOf("/"));
+  // A relative import counts only when it lands in src/ui/shell; an app folder of its own named shell is the app's.
+  const inShell = (spec: string): boolean => {
+    if (!spec.startsWith(".")) return true;
+    const parts = dir.split("/");
+    for (const seg of spec.split("/")) { if (seg === "..") parts.pop(); else if (seg !== ".") parts.push(seg); }
+    const to = parts.join("/");
+    return to === "src/ui/shell" || to.startsWith("src/ui/shell/");
+  };
+  for (let m = re.exec(clean); m; m = re.exec(clean)) if (inShell(m[1]!)) out.push(m[1]!);
   return out;
 }
 

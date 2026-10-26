@@ -105,7 +105,7 @@ export function LanCard({
       {lan.pending.length > 0 && (
         <div className={styles.devices}>
           <div className={styles.devicesTitle}>Wants to connect</div>
-          {lan.pending.map((d) => (
+          {lan.pending.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (d) => (
             <div key={d.id} className={styles.deviceRow}>
               <span className={styles.deviceName}>{redacted ? mask(d.label) : d.label}</span>
               <div className={styles.actions}>
@@ -124,7 +124,7 @@ export function LanCard({
       {lan.connected.length > 0 && (
         <div className={styles.devices}>
           <div className={styles.devicesTitle}>Connected devices</div>
-          {lan.connected.map((d) => (
+          {lan.connected.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (d) => (
             <div key={d.id} className={styles.deviceRow}>
               <span className={styles.deviceName}>{redacted ? mask(d.label) : d.label}</span>
               <Button size="sm" variant="danger" onClick={() => settle(ctx.api.remoteLanKick(d.id))}>

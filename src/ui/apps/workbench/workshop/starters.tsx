@@ -28,7 +28,7 @@ export function WorkshopStarters({ emptyTriggers, undo, onApply }: WorkshopStart
           You have no rules yet. Starters drop a finished When / If / Then pack you can edit.
         </WorkshopNotice>
       )}
-      {listRecipes().map((r) => (
+      {listRecipes().map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (r) => (
         <div className={styles.trig} key={r.id}>
           <div className={styles.th}>
             <strong

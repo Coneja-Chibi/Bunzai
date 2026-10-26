@@ -9,11 +9,13 @@ import type { AppContext } from "../../app-contract";
 import { Ic } from "../../_shared/ic";
 import type { MusicPlayer } from "./stage-music-player";
 import { openStageTab } from "./stage-open";
+import { useMusicAutoplay } from "./use-music-autoplay";
 import { sharedMusic, useStageMusic } from "./use-stage-music";
 import { IconButton } from "../../components/button";
 
 export function MusicMini({ ctx, player = sharedMusic, onExpand = () => openStageTab("music") }: { ctx: AppContext; player?: MusicPlayer; onExpand?: () => void }): JSX.Element | null {
   const { state } = useStageMusic(ctx, player);
+  useMusicAutoplay(ctx, player, state.track);
   if (!state.track) return null;
   return (
     <div className="mm-mini-bar" data-part="scene.stage.music.mini">

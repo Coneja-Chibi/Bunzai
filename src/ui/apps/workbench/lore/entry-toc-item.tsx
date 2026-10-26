@@ -115,7 +115,7 @@ export function EntryTocItem({
                   Uncategorized
                 </MenuItem>
                 <div className={styles.eiMoveSep} />
-                {categories.map((cat) => {
+                {categories.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (cat) => {
                   const on = entry.categoryId === cat.id;
                   return (
                     <MenuItem

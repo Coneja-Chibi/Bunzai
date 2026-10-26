@@ -17,16 +17,17 @@ import { useSceneProps } from "../props/use-scene-props";
 import { DIALOGUE_COLORS_PROP } from "../props/dialogue-colors";
 import { useSceneParticipants } from "../participants/use-scene-participants";
 import { sceneRoster } from "../participants/scene-roster";
+import { AddParticipant } from "./add-participant";
 import { CastHero } from "./cast-parts";
 import { ParticipantRow } from "./participant-row";
 import { ReconcileCard } from "./reconcile-card";
 
-function Section({ title, rows, empty, colorsOn, onChange }: { title: string; rows: RosterRow[]; empty: string; colorsOn: boolean; onChange(c: ParticipantChange): void }): JSX.Element | null {
+function Section({ chatId, title, rows, empty, colorsOn, onChange }: { chatId: string; title: string; rows: RosterRow[]; empty: string; colorsOn: boolean; onChange(c: ParticipantChange): void }): JSX.Element | null {
   if (rows.length === 0 && empty === "") return null;
   return (
     <section className="sec">
       <h3>{title}</h3>
-      {rows.length === 0 ? <div className="none">{empty}</div> : <div className="rows">{rows.map((r) => <ParticipantRow key={r.id} row={r} colorsOn={colorsOn} onChange={onChange} />)}</div>}
+      {rows.length === 0 ? <div className="none">{empty}</div> : <div className="rows">{rows.map((r) => <ParticipantRow key={r.id} chatId={chatId} row={r} colorsOn={colorsOn} onChange={onChange} />)}</div>}
     </section>
   );
 }
@@ -49,10 +50,11 @@ export function ParticipantsTab({ ctx, scene }: { ctx: AppContext; scene: OpenSc
         </div>
         <ReconcileCard available={scene.messageCount} state={reconcile} onRun={(n) => void run(n)} onConfirm={(names) => void confirm(names)} onUndo={(r) => void undo(r)} onDismiss={dismiss} />
         {error && <p className="notice gone" role="alert">{error}</p>}
-        <Section title="Main Character" rows={[roster.main]} empty="No main character registered." colorsOn={colorsOn} onChange={change} />
-        <Section title="Player" rows={roster.player ? [roster.player] : []} empty="" colorsOn={colorsOn} onChange={change} />
-        <Section title="Cards" rows={roster.cards} empty="No card participants registered." colorsOn={colorsOn} onChange={change} />
-        <Section title="NPCs" rows={roster.npcs} empty="No NPCs registered yet." colorsOn={colorsOn} onChange={change} />
+        <Section chatId={chatId} title="Main Character" rows={[roster.main]} empty="No main character registered." colorsOn={colorsOn} onChange={change} />
+        <Section chatId={chatId} title="Player" rows={roster.player ? [roster.player] : []} empty="" colorsOn={colorsOn} onChange={change} />
+        <Section chatId={chatId} title="Cards" rows={roster.cards} empty="No card participants registered." colorsOn={colorsOn} onChange={change} />
+        <Section chatId={chatId} title="NPCs" rows={roster.npcs} empty="No NPCs registered yet." colorsOn={colorsOn} onChange={change} />
+        <AddParticipant rows={[roster.main, ...(roster.player ? [roster.player] : []), ...roster.cards, ...roster.npcs, ...roster.retired]} onChange={change} />
         {roster.retired.length > 0 && (
           <section className="sec">
             <h3>Retired</h3>

@@ -17,7 +17,7 @@ import { useSceneModels } from "../../use-scene-models";
 
 type Save = (patch: DirectorSettingsPatch) => Promise<string | null>;
 
-const EFFORTS: readonly { id: ChatReasoningEffort | null; label: string }[] = [
+export const EFFORTS: readonly { id: ChatReasoningEffort | null; label: string }[] = [
   { id: null, label: "Auto" }, { id: "none", label: "Off" }, { id: "minimal", label: "Minimal" }, { id: "low", label: "Low" }, { id: "medium", label: "Medium" }, { id: "high", label: "High" }, { id: "xhigh", label: "Max" },
 ];
 
@@ -47,7 +47,7 @@ export function DirectorReasoning({ panel, save }: { panel: DirectorPanel; save:
   );
 }
 
-const MODES: readonly { id: DirectorCommandMode; label: string; description: string; icon: IconName }[] = [
+export const MODES: readonly { id: DirectorCommandMode; label: string; description: string; icon: IconName }[] = [
   { id: "tool-call", label: "Tool call", description: "Native provider function calls. Recommended for models with reliable tool support.", icon: "lucide:wrench" },
   { id: "tagged", label: "Tagged", description: "Validated text commands for providers or models without native function calling.", icon: "lucide:braces" },
 ];

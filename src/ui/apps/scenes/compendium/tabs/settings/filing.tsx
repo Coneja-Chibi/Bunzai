@@ -26,7 +26,7 @@ export function FilingSection({ compendium, guides, set }: SectionProps): JSX.El
       <SettingsStepper label="How often (every N of your turns)" hint="1 files after every turn of yours." value={f.everyN} min={RANGES.everyN[0]} max={RANGES.everyN[1]} onChange={(n) => void set({ filing: { everyN: n } })} />
       <SettingsField label="When to file" hint="Filing on your next message means the reply you are most likely to regenerate has nothing to undo. Cutting or regenerating a filed reply takes its filings back.">
         <select className="cps-sel" aria-label="When to file" value={f.wait} onChange={(e) => void set({ filing: { wait: Number(e.target.value) } })}>
-          {WHEN.map((label, wait) => <option key={wait} value={wait}>{label}</option>)}
+          {WHEN.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (label, wait) => <option key={wait} value={wait}>{label}</option>)}
         </select>
       </SettingsField>
     </SettingsSection>

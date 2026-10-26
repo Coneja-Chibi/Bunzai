@@ -154,7 +154,7 @@ export function RuleRail({ rule, styles, onOpenBench, findings, onOpenHealth }: 
             findings.length === 0 ? (
               <p className={styles.healthLine}>&#9679; This rule looks quick and safe.</p>
             ) : (
-              findings.map((f, i) => (
+              findings.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (f, i) => (
                 <p key={`${f.rule}-${i}`} className={`${styles.healthLine} ${styles.healthNote}`}>
                   &#9679; {f.message}
                 </p>

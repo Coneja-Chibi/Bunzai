@@ -21,7 +21,7 @@ import type { Chat, ChatPreset } from "../../../stage/contracts/chat-store";
 import type { JSX } from "react";
 import type { PresetText } from "./use-scene-preset-text";
 import { ApiHttpError } from "../../_shared/api-fetch";
-import { installDom, type InstalledDom } from "../../_shared/test-dom";
+import { expectWindowed, installDom, type InstalledDom } from "../../_shared/test-dom";
 
 /** PromptList virtualizes now: `@tanstack/react-virtual` unconditionally
  * touches `ResizeObserver` when it measures a row, which plain jsdom has no built-in for. */
@@ -236,6 +236,13 @@ function blurOut(flushSync: FlushSync, el: HTMLElement): void {
 // -- tests -------------------------------------------------------------------------------------
 
 describe("PresetWing", () => {
+  test("a 500-preset library mounts fewer than 60 picker rows", async () => {
+    listImpl = async () => Array.from({ length: 500 }, (_, i) => ({ id: `lib${String(i)}`, kind: "preset", name: `Preset ${String(i)}` }) as StudioEntitySummary);
+    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    await press(flushSync, byTitle("Switch preset")!);
+    expectWindowed(host, ".picker [data-index]", 500, 60);
+    unmountWing(flushSync);
+  });
   test("flipping a prompt's switch then unmounting the wing within 300ms still sends one setScenePreset with that switch", async () => {
     const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
     const toggle = byLabel("Turn off main")!;

@@ -15,6 +15,9 @@ import { PopoutButton } from "../../popout/popout-panel";
 import { feedRows, type ActivityRow, type FeedTab } from "../activity-core";
 import { ActivityCard } from "../activity-card";
 import type { Receipts } from "../use-compendium-receipts";
+import { VirtualRows } from "../../../../_shared/virtual-list";
+
+const CARD_ROW_PX = 72;
 
 const TABS: { id: FeedTab; label: string }[] = [{ id: "all", label: "All" }, { id: "entries", label: "Entries" }, { id: "tools", label: "Tools" }];
 
@@ -60,7 +63,7 @@ export function ActivityTab({ ctx, chatId, feed, extra = [], extraWhy, pop }: {
         {feed.state === "ready" && rows.length === 0 && (
           <div className="empty"><span className="ring"><Ic name="lucide:zap" size={20} /></span><b>No activity yet</b><small>Compendium tool calls will stream here in real-time.</small></div>
         )}
-        <div className="list">{rows.map((row) => <ActivityCard key={row.id} row={row} now={now} actions={actions} />)}</div>
+        <div className="list"><VirtualRows items={rows} keyOf={(row) => row.id} estimate={CARD_ROW_PX} gap={8} render={(row) => <ActivityCard row={row} now={now} actions={actions} />} /></div>
       </div>
     </div>
   );

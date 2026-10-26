@@ -42,7 +42,7 @@ export function DiagnosticsSection({ ctx, chat, compendium, lore }: SectionProps
       <Button block disabled={running} onClick={() => void run()}>{running ? "Running..." : "Run Diagnostics"}</Button>
       {results && (
         <div className="cps-diag" aria-label="Diagnostic results">
-          {results.map((r, i) => (
+          {results.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (r, i) => (
             <div key={`${r.check}:${i}`} className={`row ${r.status}`}>
               <div><em>[{r.status.toUpperCase()}]</em> <b>{r.category}</b> <span>{r.check}</span></div>
               <p>{r.message}</p>

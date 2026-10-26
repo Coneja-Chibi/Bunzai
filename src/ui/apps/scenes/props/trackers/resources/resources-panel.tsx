@@ -88,7 +88,7 @@ export function StatsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
             {needs.length > 0 && (
               <div className="st-needs">
                 <div className="st-needs-head"><Ic name="lucide:thermometer" size={16} /> Survival Needs</div>
-                {needs.map(([key, need]) => <NeedBar key={key} id={key} need={need} onChange={(delta) => act({ kind: "need", key, delta })} />)}
+                {needs.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ([key, need]) => <NeedBar key={key} id={key} need={need} onChange={(delta) => act({ kind: "need", key, delta })} />)}
               </div>
             )}
           </>

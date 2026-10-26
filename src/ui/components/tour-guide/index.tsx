@@ -116,7 +116,7 @@ export function TourGuide({ tour, ctx, onClose }: TourGuideProps): JSX.Element {
       </div>
 
       <div className={styles.dots} aria-hidden="true">
-        {tour.steps.map((s, i) => (
+        {tour.steps.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (s, i) => (
           <i key={s.id} className={i < index ? styles.done : i === index ? styles.now : undefined} />
         ))}
       </div>
@@ -132,7 +132,7 @@ export function TourGuide({ tour, ctx, onClose }: TourGuideProps): JSX.Element {
 
       {step.choice && (
         <div className={styles.choice}>
-          {step.choice.options.map((o) => {
+          {step.choice.options.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (o) => {
             const on = ctx.prefs.get(step.choice!.prefKey) === o.value;
             return (
               <Card

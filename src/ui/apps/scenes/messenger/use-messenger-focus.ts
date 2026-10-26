@@ -1,30 +1,35 @@
 /**
- * The Messenger's keyboard and focus rules (RoleCall DiscordChrome.tsx:147-151,229-280,282-303), on the studio's own Escape arbiter and focus-trap core. The dialog and the narrow
- * drawer each keep Tab inside themselves; the dialog closes on Escape (use-escape-key.ts, so a reply is not stopped by the same press) and gives focus back to what opened it; the
- * drawer closes on Escape and gives focus back to its menu button. "Narrow" is the scene's own width (AGENTS rule 11), not the window's.
+ * The Messenger's width and drawer rules (RoleCall DiscordChrome.tsx:147-151,229-280,282-303), on the studio's own Escape arbiter and focus-trap core. Under 640px the left side is a drawer that
+ * keeps Tab inside itself, closes on Escape and gives focus back to its menu button. The layers (shell/surface-host.tsx, frames/layer.tsx) hold their own trap, Escape and focus return.
+ * "Narrow" is the scene's own width (AGENTS rule 11), not the window's.
  */
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from "react";
 import { focusablesIn } from "../../../_shared/focus-trap";
-import { useDialogEscape, useEscapeKey } from "../../../_shared/use-escape-key";
+import { useEscapeKey } from "../../../_shared/use-escape-key";
 
 /** At or under this width the sidebar is a drawer (discord.css @media max-width 640px, here a container query on the scene). */
 export const NARROW_PX = 640;
+/** Under this width the member list is a drawer over the chat and starts closed (shell.html narrow note). */
+export const COMPACT_PX = 1024;
 
-/** Whether the scene is narrow; a box that has not been laid out (width 0) counts as wide. */
-export function useNarrow(shell: RefObject<HTMLElement | null>): boolean {
-  const [narrow, setNarrow] = useState(false);
+/** The scene's width in px; 0 until it is laid out (and in a DOM that lays nothing out), which callers treat as wide. */
+export function useSceneWidth(shell: RefObject<HTMLElement | null>): number {
+  const [width, setWidth] = useState(0);
   useLayoutEffect(() => {
     const box = shell.current?.closest<HTMLElement>(".scs") ?? shell.current;
     if (!box) return undefined;
-    const measure = (): void => setNarrow(box.clientWidth > 0 && box.clientWidth <= NARROW_PX);
+    const measure = (): void => setWidth(box.clientWidth);
     measure();
     window.addEventListener("resize", measure);
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
     observer?.observe(box);
     return () => { window.removeEventListener("resize", measure); observer?.disconnect(); };
   }, [shell]);
-  return narrow;
+  return width;
 }
+
+export const isNarrow = (width: number): boolean => width > 0 && width <= NARROW_PX;
+export const isCompact = (width: number): boolean => width > 0 && width < COMPACT_PX;
 
 /** Tab stays inside `root`: from the last control to the first, and back. */
 function trapTab(event: KeyboardEvent, root: HTMLElement): void {
@@ -53,27 +58,14 @@ function useTabTrap(root: RefObject<HTMLElement | null>, on: boolean): void {
   }, [root, on]);
 }
 
-const closeButton = (dialog: RefObject<HTMLElement | null>): HTMLButtonElement | null | undefined => dialog.current?.querySelector<HTMLButtonElement>("[data-msn-close]");
-
 export function useMessengerFocus(a: {
-  left: RefObject<HTMLElement | null>; dialog: RefObject<HTMLElement | null>; menu: RefObject<HTMLButtonElement | null>;
-  overlayOpen: boolean; tabOpen: boolean; navOpen: boolean; narrow: boolean; closeSettings(): void; setNavOpen(open: boolean): void;
-}): { remember(): void; closeNav(): void } {
-  const { left, dialog, menu, overlayOpen, tabOpen, navOpen, narrow, closeSettings, setNavOpen } = a;
-  const trigger = useRef<HTMLElement | null>(null);
+  left: RefObject<HTMLElement | null>; menu: RefObject<HTMLButtonElement | null>; navOpen: boolean; narrow: boolean; setNavOpen(open: boolean): void;
+}): { closeNav(): void } {
+  const { left, menu, navOpen, narrow, setNavOpen } = a;
   const menuRestores = useRef(false);
   const was = useRef(false);
-  const live = useRef({ narrow, tabOpen });
-  live.current = { narrow, tabOpen };
-  /** What had focus when the dialog opened gets it back; a trigger inside a drawer that is gone returns to the menu button. */
-  const restore = useRef((): void => undefined);
-  restore.current = (): void => {
-    if (trigger.current?.closest(".msn-left") && live.current.narrow) menu.current?.focus();
-    else if (trigger.current?.isConnected) trigger.current.focus();
-    trigger.current = null;
-  };
-  useLayoutEffect(() => { if (overlayOpen) closeButton(dialog)?.focus(); else restore.current(); }, [overlayOpen, dialog]);
-  useEffect(() => () => restore.current(), []);
+  const live = useRef({ narrow });
+  live.current = { narrow };
   useEffect(() => { if (!narrow) setNavOpen(false); }, [narrow, setNavOpen]);
   useLayoutEffect(() => {
     const wasOpen = was.current;
@@ -81,15 +73,10 @@ export function useMessengerFocus(a: {
     if (navOpen) {
       menuRestores.current = false;
       if (left.current) focusablesIn(left.current)[0]?.focus();
-    } else if (wasOpen && !overlayOpen && live.current.narrow) {
-      if (!live.current.tabOpen || menuRestores.current) menu.current?.focus();
-      else closeButton(dialog)?.focus();
-    }
-  }, [navOpen, overlayOpen, left, menu, dialog]);
+    } else if (wasOpen && live.current.narrow && menuRestores.current) menu.current?.focus();
+  }, [navOpen, left, menu]);
   const closeNav = (): void => { menuRestores.current = true; setNavOpen(false); };
   useEscapeKey(closeNav, navOpen);
-  useDialogEscape(dialog, closeSettings, overlayOpen);
-  useTabTrap(dialog, overlayOpen);
   useTabTrap(left, navOpen);
-  return { remember: () => { if (!overlayOpen) trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null; }, closeNav };
+  return { closeNav };
 }

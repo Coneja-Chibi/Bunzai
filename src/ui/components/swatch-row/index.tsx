@@ -51,7 +51,7 @@ export function SwatchRow({ palette, value, onChange, allowCustom }: SwatchRowPr
   return (
     <div className={styles.wrap}>
       <div className={styles.row}>
-        {palette.map((choice) => (
+        {palette.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (choice) => (
           <span key={choice.id} className={styles.cell}>
             <Tile kind="swatch" label={choice.label} caption={choice.label} color={choice.hex} selected={eq(choice.hex, current)} aria-pressed={eq(choice.hex, current)} onClick={() => onChange(choice.hex)} />
           </span>

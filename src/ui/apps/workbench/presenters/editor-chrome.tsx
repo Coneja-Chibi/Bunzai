@@ -65,7 +65,7 @@ export function EditorTabstrip({
             </span>
           )}
           <span className={styles.frac}>{`${doneCount}/${chips.length}`}</span>
-          {chips.map(([label, ok]) => (
+          {chips.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ ([label, ok]) => (
             <span key={label} className={`${styles.chip}${ok ? ` ${styles.chipOk}` : ""}`}>
               {label}
             </span>

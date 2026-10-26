@@ -158,9 +158,9 @@ const titles = (): string[] => [...doc().body.querySelectorAll(".cw-sec > h3")].
 // -- the Character tab -------------------------------------------------------------------------------
 
 describe("Cast wing: Character tab", () => {
-  test("shows RoleCall's sections in RoleCall's order, and the form says Saved while nothing is edited", async () => {
+  test("shows RoleCall's sections in RoleCall's order then the new scene defaults, and the form says Saved while nothing is edited", async () => {
     const flushSync = await mount(sceneOf());
-    expect(titles()).toEqual(["Color Palette", "Description", "Personality", "Scenario", "First Message", "Example Dialogue", "Advanced", "Content Rating", "Tags"]);
+    expect(titles()).toEqual(["Color Palette", "Description", "Personality", "Scenario", "First Message", "Example Dialogue", "Advanced", "Content Rating", "Tags", "New scene defaults"]);
     expect(doc().body.querySelector("[data-part='scene.cast.lorebooks'] [data-slot='label']")?.textContent).toBe("Lorebooks");
     const identityLabels = [...doc().body.querySelectorAll(".cw-card .lb")].map((l) => (l.textContent ?? "").trim());
     expect(identityLabels).toEqual(["Theme", "Stage name", "Full name", "Title / Epithet", "Age", "Pronouns", "Tagline"]);

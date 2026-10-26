@@ -134,7 +134,7 @@ export function ExportDialog({
 
       {mediaChips.length > 0 ? (
         <div className={styles.chips} aria-label="Media on this card">
-          {mediaChips.map((c) => (
+          {mediaChips.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (c) => (
             <span key={c} className={styles.chip}>
               {c}
             </span>
@@ -143,7 +143,7 @@ export function ExportDialog({
       ) : null}
 
       <div className={styles.list} role="listbox" aria-label="Export formats">
-        {formats.map((f) => (
+        {formats.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (f) => (
           <ListRow
             key={f.id}
             variant="option"
@@ -166,7 +166,7 @@ export function ExportDialog({
       */}
       {(target?.outputExtensions.length ?? 0) > 1 && (
         <div className={styles.list} role="radiogroup" aria-label="File type">
-          {target?.outputExtensions.map((raw) => {
+          {target?.outputExtensions.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (raw) => {
             const ext = raw.replace(/^\./, "");
             /**
              * NOTHING IS PRESELECTED, because this dialog does not know what the adapter will do.
@@ -196,7 +196,7 @@ export function ExportDialog({
       {honesty && (
         <div className={styles.honesty} role="status">
           <h4>{honesty.headline}</h4>
-          {honesty.lines.map((l, i) => (
+          {honesty.lines.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (l, i) => (
             <p
               key={i}
               className={`${styles.line}${

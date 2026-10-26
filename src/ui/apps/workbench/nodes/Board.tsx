@@ -50,7 +50,7 @@ export interface BoardLayerProps {
 export function BoardLayer(p: BoardLayerProps): JSX.Element {
   return (
     <>
-      {p.items.map((item) => {
+      {p.items.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (item) => {
         const sel = item.id === p.selectedId ? ` ${css.itemSel}` : "";
         const box = { left: item.x, top: item.y, width: item.w, height: item.h };
         if (item.type === "frame") {

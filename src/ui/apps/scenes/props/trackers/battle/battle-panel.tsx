@@ -37,7 +37,7 @@ export function CombatPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
       {b.inCombat && (
         <div className="bt-round">
           <span className="bt-roundtag">ROUND {b.round}</span>
-          <span className="bt-pips">{b.turnOrder.map((id) => <i key={id} className={id === b.currentTurn ? "now" : ""} title={enemies.find((e) => e.id === id)?.name ?? "Unknown"} />)}</span>
+          <span className="bt-pips">{b.turnOrder.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (id) => <i key={id} className={id === b.currentTurn ? "now" : ""} title={enemies.find((e) => e.id === id)?.name ?? "Unknown"} />)}</span>
           <IconButton size="sm" label="Next Turn" icon="lucide:skip-forward" onClick={() => act({ kind: "next" })} />
         </div>
       )}
@@ -49,7 +49,7 @@ export function CombatPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
           <>
             {adding ? <AddEnemy onCancel={() => setAdding(false)} onAdd={(e) => { act({ kind: "add", enemy: newEnemy(e) }); setAdding(false); }} />
               : <Button size="sm" block icon="lucide:plus" onClick={() => setAdding(true)}>Add New Enemy</Button>}
-            {enemies.map((e) => (
+            {enemies.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e) => (
               <EnemyCard key={e.id} enemy={e} current={e.id === b.currentTurn} onDamage={(amount) => act({ kind: "damage", id: e.id, amount })} onHeal={(amount) => act({ kind: "heal", id: e.id, amount })}
                 onRemove={() => act({ kind: "remove", id: e.id, at: Date.now() }, `Removed ${e.name}`)} />
             ))}

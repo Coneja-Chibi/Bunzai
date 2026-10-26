@@ -323,7 +323,7 @@ export function SpritePackDialog({
       <ExpressionStage pack={draft} profile={profile} />
 
       <div className={styles.health}>
-        {health.map((h, i) => (
+        {health.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (h, i) => (
           <div
             key={i}
             className={

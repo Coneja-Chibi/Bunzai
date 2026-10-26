@@ -9,7 +9,11 @@ import { cryptoUnit, runLore, type LoreFire, type LoreRun, type LoreVerdict, typ
 import { loreVerdictText } from "./reason-text";
 import { loreTokens, toBookInput, toScan, withoutCharacterFilters, withoutOwnBudget } from "./lore-run";
 import { PlaybackTab } from "./playback-tab";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import styles from "./rehearsal-pane.module.css";
+
+const HIT_ROW_PX = 52;
+const CUT_ROW_PX = 20;
 
 const CANNED = [
   "The air stills for a beat.",
@@ -57,6 +61,7 @@ export function RehearsalPane({
   const [recentFires, setRecentFires] = useState<LoreFire[]>([]);
   const [cannedAt, setCannedAt] = useState(0);
   const [last, setLast] = useState<LoreRun | null>(null);
+  const [missOpen, setMissOpen] = useState(false);
   const [budgetPreset, setBudgetPreset] = useState<BudgetPreset>(
     body.tokenBudget > 0 ? "book" : "off",
   );
@@ -173,10 +178,10 @@ export function RehearsalPane({
             <div className={styles.results}>
               <div className={styles.rhead}>Fired ({fired.length})</div>
               {fired.length === 0 && <p className={styles.empty}>Nothing fired.</p>}
-              {fired.map((v) => {
+              <VirtualRows items={fired} keyOf={(v) => v.entryId} estimate={HIT_ROW_PX} render={(v) => {
                 const kw = v.reason === "key" || v.reason === "recursion" ? v.matched[0] : null;
                 return (
-                  <div key={v.entryId} className={styles.hitRow}>
+                  <div className={styles.hitRow}>
                     <ListRow
                       selected
                       accent="var(--stage-ok)"
@@ -189,28 +194,27 @@ export function RehearsalPane({
                     )}
                   </div>
                 );
-              })}
+              }} />
               {budgetLine && <p className={styles.budget}>{budgetLine}</p>}
               {cuts.length > 0 && (
                 <details className={styles.cuts} open>
                   <summary>Cut by budget ({cuts.length})</summary>
-                  {cuts.map((v) => (
-                    <div key={v.entryId}>{loreVerdictText(v, entryOf(v))}</div>
-                  ))}
+                  <VirtualRows items={cuts} keyOf={(v) => v.entryId} estimate={CUT_ROW_PX} render={(v) => <div>{loreVerdictText(v, entryOf(v))}</div>} />
                 </details>
               )}
-              <details className={styles.miss}>
+              <details className={styles.miss} onToggle={(ev) => setMissOpen(ev.currentTarget.open)}>
                 <summary>Didn&apos;t fire ({skipped.length})</summary>
-                {skipped.map((v) => (
-                  <ListRow
-                    key={v.entryId}
-                    selected
-                    accent="var(--stage-warn)"
-                    onClick={() => onJumpEntry(v.entryId)}
-                    label={titleOf(v.entryId)}
-                    subtitle={loreVerdictText(v, entryOf(v))}
-                  />
-                ))}
+                {missOpen && (
+                  <VirtualRows items={skipped} keyOf={(v) => v.entryId} estimate={HIT_ROW_PX} render={(v) => (
+                    <ListRow
+                      selected
+                      accent="var(--stage-warn)"
+                      onClick={() => onJumpEntry(v.entryId)}
+                      label={titleOf(v.entryId)}
+                      subtitle={loreVerdictText(v, entryOf(v))}
+                    />
+                  )} />
+                )}
               </details>
             </div>
           )}

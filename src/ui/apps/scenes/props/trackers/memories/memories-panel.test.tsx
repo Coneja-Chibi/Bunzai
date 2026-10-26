@@ -43,6 +43,15 @@ describe("what it shows", () => {
   });
 });
 
+describe("a full journal", () => {
+  test("500 added memories (300 kept) mount fewer than 60 cards", async () => {
+    await r.mount(panel(kept(...Array.from({ length: 500 }, (_, i) => ({ content: `Memory ${String(i)}: kept.` })))));
+    const cards = r.qa(".it-card").length;
+    expect(cards).toBeGreaterThan(0);
+    expect(cards).toBeLessThan(60);
+  });
+});
+
 describe("Add Memory: the model proposes, the person accepts", () => {
   test("Generate asks with the NPC and guide and Accept keeps it", async () => {
     r.state.answers.push(made());

@@ -18,7 +18,7 @@ import { CatchThinking } from "./catch-thinking";
 import type { PromptingView } from "./use-prompting-view";
 
 const ROLES = ["assistant", "user", "system"] as const;
-const ROLE_NAME = { assistant: "Assistant Prefill", user: "User Hint", system: "System Note" } as const;
+export const ROLE_NAME = { assistant: "Assistant Prefill", user: "User Hint", system: "System Note" } as const;
 const ROLE_TIP = {
   assistant: "Send as assistant prefill (default; the model continues the message)",
   user: "Send as trailing user hint (use when the model rejects assistant prefill)",

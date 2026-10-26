@@ -8,6 +8,7 @@ import type { AppManifestEntry, StudioEntitySummary } from "../app-contract";
 import { apiFetchJson } from "../_shared/api-fetch";
 import { toErrorMessage } from "../_shared/error-message";
 import { CORE_THEME_APPEARANCE, initialTheme, paintTheme } from "./theme";
+import { paintAccessibility } from "./accessibility";
 import type { EffectiveThemeAppearance } from "../../extensions/theme-contract";
 import { createAppearanceRequests } from "./appearance-requests";
 import { createSettingsRequestQueue } from "./settings-request-queue";
@@ -148,6 +149,7 @@ export const useShellStore = create<ShellState>((set, get, api) => ({
     const changedTheme = theme !== get().theme;
     if (changedTheme) get().invalidateAppearance();
     else if (next.houseAccent !== get().settings.houseAccent) paintTheme(get().appearance, next.houseAccent, get().appearanceAssetUrls);
+    if (typeof document !== "undefined") paintAccessibility(next);
     set({ settings: next, theme });
   },
 

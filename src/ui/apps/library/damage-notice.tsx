@@ -6,6 +6,9 @@ import type { StudioDamagedEntry } from "../../app-contract";
 import { damageHidden, damageSeenList, PREF_DAMAGE_SEEN } from "./damage-dismiss";
 import { plural } from "../../../core/text";
 import { Button } from "../../components/button";
+import { VirtualRows } from "../../_shared/virtual-list";
+
+const ENTRY_ROW_PX = 24;
 
 /**
  * Why one file did not open, in words that say what to do about it.
@@ -66,14 +69,12 @@ export function DamageNotice(props: {
       <p>The files are still on disk and Bunraku did not change them.</p>
       <details>
         <summary>Show files and recovery details</summary>
-        <ul>
-          {props.entries.map((entry) => (
-            <li key={`${entry.kind}:${entry.id}`}>
-              <code>{`${entry.kind}/${entry.id}.json`}</code>
-              {` ${reasonText(entry.reason)}.`}
-            </li>
-          ))}
-        </ul>
+        <VirtualRows pick={false} className="dn-list" rowClassName="dn-row" items={props.entries} keyOf={(entry) => `${entry.kind}:${entry.id}`} estimate={ENTRY_ROW_PX} render={(entry) => (
+          <>
+            <code>{`${entry.kind}/${entry.id}.json`}</code>
+            {` ${reasonText(entry.reason)}.`}
+          </>
+        )} />
         {props.studioDir && <p><code>{props.studioDir}</code></p>}
         <p>Restore a file from backup, or remove it yourself to clear this notice.</p>
       </details>

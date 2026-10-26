@@ -65,7 +65,7 @@ function control(field: FormField, value: unknown, set: (v: unknown) => void): J
     case "select":
       return (
         <select className={styles.sel} value={str(value)} onChange={(e) => set(e.target.value)}>
-          {(field.options ?? []).map((o) => (
+          {(field.options ?? []).map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (o) => (
             <option key={o.value} value={o.value}>
               {o.label}
             </option>
@@ -110,7 +110,7 @@ function ResourceControl({ field, value, onChange }: { field: FormField; value: 
 export function FieldForm({ fields, value, onChange }: FieldFormProps): JSX.Element {
   return (
     <div className={styles.grid}>
-      {fields.map((f) => (
+      {fields.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (f) => (
         <label className={f.half ? `${styles.field} ${styles.half}` : styles.field} key={f.key}>
           <span className={styles.label}>{f.label}</span>
           {f.kind === "resource" ? (

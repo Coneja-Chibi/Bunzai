@@ -53,6 +53,14 @@ describe("Next send", () => {
     expect(m.host.textContent).toContain("Prompt regex runs when you send");
     m.done();
   });
+  test("500 messages mount fewer than 60 blocks", async () => {
+    const messages = Array.from({ length: 500 }, (_, i) => ({ role: "user" as const, content: `message ${String(i)}`, tokens: 3 }));
+    const m = await mountView({ forecast: { ...forecast, messages }, loading: false, error: null });
+    const blocks = m.host.querySelectorAll(".ns-msg").length;
+    expect(blocks).toBeGreaterThan(0);
+    expect(blocks).toBeLessThan(60);
+    m.done();
+  });
   test("a new forecast being built shows Updating... over the last one", async () => {
     const m = await mountView({ forecast, loading: true, error: null });
     expect(m.host.querySelector(".ns-upd")?.textContent).toBe("Updating...");

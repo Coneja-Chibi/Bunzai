@@ -99,7 +99,7 @@ starting.
     readable. No abstraction, option, wrapper, helper, or comment without a present need; no
     speculative extensibility; no parallel copy of logic that already exists. If the same behavior
     fits in fewer lines with no loss of correctness, clarity, or tests, the longer version is a
-    defect.
+    defect. Long lists go through `useVirtualRows` (`src/ui/_shared/virtual-list`), never a bare `.map` over every row.
 13. **One button family.** Every clickable thing is a named part of `src/ui/components/button`
     (Button, IconButton, Segmented, Tabs, DocTab, Chip, ListRow, MenuItem, Disclosure, Tile, Card,
     Dot, Toggle, InlineValue, Scrim). Rooms never style a button. Lint blocks a raw `<button>`.
@@ -128,6 +128,7 @@ Or individually while iterating:
 | `bun run scan:colors:check` | no hardcoded colors outside the token sheet |
 | `bun run scan:style` | named fonts and viewport width media queries (report; pre-commit blocks new ones) |
 | `bun run scan:clones` | near-duplicate functions and CSS rules outside the baseline (report; pre-commit blocks new ones) |
+| `bun run scan:lists` | JSX lists that render every row without `useVirtualRows` outside the baseline (report; pre-commit blocks new ones; `bounded-ok: <reason>` exempts a short list) |
 | `bun run scan:emdash` | no em dashes in prose |
 | `bun run scan:headers` | every authored TS/TSX file opens with a purpose docblock |
 | `bun run scan:emoji` | no emoji pictographs in authored TS/TSX code |

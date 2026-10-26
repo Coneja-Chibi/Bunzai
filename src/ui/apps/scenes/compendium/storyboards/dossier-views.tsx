@@ -22,7 +22,7 @@ function QuestCard({ q, open }: { q: QuestItem; open: Open }): JSX.Element {
       {(q.tagline ?? q.description) && <p>{q.tagline ?? q.description}</p>}
       <Meter label="Urgency" value={q.urgency} tone={tone} />
       <div className="sb-facts">{q.progress && <span>Progress {q.progress}</span>}{q.deadline && <span>Deadline {q.deadline}</span>}</div>
-      {q.objectives.length > 0 && <ul className="sb-objs">{q.objectives.map((o) => <li key={o.id} data-status={o.status}><i>{MARK[o.status]}</i>{o.description}</li>)}</ul>}
+      {q.objectives.length > 0 && <ul className="sb-objs">{q.objectives.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (o) => <li key={o.id} data-status={o.status}><i>{MARK[o.status]}</i>{o.description}</li>)}</ul>}
       {[...q.characters, ...q.locations, ...q.items].length > 0 && <div className="sb-links">{[...q.characters, ...q.locations, ...q.items].map((n) => <Chip key={n}>{n}</Chip>)}</div>}
     </article>
   );
@@ -44,11 +44,11 @@ export function QuestsBody({ d, open, ai }: { d: QuestsDossier; open: Open; ai: 
       <Tabs<"pressure" | "journal" | "ai"> label="Quest dossier sections" active={tab} onChange={setTab} tabs={[{ id: "pressure", label: "Pressure Board", count: "Live" }, { id: "journal", label: "Journal", count: total }, { id: "ai", label: "AI Context", count: `${d.ai.tokens} tok` }]} />
       {tab === "pressure" && (
         <div className="sb-split">
-          <div>{lanes(d).map((l) => <Section key={l.title} title={l.title} sub={l.sub} tone={l.tone}>{l.list.length === 0 ? <Empty>Nothing here.</Empty> : l.list.map((q) => <QuestCard key={`${l.title}:${q.id}`} q={q} open={open} />)}</Section>)}</div>
+          <div>{lanes(d).map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (l) => <Section key={l.title} title={l.title} sub={l.sub} tone={l.tone}>{l.list.length === 0 ? <Empty>Nothing here.</Empty> : l.list.map((q) => <QuestCard key={`${l.title}:${q.id}`} q={q} open={open} />)}</Section>)}</div>
           <aside><Meter label="Failure pressure" value={d.stats.failurePressure} tone={d.stats.failurePressure >= 75 ? "danger" : "warn"} />{ai}</aside>
         </div>
       )}
-      {tab === "journal" && (total === 0 ? <Empty>No quests yet. Plots in the Compendium appear here.</Empty> : <div>{[...new Map(all.map((q) => [q.id, q])).values()].map((q) => <QuestCard key={q.id} q={q} open={open} />)}</div>)}
+      {tab === "journal" && (total === 0 ? <Empty>No quests yet. Plots in the Compendium appear here.</Empty> : <div>{[...new Map(all.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (q) => [q.id, q])).values()].map((q) => <QuestCard key={q.id} q={q} open={open} />)}</div>)}
       {tab === "ai" && ai}
     </>
   );
@@ -59,7 +59,7 @@ function CaseFile({ m, open }: { m: CastMember; open: Open }): JSX.Element {
     <article className="sb-card" onClick={() => open(m.id)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") open(m.id); }} data-part="compendium.dossier.card">
       <header><b>{m.name}</b>{m.role && <Chip>{m.role}</Chip>}{m.category && <Chip>{m.category}</Chip>}{m.inScene && <Chip tone="ok">In scene</Chip>}</header>
       {m.emotion && <p>{m.emotion}{m.emotionIntensity !== null ? ` (${m.emotionIntensity})` : ""}{m.emotionCause ? `: ${m.emotionCause}` : ""}</p>}
-      {m.metrics.map((x) => <Meter key={x.id} label={x.label} value={x.value} max={x.max} tone="pink" />)}
+      {m.metrics.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (x) => <Meter key={x.id} label={x.label} value={x.value} max={x.max} tone="pink" />)}
       {m.memories.length > 0 && <ul className="sb-objs">{m.memories.map((x) => <li key={x.id} data-status={x.impact === "negative" ? "failed" : "open"}><i>{x.weight >= 8 ? "★" : "○"}</i>{x.text}</li>)}</ul>}
       {m.relationships.length > 0 && <div className="sb-links">{m.relationships.map((r) => <Chip key={r.target}>{r.nature ? `${r.target} (${r.nature})` : r.target}</Chip>)}</div>}
     </article>

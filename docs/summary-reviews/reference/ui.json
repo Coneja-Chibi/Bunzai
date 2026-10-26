@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:ea7b8bfbc71efa0575d4323418f70b5b18a4df81bfd8afa1b998a5472262e17d",
-  "semanticSummaryHash": "sha256:cfec053df2ed9ac36352df5f3d679acf04d728d30f2bf645254134697383d60d",
+  "sourceHash": "sha256:34213f3811c958b9fd99de5e5edfa0b1b1c2a357b2e19a7c61e8f3df88f68210",
+  "semanticSummaryHash": "sha256:a811e893d55551025bff00a5e7b1f02266b7310bf84aa2a890fddb2adc454568",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer",
-  "notes": "tone sentence (ui.md:1565-1567) matches index.tsx tone props, data-tone and styles.module.css:69-72, Segmented item tone; summaries accurate.",
-  "reviewedAt": "2026-10-26T06:06:51.829Z"
+  "reviewer": "sonnet-docs-reviewer-2",
+  "notes": "Scenes and Settings sections match page; Backups and Memory sections verified in src",
+  "reviewedAt": "2026-10-26T16:11:56.388Z"
 }

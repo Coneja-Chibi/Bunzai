@@ -67,7 +67,7 @@ export const LORE_STATE_STYLE = `
 .scs .ls-none{padding:48px 12px;text-align:center;color:var(--stage-dim)}
 .scs .ls-none p{margin:12px 0 0;font:var(--text-control) var(--font-ui);color:var(--stage-mute)}
 .scs .ls-none small{display:block;margin-top:4px;font:var(--text-meta) var(--font-ui);color:var(--stage-dim)}
-.scs .ls-book{margin-bottom:12px}
+.scs .ls-end{margin-bottom:12px}
 .scs .ls-bk{display:flex;width:100%;align-items:center;gap:8px;margin-bottom:4px;padding:6px 8px;border:0;border-left:2px solid var(--deck-lorebook);background:color-mix(in srgb,var(--stage-black) 30%,transparent);font:500 var(--text-meta) var(--font-ui);color:var(--stage-card);text-align:left}
 .scs .ls-bk span{flex:1}.scs .ls-bk small{font:var(--text-meta) var(--font-ui);color:var(--stage-dim)}
 .scs .ls-search{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);color:var(--stage-dim)}

@@ -58,3 +58,11 @@ test("only a file that renaming would actually rescue is told to rename itself",
   );
   expect(html).toContain("rename it");
 });
+
+test("500 damaged files render fewer than 60 rows", () => {
+  const entries = Array.from({ length: 500 }, (_, i) => ({ kind: "character" as const, id: `broken-${String(i)}`, reason: "unreadable-json" as const }));
+  const html = renderToStaticMarkup(<DamageNotice entries={entries} />);
+  const rows = html.split("dn-row").length - 1;
+  expect(rows).toBeGreaterThan(0);
+  expect(rows).toBeLessThan(60);
+});

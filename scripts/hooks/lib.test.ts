@@ -65,9 +65,13 @@ test("htmlSinkTokens passes clean source, comments, and non-UI paths", () => {
 });
 
 test("shellImportTokens flags shell imports from apps and setup, nowhere else", () => {
-  const src = 'import { useContextMenu } from "../../shell/store";';
-  expect(shellImportTokens("src/ui/apps/library/views/grid.tsx", src)).toEqual(["../../shell/store"]);
-  expect(shellImportTokens("src/ui/setup/steps/theme/index.tsx", src)).toEqual(["../../shell/store"]);
+  const src = 'import { useContextMenu } from "../../../shell/store";';
+  expect(shellImportTokens("src/ui/apps/library/views/grid.tsx", src)).toEqual(["../../../shell/store"]);
+  expect(shellImportTokens("src/ui/setup/steps/theme/index.tsx", src)).toEqual(["../../../shell/store"]);
+  // an app's own folder named shell is not the app shell
+  expect(shellImportTokens("src/ui/apps/scenes/messenger/messenger.tsx", 'import { Rail } from "./shell/rail";')).toEqual([]);
+  expect(shellImportTokens("src/ui/apps/scenes/messenger/panels/workshop/layer.tsx", 'import { x } from "../../shell/holders";')).toEqual([]);
+  expect(shellImportTokens("src/ui/apps/scenes/messenger/settings/user/rows.ts", 'import { x } from "../../../../../shell/accessibility";')).toEqual(["../../../../../shell/accessibility"]);
   expect(shellImportTokens("src/ui/shell/App.tsx", 'import { menus } from "./store";')).toEqual([]);
   expect(shellImportTokens("src/ui/apps/library/index.tsx", 'import type { AppContext } from "../../app-contract";')).toEqual([]);
   expect(shellImportTokens("src/ui/apps/x/index.tsx", "// from '../../shell/store' in a comment")).toEqual([]);

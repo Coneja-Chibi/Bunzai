@@ -12,6 +12,7 @@ import type { OpenScene } from "../../../../studio/scenes";
 import type { PopoutKind } from "../popout/popout-kind";
 import type { SceneProp } from "../props/prop-contract";
 import { STAGE_TABS } from "../scene-stage-wing";
+import { hasOwnProgram, messengerKind, trackersProgram } from "./panels";
 
 export interface Program {
   id: string;
@@ -61,8 +62,8 @@ const AFTER_STAGE: readonly Program[] = [
 export function buildPrograms(scene: OpenScene | undefined, propsOn: readonly string[] | null, props: readonly SceneProp[], prefs: AppContext["prefs"]): Program[] {
   if (!scene) return [];
   const stage = STAGE_TABS.filter((t) => t.visible({ scene, propsOn, prefs })).flatMap((t) => STAGE[t.id] ?? []);
-  const panels = props.flatMap((p) => (p.panel && propsOn?.includes(p.id) ? [{ id: `prop-${p.id}`, wing: "props", title: p.name, icon: p.icon, panel: p.panel }] : []));
-  return [...BEFORE_STAGE, ...stage, ...AFTER_STAGE, ...panels];
+  const panels = props.flatMap((p) => (p.panel && hasOwnProgram(p) && propsOn?.includes(p.id) ? [{ id: `prop-${p.id}`, wing: "props", title: p.name, icon: p.icon, panel: messengerKind(p.panel) }] : []));
+  return [...BEFORE_STAGE, ...stage, ...AFTER_STAGE, ...panels, ...trackersProgram(props, propsOn)];
 }
 
 /** The same list while nothing about it changed, so the shell's effects do not run again on every message. */

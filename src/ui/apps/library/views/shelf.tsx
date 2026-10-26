@@ -11,6 +11,7 @@ import { plural } from "../../../../core/text";
 import { icSvg } from "../../../_shared/ic-svg";
 import { QueuedPiecePreview } from "../piece-preview";
 import { Button, Toggle } from "../../../components/button";
+import { VirtualShelf } from "../../../_shared/virtual-list";
 
 const CSS = `
 .dv-shelfscroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
@@ -174,6 +175,7 @@ const view: DeckView = {
         : searchResult.query === q
         ? ctx.entities.filter((e) => searchResult.ids.has(`${e.kind}\0${e.id}`))
         : [];
+    const dragged = filtered.find((e) => e.id === draggingId && e.kind === "lorebook");
     return (
       <div className="dv-shelfscroll">
         <label
@@ -214,17 +216,8 @@ const view: DeckView = {
           />
         </label>
         {q && (!currentSearch || unavailable || (currentSearch && searchResult.truncated)) && <p role="status">{unavailable ? <>Search unavailable; showing every book. <Button size="sm" variant="quiet" onClick={() => setSearchRetry((value) => value + 1)}>Retry</Button></> : currentSearch && searchResult.truncated ? "The result limit was reached; only the first matching books are shown." : "Searching books…"}</p>}
-        <div className="dv-shelf">
-          {filtered.map((e) => (
-            <BookCard
-              key={pieceKey(e)}
-              ctx={ctx}
-              e={e}
-              draggingId={draggingId}
-              setDraggingId={setDraggingId}
-            />
-          ))}
-        </div>
+        <VirtualShelf items={filtered} keyOf={(e) => pieceKey(e)} rowClass="dv-shelf" pinKey={dragged ? pieceKey(dragged) : null}
+          render={(e) => <BookCard ctx={ctx} e={e} draggingId={draggingId} setDraggingId={setDraggingId} />} />
         {filtered.length === 0 && (
           <p
             style={{

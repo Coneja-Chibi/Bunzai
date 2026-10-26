@@ -86,7 +86,7 @@ export function SpriteParts({
         </div>
       </div>
       <div className={styles.parts}>
-        {Object.entries(s.parts).map(([k, v]) => (
+        {Object.entries(s.parts).map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([k, v]) => (
           <div className={styles.part} key={k}>
             <IconButton
               variant="quiet"

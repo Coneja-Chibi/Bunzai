@@ -3,6 +3,7 @@
  * flag. They live apart from chat-rules.ts (which re-uses them) so the small rules modules can ask them
  * without reaching into the big one, and so no module keeps its own idea of "a whole number".
  */
+import { isPlainObject } from "../../core/guards";
 import { StudioValidationError } from "../../studio/errors";
 
 /**
@@ -15,6 +16,19 @@ export const isWhole = (value: unknown, min = Number.MIN_SAFE_INTEGER, max = Num
 /** `value` when it is a whole number from `min` to `max`, else a validation error saying `message`. */
 export function checkWhole(value: unknown, message: string, min?: number, max?: number): number {
   if (!isWhole(value, min, max)) throw new StudioValidationError(message);
+  return value;
+}
+
+/** `value` when it is a finite number from `min` to `max` (ends included, fractions allowed), else a validation error saying `message`. */
+export function checkNumber(value: unknown, message: string, min: number, max: number): number {
+  if (typeof value !== "number" || !Number.isFinite(value) || value < min || value > max) throw new StudioValidationError(message);
+  return value;
+}
+
+/** An object carrying only the named fields: a misspelt one is refused, never dropped. */
+export function onlyKeys(value: unknown, allowed: readonly string[], what: string): Record<string, unknown> {
+  if (!isPlainObject(value)) fail(`${what} must be an object`);
+  for (const key of Object.keys(value)) if (!allowed.includes(key)) fail(`${what} has an unknown field: ${key}`);
   return value;
 }
 

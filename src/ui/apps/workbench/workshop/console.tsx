@@ -80,7 +80,7 @@ export function WorkshopConsole(props: WorkshopConsoleProps): JSX.Element {
           <>
             <div className={styles.vlabel} style={{ marginTop: "0.7rem" }}>After Run · moved first</div>
             <div className={styles.delta}>
-              {delta.map((d) => (
+              {delta.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (d) => (
                 <span
                   key={d.name}
                   className={`${styles.vpill}${d.moved ? ` ${styles.vpillMoved}` : ""}`}

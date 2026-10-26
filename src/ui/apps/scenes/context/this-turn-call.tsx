@@ -55,7 +55,7 @@ function Route({ route }: { route: NonNullable<SceneTrace["route"]> }): JSX.Elem
   const { attempts, fellBack } = routeRows(route);
   return (
     <div className="tt-msgs">
-      {attempts.map((a) => (
+      {attempts.map(/* bounded-ok: per-turn bounded detail lines */ (a) => (
         <div className={`tt-msg tt-attempt ${a.outcome.toLowerCase()}`} key={a.number}>
           <div className="tt-tool"><span className="tt-role system">Attempt {a.number} <i>{a.model}</i></span><span className="tt-tk">{a.outcome}</span></div>
           <p className="tt-note">{a.connectionId} ({a.kind}){a.served ? `, answered by ${a.served}` : ""}</p>
@@ -87,7 +87,7 @@ export function CallDetail({ row, trace }: { row: CallRow; trace: SceneTrace }):
       <div className="tt-detail">
         {row.state === "Failed" && <p className="tt-fail">{recall.reason || "This call failed. No reason was recorded for it."}</p>}
         <p className="tt-note">{recall.cached ? "Kept from the last reply." : `${recall.calls} model call${recall.calls === 1 ? "" : "s"}.`} {recall.injected.length} placed{recall.cut.length > 0 ? `, ${recall.cut.length} left out for space` : ""}.</p>
-        {recall.injected.map((h) => <p className="tt-note" key={`${h.bookId}:${h.entryId}`}>{h.title} ({h.tokens} tokens) · {h.bookName}</p>)}
+        {recall.injected.map(/* bounded-ok: per-turn bounded detail lines */ (h) => <p className="tt-note" key={`${h.bookId}:${h.entryId}`}>{h.title} ({h.tokens} tokens) · {h.bookName}</p>)}
       </div>
     );
   }

@@ -91,15 +91,15 @@ export function FinalCutActivity({ api, chatId, messageId, enabled, onApply, onA
               <Tabs label="Final Cut activity" value={tab} onChange={setTab} items={[{ value: "changelog", label: "Changelog" }, { value: "diff", label: "Before / After" }]} />
               {tab === "changelog" ? (
                 <ul className="fa-passes">
-                  {trace.passes.map((p) => {
+                  {trace.passes.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (p) => {
                     const status = effectiveStatus(p);
                     return (
                       <li key={p.id} className={`fa-pass ${status}`}>
                         <div className="fa-head"><b>{p.label ?? PASS_TYPE_LABEL[p.type]}</b><span title={STATUS_DESCRIPTION[status]}>{STATUS_LABEL[status]}</span>{formatDuration(p.ms) && <span>{formatDuration(p.ms)}</span>}{p.model && <span>{p.model}</span>}</div>
-                        {p.changelog.map((c, i) => <p key={i} className="fa-line"><b>{c.rule}</b> {c.description}</p>)}
-                        {p.warnings.map((w, i) => <p key={i} className="fa-warn">{w}</p>)}
+                        {p.changelog.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (c, i) => <p key={i} className="fa-line"><b>{c.rule}</b> {c.description}</p>)}
+                        {p.warnings.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (w, i) => <p key={i} className="fa-warn">{w}</p>)}
                         {p.ruleReview && p.ruleReview.length > 0 && (
-                          <ul className="fa-review">{p.ruleReview.map((r, i) => <li key={i}><b>{r.rule}</b> <em>{r.verdict}</em> {r.reasoning}</li>)}</ul>
+                          <ul className="fa-review">{p.ruleReview.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (r, i) => <li key={i}><b>{r.rule}</b> <em>{r.verdict}</em> {r.reasoning}</li>)}</ul>
                         )}
                         {p.raw !== undefined && <details><summary>Raw model reply</summary><pre>{p.raw}</pre></details>}
                       </li>

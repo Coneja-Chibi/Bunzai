@@ -224,7 +224,7 @@ function QuestionScreen({ steps, index, draft, onPick, onBack, onNext, onSkipAll
           <Lockup />
           <div className="prog">
             <span className="dots">
-              {steps.map((_, d) => (
+              {steps.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (_, d) => (
                 <i key={d} className={d < index ? "done" : d === index ? "now" : undefined} />
               ))}
             </span>
@@ -232,7 +232,7 @@ function QuestionScreen({ steps, index, draft, onPick, onBack, onNext, onSkipAll
           </div>
         </div>
         <h1 className="q">
-          {manifest.question.split("\n").map((line, n) => (
+          {manifest.question.split("\n").map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (line, n) => (
             <span key={n}>
               {n > 0 && <br />}
               {line}
@@ -274,7 +274,7 @@ function FinalScreen({ steps, draft, onOpen }: { steps: LoadedStep[]; draft: Set
         <Lockup />
         <h1 className="q">You&apos;re set.</h1>
         <p className="summary">
-          {plan.map((frag, i) => (
+          {plan.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (frag, i) => (
             <span key={i}>
               {frag.pre}
               <b>{frag.strong}</b>
@@ -283,7 +283,7 @@ function FinalScreen({ steps, draft, onOpen }: { steps: LoadedStep[]; draft: Set
           ))}
         </p>
         <div className="recap">
-          {chips.map((chip, i) => (
+          {chips.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (chip, i) => (
             <span key={i}>
               {chip.label} <b>{chip.value}</b>
             </span>

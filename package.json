@@ -53,6 +53,8 @@
     "scan:colors:check": "bun run scripts/hooks/no-hardcode-colors.ts --check",
     "scan:style": "bun run scripts/hooks/style-guard.ts --scan",
     "scan:clones": "bun run scripts/hooks/clones.ts --scan",
+    "scan:lists": "bun run scripts/hooks/unbounded-lists.ts --scan",
+    "lists:baseline": "bun run scripts/hooks/unbounded-lists.ts --baseline",
     "clones:baseline": "bun run scripts/hooks/clones.ts --baseline",
     "scan:lines": "bun run scripts/hooks/file-lines.ts --scan",
     "scan:emdash": "bun run scripts/hooks/prose-guards.ts --emdash",

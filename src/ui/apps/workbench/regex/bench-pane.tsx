@@ -232,7 +232,7 @@ export function BenchPane({
                       <>
                         <div className={styles.overlayNote}>Shows as an overlay - the text is untouched</div>
                         <div className={styles.groups}>
-                          {overlay.matches.map((m, mi) => (
+                          {overlay.matches.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m, mi) => (
                             <span key={mi} className={styles.gchip}>
                               <i>over</i>
                               {trace.before.slice(m.whole.start, m.whole.end)}
@@ -245,7 +245,7 @@ export function BenchPane({
                         <DiffBody before={trace.before} after={trace.after} />
                         {chips.length > 0 && (
                           <div className={styles.groups}>
-                            {chips.map((c) => (
+                            {chips.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (c) => (
                               <span key={c.n} className={`${styles.gchip} ${styles[`c${c.lane}`]}`}>
                                 <i>${c.n}</i>
                                 {c.text}

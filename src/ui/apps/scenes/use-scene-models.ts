@@ -83,3 +83,13 @@ export function useSceneModels(ctx: AppContext, chat: Chat, onPicked: (chat: Cha
   const retry = (id: string): void => { const c = conns?.find((x) => x.id === id); if (c) load(c, true); };
   return { conns, models, favorites, labelOf: (id) => conns?.find((c) => c.id === id)?.label ?? "a connection Kit no longer has", windowOf, nameOf, toggleFavorite, retry, pick };
 }
+
+/** Every model a scene can pick right now, as select choices keyed like `keyOf` (unusable connections left out; a failed list still offers its saved model). */
+export function modelChoices(models: SceneModels): { value: string; label: string; conn: ChatConnection }[] {
+  return (models.conns ?? []).flatMap((c) => {
+    if (c.unavailable) return [];
+    const m = models.models[c.id];
+    const ids: { id: string; label?: string }[] = m?.state === "ready" ? m.ids : m?.state === "failed" ? [{ id: m.saved }] : [];
+    return ids.map((x) => { const conn = { id: c.id, model: x.id }; return { value: keyOf(conn), label: `${c.label}: ${x.label ?? x.id}`, conn }; });
+  });
+}

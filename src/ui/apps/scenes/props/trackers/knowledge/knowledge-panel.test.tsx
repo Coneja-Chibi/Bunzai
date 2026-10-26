@@ -120,3 +120,12 @@ describe("the frame", () => {
     expect(r.lastData<Knowledge>()).toEqual({ entries: [], subs: { secrets: true } });
   });
 });
+
+describe("a full tracker", () => {
+  test("500 items mount fewer than 60 cards", async () => {
+    await r.mount(panel(kept(...Array.from({ length: 500 }, (_, i) => entry(`k${String(i)}`, { subject: `Subject ${String(i)}` })))));
+    const cards = r.qa(".it-card").length;
+    expect(cards).toBeGreaterThan(0);
+    expect(cards).toBeLessThan(60);
+  });
+});

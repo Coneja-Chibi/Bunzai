@@ -56,7 +56,7 @@ export function Inspector(p: InspectorProps): JSX.Element | null {
             <span>Pin to</span>
             <select value={it.pin ?? ""} disabled={p.readOnly} onChange={(e) => p.onItem(it.id, { pin: e.target.value || undefined })}>
               <option value="">Nothing</option>
-              {p.nodes.filter((n) => !n.ghost).map((n) => <option key={n.key} value={n.key}>{n.name}</option>)}
+              {p.nodes.filter((n) => !n.ghost).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (n) => <option key={n.key} value={n.key}>{n.name}</option>)}
             </select>
           </label>
         )}

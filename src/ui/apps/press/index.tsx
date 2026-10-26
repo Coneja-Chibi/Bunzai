@@ -336,7 +336,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
           <span className={styles.kick}>from the library · click to stage</span>
           {loadNote && <p className={styles.empty}>{loadNote}</p>}
           <div className={styles.offerList} data-part="press.offers">
-            {offers.map((s) => (
+            {offers.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
               <ListRow key={pieceKeyOf(s)} data-part="press.offer" onClick={() => ctx.press.stage([s])} label={s.name || s.id} meta={s.kind} />
             ))}
             {offers.length === 0 && <p className={styles.empty}>everything is staged</p>}
@@ -369,7 +369,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
             </p>
           ) : (
             <>
-              {grouping.bundles.map((bundle) => (
+              {grouping.bundles.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (bundle) => (
                 <div key={pieceKeyOf(bundle.owner)} className={styles.bundle} data-part="press.bundle">
                   <div className={styles.bundleMarq}>
                     <span>{`bundle · ${bundle.owner.name}`}</span>
@@ -382,7 +382,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
                   {bundle.riders.map((r) => card(r, { of: bundle.owner.name }))}
                 </div>
               ))}
-              {grouping.solos.map((s) => (
+              {grouping.solos.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
                 <div key={pieceKeyOf(s)} className={styles.bundle} data-part="press.bundle">
                   <div className={styles.bundleMarq}>
                     <span>{`solo · ${s.name}`}</span>

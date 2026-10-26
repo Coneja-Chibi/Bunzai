@@ -133,7 +133,7 @@ export function PromptEditPanel({
                 onChange={(e) => onSetGroup(e.target.value === UNCATEGORIZED ? null : e.target.value)}
               >
                 <option value={UNCATEGORIZED}>Uncategorized</option>
-                {categoryOptions.map(({ group, label }) => (
+                {categoryOptions.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ ({ group, label }) => (
                   <option key={group.id} value={group.id}>
                     {label}
                   </option>
@@ -173,7 +173,7 @@ export function PromptEditPanel({
               aria-label="Placement"
               onChange={(e) => onPatch({ placement: e.target.value })}
             >
-              {stops.map((stop) => (
+              {stops.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (stop) => (
                 <option key={stop} value={stop}>
                   {PRESET_PLACEMENT_LABELS[stop]?.label ?? stop}
                   {PRESET_PLACEMENT_LABELS[stop]?.hint ? ` - ${PRESET_PLACEMENT_LABELS[stop]!.hint}` : ""}

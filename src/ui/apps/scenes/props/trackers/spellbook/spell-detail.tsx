@@ -38,7 +38,7 @@ const ago = (at: number, now = Date.now()): string => {
 function Row({ icon, tone, label, children }: { icon: IconName; tone: string; label: string; children: JSX.Element | string }): JSX.Element {
   return <div className="sp-row"><span style={{ color: tone }}><Ic name={icon} size={16} /></span><div><small>{label}</small>{typeof children === "string" ? <div>{children}</div> : children}</div></div>;
 }
-const List = ({ items }: { items: readonly string[] }): JSX.Element => <ul>{items.map((e, i) => <li key={`${e}${i}`}>{e}</li>)}</ul>;
+const List = ({ items }: { items: readonly string[] }): JSX.Element => <ul>{items.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e, i) => <li key={`${e}${i}`}>{e}</li>)}</ul>;
 
 export function SpellDetail({ spell, tactical }: { spell: Spell; tactical: boolean }): JSX.Element {
   const [history, setHistory] = useState(false);

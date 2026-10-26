@@ -13,7 +13,7 @@ import { BoothModelPicker } from "../booth-model-picker";
 import { useSceneModels } from "../use-scene-models";
 import type { ContextProps } from "./context-wing";
 import { Disclosure, Field, NumberBox, SwitchRow } from "./memory-controls";
-import { autoPatch, backfillLabel, compactModelName, contextLabel, controlsLine, heroSubtitle, hidePatch, intervalPatch, methodLabel, methodPatch, optionOf, promptVariables, timingLabel } from "./memory-core";
+import { autoPatch, backfillLabel, compactModelName, contextLabel, controlsLine, heroSubtitle, hidePatch, intervalPatch, methodLabel, methodPatch, nowLabel, optionOf, promptVariables, timingLabel } from "./memory-core";
 import { useSummary } from "./use-summary";
 
 const FOLDS = "context.memoryFolds";
@@ -112,7 +112,7 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
             description={`Limits each source message to ${SUMMARY_DEFAULTS.sourceLimit} characters before summary generation.`} />
           <Disclosure open={folds.prompt} onToggle={(o) => fold("prompt", o)} icon="lucide:scroll-text" title="Prompt template" hint="Custom">
             <div className="mm-vars">
-              <span>Variables: {promptVariables(option).map((v) => <code key={v}>{v}</code>)}. {option === "pair" ? "Missing source variables are appended automatically." : "Missing history is appended automatically."}</span>
+              <span>Variables: {promptVariables(option).map(/* bounded-ok: per-turn bounded detail lines */ (v) => <code key={v}>{v}</code>)}. {option === "pair" ? "Missing source variables are appended automatically." : "Missing history is appended automatically."}</span>
               <Button size="sm" icon="lucide:refresh-cw" disabled={!r.prompt} onClick={() => put({ prompt: null })}>Reset prompt</Button>
             </div>
             <PromptBox key={r.prompt ?? ""} saved={r.prompt} fallback={option === "pair" ? PAIR_PROMPT : rollingPrompt(r.mode, false)} onCommit={(text) => put({ prompt: text.trim() === "" ? null : text })} />
@@ -148,6 +148,8 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
         )}
         {editing === null ? (
           <div className="mm-back">
+            <p>Summarize now: {nowLabel(r, Boolean(s.text))}</p>
+            <Button size="sm" icon={s.running ? "lucide:loader-circle" : "lucide:sparkles"} disabled={s.running || view.busy} onClick={() => void view.summarizeNow()}>Summarize now</Button>
             <p>This run: <b>{backfillLabel(option)}</b>. Full history is loaded and split adaptively for the selected model. You can switch methods afterward.</p>
             <Button size="sm" icon={s.running ? "lucide:loader-circle" : "lucide:refresh-cw"} disabled={s.running || view.busy} onClick={() => void view.backfill()}>Backfill history</Button>
           </div>

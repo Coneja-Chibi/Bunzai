@@ -43,7 +43,7 @@ import {
   swipeHistoryOf,
   sceneTrash,
   sendToScene,
-  startScene,
+  startSceneWithNotes,
   switchTake,
   updateSceneCard,
   type OpenScene,
@@ -250,7 +250,7 @@ const WRITES: Record<string, (chats: ChatStore, store: StudioStoreLike, b: Body,
     if (take) await syncTrackersToTake(chats, take.chatId);
     return take ? json(take) : err("the Trash no longer holds that take", 404);
   },
-  "/api/chats/start": async (chats, store, b, settings) => json(await startScene(chats, store, settings, str(b["characterId"]))),
+  "/api/chats/start": async (chats, store, b, settings) => json(await startSceneWithNotes(chats, store, settings, str(b["characterId"])).then(({ chat, notes }) => (notes.length > 0 ? { ...chat, startNotes: notes } : chat))),
   "/api/chats/send": async (chats, store, b) => {
     const { greetingIndex, expectedVersion } = b;
     if (typeof greetingIndex !== "number" || typeof expectedVersion !== "number" || typeof b["content"] !== "string") return err("expected { chatId, content, greetingIndex, expectedVersion }");

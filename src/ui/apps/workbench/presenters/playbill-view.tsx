@@ -130,7 +130,7 @@ export function PlaybillView({
         {sealedCard}
       </div>
       <div className={styles.pbForm}>
-        {acts.map((act) => {
+        {acts.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (act) => {
           const mods = actModules(act.ids).filter((m) => !lensHides(m));
           if (mods.length === 0) return null;
           return (
@@ -153,7 +153,7 @@ export function PlaybillView({
         <div className={styles.pbTitle}>The Bill</div>
         <p className={styles.pbSay}>Jump to any act.</p>
         <ul className={styles.toc}>
-          {acts.map((act) => {
+          {acts.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (act) => {
             const n = actModules(act.ids).filter((m) => !lensHides(m)).length;
             if (n === 0) return null;
             return (

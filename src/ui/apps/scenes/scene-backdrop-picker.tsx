@@ -13,11 +13,14 @@ import { SegControl } from "../settings/section-contract";
 import { toErrorMessage } from "../../_shared/error-message";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
 import type { ChatBackdrop } from "../../../stage/contracts/chat-store";
-import { DEFAULT_DIM, MAX_DIM, MAX_RATE, MIN_RATE, dimOf, isVideoRef, rateOf } from "./scene-backdrop-core";
+import { DEFAULT_DIM, MAX_BLUR, MAX_DIM, MAX_RATE, MIN_RATE, blurOf, dimOf, isVideoRef, rateOf } from "./scene-backdrop-core";
 import { Button, Tile } from "../../components/button";
 import { addImagesToPack, addLinkToPack } from "./scene-backdrop-add";
 import { BackdropThumb } from "./scene-backdrop-layer";
 import { useBackdropPack } from "./use-backdrop-pack";
+import { VirtualShelf } from "../../_shared/virtual-list";
+
+const GRID_ROW_PX = 90;
 
 const SAVE_DELAY_MS = 300;
 
@@ -34,6 +37,7 @@ export function BackdropPicker({ ctx, backdrop, onPick, onClose }: {
   const [adding, setAdding] = useState(false);
   const [dim, setDim] = useState(backdrop ? dimOf(backdrop) : DEFAULT_DIM);
   const [rate, setRate] = useState(backdrop ? rateOf(backdrop) : 1);
+  const [blur, setBlur] = useState(backdrop ? blurOf(backdrop) : 0);
   const [link, setLink] = useState("");
   const file = useRef<HTMLInputElement>(null);
   const shown = useBackdropPack(ctx, packId);
@@ -51,11 +55,11 @@ export function BackdropPicker({ ctx, backdrop, onPick, onClose }: {
   // The sliders drag fast; save once they rest, and when the picker closes with a change still waiting.
   const held = useRef({ backdrop, onPick });
   held.current = { backdrop, onPick };
-  const sliders = useDebouncedSave<{ dim: number; rate: number }>(async (next) => {
+  const sliders = useDebouncedSave<{ dim: number; rate: number; blur: number }>(async (next) => {
     const { backdrop: current, onPick: pick } = held.current;
-    if (!current || (next.dim === (current.dim ?? DEFAULT_DIM) && next.rate === (current.rate ?? 1))) return;
-    const { rate: _old, ...rest } = current;
-    await pick({ ...rest, dim: next.dim, ...(next.rate === 1 ? {} : { rate: next.rate }) });
+    if (!current || (next.dim === (current.dim ?? DEFAULT_DIM) && next.rate === (current.rate ?? 1) && next.blur === blurOf(current))) return;
+    const { rate: _old, blur: _oldBlur, ...rest } = current;
+    await pick({ ...rest, dim: next.dim, ...(next.rate === 1 ? {} : { rate: next.rate }), ...(next.blur === 0 ? {} : { blur: next.blur }) });
   }, SAVE_DELAY_MS, (e) => setNote(`Could not save the backdrop. ${toErrorMessage(e, "")}`.trim()));
   /** A pick carries the sliders' values itself, so a value still waiting must not save over it afterwards. */
   const pickNow = (next: ChatBackdrop | null): void => { sliders.cancel(); void onPick(next); };
@@ -104,27 +108,35 @@ export function BackdropPicker({ ctx, backdrop, onPick, onClose }: {
             <input type="search" value={query} placeholder="Filter by name" aria-label="Filter by name" onChange={(e) => setQuery(e.target.value)} />
             <span className="hint">{shown.state === "ready" ? `${String(shown.pack.items.length)} ${shown.pack.items.length === 1 ? "picture" : "pictures"}` : ""}</span>
           </div>
-          <div className="grid" role="listbox" aria-label="Backdrops">
-            <Tile kind="thumb" size="fill" role="option" aria-selected={!backdrop} selected={!backdrop} label="None" art="None" onClick={() => pickNow(null)} />
-            {items.map((i) => {
-              const on = backdrop?.pack === packId && backdrop?.item === i.id;
-              return (
-                <Tile key={i.id} kind="thumb" size="fill" role="option" aria-selected={on} selected={on} label={i.label}
-                  onClick={() => packId && pickNow({ pack: packId, item: i.id, ...(dim === DEFAULT_DIM ? {} : { dim }) })}
-                  art={<><BackdropThumb refValue={i.ref} {...(i.mime ? { mime: i.mime } : {})} /><span className="cap">{i.label}</span></>} />
-              );
-            })}
+          <div className="gscroll" role="listbox" aria-label="Backdrops">
+            <VirtualShelf items={items} keyOf={(i) => i.id} rowClass="grow" estimate={GRID_ROW_PX}
+              head={
+                <Tile kind="thumb" size="fill" role="option" aria-selected={!backdrop} selected={!backdrop} label="None" art="None" onClick={() => pickNow(null)} />
+              }
+              render={(i) => {
+                const on = backdrop?.pack === packId && backdrop?.item === i.id;
+                return (
+                  <Tile data-pick={i.id} kind="thumb" size="fill" role="option" aria-selected={on} selected={on} label={i.label}
+                    onClick={() => packId && pickNow({ pack: packId, item: i.id, ...(dim === DEFAULT_DIM ? {} : { dim }), ...(blur === 0 ? {} : { blur }) })}
+                    art={<><BackdropThumb refValue={i.ref} {...(i.mime ? { mime: i.mime } : {})} /><span className="cap">{i.label}</span></>} />
+                );
+              }} />
           </div>
           {shown.state === "loading" && <p className="hint">Loading...</p>}
           {(shown.state === "gone" || shown.state === "failed") && <p className="hint">This pack could not be read. Pick another, or choose None.</p>}
           {backdrop && isVideo && (
             <label className="dim"><span>Video speed</span>
-              <Slider value={rate} min={MIN_RATE} max={MAX_RATE} step={0.05} onChange={(v) => { setRate(v); sliders.push({ dim, rate: v }); }} format={(v) => v.toFixed(2) + "x"} aria-label="Video speed" />
+              <Slider value={rate} min={MIN_RATE} max={MAX_RATE} step={0.05} onChange={(v) => { setRate(v); sliders.push({ dim, rate: v, blur }); }} format={(v) => v.toFixed(2) + "x"} aria-label="Video speed" />
             </label>
           )}
           {backdrop && (
             <label className="dim"><span>Overlay darkness</span>
-              <Slider value={dim} min={0} max={MAX_DIM} step={0.05} onChange={(v) => { setDim(v); sliders.push({ dim: v, rate }); }} format={(v) => `${String(Math.round(v * 100))}%`} aria-label="Overlay darkness" />
+              <Slider value={dim} min={0} max={MAX_DIM} step={0.05} onChange={(v) => { setDim(v); sliders.push({ dim: v, rate, blur }); }} format={(v) => `${String(Math.round(v * 100))}%`} aria-label="Overlay darkness" />
+            </label>
+          )}
+          {backdrop && (
+            <label className="dim"><span>Blur</span>
+              <Slider value={blur} min={0} max={MAX_BLUR} step={1} onChange={(v) => { setBlur(v); sliders.push({ dim, rate, blur: v }); }} format={(v) => `${String(v)} px`} aria-label="Blur" />
             </label>
           )}
           <div className="bar">

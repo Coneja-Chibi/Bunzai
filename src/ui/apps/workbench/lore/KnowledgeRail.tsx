@@ -36,7 +36,7 @@ export function KnowledgeRail({ ctx, refs, onChange }: KnowledgeRailProps): JSX.
     <section aria-label="Linked lorebooks" className={styles.rail}>
       <div className={styles.head}>Knowledge</div>
       {refs.length === 0 && <div className={styles.empty}>No library books linked.</div>}
-      {refs.map((id, i) => (
+      {refs.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (id, i) => (
         <div key={id} className={missing.includes(id) ? `${styles.row} ${styles.rowMissing}` : styles.row}>
           <ListRow
             selected={missing.includes(id)}

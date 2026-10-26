@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { CombatPanel } from "./battle-panel";
+import { summaryLine } from "./summary";
 
 export const combatProp = trackerProp({
   module: "battle",
@@ -16,4 +17,5 @@ export const combatProp = trackerProp({
   title: "Battle Tracker",
   noun: "Combat",
   Panel: CombatPanel,
+  summary: summaryLine,
 });

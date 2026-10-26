@@ -13,7 +13,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Block, Chips, Empty, Filters, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Block, Chips, Empty, Filters, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 
@@ -77,9 +77,8 @@ export function KnowledgePanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
       <div className="st-body">
         <Filters<Cat> options={CAT_FILTERS} value={cat} onChange={setCat} icons={{ all: "lucide:layers", ...CAT_ICON }} />
         {shown.length > 0 ? (
-          <div className="it-list">
-            {shown.map((e) => (
-              <ItemCard key={e.id} color={TONE[e.reliability]} icon={<Ic name={CAT_ICON[e.category]} size={14} />} title={e.subject}
+          <ItemList items={shown} render={(e) => (
+              <ItemCard color={TONE[e.reliability]} icon={<Ic name={CAT_ICON[e.category]} size={14} />} title={e.subject}
                 meta={e.source ? <span className="it-line"><Ic name="lucide:user" size={12} />From: {e.source}</span> : null} preview={e.content}
                 right={(
                   <div className="it-pillcol">
@@ -106,14 +105,13 @@ export function KnowledgePanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
                     <b><Ic name="lucide:lock" size={14} />Secret Details</b>
                     {e.hiddenFrom && e.hiddenFrom.length > 0 && <div><small>Hidden from:</small><Chips items={e.hiddenFrom} /></div>}
                     {e.concealmentMethod && <div><small>Concealment method:</small><div>{e.concealmentMethod}</div></div>}
-                    {e.vulnerabilityPoints && e.vulnerabilityPoints.length > 0 && <div><small>Vulnerability points:</small><ul>{e.vulnerabilityPoints.map((p, i) => <li key={`${p}${i}`}>{p}</li>)}</ul></div>}
+                    {e.vulnerabilityPoints && e.vulnerabilityPoints.length > 0 && <div><small>Vulnerability points:</small><ul>{e.vulnerabilityPoints.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (p, i) => <li key={`${p}${i}`}>{p}</li>)}</ul></div>}
                     {e.revelationImpact && <div><small>If revealed:</small><em>{e.revelationImpact}</em></div>}
                   </div>
                 )}
                 <div className="it-fine">{e.learnedFrom && <div>Learned from: {e.learnedFrom}</div>}<div>Learned: {new Date(e.learnedAt).toLocaleString()}</div></div>
               </ItemCard>
-            ))}
-          </div>
+            )} />
         ) : (
           <Empty icon={tab === "secrets" ? "lucide:lock" : "lucide:book-open"} title={tab === "secrets" ? "No secrets tracked" : "No knowledge entries"}
             hint={tab === "secrets" ? "Enable the Secrets sub-toggle to track concealed information" : query ? "No results found" : "Your knowledge base is empty"} />

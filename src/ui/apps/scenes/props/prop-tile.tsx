@@ -18,7 +18,7 @@ export function PropTile({ prop, on, tips, onToggle, onGear, subOn }: { prop: Sc
   };
   const stop = (fn: () => void) => (e: MouseEvent): void => { e.stopPropagation(); fn(); };
   const story = prop.group === "storyboard";
-  const dots = (cls: string): JSX.Element | null => (prop.subs ? <span className={cls} aria-hidden="true">{prop.subs.map((s) => <i key={s.id} className={on && subOn?.[s.id] ? "on" : on ? "up" : ""} />)}</span> : null);
+  const dots = (cls: string): JSX.Element | null => (prop.subs ? <span className={cls} aria-hidden="true">{prop.subs.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s) => <i key={s.id} className={on && subOn?.[s.id] ? "on" : on ? "up" : ""} />)}</span> : null);
   const tile = (
     <div className={`pw-tile${story ? " story" : ""}${on ? " on" : ""}`} role="button" tabIndex={0} aria-pressed={on} style={{ "--tone": prop.tone } as CSSProperties} data-part={`scene.props.tile.${prop.id}`}
       aria-label={`${prop.name}: ${prop.blurb}`} onClick={onToggle} onKeyDown={key}>

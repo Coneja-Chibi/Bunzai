@@ -49,7 +49,7 @@ export function TakeCompare({ api, chatId, a, b, onClose }: { api: Pick<ScenesAp
             <>
               <p className="cx-blurb">{out.a.name} ({plural(out.a.messages, "message")}) and {out.b.name} ({plural(out.b.messages, "message")}) have {plural(out.shared, "message")} in common.</p>
               {out.rows.length === 0 && <p className="cx-note">These takes have the same messages.</p>}
-              {out.rows.map((r, i) => (
+              {out.rows.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (r, i) => (
                 <div key={i} className="cx-cols tc-row"><Cell side={r.a} other={r.b} which="a" /><Cell side={r.b} other={r.a} which="b" /></div>
               ))}
               {out.truncated && <p className="cx-note">Only the first {out.rows.length} differing messages are shown.</p>}

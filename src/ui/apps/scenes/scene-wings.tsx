@@ -21,12 +21,14 @@ import type { WingResize } from "./wing-resize-edge";
 export { WINGS } from "./scene-wing-data";
 export { WingRails } from "./scene-wing-rail";
 
-export function WingPanel({ id, tab, bare, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resize }: {
+export function WingPanel({ id, tab, bare, single, castPanel, booth, ai, aiGeneration, stage, prompting, world, props, finalCut, context, resize }: {
   id: string;
   /** The tab to open on (a Messenger program, messenger/programs.ts). */
   tab?: string;
   /** Drawn for a Messenger program: the wing's body in a plain box, without the frame's edge, depth, sheen or drag edge. */
   bare?: boolean;
+  /** Draw only `tab`'s body, without the wing's tab bar or crumb (a Messenger section). */
+  single?: boolean;
   context?: ContextProps; castPanel?: JSX.Element; booth?: JSX.Element; ai?: JSX.Element; aiGeneration?: JSX.Element; stage?: StageProps; prompting?: { panel: JSX.Element }; world?: { panel: JSX.Element; compendium: JSX.Element; meta: string };
   props?: { panel: JSX.Element; meta: string };
   finalCut?: { panel: JSX.Element };
@@ -43,14 +45,14 @@ export function WingPanel({ id, tab, bare, castPanel, booth, ai, aiGeneration, s
   if (id === "booth" && booth) return frame(undefined, <><ThemeSlot id="scene.wing.booth" /><nav className="fold">{crumb}</nav>{booth}</>);
   if (id === "prompting" && prompting) return frame(undefined, <><ThemeSlot id="scene.wing.prompting" />{prompting.panel}</>);
   if (id === "finalcut" && finalCut) return frame(undefined, <><ThemeSlot id="scene.wing.finalcut" />{finalCut.panel}</>);
-  if (id === "world" && world) return frame("world-wing", <><ThemeSlot id="scene.wing.world" /><WorldWing lore={world.panel} compendium={world.compendium} linked={world.meta} initialTab={tab} /></>);
+  if (id === "world" && world) return frame("world-wing", <><ThemeSlot id="scene.wing.world" /><WorldWing lore={world.panel} compendium={world.compendium} linked={world.meta} initialTab={tab} {...(single ? { single } : {})} /></>);
   if (id === "props" && props) {
     return frame("props-wing", <><ThemeSlot id="scene.wing.props" /><FoldoutTabs area="Scene" group="Props" tabs={[{ id: "props", label: "Props", meta: props.meta }]} active="props" onSelect={() => undefined} />{props.panel}</>);
   }
-  if (id === "ai" && ai) return frame("ai-wing", <><ThemeSlot id="scene.wing.ai" /><AiTabs model={ai} initialTab={tab} {...(aiGeneration ? { generation: aiGeneration } : {})} /></>);
-  if (id === "context" && context) return bare ? frame("context-wing", <><ThemeSlot id="scene.wing.context" /><ContextWing initialTab={tab} {...context} /></>) : <ContextSection wing={wing} initialTab={tab} {...(resize ? { resize } : {})} {...context} />;
+  if (id === "ai" && ai) return frame("ai-wing", <><ThemeSlot id="scene.wing.ai" /><AiTabs model={ai} initialTab={tab} {...(single ? { single } : {})} {...(aiGeneration ? { generation: aiGeneration } : {})} /></>);
+  if (id === "context" && context) return bare ? frame("context-wing", <><ThemeSlot id="scene.wing.context" /><ContextWing initialTab={tab} {...(single ? { single } : {})} {...context} /></>) : <ContextSection wing={wing} initialTab={tab} {...(single ? { single } : {})} {...(resize ? { resize } : {})} {...context} />;
   // theme-key-ok: "stage" here is this wing's id, not a theme
-  if (id === "stage" && stage) return frame("stage-wing", <><ThemeSlot id="scene.wing.stage" /><StageWing initialTab={tab} {...stage} /></>);
+  if (id === "stage" && stage) return frame("stage-wing", <><ThemeSlot id="scene.wing.stage" /><StageWing initialTab={tab} {...(single ? { single } : {})} {...stage} /></>);
   return frame(undefined, <><nav className="fold">{crumb}</nav><div className="wbody">
       <div className="quiet"><div><Ic name={wing.icon} size={34} /><div>{id === "context" ? "Open a saved scene to see what the AI sees." : `${wing.label} is not built yet.`}</div><small>{wing.blurb}</small></div></div>
     </div></>);

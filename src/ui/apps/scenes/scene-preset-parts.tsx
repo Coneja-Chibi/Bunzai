@@ -30,7 +30,7 @@ type Prefs = AppContext["prefs"];
 
 type Samplers = ChatPresetSamplers;
 /** Every value a preset may hold; the _tools twins run as their plain mode, since scenes send no tools. */
-const MERGE: readonly (readonly [NonNullable<PresetSamplers["promptPostProcessing"]>, string])[] = [
+export const MERGE: readonly (readonly [NonNullable<PresetSamplers["promptPostProcessing"]>, string])[] = [
   ["none", "None (send as built)"],
   ["merge", "Merge same-role messages"],
   ["merge_tools", "Merge (keeping tools)"],
@@ -47,7 +47,7 @@ const MERGE_SHORT: Readonly<Record<string, string>> = {
 };
 /** `unset` is where the handle rests when neither the preset nor the scene sets a value: what a provider does without one. `tone` and `help` are RoleCall's colour and "?" text for the card (PresetPanel.tsx:2600-2714). */
 type Slider = { key: Exclude<SamplerKey, "promptPostProcessing" | "contextMode">; label: string; min: number; max: number; step: number; unset: number; tone: string; help: string };
-const SLIDERS: readonly Slider[] = [
+export const SLIDERS: readonly Slider[] = [
   { key: "temperature", label: "Temperature", min: 0, max: 2, step: 0.01, unset: 1, tone: "var(--deck-regex)", help: "Controls randomness. Lower (0.0-0.7) = focused and predictable. Higher (0.8-2.0) = creative and varied. Use 0.7-1.0 for most conversations." },
   { key: "topP", label: "Top P", min: 0, max: 1, step: 0.01, unset: 1, tone: "var(--deck-persona)", help: "Limits word choices by probability. Lower (0.1-0.5) = safer, more common words. Higher (0.9-1.0) = wider vocabulary. Most use 0.9-0.95. Works with Temperature." },
   { key: "topK", label: "Top K", min: 0, max: 200, step: 1, unset: 0, tone: "var(--stage-ok)", help: "Limits word choices to top N candidates. Lower (10-40) = consistent style. Higher (60-100) = more variety. 0 = disabled. Often used with Top P. Try 40-60 for balanced results." },
@@ -57,7 +57,7 @@ const SLIDERS: readonly Slider[] = [
   { key: "presencePenalty", label: "Presence Penalty", min: -2, max: 2, step: 0.01, unset: 0, tone: "var(--stage-text-dim)", help: "Lowers the odds of any word that has appeared at all. Positive values push toward new topics; negative values stay on the current one." },
 ];
 /** RoleCall's Max Messages slider (QuickPlayPanel.tsx:2025): shown instead of Max Context in messages mode. */
-const MAX_MESSAGES: Slider = { key: "maxMessages", label: "Max Messages", min: 0, max: 1_000, step: 1, unset: DEFAULT_MAX_MESSAGES, tone: "var(--stage-warn)", help: "Number of previous messages the AI sees. The current user message is always included on top of this count. Use when you want to cap by raw conversation depth instead of a token budget." };
+export const MAX_MESSAGES: Slider = { key: "maxMessages", label: "Max Messages", min: 0, max: 1_000, step: 1, unset: DEFAULT_MAX_MESSAGES, tone: "var(--stage-warn)", help: "Number of previous messages the AI sees. The current user message is always included on top of this count. Use when you want to cap by raw conversation depth instead of a token budget." };
 const shown = (v: number | undefined, step?: number) => (v === undefined ? "-" : formatSampler(v, step));
 
 /** The Control Booth's order and members (QuickPlayPanel.tsx:1928-2087): Temperature, Max Tokens, the Context card, then the rest. */

@@ -12,7 +12,7 @@ export function OverlayWidgets({ ctx, onActivate }: OverlayWidgetProps) {
   if (!ctx.pieces.isSeeded()) return <OverlayWidget title="Your library decks"><p>{ctx.workbench.restoreFailure?.() ?? "Loading the library inventory..."}</p></OverlayWidget>;
   const counts = deckCounts([...pieces], []);
   return <><OverlayWidget title="Your library decks"><div className={`overlay-widget-grid ${styles.counts}`}>
-    {counts.map(({ kind, count }) => <div className="overlay-widget-tile" key={kind}><strong>{count}</strong>{deckMeta(kind).plural}</div>)}
+    {counts.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ ({ kind, count }) => <div className="overlay-widget-tile" key={kind}><strong>{count}</strong>{deckMeta(kind).plural}</div>)}
     {!pieces.length && <p>Your library has no pieces yet. Import files to begin.</p>}
   </div></OverlayWidget><OverlayWidget title="Recent arrivals"><ul>
     {[...pieces].sort((a, b) => (b.importedAt ?? "").localeCompare(a.importedAt ?? "")).slice(0, 3).map((p) => <li key={`${p.kind}:${p.id}`}><ListRow onClick={() => { ctx.workbench.open(p); onActivate(); }} label={p.name} subtitle={deckMeta(p.kind).singular} meta={<span aria-hidden="true">Open</span>} /></li>)}

@@ -10,14 +10,18 @@ import type { JSX } from "react";
 import type { SettingsSection } from "../section-contract";
 import { SettingsRow } from "../section-contract";
 import { Button } from "../../../components/button";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import { StageNote } from "../../../components/stage-dossier";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { ProtectedDialog } from "../../../_shared/protected-dialog";
 import { agoLabel, backupsApi, dayLabel, keptWords, KIND_CHIP, removable, sizeLabel, whenLabel, type BackupsState, type Copy } from "./backups-core";
+import { useLibraryExport } from "./library-export";
 import { RestoreDialog } from "./backups-dialogs";
 import { sentence } from "./security-flows";
 import styles from "./security.module.css";
 import { plural } from "../../../../core/text";
+
+const COPY_ROW_PX = 56;
 
 const SHOWN = 5;
 const chipClass = (tone: "plain" | "ok" | "warn"): string | undefined => (tone === "ok" ? styles.chipOk : tone === "warn" ? styles.chipWarn : styles.chip);
@@ -41,6 +45,7 @@ function Backups(): JSX.Element {
   const [busy, setBusy] = useState(false);
   const [all, setAll] = useState(false);
   const [restoring, setRestoring] = useState<Copy | null>(null);
+  const exp = useLibraryExport();
 
   const refresh = useCallback(async (): Promise<void> => {
     try {
@@ -106,7 +111,7 @@ function Backups(): JSX.Element {
       </div>
 
       <pre className={styles.proof}>
-        {proofLines(state.needsWords).map((l, i) => (
+        {proofLines(state.needsWords).map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (l, i) => (
           <span key={i} className={l.not ? styles.proofNot : undefined}>
             {`${l.text}\n`}
           </span>
@@ -142,6 +147,11 @@ function Backups(): JSX.Element {
             Back up now
           </Button>
         </SettingsRow>
+        <SettingsRow label="Export library" hint={exp.note ?? "Writes everything to a plain folder beside your studio folder, ready to import elsewhere. The folder is not encrypted."}>
+          <Button size="sm" disabled={exp.busy || !state.unlocked} onClick={exp.run}>
+            Export library
+          </Button>
+        </SettingsRow>
         <SettingsRow
           label="What is kept"
           hint={`${keptWords(state.manual, state.snapshots.filter((c) => c.kind === "before-restore").length)} Copies use ${sizeLabel(state.totalBytes)} of this disk.`}
@@ -153,8 +163,8 @@ function Backups(): JSX.Element {
       <div className={styles.card}>
         <div className={styles.cardTitle}>Copies</div>
         {total === 0 ? <div className={styles.cardBody}>No copies yet. The first one is made shortly after Bunraku opens, or press Back up now.</div> : null}
-        {shown.map((c) => (
-          <div className={styles.pc} key={c.id}>
+        <VirtualRows items={shown} keyOf={(c) => c.id} estimate={COPY_ROW_PX} render={(c, i) => (
+          <div className={i === shown.length - 1 && total <= SHOWN ? `${styles.pc} ${styles.pcLast}` : styles.pc}>
             <div>
               <div className={styles.pcName}>
                 {whenLabel(c.takenAt)} <span className={chipClass(KIND_CHIP[c.kind].tone)}>{KIND_CHIP[c.kind].label}</span>
@@ -172,7 +182,7 @@ function Backups(): JSX.Element {
               </Button>
             </div>
           </div>
-        ))}
+        )} />
         {total > SHOWN ? (
           <>
             <p className={styles.subtle}>{`Showing the ${all ? "whole list" : `newest ${SHOWN}`} of ${total}. Newest first; a copy is named by when it was made.`}</p>

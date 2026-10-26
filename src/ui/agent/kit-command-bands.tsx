@@ -77,7 +77,7 @@ function Doctor({ rows }: { rows: readonly DoctorRow[] }): JSX.Element {
     <div className="kit-doctor">
       <div className="kit-list__head">{"DOCTOR"}</div>
       {rows.length === 0 && <p className="kit-list__hint">{"No checks are wired in this build."}</p>}
-      {rows.map((row, at) => (
+      {rows.map(/* bounded-ok: single message / fixed menu or glyph parts */ (row, at) => (
         <div key={`${row.label}${String(at)}`} className="kit-doctor__row" style={{ borderLeftColor: STATUS_INK[row.status] }}>
           <span className="kit-doctor__mark" style={{ color: STATUS_INK[row.status] }}>{row.status}</span>
           <span className="kit-list__key">{row.label}</span>
@@ -100,7 +100,7 @@ function Pictures({ title, images }: { title: string; images: KitWidget & { kind
     <div className="kit-shelf">
       <div className="kit-list__head">{title}</div>
       <div className="kit-shelf__strip">
-        {images.images.map((image, at) => (
+        {images.images.map(/* bounded-ok: single message / fixed menu or glyph parts */ (image, at) => (
           <figure key={`${image.src.slice(-24)}${String(at)}`} className="kit-shelf__frame">
             {/* No alt beyond the caption: this is a picture of somebody's own file, and inventing a
                 description of it would be the window claiming to have looked. */}

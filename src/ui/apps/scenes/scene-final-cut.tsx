@@ -15,16 +15,16 @@ import { tabOr } from "./scene-wing-data";
 
 type Tab = "cut" | "regex";
 
-export function FinalCutWing({ ctx, chat, onChanged, initialTab }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void; initialTab?: string }): JSX.Element {
+export function FinalCutWing({ ctx, chat, onChanged, initialTab, single }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void; initialTab?: string; single?: boolean }): JSX.Element {
   const [tab, setTab] = useState<Tab>(() => tabOr<Tab>(["cut", "regex"], initialTab, "cut"));
   const picks = useSceneRegexPicks(ctx, chat, onChanged);
   const tabs: readonly { id: Tab; label: string; meta: string }[] = [{ id: "cut", label: "Final Cut", meta: "" }, { id: "regex", label: "Regex", meta: regexTabMetaOf(picks) }];
   return (
     <>
-      <nav className="fold" data-part="scene.finalcut.tabs">
+      {!single && <nav className="fold" data-part="scene.finalcut.tabs">
         <div className="crumb">Scene <i>/</i> <b>Final Cut</b> <i>/</i> <b>{tabs.find((t) => t.id === tab)!.label}</b></div>
         <Tabs label="Final Cut sections" items={tabs.map((t) => ({ value: t.id, label: <><b>{t.label}</b>{t.meta && <small>{t.meta}</small>}</> }))} value={tab} onChange={setTab} />
-      </nav>
+      </nav>}
       {tab === "cut" ? <><ThemeSlot id="scene.wing.finalcut.cut" /><FinalCutTab ctx={ctx} chat={chat} onChanged={onChanged} /></> : <><ThemeSlot id="scene.wing.finalcut.regex" /><SceneRegexWing ctx={ctx} picks={picks} /></>}
     </>
   );

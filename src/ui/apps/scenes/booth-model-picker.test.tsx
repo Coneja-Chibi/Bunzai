@@ -29,12 +29,12 @@ const models = {
   toggleFavorite: () => undefined, retry: () => undefined, pick: () => undefined,
 } as unknown as SceneModels;
 
-async function mount(onPick: (c: ChatConnection) => void) {
+async function mount(onPick: (c: ChatConnection) => void, list: SceneModels = models) {
   const { BoothModelPicker } = await import("./booth-model-picker");
   const host = dom.window.document.createElement("div");
   dom.window.document.body.appendChild(host);
   const root = createRoot(host);
-  await act(async () => { root.render(<BoothModelPicker current={{ id: "k1", model: "claude-x-1" }} models={models} onPick={onPick} />); });
+  await act(async () => { root.render(<BoothModelPicker current={{ id: "k1", model: "claude-x-1" }} models={list} onPick={onPick} />); });
   return { host, done: () => { act(() => root.unmount()); host.remove(); } };
 }
 
@@ -44,6 +44,16 @@ const OPTIONS = '.bth-dlist [data-control="row"]';
 const titleOf = (row: Element): string | null => row.querySelector("small")!.previousElementSibling!.textContent;
 
 describe("the Booth model picker", () => {
+  test("500 models under one connection mount fewer than 60 rows", async () => {
+    const many = { ...models, models: { k1: { state: "ready", ids: Array.from({ length: 500 }, (_, i) => ({ id: `model-${String(i)}` })), saved: "model-0" } } } as unknown as SceneModels;
+    const m = await mount(() => undefined, many);
+    act(() => m.host.querySelector<HTMLButtonElement>(TRIGGER)!.click());
+    const rows = m.host.querySelectorAll(OPTIONS).length;
+    expect(rows).toBeGreaterThan(0);
+    expect(rows).toBeLessThan(60);
+    m.done();
+  });
+
   test("the button shows the display name, its provider and window; opening lists display names under a head per connection, with counts on the provider chips", async () => {
     const m = await mount(() => undefined);
     expect(m.host.querySelector(TRIGGER)!.textContent).toBe("Claude X OneHarbor · 200K ctx");

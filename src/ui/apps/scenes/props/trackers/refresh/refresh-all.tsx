@@ -42,7 +42,7 @@ function CombinedSheet({ entries, r }: { entries: Entry[]; r: RefreshAll }): JSX
         <header className="hd"><div className="eb"><Ic name="lucide:refresh-cw" size={16} />Refresh Enabled Boards</div><h2>Refresh Enabled Boards: review</h2>
           <p>{entries.length} {entries.length === 1 ? "board" : "boards"} read from the last 20 messages and the first message. Nothing changes until you accept.</p></header>
         <div className="bd">
-          <div className="mods">{entries.map((e) => <Module key={e.module} e={e} r={r} />)}</div>
+          <div className="mods">{entries.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e) => <Module key={e.module} e={e} r={r} />)}</div>
           <p className="rv-help">Skipped: Storyboards and Tarot. Each Accept can be undone on its own board.</p>
         </div>
         <footer className="ft"><span className="rv-count">{ready.length} {ready.length === 1 ? "board has" : "boards have"} changes ({changes})</span>

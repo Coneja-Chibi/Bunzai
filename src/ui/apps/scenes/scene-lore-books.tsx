@@ -10,6 +10,7 @@ import type { StudioEntitySummary } from "../../app-contract";
 import type { SceneLoreBook, SceneLoreFired } from "../../app-contract-scenes";
 import { Button, IconButton, ListRow } from "../../components/button";
 import { Ic } from "../../_shared/ic";
+import { VirtualRows } from "../../_shared/virtual-list";
 import { isEscapeClose, useEscapeKey } from "../../_shared/use-escape-key";
 import { footerLine, sourceBadge } from "./lore-core";
 
@@ -97,6 +98,8 @@ export function PickHint({ hasBooks }: { hasBooks: boolean }): JSX.Element {
   );
 }
 
+const BOOK_ROW_PX = 52;
+
 /** My Library, searchable. A book the scene already reads is listed but cannot be added twice. */
 export function LibraryPicker({ library, inScene, onPick }: {
   library: StudioEntitySummary[] | null;
@@ -115,15 +118,15 @@ export function LibraryPicker({ library, inScene, onPick }: {
         {library !== null && shown.length === 0 && (
           <div className="wl-none"><span className="box"><Ic name="lucide:book" size={20} /></span><b>{q ? "No lorebooks match your search" : "No lorebooks found"}</b><small>{q ? "Try different keywords" : "Create one in your library"}</small></div>
         )}
-        {shown.map((s) => {
+        <VirtualRows items={shown} keyOf={(s) => s.id} estimate={BOOK_ROW_PX} render={(s) => {
           const already = inScene.has(s.id);
           const count = s.facts?.lore?.entryCount;
           const sub = [count === undefined ? null : `${count} ${count === 1 ? "entry" : "entries"}`, already ? "In this scene" : null].filter(Boolean).join(" · ");
           return (
-            <ListRow key={s.id} data-part="scene.lore.book-row" disabled={already} onClick={() => onPick(s.id)}
+            <ListRow data-part="scene.lore.book-row" disabled={already} onClick={() => onPick(s.id)}
               leading={<Ic name="lucide:book" size={16} />} label={s.name} subtitle={sub || undefined} />
           );
-        })}
+        }} />
       </div>
     </div>
   );

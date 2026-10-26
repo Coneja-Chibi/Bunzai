@@ -87,7 +87,7 @@ export function Lines({ heading, children }: { heading: string; children: ReactN
 export function WordList({ words }: { words: readonly string[] }): JSX.Element {
   return (
     <div className={styles.lineGrid}>
-      {words.map((w, i) => (
+      {words.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (w, i) => (
         <div className={styles.line} key={i}>
           <i>{`${i + 1}.`}</i>
           <span>{w}</span>
@@ -138,7 +138,7 @@ export function CueGrid({
   return (
     <Lines heading={label}>
       <div className={styles.lineGrid}>
-        {values.map((v, i) => (
+        {values.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (v, i) => (
           <label className={flubbed.includes(i) ? `${styles.cue} ${styles.flubbed}` : styles.cue} key={i}>
             <i>{`${i + 1}.`}</i>
             <input

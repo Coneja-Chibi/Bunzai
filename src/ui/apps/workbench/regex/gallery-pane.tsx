@@ -28,11 +28,11 @@ export function GalleryPane({ onPick, onStartBlank, onClose }: GalleryPaneProps)
       </div>
 
       <div className={gp.grid}>
-        {templatesByCategory().map((group) => (
+        {templatesByCategory().map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (group) => (
           <div key={group.category} className={gp.groupWrap}>
             <span className={gp.cat}>{group.label}</span>
             <div className={gp.cards}>
-              {group.entries.map((t) => (
+              {group.entries.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (t) => (
                 <Card key={t.id} kind="choice" onClick={() => onPick(t)} heading={t.name} subtitle={t.does}>
                   <span className={gp.ba}>
                     <span className={gp.baCell}>

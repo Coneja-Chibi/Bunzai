@@ -3,7 +3,7 @@
  * make, each a few keys of ChatStore rule 45's settings. The couplings are RoleCall's: switching automation on from an interval of 0 gives it 60 so it never reads On while it cannot run, typing an interval turns
  * automation on or off, and turning on Hide messages already covered picks a Keep recent. No React.
  */
-import { SUMMARY_DEFAULTS, automationActive, contextWindow, type ResolvedSummary } from "../../../../core/summary/settings";
+import { SUMMARY_DEFAULTS, automationActive, contextWindow, summaryWindow, type ResolvedSummary } from "../../../../core/summary/settings";
 import type { BackfillMode } from "../../../../core/summary/prompts";
 
 export { autoPatch, hidePatch, intervalPatch, methodPatch, optionOf } from "../../../../core/summary/couplings";
@@ -11,6 +11,13 @@ export { autoPatch, hidePatch, intervalPatch, methodPatch, optionOf } from "../.
 export const methodLabel = (o: BackfillMode): string => (o === "pair" ? "Every exchange" : o === "additive" ? "Timeline" : "Rolling recap");
 /** What Backfill history says it will do this run. */
 export const backfillLabel = (o: BackfillMode): string => (o === "pair" ? "Per-exchange" : o === "additive" ? "Rolling Additive" : "Rolling Replace");
+
+/** What Summarize now says it will send (the estimate shown before it spends a call). */
+export const nowLabel = (r: ResolvedSummary, hasText: boolean): string => {
+  const window = summaryWindow(r);
+  const reads = r.method === "pair" ? "the latest exchange" : window !== undefined ? `the last ${window} messages` : "every message";
+  return `One call for ${reads}${r.method !== "pair" && hasText ? " and the saved summary" : ""}. The saved text stays if it fails.`;
+};
 
 export const timingLabel = (r: ResolvedSummary): string => (!automationActive(r) ? "Manual only" : r.method === "pair" ? "Every exchange" : `Every ${r.interval} messages`);
 

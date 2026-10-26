@@ -16,14 +16,18 @@ import { usePortraitAsset } from "../../_shared/art-cache";
 import { portraitUrl } from "../../_shared/asset-url";
 import { toErrorMessage } from "../../_shared/error-message";
 import { Ic } from "../../_shared/ic";
+import { VirtualRows } from "../../_shared/virtual-list";
 import { handOffScene } from "../../_shared/scene-handoff";
+
+const LIBRARY_ROW_PX = 56;
 
 function Face({ s }: { s: StudioEntitySummary }): JSX.Element {
   const art = usePortraitAsset("character", s.id, s.version, s.hasPortrait ? portraitUrl("character", s.id) : null, s.revision);
   return <span className="bth-face">{art.src ? <img ref={art.ref as never} src={art.src} alt="" /> : <span>{s.name.charAt(0).toUpperCase()}</span>}</span>;
 }
 
-function CharacterLibrary({ ctx, currentId, onClose }: { ctx: AppContext; currentId: string; onClose(): void }): JSX.Element {
+/** `onStarted` runs once the new scene exists, just before the page moves to it (the Messenger drops its cached scene list there). */
+export function CharacterLibrary({ ctx, currentId, onClose, onStarted }: { ctx: AppContext; currentId: string; onClose(): void; onStarted?(): void }): JSX.Element {
   const [list, setList] = useState<StudioEntitySummary[] | null>(null);
   const [query, setQuery] = useState("");
   // The shell rebuilds ctx on every status change; the list is read once per opening.
@@ -38,7 +42,7 @@ function CharacterLibrary({ ctx, currentId, onClose }: { ctx: AppContext; curren
   const shown = (list ?? []).filter((s) => !q || s.name.toLowerCase().includes(q));
   const start = (id: string): void => {
     onClose();
-    ctx.api.startScene(id).then((chat) => handOffScene(chat.id), (e: unknown) => ctx.setStatus(`could not start a new scene: ${toErrorMessage(e)}`));
+    ctx.api.startScene(id).then((chat) => { onStarted?.(); handOffScene(chat.id); if (chat.startNotes?.length) ctx.setStatus(chat.startNotes.join(" ")); }, (e: unknown) => ctx.setStatus(`could not start a new scene: ${toErrorMessage(e)}`));
   };
   return (
     <InkDialog ariaLabel="Character Library" onDismiss={onClose} sheetClassName="bth-libsheet">
@@ -49,9 +53,9 @@ function CharacterLibrary({ ctx, currentId, onClose }: { ctx: AppContext; curren
         <div className="bth-libl">
           {list === null && <p className="bthl-quiet">Loading...</p>}
           {list !== null && shown.length === 0 && <p className="bthl-quiet">No characters found.</p>}
-          {shown.map((s) => (
-            <ListRow key={s.id} onClick={() => start(s.id)} leading={<Face s={s} />} label={s.name} subtitle={s.id === currentId ? "Start fresh scene" : "Start scene"} />
-          ))}
+          <VirtualRows items={shown} keyOf={(s) => s.id} estimate={LIBRARY_ROW_PX} gap={2} render={(s) => (
+            <ListRow onClick={() => start(s.id)} leading={<Face s={s} />} label={s.name} subtitle={s.id === currentId ? "Start fresh scene" : "Start scene"} />
+          )} />
         </div>
       </div>
     </InkDialog>
@@ -68,7 +72,7 @@ export function BoothNavigator({ ctx, scene, art }: { ctx: AppContext; scene: Op
       <span className="bth-portrait">{art}</span>
       <b>{str(identity["name"]) || "Unknown Character"}</b>
       {str(identity["tagline"]) && <span className="bth-tagline">{str(identity["tagline"])}</span>}
-      {tags.length > 0 && <span className="bth-tags">{tags.map((t) => <span className="bth-tag" key={t}>{t}</span>)}</span>}
+      {tags.length > 0 && <span className="bth-tags">{tags.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (t) => <span className="bth-tag" key={t}>{t}</span>)}</span>}
       <div className="bth-change"><Button size="sm" icon="lucide:search" aria-label="Open character navigator" aria-expanded={open} onClick={() => setOpen(true)}>Change Character</Button></div>
       {open && <CharacterLibrary ctx={ctx} currentId={scene.chat.cast.character.id} onClose={() => setOpen(false)} />}
     </section>

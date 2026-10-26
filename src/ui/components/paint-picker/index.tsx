@@ -134,7 +134,7 @@ function GradientEditor({
   return (
     <div className={styles.grad}>
       <div className={styles.bar} style={{ background: barBg }} onPointerDown={onBarPointerDown}>
-        {paint.stops.map((s, i) => (
+        {paint.stops.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (s, i) => (
           <span
             key={i}
             className={i === sel ? `${styles.stop} ${styles.sel}` : styles.stop}

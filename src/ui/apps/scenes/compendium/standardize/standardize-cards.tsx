@@ -70,11 +70,11 @@ export function Finished({ run, reverting, canRevert, onDismiss, onRevert }: { r
           <div className="line">
             {run.rewritten} rewritten {GLYPH.dot} {run.consumed} consumed {GLYPH.dot} {run.created} new (dedup: {run.dedup}) {GLYPH.dot} <span className={run.failed > 0 ? "bad" : "mute"}>{run.failed} failed</span>
           </div>
-          {types.length > 0 && <div className="types">{types.map(([t, n]) => <span key={t}><b>{n}</b> {titled(t)}</span>)}</div>}
+          {types.length > 0 && <div className="types">{types.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ ([t, n]) => <span key={t}><b>{n}</b> {titled(t)}</span>)}</div>}
           {stopped && <div className="sub">Stopped before every entry was reached. Everything written is receipted; run it again to continue with the entries still classic ({run.total - run.processed} not reached).</div>}
           {run.warnings.length > 0 && (
             <Details summary={`${run.warnings.length} warning${run.warnings.length === 1 ? "" : "s"} (click to expand)`}>
-              <div className="log">{run.warnings.map((w, i) => <div key={i}>{w}</div>)}</div>
+              <div className="log">{run.warnings.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (w, i) => <div key={i}>{w}</div>)}</div>
             </Details>
           )}
         </div>

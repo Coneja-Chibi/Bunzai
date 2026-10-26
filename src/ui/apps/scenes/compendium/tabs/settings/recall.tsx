@@ -37,7 +37,7 @@ export function Guidance({ value, guide, guides, onText, onGuide, copy = RECALL_
         <select id={copy.id} className="cps-sel" value={guide ?? ""} onChange={(e) => onGuide(e.target.value || null)}>
           <option value="">None</option>
           {guide !== undefined && !usable.some((g) => g.id === guide) && <option value={guide}>A Guide that is no longer in your library</option>}
-          {usable.map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
+          {usable.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (g) => <option key={g.id} value={g.id}>{g.title}</option>)}
         </select>
         <p className="cps-hint">At generation time, Compendium loads this Guide&apos;s current text and sends it to this agent phase. The inline instructions above come afterward.</p>
       </div>

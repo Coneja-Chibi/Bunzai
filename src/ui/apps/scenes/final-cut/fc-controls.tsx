@@ -12,7 +12,7 @@ export function Sel({ label, value, options, onChange }: { label: string; value:
   return (
     <label className="fc-label">{label}
       <select className="fc-select" value={value} onChange={(e) => onChange(e.target.value)}>
-        {Object.entries(options).map(([id, o]) => <option key={id} value={id}>{o.label}</option>)}
+        {Object.entries(options).map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ ([id, o]) => <option key={id} value={id}>{o.label}</option>)}
       </select>
     </label>
   );

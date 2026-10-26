@@ -81,7 +81,7 @@ export function AutoUpdate({ ctx, chat, panel, save, onChat }: { ctx: AppContext
           <p className="ds-list-h">Trackers in this scene</p>
           <div className="ds-list" data-part="props.story-director.auto-update.list">
             {modules.length === 0 && <p className="ds-hint">No tracker is switched on in this scene.</p>}
-            {modules.map((id) => {
+            {modules.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (id) => {
               const own = trackers[id]?.auto;
               const on = own?.on !== false;
               const every = own?.every ?? s.every;

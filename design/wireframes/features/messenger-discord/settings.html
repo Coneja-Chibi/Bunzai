@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messenger settings, by scope</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+/* WIREFRAME ONLY. Colors and fonts are theme tokens; controls follow the button family. The theme has no radius token yet, so --wf-r below is the one proposed value the build would add. */
+:root { --wf-r: 10px; }
+.page { max-width: 90rem; }
+.map { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.68rem; line-height: 1.5; }
+.map th { text-align: left; color: var(--text-dim); font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; font-size: var(--text-meta); padding: 0.4rem 0.6rem; border-bottom: 2px solid var(--edge); }
+.map td { padding: 0.35rem 0.6rem; border-bottom: 1px solid var(--seam); vertical-align: top; color: var(--text-soft); }
+.map td:first-child { color: var(--text); white-space: nowrap; }
+.scroll-x { overflow-x: auto; }
+.scopes { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* the app behind the panel */
+.layer { width: 1440px; max-width: 100%; height: 900px; position: relative; overflow: hidden; background: var(--bk-surface-well); border: 1px solid var(--edge); }
+.layer.narrow { width: 390px; height: 760px; }
+.behind { position: absolute; inset: 0; display: grid; grid-template-columns: 4.5rem 16rem 1fr 15rem; }
+.behind > div { border-right: 1px solid var(--seam); font: 500 0.8rem var(--font-body); color: var(--text-dim); display: flex; flex-direction: column; min-height: 0; }
+.rail { padding: 0.7rem; gap: 0.6rem; align-items: center; }
+.rail i { width: 40px; height: 40px; border-radius: 50%; background: var(--bk-surface-raised); border: 2px solid var(--seam); display: grid; place-items: center; font: 800 0.9rem var(--font-fancy); font-style: normal; color: var(--text-soft); }
+.rail i.on { border-color: var(--accent); color: var(--text); }
+.side { background: var(--bk-surface-sunken); }
+.side .head { padding: 0.8rem; border-bottom: 1px solid var(--seam); font: 700 0.9rem var(--font-body); color: var(--text); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.side .srow { display: flex; align-items: center; justify-content: space-between; padding: 0.4rem 0.8rem; color: var(--text-soft); }
+.side .srow.on { background: var(--bk-surface-raised); color: var(--text); }
+.side .grow { flex: 1; }
+.gear { all: unset; cursor: pointer; width: 26px; height: 26px; display: grid; place-items: center; color: var(--text-dim); border-radius: 6px; }
+.gear:hover { color: var(--text); background: color-mix(in srgb, var(--text) 8%, transparent); }
+.upanel { padding: 0.6rem 0.8rem; background: var(--bk-surface-well); border-top: 1px solid var(--seam); display: flex; align-items: center; gap: 0.6rem; color: var(--text); font: 700 0.84rem var(--font-body); }
+.upanel .a { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(160deg, var(--deck-persona-deep), var(--deck-lorebook-deep)); }
+.upanel .gear { margin-left: auto; }
+.mid { padding: 0.8rem; gap: 0.6rem; }
+.mid .m { background: var(--bk-surface-panel); padding: 0.5rem 0.7rem; max-width: 22rem; color: var(--text-soft); border-radius: var(--wf-r); }
+.hot { outline: 2px dashed var(--selection-fg); outline-offset: 2px; }
+.dim { position: absolute; inset: 0; background: var(--scrim); }
+
+/* the panel */
+.panel { position: absolute; inset: 3.2rem 5.5rem 2.4rem; display: grid; grid-template-columns: 17.5rem 1fr; background: var(--bk-surface-base); border: 1px solid var(--control-boundary); border-radius: 14px; box-shadow: 0 12px 40px var(--shadow-ink); overflow: hidden; z-index: 2; }
+.layer.narrow .panel { inset: 0.6rem; grid-template-columns: 1fr; }
+.layer.narrow .content-side { display: none; }
+.nav-side { background: var(--bk-surface-sunken); display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--seam); }
+.who { display: flex; gap: 0.7rem; align-items: center; padding: 1.1rem 1rem 0.8rem; }
+.who .av { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font: 800 1rem var(--font-fancy); flex: none; background: linear-gradient(160deg, var(--deck-persona-deep), var(--deck-lorebook-deep)); color: var(--deck-persona); }
+.who .av.ch { background: linear-gradient(160deg, var(--deck-character-deep), var(--deck-lorebook-deep)); color: var(--deck-character); }
+.who .av.sc { background: linear-gradient(160deg, var(--deck-preset-deep), var(--deck-pack-deep)); color: var(--deck-preset); }
+.who b { display: block; font: 700 0.95rem var(--font-body); }
+.who a { font: 500 0.76rem var(--font-body); color: var(--text-soft); cursor: pointer; display: inline-flex; gap: 0.3rem; align-items: center; }
+.who a:hover { color: var(--text); }
+.who small { display: block; font: 500 0.62rem var(--font-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--chrome-structure); margin-bottom: 0.15rem; }
+.search { margin: 0 0.8rem 0.5rem; display: flex; align-items: center; gap: 0.5rem; background: var(--bk-surface-well); border: 1px solid var(--control-boundary); border-radius: 8px; padding: 0.45rem 0.7rem; color: var(--text-dim); }
+.search input { all: unset; flex: 1; color: var(--text); font: 500 0.82rem var(--font-body); }
+.nav-in { padding: 0.2rem 0.6rem 1.4rem; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; min-height: 0; }
+.cap { font: 700 0.75rem var(--font-body); color: var(--text-dim); padding: 0.7rem 0.65rem 0.3rem; border-top: 1px solid var(--seam); margin-top: 0.5rem; }
+.ni { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.65rem; cursor: pointer; font: 600 0.88rem var(--font-body); color: var(--text-soft); border-radius: 8px; }
+.ni:hover { background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text); }
+.ni[aria-current="page"] { background: var(--bk-surface-raised); color: var(--text); }
+.ni:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.ni svg { width: 18px; height: 18px; flex: none; color: var(--text-dim); }
+.ni[aria-current="page"] svg { color: var(--text); }
+.ni.danger, .ni.danger svg { color: var(--stage-danger-text); }
+/* the in-place sub-list: a thin vertical line on the left, a short bar on the current item */
+.sub { margin: 2px 0 6px 1.45rem; border-left: 1px solid var(--seam); display: flex; flex-direction: column; }
+.si { all: unset; box-sizing: border-box; position: relative; cursor: pointer; padding: 0.38rem 0.7rem 0.38rem 1rem; font: 500 0.84rem var(--font-body); color: var(--text-dim); }
+.si:hover { color: var(--text); }
+.si[aria-current="true"] { color: var(--text); font-weight: 700; }
+.si[aria-current="true"]::before { content: ""; position: absolute; left: -2px; top: 22%; bottom: 22%; width: 3px; border-radius: 2px; background: var(--text); }
+.si:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+
+.content-side { background: var(--bk-surface-base); display: flex; flex-direction: column; min-height: 0; position: relative; }
+.ph { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1.2rem 0.7rem 1.6rem; border-bottom: 1px solid var(--seam); flex: none; gap: 1rem; min-height: 3.4rem; }
+.ph .l { display: flex; align-items: center; gap: 0.6rem; font: 700 1rem var(--font-body); min-width: 0; }
+.ib { all: unset; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: var(--text-soft); flex: none; }
+.ib:hover { color: var(--text); background: color-mix(in srgb, var(--text) 8%, transparent); }
+.ib:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.scroll { overflow-y: auto; flex: 1; min-height: 0; scroll-behavior: smooth; }
+.content-in { max-width: 44rem; margin: 0 auto; padding: 1.8rem 1.6rem 0; }
+.spacer { height: 70vh; }
+.intro { font: 400 0.86rem/1.55 var(--font-body); color: var(--text-dim); margin-bottom: 1.2rem; }
+.blk { padding: 0 0 2.2rem; }
+.blk + .blk { border-top: 1px solid var(--seam); padding-top: 2.2rem; }
+.blk h2 { font: 800 1.45rem var(--font-body); color: var(--text); margin-bottom: 0.3rem; }
+.blk .secd { font: 400 0.84rem var(--font-body); color: var(--text-dim); margin-bottom: 1rem; }
+.blk h2 + .rows { margin-top: 1rem; }
+.rows { display: flex; flex-direction: column; gap: 1rem; }
+.r { display: flex; align-items: center; justify-content: space-between; gap: 1.4rem; }
+.r .t { min-width: 0; flex: 1; }
+.r .t b { display: block; font: 600 0.95rem var(--font-body); color: var(--text); }
+.r .t span { display: block; font: 400 0.8rem/1.5 var(--font-body); color: var(--text-dim); margin-top: 0.15rem; max-width: 30rem; }
+.r .c { flex: none; display: flex; align-items: center; gap: 0.8rem; }
+.r .val { font: 500 0.9rem var(--font-body); color: var(--text-soft); }
+.r.drill { cursor: pointer; padding: 0.15rem 0; }
+.r.drill:hover .t b { text-decoration: underline; text-underline-offset: 3px; }
+.r.drill svg { color: var(--text-dim); }
+.r.stack { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+.r.under { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+.r.under .sl { display: flex; align-items: center; gap: 0.8rem; }
+.r.under .sl input { flex: 1; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.pair label { display: flex; flex-direction: column; gap: 0.4rem; font: 700 0.7rem var(--font-body); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-soft); }
+.pair .sel { width: 100%; font-weight: 500; text-transform: none; letter-spacing: 0; }
+.radios { display: flex; flex-direction: column; gap: 0.6rem; }
+.radio { display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.8rem 1rem; border: 1px solid var(--seam); border-radius: var(--wf-r); background: var(--bk-surface-panel); cursor: pointer; }
+.radio[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--bk-surface-panel)); }
+.radio .dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--control-boundary); flex: none; margin-top: 2px; display: grid; place-items: center; }
+.radio[aria-checked="true"] .dot { border-color: var(--text); }
+.radio[aria-checked="true"] .dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--text); }
+.radio b { display: block; font: 600 0.92rem var(--font-body); }
+.radio span { display: block; font: 400 0.8rem var(--font-body); color: var(--text-dim); margin-top: 0.1rem; }
+.lead { width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; font: 800 0.8rem var(--font-body); color: var(--bk-surface-ink); }
+
+.tg { all: unset; box-sizing: border-box; cursor: pointer; width: 42px; height: 24px; padding: 2px; border-radius: 12px; background: var(--bk-surface-raised); border: 2px solid var(--control-boundary); display: flex; }
+.tg i { width: 16px; height: 16px; border-radius: 50%; background: var(--text-faint); transition: transform 0.15s ease; }
+.tg[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 35%, var(--bk-surface-well)); }
+.tg[aria-checked="true"] i { transform: translateX(18px); background: var(--text); }
+.tg:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+input[type=range] { -webkit-appearance: none; appearance: none; height: 22px; background: transparent; cursor: pointer; }
+input[type=range]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--seam); }
+input[type=range]::-moz-range-track { height: 6px; border-radius: 3px; background: var(--seam); }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; margin-top: -5px; border-radius: 50%; background: var(--text); border: 2px solid var(--bk-surface-base); }
+input[type=range]::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; background: var(--text); border: 2px solid var(--bk-surface-base); }
+input[type=range]:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.sel, .in, .ta { box-sizing: border-box; font: 500 0.88rem var(--font-body); color: var(--text); background: var(--bk-surface-well); border: 1px solid var(--control-boundary); border-radius: 8px; padding: 0.5rem 0.75rem; }
+.sel { min-width: 12rem; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%); background-position: calc(100% - 16px) 55%, calc(100% - 11px) 55%; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 2rem; }
+.in.num { width: 6rem; text-align: right; font-family: var(--font-mono); }
+.ta { width: 100%; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.55; min-height: 5.5rem; resize: vertical; }
+:is(.sel,.in,.ta):focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.btn { font: 600 0.85rem var(--font-body); cursor: pointer; color: var(--text); background: var(--bk-surface-raised); border: 0; border-radius: 8px; padding: 0.5rem 1.1rem; }
+.btn:hover { background: color-mix(in srgb, var(--text) 16%, var(--bk-surface-raised)); }
+.btn:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
+.btn.primary { background: var(--action-primary); color: var(--action-primary-fg); }
+.btn.danger { background: var(--stage-danger-bg); color: var(--stage-danger-text); border: 1px solid var(--stage-danger-edge); }
+.seg { display: inline-flex; border-radius: 8px; background: var(--bk-surface-well); border: 1px solid var(--control-boundary); padding: 2px; }
+.seg button { font: 600 0.82rem var(--font-body); padding: 0.35rem 0.8rem; color: var(--text-dim); background: none; border: 0; border-radius: 6px; cursor: pointer; }
+.seg button[aria-pressed="true"] { color: var(--text); background: var(--bk-surface-raised); }
+.hero { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.6rem; }
+.hero .art { width: 72px; height: 72px; border-radius: 50%; flex: none; display: grid; place-items: center; font: 800 1.5rem var(--font-fancy); }
+.hero b { font: 700 1.1rem var(--font-body); display: block; }
+.hero small { font: 400 0.82rem var(--font-body); color: var(--text-dim); }
+.layer.closed .panel, .layer.closed .behind, .layer.closed .dim { display: none; }
+.layer.closed { display: grid; place-items: center; }
+.closed-msg { display: none; text-align: center; font: 500 0.8rem var(--font-mono); color: var(--text-dim); }
+.layer.closed .closed-msg { display: block; }
+.bk-btn { font: 700 13px var(--font-body); cursor: pointer; color: var(--text); background: var(--bk-surface-raised); border: 2px solid var(--control-boundary); box-shadow: 3px 3px 0 0 var(--bk-surface-ink); padding: 0.4rem 0.8rem; }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="wf-head"><div>
+    <div class="wf-title">Messenger settings: three scopes, one long page per category</div>
+    <p class="wf-lede">One floating panel, opened from three places, each showing only what you opened it on. Select a category and its sections appear under it in the nav; the page is every section of that category stacked in one scrolling column, and scrolling highlights the current section in the nav. Rows with a chevron open a deeper page with a back arrow. Replaces today's single "settings workspace" with 16 or more flat programs (messenger-chrome.tsx, programs.ts). Click a scope button or a gear; scroll; click a sub-item; Esc or X closes.</p>
+  </div></header>
+
+  <p class="wf-note"><b>Decision: scope follows ownership.</b> Appearance and your AI connection belong to you; a lorebook, wardrobe or card belongs to the character; a preset, samplers, summary or tracker belongs to the scene. Today they share one flat list as if they were alike. Three windows, three entry points, one layout.</p>
+
+  <div class="wf-state">Open it from</div>
+  <div class="scopes">
+    <button class="bk-btn" data-open="user">User settings: gear beside your name, bottom left</button>
+    <button class="bk-btn" data-open="char">Character settings: the character name at the top of the sidebar</button>
+    <button class="bk-btn" data-open="scene">Scene settings: gear on a scene row</button>
+  </div>
+  <p class="wf-note"><b>Entry points.</b> The dashed outline in the frame marks where the open window came from. User: the settings gear in the user panel (the same gear that opens today's workspace). Character: the character name dropdown atop the sidebar; the rail icon is the character, like a Discord server. Scene: a gear that shows on hover on each scene row, like a channel's gear.</p>
+
+  <div class="scroll-x"><section class="layer" id="layer" aria-label="Settings demo">
+    <div class="behind" aria-hidden="true">
+      <div class="rail"><i class="on" id="hot-rail">V</i><i>M</i><i>+</i></div>
+      <div class="side">
+        <div class="head" data-open="char" id="hot-char"><span>Vera Lindqvist</span><span>&#9662;</span></div>
+        <div class="srow on" id="hot-scene"><span># The flooded archive</span><button class="gear" data-open="scene" aria-label="Scene settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></button></div>
+        <div class="srow"><span># Canal chase</span></div><div class="srow"><span># Quiet dinner</span></div>
+        <div class="grow"></div>
+        <div class="upanel" id="hot-user"><span class="a"></span>Chibee<button class="gear" data-open="user" aria-label="User settings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></button></div>
+      </div>
+      <div class="mid"><span class="m">The lamps are out in the stacks. Mind the water.</span><span class="m">Where do the maps lead?</span></div>
+      <div style="padding:0.8rem">Participants</div>
+    </div>
+    <div class="dim" id="dim"></div>
+    <div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Settings"></div>
+    <div class="closed-msg"><p>Settings closed, back in the chat.</p><br><button class="bk-btn" data-open="user">Reopen User settings</button></div>
+  </section></div>
+
+  <p class="wf-note"><b>Left column.</b> User settings: your round avatar, name and "Edit profile" with a pencil. Character and Scene settings show that character's or scene's art and name with their own edit link. Then the search box, an unheaded first group, and small dim headers after thin dividers. Every category row has an icon; the selected one is filled. Under the selected category its sections appear indented along a thin vertical line; the current one has a short bar and brighter text. Other categories stay collapsed.</p>
+  <p class="wf-note"><b>The page.</b> Top bar: the category name at left, X at right, nothing else. Below, a centered column about 44rem wide, each section under a large heading, separated by a full-width divider and generous space. Rows put the label at left and, at right, a value then an Edit button, or a value then a chevron (opens a deeper page). Switch rows keep a title, a description and the switch at the right end. Drawn controls: paired dropdowns with labels above (Samplers, Appearance), sliders under their labels, radio groups with a title and a one-line description per option (Appearance, Control Booth), a primary button (Memory). Esc closes the window; Backspace goes up one deeper page.</p>
+  <p class="wf-note"><b>Deeper pages.</b> Only chevron rows open one: User &gt; AI connection &gt; Models; Character &gt; Lorebooks &gt; Canal District &gt; The pump room; Scene &gt; Presets and prompts &gt; Narrator bank. The deeper page puts a back arrow and the parent section's name in the top bar, then its own large heading.</p>
+  <p class="wf-note"><b>Search.</b> Searches rows of the open scope and lists the matches with their category and section; here it dims nav rows that do not match. Per-page search boxes (guides, models, sampler parameters) stay for long lists. <b>Corners.</b> The theme has no radius token; this page uses one local value (10px, 8px on small controls) to show the shape, and the build needs one token for it.</p>
+  <div class="wf-state">Narrow state (Scene settings, nav screen)</div>
+  <div class="scroll-x"><section class="layer narrow" id="layer2" aria-label="Narrow demo"><div class="dim"></div><div class="panel" id="panel2"></div></section></div>
+  <p class="wf-note"><b>Narrow widths (below about 900 px).</b> The panel fills the screen and the first screen is the category list alone. Tapping a category opens its page with a back arrow to the list; sections become a horizontal chip row under the top bar in place of the nav sub-list, and scroll-spy keeps the current chip in view. Value-and-button rows wrap the button under the label; paired dropdowns stack. Matches today's tab view on narrow screens.</p>
+
+  <div class="wf-state">Mapping: old program to scope, category, section</div>
+  <div class="scroll-x"><table class="map">
+    <tr><th>Today (programs.ts)</th><th>Scope</th><th>Category</th><th>Section or deeper page</th></tr>
+    <tr><td>Control Booth</td><td>Scene</td><td>Control Booth</td><td>Right now (model, fallback, preset, lorebooks, summary, max tool rounds, loadouts), each row opens its home</td></tr>
+    <tr><td>Characters</td><td>Character</td><td>Overview</td><td>Card (name, description, rating, injection)</td></tr>
+    <tr><td>My Persona</td><td>User</td><td>My profile</td><td>Persona; Scene &gt; Overview &gt; Playing as picks one per scene</td></tr>
+    <tr><td>Participants</td><td>Character</td><td>Participants</td><td>Speakers; participant row opens color and emoji</td></tr>
+    <tr><td>Lorebooks</td><td>Character</td><td>Lorebooks</td><td>Attached; deeper: Canal District &gt; The pump room</td></tr>
+    <tr><td>Compendium</td><td>Character</td><td>Compendium</td><td>Notes, Access</td></tr>
+    <tr><td>Wardrobe (when shown)</td><td>Character</td><td>Wardrobe</td><td>Outfits</td></tr>
+    <tr><td>Generation (presets)</td><td>Scene</td><td>Writing</td><td>Presets and prompts; deeper: Narrator bank (prompt order, templates)</td></tr>
+    <tr><td>Samplers</td><td>Scene</td><td>Writing</td><td>Samplers (Core, Thinking, Replies, all parameters)</td></tr>
+    <tr><td>Guides</td><td>Scene</td><td>Writing</td><td>Guides</td></tr>
+    <tr><td>Scene Note</td><td>Scene</td><td>Writing</td><td>Scene Note</td></tr>
+    <tr><td>Writing Helpers</td><td>Scene</td><td>Writing</td><td>Writing Helpers</td></tr>
+    <tr><td>Regex Workshop</td><td>Scene</td><td>Writing</td><td>Regex Workshop</td></tr>
+    <tr><td>Final Cut</td><td>Scene</td><td>Writing</td><td>Final Cut</td></tr>
+    <tr><td>Memory</td><td>Scene</td><td>Memory</td><td>Summary, Summary controls, Advanced</td></tr>
+    <tr><td>Context Inspector</td><td>Scene</td><td>Memory</td><td>Context inspector</td></tr>
+    <tr><td>Add / Remove Features</td><td>Scene</td><td>Features</td><td>Features</td></tr>
+    <tr><td>Story Director (Prop panel)</td><td>Scene</td><td>Story Director (only while on)</td><td>Personality, Pacing, Rules, Debug</td></tr>
+    <tr><td>Trackers / TrackHare (Prop panel)</td><td>Scene</td><td>TrackHare (only while on)</td><td>Trackers, Tokens view</td></tr>
+    <tr><td>Control Panel (appearance acts)</td><td>User</td><td>Appearance</td><td>Chat layout, The message, The type, Motion and signals, Chrome and device</td></tr>
+    <tr><td>Control Panel (scene backdrop row)</td><td>Scene</td><td>Overview</td><td>Backdrop; My Pictures live in Pictures</td></tr>
+    <tr><td>My Pictures</td><td>Scene</td><td>Pictures</td><td>Backdrop, My pictures</td></tr>
+    <tr><td>Music, Spotify</td><td>User</td><td>Music and Spotify</td><td>Music, Spotify</td></tr>
+    <tr><td>AI Connection</td><td>User</td><td>AI connection</td><td>Provider, Models (deeper page)</td></tr>
+    <tr><td>Backups, health check</td><td>User</td><td>Data and backups</td><td>Backups (Snapshots deeper), Health, Export</td></tr>
+  </table></div>
+  <p class="wf-note"><b>Open questions.</b> (1) Control Booth keeps a per-scene model pick while the connection is per user: confirm. (2) Pictures under Scene or User? (3) Character defaults versus scene values: which wins; the page only shows where they live.</p>
+</main>
+
+<script>
+const IC = {
+  user: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0", plug: "M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4", bell: "M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4",
+  db: "M4 6c0-2 16-2 16 0v12c0 2-16 2-16 0zM4 12c0 2 16 2 16 0", palette: "M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.5-2-.6-1.3.3-2.5 1.7-2.5H18a3 3 0 0 0 3-3A9 9 0 0 0 12 3z",
+  eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z", music: "M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z",
+  book: "M4 4h12a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4zM8 4v16", shirt: "M8 3 3 6l2 4 3-1v12h8V9l3 1 2-4-5-3a4 4 0 0 1-8 0z", users: "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6",
+  sliders: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6", pen: "M12 20h9M16.5 3.5l4 4L8 20l-5 1 1-5z", mem: "M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2",
+  puzzle: "M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3", star: "M12 3l2.7 6 6.3.6-4.8 4.3 1.4 6.4L12 17l-5.6 3.3L7.8 14 3 9.6 9.3 9z", grid: "M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z",
+  img: "M3 5h18v14H3zM3 15l5-5 5 5 3-3 5 5", zap: "M13 2 3 14h9l-1 8 10-12h-9z", home: "M3 11 12 3l9 8M5 10v10h14V10", trash: "M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14", id: "M3 5h18v14H3zM8 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM13 9h5M13 13h5",
+  chev: "M9 6l6 6-6 6", back: "M15 6l-6 6 6 6", x: "M18 6 6 18M6 6l12 12", search: "M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"
+};
+const svg = (k, w = 18) => `<svg width="${w}" height="${w}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="${IC[k] || IC.grid}"/></svg>`;
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+/* row builders */
+const T = (l, d, on = true) => ["t", l, d, on];
+const V = (l, v, btn = "Edit", d = "") => ["v", l, d, v, btn];
+const C = (l, v, to, d = "") => ["c", l, d, v, to];
+const S = (l, d, opts, i = 0) => ["s", l, d, opts, i];
+const P = (a, b) => ["p", a, b];
+const G = (l, d, opts, i = 0) => ["g", l, d, opts, i];
+const R = (l, d, min, max, val, div = 1, unit = "") => ["r", l, d, min, max, val, div, unit];
+const N = (l, d, v) => ["n", l, d, v];
+const B = (l, d, label, kind = "") => ["b", l, d, label, kind];
+const X = (l, d, text) => ["x", l, d, text];
+const RAD = (opts, sel = 0) => ["rad", opts, sel];
+const sec = (h, rows, d = "") => ({ h, d, rows });
+const cat = (id, label, icon, secs, extra = {}) => ({ id, label, icon, secs, ...extra });
+
+const DEEP = {
+  models: { t: "Models", secs: [sec("Favorites", [T("GPT-5 mini", "OpenRouter, 128k"), T("Claude Sonnet", "Anthropic, 200k")], "Shown first in every model picker."), sec("Custom", [B("Add a model id", "For a model the list does not show yet.", "Add")])] },
+  snaps: { t: "Snapshots", secs: [sec("Saved snapshots", [V("Today 09:14", "212 MB", "Restore"), V("Yesterday 09:14", "211 MB", "Restore"), V("Mon 09:14", "208 MB", "Restore")])] },
+  canal: { t: "Canal District", secs: [sec("Book", [T("Enabled for this character", ""), R("Token budget", "Share of the context this book may use.", 0, 100, 20, 1, "%")]), sec("Entries", [C("The pump room", "On", "entry"), C("The forged maps", "On", "entry"), C("Harbor clerk", "On", "entry"), B("Add entry", "", "New entry")])] },
+  entry: { t: "The pump room", secs: [sec("Entry", [T("Enabled", ""), X("Keys", "Words that bring this entry in.", "pump, pumps, engine"), X("Content", "", "The pump room floods first when the canal gates stick."), N("Priority", "", "3")]), sec("Advanced", [G("Match", "", ["Any key", "All keys"]), N("Scan depth", "Messages searched for keys.", "4"), T("Sticky", "Keep it in after a match for a few turns.", false)])] },
+  narr: { t: "Narrator bank", secs: [sec("Prompt order", [T("System prompt", ""), T("Character card", ""), T("Lorebooks", ""), T("Scene note", ""), T("Chat history", "")], "Top to bottom, as sent."), sec("Templates", [B("Open the full editor", "Split view with macros preview.", "Open")])] }
+};
+
+const SCOPES = {
+  user: { name: "Chibee", who: "u", edit: "Edit profile", hot: "hot-user", start: "look", nav: [
+    [null, [
+      cat("persona", "My profile", "user", [sec("Persona", [V("Name shown to the model", "Mina", "Edit", "What characters call you."), V("Description", "Archivist, careful", "Edit"), B("Persona art", "A portrait for your messages.", "Upload")], "Who you play across every scene."), sec("Other personas", [V("Archivist", "Used in 2 scenes", "Edit"), B("New persona", "", "Create")], "Pick one per scene under Scene settings.")]),
+      cat("conn", "AI connection", "plug", [sec("Provider", [S("Provider", "Where requests are sent.", ["OpenRouter", "Anthropic", "OpenAI", "Local"]), V("API key", "sk-or-...0000", "Edit", "Stored on this computer, never shown again once saved."), B("Test connection", "Sends one tiny request.", "Test", "primary")]), sec("Models", [C("Models", "142 available", "models", "Search the list, mark favorites, add a custom id.")], "The per-scene pick is in Scene settings.")]),
+      cat("notif", "Notifications", "bell", [sec("While you are away", [T("Response chime", "A short sound when a reply finishes and the window is not focused.", false), T("Desktop notification", "A system notice for a finished reply.", false), T("Typing indicator", "Three dots while a character is writing.", true)])]),
+      cat("data", "Data and backups", "db", [sec("Backups", [B("Back up now", "Writes a snapshot of every character, scene and setting.", "Back up", "primary"), C("Snapshots", "14 saved", "snaps", "Last: today, 09:14."), S("Automatic backup", "", ["Daily", "Weekly", "Off"])], "Your library is stored on this computer."), sec("Health", [B("Run health check", "Looks for broken links and missing art.", "Run")]), sec("Export", [B("Export library", "One file, readable later.", "Export")])])]],
+    ["Experience", [
+      cat("look", "Appearance", "palette", [
+        sec("Chat layout", [RAD([["Messenger", "Chat first, panels open as pages like this one."], ["Full Chat", "Every panel stays a wing around the chat."]], 0)], "Which chat layout scenes use."),
+        sec("The message", [T("Show avatars", "A small portrait beside the first message of each run."), T("Show timestamps", "The time on the first message of a run, and on hover for the rest."), R("Message bubble opacity", "Lower it to let the backdrop show through.", 0, 100, 82, 1, "%"), R("Message spacing", "Gap between messages in the list.", 0, 32, 12, 1, " px")], "How each message is drawn."),
+        sec("The type", [P(["Message font", ["Atkinson Hyperlegible", "Fraunces", "IBM Plex Mono"]], ["Message text color", ["Theme default", "Soft", "Custom"]]), R("Message text size", "", 12, 24, 16, 1, " px"), R("Line spacing", "", 12, 22, 16, 10)], "Font, size and color of message text."),
+        sec("Motion and signals", [RAD([["Always", "Follow every new reply."], ["Smart", "Follow only when you are near the bottom."], ["Never", "Stay where you are."]], 1), T("Cap long reasoning", "Fold a model's thinking after a few lines.")], "Auto-scroll and reasoning."),
+        sec("Chrome and device", [T("Compact mode", "Tighter rows in lists and in these settings.", false), T("Collapse side panels", "Start with the right panel closed.", false), T("Show panel labels on hover", "Tooltips on the rail and header icons."), G("Edge indicator style", "The line that marks the open side panel.", ["Single", "Segmented", "Clean glow line"])], "Panels and tooltips.")]),
+      cat("access", "Accessibility", "eye", [sec("Reading", [R("Interface text size", "Never below 12 px.", 12, 20, 14, 1, " px"), T("Reduce motion", "Turns off slides and the lift on buttons.", false), T("High contrast edges", "Stronger borders on rows and controls.", false)])]),
+      cat("music", "Music and Spotify", "music", [sec("Music", [C("Library", "34 tracks", "library", "Three playlists."), R("Volume", "", 0, 100, 60, 1, "%"), T("Play on scene open", "", false)], "Mood music for scenes."), sec("Spotify", [B("Connect Spotify", "Shows the current track in the scene header.", "Connect", "primary")])])]]] },
+
+  char: { name: "Vera Lindqvist", who: "ch", edit: "Edit character", hot: "hot-char", start: "lore", nav: [
+    [null, [
+      cat("over", "Overview", "home", [sec("Card", [V("Name", "Vera Lindqvist"), V("Description", "A river-city archivist who keeps two sets of maps."), S("Rating tags", "", ["General", "Teen", "Mature"], 1), N("Injection depth", "Where the card sits in the prompt.", "4")], "The fields that define Vera."), sec("Danger zone", [B("Delete character", "Scenes with Vera move to the trash first.", "Delete", "danger")])], { hero: ["V", "character", "Vera Lindqvist", "Archivist, forty. 3 scenes, 1 lorebook."] }),
+      cat("lore", "Lorebooks", "book", [sec("Attached", [C("Canal District", "3 entries active", "canal"), C("Old Harbor", "Off", "canal")], "World knowledge on for every scene with Vera unless a scene turns one off."), sec("Add", [B("Attach a lorebook", "", "Browse"), B("New lorebook", "", "Create")])]),
+      cat("comp", "Compendium", "id", [sec("Notes", [C("Canal District notes", "12 notes", "notes"), B("File a note", "", "New note")], "Filed world notes."), sec("Access", [T("Allow this character to read notes", "")])]),
+      cat("ward", "Wardrobe", "shirt", [sec("Outfits", [V("Archive coat", "Current", "Change"), V("Rain cloak", "", "Apply"), B("Add outfit", "", "Upload")], "Shown while the Wardrobe feature is on.")]),
+      cat("parts", "Participants", "users", [sec("Speakers", [C("Vera Lindqvist", "Color and emoji", "speaker"), C("The harbor clerk", "Color and emoji", "speaker"), B("Add participant", "", "Add")], "Who can speak with Vera.")])]],
+    ["Defaults", [cat("def", "Character defaults", "sliders", [sec("New scene defaults", [P(["Preset", ["Narrator bank", "Plain"]], ["Samplers", ["Use preset", "Custom"]]), S("Backdrop", "", ["Card backdrop", "None"]), T("Turn on Story Director", "", false)], "Starting values for new scenes with Vera. A scene can override each one.")])]]] },
+
+  scene: { name: "The flooded archive", who: "sc", edit: "Edit scene", hot: "hot-scene", start: "writing", nav: [
+    [null, [
+      cat("sover", "Overview", "home", [sec("Scene", [V("Title", "The flooded archive"), C("Playing as", "Mina Okafor", "persona", "Persona used in this scene."), C("Backdrop", "Archive at night", "backdrop")]), sec("Danger zone", [B("Move scene to trash", "You can bring it back for 30 days.", "Trash", "danger")])], { hero: ["F", "preset", "The flooded archive", "With Vera Lindqvist. 214 messages."] }),
+      cat("booth", "Control Booth", "zap", [sec("Right now", [P(["Model", ["GPT-5 mini", "Claude Sonnet"]], ["Fallback model", ["Off", "Custom"]]), C("Preset", "Narrator bank", "narr"), C("Lorebooks", "Canal District, 3 entries", "canal"), C("Summary", "Automatic every 20 messages", "persona"), N("Max tool rounds", "Tool calls allowed before the model must answer.", "4")], "The quick page for what you change most. The connection is under User settings."), sec("Loadouts", [B("Save current setup", "Models, preset, lorebooks and features together.", "Save loadout", "primary"), B("Load a setup", "", "Load")])])]],
+    ["Prompt", [
+      cat("writing", "Writing", "pen", [
+        sec("Presets and prompts", [C("Narrator bank", "Active", "narr", "Prose and pacing passes."), B("Switch preset", "", "Switch"), B("New preset", "", "Create")], "How the prompt is built."),
+        sec("Samplers", [P(["Reasoning effort", ["Low", "Medium", "High"]], ["Prefill handling", ["Convert to instruction", "Send as prefill", "Drop"]]), R("Temperature", "Higher is looser, lower is steadier.", 0, 200, 90, 100), R("Top P", "Keep only the likeliest words that add up to this share.", 0, 100, 95, 100), R("Top K", "Zero turns it off.", 0, 200, 40), R("Repetition penalty", "", 100, 200, 112, 100), N("Max reply length", "Tokens per turn.", "1200"), T("Stream replies", "Show words as they arrive."), T("Enable reasoning", "Let supporting models think first."), T("Catch thinking", "Move thinking found in the reply into the folded block."), T("Show prefill in chat", "", false), C("All parameters", "24 more", "params")], "The numbers that shape each reply."),
+        sec("Guides", [T("Slow burn", "Use in this scene only."), T("Show, do not tell", "", false), B("Open guide editor", "", "Open")], "Writing guides, switched on per scene."),
+        sec("Scene Note", [X("Note content", "Injected into the prompt every turn.", "Keep the lamps out until Vera finds the keys."), N("Injection depth", "", "2")]),
+        sec("Writing Helpers", [C("Rewrite", "What it sends", "helper"), C("Continue", "What it sends", "helper"), C("Fix grammar", "What it sends", "helper")], "Tools that draft and fix text."),
+        sec("Regex Workshop", [T("Strip stage directions", ""), T("Hide OOC notes", ""), B("New rule", "", "Create")]),
+        sec("Final Cut", [T("Tidy punctuation", "Runs after each finished reply."), T("Trim repeated openings", "", false), T("Split long paragraphs", "")])]),
+      cat("mem", "Memory", "mem", [
+        sec("Summary", [T("Include saved summary in AI context", "Send it with every turn."), T("Hide messages already covered by the summary", "They stay in the list but stop going to the model."), N("Keep recent messages visible to AI", "", "12"), X("Current summary", "Edit it by hand and it is kept as written.", "Vera and Mina found the canal maps forged. The pump room is flooded.")], "What the story remembers once it outgrows the window."),
+        sec("Summary controls", [RAD([["Automatic", "Write a summary every few messages."], ["Manual", "Only when you press Summarize."]], 0), N("Summarize every", "Messages between summaries.", "20"), P(["Summary model", ["Same as the scene", "GPT-5 mini"]], ["Messages included", ["30", "50", "All"]]), B("Summarize now", "", "Summarize", "primary")]),
+        sec("Advanced", [R("Temperature", "", 0, 100, 30, 100), N("Max output tokens", "", "600"), T("Enable reasoning", "", false), T("Truncate messages", "Cut very long messages first.", false), X("Prompt template", "What the summary model receives.", "Summarize the scene in a few plain sentences. Keep names, promises and open questions.")], "Summary model only."),
+        sec("Context inspector", [C("Next send", "Preview the prompt", "inspect"), C("This turn", "The last call", "inspect"), C("Lore state", "", "inspect"), C("Macros", "", "inspect")], "What the model will see.")])]],
+    ["Features", [
+      cat("props", "Features", "puzzle", [sec("Features", [T("Story Director", "Plans beats and nudges the story."), T("TrackHare", "Tracks stats and tokens."), T("Wardrobe", "Outfits in the scene header.", false)], "Optional systems for this scene. A feature's own page shows in this list while it is on.")]),
+      cat("dir", "Story Director", "star", [
+        sec("Personality", [RAD([["Gentle", "Suggests, never insists."], ["Bold", "Pushes the plot when it stalls."], ["Wild", "Introduces surprises on its own."]], 0), R("Push strength", "How hard it steers.", 0, 100, 30, 1, "%")], "How the Director speaks up."),
+        sec("Pacing", [N("Beats per act", "", "3"), G("Tempo", "", ["Slow", "Even", "Fast"]), T("Wait for a quiet moment", "")]),
+        sec("Rules", [T("Ask before changing the plot", ""), T("Never kill a named character", ""), X("House rules", "Extra instructions the Director must follow.", "No time travel.")]),
+        sec("Debug", [T("Show Director notes in chat", "", false), B("Open trace", "See what the Director sent last turn.", "Open")])]),
+      cat("track", "TrackHare", "grid", [sec("Trackers", [T("Health", ""), T("Reputation", ""), B("Add tracker", "", "Add")]), sec("Tokens view", [C("Tokens view", "Doubles as the trace viewer", "trace")])]),
+      cat("pics", "Pictures", "img", [sec("Backdrop", [C("Archive at night", "Current", "backdrop"), R("Dim", "", 0, 100, 40, 1, "%"), R("Blur", "", 0, 20, 4, 1, " px")]), sec("My pictures", [B("Open gallery", "Apply any picture as the backdrop.", "Open")])])]]] }
+};
+
+function rowHtml(r) {
+  const [ty, l, d] = r; const tx = `<div class="t"><b>${l}</b>${d ? `<span>${d}</span>` : ""}</div>`;
+  const wrap = (c) => `<div class="r">${tx}<div class="c">${c}</div></div>`;
+  if (ty === "t") return wrap(`<button class="tg" role="switch" aria-checked="${r[3]}" aria-label="${l}"><i></i></button>`);
+  if (ty === "v") return wrap(`<span class="val">${r[3]}</span><button class="btn">${r[4]}</button>`);
+  if (ty === "c") return `<div class="r drill" data-to="${r[4]}" data-from="" tabindex="0" role="link">${tx}<div class="c"><span class="val">${r[3]}</span>${svg("chev", 18)}</div></div>`;
+  if (ty === "s") return wrap(`<select class="sel" aria-label="${l}">${r[3].map((o, i) => `<option${i === r[4] ? " selected" : ""}>${o}</option>`).join("")}</select>`);
+  if (ty === "p") return `<div class="pair">${[r[1], r[2]].map(([lb, o]) => `<label>${lb}<select class="sel">${o.map((x) => `<option>${x}</option>`).join("")}</select></label>`).join("")}</div>`;
+  if (ty === "g") return wrap(`<div class="seg" data-seg>${r[3].map((o, i) => `<button aria-pressed="${i === r[4]}">${o}</button>`).join("")}</div>`);
+  if (ty === "r") { const [min, max, val, div, unit] = [r[3], r[4], r[5], r[6], r[7]]; return `<div class="r under">${tx}<div class="sl"><input type="range" min="${min}" max="${max}" value="${val}" data-div="${div}" data-unit="${unit}" aria-label="${l}"><output class="val">${(div > 1 ? (val / div).toFixed(2) : val) + unit}</output></div></div>`; }
+  if (ty === "n") return wrap(`<input class="in num" value="${r[3]}" aria-label="${l}">`);
+  if (ty === "b") return wrap(`<button class="btn ${r[4]}">${r[3]}</button>`);
+  if (ty === "x") return `<div class="r stack">${tx}<textarea class="ta" aria-label="${l}">${r[3]}</textarea></div>`;
+  if (ty === "rad") return `<div class="radios" role="radiogroup">${r[1].map(([t, dd], i) => `<div class="radio" role="radio" tabindex="0" aria-checked="${i === r[2]}"><span class="dot"></span><div><b>${t}</b><span>${dd}</span></div></div>`).join("")}</div>`;
+  return "";
+}
+const blockHtml = (s, id) => `<section class="blk" id="${id}" data-sec><h2>${s.h}</h2>${s.d ? `<div class="secd">${s.d}</div>` : ""}<div class="rows">${s.rows.map(rowHtml).join("")}</div></section>`;
+
+class Win {
+  constructor(root, sc, narrow) { this.root = root; this.sc = sc; this.narrow = narrow; this.cat = SCOPES[sc].start; this.deep = []; this.draw(); }
+  cats() { return SCOPES[this.sc].nav.flatMap(([, c]) => c); }
+  draw() {
+    const S = SCOPES[this.sc]; const cats = this.cats(); const C0 = cats.find((c) => c.id === this.cat);
+    const who = this.sc === "user" ? `<div class="who"><div class="av">C</div><div><b>${S.name}</b><a>${S.edit} ${svg("pen", 12)}</a></div></div>` : `<div class="who"><div class="av ${S.who}">${S.name[0]}</div><div><small>${this.sc === "char" ? "Character" : "Scene"}</small><b>${S.name}</b><a>${S.edit} ${svg("pen", 12)}</a></div></div>`;
+    const nav = S.nav.map(([h, items]) => (h ? `<div class="cap">${h}</div>` : "") + items.map((c) => `<button class="ni" data-cat="${c.id}" data-label="${c.label.toLowerCase()}" ${c.id === this.cat ? 'aria-current="page"' : ""}>${svg(c.icon)}${c.label}</button>${c.id === this.cat ? `<div class="sub">${c.secs.map((s) => `<button class="si" data-sec="${c.id}-${slug(s.h)}">${s.h}</button>`).join("")}</div>` : ""}`).join("")).join("");
+    let top, body;
+    if (this.deep.length) {
+      const d = this.deep[this.deep.length - 1]; const P = DEEP[d.to] || { t: d.title, secs: [sec("Details", [T("Enabled", "This deeper page uses the same rows."), N("Value", "", "1")])] };
+      top = `<header class="ph"><div class="l"><button class="ib" data-back aria-label="Back">${svg("back", 20)}</button><span>${d.from}</span></div><button class="ib" data-close aria-label="Close settings">${svg("x", 20)}</button></header>`;
+      body = `<div class="blk"><h2>${P.t}</h2></div>` + P.secs.map((s, i) => blockHtml(s, `d-${i}`)).join("");
+    } else {
+      top = `<header class="ph"><div class="l"><span>${C0.label}</span></div><button class="ib" data-close aria-label="Close settings">${svg("x", 20)}</button></header>`;
+      const hero = C0.hero ? `<div class="hero"><div class="art" style="background:linear-gradient(160deg,var(--deck-${C0.hero[1]}-deep),var(--deck-lorebook-deep));color:var(--deck-${C0.hero[1]})">${C0.hero[0]}</div><div><b>${C0.hero[2]}</b><small>${C0.hero[3]}</small></div></div>` : "";
+      body = hero + C0.secs.map((s) => blockHtml(s, `${C0.id}-${slug(s.h)}`)).join("") + '<div class="spacer"></div>';
+    }
+    this.root.innerHTML = `<aside class="nav-side">${who}<label class="search">${svg("search", 14)}<input class="q" placeholder="Search" aria-label="Search settings"></label><nav class="nav-in" aria-label="Settings categories">${nav}</nav></aside><section class="content-side">${top}<div class="scroll"><div class="content-in">${body}</div></div></section>`;
+    this.wire();
+  }
+  wire() {
+    const r = this.root; const sc = r.querySelector(".scroll");
+    r.querySelectorAll(".ni").forEach((n) => n.addEventListener("click", () => { this.cat = n.dataset.cat; this.deep = []; this.draw(); }));
+    r.querySelectorAll(".si").forEach((n) => n.addEventListener("click", () => { const el = r.querySelector("#" + n.dataset.sec); if (el) sc.scrollTo({ top: el.offsetTop - 8, behavior: "smooth" }); }));
+    const spy = () => { const blks = [...r.querySelectorAll("section.blk[id]")]; if (!blks.length || this.deep.length) return; let cur = blks[0]; blks.forEach((b) => { if (b.offsetTop - 80 <= sc.scrollTop) cur = b; }); if (sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 4) cur = blks[blks.length - 1]; r.querySelectorAll(".si").forEach((s) => s.setAttribute("aria-current", s.dataset.sec === cur.id ? "true" : "false")); };
+    sc.addEventListener("scroll", spy); spy();
+    r.querySelectorAll("[data-to]").forEach((row) => { const go = () => { const blk = row.closest("section.blk"); const from = blk && blk.querySelector("h2") ? (this.deep.length ? DEEP[this.deep[this.deep.length - 1].to]?.t || "Back" : blk.querySelector("h2").textContent) : "Back"; this.deep.push({ to: row.dataset.to, from, title: row.querySelector("b").textContent }); this.draw(); }; row.addEventListener("click", go); row.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); }); });
+    const back = r.querySelector("[data-back]"); if (back) back.addEventListener("click", () => this.back());
+    r.querySelector("[data-close]").addEventListener("click", closeAll);
+    r.querySelectorAll(".tg").forEach((t) => t.addEventListener("click", () => t.setAttribute("aria-checked", t.getAttribute("aria-checked") === "true" ? "false" : "true")));
+    r.querySelectorAll("[data-seg]").forEach((g) => g.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { g.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", "false")); b.setAttribute("aria-pressed", "true"); })));
+    r.querySelectorAll(".radios").forEach((g) => g.querySelectorAll(".radio").forEach((b) => b.addEventListener("click", () => { g.querySelectorAll(".radio").forEach((x) => x.setAttribute("aria-checked", "false")); b.setAttribute("aria-checked", "true"); })));
+    r.querySelectorAll("input[type=range]").forEach((i) => { const o = i.nextElementSibling; i.addEventListener("input", () => { const d = +i.dataset.div; o.textContent = (d > 1 ? (i.value / d).toFixed(2) : i.value) + i.dataset.unit; }); });
+    r.querySelector(".q").addEventListener("input", (e) => { const q = e.target.value.trim().toLowerCase(); r.querySelectorAll(".ni").forEach((n) => { n.style.opacity = !q || n.dataset.label.includes(q) ? "1" : "0.35"; }); });
+  }
+  back() { if (this.deep.length) { this.deep.pop(); this.draw(); } }
+}
+
+const layer = document.getElementById("layer"); let win = null;
+function openScope(sc) { layer.classList.remove("closed"); document.querySelectorAll(".hot").forEach((e) => e.classList.remove("hot")); document.getElementById(SCOPES[sc].hot).classList.add("hot"); win = new Win(document.getElementById("panel"), sc, false); }
+function closeAll() { layer.classList.add("closed"); document.querySelectorAll(".hot").forEach((e) => e.classList.remove("hot")); win = null; }
+document.addEventListener("click", (e) => { const o = e.target.closest("[data-open]"); if (o) openScope(o.dataset.open); });
+document.getElementById("dim").addEventListener("click", closeAll);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && win) closeAll();
+  if (e.key === "Backspace" && win && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { e.preventDefault(); win.back(); }
+});
+openScope("scene");
+new Win(document.getElementById("panel2"), "scene", true);
+</script>
+</body>
+</html>

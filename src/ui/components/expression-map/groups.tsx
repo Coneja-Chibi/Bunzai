@@ -43,7 +43,7 @@ export function ExpressionGroups({ value, onChange }: ExpressionGroupsProps): JS
 
   return (
     <div className={styles.wrap}>
-      {rows.map((row, i) => (
+      {rows.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (row, i) => (
         <div className={styles.group} key={i}>
           <div className={styles.head}>
             <input

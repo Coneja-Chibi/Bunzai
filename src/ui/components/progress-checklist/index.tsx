@@ -30,7 +30,7 @@ export function ProgressChecklist({ items, extraStat }: ProgressChecklistProps):
       </Button>
       {open && (
         <BottomSheet title={`What's done · ${done}/${items.length}`} onDismiss={() => setOpen(false)}>
-          {items.map(([label, ok]) => (
+          {items.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([label, ok]) => (
             <div key={label} className={styles.row}>
               <span className={ok ? styles.ok : styles.no} aria-hidden="true">
                 {ok ? "✓" : "○"}

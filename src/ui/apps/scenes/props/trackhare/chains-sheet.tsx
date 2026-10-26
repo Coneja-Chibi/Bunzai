@@ -54,7 +54,7 @@ export function ChainsSheet({ sheetRef, lore, replyNumber, onClose }: {
                   : groups[g.id].map((row) => (
                     <div className="cl" key={row.title}>
                       {row.title}
-                      {row.lines.map((line, i) => <small key={i}>{line}</small>)}
+                      {row.lines.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (line, i) => <small key={i}>{line}</small>)}
                     </div>
                   ))}
               </div>

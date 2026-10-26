@@ -24,7 +24,7 @@ export function SubFeatureList({ ctx, chat, onChat, module, subs, tone }: { ctx:
   };
   return (
     <div className="pw-subs" style={{ "--tone": tone } as CSSProperties}>
-      {subs.map((s) => (
+      {subs.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s) => (
         <ListRow key={s.id} variant="option" selected={on[s.id] === true} role="radio" aria-checked={on[s.id] === true} title={s.description} aria-label={`${s.label}: ${s.description}`} onClick={() => toggle(s.id)}
           label={<span className="psb-l"><Ic name={s.icon as IconName} size={12} />{s.label}</span>} />
       ))}

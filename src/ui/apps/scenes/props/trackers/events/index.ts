@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { EventsPanel } from "./events-panel";
+import { summaryLine } from "./summary";
 
 export const eventsProp = trackerProp({
   module: "events",
@@ -16,4 +17,5 @@ export const eventsProp = trackerProp({
   title: "Parallel Events",
   noun: "Events",
   Panel: EventsPanel,
+  summary: summaryLine,
 });

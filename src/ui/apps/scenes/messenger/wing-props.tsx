@@ -56,15 +56,21 @@ export interface WingArgs {
   openWing(id: string | null): void;
 }
 
-export type WingPanels = Omit<ComponentProps<typeof WingPanel>, "id" | "tab" | "bare" | "resize">;
+export type WingPanels = Omit<ComponentProps<typeof WingPanel>, "id" | "tab" | "bare" | "single" | "resize">;
 
-export function wingPanels(a: WingArgs, tab?: string): WingPanels {
+/** A panel's new chat, taken into the page's scene. */
+export const onChatOf = (a: Pick<WingArgs, "setScene">) => (chat: Chat): void => a.setScene((s) => (s ? { ...s, chat } : s));
+
+/** What a Booth loadout apply or undo hands back: the page takes the scene and re-reads the Props and World it shows. */
+export const onBoothSettings = (a: WingArgs) => (next: OpenScene, units: readonly string[]): void => { a.replaceScene(next); if (units.includes("props")) a.propsState.reload(); if (units.includes("lore")) a.setLoreBooks(null); };
+
+export function wingPanels(a: WingArgs, tab?: string, single = false): WingPanels {
   const { ctx, scene, busy, card, name, propsState, registeredProps } = a;
-  const onChat = (chat: Chat): void => a.setScene((s) => (s ? { ...s, chat } : s));
-  const initial = tab === undefined ? {} : { initialTab: tab };
+  const onChat = onChatOf(a);
+  const initial = { ...(tab === undefined ? {} : { initialTab: tab }), ...(single ? { single } : {}) };
   return {
     castPanel: <CastWing ctx={ctx} scene={scene} busy={busy} card={card} onScene={a.replaceScene} onUpdate={a.onUpdate} onRevert={a.onRevert} {...initial} />,
-    booth: <BoothWing ctx={ctx} scene={scene} busy={busy} art={a.charArt} onChat={onChat} onSettings={(next, units) => { a.replaceScene(next); if (units.includes("props")) propsState.reload(); if (units.includes("lore")) a.setLoreBooks(null); }} onOpen={a.openWing} />,
+    booth: <BoothWing ctx={ctx} scene={scene} busy={busy} art={a.charArt} onChat={onChat} onSettings={onBoothSettings(a)} onOpen={a.openWing} />,
     ai: <AiWing ctx={ctx} chat={scene.chat} onPicked={(chat) => a.setScene({ ...scene, chat })} onClose={() => a.openWing(null)} />,
     aiGeneration: <GenerationTab ctx={ctx} chat={scene.chat} onChat={onChat} />,
     prompting: { panel: <PromptingWing ctx={ctx} chat={scene.chat} presetBody={a.presetBody} onChanged={onChat} onBody={a.setPresetBody} {...initial} /> },

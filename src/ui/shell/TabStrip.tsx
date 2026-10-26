@@ -68,7 +68,7 @@ export function TabStrip(): JSX.Element | null {
   if (openPieces.length === 0 && !devUpdate) return null;
   return (
     <nav id="tabstrip" data-part="shell.tabs" className={openPieces.length > 0 ? "hastabs" : undefined} aria-label="Open pieces">
-      {openPieces.map((p) => (
+      {openPieces.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
         <Tab
           key={paneKeyOf(p)}
           piece={p}

@@ -197,6 +197,7 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
     try {
       const chat = await api.startScene(characterId);
       onOpen(chat.id);
+      if (chat.startNotes?.length) setStatus(chat.startNotes.join(" "));
     } catch (e) {
       setStatus(`could not start a new scene: ${toErrorMessage(e)}`);
     }

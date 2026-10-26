@@ -57,10 +57,10 @@ const human = (key: string): string => key.replace(/([A-Z])/g, " $1").replace(/_
 export function KeyValues({ data }: { data: Record<string, unknown> }): JSX.Element {
   return (
     <div className="dr-kv">
-      {Object.entries(data).filter(([, v]) => v !== undefined && v !== "" && !(Array.isArray(v) && v.length === 0)).map(([key, value]) => (
+      {Object.entries(data).filter(([, v]) => v !== undefined && v !== "" && !(Array.isArray(v) && v.length === 0)).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ([key, value]) => (
         <div key={key}>
           <h4>{human(key)}</h4>
-          {Array.isArray(value) ? <ul>{value.map((item, i) => <li key={i}>{typeof item === "string" ? item : JSON.stringify(item)}</li>)}</ul> : <p>{typeof value === "string" ? value : String(value)}</p>}
+          {Array.isArray(value) ? <ul>{value.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (item, i) => <li key={i}>{typeof item === "string" ? item : JSON.stringify(item)}</li>)}</ul> : <p>{typeof value === "string" ? value : String(value)}</p>}
         </div>
       ))}
     </div>

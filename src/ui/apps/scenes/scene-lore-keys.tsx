@@ -94,7 +94,7 @@ export function TriggerBox({ triggers, two = false, advanced, placeholder, onCha
   return (
     <div className="wl-tb" data-part="scene.world.keys">
       <div className={`wl-tbx${two ? " two" : ""}${bad ? " bad" : ""}`}>
-        {visible.map((t, i) => (
+        {visible.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (t, i) => (
           <Chip key={`${t.keyword}-${i}`} trigger={t} two={two} advanced={advanced}
             onRemove={() => onChange(triggers.filter((_, j) => j !== i))}
             onPatch={(patch) => onChange(triggers.map((x, j) => (j === i ? { ...x, ...patch } : x)))} />

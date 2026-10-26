@@ -31,7 +31,7 @@ export function InjectionCard({ body, onBody, stops, labels, showWrapper, locked
   return (
     <>
       <div className={s.stops} role="group" aria-label="Where it is injected">
-        {stops.map((stop) => {
+        {stops.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (stop) => {
           const on = current === stop;
           const meta = labels[stop] ?? { label: stop, hint: "" };
           return (

@@ -40,7 +40,7 @@ export function MacroPreview({ content, prefs }: { content: string; prefs: AppCo
     </div>
   );
   const body = (
-    <div className="mp-body"><pre>{parts.map((p, i) => {
+    <div className="mp-body"><pre>{parts.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (p, i) => {
       if (p.kind === "text") return <span key={i}>{p.value}</span>;
       return <span key={i} className="mp-m"><span className="mp-b">{"{{"}</span>{p.value.split(/(::)/).map((seg, j) => (
         seg === "::" ? <span key={j} className="mp-b">{seg}</span> : <span key={j} className={j === 0 ? "mp-name" : "mp-arg"}>{seg}</span>

@@ -11,7 +11,7 @@ export function Ic({ name, size = 16, fill = false, className }: { name: IconNam
   return (
     <svg data-ic="" className={className} width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" fill={solid ? "currentColor" : "none"}
       stroke={name.startsWith("mdi:") ? "none" : "currentColor"} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      {glyphs[name].split("|").map((d) => <path key={d} d={d} />)}
+      {glyphs[name].split("|").map(/* bounded-ok: single message / fixed menu or glyph parts */ (d) => <path key={d} d={d} />)}
     </svg>
   );
 }

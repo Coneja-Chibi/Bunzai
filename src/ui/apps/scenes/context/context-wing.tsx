@@ -33,7 +33,7 @@ type Tab = "inspector" | "memory";
 const TABS: FoldoutTab<Tab>[] = [{ id: "inspector", label: "Prompt Inspector", meta: "history / review" }, { id: "memory", label: "Memory" }];
 
 /** The wing's panel: the section RoleCall draws, in the frame every wing shares (its width and drag edge are the page's: use-wing-widths.ts). */
-export function ContextSection({ wing, resize, ...props }: ContextProps & { wing: Wing; resize?: WingResize; initialTab?: string }): JSX.Element {
+export function ContextSection({ wing, resize, ...props }: ContextProps & { wing: Wing; resize?: WingResize; initialTab?: string; single?: boolean }): JSX.Element {
   return (
     <WingFrame wing={wing} extra="context-wing" {...(resize ? { resize } : {})}>
       <ThemeSlot id="scene.wing.context" />
@@ -42,7 +42,7 @@ export function ContextSection({ wing, resize, ...props }: ContextProps & { wing
   );
 }
 
-export function ContextWing({ initialTab, ...props }: ContextProps & { initialTab?: string }): JSX.Element {
+export function ContextWing({ initialTab, single, ...props }: ContextProps & { initialTab?: string; single?: boolean }): JSX.Element {
   const { ctx, scene } = props;
   const [tab, setTab] = useState<Tab>(() => tabOr(TABS.map((t) => t.id), initialTab, "inspector"));
   const [sub, setSub] = useState<InspectorTab>("this-turn");
@@ -59,7 +59,7 @@ export function ContextWing({ initialTab, ...props }: ContextProps & { initialTa
   };
   return (
     <>
-      <FoldoutTabs<Tab> area="Tools" group="Context" tabs={TABS} active={tab} onSelect={setTab} />
+      {!single && <FoldoutTabs<Tab> area="Tools" group="Context" tabs={TABS} active={tab} onSelect={setTab} />}
       {tab === "inspector" ? <><ThemeSlot id="scene.wing.context.inspector" /><InspectorShell bodies={bodies} tab={sub} onTab={setSub} onReview={() => setNone(!requestReview())} /></> : <><ThemeSlot id="scene.wing.context.memory" /><MemoryTab {...props} /></>}
       {none && (
         <div className="cx-toast" role="status" data-part="scene.context.toast">

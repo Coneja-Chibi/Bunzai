@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { StatsPanel } from "./resources-panel";
+import { summaryLine } from "./summary";
 
 export const statsProp = trackerProp({
   module: "resources",
@@ -16,4 +17,5 @@ export const statsProp = trackerProp({
   title: "Player Stats",
   noun: "Stats",
   Panel: StatsPanel,
+  summary: summaryLine,
 });

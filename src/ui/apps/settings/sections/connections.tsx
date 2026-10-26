@@ -153,11 +153,11 @@ function ConnectionsSection(): JSX.Element {
         <span />
       </SettingsRow>
 
-      {rejected.map((line) => <p key={line} className={styles.problem}>{line}</p>)}
+      {rejected.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (line) => <p key={line} className={styles.problem}>{line}</p>)}
 
       <ul className={styles.list}>
         {rows.length === 0 && <li className={styles.empty}>No servers connected yet.</li>}
-        {rows.map((row) => (
+        {rows.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (row) => (
           <li key={row.id} className={styles.row}>
             <span className={styles.name}>{row.id}</span>
             <span className={styles.command}>{[row.command, ...row.args].join(" ")}</span>

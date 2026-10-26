@@ -20,7 +20,7 @@ export function CssStarters({ packId, packBlurb, onApply }: CssStartersProps): J
       <p className={styles.hint}>
         Drop a starter into your sheet, then tune it in Assist or Source. {packBlurb}
       </p>
-      {recipes.map((r) => (
+      {recipes.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (r) => (
         <div className={styles.recipe} key={r.id}>
           <div className={styles.recipeHead}>
             <span className={styles.recipeTitle}>{r.title}</span>

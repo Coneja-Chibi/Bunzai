@@ -23,6 +23,7 @@ import type { SettingsStoreLike, StudioStoreLike } from "./contracts";
 import { hasPortrait } from "./portrait";
 import { pieceAccent } from "./summary";
 import { readChatCast } from "./cast-snapshot";
+import { CHARACTER_DEFAULTS_PREF, applyCharacterDefaults } from "./scene-character-defaults";
 
 /** The pref the persona editor sets and a new scene reads. */
 export const DEFAULT_PERSONA_PREF = "persona.default";
@@ -64,12 +65,17 @@ export async function freezeCast(studio: StudioStoreLike, characterId: string, p
   };
 }
 
-export async function startScene(chats: ChatStore, studio: StudioStoreLike, settings: SettingsStoreLike, characterId: string): Promise<Chat> {
+/** A new scene with the saved starting defaults applied, and the plain sentences for any that could not be (the scene exists either way). */
+export const startScene = async (chats: ChatStore, studio: StudioStoreLike, settings: SettingsStoreLike, characterId: string): Promise<Chat> => (await startSceneWithNotes(chats, studio, settings, characterId)).chat;
+
+export async function startSceneWithNotes(chats: ChatStore, studio: StudioStoreLike, settings: SettingsStoreLike, characterId: string): Promise<{ chat: Chat; notes: string[] }> {
   const prefs = await settings.read();
-  const chat = await chats.createChat(await freezeCast(studio, characterId, prefs[DEFAULT_PERSONA_PREF]));
+  const frozen = await freezeCast(studio, characterId, prefs[DEFAULT_PERSONA_PREF]);
+  const created = await chats.createChat(frozen);
   const defaults = summaryDefaultsOf(prefs[DEFAULT_SUMMARY_PREF]);
   // The scene exists whether or not its defaults apply; defaults that are not valid settings are left off rather than refusing to start it.
-  return defaults ? ((await chats.setSummarySettings(chat.id, defaults)) ?? chat) : chat;
+  const chat = defaults ? ((await chats.setSummarySettings(created.id, defaults)) ?? created) : created;
+  return applyCharacterDefaults(chats, studio, chat, characterId, frozen.title, prefs[CHARACTER_DEFAULTS_PREF]);
 }
 
 export interface SceneSummary extends Chat {

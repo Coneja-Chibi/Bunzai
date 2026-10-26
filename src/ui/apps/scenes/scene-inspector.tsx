@@ -15,6 +15,9 @@ import { editsOf } from "./inspector-core";
 import { OPEN_REVIEW } from "./context/review-open";
 import type { RequestParams } from "../../../studio/scene-turn-trace";
 import type { Review } from "./use-scene-turn";
+import { VirtualRows } from "../../_shared/virtual-list";
+
+const MESSAGE_ROW_PX = 96;
 
 const WHY: Record<string, string> = { unsupported: "this provider does not take it", neutral: "it is at its no-op value", "parent-off": "the setting it belongs to is off", unusable: "its value cannot be used here" };
 
@@ -56,13 +59,13 @@ export function PromptInspector({ review, onAnswer }: { review: Review; onAnswer
           <IconButton variant="quiet" size="sm" label="Close Prompt Inspector" icon="lucide:x" onClick={later} />
         </header>
         <div className="pi-body">
-          {review.messages.map((m, i) => (
-            <label key={i} className="pi-msg">
+          <VirtualRows items={review.messages} keyOf={(_, i) => String(i)} estimate={MESSAGE_ROW_PX} gap={10} render={(m, i) => (
+            <label className="pi-msg">
               <span>{m.role}</span>
               <textarea value={drafts[i]} rows={Math.min(12, Math.max(2, (drafts[i] ?? "").split("\n").length))} disabled={busy} onChange={(e) => setDrafts(drafts.map((d, j) => (j === i ? e.target.value : d)))} />
             </label>
-          ))}
-          {review.tools?.map((t) => (
+          )} />
+          {review.tools?.map(/* bounded-ok: tool list of one review */ (t) => (
             <label key={t.name} className="pi-msg" data-part="scene.inspector.tool">
               <span>tool: {t.name}</span>
               <textarea readOnly value={JSON.stringify({ description: t.description, parameters: t.parameters }, null, 2)} rows={6} />

@@ -79,7 +79,7 @@ export function CorruptionPanel({ ctx, chat, onChat, popOut }: PopoutContext): J
                     <span><Pm label={METRIC_NAMES[m]} onMinus={() => nudge(m, -5)} onPlus={() => nudge(m, 5)} /><b className="cr-val" style={{ color: metricTone(v) }}>{v}</b></span>
                   </div>
                   <div className="cr-bar"><div style={{ width: `${v}%`, background: metricTone(v) }} />{THRESHOLDS.map((t, i) => <u key={t} style={{ left: `${t}%`, opacity: 0.3 + i * 0.2 }} />)}</div>
-                  {effectsFor(v, METRIC_NAMES[m]).map((e) => <div key={e} className="it-line"><Ic name="lucide:minus" size={12} /><span>{e}</span></div>)}
+                  {effectsFor(v, METRIC_NAMES[m]).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e) => <div key={e} className="it-line"><Ic name="lucide:minus" size={12} /><span>{e}</span></div>)}
                 </div>
               );
             })}
@@ -89,7 +89,7 @@ export function CorruptionPanel({ ctx, chat, onChat, popOut }: PopoutContext): J
           <>
             {npcs.length > 0 && (
               <div className="it-list">
-                {npcs.map((n) => (
+                {npcs.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (n) => (
                   <div key={n.id} className="cr-npc">
                     <div className="cr-npchead">
                       <span><Ic name="lucide:user" size={16} /><b>{n.npcName}</b></span>
@@ -118,7 +118,7 @@ export function CorruptionPanel({ ctx, chat, onChat, popOut }: PopoutContext): J
           </>
         )}
         {tab === "effects" && (effects.length > 0
-          ? <div className="it-list">{effects.map((e) => <div key={e} className="it-bonus"><span><Ic name="lucide:zap" size={16} /> {e}</span></div>)}</div>
+          ? <div className="it-list">{effects.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (e) => <div key={e} className="it-bonus"><span><Ic name="lucide:zap" size={16} /> {e}</span></div>)}</div>
           : <Empty icon="lucide:shield" title="No corruption effects" hint="You remain untainted... for now" />)}
         {tab === "history" && (c.log.length > 0
           ? (

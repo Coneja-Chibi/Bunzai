@@ -230,7 +230,7 @@ export function buildEditorBodyViews(opts: {
     if (mods.length === 0) return [];
     return [{
       id: act.id, no: act.no.replace("Act ", ""), title: act.title,
-      node: <>{mods.map((m) => (
+      node: <>{mods.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m) => (
         <div key={m.id} className={lensDims(m) ? styles.dimlens : undefined}>
           {RICH_FIELD_KINDS.has(m.kind) ? controlFor(m) : (
             <EditorField label={m.sheetLabel} hint={m.helper || undefined} required={m.required} wide={WIDE_KINDS.has(m.kind) || PANEL_KINDS.has(m.kind)}>{controlFor(m)}</EditorField>

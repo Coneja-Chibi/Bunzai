@@ -99,7 +99,7 @@ function Rulebook({ ctx, pass, onChange }: { ctx: AppContext; pass: FinalCutPass
     <div className="fc-preset" data-part="scene.finalcut.rulebook">
       <b>Preset entries used by this agent</b>
       <div className="fc-rules">
-        {prompts.map((p) => (
+        {prompts.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (p) => (
           <label key={p.id} className="fc-entry">
             <input type="checkbox" checked={states[p.id] ?? p.enabled} onChange={(e) => onChange({ customPresetPromptStates: { ...states, [p.id]: e.target.checked } })} />
             <span className="fc-box" aria-hidden="true" />
@@ -130,7 +130,7 @@ export function AgentControls({ ctx, pass, lib, onChange }: { ctx: AppContext; p
       <label className="fc-label">Attach a preset rulebook
         <select className="fc-select" value={pass.customPresetId ?? ""} onChange={(e) => onChange({ customPresetId: e.target.value || null, customPresetName: list.find((p) => p.id === e.target.value)?.name ?? null, customPresetPromptStates: {} })}>
           <option value="">No attached preset</option>
-          {list.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          {list.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (p) => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
       </label>
       {presets === "loading" && <div className="fc-note">Loading your preset library...</div>}

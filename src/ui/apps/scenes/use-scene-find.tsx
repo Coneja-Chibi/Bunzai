@@ -38,7 +38,7 @@ export function useSceneFind(input: {
   loadThrough(seq: number): Promise<boolean>;
   setStatus(text: string): void;
   names: { character: string; persona: string };
-}): { overlay: JSX.Element | null; jump: JSX.Element | null } {
+}): { overlay: JSX.Element | null; jump: JSX.Element | null; open(): void } {
   const { api, chatId, scene, scroller, busy, setStatus } = input;
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -89,6 +89,7 @@ export function useSceneFind(input: {
     return () => document.removeEventListener("keydown", onKey);
   }, [scene !== null]); // eslint-disable-line react-hooks/exhaustive-deps -- only whether a scene is open matters
   useEffect(() => { if (open) inputRef.current?.focus(); }, [open]);
+  const show = useCallback((): void => setOpen(true), []);
   // Esc closes it before it can stop a running reply (a modal owner of the Escape arbiter); a press outside closes it too (ChatSearchOverlay.tsx:274-286).
   useDialogEscape(rootRef, close, open);
   useEffect(() => {
@@ -184,5 +185,5 @@ export function useSceneFind(input: {
   const jump = away ? (
     <div className="jtl"><IconButton icon="lucide:chevron-down" label="Jump to latest" onClick={toLatest} /></div>
   ) : null;
-  return { overlay, jump };
+  return { overlay, jump, open: show };
 }

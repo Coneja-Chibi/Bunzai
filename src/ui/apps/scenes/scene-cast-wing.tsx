@@ -13,12 +13,11 @@ import { emptyPersonaBody } from "../../../entities/persona";
 import { bodyOf, isRecord, str } from "../../../core/guards";
 import { type OpenScene, DEFAULT_PERSONA_PREF } from "../../../studio/scenes";
 import { Button } from "../../components/button";
-import { ApiHttpError } from "../../_shared/api-fetch";
-import { toErrorMessage } from "../../_shared/error-message";
 import { createAndOpenPiece } from "../library/new-piece";
 import { CardNotice, isNewer, UpdateBadge, type CardState } from "./scene-card";
 import { FoldoutTabs } from "./scene-foldout";
 import { pickerPersonas, PersonaPicker } from "./scene-persona-picker";
+import { castPersona, castProblem } from "./cast/persona-cast";
 import { CAST_TABS, type CastTab } from "./cast/cast-core";
 import { tabOr } from "./scene-wing-data";
 import { CastConfirm, NewPersona } from "./cast/cast-dialogs";
@@ -44,7 +43,7 @@ function CharacterSession({ ctx, scene, piece, busy, onScene, onSaved, onVariant
   const editor = useCastEditor<Body>({ ctx, chatId: scene.chat.id, entity: piece.entity, revision: piece.revision, busy, onScene, onSaved });
   const frozen = bodyOf(scene.snapshot.character)["variants"];
   const variants = Array.isArray(frozen) ? (frozen as CharacterVariant[]) : [];
-  return <CharacterForm ctx={ctx} id={id} chatId={scene.chat.id} editor={editor} summary={piece.summary} art={artAccentOf(piece.entity)} version={scene.chat.cast.character.version} variants={variants} variantId={scene.chat.variantId} busy={busy} onVariant={onVariant} />;
+  return <CharacterForm ctx={ctx} id={id} chatId={scene.chat.id} chat={scene.chat} editor={editor} summary={piece.summary} art={artAccentOf(piece.entity)} version={scene.chat.cast.character.version} variants={variants} variantId={scene.chat.variantId} busy={busy} onVariant={onVariant} />;
 }
 
 function PersonaSession({ ctx, scene, piece, busy, onScene, onSaved, defaultId, stats, onOpenPicker, onSetDefault }: {
@@ -61,8 +60,10 @@ function PersonaSession({ ctx, scene, piece, busy, onScene, onSaved, defaultId, 
 }
 
 /** The Cast wing's three tabs (Character, Persona, Participants) and everything that changes who is in the scene. */
-export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, initialTab }: {
+export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, initialTab, single }: {
   ctx: AppContext;
+  /** Draw only `initialTab`'s body (a Messenger section): no tab bar, and the tab never changes. */
+  single?: boolean;
   /** The tab to open on (a Messenger program); the wing's first when absent or unknown. */
   initialTab?: string;
   scene: OpenScene;
@@ -76,7 +77,8 @@ export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, 
   const chat = scene.chat;
   const characterId = chat.cast.character.id;
   const persona = chat.cast.persona ?? null;
-  const [tab, setTab] = useState<CastTab>(() => tabOr(CAST_TABS.map((t) => t.id), initialTab, "character"));
+  const [tab, setTabState] = useState<CastTab>(() => tabOr(CAST_TABS.map((t) => t.id), initialTab, "character"));
+  const setTab = (t: CastTab): void => { if (!single) setTabState(t); };
   const character = useCastPiece(ctx, "character", characterId);
   const personaPiece = useCastPiece(ctx, "persona", persona?.id ?? null);
   const [library, setLibrary] = useState<StudioEntitySummary[] | null>(null);
@@ -122,17 +124,12 @@ export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, 
     if (!changedPerson && personaId && mine.current.persona !== chat.cast.persona?.version) personaReload();
   }, [personaReload, personaId, chat.cast.persona?.version]);
 
-  const say = (e: unknown): void => {
-    const text = toErrorMessage(e, "that did not go through");
-    setProblem(e instanceof ApiHttpError && e.status === 409 && !/reply is being written/i.test(text)
-      ? "Could not switch: this scene changed in another window while you were choosing. Nothing was changed. Try again."
-      : text);
-  };
+  const say = (e: unknown): void => setProblem(castProblem(e));
   const cast = async (to: string | null): Promise<void> => {
     setWorking(true);
     setProblem(null);
     try {
-      onScene(await api.editScene("persona", { chatId: chat.id, personaId: to, expectedSnapshotVersion: chat.snapshotVersion }));
+      onScene(await castPersona(api, chat, to));
       setConfirm(null);
       setPicker(false);
       setCreating(false);
@@ -189,7 +186,7 @@ export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, 
 
   return (
     <>
-      <FoldoutTabs<CastTab> area="Scene" group="Cast" active={tab} onSelect={setTab} tabs={CAST_TABS} />
+      {!single && <FoldoutTabs<CastTab> area="Scene" group="Cast" active={tab} onSelect={setTab} tabs={CAST_TABS} />}
       <div className="cw-wrap">
         {notices}
         {tab === "character" && <ThemeSlot id="scene.wing.cast.character" />}

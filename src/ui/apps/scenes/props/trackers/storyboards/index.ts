@@ -9,6 +9,8 @@ import { TRACKER_PROP_PREFIX } from "../../../../../../stage/contracts/chat-stor
 import type { IconName } from "../../../../../_shared/ic";
 import { openStoryboards } from "../../../compendium/storyboards/storyboards-open";
 import type { SceneProp } from "../../prop-contract";
+import { registerSummary } from "../summary";
+import { summaryLine } from "./summary";
 
 export interface StoryboardDef { type: DossierType; name: string; blurb: string; icon: IconName; tone: string }
 
@@ -28,15 +30,21 @@ const BULLETS = [
   "Saves per chat; switching it off keeps its settings.",
 ] as const;
 
-export const storyboardProps: SceneProp[] = STORYBOARDS.map((def): SceneProp => ({
-  id: `${TRACKER_PROP_PREFIX}${def.type}`,
-  name: def.name,
-  blurb: def.blurb,
-  tier: "Storyboard",
-  reach: "none",
-  icon: def.icon,
-  tone: def.tone,
-  group: "storyboard",
-  tip: { description: def.blurb, bullets: BULLETS },
-  gear: () => openStoryboards(def.type),
-}));
+/** Quest Board and Cast start on, Map and Renown off (RoleCall defaults), which the card line reads while no choice is stored. */
+const DEFAULT_ON: readonly DossierType[] = ["quests", "cast"];
+
+export const storyboardProps: SceneProp[] = STORYBOARDS.map((def): SceneProp => {
+  registerSummary(def.type, summaryLine(DEFAULT_ON.includes(def.type)));
+  return {
+    id: `${TRACKER_PROP_PREFIX}${def.type}`,
+    name: def.name,
+    blurb: def.blurb,
+    tier: "Storyboard",
+    reach: "none",
+    icon: def.icon,
+    tone: def.tone,
+    group: "storyboard",
+    tip: { description: def.blurb, bullets: BULLETS },
+    gear: () => openStoryboards(def.type),
+  };
+});

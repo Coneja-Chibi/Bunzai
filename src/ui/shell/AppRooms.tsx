@@ -35,7 +35,7 @@ export function AppRooms({ app, activeAppId, workspaceAppId, overlayAppId, works
       return next.length === current.length && next.every((room, i) => room === current[i]) ? current : next;
     });
   }, [app, workspaceAppId, overlayAppId]);
-  return <>{rooms.map((room) => {
+  return <>{rooms.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (room) => {
     const id = room.manifest.id; const floating = overlayOpen && id === overlayAppId;
     return <AppSurface key={id} workspace={workspace} overlay={floating ? overlay : null} visible={floating || id === workspaceAppId}>
       <Room app={room} ctx={ctx} active={id === activeAppId} />

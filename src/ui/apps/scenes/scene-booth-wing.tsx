@@ -32,7 +32,7 @@ import { useScenePresetOwn } from "./use-scene-preset-own";
 import { useDirectorOn } from "./use-director-on";
 
 /** What the Preset tile reads. */
-function presetTile(chat: Chat, preset: BoothPreset): string {
+export function presetTile(chat: Chat, preset: BoothPreset): string {
   if (!chat.preset) return "No preset";
   if (preset.state === "ready") return preset.body.name;
   if (preset.state === "gone") return "Not in your library";
@@ -98,7 +98,7 @@ export function BoothWing({ ctx, scene, busy, art, onChat, onSettings, onOpen }:
  * `agentLoopMaxTurns`, clamped 1 to 20): the scene's own prompting settings (ChatStore rule 37), read by the turn (turn-loop rule 18). Off means the
  * writing model receives no tools. The rounds box shows only while access is on, as in RoleCall, and is clamped on the way in.
  */
-function ToolAccessRows({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void }): JSX.Element {
+export function ToolAccessRows({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void }): JSX.Element {
   const saved = chat.prompting?.toolAccess === true;
   const [asked, setAsked] = useState<boolean | null>(null);
   const on = asked ?? saved;

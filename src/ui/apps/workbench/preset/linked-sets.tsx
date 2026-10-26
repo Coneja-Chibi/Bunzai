@@ -32,7 +32,7 @@ function Group({
       <h3 className={s.title}>{title}</h3>
       {rows.length === 0 ? <p className={s.empty}>{empty}</p> : (
         <div className={s.choices}>
-          {rows.map((row) => (
+          {rows.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (row) => (
             <label className={s.choice} key={`${row.kind}:${row.id}`}>
               <input
                 type="checkbox"

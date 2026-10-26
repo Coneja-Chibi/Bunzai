@@ -14,8 +14,9 @@ export const BACKDROP_STYLE = `
 .bdk h2{margin:0;font:700 1.1rem var(--font-big)}
 .bdk .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .bdk .bar input[type=search],.bdk .bar input[type=url]{flex:1;min-width:8rem;padding:6px 8px;border:2px solid var(--edge);background:var(--paper-2);color:var(--text);font:var(--text-control) var(--font-body);border-radius:0}
-.bdk .grid{align-content:start;display:grid;grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr));gap:10px;overflow-y:auto;min-height:6rem;padding:2px}
-.bdk .grid [data-control="tile"]{width:100%;height:auto;aspect-ratio:16/10}
+.bdk .gscroll{overflow-y:auto;min-height:6rem;padding:2px}
+.bdk .grow{align-content:start;display:grid;grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr));gap:10px}
+.bdk .grow [data-control="tile"]{width:100%;height:auto;aspect-ratio:16/10}
 .bdk [data-control="tile"] img,.bdk [data-control="tile"] video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .bdk [data-control="tile"] .cap{position:absolute;left:0;bottom:0;display:block;width:100%;height:auto;padding:3px 6px;background:color-mix(in srgb,var(--face) 82%,transparent);color:var(--text);font:var(--text-meta) var(--font-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bdk .hint{font:400 var(--text-body)/1.4 var(--font-body);color:var(--text-dim);margin:0}

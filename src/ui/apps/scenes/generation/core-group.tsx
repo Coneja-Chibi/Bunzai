@@ -35,7 +35,7 @@ export function CoreGroup({ env, params, searching }: { env: GenerationEnv; para
           ) : (
             <>
               <p className="gn-lead">Same values as Prompting &gt; Preset and the Control Booth. Changing one here changes it there.</p>
-              {params.map((def) => {
+              {params.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (def) => {
                 const { value, from } = coreValue(def, own.own!, body.samplers);
                 const field = CORE_FIELD[def.id as CoreId];
                 const set = (next: number | undefined): void => own.setSamplerValue(body.samplers, field, next as ChatPreset["samplers"][typeof field]);

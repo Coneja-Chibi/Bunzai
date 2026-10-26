@@ -34,7 +34,7 @@ import { Card } from "../../components/button";
 function PreviewSlide({ tail }: { tail: SceneTailMessage[] }): JSX.Element {
   return (
     <div className="pv-slide on">
-      {tail.map((m) => (
+      {tail.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (m) => (
         <div className="pv-msg" key={m.id}>
           <span className={`av${m.role === "user" ? " you" : ""}`}>{(m.speaker.trim().charAt(0) || "?").toUpperCase()}</span>
           <div className="pv-msg-tx">

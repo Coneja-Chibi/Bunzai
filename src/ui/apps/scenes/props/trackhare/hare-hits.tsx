@@ -7,6 +7,11 @@ import { Disclosure, ListRow } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import type { SceneTrace } from "../../../../app-contract-scenes";
 import { bookGroups, reasonBadge, rollBadge, sortHits, type SortMode } from "./hare-core";
+import { VirtualRows } from "../../../../_shared/virtual-list";
+
+const HIT_ROW_PX = 52;
+const MISS_ROW_PX = 28;
+const hitKey = (h: { bookId: string; entryId: string }): string => `${h.bookId}:${h.entryId}`;
 
 export function HareHits({ trace, group, sort, showMisses }: { trace: SceneTrace; group: boolean; sort: SortMode; showMisses: boolean }): JSX.Element {
   const [missesOpen, setMissesOpen] = useState(false);
@@ -21,30 +26,30 @@ export function HareHits({ trace, group, sort, showMisses }: { trace: SceneTrace
       {lore === null && recall === null && (
         <div className="hare-none">No lorebooks fired in this reply.<span className="hint">Open the World wing to add or turn on a lorebook.</span></div>
       )}
-      {lore && groups.map((g) => (
+      {lore && groups.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (g) => (
         <div key={g.bookName || "_"}>
           {g.bookName && <div className="bkh"><Ic name="lucide:book" size={14} />{g.bookName}</div>}
-          {g.hits.map((hit) => {
+          <VirtualRows items={g.hits} keyOf={hitKey} estimate={HIT_ROW_PX} render={(hit) => {
             const badge = reasonBadge(hit, lore.chains);
             const roll = rollBadge(hit);
             return (
-              <ListRow key={`${hit.bookId}:${hit.entryId}`} data-part="props.trackhare.hit" vars={{ "--c": badge.tone }}
+              <ListRow data-part="props.trackhare.hit" vars={{ "--c": badge.tone }}
                 leading={<Ic name={badge.icon} size={16} className="he-ic" />} label={hit.title}
                 subtitle={<><span className="rs">{badge.text}</span>{roll && <span className="rs">{roll.text}</span>}<span className="tags"><span>{hit.place}</span>{hit.loop > 0 && <span>loop {hit.loop}</span>}</span></>}
                 meta={<span className="tk">~{hit.tokens}</span>} />
             );
-          })}
+          }} />
         </div>
       ))}
       {recall && (
         <div>
           <div className="bkh"><Ic name="lucide:book" size={14} />Recalled by the Compendium{recall.cached ? " (kept from the last reply)" : ""}</div>
-          {recall.injected.map((hit) => (
-            <ListRow key={`${hit.bookId}:${hit.entryId}`} data-part="props.trackhare.hit" vars={{ "--c": "var(--deck-lorebook)" }}
+          <VirtualRows items={recall.injected} keyOf={hitKey} estimate={HIT_ROW_PX} render={(hit) => (
+            <ListRow data-part="props.trackhare.hit" vars={{ "--c": "var(--deck-lorebook)" }}
               leading={<Ic name="lucide:book" size={16} className="he-ic" />} label={hit.title}
               subtitle={<><span className="rs">{hit.reason || "Picked by the Compendium"}</span><span className="tags"><span>{hit.bookName}</span></span></>}
               meta={<span className="tk">~{hit.tokens}</span>} />
-          ))}
+          )} />
           {recall.injected.length === 0 && <div className="hare-none">{recall.status === "failed" ? `Recall failed: ${recall.reason ?? "no reason given"}` : recall.status === "skipped" ? `Recall skipped: ${recall.reason ?? "nothing to read"}` : "Recall picked nothing for this reply."}</div>}
           {recall.cut.length > 0 && <div className="hare-none">Left out for space: {recall.cut.map((h) => h.title).join(", ")}</div>}
         </div>
@@ -52,7 +57,7 @@ export function HareHits({ trace, group, sort, showMisses }: { trace: SceneTrace
       {lore && showMisses && misses.length > 0 && (
         <div className="hare-miss">
           <Disclosure variant="line" open={missesOpen} onClick={() => setMissesOpen((v) => !v)} label={`Didn't fire (${misses.length})`} summary={missesOpen ? "hide" : "show"} />
-          {missesOpen && misses.map((m) => <div className="mi" key={`${m.bookId}:${m.entryId}`}><span>{m.title}</span><em>{m.why}</em></div>)}
+          {missesOpen && <VirtualRows items={misses} keyOf={hitKey} estimate={MISS_ROW_PX} render={(m) => <div className="mi"><span>{m.title}</span><em>{m.why}</em></div>} />}
         </div>
       )}
     </>

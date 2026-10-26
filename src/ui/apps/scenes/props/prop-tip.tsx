@@ -65,7 +65,7 @@ export function PropTip({ title, tip, notes = [], tone, enabled, children }: { t
           <div className="pw-rt-body">
             <p>{tip.description}</p>
             {notes.length > 0 && <p className="pw-rt-note">{notes.join(". ")}</p>}
-            {help && bullets.length > 0 && <ul>{bullets.map((b) => <li key={b}><i aria-hidden="true">+</i><span>{b}</span></li>)}</ul>}
+            {help && bullets.length > 0 && <ul>{bullets.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (b) => <li key={b}><i aria-hidden="true">+</i><span>{b}</span></li>)}</ul>}
             {!help && bullets.length > 0 && <div className="pw-rt-hint">Open help for details. This peek never locks.</div>}
           </div>
         </div>,

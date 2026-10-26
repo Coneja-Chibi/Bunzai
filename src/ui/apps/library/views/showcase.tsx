@@ -6,13 +6,14 @@
  * CSS backgrounds, fetched through the shared art cache (M8) so a
  * piece shown as both the hero and its own rail thumb decrypts once.
  */
-import { useReducer } from "react";
+import { useCallback, useReducer, useRef } from "react";
 import type { CSSProperties, JSX } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
 import { deckMeta } from "../../../_shared/decks";
 import { QueuedPiecePreview } from "../piece-preview";
 import { useArtSrc } from "../../../_shared/art-cache";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
+import { FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, remToPx, useFocusedRangeIndex, useVirtualRows, type Range } from "../../../_shared/virtual-list";
 import { icSvg } from "../../../_shared/ic-svg";
 import { Button, IconButton, Tile } from "../../../components/button";
 
@@ -37,11 +38,11 @@ const CSS = `
   text-transform:uppercase;color:var(--stage-soft)}
 .dv-show .plate .stage-btn{align-self:flex-start}
 .dv-show .rail{flex:none;display:flex;gap:.4rem;padding:.5rem .8rem .8rem;overflow-x:auto}
-.dv-show .mini{flex:none;width:2.2rem;aspect-ratio:2/3;border:2px solid var(--stage-black);background:var(--a);cursor:pointer;
+
   position:relative;opacity:.55;transition:opacity .1s ease-out,transform .1s ease-out}
-.dv-show .mini img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
-.dv-show .mini:hover{opacity:1;transform:translateY(-2px)}
-.dv-show .mini.now{opacity:1;border-color:var(--a);outline:2px solid var(--a)}
+
+
+
 /* phones: hero row on top (nav flanking), the words plate drops below full-width (fluid law) */
 @container (max-width: 40rem){
   .dv-show .main{flex-wrap:wrap;overflow-y:auto;align-content:flex-start;gap:.6rem;padding:.6rem}
@@ -68,6 +69,35 @@ function MiniThumb({ ctx, e }: { ctx: DeckViewContext; e: StudioEntitySummary })
   const art = ctx.portraitUrl(e);
   const { ref, src } = useArtSrc(versionedArtUrl(ctx, e));
   return art ? <img ref={ref} src={src} alt="" loading="lazy" decoding="async" /> : null;
+}
+
+const THUMB_PX = 64;
+
+/** The thumb rail, windowed sideways: a deck can hold thousands of thumbs, so only the ones near the viewport mount. */
+function Rail({ ctx, idx, pick }: { ctx: DeckViewContext; idx: number; pick: (i: number) => void }): JSX.Element {
+  const ref = useRef<HTMLDivElement>(null);
+  const gap = remToPx(0.4);
+  const flatOf = useCallback((t: HTMLElement) => Number(t.closest<HTMLElement>("[data-index]")?.dataset["index"] ?? -1), []);
+  const same = useCallback((i: number) => i, []);
+  const { focusedIndex, onFocus } = useFocusedRangeIndex(flatOf, same);
+  const virtual = useVirtualRows({
+    mode: "list", horizontal: true, count: ctx.entities.length, getScrollElement: () => ref.current, getItemKey: (i) => pieceKey(ctx.entities[i]!), estimateSize: () => THUMB_PX, gap,
+    overscan: OVERSCAN, initialRect: FALLBACK_VIEWPORT, rangeExtractor: useCallback((r: Range) => keepFocusedInRange(r, focusedIndex), [focusedIndex]),
+  });
+  return (
+    <div className="rail" ref={ref} onFocus={onFocus}>
+      <div style={{ position: "relative", flex: "none", width: virtual.getTotalSize(), height: THUMB_PX }}>
+        {virtual.getVirtualItems().map((v) => {
+          const m = ctx.entities[v.index]!;
+          return (
+            <div key={v.key} data-index={v.index} style={{ position: "absolute", top: 0, left: 0, transform: `translateX(${String(v.start)}px)` }}>
+              <Tile kind="thumb" vars={{ "--a": m.accent ?? deckMeta(m.kind).accent }} selected={v.index === idx} aria-current={v.index === idx ? "true" : undefined} label={m.name} onClick={() => pick(v.index)} art={<MiniThumb ctx={ctx} e={m} />} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -136,23 +166,7 @@ function ShowcaseFocus({ ctx }: { ctx: DeckViewContext }): JSX.Element {
         </div>
         <IconButton label="Next" icon="lucide:chevron-right" onClick={() => step(1)} />
       </div>
-      <div className="rail">
-        {ctx.entities.map((m, i) => (
-          <Tile
-            kind="thumb"
-            key={pieceKey(m)}
-            vars={{ "--a": m.accent ?? deckMeta(m.kind).accent }}
-            selected={i === idx}
-            aria-current={i === idx ? "true" : undefined}
-            label={m.name}
-            onClick={() => {
-              focusByKind.set(ctx.deck.kind, i);
-              bump();
-            }}
-            art={<MiniThumb ctx={ctx} e={m} />}
-          />
-        ))}
-      </div>
+      <Rail ctx={ctx} idx={idx} pick={(i) => { focusByKind.set(ctx.deck.kind, i); bump(); }} />
     </div>
   );
 }

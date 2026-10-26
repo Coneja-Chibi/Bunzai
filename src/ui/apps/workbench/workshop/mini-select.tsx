@@ -13,7 +13,7 @@ export interface MiniSelectProps {
 export function MiniSelect({ opts, value, onChange }: MiniSelectProps): JSX.Element {
   return (
     <select className={styles.mini} value={value} onChange={(e) => onChange(e.target.value)}>
-      {opts.map(([v, label]) => (
+      {opts.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ ([v, label]) => (
         <option key={v} value={v}>{label}</option>
       ))}
     </select>

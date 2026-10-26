@@ -22,7 +22,7 @@ export function buildBcard(
     if (mods.length === 0) return null;
     return (
       <BentoCard key={title} title={title}>
-        {mods.map((m) => (
+        {mods.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m) => (
           <div key={m.id} className={`${styles.bfield}${lensDims(m) ? ` ${styles.dimlens}` : ""}`}>
             {!RICH_FIELD_KINDS.has(m.kind) && (
               <span className={styles.blabel}>
@@ -48,7 +48,7 @@ export function buildMacroCard(
       {macroCounts.length === 0 ? (
         <div className={styles.blabel}>No macros detected yet</div>
       ) : (
-        macroCounts.map(([name, n]) => (
+        macroCounts.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ ([name, n]) => (
           <div key={name} className={styles.mrow}>
             <span className={styles.mname}>{name}</span>
             <span className={styles.mcnt}>{`× ${n}`}</span>

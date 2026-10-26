@@ -24,7 +24,7 @@ export interface OptionCardsProps {
 export function OptionCards({ options, value, onSelect, styles }: OptionCardsProps): JSX.Element {
   return (
     <div className={styles.opts}>
-      {options.map((o, i) => {
+      {options.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (o, i) => {
         const on = value === o.value;
         return (
           <Card

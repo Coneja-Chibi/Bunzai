@@ -12,6 +12,7 @@ import { applyParticipantChange, checkParticipantChange } from "../../../stage/s
 import type { OpenScene } from "../../../studio/scenes";
 import type { AppContext } from "../../app-contract";
 import { installDom, type InstalledDom } from "../../_shared/test-dom";
+import { registerInserter } from "./context/draft-bus";
 import { holdParticipants } from "./participants/participants-store";
 
 let dom: JSDOM;
@@ -79,6 +80,7 @@ async function mount(s: OpenScene = scene()): Promise<{ f: Flush; s: OpenScene }
 }
 const press = async (f: Flush, el: HTMLElement | undefined): Promise<void> => { if (!el) throw new Error("nothing to press"); f(() => el.click()); await settle(f); };
 const unmount = (f: Flush): void => { f(() => root.unmount()); host.remove(); };
+const fill = (f: Flush, label: string, value: string): void => { const el = doc().body.querySelector<HTMLInputElement>(`input[aria-label="${label}"]`)!; f(() => { Object.getOwnPropertyDescriptor(dom.window.HTMLInputElement.prototype, "value")!.set!.call(el, value); el.dispatchEvent(new dom.window.Event("input", { bubbles: true })); }); };
 const rows = (): HTMLElement[] => [...doc().body.querySelectorAll(".prow")] as HTMLElement[];
 
 describe("the Participants tab", () => {
@@ -93,6 +95,29 @@ describe("the Participants tab", () => {
     expect(rows()[1]!.textContent).toContain("Set Main");
     expect(changes).toEqual([]);
     expect(stored).toBeNull();
+    unmount(f);
+  });
+
+  test("the Ping line's Insert button puts the mention in the composer draft and changes nothing else", async () => {
+    const { f, s } = await mount();
+    const got: string[] = [];
+    const off = registerInserter(s.chat.id, (p) => { got.push(p); return true; });
+    await press(f, rows()[1]!.querySelector<HTMLElement>('[data-part="scene.cast.participant.ping"]')!);
+    expect(got).toEqual(["@Nuit"]);
+    expect(changes).toEqual([]);
+    off();
+    unmount(f);
+  });
+
+  test("Ping with no composer open says the mention is queued, and the composer gets it when it opens", async () => {
+    const { f, s } = await mount();
+    await press(f, rows()[1]!.querySelector<HTMLElement>('[data-part="scene.cast.participant.ping"]')!);
+    expect(rows()[1]!.querySelector('[data-part="scene.cast.participant.ping-notice"]')?.textContent).toContain("@Nuit is queued");
+    expect(changes).toEqual([]);
+    const got: string[] = [];
+    const off = registerInserter(s.chat.id, (p) => { got.push(p); return true; });
+    expect(got).toEqual(["@Nuit"]);
+    off();
     unmount(f);
   });
 
@@ -170,6 +195,28 @@ describe("the Participants tab", () => {
     expect(text()).toContain("could not be read");
     expect(stored).toBeNull();
     expect(applied).toEqual([]);
+    unmount(f);
+  });
+  test("Add participant writes one add run with the name, note and presence, and the new person shows up", async () => {
+    const { f } = await mount();
+    await press(f, button("Add participant"));
+    fill(f, "New participant name", "  Atlas   Guard ");
+    fill(f, "New participant note", "Keeper of the Customs seal");
+    await press(f, button("Absent"));
+    await press(f, button("Add"));
+    expect(changes).toHaveLength(1);
+    expect(changes[0]).toEqual({ op: "add", run: expect.stringMatching(/^add-.{8,}/), people: [{ name: "Atlas Guard", description: "Keeper of the Customs seal", presence: "absent" }] });
+    expect(stored!.people.map((p) => p.name)).toEqual(["Atlas Guard"]);
+    expect(text()).toContain("Atlas Guard");
+    expect(doc().body.querySelector('input[aria-label="New participant name"]')).toBeNull();
+    await press(f, button("Add participant"));
+    fill(f, "New participant name", "atlas guard");
+    await press(f, button("Add"));
+    expect(text()).toContain("atlas guard is already on the roster.");
+    expect(changes).toHaveLength(1);
+    expect(doc().body.querySelector<HTMLInputElement>('input[aria-label="New participant name"]')!.value).toBe("atlas guard");
+    await press(f, button("Cancel"));
+    expect(doc().body.querySelector('input[aria-label="New participant name"]')).toBeNull();
     unmount(f);
   });
 });

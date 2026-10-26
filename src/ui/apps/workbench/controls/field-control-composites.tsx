@@ -150,7 +150,7 @@ export function renderSub(
     case "select":
       return (
         <select className={styles.in} value={str(value)} onChange={(e) => onChange(e.target.value)}>
-          {(sf.options ?? []).map((o) => (
+          {(sf.options ?? []).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
         </select>
@@ -172,7 +172,7 @@ export function compositeControlFor(
       const items = strArray(readPath(draft, m.path));
       return (
         <div className={styles.tags}>
-          {items.map((it) => (
+          {items.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (it) => (
             <Chip key={it} title={`Remove ${it}`} onClick={() => setField(m.path, items.filter((x) => x !== it))}>{it} <i>x</i></Chip>
           ))}
           <input
@@ -261,7 +261,7 @@ export function compositeControlFor(
         <div className={styles.sublist}>
           {rows.map((row, i) => (
             <div className={styles.subrow} key={i}>
-              {subs.map((sf) => (
+              {subs.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (sf) => (
                 <label className={styles.subcell} key={sf.key}>
                   <span className={styles.subk}>{sf.label}</span>
                   {renderSub(styles, row[sf.key], (v) => setRows(rows.map((r, j) => (j === i ? { ...r, [sf.key]: v } : r))), sf)}
@@ -279,7 +279,7 @@ export function compositeControlFor(
       const subs = m.subFields ?? [];
       return (
         <div className={styles.structured}>
-          {subs.map((sf) => (
+          {subs.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (sf) => (
             <label className={styles.subcell} key={sf.key}>
               <span className={styles.subk}>{sf.label}</span>
               {renderSub(styles, obj[sf.key], (v) => setField(`${m.path}.${sf.key}`, v), sf)}

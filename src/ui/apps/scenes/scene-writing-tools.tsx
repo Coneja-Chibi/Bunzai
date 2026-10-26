@@ -69,7 +69,7 @@ export function SceneWritingTools({ text }: { text: PresetText }): JSX.Element {
           <section key={section.id} className="wt-group" data-part={`scene.prompting.tools.section.${section.id}`}>
             <Disclosure open={open[section.id] === true} onClick={() => setOpen({ ...open, [section.id]: !open[section.id] })}
               leading={<Ic name={ICONS[section.id]} size={16} />} label={section.label} summary={`${tools.length} ${tools.length === 1 ? "tool" : "tools"}`} />
-            {open[section.id] && <ul className="wt-tools">{tools.map((t) => <Tool key={t.id} tool={t} text={text} />)}</ul>}
+            {open[section.id] && <ul className="wt-tools">{tools.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (t) => <Tool key={t.id} tool={t} text={text} />)}</ul>}
           </section>
         );
       })}

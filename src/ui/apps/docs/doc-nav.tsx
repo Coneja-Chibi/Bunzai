@@ -41,17 +41,17 @@ export function DocNav({ docs, activeId, query, onQuery, onPick }: DocNavProps):
           />
         </div>
       )}
-      {visibleGroups.map((group) => (
+      {visibleGroups.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (group) => (
         <section className={styles.group} key={group.id} aria-label={group.label}>
           {query.trim() && <h2 className={styles.groupTitle}>{group.label}</h2>}
-          {group.sections.map((section, index) => (
+          {group.sections.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (section, index) => (
             <details
               className={styles.section}
               key={`${group.id}-${section.id}-${shelf}`}
               open={Boolean(query.trim()) || index === 0 || section.docs.some((doc) => doc.id === activeId)}
             >
               <summary className={styles.grp}>{section.label} <span>{section.docs.length}</span></summary>
-              {section.docs.map((doc) => (
+              {section.docs.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (doc) => (
                 <ListRow
                   key={doc.id}
                   selected={doc.id === activeId}

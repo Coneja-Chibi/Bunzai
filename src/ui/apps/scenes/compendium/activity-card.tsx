@@ -42,8 +42,8 @@ export function ActivityCard({ row, now, actions }: { row: ActivityRow; now: num
               <span className="chip tok">{rc.tokens.toLocaleString()} tokens</span>
             </>
           )}
-          {row.retrieved?.map((e, i) => <span key={i} className="chip ent">{e.title} <small>{e.book}, {e.tokens.toLocaleString()} tokens</small></span>)}
-          {row.lines.map((l) => <span key={`${l.bookId}:${l.entryId}`} className="chip ent" style={l.type ? { "--tc": `var(${ENTRY_TYPE_INFO[l.type].token})` } as React.CSSProperties : undefined}>{l.name} <small>{l.verb}</small></span>)}
+          {row.retrieved?.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (e, i) => <span key={i} className="chip ent">{e.title} <small>{e.book}, {e.tokens.toLocaleString()} tokens</small></span>)}
+          {row.lines.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (l) => <span key={`${l.bookId}:${l.entryId}`} className="chip ent" style={l.type ? { "--tc": `var(${ENTRY_TYPE_INFO[l.type].token})` } as React.CSSProperties : undefined}>{l.name} <small>{l.verb}</small></span>)}
         </div>
       )}
       {(detailed || row.why || row.canUndo || row.canFileAgain) && (
@@ -56,7 +56,7 @@ export function ActivityCard({ row, now, actions }: { row: ActivityRow; now: num
       )}
       {open && (
         <div className="det">
-          {row.lines.map((l) => <div key={`${l.bookId}:${l.entryId}`}><b>{l.name}</b> {l.verb}{l.fields.length > 0 ? `: ${l.fields.join(", ")}` : ""}</div>)}
+          {row.lines.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (l) => <div key={`${l.bookId}:${l.entryId}`}><b>{l.name}</b> {l.verb}{l.fields.length > 0 ? `: ${l.fields.join(", ")}` : ""}</div>)}
           {row.reason && <div className="why">{row.reason}</div>}
         </div>
       )}

@@ -72,7 +72,7 @@ export function RawExtensions({ data, handled, onChange }: RawExtensionsProps): 
   return (
     <div className={styles.wrap}>
       <div className={styles.head}>Anything else in the extension slot</div>
-      {keys.map((k) => (
+      {keys.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (k) => (
         <div className={styles.row} key={k}>
           <div className={styles.key}>{k}</div>
           {valueControl(k, data[k], (v) => onChange(k, v))}

@@ -15,6 +15,7 @@ import { deckMeta } from "../../../_shared/decks";
 import { pieceKey, type DeckView, type DeckViewContext } from "../view-contract";
 import { icSvg } from "../../../_shared/ic-svg";
 import { Button, Tile, Toggle } from "../../../components/button";
+import { VirtualShelf } from "../../../_shared/virtual-list";
 
 const CSS = `
 .rgx-scroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
@@ -102,6 +103,7 @@ function SetCard({
   return (
     <div
       ref={menuRef}
+      data-pick={key}
       draggable
       className={`rgx-set${isOpen ? " cast" : ""}${staged ? " pick" : ""}${enabled ? "" : " off"}${
         over ? " drop" : ""
@@ -163,22 +165,12 @@ const view: DeckView = {
   Component({ ctx }) {
     const [draggingId, setDraggingId] = useState<string | null>(null);
     const rgx = ctx.regexShelf;
+    const dragged = ctx.entities.find((e) => e.id === draggingId);
     return (
       <div className="rgx-scroll">
-        <div className="rgx-shelf">
-          {ctx.entities.map((e) => (
-            <SetCard
-              key={pieceKey(e)}
-              ctx={ctx}
-              e={e}
-              draggingId={draggingId}
-              setDraggingId={setDraggingId}
-            />
-          ))}
-          {rgx && (
-            <Tile kind="add" data-part="library.regex.new" label="New set" title="New set, or drop a file" icon={<span>+ New set · or drop a file</span>} onClick={() => rgx.onNew()} />
-          )}
-        </div>
+        <VirtualShelf items={ctx.entities} keyOf={(e) => pieceKey(e)} rowClass="rgx-shelf" pinKey={dragged ? pieceKey(dragged) : null}
+          render={(e) => <SetCard ctx={ctx} e={e} draggingId={draggingId} setDraggingId={setDraggingId} />}
+          tail={rgx && <Tile kind="add" data-part="library.regex.new" label="New set" title="New set, or drop a file" icon={<span>+ New set · or drop a file</span>} onClick={() => rgx.onNew()} />} />
         {ctx.entities.length === 0 && <p className="rgx-empty">No regex sets yet.</p>}
         <div className={`rgx-trash${draggingId ? " show" : ""}`}>
           Drag onto another set to merge

@@ -37,3 +37,10 @@ test("a request with nothing extra shows no section", async () => {
   expect(await shown({ ...base, params: { sent: {}, notSent: [] } })).toBeNull();
   expect(await shown(base)).toBeNull();
 });
+
+test("500 messages mount fewer than 60 editable rows", async () => {
+  await shown({ ...base, messages: Array.from({ length: 500 }, (_, i) => ({ role: "user" as const, content: `message ${String(i)}` })) });
+  const rows = dom.window.document.body.querySelectorAll(".pi-msg").length;
+  expect(rows).toBeGreaterThan(0);
+  expect(rows).toBeLessThan(60);
+});

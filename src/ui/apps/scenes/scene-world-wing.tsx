@@ -12,15 +12,15 @@ import { Tabs } from "../../components/button";
 
 type Tab = "lorebook" | "compendium";
 
-export function WorldWing({ lore, compendium, linked, initialTab }: { lore: JSX.Element; compendium: JSX.Element; linked: string; initialTab?: string }): JSX.Element {
+export function WorldWing({ lore, compendium, linked, initialTab, single }: { lore: JSX.Element; compendium: JSX.Element; linked: string; initialTab?: string; single?: boolean }): JSX.Element {
   const [tab, setTab] = useState<Tab>(() => tabOr(["lorebook", "compendium"], initialTab, pendingStoryboards() ? "compendium" : "lorebook"));
   const card = (label: string, meta?: string): JSX.Element => <><b>{label}</b>{meta && <small>{meta}</small>}</>;
   return (
     <>
-      <nav className="fold wfold" data-part="scene.world.tabs">
+      {!single && <nav className="fold wfold" data-part="scene.world.tabs">
         <div className="crumb">Scene <i>/</i> <b>World</b></div>
         <div className="tabs"><Tabs label="World sections" items={[{ value: "lorebook", label: card("Lorebook", linked) }, { value: "compendium", label: card("Compendium") }]} value={tab} onChange={setTab} /></div>
-      </nav>
+      </nav>}
       <div className="wtab" hidden={tab !== "lorebook"} data-part="scene.world.lorebook"><ThemeSlot id="scene.wing.world.lorebook" />{lore}</div>
       {tab === "compendium" && <div className="wtab" data-part="scene.world.compendium"><ThemeSlot id="scene.wing.world.compendium" />{compendium}</div>}
     </>

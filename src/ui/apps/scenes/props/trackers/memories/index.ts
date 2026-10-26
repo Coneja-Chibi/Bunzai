@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { MemoriesPanel } from "./memories-panel";
+import { summaryLine } from "./summary";
 
 export const memoriesProp = trackerProp({
   module: "memories",
@@ -16,4 +17,5 @@ export const memoriesProp = trackerProp({
   title: "Memory Journal",
   noun: "Memories",
   Panel: MemoriesPanel,
+  summary: summaryLine,
 });

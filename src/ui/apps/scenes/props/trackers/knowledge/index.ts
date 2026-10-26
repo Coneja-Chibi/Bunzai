@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { KnowledgePanel } from "./knowledge-panel";
+import { summaryLine } from "./summary";
 
 export const knowledgeProp = trackerProp({
   module: "knowledge",
@@ -16,4 +17,5 @@ export const knowledgeProp = trackerProp({
   title: "Knowledge",
   noun: "Knowledge",
   Panel: KnowledgePanel,
+  summary: summaryLine,
 });

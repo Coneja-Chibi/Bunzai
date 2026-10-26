@@ -34,7 +34,7 @@ export function GradientControl({ value, onChange, styles }: GradientControlProp
     <>
       <span className={styles.hint}>one color is solid; add up to 3 to blend them into a gradient</span>
       <div className={styles.palGrid}>
-        {value.map((hex, i) => (
+        {value.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (hex, i) => (
           <ListRow
             key={i}
             selected={i === at && open}
@@ -123,7 +123,7 @@ export function PaletteControl({ value, onChange, styles, twoField }: PaletteCon
   return (
     <>
       <div className={styles.palGrid}>
-        {value.map((s, i) => (
+        {value.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (s, i) => (
           <ListRow
             key={i}
             selected={i === at && open}

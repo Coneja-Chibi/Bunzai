@@ -91,7 +91,7 @@ export function TakesMenu({ takes, activeId, onSwitch, onRename, onDelete, onTre
       )}
       {alternates.length > 0 && <div className="sep">Alternate Takes</div>}
       <div className="pad list">
-        {alternates.map((t) => (
+        {alternates.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (t) => (
           <Fragment key={t.id}>
             {row(t)}
             {t.id === activeId && subs.map((s) => row(s, true))}

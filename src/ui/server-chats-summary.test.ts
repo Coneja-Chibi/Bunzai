@@ -19,6 +19,8 @@ const UNLOCK = { passphrase: "summary-route-test" };
 let server: ReturnType<typeof Bun.serve>;
 let localId = "";
 const summaryCalls: string[] = [];
+let hold: Promise<void> | null = null;
+let answer: { status: number; content: string } = { status: 200, content: "They watched the storm." };
 
 beforeAll(async () => {
   process.env.BUNRAKU_HOME = HOME;
@@ -31,7 +33,9 @@ beforeAll(async () => {
         return new Response(chunk({ choices: [{ delta: { content: "Calm." }, finish_reason: "stop" }] }) + "data: [DONE]\n\n", { headers: { "content-type": "text/event-stream" } });
       }
       summaryCalls.push(body.messages?.[0]?.content ?? "");
-      return Response.json({ choices: [{ message: { role: "assistant", content: "They watched the storm." }, finish_reason: "stop" }], model: "qwen3" });
+      if (hold) await hold;
+      if (answer.status !== 200) return Response.json({ error: { message: "model down" } }, { status: answer.status });
+      return Response.json({ choices: [{ message: { role: "assistant", content: answer.content }, finish_reason: "stop" }], model: "qwen3" });
     },
   });
   localId = (await saveProvider({ kind: "local", model: "qwen3", baseURL: `http://127.0.0.1:${server.port}/v1`, name: "Desk" }, UNLOCK)).id!;
@@ -108,4 +112,54 @@ test("a real reply leaves an automatic summary behind when it is on and due, and
   let state = await on.get();
   for (let i = 0; i < 100 && state.text === null; i++) { await Bun.sleep(20); state = await on.get(); }
   expect(state).toMatchObject({ text: "They watched the storm.", through: 3, error: null });
+});
+
+test("Summarize now runs the automatic step once, writes one summary entry, and clears an old failure", async () => {
+  summaryCalls.length = 0;
+  const { post, chat, send, get } = await started();
+  await send("Any storms?");
+  const done = (await (await post("/api/chats/summary-now", { chatId: chat.id })).json()) as ChatSummaryState;
+  expect(done).toMatchObject({ text: "They watched the storm.", through: 3, error: null });
+  expect(summaryCalls).toHaveLength(1);
+  expect(summaryCalls[0]).not.toContain("Summarize the entire roleplay chat");
+  expect((await get()).text).toBe("They watched the storm.");
+});
+
+test("Summarize now on a scene with no model, no messages, or a failing model says why and writes nothing", async () => {
+  const bare = await started(false);
+  const none = await bare.post("/api/chats/summary-now", { chatId: bare.chat.id });
+  expect(none.status).toBe(409);
+  expect(((await none.json()) as { error: string }).error).toBe("Choose a configured Summary Model before automatic summaries can run.");
+  const { post, chat, send, get } = await started();
+  expect((await post("/api/chats/summary-now", { chatId: "nope" })).status).toBe(404);
+  await send("Any storms?");
+  await post("/api/chats/summary", { chatId: chat.id, text: "My own words." });
+  answer = { status: 500, content: "" };
+  try {
+    const failed = await post("/api/chats/summary-now", { chatId: chat.id });
+    expect(failed.status).toBe(409);
+    expect(((await failed.json()) as { error: string }).error.length).toBeGreaterThan(0);
+  } finally { answer = { status: 200, content: "They watched the storm." }; }
+  expect((await get()).text).toBe("My own words.");
+});
+
+test("Summarize now never starts a second run while one is going, and the first still finishes", async () => {
+  summaryCalls.length = 0;
+  const { post, chat, send, get } = await started();
+  await send("Any storms?");
+  let release = (): void => undefined;
+  hold = new Promise<void>((resolve) => { release = resolve; });
+  const first = post("/api/chats/summary-now", { chatId: chat.id });
+  for (let i = 0; i < 100 && summaryCalls.length === 0; i++) await Bun.sleep(20);
+  expect((await get()).running).toBe(true);
+  const second = await post("/api/chats/summary-now", { chatId: chat.id });
+  const backfilled = await post("/api/chats/summary-backfill", { chatId: chat.id });
+  hold = null;
+  release();
+  expect(second.status).toBe(409);
+  expect(((await second.json()) as { error: string }).error).toBe("A summary is already being written for this scene.");
+  expect(backfilled.status).toBe(409);
+  expect((await first).status).toBe(200);
+  expect(summaryCalls).toHaveLength(1);
+  expect((await get()).running).toBe(false);
 });

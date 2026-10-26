@@ -14,6 +14,10 @@ import type { AppContext } from "../../../../app-contract";
 
 export const CHAT = { id: "chat1", activeBranchId: "b1", updatedAt: 1 } as Chat;
 
+let fresh = 0;
+/** A scene id of its own. The Director's live events and tab requests are kept per scene id for the whole process (director-live.ts), so a test that must not hear another file's leftovers mounts under its own. */
+export const freshChat = (): Chat => ({ ...CHAT, id: `chat-fresh-${++fresh}` }) as Chat;
+
 export function panelOf(over: Partial<DirectorPanel> = {}): DirectorPanel {
   return { on: true, settings: resolveDirector({}), state: stateOf(), version: 3, tip: "m9", size: { bytes: 12_400, max: 600_000 }, tools: "native", archived: { notes: [], hidden: [] }, history: [], at: null, trackerUpdates: {}, ...over };
 }
@@ -94,6 +98,8 @@ export function fakeDirector(start: DirectorPanel, onEdit?: (panel: DirectorPane
 export interface Mounted {
   host: HTMLElement;
   tick(): Promise<void>;
+  /** Waits (up to `ms`) until `ready()` holds, applying renders as it goes; throws when it never does, so a slow machine fails loudly instead of asserting on a half-drawn panel. */
+  until(ready: () => boolean, ms?: number): Promise<void>;
   /** Runs `fn` and applies what it caused. */
   flush(fn: () => void): void;
   click(el: Element | null | undefined): Promise<void>;
@@ -113,8 +119,15 @@ export async function mounted(dom: JSDOM, ui: JSX.Element): Promise<Mounted> {
   const tick = async (): Promise<void> => { await new Promise((r) => setTimeout(r, 15)); flushSync(() => undefined); };
   flushSync(() => root.render(ui));
   await tick();
+  const until = async (ready: () => boolean, ms = 3000): Promise<void> => {
+    const stop = Date.now() + ms;
+    while (!ready()) {
+      if (Date.now() > stop) throw new Error("the panel never reached the state the test waited for");
+      await tick();
+    }
+  };
   return {
-    host, tick, flush: (fn) => flushSync(fn),
+    host, tick, until, flush: (fn) => flushSync(fn),
     click: async (el) => { flushSync(() => (el as HTMLElement).click()); await tick(); },
     type: async (el, value) => {
       const input = el as HTMLInputElement | HTMLTextAreaElement;

@@ -6,18 +6,18 @@
  * draws nothing when no backdrop is picked and the card pins none, or the pack or item is gone (the Stage wing's row says
  * so), so the theme's own `scene.backdrop` look shows through unchanged.
  */
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import { useArtSrc } from "../../_shared/art-cache";
 import type { ChatBackdrop } from "../../../stage/contracts/chat-store";
-import { dimOf, isVideoRef, itemOf, rateOf, refSha, veilOf, type CharacterBackdrop } from "./scene-backdrop-core";
+import { blurOf, blurStyle, dimOf, isVideoRef, itemOf, rateOf, refSha, veilOf, type CharacterBackdrop } from "./scene-backdrop-core";
 import { useBackdropPack } from "./use-backdrop-pack";
 
 /** What to draw: a ref, its overlay, and for a video its speed. */
-interface Shown { ref: string; dim: number; video: boolean; rate: number }
+interface Shown { ref: string; dim: number; video: boolean; rate: number; blur: number }
 
 /** A looping muted video from the asset route; it holds still while the tab is hidden, so it costs nothing unseen. */
-export function BackdropVideo({ sha, rate, className }: { sha: string; rate: number; className?: string }): JSX.Element {
+export function BackdropVideo({ sha, rate, className, style }: { sha: string; rate: number; className?: string; style?: CSSProperties }): JSX.Element {
   const el = useRef<HTMLVideoElement | null>(null);
   useEffect(() => { if (el.current) el.current.playbackRate = rate; }, [rate, sha]);
   useEffect(() => {
@@ -30,7 +30,7 @@ export function BackdropVideo({ sha, rate, className }: { sha: string; rate: num
     document.addEventListener("visibilitychange", onVisibility);
     return () => document.removeEventListener("visibilitychange", onVisibility);
   }, []);
-  return <video key={sha} ref={el} className={className} src={`/api/asset/${sha}`} autoPlay loop muted playsInline preload="metadata" />;
+  return <video key={sha} ref={el} className={className} style={style} src={`/api/asset/${sha}`} autoPlay loop muted playsInline preload="metadata" />;
 }
 
 /** `backdrop` is the scene's pick; `character` is the card's pinned background, shown only while the scene has no pick of its own (RoleCall useCharacterLoad.ts:556-577). */
@@ -38,16 +38,16 @@ export function BackdropLayer({ ctx, backdrop, character }: { ctx: AppContext; b
   const loaded = useBackdropPack(ctx, backdrop?.pack);
   const item = backdrop && loaded.state === "ready" ? itemOf(loaded.pack, backdrop) : null;
   const shown: Shown | null = backdrop
-    ? item ? { ref: item.ref, dim: dimOf(backdrop), video: isVideoRef(item.ref, item.mime), rate: rateOf(backdrop) } : null
-    : character ? { ref: character.ref, dim: character.dim, video: character.video === true, rate: character.rate ?? 1 } : null;
+    ? item ? { ref: item.ref, dim: dimOf(backdrop), video: isVideoRef(item.ref, item.mime), rate: rateOf(backdrop), blur: blurOf(backdrop) } : null
+    : character ? { ref: character.ref, dim: character.dim, video: character.video === true, rate: character.rate ?? 1, blur: 0 } : null;
   const sha = shown?.video ? refSha(shown.ref) : null;
   const art = useArtSrc(shown && !shown.video ? shown.ref : null);
   if (!shown) return null;
   return (
     <div className="bdp" data-part="scene.backdrop.image" aria-hidden="true">
       {shown.video
-        ? sha && <BackdropVideo sha={sha} rate={shown.rate} />
-        : <img ref={art.ref as (node: HTMLImageElement | null) => void} src={art.src} alt="" draggable={false} />}
+        ? sha && <BackdropVideo sha={sha} rate={shown.rate} style={blurStyle(shown.blur)} />
+        : <img ref={art.ref as (node: HTMLImageElement | null) => void} src={art.src} style={blurStyle(shown.blur)} alt="" draggable={false} />}
       <div className="veil" style={{ background: veilOf(shown.dim) }} />
     </div>
   );

@@ -26,7 +26,7 @@ export default function TitlePageTitle({ state, pieces }: { state: TitleState; p
         <nav aria-label="Contents">
           <h2 className={styles.contents}>Contents</h2>
           <ol className={styles.toc}>
-            {contents.map(([action, label, folio, run]) => (
+            {contents.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([action, label, folio, run]) => (
               <li key={action}>
                 <Card kind="entry" data-title-action={action} heading={label} disabled={closing} onClick={run}>
                   <span className={styles.leader} aria-hidden="true" />

@@ -10,9 +10,12 @@
 import { useState, type JSX } from "react";
 import { Chip, ListRow } from "../../components/button";
 import { Ic } from "../../_shared/ic";
+import { VirtualRows } from "../../_shared/virtual-list";
 import { useEscapeKey } from "../../_shared/use-escape-key";
 import type { ChatConnection } from "../../../stage/contracts/chat-store";
 import { keyOf, type SceneModels } from "./use-scene-models";
+
+const MODEL_ROW_PX = 56;
 
 /** A stated window as RoleCall writes it: "200K ctx". */
 const ctxOf = (n: number | undefined): string => (n ? ` · ${String(Math.round(n / 1000))}K ctx` : "");
@@ -42,7 +45,7 @@ export function BoothModelPicker({ current, models, onPick }: { current: ChatCon
             <div className="bth-dl">Provider</div>
             <div className="bth-chips" role="group" aria-label="Provider">
               <Chip pressed={provider === "all"} onClick={() => setProvider("all")}>All<i>{(conns ?? []).reduce((n, c) => n + countOf(c.id), 0)}</i></Chip>
-              {(conns ?? []).map((c) => (
+              {(conns ?? []).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (c) => (
                 <Chip key={c.id} pressed={provider === c.id} title={c.unavailable} onClick={() => setProvider(c.id)}>{c.label}<i>{countOf(c.id)}</i></Chip>
               ))}
             </div>
@@ -55,18 +58,18 @@ export function BoothModelPicker({ current, models, onPick }: { current: ChatCon
               <div key={c.id} className="bth-grp">
                 <div className="grp-hd">{c.label}</div>
                 {loading && <p className="bth-dnote">Loading models...</p>}
-                {ids.map((x) => {
+                <VirtualRows items={ids} keyOf={(x) => x.id} estimate={MODEL_ROW_PX} render={(x) => {
                   const conn = { id: c.id, model: x.id };
                   const on = current !== undefined && keyOf(current) === keyOf(conn);
                   return (
-                    <ListRow key={x.id} selected={on} disabled={c.unavailable !== undefined} title={c.unavailable}
+                    <ListRow selected={on} disabled={c.unavailable !== undefined} title={c.unavailable}
                       onClick={() => { onPick(conn); setOpen(false); }}
                       leading={<Ic name="lucide:sparkles" size={16} />}
                       label={<>{x.label ?? x.id}{c.unavailable && <i className="bth-badge">Setup Required</i>}</>}
                       subtitle={c.unavailable ?? `${c.label}${ctxOf(x.context)}`}
                       trailing={!c.unavailable && on ? <span className="bth-ck"><Ic name="lucide:check" size={16} /></span> : undefined} />
                   );
-                })}
+                }} />
               </div>
             ))}
           </div>

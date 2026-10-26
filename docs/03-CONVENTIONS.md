@@ -51,8 +51,9 @@ land, [the CLI reference](reference/cli.md) is the source of truth for current b
 - `[skip release]` is the only machine-read commit marker.
 - User-facing behavior changes include tests or recorded live verification.
 - Do not bypass hooks or weaken a gate to make a change pass.
-- Studio virtualization imports go through `src/ui/_shared/virtual-list.tsx`.
+- Studio virtualization imports go through `src/ui/_shared/virtual-list`.
   `scan:virtualizers`, CI verification, and the relevant pre-commit path enforce this owner.
+- A long flat list is `VirtualRows`; a long card grid is `VirtualShelf` (both from `src/ui/_shared/virtual-list`). Both find their own scroller. Reach for `useVirtualRows` directly only when neither fits.
 - Host CSS and TypeScript never key a look or behavior on a theme id; use a surface pick or a manifest field any theme can set.
   `scan:theme-keys` fails on such selectors and comparisons; a comparison that is truly about the bundled set carries `theme-key-ok: <reason>`.
 - Every `data-part` is a dotted lowercase name keyed on an id, never on a label, and every scenes wing, tab and pop-out file carries one.

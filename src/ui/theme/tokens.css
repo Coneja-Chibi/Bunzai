@@ -199,8 +199,9 @@
   /* fluid type scale (16px body floor; the theme's type scale step only enlarges) */
   --text-body: calc(clamp(1rem, 0.95rem + 0.2vw, 1.125rem) * var(--bk-type-scale));
   --text-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.4rem);
-  --text-control: 0.875rem;
-  --text-meta: 0.75rem;
+  /* ui.textSize (ui/shell/accessibility.ts) sets --ui-scale on the root: 1 at the 14px default. Meta text never drops below 12px. */
+  --text-control: calc(0.875rem * var(--ui-scale, 1));
+  --text-meta: max(12px, calc(0.75rem * var(--ui-scale, 1)));
   /* ornament: a thin line and one soft plum shadow, not 3px ink and a black stamp */
   --ink-border: var(--bk-frame-w) solid var(--edge);
   --stamp-x: 10px;
@@ -264,7 +265,7 @@
   --msg-brand: #5865f2; --msg-text: #dbdee1; --msg-bright: #f2f3f5; --msg-mute: #b5bac1; --msg-faint: #a0a4ac; --msg-input: #383a40;
   --msg-divider: #35363c; --msg-edge: #26272b; --msg-pill: #383b45; --msg-pill-text: #c9ceff; --msg-modal-edge: #44464d;
   --msg-close-ring: #767b87; --msg-focus: #aab1ff; --msg-field-edge: #494b53; --msg-link: #8cc8ff; --msg-white: #fff;
-  --msg-scrim: #14151bbf; --msg-dim: #0008; --msg-shadow: #0008; --msg-drawer-shadow: #0007;
+  --msg-unread: #f23f42; --msg-scrim: #14151bbf; --msg-dim: #0008; --msg-shadow: #0008; --msg-drawer-shadow: #0007;
   --msg-rail-w: 72px; --msg-side-w: 240px;
 }
 :root[data-chrome="rolecall"] body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -273,6 +274,10 @@
 @media (prefers-reduced-motion: reduce) {
   :root, .host-protected { --bk-dur-instant: 0ms !important; --bk-dur-fast: 0ms !important; --bk-dur-base: 0ms !important; --bk-dur-slow: 0ms !important; --bk-lift-y: 0px !important; }
 }
+
+/* The same rules as the OS setting, switched by the user's own accessibility choices (ui/shell/accessibility.ts paints the attributes). */
+:root[data-reduce-motion], :root[data-reduce-motion] .host-protected { --bk-dur-instant: 0ms !important; --bk-dur-fast: 0ms !important; --bk-dur-base: 0ms !important; --bk-dur-slow: 0ms !important; --bk-lift-y: 0px !important; }
+:root[data-high-contrast], :root[data-high-contrast] .host-protected { --edge: var(--bk-text-soft); --seam: var(--bk-line-control); --control-boundary: var(--bk-text); }
 
 /* Explicitly restore real token consumers inside protected host-owned dialogs/permission surfaces. The aliases
    above also apply here (the shared selector), so they resolve against THESE host values, never a theme's:

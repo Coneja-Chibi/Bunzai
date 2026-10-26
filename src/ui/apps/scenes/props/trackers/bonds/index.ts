@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { BondsPanel } from "./bonds-panel";
+import { summaryLine } from "./summary";
 
 export const bondsProp = trackerProp({
   module: "bonds",
@@ -16,4 +17,5 @@ export const bondsProp = trackerProp({
   title: "Supernatural Bonds",
   noun: "Bonds",
   Panel: BondsPanel,
+  summary: summaryLine,
 });

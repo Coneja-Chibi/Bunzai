@@ -24,7 +24,7 @@ export default function AttractTitle({ state }: { state: TitleState }): JSX.Elem
         </header>
         <div className={styles.body}>
           <nav className={styles.menu} aria-label="Main menu">
-            {menu.map(([action, label, run], i) => (
+            {menu.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ ([action, label, run], i) => (
               <Card key={action} kind="entry" data-title-action={action} heading={label} disabled={closing} onClick={run}>
                 <span className={styles.cursor} aria-hidden="true" />
                 <span className={styles.slot} aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>

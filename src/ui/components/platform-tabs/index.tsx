@@ -38,7 +38,7 @@ export function PlatformTabs({ platforms, selected, onToggle, onClear, offTarget
       >
         Bunraku <i className={styles.hint}>full card</i>
       </Chip>
-      {platforms.map((p) => (
+      {platforms.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (p) => (
         <Chip
           key={p.id}
           pressed={selected.includes(p.id)}

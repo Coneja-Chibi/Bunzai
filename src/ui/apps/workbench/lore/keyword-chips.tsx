@@ -61,7 +61,7 @@ export function KeywordChips({
 
   return (
     <div className={styles.keybox} role="group" aria-label={ariaLabel}>
-      {triggers.map((t, i) => (
+      {triggers.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (t, i) => (
         <span
           key={`${t.keyword}-${i}`}
           className={i === pickedIndex ? `${styles.key} ${styles.keyPicked}` : styles.key}

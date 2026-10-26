@@ -83,3 +83,12 @@ describe("Refresh and Break", () => {
     expect(r.text()).toContain("Unbreakable");
   });
 });
+
+describe("a full tracker", () => {
+  test("500 items mount fewer than 60 cards", async () => {
+    await r.mount(panel(formed(...Array.from({ length: 500 }, (_, i) => ({ partnerName: `Partner ${String(i)}` })))));
+    const cards = r.qa(".it-card").length;
+    expect(cards).toBeGreaterThan(0);
+    expect(cards).toBeLessThan(60);
+  });
+});

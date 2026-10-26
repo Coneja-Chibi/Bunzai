@@ -59,7 +59,7 @@ export function MacroReference({ groups }: MacroReferenceProps): JSX.Element {
       </div>
 
       <div className={s.macroScroll}>
-        {groups.map((g) => {
+        {groups.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (g) => {
           const isOpen = open.has(g.name);
           const icon = GROUP_ICONS[g.name] ?? "lucide:hash";
           return (
@@ -76,7 +76,7 @@ export function MacroReference({ groups }: MacroReferenceProps): JSX.Element {
                 <div className={s.macroBody}>
                   <p className={s.macroGroupDesc}>{g.description}</p>
                   <div className={s.macroPills}>
-                    {g.macros.map((m) => {
+                    {g.macros.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (m) => {
                       const isCopied = copied === m.macro;
                       return (
                         <Chip

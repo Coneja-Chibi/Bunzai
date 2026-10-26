@@ -24,6 +24,12 @@ export const SETTING_KEYS = {
   workbenchRecents: "workbench.recents",
   /** remote access on/off (reach this studio from another device via the Tailscale sidecar) */
   remoteAccessEnabled: "remoteAccessEnabled",
+  /** a new scene's starting setup per character (studio/scene-character-defaults.ts owns the shape): `{ [characterId]: { presetId, samplers, backdrop, director } }` */
+  sceneCharacterDefaults: "scenes.characterDefaults",
+  /** accessibility (ui/shell/accessibility.ts owns the readers): interface text size in px, reduce motion, high contrast */
+  uiTextSize: "ui.textSize",
+  uiReduceMotion: "ui.reduceMotion",
+  uiHighContrast: "ui.highContrast",
 } as const;
 
 /** The theme a studio paints when no theme is saved (a first run). A saved choice always wins; this never rewrites one. */

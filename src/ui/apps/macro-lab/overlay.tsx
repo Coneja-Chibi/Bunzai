@@ -8,6 +8,6 @@ export function OverlayWidgets({ ctx, onActivate }: OverlayWidgetProps) {
   const [engines, setEngines] = useState<MacroEngineInfo[] | null>(null); const [failed, setFailed] = useState(false);
   useEffect(() => { let cancelled = false; void ctx.api.macroEngines().then((out) => { if (!cancelled) setEngines(out.engines); }, () => { if (!cancelled) setFailed(true); }); return () => { cancelled = true; }; }, [ctx.api]);
   return <OverlayWidget title="Macro engine bench"><pre>{"{{user}}  {{char}}\nMacro text stays text until you run the test bench."}</pre>
-    {failed ? <p>Engine availability could not be checked.</p> : !engines ? <p>Checking installed engines...</p> : <ul>{engines.map((engine) => <li key={engine.id}>{engine.label}<small>Available on this host</small></li>)}{!engines.length && <li>No test engines installed.</li>}</ul>}
+    {failed ? <p>Engine availability could not be checked.</p> : !engines ? <p>Checking installed engines...</p> : <ul>{engines.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (engine) => <li key={engine.id}>{engine.label}<small>Available on this host</small></li>)}{!engines.length && <li>No test engines installed.</li>}</ul>}
     <Button onClick={onActivate}>Return to macro testing</Button></OverlayWidget>;
 }

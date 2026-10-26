@@ -177,7 +177,7 @@ export function CodeEditor(props: CodeEditorProps): JSX.Element {
           {ac && (
             <div className={styles.ac} style={{ left: ac.x, top: ac.y }}>
               <div className={styles.acHead}>macros &middot; tab to insert</div>
-              {ac.items.map((m, i) => (
+              {ac.items.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (m, i) => (
                 <div
                   key={m.sig}
                   className={`${styles.acItem}${i === ac.index ? ` ${styles.acItemOn}` : ""}`}

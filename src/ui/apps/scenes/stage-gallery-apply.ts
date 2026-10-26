@@ -34,8 +34,8 @@ async function loadPack(ctx: AppContext, id: string): Promise<BackdropPack> {
 }
 
 export async function applyAsBackdrop(ctx: AppContext, chat: Chat, item: GalleryItem): Promise<Chat> {
-  const dim = chat.backdrop?.dim;
-  const backdrop = (pack: string, picked: string): ChatBackdrop => ({ pack, item: picked, ...(dim === undefined ? {} : { dim }) });
+  const { dim, blur } = chat.backdrop ?? {};
+  const backdrop = (pack: string, picked: string): ChatBackdrop => ({ pack, item: picked, ...(dim === undefined ? {} : { dim }), ...(blur === undefined ? {} : { blur }) });
   if (item.pack) return ctx.api.setSceneBackdrop(chat.id, backdrop(item.pack.pack, item.pack.item));
   const packId = chat.backdrop?.pack ?? (await ctx.api.listEntities("pack"))[0]?.id;
   if (!packId) throw new Error("Make a pack in the Library first, then come back to use this as a background.");

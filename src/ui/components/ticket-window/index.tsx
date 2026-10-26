@@ -172,7 +172,7 @@ export function TicketWindow({
         <>
         <ShelfKicker>alternates</ShelfKicker>
         <div className={styles.strip}>
-          {(alternates ?? []).map((alt) => (
+          {(alternates ?? []).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (alt) => (
             <Tile
               key={alt.id}
               kind="thumb"

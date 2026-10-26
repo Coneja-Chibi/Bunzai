@@ -117,7 +117,7 @@ export function WorkshopTriggerCard({
           <>
             <div className={`${styles.block} ${styles.blockIf}`}>
               <span className={`${styles.kw} ${styles.kwIf}`}>IF</span>
-              {t.conditions.map((c, ci) => {
+              {t.conditions.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (c, ci) => {
                 const v = classifyCondition(c);
                 if (v.kind !== "known") return null;
                 return (

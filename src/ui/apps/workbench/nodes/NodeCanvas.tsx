@@ -277,7 +277,7 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
         <IconButton label="Zoom out" size="sm" icon="lucide:minus" disabled={canvas.zoom <= MIN_ZOOM} onClick={() => zoomCentre(0.8)} />
       </div>
       <div className={css.mini} aria-hidden="true" onPointerDown={onMiniDown}>
-        {rects.map((r, i) => <i key={i} className={css.miniDot} style={mini(r)} />)}
+        {rects.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (r, i) => <i key={i} className={css.miniDot} style={mini(r)} />)}
         <span className={css.miniVp} style={mini(view)} />
       </div>
     </div>

@@ -30,7 +30,7 @@ function Form({ draft, set }: { draft: Draft; set(next: Draft): void }): JSX.Ele
       <label className="fc-label">Replacement guidance<textarea className="fc-area" value={draft.replace} maxLength={4000} placeholder="Concrete guidance the rewriter should follow..." onChange={(e) => set({ ...draft, replace: e.target.value })} /></label>
       <label className="fc-label">Why this fails (optional)<textarea className="fc-area" value={draft.why} maxLength={4000} onChange={(e) => set({ ...draft, why: e.target.value })} /></label>
       <div className="fc-label">Examples<small>{draft.examples.length} of 30</small></div>
-      {draft.examples.map((example, i) => (
+      {draft.examples.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (example, i) => (
         <div className="fc-example" key={i}>
           <input className="fc-field" value={example} maxLength={1000} placeholder="Example phrase" aria-label={`Example ${i + 1}`} onChange={(e) => set({ ...draft, examples: draft.examples.map((x, j) => (j === i ? e.target.value : x)) })} />
           <IconButton variant="quiet" size="sm" label="Remove example" icon="lucide:x" disabled={draft.examples.length === 1} onClick={() => set({ ...draft, examples: draft.examples.filter((_, j) => j !== i) })} />
@@ -88,7 +88,7 @@ export function UserBanksCard({ lib }: { lib: FinalCutLibrary }): JSX.Element {
                     <Button variant="danger" size="sm" onClick={() => { if (confirm === b.id) { void lib.deleteBank(b.id); setConfirm(null); setDraft(null); } else setConfirm(b.id); }}>{confirm === b.id ? "Confirm" : "Delete"}</Button>
                   </div>
                 </div>
-                {open === b.id && !editing && <div className="view"><ul>{b.examples.map((e, i) => <li key={i}>{e}</li>)}</ul>{b.replace && <p><b>Replace with:</b> {b.replace}</p>}{b.why && <p><b>Why:</b> {b.why}</p>}</div>}
+                {open === b.id && !editing && <div className="view"><ul>{b.examples.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (e, i) => <li key={i}>{e}</li>)}</ul>{b.replace && <p><b>Replace with:</b> {b.replace}</p>}{b.why && <p><b>Why:</b> {b.why}</p>}</div>}
                 {editing && draft && (
                   <div className="fc-create"><Form draft={draft} set={setDraft} />
                     <div className="acts"><Button variant="primary" size="sm" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save changes"}</Button><Button variant="quiet" size="sm" onClick={() => setDraft(null)}>Cancel</Button></div></div>

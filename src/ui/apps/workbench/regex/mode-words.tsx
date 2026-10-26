@@ -203,7 +203,7 @@ export function ModeWords({ rule, styles, onPatch }: ModeWordsProps): JSX.Elemen
               {readout.reading && <p className={styles.describe}>{readout.reading}</p>}
               {(readout.matches.length > 0 || readout.nearMisses.length > 0) && (
                 <div className={styles.exRow}>
-                  {readout.matches.map((m) => (
+                  {readout.matches.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (m) => (
                     <span key={`hit-${m}`} className={`${styles.exChip} ${styles.exHit}`}>
                       {m}
                     </span>

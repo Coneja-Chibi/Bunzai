@@ -78,7 +78,7 @@ function TokenRow({
 
       {open ? (
         <ul className={styles.travel}>
-          {travel.map((t) => (
+          {travel.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (t) => (
             <li key={t.lens} className={styles.travelRow}>
               <span className={styles.travelLens}>{MACRO_DIALECT_LABELS[t.lens]}</span>
               <span className={t.kind === "same" ? styles.travelSame : styles.travelFlag}>
@@ -127,7 +127,7 @@ export function ReadingPane({
                 {"It will reach the model as literal text."}
               </p>
               <div className={styles.tokens}>
-                {reading.unknownNames.map((n) => (
+                {reading.unknownNames.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (n) => (
                   <code key={n} className={styles.deadToken}>{n}</code>
                 ))}
               </div>

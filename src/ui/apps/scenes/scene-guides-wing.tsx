@@ -12,6 +12,9 @@ import { toErrorMessage } from "../../_shared/error-message";
 import { CATEGORY_ICON, CATEGORY_LABEL, MODE_META, activeCount, draftOf, groupGuides } from "./guides-core";
 import { GuideEditor } from "./scene-guide-editor";
 import type { ScenePrompting } from "./use-scene-prompting";
+import { VirtualRows } from "../../_shared/virtual-list";
+
+const GUIDE_ROW_PX = 48;
 
 /** How the tab reads in the fold: "2 active" (RoleCall's "n ACTIVE"). */
 export const guidesTabMeta = (prompting: ScenePrompting, on: readonly string[]): string =>
@@ -93,16 +96,16 @@ export function SceneGuidesWing({ prompting, on }: { prompting: ScenePrompting; 
         <div className="pg-new"><Button variant="primary" block icon="lucide:plus" onClick={() => { setError(null); setOpen({ id: null, draft: draftOf() }); }}>New Guide</Button></div>
         <label className="pg-search"><Ic name="lucide:search" size={14} /><input value={query} placeholder="Search guides..." aria-label="Search guides" onChange={(e) => setQuery(e.target.value)} /></label>
         {guides.length === 0 && <div className="ed-note">No guides yet. Make one with New Guide.</div>}
-        {groups.map(({ category, rows }) => (
+        {groups.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ ({ category, rows }) => (
           <div key={category} className="pg-group">
             <div className={`pg-cat c-${category}`}><Ic name={CATEGORY_ICON[category]} size={14} /><b>{CATEGORY_LABEL[category]}</b><small>{rows.length}</small></div>
-            {rows.map((g) => (
-              <div key={g.id} className={`pg-row${open?.id === g.id ? " sel" : ""}`}>
+            <VirtualRows items={rows} keyOf={(g) => g.id} estimate={GUIDE_ROW_PX} render={(g) => (
+              <div className={`pg-row${open?.id === g.id ? " sel" : ""}`}>
                 <Toggle size="sm" on={on.includes(g.id)} aria-label={`Use ${g.title} in this scene`} title="Use in this scene: switches the guide on for this scene only" onChange={() => toggle(g.id, !on.includes(g.id))} />
                 <Button variant="link" onClick={() => show(g)}>{g.title || "Untitled"}</Button>
                 <span className={`pg-pill m-${g.mode}`}>{MODE_META[g.mode].pill}</span>
               </div>
-            ))}
+            )} />
           </div>
         ))}
       </div>

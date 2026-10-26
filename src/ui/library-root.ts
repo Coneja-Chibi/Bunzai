@@ -212,7 +212,6 @@ async function importIn(studioDir: string, vault: DeviceVault, options: OpenOpti
   return result;
 }
 
-
 export interface OpenOptions {
   vault?: DeviceVault;
   /** Progress of a first-start import, piece by piece. */
@@ -337,6 +336,7 @@ export type LibraryPhase =
   | { phase: "unlocked" };
 
 export interface LibraryHandle {
+  readonly studioDir: string;
   /** Opens the library (importing a plain folder first). Once; only in the process that serves the window. */
   open(): Promise<OpenedLibrary | null>;
   phase(): Promise<LibraryPhase>;
@@ -447,7 +447,7 @@ export function createLibrary(
   };
 
   return {
-    open: () => (opening ??= open()),
+    studioDir, open: () => (opening ??= open()),
     async phase() {
       if (!library) return state;
       return { phase: (await library.keyring.status()).state === "unlocked" ? "unlocked" : "locked" };

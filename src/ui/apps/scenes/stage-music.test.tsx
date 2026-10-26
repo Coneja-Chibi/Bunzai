@@ -12,7 +12,7 @@ import { installDom, type InstalledDom } from "../../_shared/test-dom";
 import { FakeAudio } from "./fake-audio";
 import { moodMusicProp } from "./props/mood-music";
 import { sceneProps } from "./props/registry";
-import { MOOD_MUSIC_PROP, VOLUME_KEY } from "./stage-music-core";
+import { AUTOPLAY_KEY, LAST_TRACK_KEY, MOOD_MUSIC_PROP, VOLUME_KEY } from "./stage-music-core";
 import { MusicMini } from "./stage-music-mini";
 import { MusicPanel } from "./stage-music-panel";
 import { createMusicPlayer } from "./stage-music-player";
@@ -268,6 +268,51 @@ describe("the mini player", () => {
   });
 });
 
+
+describe("play on scene open", () => {
+  const fiddle = { id: "tav:a", packId: "tav", packName: "Tavern", itemId: "a", title: "Fiddle", sha: sha(1) };
+
+  test("a played track is remembered by its pack and item ids", async () => {
+    const flushSync = await mount(<MusicMini ctx={makeCtx()} player={player} />);
+    await player.play(fiddle, []);
+    await settle(flushSync);
+    expect(prefs.get(LAST_TRACK_KEY)).toEqual({ packId: "tav", itemId: "a" });
+  });
+
+  test("with autoplay on, opening the scene starts the last track", async () => {
+    prefs.set(AUTOPLAY_KEY, true);
+    prefs.set(LAST_TRACK_KEY, { packId: "tav", itemId: "b" });
+    await mount(<MusicMini ctx={makeCtx()} player={player} />);
+    expect(player.get()).toMatchObject({ playing: true, track: { itemId: "b", title: "Rain" } });
+    expect(audio.src).toBe(`/api/asset/${sha(2)}`);
+  });
+
+  test("with autoplay off, or no remembered track, or the track gone, nothing starts", async () => {
+    prefs.set(LAST_TRACK_KEY, { packId: "tav", itemId: "b" });
+    await mount(<MusicMini ctx={makeCtx()} player={player} />);
+    expect(player.get().track).toBeNull();
+    root!.unmount(); root = null;
+    prefs.set(AUTOPLAY_KEY, true);
+    prefs.delete(LAST_TRACK_KEY);
+    await mount(<MusicMini ctx={makeCtx()} player={player} />);
+    expect(player.get().track).toBeNull();
+    root!.unmount(); root = null;
+    prefs.set(LAST_TRACK_KEY, { packId: "tav", itemId: "deleted" });
+    await mount(<MusicMini ctx={makeCtx()} player={player} />);
+    expect(player.get().track).toBeNull();
+  });
+
+  test("a browser that refuses leaves the track paused with its message and the Play button", async () => {
+    prefs.set(AUTOPLAY_KEY, true);
+    prefs.set(LAST_TRACK_KEY, { packId: "tav", itemId: "a" });
+    const fresh = createMusicPlayer(() => { audio = new FakeAudio(); audio.refuse = new DOMException("", "NotAllowedError"); return audio; });
+    const flushSync = await mount(<MusicMini ctx={makeCtx()} player={fresh} />);
+    await settle(flushSync);
+    expect(fresh.get()).toMatchObject({ playing: false, track: { itemId: "a" }, error: "Browser blocked autoplay." });
+    expect(text()).toContain("Browser blocked autoplay.");
+    expect(button("Play mood music")).toBeDefined();
+  });
+});
 describe("the Prop", () => {
   test("Mood Music is registered, off by default, and draws the mini player on the stage", async () => {
     expect(sceneProps().map((p) => p.id)).toContain(MOOD_MUSIC_PROP);

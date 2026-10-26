@@ -133,3 +133,12 @@ describe("Add Spell and Refresh: the model proposes, the person accepts", () => 
     expect(r.lastData<Spellbook>().spells[0]).toMatchObject({ id: "s0", description: "Hotter.", masteryLevel: 30 });
   });
 });
+
+describe("a full tracker", () => {
+  test("500 items mount fewer than 60 cards", async () => {
+    await r.mount(panel(book(...Array.from({ length: 500 }, (_, i) => ({ name: `Spell ${String(i)}` })))));
+    const cards = r.qa(".it-card").length;
+    expect(cards).toBeGreaterThan(0);
+    expect(cards).toBeLessThan(60);
+  });
+});

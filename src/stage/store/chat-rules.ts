@@ -7,7 +7,7 @@
 import { StudioConflictError } from "../../studio/atomic-file";
 import { StudioValidationError } from "../../studio/errors";
 import { deepEq, isPlainObject } from "../../core/guards";
-import { checkWhole, fail, isWhole } from "./scalar-rules";
+import { checkWhole, fail, isWhole, onlyKeys } from "./scalar-rules";
 import { checkGeneration } from "./generation-rules";
 
 export { checkGeneration, fail };
@@ -287,12 +287,6 @@ export function requireVersion(actual: number, expected: number | undefined): vo
   }
 }
 
-/** An object carrying only the named fields: a misspelt one is refused, never dropped. */
-function onlyKeys(value: unknown, allowed: readonly string[], what: string): Record<string, unknown> {
-  if (!isPlainObject(value)) fail(`${what} must be an object`);
-  for (const key of Object.keys(value)) if (!allowed.includes(key)) fail(`${what} has an unknown field: ${key}`);
-  return value;
-}
 
 /** A trace (rule 15): absent, or a JSON object. Returns a private copy. */
 export function checkTrace(value: unknown): JsonObject | undefined {

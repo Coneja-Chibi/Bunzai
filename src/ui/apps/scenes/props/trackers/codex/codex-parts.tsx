@@ -26,7 +26,7 @@ export function CodexSections({ e, stats }: { e: Shared; stats?: { label: string
     <>
       {e.abilities && e.abilities.length > 0 && (
         <Section icon="lucide:zap" tone="var(--stage-warn)" title="Abilities">
-          {e.abilities.map((a, i) => (
+          {e.abilities.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (a, i) => (
             <div key={`${a.name}${i}`} className="cx-item">
               <div><b>{a.name}</b><span className="it-tag" style={{ "--c": ABILITY_TONE[a.type] } as CSSProperties}>{a.type}</span></div>
               {a.description && <p>{a.description}</p>}
@@ -39,12 +39,12 @@ export function CodexSections({ e, stats }: { e: Shared; stats?: { label: string
       )}
       {e.passives && e.passives.length > 0 && (
         <Section icon="lucide:shield" tone="var(--stage-link)" title="Passives">
-          {e.passives.map((p, i) => <div key={`${p.name}${i}`} className="cx-item"><div><b>{p.name}</b></div>{p.description && <p>{p.description}</p>}{p.effect && <small>{p.effect}</small>}</div>)}
+          {e.passives.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (p, i) => <div key={`${p.name}${i}`} className="cx-item"><div><b>{p.name}</b></div>{p.description && <p>{p.description}</p>}{p.effect && <small>{p.effect}</small>}</div>)}
         </Section>
       )}
       {needs && Object.keys(needs).length > 0 && (
         <Section icon="lucide:activity" tone="var(--stage-ok)" title="Needs">
-          {Object.entries(needs).map(([k, n]) => <div key={k} className="cx-need"><span>{n.label || k}</span><Bar value={n.value} max={n.maxValue} tone={n.maxValue > 0 && n.value / n.maxValue <= 0.2 ? "var(--stage-danger-text)" : n.maxValue > 0 && n.value / n.maxValue <= 0.4 ? "var(--stage-warn)" : "var(--stage-ok)"} /><small>{n.value}/{n.maxValue}</small></div>)}
+          {Object.entries(needs).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ ([k, n]) => <div key={k} className="cx-need"><span>{n.label || k}</span><Bar value={n.value} max={n.maxValue} tone={n.maxValue > 0 && n.value / n.maxValue <= 0.2 ? "var(--stage-danger-text)" : n.maxValue > 0 && n.value / n.maxValue <= 0.4 ? "var(--stage-warn)" : "var(--stage-ok)"} /><small>{n.value}/{n.maxValue}</small></div>)}
         </Section>
       )}
       {stats && (stats.s.hp !== undefined || stats.s.attack !== undefined) && (
@@ -93,7 +93,7 @@ export function CodexSections({ e, stats }: { e: Shared; stats?: { label: string
       )}
       {e.research && (
         <Section icon="lucide:microscope" tone="var(--stage-link)" title="Research" aside={<small className="cx-aside">{e.research.knowledgeLevel}</small>}>
-          {e.research.fieldNotes.length > 0 && <div><small>Field Notes:</small><ul className="cy-list">{e.research.fieldNotes.map((n, i) => <li key={`${n}${i}`}>{n}</li>)}</ul></div>}
+          {e.research.fieldNotes.length > 0 && <div><small>Field Notes:</small><ul className="cy-list">{e.research.fieldNotes.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (n, i) => <li key={`${n}${i}`}>{n}</li>)}</ul></div>}
           {e.research.specimensCollected !== undefined && <small><b>Specimens:</b> {e.research.specimensCollected}</small>}
           {e.research.dissectionNotes && <small><b>Dissection:</b> {e.research.dissectionNotes}</small>}
           {e.research.pendingHypotheses && e.research.pendingHypotheses.length > 0 && <div><small>Hypotheses:</small><Chips items={e.research.pendingHypotheses} /></div>}

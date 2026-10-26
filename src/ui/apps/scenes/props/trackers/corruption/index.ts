@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { CorruptionPanel } from "./corruption-panel";
+import { summaryLine } from "./summary";
 
 export const corruptionProp = trackerProp({
   module: "corruption",
@@ -16,4 +17,5 @@ export const corruptionProp = trackerProp({
   title: "Corruption",
   noun: "Corruption",
   Panel: CorruptionPanel,
+  summary: summaryLine,
 });

@@ -36,10 +36,10 @@ export function Value({ v }: { v: unknown }): JSX.Element | null {
   if (isEmpty(v)) return null;
   if (Array.isArray(v)) {
     return v.every((x) => typeof x !== "object" || x === null)
-      ? <div className="cp-chips">{v.map((x, i) => <span key={i}>{prim(x)}</span>)}</div>
+      ? <div className="cp-chips">{v.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (x, i) => <span key={i}>{prim(x)}</span>)}</div>
       : <div className="cp-ors">{v.map((x, i) => (isRecord(x) ? <ObjectRow key={i} o={x} /> : <div key={i} className="cp-or"><div className="m">{plain(x)}</div></div>))}</div>;
   }
-  if (isRecord(v)) return <div className="cp-kv">{Object.entries(v).filter(([, x]) => !isEmpty(x)).map(([k, x]) => <div key={k}><span className="k">{titled(k)}</span><div className="x">{typeof x === "object" ? <Value v={x} /> : prim(x)}</div></div>)}</div>;
+  if (isRecord(v)) return <div className="cp-kv">{Object.entries(v).filter(([, x]) => !isEmpty(x)).map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ ([k, x]) => <div key={k}><span className="k">{titled(k)}</span><div className="x">{typeof x === "object" ? <Value v={x} /> : prim(x)}</div></div>)}</div>;
   return <div className="cp-txt">{prim(v)}</div>;
 }
 
@@ -60,7 +60,7 @@ function Arc({ data }: { data: Rec }): JSX.Element | null {
       </div>
       {moments.length > 4 && <div className="cp-wide" aria-hidden="true">Scroll the timeline to explore every milestone&nbsp;→</div>}
       <div className="cp-vp">
-        <ol className="cp-ms" aria-label="Character arc milestones">{moments.map((m, i) => (
+        <ol className="cp-ms" aria-label="Character arc milestones">{moments.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (m, i) => (
           <li key={i} className={i < at ? "done" : i === at ? "cur" : ""} aria-current={i === at ? "step" : undefined}>
             <span className="tk" aria-hidden="true" /><span className="mk" aria-hidden="true" />
             <div className="mb"><i aria-hidden="true">{String(i + 1).padStart(2, "0")}</i><span>{m}</span></div>
@@ -75,7 +75,7 @@ const firstFilled = (data: Rec, b: Block): unknown => b.keys.map((k) => pluck(da
 
 function blockBody(b: Block, data: Rec): ReactNode {
   if (b.keys.length === 1 || b.first) return <Value v={firstFilled(data, b)} />;
-  return <div className="cp-kv">{b.keys.filter((k) => !isEmpty(pluck(data, k))).map((k) => <div key={k}><span className="k">{titled(k)}</span><div className="x"><Value v={pluck(data, k)} /></div></div>)}</div>;
+  return <div className="cp-kv">{b.keys.filter((k) => !isEmpty(pluck(data, k))).map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (k) => <div key={k}><span className="k">{titled(k)}</span><div className="x"><Value v={pluck(data, k)} /></div></div>)}</div>;
 }
 
 /** Every type's body: tiles, blocks, then Other Fields (what no block names and the header does not show). */
@@ -102,7 +102,7 @@ export function EntryBody({ type, data }: { type: EntryType; data: Rec }): JSX.E
     out.push(<FieldBlock key={b.label} label={b.count && n > 0 ? `${b.label} ${GLYPH.dot} ${n}` : b.label}>{blockBody(b, data)}</FieldBlock>);
   }
   flush();
-  if (other.length > 0) out.push(<FieldBlock key="other" label="Other Fields"><div className="cp-kv">{other.map((k) => <div key={k}><span className="k">{titled(k)}</span><div className="x"><Value v={data[k]} /></div></div>)}</div></FieldBlock>);
+  if (other.length > 0) out.push(<FieldBlock key="other" label="Other Fields"><div className="cp-kv">{other.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (k) => <div key={k}><span className="k">{titled(k)}</span><div className="x"><Value v={data[k]} /></div></div>)}</div></FieldBlock>);
   return <>{out.length > 0 ? out : <div className="cp-quiet">No structured data for this entry.</div>}<Issues type={type} data={data} /></>;
 }
 

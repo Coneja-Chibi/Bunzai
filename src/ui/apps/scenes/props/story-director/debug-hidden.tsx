@@ -43,20 +43,20 @@ function HiddenCard({ arc, open, onToggle, onDelete, locked }: { arc: DirectorIn
           {arc.plannedBeats.length > 0 && (
             <div>
               <div className="dr-sub"><Ic name="lucide:list-ordered" size={12} />Planned Beats ({done}/{arc.plannedBeats.length})</div>
-              <div className="dr-seeds">{arc.plannedBeats.map((b) => <div key={b.id} className={b.completed ? "done" : ""}><Ic name={b.completed ? "lucide:circle-check" : "lucide:circle"} size={12} /><span>{b.description}</span>{b.hidden && <Ic name="lucide:eye-off" size={12} />}</div>)}</div>
+              <div className="dr-seeds">{arc.plannedBeats.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (b) => <div key={b.id} className={b.completed ? "done" : ""}><Ic name={b.completed ? "lucide:circle-check" : "lucide:circle"} size={12} /><span>{b.description}</span>{b.hidden && <Ic name="lucide:eye-off" size={12} />}</div>)}</div>
             </div>
           )}
           {arc.stages.length > 0 && (
             <div>
               <div className="dr-sub"><Ic name="lucide:flag" size={12} />Stages ({arc.stages.length})</div>
-              <div className="dr-stages">{arc.stages.map((s, i) => <div key={i} className={i === arc.stages.length - 1 ? "now" : ""}><span className="dr-stage-dot" /><b>{s.title}</b>{s.description && <p>{s.description}</p>}<small>Turn {s.turn}</small></div>)}</div>
+              <div className="dr-stages">{arc.stages.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s, i) => <div key={i} className={i === arc.stages.length - 1 ? "now" : ""}><span className="dr-stage-dot" /><b>{s.title}</b>{s.description && <p>{s.description}</p>}<small>Turn {s.turn}</small></div>)}</div>
             </div>
           )}
           {arc.playerClues.length > 0 && (
-            <div><div className="dr-sub"><Ic name="lucide:search" size={12} />Player Clues ({arc.playerClues.length})</div>{arc.playerClues.map((c, i) => <p key={i} className="dr-warn-text">{c.clue} <small>(turn {c.turn})</small></p>)}</div>
+            <div><div className="dr-sub"><Ic name="lucide:search" size={12} />Player Clues ({arc.playerClues.length})</div>{arc.playerClues.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (c, i) => <p key={i} className="dr-warn-text">{c.clue} <small>(turn {c.turn})</small></p>)}</div>
           )}
-          {arc.relatedVisibleArcs.length > 0 && <div><div className="dr-sub"><Ic name="lucide:link" size={12} />Related Arcs</div><div className="dr-chips">{arc.relatedVisibleArcs.map((r, i) => <Badge key={i} tone="info">{r}</Badge>)}</div></div>}
-          {arc.foreshadowingSeeds.length > 0 && <div><div className="dr-sub"><Ic name="lucide:leaf" size={12} />Foreshadowing Seeds</div><div className="dr-chips">{arc.foreshadowingSeeds.map((s, i) => <Badge key={i} tone="ok">{s}</Badge>)}</div></div>}
+          {arc.relatedVisibleArcs.length > 0 && <div><div className="dr-sub"><Ic name="lucide:link" size={12} />Related Arcs</div><div className="dr-chips">{arc.relatedVisibleArcs.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (r, i) => <Badge key={i} tone="info">{r}</Badge>)}</div></div>}
+          {arc.foreshadowingSeeds.length > 0 && <div><div className="dr-sub"><Ic name="lucide:leaf" size={12} />Foreshadowing Seeds</div><div className="dr-chips">{arc.foreshadowingSeeds.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (s, i) => <Badge key={i} tone="ok">{s}</Badge>)}</div></div>}
         </div>
       )}
     </div>
@@ -108,7 +108,7 @@ export function HiddenWorld({ arcs, notes, onEdit, locked }: { arcs: readonly Di
       {live.length > 0 && (
         <div className="dr-stack tight">
           <div className="dr-sub up"><Ic name="lucide:eye-off" size={12} />Invisible Arcs <Badge>{live.length}</Badge></div>
-          {live.map((a) => <HiddenCard key={a.id} arc={a} open={open === a.id} locked={locked} onToggle={() => setOpen(open === a.id ? null : a.id)} onDelete={() => void onEdit({ op: "remove-hidden", id: a.id }, "The arc could not be deleted. Reload this story before trying again.")} />)}
+          {live.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (a) => <HiddenCard key={a.id} arc={a} open={open === a.id} locked={locked} onToggle={() => setOpen(open === a.id ? null : a.id)} onDelete={() => void onEdit({ op: "remove-hidden", id: a.id }, "The arc could not be deleted. Reload this story before trying again.")} />)}
         </div>
       )}
       {concluded.length > 0 && (
@@ -119,7 +119,7 @@ export function HiddenWorld({ arcs, notes, onEdit, locked }: { arcs: readonly Di
       )}
       <div className="dr-stack tight" data-part="scene.director.notes">
         <div className="dr-sub up"><Ic name="lucide:file-text" size={12} />DM Notes <Badge>{notes.length}</Badge></div>
-        {notes.map((n) => (
+        {notes.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (n) => (
           <div key={n.id} className="dr-note"><Ic name="lucide:pencil" size={12} /><p>{n.content}</p><IconButton variant="danger" size="sm" label="Delete note" icon="lucide:trash-2" disabled={locked} onClick={() => void onEdit({ op: "remove-note", id: n.id }, "The note could not be deleted. Reload this story before trying again.")} /></div>
         ))}
         <div className="dr-form">

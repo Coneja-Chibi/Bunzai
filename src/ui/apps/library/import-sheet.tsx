@@ -9,7 +9,7 @@
  * (triage + inspect + commit) that feed this stay in import-flow.tsx; this file owns no network
  * calls of its own.
  */
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState, type JSX, type ReactNode } from "react";
 import { InkDialog } from "../../components/ink-dialog";
 import {
   defaultCheckedIndexes,
@@ -24,6 +24,12 @@ import {
   type ReadFile,
 } from "./import-triage";
 import { Button } from "../../components/button";
+import { VirtualRows } from "../../_shared/virtual-list";
+
+/** One card of the windowed review list: an archive report, a file, or a group of skipped files. */
+type ImportRow = { key: string; node: ReactNode };
+const ROW_ESTIMATE_PX = 96;
+const ROW_GAP_PX = 9;
 
 export type ImportState =
   | { phase: "reading"; reads: ReadFile[]; done: number; total: number; archiveReports: ArchiveReportEntry[] }
@@ -71,7 +77,7 @@ function ReceiptCard({
               {r.healNotes.length > 3 ? ` · +${r.healNotes.length - 3} more` : ""}
             </p>
           )}
-          {r.result.receipt.extras.map((line, i) => (
+          {r.result.receipt.extras.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (line, i) => (
             <p key={i} className="impkind">
               {line}
             </p>
@@ -135,14 +141,14 @@ function ArchiveReportCard({ entry }: { entry: ArchiveReportEntry }): JSX.Elemen
           something that was never imported.
         </p>
       )}
-      {report.warnings.map((w, i) => (
+      {report.warnings.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (w, i) => (
         <p key={i} className="impmeta">
           {w}
         </p>
       ))}
       {failGroups.length > 0 && (
         <ul>
-          {failGroups.map((g, i) => (
+          {failGroups.map(/* bounded-ok: failures are grouped by error message */ (g, i) => (
             <li key={i}>
               {g.filenames.length >= 4
                 ? `${g.filenames.length} rows: ${g.error} (${g.filenames.slice(0, 3).join(" · ")} · +${g.filenames.length - 3} more)`
@@ -245,6 +251,17 @@ export function ImportOverlay({
     });
   };
 
+  const rows: ImportRow[] = [
+    ...state.archiveReports.map((entry, i): ImportRow => ({ key: `report${String(i)}`, node: <ArchiveReportCard entry={entry} /> })),
+    ...okRows.map(({ r, i }): ImportRow => ({ key: String(i), node: (
+      <ReceiptCard r={decorated(r)} checked={checked.has(i)} onToggle={() => { if (!r.result.ok || r.batchDupe) return; toggle(i); }} />
+    ) })),
+    ...dupeRows.map(({ r, i }): ImportRow => ({ key: String(i), node: <ReceiptCard r={decorated(r)} checked={false} onToggle={() => {}} /> })),
+    ...badGroups.flatMap((g, gi): ImportRow[] => g.filenames.length >= 4
+      ? [{ key: `g${String(gi)}`, node: <BadGroupCard group={g} /> }]
+      : g.indexes.map((i) => ({ key: String(i), node: <ReceiptCard r={decorated(state.reads[i]!)} checked={false} onToggle={() => {}} /> }))),
+  ];
+
   return (
     <InkDialog onDismiss={onCancel} ariaLabel="Pick what to import" sheetClassName="impsheet">
       <p className="impkick">The Library · Import</p>
@@ -255,32 +272,7 @@ export function ImportOverlay({
         {summary}. Uncheck anything you do not want. Import only writes the checked ones.
       </p>
       <div className="improws">
-        {state.archiveReports.map((entry, i) => (
-          <ArchiveReportCard key={`report${i}`} entry={entry} />
-        ))}
-        {okRows.map(({ r, i }) => (
-          <ReceiptCard
-            key={i}
-            r={decorated(r)}
-            checked={checked.has(i)}
-            onToggle={() => {
-              if (!r.result.ok || r.batchDupe) return;
-              toggle(i);
-            }}
-          />
-        ))}
-        {dupeRows.map(({ r, i }) => (
-          <ReceiptCard key={i} r={decorated(r)} checked={false} onToggle={() => {}} />
-        ))}
-        {badGroups.map((g, gi) =>
-          g.filenames.length >= 4 ? (
-            <BadGroupCard key={`g${gi}`} group={g} />
-          ) : (
-            g.indexes.map((i) => (
-              <ReceiptCard key={i} r={decorated(state.reads[i]!)} checked={false} onToggle={() => {}} />
-            ))
-          ),
-        )}
+        <VirtualRows items={rows} keyOf={(r) => r.key} estimate={ROW_ESTIMATE_PX} gap={ROW_GAP_PX} render={(r) => r.node} />
       </div>
       <div className="impacts">
         <Button onClick={() => setChecked(new Set(checkable))}>

@@ -132,7 +132,7 @@ export async function handleLibraryRoutes(p: string, req: Request, library: Libr
     }
   }
 
-  const care = await handleCareRoutes(p.slice(PREFIX.length), req, opened, async () => (await library.phase()).phase === "unlocked");
+  const care = await handleCareRoutes(p.slice(PREFIX.length), req, opened, async () => (await library.phase()).phase === "unlocked", library.studioDir);
   if (care) return care;
 
   if (req.method !== "POST") return err("not found", 404);

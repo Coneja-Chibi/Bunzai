@@ -45,3 +45,23 @@ test("volume clamps to 0 to 1 and an unset or broken pref is 0.6", () => {
   expect([volumeOf(0.25), volumeOf(7), volumeOf(-1)]).toEqual([0.25, 1, 0]);
   expect([volumeOf(undefined), volumeOf("x"), volumeOf(Number.NaN)]).toEqual([DEFAULT_VOLUME, DEFAULT_VOLUME, DEFAULT_VOLUME]);
 });
+
+describe("play on scene open", () => {
+  test("autoplay is on only when set true", async () => {
+    const { autoplayOn } = await import("./stage-music-core");
+    expect([autoplayOn(undefined), autoplayOn("true"), autoplayOn(1), autoplayOn(false), autoplayOn(true)]).toEqual([false, false, false, false, true]);
+  });
+  test("a saved track reference is parsed strictly and found by pack and item ids", async () => {
+    const { lastTrackOf, findTrack } = await import("./stage-music-core");
+    expect(lastTrackOf(null)).toBeNull();
+    expect(lastTrackOf({ packId: "p" })).toBeNull();
+    expect(lastTrackOf({ packId: "", itemId: "i" })).toBeNull();
+    const ref = lastTrackOf({ packId: "p", itemId: "i" });
+    expect(ref).toEqual({ packId: "p", itemId: "i" });
+    const track = { id: "p:i", packId: "p", packName: "P", itemId: "i", title: "T", sha: "s" };
+    const groups = [{ packId: "p", name: "P", tracks: [track] }];
+    expect(findTrack(groups, ref!)?.track).toBe(track);
+    expect(findTrack(groups, { packId: "p", itemId: "gone" })).toBeNull();
+    expect(findTrack(groups, { packId: "other", itemId: "i" })).toBeNull();
+  });
+});

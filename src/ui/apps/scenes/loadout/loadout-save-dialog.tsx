@@ -86,7 +86,7 @@ export function LoadoutSaveDialog({ ctx, chatId, loadouts, onSaved, onClose }: {
           {live && LIVE_PANELS.map((g) => (
             <div key={g.id}>
               <div className="ldd-grp">{g.label}</div>
-              {g.panels.map((id) => (
+              {g.panels.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (id) => (
                 <label key={id} className="ldb-row">
                   <input type="checkbox" checked={ticked.has(id)} onChange={(e) => flip(id, e.target.checked)} />
                   <span className="pn"><span>{PANEL_META[id].label}</span><small>{defaultTicks(live).has(id) ? "Captures this scene's current value" : "Not set on this scene"}</small></span>

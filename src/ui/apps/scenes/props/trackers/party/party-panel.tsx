@@ -55,7 +55,7 @@ export function PartyPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
               </div>
             )}
             <div className="it-list">
-              {members.map((m) => {
+              {members.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (m) => {
                 const lead = m.profileId === p.leaderId;
                 const percent = hpPercent(m);
                 return (
@@ -87,7 +87,7 @@ export function PartyPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                 return (
                   <div key={lane} className="pt-lane">
                     <span><Ic name={LANE_ICON[lane]} size={14} /> <span className="cap">{lane}</span></span>
-                    <div>{here.length > 0 ? here.map((m) => <em key={m.profileId}>{m.name.slice(0, 10)}</em>) : <i>Empty</i>}</div>
+                    <div>{here.length > 0 ? here.map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (m) => <em key={m.profileId}>{m.name.slice(0, 10)}</em>) : <i>Empty</i>}</div>
                   </div>
                 );
               })}

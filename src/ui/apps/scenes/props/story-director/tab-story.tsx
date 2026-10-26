@@ -1,9 +1,11 @@
 /**
- * The Story tab (RoleCall's OverviewTab, StoryDirectorWingPanel.tsx:540-743): Current Chapter, Chapter History, Current Mood, Suggested Actions (text, not buttons) and DM Intentions.
+ * The Story tab (RoleCall's OverviewTab, StoryDirectorWingPanel.tsx:540-743): Current Chapter, Chapter History, Current Mood, Suggested Actions (buttons that fill the composer) and DM Intentions.
  * The chapter shown is the one the state points at, else the newest unfinished (VVS-720).
  */
 import type { JSX } from "react";
+import { Button } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
+import { insertIntoDraft } from "../../context/draft-bus";
 import type { DirectorChapter, DirectorState } from "../../../../../stage/contracts/director-types";
 import { currentChapter } from "./director-core";
 import { Badge, MoodDot, Section, StatusBadge } from "./director-parts";
@@ -19,7 +21,8 @@ function Goals({ chapter, dim }: { chapter: DirectorChapter; dim?: boolean }): J
   return list.length === 0 ? null : <div className={`dr-goals${dim ? " dim" : ""}`}>{list.map((g, i) => <div key={i}><Ic name="lucide:chevron-right" size={12} /><span>{g}</span></div>)}</div>;
 }
 
-export function StoryTab({ state }: { state: DirectorState }): JSX.Element {
+/** `chatId` is the scene whose composer a suggested action fills; without it the actions stay plain text. */
+export function StoryTab({ state, chatId }: { state: DirectorState; chatId?: string }): JSX.Element {
   const now = currentChapter(state.chapters, state.currentChapterId);
   const elapsed = now ? Math.max(now.turnsElapsed, state.turn !== undefined ? state.turn - now.createdAtTurn : 0) : 0;
   const history = state.chapters.filter((c) => c.id !== now?.id).sort((a, b) => b.number - a.number);
@@ -59,7 +62,9 @@ export function StoryTab({ state }: { state: DirectorState }): JSX.Element {
       {state.suggestedActions.length > 0 && (
         <Section title="Suggested Actions" icon="lucide:sparkles">
           <div className="dr-stack tight" data-part="scene.director.actions">
-            {state.suggestedActions.map((a, i) => <div key={i} className="dr-action"><Ic name="lucide:chevron-right" size={12} /><span>{a}</span></div>)}
+            {state.suggestedActions.map((a, i) => chatId === undefined
+              ? <div key={i} className="dr-action"><Ic name="lucide:chevron-right" size={12} /><span>{a}</span></div>
+              : <Button key={i} variant="quiet" size="sm" block icon="lucide:chevron-right" data-part="scene.director.action" title="Put this in your message. Nothing is sent." onClick={() => { insertIntoDraft(chatId, a); }}>{a}</Button>)}
           </div>
         </Section>
       )}

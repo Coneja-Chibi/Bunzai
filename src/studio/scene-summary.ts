@@ -127,6 +127,7 @@ export function summarizeAfter(deps: SummaryDeps, chatId: string, kind: TurnKind
       const take = await deps.chats.summaryOf(landed.branchId);
       if (s.method === "rolling" && (await deps.chats.countMessages(landed.branchId)) - (take?.through ?? 0) < s.interval) return;
       if (s.method === "pair" && kind === "continue") return;
+      if (running.has(chatId)) return;
       running.add(chatId);
       try {
         const d = await setup(deps, chatId);
@@ -142,6 +143,38 @@ export function summarizeAfter(deps: SummaryDeps, chatId: string, kind: TurnKind
       await deps.chats.setSummaryError(chatId, message.slice(0, 500)).catch(() => undefined);
     }
   }).catch(() => undefined);
+}
+
+/**
+ * Summarize now: the automatic step (`rolling`, or `pair` for the last reply) run once on request, under the same `running` guard as the automatic run and Backfill, so two runs never overlap. Unlike the automatic
+ * run it says so when nothing was written: no messages, nothing new to add, or an empty answer. The old text stays on any failure; the summary history is the undo.
+ */
+export async function summarizeNow(deps: SummaryDeps, chatId: string): Promise<TakeSummary> {
+  if (running.has(chatId)) throw new SummaryFailure("A summary is already being written for this scene.");
+  running.add(chatId);
+  try {
+    const d = await setup(deps, chatId);
+    const take = await deps.chats.summaryOf(d.branchId);
+    if (d.s.method === "pair") {
+      const last = [...(await deps.chats.readMessages(d.branchId, { limit: WHOLE_BRANCH })).messages].reverse().find((m) => !m.cut && !m.hidden && m.role === "assistant");
+      if (!last) throw new SummaryFailure("There are no messages to summarize yet.");
+      if (take?.last === last.id) throw new SummaryFailure("The latest exchange is already in the summary.");
+      await pair(deps, d, take, last);
+    } else {
+      if ((await liveMessages(deps.chats, d.branchId)).said.length === 0) throw new SummaryFailure("There are no messages to summarize yet.");
+      await rolling(deps, d, take);
+    }
+    const wrote = await deps.chats.summaryOf(d.branchId);
+    if (!wrote || wrote.at === take?.at) throw new SummaryFailure("The summary model returned no text, so nothing was saved.");
+    await deps.chats.setSummaryError(chatId, null);
+    return wrote;
+  } catch (e) {
+    if (!(e instanceof SummaryFailure) && e instanceof StudioConflictError) throw new SummaryFailure("The summary changed while it was being written, so the new one was not saved. Try again.");
+    if (e instanceof Capacity) throw new SummaryFailure("The summary model could not take that much text. Lower the messages per summary or choose a model with a larger window.");
+    throw e;
+  } finally {
+    running.delete(chatId);
+  }
 }
 
 /**

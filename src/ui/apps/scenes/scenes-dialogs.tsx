@@ -24,7 +24,7 @@ export function RenameSceneDialog({ title, onCancel, onSave }: { title: string; 
   );
 }
 
-export function CutSceneDialog({ scenes, onCancel, onCut }: { scenes: SceneSummary[]; onCancel(): void; onCut(): void }): JSX.Element {
+export function CutSceneDialog({ scenes, onCancel, onCut }: { scenes: Pick<SceneSummary, "title">[]; onCancel(): void; onCut(): void }): JSX.Element {
   return (
     <InkDialog onDismiss={onCancel} ariaLabel="Cut this story">
       <div className="scn-cut">
@@ -66,7 +66,7 @@ export function DeleteFolderDialog({ name, onCancel, onDelete }: { name: string;
 }
 
 export function MoveToFolderDialog({ scene, folders, onCancel, onPick }: {
-  scene: SceneSummary;
+  scene: Pick<SceneSummary, "title" | "folderId">;
   folders: (SceneFolder & { count: number })[];
   onCancel(): void;
   onPick(folderId: string | null): void;

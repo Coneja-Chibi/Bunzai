@@ -10,7 +10,7 @@
  * licensed (`license:audit`).
  */
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type FocusEvent, type RefCallback } from "react";
-import { defaultRangeExtractor, useVirtualizer, type Range, type Virtualizer } from "@tanstack/react-virtual";
+import { defaultRangeExtractor, observeElementRect, useVirtualizer, type Range, type Virtualizer } from "@tanstack/react-virtual";
 
 export type { Range } from "@tanstack/react-virtual";
 
@@ -28,6 +28,7 @@ export function useVirtualRows<TScroll extends Element, TItem extends Element>(
     ...virtualizerOptions,
     overscan: virtualizerOptions.overscan ?? (mode === "variable" ? 4 : OVERSCAN),
     initialRect: virtualizerOptions.initialRect ?? FALLBACK_VIEWPORT,
+    observeElementRect: virtualizerOptions.observeElementRect ?? observeSizedRect,
   });
   const scrollElement = virtualizer.scrollElement;
   useEffect(() => () => { if (scrollElement) pendingTabs.get(scrollElement)?.(); }, [scrollElement]);
@@ -42,6 +43,10 @@ export const OVERSCAN = 6;
  * ResizeObserver has fired): keeps `useVirtualizer` from computing a zero-height visible range,
  * which would silently render nothing rather than the visible window a real browser would show. */
 export const FALLBACK_VIEWPORT = { width: 1024, height: 720 } as const;
+
+/** The scroller's own size, except that a box with no layout at all (a hidden panel, bun test's jsdom) reports the fallback window rather than a zero-height one that mounts no rows. */
+const observeSizedRect: typeof observeElementRect = (instance, cb) =>
+  observeElementRect(instance, (rect) => cb(rect.width === 0 && rect.height === 0 ? FALLBACK_VIEWPORT : rect));
 
 type OccurrenceRecord = { identity: string; key: string; instance?: object; replacementKey?: string };
 export type OccurrenceKeySet = { keys: string[]; indexOf: (key: string) => number };
@@ -172,6 +177,7 @@ export function useGridColumns(): { cols: number; gapPx: number; rowRef: RefCall
     };
     read();
     const cell = row.firstElementChild as HTMLElement | null;
+    if (typeof ResizeObserver === "undefined") return;
     const ro = new ResizeObserver(read);
     ro.observe(cell ?? row);
     return () => ro.disconnect();

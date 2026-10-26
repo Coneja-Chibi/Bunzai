@@ -9,6 +9,7 @@
 import type { JSX } from "react";
 import { Segmented } from "../../../components/button";
 import type { AppContext } from "../../../app-contract";
+import type { OpenScene } from "../../../../studio/scenes";
 import type { CharacterVariant } from "../../../../entities/character/schema";
 import { isPreviewablePortraitRef } from "../../../../core/media";
 import { useArtSrc, usePieceArtIdentity, usePortraitAsset } from "../../../_shared/art-cache";
@@ -22,16 +23,19 @@ import { pieceAccent } from "../../../../studio/summary";
 import { CastFooter, CastHero, CastPortrait, FormSection, LineField, ProseSection } from "./cast-parts";
 import { RatingSection, TagsSection } from "./cast-rating-tags";
 import { LorebooksSection } from "./cast-lorebooks";
+import { DefaultsSection } from "./cast-defaults";
 import type { CastEditor } from "./use-cast-editor";
 import { strArray } from "../../../../core/guards";
 
 type Body = Record<string, unknown>;
 
 /** The Character tab: the card's fields in RoleCall's order, the look strip, and the pinned Save. */
-export function CharacterForm({ ctx, id, chatId, editor, summary, art, version, variants, variantId, busy, onVariant }: {
+export function CharacterForm({ ctx, id, chatId, chat, editor, summary, art, version, variants, variantId, busy, onVariant }: {
   ctx: AppContext;
   id: string;
   chatId: string;
+  /** the open scene, for the backdrop and samplers a new-scene default can keep */
+  chat: Pick<OpenScene["chat"], "backdrop" | "preset" | "cast">;
   editor: CastEditor<Body>;
   summary: { version?: number; writeId?: number; revision?: string; hasPortrait?: boolean } | undefined;
   /** the accent stamped from the stored card's portrait (summary.ts artAccentOf): the colour an unsigned card wears */
@@ -120,6 +124,7 @@ export function CharacterForm({ ctx, id, chatId, editor, summary, art, version, 
             <RatingSection value={get("discovery.rating") || "all-ages"} onChange={set("discovery.rating")} />
             <TagsSection tags={tags} onChange={(next) => set("discovery.tags")(next)} />
             <LorebooksSection ctx={ctx} chatId={chatId} onOpenEditor={() => ctx.workbench.open({ id, kind: "character", name: name || "Unnamed Character" })} />
+            <DefaultsSection ctx={ctx} chat={chat} />
           </div>
           <CastFooter dirty={editor.dirty} saving={editor.saving} busy={busy} note={editor.note} what="card" saveLabel="Save Draft" onSave={() => void editor.save()} />
         </div>

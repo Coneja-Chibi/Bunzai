@@ -16,7 +16,7 @@ export function DocToc({ anchors, activeSlug, onJump }: DocTocProps): JSX.Elemen
   return (
     <aside className={styles.toc} aria-label="On this page" data-tour="toc">
       {flat.length > 0 && <div className={styles.tocHead}>On this page</div>}
-      {flat.map((anchor) => (
+      {flat.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (anchor) => (
         <ListRow
           key={`${anchor.slug}-${anchor.level}`}
           depth={anchor.level >= 3 ? 1 : 0}

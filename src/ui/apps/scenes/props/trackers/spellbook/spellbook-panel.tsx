@@ -14,7 +14,7 @@ import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { AddByModel, RefreshByModel } from "../items/generate-kit";
-import { Empty, Filters, ItemCard, Tabs, inner } from "../items/item-parts";
+import { Empty, Filters, ItemCard, ItemList, Tabs, inner } from "../items/item-parts";
 import { TrackerFrame } from "../tracker-frame";
 import { useTracker } from "../use-tracker";
 import { MASTERY_TONE, SpellDetail, TEMPLATE_ICON, TEMPLATE_NAME, TEMPLATE_TONE } from "./spell-detail";
@@ -113,7 +113,7 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
       {hasStats && r.maxMp > 0 && (
         <div className="sp-pool">
           <div><span style={{ color: "var(--stage-link)" }}><Ic name="lucide:droplet" size={14} /></span><div className="st-track thin" style={{ "--c": "var(--stage-link)" } as CSSProperties}><div style={{ width: `${Math.min(100, (r.mp / r.maxMp) * 100)}%` }} /></div><small>{r.mp}/{r.maxMp}</small></div>
-          {[...needs].filter((k) => r.needs[k]).map((k) => (
+          {[...needs].filter((k) => r.needs[k]).map(/* bounded-ok: fixed option / param / prop sets, chips and per-item detail */ (k) => (
             <div key={k}><span style={{ color: "var(--stage-warn)" }}><Ic name="lucide:flame" size={12} /></span><div className="st-track thin" style={{ "--c": "var(--stage-warn)" } as CSSProperties}><div style={{ width: `${Math.min(100, (r.needs[k]!.value / r.needs[k]!.maxValue) * 100)}%` }} /></div><small>{r.needs[k]!.label || k}: {r.needs[k]!.value}/{r.needs[k]!.maxValue}</small></div>
           ))}
         </div>
@@ -123,14 +123,13 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
         <Filters<Kind> options={KINDS} value={kind} onChange={setKind} icons={TEMPLATE_ICON} />
         {classes.length > 0 && <Filters<string> options={["all", ...classes]} value={cls} onChange={setCls} />}
         {shown.length > 0 ? (
-          <div className="it-list">
-            {shown.map((s) => {
+          <ItemList items={shown} render={(s) => {
               const rare = s.rarity ? RARITY_TONE[s.rarity] : ACCENT;
               const mastery = masteryOf(s);
               const cooling = (s.cooldownRemaining ?? 0) > 0;
               const here = feedback?.id === s.id ? feedback : null;
               return (
-                <ItemCard key={s.id} color={rare} mod={`${s.status === "observed" ? " observed" : ""}${s.status === "theoretical" ? " theory" : ""}`}
+                <ItemCard color={rare} mod={`${s.status === "observed" ? " observed" : ""}${s.status === "theoretical" ? " theory" : ""}`}
                   icon={<span style={{ color: TEMPLATE_TONE[s.template] }}><Ic name={TEMPLATE_ICON[s.template]} size={16} /></span>}
                   title={s.name}
                   chip={(
@@ -183,8 +182,7 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
                   <SpellDetail spell={s} tactical={tactical} />
                 </ItemCard>
               );
-            })}
-          </div>
+            }} />
         ) : <Empty icon="lucide:wand-sparkles" title="No spells known" hint={query ? "No results found" : "Spells will be discovered as the story progresses"} />}
         {note && <p className="it-error" role="alert">{note}</p>}
         <AddByModel<SpellMade> ctx={ctx} chatId={chat.id} ask={ASK} label="Add Spell" noun="spell" namePlaceholder="Spell name" guidePlaceholder="Guide the AI... (e.g., 'a fire attack spell')"

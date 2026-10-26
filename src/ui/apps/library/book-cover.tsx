@@ -30,10 +30,10 @@ export function BookCoverDialog({ title, initial, onSave, onDismiss }: {
       <BookCover title={title} choice={choice} />
       <div className={styles.fields}>
         <label>Illustration<select value={choice.design} onChange={(e) => setChoice({ ...choice, design: e.target.value })}>
-          {coverDesigns.map((a) => <option key={a.slug} value={a.slug}>{a.label}</option>)}
+          {coverDesigns.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (a) => <option key={a.slug} value={a.slug}>{a.label}</option>)}
         </select></label>
         <label>Painted paper<select value={choice.background} onChange={(e) => setChoice({ ...choice, background: e.target.value })}>
-          {coverBackgrounds.map((a) => <option key={a.slug} value={a.slug}>{a.label}</option>)}
+          {coverBackgrounds.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (a) => <option key={a.slug} value={a.slug}>{a.label}</option>)}
         </select></label>
         <label>Cover title<input maxLength={120} value={choice.title ?? ""} placeholder={title}
           onChange={(e) => setChoice({ ...choice, title: e.target.value })} /></label>

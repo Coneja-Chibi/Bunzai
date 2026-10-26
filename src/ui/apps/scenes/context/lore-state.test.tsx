@@ -197,6 +197,15 @@ describe("Lore", () => {
     expect(m.host.textContent).toContain("No matching entries");
     m.done();
   });
+  test("500 injected entries mount fewer than 60 rows", async () => {
+    const injected = Array.from({ length: 500 }, (_, i) => ({ bookId: "b1", entryId: `e${String(i)}`, bookName: "The Book", title: `Entry ${String(i)}`, reason: "key" as const, matched: ["k"], tokens: 1, place: "World", loop: 0 }));
+    const m = await mount(ready(trace({ lore: { ...trace().lore!, injected } })));
+    await click(tab(m.host, "Lore"));
+    const rows = m.host.querySelectorAll(".ls-list .ls-node.lore").length;
+    expect(rows).toBeGreaterThan(0);
+    expect(rows).toBeLessThan(60);
+    m.done();
+  });
   test("a reply no lorebook touched says so in RoleCall's words", async () => {
     const m = await mount(ready(trace({ lore: null })));
     await click(tab(m.host, "Lore"));
@@ -323,6 +332,30 @@ describe("a variable's history", () => {
     m = await mount(ready(trace()), { getSceneVariableHistory: async () => { throw new Error("trace unreadable"); } });
     await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("mood")));
     expect(m.host.textContent).toContain("trace unreadable");
+    m.done();
+  });
+});
+
+describe("long traces are windowed", () => {
+  const rowsIn = (m: { host: HTMLElement }, sel: string): number => { const n = m.host.querySelectorAll(sel).length; expect(n).toBeGreaterThan(0); return n; };
+  test("500 macros mount fewer than 60 rows", async () => {
+    const used = Array.from({ length: 500 }, (_, i) => ({ name: `m${String(i)}`, count: 1, tokens: 1, example: `{{m${String(i)}}}`, value: "v" }));
+    const m = await mount(ready(trace({ macros: { ...macros, used } })));
+    await click(tab(m.host, "Macros"));
+    expect(rowsIn(m, ".ls-macro")).toBeLessThan(60);
+    m.done();
+  });
+  test("500 variables mount fewer than 60 rows", async () => {
+    const local = Array.from({ length: 500 }, (_, i) => ({ key: `k${String(i)}`, value: i, createdAt: 1, updatedAt: 2 }));
+    const m = await mount(ready(trace()), { getSceneVariables: async () => ({ local, global: [] }) });
+    expect(rowsIn(m, ".ls-list [data-control=disclosure]")).toBeLessThan(60);
+    m.done();
+  });
+  test("500 request blocks mount fewer than 60 sections in Compose", async () => {
+    const blocks = Array.from({ length: 500 }, (_, i) => ({ kind: "history" as const, label: `Message ${String(i)}`, role: "user" as const, tokens: 1, category: "history" as const, text: "x" }));
+    const m = await mount(ready(trace({ blocks })));
+    await click(tab(m.host, "Compose"));
+    expect(rowsIn(m, ".ls-sec")).toBeLessThan(60);
     m.done();
   });
 });

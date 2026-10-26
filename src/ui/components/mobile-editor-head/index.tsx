@@ -57,7 +57,7 @@ export function MobileEditorHead({ name, sub, dirty, saving, onBack, onSave, men
         <IconButton size="sm" icon="lucide:ellipsis-vertical" label="More actions" aria-expanded={open} onClick={() => setOpen((p) => !p)} />
         {open && (
           <div className={styles.menu} role="menu">
-            {menu.map((item) => (
+            {menu.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (item) => (
               <MenuItem
                 key={item.label}
                 disabled={item.disabled === true}

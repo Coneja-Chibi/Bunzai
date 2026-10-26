@@ -59,7 +59,7 @@ export function TemplatesSection({ body, text, query }: { body: PresetBody; text
         summary={`${entries.filter((e) => e.content.trim()).length}/${entries.length}`} />
       {open && (
         <div className="tpl-list">
-          {shown.length === 0 ? <p className="tpl-none">No templates match search</p> : shown.map((e) => <SystemPromptItem key={e.key} field={e.key} body={body} text={text} />)}
+          {shown.length === 0 ? <p className="tpl-none">No templates match search</p> : shown.map(/* bounded-ok: the fixed set of system prompt templates */ (e) => <SystemPromptItem key={e.key} field={e.key} body={body} text={text} />)}
         </div>
       )}
     </div>

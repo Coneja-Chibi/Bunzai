@@ -81,7 +81,7 @@ export function GateCard({
       {warnings.length > 0 && (
         <ul className="gate-card__warnings">
           {/* In full, and above the detail. These are the reasons to say no. */}
-          {warnings.map((w, i) => <li key={`w${String(i)}`}>{w}</li>)}
+          {warnings.map(/* bounded-ok: single message / fixed menu or glyph parts */ (w, i) => <li key={`w${String(i)}`}>{w}</li>)}
         </ul>
       )}
 

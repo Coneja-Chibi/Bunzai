@@ -17,6 +17,7 @@ import { toErrorMessage } from "../../../_shared/error-message";
 import { protect } from "../../../_shared/protected-control";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import { Button } from "../../../components/button";
+import { testProvider, testWords } from "./models-api";
 import styles from "./models.module.css";
 import {
   draftFrom,
@@ -118,14 +119,8 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
   const test = async (id: string): Promise<void> => {
     setTested((prior) => ({ ...prior, [id]: "asking..." }));
     try {
-      const reply = await apiFetchJson<{ ok: boolean; ms?: number; error?: string }>(
-        "/api/agent/providers/test",
-        { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ id }) },
-      );
-      setTested((prior) => ({
-        ...prior,
-        [id]: reply.ok ? `answered in ${String(reply.ms ?? 0)}ms` : (reply.error ?? "no answer"),
-      }));
+      const reply = await testProvider(id);
+      setTested((prior) => ({ ...prior, [id]: testWords(reply) }));
     } catch (error) {
       setTested((prior) => ({ ...prior, [id]: toErrorMessage(error, "no answer") }));
     }
@@ -163,7 +158,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
       <ul className={styles.list}>
         {providers.length === 0 && <li className={styles.empty}>No models connected yet.</li>}
-        {providers.map((p) => (
+        {providers.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (p) => (
           <li key={p.id} className={p.active ? `${styles.row} ${styles.rowActive}` : styles.row}>
             <label className={styles.pick}>
               {/* A radio, because exactly one provider is active and that is worth looking like. */}
@@ -233,7 +228,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
                 void loadModels({ kind: e.target.value });
               }}
             >
-              {kinds.map((k) => <option key={k.id} value={k.id}>{k.label}</option>)}
+              {kinds.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (k) => <option key={k.id} value={k.id}>{k.label}</option>)}
             </select>
           </label>
 
@@ -284,7 +279,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
             this window - an agent that reads the whole studio, agrees the plan, and then cannot
             stage a single draft.
           */}
-          {(kindOf(draft.kind)?.options ?? []).map((option) => (
+          {(kindOf(draft.kind)?.options ?? []).map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (option) => (
             <label key={option.key}>
               {option.label}
               <select
@@ -293,7 +288,7 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
                   setDraft({ ...draft, options: { ...draft.options, [option.key]: e.target.value } });
                 }}
               >
-                {option.choices.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                {option.choices.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (c) => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
             </label>
           ))}

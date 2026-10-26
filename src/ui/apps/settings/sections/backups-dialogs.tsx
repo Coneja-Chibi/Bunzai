@@ -78,7 +78,7 @@ export function RestoreDialog({ copy, onClose, onUndo }: { copy: Copy; onClose: 
         <Direction>Your whole library goes back to how it was in this copy. Your password, your lines, and the computers that can open it stay exactly as they are.</Direction>
         {step.preview ? (
           <div className={styles.card}>
-            {previewRows(step.preview).map((row) => (
+            {previewRows(step.preview).map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (row) => (
               <div className={styles.pc} key={row.name}>
                 <div>
                   <div className={styles.pcName}>{row.name}</div>

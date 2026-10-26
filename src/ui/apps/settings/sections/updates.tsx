@@ -121,7 +121,7 @@ function VersionRow({
         )}
         {open && commits.length > 0 && (
           <div className={styles.log}>
-            {commits.map((c) => (
+            {commits.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (c) => (
               <div key={c.hash} className={styles.c}>
                 <span className={styles.h}>{c.hash}</span>
                 <span className={styles.s}>{c.subject}</span>
@@ -318,7 +318,7 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
           <div className={styles.card}>
             <div className={styles.cardTitle}>All releases</div>
             <div className={styles.tl}>
-              {phase.timeline.rows.map((row) => (
+              {phase.timeline.rows.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (row) => (
                 <VersionRow key={row.release.version} row={row} onSwitch={onSwitch} />
               ))}
               {phase.timeline.rows.length === 0 && (

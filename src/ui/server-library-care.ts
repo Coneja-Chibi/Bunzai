@@ -8,7 +8,11 @@
  * A scan is a job the screen polls (one per open library): it can take seconds, and the person can stop
  * it. Findings stay here; the screen gets words and an id, and names the finding it wants repaired.
  */
+import { mkdirSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { hasErrorName } from "../core/guards";
+import { ExportRefusedError, exportLibraryToFolder } from "../studio/folder-export";
+import { libraryFor } from "../studio/library-content";
 import type { OpenedLibrary } from "./library-root";
 import { err, json, readJsonObject } from "./server-security";
 
@@ -99,7 +103,39 @@ function snapshotFailure(e: unknown): Response | null {
   return json({ error: e.message, code: typeof code === "string" ? code : "failed" }, code === "missing" || code === "foreign" || code === "busy" ? 409 : 503);
 }
 
-export async function handleCareRoutes(sub: string, req: Request, library: OpenedLibrary, isUnlocked: () => Promise<boolean>): Promise<Response | null> {
+const exporting = new WeakSet<OpenedLibrary>();
+const stamp = (d: Date): string => d.toISOString().slice(0, 19).replace("T", " ").replace(/:/g, "-");
+
+/**
+ * Writes the whole library as a plain folder (the CLI's own export core) into "Bunraku exports", a folder beside the
+ * studio folder: the exporter refuses a destination inside the studio, and the client names no path, so the target
+ * is always `<parent of studio>/Bunraku exports/Library export <date time>`. One export at a time.
+ */
+async function exportWholeLibrary(library: OpenedLibrary, studioDir: string): Promise<Response> {
+  const stores = libraryFor(studioDir);
+  if (!stores) return err("the library is locked", 423);
+  if (exporting.has(library)) return err("an export is already running", 409);
+  exporting.add(library);
+  try {
+    const root = join(dirname(studioDir), "Bunraku exports");
+    mkdirSync(root, { recursive: true });
+    const r = await exportLibraryToFolder(join(root, `Library export ${stamp(new Date())}`), stores, { studioDir });
+    return json({ ok: true, folder: r.folder, pieces: r.pieces, documents: r.documents, damaged: r.damaged.length, droppedFromCollections: r.droppedFromCollections });
+  } catch (e) {
+    if (e instanceof ExportRefusedError) return err(`nothing was exported: ${e.message}`, 409);
+    throw e;
+  } finally {
+    exporting.delete(library);
+  }
+}
+
+export async function handleCareRoutes(
+  sub: string,
+  req: Request,
+  library: OpenedLibrary,
+  isUnlocked: () => Promise<boolean>,
+  studioDir?: string,
+): Promise<Response | null> {
   if (sub === "backups" && req.method === "GET") {
     const status = library.snapshots.status();
     return json({ unlocked: await isUnlocked(), snapshots: library.snapshots.list(), ...status });
@@ -109,6 +145,7 @@ export async function handleCareRoutes(sub: string, req: Request, library: Opene
     return err("the library is locked", 423);
   }
   if (sub === "health/scan" && req.method === "GET") return json(jobView(library));
+  if (sub === "export" && req.method === "POST" && studioDir) return exportWholeLibrary(library, studioDir);
   if (req.method !== "POST" || !(sub.startsWith("backups/") || sub.startsWith("health/"))) return null;
 
   const parsed = await readJsonObject(req);

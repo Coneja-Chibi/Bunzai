@@ -2,11 +2,11 @@
   "generated": "2026-10-26",
   "targetChars": 90000,
   "totalPages": 119,
-  "totalSourceChars": 1455123,
+  "totalSourceChars": 1475351,
   "batches": [
     {
       "id": "batch-001",
-      "sourceChars": 85319,
+      "sourceChars": 85520,
       "pages": [
         {
           "docId": "01-VISION",
@@ -29,7 +29,7 @@
           "sourcePath": "docs/03-CONVENTIONS.md",
           "sidecarPath": "docs/summaries/03-CONVENTIONS.json",
           "sectionCount": 6,
-          "sourceChars": 4889,
+          "sourceChars": 5090,
           "status": "APPROVED"
         },
         {
@@ -382,14 +382,14 @@
     },
     {
       "id": "batch-005",
-      "sourceChars": 134665,
+      "sourceChars": 153924,
       "pages": [
         {
           "docId": "reference/components",
           "sourcePath": "docs/reference/components.md",
           "sidecarPath": "docs/summaries/reference/components.json",
           "sectionCount": 3,
-          "sourceChars": 134665,
+          "sourceChars": 153924,
           "status": "APPROVED"
         }
       ]
@@ -1032,14 +1032,14 @@
     },
     {
       "id": "batch-016",
-      "sourceChars": 251294,
+      "sourceChars": 252062,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 33,
-          "sourceChars": 251294,
+          "sourceChars": 252062,
           "status": "APPROVED"
         }
       ]

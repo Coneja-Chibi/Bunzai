@@ -15,7 +15,7 @@ export const toneVar = (t: Tone): CSSProperties => ({ "--c": TONE[t] } as CSSPro
 export function StatRow({ tiles }: { tiles: readonly { label: string; value: ReactNode; tone: Tone }[] }): JSX.Element {
   return (
     <div className="sb-stats" style={{ gridTemplateColumns: `repeat(${Math.min(tiles.length, 6)},minmax(0,1fr))` }} data-part="compendium.dossier.stats">
-      {tiles.map((t) => <div className="sb-stat" key={t.label} style={toneVar(t.tone)}><small>{t.label}</small><b>{t.value}</b></div>)}
+      {tiles.map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (t) => <div className="sb-stat" key={t.label} style={toneVar(t.tone)}><small>{t.label}</small><b>{t.value}</b></div>)}
     </div>
   );
 }
@@ -49,7 +49,7 @@ export const Empty = ({ children }: { children: ReactNode }): JSX.Element => <p 
 
 /** RoleCall's marker colouring for the preview (AIContextPanel.tsx:renderAiContextText): [BRACKETS] and {slugs} are set apart. */
 function Colored({ text }: { text: string }): JSX.Element {
-  return <>{text.split(/(\[[^\]\n]+\]|\{[^}\n]+\})/g).map((part, i) => (
+  return <>{text.split(/(\[[^\]\n]+\]|\{[^}\n]+\})/g).map(/* bounded-ok: fields of one entry card, one run's summary, or capped by a SHOWN/LIMIT constant */ (part, i) => (
     <Fragment key={i}>{/^\[[^\]\n]+\]$/.test(part) ? <span className="sb-mark">{part}</span> : /^\{[^}\n]+\}$/.test(part) ? <span className="sb-slug">{part}</span> : part}</Fragment>
   ))}</>;
 }

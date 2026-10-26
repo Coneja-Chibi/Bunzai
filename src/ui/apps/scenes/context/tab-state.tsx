@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import { Chip, Disclosure, IconButton } from "../../../components/button";
 import type { AppContext } from "../../../app-contract";
 import type { SceneTrace, SceneVariable } from "../../../app-contract-scenes";
@@ -24,6 +25,8 @@ const rowsOf = (local: readonly SceneVariable[], global: readonly SceneVariable[
   const lib = global.map((v): Row => ({ id: `global:${v.key}`, scope: "global", display: v.key, stored: v.key, value: v.value, updatedAt: v.updatedAt }));
   return [...mine, ...lib].sort((a, b) => ORDER.indexOf(a.scope) - ORDER.indexOf(b.scope) || a.display.localeCompare(b.display));
 };
+
+const ROW_ESTIMATE_PX = 40;
 
 type Load = { state: "loading" } | { state: "failed"; why: string } | { state: "ready"; rows: Row[] };
 
@@ -67,7 +70,7 @@ export function StateTab({ ctx, chatId, version, trace }: { ctx: AppContext; cha
       {report && panel === "mutations" && (
         <div className="ls-merrs">
           {report.mutations.length === 0 && <p className="ls-meta">The last request changed no variable.</p>}
-          {report.mutations.map((m, i) => <p className="ls-mut" key={i}><span className="ls-scope">{m.scope}</span><code>{m.key}</code><span>{m.deleted ? "deleted" : previewInspectorValue(m.value, 80)}</span>{m.cause && <small>{m.cause}</small>}</p>)}
+          {report.mutations.map(/* bounded-ok: per-turn bounded detail lines */ (m, i) => <p className="ls-mut" key={i}><span className="ls-scope">{m.scope}</span><code>{m.key}</code><span>{m.deleted ? "deleted" : previewInspectorValue(m.value, 80)}</span>{m.cause && <small>{m.cause}</small>}</p>)}
         </div>
       )}
       {report && panel === "errors" && (report.errors.length === 0 ? <div className="ls-merrs"><p className="ls-meta">No macro failed in the last request.</p></div> : <MacroErrors errors={report.errors} />)}
@@ -78,8 +81,8 @@ export function StateTab({ ctx, chatId, version, trace }: { ctx: AppContext; cha
       <div className="ls-list">
         {load.state === "failed" && <p className="ls-err" role="alert"><Ic name="lucide:triangle-alert" size={14} />{load.why}</p>}
         {load.state === "ready" && shown.length === 0 && <div className="ls-none"><Ic name="lucide:info" size={24} /><p>No variables{q ? " match the search" : " set yet"}</p><small>{"{{state.set::session:key::value}}"} and {"{{setvar}}"} state appears here</small></div>}
-        {shown.map((r) => (
-          <div key={r.id}>
+        <VirtualRows items={shown} keyOf={(r) => r.id} estimate={ROW_ESTIMATE_PX} render={(r) => (
+          <div>
             <Disclosure open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)}
               leading={<span className="ls-scope" style={{ "--c": `var(${TONE[r.scope]})` } as CSSProperties}>{r.scope}</span>}
               label={<code>{r.display}</code>} summary={<span className="ls-val">{previewInspectorValue(r.value)}</span>} />
@@ -95,7 +98,7 @@ export function StateTab({ ctx, chatId, version, trace }: { ctx: AppContext; cha
               </div>
             )}
           </div>
-        ))}
+        )} />
       </div>
     </div>
   );

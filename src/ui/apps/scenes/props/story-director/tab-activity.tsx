@@ -8,6 +8,9 @@ import { Ic } from "../../../../_shared/ic";
 import type { DirectorActivity } from "../../../../../stage/contracts/director-types";
 import { ACTIVITY_FILTERS, activityNewestFirst, type ActivityFilter } from "./director-core";
 import { ActivityLine } from "./director-parts";
+import { VirtualRows } from "../../../../_shared/virtual-list";
+
+const LINE_ROW_PX = 44;
 
 export function ActivityTab({ entries, now, onClear, locked }: { entries: readonly DirectorActivity[]; now: number; onClear(): void; locked: boolean }): JSX.Element {
   const [filter, setFilter] = useState<ActivityFilter>("all");
@@ -25,7 +28,7 @@ export function ActivityTab({ entries, now, onClear, locked }: { entries: readon
       {shown.length === 0 ? (
         <div className="dr-quiet short"><Ic name="lucide:activity" size={32} /><p>No activity yet</p><small>Send a message to see DM activity</small></div>
       ) : (
-        <div className="dr-feed">{shown.map((e) => <ActivityLine key={e.id} entry={e} now={now} open={open === e.id} onToggle={() => setOpen(open === e.id ? null : e.id)} />)}</div>
+        <div className="dr-feed"><VirtualRows items={shown} keyOf={(e) => e.id} estimate={LINE_ROW_PX} render={(e) => <ActivityLine entry={e} now={now} open={open === e.id} onToggle={() => setOpen(open === e.id ? null : e.id)} />} /></div>
       )}
     </div>
   );

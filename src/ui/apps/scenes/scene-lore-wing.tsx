@@ -9,207 +9,214 @@
  * once, then saves as a send-only-changed patch: the entry that changed, or the swapped pair for
  * Move, never the book. Typed edits wait two seconds after the last keystroke and flush when the
  * entry or the wing closes; the row menu's actions and "New entry" save straight away. They all share
- * one queue and the book's revision, so a fast second action is never lost and a 409 reloads the
+ * one queue and the book's revision (one session per book, lore-book-sessions.ts, so books shown together never share either), so a fast second action is never lost and a 409 reloads the
  * book. A typed edit is saved as an autosave; a delete, move, toggle or add is a manual save, so the
  * library keeps a version to recover from. The server routes are D4's; this wing never writes to src/core.
  */
 import { useCallback, useEffect, useMemo, useRef, useState, type JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
-import type { LorebookBody, LorebookEntry } from "../../../entities/lorebook/schema";
-import type { ParsedCanonicalEntity } from "../../../entities/runtime-schema";
+import type { LorebookEntry } from "../../../entities/lorebook/schema";
 import type { Chat } from "../../../stage/contracts/chat-store";
 import { emptyLoreEntry } from "../../../core/lore";
-import { ApiHttpError } from "../../_shared/api-fetch";
 import { createLorebook } from "../../_shared/create-lorebook";
-import { buildPiecePatch } from "../../_shared/editor-patch";
 import { Ic } from "../../_shared/ic";
 import { newUiId } from "../../_shared/new-id";
 import { toErrorMessage } from "../../_shared/error-message";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
-import type { AsyncState } from "../../_shared/async-state";
 import type { SceneLoreBook } from "../../app-contract-scenes";
 import { entryTokens, groupNamesOf, moveEntry, nextSortOrder, statLine } from "./lore-core";
 import { useSceneLore } from "./use-scene-lore";
+import { createLoreBookSessions, type LoreBookSessions, type LoreBookState } from "./lore-book-sessions";
 import { AddPopover, BookList, LibraryPicker, LoreHeader, PickHint } from "./scene-lore-books";
 import { DeleteEntryDialog, DetailHint, EntriesPanel } from "./scene-lore-entries";
 import { EntryEditor } from "./scene-lore-entry";
 import { IconButton } from "../../components/button";
 
-type Entity = { kind: string; id: string; body: LorebookBody };
-type Ready = { entity: Entity; revision: string };
-type BookState = AsyncState<Ready, { state: "none" } | { state: "gone" }>;
 type Note = { kind: "saved" | "stale" | "failed"; text: string };
-type Intent = "manual" | "autosave";
 const ADV_KEY = "scenes.loreAdvanced";
+type EntryPick = { id: string; bookId: string | null };
+type DeleteTarget = { id: string; bookId: string };
+const NOT_LOADED: LoreBookState = { state: "none" };
 
-export function LoreWing({ ctx, chat, characterName, onLore }: {
-  ctx: AppContext;
-  chat: Chat;
-  /** The scene's cast character name, as the Cast wing reads it, for the "From <name>" line. */
-  characterName: string;
-  onLore(books: SceneLoreBook[] | null): void;
-}): JSX.Element {
+/** The Lorebook wing's whole behavior: the scene's books, each shown book's own session (load, accepted base, save queue), the entry writers. The Messenger's Lorebooks panel calls this same hook, so both layouts share one writer. */
+export function useLoreWing(ctx: AppContext, chat: Chat, onLore: (books: SceneLoreBook[] | null) => void) {
   const [selectedBookId, setSelectedBookId] = useState<string | null>(null);
-  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
-  const [bookLoaded, setBookLoaded] = useState<BookState>({ state: "none" });
+  const [entrySel, setEntrySel] = useState<EntryPick | null>(null);
+  const [states, setStates] = useState<Record<string, LoreBookState>>({});
+  /** Books the Messenger list shows all at once; Full Chat leaves it empty and shows only the selected book. */
+  const [retained, setRetained] = useState<string[]>([]);
   const [entryQuery, setEntryQuery] = useState("");
   const [entryNote, setEntryNote] = useState<Note | null>(null);
   const [picking, setPicking] = useState<"none" | "pane" | "popover">("none");
-  const [deleteEntryId, setDeleteEntryId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
   const [library, setLibrary] = useState<StudioEntitySummary[] | null>(null);
   const [advancedOpen, setAdvancedOpen] = useState(() => ctx.prefs.get(ADV_KEY) === true);
   const [saving, setSaving] = useState(0);
 
-  const root = useRef<HTMLDivElement>(null);
   const api = useRef(ctx.api);
   api.current = ctx.api;
   const setStatus = useRef(ctx.setStatus);
   setStatus.current = ctx.setStatus;
   const onLoreRef = useRef(onLore);
   onLoreRef.current = onLore;
+  const selectedRef = useRef(selectedBookId);
+  selectedRef.current = selectedBookId;
+  const multiRef = useRef(false);
+  multiRef.current = retained.length > 0;
   const mounted = useRef(true);
-  useEffect(() => () => { mounted.current = false; }, []);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
-  const bookGeneration = useRef(0);
-  const current = useRef<Ready | null>(null);
-  /** What the library last accepted: the base every save's patch is measured against, so only what changed travels. */
-  const accepted = useRef<Entity | null>(null);
-  const entrySaveQueue = useRef(Promise.resolve());
+  /** One session per shown book: no two books share a load, a revision, an accepted base or a save queue. */
+  const sessionsRef = useRef<LoreBookSessions | null>(null);
+  sessionsRef.current ??= createLoreBookSessions({
+    api: () => api.current,
+    alive: () => mounted.current,
+    onState: (id, state) => setStates((prev) => ({ ...prev, [id]: state })),
+    onSaving: (delta) => setSaving((n) => n + delta),
+    onStale: () => setEntryNote({ kind: "stale", text: "This book changed somewhere else first, so the edit was not saved. The latest entry is loaded; edit it again to save." }),
+    onError: (_id, message) => setStatus.current(`the change was not saved: ${message}`),
+  });
+  const sessions = sessionsRef.current;
 
   // -- loading the scene's lore -------------------------------------------------------------------
 
   const { lore, reload: loadLore, toggle, remove: removeFromScene, add } = useSceneLore(ctx, chat.id);
   useEffect(() => { onLoreRef.current(lore.state === "ready" ? lore.books : null); }, [lore]);
 
-  // -- the open book's entries ----------------------------------------------------------------------
+  // -- the shown books' entries ----------------------------------------------------------------------
 
-  const loadBook = useCallback(async (id: string | null) => {
-    const mine = ++bookGeneration.current;
-    current.current = null;
-    accepted.current = null;
-    if (!id) return setBookLoaded({ state: "none" });
-    setBookLoaded({ state: "loading" });
-    try {
-      const found = await api.current.getLightEditableEntity(`kind=lorebook&id=${encodeURIComponent(id)}`);
-      if (mine !== bookGeneration.current) return;
-      const entity = found.entity as Entity;
-      if (entity?.kind !== "lorebook") return setBookLoaded({ state: "gone" });
-      current.current = { entity, revision: found.revision };
-      accepted.current = entity;
-      setBookLoaded({ state: "ready", ...current.current });
-    } catch (e) {
-      if (mine !== bookGeneration.current) return;
-      setBookLoaded(e instanceof ApiHttpError && e.status === 404 ? { state: "gone" } : { state: "failed", why: toErrorMessage(e, "the book could not be read") });
-    }
+  const retain = useCallback((ids: readonly string[]): void => {
+    setRetained((prev) => (prev.length === ids.length && prev.every((id, i) => id === ids[i]) ? prev : [...ids]));
   }, []);
+  const retainedKey = retained.join("\n");
   useEffect(() => {
-    void loadBook(selectedBookId);
-    setSelectedEntryId(null);
+    const keep = new Set(retained);
+    if (selectedBookId) keep.add(selectedBookId);
+    for (const id of keep) {
+      const session = sessions.ensure(id);
+      const at = session.state().state;
+      if (at === "none" || at === "failed") void session.load();
+    }
+    const left = sessions.ids().filter((id) => !keep.has(id));
+    if (left.length === 0) return;
+    entrySaver.flush();
+    for (const id of left) sessions.drop(id);
+    void sessions.idle().then(() => {
+      if (!mounted.current) return;
+      const held = new Set(sessions.ids());
+      setStates((prev) => Object.fromEntries(Object.entries(prev).filter(([id]) => held.has(id))));
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `retained` is read through its key; sessions and entrySaver are stable
+  }, [selectedBookId, retainedKey]);
+  useEffect(() => {
+    setEntrySel((s) => (s && s.bookId !== selectedBookId ? null : s));
+    if (multiRef.current) return;
     setEntryQuery("");
     setEntryNote(null);
-  }, [selectedBookId, loadBook]);
+  }, [selectedBookId]);
 
-  // The one save queue: a debounced typed edit and every immediate action go through it. Each save is
-  // sent for whatever `current.current` holds at ITS OWN turn (read fresh right before the request), so a
-  // second action queued while the first is in flight is never lost: it was already folded into
-  // `current.current` before its own save was queued, and a save's response only advances the revision.
-  const queueEntitySave = useCallback((gen: number, intent: Intent, onSaved?: (entity: Entity) => void, onFailed?: (message: string) => void) => {
-    setSaving((n) => n + 1);
-    entrySaveQueue.current = entrySaveQueue.current.then(async () => {
-      try {
-        // Typed or clicked against a load the wing has since replaced: saving it would overwrite what came in.
-        if (gen !== bookGeneration.current) return;
-        const cur = current.current;
-        const base = accepted.current;
-        if (!cur || !base) return;
-        // Only what differs from the accepted copy travels: one entry, or the swapped pair, never the book.
-        const patch = buildPiecePatch(base as unknown as ParsedCanonicalEntity, cur.entity as unknown as ParsedCanonicalEntity);
-        if (!patch.items && !patch.order) return; // nothing differs (typed back to what it was): nothing to save
-        const saved = await api.current.patchEditedEntity("lorebook", cur.entity.id, cur.revision, patch, undefined, intent);
-        if (!mounted.current || gen !== bookGeneration.current) return;
-        accepted.current = cur.entity;
-        current.current = { entity: current.current!.entity, revision: saved.revision };
-        setBookLoaded({ state: "ready", ...current.current });
-        onSaved?.(cur.entity);
-      } catch (e) {
-        if (!mounted.current) return;
-        if (e instanceof ApiHttpError && e.status === 409) {
-          if (gen !== bookGeneration.current) return;
-          await loadBook(selectedBookId);
-          setEntryNote({ kind: "stale", text: "This book changed somewhere else first, so the edit was not saved. The latest entry is loaded; edit it again to save." });
-        } else {
-          const message = toErrorMessage(e, "the library refused it");
-          if (onFailed) onFailed(message);
-          else setStatus.current(`the change was not saved: ${message}`);
-        }
-      } finally {
-        if (mounted.current) setSaving((n) => n - 1);
-      }
-    });
-  }, [loadBook, selectedBookId]);
-
-  /** Applies a change to the loaded book at once (the dirty check is the patch itself: an unchanged entry sends nothing). */
-  const applyNow = useCallback((mutate: (entries: LorebookEntry[]) => LorebookEntry[]): boolean => {
-    const cur = current.current;
-    if (!cur) return false;
-    const nextEntries = mutate(cur.entity.body.entries);
-    if (nextEntries === cur.entity.body.entries) return false;
-    current.current = { entity: { ...cur.entity, body: { ...cur.entity.body, entries: nextEntries } }, revision: cur.revision };
-    setBookLoaded({ state: "ready", ...current.current });
-    return true;
+  const bookLoaded: LoreBookState = (selectedBookId && states[selectedBookId]) || NOT_LOADED;
+  const stateOf = useCallback((bookId: string | null): LoreBookState => (bookId && states[bookId]) || NOT_LOADED, [states]);
+  const entriesOf = useCallback((bookId: string | null): LorebookEntry[] | null => {
+    const s = stateOf(bookId);
+    return s.state === "ready" ? s.entity.body.entries : null;
+  }, [stateOf]);
+  const selectedEntryId = entrySel && entrySel.bookId === selectedBookId ? entrySel.id : null;
+  const setSelectedEntryId = useCallback((id: string | null): void => setEntrySel(id ? { id, bookId: selectedRef.current } : null), []);
+  /** Opens one entry of one book (the list's rows): the book becomes the open one without reloading it. */
+  const selectEntryIn = useCallback((bookId: string, id: string): void => {
+    setSelectedBookId(bookId);
+    setEntrySel({ id, bookId });
   }, []);
-  const applyEntries = useCallback((mutate: (entries: LorebookEntry[]) => LorebookEntry[]): void => {
-    if (applyNow(mutate)) queueEntitySave(bookGeneration.current, "manual");
-  }, [applyNow, queueEntitySave]);
 
-  /** A typed edit is saved two seconds after the last keystroke, and when the wing closes with one still waiting. */
-  const entrySaver = useDebouncedSave<number>((gen) => {
-    if (gen !== bookGeneration.current) return;
-    queueEntitySave(gen, "autosave",
-      (entity) => setEntryNote({ kind: "saved", text: `Saved to ${entity.body.name}. Every scene reading this book uses the new text from its next turn.` }),
-      (message) => setEntryNote({ kind: "failed", text: `The edit was not saved: ${message}. It is still here to try again.` }));
+  /** Applies a change to a loaded book at once, then queues its own manual save (the dirty check is the patch itself: an unchanged entry sends nothing). */
+  const applyEntries = useCallback((bookId: string | null, mutate: (entries: LorebookEntry[]) => LorebookEntry[]): void => {
+    const session = bookId ? sessions.get(bookId) : undefined;
+    if (session?.apply(mutate)) session.save(session.generation(), "manual");
+  }, [sessions]);
+
+  /** A typed edit is saved two seconds after the last keystroke, and when the wing closes with one still waiting. Every book edited since the last save goes in its own queue. */
+  const dirty = useRef(new Map<string, number>());
+  const entrySaver = useDebouncedSave<string>(() => {
+    const todo = [...dirty.current];
+    dirty.current.clear();
+    for (const [bookId, gen] of todo) {
+      const session = sessions.get(bookId);
+      if (!session || gen !== session.generation()) continue;
+      session.save(gen, "autosave", {
+        onSaved: (entity) => setEntryNote({ kind: "saved", text: `Saved to ${entity.body.name}. Every scene reading this book uses the new text from its next turn.` }),
+        onFailed: (message) => setEntryNote({ kind: "failed", text: `The edit was not saved: ${message}. It is still here to try again.` }),
+      });
+    }
   }, 2000);
 
-  const editEntry = (id: string, patch: Partial<LorebookEntry>): void => {
-    if (!applyNow((entries) => entries.map((e) => (e.id === id ? { ...e, ...patch } : e)))) return;
+  const editEntry = (id: string, patch: Partial<LorebookEntry>, bookId: string | null = selectedRef.current): void => {
+    const session = bookId ? sessions.get(bookId) : undefined;
+    if (!bookId || !session?.apply((entries) => entries.map((e) => (e.id === id ? { ...e, ...patch } : e)))) return;
     setEntryNote(null);
-    entrySaver.push(bookGeneration.current);
+    dirty.current.set(bookId, session.generation());
+    entrySaver.push(bookId);
   };
 
   // -- the row "..." menu and "New entry" -----------------------------------------------------------
 
-  const addEntry = (): void => {
-    const cur = current.current;
-    if (!cur) return;
+  const addEntryTo = (bookId: string): void => {
+    const cur = stateOf(bookId);
+    if (cur.state !== "ready") return;
     const id = newUiId("entry_");
     // RoleCall's createEntry: "New Entry", selective, no keys, injected at depth 4.
     const fresh: LorebookEntry = { ...emptyLoreEntry(id), title: "New Entry", position: "depth", depth: 4, sortOrder: nextSortOrder(cur.entity.body.entries) };
-    applyEntries((entries) => [...entries, fresh]);
+    applyEntries(bookId, (entries) => [...entries, fresh]);
     setEntryQuery("");
-    setSelectedEntryId(id);
+    selectEntryIn(bookId, id);
   };
-  const actions = useMemo(() => ({
-    onSelect: setSelectedEntryId,
-    onToggleEnabled: (id: string) => applyEntries((entries) => entries.map((e) => (e.id === id ? { ...e, enabled: !e.enabled } : e))),
-    onMove: (id: string, direction: "up" | "down") => applyEntries((entries) => moveEntry(entries, id, direction)),
-    onDeleteRequest: setDeleteEntryId,
-  }), [applyEntries]);
+  const addEntry = (): void => { if (selectedRef.current) addEntryTo(selectedRef.current); };
+  /** The row actions of one book's entries (null: the open book, read when the action runs). The objects are stable per book. */
+  const openRef = useRef<(entryId?: string | null, bookId?: string | null) => void>(() => undefined);
+  const actionCache = useRef(new Map<string | null, ReturnType<typeof makeActions>>());
+  const makeActions = (bookId: string | null) => {
+    const target = (): string | null => bookId ?? selectedRef.current;
+    return {
+      onSelect: (id: string): void => { const b = target(); if (b) selectEntryIn(b, id); },
+      onToggleEnabled: (id: string): void => applyEntries(target(), (entries) => entries.map((e) => (e.id === id ? { ...e, enabled: !e.enabled } : e))),
+      onMove: (id: string, direction: "up" | "down"): void => applyEntries(target(), (entries) => moveEntry(entries, id, direction)),
+      onDeleteRequest: (id: string): void => { const b = target(); if (b) setDeleteTarget({ id, bookId: b }); },
+      onOpenFull: (id: string): void => openRef.current(id, target()),
+    };
+  };
+  const actionsFor = (bookId: string | null) => {
+    let found = actionCache.current.get(bookId);
+    if (!found) {
+      found = makeActions(bookId);
+      actionCache.current.set(bookId, found);
+    }
+    return found;
+  };
+  const actions = actionsFor(null);
+  openRef.current = openInWorkbench;
+  const setDeleteEntryId = (id: string | null): void => setDeleteTarget(id && selectedRef.current ? { id, bookId: selectedRef.current } : null);
+  const deleteEntryId = deleteTarget?.id ?? null;
   const confirmDeleteEntry = (): void => {
-    const id = deleteEntryId;
-    setDeleteEntryId(null);
-    if (!id) return;
-    applyEntries((entries) => entries.filter((e) => e.id !== id));
-    if (selectedEntryId === id) setSelectedEntryId(null);
+    const target = deleteTarget;
+    setDeleteTarget(null);
+    if (!target) return;
+    applyEntries(target.bookId, (entries) => entries.filter((e) => e.id !== target.id));
+    if (entrySel?.id === target.id && entrySel.bookId === target.bookId) setEntrySel(null);
   };
 
-  /** Back to the book list: what is typed is saved first, so the next book's load cannot orphan it. */
-  const leaveBook = async (): Promise<void> => {
+  /** Opens another book (or none): what is typed is saved first, so the next book's load cannot orphan it. */
+  const openBook = async (id: string | null): Promise<void> => {
     entrySaver.flush();
-    await entrySaveQueue.current;
+    await sessions.idle();
     if (!mounted.current) return;
-    setSelectedEntryId(null);
-    setSelectedBookId(null);
+    setEntrySel(null);
+    setSelectedBookId(id);
   };
+  /** Back to the book list. */
+  const leaveBook = (): Promise<void> => openBook(null);
 
   // -- the scene's own book choice -------------------------------------------------------------------
 
@@ -248,12 +255,14 @@ export function LoreWing({ ctx, chat, characterName, onLore }: {
       return !open;
     });
   };
-  const openInWorkbench = (): void => {
-    if (bookLoaded.state !== "ready") return;
+  /** Opens a book in the Workbench, on `entryId` or else the entry open here; `bookId` defaults to the open book. */
+  function openInWorkbench(entryId: string | null = selectedEntryId, bookId: string | null = selectedRef.current): void {
+    const s = stateOf(bookId);
+    if (s.state !== "ready") return;
     entrySaver.flush();
-    ctx.workbench.open({ id: bookLoaded.entity.id, kind: "lorebook", name: bookLoaded.entity.body.name, ...(selectedEntryId ? { params: { focusEntry: selectedEntryId } } : {}) });
+    ctx.workbench.open({ id: s.entity.id, kind: "lorebook", name: s.entity.body.name, ...(entryId ? { params: { focusEntry: entryId } } : {}) });
     ctx.openApp("workbench");
-  };
+  }
 
   // -- render ------------------------------------------------------------------------------------
 
@@ -261,6 +270,28 @@ export function LoreWing({ ctx, chat, characterName, onLore }: {
   const loadedTokens = useMemo(() => (entries ? entries.reduce((n, e) => n + entryTokens(e), 0) : 0), [entries]);
   const groups = useMemo(() => (entries ? groupNamesOf(entries) : []), [entries]);
   const candidates = useMemo(() => (entries ?? []).map((e) => ({ id: e.id, title: e.title })), [entries]);
+
+  return {
+    lore, loadLore, toggle, books, inScene, remove, pick, createBook, selectedBookId, setSelectedBookId, selectedEntryId, setSelectedEntryId, bookLoaded, entryQuery, setEntryQuery, entryNote, picking, setPicking,
+    deleteEntryId, deleteBookId: deleteTarget?.bookId ?? null, setDeleteEntryId, library, advancedOpen, toggleAdvanced, saving, entries, loadedTokens, groups, candidates, actions, actionsFor, addEntry, addEntryTo,
+    confirmDeleteEntry, openBook, leaveBook, openInWorkbench, entrySaver, editEntry, retain, stateOf, entriesOf, selectEntryIn,
+  };
+}
+
+/** The Lorebook wing for Full Chat. */
+export function LoreWing({ ctx, chat, characterName, onLore }: {
+  ctx: AppContext;
+  chat: Chat;
+  /** The scene's cast character name, as the Cast wing reads it, for the "From <name>" line. */
+  characterName: string;
+  onLore(books: SceneLoreBook[] | null): void;
+}): JSX.Element {
+  const root = useRef<HTMLDivElement>(null);
+  const {
+    lore, loadLore, toggle, books, inScene, remove, pick, createBook, selectedBookId, setSelectedBookId, selectedEntryId, setSelectedEntryId, bookLoaded, entryQuery, setEntryQuery, entryNote, picking, setPicking,
+    deleteEntryId, setDeleteEntryId, library, advancedOpen, toggleAdvanced, saving, entries, loadedTokens, groups, candidates, actions, addEntry, confirmDeleteEntry, leaveBook,
+    openInWorkbench, entrySaver, editEntry,
+  } = useLoreWing(ctx, chat, onLore);
 
   if (lore.state === "loading") return <div className="wbody pp"><div className="ed-empty">Loading the scene&apos;s lorebooks...</div></div>;
   if (lore.state === "failed") {
@@ -289,7 +320,7 @@ export function LoreWing({ ctx, chat, characterName, onLore }: {
     body = bookLoaded.state === "ready" && entries ? (
       <div className="wl-body">
         <EntriesPanel entries={entries} selectedId={selectedEntry?.id ?? null} query={entryQuery} onQuery={setEntryQuery} bookId={selectedBook.id} lastTurn={lore.lastTurn}
-          saving={saving > 0} host={root} actions={actions} onAddEntry={addEntry} onOpenBook={openInWorkbench}>
+          saving={saving > 0} host={root} actions={actions} onAddEntry={addEntry} onOpenBook={() => openInWorkbench()}>
           {selectedEntry ? (
             <EntryEditor entry={selectedEntry} globalScanDepth={bookLoaded.entity.body.globalScanDepth} boostCandidates={candidates} groups={groups} advancedOpen={advancedOpen} onToggleAdvanced={toggleAdvanced}
               note={entryNote} onPatch={(patch) => editEntry(selectedEntry.id, patch)} onClose={() => { entrySaver.flush(); setSelectedEntryId(null); }} />

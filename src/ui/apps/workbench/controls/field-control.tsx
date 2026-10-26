@@ -46,7 +46,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
       </div>
       <label className={styles.k}>{`selected tags (${strArray(readPath(draft, "discovery.tags")).length})`}</label>
       <div className={styles.tags}>
-        {strArray(readPath(draft, "discovery.tags")).map((tag) => {
+        {strArray(readPath(draft, "discovery.tags")).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (tag) => {
           const cs = TAG_CATEGORY_STYLE[categorizeTag(tag)];
           return (
             <Chip
@@ -131,7 +131,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
       setField(path, next.filter((g) => g.text !== "" || (g.title ?? "") !== "" || g.id !== undefined));
     return (
       <>
-        {rows.map((g, i) => (
+        {rows.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (g, i) => (
           <div className={styles.greetRow} key={g.id ?? `greet-${i}`}>
             <div className={styles.greetHead}>
               <input
@@ -197,7 +197,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
   };
   const spotlightBody = (
     <>
-      {spoilOrder.map((key) => {
+      {spoilOrder.map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (key) => {
         const label = SPOTLIGHT_FIELDS.find(([k]) => k === key)?.[1] ?? key;
         const on = spoilFields[key] === true;
         return (

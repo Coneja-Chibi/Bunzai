@@ -65,7 +65,7 @@ export function LibraryRail(props: LibraryRailProps): JSX.Element {
       <div className="lrail-scroll">
         <div className="lrail-div">Decks</div>
         <div className="lrail-rows" data-tour="decks">
-          {decks.map(({ kind, count }) => {
+          {decks.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ ({ kind, count }) => {
             const meta = deckMeta(kind);
             // While a search runs the count is MATCHES; the title keeps the real total so no count
             // ever reads as a loss.

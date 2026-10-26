@@ -65,7 +65,7 @@ export function PieceNode(p: PieceNodeProps): JSX.Element {
           <Button size="sm" onPointerDown={(e) => e.stopPropagation()} onClick={p.onBringUp}>Bring up</Button>
         )}
       </div>
-      {portsOf(node.kind).map((port) => {
+      {portsOf(node.kind).map(/* bounded-ok: tabs, ports, options, chips and per-item detail inside one document */ (port) => {
         const count = p.counts[port.field] ?? 0;
         return (
           <div key={port.field} className={`${css.port} ${count ? css.full : ""}`} style={{ "--pc": deckMeta(port.to).accent } as CSSProperties}>

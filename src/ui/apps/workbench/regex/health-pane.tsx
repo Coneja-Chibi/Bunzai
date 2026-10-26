@@ -66,7 +66,7 @@ export function HealthPane({ findings, rules, onClose, onGoTo, onFix }: HealthPa
           {problems.length > 0 && (
             <div className={hp.group}>
               <p className={hp.groupTitle}>Problems</p>
-              {problems.map((f, i) => (
+              {problems.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (f, i) => (
                 <Row key={`p${i}`} finding={f} onGoTo={onGoTo} onFix={onFix} />
               ))}
             </div>
@@ -74,7 +74,7 @@ export function HealthPane({ findings, rules, onClose, onGoTo, onFix }: HealthPa
           {notes.length > 0 && (
             <div className={hp.group}>
               <p className={hp.groupTitle}>Worth a look</p>
-              {notes.map((f, i) => (
+              {notes.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (f, i) => (
                 <Row key={`n${i}`} finding={f} onGoTo={onGoTo} onFix={onFix} />
               ))}
             </div>

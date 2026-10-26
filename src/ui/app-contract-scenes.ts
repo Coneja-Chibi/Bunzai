@@ -49,8 +49,8 @@ export interface ScenesApi {
   getSceneSwipeHistory(input: { chatId: string; branchId: string; messageId: string; index: number; expectedVersion: number }): Promise<{ swipeId: string; texts: string[] }>;
   /** Searches the scene's active take (ChatStore rule 35): every word of the query, newest first, each hit with RoleCall's 50-character context. */
   searchScene(chatId: string, query: string): Promise<SceneSearchResult>;
-  /** A new scene with this character and the default persona, its cast frozen at their current versions. */
-  startScene(characterId: string): Promise<Chat>;
+  /** A new scene with this character and the default persona, its cast frozen at their current versions, and the character's saved starting setup (`startNotes` says, in words, any part of it that could not be applied). */
+  startScene(characterId: string): Promise<Chat & { startNotes?: string[] }>;
   /** Saves the message, and first the chosen greeting (the person's edit of it, when there is one) when the scene is still empty. */
   sendToScene(input: { chatId: string; content: string; greetingIndex: number; expectedVersion: number }): Promise<OpenScene>;
   editSceneMessage(input: { messageId: string; swipeId: string; content: string; expectedVersion: number }): Promise<Message>;
@@ -176,6 +176,8 @@ export interface ScenesApi {
   saveSceneSummary(chatId: string, text: string): Promise<ChatSummaryState>;
   /** Rebuilds the active take's summary from its whole history; rejects with the sentence that says why when it cannot. */
   backfillSceneSummary(chatId: string, signal?: AbortSignal): Promise<ChatSummaryState>;
+  /** Runs the automatic summary step once now (Summarize now); rejects with the sentence that says why when a run is already going or it cannot. */
+  summarizeSceneNow(chatId: string, signal?: AbortSignal): Promise<ChatSummaryState>;
   /** The Story Director panel (ChatStore rule 47): the take's story state at its tip, the scene's settings and the version an edit must send back. */
   getSceneDirector(chatId: string, opts?: { at?: string }): Promise<DirectorPanel>;
   /** One edit of the Director's story (resolve or remove an item, plant a hidden arc, add a note, clear the activity, Reset), guarded by the version the panel showed; rejects with a conflict when the story moved on. */

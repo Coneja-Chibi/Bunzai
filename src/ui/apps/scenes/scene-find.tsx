@@ -101,7 +101,7 @@ export function FindPanel(p: FindPanelProps): JSX.Element {
           {p.failed ? <p className="fnone" role="alert">{p.failed}</p>
             : p.searching && p.hits.length === 0 ? <p className="fnone" role="status">Searching...</p>
             : p.hits.length === 0 ? <p className="fnone" role="status">No matches found in this scene</p>
-            : p.hits.map((h, i) => (
+            : p.hits.map(/* bounded-ok: hits are capped at MAX_SEARCH_HITS (200) */ (h, i) => (
               <ListRow key={h.messageId} wrap role="option" aria-selected={i === p.selected} data-index={i} selected={i === p.selected} data-kind={kindOf(h) ?? "system"}
                 accent={SPEAKER_TONE[kindOf(h) ?? ""] ?? SPEAKER_TONE["character"]!} vars={{ "--sp": SPEAKER_TONE[kindOf(h) ?? ""] ?? SPEAKER_TONE["character"]! }} onClick={() => p.onGo(i)}
                 label={<span className="who">{speaker(h)}

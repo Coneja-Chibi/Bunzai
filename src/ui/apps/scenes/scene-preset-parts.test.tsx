@@ -1,7 +1,7 @@
 /**
  * B20 (dup-audit/ui.md item 9): PromptList is the one virtualized list of the 7 in the Studio that
  * skipped the shared focus-preservation helpers (`useFocusedRangeIndex`/`keepFocusedInRange`/
- * `bridgeTabAcrossVirtualBoundary` from `_shared/virtual-list.tsx`), which every sibling view
+ * `bridgeTabAcrossVirtualBoundary` from `_shared/virtual-list`), which every sibling view
  * (`views/grid.tsx`, `views/list.tsx`, `shelves.tsx`, `trash-panel.tsx`, `views/persona-shelf.tsx`,
  * `block-list.tsx`) wires. C-1 proves the bug this skip causes: a mouse-wheel/scrollbar scroll (no
  * Tab) must not drop a focused row out of the DOM.

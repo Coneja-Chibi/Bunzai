@@ -6,6 +6,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import { IconButton } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
@@ -13,12 +14,14 @@ import type { MacroReport } from "../../../../core/assembly/types";
 import type { SceneTrace } from "../../../app-contract-scenes";
 import { macroRows, macroTiles } from "./macros-core";
 
+const ROW_ESTIMATE_PX = 44;
+
 /** The failed macros, each as written with the engine's message (shared with State's Macro Errors tile). */
 export function MacroErrors({ errors }: { errors: MacroReport["errors"] }): JSX.Element | null {
   if (errors.length === 0) return null;
   return (
     <div className="ls-merrs">
-      {errors.map((e, i) => <p className="ls-merr" key={i}><Ic name="lucide:circle-alert" size={12} /><code>{e.macro}</code><span>{e.message}</span></p>)}
+      {errors.map(/* bounded-ok: per-turn bounded detail lines */ (e, i) => <p className="ls-merr" key={i}><Ic name="lucide:circle-alert" size={12} /><code>{e.macro}</code><span>{e.message}</span></p>)}
     </div>
   );
 }
@@ -42,8 +45,8 @@ export function Macros({ trace }: { trace: SceneTrace }): JSX.Element {
       <div className="ls-list">
         <MacroErrors errors={report.errors} />
         {rows.length === 0 && <div className="ls-none"><Ic name="lucide:info" size={24} /><p>{query.trim() ? "No macros match the search" : "No macros ran in this request"}</p></div>}
-        {rows.map((u) => (
-          <div key={u.name}>
+        <VirtualRows items={rows} keyOf={(u) => u.name} estimate={ROW_ESTIMATE_PX} render={(u) => (
+          <div>
             <div className="ls-node ls-macro" role="button" tabIndex={0} aria-expanded={open === u.name} onClick={() => setOpen(open === u.name ? null : u.name)} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(open === u.name ? null : u.name); } }}>
               <Ic name={open === u.name ? "lucide:chevron-down" : "lucide:chevron-right"} size={12} />
               <span className="ls-name"><code>{u.example}</code><small>{u.value.length > 60 ? `${u.value.slice(0, 60)}...` : u.value}</small></span>
@@ -57,7 +60,7 @@ export function Macros({ trace }: { trace: SceneTrace }): JSX.Element {
               </div>
             )}
           </div>
-        ))}
+        )} />
       </div>
       <div className="ls-foot"><span>{report.used.length} macros</span><span>{tiles.tokens} tokens added</span></div>
     </div>

@@ -10,6 +10,7 @@
  * a reply recesses, a tool row wears its verb colour. What is added is what each band can DO.
  */
 import type { JSX } from "react";
+import { VirtualRows } from "../_shared/virtual-list";
 import { verbOf } from "./kit-vars";
 import { CopyableBand, ErrorRow, FoldedSay } from "./kit-bands";
 import { isFoldable, sayIsOpen } from "./kit-bands-core";
@@ -131,6 +132,9 @@ function Line({
   );
 }
 
+const LINE_ESTIMATE_PX = 88;
+const LINE_GAP_PX = 4;
+
 /**
  * The whole transcript.
  *
@@ -158,19 +162,15 @@ export function Transcript({
 }): JSX.Element {
   return (
     <>
-      {lines.map((line, i) => (
-        <Line
-          key={`${line.role}${String(i)}`}
-          line={line}
-          index={i}
-          lines={lines}
-          busy={busy}
-          acts={acts}
-          onFold={onFold}
-          onNotice={onNotice}
-          onAnswer={onAnswer}
-        />
-      ))}
+      <VirtualRows
+        items={lines}
+        keyOf={(line, i) => `${line.role}${String(i)}`}
+        estimate={LINE_ESTIMATE_PX}
+        gap={LINE_GAP_PX}
+        render={(line, i) => (
+          <Line line={line} index={i} lines={lines} busy={busy} acts={acts} onFold={onFold} onNotice={onNotice} onAnswer={onAnswer} />
+        )}
+      />
       {streaming && (
         <div className="agent-room__line agent-room__line--assistant">
           <div className="agent-room__body">

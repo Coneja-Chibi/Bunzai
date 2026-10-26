@@ -19,6 +19,7 @@ import { INSPECTOR_KEY, readInspector } from "./inspector-core";
 import { carryOpenChoices } from "./scene-reasoning-core";
 import { answerPromptRegex } from "./scene-prompt-regex";
 import { publishDirector } from "./props/story-director/director-live";
+import { replyNotice } from "./reply-notice";
 
 export interface LiveTurn {
   kind: "reply" | "swipe" | "continue";
@@ -42,7 +43,8 @@ export type HeldTurn =
   | { kind: "failed"; code: string; message: string; draft: string; turn: "reply" | "swipe" | "continue"; anchor: string | null; /** A guided re-roll's instruction, so Retry keeps it. */ guidance?: string }
   | { kind: "conflict"; turnId: string; draft: string };
 
-export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void) {
+/** `who` is the character the open scene is with (the page keeps it current); the optional desktop notice for a finished reply names them (reply-notice.ts). */
+export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void, who?: { current: { characterId: string; name: string } | null }) {
   const [live, setLive] = useState<LiveTurn | null>(null);
   const [held, setHeld] = useState<HeldTurn | null>(null);
   const [review, setReview] = useState<Review | null>(null);
@@ -105,6 +107,7 @@ export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void
       else if (e.type === "done" && kind === "swipe" && e.message) setLanded(e.message.id);
       // The live turn becomes the saved version: a block closed by hand stays closed.
       if ((e.type === "done" || e.type === "stopped") && e.message && turn.turnId) carryOpenChoices(`turn:${turn.turnId}`, e.message.swipes[e.message.current]?.id ?? "");
+      if (e.type === "done" && kind === "reply") replyNotice(ctx.prefs, chatId, who?.current ?? null);
       // A non-text event never waits behind a batched token: flush whatever text already arrived,
       // then this event's own state, in the same tick.
       cancelFrame();
@@ -123,7 +126,7 @@ export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void
       setLive(null);
       reload();
     }
-  }, [ctx, chatId, reload, cancelFrame]);
+  }, [ctx, chatId, reload, cancelFrame, who]);
 
   const stop = useCallback((): void => {
     if (!turnRef.current) return;

@@ -17,7 +17,15 @@ export const MAX_DIM = 0.95;
 export const MIN_RATE = 0.25;
 export const MAX_RATE = 2;
 
+/** The blur slider's top, in pixels: past it the picture stops being a picture and a video costs the GPU too much. */
+export const MAX_BLUR = 20;
+
 export const dimOf = (backdrop: Pick<ChatBackdrop, "dim">): number => backdrop.dim ?? DEFAULT_DIM;
+export const blurOf = (backdrop: Pick<ChatBackdrop, "blur">): number => backdrop.blur ?? 0;
+
+/** The picture's blur filter, grown past the frame by twice the radius so the blurred edge never shows the well; empty when there is none. */
+export const blurStyle = (blur: number): { filter?: string; inset?: string; width?: string; height?: string } =>
+  blur > 0 ? { filter: `blur(${String(blur)}px)`, inset: `-${String(blur * 2)}px`, width: `calc(100% + ${String(blur * 4)}px)`, height: `calc(100% + ${String(blur * 4)}px)` } : {};
 export const rateOf = (backdrop: Pick<ChatBackdrop, "rate">): number => backdrop.rate ?? 1;
 
 /** A video ref: an inline or uploaded file whose media type is video (the asset store keeps mp4, webm and mov). */

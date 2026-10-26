@@ -77,7 +77,7 @@ export function FinalCutTab({ ctx, chat, onChanged }: { ctx: AppContext; chat: C
         <LiveSwitch on={on} onToggle={() => fc.setOn(!on)} />
       </section>
       {fc.error && <div className="fc-error" role="alert">{fc.error}</div>}
-      <section className="fc-stats">{stats(passes).map((s) => <div key={s.label}><small>{s.label}</small><b>{s.value}</b></div>)}</section>
+      <section className="fc-stats">{stats(passes).map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (s) => <div key={s.label}><small>{s.label}</small><b>{s.value}</b></div>)}</section>
       <ToolsCard tools={settings.tools} models={models} onChange={fc.setTools} />
       <SafetyCard pass={onPass(passes, "validator") ?? passes?.find((p) => p.type === "validator")} onToggle={() => fc.toggle("validator")} onChange={(patch) => fc.patch("validator", patch)} />
       <AntiSlopCard pass={passes?.find((p) => p.type === "anti-slop")} models={models} onToggle={() => fc.toggle("anti-slop")} onChange={(patch) => fc.patch("anti-slop", patch)} />

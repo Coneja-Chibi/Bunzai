@@ -2,11 +2,15 @@
  * Rehearsal Playback tab: drop/open a chat file, replay runLore with exact marks + near-misses.
  */
 import { InlineValue } from "../../../components/button";
+import { VirtualRows } from "../../../_shared/virtual-list";
 import { useState, type JSX } from "react";
 import type { LorebookBody } from "../../../../entities/lorebook/schema";
 import { nearMisses, parseChatJsonl, runLore, type LoreFire, type ScanLine } from "../../../../core/lore";
 import { loreTokens, toBookInput, toScan, withoutCharacterFilters, withoutOwnBudget } from "./lore-run";
 import styles from "./rehearsal-pane.module.css";
+
+const TURN_ESTIMATE_PX = 56;
+const TURN_GAP_PX = 6;
 
 export interface PlaybackTabProps {
   body: LorebookBody;
@@ -129,16 +133,18 @@ export function PlaybackTab({ body, onJumpEntry }: PlaybackTabProps): JSX.Elemen
       </label>
       {status && <p className={styles.empty}>{status}</p>}
       <div className={styles.chat}>
-        {turns.map((t, i) => (
-          <div key={i} className={t.line.role === "user" ? styles.user : styles.bot}>
-            <PlaybackLine text={t.line.text} exact={t.exactKeywords} near={t.near} onJump={onJumpEntry} />
-            {t.firedTitles.length > 0 && (
-              <div className={styles.firedList}>
-                Fired: {t.firedTitles.join(", ")}
-              </div>
-            )}
+        <VirtualRows items={turns} keyOf={(_, i) => String(i)} estimate={TURN_ESTIMATE_PX} gap={TURN_GAP_PX} render={(t) => (
+          <div className={t.line.role === "user" ? styles.rowUser : styles.rowBot}>
+            <div className={t.line.role === "user" ? styles.user : styles.bot}>
+              <PlaybackLine text={t.line.text} exact={t.exactKeywords} near={t.near} onJump={onJumpEntry} />
+              {t.firedTitles.length > 0 && (
+                <div className={styles.firedList}>
+                  Fired: {t.firedTitles.join(", ")}
+                </div>
+              )}
+            </div>
           </div>
-        ))}
+        )} />
       </div>
     </div>
   );
@@ -161,7 +167,7 @@ function PlaybackLine({
 
   return (
     <span>
-      {parts.map((part, i) => {
+      {parts.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (part, i) => {
         const lower = part.toLowerCase();
         if (exactLower.has(lower) || [...exactLower].some((k) => lower.includes(k) && k.length > 2 && part.toLowerCase() === k)) {
           return (

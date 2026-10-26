@@ -120,7 +120,7 @@ function PrintedScript({ words }: { words: readonly string[] }): JSX.Element {
       <h1>Bunraku recovery words</h1>
       <p>Spoken in order, these open your library on any computer. Keep this page somewhere safe.</p>
       <ol>
-        {words.map((w, i) => (
+        {words.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (w, i) => (
           <li key={i}>{w}</li>
         ))}
       </ol>

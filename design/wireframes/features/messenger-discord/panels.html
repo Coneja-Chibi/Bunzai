@@ -1,0 +1,869 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messenger feature panels</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+/* WIREFRAME ONLY. Colors and fonts are app tokens; controls copy the button-family parts (bk-btn, bk-tabs, bk-seg, bk-chip, tg, mi). Square corners, 12px floor. */
+body { padding: 24px 16px 80px; background: var(--premiere-hard); font-size: 14px; }
+.page { max-width: 1480px; gap: 56px; }
+.sec { display: flex; flex-direction: column; gap: 16px; }
+.sec > h2 { font: 800 24px var(--font-big); letter-spacing: -0.01em; }
+.sec > .wf-lede { max-width: 62rem; }
+.wf-note, .wf-lede, .wf-comp, .kicker, .cap { font-size: 12px; }
+.wf-note { max-width: 62rem; }
+.scrollx { overflow-x: auto; padding-bottom: 8px; }
+.figrow { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; }
+.fig { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cap { font: 500 12px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font: 12px var(--font-mono); color: var(--text-dim); }
+.legend b { color: var(--text); }
+
+/* icons */
+.ic { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: square; stroke-linejoin: miter; }
+.ic.s { width: 16px; height: 16px; }
+
+/* ---- button family (copied from features/button-family) ---- */
+.bk-btn { --sx: 3px; --sy: 3px; --sh: var(--premiere-hard); display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 32px; padding: 0 12px; font: 700 13px var(--font-body); cursor: pointer; color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); border: 2px solid color-mix(in srgb, var(--premiere-text) 55%, transparent); box-shadow: var(--sx) var(--sy) 0 0 var(--sh); transition: transform .15s ease, box-shadow .15s ease; white-space: nowrap; }
+.bk-btn:hover { transform: translateY(-2px); box-shadow: var(--sx) calc(var(--sy) + 2px) 0 0 var(--sh); }
+.bk-btn.primary { background: var(--premiere-rose); border-color: var(--premiere-rose); --sh: color-mix(in srgb, var(--deck-character) 85%, black); }
+.bk-btn.quiet { background: transparent; border-color: transparent; box-shadow: none; color: var(--rc-zinc-300); padding: 0 8px; }
+.bk-btn.quiet:hover { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-text) 8%, transparent); transform: none; }
+.bk-btn.danger { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.bk-btn.full { width: 100%; }
+.ib { all: unset; box-sizing: border-box; width: 32px; height: 32px; display: grid; place-items: center; cursor: pointer; color: var(--rc-zinc-300); flex: none; position: relative; }
+.ib:hover { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-text) 8%, transparent); }
+.ib.on { color: var(--premiere-text); background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 0 -2px 0 var(--accent); }
+.ib.danger { color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.bk-seg { display: inline-flex; border: 2px solid color-mix(in srgb, var(--premiere-text) 35%, transparent); box-shadow: 3px 3px 0 0 var(--premiere-hard); background: color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-hard)); }
+.bk-seg button { font: 600 13px var(--font-body); padding: 5px 12px; color: var(--rc-zinc-300); background: none; border: 0; cursor: pointer; }
+.bk-seg button + button { border-left: 1px solid color-mix(in srgb, var(--premiere-text) 15%, transparent); }
+.bk-seg button[aria-pressed="true"] { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-rose) 26%, transparent); box-shadow: inset 0 -3px 0 var(--premiere-rose); }
+.bk-tabs { display: flex; gap: 4px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); padding: 0 12px; flex: none; overflow-x: auto; }
+.bk-tabs button { display: inline-flex; align-items: center; gap: 6px; font: 600 13px var(--font-body); padding: 10px 8px; color: var(--rc-zinc-300); background: none; border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; cursor: pointer; white-space: nowrap; }
+.bk-tabs button[aria-selected="true"] { color: var(--premiere-text); border-bottom-color: var(--premiere-rose); }
+.bk-chip { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 9px; font: 600 12px var(--font-body); color: var(--rc-zinc-300); border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: transparent; white-space: nowrap; }
+.bk-chip.on { color: var(--premiere-text); border-color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.bk-chip.ok { color: var(--stage-ok); border-color: var(--stage-ok); }
+.bk-chip.warn { color: var(--stage-warn); border-color: var(--stage-warn); }
+.bk-chip.bad { color: var(--stage-danger-text); border-color: var(--stage-danger-edge); }
+.bk-chip.sel { color: var(--stage-macro); border-color: var(--stage-macro); }
+.tg { all: unset; box-sizing: border-box; cursor: pointer; width: 40px; height: 22px; padding: 2px; border: 2px solid color-mix(in srgb, var(--premiere-text) 35%, transparent); background: var(--premiere-hard); display: flex; flex: none; }
+.tg i { width: 14px; height: 14px; background: var(--rc-zinc-400); }
+.tg[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 30%, var(--premiere-hard)); }
+.tg[aria-checked="true"] i { transform: translateX(18px); background: var(--premiere-text); }
+.mi-pop { background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); box-shadow: 4px 4px 0 0 var(--premiere-hard); padding: 4px 0; color: var(--premiere-text); }
+.mi { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 7px 12px; cursor: pointer; font: 500 13px var(--font-body); color: var(--premiere-text); }
+.mi:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.mi small { color: var(--rc-zinc-300); font-size: 12px; }
+.mi.danger { color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.mi-sep { height: 1px; margin: 4px 0; background: color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.dc { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 9px 4px; cursor: pointer; font: 700 13px var(--font-body); color: var(--premiere-text); }
+.dc small { font: 500 12px var(--font-body); color: var(--rc-zinc-300); }
+.in { font: 13px var(--font-body); color: var(--text); background: var(--bk-surface-well); border: 2px solid var(--bk-line); padding: 6px 9px; width: 100%; min-height: 32px; display: flex; align-items: center; gap: 8px; }
+.in.ta { min-height: 76px; align-items: flex-start; line-height: 1.5; }
+.in.mono { font-family: var(--font-mono); }
+.in .ph { color: var(--text-faint); }
+.lbl { font: 600 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; display: block; }
+.fld { display: flex; flex-direction: column; min-width: 0; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.three { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.hint { font: 12px/1.5 var(--font-body); color: var(--text-dim); }
+.sc { font: 600 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); display: flex; align-items: center; gap: 6px; padding: 4px 4px 2px; }
+.sc .n { color: var(--text-faint); }
+.sc .grow { flex: 1; }
+.setrow { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--seam); }
+.setrow:last-child { border-bottom: 0; }
+.setrow .tx { flex: 1; min-width: 0; }
+.setrow b { font: 700 13px var(--font-body); display: block; }
+.setrow span.d { font: 12px/1.4 var(--font-body); color: var(--text-dim); }
+.dot { width: 8px; height: 8px; display: inline-block; background: var(--text-faint); flex: none; }
+.dot.ok { background: var(--stage-ok); } .dot.live { background: var(--stage-var); } .dot.bad { background: var(--stage-danger-text); }
+
+/* avatars */
+.av { width: 36px; height: 36px; flex: none; display: grid; place-items: center; font: 800 13px var(--font-big); color: var(--stage-ink); background: var(--deck-character); }
+.av.sm { width: 28px; height: 28px; font-size: 12px; } .av.lg { width: 64px; height: 64px; font-size: 22px; }
+.c1 { background: var(--deck-character); } .c2 { background: var(--deck-lorebook); } .c3 { background: var(--deck-persona); } .c4 { background: var(--deck-pack); } .c5 { background: var(--deck-preset); } .c6 { background: var(--deck-regex); }
+
+/* ---- shell ---- */
+.shell { background-image: linear-gradient(160deg, color-mix(in srgb, var(--deck-lorebook) 16%, var(--bk-surface-base)), var(--bk-surface-base) 55%, color-mix(in srgb, var(--deck-character) 10%, var(--bk-surface-base))); display: grid; grid-template-columns: 72px 248px minmax(0, 1fr) auto; width: 1440px; height: 760px; background: var(--bk-surface-base); border: 1px solid var(--bk-line); position: relative; overflow: hidden; }
+.rail { background: var(--bk-surface-well); display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px 0; }
+.rb { position: relative; width: 48px; height: 48px; display: grid; place-items: center; background: var(--bk-surface-raised); color: var(--text-soft); border: 0; font: 800 14px var(--font-big); cursor: pointer; }
+.rb.on { background: var(--accent-deep); color: var(--premiere-text); }
+.rb.on::before { content: ""; position: absolute; left: -12px; top: 10px; width: 4px; height: 28px; background: var(--text); }
+.rsep { width: 32px; height: 2px; background: var(--seam); }
+.side { background: var(--bk-surface-sunken); display: flex; flex-direction: column; min-height: 0; border-right: 1px solid var(--seam); }
+.side-h { height: 48px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px; border-bottom: 1px solid var(--seam); font: 800 15px var(--font-big); flex: none; }
+.side-b { flex: 1; overflow: hidden; padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+.srow { display: flex; align-items: center; gap: 8px; padding: 6px 8px; font: 600 14px var(--font-body); color: var(--text-dim); min-height: 32px; }
+.srow.on { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
+.srow .r { margin-left: auto; }
+.upanel { flex: none; display: flex; align-items: center; gap: 8px; padding: 8px; background: var(--bk-surface-well); border-top: 1px solid var(--seam); }
+.upanel .nm { flex: 1; min-width: 0; line-height: 1.25; font: 700 13px var(--font-body); }
+.upanel .nm small { display: block; font: 12px var(--font-body); color: var(--text-dim); }
+.minip { margin: 6px 0 0; padding: 8px; background: var(--bk-surface-panel); border: 1px solid var(--seam); display: flex; align-items: center; gap: 8px; font: 12px var(--font-body); color: var(--text-dim); }
+.main { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.hdr { height: 48px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 10px 0 14px; border-bottom: 1px solid var(--seam); position: relative; background: var(--bk-surface-base); }
+.hdr .nm { font: 800 15px var(--font-big); white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.hdr .tp { font: 12px var(--font-body); color: var(--text-dim); border-left: 1px solid var(--seam); padding-left: 10px; margin-left: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 1; }
+.hdr .sp { flex: 1; }
+.hdr .vs { width: 1px; height: 22px; background: var(--seam); margin: 0 4px; }
+.hb { all: unset; box-sizing: border-box; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; color: var(--rc-zinc-300); position: relative; flex: none; }
+.hb:hover { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-text) 8%, transparent); }
+.hb.on { color: var(--premiere-text); background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 0 -2px 0 var(--accent); }
+.hb .bd { position: absolute; top: 3px; right: 2px; min-width: 14px; height: 14px; padding: 0 3px; font: 700 12px/14px var(--font-mono); background: var(--premiere-rose); color: var(--premiere-text); text-align: center; font-size: 11px; }
+.pill { font: 700 12px var(--font-body); padding: 4px 9px; border: 1px solid var(--stage-macro); color: var(--stage-macro); white-space: nowrap; display: inline-flex; gap: 6px; align-items: center; }
+.pill.warn { border-color: var(--stage-warn); color: var(--stage-warn); }
+.hsearch { width: 150px; height: 26px; background: var(--bk-surface-well); border: 1px solid var(--bk-line); color: var(--text-faint); font: 12px var(--font-body); padding: 0 8px; display: flex; align-items: center; justify-content: space-between; flex: none; }
+.body { flex: 1; display: flex; min-height: 0; }
+.chat { flex: 1; min-width: 0; display: flex; flex-direction: column; min-height: 0; }
+.msgs { flex: 1; overflow: hidden; padding: 16px 0 8px; display: flex; flex-direction: column; justify-content: flex-end; }
+.msg { display: grid; grid-template-columns: 56px 1fr; padding: 2px 16px 2px 0; position: relative; }
+.msg .avc { padding-left: 14px; padding-top: 2px; }
+.msg.cont .avc { color: var(--text-faint); font: 11px var(--font-mono); padding-top: 6px; opacity: 0; }
+.msg.hov { background: color-mix(in srgb, var(--premiere-text) 4%, transparent); }
+.msg.hov.cont .avc { opacity: 1; }
+.msg .nmx { font: 700 14px var(--font-big); } .msg .nmx small { font: 12px var(--font-mono); color: var(--text-faint); margin-left: 8px; }
+.msg p { font: 14px/1.55 var(--font-body); color: var(--text-soft); max-width: 46rem; }
+.abar { position: absolute; right: 16px; top: -14px; display: flex; background: var(--bk-surface-panel); border: 1px solid var(--bk-line); }
+.abar .ib { width: 30px; height: 28px; }
+.compose { flex: none; margin: 0 16px 16px; background: var(--bk-surface-raised); display: flex; align-items: center; gap: 4px; padding: 6px 8px; min-height: 44px; border: 1px solid var(--seam); }
+.compose .ph { flex: 1; font: 14px var(--font-body); color: var(--text-faint); padding: 0 6px; }
+.slot { display: flex; min-height: 0; }
+.layer { position: absolute; inset: 0; z-index: 8; background: var(--overlay); display: grid; place-items: center; padding: 28px; }
+.lbox { width: 100%; height: 100%; max-width: 1180px; display: grid; grid-template-columns: 280px 1fr; background: var(--bk-surface-panel); border: 2px solid var(--bk-line); box-shadow: 8px 8px 0 0 var(--premiere-hard); overflow: hidden; }
+.layer .ln { background: var(--bk-surface-sunken); padding: 16px 12px; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+.layer .who { display: flex; align-items: center; gap: 10px; padding: 4px 6px 12px; }
+.layer .who b { font: 800 14px var(--font-big); display: block; } .layer .who small { font: 12px var(--font-body); color: var(--text-dim); }
+.layer .lp { padding: 24px 32px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; }
+.layer .xb { position: absolute; top: 14px; right: 14px; }
+.layer h3 { font: 800 22px var(--font-big); }
+
+/* header popout: all panels */
+.allp { position: absolute; right: 190px; top: 46px; width: 360px; max-height: 640px; overflow: auto; z-index: 9; }
+.allp .q { margin: 6px 10px 8px; }
+.allp .g { font: 600 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--premiere-gold); padding: 8px 12px 4px; }
+.pr { display: grid; grid-template-columns: 20px 1fr auto auto; align-items: center; gap: 10px; padding: 6px 12px; cursor: pointer; font: 500 13px var(--font-body); color: var(--premiere-text); border-left: 3px solid transparent; }
+.pr:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.pr.on { background: color-mix(in srgb, var(--accent) 14%, transparent); border-left-color: var(--accent); }
+.pr em { font: 600 12px var(--font-mono); font-style: normal; color: var(--rc-zinc-400); }
+.pr .st { color: var(--rc-zinc-400); } .pr .st.p { color: var(--premiere-gold); }
+.hdrfig { width: 1128px; position: relative; height: 48px; margin-left: 320px; }
+.hdrfig.open { height: 700px; }
+.hdrfig .hdr { position: absolute; left: 0; right: 0; top: 0; }
+.ghost { position: absolute; left: -320px; top: 0; width: 320px; height: 48px; background: var(--bk-surface-sunken); border-right: 1px solid var(--seam); display: flex; align-items: center; padding: 0 14px; font: 12px var(--font-mono); color: var(--text-faint); }
+
+/* ---- panel frame ---- */
+.pf { width: 400px; flex: none; background: linear-gradient(170deg, color-mix(in srgb, var(--deck-lorebook) 12%, var(--bk-surface-panel)) 0%, color-mix(in srgb, var(--bk-surface-panel) 92%, transparent) 60%); border-left: 1px solid var(--bk-line); display: flex; flex-direction: column; min-height: 0; color: var(--text); position: relative; }
+.pf[data-kind="wide"] { width: 600px; }
+.pf-h { height: 48px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 8px 0 14px; border-bottom: 1px solid var(--seam); }
+.pf-h .t { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+.pf-h b { font: 800 15px var(--font-big); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-h small { font: 12px var(--font-mono); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-b { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.pf-f { flex: none; border-top: 1px solid var(--seam); padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
+.pf-f .grow { flex: 1; }
+.fig > .pf { height: 700px; border: 1px solid var(--bk-line); }
+.tabpane { display: none; flex-direction: column; gap: 10px; }
+.tabpane.on { display: flex; }
+.pf-b.nopad { padding: 0; }
+.rw { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding: 7px 8px; border-left: 3px solid transparent; position: relative; min-width: 0; }
+.rw:hover, .rw.hover { background: color-mix(in srgb, var(--premiere-text) 6%, transparent); }
+.rw.sel { background: color-mix(in srgb, var(--accent) 14%, transparent); border-left-color: var(--accent); }
+.rw .tx { min-width: 0; display: flex; flex-direction: column; line-height: 1.3; }
+.rw .tx b { font: 700 14px var(--font-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rw .tx small { font: 12px var(--font-mono); color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rw .mt { display: flex; align-items: center; gap: 6px; font: 12px var(--font-mono); color: var(--text-dim); }
+.rw.dim { opacity: .55; }
+.rw .hbar { position: absolute; right: 8px; top: -13px; display: none; background: var(--bk-surface-panel); border: 1px solid var(--bk-line); z-index: 2; }
+.rw.hover .hbar { display: flex; }
+.rw .hbar .ib { width: 28px; height: 26px; }
+.card { background: var(--bk-surface-sunken); border: 1px solid var(--bk-line-track); padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+.card.sel { border-color: var(--accent); }
+.card h4 { font: 800 14px var(--font-big); display: flex; align-items: center; gap: 8px; }
+.card h4 .r { margin-left: auto; font: 12px var(--font-mono); color: var(--text-dim); font-weight: 500; }
+.card p { font: 13px/1.5 var(--font-body); color: var(--text-soft); }
+.card .hbar { position: absolute; right: 8px; top: -13px; display: none; background: var(--bk-surface-panel); border: 1px solid var(--bk-line); }
+.card.hover .hbar { display: flex; }
+.card .hbar .ib { width: 28px; height: 26px; }
+.note { border-left: 4px solid var(--stage-warn); background: var(--stage-warn-ink); padding: 8px 10px; font: 13px/1.5 var(--font-body); color: var(--text-soft); display: flex; gap: 8px; align-items: flex-start; }
+.note.bad { border-color: var(--stage-danger-edge); background: var(--stage-danger-bg); }
+.note.ok { border-color: var(--stage-ok); background: var(--stage-ok-bg); }
+.note.info { border-color: var(--stage-var); background: color-mix(in srgb, var(--stage-var) 12%, var(--bk-surface-base)); }
+.note .r { margin-left: auto; display: flex; gap: 6px; flex: none; }
+.empty { text-align: center; padding: 28px 12px; display: flex; flex-direction: column; gap: 8px; align-items: center; color: var(--text-dim); font: 13px/1.5 var(--font-body); }
+.empty b { color: var(--text); font: 800 15px var(--font-big); }
+.meter { height: 8px; background: var(--bk-line-track); border: 1px solid var(--bk-line); }
+.meter i { display: block; height: 100%; background: var(--stage-ok); }
+.kv { display: flex; justify-content: space-between; font: 12px var(--font-mono); color: var(--text-dim); }
+.kv b { color: var(--text); font-weight: 600; }
+.sw { width: 20px; height: 20px; border: 2px solid var(--bk-line); display: inline-block; }
+.sw.on { border-color: var(--text); }
+
+/* popout profile */
+.pop { width: 320px; background: var(--bk-surface-panel); border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); box-shadow: 6px 6px 0 0 var(--premiere-hard); color: var(--text); }
+.pop .bn { height: 64px; background: linear-gradient(120deg, var(--deck-character), var(--deck-lorebook)); }
+.pop .bd { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 10px; margin-top: -26px; }
+.pop .bd .av { border: 4px solid var(--bk-surface-panel); }
+.pop .sec2 { border-top: 1px solid var(--seam); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.stage { background: var(--bk-surface-well); border: 2px dashed var(--bk-line); padding: 18px; display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+
+/* tables */
+table.map { width: 100%; border-collapse: collapse; font: 13px/1.5 var(--font-body); }
+table.map th { text-align: left; font: 600 12px var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--premiere-gold); padding: 8px 10px; border-bottom: 2px solid var(--bk-line); position: sticky; top: 0; background: var(--premiere-hard); }
+table.map td { vertical-align: top; padding: 9px 10px; border-bottom: 1px solid var(--bk-line-track); color: var(--text-soft); }
+table.map td:first-child { font: 700 13px var(--font-body); color: var(--text); white-space: nowrap; }
+table.map td code { font: 12px var(--font-mono); color: var(--stage-var); }
+table.map tr.grp td { font: 600 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); background: var(--bk-surface-sunken); }
+.k { font: 700 12px var(--font-mono); padding: 1px 6px; border: 1px solid var(--bk-line-control); color: var(--text); white-space: nowrap; }
+.nar { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
+.nbox { border: 1px solid var(--bk-line); background: var(--bk-surface-base); position: relative; display: flex; overflow: hidden; }
+.nbox .a { background: var(--bk-surface-sunken); } .nbox .b { background: var(--bk-surface-base); flex: 1; } .nbox .c { background: var(--bk-surface-panel); }
+.nbox span { font: 12px var(--font-mono); color: var(--text-dim); padding: 6px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-hash" viewBox="0 0 24 24"><path d="M9 4 7 20M17 4l-2 16M4 9h17M3 15h17"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c3 0 5 2 5 5"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5c3-1 6-1 8 1 2-2 5-2 8-1v14c-3-1-6-1-8 1-2-2-5-2-8-1z"/><path d="M12 6v14"/></symbol>
+<symbol id="i-library" viewBox="0 0 24 24"><path d="M5 4v16M10 4v16M15 5l4 15"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/><circle cx="9" cy="7" r="2"/><circle cx="15" cy="12" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></symbol>
+<symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 7.5 20 18M8 16.5 20 6"/></symbol>
+<symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M5 5h6a2 2 0 1 1 4 0h4v5a2 2 0 1 0 0 4v5H5z"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17"/><path d="M8 9h8M8 13h8M8 17h5"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 5 5"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 6M20 4v7h-7"/></symbol>
+<symbol id="i-popout" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
+<symbol id="i-cr" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-cl" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
+<symbol id="i-cd" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M5 7h14M9 7V4h6v3M7 7l1 13h8l1-13"/></symbol>
+<symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 7 4 12l5 5M4 12h10a5 5 0 0 1 0 8h-3"/></symbol>
+<symbol id="i-pulse" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="m12 4 2.5 5.5 6 .7-4.5 4 1.3 5.8L12 17l-5.3 3 1.3-5.8-4.5-4 6-.7z"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H5M11 6l-6 6 6 6"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14"/><circle cx="9" cy="10" r="1.5"/><path d="m5 18 5-5 4 4 2-2 4 4"/></symbol>
+<symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="16" r="2"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1-5L16 4l4 4L9 19z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12 20 4l-4 16-4-6z"/></symbol>
+<symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1.2"/><circle cx="15" cy="6" r="1.2"/><circle cx="9" cy="12" r="1.2"/><circle cx="15" cy="12" r="1.2"/><circle cx="9" cy="18" r="1.2"/><circle cx="15" cy="18" r="1.2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+<symbol id="i-swap" viewBox="0 0 24 24"><path d="M4 8h14l-4-4M20 16H6l4 4"/></symbol>
+<symbol id="i-note" viewBox="0 0 24 24"><path d="M5 4h14v12l-4 4H5z"/><path d="M15 20v-4h4"/></symbol>
+<symbol id="i-regex" viewBox="0 0 24 24"><path d="M12 4v10M7.5 6.5l9 5M16.5 6.5l-9 5"/><circle cx="6" cy="19" r="1.5"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3h6l-1 6 3 3H7l3-3zM12 12v9"/></symbol>
+</svg>
+
+<main class="page">
+
+<header class="wf-head"><div>
+  <div class="wf-title">Messenger feature panels</div>
+  <p class="wf-lede">Today Messenger opens a wing of the Full Chat layout as a tab or dialog, so lore, cast, presets and trackers look like a different app. Here every one of those wings is a native
+  Messenger surface in Discord's architecture: panels dock on the right of the chat, switch from the header, and share one frame. Bunraku keeps its tokens, fonts and the button family. Only structure is borrowed.
+  Page width 1440. Headers, rail and sidebar are sketched only as far as the panels need them.</p>
+</div></header>
+
+<!-- ============ 0. surface kinds ============ -->
+<section class="sec" id="kinds">
+  <h2>0. The four surface kinds</h2>
+  <div class="legend">
+    <span><b>Side</b> 400 px panel docked right of the chat, like members or threads</span>
+    <span><b>Wide</b> 600 px inspector, same slot, like a thread opened wide</span>
+    <span><b>Popout</b> floating card on avatar click or right click</span>
+    <span><b>Layer</b> large floating window over the dimmed app with left nav and X, like Discord settings (section 6)</span>
+  </div>
+  <p class="wf-note"><b>Decision.</b> One panel at a time, in one slot. Every program from <code>programs.ts</code> becomes one of these four kinds, drawn by one shared frame (title, scope line, pop-out, close). That replaces today's mix of tab, dialog and floating pop-out (<code>messenger-chrome.tsx</code> program tab or overlay). Small lists and forms are Side. Anything with a master/detail editor is Wide. Anything that needs a full workspace (Compendium, prompt editor, Final Cut, Regex) is a Layer. Visited panels stay mounted and hidden so drafts survive, exactly as today. The existing pop-out button on every panel header stays.</p>
+</section>
+
+<!-- ============ 1. header switcher ============ -->
+<section class="sec" id="switcher">
+  <h2>1. The panel switcher in the header</h2>
+  <p class="wf-note"><b>Decision.</b> The header carries five pinned toggles (Control Booth, Cast, Lorebooks, Story Director, Trackers), a grid button "All panels", and a find box. Clicking the active toggle closes the panel, Esc closes it too, and clicking another swaps it. The grid button opens a searchable list of every program grouped by wing, each row tagged Side, Wide or Layer, with a star to pin or unpin it. Pins are a per-person preference. Features with a panel (Story Director, trackers, TrackHare) appear in the list only while that Prop is on, and Stage tabs (Pictures, Music, Spotify, Wardrobe) only while the scene shows them, as today. The Director's Cut pill and the Update badge keep their place, left of the icons. <b>Replaces:</b> the 16+ round rail buttons that today each open a program.</p>
+
+  <div class="fig"><div class="cap">1a. Nothing open</div><div class="scrollx"><div class="hdrfig" id="h-none"><div class="ghost">sidebar edge</div></div></div></div>
+  <div class="fig"><div class="cap">1b. One open (Lorebooks), click again to close</div><div class="scrollx"><div class="hdrfig" id="h-one"><div class="ghost">sidebar edge</div></div></div></div>
+  <div class="fig"><div class="cap">1c. All panels open (grid button)</div><div class="scrollx"><div class="hdrfig open" id="h-menu"><div class="ghost">sidebar edge</div></div></div></div>
+
+  <div class="fig"><div class="cap">1d. Live shell: click the header icons, the grid button, a sidebar feature row. Esc closes.</div>
+  <div class="scrollx">
+  <div class="shell" id="live">
+    <nav class="rail" aria-label="Spaces">
+      <button class="rb" title="Browse characters"><svg class="ic"><use href="#i-chat"/></svg></button>
+      <div class="rsep"></div>
+      <button class="rb on c1" title="Vera Lindqvist">VL</button>
+      <button class="rb" title="Harbor Customs scenes">HC</button>
+      <button class="rb" title="New scene"><svg class="ic"><use href="#i-plus"/></svg></button>
+      <div class="rsep"></div>
+      <button class="rb" title="The Library"><svg class="ic"><use href="#i-library"/></svg></button>
+      <button class="rb" title="The Agent"><svg class="ic"><use href="#i-bolt"/></svg></button>
+      <button class="rb" title="The Press"><svg class="ic"><use href="#i-scissors"/></svg></button>
+      <button class="rb" title="Settings"><svg class="ic"><use href="#i-gear"/></svg></button>
+    </nav>
+    <aside class="side">
+      <div class="side-h">Vera Lindqvist <svg class="ic s"><use href="#i-cd"/></svg></div>
+      <div class="side-b">
+        <div class="srow"><svg class="ic s"><use href="#i-search"/></svg>Browse Characters</div>
+        <div class="sc" style="margin-top:10px">Scenes</div>
+        <div class="srow on"><svg class="ic s"><use href="#i-hash"/></svg>The flooded archive <svg class="ic s r"><use href="#i-gear"/></svg></div>
+        <div class="srow"><svg class="ic s"><use href="#i-hash"/></svg>Lantern market</div>
+        <div class="srow"><svg class="ic s"><use href="#i-hash"/></svg>Customs hearing</div>
+        <div class="sc" style="margin-top:10px">Active features</div>
+        <div class="srow" data-panel="director" style="cursor:pointer"><svg class="ic s"><use href="#i-compass"/></svg>Story Director <span class="dot ok r"></span></div>
+        <div class="srow" data-panel="trackers" style="cursor:pointer"><svg class="ic s"><use href="#i-list"/></svg>Trackers <span class="bk-chip r">5</span></div>
+        <div class="srow" data-panel="trackhare" style="cursor:pointer"><svg class="ic s"><use href="#i-search"/></svg>TrackHare</div>
+        <div class="minip"><svg class="ic s"><use href="#i-music"/></svg>Rain on the canal <span class="r" style="margin-left:auto">Next</span></div>
+      </div>
+      <div class="upanel"><div class="av sm c3">MO</div><div class="nm">Mara Okafor<small>Starring</small></div><button class="ib" title="Swap persona (Casting Call)"><svg class="ic s"><use href="#i-swap"/></svg></button><button class="ib" title="Settings"><svg class="ic s"><use href="#i-gear"/></svg></button></div>
+    </aside>
+    <div class="main">
+      <div class="hdr-slot"></div>
+      <div class="body">
+        <div class="chat">
+          <div class="msgs">
+            <div class="msg"><div class="avc"><div class="av c1">VL</div></div><div><div class="nmx">Vera Lindqvist<small>Today at 10:42</small></div><p>The water has reached the third shelf. If we leave the Customs ledgers now, they are gone.</p></div></div>
+            <div class="msg cont"><div class="avc">10:42</div><div><p>She holds the lantern higher. Somewhere below, the salt-lock groans.</p></div></div>
+            <div class="msg"><div class="avc"><div class="av c3">MO</div></div><div><div class="nmx">Mara Okafor<small>Today at 10:44</small></div><p>Then we take the ledgers and the seal. Which stair is still dry?</p></div></div>
+            <div class="msg cont hov"><div class="avc">10:45</div><div><p>I tie the seal ring to my belt and wade toward the eastern stair.</p>
+              <div class="abar"><button class="ib" title="Edit"><svg class="ic s"><use href="#i-pen"/></svg></button><button class="ib" title="Retake"><svg class="ic s"><use href="#i-refresh"/></svg></button><button class="ib" title="Final Cut"><svg class="ic s"><use href="#i-scissors"/></svg></button><button class="ib" title="More"><svg class="ic s"><use href="#i-more"/></svg></button></div></div></div>
+          </div>
+          <div class="compose"><button class="ib"><svg class="ic"><use href="#i-plus"/></svg></button><div class="ph">Message The flooded archive</div><button class="ib"><svg class="ic"><use href="#i-sliders"/></svg></button><button class="ib"><svg class="ic"><use href="#i-send"/></svg></button></div>
+        </div>
+        <div class="slot panel-slot"></div>
+      </div>
+    </div>
+  </div>
+  </div></div>
+
+  <p class="wf-note"><b>The right column.</b> Panels live in the column Discord uses for the member list, over the window's themed gradient with a lightly translucent surface, and are switched by header icon buttons like members, threads and pins. The Cast panel is drawn as that member list: role-style headers with counts, avatar with status dot, colored names, badge pills and a status line.</p>
+  <p class="wf-note"><b>Why not an icon rail.</b> Discord's left rail is for places, not tools. Putting tools in the header (members, threads, pins, search) is its own pattern, so panels live there. Today's left rail goes back to spaces: characters, scenes and app spaces. The sidebar's Active features rows are a second, quieter way into the same panels, as Discord shows voice activity under a channel. <b>Control Booth stays the hub</b> (first pinned icon), not dissolved into chips.</p>
+  <p class="wf-note"><b>Keyboard and focus.</b> The grid popout is a menu: arrow keys move, Enter opens, Esc closes and returns focus to the grid button. Opening a panel moves focus to its first control and Esc closes it. Under a Layer the header and panels are inert, as dialogs are today.</p>
+</section>
+
+<!-- ============ 2. cast ============ -->
+<section class="sec" id="cast">
+  <h2>2. Cast: a members list, a profile card and an inspector</h2>
+  <p class="wf-note"><b>Decision.</b> The Participants tab becomes Discord's member list: groups On Stage, NPCs, Registered, Retired with counts, avatars, a presence dot (Present or Absent) and a Main badge. Row actions that used to be inline buttons (Ping, Set Main, Present/Absent, Color, Uses Card Gradient, Delete) move to a profile card popout on avatar click and a hover bar for the two quick ones. Editing a character or your persona is a Wide inspector, since it is a long form. The reconcile card becomes a banner at the top of the list. The "You now play" swap line becomes a system message in the chat, and Casting Call becomes a popout from the user panel at the bottom of the sidebar and from the persona row.</p>
+  <div class="figrow">
+    <div class="fig"><div class="cap">2a. Side panel: Cast (default)</div>
+    <section class="pf" id="panel-cast" data-kind="side">
+      <header class="pf-h"><svg class="ic"><use href="#i-users"/></svg><div class="t"><b>Cast</b><small>The flooded archive · 6 people</small></div><button class="ib" title="Pop out"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib" title="Close"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="pf-b">
+        <div class="in"><svg class="ic s"><use href="#i-search"/></svg><span class="ph">Search cast</span></div>
+        <div class="note info"><svg class="ic s"><use href="#i-refresh"/></svg><div><b>Reconcile recent scene</b><br>3 new names in the last 12 messages.</div><div class="r"><button class="bk-btn sm primary" style="min-height:28px">Add selected</button><button class="bk-btn quiet" style="min-height:28px">Dismiss</button></div></div>
+        <div class="sc">On stage - <span class="n">2</span></div>
+        <div class="rw"><div class="av sm c1">VL</div><div class="tx"><b style="color:var(--deck-character)">Vera Lindqvist</b><small>Counting the third shelf</small></div><div class="mt"><span class="bk-chip">Main</span><span class="bk-chip">Card</span><span class="dot ok"></span></div></div>
+        <div class="rw"><div class="av sm c3">MO</div><div class="tx"><b style="color:var(--deck-persona)">Mara Okafor</b><small>Starring · wading east</small></div><div class="mt"><span class="bk-chip">Player</span><span class="dot ok"></span></div></div>
+        <div class="sc">NPCs - <span class="n">2</span></div>
+        <div class="rw hover"><div class="av sm c2">HO</div><div class="tx"><b style="color:var(--deck-lorebook)">Harbormaster Oyelaran</b><small>Guarding the Customs seal</small></div><div class="mt"><span class="dot ok"></span></div>
+          <div class="hbar"><button class="ib" title="Ping"><svg class="ic s"><use href="#i-bolt"/></svg></button><button class="ib" title="Set Main"><svg class="ic s"><use href="#i-star"/></svg></button><button class="ib" title="More"><svg class="ic s"><use href="#i-more"/></svg></button></div></div>
+        <div class="rw dim"><div class="av sm c6">PL</div><div class="tx"><b>Pip the lamplighter</b><small>Absent</small></div><div class="mt"><span class="dot"></span></div></div>
+        <div class="sc">Registered - <span class="n">1</span></div>
+        <div class="rw"><div class="av sm c5">DH</div><div class="tx"><b>Dr. Halloran</b><small>Seen once · not in scene</small></div><div class="mt"></div></div>
+        <div class="sc">Retired - <span class="n">1</span></div>
+        <div class="rw dim"><div class="av sm c4">CC</div><div class="tx"><b>The Customs Clerk</b><small>Retired</small></div><div class="mt"><button class="bk-btn quiet" style="min-height:26px">Restore</button></div></div>
+      </div>
+      <footer class="pf-f"><button class="bk-btn"><svg class="ic s"><use href="#i-plus"/></svg>Add participant</button><span class="grow"></span><button class="bk-btn"><svg class="ic s"><use href="#i-swap"/></svg>Casting Call</button></footer>
+    </section></div>
+
+    <div class="fig"><div class="cap">2b. Popout: profile card on avatar click</div>
+    <div class="pop" id="pop-profile">
+      <div class="bn"></div>
+      <div class="bd">
+        <div class="av lg c2">HO</div>
+        <div><div style="font:800 18px var(--font-big)">Harbormaster Oyelaran</div><div class="hint">Keeper of the Customs seal</div></div>
+        <div style="display:flex;gap:6px"><span class="bk-chip">NPC</span><span class="bk-chip ok">Present</span></div>
+        <div class="sec2"><span class="lbl">In this scene</span>
+          <div class="bk-seg"><button aria-pressed="true">Present</button><button aria-pressed="false">Absent</button></div></div>
+        <div class="sec2"><span class="lbl">Color</span>
+          <div style="display:flex;gap:6px"><i class="sw on c2"></i><i class="sw c1"></i><i class="sw c3"></i><i class="sw c4"></i><i class="sw c5"></i><i class="sw c6"></i></div>
+          <div class="setrow" style="padding:4px 0"><div class="tx"><b>Uses card gradient</b></div><button class="tg" role="switch" aria-checked="false"><i></i></button></div></div>
+        <div style="display:flex;gap:8px"><button class="bk-btn" style="flex:1">Ping</button><button class="bk-btn" style="flex:1">Set Main</button></div>
+        <button class="bk-btn full primary">Edit card</button>
+        <div class="mi-sep" style="margin:0"></div>
+        <button class="bk-btn quiet danger" style="justify-content:flex-start"><svg class="ic s"><use href="#i-trash"/></svg>Delete</button>
+      </div>
+    </div></div>
+
+    <div class="fig"><div class="cap">2c. Wide inspector: edit card, persona</div>
+    <section class="pf" id="panel-castedit" data-kind="wide">
+      <header class="pf-h"><button class="ib"><svg class="ic s"><use href="#i-back"/></svg></button><div class="t"><b>Edit character</b><small>Vera Lindqvist · Original card</small></div><button class="ib" title="Pop out"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib" title="Close"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="bk-tabs" data-tabs><button data-tab="char" aria-selected="true">Character</button><button data-tab="persona" aria-selected="false">My persona</button></div>
+      <div class="pf-b">
+        <div class="tabpane on" data-pane="char">
+          <div style="display:flex;gap:10px;align-items:center;justify-content:space-between"><span class="lbl" style="margin:0">Card version this scene plays</span><div class="bk-seg"><button aria-pressed="true">Original</button><button aria-pressed="false">Base</button></div></div>
+          <div class="card"><h4>Identity and titles</h4>
+            <div class="two"><div class="fld"><span class="lbl">Stage name</span><div class="in">Vera</div></div><div class="fld"><span class="lbl">Full name</span><div class="in">Vera Lindqvist</div></div></div>
+            <div class="two"><div class="fld"><span class="lbl">Title / epithet</span><div class="in">Archivist of the Third Shelf</div></div><div class="fld"><span class="lbl">Tagline</span><div class="in">Counts what the water takes</div></div></div>
+            <div class="three"><div class="fld"><span class="lbl">Pronouns</span><div class="in">She/Her</div></div><div class="fld"><span class="lbl">Age</span><div class="in">34</div></div><div class="fld"><span class="lbl">Looks</span><div class="in">Ink-stained, tall</div></div></div></div>
+          <div class="card"><h4>Description <span class="r">412 tokens</span></h4><div class="in ta">Vera keeps the Canal District records. She is dry-humored, careful, and quietly furious at the tide authority.</div></div>
+          <div class="card"><h4>Personality <span class="r">96 tokens</span></h4><div class="in ta">Methodical, wry, protective of paper. Hides fear behind inventory.</div></div>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Scenario<small>setting</small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>First message<small>Opening message picker</small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Example dialogue<small></small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>System prompt and post-history instructions<small></small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Creator notes<small></small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Color palette: named colors, theme<small>3 colors</small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Content rating and tags<small>Open Tagsheet</small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Lorebooks: creator recommends, your added, Open Full Editor<small>2</small></button>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Advanced<small></small></button>
+        </div>
+        <div class="tabpane" data-pane="persona">
+          <div class="card"><h4>Starring</h4><div class="rw" style="padding:0"><div class="av c3">MO</div><div class="tx"><b>Mara Okafor</b><small>Lead role</small></div><div class="mt"><button class="bk-btn">Casting Call</button><button class="bk-btn quiet">Clear role</button></div></div></div>
+          <div class="two"><div class="fld"><span class="lbl">Persona name and emoji</span><div class="in">Mara Okafor</div></div><div class="fld"><span class="lbl">Tagline</span><div class="in">Surveyor of drowned streets</div></div></div>
+          <div class="three"><div class="fld"><span class="lbl">Age</span><div class="in">29</div></div><div class="fld"><span class="lbl">Height</span><div class="in">172 cm</div></div><div class="fld"><span class="lbl">Pronouns</span><div class="in">She/Her</div></div></div>
+          <div class="card"><h4>Appearance</h4><div class="in ta">Wader boots, a tide-chart satchel, short braids.</div></div>
+          <div class="card"><h4>Personality, quirks, history</h4><div class="in ta">Counts steps aloud. Never trusts a dry floor.</div></div>
+          <div class="card"><h4>Linked lorebook</h4><div class="in">Canal District<svg class="ic s" style="margin-left:auto"><use href="#i-chevron"/></svg></div></div>
+          <div class="card"><h4>Prompt injection <span class="r">Auto via preset</span></h4>
+            <div class="in">In chat history</div><div class="kv"><span>Live preview</span><b>38 tokens</b></div></div>
+          <button class="bk-btn quiet" style="align-self:flex-start">New persona</button>
+        </div>
+      </div>
+      <footer class="pf-f"><span class="hint">Saved as you type. Revert restores the last saved card.</span><span class="grow"></span><button class="bk-btn quiet">Revert</button></footer>
+    </section></div>
+  </div>
+  <p class="wf-note"><b>Features kept.</b> Everything in <code>scene-cast-wing</code> and <code>cast/*</code> survives: the three tabs (Character, Persona, Participants), original vs base card, every card field, the opening-message picker, Casting Call with Lead role and Clear role, New persona, persona injection with live preview and token count, the linked lorebook, content rating and tags, Creator Recommends lorebooks, participant color and card gradient, Ping, Set Main, reconcile with Undo. The nine collapsed rows in 2c each expand to the fields named on them.</p>
+</section>
+
+<!-- ============ 3. lore ============ -->
+<section class="sec" id="lore">
+  <h2>3. Lorebooks: an entries panel, a book manager and a thread-style entry inspector</h2>
+  <p class="wf-note"><b>Decision.</b> World Info becomes a forum-like list. The side panel groups entries under their book, with the book name as a small caps header and a collapse chevron, a search box, an on/off switch per entry, and badges for Constant, Selective, token cost, and a blue dot on entries that fired last turn. Clicking an entry opens it in the same slot as a Wide inspector, with a back arrow, like opening a thread. Adding, removing and browsing books is a view inside the panel behind the header's book button. Entry actions (Move up, Move down, Open full editor, Delete) are a right-click menu and the hover bar. The Compendium is a Layer (section 6), not squeezed in here.</p>
+  <div class="figrow">
+    <div class="fig"><div class="cap">3a. Side panel: entries (default)</div>
+    <section class="pf" id="panel-lore" data-kind="side">
+      <header class="pf-h"><svg class="ic"><use href="#i-book"/></svg><div class="t"><b>Lorebooks</b><small>2 active · 17 entries</small></div><button class="ib" title="Browse and add lorebooks"><svg class="ic s"><use href="#i-sliders"/></svg></button><button class="ib" title="Pop out"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib" title="Close"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="pf-b">
+        <div style="display:flex;gap:8px"><div class="in"><svg class="ic s"><use href="#i-search"/></svg><span class="ph">Search entries, text, or triggers</span></div><button class="bk-chip" title="From the last reply's trace: which entries went into the prompt and why">Last turn</button></div>
+        <div class="sc"><svg class="ic s"><use href="#i-cd"/></svg>Canal District <span class="n">12</span><span class="grow"></span><span class="bk-chip ok">Active</span></div>
+        <div class="rw sel"><button class="tg" role="switch" aria-checked="true"><i></i></button><div class="tx"><b>Salt-lock ordinance</b><small>salt-lock, ordinance, tide gate</small></div><div class="mt"><span class="dot live" title="Fired last turn"></span><span class="bk-chip sel">Selective</span><span>84</span></div></div>
+        <div class="rw hover"><button class="tg" role="switch" aria-checked="true"><i></i></button><div class="tx"><b>Third shelf flood line</b><small>always on</small></div><div class="mt"><span class="dot live"></span><span class="bk-chip">Constant</span><span>120</span></div>
+          <div class="hbar"><button class="ib" title="Move up"><svg class="ic s"><use href="#i-cl" style="transform:rotate(90deg)"/></svg></button><button class="ib" title="Move down"><svg class="ic s"><use href="#i-cd"/></svg></button><button class="ib" title="Open full editor"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib danger" title="Delete entry"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+        <div class="rw"><button class="tg" role="switch" aria-checked="true"><i></i></button><div class="tx"><b>Harbormaster Oyelaran</b><small>oyelaran, harbormaster</small></div><div class="mt"><span class="bk-chip sel">Selective</span><span>61</span></div></div>
+        <div class="rw dim"><button class="tg" role="switch" aria-checked="false"><i></i></button><div class="tx"><b>Lantern guild dues</b><small>lantern guild, dues</small></div><div class="mt"><span class="bk-chip sel">Selective</span><span>47</span></div></div>
+        <div class="rw"><button class="tg" role="switch" aria-checked="true"><i></i></button><div class="tx"><b>Eastern stair</b><small>eastern stair, dry stair</small></div><div class="mt"><span class="dot live"></span><span>38</span></div></div>
+        <div class="sc"><svg class="ic s"><use href="#i-cr"/></svg>Harbor Customs <span class="n">5</span><span class="grow"></span><span class="bk-chip ok">Active</span></div>
+      </div>
+      <footer class="pf-f"><button class="bk-btn primary"><svg class="ic s"><use href="#i-plus"/></svg>New entry</button><span class="grow"></span><span class="hint">Right click an entry for more</span></footer>
+    </section></div>
+
+    <div class="fig"><div class="cap">3b. Context menu on an entry</div>
+      <div class="mi-pop" style="width:240px">
+        <button class="mi"><svg class="ic s"><use href="#i-pen"/></svg><span>Open and edit</span><small></small></button>
+        <button class="mi"><svg class="ic s"><use href="#i-popout"/></svg><span>Open full editor</span><small>Workbench</small></button>
+        <div class="mi-sep"></div>
+        <button class="mi"><svg class="ic s"><use href="#i-cd"/></svg><span>Move down</span><small></small></button>
+        <button class="mi"><svg class="ic s"><use href="#i-cd"/></svg><span>Move up</span><small></small></button>
+        <div class="mi-sep"></div>
+        <button class="mi danger"><svg class="ic s"><use href="#i-trash"/></svg><span>Delete entry</span><small></small></button>
+      </div>
+      <div class="cap" style="margin-top:18px">3c. Empty and no match</div>
+      <div class="card" style="width:300px"><div class="empty" style="padding:10px"><b>No entries</b>This lorebook is empty.<button class="bk-btn primary">Add your first entry</button></div></div>
+      <div class="card" style="width:300px"><div class="empty" style="padding:10px"><b>No matching entries</b>Nothing matches "tide wall".<button class="bk-btn">Clear search</button></div></div>
+    </div>
+
+    <div class="fig"><div class="cap">3d. Book manager (view inside the panel)</div>
+    <section class="pf" id="panel-lorebooks" data-kind="side">
+      <header class="pf-h"><button class="ib" title="Back to lorebooks"><svg class="ic s"><use href="#i-back"/></svg></button><div class="t"><b>Add or remove lorebooks</b><small>This scene only</small></div><button class="ib"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="pf-b">
+        <div class="sc">Active lorebooks <span class="n">2</span></div>
+        <div class="rw"><div class="av sm c2">CD</div><div class="tx"><b>Canal District</b><small>12 entries · 4 fired last turn</small></div><div class="mt"><button class="bk-chip" title="From the last reply's trace">Last turn</button><button class="ib" title="Remove from this scene"><svg class="ic s"><use href="#i-x"/></svg></button></div></div>
+        <div class="rw"><div class="av sm c6">HC</div><div class="tx"><b>Harbor Customs</b><small>5 entries · 1 fired last turn</small></div><div class="mt"><button class="bk-chip">Last turn</button><button class="ib" title="Remove from this scene"><svg class="ic s"><use href="#i-x"/></svg></button></div></div>
+        <div class="sc" style="margin-top:8px">Add lorebook</div>
+        <div class="in"><svg class="ic s"><use href="#i-search"/></svg><span class="ph">Search my library</span></div>
+        <div class="rw"><div class="av sm c5">TA</div><div class="tx"><b>Tidewater Almanac</b><small>28 entries</small></div><button class="bk-btn">Add</button></div>
+        <div class="rw"><div class="av sm c4">DS</div><div class="tx"><b>Dockhand Slang</b><small>9 entries</small></div><button class="bk-btn">Add</button></div>
+        <div class="sc" style="margin-top:8px">New lorebook</div>
+        <div style="display:flex;gap:8px"><div class="in"><span class="ph">Name your new lorebook</span></div><button class="bk-btn primary">Create</button></div>
+        <div class="empty" style="margin-top:6px"><b>No lorebooks</b>With none active, entries have nothing to fire. Add one to begin.</div>
+      </div>
+    </section></div>
+  </div>
+
+  <div class="figrow">
+    <div class="fig"><div class="cap">3e. Wide inspector: one entry, thread style</div>
+    <section class="pf" id="panel-entry" data-kind="wide">
+      <header class="pf-h"><button class="ib" title="Back to entries"><svg class="ic s"><use href="#i-back"/></svg></button><div class="t"><b>Salt-lock ordinance</b><small>Canal District · entry 1 of 12 · 84 tokens</small></div><span style="display:flex;align-items:center;gap:6px;font:12px var(--font-mono);color:var(--text-dim)">Enabled <button class="tg" role="switch" aria-checked="true"><i></i></button></span><button class="ib" title="Pop out"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib" title="Close this entry panel"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="bk-tabs" data-tabs><button data-tab="simple" aria-selected="true">Simple</button><button data-tab="adv" aria-selected="false">Advanced</button></div>
+      <div class="pf-b">
+        <div class="tabpane on" data-pane="simple">
+          <div class="fld"><span class="lbl">Entry title</span><div class="in">Salt-lock ordinance</div></div>
+          <div class="two"><div class="fld"><span class="lbl">Trigger mode</span><div class="bk-seg"><button aria-pressed="false">Constant</button><button aria-pressed="true">Keywords</button><button aria-pressed="false">Selective</button></div></div>
+            <div class="fld"><span class="lbl">Entry type</span><div class="in">World<svg class="ic s" style="margin-left:auto"><use href="#i-cd"/></svg></div></div></div>
+          <div class="fld"><span class="lbl">Triggers</span><div class="in" style="flex-wrap:wrap"><span class="bk-chip">salt-lock <svg class="ic s"><use href="#i-x"/></svg></span><span class="bk-chip">ordinance <svg class="ic s"><use href="#i-x"/></svg></span><span class="bk-chip">tide gate <svg class="ic s"><use href="#i-x"/></svg></span><span class="ph">Add keyword</span><button class="ib" style="margin-left:auto" title="Insert special condition"><svg class="ic s"><use href="#i-regex"/></svg></button></div>
+            <span class="hint">Type a keyword or regex pattern and press Enter. Secondary triggers appear when mode is Selective: <span class="in" style="display:inline-flex;width:auto;min-height:24px;padding:0 6px"><span class="ph">Secondary (optional)</span></span></span></div>
+          <div class="three"><div class="fld"><span class="lbl">Insertion order</span><div class="in">100</div></div><div class="fld"><span class="lbl">Scan depth</span><div class="in">4</div></div><div class="fld"><span class="lbl">Probability</span><div class="in">100%</div></div></div>
+          <div class="fld"><span class="lbl">Entry content <span style="float:right;text-transform:none;letter-spacing:0">84 tokens (estimate)</span></span><div class="in ta">Under the salt-lock ordinance, no vessel may pass the tide gate within two hours of the turn. Ledgers older than the ordinance are kept on the third shelf and may not be removed without a seal.</div></div>
+          <div class="setrow"><div class="tx"><b>Preserve during standardization</b><span class="d">The Compendium's standardize run skips this entry: its title, content, keys and metadata are never sent to the model. Use it for a hand-curated entry whose wording matters.</span></div><button class="tg" role="switch" aria-checked="false"><i></i></button></div>
+        </div>
+        <div class="tabpane" data-pane="adv">
+          <div class="card"><h4>Injection</h4><div class="three"><div class="fld"><span class="lbl">Position</span><div class="in">@ Depth</div></div><div class="fld"><span class="lbl">Depth</span><div class="in">4</div></div><div class="fld"><span class="lbl">Role</span><div class="in">System</div></div></div><span class="hint">Positions: World, Character, Scene, @ Depth, Append, Prepend, Top, Bottom.</span></div>
+          <div class="card"><h4>Timing</h4><div class="setrow"><div class="tx"><b>Only on first trigger</b></div><button class="tg" role="switch" aria-checked="false"><i></i></button></div><div class="setrow"><div class="tx"><b>Clear when deactivated</b></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div></div>
+          <div class="card"><h4>Recursion and cross-entry boosting</h4><div class="two"><div class="fld"><span class="lbl">Recursion</span><div class="in">Allowed</div></div><div class="fld"><span class="lbl">Boost entry</span><div class="in"><span class="ph">Entry name to boost</span></div></div></div></div>
+          <div class="card"><h4>Group and scope</h4><div class="two"><div class="fld"><span class="lbl">Group</span><div class="in">harbor-law</div></div><div class="fld"><span class="lbl">Scope</span><div class="bk-seg"><button aria-pressed="true">Global</button><button aria-pressed="false">Local</button></div></div></div></div>
+          <div class="card"><h4>Character filter</h4><div class="bk-seg" style="align-self:flex-start"><button aria-pressed="false">Off</button><button aria-pressed="true">Blacklist</button><button aria-pressed="false">Character</button></div><div class="in"><span class="ph">Add character name or tag</span></div></div>
+          <div class="card"><h4>Side effects <button class="bk-btn" style="margin-left:auto;min-height:26px">Add effect</button></h4><span class="hint">Add effects to set variables when this entry triggers. Types: set, increment, decrement, append, clear.</span><div class="empty" style="padding:6px">No side effects configured.</div></div>
+        </div>
+      </div>
+      <footer class="pf-f"><span class="hint">Saving...</span><span class="grow"></span><button class="bk-btn quiet danger"><svg class="ic s"><use href="#i-trash"/></svg>Delete entry</button></footer>
+    </section></div>
+    <div class="fig" style="width:340px"><div class="cap">3f. Delete confirmation, inline</div>
+      <div class="note bad"><svg class="ic s"><use href="#i-trash"/></svg><div><b>Delete this entry?</b><br>Salt-lock ordinance will be removed from Canal District.</div></div>
+      <div style="display:flex;gap:8px"><button class="bk-btn">Keep entry</button><button class="bk-btn danger">Delete this entry</button></div>
+      <p class="wf-note" style="margin-top:12px"><b>Features kept.</b> All of <code>scene-lore-*</code>: book list with Last turn trace, add from library, new lorebook, remove from scene, entry search, add/open/move/delete entry, simple and advanced editors (trigger mode, keys and regex, secondary keys, type, order, scan depth, probability, content with token estimate, enabled, preserve during standardization, injection, timing, recursion, boosting, group, character filter, scope, side effects), full editor hand-off, booth lorebook row and the creator-recommended books from the cast tab.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. Story Director ============ -->
+<section class="sec" id="director">
+  <h2>4. Story Director: a thread inspector with five tabs</h2>
+  <p class="wf-note"><b>Decision.</b> The Director is the thread you read beside the chat: turn number and a stepper in the header, then the same five tabs (Story, Arcs, Analysis, Activity, Debug) as a bk-tabs strip. Reset DM sits in the header overflow with its confirm card. The Director's settings (model, reasoning, command mode, creativity, personality, custom instructions, tracker auto-update) were scattered between the Props row gear and the Booth narrator block. They now sit behind one gear in this panel, and the Booth keeps its narrator block as a shortcut that opens the same view. Reading an earlier turn makes every edit control inert, as today.</p>
+  <div class="figrow">
+    <div class="fig"><div class="cap">4a. Side panel: Story Director (tabs are live)</div>
+    <section class="pf" id="panel-director" data-kind="side">
+      <header class="pf-h"><svg class="ic"><use href="#i-compass"/></svg><div class="t"><b>Story Director</b><small>Turn 42 · chapter 3</small></div><button class="ib" title="Director settings" data-tab="settings"><svg class="ic s"><use href="#i-gear"/></svg></button><button class="ib" title="More: Reset DM"><svg class="ic s"><use href="#i-more"/></svg></button><button class="ib" title="Pop out"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib" title="Close"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="bk-tabs" data-tabs><button data-tab="story" aria-selected="true"><svg class="ic s"><use href="#i-book"/></svg>Story</button><button data-tab="arcs" aria-selected="false">Arcs</button><button data-tab="analysis" aria-selected="false">Analysis</button><button data-tab="activity" aria-selected="false">Activity</button><button data-tab="debug" aria-selected="false">Debug</button></div>
+      <div class="pf-b">
+        <div style="display:flex;align-items:center;gap:6px"><button class="ib" title="Previous turn"><svg class="ic s"><use href="#i-cl"/></svg></button><span class="bk-chip on">Latest</span><button class="ib" title="Next turn" disabled><svg class="ic s"><use href="#i-cr"/></svg></button></div>
+        <div class="tabpane on" data-pane="story">
+          <div class="card"><h4>Current chapter <span class="r">3</span></h4><p><b>The Third Shelf.</b> The water is rising faster than the ordinance allows. Vera and Mara must choose between the ledgers and the seal.</p></div>
+          <button class="dc"><svg class="ic s"><use href="#i-cr"/></svg>Chapter history<small>2 chapters</small></button>
+          <div class="card"><h4>Current mood</h4><div style="display:flex;gap:6px"><span class="bk-chip warn">Tense</span><span class="bk-chip">Urgent</span></div></div>
+          <div class="card"><h4>Suggested actions</h4><div style="display:flex;flex-direction:column;gap:6px"><button class="bk-btn" style="justify-content:flex-start">Ask Vera what the seal opens</button><button class="bk-btn" style="justify-content:flex-start">Climb to the mezzanine</button><button class="bk-btn" style="justify-content:flex-start">Wait for the tide to turn</button></div><span class="hint">Choosing one fills the composer. It does not send.</span></div>
+          <div class="card"><h4>DM intentions</h4><p>Let the flood press the pace. Keep the seal's purpose unclear for two more turns.</p></div>
+        </div>
+        <div class="tabpane" data-pane="arcs">
+          <div class="card"><h4>The ledger that predates the flood <span class="r">arc</span></h4><div class="kv"><span>Reinforced</span><b>3</b></div><div class="kv"><span>Payoff</span><b>turn 50</b></div><button class="bk-btn" style="align-self:flex-start">Mark as complete</button></div>
+          <div class="card"><h4>The tide authority's debt <span class="r">arc</span></h4><div class="kv"><span>Reinforced</span><b>1</b></div><button class="bk-btn" style="align-self:flex-start">Mark as complete</button></div>
+          <div class="empty" style="padding:8px">No active arcs. All resolved.</div>
+        </div>
+        <div class="tabpane" data-pane="analysis">
+          <div class="card"><h4>Turn analysis</h4><p>Mara's choice raised the stakes for the seal. Vera's loyalty to the ledgers is the open tension.</p></div>
+          <div class="card"><h4>Pacing analysis</h4><div class="meter"><i style="width:68%"></i></div><p>Rising. Two quiet turns would help the next beat land.</p></div>
+          <div class="card"><h4>Chapter update</h4><p>Chapter 3 ends when the party leaves the archive or the lower shelf floods.</p></div>
+        </div>
+        <div class="tabpane" data-pane="activity">
+          <div style="display:flex;gap:6px;flex-wrap:wrap"><span class="bk-chip on">All</span><span class="bk-chip">Directive</span><span class="bk-chip">Arc</span><span class="bk-chip">Tracker</span><span class="bk-chip">Error</span><button class="bk-btn quiet" style="margin-left:auto;min-height:26px">Clear activity log</button></div>
+          <div class="rw"><span class="dot live"></span><div class="tx"><b>Directive</b><small>Keep the seal unclear</small></div><div class="mt">2m</div></div>
+          <div class="rw"><span class="dot ok"></span><div class="tx"><b>Turn done</b><small>Turn 42</small></div><div class="mt">2m</div></div>
+          <div class="rw"><span class="dot"></span><div class="tx"><b>Tracker</b><small>Inventory updated</small></div><div class="mt">2m</div></div>
+          <div class="rw"><span class="dot bad"></span><div class="tx"><b>Turn error</b><small>Tool response invalid, retried</small></div><div class="mt">9m</div></div>
+        </div>
+        <div class="tabpane" data-pane="debug">
+          <div class="note"><svg class="ic s"><use href="#i-eye"/></svg>Debug data contains story spoilers and hidden DM information.</div>
+          <button class="bk-btn" style="align-self:flex-start">Show debug data</button>
+          <div class="card"><h4>Shadow world</h4><p>The seal opens the lower vault under the Customs house.</p></div>
+          <div class="card"><h4>Narrative seeds</h4><div class="rw" style="padding:0"><div class="tx"><b>The clerk who vanished</b><small>Reinforced 2 · Payoff turn 60</small></div><span></span><button class="ib danger" title="Delete seed"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+          <div class="card"><h4>Raw DM hidden data and last directive</h4><div class="in mono ta">{ "directive": "keep seal unclear" }</div></div>
+          <div class="kv"><span>Story size</span><b>3.1k tokens</b></div><div class="kv"><span>Deleted and kept</span><b>Nothing deleted yet</b></div>
+        </div>
+        <div class="tabpane" data-pane="settings">
+          <div class="note info"><svg class="ic s"><use href="#i-gear"/></svg>Director settings. Changes apply from the next reply. <button class="bk-btn quiet" style="min-height:24px" data-tab="story">Back</button></div>
+          <div class="fld"><span class="lbl">Story Director model</span><div class="in">Same as narrator<svg class="ic s" style="margin-left:auto"><use href="#i-cd"/></svg></div></div>
+          <div class="two"><div class="fld"><span class="lbl">Reasoning effort</span><div class="in">Medium</div></div><div class="fld"><span class="lbl">Command mode</span><div class="in">Suggest</div></div></div>
+          <div class="fld"><span class="lbl">Creativity (DM temperature)</span><div class="meter"><i style="width:55%;background:var(--accent)"></i></div><span class="hint">How boldly the Director steers the story.</span></div>
+          <div class="fld"><span class="lbl">Personality</span><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="bk-chip on">Philosophy: Patient</span><span class="bk-chip">Favorite arcs: Mystery</span><span class="bk-chip">Emotional focus: Dread</span></div></div>
+          <div class="fld"><span class="lbl">Custom instructions for DM</span><div class="in ta">Keep the tone warm and grounded. Let scenes breathe.</div><span class="hint">Persistent, unlike the in-the-moment steering note.</span></div>
+          <div class="setrow"><div class="tx"><b>Update trackers after each reply</b><span class="d">Off means trackers change only when you edit or Refresh them.</span></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div>
+          <div class="three"><div class="fld"><span class="lbl">Every N replies</span><div class="in">2</div></div><div class="fld"><span class="lbl">Calls per reply</span><div class="in">3</div></div><div class="fld"><span class="lbl">Max tool rounds</span><div class="in">4</div></div></div>
+          <div class="setrow"><div class="tx"><b>Auto-retry invalid tool responses</b></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div>
+        </div>
+      </div>
+    </section></div>
+
+    <div class="fig" style="width:400px"><div class="cap">4b. States of the same panel</div>
+      <div class="card"><div class="empty" style="padding:6px"><svg class="ic" style="width:32px;height:32px"><use href="#i-compass"/></svg><b>The stage is dark</b>Send a message and the Director takes its place behind the curtain.</div></div>
+      <div class="note"><svg class="ic s"><use href="#i-lock"/></svg>The Story Director is off for this scene. What it saved stays here.</div>
+      <div class="note info"><svg class="ic s"><use href="#i-eye"/></svg>Reading turn 38. Edits are off until you jump to latest.<div class="r"><button class="bk-btn quiet" style="min-height:26px">Jump to latest</button></div></div>
+      <div class="note info"><svg class="ic s"><use href="#i-refresh"/></svg>The Director is planning this reply.</div>
+      <div class="note bad"><svg class="ic s"><use href="#i-pulse"/></svg>No directive for the last reply: the model returned malformed tool data.</div>
+      <div class="note bad"><svg class="ic s"><use href="#i-pulse"/></svg><div><b>Story Director error</b><br>Could not load.</div><div class="r"><button class="bk-btn" style="min-height:26px">Try again</button></div></div>
+      <div class="cap" style="margin-top:6px">4c. Reset DM confirm</div>
+      <div class="note bad"><div><b>Reset the Story Director?</b><br>Chapters, arcs, seeds, hidden arcs and notes are cleared from this reply on. Earlier replies keep their story. The activity feed stays.</div></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end"><button class="bk-btn quiet">Cancel</button><button class="bk-btn danger">Reset</button></div>
+    </div>
+  </div>
+  <p class="wf-note"><b>Features kept.</b> Hero turn counter, turn-history stepper with Jump to latest, Reset DM with confirm, first-use tour (as a dismissible note at the top of the Story tab), the five tabs and their cards, Mark as Complete, activity filter and Clear, debug data with Delete seed, Story Director Activity (the floating activity button becomes the Activity tab and a pulse badge on the header icon), model, reasoning, command mode, creativity, personality picker, custom instructions, tracker auto-update, calls per reply, retry, runtime numbers. Narrator Tool Access stays in the Booth.</p>
+</section>
+
+<!-- ============ 5. trackers ============ -->
+<section class="sec" id="trackers">
+  <h2>5. Trackers: a pinned-messages style list</h2>
+  <p class="wf-note"><b>Decision.</b> The 12 legacy trackers and 4 storyboards that are switched on appear as cards in one list, the way Discord shows pinned messages: each a small card with its name, a one-line summary, last update, and a hover bar (Refresh from chat history, Open, Pop out, Clear). Clicking a card opens that tracker inside the same panel with a back arrow, so there is one panel instead of 16 floating pop-outs. A tracker's own AI settings and sub-features sit behind its gear. Switching trackers on or off is Add / Remove Features, linked from the list footer. Clear All Data keeps its inline confirm and Undo. TrackHare, which has its own sheets, is a separate program (mapped below).</p>
+  <div class="figrow">
+    <div class="fig"><div class="cap">5a. Side panel: trackers that are on (tabs are live)</div>
+    <section class="pf" id="panel-trackers" data-kind="side">
+      <header class="pf-h"><svg class="ic"><use href="#i-list"/></svg><div class="t"><b>Trackers</b><small>5 on · Story Director updates every 2 replies</small></div><button class="ib" title="Panel AI settings" data-tab="tset"><svg class="ic s"><use href="#i-gear"/></svg></button><button class="ib" title="Pop out"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib" title="Close"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="pf-b">
+        <div class="tabpane on" data-pane="tlist">
+          <div class="note info"><svg class="ic s"><use href="#i-pulse"/></svg><div>Updated by the Story Director after your replies.</div><div class="r"><button class="bk-btn quiet" style="min-height:24px">Change in Story Director</button></div></div>
+          <div class="card hover" data-tab="tinv" style="cursor:pointer"><h4><svg class="ic s"><use href="#i-list"/></svg>Inventory<span class="r">turn 41</span></h4><p>14 items · 212 gp · lantern equipped</p>
+            <div class="hbar"><button class="ib" title="Refresh from chat history"><svg class="ic s"><use href="#i-refresh"/></svg></button><button class="ib" title="Open"><svg class="ic s"><use href="#i-cr"/></svg></button><button class="ib" title="Pop out to floating panel"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib danger" title="Clear all data"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+          <div class="card"><h4><svg class="ic s"><use href="#i-users"/></svg>Party<span class="r">turn 41</span></h4><p>Vera Lindqvist, Mara Okafor · lead: Mara</p></div>
+          <div class="card"><h4><svg class="ic s"><use href="#i-note"/></svg>Quest Board<span class="r">turn 40</span></h4><p>2 active, 1 blocked · deadline: high tide</p></div>
+          <div class="card" data-tab="tcodex" style="cursor:pointer"><h4><svg class="ic s"><use href="#i-eye"/></svg>Creature Codex<span class="r">turn 38</span></h4><p>3 entries · salt-eel, lamp moth, tide wight</p></div>
+          <div class="card"><h4><svg class="ic s"><use href="#i-lock"/></svg>Knowledge<span class="r">turn 41</span></h4><p>7 facts, 2 secrets, 1 suspicion</p></div>
+          <button class="bk-btn" style="align-self:flex-start"><svg class="ic s"><use href="#i-puzzle"/></svg>Add or remove trackers</button>
+        </div>
+        <div class="tabpane" data-pane="tinv">
+          <div style="display:flex;align-items:center;gap:8px"><button class="ib" data-tab="tlist" title="Back"><svg class="ic s"><use href="#i-back"/></svg></button><b style="font:800 15px var(--font-big)">Inventory</b><span class="grow" style="flex:1"></span><span class="kv" style="gap:6px"><span>Total value</span><b>212 gp</b></span></div>
+          <div class="bk-seg" style="align-self:flex-start"><button aria-pressed="true">Items</button><button aria-pressed="false">Equipped</button><button aria-pressed="false">Currency</button></div>
+          <div class="in"><svg class="ic s"><use href="#i-search"/></svg><span class="ph">Filter</span></div>
+          <div class="rw"><div class="av sm c6">BL</div><div class="tx"><b>Brass lantern</b><small>Effects: light 20 ft</small></div><div class="mt"><button class="bk-btn" style="min-height:26px">Equip</button><button class="ib danger" title="Delete item"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+          <div class="rw"><div class="av sm c2">SR</div><div class="tx"><b>Customs seal ring</b><small>Stats: +1 persuasion · finger</small></div><div class="mt"><button class="bk-btn" style="min-height:26px">Unequip</button><button class="ib danger"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+          <div class="card"><h4>Generated: Tide chart<span class="r">proposal</span></h4><div style="display:flex;gap:8px"><button class="bk-btn primary" style="min-height:26px">Accept</button><button class="bk-btn" style="min-height:26px">Discard</button></div></div>
+          <div class="fld"><span class="lbl">Refresh with AI</span><div style="display:flex;gap:8px"><div class="in"><span class="ph">Guide the AI... (optional)</span></div><button class="bk-btn primary"><svg class="ic s"><use href="#i-refresh"/></svg>Refresh</button></div></div>
+          <div style="display:flex;gap:8px"><button class="bk-btn"><svg class="ic s"><use href="#i-plus"/></svg>Add item</button><button class="bk-btn">Generate</button><span style="flex:1"></span><button class="bk-btn quiet danger">Clear all data</button></div>
+          <div class="note bad"><div><b>Clear all Inventory data?</b></div><div class="r"><button class="bk-btn quiet" style="min-height:26px">Cancel</button><button class="bk-btn danger" style="min-height:26px">Yes, clear</button></div></div>
+          <div class="note ok"><svg class="ic s"><use href="#i-check"/></svg>Inventory cleared.<div class="r"><button class="bk-btn quiet" style="min-height:26px"><svg class="ic s"><use href="#i-undo"/></svg>Undo</button></div></div>
+        </div>
+        <div class="tabpane" data-pane="tcodex">
+          <div style="display:flex;align-items:center;gap:8px"><button class="ib" data-tab="tlist"><svg class="ic s"><use href="#i-back"/></svg></button><b style="font:800 15px var(--font-big)">Creature Codex</b></div>
+          <div class="card"><h4>Salt-eel</h4><p>Tide-bound predator of flooded stairs. Weak to lamplight.</p></div>
+          <span class="lbl" style="margin-top:6px">Sub-features</span>
+          <div class="setrow"><div class="tx"><b>Secrets</b><span class="d">Bidirectional secret tracking with concealment</span></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div>
+          <div class="setrow"><div class="tx"><b>Creature stats</b><span class="d">HP, MP, attack, defense, speed</span></div><button class="tg" role="switch" aria-checked="false"><i></i></button></div>
+          <div class="setrow"><div class="tx"><b>Combat profiles</b><span class="d">Threat levels, abilities, weaknesses, loot</span></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div>
+          <div class="setrow"><div class="tx"><b>Ecology, taming and bonds, arcana, research notes</b><span class="d">Four more toggles in this list</span></div><button class="ib"><svg class="ic s"><use href="#i-cd"/></svg></button></div>
+        </div>
+        <div class="tabpane" data-pane="tset">
+          <div class="note info"><svg class="ic s"><use href="#i-gear"/></svg>Panel AI settings<div class="r"><button class="bk-btn quiet" style="min-height:24px" data-tab="tlist">Back</button></div></div>
+          <div class="fld"><span class="lbl">Model for tracker generation</span><div class="in">Story Director model<svg class="ic s" style="margin-left:auto"><use href="#i-cd"/></svg></div></div>
+          <div class="setrow"><div class="tx"><b>Update trackers automatically</b><span class="d">Mirrors the Story Director setting.</span></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div>
+          <div class="fld"><span class="lbl">Every N replies, per tracker</span><div class="rw" style="padding:2px 0"><div class="tx"><b>Inventory</b></div><span></span><div class="in" style="width:70px">2</div></div><div class="rw" style="padding:2px 0"><div class="tx"><b>Quest Board</b></div><span></span><div class="in" style="width:70px">1</div></div></div>
+        </div>
+      </div>
+      <footer class="pf-f"><span class="hint">12 more trackers available</span><span class="grow"></span><button class="bk-btn quiet">Manage features</button></footer>
+    </section></div>
+
+    <div class="fig" style="width:420px"><div class="cap">5b. How a tracker panel reads in the list</div>
+      <p class="wf-note">Each of the 16 modules fills the same card. The summary line is the module's own headline number, and Open shows its panel.</p>
+      <table class="map" style="font-size:12px"><thead><tr><th>Tracker</th><th>Card summary</th></tr></thead><tbody>
+        <tr><td>Combat</td><td>Round, enemies left, pressure</td></tr><tr><td>Bonds</td><td>Active bonds and strength</td></tr>
+        <tr><td>Creature Codex</td><td>Entries known, last found</td></tr><tr><td>Corruption</td><td>Metric and phase</td></tr>
+        <tr><td>Cycles</td><td>Phase and day</td></tr><tr><td>Events</td><td>Off-scene events pending</td></tr>
+        <tr><td>Inventory</td><td>Items, currency, equipped</td></tr><tr><td>Knowledge</td><td>Facts, secrets, suspicions</td></tr>
+        <tr><td>Memories</td><td>Moments per character</td></tr><tr><td>Party</td><td>Members and lead</td></tr>
+        <tr><td>Stats</td><td>HP, MP, AP, resources</td></tr><tr><td>Spellbook</td><td>Spells, cooldowns</td></tr>
+        <tr><td>Quest Board</td><td>Active, blocked, deadlines</td></tr><tr><td>Cast</td><td>Files and drift</td></tr>
+        <tr><td>Map</td><td>Location and discoveries</td></tr><tr><td>Renown</td><td>Standing, favors, heat</td></tr>
+        <tr><td>Calendar (soon)</td><td>Shown under "Soon" in the feature manager</td></tr></tbody></table>
+      <p class="wf-note" style="margin-top:12px"><b>Features kept.</b> Per-tracker Refresh from chat history, Refresh with AI plus Guide the AI, Generate, Add, Equip and Unequip, filters and sections, delete per item, Clear All Data with confirm and Undo, Panel AI settings, pop out, sub-features (Codex 7, Cycles 4, Combat tactical mode and wild magic), the auto-update line with "Change in Story Director", and the Storyboards scope and AI Context controls.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. booth + layer ============ -->
+<section class="sec" id="booth">
+  <h2>6. Control Booth hub and the workshop layer</h2>
+  <p class="wf-note"><b>Control Booth.</b> It stays the hub (first pinned icon). It is a Side panel of Discord-style setting rows, each one a link into the panel that owns the thing: Narrator Model opens the model popout, Active Preset opens the Generation layer, Lorebooks opens the Lorebooks panel, Memory opens Memory. Nothing is duplicated, so a fix in a panel shows here too.</p>
+  <div class="figrow">
+    <div class="fig"><div class="cap">6a. Side panel: Control Booth</div>
+    <section class="pf" id="panel-booth" data-kind="side">
+      <header class="pf-h"><svg class="ic"><use href="#i-bolt"/></svg><div class="t"><b>Control Booth</b><small>Scene control surface</small></div><button class="ib"><svg class="ic s"><use href="#i-popout"/></svg></button><button class="ib"><svg class="ic s"><use href="#i-x"/></svg></button></header>
+      <div class="pf-b">
+        <div class="card"><h4>Scene readout</h4><div class="meter"><i style="width:57%"></i></div><div class="kv"><span>Context</span><b>18.2k / 32k</b></div><div class="kv"><span>Msgs</span><b>42</b></div><div class="kv"><span>Tokens</span><b>18,204</b></div></div>
+        <div class="setrow"><div class="tx"><b>Narrator model</b><span class="d">Claude Sonnet</span></div><button class="bk-btn">Change</button></div>
+        <div class="setrow"><div class="tx"><b>Fallback model</b><span class="d">Used once when the main model gives up.</span></div><div class="bk-seg"><button aria-pressed="true">Off</button><button aria-pressed="false">Custom</button></div></div>
+        <div class="setrow"><div class="tx"><b>Active preset</b><span class="d">Harbor Noir</span></div><button class="bk-btn quiet">Open Generation <svg class="ic s"><use href="#i-cr"/></svg></button></div>
+        <div class="setrow"><div class="tx"><b>Lorebooks</b><span class="d">Canal District, Harbor Customs</span></div><button class="bk-btn quiet">Open <svg class="ic s"><use href="#i-cr"/></svg></button></div>
+        <div class="card"><h4>Narrator<span class="r">Story Director on</span></h4><div class="kv"><span>Model</span><b>Same as narrator</b></div><div class="kv"><span>Personality</span><b>Patient</b></div><div class="kv"><span>Max tool rounds</span><b>4</b></div><div class="setrow"><div class="tx"><b>Narrator tool access</b></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div><button class="bk-btn quiet" style="align-self:flex-start">Director settings <svg class="ic s"><use href="#i-cr"/></svg></button></div>
+        <div class="card"><h4>AI context summary</h4><div class="setrow" style="padding:2px 0"><div class="tx"><b>Include saved summary</b></div><button class="tg" role="switch" aria-checked="true"><i></i></button></div><button class="bk-btn quiet" style="align-self:flex-start">Open Memory <svg class="ic s"><use href="#i-cr"/></svg></button></div>
+        <button class="bk-btn"><svg class="ic s"><use href="#i-users"/></svg>Change character</button>
+        <div class="note"><svg class="ic s"><use href="#i-lock"/></svg>A reply is being written. Changes apply from the next reply.</div>
+      </div>
+    </section></div>
+
+    <div class="fig" style="flex:1;min-width:760px"><div class="cap">6b. Layer: the workshop (Regex Workshop shown)</div>
+      <div class="shell" style="width:100%;max-width:960px;height:700px;display:block">
+        <div class="layer" style="position:relative;height:100%;padding:16px">
+         <div class="lbox" style="grid-template-columns:250px 1fr">
+          <div class="ln">
+            <div class="who"><div class="av sm c1">VL</div><div><b>The flooded archive</b><small>Scene workshop</small></div></div>
+            <div class="in" style="margin-bottom:8px"><svg class="ic s"><use href="#i-search"/></svg><span class="ph">Search</span></div>
+            <div class="sc">Scene</div><div class="srow"><svg class="ic s"><use href="#i-note"/></svg>Scene note</div>
+            <div class="sc" style="margin-top:8px">Prompting</div><div class="srow"><svg class="ic s"><use href="#i-sliders"/></svg>Generation</div><div class="srow"><svg class="ic s"><use href="#i-compass"/></svg>Guides</div>
+            <div class="sc" style="margin-top:8px">World</div><div class="srow"><svg class="ic s"><use href="#i-library"/></svg>Compendium</div>
+            <div class="sc" style="margin-top:8px">Final Cut</div><div class="srow"><svg class="ic s"><use href="#i-scissors"/></svg>Final Cut</div><div class="srow on"><svg class="ic s"><use href="#i-regex"/></svg>Regex Workshop</div>
+          </div>
+          <div class="lp">
+            <button class="ib xb" title="Close (Esc)"><svg class="ic"><use href="#i-x"/></svg></button>
+            <h3>Regex Workshop</h3><span class="hint">Text transformations applied to this scene, in order.</span>
+            <div class="sc">Scripts <span class="n">3</span></div>
+            <div class="rw"><svg class="ic s"><use href="#i-grip"/></svg><div class="tx"><b>Strip stage directions</b><small>display · every reply</small></div><div class="mt"><button class="tg" role="switch" aria-checked="true"><i></i></button><button class="bk-btn" style="min-height:28px">Edit</button><button class="ib danger" title="Delete"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+            <div class="rw"><svg class="ic s"><use href="#i-grip"/></svg><div class="tx"><b>Normalize quotes</b><small>prompt · before sending</small></div><div class="mt"><button class="tg" role="switch" aria-checked="true"><i></i></button><button class="bk-btn" style="min-height:28px">Edit</button><button class="ib danger" title="Delete"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+            <div class="rw"><svg class="ic s"><use href="#i-grip"/></svg><div class="tx"><b>Harbor slang</b><small>display</small></div><div class="mt"><button class="tg" role="switch" aria-checked="false"><i></i></button><button class="bk-btn" style="min-height:28px">Edit</button><button class="ib danger" title="Delete"><svg class="ic s"><use href="#i-trash"/></svg></button></div></div>
+            <div><button class="bk-btn primary">New regex script</button></div>
+            <div class="empty"><b>No regex scripts yet</b>Create or import regex scripts to get started.</div>
+          </div>
+         </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="wf-note"><b>Decision (6b).</b> A Layer follows Discord's current settings window: a large panel floating over the dimmed app (not full screen), a left nav that starts with the scene's avatar and name and a search box, then groups under small caps headers with icon rows. The page title sits top left and a plain X top right; Esc also closes. Content is rows with the action at the right end (switch, Edit, delete). It serves only the four heavy workspaces: Generation, Guides, Compendium, and Final Cut with Regex, so the nav above is the whole Prompting, World and Final Cut set. Settings-like panels in the right column (Booth, Director settings, tracker settings, Memory) use the same row grammar. The Messenger settings window is another wireframe's; this one reuses its shell.</p>
+</section>
+
+<!-- ============ 7. mapping ============ -->
+<section class="sec" id="map">
+  <h2>7. Every program, and where each feature lives now</h2>
+  <p class="wf-note"><b>How to read it.</b> Rows follow <code>programs.ts</code> in order (BEFORE_STAGE, STAGE, AFTER_STAGE, then Prop panels), then the other surfaces Messenger opens today. "Side", "Wide" and "Layer" are the kinds from section 0. Nothing is removed. Rows that say "settings layer" belong to the settings wireframe, and are routed there so they are not lost.</p>
+  <table class="map">
+    <thead><tr><th>Program (today)</th><th>Source today</th><th>New home</th><th>Features and where they land</th></tr></thead>
+    <tbody>
+    <tr class="grp"><td colspan="4">Scene</td></tr>
+    <tr><td>Control Booth</td><td><code>scene-booth-wing</code>, <code>booth-*</code></td><td><span class="k">Side</span> hub, first pinned icon</td><td>Scene readout (context bar, msgs, tokens) stays at top. Narrator model, fallback model (Off/Custom), active preset, lorebooks, Story Director block, AI context summary rows each link to the owning panel (6a). Change character opens the navigator from the sidebar's Browse Characters and the avatar popout. The "reply is being written" lock note stays.</td></tr>
+    <tr><td>Characters</td><td><code>cast-character-tab</code>, <code>cast-parts</code>, <code>cast-palette</code>, <code>cast-rating-tags</code>, <code>scene-greeting-picker</code></td><td><span class="k">Wide</span> inspector, Character tab; reached from the profile card's Edit card</td><td>Original/Base card switch, identity and titles, description, personality, scenario, first message with the opening-message picker, example dialogue, system prompt, post-history, creator notes, color palette and named colors, theme, content rating and Tagsheet, advanced (2c).</td></tr>
+    <tr><td>My Persona</td><td><code>cast-persona-tab</code>, <code>scene-persona-picker</code>, <code>cast-injection</code>, <code>emoji-picker</code></td><td><span class="k">Wide</span> inspector, My persona tab; Casting Call is a popout from the user panel</td><td>Starring and Lead role, Clear role, New persona, name and emoji picker, tagline, age, height, pronouns, appearance, personality, quirks, history, linked lorebook, prompt injection with live preview and tokens (2c). "You now play" swap line becomes a system message in the chat.</td></tr>
+    <tr><td>Participants</td><td><code>cast-participants-tab</code>, <code>participant-row</code>, <code>reconcile-card</code></td><td><span class="k">Side</span> member list (2a) plus profile popout (2b)</td><td>On Stage, NPCs, Registered, Retired groups with Restore, Main/Player badges, Present/Absent, color and Uses Card Gradient, Ping, Set/Unset Main, Delete, reconcile card with Add selected, Dismiss, Undo.</td></tr>
+    <tr class="grp"><td colspan="4">World</td></tr>
+    <tr><td>Lorebooks</td><td><code>scene-lore-wing</code>, <code>scene-lore-books</code>, <code>scene-lore-entries</code>, <code>scene-lore-entry</code>, <code>scene-lore-advanced</code>, <code>scene-lore-keys</code>, <code>cast-lorebooks</code></td><td><span class="k">Side</span> entries (3a), book manager view (3d), <span class="k">Wide</span> entry inspector (3e)</td><td>All listed under 3. Creator-recommended and own lorebooks on the cast tab are the same book manager, linked from the character inspector.</td></tr>
+    <tr><td>Compendium</td><td><code>compendium/*</code>, <code>compendium-mounts</code></td><td><span class="k">Layer</span> (6b floating window), left nav "World"</td><td>Dashboard, Browse (entry pages, back to list), Storyboards (scope, AI Context filters), Activity feed (All/Entries/Tools, Clear) which is also a popout, Settings (books, master, model, recall, filing, ingest, language, historian, standardize, tree, diagnostics, access chip), graph explorer, standardize banner and cards, export button, tree maintenance, reconcile modal. The books-in-this-scene row and per-book "How the AI may use this book" chip sit in the layer header.</td></tr>
+    <tr class="grp"><td colspan="4">Prompting</td></tr>
+    <tr><td>Generation</td><td><code>scene-preset-wing</code>, <code>scene-preset-parts</code>, <code>scene-preset-templates</code></td><td><span class="k">Layer</span>, Prompting nav</td><td>Active prompts list with search and collapse, prompt editor, marker prompts, context mode, prompt post-processing, sampler readout, templates, switch preset, run without a preset, open in Workbench, help. The Booth's Active preset row opens it.</td></tr>
+    <tr><td>Guides</td><td><code>scene-guides-wing</code>, <code>scene-guide-editor</code>, <code>guides-core</code></td><td><span class="k">Layer</span> page, Prompting nav (Wide inspector if the layer is not wanted)</td><td>Guide list with search, New Guide, "Use in this scene" switch, editor (name, type, category, content, placement prepend/append, injection role, depth, target macro, visible in library), Responses.</td></tr>
+    <tr><td>Scene Note</td><td><code>scene-note-wing</code></td><td><span class="k">Side</span></td><td>Note content with macros, position (After Scenario, In Chat History, Reinforcement, Response Formatting), injection depth, frequency, Unsaved state. Also shown as a pinned-style note at the top of the chat when it has text.</td></tr>
+    <tr><td>Writing Helpers</td><td><code>scene-writing-tools</code>, <code>writing-tools-core</code></td><td><span class="k">Side</span>, and the "+" menu in the composer</td><td>Your turn helpers list, "Uses this prompt", "What this sends" popout, the choose-a-preset notice.</td></tr>
+    <tr class="grp"><td colspan="4">Final Cut</td></tr>
+    <tr><td>Regex Workshop</td><td><code>scene-regex-wing</code>, <code>use-scene-regex-picks</code></td><td><span class="k">Layer</span> (6b)</td><td>Scripts, drag to reorder, edit, delete, New Regex Script, Text Transformations, per-scene picks. Active count shows as a badge on the sidebar's Active features row, as today's "Regex (n)".</td></tr>
+    <tr><td>Final Cut</td><td><code>scene-final-cut</code>, <code>final-cut/*</code></td><td><span class="k">Layer</span>, Final Cut nav; per-message Final Cut is in the hover action bar</td><td>Passes with enable switch and prompt contract, Now in review, agents (saved agents, department name, instruction, preset entries), Anti-Slop Engine (banks, custom banks, watchlist, replacement guidance, check my messages), Translator (target language, strictness, register, names, glossary, honorifics, never translate), on-demand editing tools with reset to defaults, activity feed.</td></tr>
+    <tr class="grp"><td colspan="4">Features</td></tr>
+    <tr><td>Add / Remove Features</td><td><code>props-wing</code>, <code>prop-row</code>, <code>prop-tile</code>, <code>prop-tip</code>, <code>props-soon</code></td><td><span class="k">Side</span> list of toggle rows with a gear for each feature's own settings</td><td>Built-In Props, Scene Augmentations, Legacy Trackers, Storyboards, Coming Soon (Soon) groups, tooltips, load error with Try again. It is also the target of "Add or remove trackers" in 5a.</td></tr>
+    <tr><td>Story Director (prop)</td><td><code>story-director/*</code></td><td><span class="k">Side</span> (4a), pinned icon</td><td>All five tabs, stepper, Reset DM, tour, settings view (model, reasoning, command mode, creativity, personality, instructions, auto-update, retries), activity badge. Props-row gear and Booth block both open the settings view.</td></tr>
+    <tr><td>Trackers (16 modules)</td><td><code>props/trackers/*</code></td><td><span class="k">Side</span> list with drill-in (5a), pinned icon</td><td>Listed under 5 per module. Floating pop-out of any tracker stays.</td></tr>
+    <tr><td>TrackHare</td><td><code>props/trackhare/*</code></td><td><span class="k">Side</span>, sidebar Active features row</td><td>Reply hits, options and popover stay in the panel; the Chains sheet and Tokens sheet (also the trace viewer) open as <span class="k">Wide</span> inspector tabs.</td></tr>
+    <tr><td>Choices</td><td><code>scene-choices</code>, <code>scene-choice-walkthrough</code></td><td>Button row under the last message, like message components; setup in the Booth</td><td>Preset choices, Use defaults, Walk me through (walkthrough opens as a popout). Open question below.</td></tr>
+    <tr class="grp"><td colspan="4">Stage</td></tr>
+    <tr><td>Control Panel</td><td><code>stage-appearance</code>, <code>scene-backdrop-*</code>, <code>scene-accent-row</code></td><td>Routes to the settings layer (Appearance); backdrop and accent open from the sidebar scene's gear, Discord's "edit channel"</td><td>Chat theme (Basic, Full Stage, Immersive), scene presentation, backdrop picker with card pin, accent colors.</td></tr>
+    <tr><td>My Pictures</td><td><code>stage-gallery*</code></td><td><span class="k">Side</span> media grid, lightbox on click</td><td>Gallery grid, Show switch, empty state "No images in this scene yet", apply to backdrop.</td></tr>
+    <tr><td>Music</td><td><code>stage-music-panel</code>, <code>mood-music</code> prop</td><td><span class="k">Side</span> plus a mini player card above the user panel (Discord's activity card)</td><td>Choose files, direct link, title, volume, next, stop, library list.</td></tr>
+    <tr><td>Spotify</td><td><code>stage-spotify-panel</code>, <code>stage-spotify-feed</code></td><td><span class="k">Side</span>, same mini player card</td><td>Feed, controls, connection state.</td></tr>
+    <tr><td>Wardrobe</td><td><code>stage-wardrobe</code></td><td><span class="k">Side</span> roster list</td><td>Per-caster garments, loose garments, standalone dresses, the "next reply" note.</td></tr>
+    <tr class="grp"><td colspan="4">Context and AI</td></tr>
+    <tr><td>Context Inspector</td><td><code>context-wing</code>, <code>this-turn</code>, <code>next-send</code>, <code>tab-*</code>, <code>pressure</code></td><td><span class="k">Wide</span> inspector with tabs: This turn, Next send, Lore, State, Macros</td><td>Earlier/later turn, Estimated vs exact tokens, searchable next-send preview, lore recalled by the Compendium, variables and mutations, macro errors, context target and thresholds, calls awaiting review. Context pressure shows as a thin meter under the header.</td></tr>
+    <tr><td>Memory</td><td><code>memory-tab</code>, <code>memory-controls</code></td><td><span class="k">Side</span></td><td>Current summary, Write summary, Backfill history, method (Every exchange, Growing timeline, Long-term recall), runs, prompt template with Reset prompt, per-chat model override, Save.</td></tr>
+    <tr><td>AI Connection</td><td><code>scene-ai-wing</code></td><td>Routes to the settings layer (AI); the scene picker is the Booth's Change popout</td><td>Search models, All Providers, Select AI, Open Kit connections, no-connections and retry states.</td></tr>
+    <tr><td>Samplers</td><td><code>generation-tab</code>, <code>generation-params-*</code>, <code>sampler-history</code></td><td><span class="k">Wide</span> inspector</td><td>Parameter search by name or alias, groups (Nucleus Sampling, Repetition Penalties, Output Constraints, Advanced, custom, bias), Reset, history.</td></tr>
+    </tbody>
+  </table>
+  <p class="wf-note"><b>Also in Messenger today, kept.</b> Takes pill and Update available badge (header, left of icons). Scene find becomes the header's find box. Composer tools (re-rolls, continue) stay in the "+" menu. The scene readout HUD stays in the Booth. Regex count and active features in the sidebar. Persona and the settings gear in the user panel.</p>
+</section>
+
+<!-- ============ 8. narrow ============ -->
+<section class="sec" id="narrow">
+  <h2>8. Narrow widths</h2>
+  <div class="nar">
+    <div class="fig"><div class="cap">1440 and up</div><div class="nbox" style="width:420px;height:130px"><div class="a" style="width:50px"><span>rail</span></div><div class="a" style="width:80px"><span>side</span></div><div class="b"><span>chat</span></div><div class="c" style="width:90px"><span>panel</span></div></div></div>
+    <div class="fig"><div class="cap">Under 1024: panel is a sheet over the chat</div><div class="nbox" style="width:300px;height:130px"><div class="a" style="width:44px"><span>rail</span></div><div class="b"><span>chat</span></div><div class="c" style="position:absolute;inset:0 0 0 30px;box-shadow:-4px 0 0 0 var(--premiere-hard)"><span>sheet with back arrow</span></div></div></div>
+    <div class="fig"><div class="cap">Under 640: drawer, as today</div><div class="nbox" style="width:200px;height:130px"><div class="a" style="width:120px"><span>drawer: rail and side</span></div><div class="b"><span>chat</span></div></div></div>
+  </div>
+  <p class="wf-note"><b>Decision.</b> Under 1024 px a Side or Wide panel covers the chat as a full-width sheet with its back arrow, and the header keeps the pinned icons. Wide inspectors never share the row with the chat below 1200 px. Under 640 px the existing drawer holds rail and sidebar behind a menu button, the header shows only back, name, the grid button and the find icon, and the grid popout becomes a bottom sheet. Layers are already full screen.</p>
+  <p class="wf-note"><b>Open questions.</b> (1) Choices: confirm the button row under the last message, since today it lives with the composer. (2) Pinned icons: five as drawn, or let people pick from the start? (3) Guides: Wide inspector or Layer page. (4) Control Panel and AI Connection routing depends on the settings wireframe's nav. (5) Delete on a participant moves to Retired today; keep that wording on the profile card.</p>
+</section>
+
+</main>
+
+<script>
+(function () {
+  var ic = function (n, c) { return '<svg class="ic ' + (c || '') + '"><use href="#i-' + n + '"/></svg>'; };
+  var PINNED = [['booth', 'bolt', 'Control Booth'], ['cast', 'users', 'Cast'], ['lore', 'book', 'Lorebooks'], ['director', 'compass', 'Story Director'], ['trackers', 'list', 'Trackers']];
+  var PROGRAMS = [
+    ['Scene', 'booth', 'Control Booth', 'Side', 'bolt'], ['Scene', 'castedit', 'Characters', 'Wide', 'user'], ['Scene', 'castedit', 'My Persona', 'Wide', 'user'], ['Scene', 'cast', 'Cast (participants)', 'Side', 'users'],
+    ['World', 'lore', 'Lorebooks', 'Side', 'book'], ['World', 'compendium', 'Compendium', 'Layer', 'library'],
+    ['Prompting', 'generation', 'Generation', 'Layer', 'sliders'], ['Prompting', 'guides', 'Guides', 'Layer', 'compass'], ['Prompting', 'note', 'Scene Note', 'Side', 'note'], ['Prompting', 'helpers', 'Writing Helpers', 'Side', 'pen'],
+    ['Final Cut', 'finalcut', 'Final Cut', 'Layer', 'scissors'], ['Final Cut', 'regex', 'Regex Workshop', 'Layer', 'regex'],
+    ['Features', 'features', 'Add / Remove Features', 'Side', 'puzzle'], ['Features', 'director', 'Story Director', 'Side', 'compass'], ['Features', 'trackers', 'Trackers', 'Side', 'list'], ['Features', 'trackhare', 'TrackHare', 'Side', 'search'],
+    ['Stage', 'pictures', 'My Pictures', 'Side', 'image'], ['Stage', 'music', 'Music', 'Side', 'music'], ['Stage', 'spotify', 'Spotify', 'Side', 'music'], ['Stage', 'wardrobe', 'Wardrobe', 'Side', 'user'], ['Stage', 'controlpanel', 'Control Panel', 'Settings', 'gear'],
+    ['Context', 'inspector', 'Context Inspector', 'Wide', 'scan'], ['Context', 'memory', 'Memory', 'Side', 'book'],
+    ['AI', 'aiconn', 'AI Connection', 'Settings', 'gear'], ['AI', 'samplers', 'Samplers', 'Wide', 'sliders']
+  ];
+  var pinnedIds = PINNED.map(function (p) { return p[0]; });
+
+  function menu(open) {
+    var h = '<div class="mi-pop allp"><div class="in q">' + ic('search', 's') + '<span class="ph">Find a panel</span></div>', g = '';
+    PROGRAMS.forEach(function (p) {
+      if (p[0] !== g) { g = p[0]; h += '<div class="g">' + g + '</div>'; }
+      h += '<div class="pr' + (p[1] === open ? ' on' : '') + '" data-panel="' + p[1] + '">' + ic(p[4], 's') + '<span>' + p[2] + '</span><em>' + p[3] + '</em><span class="st' + (pinnedIds.indexOf(p[1]) > -1 ? ' p' : '') + '" title="Pin to header">' + ic('star', 's') + '</span></div>';
+    });
+    return h + '</div>';
+  }
+  function header(open, menuOpen) {
+    var h = '<div class="hdr"><div class="nm">' + ic('hash', 's') + 'The flooded archive</div><div class="tp">Vera Lindqvist · Canal District · Turn 42</div>';
+    h += '<span class="pill">Director\'s Cut</span><span class="pill warn">Update available</span><span class="vs"></span>';
+    PINNED.forEach(function (p) { h += '<button class="hb' + (open === p[0] ? ' on' : '') + '" data-panel="' + p[0] + '" title="' + p[2] + '">' + ic(p[1]) + (p[0] === 'director' ? '<span class="bd">1</span>' : '') + '</button>'; });
+    h += '<span class="vs"></span><button class="hb' + (menuOpen ? ' on' : '') + '" data-menu="1" title="All panels">' + ic('grid') + '</button><div class="hsearch">Find<span>' + ic('search', 's') + '</span></div>';
+    return h + (menuOpen ? menu(open) : '') + '</div>';
+  }
+  function fill(id, open, menuOpen) { var el = document.getElementById(id); if (el) el.insertAdjacentHTML('beforeend', header(open, menuOpen)); }
+  fill('h-none', null, false); fill('h-one', 'lore', false); fill('h-menu', 'lore', true);
+
+  var live = document.getElementById('live'), state = { open: 'lore', menu: false }, wideIds = { castedit: 1, entry: 1 };
+  function stub(id) {
+    var p = PROGRAMS.filter(function (x) { return x[1] === id; })[0] || ['', id, id, 'Side', 'grid'];
+    var d = document.createElement('section'); d.className = 'pf'; d.dataset.kind = p[3] === 'Wide' ? 'wide' : 'side';
+    d.innerHTML = '<header class="pf-h">' + ic(p[4]) + '<div class="t"><b>' + p[2] + '</b><small>' + p[0] + '</small></div><button class="ib" title="Pop out">' + ic('popout', 's') + '</button><button class="ib" data-close="1">' + ic('x', 's') + '</button></header><div class="pf-b"><div class="empty"><b>' + p[2] + '</b>Opens as a ' + p[3] + ' surface in this slot. Its features are listed in the mapping table (section 7).</div></div>';
+    return d;
+  }
+  function layerStub(id) {
+    var p = PROGRAMS.filter(function (x) { return x[1] === id; })[0];
+    var d = document.createElement('div'); d.className = 'layer';
+    var nav = ''; PROGRAMS.filter(function (x) { return x[3] === 'Layer'; }).forEach(function (x) { nav += '<div class="srow' + (x[1] === id ? ' on' : '') + '">' + ic(x[4], 's') + x[2] + '</div>'; });
+    d.innerHTML = '<div class="lbox"><div class="ln"><div class="who"><div class="av sm c1">VL</div><div><b>The flooded archive</b><small>Scene workshop</small></div></div>' + nav + '</div><div class="lp"><button class="ib xb" data-close="1" title="Close (Esc)">' + ic('x') + '</button><h3>' + p[2] + '</h3><span class="hint">Floating workshop window over the dimmed app. See section 6b and the mapping table.</span></div></div>';
+    return d;
+  }
+  function render() {
+    live.querySelector('.hdr-slot').innerHTML = header(state.open, state.menu);
+    var slot = live.querySelector('.panel-slot'); slot.innerHTML = '';
+    live.querySelectorAll('.layer').forEach(function (n) { n.remove(); });
+    if (!state.open) return;
+    var prog = PROGRAMS.filter(function (x) { return x[1] === state.open; })[0];
+    if (prog && (prog[3] === 'Layer' || prog[3] === 'Settings')) { live.appendChild(layerStub(state.open)); return; }
+    var src = document.getElementById('panel-' + state.open), el;
+    if (src) { el = src.cloneNode(true); el.removeAttribute('id'); } else { el = stub(state.open); }
+    el.style.height = '100%'; slot.appendChild(el);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var tab = t.closest('[data-tab]');
+    if (tab) {
+      var pf = tab.closest('.pf'); if (pf) {
+        var name = tab.getAttribute('data-tab');
+        pf.querySelectorAll('[data-tabs] button').forEach(function (b) { b.setAttribute('aria-selected', b.getAttribute('data-tab') === name ? 'true' : 'false'); });
+        pf.querySelectorAll('.tabpane').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-pane') === name); });
+        return;
+      }
+    }
+    var seg = t.closest('.bk-seg button');
+    if (seg) { seg.parentNode.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b === seg ? 'true' : 'false'); }); return; }
+    var tg = t.closest('.tg'); if (tg) { tg.setAttribute('aria-checked', tg.getAttribute('aria-checked') === 'true' ? 'false' : 'true'); return; }
+    if (!live.contains(t)) return;
+    if (t.closest('[data-close]')) { state.open = null; state.menu = false; render(); return; }
+    var m = t.closest('[data-menu]'); if (m) { state.menu = !state.menu; render(); return; }
+    var pn = t.closest('[data-panel]');
+    if (pn) { var id = pn.getAttribute('data-panel'); state.open = (state.open === id && !state.menu) ? null : id; state.menu = false; render(); return; }
+    if (state.menu && !t.closest('.allp')) { state.menu = false; render(); }
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { if (state.menu) state.menu = false; else state.open = null; render(); } });
+  render();
+})();
+</script>
+</body>
+</html>

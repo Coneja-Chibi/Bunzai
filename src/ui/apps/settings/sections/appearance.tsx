@@ -9,6 +9,7 @@ import type { AppContext } from "../../../app-contract";
 import { SETTING_KEYS } from "../../../../studio/settings-shape";
 import { HOUSE_PALETTE, SwatchRow } from "../../../components/swatch-row";
 import { SettingsRow, type SettingsSection } from "../section-contract";
+import { AccessibilityRows } from "./accessibility-rows";
 import { ChatLayoutRow } from "./chat-layout-row";
 import { ThemeManager } from "./theme-manager";
 
@@ -33,6 +34,7 @@ function AppearanceSection({ ctx }: { ctx: AppContext }): JSX.Element {
         />
       </SettingsRow>
       <ChatLayoutRow prefs={ctx.prefs} />
+      <AccessibilityRows prefs={ctx.prefs} />
     </>
   );
 }

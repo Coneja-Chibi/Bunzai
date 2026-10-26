@@ -98,7 +98,7 @@ export function nativePlaybillSection(items: NativeFieldItem[]): JSX.Element | n
   if (items.length === 0) return null;
   return (
     <>
-      {byPlatform(items).map(([platform, group]) => (
+      {byPlatform(items).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ ([platform, group]) => (
         <section key={platform} id={anchor(platform)} className={styles.section}>
           <div className={styles.break}>
             <span className={styles.bar} />

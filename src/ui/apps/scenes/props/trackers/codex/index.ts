@@ -4,6 +4,7 @@
  */
 import { trackerProp } from "../tracker-prop";
 import { CodexPanel } from "./codex-panel";
+import { summaryLine } from "./summary";
 
 export const codexProp = trackerProp({
   module: "codex",
@@ -16,4 +17,5 @@ export const codexProp = trackerProp({
   title: "Creature Codex",
   noun: "Creature Codex",
   Panel: CodexPanel,
+  summary: summaryLine,
 });

@@ -13,7 +13,7 @@ export function chatStoreBackdropContract(make: (clock: () => number) => ChatSto
   const version = async (store: ChatStore, branchId: string) => (await store.readMessages(branchId, { limit: 1 })).branchVersion;
 
   describe("the scene's backdrop (rule 36)", () => {
-    const PICK = { pack: "pack-st", item: "sp_1", dim: 0.4, rate: 1.5 };
+    const PICK = { pack: "pack-st", item: "sp_1", dim: 0.4, rate: 1.5, blur: 8 };
 
     test("a new chat has none; setBackdrop sets, replaces and clears it, bumping no version and moving no updatedAt", async () => {
       const { store, chat, main, setNow } = await seeded(1);
@@ -51,7 +51,7 @@ export function chatStoreBackdropContract(make: (clock: () => number) => ChatSto
       expect((await store.restoreChat(chat.id))!.backdrop).toEqual(PICK);
     });
 
-    test("anything but a pack, an item an optional dim from 0 to 1 and an optional rate from 0.25 to 2 is refused and changes nothing", async () => {
+    test("anything but a pack, an item an optional dim from 0 to 1 and an optional rate from 0.25 to 2 and an optional blur from 0 to 20 is refused and changes nothing", async () => {
       const { store, chat } = await seeded(1);
       await store.setBackdrop(chat.id, PICK);
       const bads: unknown[] = [
@@ -69,6 +69,10 @@ export function chatStoreBackdropContract(make: (clock: () => number) => ChatSto
         { pack: "a", item: "b", rate: 0.1 },
         { pack: "a", item: "b", rate: 2.5 },
         { pack: "a", item: "b", rate: "1" },
+        { pack: "a", item: "b", blur: -1 },
+        { pack: "a", item: "b", blur: 20.5 },
+        { pack: "a", item: "b", blur: Number.NaN },
+        { pack: "a", item: "b", blur: "5" },
         { pack: "a", item: "b", extra: 1 },
         [],
         "x",

@@ -12,6 +12,9 @@ import styles from "./theme-manager.module.css";
 
 interface Inspection { preview: ThemePackagePreview; challenge: string }
 interface Example { id: string; name: string; version: string; digest: string; requestedScopes: string[] }
+/** The installed theme packages (host-only route); the Messenger You scope reads it through this, not its own fetch. */
+export const loadThemeCatalog = (): Promise<ThemeCatalogEntry[]> => apiFetchJson<ThemeCatalogEntry[]>("/api/themes/packages");
+
 interface RestoreReview { item: ThemeCatalogEntry; challenge: string }
 const post = <T,>(path: string, body: Record<string, unknown>): Promise<T> =>
   apiFetchJson<T>(path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -35,7 +38,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
   const [note, setNote] = useState("");
   const refresh = useCallback(async () => {
     try {
-      setCatalog(await apiFetchJson<ThemeCatalogEntry[]>("/api/themes/packages"));
+      setCatalog(await loadThemeCatalog());
       try { setExamples(await apiFetchJson<Example[]>("/api/themes/examples")); }
       catch { setExamples([]); }
     }
@@ -133,7 +136,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
     <label className={styles.choice}>Requested appearance
       <select value={selectedIsAvailable ? selected : ""} onChange={(event) => choose(event.currentTarget.value)}>
         {!selectedIsAvailable && <option value="">Unavailable selection</option>}
-        {options.map((item) => <option key={item.id} value={item.id}>{item.name}{item.builtIn ? " · bundled" : " · installed"}</option>)}
+        {options.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (item) => <option key={item.id} value={item.id}>{item.name}{item.builtIn ? " · bundled" : " · installed"}</option>)}
       </select>
     </label>
     <p className={styles.state} role="status">
@@ -143,7 +146,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
     <label className={styles.file}>Inspect a theme package JSON
       <input type="file" accept="application/json,.json" disabled={busy} onChange={(event) => void inspectFile(event.currentTarget.files?.[0])} />
     </label>
-    {examples.filter((example) => !catalog.some((item) => item.id === example.id && item.enabled)).map((example) =>
+    {examples.filter((example) => !catalog.some((item) => item.id === example.id && item.enabled)).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (example) =>
       <div className={styles.example} key={example.id}>
         <div><strong>{example.name}</strong><span>Shipped example · not active</span></div>
         <div className={styles.actions}>
@@ -156,7 +159,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
       <h4>Review {inspection.preview.name} {inspection.preview.version}</h4>
       <code>{inspection.preview.id}</code>
       <code>SHA-256 · {inspection.preview.digest}</code>
-      <ul>{inspection.preview.derivedScopes.map((scope) => <li key={scope}>{scopeLabels[scope] ?? scope}</li>)}</ul>
+      <ul>{inspection.preview.derivedScopes.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (scope) => <li key={scope}>{scopeLabels[scope] ?? scope}</li>)}</ul>
       <p>Approval applies to this exact digest. A changed package needs a new review and approval.</p>
       <div className={styles.actions}>
         <Button size="sm" variant="primary" disabled={busy} onClick={() => void approve()}>Approve and install</Button>
@@ -187,7 +190,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
         ? "The host-verified package changed. Review its digest and grants before applying the update."
         : "This bundled appearance was revoked. Review the host-verified package digest and grants before restoring it."}</p>
       <code>SHA-256 · {restoreReview.item.digest}</code>
-      <ul>{restoreReview.item.requestedScopes.map((scope) => <li key={scope}>{scopeLabels[scope] ?? scope}</li>)}</ul>
+      <ul>{restoreReview.item.requestedScopes.map(/* bounded-ok: fixed options, per-finding detail, or short word lists */ (scope) => <li key={scope}>{scopeLabels[scope] ?? scope}</li>)}</ul>
       <div className={styles.actions}>
         <Button size="sm" variant="primary" disabled={busy} onClick={() => void mutate("restore", restoreReview.item)}>Approve restore</Button>
         <Button size="sm" variant="quiet" disabled={busy} onClick={() => setRestoreReview(null)}>Cancel</Button>

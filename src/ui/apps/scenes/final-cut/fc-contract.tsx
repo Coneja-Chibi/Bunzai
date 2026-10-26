@@ -38,7 +38,7 @@ export function Contract({ passes, rulebook }: { passes: readonly FinalCutPass[]
       </header>
       <div className="fc-chips">
         {one && <Chip onClick={() => setPicked(null)}>All passes ~{total.toLocaleString()}</Chip>}
-        {list.map((c, i) => (
+        {list.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (c, i) => (
           <Chip key={c.type} pressed={picked === c.type} muted={!!picked && picked !== c.type} onClick={() => setPicked(picked === c.type ? null : c.type)}>
             {i + 1} {c.label} {c.type === "validator" ? "-" : `~${c.tokens.toLocaleString()}`}
           </Chip>

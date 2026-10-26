@@ -55,20 +55,20 @@ export function OpsPane({ onInsert }: { onInsert: (token: string) => void }): JS
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (row) => (
               <tr key={row.op}>
                 <th scope="row" className={grid.opCell}>
                   <span className={grid.opAction}>{actionOf(row.op)}</span>
                   <span className={grid.opFamily}>{row.family}</span>
                 </th>
-                {row.byLens.map((cell) => (
+                {row.byLens.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (cell) => (
                   <td key={cell.lens} className={cell.forms.length === 0 ? grid.gap : undefined}>
                     {cell.forms.length === 0 ? (
                       // Named, not left blank. An empty cell reads as "not filled in yet"; this
                       // reads as the finding it is.
                       <span className={grid.gapWord}>none</span>
                     ) : (
-                      cell.forms.map((form) => (
+                      cell.forms.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (form) => (
                         <Chip
                           key={form.macro}
                           title={form.description}
