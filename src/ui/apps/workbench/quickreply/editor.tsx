@@ -132,7 +132,7 @@ export function QuickReplyEditor({ entity, revision, ctx, piece, topRight }: Qui
         })}
         namePlaceholder="Untitled quick replies"
         nameAriaLabel="Quick-reply set name"
-        meta={`quick replies · ${body.replies.length} button${body.replies.length === 1 ? "" : "s"}`}
+        meta={`quick replies · ${body.replies.length} button${body.replies.length === 1 ? "" : "s"}`} /* style-ok: user-facing word "button", not a style rule */
         dirty={dirty}
         saving={saving}
         onSave={() => void doSave()}

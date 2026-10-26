@@ -8,6 +8,7 @@ import type { JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import { SETTING_KEYS } from "../../../../studio/settings-shape";
 import { knownDecks } from "../../../_shared/decks";
+import { Segmented } from "../../../components/button";
 import { SegControl, SettingsRow, type SettingsSection } from "../section-contract";
 import { EngineRoots } from "./engines";
 import styles from "../styles.module.css";
@@ -47,10 +48,8 @@ function StudioSection({ ctx }: { ctx: AppContext }): JSX.Element {
     };
   }, [ctx]);
 
-  const togglePlatform = (p: string): void => {
-    const next = new Set(picked);
-    if (next.has(p)) next.delete(p);
-    else next.add(p);
+  const pickPlatforms = (list: string[]): void => {
+    const next = new Set(list);
     setPicked(next);
     ctx.prefs.set(SETTING_KEYS.publishTargets, [...next]);
   };
@@ -79,16 +78,7 @@ function StudioSection({ ctx }: { ctx: AppContext }): JSX.Element {
       </SettingsRow>
       <SettingsRow label="You publish to" hint="Pick any that fit. Every format stays ready either way.">
         <div className={styles.plates}>
-          {platforms.map((p) => (
-            <button
-              key={p}
-              type="button"
-              className={picked.has(p) ? `${styles.plate} ${styles.on}` : styles.plate}
-              onClick={() => togglePlatform(p)}
-            >
-              {p}
-            </button>
-          ))}
+          <Segmented multiple label="You publish to" items={platforms.map((p) => ({ value: p, label: p }))} value={platforms.filter((p) => picked.has(p))} onChange={pickPlatforms} />
         </div>
       </SettingsRow>
       {/*

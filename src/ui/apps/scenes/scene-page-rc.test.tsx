@@ -37,9 +37,9 @@ describe("a message portrait on the scene page", () => {
   test("is a zoom button when the character has art, and opens the enlarged view without reaching the message", async () => {
     rig.portrait = true;
     const flushSync = await mount(endsOnReply());
-    const zoom = rig.host.querySelector<HTMLButtonElement>(".msg.char .pw .pzoom")!;
+    const zoom = rig.host.querySelector<HTMLButtonElement>(".msg.char .pw [data-part='scene.portrait.zoom']")!;
     expect(zoom).not.toBeNull();
-    expect(rig.host.querySelector(".msg.user .pzoom")).toBeNull();
+    expect(rig.host.querySelector(".msg.user [data-part='scene.portrait.zoom']")).toBeNull();
     expect(rig.dom.window.document.querySelector(".sgl")).toBeNull();
     flushSync(() => zoom.click());
     await settle(flushSync);
@@ -49,7 +49,7 @@ describe("a message portrait on the scene page", () => {
 
   test("is plain art with nothing to click when the character has none", async () => {
     const flushSync = await mount(endsOnReply());
-    expect(rig.host.querySelector(".pzoom")).toBeNull();
+    expect(rig.host.querySelector("[data-part='scene.portrait.zoom']")).toBeNull();
     expect(rig.host.querySelector(".msg.char .pw .por")).not.toBeNull();
     unmount(flushSync);
   });

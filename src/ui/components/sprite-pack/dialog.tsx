@@ -3,6 +3,7 @@
  * Also: cross-card pack attach, face-only thin export, sprite-sheet slice.
  * Sheet helpers live in sheet-slice.ts; attach/sheet panels in dialog-panels.tsx.
  */
+import { Button, Tabs } from "../button";
 import { useMemo, useRef, useState, type JSX } from "react";
 import { toErrorMessage } from "../../../error-message";
 import {
@@ -294,26 +295,15 @@ export function SpritePackDialog({
 
       {showGroups ? (
         <div className={styles.groupBar}>
-          <button
-            type="button"
-            className={`${styles.groupTab}${activeGroup === FLAT ? ` ${styles.groupOn}` : ""}`}
-            onClick={() => setActiveGroup(FLAT)}
-          >
-            Main
-          </button>
-          {groupNames.map((n) => (
-            <button
-              key={n}
-              type="button"
-              className={`${styles.groupTab}${activeGroup === n ? ` ${styles.groupOn}` : ""}`}
-              onClick={() => setActiveGroup(n)}
-            >
-              {n}
-            </button>
-          ))}
-          <button type="button" className={styles.groupAdd} onClick={addGroup} title="Add character group">
+          <Tabs
+            label="Character groups"
+            value={activeGroup}
+            onChange={setActiveGroup}
+            items={[{ value: FLAT, label: "Main" }, ...groupNames.map((n) => ({ value: n, label: n }))]}
+          />
+          <Button size="sm" onClick={addGroup} title="Add character group">
             + Group
-          </button>
+          </Button>
           {activeGroup !== FLAT ? (
             <>
               <input
@@ -322,9 +312,9 @@ export function SpritePackDialog({
                 onChange={(e) => renameActive(e.target.value)}
                 aria-label="Group name"
               />
-              <button type="button" className={styles.groupRm} onClick={removeActive}>
+              <Button size="sm" variant="danger" onClick={removeActive}>
                 Remove group
-              </button>
+              </Button>
             </>
           ) : null}
         </div>
@@ -348,17 +338,15 @@ export function SpritePackDialog({
       </div>
 
       <div className={styles.tools}>
-        <button
-          type="button"
-          className={styles.toolBtn}
+        <Button
+          size="sm"
           onClick={() => setExpandSlots((v) => !v)}
           title="Show full SillyTavern 28 slot ghosts"
         >
           {expandSlots ? "Slots: ST 28" : "Slots: core"}
-        </button>
-        <button
-          type="button"
-          className={styles.toolBtn}
+        </Button>
+        <Button
+          size="sm"
           onClick={async () => {
             try {
               const items = await navigator.clipboard.read();
@@ -388,11 +376,10 @@ export function SpritePackDialog({
           }}
         >
           Paste image
-        </button>
+        </Button>
         {canFaceOnly ? (
-          <button
-            type="button"
-            className={styles.toolBtn}
+          <Button
+            size="sm"
             title="Promote default face to portrait and clear the pack (thin export)"
             onClick={() => {
               applied.current = true;
@@ -402,12 +389,12 @@ export function SpritePackDialog({
             }}
           >
             Face only
-          </button>
+          </Button>
         ) : null}
         {canSaveLib ? (
-          <button
-            type="button"
-            className={styles.toolBtn}
+          <Button
+            size="sm"
+            variant="primary"
             disabled={saving}
             title="Save as a reusable pack entity in The Library"
             onClick={() => {
@@ -434,7 +421,7 @@ export function SpritePackDialog({
             }}
           >
             Save to Library
-          </button>
+          </Button>
         ) : null}
         {flash ? <span className={styles.flash}>{flash}</span> : null}
       </div>

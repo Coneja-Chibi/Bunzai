@@ -6,12 +6,7 @@
  */
 .wrap {
   composes: wrap from "./section-card.module.css";
-  /* Security stays host-typeset even while an appearance contribution is selected. */
-  --font-body: "Atkinson Hyperlegible", sans-serif;
-  --font-big: "Fraunces", serif;
-  --font-fancy: "Cinzel", serif;
-  --font-mono: "IBM Plex Mono", monospace;
-  font-family: "Atkinson Hyperlegible", sans-serif;
+  font-family: var(--font-body);
   font-size: 1rem;
   color: var(--text);
 }
@@ -29,15 +24,6 @@
 }
 .actions {
   composes: actions from "./section-card.module.css";
-}
-.btn {
-  composes: btn from "./section-card.module.css";
-}
-.btnGhost {
-  composes: btnGhost from "./section-card.module.css";
-}
-.btnDanger {
-  composes: btnDanger from "./section-card.module.css";
 }
 .chip {
   composes: chip from "./section-card.module.css";

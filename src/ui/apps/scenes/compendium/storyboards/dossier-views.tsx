@@ -57,7 +57,7 @@ export function QuestsBody({ d, open, ai }: { d: QuestsDossier; open: Open; ai: 
 function CaseFile({ m, open }: { m: CastMember; open: Open }): JSX.Element {
   return (
     <article className="sb-card" onClick={() => open(m.id)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === "Enter") open(m.id); }} data-part="compendium.dossier.card">
-      <header><b>{m.name}</b>{m.role && <Chip>{m.role}</Chip>}{m.category && <Chip>{m.category}</Chip>}{m.inScene && <Chip tone="ok">in scene</Chip>}</header>
+      <header><b>{m.name}</b>{m.role && <Chip>{m.role}</Chip>}{m.category && <Chip>{m.category}</Chip>}{m.inScene && <Chip tone="ok">In scene</Chip>}</header>
       {m.emotion && <p>{m.emotion}{m.emotionIntensity !== null ? ` (${m.emotionIntensity})` : ""}{m.emotionCause ? `: ${m.emotionCause}` : ""}</p>}
       {m.metrics.map((x) => <Meter key={x.id} label={x.label} value={x.value} max={x.max} tone="pink" />)}
       {m.memories.length > 0 && <ul className="sb-objs">{m.memories.map((x) => <li key={x.id} data-status={x.impact === "negative" ? "failed" : "open"}><i>{x.weight >= 8 ? "★" : "○"}</i>{x.text}</li>)}</ul>}
@@ -90,7 +90,7 @@ export function MapBody({ d, open, ai }: { d: MapDossier; open: Open; ai: JSX.El
       {tab === "ai" ? ai : d.locations.length === 0 ? <Empty>No locations yet. Places in the Compendium appear here.</Empty> : (
         <div>{d.locations.map((l) => (
           <article className="sb-card" key={l.id} role="button" tabIndex={0} onClick={() => open(l.id)} onKeyDown={(e) => { if (e.key === "Enter") open(l.id); }}>
-            <header><b>{l.name}</b><Chip>{l.type}</Chip>{l.danger && <Chip tone={l.danger === "high" || l.danger === "extreme" ? "danger" : "ok"}>{`danger ${l.danger}`}</Chip>}{l.visited && <Chip tone="ok">visited</Chip>}</header>
+            <header><b>{l.name}</b><Chip>{l.type}</Chip>{l.danger && <Chip tone={l.danger === "high" || l.danger === "extreme" ? "danger" : "ok"}>{`danger ${l.danger}`}</Chip>}{l.visited && <Chip tone="ok">Visited</Chip>}</header>
             {l.region && <div className="sb-facts"><span>Region {l.region}</span></div>}
             {l.description && <p>{l.description}</p>}
           </article>
@@ -108,7 +108,7 @@ export function RenownBody({ d, open, ai }: { d: RenownDossier; open: Open; ai: 
       {tab === "ai" ? ai : d.standings.length === 0 ? <Empty>No standings yet. Organizations in the Compendium appear here.</Empty> : (
         <div>{d.standings.map((s) => (
           <article className="sb-card" key={s.id} role="button" tabIndex={0} onClick={() => open(s.id)} onKeyDown={(e) => { if (e.key === "Enter") open(s.id); }}>
-            <header><b>{s.name}</b><Chip>{s.entityType}</Chip>{s.kind && <Chip>{s.kind}</Chip>}{s.heat >= 70 && <Chip tone="danger">wanted</Chip>}</header>
+            <header><b>{s.name}</b><Chip>{s.entityType}</Chip>{s.kind && <Chip>{s.kind}</Chip>}{s.heat >= 70 && <Chip tone="danger">Wanted</Chip>}</header>
             <Meter label="Reputation" value={s.reputation} max={100} tone={s.reputation < 0 ? "danger" : "ok"} />
             <Meter label="Heat" value={s.heat} tone={s.heat >= 70 ? "danger" : "warn"} />
             <div className="sb-facts">{s.region && <span>Region {s.region}</span>}<span>Favors banked {s.banked}</span><span>Owed {s.owed}</span>{s.heatLabel && <span>{s.heatLabel}</span>}</div>

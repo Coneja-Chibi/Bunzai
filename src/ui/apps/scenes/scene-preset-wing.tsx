@@ -25,6 +25,7 @@ import { effectiveToggles, toChoiceGroups } from "../../../core/preset/choices";
 import { PromptEditor, PromptList, SamplerBar } from "./scene-preset-parts";
 import { TemplatesSection } from "./scene-preset-templates";
 import type { PresetText } from "./use-scene-preset-text";
+import { IconButton, ListRow } from "../../components/button";
 
 /** How the tab reads in the fold: "14 of 22 on", or that none is chosen. */
 export function presetTabMeta(chat: Chat, body: PresetBody | null): string {
@@ -91,7 +92,7 @@ export function PresetWing({ ctx, chat, text, onChanged }: { ctx: AppContext; ch
       <div className="wbody pp">
         <div className="pp-top">
           <header className="hero bad"><span className="hi"><Ic name="mdi:alert-octagon-outline" size={20} /></span><div><div className="eb">Preset Error</div><h2>Could not <em>load</em></h2><p>The preset could not be read: {loaded.why}.</p></div></header>
-          <div className="hero-tools"><button type="button" className="tbtn" title="Try again" onClick={() => void load(presetId)}><Ic name="lucide:refresh-cw" size={14} /></button></div>
+          <div className="hero-tools"><IconButton variant="quiet" size="sm" icon="lucide:refresh-cw" label="Try again" onClick={() => void load(presetId)} /></div>
         </div>
       </div>
     );
@@ -108,9 +109,9 @@ export function PresetWing({ ctx, chat, text, onChanged }: { ctx: AppContext; ch
             <div><div className="eb">Edit Preset</div><h2>{title(body.name)}</h2><p>Tune prompts, samplers, and post-processing for this scene. Switches and samplers here are this scene&apos;s own; prompt text edits change the preset everywhere.</p></div>
           </header>
           <div className="hero-tools">
-            <button type="button" className="tbtn" title="Open in Workbench" onClick={openInWorkbench}><Ic name="lucide:pencil" size={14} /></button>
-            <button type="button" className="tbtn red" title="Run without a preset" onClick={() => void pick(null)}><Ic name="lucide:trash-2" size={14} /></button>
-            <button type="button" className="tbtn" title="Switch preset" onClick={() => { setQuery(""); setSwitching(true); }}><Ic name="lucide:library" size={16} /></button>
+            <IconButton variant="quiet" size="sm" icon="lucide:pencil" label="Open in Workbench" onClick={openInWorkbench} />
+            <IconButton variant="danger" size="sm" icon="lucide:trash-2" label="Run without a preset" onClick={() => void pick(null)} />
+            <IconButton variant="quiet" size="sm" icon="lucide:library" label="Switch preset" onClick={() => { setQuery(""); setSwitching(true); }} />
           </div>
         </div>
         {note?.kind === "failed" && !prompt && <div className="note">{note.text}</div>}
@@ -136,23 +137,20 @@ export function PresetWing({ ctx, chat, text, onChanged }: { ctx: AppContext; ch
         ) : (
           <header className="hero"><span className="hi"><Ic name="mdi:tune" size={20} /></span><div><div className="eb">{switching ? "Switch Preset" : "Select Preset"}</div><h2>Choose a <em>Preset</em></h2><p>Pick a recipe from your library to load prompts and sampler defaults for this scene. Without one, the scene sends the card, persona, and history in RoleCall&apos;s default order.</p></div></header>
         )}
-        {switching && <div className="hero-tools"><button type="button" className="tbtn on" title="Back to editing" onClick={() => void pick(presetId)}><Ic name="lucide:chevron-left" size={16} /></button></div>}
+        {switching && <div className="hero-tools"><IconButton variant="quiet" size="sm" icon="lucide:chevron-left" label="Back to editing" onClick={() => void pick(presetId)} /></div>}
       </div>
       {note?.kind === "failed" && <div className="note">{note.text}</div>}
       <div className="picker">
         <div className="pk-search"><div className="sb lg"><Ic name="lucide:search" size={14} /><input value={query} placeholder="Search my library..." aria-label="Search my library" onChange={(e) => setQuery(e.target.value)} /></div></div>
-        <button type="button" className={`pk none${presetId ? "" : " cur"}`} onClick={() => void pick(null)}>
-          <span className="pk-ic"><Ic name="lucide:x" size={16} /></span><div><b>Run Without Preset</b><small>RoleCall&apos;s default order: card, persona, history</small></div>
-        </button>
+        <ListRow selected={!presetId} onClick={() => void pick(null)} leading={<Ic name="lucide:x" size={16} />}
+          label="Run Without Preset" subtitle="RoleCall&apos;s default order: card, persona, history" />
         <h4 className="pk-hd">My Library ({library?.length ?? "..."})</h4>
         {library && shown.length === 0 && (
           <div className="pk-empty"><span><Ic name="lucide:sliders-horizontal" size={20} /></span><p>{q ? "No presets match your search" : "No presets found"}</p><small>{q ? "Try different keywords" : "Import one in the Library, or make one on the Workbench"}</small></div>
         )}
         {shown.map((s) => (
-          <button type="button" key={s.id} className={`pk${s.id === presetId ? " cur" : ""}`} onClick={() => void pick(s.id)}>
-            <span className="pk-ic">{initials(s.name)}</span>
-            <div><span className="pk-n"><b>{s.name}</b>{s.id === presetId && <i>Active</i>}</span>{s.provenance && <small>{s.provenance}</small>}</div>
-          </button>
+          <ListRow key={s.id} selected={s.id === presetId} onClick={() => void pick(s.id)} leading={initials(s.name)}
+            label={s.name} subtitle={s.provenance || undefined} meta={s.id === presetId ? "Active" : undefined} />
         ))}
       </div>
     </div>

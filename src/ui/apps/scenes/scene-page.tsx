@@ -29,7 +29,6 @@ import { useSurfaceVariant } from "../../_shared/surface-variant";
 import { useDismissHoldMenus } from "./use-dismiss-hold-menus";
 import { toErrorMessage } from "../../_shared/error-message";
 import { apiStatusIs } from "../../_shared/api-fetch";
-import { Stamp } from "../../components/stamp";
 import { trashScene } from "./trash-scene";
 import { chatDisplay } from "../../../core/chat-display";
 import { bodyOf, isRecord, str } from "../../../core/guards";
@@ -94,6 +93,7 @@ import { Messenger } from "./messenger/messenger";
 import { buildPrograms, useStablePrograms } from "./messenger/programs";
 import { wingPanels } from "./messenger/wing-props";
 import type { MessengerRequest } from "./messenger/use-messenger-nav";
+import { Button, IconButton, Tile } from "../../components/button";
 const stale = (e: unknown): boolean => /\bversion\b|409/i.test(toErrorMessage(e));
 export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; chatId: string; onBack(): void; /** Opens the Branching Tree (RoleCall's "View Full Branching Tree"). */ onTree?(chatId: string): void }): JSX.Element {
   const { api, setStatus } = ctx;
@@ -370,7 +370,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   );
   if (problem) return (
     <div className="scs"><div className="quiet" role="alert"><div><b>This scene could not open</b><p>{problem.message}</p><div className="qacts">
-      {problem.castGone ? <Stamp onClick={() => trashScene(ctx, chatId, onBack)}>Move to Trash</Stamp> : <Stamp onClick={load}>Try again</Stamp>}<Stamp onClick={onBack}>Back to Scenes</Stamp>
+      {problem.castGone ? <Button variant="danger" onClick={() => trashScene(ctx, chatId, onBack)}>Move to Trash</Button> : <Button variant="primary" onClick={load}>Try again</Button>}<Button variant="quiet" onClick={onBack}>Back to Scenes</Button>
     </div></div></div></div>
   );
   const side = wingOf(wing)?.side; const replaceScene = (next: OpenScene): void => { loadGeneration.current++; setMacroMessages(new Map()); setScene(next); };
@@ -393,11 +393,11 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
         {find.overlay}
         <div className="scroll" data-part="scene.messages" ref={scroller} onScroll={(e) => { const el = e.currentTarget; following.current = el.scrollHeight - el.scrollTop - el.clientHeight < 160; if (el.scrollTop < 80) void loadOlder(); }}>
           {resolvingMacros && <p className="help" role="status">Resolving scene macros...</p>}
-          {macroLoadFailed && <p className="help" role="status">Scene macros could not load. <button type="button" onClick={retryMacros}>Retry</button></p>}
+          {macroLoadFailed && <p className="help" role="status">Scene macros could not load. <Button variant="quiet" size="sm" onClick={retryMacros}>Retry</Button></p>}
           {scene?.hasMore && (
-            <button type="button" className="older" disabled={loadingOlder} onClick={() => void loadOlder()}>
+            <div className="older"><Button variant="quiet" size="sm" disabled={loadingOlder} onClick={() => void loadOlder()}>
               {loadingOlder ? "Loading older messages…" : "Load older messages"}
-            </button>
+            </Button></div>
           )}
           {unsent && greetings.length > 0 && <GreetingPicker count={greetings.length} index={greeting} onPick={setGreeting} />}
           {unsent && shown.greeting && <Bubble id="greeting" n={1} who={name} tone={CHAR_TONE} art={charArt} text={shown.greeting}
@@ -470,7 +470,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
         <BackdropLayer ctx={ctx} backdrop={scene?.chat.backdrop} character={cardBackdrop} />
         <ThemeSlot id="scene.backdrop" />
         <header className="sh" data-part="scene.header">
-          <button type="button" className="back" onClick={onBack} aria-label="Back to Scenes"><Ic name="lucide:arrow-left" /></button>
+          <IconButton variant="quiet" size="sm" icon="lucide:arrow-left" label="Back to Scenes" onClick={onBack} />
           <span className="nm">{name}</span>
           {tagline && <span className="tag">{tagline}</span>}
           {takes}{update}
@@ -478,7 +478,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
         {chat}
       </div>
       <WingRails open={wing} onToggle={(id) => setWing(wing === id ? null : id)} />
-      {wing && <><div className="wback" aria-hidden="true" /><button type="button" className="paused-mark" onClick={() => setWing(null)} aria-label="Close the wing"><span className="sq"><Ic name="lucide:pause" size={26} /></span><small>SCENE PAUSED</small></button></>}
+      {wing && <><div className="wback" aria-hidden="true" /><div data-part="scene.paused"><Tile kind="icon" size="lg" label="Close the wing" icon={<Ic name="lucide:pause" size={26} />} caption="SCENE PAUSED" onClick={() => setWing(null)} /></div></>}
       {(["l", "r"] as const).map((sd) => (
         <WingSlot key={sd} side={sd} open={side === sd}>{wing && side === sd && wingBody(wing)}</WingSlot>
       ))}

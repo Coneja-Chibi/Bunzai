@@ -43,7 +43,7 @@ describe("the size tokens", () => {
 describe("the sheets changed for RoleCall", () => {
   test("the message sheet gives every theme only the portrait slot, the delete menu's rule, the zoom button and the avatars-off rule", () => {
     const bare = BUBBLE_STYLE.split("\n").filter((l) => l.startsWith(".scs") || l.startsWith("html .scs"));
-    expect(bare.map((l) => l.slice(0, l.indexOf("{")))).toEqual([".scs .msg .pw", ".scs .msg .pw .por", ".scs .msg .pw .pstamp", 'html .scs[data-look~="noavatar"] .msg .pw', ".scs .dd .menu-rule", ".scs .pzoom", ".scs .pzoom:hover"]);
+    expect(bare.map((l) => l.slice(0, l.indexOf("{")))).toEqual([".scs .msg .pw", ".scs .msg .pw .por", ".scs .msg .pw .pstamp", 'html .scs[data-look~="noavatar"] .msg .pw', ".scs .dd .menu-rule", '.scs [data-part="scene.portrait.zoom"]', '.scs [data-part="scene.portrait.zoom"]:hover']);
   });
 
   test("a scene with avatars off drops the whole portrait column, and RoleCall's chrome keeps the time in the meta row for it", () => {

@@ -51,8 +51,8 @@ test("with nothing matching anywhere, no jumps are offered rather than an empty 
 });
 
 test("the box shows a clear control only once there is something to clear", () => {
-  expect(renderToStaticMarkup(<SearchBox value="" onChange={() => {}} hint="" />)).not.toContain("findx");
-  expect(renderToStaticMarkup(<SearchBox value="war" onChange={() => {}} hint="" />)).toContain("findx");
+  expect(renderToStaticMarkup(<SearchBox value="" onChange={() => {}} hint="" />)).not.toContain(`aria-label="Clear search"`);
+  expect(renderToStaticMarkup(<SearchBox value="war" onChange={() => {}} hint="" />)).toContain(`aria-label="Clear search"`);
 });
 
 test("the parser's complaint is shown, never swallowed", () => {

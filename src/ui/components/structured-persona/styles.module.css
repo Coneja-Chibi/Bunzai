@@ -11,22 +11,6 @@
   flex-wrap: wrap;
   gap: 0.35rem;
 }
-.kind {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--field, var(--paper)));
-  color: var(--stage-mute, var(--muted));
-  padding: 0.28rem 0.5rem;
-  cursor: pointer;
-}
-.kindOn {
-  border-color: var(--rose);
-  color: var(--stage-soft, var(--text));
-  box-shadow: 2px 2px 0 0 var(--stage-black, var(--edge));
-}
 .attr {
   border: 2px solid var(--stage-seam, var(--seam));
   background: var(--stage-panel, var(--panel));
@@ -65,15 +49,6 @@
   align-items: center;
   gap: 0.25rem;
 }
-.chipX {
-  border: none;
-  background: none;
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-  font-size: var(--text-control);
-  padding: 0;
-  line-height: 1;
-}
 .chipInput {
   font-family: var(--font-mono);
   font-size: var(--text-control);
@@ -84,26 +59,9 @@
   min-width: 5rem;
 }
 .rm {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper)); /* --field was never defined */
-  color: var(--stage-mute, var(--muted));
-  padding: 0.1rem 0.3rem;
-  cursor: pointer;
   margin-left: auto;
 }
 .add {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px dashed var(--stage-seam, var(--seam));
-  background: transparent;
-  color: var(--stage-mute, var(--muted));
-  padding: 0.3rem 0.55rem;
-  cursor: pointer;
   align-self: flex-start;
 }
 .ta {

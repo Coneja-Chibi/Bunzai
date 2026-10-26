@@ -11,7 +11,7 @@ import { automationActive, resolveSummary } from "../../../core/summary/settings
 import { Ic } from "../../_shared/ic";
 import { contextLabel, timingLabel } from "./context/memory-core";
 import { useSummary } from "./context/use-summary";
-import { ToggleSwitch } from "../../components/toggle-switch";
+import { Button, Toggle } from "../../components/button";
 
 const TONE = { "--tone": "var(--stage-ok)" } as CSSProperties;
 
@@ -35,15 +35,15 @@ export function BoothSummaryRow({ ctx, chat, onOpen }: { ctx: AppContext; chat: 
       <div className="prop-row" style={TONE}>
         <span className="prop-ic"><Ic name="lucide:sparkles" size={20} /></span>
         <div><b>Automatic summaries</b><small>{active ? "A new summary is written on its own." : "Off. Manual edits and Backfill history still work."}</small></div>
-        <ToggleSwitch size="sm" tone="var(--tone)" on={active} disabled={view.busy} aria-label={`${active ? "Turn off" : "Turn on"} automatic summaries`} onChange={(on) => void view.patch(autoPatch(r, on))} />
+        <Toggle size="sm" tone="var(--tone)" on={active} disabled={view.busy} aria-label={`${active ? "Turn off" : "Turn on"} automatic summaries`} onChange={(on) => void view.patch(autoPatch(r, on))} />
       </div>
       <div className="prop-row" style={TONE}>
         <span className="prop-ic"><Ic name="lucide:brain" size={20} /></span>
         <div><b>Include saved summary in AI context</b><small>The AI receives the saved summary with each reply.</small></div>
-        <ToggleSwitch size="sm" tone="var(--tone)" on={r.include} disabled={view.busy} aria-label={`${r.include ? "Turn off" : "Turn on"} the saved summary in AI context`} onChange={(include) => void view.patch({ include })} />
+        <Toggle size="sm" tone="var(--tone)" on={r.include} disabled={view.busy} aria-label={`${r.include ? "Turn off" : "Turn on"} the saved summary in AI context`} onChange={(include) => void view.patch({ include })} />
       </div>
       {error ? <p className="bth-note warn" role="alert">Last summary run failed: {error}</p> : null}
-      <button type="button" className="bth-link" onClick={onOpen}>Open Memory</button>
+      <Button variant="quiet" size="sm" onClick={onOpen}>Open Memory</Button>
     </section>
   );
 }

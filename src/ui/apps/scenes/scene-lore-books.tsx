@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState, type JSX } from "react";
 import type { StudioEntitySummary } from "../../app-contract";
 import type { SceneLoreBook, SceneLoreFired } from "../../app-contract-scenes";
+import { Button, IconButton, ListRow } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { isEscapeClose, useEscapeKey } from "../../_shared/use-escape-key";
 import { footerLine, sourceBadge } from "./lore-core";
@@ -22,10 +23,10 @@ export function LoreHeader({ title, stats, onBack, onLibrary }: {
 }): JSX.Element {
   return (
     <header className="wl-hd">
-      {onBack && <button type="button" className="wl-sq" title="Back to lorebooks" aria-label="Back to lorebooks" onClick={onBack}><Ic name="lucide:chevron-left" size={16} /></button>}
+      {onBack && <IconButton size="sm" label="Back to lorebooks" icon="lucide:chevron-left" onClick={onBack} />}
       <span className="wl-ic"><Ic name="lucide:book" size={16} /></span>
       <div className="wl-tt"><span className="wl-t">{title}</span>{stats && <span className="wl-st">{stats}</span>}</div>
-      {onLibrary && <button type="button" className="wl-sq" title="Browse / add lorebooks" aria-label="Browse / add lorebooks" onClick={onLibrary}><Ic name="lucide:book" size={16} /></button>}
+      {onLibrary && <IconButton size="sm" label="Browse / add lorebooks" icon="lucide:book" onClick={onLibrary} />}
     </header>
   );
 }
@@ -65,11 +66,11 @@ export function BookList({ books, characterName, selectedId, onSelect, onToggle,
               </div>
               <div className="wl-by">{b.missing ? "Not in your library" : sourceBadge(b, characterName)}</div>
               <div className="wl-act">
-                <button type="button" className={`wl-ab${b.enabled ? " on" : ""}`} title={b.enabled ? "Disable" : "Enable"} aria-label={`${b.enabled ? "Disable" : "Enable"} ${b.name}`}
-                  onClick={(e) => { e.stopPropagation(); onToggle(b); }}><Ic name="lucide:power" size={12} /></button>
+                <IconButton variant={b.enabled ? "secondary" : "quiet"} size="sm" title={b.enabled ? "Disable" : "Enable"} label={`${b.enabled ? "Disable" : "Enable"} ${b.name}`}
+                  icon="lucide:power" onClick={(e) => { e.stopPropagation(); onToggle(b); }} />
                 {b.source === "scene" && (
-                  <button type="button" className="wl-ab red" title="Remove from this scene" aria-label={`Remove ${b.name} from this scene`}
-                    onClick={(e) => { e.stopPropagation(); onRemove(b); }}><Ic name="lucide:trash-2" size={12} /></button>
+                  <IconButton variant="danger" size="sm" label={`Remove ${b.name} from this scene`} title="Remove from this scene"
+                    icon="lucide:trash-2" onClick={(e) => { e.stopPropagation(); onRemove(b); }} />
                 )}
               </div>
             </div>
@@ -80,7 +81,7 @@ export function BookList({ books, characterName, selectedId, onSelect, onToggle,
         )}
       </div>
       <LastTurnFoot lastTurn={lastTurn} />
-      <div className="wl-addf"><button type="button" className="wl-add" title="Add Lorebook" onClick={onAdd}><Ic name="lucide:plus" size={14} />Add Lorebook</button></div>
+      <div className="wl-addf"><Button block icon="lucide:plus" title="Add Lorebook" onClick={onAdd}>Add Lorebook</Button></div>
     </aside>
   );
 }
@@ -119,10 +120,8 @@ export function LibraryPicker({ library, inScene, onPick }: {
           const count = s.facts?.lore?.entryCount;
           const sub = [count === undefined ? null : `${count} ${count === 1 ? "entry" : "entries"}`, already ? "In this scene" : null].filter(Boolean).join(" · ");
           return (
-            <button type="button" key={s.id} className="wl-lr" disabled={already} onClick={() => onPick(s.id)}>
-              <span className="ico"><Ic name="lucide:book" size={16} /></span>
-              <span className="tx"><b>{s.name}</b>{sub && <small>{sub}</small>}</span>
-            </button>
+            <ListRow key={s.id} data-part="scene.lore.book-row" disabled={already} onClick={() => onPick(s.id)}
+              leading={<Ic name="lucide:book" size={16} />} label={s.name} subtitle={sub || undefined} />
           );
         })}
       </div>
@@ -167,12 +166,12 @@ export function AddPopover({ library, inScene, onPick, onCreate, onClose }: {
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); create(); } else if (isEscapeClose(e)) { e.preventDefault(); cancel(); } }} />
             <div className="row">
-              <button type="button" disabled={busy || !name.trim()} onClick={create}><Ic name={busy ? "lucide:loader-circle" : "lucide:plus"} size={12} />{busy ? "Creating..." : "Create"}</button>
-              <button type="button" disabled={busy} onClick={cancel}>Cancel</button>
+              <Button size="sm" icon={busy ? "lucide:loader-circle" : "lucide:plus"} disabled={busy || !name.trim()} onClick={create}>{busy ? "Creating..." : "Create"}</Button>
+              <Button variant="quiet" size="sm" disabled={busy} onClick={cancel}>Cancel</Button>
             </div>
           </div>
         ) : (
-          <button type="button" disabled={busy} onClick={() => { setName(""); setNaming(true); }}><Ic name="lucide:plus" size={14} />+ New Lorebook</button>
+          <Button size="sm" icon="lucide:plus" disabled={busy} onClick={() => { setName(""); setNaming(true); }}>+ New Lorebook</Button>
         )}
       </div>
       <LibraryPicker library={library} inScene={inScene} onPick={onPick} />

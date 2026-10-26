@@ -4,6 +4,7 @@
  * Empty selection = the Bunraku tab is on (the full card, nothing judged). Reusable by
  * any editor kind: lorebooks and presets get the same strip against their own coverage.
  */
+import { Chip, Segmented } from "../button";
 import type { JSX } from "react";
 import styles from "./styles.module.css";
 
@@ -29,49 +30,37 @@ export function PlatformTabs({ platforms, selected, onToggle, onClear, offTarget
   return (
     <div className={styles.strip}>
       {/* role parity with LensRail: same contract, same semantics - the two skins must not drift */}
-      <div role="tablist" aria-label="Writing for platform" style={{ display: "contents" }}>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={selected.length === 0}
-        className={`${styles.tab}${selected.length === 0 ? ` ${styles.on}` : ""}`}
+      <div role="group" aria-label="Writing for platform" style={{ display: "contents" }}>
+      <Chip
+        pressed={selected.length === 0}
         onClick={onClear}
         title="The full Bunraku card: every field kept, nothing dropped"
       >
         Bunraku <i className={styles.hint}>full card</i>
-      </button>
+      </Chip>
       {platforms.map((p) => (
-        <button
+        <Chip
           key={p.id}
-          type="button"
-          role="tab"
-          aria-selected={selected.includes(p.id)}
-          className={`${styles.tab}${selected.includes(p.id) ? ` ${styles.on}` : ""}`}
+          pressed={selected.includes(p.id)}
           onClick={() => onToggle(p.id)}
           title={`Target ${p.label}: select every platform you ship to`}
         >
           {p.label}
-        </button>
+        </Chip>
       ))}
       </div>
       <span className={styles.offt}>
         <i className={styles.hint}>off-target</i>
-        <button
-          type="button"
-          className={offTarget === "hide" ? styles.on : undefined}
-          onClick={() => onOffTarget("hide")}
-          title="Off-target fields leave the form (recommended)"
-        >
-          Hide
-        </button>
-        <button
-          type="button"
-          className={offTarget === "dim" ? styles.on : undefined}
-          onClick={() => onOffTarget("dim")}
-          title="Same as hide for now: off-target fields leave so lean platforms stay lean"
-        >
-          Dim
-        </button>
+        <Segmented
+          size="sm"
+          label="Off-target fields"
+          value={offTarget}
+          onChange={onOffTarget}
+          items={[
+            { value: "hide", label: "Hide", title: "Off-target fields leave the form (recommended)" },
+            { value: "dim", label: "Dim", title: "Same as hide for now: off-target fields leave so lean platforms stay lean" },
+          ]}
+        />
       </span>
     </div>
   );

@@ -4,7 +4,7 @@
  * long it took and the provider's finish reason, then the SwipeCounter.
  */
 import type { JSX } from "react";
-import { Ic } from "../../_shared/ic";
+import { Dot, IconButton } from "../../components/button";
 import { useSurfaceVariant } from "../../_shared/surface-variant";
 import { finishChip } from "./scene-meta-core";
 
@@ -47,17 +47,17 @@ export function MetaRow(p: MetaFacts & {
       {chip && <span className={`fin ${chip.tone}`} title={chip.title}>{chip.label}</span>}
       {v && (
         <span className={`swc${v.isNew ? " new" : ""}`} data-part="scene.swipes">
-          <button type="button" disabled={v.index === 0 || v.busy} title={v.index === 0 ? "No previous version" : "Previous version"} aria-label="Previous version" onClick={v.onPrev}><Ic name="lucide:chevron-left" /></button>
+          <IconButton variant="quiet" size="sm" icon="lucide:chevron-left" label="Previous version" disabled={v.index === 0 || v.busy} title={v.index === 0 ? "No previous version" : "Previous version"} onClick={v.onPrev} />
           {dots && v.onGo && (
             <span className="vdots">{Array.from({ length: v.count }, (_, i) => (
-              <button type="button" key={i} className={i === v.index ? "on" : undefined} disabled={v.busy} aria-label={`Version ${i + 1}`} aria-current={i === v.index} onClick={() => v.onGo?.(i)} />
+              <Dot key={i} current={i === v.index} disabled={v.busy} label={`Version ${i + 1}`} onClick={() => v.onGo?.(i)} />
             ))}</span>
           )}
           <span className="ct"><span className="n">{v.index + 1}</span><span className="sl">/</span><span className="t">{v.count}</span>{v.isNew && <span className="nw">new</span>}</span>
-          {v.onCompare && <button type="button" title="Compare versions" aria-label="Compare versions" onClick={v.onCompare}><Ic name="lucide:columns-2" /></button>}
+          {v.onCompare && <IconButton variant="quiet" size="sm" icon="lucide:columns-2" label="Compare versions" onClick={v.onCompare} />}
           {newest && v.onRegenerate
-            ? <button type="button" disabled={v.busy} title={v.busy ? "Generation in progress" : "Regenerate"} aria-label="Regenerate" onClick={v.onRegenerate}><Ic name="lucide:rotate-ccw" /></button>
-            : <button type="button" disabled={v.busy || newest} title={newest ? "No newer version" : "Next version"} aria-label="Next version" onClick={v.onNext}><Ic name="lucide:chevron-right" /></button>}
+            ? <IconButton variant="quiet" size="sm" icon="lucide:rotate-ccw" label="Regenerate" disabled={v.busy} title={v.busy ? "Generation in progress" : "Regenerate"} onClick={v.onRegenerate} />
+            : <IconButton variant="quiet" size="sm" icon="lucide:chevron-right" label="Next version" disabled={v.busy || newest} title={newest ? "No newer version" : "Next version"} onClick={v.onNext} />}
         </span>
       )}
     </div>

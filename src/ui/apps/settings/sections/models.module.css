@@ -82,37 +82,9 @@
   gap: 0.3rem;
 }
 
-.acts button,
-.add,
-.formActs button {
-  border: 2px solid var(--edge);
-  background: var(--face);
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  padding: 0.28rem 0.6rem;
-  cursor: pointer;
-}
-
-.acts button:hover:not(:disabled),
-.add:hover:not(:disabled),
-.formActs button:hover:not(:disabled) {
-  background: var(--panel);
-}
-
-.acts button:disabled,
-.add:disabled,
-.formActs button:disabled {
-  color: var(--text-dim);
-  cursor: not-allowed;
-}
-
 .add {
   align-self: flex-start;
   margin-top: 0.6rem;
-  box-shadow: 3px 3px 0 0 var(--edge);
 }
 
 .form {
@@ -170,11 +142,6 @@
 }
 
 :global(html[data-surface-settings-shape="program-sections"]) .problem { border-color: var(--danger); }
-:global(html[data-surface-settings-shape="program-sections"]) .acts button:hover:not(:disabled),
-:global(html[data-surface-settings-shape="program-sections"]) .add:hover:not(:disabled),
-:global(html[data-surface-settings-shape="program-sections"]) .formActs button:hover:not(:disabled) {
-  border-color: var(--selection);
-}
 :global(html[data-surface-settings-shape="program-sections"]) .form input:focus,
 :global(html[data-surface-settings-shape="program-sections"]) .form select:focus {
   outline: 2px solid var(--focus-ring);

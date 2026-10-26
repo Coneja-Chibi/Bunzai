@@ -8,6 +8,7 @@
  */
 import type { JSX } from "react";
 import { protect } from "../../../_shared/protected-control";
+import { Button } from "../../../components/button";
 import type { RosterRow } from "../../../../core/participants/roster";
 import type { ParticipantChange } from "../../../../stage/contracts/chat-store";
 import type { OpenScene } from "../../../../studio/scenes";
@@ -56,7 +57,7 @@ export function ParticipantsTab({ ctx, scene }: { ctx: AppContext; scene: OpenSc
           <section className="sec">
             <h3>Retired</h3>
             <div className="rows">{roster.retired.map((r) => (
-              <div key={r.id} className="prow"><div className="bd"><div className="hd"><b className="nm">{r.name}</b><span className="chip">npc</span><button type="button" {...protect("participant-delete")} onClick={() => change({ op: "edit", id: r.id, edit: { retired: false } })}>Restore</button></div></div></div>
+              <div key={r.id} className="prow"><div className="bd"><div className="hd"><b className="nm">{r.name}</b><span className="chip">npc</span><span {...protect("participant-delete")}><Button size="sm" onClick={() => change({ op: "edit", id: r.id, edit: { retired: false } })}>Restore</Button></span></div></div></div>
             ))}</div>
           </section>
         )}

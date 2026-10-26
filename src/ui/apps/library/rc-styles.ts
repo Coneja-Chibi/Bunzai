@@ -29,7 +29,7 @@ export const RC_STYLE = `
 /* RC sets its sidebar, headers, and cards in Inter; Bunraku's Inter is --font-big (Fraunces). Named
    here, because these parts otherwise inherited the page's serif. Cinzel titles and italic taglines
    name their own. */
-.lrail,.lsec,.rcard,.rnewtile{font-family:var(--font-big)}
+.lrail,.lsec,.rcard{font-family:var(--font-big)}
 .lmain{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:.7rem;padding:.9rem clamp(.7rem,2vw,1.75rem) .9rem}
 
 /* -- the rail (library-client-v2's collection sidebar) -- */
@@ -38,48 +38,27 @@ export const RC_STYLE = `
 .lrail-head .ey{font-family:var(--font-fancy);font-size: var(--text-meta);letter-spacing:.28em;text-transform:uppercase;color:var(--stage-kicker);margin-bottom:.5rem}
 .lrail-head .ttl{font-family:var(--font-fancy);font-size:1.625rem;letter-spacing:.24em;font-weight:600;color:var(--stage-card)}
 .lrail-head .ttl em{font-style:normal;color:var(--accent)}
-.lrail-toggle{margin-top:.75rem;display:inline-flex;border:2px solid var(--stage-black);background:var(--stage-black);gap:1px}
-.lrail-toggle button{padding:.375rem 1rem;font-family:var(--font-fancy);font-weight:700;font-size: var(--text-control);letter-spacing:.1em;text-transform:uppercase;
-  border:none;background:var(--stage-well);color:var(--stage-mute);cursor:pointer}
-.lrail-toggle button.on{background:var(--accent-deep);color:var(--stage-white)}
-.lrail-toggle button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.lrail-toggle{margin-top:.75rem;display:inline-flex}
 .lrail-scroll{flex:1;min-height:0;overflow-y:auto;padding-top:1rem}
 .lrail-div{display:flex;align-items:center;gap:.625rem;padding:0 1.25rem .5rem;font-family:var(--font-fancy);font-size: var(--text-meta);letter-spacing:.2em;text-transform:uppercase;color:var(--stage-kicker)}
 .lrail-div::before,.lrail-div::after{content:"";flex:1;height:1px;background:var(--stage-seam)}
 .lrail-rows{display:flex;flex-direction:column;padding:0 1.25rem .5rem}
-.lrail .lrow{display:flex;align-items:center;gap:.75rem;padding:.625rem .75rem;border:none;border-left:3px solid transparent;background:transparent;
-  font:inherit;text-align:left;cursor:pointer;color:inherit;width:100%}
-.lrail .lrow:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
-.lrail .lrow:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
-.lrail .lrow.on{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 10%,transparent),transparent);border-left-color:var(--accent)}
 .lrail .tile{width:2.5rem;height:2.5rem;flex:none;display:grid;place-items:center;background:var(--stage-sunken);border:2px solid var(--stage-black);color:var(--stage-mute)}
 .lrail .tile .ico,.lrail .tile svg{display:block}
-.lrail .lrow.on .tile{background:color-mix(in srgb,var(--accent) 18%,var(--stage-sunken));border-color:var(--accent);box-shadow:2px 2px 0 var(--stage-black);color:var(--stage-card)}
-.lrail .tx{flex:1;min-width:0;display:flex;flex-direction:column}
+.lrail [data-control="row"][data-selected] .tile{background:color-mix(in srgb,var(--accent) 18%,var(--stage-sunken));border-color:var(--accent);box-shadow:2px 2px 0 var(--stage-black);color:var(--stage-card)}
 .lrail .n{font-size:.9375rem;font-weight:500;color:var(--stage-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lrail .lrow.on .n{color:var(--stage-card)}
+.lrail [data-control="row"][data-selected] .n{color:var(--stage-card)}
 .lrail .d{font-size:.75rem;color:var(--stage-text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lrail .cnt{min-width:2rem;padding:.25rem .625rem;text-align:center;font-family:var(--font-mono);font-size:.78rem;font-weight:700;
   background:var(--stage-sunken);border:1.5px solid color-mix(in srgb,var(--accent) 50%,transparent);color:var(--stage-soft)}
-.lrail .lrow.on .cnt{border-color:var(--accent);color:var(--stage-card)}
+.lrail [data-control="row"][data-selected] .cnt{border-color:var(--accent);color:var(--stage-card)}
 .lrail .cnt.zero{border-color:var(--stage-seam);color:var(--stage-mute)}
 .lrail-add{padding:1.25rem;background:var(--stage-sunken);border-top:2px solid var(--stage-black)}
-.lrail-add button{width:100%;padding:.875rem;font-family:var(--font-fancy);font-weight:800;font-size: var(--text-control);letter-spacing:.2em;text-transform:uppercase;
-  color:var(--stage-white);background:linear-gradient(180deg,var(--accent-deep),color-mix(in srgb,var(--accent-deep) 70%,var(--stage-black)));
-  border:2px solid var(--stage-black);box-shadow:4px 4px 0 var(--stage-black);cursor:pointer}
-.lrail-add button:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--stage-black)}
-.lrail-add button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* -- the top bar -- */
 .ltop{display:flex;gap:.625rem;align-items:stretch;flex-wrap:wrap;flex:none}
 .ltop .findwrap{flex:1 1 16rem}
-.lfilter{display:inline-flex;border:3px solid var(--edge);box-shadow:3px 3px 0 var(--edge);flex:none}
-.lfilter button,.ltb{font-family:var(--font-fancy);font-weight:700;font-size: var(--text-control);letter-spacing:.14em;text-transform:uppercase;padding:0 1rem;min-height:2.375rem;
-  background:var(--face);color:var(--text-soft);border:none;border-left:2px solid var(--edge);cursor:pointer}
-.lfilter button:first-child{border-left:none}
-.lfilter button.on{background:var(--accent-deep);color:var(--stage-white)}
-.ltb{border:3px solid var(--edge);box-shadow:3px 3px 0 var(--edge);flex:none}
-.lfilter button:focus-visible,.ltb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lfilter{display:inline-flex;flex:none}
 
 /* -- the Carousel: LibrarySectionHeader + HorizontalAssetRow -- */
 .lcar{flex:1;min-height:0;overflow-y:auto;padding:0 .25rem 3rem}
@@ -103,13 +82,7 @@ export const RC_STYLE = `
 /* the count, the deck's view switch, and New sit in the same strip, after the title */
 .lsec .sside{display:contents}
 .lsec .sviews{display:flex;gap:.4rem;align-items:center;flex-wrap:wrap}
-  .lsec .viewseg{border-width:2px;box-shadow:2px 2px 0 0 var(--stage-black)}
-  .lsec .viewseg button{padding:.25rem .5rem;font-size:var(--text-control)}
 .lsec-wrap.solo .lsec{margin-top:.5rem}
-/* the deck New button, as the old stage crumb drew it, on stage chrome */
-.lsec .crumbsel{font-family:var(--font-mono);font-weight:700;font-size: var(--text-control);letter-spacing:.1em;text-transform:uppercase;background:transparent;
-  color:var(--stage-text-dim);border:2px solid var(--stage-line);cursor:pointer;padding:.3rem .55rem}
-.lsec .crumbsel:hover,.lsec .crumbsel:focus-visible{color:var(--stage-card);border-color:var(--accent);outline:none}
 
 /* overflow-y:visible pinned explicitly: every card is absolutely
    positioned now (shelves.tsx Row), sized off one measured "probe" card rather than every
@@ -120,8 +93,7 @@ export const RC_STYLE = `
    feed back through the aspect ratio into a card wider than its column */
 .rcell{min-width:0;display:flex;flex-direction:column;container-type:inline-size}
 /* RoleCall's Start Scene under a character card */
-.rstart{margin-top:8px;height:32px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:2px;cursor:pointer;background:linear-gradient(135deg,var(--t,var(--deck-character)),color-mix(in srgb,var(--t,var(--deck-character)) 80%,transparent));box-shadow:0 4px 12px color-mix(in srgb,var(--t,var(--deck-character)) 25%,transparent);font: 600 var(--text-control) var(--font-big);letter-spacing:.05em;text-transform:uppercase;color:var(--stage-ink)}
-.rstart:hover{filter:brightness(1.1)}
+.rstart{margin-top:8px}
 .rcell>.rcard{width:100%}
 .lrow-cards::-webkit-scrollbar{display:none}
 /* RC's grid layout: the same cards wrapping; preset rows run three wide cards per row, as RC's
@@ -134,9 +106,7 @@ export const RC_STYLE = `
 .rgrid-row.presets{grid-template-columns:repeat(auto-fill,minmax(min(calc(var(--cw) * .76),100%),1fr))}
 /* the New tile that closes a row, as the old shelves' New set and New persona cards did */
 .rnewcell{display:flex;min-width:0;align-self:stretch;container-type:inline-size}
-.rnewtile{flex:1;min-height:6rem;display:grid;place-items:center;padding:.4rem;text-align:center;font-size:var(--text-control);border:3px dashed var(--stage-line);background:transparent;cursor:pointer;
-  font-family:var(--font-big);font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--stage-text-dim)}
-.rnewtile:hover,.rnewtile:focus-visible{border-color:var(--accent);color:var(--stage-card);outline:none}
+.rnewlbl{text-align:center;font-size:var(--text-control);font-family:var(--font-big);font-weight:900;letter-spacing:.08em;text-transform:uppercase}
 /* a section showing a drop-in view: as tall as what it holds, up to a bound, past which it scrolls
    inside itself so the page still flows on to the next deck */
 .lview.libstage{flex:none;height:auto;max-height:min(38rem,78vh);display:flex;flex-direction:column}
@@ -149,11 +119,7 @@ export const RC_STYLE = `
   background:linear-gradient(180deg,color-mix(in srgb,var(--t) 12%,var(--stage-panel)) 0%,color-mix(in srgb,var(--t) 4%,var(--stage-panel)) 22%,var(--stage-panel) 45%);
   border:3px solid var(--stage-black);box-shadow:6px 6px 0 var(--stage-black);transition:transform .2s ease,box-shadow .2s ease}
 .rcard:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--stage-black),0 0 28px color-mix(in srgb,var(--t) 32%,transparent)}
-.rcard:has(.rname:focus-visible){outline:3px solid var(--accent);outline-offset:3px}
-/* the stage control IS the name: a real button, text still selectable so an id can be copied */
-/* width:100%: a button sizes to its text even as a block, so a long name overran the card */
-.rname{all:unset;display:block;width:100%;box-sizing:border-box;min-width:0;cursor:pointer;user-select:text}
-.rname:focus-visible{outline:none}
+.rcard:has([data-part="library.card.name"]:focus-visible){outline:3px solid var(--accent);outline-offset:3px}
 .rcard::before{content:"";position:absolute;inset:0;border:1px solid color-mix(in srgb,var(--stage-card) 16%,transparent);z-index:4;pointer-events:none}
 .rcard::after{content:"";position:absolute;inset:4px;border:1px solid var(--t);opacity:.4;z-index:3;pointer-events:none}
 /* STAGED: accent outline + corner check, lifted; OPEN: pressed in, a quiet tick (the Grid's grammar) */
@@ -169,14 +135,12 @@ export const RC_STYLE = `
   display:flex;justify-content:space-between;align-items:center;gap:.75rem;font-size:.75rem;color:var(--stage-text-dim)}
 .rfoot>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rfoot .grow,.rtools .grow{flex:1}
+.ract{display:contents}
 .rfacts+.grow{flex:0}
 .rfacts{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.75rem;color:var(--stage-text-dim)}
 .rtools{margin-top:auto;display:flex;align-items:center;flex-wrap:wrap;gap:.4rem;padding:.625rem 1rem;border-top:1px dashed var(--stage-seam);background:var(--stage-row);
   font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-text-dim);cursor:default}
-.ract:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .rswl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.ract{flex:none;font:700 max(14px,var(--text-control)) var(--font-mono);padding:.2rem .45rem;border:1px solid var(--stage-line);background:transparent;color:var(--stage-card);cursor:pointer}
-.ract:hover{border-color:var(--accent)}
 .rslow{flex:none;padding:.125rem .375rem;border:1px solid var(--stage-warn);background:var(--stage-warn-ink);color:var(--stage-warn)}
 .rcard.over{outline:3px dashed var(--accent);outline-offset:4px}
 .rdroptip{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);z-index:7;pointer-events:none;white-space:nowrap;
@@ -184,8 +148,7 @@ export const RC_STYLE = `
   padding:.375rem .625rem;border:2px solid var(--stage-black)}
 .rcdef{padding:.125rem .45rem;font-family:var(--font-mono);font-size: var(--text-meta);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
   background:var(--accent-deep);color:var(--stage-white)}
-.rmore{width:2.125rem;height:2.125rem;flex:none;display:grid;place-items:center;background:var(--stage-sunken);border:2px solid var(--stage-seam);color:var(--stage-card);cursor:pointer}
-.rmore:hover,.rmore:focus-visible{border-color:var(--accent);outline:none}
+.rmore{display:flex;flex:none}
 .rtags{padding:0 1.25rem .875rem;display:flex;gap:.375rem;flex-wrap:wrap}
 .rtag{padding:.25rem .625rem;border-radius:6px;font-size: var(--text-meta);background:color-mix(in srgb,var(--t) 14%,transparent);color:var(--stage-card)}
 
@@ -299,14 +262,13 @@ export const RC_STYLE = `
   .rstrip,.rrhead{display:none}
   /* one line, never broken mid-word, never shrunk past reading size */
   .ratitle,.rptitle,.rrtitle,.rctitle{display:block;-webkit-line-clamp:unset;font-size: var(--text-body);letter-spacing:.02em}
-  .rname .rnmx{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  [data-part="library.card.name"] .rnmx{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* Split and Copy live in the card's menu (right-click or ...): stacked here they were unreadable */
   .ract{display:none}
   /* a book this small is its name and its tools: the cover would crowd the switch out, and the
      card grows to hold them rather than keep a shape that would cut them off */
   .rcard.rasset>.rart{display:none}
   .rcard.rasset{aspect-ratio:auto}
-  .rmore{width:1.5rem;height:1.5rem}
 }
 
 /* -- narrow panes: the rail becomes chips above the shelf. They WRAP: everything visible, nothing
@@ -318,18 +280,15 @@ export const RC_STYLE = `
   .lrail-head .ey{display:none}
   .lrail-head .ttl{font-size:var(--text-control);letter-spacing:.06em;white-space:nowrap}
   .lrail-head .lrail-toggle{margin-top:0;flex:none}
-  .lrail-head .lrail-toggle button{padding:.3rem .6rem}
   .lrail-scroll{padding:.5rem 0;overflow:visible;flex:none}
   .lrail-div,.lrail-add{display:none}
   .lrail-rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr));padding:0 .6rem .25rem;gap:.25rem}
-  .lrail .lrow{width:100%;min-width:0;padding:.25rem .35rem;gap:.3rem;border-left:none;border-bottom:3px solid transparent}
-  .lrail .lrow.on{border-bottom-color:var(--accent)}
+  .lrail [data-control="row"]{width:100%;min-width:0;padding:.25rem .35rem;gap:.3rem;border-left:none;border-bottom:3px solid transparent}
+  .lrail [data-control="row"][data-selected]{border-bottom-color:var(--accent)}
   .lrail .tile{display:none}
-  .lrail .tx{flex:1;min-width:0}
   .lrail .cnt{min-width:1.25rem;padding:.125rem .2rem}
   .lrail .d{display:none}
   .lsec .viewseg{flex:1 1 100%;min-width:0;max-width:100%;flex-wrap:wrap}
-  .lsec .viewseg button{flex:1 1 auto}
   .lsec{padding:.45rem .7rem .45rem 1.1rem}
 }
 

@@ -9,6 +9,7 @@ import type { Chat, CompendiumAccess } from "../../../../../../stage/contracts/c
 import type { AppContext } from "../../../../../app-contract";
 import { toErrorMessage } from "../../../../../_shared/error-message";
 import { Ic } from "../../../../../_shared/ic";
+import { Card, Chip } from "../../../../../components/button";
 import { protect } from "../../../../../_shared/protected-control";
 import { useSceneCompendium } from "../../../use-scene-compendium";
 import { accessChange } from "./books";
@@ -22,13 +23,8 @@ const CHOICES: readonly { value: CompendiumAccess; label: string; text: string }
 
 const CHIP_STYLE = `
 .scs .cp-chipw{position:relative;display:inline-flex}
-.scs button.cp-chip{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
 .scs .cp-chipp{position:absolute;top:100%;right:0;z-index:5;display:flex;flex-direction:column;gap:4px;width:min(22rem,80vw);margin-top:4px;padding:10px;border:2px solid var(--stage-black);background:var(--stage-panel);box-shadow:3px 3px 0 0 var(--stage-black)}
 .scs .cp-chipp>b{font:700 var(--text-meta) var(--font-big);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-card)}
-.scs .cp-chipp button{display:flex;flex-direction:column;gap:2px;padding:8px;text-align:left;border:2px solid transparent;background:var(--stage-row);color:var(--stage-card);cursor:pointer}
-.scs .cp-chipp button.on{border-color:var(--w,var(--stage-card))}
-.scs .cp-chipp button span{font:700 var(--text-control) var(--font-big)}
-.scs .cp-chipp button small{font:var(--text-meta)/1.4 var(--font-big);color:var(--stage-soft)}
 `;
 
 export function AccessChip({ ctx, chat, bookId, bookName, onChat }: { ctx: AppContext; chat: Chat; bookId: string; bookName: string; onChat(chat: Chat): void }): JSX.Element {
@@ -42,16 +38,16 @@ export function AccessChip({ ctx, chat, bookId, bookName, onChat }: { ctx: AppCo
   return (
     <span className="cp-chipw" data-part="compendium.access">
       <style>{CHIP_STYLE}</style>
-      <button type="button" {...protect("compendium-access", "cp-chip")} aria-expanded={open} title="How the AI may use this book" onClick={() => setOpen(!open)}>
-        {access === "read_only" && <Ic name="lucide:lock" size={12} />}{CHOICES.find((c) => c.value === access)!.label}<Ic name="lucide:chevron-down" size={12} />
-      </button>
+      <span {...protect("compendium-access")}>
+        <Chip aria-expanded={open} title="How the AI may use this book" onClick={() => setOpen(!open)}>
+          {access === "read_only" && <Ic name="lucide:lock" size={12} />}{CHOICES.find((c) => c.value === access)!.label}<Ic name="lucide:chevron-down" size={12} />
+        </Chip>
+      </span>
       {open && (
         <div {...protect("compendium-access", "cp-chipp")} role="dialog" aria-label={`AI Access for ${bookName}`}>
           <b>AI Access for &quot;{bookName}&quot;</b>
           {CHOICES.map((c) => (
-            <button type="button" key={c.value} className={c.value === access ? "on" : undefined} aria-pressed={c.value === access} onClick={() => pick(c.value)}>
-              <span>{c.label}</span><small>{c.text}</small>
-            </button>
+            <Card key={c.value} kind="choice" heading={c.label} subtitle={c.text} selected={c.value === access} aria-pressed={c.value === access} onClick={() => pick(c.value)} />
           ))}
         </div>
       )}

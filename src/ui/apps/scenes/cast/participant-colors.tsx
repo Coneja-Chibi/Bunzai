@@ -5,6 +5,7 @@
  */
 import type { JSX } from "react";
 import { SwatchRow } from "../../../components/swatch-row";
+import { Button } from "../../../components/button";
 import { pickPaletteHex } from "../../../../core/participants/palette";
 import type { RosterRow } from "../../../../core/participants/roster";
 
@@ -20,8 +21,8 @@ export function ColorEditor({ row, enabled, onColors }: { row: RosterRow; enable
         {colors.map((c, i) => (enabled
           ? <SwatchRow key={i} palette={[]} allowCustom value={c} onChange={(hex) => setAt(i, hex)} />
           : <span key={i} className="stop" style={{ background: c }} title={hint} />))}
-        {colors.length < 3 && <button type="button" disabled={!enabled} title={enabled ? "Add gradient stop" : hint} onClick={() => onColors([...colors, colors[colors.length - 1]!])}>+ Gradient</button>}
-        {row.colors.length > 0 && <button type="button" disabled={!enabled} title={enabled ? "Clear participant color" : hint} onClick={() => onColors(null)}>Clear</button>}
+        {colors.length < 3 && <Button variant="quiet" size="sm" disabled={!enabled} title={enabled ? "Add gradient stop" : hint} onClick={() => onColors([...colors, colors[colors.length - 1]!])}>+ Gradient</Button>}
+        {row.colors.length > 0 && <Button variant="quiet" size="sm" disabled={!enabled} title={enabled ? "Clear participant color" : hint} onClick={() => onColors(null)}>Clear</Button>}
       </div>
       {!enabled && <small>Colors apply when Dialogue Colors is on.</small>}
     </div>

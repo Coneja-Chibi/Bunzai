@@ -4,7 +4,7 @@ import { parseHex } from "../../../color";
 import { FRAGMENT, VERTEX } from "./shaders";
 import { FOG_FRAGMENT } from "./fog-shader";
 
-export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, mouseInfluence: number): (() => void) | null {
+export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, mouseInfluence: number, withFog = true): (() => void) | null {
   let renderer: Renderer;
   try { renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true, depth: false, antialias: false, dpr: 1, powerPreference: "low-power", autoClear: false }); }
   catch { return null; }
@@ -46,8 +46,8 @@ export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, 
       pulsating: { value: 0 }, fadeDistance: { value: 1 }, saturation: { value: 1 }, mousePos: { value: [.5, .5] },
       mouseInfluence: { value: 0 }, noiseAmount: { value: .015 }, distortion: { value: .03 }, isStatic: { value: 0 },
     }));
-    const fog = make(FOG_FRAGMENT, { iTime: { value: 0 }, iResolution: { value: [1, 1] }, fogColor: { value: rgb("--premiere-text") } });
-    const meshes = [...rays, fog];
+    const fog = withFog ? [make(FOG_FRAGMENT, { iTime: { value: 0 }, iResolution: { value: [1, 1] }, fogColor: { value: rgb("--premiere-text") } })] : [];
+    const meshes = [...rays, ...fog];
     const mouse = { x: .5, y: .5 };
     const smoothMouse = { ...mouse };
     let hasMouse = false;

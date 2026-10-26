@@ -5,6 +5,7 @@
  * version (use-director-panel.ts), and the controls are off while one is being saved. The first-use strip is RoleCall's DM tour (DMTourOverlay.tsx) as a note, not an overlay.
  */
 import { useEffect, useState, type CSSProperties, type JSX } from "react";
+import { Button, IconButton, Tabs } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { protect } from "../../../../_shared/protected-control";
 import { ThemeSlot } from "../../../../_shared/theme-slot";
@@ -60,7 +61,7 @@ export function DirectorPanelView({ ctx, chat, id, popOut }: PopoutContext): JSX
     return root(
       <header className="hero bad" role="alert"><span className="hi"><Ic name="lucide:circle-alert" size={20} /></span>
         <div><div className="eb">Story Director Error</div><h2>Could not <em>load</em></h2><p>{data.load.why}</p></div>
-        <div className="hero-tools"><button type="button" className="tbtn" title="Try again" aria-label="Try again" onClick={data.reload}><Ic name="lucide:refresh-cw" size={14} /></button>{viewAt && <button type="button" className="tbtn" title="Jump to latest" aria-label="Jump to latest" onClick={() => setViewAt(null)}><Ic name="lucide:skip-forward" size={14} /></button>}</div>
+        <div className="hero-tools"><IconButton size="sm" label="Try again" icon="lucide:refresh-cw" onClick={data.reload} />{viewAt && <IconButton size="sm" label="Jump to latest" icon="lucide:skip-forward" onClick={() => setViewAt(null)} />}</div>
       </header>,
     );
   }
@@ -82,37 +83,34 @@ export function DirectorPanelView({ ctx, chat, id, popOut }: PopoutContext): JSX
       <div className="dr-bar" data-part="scene.director.tools">
         {stops.length > 1 && (
           <span className="dr-hist" data-part="scene.director.history">
-            <button type="button" title="Previous turn" aria-label="Previous turn" disabled={at <= 0} onClick={() => go(at - 1)}><Ic name="lucide:chevron-left" size={16} /></button>
+            <IconButton size="sm" label="Previous turn" icon="lucide:chevron-left" disabled={at <= 0} onClick={() => go(at - 1)} />
             <span>{viewing ? `${at + 1} / ${stops.length}` : "Latest"}</span>
-            <button type="button" title="Next turn" aria-label="Next turn" disabled={!viewing} onClick={() => go(at + 1)}><Ic name="lucide:chevron-right" size={16} /></button>
-            {viewing && <button type="button" className="jump" onClick={() => setViewAt(null)}>Jump to latest</button>}
+            <IconButton size="sm" label="Next turn" icon="lucide:chevron-right" disabled={!viewing} onClick={() => go(at + 1)} />
+            {viewing && <Button variant="quiet" size="sm" onClick={() => setViewAt(null)}>Jump to latest</Button>}
           </span>
         )}
         <span className="dr-bar-r">
           {popOut && <PopoutButton id={id} onClick={popOut} />}
-          <button type="button" {...protect("director-reset", "dr-btn reset")} title="Reset DM state: re-evaluate mood, arcs & context from chat history" disabled={readOnly || panel.tip === null} onClick={() => setConfirm(true)}>
-            <Ic name="lucide:rotate-ccw" size={16} /><span>Reset DM</span>
-          </button>
+          <span {...protect("director-reset")}>
+            <Button size="sm" icon="lucide:rotate-ccw" title="Reset DM state: re-evaluate mood, arcs & context from chat history" disabled={readOnly || panel.tip === null} onClick={() => setConfirm(true)}>Reset DM</Button>
+          </span>
         </span>
       </div>
       {confirm && (
         <div className="dr-confirm" role="alertdialog" aria-label="Reset the Story Director" data-part="scene.director.reset">
           <p><b>Reset the Story Director?</b> Chapters, arcs, seeds, hidden arcs and notes are cleared from this reply on, and the Director starts again on the next one. Earlier replies keep the story they were written with; the activity feed stays.</p>
-          <div><button type="button" className="dr-btn" onClick={() => setConfirm(false)}>Cancel</button>
-            <button type="button" {...protect("director-reset", "dr-btn danger")} disabled={busy} onClick={() => void edit({ op: "reset" }, "The Story Director could not be reset. Reload this story before trying again.").then(() => setConfirm(false))}>Reset DM</button></div>
+          <div><Button variant="quiet" size="sm" onClick={() => setConfirm(false)}>Cancel</Button>
+            <span {...protect("director-reset")}><Button variant="danger" size="sm" disabled={busy} onClick={() => void edit({ op: "reset" }, "The Story Director could not be reset. Reload this story before trying again.").then(() => setConfirm(false))}>Reset DM</Button></span></div>
         </div>
       )}
       {viewing && <p className="dr-note-line" role="status" data-part="scene.director.readonly">Reading turn {state.turn ?? at + 1}. Edits are off until you jump to latest.</p>}
       {!panel.on && <p className="dr-note-line" role="status">The Story Director is off for this scene. What it saved stays here.</p>}
       {live.planning && <p className="dr-note-line live" role="status"><Ic name="lucide:loader-circle" size={14} />The Director is planning this reply.</p>}
       {live.failed && !live.planning && <p className="dr-note-line bad" role="alert" data-part="scene.director.failed">No directive for the last reply: {live.failed}</p>}
-      {note && <p className="dr-note-line bad" role="alert">{note}<button type="button" className="dr-ico" aria-label="Dismiss" onClick={() => setNote(null)}><Ic name="lucide:x" size={12} /></button></p>}
-      <div className="dr-tabs" role="tablist" data-part="scene.director.tabs">
-        {DIRECTOR_TABS.map((t) => (
-          <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : ""} data-part={`scene.director.tab.${t.id}`} onClick={() => setTab(t.id)}>
-            <Ic name={t.icon} size={16} /><span>{t.label}</span>
-          </button>
-        ))}
+      {note && <p className="dr-note-line bad" role="alert">{note}<span className="dr-note-x"><IconButton size="sm" label="Dismiss" icon="lucide:x" onClick={() => setNote(null)} /></span></p>}
+      <div className="dr-tabs">
+        <Tabs label="Story Director sections" data-part="scene.director.tabs" value={tab} onChange={setTab}
+          items={DIRECTOR_TABS.map((t) => ({ value: t.id, "data-part": `scene.director.tab.${t.id}`, label: <><Ic name={t.icon} size={14} /><span>{t.label}</span></> }))} />
       </div>
       <div key={tab} className="dr-tabpanel" role="tabpanel" data-director-panel={tab}>
         {tab === "activity" ? <ActivityTab entries={state.activity} now={now} locked={readOnly} onClear={() => void edit({ op: "clear-activity" }, "The activity log could not be cleared. Reload this story before trying again.")} />

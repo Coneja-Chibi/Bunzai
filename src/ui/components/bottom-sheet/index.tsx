@@ -3,6 +3,7 @@
  * The narrow-pane sibling of InkDialog (design/vs-mobile-editors.html frames 2 and 4).
  * Positions absolutely, so the hosting pane (.paneWrap) must be a positioned ancestor.
  */
+import { IconButton } from "../button";
 import { useRef, type JSX, type ReactNode } from "react";
 import { DialogCore } from "../dialog-core";
 import styles from "./styles.module.css";
@@ -38,9 +39,7 @@ export function BottomSheet({ title, ariaLabel, onDismiss, titleAction, footerAc
         <div className={styles.titleRow}>
           <b className={styles.title}>{title}</b>
           {titleAction}
-          <button type="button" className={styles.closeX} aria-label="Close" onClick={onDismiss}>
-            &times;
-          </button>
+          <IconButton variant="quiet" size="sm" icon="lucide:x" label="Close" onClick={onDismiss} />
         </div>
         <div className={styles.body}>{children}</div>
         {footerAction !== undefined && <div className={styles.footer}>{footerAction}</div>}

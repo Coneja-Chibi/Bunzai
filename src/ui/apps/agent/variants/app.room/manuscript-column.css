@@ -11,5 +11,4 @@ html[data-surface-app-room="manuscript-column"] .agent-room[data-room="docked"] 
   & .agent-room__composer { background: transparent; border-top: 0; padding-inline: 0; }
   & .agent-room__composer::before { display: none; }
   & .agent-room__composer textarea { background: transparent; border: 0; border-bottom: 2px solid var(--bk-line-strong); }
-  & .agent-room__composer button { border: 0; background: transparent; }
 }

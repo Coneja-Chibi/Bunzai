@@ -35,26 +35,6 @@
   gap: 0.4rem;
 }
 
-.acts button {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: var(--face);
-  border: 3px solid var(--edge);
-  box-shadow: 3px 3px 0 0 var(--edge);
-  padding: 0.35rem 0.7rem;
-  cursor: pointer;
-}
-
-.acts button:disabled {
-  cursor: default;
-  box-shadow: none;
-  opacity: 0.55;
-}
-
 .note,
 .good,
 .said {

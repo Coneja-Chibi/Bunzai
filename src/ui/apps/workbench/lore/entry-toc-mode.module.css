@@ -8,44 +8,6 @@
   max-width: 100%;
 }
 
-.modeTrigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.22rem;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
-  padding: 0.14rem 0.28rem;
-  cursor: pointer;
-  max-width: 100%;
-}
-
-.modeTrigger span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.modeKey {
-  border-color: var(--stage-ok);
-  color: var(--stage-ok);
-}
-
-.modeAlways {
-  border-color: var(--stage-var);
-  color: var(--stage-var);
-}
-
-.modeMeaning {
-  border-color: var(--a, var(--accent));
-  color: var(--a, var(--accent));
-}
-
 .modeMenu {
   position: absolute;
   z-index: 20;
@@ -60,34 +22,22 @@
   box-shadow: 3px 3px 0 0 var(--stage-black);
 }
 
-.modeOpt {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  width: 100%;
-  border: 0;
-  background: transparent;
-  color: var(--stage-soft);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0.28rem 0.35rem;
-  cursor: pointer;
-  text-align: left;
+/* trigger method colors: keywords ok, always on var, by meaning accent (trigger icon and menu option icons) */
+.modeSelect[data-mode="keyed"] > [data-control="button"] > svg[data-ic]:first-child,
+li[data-mode="keyed"] .modeTone {
+  color: var(--stage-ok);
 }
 
-.modeOpt:hover:not(:disabled) {
-  background: var(--stage-row);
-  color: var(--stage-card);
+.modeSelect[data-mode="always"] > [data-control="button"] > svg[data-ic]:first-child,
+li[data-mode="always"] .modeTone {
+  color: var(--stage-var);
 }
 
-.modeOptOn {
-  background: var(--stage-row);
+.modeSelect[data-mode="meaning"] > [data-control="button"] > svg[data-ic]:first-child,
+li[data-mode="meaning"] .modeTone {
+  color: var(--a, var(--accent));
 }
 
-.modeOptGated {
-  opacity: 0.4;
-  cursor: not-allowed;
+.modeTone {
+  display: inline-flex;
 }

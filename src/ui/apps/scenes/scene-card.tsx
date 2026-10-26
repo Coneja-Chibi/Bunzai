@@ -6,6 +6,7 @@
  */
 import type { JSX } from "react";
 import { InkDialog } from "../../components/ink-dialog";
+import { Button, Chip } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 
 /** Where the scene's card stands against the library's. */
@@ -21,7 +22,7 @@ export interface CardState {
 export const isNewer = (c: CardState): boolean => c.latest !== null && c.latest > c.version;
 
 export function UpdateBadge({ onClick }: { onClick(): void }): JSX.Element {
-  return <button type="button" className="upd" title="Click to accept update" onClick={onClick}><Ic name="lucide:refresh-cw" size={10} />Update available</button>;
+  return <span className="upd"><Chip tone="var(--stage-warn)" data-part="scene.update-badge" title="Click to accept update" onClick={onClick}><Ic name="lucide:refresh-cw" size={10} />Update available</Chip></span>;
 }
 
 export function CardNotice({ card, onRevert }: { card: CardState; onRevert(): void }): JSX.Element | null {
@@ -31,7 +32,7 @@ export function CardNotice({ card, onRevert }: { card: CardState; onRevert(): vo
   return (
     <p className="notice row">
       <span className="grow">This scene plays version {card.version}. Messages already in the scene stay as they were.</span>
-      <button type="button" onClick={onRevert}>Back to version {card.previous}</button>
+      <Button variant="quiet" size="sm" onClick={onRevert}>Back to version {card.previous}</Button>
     </p>
   );
 }
@@ -45,7 +46,7 @@ export function UpdateCardDialog({ card, onCancel, onUpdate }: { card: CardState
           <div className="box"><div className="t">This update changes</div><ul><li>Name, art, description, and prompts, from version {card.latest}</li><li>Only this scene; other scenes keep their own version</li></ul></div>
           <div className="box"><div className="t">It keeps</div><ul><li>Every message already in the scene, exactly as written</li><li>Version {card.version}, so you can go back from the Cast wing</li></ul></div>
         </div>
-        <footer className="ft"><button type="button" autoFocus onClick={onCancel}>Keep version {card.version}</button><button type="button" className="go" onClick={onUpdate}>Update</button></footer>
+        <footer className="ft"><Button autoFocus onClick={onCancel}>Keep version {card.version}</Button><Button variant="primary" tone="var(--stage-warn)" onClick={onUpdate}>Update</Button></footer>
       </div>
     </InkDialog>
   );

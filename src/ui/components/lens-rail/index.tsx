@@ -3,6 +3,7 @@
  * sideways with an edge fade, never a stacked word-wall (design/vs-mobile-editors.html frame 1).
  * Same contract as PlatformTabs; the editor renders one or the other by pane width.
  */
+import { Chip, Segmented } from "../button";
 import type { JSX } from "react";
 import type { OffTarget } from "../platform-tabs";
 import styles from "./styles.module.css";
@@ -20,45 +21,26 @@ export interface LensRailProps {
 export function LensRail({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: LensRailProps): JSX.Element {
   return (
     <div className={styles.rail}>
-      <div className={styles.scroll} role="tablist" aria-label="Writing for platform">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={selected.length === 0}
-          className={`${styles.chip}${selected.length === 0 ? ` ${styles.on}` : ""}`}
-          onClick={onClear}
-        >
+      <div className={styles.scroll} role="group" aria-label="Writing for platform">
+        <Chip pressed={selected.length === 0} onClick={onClear}>
           Bunraku
-        </button>
+        </Chip>
         {platforms.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            role="tab"
-            aria-selected={selected.includes(p.id)}
-            className={`${styles.chip}${selected.includes(p.id) ? ` ${styles.on}` : ""}`}
-            onClick={() => onToggle(p.id)}
-          >
+          <Chip key={p.id} pressed={selected.includes(p.id)} onClick={() => onToggle(p.id)}>
             {p.label}
-          </button>
+          </Chip>
         ))}
         <span className={styles.offt}>
-          <button
-            type="button"
-            className={`${styles.chip}${offTarget === "hide" ? ` ${styles.on}` : ""}`}
-            title="Hide fields the selected platform can't carry"
-            onClick={() => onOffTarget("hide")}
-          >
-            Hide
-          </button>
-          <button
-            type="button"
-            className={`${styles.chip}${offTarget === "dim" ? ` ${styles.on}` : ""}`}
-            title="Same as hide for now: off-target fields leave so lean platforms stay lean"
-            onClick={() => onOffTarget("dim")}
-          >
-            Dim
-          </button>
+          <Segmented
+            size="sm"
+            label="Off-target fields"
+            value={offTarget}
+            onChange={onOffTarget}
+            items={[
+              { value: "hide", label: "Hide", title: "Hide fields the selected platform can't carry" },
+              { value: "dim", label: "Dim", title: "Same as hide for now: off-target fields leave so lean platforms stay lean" },
+            ]}
+          />
         </span>
       </div>
       <span className={styles.fade} aria-hidden="true" />

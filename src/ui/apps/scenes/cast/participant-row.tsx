@@ -6,6 +6,7 @@
  */
 import type { JSX } from "react";
 import { protect } from "../../../_shared/protected-control";
+import { Button } from "../../../components/button";
 import type { RosterRow } from "../../../../core/participants/roster";
 import type { ParticipantChange, ParticipantPresence } from "../../../../stage/contracts/chat-store";
 import { ColorEditor } from "./participant-colors";
@@ -43,15 +44,15 @@ export function ParticipantRow({ row, colorsOn, onChange }: { row: RosterRow; co
         </dl>
         <div className="acts">
           {row.main && row.anchored ? <span className="anch" title="The main slot follows the scene's character card. Use Set Main on another participant to swap.">Anchored to the scene card</span>
-            : row.main ? <button type="button" onClick={() => onChange({ op: "main", id: null })}>Unset Main</button>
-            : <button type="button" className="setmain" onClick={() => onChange({ op: "main", id: row.id })}>Set Main</button>}
+            : row.main ? <Button size="sm" onClick={() => onChange({ op: "main", id: null })}>Unset Main</Button>
+            : <Button size="sm" onClick={() => onChange({ op: "main", id: row.id })}>Set Main</Button>}
           {row.anchored ? <span className="anch card">Uses Card Gradient</span> : <ColorEditor row={row} enabled={colorsOn} onColors={(c) => edit({ colors: c })} />}
           <label className="scene" title="Shared scene state used by scene-aware features.">Scene
             <select aria-label={`Scene presence for ${row.name}`} value={row.presence} onChange={(e) => edit({ presence: e.currentTarget.value as ParticipantPresence })}>
               <option value="present">Present</option><option value="background">Background</option><option value="absent">Absent</option>
             </select>
           </label>
-          {row.kind === "npc" && <button type="button" {...protect("participant-delete", "del")} onClick={() => edit({ retired: true })}>Delete</button>}
+          {row.kind === "npc" && <span {...protect("participant-delete")}><Button variant="danger" size="sm" onClick={() => edit({ retired: true })}>Delete</Button></span>}
         </div>
       </div>
     </div>

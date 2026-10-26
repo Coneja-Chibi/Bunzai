@@ -9,6 +9,7 @@
  * resolved on read, and only a change the person makes is sent.
  */
 import { useEffect, useState, type JSX } from "react";
+import { Segmented } from "../../../../../components/button";
 import type { AppContext } from "../../../../../app-contract";
 import type { GuideRecord } from "../../../../../../core/guide-record";
 import type { Chat, ChatCompendiumPatch } from "../../../../../../stage/contracts/chat-store";
@@ -87,9 +88,7 @@ export function CompendiumSettingsTab({ ctx, chat, onChat, bookId }: { ctx: AppC
         <div className="cps-eb">Compendium settings</div>
         <h1>What Compendium remembers</h1>
         <p>Choose which books it may use, what it should recall before a reply, and what lasting changes it should file afterward.</p>
-        <div className="cps-views" role="group" aria-label="Settings view">
-          {VIEWS.map((v) => <button type="button" key={v.id} aria-pressed={view === v.id} className={view === v.id ? "on" : undefined} onClick={() => setView(v.id)}>{v.label}</button>)}
-        </div>
+        <Segmented label="Settings view" value={view} onChange={setView} items={VIEWS.map((v) => ({ value: v.id, label: v.label }))} />
       </header>
       {SECTIONS.filter((s) => s.view === view).map(({ id, Section: S }) => <S key={id} {...props} />)}
     </div>

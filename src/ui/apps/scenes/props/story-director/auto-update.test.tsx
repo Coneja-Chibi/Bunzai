@@ -118,7 +118,7 @@ describe("the tracker list", () => {
   test("a row whose number differs shows Use default, which clears it; one that matches does not", async () => {
     const rig = await block({ every: 2 }, { party: { auto: { every: 5 } }, inventory: { auto: { every: 2 } } });
     expect(input("Party, every N replies").value).toBe("5");
-    expect(m!.host.querySelectorAll(".ds-trow .linkish").length).toBe(1);
+    expect([...m!.host.querySelectorAll(".ds-trow button")].filter((b) => b.textContent === "Use default").length).toBe(1);
     await m!.click(m!.button("Use default"));
     expect(rig.tracked).toEqual([{ module: "party", patch: { auto: null } }]);
     expect(input("Party, every N replies").value).toBe("2");

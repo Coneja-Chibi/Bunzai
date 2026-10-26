@@ -6,6 +6,7 @@
  * middle = nest, low third = sibling below), and the bottom strip un-nests to the root. Entry rows
  * reuse the shared trow furniture so the lens adds containers, not new row vocabulary.
  */
+import { Button, IconButton, Toggle } from "../../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type DragEvent, type JSX, type KeyboardEvent } from "react";
 import type { LorebookCategory, LorebookEntry } from "../../../../entities/lorebook/schema";
 import { estimateEntryTokens, fieldVisible, type LoreWriteForProfile } from "../../../../core/lore";
@@ -20,7 +21,6 @@ import {
   type ParentEdges,
 } from "./folder-tree";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, useFocusedRangeIndex, useOccurrenceKeys, useVirtualRows, type Range } from "../../../_shared/virtual-list";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 
 type DragPayload = { kind: "entry" | "folder"; id: string } | null;
 type Band = "above" | "nest" | "below";
@@ -207,7 +207,7 @@ export function MarinaraFolderToc({
             }
           }}
         >
-          <ToggleSwitch size="sm" on={e.enabled} aria-label={e.enabled ? "Entry on" : "Entry off"} isolate onChange={() => onPatchEntry(e.id, { enabled: !e.enabled })} />
+          <Toggle size="sm" on={e.enabled} aria-label={e.enabled ? "Entry on" : "Entry off"} isolate onChange={() => onPatchEntry(e.id, { enabled: !e.enabled })} />
           <div className={styles.tMain}>
             <div className={styles.tTitleRow}>
               <span className={styles.tnm}>{e.title || "(untitled)"}</span>
@@ -288,18 +288,10 @@ export function MarinaraFolderToc({
             }
           }}
         >
-          <button
-            type="button"
-            className={isCollapsed ? `${styles.mfChev} ${styles.mfChevClosed}` : styles.mfChev}
-            aria-label={isCollapsed ? "Expand folder" : "Collapse folder"}
-            aria-expanded={!isCollapsed}
-            onClick={(ev) => {
+          <IconButton label={isCollapsed ? "Expand folder" : "Collapse folder"} variant="quiet" size="sm" icon={isCollapsed ? "lucide:chevron-right" : "lucide:chevron-down"} aria-expanded={!isCollapsed} onClick={(ev) => {
               ev.stopPropagation();
               onToggleCollapse(c.id);
-            }}
-          >
-            {isCollapsed ? "›" : "▾"}
-          </button>
+            }} />
           <span className={styles.mfDragHandle} title="Drag to move or re-parent" aria-hidden="true">
             {"⠷"}
           </span>
@@ -307,7 +299,7 @@ export function MarinaraFolderToc({
           <span className={styles.mfCount}>
             {isCollapsed ? `${hidden} hidden` : `${count.entries} + ${count.folders}`}
           </span>
-          <ToggleSwitch size="sm" on={enabled} aria-label={enabled ? "Folder enabled" : "Folder disabled"} title={enabled ? "Folder enabled" : "Folder disabled"} isolate onChange={() => onToggleFolderEnabled(c.id, !enabled)} />
+          <Toggle size="sm" on={enabled} aria-label={enabled ? "Folder enabled" : "Folder disabled"} title={enabled ? "Folder enabled" : "Folder disabled"} isolate onChange={() => onToggleFolderEnabled(c.id, !enabled)} />
         </div>
         {overHere === "below" && <div className={styles.mfInsert} />}
       </div>
@@ -370,12 +362,8 @@ export function MarinaraFolderToc({
       </div>
 
       <div className={styles.mfAddRow}>
-        <button type="button" className={styles.mfAdd} onClick={onAddFolder}>
-          + New folder
-        </button>
-        <button type="button" className={styles.mfAdd} onClick={onAddEntry}>
-          + New entry
-        </button>
+        <Button size="sm" block onClick={onAddFolder}>+ New folder</Button>
+        <Button size="sm" block onClick={onAddEntry}>+ New entry</Button>
       </div>
     </aside>
   );

@@ -4,6 +4,7 @@
  * note, so the flow is real instead of a dead label. Swap the body for the real editor when it lands;
  * the LinkOut wiring stays the same. Composes the house InkDialog.
  */
+import { Button } from "../button";
 import type { JSX, ReactNode } from "react";
 import { InkDialog } from "../ink-dialog";
 import styles from "./styles.module.css";
@@ -23,9 +24,11 @@ export function StubEditor({ title, note, onClose, children }: StubEditorProps):
       <div className={styles.head}>{title}</div>
       <div className={styles.note}>{note}</div>
       {children ? <div className={styles.body}>{children}</div> : null}
-      <button type="button" className={styles.close} onClick={onClose}>
-        Close
-      </button>
+      <div className={styles.close}>
+        <Button variant="quiet" onClick={onClose}>
+          Close
+        </Button>
+      </div>
     </InkDialog>
   );
 }

@@ -23,6 +23,7 @@
  * its explanation ended up sixty columns apart, once per option.
  */
 import { useState, type JSX } from "react";
+import { Button, ListRow } from "../components/button";
 import { armedAnswer, askMessage, numberedRows, type AskState } from "../../kit/render/ask/ask-core";
 import type { AskChoices } from "./kit-choice-core";
 
@@ -92,9 +93,13 @@ export function ChoiceList({
           : kind === "own" ? "Write your own answer" : "Chat about this instead";
         return (
           <div key={`o${String(at)}`} className={on ? "kit-ask__opt kit-ask__opt--on" : "kit-ask__opt"}>
-            <button
-              type="button"
-              className="kit-ask__pick"
+            <ListRow
+              selected={on}
+              leading={<span className="kit-ask__caret">{on ? "❯" : " "}</span>}
+              label={<>
+                <span className="kit-ask__num">{`${String(entry.number ?? 0)}. `}</span>
+                <span className={kind === "option" ? "kit-ask__val" : "kit-ask__esc"}>{label}</span>
+              </>}
               disabled={busy}
               /**
                * CLICK SELECTS, IT DOES NOT SEND. The two visible steps are what make sending
@@ -102,11 +107,7 @@ export function ChoiceList({
                * on a mis-aim.
                */
               onClick={() => { setState((prior) => ({ ...prior, cursor: mine })); }}
-            >
-              <span className="kit-ask__caret">{on ? "❯" : " "}</span>
-              <span className="kit-ask__num">{`${String(entry.number ?? 0)}. `}</span>
-              <span className={kind === "option" ? "kit-ask__val" : "kit-ask__esc"}>{label}</span>
-            </button>
+            />
             {kind === "option" && entry.row.note !== undefined && (
               <p className="kit-ask__note">{entry.row.note}</p>
             )}
@@ -148,9 +149,9 @@ export function ChoiceList({
             ? "pick one, then send it"
             : `sends ${armed}${live.note.trim() ? " · with your note" : ""}`}
         </span>
-        <button
-          type="button"
-          className="kit-ask__send"
+        <Button
+          size="sm"
+          variant="primary"
           disabled={busy || armed === null}
           onClick={() => {
             const message = askMessage(live);
@@ -158,7 +159,7 @@ export function ChoiceList({
           }}
         >
           {"Send"}
-        </button>
+        </Button>
       </div>
     </div>
   );

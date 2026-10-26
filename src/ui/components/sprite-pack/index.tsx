@@ -2,6 +2,7 @@
  * SpritePack - visual emotion / expression pack editor (label -> image).
  * Platform-agnostic value+onChange. Bridges live outside this leaf.
  */
+import { Button, Tile, Toggle } from "../button";
 import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent, type JSX, type KeyboardEvent } from "react";
 import {
   labelFromFilename,
@@ -13,7 +14,6 @@ import {
   type SpritePackItem,
   type SpritePackValue,
 } from "../../../core/media";
-import { ToggleSwitch } from "../toggle-switch";
 import type { AssetBatchUpload, AssetUpload } from "../../_shared/asset-upload";
 import styles from "./styles.module.css";
 import { importSpriteZip } from "./zip-import";
@@ -268,7 +268,7 @@ export function SpritePack({
     <div className={styles.wrap}>
       <div className={styles.bar}>
         {showEnabled ? (
-          <ToggleSwitch
+          <Toggle
             on={pack.enabled !== false}
             onChange={(on) => commit({ ...pack, enabled: on })}
             label={pack.enabled === false ? "Pack off" : "Pack on"}
@@ -278,8 +278,8 @@ export function SpritePack({
           <>
             <span className={styles.lbl}>Default</span>
             <span className={styles.meta}>{pack.defaultLabel ?? "(auto)"}</span>
-            <button type="button" className={styles.toolBtn} disabled={!pack.defaultLabel}
-              onClick={() => commit({ ...pack, defaultLabel: undefined })}>auto</button>
+            <Button size="sm" disabled={!pack.defaultLabel}
+              onClick={() => commit({ ...pack, defaultLabel: undefined })}>Auto</Button>
           </>
         ) : null}
         {profile ? (
@@ -301,19 +301,17 @@ export function SpritePack({
             );
             if (hit) return null;
             return (
-              <button
+              <Tile
                 key={`ghost-${slot}`}
-                type="button"
-                className={styles.add}
-                style={{ minHeight: "5rem", borderStyle: "dashed" }}
-                title={`Add ${slot}`}
+                kind="add"
+                data-part="sprite.ghost"
+                label={`Add ${slot}`}
+                icon={<span>+ {slot}</span>}
                 onClick={() => {
                   slotLabelRef.current = slot;
                   fileRef.current?.click();
                 }}
-              >
-                <span>+ {slot}</span>
-              </button>
+              />
             );
           })}
         </div>
@@ -394,15 +392,15 @@ export function SpritePack({
                 }}
               />
               <div className={styles.ops}>
-                <button
-                  type="button"
+                <Button
+                  size="sm"
                   title="Set as default"
                   onClick={() => commit({ ...pack, defaultLabel: it.label })}
                 >
                   Default
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  size="sm"
                   title="Replace image"
                   onClick={() => {
                     replaceIdRef.current = it.id;
@@ -410,9 +408,10 @@ export function SpritePack({
                   }}
                 >
                   Replace
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
+                  size="sm"
+                  variant="danger"
                   title="Remove"
                   onClick={() => {
                     const items = pack.items.filter((row) => row.id !== it.id);
@@ -427,7 +426,7 @@ export function SpritePack({
                   }}
                 >
                   Remove
-                </button>
+                </Button>
               </div>
             </div>
           );
@@ -437,9 +436,10 @@ export function SpritePack({
         </div>
       </div>
       <div className={styles.grid}>
-        <button
-          type="button"
-          className={styles.add}
+        <Tile
+          kind="add"
+          label="Add images"
+          icon={<><span>+ Add</span><span>drop images</span></>}
           onClick={() => {
             replaceIdRef.current = null;
             slotLabelRef.current = null;
@@ -447,21 +447,16 @@ export function SpritePack({
           }}
           onDragOver={(e) => e.preventDefault()}
           onDrop={onDropAdd}
-        >
-          <span>+ Add</span>
-          <span>drop images</span>
-        </button>
-        {zipImporting ? <button type="button" className={styles.toolBtn} onClick={() => zipAbort.current?.abort()}>Cancel ZIP</button> : null}
-        <button
-          type="button"
-          className={styles.add}
+        />
+        {zipImporting ? <Button size="sm" variant="quiet" onClick={() => zipAbort.current?.abort()}>Cancel ZIP</Button> : null}
+        <Tile
+          kind="add"
+          label="Import a ZIP pack"
+          icon={<><span>ZIP</span><span>import pack</span></>}
           onClick={() => zipRef.current?.click()}
           onDragOver={(e) => e.preventDefault()}
           onDrop={onDropAdd}
-        >
-          <span>ZIP</span>
-          <span>import pack</span>
-        </button>
+        />
       </div>
 
       <p className={styles.hint}>

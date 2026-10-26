@@ -61,24 +61,6 @@
   flex: 1;
 }
 
-.close {
-  border: 1px solid var(--kit-line);
-  background: var(--kit-floor);
-  color: var(--kit-text);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  line-height: 1;
-  padding: 0.15rem 0.4rem;
-  cursor: pointer;
-  flex: none;
-}
-
-.close:hover {
-  background: var(--accent-deep);
-  color: var(--bk-text-on-deep);
-}
-
 :global(html[data-surface-ui-panel="gilt-frame"]) .panel {
   border-color: var(--chrome-structure);
   background: var(--panel);
@@ -86,10 +68,6 @@
 :global(html[data-surface-ui-panel="gilt-frame"]) .bar {
   background: var(--face);
   border-color: var(--chrome-structure);
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .close:hover {
-  background: var(--accent-deep);
-  color: var(--bk-text-on-deep);
 }
 
 /*
@@ -172,11 +150,11 @@
   right: 1rem;
   bottom: 1rem;
   z-index: 40;
-  display: flex;
-  align-items: center;
+}
+.tab [data-agent-panel="min"]:not(:disabled) {
   gap: 0.45rem;
+  min-height: 0;
   padding: 0.4rem 0.7rem;
-  cursor: pointer;
   font-family: var(--kit-mono, monospace);
   font-size: var(--text-control);
   font-weight: 700;
@@ -186,13 +164,13 @@
   border: 1px solid var(--kit-line);
   box-shadow: 0 6px 18px rgb(0 0 0 / 45%); /* hardcode-ok: a shadow is depth, not a themed colour */
 }
-.tab:hover { color: var(--kit-text); border-color: var(--kit-mut); }
-:global(html[data-surface-ui-panel="gilt-frame"]) .tab {
+.tab [data-agent-panel="min"]:not(:disabled):hover { color: var(--kit-text); border-color: var(--kit-mut); transform: none; box-shadow: 0 6px 18px rgb(0 0 0 / 45%); /* hardcode-ok: a shadow is depth, not a themed colour */ }
+:global(html[data-surface-ui-panel="gilt-frame"]) .tab [data-agent-panel="min"]:not(:disabled) {
   color: var(--text);
   background: var(--panel);
   border-color: var(--chrome-structure);
 }
-:global(html[data-surface-ui-panel="gilt-frame"]) .tab:hover {
+:global(html[data-surface-ui-panel="gilt-frame"]) .tab [data-agent-panel="min"]:not(:disabled):hover {
   color: var(--bk-text-on-deep);
   background: var(--accent-deep);
 }

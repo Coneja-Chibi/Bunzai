@@ -7,10 +7,10 @@
  * the toggle, and - when expanded - the content textarea with Edit Settings / To Category / Delete
  * actions. Clicking the row body BOTH selects it into the sidebar AND expands its content (RC).
  */
+import { Button, Dot, IconButton, Toggle } from "../../../components/button";
 import { memo, type CSSProperties, type DragEvent, type JSX } from "react";
 import type { PresetPrompt } from "../../../../entities/preset";
 import { blockTokens } from "../../../../core/preset";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 import { BlockContent } from "./block-content";
 import s from "./row.module.css";
 
@@ -115,31 +115,17 @@ function BlockRowInner({
           onDropOn(id);
         }}
       >
-        <button
-          type="button"
-          className={expanded ? `${s.chev} ${s.chevOpen}` : s.chev}
-          aria-expanded={expanded}
-          aria-label={expanded ? "Collapse content" : "Expand content"}
-          onClick={(e) => {
+        <IconButton label={expanded ? "Collapse content" : "Expand content"} variant="quiet" size="sm" icon={expanded ? "lucide:chevron-down" : "lucide:chevron-right"} aria-expanded={expanded} onClick={(e) => {
             stop(e);
             onToggleExpand(id);
-          }}
-        >
-          &#8250;
-        </button>
+          }} />
 
-        <button
-          type="button"
-          className={selected ? `${s.check} ${s.checkOn}` : s.check}
-          aria-label={selected ? "Deselect" : "Select"}
-          aria-pressed={selected}
-          onClick={(e) => {
-            stop(e);
-            onToggleCheck(id);
-          }}
-        >
-          {selected ? "✓" : ""}
-        </button>
+        <span className={selected ? `${s.check} ${s.checkOn}` : s.check}>
+          <Dot kind="check" label={selected ? "Deselect" : "Select"} pressed={selected} onClick={(e) => {
+              stop(e);
+              onToggleCheck(id);
+            }} />
+        </span>
 
         <span
           className={s.grip}
@@ -176,7 +162,7 @@ function BlockRowInner({
         <span className={s.tok}>{block.marker ? "slot" : `${tokenDisplay} tok`}</span>
 
         <span onClick={stop} className={s.toggleWrap}>
-          <ToggleSwitch on={block.enabled} onChange={() => onToggle(id)} label={block.enabled ? "on" : "off"} />
+          <Toggle on={block.enabled} onChange={() => onToggle(id)} label={block.enabled ? "on" : "off"} />
         </span>
       </div>
 
@@ -184,12 +170,8 @@ function BlockRowInner({
         <div className={s.expandArea}>
           <BlockContent block={block} onPatch={(patch) => onPatch(id, patch)} />
           <div className={s.expandActions}>
-            <button type="button" className={s.actBtn} onClick={() => onSelectRow(id)}>
-              Edit settings
-            </button>
-            <button type="button" className={`${s.actBtn} ${s.actDanger}`} onClick={() => onDelete(id)}>
-              Delete
-            </button>
+            <Button size="sm" onClick={() => onSelectRow(id)}>Edit settings</Button>
+            <Button variant="danger" size="sm" onClick={() => onDelete(id)}>Delete</Button>
           </div>
         </div>
       )}

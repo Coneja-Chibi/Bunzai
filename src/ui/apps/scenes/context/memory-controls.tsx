@@ -5,7 +5,7 @@
 import { useState, type JSX, type ReactNode } from "react";
 import { Ic, type IconName } from "../../../_shared/ic";
 import { numOrNull } from "../../../../core/guards";
-import { ToggleSwitch } from "../../../components/toggle-switch";
+import { Toggle } from "../../../components/button";
 
 export function Field({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }): JSX.Element {
   return (
@@ -19,12 +19,12 @@ export function Field({ label, hint, children }: { label: string; hint?: ReactNo
 
 export function SwitchRow({ title, description, checked, onChange, icon, disabled = false }: { title: string; description?: ReactNode; checked: boolean; onChange(): void; icon?: IconName; disabled?: boolean }): JSX.Element {
   return (
-    <ToggleSwitch on={checked} disabled={disabled} className="mm-sw" tone="var(--w)" onChange={onChange}>
+    <Toggle on={checked} disabled={disabled} card tone="var(--w)" onChange={onChange}>
       <span className="mm-st">
         <span className="mm-sn">{icon ? <Ic name={icon} size={14} /> : null}{title}</span>
         {description ? <span className="mm-sd">{description}</span> : null}
       </span>
-    </ToggleSwitch>
+    </Toggle>
   );
 }
 

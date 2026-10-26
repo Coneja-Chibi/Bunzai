@@ -4,10 +4,11 @@
 import {
   newPackItemId,
   normalizePack,
+  packFromExpressionMap,
   type SpritePackItem,
   type SpritePackValue,
 } from "../../../core/media";
-import { isRecord, str } from "../../../core/guards";
+import { isRecord } from "../../../core/guards";
 import { readOriginalExt, writeOriginalExt } from "./original-ext";
 
 export type LumiExpressionConfig = {
@@ -17,23 +18,6 @@ export type LumiExpressionConfig = {
 };
 
 export type LumiExpressionGroups = Record<string, Record<string, string>>;
-
-/** Flat pack from Lumi expressions config. */
-export function packFromLumiExpressions(config: unknown): SpritePackValue {
-  if (!isRecord(config)) return normalizePack({ items: [] });
-  const mappings = isRecord(config.mappings) ? config.mappings : {};
-  const items: SpritePackItem[] = [];
-  for (const [label, ref] of Object.entries(mappings)) {
-    if (typeof ref !== "string" || !ref.trim() || !label.trim()) continue;
-    items.push({ id: newPackItemId(), label: label.trim(), ref: ref.trim() });
-  }
-  const pack = normalizePack({
-    items,
-    enabled: config.enabled === true ? true : config.enabled === false ? false : undefined,
-    defaultLabel: str(config.defaultExpression).trim() || undefined,
-  });
-  return pack;
-}
 
 /** Pack -> Lumi expressions block */
 export function lumiExpressionsFromPack(pack: SpritePackValue): LumiExpressionConfig {
@@ -83,7 +67,7 @@ export function lumiGroupsFromPacks(
 export function packFromLumiOriginal(original: Record<string, unknown>): SpritePackValue {
   const ext = readOriginalExt(original, "sillytavern");
   if (!ext) return normalizePack({ items: [] });
-  return packFromLumiExpressions(ext.expressions);
+  return packFromExpressionMap(ext.expressions);
 }
 
 export function groupsFromLumiOriginal(

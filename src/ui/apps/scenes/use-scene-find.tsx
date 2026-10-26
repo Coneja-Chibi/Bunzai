@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type JSX, type RefObject } from "react";
 import type { AppContext } from "../../app-contract";
 import { toErrorMessage } from "../../_shared/error-message";
-import { Ic } from "../../_shared/ic";
+import { IconButton } from "../../components/button";
 import { useDialogEscape } from "../../_shared/use-escape-key";
 import { searchTerms } from "../../../core/scene-search";
 import type { SceneSearchResult } from "../../../studio/scene-search";
@@ -182,7 +182,7 @@ export function useSceneFind(input: {
       onGo={go} onStep={(d) => go(stepResult(at, hits.length, d))} onClose={close} />
   ) : null;
   const jump = away ? (
-    <div className="jtl"><button type="button" aria-label="Jump to latest" title="Jump to latest" onClick={toLatest}><Ic name="lucide:chevron-down" size={20} /></button></div>
+    <div className="jtl"><IconButton icon="lucide:chevron-down" label="Jump to latest" onClick={toLatest} /></div>
   ) : null;
   return { overlay, jump };
 }

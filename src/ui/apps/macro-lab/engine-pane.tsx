@@ -11,9 +11,9 @@
  * thing to do when a person asks for it and an unforgivable thing to do on every character typed.
  * The route refuses a second concurrent run per engine as well; this is the half a person sees.
  */
+import { Button } from "../../components/button";
 import type { JSX } from "react";
 import type { MacroEngineInfo, MacroResolveResult } from "../../app-contract";
-import { Stamp } from "../../components/stamp";
 import styles from "./styles.module.css";
 
 export interface EngineState {
@@ -50,9 +50,9 @@ export function EnginePane({
       </div>
 
       <div className={styles.actions}>
-        <Stamp onClick={onResolve} disabled={!engine || state.busy}>
+        <Button variant="primary" onClick={onResolve} disabled={!engine || state.busy}>
           {state.busy ? "Resolving…" : "Resolve for real"}
-        </Stamp>
+        </Button>
         {/*
           The reason a lens cannot be resolved, said where the disabled button is. Five lenses have
           catalogs and only the two with a checkout on this machine have a runtime; a control that

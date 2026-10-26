@@ -32,15 +32,6 @@ test("each control is its native element with its props and the shared class", a
   expect(host.querySelector("span")!.textContent).toBe("tag");
 });
 
-test("a Button is type=button unless told otherwise, and keeps disabled", async () => {
-  const { Button } = await import("./index");
-  const host = await mount(<><Button>go</Button><Button type="submit" variant="danger" size="sm" disabled>send</Button></>);
-  const [a, b] = [...host.querySelectorAll("button")];
-  expect(a!.type).toBe("button");
-  expect(b!.type).toBe("submit");
-  expect(b!.disabled).toBe(true);
-});
-
 test("a Tooltip's text is the child's accessible description", async () => {
   const { Tooltip } = await import("./index");
   const host = await mount(<Tooltip text="Explains it"><button type="button">?</button></Tooltip>);

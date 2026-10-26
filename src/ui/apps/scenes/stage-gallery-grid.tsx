@@ -8,6 +8,7 @@ import { useArtSrc } from "../../_shared/art-cache";
 import { rowsOf, useVirtualRows } from "../../_shared/virtual-list";
 import { BackdropThumb } from "./scene-backdrop-layer";
 import { portraitIdentity, type GalleryItem, type GallerySource } from "./stage-gallery-core";
+import { Tile } from "../../components/button";
 
 const SOURCE_LABEL: Record<GallerySource, string> = { card: "Card", persona: "Persona", pack: "Pack" };
 const COLUMNS = 2;
@@ -35,11 +36,9 @@ export function GalleryGrid({ items, onOpen }: { items: readonly GalleryItem[]; 
         {virtual.getVirtualItems().map((row) => (
           <div key={row.key} className="sg-row" data-index={row.index} ref={virtual.measureElement} style={{ transform: `translateY(${String(row.start)}px)` }}>
             {rows[row.index]?.map((item, col) => (
-              <button type="button" role="listitem" key={item.id} className="sg-tile" title={`${SOURCE_LABEL[item.source]}: ${item.label}`}
-                aria-setsize={items.length} aria-posinset={row.index * COLUMNS + col + 1} onClick={() => onOpen(item)}>
-                <Thumb item={item} />
-                <span className="strip"><b>{SOURCE_LABEL[item.source]}</b><span>{item.label}</span></span>
-              </button>
+              <Tile kind="thumb" size="fill" role="listitem" key={item.id} label={`${SOURCE_LABEL[item.source]}: ${item.label}`}
+                aria-setsize={items.length} aria-posinset={row.index * COLUMNS + col + 1} onClick={() => onOpen(item)}
+                art={<><Thumb item={item} /><span className="strip"><b>{SOURCE_LABEL[item.source]}</b><span>{item.label}</span></span></>} />
             ))}
           </div>
         ))}

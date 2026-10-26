@@ -6,6 +6,7 @@
 import type { JSX } from "react";
 import { refreshSpecOf } from "../../../../../core/trackers";
 import type { TrackerModule } from "../../../../../stage/contracts/chat-store";
+import { Button } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import type { TrackerView } from "../trackers/use-tracker";
 import { openDirectorSettings } from "./director-live";
@@ -22,7 +23,7 @@ export function AutoUpdateLine({ view, dm }: { view: Pick<TrackerView<unknown>, 
   return (
     <div className={`trk-ro${live ? "" : " dim"}`} data-part="props.tracker.auto-update">
       <span><Ic name="lucide:refresh-cw" size={14} />{words}</span>
-      <button type="button" className="linkish" onClick={openDirectorSettings}>Change in Story Director</button>
+      <div className="trk-ro-link"><Button variant="quiet" size="sm" onClick={openDirectorSettings}>Change in Story Director</Button></div>
     </div>
   );
 }
@@ -33,11 +34,11 @@ export function DirectorUpdateLine({ dm }: { dm: TrackerUpdateLine }): JSX.Eleme
       {dm.update && (
         <div className="trk-undo" role="status" data-part="props.tracker.director-update">
           <span>Updated by the Story Director, reply {dm.update.turn}</span>
-          <button type="button" onClick={() => void dm.undo()}>Undo</button>
+          <Button size="sm" onClick={() => void dm.undo()}>Undo</Button>
         </div>
       )}
-      {dm.note?.kind === "refused" && <p className="trk-error" role="alert" data-part="props.tracker.director-update-note">{dm.note.text}<button type="button" className="trk-undo-x" onClick={dm.dismiss}>Dismiss</button></p>}
-      {dm.note?.kind === "undone" && <div className="trk-undo" role="status" data-part="props.tracker.director-update-note"><span>{dm.note.text}</span><button type="button" onClick={dm.dismiss}>Dismiss</button></div>}
+      {dm.note?.kind === "refused" && <p className="trk-error" role="alert" data-part="props.tracker.director-update-note">{dm.note.text}<span className="trk-undo-x"><Button variant="quiet" size="sm" onClick={dm.dismiss}>Dismiss</Button></span></p>}
+      {dm.note?.kind === "undone" && <div className="trk-undo" role="status" data-part="props.tracker.director-update-note"><span>{dm.note.text}</span><Button variant="quiet" size="sm" onClick={dm.dismiss}>Dismiss</Button></div>}
     </>
   );
 }

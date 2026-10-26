@@ -2,6 +2,7 @@
  * Composite field bodies for list/keyvalue/subeditor/gallery and related kinds.
  * Extracted from field-control.tsx so the dispatcher stays under the line cap.
  */
+import { Button, Chip } from "../../../components/button";
 import { useRef, useState, type JSX } from "react";
 import { str } from "../editor-derive";
 import { readPath } from "../editor-core";
@@ -89,16 +90,8 @@ function AssetGallery({
             </select>
             <input className={styles.in} placeholder="label" value={str(a.label)} onChange={(e) => update(i, { label: e.target.value })} />
             <div className={styles.assetRow}>
-              <button
-                type="button"
-                className={`${styles.toggle}${a.primary === true ? ` ${styles.toggleOn}` : ""}`}
-                onClick={() => update(i, { primary: a.primary !== true })}
-              >
-                Primary
-              </button>
-              <button type="button" className={styles.rm} onClick={() => setAssets(assets.filter((_, j) => j !== i))}>
-                remove
-              </button>
+              <Chip onClick={() => update(i, { primary: a.primary !== true })} pressed={a.primary === true}>Primary</Chip>
+              <Button variant="danger" size="sm" onClick={() => setAssets(assets.filter((_, j) => j !== i))}>Remove</Button>
             </div>
           </div>
         );
@@ -152,14 +145,7 @@ export function renderSub(
       );
     case "toggle":
       return (
-        <button
-          type="button"
-          className={`${styles.toggle}${value === true ? ` ${styles.toggleOn}` : ""}`}
-          aria-pressed={value === true}
-          onClick={() => onChange(value !== true)}
-        >
-          {value === true ? "On" : "Off"}
-        </button>
+        <Chip pressed={value === true} onClick={() => onChange(value !== true)}>{value === true ? "On" : "Off"}</Chip>
       );
     case "select":
       return (
@@ -187,16 +173,7 @@ export function compositeControlFor(
       return (
         <div className={styles.tags}>
           {items.map((it) => (
-            <button
-              key={it}
-              type="button"
-              className={styles.tag}
-              style={{ color: "var(--text-dim)", borderColor: "var(--seam)", background: "transparent" }}
-              title={`Remove ${it}`}
-              onClick={() => setField(m.path, items.filter((x) => x !== it))}
-            >
-              {it} <i>x</i>
-            </button>
+            <Chip key={it} title={`Remove ${it}`} onClick={() => setField(m.path, items.filter((x) => x !== it))}>{it} <i>x</i></Chip>
           ))}
           <input
             className={styles.tagIn}
@@ -268,14 +245,10 @@ export function compositeControlFor(
                 value={showVal(v)}
                 onChange={(e) => write(entries.map((en, j) => (j === i ? [en[0], parseVal(e.target.value)] : en)))}
               />
-              <button type="button" className={styles.rm} onClick={() => write(entries.filter((_, j) => j !== i))}>
-                remove
-              </button>
+              <Button variant="danger" size="sm" onClick={() => write(entries.filter((_, j) => j !== i))}>Remove</Button>
             </div>
           ))}
-          <button type="button" className={styles.add} onClick={() => write([...entries, ["", ""]])}>
-            {`+ add ${kv.keyLabel.toLowerCase()}`}
-          </button>
+          <Button size="sm" onClick={() => write([...entries, ["", ""]])}>{`+ add ${kv.keyLabel.toLowerCase()}`}</Button>
         </div>
       );
     }
@@ -294,14 +267,10 @@ export function compositeControlFor(
                   {renderSub(styles, row[sf.key], (v) => setRows(rows.map((r, j) => (j === i ? { ...r, [sf.key]: v } : r))), sf)}
                 </label>
               ))}
-              <button type="button" className={styles.rm} onClick={() => setRows(rows.filter((_, j) => j !== i))}>
-                remove
-              </button>
+              <Button variant="danger" size="sm" onClick={() => setRows(rows.filter((_, j) => j !== i))}>Remove</Button>
             </div>
           ))}
-          <button type="button" className={styles.add} onClick={() => setRows([...rows, {}])}>
-            {m.addLabel ?? "+ add"}
-          </button>
+          <Button size="sm" onClick={() => setRows([...rows, {}])}>{m.addLabel ?? "+ add"}</Button>
         </div>
       );
     }

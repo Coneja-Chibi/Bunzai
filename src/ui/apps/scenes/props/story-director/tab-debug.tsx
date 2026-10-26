@@ -4,20 +4,18 @@
  * Updates are not drawn: nothing in Bunraku writes them. NEW: the last directive as raw data, what was removed and is kept for you, and how full the story is.
  */
 import { useState, type JSX, type ReactNode } from "react";
+import { Button, Disclosure, IconButton } from "../../../../components/button";
 import { Ic, type IconName } from "../../../../_shared/ic";
 import type { DirectorState } from "../../../../../stage/contracts/director-types";
 import type { DirectorPanel } from "../../../../../studio/scene-director-edit";
 import { overdueOf, seedStatus, sizeReadout } from "./director-core";
-import { Badge, Chevron } from "./director-parts";
+import { Badge } from "./director-parts";
 import { HiddenWorld, type EditFn } from "./debug-hidden";
 
 function Fold({ id, title, icon, count, open, onToggle, children }: { id: string; title: string; icon: IconName; count?: number; open: boolean; onToggle(): void; children: ReactNode }): JSX.Element {
   return (
     <div className="dr-fold" data-part={`scene.director.debug.${id}`}>
-      <button type="button" className="dr-fold-h" aria-expanded={open} onClick={onToggle}>
-        <span><Ic name={icon} size={14} /><b>{title}</b>{count !== undefined && count > 0 && <Badge>{count}</Badge>}</span>
-        <Chevron open={open} />
-      </button>
+      <Disclosure open={open} onClick={onToggle} leading={<Ic name={icon} size={14} />} label={title} trailing={count !== undefined && count > 0 ? <Badge>{count}</Badge> : undefined} />
       {open && <div className="dr-fold-b">{children}</div>}
     </div>
   );
@@ -39,7 +37,7 @@ function Seeds({ state, onEdit, locked }: { state: DirectorState; onEdit: EditFn
               {last && <p className="dr-ok-text"><span>Reinforced:</span> {last.description}</p>}
               <p className="dr-warn-text"><span>Payoff:</span> {s.payoffHorizon}</p>
             </div>
-            <button type="button" className="dr-ico" title="Delete seed" aria-label={`Delete seed ${s.hint}`} disabled={locked} onClick={() => void onEdit({ op: "remove-seed", id: s.id }, "The seed could not be deleted. Refresh and try again.")}><Ic name="lucide:trash-2" size={12} /></button>
+            <IconButton variant="danger" size="sm" label={`Delete seed ${s.hint}`} title="Delete seed" icon="lucide:trash-2" disabled={locked} onClick={() => void onEdit({ op: "remove-seed", id: s.id }, "The seed could not be deleted. Refresh and try again.")} />
           </div>
         );
       })}
@@ -57,7 +55,7 @@ export function DebugTab({ panel, onEdit, locked }: { panel: DirectorPanel; onEd
   return (
     <div className="dr-pane" data-part="scene.director.debug">
       <div className="dr-warn" role="note"><Ic name="lucide:circle-alert" size={16} /><span>Debug data contains story spoilers and hidden DM information.</span></div>
-      <button type="button" className="dr-wide" aria-pressed={show} data-part="scene.director.debug.toggle" onClick={() => setShow(!show)}><Ic name={show ? "lucide:eye-off" : "lucide:eye"} size={14} />{show ? "Hide Spoilers" : "Show Debug Data"}</button>
+      <Button size="sm" block icon={show ? "lucide:eye-off" : "lucide:eye"} aria-pressed={show} data-part="scene.director.debug.toggle" onClick={() => setShow(!show)}>{show ? "Hide Spoilers" : "Show Debug Data"}</Button>
       {show && (
         <div className="dr-stack">
           <Fold id="shadow" title="Shadow World" icon="lucide:ghost" count={state.invisibleArcs.length + state.notes.length} open={fold === "shadow"} onToggle={() => toggle("shadow")}>

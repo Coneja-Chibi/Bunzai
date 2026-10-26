@@ -28,7 +28,7 @@ async function bar(own: ChatPresetSamplers, history?: SamplerHistory) {
   dom.window.document.body.appendChild(host);
   const sets: [string, unknown][] = [];
   flushSync(() => createRoot(host).render(<SamplerHistoryContext.Provider value={history}><SamplerBar preset={{}} own={own} onSet={(k, v) => void sets.push([k, v])} /></SamplerHistoryContext.Provider>));
-  flushSync(() => host.querySelector<HTMLButtonElement>(".sbar-row")!.click());
+  flushSync(() => host.querySelector<HTMLButtonElement>("[data-part='scene.preset.samplers']")!.click());
   return { host, sets };
 }
 const labels = (host: HTMLElement) => [...host.querySelectorAll(".slh span")].map((e) => e.textContent);
@@ -38,7 +38,7 @@ describe("Context Mode and Max Messages", () => {
     const { host } = await bar({});
     expect(labels(host)).toContain("Max Context");
     expect(labels(host)).not.toContain("Max Messages");
-    expect(host.querySelector('[aria-label="Context Mode"] [aria-pressed=true]')?.textContent).toBe("tokens");
+    expect(host.querySelector('[aria-label="Context Mode"] [aria-pressed=true]')?.textContent).toBe("Tokens");
   });
 
   test("messages mode swaps in Max Messages, 0 to 1000, with the estimate of what the next send carries", async () => {
@@ -59,7 +59,7 @@ describe("Context Mode and Max Messages", () => {
   test("the buttons set the mode", async () => {
     const { host, sets } = await bar({});
     const { flushSync } = await import("react-dom");
-    flushSync(() => [...host.querySelectorAll<HTMLButtonElement>('[aria-label="Context Mode"] button')].find((b) => b.textContent === "messages")!.click());
+    flushSync(() => [...host.querySelectorAll<HTMLButtonElement>('[aria-label="Context Mode"] button')].find((b) => b.textContent === "Messages")!.click());
     expect(sets).toEqual([["contextMode", "messages"]]);
   });
 });

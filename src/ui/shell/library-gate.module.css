@@ -4,11 +4,11 @@
  */
 .stage {
   /* A theme contribution can choose the workspace typeface, but never the password/recovery UI. */
-  --font-body: "Atkinson Hyperlegible", sans-serif;
-  --font-big: "Fraunces", serif;
-  --font-fancy: "Cinzel", serif;
-  --font-mono: "IBM Plex Mono", monospace;
-  font-family: "Atkinson Hyperlegible", sans-serif;
+  --font-body: "Atkinson Hyperlegible", sans-serif; /* style-ok: the unlock gate pins its fonts on purpose, before any theme loads */
+  --font-big: "Fraunces", serif; /* style-ok: the unlock gate pins its fonts on purpose, before any theme loads */
+  --font-fancy: "Cinzel", serif; /* style-ok: the unlock gate pins its fonts on purpose, before any theme loads */
+  --font-mono: "IBM Plex Mono", monospace; /* style-ok: the unlock gate pins its fonts on purpose, before any theme loads */
+  font-family: "Atkinson Hyperlegible", sans-serif; /* style-ok: the unlock gate pins its fonts on purpose, before any theme loads */
   font-size: 1rem;
   color: var(--text);
   background: var(--stage-floor);

@@ -16,9 +16,9 @@
 | `compendium.dossier.card` | `article` | `src/ui/apps/scenes/compendium/storyboards/dossier-views.tsx` |
 | `compendium.dossier.section` | `section` | `src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx` |
 | `compendium.dossier.stats` | `div` | `src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx` |
-| `compendium.dossier.tabs` | `div` | `src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx` |
+| `compendium.dossier.tabs` | `ButtonTabs` | `src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx` |
 | `compendium.entry` | `article` | `src/ui/apps/scenes/compendium/entry-page.tsx` |
-| `compendium.export` | `button` | `src/ui/apps/scenes/compendium/export-button.tsx` |
+| `compendium.export` | `Button` | `src/ui/apps/scenes/compendium/export-button.tsx` |
 | `compendium.graph` | `header` | `src/ui/apps/scenes/compendium/graph/graph-explore.tsx` |
 | `compendium.graph.detail` | `div` | `src/ui/apps/scenes/compendium/graph/graph-side.tsx` |
 | `compendium.graph.side` | `aside` | `src/ui/apps/scenes/compendium/graph/graph-side.tsx` |
@@ -26,7 +26,7 @@
 | `compendium.ingest` | `div` | `src/ui/apps/scenes/compendium/tabs/settings/ingest.tsx` |
 | `compendium.lock` | `div` | `src/ui/apps/scenes/compendium/standardize/standardize-cards.tsx` |
 | `compendium.maintenance` | `details` | `src/ui/apps/scenes/compendium/tabs/tree-maintenance.tsx` |
-| `compendium.reconcile` | `button` | `src/ui/apps/scenes/compendium/reconcile-modal.tsx` |
+| `compendium.reconcile` | `Button` | `src/ui/apps/scenes/compendium/reconcile-modal.tsx` |
 | `compendium.root` | `div` | `src/ui/apps/scenes/compendium/compendium-wing.tsx` |
 | `compendium.settings` | `div` | `src/ui/apps/scenes/compendium/tabs/settings/index.tsx` |
 | `compendium.settings.<id>` | `section` | `src/ui/apps/scenes/compendium/tabs/settings/parts.tsx` |
@@ -38,7 +38,7 @@
 | `compendium.standardize.running` | `div` | `src/ui/apps/scenes/compendium/standardize/standardize-cards.tsx` |
 | `compendium.standardize.stopped` | `div` | `src/ui/apps/scenes/compendium/standardize/standardize-cards.tsx` |
 | `compendium.storyboards` | `div` | `src/ui/apps/scenes/compendium/tabs/storyboards.tsx` |
-| `compendium.tabs` | `div` | `src/ui/apps/scenes/compendium/compendium-shell.tsx` |
+| `compendium.tabs` | `Tabs` | `src/ui/apps/scenes/compendium/compendium-shell.tsx` |
 | `compendium.tree-menu` | `div` | `src/ui/apps/scenes/compendium/browse/tree-menu.tsx` |
 
 ### css-workshop
@@ -66,13 +66,31 @@
 | Part | Element | Source |
 | --- | --- | --- |
 | `library.card` | `div` | `src/ui/apps/library/card-row.tsx` |
+| `library.card.name` | `Button` | `src/ui/apps/library/rc-cards.tsx` |
 | `library.decks` | `aside` | `src/ui/apps/library/rail.tsx` |
+| `library.gcard` | `Card` | `src/ui/apps/library/views/grid.tsx` |
 | `library.grid` | `div` | `src/ui/apps/library/card-row.tsx` |
 | `library.main` | `div` | `src/ui/apps/library/index.tsx` |
+| `library.new.compact` | `Button` | `src/ui/apps/library/new-in-deck-button.tsx` |
+| `library.new.tile` | `Tile` | `src/ui/apps/library/new-in-deck-button.tsx` |
+| `library.persona.new` | `Tile` | `src/ui/apps/library/views/persona-shelf.tsx` |
+| `library.regex.name` | `Button` | `src/ui/apps/library/views/regex-shelf.tsx` |
+| `library.regex.new` | `Tile` | `src/ui/apps/library/views/regex-shelf.tsx` |
 | `library.root` | `div` | `src/ui/apps/library/index.tsx` |
+| `library.row` | `RowPart` | `src/ui/apps/library/views/list.tsx` |
 | `library.section` | `section` | `src/ui/apps/library/shelves.tsx` |
 | `library.section.header` | `div` | `src/ui/apps/library/shelves.tsx` |
+| `library.shelf.name` | `Button` | `src/ui/apps/library/views/shelf.tsx` |
 | `library.toolbar` | `div` | `src/ui/apps/library/index.tsx` |
+| `library.trash` | `ListRow`, `TrashRows` | `src/ui/apps/library/rail.tsx`, `src/ui/apps/library/trash-panel.tsx` |
+
+### nodes
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `nodes.pipeline-wires` | `svg` | `src/ui/apps/workbench/nodes/PipelineLayer.tsx` |
+| `nodes.preview` | `div` | `src/ui/apps/workbench/nodes/EngineNodes.tsx` |
+| `nodes.root` | `div` | `src/ui/apps/workbench/nodes/NodesView.tsx` |
 
 ### press
 
@@ -80,6 +98,7 @@
 | --- | --- | --- |
 | `press.bundle` | `div` | `src/ui/apps/press/index.tsx` |
 | `press.foot` | `div` | `src/ui/apps/press/index.tsx` |
+| `press.offer` | `ListRow` | `src/ui/apps/press/index.tsx` |
 | `press.offers` | `div` | `src/ui/apps/press/index.tsx` |
 | `press.queue` | `section` | `src/ui/apps/press/index.tsx` |
 | `press.rail` | `aside` | `src/ui/apps/press/index.tsx` |
@@ -104,21 +123,23 @@
 | `props.tracker.auto-update` | `div` | `src/ui/apps/scenes/props/story-director/tracker-update-ui.tsx` |
 | `props.tracker.director-update` | `div` | `src/ui/apps/scenes/props/story-director/tracker-update-ui.tsx` |
 | `props.tracker.director-update-note` | `div`, `p` | `src/ui/apps/scenes/props/story-director/tracker-update-ui.tsx` |
-| `props.tracker.refresh` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
+| `props.tracker.refresh` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
 | `props.tracker.review` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx`, `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
 | `props.tracker.review.<id>` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-diff.tsx` |
-| `props.tracker.review.accept` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
-| `props.tracker.review.accept-all` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
-| `props.tracker.review.discard` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
-| `props.tracker.review.discard-all` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
+| `props.tracker.review.accept` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
+| `props.tracker.review.accept-all` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
+| `props.tracker.review.discard` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
+| `props.tracker.review.discard-all` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
 | `props.tracker.review.module.<id>` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
-| `props.tracker.review.retry` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
+| `props.tracker.review.retry` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-ui.tsx` |
 | `props.tracker.review.skipped` | `p` | `src/ui/apps/scenes/props/trackers/refresh/refresh-diff.tsx` |
 | `props.trackers.refresh-all` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
-| `props.trackers.refresh-all.cancel` | `button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
+| `props.trackers.refresh-all.cancel` | `Button` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
 | `props.trackers.refresh-all.progress` | `div` | `src/ui/apps/scenes/props/trackers/refresh/refresh-all.tsx` |
 | `props.trackhare` | `div` | `src/ui/apps/scenes/props/trackhare/hare-popover.tsx` |
-| `props.trackhare.button` | `button` | `src/ui/apps/scenes/props/trackhare/hare-stage.tsx` |
+| `props.trackhare.button` | `IconButton` | `src/ui/apps/scenes/props/trackhare/hare-stage.tsx` |
+| `props.trackhare.hit` | `ListRow` | `src/ui/apps/scenes/props/trackhare/hare-hits.tsx` |
+| `props.trackhare.resize` | `Dot` | `src/ui/apps/scenes/props/trackhare/hare-stage.tsx` |
 | `props.trackhare.trace` | `div` | `src/ui/apps/scenes/props/trackhare/hare-popout.tsx` |
 
 ### scene
@@ -157,7 +178,7 @@
 | `scene.cast.appearance` | `FormSection` | `src/ui/apps/scenes/cast/cast-persona-tab.tsx` |
 | `scene.cast.character` | `div` | `src/ui/apps/scenes/cast/cast-character-tab.tsx` |
 | `scene.cast.confirm` | `div` | `src/ui/apps/scenes/cast/cast-dialogs.tsx` |
-| `scene.cast.default` | `button` | `src/ui/apps/scenes/cast/cast-persona-tab.tsx` |
+| `scene.cast.default` | `Button` | `src/ui/apps/scenes/cast/cast-persona-tab.tsx` |
 | `scene.cast.description` | `ProseSection` | `src/ui/apps/scenes/cast/cast-character-tab.tsx` |
 | `scene.cast.emoji` | `div` | `src/ui/apps/scenes/cast/emoji-picker.tsx` |
 | `scene.cast.example-dialogue` | `ProseSection` | `src/ui/apps/scenes/cast/cast-character-tab.tsx` |
@@ -190,13 +211,14 @@
 | `scene.cast.swatches` | `div` | `src/ui/apps/scenes/cast/cast-palette.tsx` |
 | `scene.cast.tags` | `FormSection` | `src/ui/apps/scenes/cast/cast-rating-tags.tsx` |
 | `scene.cast.theme` | `div` | `src/ui/apps/scenes/cast/cast-palette.tsx` |
-| `scene.cast.variants` | `div` | `src/ui/apps/scenes/cast/cast-character-tab.tsx` |
+| `scene.cast.variants` | `Segmented` | `src/ui/apps/scenes/cast/cast-character-tab.tsx` |
 | `scene.choices` | `div` | `src/ui/apps/scenes/scene-choices.tsx` |
 | `scene.choices.walkthrough` | `div` | `src/ui/apps/scenes/scene-choice-walkthrough.tsx` |
 | `scene.composer` | `div` | `src/ui/apps/scenes/scene-composer.tsx` |
 | `scene.composer.draft` | `div` | `src/ui/apps/scenes/scene-draft-status.tsx` |
 | `scene.composer.steering` | `div` | `src/ui/apps/scenes/scene-composer.tsx` |
 | `scene.composer.tools` | `div` | `src/ui/apps/scenes/scene-composer-tools.tsx` |
+| `scene.composer.tools-toggle` | `IconButton` | `src/ui/apps/scenes/scene-composer-tools.tsx` |
 | `scene.context.inspector` | `div` | `src/ui/apps/scenes/context/inspector-shell.tsx` |
 | `scene.context.lore-state` | `div` | `src/ui/apps/scenes/context/lore-state.tsx` |
 | `scene.context.memory` | `div` | `src/ui/apps/scenes/context/memory-tab.tsx` |
@@ -212,7 +234,7 @@
 | `scene.director.analysis` | `div` | `src/ui/apps/scenes/props/story-director/tab-analysis.tsx` |
 | `scene.director.analysis.empty` | `div` | `src/ui/apps/scenes/props/story-director/tab-analysis.tsx` |
 | `scene.director.arc` | `div` | `src/ui/apps/scenes/props/story-director/tab-arcs.tsx` |
-| `scene.director.arc.complete` | `button` | `src/ui/apps/scenes/props/story-director/tab-arcs.tsx` |
+| `scene.director.arc.complete` | `Button` | `src/ui/apps/scenes/props/story-director/tab-arcs.tsx` |
 | `scene.director.arc.nextbeat` | `div` | `src/ui/apps/scenes/props/story-director/tab-arcs.tsx` |
 | `scene.director.arcs` | `div` | `src/ui/apps/scenes/props/story-director/tab-arcs.tsx` |
 | `scene.director.arcs.empty` | `div` | `src/ui/apps/scenes/props/story-director/tab-arcs.tsx` |
@@ -221,11 +243,11 @@
 | `scene.director.debug.<id>` | `div` | `src/ui/apps/scenes/props/story-director/tab-debug.tsx` |
 | `scene.director.debug.archived` | `b` | `src/ui/apps/scenes/props/story-director/tab-debug.tsx` |
 | `scene.director.debug.store` | `div` | `src/ui/apps/scenes/props/story-director/tab-debug.tsx` |
-| `scene.director.debug.toggle` | `button` | `src/ui/apps/scenes/props/story-director/tab-debug.tsx` |
+| `scene.director.debug.toggle` | `Button` | `src/ui/apps/scenes/props/story-director/tab-debug.tsx` |
 | `scene.director.empty` | `div` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.fab` | `div` | `src/ui/apps/scenes/props/story-director/director-fab.tsx` |
 | `scene.director.fab.badge` | `span` | `src/ui/apps/scenes/props/story-director/director-fab.tsx` |
-| `scene.director.fab.button` | `button` | `src/ui/apps/scenes/props/story-director/director-fab.tsx` |
+| `scene.director.fab.button` | `IconButton` | `src/ui/apps/scenes/props/story-director/director-fab.tsx` |
 | `scene.director.fab.popover` | `div` | `src/ui/apps/scenes/props/story-director/director-fab.tsx` |
 | `scene.director.failed` | `p` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.hidden` | `div` | `src/ui/apps/scenes/props/story-director/debug-hidden.tsx` |
@@ -238,8 +260,7 @@
 | `scene.director.reset` | `div` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.shadow` | `div` | `src/ui/apps/scenes/props/story-director/debug-hidden.tsx` |
 | `scene.director.story` | `div` | `src/ui/apps/scenes/props/story-director/tab-story.tsx` |
-| `scene.director.tab.<id>` | `button` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
-| `scene.director.tabs` | `div` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
+| `scene.director.tabs` | `Tabs` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.tools` | `div` | `src/ui/apps/scenes/props/story-director/director-panel.tsx` |
 | `scene.director.tour` | `aside` | `src/ui/apps/scenes/props/story-director/director-tour.tsx` |
 | `scene.finalcut` | `div` | `src/ui/apps/scenes/final-cut/final-cut-tab.tsx` |
@@ -275,11 +296,34 @@
 | `scene.inspector` | `div` | `src/ui/apps/scenes/scene-inspector.tsx` |
 | `scene.inspector.params` | `label` | `src/ui/apps/scenes/scene-inspector.tsx` |
 | `scene.inspector.tool` | `label` | `src/ui/apps/scenes/scene-inspector.tsx` |
+| `scene.lore.advanced` | `Disclosure` | `src/ui/apps/scenes/scene-lore-entry.tsx` |
+| `scene.lore.book-row` | `ListRow` | `src/ui/apps/scenes/scene-lore-books.tsx` |
+| `scene.lore.effect-add` | `Button` | `src/ui/apps/scenes/scene-lore-advanced.tsx` |
+| `scene.lore.effect-remove` | `IconButton` | `src/ui/apps/scenes/scene-lore-advanced.tsx` |
+| `scene.lore.group-head` | `Disclosure` | `src/ui/apps/scenes/scene-lore-entries.tsx` |
+| `scene.lore.logic` | `Button` | `src/ui/apps/scenes/scene-lore-entry.tsx` |
+| `scene.lore.menu-away` | `Scrim` | `src/ui/apps/scenes/scene-lore-entries.tsx` |
+| `scene.lore.position` | `Segmented` | `src/ui/apps/scenes/scene-lore-advanced.tsx` |
+| `scene.lore.probability` | `Chip` | `src/ui/apps/scenes/scene-lore-entry.tsx` |
+| `scene.lore.side-effects` | `Disclosure` | `src/ui/apps/scenes/scene-lore-advanced.tsx` |
+| `scene.lore.type` | `Button` | `src/ui/apps/scenes/scene-lore-entry.tsx` |
 | `scene.message` | `div` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.ask-again` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.continue` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.copy` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.delete` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.edit` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.final-cut` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.hide` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
+| `scene.message.regenerate` | `IconButton` | `src/ui/apps/scenes/scene-bubble.tsx` |
 | `scene.messages` | `div` | `src/ui/apps/scenes/scene-page.tsx` |
+| `scene.paused` | `div` | `src/ui/apps/scenes/scene-page.tsx` |
 | `scene.popout` | `div` | `src/ui/apps/scenes/popout/popout-host.tsx` |
 | `scene.popout.<id>` | `div` | `src/ui/apps/scenes/popout/popout-panel.tsx` |
 | `scene.popout.placeholder` | `div` | `src/ui/apps/scenes/popout/popout-panel.tsx` |
+| `scene.portrait.zoom` | `Tile` | `src/ui/apps/scenes/scene-portrait-zoom.tsx` |
+| `scene.preset.category` | `Disclosure` | `src/ui/apps/scenes/scene-preset-parts.tsx` |
+| `scene.preset.samplers` | `Disclosure` | `src/ui/apps/scenes/scene-preset-parts.tsx` |
 | `scene.prompting` | `nav` | `src/ui/apps/scenes/scene-prompting.tsx` |
 | `scene.prompting.guides` | `div` | `src/ui/apps/scenes/scene-guides-wing.tsx` |
 | `scene.prompting.note` | `div` | `src/ui/apps/scenes/scene-note-wing.tsx` |
@@ -287,6 +331,7 @@
 | `scene.prompting.tabs` | `div` | `src/ui/apps/scenes/scene-prompting.tsx` |
 | `scene.prompting.tools` | `div` | `src/ui/apps/scenes/scene-writing-tools.tsx` |
 | `scene.prompting.tools.section.<id>` | `section` | `src/ui/apps/scenes/scene-writing-tools.tsx` |
+| `scene.prompting.tools.sends` | `Disclosure` | `src/ui/apps/scenes/scene-writing-tools.tsx` |
 | `scene.prompting.tools.tool.<id>` | `li` | `src/ui/apps/scenes/scene-writing-tools.tsx` |
 | `scene.props` | `div` | `src/ui/apps/scenes/props/props-wing.tsx` |
 | `scene.props.box.<id>` | `div` | `src/ui/apps/scenes/props/props-wing.tsx` |
@@ -297,10 +342,10 @@
 | `scene.reasoning` | `div` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.body` | `div` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.chevron` | `span` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
-| `scene.reasoning.copy` | `button` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
+| `scene.reasoning.copy` | `Button` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.curtain` | `div` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.duration` | `span` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
-| `scene.reasoning.header` | `button` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
+| `scene.reasoning.header` | `Disclosure` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.icon` | `span` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.label` | `span` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
 | `scene.reasoning.number` | `b` | `src/ui/apps/scenes/scene-reasoning-blocks.tsx` |
@@ -309,21 +354,26 @@
 | `scene.stage` | `div` | `src/ui/apps/scenes/scene-stage-wing.tsx` |
 | `scene.stage.act.<id>` | `section` | `src/ui/apps/scenes/stage-act.tsx` |
 | `scene.stage.appearance` | `div` | `src/ui/apps/scenes/stage-appearance.tsx` |
+| `scene.stage.edge` | `Card` | `src/ui/apps/scenes/stage-chrome-act.tsx` |
 | `scene.stage.field` | `div` | `src/ui/apps/scenes/stage-controls.tsx` |
+| `scene.stage.font` | `Card` | `src/ui/apps/scenes/stage-type-act.tsx` |
 | `scene.stage.gallery` | `div` | `src/ui/apps/scenes/stage-gallery.tsx` |
 | `scene.stage.gallery.grid` | `div` | `src/ui/apps/scenes/stage-gallery-grid.tsx` |
 | `scene.stage.lightbox` | `div` | `src/ui/apps/scenes/stage-gallery-lightbox.tsx` |
 | `scene.stage.music` | `div` | `src/ui/apps/scenes/stage-music-panel.tsx` |
 | `scene.stage.music.mini` | `div` | `src/ui/apps/scenes/stage-music-mini.tsx` |
+| `scene.stage.reset` | `Button` | `src/ui/apps/scenes/stage-controls.tsx` |
 | `scene.stage.spotify` | `div` | `src/ui/apps/scenes/stage-spotify-panel.tsx` |
 | `scene.stage.spotify.mini` | `div` | `src/ui/apps/scenes/stage-spotify-mini.tsx` |
 | `scene.stage.switch` | `div` | `src/ui/apps/scenes/stage-controls.tsx` |
 | `scene.stage.theme` | `div` | `src/ui/apps/scenes/stage-appearance.tsx` |
-| `scene.stage.tiles` | `div` | `src/ui/apps/scenes/stage-controls.tsx` |
+| `scene.stage.tiles` | `Segmented` | `src/ui/apps/scenes/stage-controls.tsx` |
 | `scene.stage.wardrobe` | `div` | `src/ui/apps/scenes/stage-wardrobe.tsx` |
 | `scene.swipes` | `span` | `src/ui/apps/scenes/scene-meta.tsx` |
+| `scene.takes.toggle` | `Button` | `src/ui/apps/scenes/scene-takes.tsx` |
 | `scene.tree` | `div` | `src/ui/apps/scenes/scene-tree.tsx` |
 | `scene.tree.compare` | `div` | `src/ui/apps/scenes/scene-tree-compare.tsx` |
+| `scene.update-badge` | `Chip` | `src/ui/apps/scenes/scene-card.tsx` |
 | `scene.wings` | `nav` | `src/ui/apps/scenes/scene-wing-rail.tsx` |
 | `scene.wings.panel` | `section` | `src/ui/apps/scenes/scene-wing-frame.tsx` |
 | `scene.wings.tabs` | `nav` | `src/ui/apps/scenes/scene-foldout.tsx` |
@@ -341,12 +391,20 @@
 | Part | Element | Source |
 | --- | --- | --- |
 | `scenes.card` | `div` | `src/ui/apps/scenes/scenes-cards.tsx` |
+| `scenes.card.new` | `Card` | `src/ui/apps/scenes/scenes-cards.tsx` |
+| `scenes.card.open` | `Card` | `src/ui/apps/scenes/scenes-cards.tsx` |
+| `scenes.cast.tile` | `Tile` | `src/ui/apps/scenes/scenes-side.tsx` |
 | `scenes.empty` | `div` | `src/ui/apps/scenes/scenes-list.tsx` |
+| `scenes.fav.open` | `Card` | `src/ui/apps/scenes/scenes-side.tsx` |
 | `scenes.filters` | `div` | `src/ui/apps/scenes/scenes-list.tsx` |
+| `scenes.folder.row` | `ListRow` | `src/ui/apps/scenes/scenes-side.tsx` |
 | `scenes.header` | `header` | `src/ui/apps/scenes/scenes-list.tsx` |
 | `scenes.hero` | `div` | `src/ui/apps/scenes/scenes-hero.tsx` |
+| `scenes.hero.open` | `Card` | `src/ui/apps/scenes/scenes-hero.tsx` |
+| `scenes.hero.preview` | `Card` | `src/ui/apps/scenes/scenes-hero.tsx` |
 | `scenes.main` | `main` | `src/ui/apps/scenes/scenes-list.tsx` |
 | `scenes.nomatch` | `div` | `src/ui/apps/scenes/scenes-list.tsx` |
+| `scenes.rail.longest` | `ListRow` | `src/ui/apps/scenes/scenes-side.tsx` |
 | `scenes.root` | `div` | `src/ui/apps/scenes/scenes-list.tsx` |
 | `scenes.side` | `div` | `src/ui/apps/scenes/scenes-side.tsx` |
 
@@ -356,7 +414,7 @@
 | --- | --- | --- |
 | `settings.body` | `div` | `src/ui/apps/settings/index.tsx` |
 | `settings.root` | `div` | `src/ui/apps/settings/index.tsx` |
-| `settings.tab` | `button` | `src/ui/apps/settings/index.tsx` |
+| `settings.tab` | `item` | `src/ui/apps/settings/index.tsx` |
 | `settings.tabs` | `div` | `src/ui/apps/settings/index.tsx` |
 
 ### shell
@@ -365,8 +423,10 @@
 | --- | --- | --- |
 | `shell.canvas` | `main` | `src/ui/shell/App.tsx` |
 | `shell.nav` | `div` | `src/ui/shell/Dock.tsx` |
-| `shell.nav.tile` | `button` | `src/ui/shell/Dock.tsx` |
-| `shell.nav.toggle` | `button` | `src/ui/shell/Dock.tsx` |
+| `shell.nav.handle` | `span` | `src/ui/shell/Dock.tsx` |
+| `shell.nav.overlay` | `Ic` | `src/ui/shell/Dock.tsx` |
+| `shell.nav.tile` | `AppMark` | `src/ui/shell/Dock.tsx` |
+| `shell.nav.toggle` | `IconButton` | `src/ui/shell/Dock.tsx` |
 | `shell.overlay` | `div` | `src/ui/shell/NavigationOverlay.tsx` |
 | `shell.overlay.apps` | `nav` | `src/ui/shell/NavigationOverlay.tsx` |
 | `shell.overlay.import` | `section` | `src/ui/shell/NavigationOverlay.tsx` |
@@ -376,7 +436,7 @@
 | `shell.root` | `div` | `src/ui/shell/App.tsx` |
 | `shell.status` | `aside` | `src/ui/shell/StatusBar.tsx` |
 | `shell.tabs` | `nav` | `src/ui/shell/TabStrip.tsx` |
-| `shell.tabs.tab` | `button` | `src/ui/shell/TabStrip.tsx` |
+| `shell.tabs.tab` | `DocTab` | `src/ui/shell/TabStrip.tsx` |
 | `shell.title` | `section` | `src/ui/shell/TitleScreen.tsx`, `src/ui/shell/variants/shell.title/attract.tsx`, `src/ui/shell/variants/shell.title/sticker-splash.tsx`, `src/ui/shell/variants/shell.title/title-page.tsx` |
 
 ### slot
@@ -426,3 +486,9 @@
 | `slot.shell.status.end` | `div` | `src/ui/_shared/theme-slot.tsx` |
 | `slot.shell.title.below` | `div` | `src/ui/_shared/theme-slot.tsx` |
 | `slot.text` | `span` | `src/ui/_shared/theme-slot.tsx` |
+
+### sprite
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `sprite.ghost` | `Tile` | `src/ui/components/sprite-pack/index.tsx` |

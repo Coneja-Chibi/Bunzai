@@ -69,12 +69,12 @@ describe("a scene that is not in this library", () => {
     await unmount();
   });
 
-  test("ScenePage: a busy or network failure keeps Try again and Back, drawn as Stamp buttons, with no toast", async () => {
+  test("ScenePage: a busy or network failure keeps Try again and Back, drawn with the button family, with no toast", async () => {
     const { ScenePage } = await import("./scene-page");
     let backs = 0;
     await mount(<ScenePage ctx={makeCtx(() => Promise.reject(new Error("network down")))} chatId="c1" onBack={() => { backs++; }} />);
     expect(buttons()).toEqual(["Try again", "Back to Scenes"]);
-    expect([...host.querySelectorAll("button")].every((b) => b.classList.contains("stamp"))).toBe(true);
+    expect([...host.querySelectorAll("button")].map((b) => b.dataset.control)).toEqual(["button", "button"]);
     expect(status).toEqual([]);
     expect(backs).toBe(0);
     expect(opens).toBe(1);

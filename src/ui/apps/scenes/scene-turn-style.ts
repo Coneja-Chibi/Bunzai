@@ -20,20 +20,15 @@ export const TURN_STYLE = `
 .scs .fin.err{color:var(--stage-danger-text);background:color-mix(in srgb,var(--stage-danger-text) 12%,transparent)}
 .scs .swc{display:inline-flex;align-items:center;gap:2px;padding:2px 4px;font-size:12px;border-radius:0;border:1px solid color-mix(in srgb,var(--stage-card) 8%,transparent);background:color-mix(in srgb,var(--stage-black) 55%,transparent);backdrop-filter:blur(4px)}
 .scs .swc.new{background:color-mix(in srgb,var(--tone) 15%,transparent);border-color:color-mix(in srgb,var(--tone) 40%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--tone) 15%,transparent)}
-.scs .swc button{width:24px;height:24px;display:grid;place-items:center;border:0;border-radius:0;background:none;color:var(--stage-soft);cursor:pointer}
-.scs .swc button:hover{color:var(--stage-card);background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
-.scs .swc button:disabled{color:var(--stage-line);cursor:not-allowed;background:none}
 .scs .swc .ct{display:flex;align-items:center;gap:6px;padding:2px 8px;user-select:none}
 .scs .swc .n{font-weight:600;color:var(--tone);font-variant-numeric:tabular-nums}
 .scs .swc .sl{color:var(--stage-mute)}
 .scs .swc .t{color:color-mix(in srgb,var(--tone) 80%,transparent);font-variant-numeric:tabular-nums}
 .scs .swc .nw{margin-left:2px;padding:2px 6px;font-size: var(--text-meta);font-weight:600;letter-spacing:.08em;text-transform:uppercase;border-radius:0;background:var(--tone-fill,var(--tone));color:var(--stage-ink)}
-.scs .acts .gen:disabled{color:var(--stage-line);cursor:not-allowed}
 .scs .cutoff{display:flex;align-items:center;gap:12px;margin-top:10px;padding:8px 12px;border-left:4px solid var(--stage-warn);background:color-mix(in srgb,var(--stage-warn) 10%,transparent);font:var(--text-body)/1.5rem var(--font-big);color:var(--stage-card)}
 .scs .cutoff svg{color:var(--stage-warn);flex:none}
 .scs .cutoff .grow{flex:1}
 .scs .cutoff small{color:var(--stage-mute);font-size:12px}
-.scs .cutoff button{padding:4px 10px;border:2px solid var(--stage-black);box-shadow:3px 3px 0 0 var(--stage-black);background:var(--stage-faint);color:var(--stage-card);font: 900 var(--text-control) var(--font-big);text-transform:uppercase;cursor:pointer}
 .scs .cap .stop{width:32px;height:32px;flex:none;display:grid;place-items:center;border-radius:0;border:0;background:var(--stage-danger-hot);color:var(--stage-card);cursor:pointer}
 .scs .cap.off .send:disabled{opacity:.55}
 .scs .cap .hint{flex:none;align-self:center;font-size: var(--text-body);color:var(--bk-scene-accent-text,var(--bk-role-brand-text));text-decoration:underline;text-underline-offset:3px;cursor:pointer;background:none;border:0}
@@ -45,9 +40,7 @@ export const TURN_STYLE = `
 .scs .fail .tt{font-weight:600;font-size: var(--text-body);color:var(--stage-card)}
 .scs .fail .ln{display:flex;align-items:center;gap:8px;margin-top:6px;font-size: var(--text-body);color:var(--stage-text-dim);flex-wrap:wrap}
 .scs .fail code{font-family:var(--font-mono);font-size: var(--text-body);padding:2px 8px;background:var(--stage-danger-bg);color:var(--stage-danger-text)}
-.scs .fail .dis{margin-left:auto;padding:10px 16px;border:1px solid var(--stage-line);background:var(--stage-row);color:var(--stage-card);font: var(--text-body) var(--font-big);white-space:nowrap;cursor:pointer}
-.scs .fail .dis+.dis{margin-left:8px}
-.scs .fail .dis.go{background:var(--accent);border-color:var(--accent);color:var(--stage-ink)}
+.scs .fail .dis{margin-left:auto;display:flex;gap:8px;flex:none}
 .scs .fail .dr{padding:16px 16px 12px;font-size: var(--text-body);color:var(--stage-soft)}
 .scs .fail textarea{display:block;margin-top:10px;width:100%;height:110px;background:var(--stage-well);color:var(--stage-card);border:1px solid var(--stage-line);padding:8px 10px;font: var(--text-body)/1.6 var(--font-big);resize:vertical}
 .scs .fail .nb{margin-top:8px;font-size: var(--text-body);color:var(--stage-mute)}

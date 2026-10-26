@@ -32,30 +32,3 @@
   display: flex;
   gap: 0.5rem;
 }
-
-.button {
-  border: 2px solid var(--stage-warn);
-  background: transparent;
-  color: var(--stage-card);
-  cursor: pointer;
-  font: 600 var(--text-control) var(--font-body);
-  padding: 0.4rem 0.8rem;
-}
-
-.button:hover {
-  background: color-mix(in srgb, var(--stage-warn) 22%, transparent);
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--stage-warn);
-  outline-offset: 2px;
-}
-
-.primary {
-  background: var(--warning);
-  color: var(--warning-fg);
-}
-
-.primary:hover {
-  background: color-mix(in srgb, var(--warning) 82%, var(--canvas));
-}

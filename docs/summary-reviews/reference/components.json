@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:6484ce474a775d034279c5c0796a295943f5036a883f3681e8ac5ce8c8e3d93c",
-  "semanticSummaryHash": "sha256:cc4c59371c53b631efe1de3a0042720bd5b0ac407281362175691147943689ed",
+  "sourceHash": "sha256:9cdee7d738104468a43505a9580e11fdf008dd72381ad438d656894552ef6a49",
+  "semanticSummaryHash": "sha256:107e1d55ff6088b6b171db21e94e3e8196d5d0ba8f04b4250080e3024a11e082",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Checked 11 new Nodes component rows against nodes/*.tsx exports and Dock row; summary still accurate, no duplicated rows",
-  "reviewedAt": "2026-10-26T00:22:32.101Z"
+  "notes": "Catalog --check passes; ListRow/MenuItem/Disclosure class lists match rows.module.css (.clip present, no .title/.label); sidecar unaffected.",
+  "reviewedAt": "2026-10-26T06:13:19.839Z"
 }

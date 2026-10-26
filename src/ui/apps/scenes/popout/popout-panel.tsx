@@ -5,6 +5,7 @@
  * panel takes focus when the person opens it, Escape inside it docks it, and focus goes back to the docked spot.
  */
 import { useEffect, useRef, useState, type JSX, type PointerEvent as ReactPointerEvent } from "react";
+import { Button, IconButton } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { isEscapeClose } from "../../../_shared/use-escape-key";
 import { isTypingTarget } from "../../../_shared/typing-target";
@@ -16,7 +17,7 @@ const originOf = (id: string): HTMLElement | null => document.querySelector<HTML
 
 /** The docked spot's button: it floats the content. */
 export function PopoutButton({ id, onClick }: { id: string; onClick(): void }): JSX.Element {
-  return <button type="button" className="po-btn" title="Pop out" aria-label="Pop out" data-popout-origin={id} onClick={onClick}><Ic name="lucide:external-link" size={14} /></button>;
+  return <IconButton size="sm" label="Pop out" icon="lucide:external-link" data-popout-origin={id} onClick={onClick} />;
 }
 
 /** What the docked spot shows while its panel floats. */
@@ -25,7 +26,7 @@ export function PopoutPlaceholder({ kind, onBack }: { kind: PopoutKind; onBack()
     <div className="po-ph" data-part="scene.popout.placeholder">
       <span className="ring"><Ic name="lucide:external-link" size={16} /></span>
       <p>{kind.noun} is floating</p>
-      <button type="button" data-popout-origin={kind.id} onClick={onBack}>Bring back</button>
+      <Button variant="quiet" size="sm" data-popout-origin={kind.id} onClick={onBack}>Bring back</Button>
     </div>
   );
 }
@@ -67,8 +68,8 @@ export function PopoutPanel({ kind, c, saved, view, onDrop, onClose }: { kind: P
         <b>{kind.title}</b>
         <i className="dot" aria-hidden="true" />
         <span className="grow" />
-        <button type="button" title="Dock back" aria-label="Dock back" onClick={onClose}><Ic name="lucide:minimize-2" size={12} /></button>
-        <button type="button" title="Close" aria-label="Close" onClick={onClose}><Ic name="lucide:x" size={12} /></button>
+        <IconButton size="sm" label="Dock back" icon="lucide:minimize-2" onClick={onClose} />
+        <IconButton size="sm" label="Close" icon="lucide:x" onClick={onClose} />
       </div>
       <div className="po-body">{kind.render(c)}</div>
     </div>

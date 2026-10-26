@@ -40,6 +40,12 @@ const NATIVE_REINVENTIONS = [
   },
 ];
 
+/** A raw <button> outside the button family: the audit found ~1,400 room-made buttons in a dozen looks. */
+const RAW_BUTTON = {
+  selector: "JSXOpeningElement[name.name='button']",
+  message: "Raw <button>. Use the button family (src/ui/components/button): Button, IconButton, Segmented, Tabs, DocTab, Chip, ListRow, MenuItem, Disclosure, Tile, Card, Dot, Toggle, InlineValue or Scrim. Wireframe: design/wireframes/features/button-family.",
+};
+
 export default [
   {
     files: ["src/ui/**/*.{ts,tsx}", "src/kit/**/*.{ts,tsx}"],
@@ -59,8 +65,17 @@ export default [
   {
     // reinvention gate: only apps and shell (components/ is where primitives legitimately compose)
     files: ["src/ui/apps/**/*.tsx", "src/ui/shell/**/*.tsx"],
+    ignores: ["**/*.test.tsx"],
     rules: {
-      "no-restricted-syntax": ["error", ...restrictedPrimitives, ...NATIVE_REINVENTIONS],
+      "no-restricted-syntax": ["error", ...restrictedPrimitives, ...NATIVE_REINVENTIONS, RAW_BUTTON],
+    },
+  },
+  {
+    // the button family is the only place a <button> is drawn; every other studio surface composes it
+    files: ["src/ui/**/*.tsx"],
+    ignores: ["src/ui/apps/**", "src/ui/shell/**", "src/ui/components/button/**", "**/*.test.tsx"],
+    rules: {
+      "no-restricted-syntax": ["error", RAW_BUTTON],
     },
   },
 ];

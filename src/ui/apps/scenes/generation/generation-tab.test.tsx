@@ -232,7 +232,7 @@ describe("Thinking in Replies", () => {
     expect(text()).toContain("Assistant Prefill");
     expect(text()).toContain("Text every reply starts with.");
     expect([...host.querySelectorAll('[aria-label="Prefill role"] button')].map((b) => b.textContent)).toEqual(["assistant", "user", "system"]);
-    expect(button("Auto").getAttribute("aria-checked")).toBe("true");
+    expect(button("Auto").getAttribute("aria-pressed")).toBe("true");
     expect(text()).toContain("Auto: catches your Start Reply With tag");
     expect(text()).toContain("Let the model see its old thinking");
     expect(text()).toContain("Show Prefill in Chat");

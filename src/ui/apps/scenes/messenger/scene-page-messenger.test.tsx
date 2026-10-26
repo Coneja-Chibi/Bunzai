@@ -44,7 +44,7 @@ describe("the chat layout on the scene page", () => {
     expect(rig.host.querySelectorAll(".msn-chat .msg")).toHaveLength(3);
     expect(box()).not.toBeNull();
     expect(rig.host.querySelector(".msn-head strong")!.textContent).toBe("Vera");
-    expect(rig.host.querySelector(".msn-head .branch")).not.toBeNull();
+    expect(rig.host.querySelector(".msn-head [data-part='scene.takes.toggle']")).not.toBeNull();
     expect(railButton("Characters")).toBeTruthy();
     expect(railButton("Context Inspector")).toBeTruthy();
     unmount(flushSync);

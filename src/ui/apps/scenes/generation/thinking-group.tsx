@@ -8,6 +8,7 @@
  */
 import { useEffect, useRef, useState, type JSX } from "react";
 import { modelTakesPrefill } from "../../../../core/assembly/request";
+import { Chip, Segmented, Toggle } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { useDebouncedSave } from "../../../_shared/use-debounced-value";
 import { paramById } from "../../../../stage/params";
@@ -15,7 +16,6 @@ import { SettingCard } from "./setting-card";
 import type { GenerationEnv } from "./generation-env";
 import { CatchThinking } from "./catch-thinking";
 import type { PromptingView } from "./use-prompting-view";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 
 const ROLES = ["assistant", "user", "system"] as const;
 const ROLE_NAME = { assistant: "Assistant Prefill", user: "User Hint", system: "System Note" } as const;
@@ -60,16 +60,15 @@ export function ThinkingGroup({ env, prompting }: { env: GenerationEnv; promptin
       <div className="gn-bb">
         <div>
           <label className="gn-lbl" htmlFor="gn-prefill">Start Reply With <small>{ROLE_NAME[role]}</small></label>
-          <div role="radiogroup" aria-label="Prefill role" className="gn-seg3 gn-seg3r">
-            {ROLES.map((r) => <button key={r} type="button" role="radio" aria-checked={role === r} title={ROLE_TIP[r]} onClick={() => write({ prefillRole: r === "assistant" ? null : r }, "Start Reply With")}>{r}</button>)}
+          <div className="gn-seg3r">
+            <Segmented label="Prefill role" items={ROLES.map((r) => ({ value: r, label: r, title: ROLE_TIP[r] }))} value={role} onChange={(r) => write({ prefillRole: r === "assistant" ? null : r }, "Start Reply With")} />
           </div>
           {claude && (
             <div role="status" aria-label="Claude prefill compatibility warning" className="gn-claude">
               <p><Ic name="mdi:alert-outline" size={16} /> <b>Claude 4.6+ cannot continue an assistant prefill.</b></p>
               <p>{role === "assistant" ? "Bunraku will ignore any chat or preset Start Reply With text for this model. The text remains saved for compatible models." : role === "user" ? "Bunraku will send the Start Reply With text as a final user message instead." : "Bunraku will send the Start Reply With text as a final system note."}</p>
               <div className="gn-two">
-                <button type="button" aria-pressed={role === "assistant"} onClick={() => write({ prefillRole: null }, "Start Reply With")}>Ignore for Claude</button>
-                <button type="button" aria-pressed={role === "user"} onClick={() => write({ prefillRole: "user" }, "Start Reply With")}>Send as user message</button>
+                <Segmented<typeof role> label="Claude prefill handling" items={[{ value: "assistant", label: "Ignore for Claude", tone: "var(--stage-warn)" }, { value: "user", label: "Send as user message", tone: "var(--stage-warn)" }]} value={role} onChange={(r) => write({ prefillRole: r === "assistant" ? null : r }, "Start Reply With")} />
               </div>
             </div>
           )}
@@ -81,7 +80,7 @@ export function ThinkingGroup({ env, prompting }: { env: GenerationEnv; promptin
           <details className="gn-det">
             <summary><Ic name="mdi:chevron-right" size={16} />Common tag shapes</summary>
             <div className="gn-chips">
-              {SHAPES.map(([tag, hint]) => <button key={tag} type="button" className={`gn-chip${stored === tag ? " on" : ""}`} title={hint} onClick={() => { typed.current = false; setText(tag); write({ prefill: tag }, "Start Reply With"); }}>{tag}</button>)}
+              {SHAPES.map(([tag, hint]) => <Chip key={tag} pressed={stored === tag} title={hint} onClick={() => { typed.current = false; setText(tag); write({ prefill: tag }, "Start Reply With"); }}>{tag}</Chip>)}
             </div>
             <p className="gn-sub">Pick one to fill the field above. You can still type your own.</p>
           </details>
@@ -92,7 +91,7 @@ export function ThinkingGroup({ env, prompting }: { env: GenerationEnv; promptin
         <SettingCard def={paramById("keep_inline_thinking_tags")!} enabled={view.keepThinking === true} value={view.keepThinking === true} onToggle={(on) => write({ keepThinking: on ? true : null }, "Let the model see its old thinking")} onChange={(v) => write({ keepThinking: v === true ? true : null }, "Let the model see its old thinking")} />
         <div className="gn-sw">
           <div><b>Show Prefill in Chat</b><small>Display the prefill text in the chat interface.</small></div>
-          <ToggleSwitch size="sm" on={view.showPrefill === true} aria-label="Show Prefill in Chat" onChange={() => write({ showPrefill: view.showPrefill === true ? null : true }, "Show Prefill in Chat")} />
+          <Toggle size="sm" on={view.showPrefill === true} aria-label="Show Prefill in Chat" onChange={() => write({ showPrefill: view.showPrefill === true ? null : true }, "Show Prefill in Chat")} />
         </div>
         <hr className="gn-hr" />
         <Explainer />

@@ -66,55 +66,6 @@
   background: color-mix(in srgb, var(--stage-card) 2%, transparent);
 }
 
-.lineHead {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  width: 100%;
-  text-align: left;
-  border: 0;
-  border-bottom: 2px solid var(--stage-black);
-  background: color-mix(in srgb, var(--stage-card) 4%, transparent);
-  padding: 0.3rem 0.4rem;
-  cursor: pointer;
-}
-
-.lineHead:hover {
-  background: color-mix(in srgb, var(--pa) 12%, transparent);
-}
-
-.ord {
-  font: 800 var(--text-control) var(--font-mono);
-  color: var(--pa);
-  flex: none;
-}
-
-.lineName {
-  flex: 1;
-  font: 700 var(--text-control) var(--font-body);
-  color: var(--stage-card);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.role,
-.stop {
-  font: 600 var(--text-control) var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--stage-mute);
-  border: 1px solid color-mix(in srgb, var(--stage-card) 14%, transparent);
-  padding: 0.02rem 0.22rem;
-  flex: none;
-}
-
-.tok {
-  font: 700 var(--text-control) var(--font-mono);
-  color: var(--stage-kicker);
-  flex: none;
-}
-
 .text {
   margin: 0;
   padding: 0.4rem 0.5rem;

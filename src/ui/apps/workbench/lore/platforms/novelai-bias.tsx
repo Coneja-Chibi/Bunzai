@@ -1,6 +1,7 @@
 /**
  * NovelAI phrase-bias editor (loreBiasGroups). Pure UI shell over entry-extras helpers.
  */
+import { Button, Chip, Toggle } from "../../../../components/button";
 import type { JSX } from "react";
 import type { LoreBiasGroup, LorebookEntry } from "../../../../../entities/lorebook/schema";
 import {
@@ -12,7 +13,6 @@ import {
 } from "../entry-extras";
 import { fieldOr, useFramed } from "../../framed";
 import { ExpandTextarea } from "../../../../components/expand";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
 
 export function NovelAiBiasBlock({
   entry,
@@ -47,7 +47,7 @@ export function NovelAiBiasBlock({
         return (
           <div key={i} className={styles.pcBiasCard}>
             <div className={styles.pcBiasHead}>
-              <ToggleSwitch size="sm" on={g.enabled} aria-label={`Bias group ${i + 1} enabled`} onChange={() =>
+              <Toggle size="sm" on={g.enabled} aria-label={`Bias group ${i + 1} enabled`} onChange={() =>
                   setGroups(replaceBiasGroup(groups, i, { ...g, enabled: !g.enabled }))
                 } />
               <span className={styles.pcK}>Group {i + 1}</span>
@@ -74,14 +74,7 @@ export function NovelAiBiasBlock({
                   {c}
                 </label>
               ))}
-              <button
-                type="button"
-                className={styles.pcBiasDel}
-                aria-label={`Remove bias group ${i + 1}`}
-                onClick={() => setGroups(removeBiasGroup(groups, i))}
-              >
-                Remove
-              </button>
+              <Button variant="danger" size="sm" aria-label={`Remove bias group ${i + 1}`} onClick={() => setGroups(removeBiasGroup(groups, i))}>Remove</Button>
             </div>
             {fieldOr(themed, { label: `Phrases, group ${i + 1}`, hint: "one per line", wide: true }, (
               <ExpandTextarea
@@ -113,31 +106,23 @@ export function NovelAiBiasBlock({
                   ["ensureSequenceFinish", "Finish sequence", g.ensureSequenceFinish === true],
                 ] as const
               ).map(([key, label, on]) => (
-                <button
+                <Chip
                   key={key}
-                  type="button"
-                  className={on ? `${styles.pcScanChip} ${styles.pcScanOn}` : styles.pcScanChip}
-                  aria-pressed={on}
+                  pressed={on}
                   onClick={() =>
                     setGroups(replaceBiasGroup(groups, i, { ...g, [key]: !on }))
                   }
                 >
                   <span className={styles.pcScanBox} aria-hidden="true" />
                   {label}
-                </button>
+                </Chip>
               ))}
             </div>
           </div>
         );
       })}
 
-      <button
-        type="button"
-        className={styles.pcBiasAdd}
-        onClick={() => setGroups([...(groups ?? []), emptyBiasGroup()])}
-      >
-        + Bias group
-      </button>
+      <Button size="sm" onClick={() => setGroups([...(groups ?? []), emptyBiasGroup()])}>+ Bias group</Button>
     </div>
   );
 }

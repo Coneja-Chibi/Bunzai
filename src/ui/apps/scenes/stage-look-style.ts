@@ -21,12 +21,12 @@ ${L("noavatar")} .msg .por{display:none}
 ${L("noavatar")} .msg{grid-template-columns:minmax(0,1fr);padding-left:0}
 ${L("noavatar")} .msg.user{padding-right:0}
 ${L("compact")}{--bk-density:.7}
-${L("nolabels")} .wi .tip{display:none}
+${L("nolabels")} [data-control="tile"][data-wing] .tip{display:none}
 @media (prefers-reduced-motion:no-preference){
 html .scs:not([data-look~="nofade"]) .bub.live{animation:scs-fadein .35s ease-out}
 }
 @keyframes scs-fadein{from{opacity:0}to{opacity:1}}
-${T("basic")} .rail.l,${T("basic")} .rail .wi:not([data-wing="ai"]):not([data-wing="stage"]),${T("basic")} .bgm::after,${T("basic")} [data-part="scene.hud"]{display:none}
+${T("basic")} .rail.l,${T("basic")} .rail [data-control="tile"][data-wing]:not([data-wing="ai"]):not([data-wing="stage"]),${T("basic")} .bgm::after,${T("basic")} [data-part="scene.hud"]{display:none}
 ${T("immersive")} .play::before,${T("immersive")} .play::after{content:"";position:absolute;left:0;right:0;z-index:30;height:clamp(24px,7%,72px);background:var(--stage-black);pointer-events:none}
 ${T("immersive")} .play::before{top:0}
 ${T("immersive")} .play::after{bottom:0}

@@ -2,7 +2,7 @@
  * Transfer bench dual-list (vs-lore-workshop). Theme tokens only.
  */
 
-.wrap {
+.wrap{
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -11,7 +11,7 @@
   padding: 0.25rem 0.15rem 0.4rem;
 }
 
-.nameRow {
+.nameRow{
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -22,7 +22,7 @@
   color: var(--stage-kicker);
 }
 
-.nameRow input {
+.nameRow input{
   border: 2px solid var(--stage-seam);
   background: var(--stage-sunken);
   color: var(--stage-card);
@@ -32,7 +32,7 @@
   padding: 0.4rem 0.55rem;
 }
 
-.note {
+.note{
   margin: 0;
   font-family: var(--font-body);
   font-style: italic;
@@ -41,7 +41,7 @@
   color: var(--stage-mute);
 }
 
-.bench {
+.bench{
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   gap: 0.55rem;
@@ -49,7 +49,7 @@
   min-height: 14rem;
 }
 
-.col {
+.col{
   border: 2px solid var(--stage-black);
   background: var(--stage-panel);
   display: flex;
@@ -57,7 +57,7 @@
   min-width: 0;
 }
 
-.colHead {
+.colHead{
   display: flex;
   align-items: center;
   gap: 0.4rem;
@@ -65,7 +65,7 @@
   border-bottom: 2px solid var(--stage-seam);
 }
 
-.colHead b {
+.colHead b{
   font-family: var(--font-big);
   font-weight: 800;
   font-size: var(--text-meta);
@@ -74,20 +74,11 @@
   color: var(--stage-card);
 }
 
-.small {
+.small{
   margin-left: auto;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.12rem 0.35rem;
-  cursor: pointer;
 }
 
-.list {
+.list{
   list-style: none;
   margin: 0;
   padding: 0.3rem;
@@ -96,7 +87,7 @@
   flex: 1;
 }
 
-.empty {
+.empty{
   font-family: var(--font-body);
   font-style: italic;
   color: var(--stage-kicker);
@@ -104,114 +95,17 @@
   font-size: var(--text-body);
 }
 
-.row {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  width: 100%;
-  border: 0;
-  background: none;
-  color: var(--stage-soft);
-  text-align: left;
-  padding: 0.28rem 0.3rem;
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: var(--text-meta);
-}
 
-.rowOn {
-  background: color-mix(in srgb, var(--a, var(--accent)) 14%, transparent);
-  color: var(--stage-card);
-}
 
-.cb {
-  width: 0.75rem;
-  height: 0.75rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  flex: none;
-}
-
-.cbOn {
-  background: var(--a, var(--accent));
-  border-color: var(--stage-black);
-}
-
-.lbl {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex: 1;
-}
-
-.meta {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  color: var(--stage-kicker);
-  flex: none;
-}
-
-.mid {
+.mid{
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 0.35rem;
 }
 
-.arrow {
-  width: 2rem;
-  height: 2rem;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-weight: 700;
-}
-
-.arrow:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.foot {
+.foot{
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-}
-
-.cancel {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.4rem 0.7rem;
-  cursor: pointer;
-}
-
-.apply {
-  border: 2px solid var(--stage-black);
-  background: var(--a, var(--accent));
-  color: var(--stage-ink);
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.4rem 0.85rem;
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  cursor: pointer;
-}
-
-.apply:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  box-shadow: none;
 }

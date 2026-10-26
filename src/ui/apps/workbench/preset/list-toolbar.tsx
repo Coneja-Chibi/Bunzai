@@ -4,6 +4,7 @@
  * with their counts. Counts come from the WHOLE list, never the filtered view, so the badges stay
  * stable while you filter (RC does the same).
  */
+import { Button, IconButton, Tabs } from "../../../components/button";
 import type { JSX } from "react";
 import { Ic } from "../../../_shared/ic";
 import {
@@ -59,49 +60,27 @@ export function ListToolbar({
         </span>
 
         <div className={s.actions}>
-          <button type="button" className={s.iconBtn} onClick={onExpandAll} title="Expand all" aria-label="Expand all">
-            <Ic name="lucide:chevrons-up-down" size={14} />
-          </button>
-          <button
-            type="button"
-            className={s.iconBtn}
-            onClick={onCollapseAll}
-            title="Collapse all"
-            aria-label="Collapse all"
-          >
-            <Ic name="lucide:chevrons-down-up" size={14} />
-          </button>
-          <button
-            type="button"
-            className={s.iconBtn}
-            onClick={onAddCategory}
-            title="New category"
-            aria-label="New category"
-          >
-            <Ic name="lucide:folder-plus" size={14} />
-          </button>
-          <button type="button" className={s.addBtn} onClick={onAdd}>
-            <Ic name="lucide:plus" size={14} />
-            Add
-          </button>
+          <IconButton label="Expand all" size="sm" icon="lucide:chevrons-up-down" onClick={onExpandAll} />
+          <IconButton label="Collapse all" size="sm" icon="lucide:chevrons-down-up" onClick={onCollapseAll} />
+          <IconButton label="New category" size="sm" icon="lucide:folder-plus" onClick={onAddCategory} />
+          <Button size="sm" icon="lucide:plus" onClick={onAdd}>Add</Button>
         </div>
       </div>
 
-      <div className={s.tabs} role="tablist" aria-label="Filter prompts">
-        {PROMPT_FILTER_TABS.map((t) => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={tab === t}
-            className={`${s.tab} ${tab === t ? s.tabOn : ""}`}
-            onClick={() => onTab(t)}
-          >
-            {PROMPT_FILTER_LABELS[t]}
-            <span className={`${s.tabCount} ${tab === t ? s.tabCountOn : ""}`}>{tabCount(counts, t)}</span>
-          </button>
-        ))}
-      </div>
+      <Tabs
+        label="Filter prompts"
+        items={PROMPT_FILTER_TABS.map((t) => ({
+          value: t,
+          label: (
+            <>
+              {PROMPT_FILTER_LABELS[t]}
+              <span className={s.tabCount}>{tabCount(counts, t)}</span>
+            </>
+          ),
+        }))}
+        value={tab}
+        onChange={onTab}
+      />
     </div>
   );
 }

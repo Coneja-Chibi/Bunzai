@@ -7,7 +7,6 @@
  */
 import { CUSTOM_INSTRUCTION_MAX, PERSPECTIVES, REWRITE_ACTIONS } from "../core/draft-prompts";
 import { str } from "../core/guards";
-import { ProviderError } from "../stage/contracts/provider";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import type { StateStore } from "../stage/contracts/state-store";
 import { StudioValidationError } from "../studio/errors";
@@ -17,7 +16,7 @@ import { runDraft, type DraftDeps, type DraftInput } from "../studio/scene-draft
 import type { ReadPreset } from "../studio/scene-turn-load";
 import type { ReadLorebook } from "../studio/scene-lore";
 import { connect } from "./server-chats-turn";
-import { json } from "./server-security";
+import { providerJson } from "./server-provider-json";
 
 type Body = Record<string, unknown>;
 
@@ -70,10 +69,5 @@ export async function handleDraftRoute(req: Request, p: string, chats: ChatStore
   if (p !== "/api/chats/draft" || req.method !== "POST" || !b) return null;
   const input = parseDraft(b);
   const deps: DraftDeps = { chats, state, connect, readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
-  try {
-    return json(await runDraft(deps, input, req.signal));
-  } catch (e) {
-    if (e instanceof ProviderError) return json({ error: e.message, code: e.code, category: e.category, ...(e.retryAfterSec ? { retryAfterSec: e.retryAfterSec } : {}) }, 502);
-    throw e;
-  }
+  return providerJson(() => runDraft(deps, input, req.signal));
 }

@@ -13,6 +13,7 @@ import { Ic } from "../../_shared/ic";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
 import { TEMPLATE_FIELDS } from "./preset-core";
 import type { PresetText, SystemPromptKey } from "./use-scene-preset-text";
+import { Disclosure } from "../../components/button";
 
 /** One field: its label and size, and when open its text, saved to the preset 500 ms after typing stops, on leaving the field and on closing. */
 export function TemplateItem({ label, content, loadedAt, onSave }: {
@@ -31,11 +32,7 @@ export function TemplateItem({ label, content, loadedAt, onSave }: {
   const tokens = useMemo(() => (empty ? 0 : countText(value)), [empty, value]);
   return (
     <div className={`tpl-item${empty ? "" : " set"}`}>
-      <button type="button" className="tpl-row" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className={`cv${open ? "" : " r"}`}><Ic name="lucide:chevron-down" size={12} /></span>
-        <span className="tpl-name">{label}</span>
-        <span className="tpl-meta">{empty ? "empty" : `~${String(tokens)}`}</span>
-      </button>
+      <Disclosure open={open} onClick={() => setOpen(!open)} label={label} summary={empty ? "empty" : `~${String(tokens)}`} />
       {open && (
         <textarea value={value} placeholder="Enter template content..." aria-label={`${label} text`} rows={Math.max(3, value.split("\n").length)}
           onChange={(e) => { setValue(e.target.value); saver.push(e.target.value); }} onBlur={saver.flush} />
@@ -58,12 +55,8 @@ export function TemplatesSection({ body, text, query }: { body: PresetBody; text
   const shown = q ? entries.filter((e) => e.key.toLowerCase().includes(q) || e.label.toLowerCase().includes(q) || e.content.toLowerCase().includes(q)) : entries;
   return (
     <div className="tpl">
-      <button type="button" className="tpl-hd" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className={`cv${open ? "" : " r"}`}><Ic name="lucide:chevron-down" size={12} /></span>
-        <Ic name="lucide:scroll-text" size={14} />
-        <span className="tpl-t">Templates</span>
-        <span className="tpl-count">{entries.filter((e) => e.content.trim()).length}/{entries.length}</span>
-      </button>
+      <Disclosure open={open} onClick={() => setOpen(!open)} leading={<Ic name="lucide:scroll-text" size={14} />} label="Templates"
+        summary={`${entries.filter((e) => e.content.trim()).length}/${entries.length}`} />
       {open && (
         <div className="tpl-list">
           {shown.length === 0 ? <p className="tpl-none">No templates match search</p> : shown.map((e) => <SystemPromptItem key={e.key} field={e.key} body={body} text={text} />)}

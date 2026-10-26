@@ -17,6 +17,7 @@ import type { MusicPlayer } from "./stage-music-player";
 import { failureWords, soundFile } from "./stage-music-form";
 import { useMusicLibrary } from "./use-music-library";
 import { sharedMusic, useStageMusic } from "./use-stage-music";
+import { ListRow, IconButton, Button } from "../../components/button";
 
 export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; player?: MusicPlayer }): JSX.Element {
   const { state, setVolume } = useStageMusic(ctx, player);
@@ -87,9 +88,9 @@ export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; pla
           </div>
         </div>
         <div className="mm-bar">
-          <button type="button" className="mm-sq" disabled={!track} onClick={() => player.toggle()} aria-label={state.playing ? "Pause mood music" : "Play mood music"}><Ic name={state.playing ? "lucide:pause" : "lucide:play"} size={16} /></button>
-          <button type="button" className="mm-sq" disabled={!track} onClick={() => player.next()} aria-label="Next mood music track"><Ic name="lucide:skip-forward" size={16} /></button>
-          <button type="button" className="mm-sq" disabled={!track} onClick={() => player.stop()} aria-label="Stop mood music"><Ic name="lucide:square" size={16} /></button>
+          <IconButton icon={state.playing ? "lucide:pause" : "lucide:play"} label={state.playing ? "Pause mood music" : "Play mood music"} disabled={!track} onClick={() => player.toggle()} />
+          <IconButton icon="lucide:skip-forward" label="Next mood music track" disabled={!track} onClick={() => player.next()} />
+          <IconButton icon="lucide:square" label="Stop mood music" disabled={!track} onClick={() => player.stop()} />
           <label className="mm-vol"><Ic name="lucide:volume-2" size={16} />
             <Slider value={state.volume} min={0} max={1} step={0.01} onChange={setVolume} format={(v) => `${String(Math.round(v * 100))}%`} aria-label="Mood music volume" />
           </label>
@@ -106,11 +107,11 @@ export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; pla
         {formError && <p className="mm-err">{formError}</p>}
         {library.state === "ready" && library.packs.length === 0 && <p className="mm-hint">Tracks live in a pack. Make a pack in the Library, then come back and add sound files to it.</p>}
         <div className="mm-actions">
-          <button type="button" className="mm-add-btn" disabled={busy || (!editing && !target)} onClick={() => void (editing ? save() : addLink())}>
-            <Ic name={busy ? "lucide:loader-circle" : editing ? "lucide:save" : "lucide:plus"} size={16} />{editing ? "Save" : "Add"}
-          </button>
-          {!editing && <button type="button" className="mm-ghost" disabled={busy || !target} onClick={() => files.current?.click()}>Choose files</button>}
-          {editing && <button type="button" className="mm-ghost" disabled={busy} onClick={reset}>Cancel</button>}
+          <Button variant="primary" icon={busy ? "lucide:loader-circle" : editing ? "lucide:save" : "lucide:plus"} disabled={busy || (!editing && !target)} onClick={() => void (editing ? save() : addLink())}>
+            {editing ? "Save" : "Add"}
+          </Button>
+          {!editing && <Button disabled={busy || !target} onClick={() => files.current?.click()}>Choose files</Button>}
+          {editing && <Button variant="quiet" disabled={busy} onClick={reset}>Cancel</Button>}
           <input ref={files} type="file" multiple hidden accept="audio/*,.mp3,.ogg,.m4a,.wav,.flac,.aac" onChange={(e) => { void addFiles(e.target.files); e.target.value = ""; }} />
         </div>
       </div>
@@ -123,9 +124,9 @@ export function MusicPanel({ ctx, player = sharedMusic }: { ctx: AppContext; pla
             <div className="mm-list">
               {g.tracks.map((t) => (
                 <div key={t.id} className={`mm-item${track?.id === t.id ? " on" : ""}`}>
-                  <button type="button" className="mm-pick" onClick={() => void player.play(t, g.tracks)}><span>{t.title}</span></button>
-                  <button type="button" className="mm-mini" onClick={() => beginEdit(t)} aria-label={`Edit ${t.title}`}><Ic name="lucide:pencil" size={14} /></button>
-                  <button type="button" className="mm-mini del" disabled={busy} onClick={() => void remove(t)} aria-label={`Delete ${t.title}`}><Ic name="lucide:trash-2" size={14} /></button>
+                  <ListRow onClick={() => void player.play(t, g.tracks)} label={t.title} />
+                  <IconButton variant="quiet" size="sm" icon="lucide:pencil" label={`Edit ${t.title}`} onClick={() => beginEdit(t)} />
+                  <IconButton variant="danger" size="sm" icon="lucide:trash-2" label={`Delete ${t.title}`} disabled={busy} onClick={() => void remove(t)} />
                 </div>
               ))}
             </div>

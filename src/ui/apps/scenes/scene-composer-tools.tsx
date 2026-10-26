@@ -6,6 +6,7 @@
  */
 import type { JSX } from "react";
 import type { Perspective } from "../../../core/draft-prompts";
+import { IconButton, MenuItem } from "../../components/button";
 import { Ic, type IconName } from "../../_shared/ic";
 import { PerspectivePill } from "./scene-draft-status";
 import { composerSections, type ComposerRow } from "./composer-tools-core";
@@ -26,7 +27,7 @@ const TONES: Partial<Record<ComposerRow["id"], string>> = { "expand-character": 
 export function ComposerTools({ open, rows, onToggle, onPick, onExpand }: ComposerToolsProps): JSX.Element {
   return (
     <span className="hold">
-      <button type="button" className={`tools${open ? " on" : ""}`} aria-label="Open tools menu" title="Open chat tools such as re-rolls and continues." aria-expanded={open} onClick={onToggle}><Ic name="lucide:plus" /></button>
+      <IconButton variant="secondary" size="sm" data-part="scene.composer.tools-toggle" label="Open tools menu" title="Open chat tools such as re-rolls and continues." aria-expanded={open} icon="lucide:plus" onClick={onToggle} />
       {open && (
         <div className="menu cm" role="menu" data-part="scene.composer.tools">
           {composerSections(rows).map(({ label, rows: group }) => (
@@ -34,9 +35,8 @@ export function ComposerTools({ open, rows, onToggle, onPick, onExpand }: Compos
               <div className="sec">{label}</div>
               {group.map((r) => (
                 <div key={r.id} className="cm-row">
-                  <button type="button" role="menuitem" disabled={r.disabled !== undefined} title={r.disabled} onClick={() => (r.id === "expand-character" ? onExpand("1st") : onPick(r.id))}>
-                    <i className="ct" data-tone={TONES[r.id] ?? "select"}><Ic name={ICONS[r.id] ?? "lucide:rotate-ccw"} size={14} /></i><span><b>{r.label}</b>{r.sublabel && <small>{r.sublabel}</small>}</span>
-                  </button>
+                  <MenuItem disabled={r.disabled !== undefined} title={r.disabled} onClick={() => (r.id === "expand-character" ? onExpand("1st") : onPick(r.id))}
+                    icon={<i className="ct" data-tone={TONES[r.id] ?? "select"}><Ic name={ICONS[r.id] ?? "lucide:rotate-ccw"} size={14} /></i>} description={r.sublabel}>{r.label}</MenuItem>
                   {r.id === "expand-character" && <PerspectivePill disabled={r.disabled !== undefined} onPick={onExpand} />}
                 </div>
               ))}

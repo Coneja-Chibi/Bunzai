@@ -8,6 +8,7 @@
  * setSampler). So the inputs are text, not number: a number input hands back "" for junk and would
  * blur the difference between "cleared" and "zero".
  */
+import { Disclosure } from "../../../components/button";
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
 import type { PresetBody, PresetSamplers } from "../../../../entities/preset";
@@ -75,13 +76,12 @@ export function SettingsBar({
 
   return (
     <div className={s.bar}>
-      <button type="button" className={s.head} aria-expanded={open} onClick={() => setOpen(!open)}>
-        <Ic name={open ? "lucide:chevron-up" : "lucide:chevron-down"} size={14} className={s.chev} />
-        <span className={s.title}>Identity &amp; Settings</span>
-        <span className={s.summary}>
-          {setCount === 0 ? "no samplers set" : `${setCount} sampler${setCount === 1 ? "" : "s"} set`}
-        </span>
-      </button>
+      <Disclosure
+        open={open}
+        onClick={() => setOpen(!open)}
+        label="Identity & Settings"
+        summary={setCount === 0 ? "no samplers set" : `${setCount} sampler${setCount === 1 ? "" : "s"} set`}
+      />
 
       {open && (
         <div className={s.body}>

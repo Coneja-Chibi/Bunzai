@@ -12,8 +12,5 @@
 .catalog li span{color:var(--text-soft);font-size:var(--text-control)}
 .example{display:flex;align-items:center;justify-content:space-between;gap:.75rem;border:1px solid var(--control-boundary);border-radius:0;padding:.7rem;background:var(--face);color:var(--text)}
 .example>div{display:grid;gap:.2rem}.example span{color:var(--text-soft);font-size:var(--text-control)}
-.example button{min-height:2.25rem;border:1px solid var(--control-boundary);border-radius:0;background:var(--action-primary);color:var(--action-primary-fg);font:inherit;font-size:var(--text-control);font-weight:650;padding:.35rem .65rem;cursor:pointer}
 .actions{display:flex;flex-wrap:wrap;gap:.4rem}
-.actions button{min-height:2.25rem;border:1px solid var(--control-boundary);border-radius:0;background:var(--action-primary);color:var(--action-primary-fg);font:inherit;font-size:var(--text-control);font-weight:650;padding:.35rem .65rem;cursor:pointer}
-.actions button:disabled{background:var(--disabled-bg);color:var(--disabled-fg);cursor:wait}
-@container (max-width:38rem){.catalog li{grid-template-columns:minmax(0,1fr)}.actions{width:100%}.actions button{flex:1 1 auto}}
+@container (max-width:38rem){.catalog li{grid-template-columns:minmax(0,1fr)}.actions{width:100%}}

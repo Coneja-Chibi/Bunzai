@@ -4,9 +4,9 @@
  * stage door are built from these pieces: a dossier with an act label and a marquee, a stage
  * direction, the lines box, the cue grid for typing words back, and the warning and error plates.
  */
+import { Button } from "../button";
 import { useRef } from "react";
 import type { ChangeEvent, ClipboardEvent, JSX, ReactNode } from "react";
-import { Stamp } from "../stamp";
 import styles from "./styles.module.css";
 
 /** A dossier: the act label, a marquee with one colored word, the flourish, then the body. */
@@ -220,9 +220,9 @@ export function StageActions({
   return (
     <div className={`${styles.actions} ${styles.noPrint}`}>
       <div className={styles.cta}>
-        <Stamp accent="var(--accent-deep)" onClick={onCta} disabled={disabled}>
+        <Button variant="primary" block onClick={onCta} disabled={disabled}>
           {`${cta} →`}
-        </Stamp>
+        </Button>
       </div>
       {children}
     </div>
@@ -232,8 +232,8 @@ export function StageActions({
 /** A quiet choice: the dashed button that never competes with the call to action. */
 export function GhostButton({ onClick, disabled, children }: { onClick: () => void; disabled?: boolean; children: ReactNode }): JSX.Element {
   return (
-    <button type="button" className={styles.ghost} onClick={onClick} disabled={disabled}>
+    <Button size="sm" variant="quiet" onClick={onClick} disabled={disabled}>
       {children}
-    </button>
+    </Button>
   );
 }

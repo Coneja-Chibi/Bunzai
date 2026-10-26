@@ -4,6 +4,7 @@
  */
 import type { JSX } from "react";
 import type { TitleState } from "../../use-title";
+import { Button, Card } from "../../../components/button";
 import { ThemeSlot } from "../../../_shared/theme-slot";
 import styles from "./attract.module.css";
 
@@ -24,11 +25,10 @@ export default function AttractTitle({ state }: { state: TitleState }): JSX.Elem
         <div className={styles.body}>
           <nav className={styles.menu} aria-label="Main menu">
             {menu.map(([action, label, run], i) => (
-              <button key={action} type="button" data-title-action={action} className={`${styles.item}${i === 0 ? ` ${styles.first}` : ""}`} disabled={closing} onClick={run}>
+              <Card key={action} kind="entry" data-title-action={action} heading={label} disabled={closing} onClick={run}>
                 <span className={styles.cursor} aria-hidden="true" />
                 <span className={styles.slot} aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
-                {label}
-              </button>
+              </Card>
             ))}
           </nav>
           <section className={styles.save} aria-label="Last save">
@@ -40,7 +40,7 @@ export default function AttractTitle({ state }: { state: TitleState }): JSX.Elem
                   <div><dt>Cast</dt><dd>{recent.characterName}</dd></div>
                   <div><dt>Messages</dt><dd>{recent.messageCount}</dd></div>
                 </dl>
-                <button type="button" data-title-action="resume" className={styles.load} disabled={closing} onClick={continueStory}>Return to scene</button>
+                <div className={styles.load}><Button size="sm" data-title-action="resume" disabled={closing} onClick={continueStory}>Return to scene</Button></div>
               </>
             ) : <p className={styles.empty}>No save data yet. Start a story to fill the first slot.</p>}
           </section>

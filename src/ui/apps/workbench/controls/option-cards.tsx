@@ -4,6 +4,7 @@
  * was written twice, near-identically. Takes the editor's style module so it reuses the exact chrome
  * (opts/opt/optOn/optMark/rank/optBody/optTitle/optSub) with no CSS duplication.
  */
+import { Card } from "../../../components/button";
 import type { JSX } from "react";
 
 export interface OptionCard {
@@ -26,19 +27,16 @@ export function OptionCards({ options, value, onSelect, styles }: OptionCardsPro
       {options.map((o, i) => {
         const on = value === o.value;
         return (
-          <button
+          <Card
             key={o.value || "none"}
-            type="button"
-            className={`${styles.opt}${on ? ` ${styles.optOn}` : ""}`}
+            kind="choice"
+            selected={on}
+            aria-pressed={on}
             onClick={() => onSelect(o.value)}
-          >
-            {on && <span className={styles.optMark}>Picked</span>}
-            <span className={styles.rank}>{String.fromCharCode(65 + i)}</span>
-            <span className={styles.optBody}>
-              <span className={styles.optTitle}>{o.title}</span>
-              {o.sub !== undefined && <span className={styles.optSub}>{o.sub}</span>}
-            </span>
-          </button>
+            kicker={String.fromCharCode(65 + i)}
+            heading={o.title}
+            subtitle={o.sub}
+          />
         );
       })}
     </div>

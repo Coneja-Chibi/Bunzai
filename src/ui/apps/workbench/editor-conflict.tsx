@@ -12,6 +12,7 @@
  * over whatever arrived. There is no default that is right for both, so the bar asks rather than
  * picking, and it names the cost of each in the button itself.
  */
+import { Button } from "../../components/button";
 import type { JSX } from "react";
 import s from "./editor-conflict.module.css";
 
@@ -33,12 +34,8 @@ export function EditorConflict({ what, onTakeTheirs, onKeepMine }: EditorConflic
         open, so your last save was refused rather than overwriting it. Nothing has been lost yet.
       </span>
       <span className={s.actions}>
-        <button type="button" className={s.button} onClick={onTakeTheirs}>
-          Discard my edits
-        </button>
-        <button type="button" className={`${s.button} ${s.primary}`} onClick={onKeepMine}>
-          Keep mine, overwrite
-        </button>
+        <Button variant="danger" onClick={onTakeTheirs}>Discard my edits</Button>
+        <Button variant="primary" onClick={onKeepMine}>Keep mine, overwrite</Button>
       </span>
     </div>
   );

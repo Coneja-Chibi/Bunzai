@@ -7,6 +7,17 @@
  *  reader's digit grouping ("1,204 messages"), which every surface now agrees on. */
 export const plural = (n: number, one: string, many = `${one}s`): string => `${n.toLocaleString()} ${n === 1 ? one : many}`;
 
+/** Levenshtein distance between two strings, case-sensitive. */
+export function editDistance(a: string, b: string): number {
+  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(cur[j - 1]! + 1, prev[j]! + 1, prev[j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[b.length]!;
+}
+
 export interface SlugOptions {
   /** Separator that replaces every run of characters outside a-z0-9. */
   sep?: "-" | "_";

@@ -1,6 +1,5 @@
-/** The Final Cut activity dialog (.fa, on top of the Correction Tools skeleton, .cx) and the bubble's scissors button (.fcut). The dialog is portaled to the body, so nothing here hangs off .scs except the button. */
+/** The Final Cut activity dialog (.fa, on top of the Correction Tools skeleton, .cx). It is portaled to the body, so nothing here hangs off .scs. */
 export const FINAL_CUT_ACTIVITY_STYLE = `
-.scs .acts .fcut.bad{color:var(--stage-warn)}
 .tc-row{margin-bottom:8px}.tc-row section{min-width:0}.tc-row .none{display:grid;place-items:center;color:var(--stage-mute);font-size:var(--text-control)}
 .tc-row del{color:var(--stage-danger-text);text-decoration:line-through}.tc-row ins{text-decoration:none;background:color-mix(in srgb,var(--bk-accent) 28%,transparent)}
 .fa-passes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}

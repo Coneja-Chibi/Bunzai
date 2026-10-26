@@ -19,6 +19,7 @@
  * rest of the page is inert until somebody answers.
  */
 import type { JSX } from "react";
+import { Button } from "../components/button";
 import { ProtectedDialog } from "../_shared/protected-dialog";
 import { kitVars } from "./kit-vars";
 import { strArray } from "../../core/guards";
@@ -89,32 +90,32 @@ export function GateCard({
       )}
 
       <div className="gate-card__row">
-        <button
-          type="button"
-          className="gate-card__yes"
+        <Button
+          size="sm"
+          variant="primary"
           disabled={busy}
           onClick={() => { onAnswer({ type: "allow-once" }); }}
         >
           {"Allow once"}
-        </button>
-        <button type="button" disabled={busy} onClick={() => { onAnswer({ type: "allow-session" }); }}>
+        </Button>
+        <Button size="sm" disabled={busy} onClick={() => { onAnswer({ type: "allow-session" }); }}>
           {"Allow for this session"}
-        </button>
-        <button type="button" disabled={busy} onClick={() => { onAnswer({ type: "deny" }); }}>
+        </Button>
+        <Button size="sm" disabled={busy} onClick={() => { onAnswer({ type: "deny" }); }}>
           {"No"}
-        </button>
+        </Button>
         {/* Not a synonym for no: it stops the call and leaves the subject open to ask about. */}
-        <button type="button" disabled={busy} onClick={() => { onAnswer({ type: "hold" }); }}>
+        <Button size="sm" variant="quiet" disabled={busy} onClick={() => { onAnswer({ type: "hold" }); }}>
           {"Wait, tell me more"}
-        </button>
-        <button
-          type="button"
-          className="gate-card__abort"
+        </Button>
+        <Button
+          size="sm"
+          variant="danger"
           disabled={busy}
           onClick={() => { onAnswer({ type: "abort" }); }}
         >
           {"Stop the whole turn"}
-        </button>
+        </Button>
       </div>
     </ProtectedDialog>
   );

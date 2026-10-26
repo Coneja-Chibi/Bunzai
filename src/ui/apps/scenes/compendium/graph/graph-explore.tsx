@@ -7,6 +7,7 @@
  */
 import { useMemo, useRef, useState, type JSX } from "react";
 import { InkDialog } from "../../../../components/ink-dialog";
+import { Button, IconButton } from "../../../../components/button";
 import type { BookModel } from "../compendium-core";
 import { GLYPH } from "../compendium-core";
 import { GraphLayer } from "./graph-canvas";
@@ -53,13 +54,13 @@ export function GraphExploreModal({ m, onOpen, onClose, layoutOf = sharedLayoutO
     <InkDialog ariaLabel="Cross-Reference Graph" onDismiss={onClose} sheetClassName="cp-gx">
       <header className="gx-hd" data-part="compendium.graph">
         <div className="l">
-          <button type="button" className="back" onClick={onClose}>{"←"} BACK</button>
+          <Button variant="quiet" size="sm" onClick={onClose}>{"←"} Back</Button>
           <div>
             <small>Lorebook{m.name ? ` ${GLYPH.dot} ${m.name}` : ""}</small>
             <h3>Cross-Reference Graph<i>lorebook connections explorer</i></h3>
           </div>
         </div>
-        <button type="button" className="x" onClick={onClose}>CLOSE {"✕"}</button>
+        <Button variant="quiet" size="sm" onClick={onClose}>CLOSE {"✕"}</Button>
       </header>
       <div className="gx-body">
         <GraphSide f={f} onF={setF} counts={counts} query={query} onQuery={setQuery} hits={hits.size} edgeLabels={edgeLabels} onEdgeLabels={setEdgeLabels} />
@@ -72,9 +73,9 @@ export function GraphExploreModal({ m, onOpen, onClose, layoutOf = sharedLayoutO
           {vis.nodes.length === 0 && <p className="gx-none">No nodes match the current filters.</p>}
           {node && detail && <GraphDetail node={node} connections={detail.connections} total={detail.total} onPick={setSelected} onOpen={() => open(node.id)} />}
           <div className="gx-zoom">
-            <button type="button" title="Zoom in" aria-label="Zoom in" disabled={cam.view.k >= ZOOM_MAX} onClick={cam.zoomIn}>+</button>
-            <button type="button" title="Zoom out" aria-label="Zoom out" onClick={cam.zoomOut}>{"−"}</button>
-            <button type="button" title="Fit to screen" aria-label="Fit to screen" className="fit" onClick={cam.fit}>FIT</button>
+            <IconButton size="sm" label="Zoom in" icon="lucide:plus" disabled={cam.view.k >= ZOOM_MAX} onClick={cam.zoomIn} />
+            <IconButton size="sm" label="Zoom out" icon="lucide:minus" onClick={cam.zoomOut} />
+            <Button size="sm" title="Fit to screen" aria-label="Fit to screen" onClick={cam.fit}>FIT</Button>
           </div>
         </div>
       </div>

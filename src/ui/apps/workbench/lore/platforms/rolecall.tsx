@@ -8,7 +8,7 @@ import { ListEditor } from "../../../../components/list-editor";
 import { rowsFromSideEffects, sideEffectsFromRows } from "../entry-extras";
 import type { LorePlatformCard, LorePlatformCardProps } from "./card-contract";
 import { CharacterFilterBlock } from "./filter-block";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
+import { Toggle } from "../../../../components/button";
 
 const SIDE_EFFECT_FIELDS: readonly FormField[] = [
   {
@@ -72,7 +72,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
           <div className={styles.pcMemo}>
             <b>Memo</b>
             <span>Remember this entry once it has fired.</span>
-            <ToggleSwitch size="sm" on={entry.useMemo} aria-label="Memo: remember this entry once triggered" onChange={() => onPatch({ useMemo: !entry.useMemo })} />
+            <Toggle size="sm" on={entry.useMemo} aria-label="Memo: remember this entry once triggered" onChange={() => onPatch({ useMemo: !entry.useMemo })} />
           </div>
         </div>
       )}
@@ -91,7 +91,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
               <div className={styles.pcCellT}>
                 <b>Only on first trigger</b>
               </div>
-              <ToggleSwitch size="sm" on={entry.sideEffects?.onlyOnFirstTrigger === true} aria-label="Only on first trigger" onChange={() =>
+              <Toggle size="sm" on={entry.sideEffects?.onlyOnFirstTrigger === true} aria-label="Only on first trigger" onChange={() =>
                   patchSe(seRows, !(entry.sideEffects?.onlyOnFirstTrigger === true), undefined)
                 } />
             </div>
@@ -99,7 +99,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
               <div className={styles.pcCellT}>
                 <b>Clear on deactivate</b>
               </div>
-              <ToggleSwitch size="sm" on={entry.sideEffects?.clearOnDeactivate === true} aria-label="Clear on deactivate" onChange={() =>
+              <Toggle size="sm" on={entry.sideEffects?.clearOnDeactivate === true} aria-label="Clear on deactivate" onChange={() =>
                   patchSe(seRows, undefined, !(entry.sideEffects?.clearOnDeactivate === true))
                 } />
             </div>

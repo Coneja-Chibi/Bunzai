@@ -12,6 +12,7 @@
  * The pane is whole-preset, which is why it lives in the rail rather than the row (the locked wire's
  * ruling: the rail holds only what is true of the WHOLE preset).
  */
+import { ListRow } from "../../../components/button";
 import { useCallback, useMemo, useRef, type JSX, type KeyboardEvent } from "react";
 import type { PresetBody } from "../../../../entities/preset";
 import { buildPreview, PRESET_PLACEMENT_LABELS } from "../../../../core/preset";
@@ -73,16 +74,13 @@ export function LiveBuild({ body, onSelect }: LiveBuildProps): JSX.Element {
             if (!l) return null;
             return (
             <li key={rowKeys[item.index]} ref={virtualizer.measureElement} data-index={item.index} data-pick={rowKeys[item.index]} className={s.line} style={{ transform: `translateY(${String(item.start)}px)` }}>
-              <button type="button" className={s.lineHead} onClick={() => onSelect(l.id)}>
-                <span className={s.ord}>{String(item.index + 1).padStart(2, "0")}</span>
-                <span className={s.lineName}>{l.name || "Untitled block"}</span>
-                <span className={s.role}>{l.role}</span>
-                <span className={s.stop}>
-                  {PRESET_PLACEMENT_LABELS[l.placement]?.label ?? l.placement}
-                  {l.depth !== undefined ? ` @${l.depth}` : ""}
-                </span>
-                <span className={s.tok}>{l.isMarker ? "slot" : `${l.tokens}`}</span>
-              </button>
+              <ListRow
+                onClick={() => onSelect(l.id)}
+                leading={String(item.index + 1).padStart(2, "0")}
+                label={l.name || "Untitled block"}
+                subtitle={`${l.role} · ${PRESET_PLACEMENT_LABELS[l.placement]?.label ?? l.placement}${l.depth !== undefined ? ` @${String(l.depth)}` : ""}`}
+                meta={l.isMarker ? "slot" : `${String(l.tokens)}`}
+              />
               <pre className={`${s.text} ${l.isMarker ? s.markerText : ""}`}>{l.text || "(empty)"}</pre>
             </li>
             );

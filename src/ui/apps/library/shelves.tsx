@@ -28,6 +28,7 @@ import { NoMatchNotice } from "./search-bar";
 import { clampSize, SIZE_RANGE, type DeckViewContext } from "./view-contract";
 import { deckViews } from "./views/registry";
 import { icSvg } from "../../_shared/ic-svg";
+import { Segmented } from "../../components/button";
 
 const CARDS_ICON = icSvg("lucide:columns-2", 14);
 
@@ -173,19 +174,17 @@ function Section(props: ShelvesProps & { section: CarouselSection; total: number
             <em>{(total === 1 ? deck.singular : deck.plural).toLowerCase()}</em>
           </div>
           <div className="sviews">
-            <div className="viewseg" data-tour="views" role="group" aria-label={`${deck.plural} view`}>
-              <button type="button" className={!view ? "on" : undefined} aria-pressed={!view} title="Cards view"
-                onClick={() => props.setView(kind, CARDS_VIEW)}>
-                <Icon svg={CARDS_ICON} />
-                Cards
-              </button>
-              {offered.map((v) => (
-                <button type="button" key={v.id} className={view?.id === v.id ? "on" : undefined} aria-pressed={view?.id === v.id}
-                  title={`${v.label} view`} onClick={() => props.setView(kind, v.id)}>
-                  <Icon svg={v.iconSvg} />
-                  {v.label}
-                </button>
-              ))}
+            <div className="viewseg" data-tour="views">
+              <Segmented
+                label={`${deck.plural} view`}
+                size="sm"
+                value={view?.id ?? CARDS_VIEW}
+                onChange={(id) => props.setView(kind, id)}
+                items={[
+                  { value: CARDS_VIEW, label: <><Icon svg={CARDS_ICON} />Cards</>, title: "Cards view" },
+                  ...offered.map((v) => ({ value: v.id, label: <><Icon svg={v.iconSvg} />{v.label}</>, title: `${v.label} view` })),
+                ]}
+              />
             </div>
             {pieces.length > 0 && <NewInDeckButton compact kind={kind} ctx={ctx} onCreated={props.onCreated} />}
           </div>

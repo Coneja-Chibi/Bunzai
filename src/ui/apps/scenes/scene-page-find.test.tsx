@@ -110,7 +110,7 @@ const type = async (flushSync: FlushSync, text: string): Promise<void> => {
   await settle(flushSync, 220);
   await settle(flushSync);
 };
-const rows = (): Element[] => [...host.querySelectorAll(".fhit")];
+const rows = (): Element[] => [...host.querySelectorAll(".find [data-control='row']")];
 const ringed = (): string[] => [...host.querySelectorAll("[data-hit]")].map((el) => (el as HTMLElement).dataset["mid"]!);
 const scroller = (): HTMLElement => host.querySelector(".scroll")!;
 const setScroll = (flushSync: FlushSync, top: number): void => {

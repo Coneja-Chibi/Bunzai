@@ -8,6 +8,7 @@
  *
  * It runs on every keystroke because it is pure and local. The engine box deliberately does not.
  */
+import { Button } from "../../components/button";
 import { useState, type JSX } from "react";
 import { MACRO_DIALECT_LABELS, type MacroDialect } from "../../../core/preset/macros";
 import {
@@ -68,9 +69,11 @@ function TokenRow({
         an empty list, which reads as "it goes nowhere" - the opposite of "we have not checked".
       */}
       {row.name && dialectTranslates(lens) ? (
-        <button type="button" className={styles.more} onClick={() => setOpen(!open)}>
-          {open ? "Hide other platforms" : "Where else does it work"}
-        </button>
+        <div className={styles.more}>
+          <Button size="sm" variant="quiet" onClick={() => setOpen(!open)}>
+            {open ? "Hide other platforms" : "Where else does it work"}
+          </Button>
+        </div>
       ) : null}
 
       {open ? (

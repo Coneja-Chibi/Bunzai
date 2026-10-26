@@ -6,6 +6,7 @@
  * the advanced path: token id to bias, replacing the list.
  */
 import { useRef, useState, type JSX } from "react";
+import { Button, IconButton } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { isRecord } from "../../../core/guards";
 import { biasFrom, entryTokens, exactTokenizer, type BiasEntry } from "../../../core/tokens/bias";
@@ -107,9 +108,9 @@ export function LogitBiasManager({ entries, model, onChange }: { entries: BiasEn
       <div className="gp-bias-top">
         <span>{entries.length === 0 ? "No logit bias entries" : `${entries.length} ${entries.length === 1 ? "entry" : "entries"} → ${count} token${count !== 1 ? "s" : ""} biased`}</span>
         <div className="gp-bias-btns">
-          <button type="button" title="Import logit bias entries from JSON file" onClick={() => file.current?.click()}><Ic name="mdi:upload" size={14} />Import</button>
-          {entries.length > 0 && <button type="button" title="Export logit bias entries to JSON file" onClick={exportList}><Ic name="mdi:download" size={14} />Export</button>}
-          <button type="button" onClick={() => onChange([...entries, { id: newId(), text: "", value: 0 }])}><Ic name="mdi:plus" size={14} />Add Entry</button>
+          <Button size="sm" icon="mdi:upload" title="Import logit bias entries from JSON file" onClick={() => file.current?.click()}>Import</Button>
+          {entries.length > 0 && <Button size="sm" icon="mdi:download" title="Export logit bias entries to JSON file" onClick={exportList}>Export</Button>}
+          <Button size="sm" icon="mdi:plus" onClick={() => onChange([...entries, { id: newId(), text: "", value: 0 }])}>Add Entry</Button>
         </div>
       </div>
       {note && <div className="gp-hint bad" role="alert">{note}</div>}
@@ -123,7 +124,7 @@ export function LogitBiasManager({ entries, model, onChange }: { entries: BiasEn
           </div>
           <input type="number" className="gp-in mono gp-bias-num" min={-100} max={100} step={0.01} value={e.value} aria-label="Bias" onChange={(ev) => { const n = parseFloat(ev.target.value); set(i, { value: Number.isFinite(n) ? Math.max(-100, Math.min(100, n)) : 0 }); }} />
           <span className={`gp-bias-dot ${e.value < 0 ? "neg" : e.value > 0 ? "pos" : ""}`} title={e.value < 0 ? "Suppress" : e.value > 0 ? "Boost" : "Neutral"} />
-          <button type="button" className="gp-bias-x" title="Remove entry" aria-label="Remove entry" onClick={() => onChange(entries.filter((_, j) => j !== i))}><Ic name="mdi:close" size={16} /></button>
+          <IconButton variant="quiet" size="sm" label="Remove entry" icon="mdi:close" onClick={() => onChange(entries.filter((_, j) => j !== i))} />
         </div>
       ))}
       <div className="gp-bias-guide">
@@ -135,7 +136,7 @@ export function LogitBiasManager({ entries, model, onChange }: { entries: BiasEn
         <p><b>Import/Export:</b> Save your logit bias configurations as JSON files and share them or reuse them across different presets.</p>
         <p><b>Provider support:</b> OpenAI, OpenRouter, llama.cpp, Ollama, and OpenAI-compatible APIs. Not supported by Anthropic (Claude) or Google (Gemini). Words are tokenized only for models whose tokenizer Bunraku carries (OpenAI&apos;s).</p>
       </div>
-      <button type="button" className="gp-bias-rawtoggle" aria-expanded={raw} onClick={() => setRaw(!raw)}>Raw JSON (advanced)<Ic name={raw ? "mdi:chevron-up" : "mdi:chevron-down"} size={14} /></button>
+      <Button variant="quiet" size="sm" aria-expanded={raw} onClick={() => setRaw(!raw)}>Raw JSON (advanced)<Ic name={raw ? "mdi:chevron-up" : "mdi:chevron-down"} size={14} /></Button>
       {raw && <RawJson entries={entries} model={m} onChange={onChange} />}
     </div>
   );

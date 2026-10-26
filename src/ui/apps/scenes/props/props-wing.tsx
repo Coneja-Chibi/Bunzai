@@ -9,6 +9,7 @@
 import { useEffect, useState, type JSX } from "react";
 import type { Chat } from "../../../../stage/contracts/chat-store";
 import type { AppContext } from "../../../app-contract";
+import { Button, Chip, IconButton } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { TRACKER_PROP_PREFIX } from "../../../../stage/contracts/chat-store";
 import { isTrackerModule, refreshSpecOf, subsOf } from "../../../../core/trackers";
@@ -63,7 +64,7 @@ export function PropsWing({ list, load, onToggle, onRetry, prefs, host }: {
     return (
       <div className="wbody">
         <header className="hero bad"><span className="hi"><Ic name="lucide:circle-alert" size={20} /></span><div><div className="eb">Props Error</div><h2>Could not <em>load</em></h2><p>{load.why}</p></div>
-          <div className="hero-tools"><button type="button" className="tbtn" title="Try again" onClick={onRetry}><Ic name="lucide:refresh-cw" size={14} /></button></div>
+          <div className="hero-tools"><IconButton size="sm" label="Try again" icon="lucide:refresh-cw" onClick={onRetry} /></div>
         </header>
       </div>
     );
@@ -78,7 +79,7 @@ export function PropsWing({ list, load, onToggle, onRetry, prefs, host }: {
   if (opened && host) {
     return (
       <div className="wbody pw" data-open={opened.id} data-part="scene.props.panel">
-        <button type="button" className="pw-back" onClick={() => setOpen(null)}><Ic name="lucide:chevron-left" size={14} /> Props</button>
+        <div className="pw-back"><Button variant="quiet" size="sm" icon="lucide:chevron-left" onClick={() => setOpen(null)}>Props</Button></div>
         <PopoutSlot kind={opened.panel!} ctx={host.ctx} chat={host.chat} {...(host.onChat ? { onChat: host.onChat } : {})} />
       </div>
     );
@@ -95,7 +96,7 @@ export function PropsWing({ list, load, onToggle, onRetry, prefs, host }: {
           <div><div className="eb">Scene Augmentations</div><h2>Stage<em>Props</em></h2>
             <p>Optional scene systems live here. Toggle the ones you want active; their wing icons and deeper panels appear only when enabled.</p></div>
         </header>
-        <button type="button" className="pw-tipbtn" aria-pressed={tips} title={`${tips ? "Disable" : "Enable"} detailed Stageprops tooltips`} onClick={setTipsAndSave}>Tooltips {tips ? "On" : "Off"}</button>
+        <div className="pw-tipbtn"><Chip pressed={tips} title={`${tips ? "Disable" : "Enable"} detailed Stageprops tooltips`} onClick={setTipsAndSave}>Tooltips {tips ? "On" : "Off"}</Chip></div>
       </div>
       <div className="pw-label">Built-In Props</div>
       <div className="pw-list">

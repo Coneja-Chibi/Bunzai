@@ -71,13 +71,15 @@ async function mount(tab: "wing" | "settings" = "wing"): Promise<void> {
   for (let i = 0; i < 3; i++) await settle(flushSync);
 }
 const tabBtn = (label: string): HTMLElement => qa('[role="tab"]').find((t) => t.textContent === label)!;
-const sub = (label: string): HTMLElement => qa(".cp-cat .subs button").find((b) => b.textContent === label)!;
+const sub = (label: string): HTMLElement => qa('.cp-cat [role="tab"]').find((b) => b.textContent === label)!;
 async function openTree(): Promise<void> {
   await press(flushSync, tabBtn("Browse"), 30);
   await waitFor(flushSync, () => q(".cp-cat"), "the catalogue");
   await press(flushSync, sub("TV Tree"), 30);
 }
-const rowOf = (label: string): HTMLElement => qa(".cp-nd, .cp-en").find((r) => r.querySelector("span")?.textContent === label)!;
+/** A row reads its name, then (on a branch) its entry count; a childless branch leads with a dot. */
+const nameOf = (r: Element): string => (r.textContent ?? "").replace(/^·/, "").replace(/\d+$/, "");
+const rowOf = (label: string): HTMLElement => qa("[data-node-id], [data-entry-id]").find((r) => nameOf(r) === label)!;
 const menu = (): HTMLElement | null => q(".cp-tmenu");
 const rightClick = async (el: HTMLElement): Promise<void> => { flushSync(() => props(el)["onContextMenu"]!({ preventDefault: () => undefined, clientX: 40, clientY: 40 })); await settle(flushSync); };
 const item = (label: string): HTMLElement => qa(".cp-tmenu button").find((b) => (b.textContent ?? "").includes(label))!;
@@ -97,13 +99,13 @@ describe("the TV Tree", () => {
     await waitFor(flushSync, () => q(".cp-dash"), "the dashboard");
     expect(text()).toMatch(/TV Tree . 3 nodes . depth 2/);
     await openTree();
-    expect(qa(".cp-nd").map((n) => n.querySelector("span")!.textContent)).toEqual(["Woods", "Marsh"]);
+    expect(qa("[data-node-id]").map((n) => nameOf(n))).toEqual(["Woods", "Marsh"]);
   });
 
   test("with no layout the derived tree shows, and a right-click on its branch still offers the menu", async () => {
     await mount();
     await openTree();
-    expect(qa(".cp-nd").map((n) => n.querySelector("span")!.textContent)).toEqual(["General"]);
+    expect(qa("[data-node-id]").map((n) => nameOf(n))).toEqual(["General"]);
     await rightClick(rowOf("General"));
     expect(menu()!.getAttribute("aria-label")).toBe("Tree Constraints");
   });
@@ -155,14 +157,14 @@ describe("the TV Tree", () => {
     await press(flushSync, item("Move to..."));
     const picker = [...doc().querySelectorAll<HTMLElement>(".cp-pick")].at(-1)!;
     expect(picker.textContent).toContain('Move "Alder" to...');
-    const names = [...picker.querySelectorAll(".list span")].map((s) => s.textContent);
+    const names = [...picker.querySelectorAll(".list [data-control=row]")].map((r) => (r.textContent ?? "").replace(/Classic$/, ""));
     expect(names).toEqual(["Birch", "Cedar", "Dogwood"]);
     flushSync(() => (([...picker.querySelectorAll<HTMLElement>(".list button")].find((b) => b.textContent?.includes("Cedar")))!).click());
     await settle(flushSync);
     expect(patches).toEqual([{ books: { b1: { tree: { pins: { e0: "e2" } } } } }]);
     expect(statuses).toContain('"Alder" moved under "Cedar".');
     await press(flushSync, rowOf("Marsh"), 10);
-    await waitFor(flushSync, () => qa(".cp-nd").find((n) => n.querySelector("span")?.textContent === "Pinned"), "the Pinned branch");
+    await waitFor(flushSync, () => qa("[data-node-id]").find((n) => nameOf(n) === "Pinned"), "the Pinned branch");
   });
 
   test("dragging an entry onto a branch files it there through the server; with no tree built it says so and calls nothing", async () => {
@@ -222,7 +224,7 @@ describe("Tree maintenance", () => {
 });
 
 describe("Settings", () => {
-  const advanced = async (): Promise<void> => { await press(flushSync, qa(".cps-views button").find((b) => b.textContent === "Advanced"), 30); };
+  const advanced = async (): Promise<void> => { await press(flushSync, qa("[aria-label=\"Settings view\"] button").find((b) => b.textContent === "Advanced"), 30); };
 
   test("Tree building shows the defaults and each row saves its own field", async () => {
     await mount("settings");
@@ -270,7 +272,7 @@ describe("Settings", () => {
     const sec = qa(".cps-sec").find((s) => s.querySelector("h3")?.textContent === "Import chat history")!;
     const sw = (label: string) => sec.querySelector<HTMLElement>(`[aria-label="${label}"]`)!;
     for (const l of ["Cross-chunk continuity", "Search", "Facts", "Narrative"]) expect(sw(l).getAttribute("aria-checked")).toBe("true");
-    expect(sec.querySelector(".cps-seg button.on")!.textContent).toBe("Compendium model");
+    expect(sec.querySelector(".cps-seg button[aria-pressed=\"true\"]")!.textContent).toBe("Compendium model");
     expect(sw("Tokens per chunk").getAttribute("min")).toBe("1000");
     expect(sw("Tokens per chunk").getAttribute("max")).toBe("32000");
     expect((sw("Tokens per chunk") as HTMLInputElement).value).toBe("6000");

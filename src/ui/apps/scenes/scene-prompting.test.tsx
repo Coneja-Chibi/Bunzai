@@ -127,7 +127,7 @@ describe("the Guides tab", () => {
     await press(flushSync, byLabel("Use Think first"));
     expect(patches.at(-1)).toEqual({ guides: ["Slow burn"] });
     typeInto(flushSync, host.querySelector("input[aria-label='Search guides']")!, "weld");
-    expect([...host.querySelectorAll(".pg-title")].map((t) => t.textContent)).toEqual(["Weld"]);
+    expect([...host.querySelectorAll(".pg-row [data-control='button']")].map((t) => t.textContent)).toEqual(["Weld"]);
   });
 
   test("two switches made before the first save has landed both stay on", async () => {
@@ -154,7 +154,7 @@ describe("the Guides tab", () => {
     await press(flushSync, byText("Append"));
     await press(flushSync, byText("Save"), 60);
     expect(saved).toEqual([{ title: "Night watch", content: "Mind the lamp.", type: "guide", category: "situational", role: "user", mode: "append", depth: 0, target: null, side: null, visible: true }]);
-    expect([...host.querySelectorAll(".pg-title")].map((t) => t.textContent)).toContain("Night watch");
+    expect([...host.querySelectorAll(".pg-row [data-control='button']")].map((t) => t.textContent)).toContain("Night watch");
     expect((host.querySelector("input[aria-label='Guide name']") as HTMLInputElement).value).toBe("Night watch");
   });
 

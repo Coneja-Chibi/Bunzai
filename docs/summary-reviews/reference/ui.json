@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:d28f2413a0f585dcd48a9669347e684c2fad067bc916676bcec4d91db6f3a510",
-  "semanticSummaryHash": "sha256:73f742223e34dd62dd025914cc5bc1cac9425a436616f1715ee53b748cf65d8d",
+  "sourceHash": "sha256:ea7b8bfbc71efa0575d4323418f70b5b18a4df81bfd8afa1b998a5472262e17d",
+  "semanticSummaryHash": "sha256:cfec053df2ed9ac36352df5f3d679acf04d728d30f2bf645254134697383d60d",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Checked dock section (z145, fixed, no reserve, Overlay after Settings, session-only hide) and Nodes view against Dock.tsx, bottom-dock.module.css, store.ts, TabStrip.tsx, nodes/*; no merge duplication",
-  "reviewedAt": "2026-10-26T00:22:31.922Z"
+  "notes": "tone sentence (ui.md:1565-1567) matches index.tsx tone props, data-tone and styles.module.css:69-72, Segmented item tone; summaries accurate.",
+  "reviewedAt": "2026-10-26T06:06:51.829Z"
 }

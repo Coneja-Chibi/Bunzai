@@ -11,6 +11,7 @@
  * takes the text, empty meaning a plain re-roll; Esc or Cancel leaves.
  */
 import { useEffect, useRef, useState, type JSX } from "react";
+import { Button, IconButton } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import type { AppContext } from "../../app-contract";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
@@ -85,7 +86,7 @@ export function SceneComposer({ api, chatId, prefs, persona, expandTick, name, c
         <div className="steer" data-part="scene.composer.steering" role="status">
           <b>Steering {label}</b>
           <span>Your next send becomes the regen instruction. Empty = re-roll without instruction.</span>
-          <button type="button" onClick={onCancelSteer}><Ic name="lucide:x" size={14} />Cancel</button>
+          <Button variant="quiet" size="sm" icon="lucide:x" onClick={onCancelSteer}>Cancel</Button>
         </div>
       )}
       <form className={`cap${connected ? "" : " off"}`} onSubmit={(e) => { e.preventDefault(); void submit(); }}>
@@ -99,12 +100,12 @@ export function SceneComposer({ api, chatId, prefs, persona, expandTick, name, c
             else if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void submit(); }
             else if (e.key === "ArrowUp" && draft === "" && !steering && !e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && onEditLast()) e.preventDefault();
           }} />
-        {showAiHint && <button type="button" className="hint" onClick={onOpenAiWing}>Open AI wing</button>}
+        {showAiHint && <Button variant="quiet" size="sm" onClick={onOpenAiWing}>Open AI wing</Button>}
         {busy
-          ? <button type="button" className="stop" aria-label="Stop" title="Stop" onClick={onStop}><Ic name="lucide:square" fill /></button>
+          ? <IconButton variant="danger" size="sm" label="Stop" icon={<Ic name="lucide:square" fill />} onClick={onStop} />
           : steering
-            ? <button type="submit" className="send" aria-label="Regenerate" title="Regenerate (ESC to cancel)" disabled={!connected}><Ic name="lucide:rotate-ccw" /></button>
-            : <button type="submit" className="send" aria-label="Send" disabled={!connected || draft.trim() === ""}><Ic name="lucide:send" /></button>}
+            ? <IconButton variant="primary" size="sm" type="submit" label="Regenerate" title="Regenerate (ESC to cancel)" icon="lucide:rotate-ccw" disabled={!connected} />
+            : <IconButton variant="primary" size="sm" type="submit" label="Send" icon="lucide:send" disabled={!connected || draft.trim() === ""} />}
       </form>
     </div>
   );

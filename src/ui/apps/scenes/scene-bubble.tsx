@@ -18,7 +18,7 @@
  * chunk elsewhere on the page, React's shallow prop compare skips a finished bubble entirely.
  */
 import { memo, type CSSProperties, type JSX } from "react";
-import { Ic } from "../../_shared/ic";
+import { Button, IconButton, MenuItem } from "../../components/button";
 import { DeleteMenu, type CutScope } from "./scene-cuts";
 import type { Speaker } from "../../../core/participants/roster";
 import { Prose } from "./prose";
@@ -138,51 +138,51 @@ function BubbleImpl(p: BubbleProps): JSX.Element {
           ) : p.editing !== undefined ? (
             <>
               <EditBox value={p.editing} onChange={(t) => p.onEditChange?.(p.id, t)} onSave={() => p.onEditSave?.(p.id)} onCancel={() => p.onEditCancel?.()} />
-              <div className="editrow"><button type="button" onClick={p.onEditCancel}>Cancel</button><button type="button" className="save" onClick={() => p.onEditSave?.(p.id)}>Save</button></div>
+              <div className="editrow"><Button variant="quiet" size="sm" onClick={p.onEditCancel}>Cancel</Button><Button variant="primary" size="sm" onClick={() => p.onEditSave?.(p.id)}>Save</Button></div>
             </>
           ) : (
             <>
               {noReply ? <p className="noreply">No reply text. The model returned only its thinking{p.finish === "length" ? ", and stopped at the token limit" : ""}.</p> : <Prose text={p.text} speakers={p.speakers} />}
               <div className={`acts${p.menu ? " held" : ""}`}>
-                {p.onEdit && <button type="button" className="edit" title="Edit" aria-label="Edit" onClick={() => p.onEdit?.(p.id)}><Ic name="lucide:pen-line" /></button>}
-                <button type="button" className="lucide:copy" data-state={copied ?? undefined} title={copyLabel} aria-label={copyLabel} onClick={copy}><Ic name={copied === "copied" ? "lucide:check" : copied === "failed" ? "lucide:x" : "lucide:copy"} /></button>
+                {p.onEdit && <IconButton variant="quiet" size="sm" data-part="scene.message.edit" label="Edit" icon="lucide:pen-line" onClick={() => p.onEdit?.(p.id)} />}
+                <IconButton variant="quiet" size="sm" data-part="scene.message.copy" data-state={copied ?? undefined} tone={copied === "copied" ? "var(--stage-ok)" : copied === "failed" ? "var(--stage-danger-text)" : undefined} label={copyLabel} icon={copied === "copied" ? "lucide:check" : copied === "failed" ? "lucide:x" : "lucide:copy"} onClick={copy} />
                 {(p.onRegenerate || p.onContinue || p.onAskAgain) && <span className="sep" aria-hidden="true" />}
-                {p.onRegenerate && <button type="button" className="gen" title="Regenerate as a new version" aria-label="Regenerate as a new version" disabled={p.busy} onClick={p.onRegenerate}><Ic name="lucide:rotate-ccw" /></button>}
-                {p.onContinue && <button type="button" className="gen cont" title="Continue generation" aria-label="Continue generation" disabled={p.busy} onClick={p.onContinue}><Ic name="lucide:play" /></button>}
-                {p.onAskAgain && <button type="button" className="gen" title="Ask again for a reply" aria-label="Ask again for a reply" disabled={p.busy} onClick={p.onAskAgain}><Ic name="lucide:rotate-ccw" /></button>}
+                {p.onRegenerate && <IconButton variant="quiet" size="sm" data-part="scene.message.regenerate" label="Regenerate as a new version" icon="lucide:rotate-ccw" disabled={p.busy} onClick={p.onRegenerate} />}
+                {p.onContinue && <IconButton variant="quiet" size="sm" data-part="scene.message.continue" tone="var(--stage-ok)" label="Continue generation" icon="lucide:play" disabled={p.busy} onClick={p.onContinue} />}
+                {p.onAskAgain && <IconButton variant="quiet" size="sm" data-part="scene.message.ask-again" label="Ask again for a reply" icon="lucide:rotate-ccw" disabled={p.busy} onClick={p.onAskAgain} />}
                 {(p.onHide || p.finalCut || p.onBranch || p.onRetake || p.onUndoEdit || p.onGuided || p.onExpand || p.onCorrect || p.onRemoveVersion) && <span className="sep" aria-hidden="true" />}
                 {p.onHide && (
-                  <button type="button" className={`hide${p.hidden ? " on" : ""}`} title={p.hidden ? "Show to AI (currently hidden)" : "Hide from AI"} aria-label={p.hidden ? "Show to AI (currently hidden)" : "Hide from AI"} aria-pressed={p.hidden === true} onClick={() => p.onHide?.(p.id)}><Ic name={p.hidden ? "lucide:eye-off" : "lucide:eye"} /></button>
+                  <IconButton variant="quiet" size="sm" data-part="scene.message.hide" tone={p.hidden ? "var(--stage-warn)" : undefined} label={p.hidden ? "Show to AI (currently hidden)" : "Hide from AI"} aria-pressed={p.hidden === true} icon={p.hidden ? "lucide:eye-off" : "lucide:eye"} onClick={() => p.onHide?.(p.id)} />
                 )}
-                {p.finalCut && p.onFinalCut && <button type="button" className={`fcut${p.finalCut.failed > 0 ? " bad" : ""}`} title={badgeLabel(p.finalCut)} aria-label={badgeLabel(p.finalCut)} onClick={() => p.onFinalCut?.(p.id)}><Ic name="lucide:scissors" /></button>}
+                {p.finalCut && p.onFinalCut && <IconButton variant="quiet" size="sm" data-part="scene.message.final-cut" data-bad={p.finalCut.failed > 0 || undefined} tone={p.finalCut.failed > 0 ? "var(--stage-warn)" : undefined} label={badgeLabel(p.finalCut)} icon="lucide:scissors" onClick={() => p.onFinalCut?.(p.id)} />}
                 {(p.onBranch || p.onRetake || p.onUndoEdit || p.onGuided || p.onExpand || p.onCorrect || p.onRemoveVersion) && (
                   <span className="hold">
-                    <button type="button" title="More message actions" aria-label="More message actions" aria-expanded={p.menu === "more" || p.menu === "history"} className={p.menu === "more" || p.menu === "history" ? "on" : undefined} onClick={() => toggle("more")}><Ic name="lucide:ellipsis" /></button>
+                    <IconButton variant="quiet" size="sm" label="More message actions" aria-expanded={p.menu === "more" || p.menu === "history"} icon="lucide:ellipsis" onClick={() => toggle("more")} />
                     {p.menu === "more" && (
                       <div className="menu" role="menu">
                         {p.onUndoEdit && (
                           <>
-                            <button type="button" role="menuitem" disabled={!p.historyCount} onClick={() => p.onUndoEdit?.(p.id)}><Ic name="lucide:rotate-ccw" size={14} />Undo last edit</button>
-                            <button type="button" role="menuitem" disabled={!p.historyCount} onClick={() => p.onHistory?.(p.id)}><Ic name="lucide:history" size={14} />Edit history{p.historyCount ? <span className="ct">{p.historyCount}</span> : null}</button>
+                            <MenuItem icon="lucide:rotate-ccw" disabled={!p.historyCount} onClick={() => p.onUndoEdit?.(p.id)}>Undo last edit</MenuItem>
+                            <MenuItem icon="lucide:history" disabled={!p.historyCount} hint={p.historyCount || undefined} onClick={() => p.onHistory?.(p.id)}>Edit history</MenuItem>
                           </>
                         )}
-                        {p.onBranch && <button type="button" role="menuitem" onClick={(e) => p.onBranch?.(p.id, e.shiftKey)}><Ic name="lucide:git-branch" size={14} />Branch from here</button>}
-                        {p.onRetake && <button type="button" role="menuitem" onClick={(e) => p.onRetake?.(p.id, e.shiftKey)}><Ic name="lucide:rotate-ccw" size={14} />Retake from here</button>}
+                        {p.onBranch && <MenuItem icon="lucide:git-branch" onClick={(e) => p.onBranch?.(p.id, e.shiftKey)}>Branch from here</MenuItem>}
+                        {p.onRetake && <MenuItem icon="lucide:rotate-ccw" onClick={(e) => p.onRetake?.(p.id, e.shiftKey)}>Retake from here</MenuItem>}
                         {(p.onGuided || p.onExpand || p.onCorrect) && (
                           <>
                             <hr className="menu-rule" />
                             <div className="sec">Writing tools</div>
-                            {p.onGuided && <button type="button" role="menuitem" disabled={p.busy === true} onClick={() => p.onGuided?.(p.id, p.guidance)}><Ic name="lucide:sparkles" size={14} />{p.guidance ? `Edit ${GUIDED.toLowerCase()}` : GUIDED}</button>}
-                            {p.onCorrect && <button type="button" role="menuitem" onClick={() => p.onCorrect?.(p.id, highlighted(p.text))}><Ic name="lucide:wand-sparkles" size={14} />{tool("correct")}</button>}
-                            {p.onExpand && <button type="button" role="menuitem" onClick={() => p.onExpand?.()}><Ic name="lucide:user" size={14} />{tool("expand-character")}</button>}
+                            {p.onGuided && <MenuItem icon="lucide:sparkles" disabled={p.busy === true} onClick={() => p.onGuided?.(p.id, p.guidance)}>{p.guidance ? `Edit ${GUIDED.toLowerCase()}` : GUIDED}</MenuItem>}
+                            {p.onCorrect && <MenuItem icon="lucide:wand-sparkles" onClick={() => p.onCorrect?.(p.id, highlighted(p.text))}>{tool("correct")}</MenuItem>}
+                            {p.onExpand && <MenuItem icon="lucide:user" onClick={() => p.onExpand?.()}>{tool("expand-character")}</MenuItem>}
                           </>
                         )}
                         {p.onRemoveVersion && (
                           <>
                             <hr className="menu-rule" />
-                            <button type="button" role="menuitem" className="danger" disabled={p.busy === true || !p.vCount || p.vCount < 2 || p.vIndex === undefined} title={p.vCount && p.vCount > 1 ? undefined : "A reply keeps at least one version"} onClick={() => p.onRemoveVersion?.(p.id)}>
-                              <Ic name="lucide:rotate-ccw" size={14} />{p.vCount && p.vCount > 1 && p.vIndex !== undefined ? `Remove version ${p.vIndex + 1} of ${p.vCount}` : "Remove this version"}
-                            </button>
+                            <MenuItem danger icon="lucide:rotate-ccw" disabled={p.busy === true || !p.vCount || p.vCount < 2 || p.vIndex === undefined} title={p.vCount && p.vCount > 1 ? undefined : "A reply keeps at least one version"} onClick={() => p.onRemoveVersion?.(p.id)}>
+                              {p.vCount && p.vCount > 1 && p.vIndex !== undefined ? `Remove version ${p.vIndex + 1} of ${p.vCount}` : "Remove this version"}
+                            </MenuItem>
                           </>
                         )}
                       </div>
@@ -193,7 +193,7 @@ function BubbleImpl(p: BubbleProps): JSX.Element {
                 {p.onCut && <span className="sep" aria-hidden="true" />}
                 {p.onCut && (
                   <span className="hold">
-                    <button type="button" title="Delete" aria-label="Delete" aria-expanded={p.menu === "delete"} className={`del${p.menu === "delete" ? " on" : ""}`} onClick={() => toggle("delete")}><Ic name="lucide:trash-2" /></button>
+                    <IconButton variant="danger" size="sm" data-part="scene.message.delete" label="Delete" aria-expanded={p.menu === "delete"} icon="lucide:trash-2" onClick={() => toggle("delete")} />
                     {p.menu === "delete" && <DeleteMenu onPick={(scope, skip) => p.onCut?.(p.id, scope, skip)} />}
                   </span>
                 )}

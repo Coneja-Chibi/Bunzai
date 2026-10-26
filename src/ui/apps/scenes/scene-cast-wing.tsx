@@ -12,6 +12,7 @@ import type { CharacterBody, CharacterVariant } from "../../../entities/characte
 import { emptyPersonaBody } from "../../../entities/persona";
 import { bodyOf, isRecord, str } from "../../../core/guards";
 import { type OpenScene, DEFAULT_PERSONA_PREF } from "../../../studio/scenes";
+import { Button } from "../../components/button";
 import { ApiHttpError } from "../../_shared/api-fetch";
 import { toErrorMessage } from "../../_shared/error-message";
 import { createAndOpenPiece } from "../library/new-piece";
@@ -176,7 +177,7 @@ export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, 
       {card && (isNewer(card) || card.latest === null) && <CardNotice card={card} onRevert={onRevert} />}
       {card && isNewer(card) && <div className="cw-upd"><UpdateBadge onClick={onUpdate} /></div>}
       {card && tab === "character" && !isNewer(card) && card.latest !== null && card.previous !== null && (
-        <p className="cw-quiet" data-part="scene.cast.revert">Plays version {card.version}. <button type="button" onClick={onRevert}>Back to version {card.previous}</button></p>
+        <p className="cw-quiet" data-part="scene.cast.revert">Plays version {card.version}. <Button variant="quiet" size="sm" onClick={onRevert}>Back to version {card.previous}</Button></p>
       )}
       {busy && <p className="notice" role="status">A reply is being written. You can swap persona or save when it finishes.</p>}
       {problem && <p className="notice gone" role="alert">{problem}</p>}
@@ -207,7 +208,7 @@ export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, 
               <div className="cw cw-persona" data-part="scene.cast.persona">
                 <CastHero icon="mdi:account-circle-outline" eyebrow="Identity & Details" title="Your" emphasis="Persona" />
                 <div className="cw-pad"><div className="empty2"><b>You play as User</b><span>No persona is set, so the AI calls you User. Open the Casting Call to pick one, or make a new one.</span>
-                  <div className="cw-acts"><button type="button" className="go" onClick={() => setPicker(true)}>Casting Call</button><button type="button" onClick={() => setCreating(true)}>New persona</button></div></div></div>
+                  <div className="cw-acts"><Button variant="primary" onClick={() => setPicker(true)}>Casting Call</Button><Button onClick={() => setCreating(true)}>New persona</Button></div></div></div>
               </div>
             )
             : personaPiece.piece.state === "ready"
@@ -215,7 +216,7 @@ export function CastWing({ ctx, scene, busy, card, onScene, onUpdate, onRevert, 
                 onOpenPicker={() => setPicker(true)} onSetDefault={setDefault} />
               : <div className="cw-pad"><CastHero icon="mdi:account-circle-outline" eyebrow="Identity & Details" title="Your" emphasis="Persona" />
                 {personaPiece.piece.state === "gone" ? gone("persona", frozenName || "This persona") : personaPiece.piece.state === "failed" ? <p className="notice gone">{personaPiece.piece.why}</p> : <p className="notice">Opening the persona...</p>}
-                <div className="cw-acts"><button type="button" className="go" onClick={() => setPicker(true)}>Casting Call</button></div></div>
+                <div className="cw-acts"><Button variant="primary" onClick={() => setPicker(true)}>Casting Call</Button></div></div>
         )}
         {tab === "persona" && creating && <div className="cw-pad"><CastHero icon="mdi:account-circle-outline" eyebrow="New persona" title="Who will you" emphasis="play" /><NewPersona busy={working || busy} onCancel={() => setCreating(false)} onCreate={(i, andCast) => void create(i, andCast)} /></div>}
         {tab === "participants" && <ParticipantsTab ctx={ctx} scene={scene} />}

@@ -11,9 +11,6 @@ const SHARED = `
 .scs .bt-pips{display:flex;gap:4px;align-items:center}
 .scs .bt-pips i{width:8px;height:8px;background:var(--stage-line)}
 .scs .bt-pips i.now{width:16px;background:var(--stage-var)}
-.scs .bt-tabs button.on{border-bottom-color:var(--stage-danger-text);background:color-mix(in srgb,var(--stage-danger-text) 5%,transparent)}
-.scs .bt-new{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px dashed var(--stage-danger-edge);background:color-mix(in srgb,var(--stage-danger-text) 5%,transparent);color:var(--stage-mute);font:500 var(--text-control)/1.4 var(--font-body);cursor:pointer}
-.scs .bt-new:hover{color:var(--stage-danger-text);border-color:var(--stage-danger-text)}
 .scs .bt-enemy{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);background:color-mix(in srgb,var(--stage-panel) 60%,transparent)}
 .scs .bt-enemy:hover{border-color:color-mix(in srgb,var(--stage-card) 15%,transparent)}
 .scs .bt-enemy.now{border-color:var(--stage-var);background:color-mix(in srgb,var(--stage-var) 10%,transparent)}
@@ -26,16 +23,11 @@ const SHARED = `
 .scs .bt-tag{padding:1px 6px;background:color-mix(in srgb,var(--stage-card) 6%,transparent);color:var(--stage-soft);font:400 var(--text-meta)/1.4 var(--font-body)}
 .scs .bt-tag.boss{background:color-mix(in srgb,var(--stage-warn) 20%,transparent);color:var(--stage-warn);font-weight:700}
 .scs .bt-tags{display:flex;flex-wrap:wrap;gap:4px}
-.scs .bt-icon{display:grid;place-items:center;padding:6px;border:0;background:none;color:var(--stage-mute);cursor:pointer}
-.scs .bt-icon:hover{color:var(--stage-card)}
 .scs .bt-bar{height:8px;background:color-mix(in srgb,var(--stage-line) 50%,transparent)}
 .scs .bt-bar div{height:100%;transition:width .2s}
 .scs .bt-dmg{display:flex;gap:8px;padding:8px;border:1px solid var(--stage-line);background:var(--stage-black)}
 .scs .bt-dmg input,.scs .bt-add input,.scs .bt-add select,.scs .bt-dice-custom input{flex:1;min-width:0;padding:6px 10px;border:1px solid var(--stage-line);background:var(--stage-panel);color:var(--stage-card);font:400 var(--text-control)/1.4 var(--font-body)}
 .scs .bt-dmg input:focus,.scs .bt-add input:focus,.scs .bt-dice-custom input:focus{outline:none;border-color:var(--stage-var)}
-.scs .bt-go,.scs .bt-cancel,.scs .bt-dice-custom button{padding:6px 12px;border:0;font:400 var(--text-control)/1.4 var(--font-body);cursor:pointer}
-.scs .bt-go{background:color-mix(in srgb,var(--stage-danger-text) 20%,transparent);color:var(--stage-danger-text)}
-.scs .bt-cancel{background:var(--stage-panel);color:var(--stage-soft)}
 .scs .bt-add{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--stage-line);background:var(--stage-panel)}
 .scs .bt-add h3{margin:0;font:600 1.125rem/1.4 var(--font-body);color:var(--stage-card)}
 .scs .bt-add label{display:flex;flex-direction:column;gap:4px;font:400 var(--text-meta)/1.4 var(--font-body);color:var(--stage-mute)}
@@ -44,7 +36,6 @@ const SHARED = `
 .scs .bt-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .scs .bt-turns-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font:500 var(--text-control)/1.4 var(--font-body);color:var(--stage-card)}
 .scs .bt-turns-head span{display:inline-flex;align-items:center;gap:8px}
-.scs .bt-turns-head .bt-go{display:inline-flex;align-items:center;gap:4px;font-size:var(--text-meta)}
 .scs .bt-turn{display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:6px 8px;border:1px solid transparent;background:color-mix(in srgb,var(--stage-panel) 40%,transparent);font:400 var(--text-control)/1.4 var(--font-body);color:var(--stage-soft)}
 .scs .bt-turn i{width:20px;height:20px;background:var(--stage-line)}
 .scs .bt-turn.now{border-color:var(--stage-var);background:color-mix(in srgb,var(--stage-var) 20%,transparent);color:var(--stage-card)}
@@ -54,18 +45,12 @@ const SHARED = `
 .scs .bt-empty small{display:block;color:var(--stage-line)}
 .scs .bt-empty p{margin:8px 0 4px;color:var(--stage-mute)}
 .scs .bt-log-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font:400 var(--text-control)/1.4 var(--font-body);color:var(--stage-mute)}
-.scs .bt-log-head button{border:0;background:none;color:var(--stage-mute);font:400 var(--text-meta)/1.4 var(--font-body);cursor:pointer}
 .scs .bt-log ul,.scs .bt-hist ul{display:flex;flex-direction:column;gap:4px;margin:0;padding:0;list-style:none;max-height:400px;overflow:auto}
 .scs .bt-log li,.scs .bt-hist li{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;background:color-mix(in srgb,var(--stage-panel) 60%,transparent);font:400 var(--text-meta)/1.5 var(--font-mono);color:var(--stage-soft)}
 .scs .bt-dice{display:flex;flex-direction:column;gap:12px}
 .scs .bt-dice-title{display:flex;align-items:center;gap:8px;font:500 var(--text-control)/1.4 var(--font-body);color:var(--stage-card)}
-.scs .bt-d20{padding:14px;border:1px solid var(--stage-warn);background:color-mix(in srgb,var(--stage-warn) 10%,transparent);color:var(--stage-warn);font:700 var(--text-control)/1.4 var(--font-body);cursor:pointer}
 .scs .bt-dice-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
-.scs .bt-dice-row button{padding:8px 0;border:1px solid var(--stage-line);background:var(--stage-panel);color:var(--stage-soft);font:600 var(--text-meta)/1.4 var(--font-body);cursor:pointer}
-.scs .bt-dice-row button:hover{border-color:var(--stage-warn);color:var(--stage-warn)}
 .scs .bt-dice-custom{display:flex;gap:8px}
-.scs .bt-dice-custom button{background:var(--stage-panel);color:var(--stage-card)}
-.scs .bt-dice-custom button:disabled{opacity:.4;cursor:default}
 .scs .bt-roll{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px;border:1px solid var(--stage-line);background:var(--stage-panel)}
 .scs .bt-roll small{font:400 var(--text-meta)/1.4 var(--font-mono);color:var(--stage-mute)}
 .scs .bt-roll b{font:700 2.25rem/1.1 var(--font-body);color:var(--c)}
@@ -83,9 +68,6 @@ const ROLECALL = `
 .scs .bt-pips{display:flex;gap:2px;align-items:center}
 .scs .bt-pips i{width:8px;height:8px;border-radius:var(--rc-radius-full);background:var(--rc-zinc-700);transition:all .15s}
 .scs .bt-pips i.now{width:16px;background:var(--bk-role-select)}
-.scs .bt-tabs button.on::before{background:linear-gradient(to bottom,color-mix(in srgb,var(--stage-danger-text) 10%,transparent),transparent)}
-.scs .bt-new{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border:1px dashed color-mix(in srgb,var(--stage-danger-text) 20%,transparent);border-radius:var(--rc-radius-sm);background:linear-gradient(to bottom right,color-mix(in srgb,var(--stage-danger-text) 5%,transparent),transparent);color:var(--rc-zinc-400);font:500 var(--rc-text-sm)/1.43 var(--font-body);cursor:pointer;transition:all .15s}
-.scs .bt-new:hover{color:color-mix(in srgb,var(--stage-danger-text) 80%,var(--stage-white));border-color:color-mix(in srgb,var(--stage-danger-text) 40%,transparent);background:linear-gradient(to bottom right,color-mix(in srgb,var(--stage-danger-text) 10%,transparent),transparent)}
 .scs .bt-enemy{position:relative;display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);border-radius:var(--rc-radius-sm);background:color-mix(in srgb,var(--rc-zinc-800) 60%,transparent);transition:border-color .15s}
 .scs .bt-enemy.now{border-color:color-mix(in srgb,var(--bk-role-select) 40%,transparent);background:color-mix(in srgb,var(--bk-role-select) 10%,transparent);box-shadow:0 10px 15px -3px color-mix(in srgb,var(--bk-role-select) 10%,transparent),0 4px 6px -4px color-mix(in srgb,var(--bk-role-select) 10%,transparent)}
 .scs .bt-enemy.now::before{content:"";position:absolute;left:-4px;top:50%;width:4px;height:32px;transform:translateY(-50%);border-radius:var(--rc-radius-full);background:var(--bk-role-select)}
@@ -96,8 +78,6 @@ const ROLECALL = `
 .scs .bt-tag{padding:2px 6px;border-radius:var(--rc-radius);background:color-mix(in srgb,var(--stage-card) 5%,transparent);color:var(--rc-zinc-400);font:400 var(--rc-s-10px)/1.5 var(--font-body)}
 .scs .bt-tags .bt-tag{color:var(--rc-zinc-300)}
 .scs .bt-tag.boss{background:color-mix(in srgb,var(--stage-warn) 20%,transparent);color:var(--stage-warn);font-weight:500}
-.scs .bt-icon{display:grid;place-items:center;padding:6px;border:0;border-radius:var(--rc-radius);background:none;color:var(--rc-zinc-400);cursor:pointer;transition:color .15s,background-color .15s}
-.scs .bt-icon:hover{color:var(--stage-white);background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
 .scs .bt-bar{height:8px;overflow:hidden;border-radius:var(--rc-radius-full);background:color-mix(in srgb,var(--rc-zinc-700) 50%,transparent)}
 .scs .bt-bar div{height:100%;border-radius:var(--rc-radius-full);transition:width .3s cubic-bezier(.2,.9,.3,1.1)}
 .scs .bt-dmg{display:flex;gap:8px;padding:8px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);border-radius:var(--rc-radius-sm);background:color-mix(in srgb,var(--rc-zinc-900) 95%,transparent);backdrop-filter:blur(12px);box-shadow:0 20px 25px -5px color-mix(in srgb,var(--stage-black) 10%,transparent),0 8px 10px -6px color-mix(in srgb,var(--stage-black) 10%,transparent)}
@@ -105,18 +85,12 @@ const ROLECALL = `
 .scs .bt-dmg input{padding:6px 8px}
 .scs .bt-dice-custom input{background:color-mix(in srgb,var(--rc-zinc-800) 40%,transparent);border-color:color-mix(in srgb,var(--stage-card) 5%,transparent)}
 .scs .bt-dmg input:focus,.scs .bt-add input:focus,.scs .bt-dice-custom input:focus{outline:none;border-color:color-mix(in srgb,var(--bk-role-select) 50%,transparent)}
-.scs .bt-go,.scs .bt-cancel,.scs .bt-dice-custom button{padding:8px 12px;border:0;border-radius:var(--rc-radius);font:400 var(--rc-text-sm)/1.43 var(--font-body);cursor:pointer;transition:background-color .15s}
-.scs .bt-go:hover{background:color-mix(in srgb,var(--stage-danger-text) 30%,transparent)}
-.scs .bt-cancel{background:color-mix(in srgb,var(--rc-zinc-800) 50%,transparent);color:var(--rc-zinc-300)}
-.scs .bt-cancel:hover{background:var(--rc-zinc-800)}
 .scs .bt-add{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);border-radius:var(--rc-radius-sm);background:color-mix(in srgb,var(--rc-zinc-900) 95%,transparent);backdrop-filter:blur(12px)}
 .scs .bt-add h3{margin:0 0 4px;font:600 1.125rem/1.56 var(--font-body);color:var(--stage-white)}
 .scs .bt-add label{display:flex;flex-direction:column;gap:4px;font:400 var(--rc-text-xs)/1.33 var(--font-body);color:var(--rc-zinc-400)}
 .scs .bt-add .bt-check{flex-direction:row;align-items:center;gap:8px;font:400 var(--rc-text-sm)/1.43 var(--font-body);color:var(--rc-zinc-300)}
 .scs .bt-turns-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font:500 var(--rc-text-sm)/1.43 var(--font-body);color:var(--stage-white)}
 .scs .bt-turns-head svg{color:var(--bk-role-select-text)}
-.scs .bt-turns-head .bt-go{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:color-mix(in srgb,var(--bk-role-select) 20%,transparent);color:var(--bk-role-select-text);font-size:var(--rc-text-xs)}
-.scs .bt-turns-head .bt-go:hover{background:color-mix(in srgb,var(--bk-role-select) 30%,transparent)}
 .scs .bt-turn{display:flex;align-items:center;gap:8px;margin-bottom:4px;padding:6px 8px;border:1px solid transparent;border-radius:var(--rc-radius);background:color-mix(in srgb,var(--rc-zinc-800) 40%,transparent);font:400 var(--rc-text-sm)/1.43 var(--font-body);color:var(--rc-zinc-300);transition:border-color .15s}
 .scs .bt-turn:hover{border-color:color-mix(in srgb,var(--stage-card) 10%,transparent)}
 .scs .bt-turn i{width:20px;height:20px;border-radius:var(--rc-radius);background:var(--rc-zinc-700)}
@@ -127,22 +101,12 @@ const ROLECALL = `
 .scs .bt-empty p{margin:8px 0 4px;font:500 var(--rc-text-sm)/1.43 var(--font-body);color:var(--rc-zinc-400)}
 .scs .bt-log,.scs .bt-hist{display:flex;flex-direction:column;overflow:hidden;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);border-radius:var(--rc-radius-sm);background:color-mix(in srgb,var(--rc-zinc-800) 40%,transparent)}
 .scs .bt-log-head{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);font:500 var(--rc-text-sm)/1.43 var(--font-body);color:var(--stage-white)}
-.scs .bt-log-head button{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border:0;border-radius:var(--rc-radius);background:none;color:var(--rc-zinc-400);font:400 var(--rc-text-xs)/1.33 var(--font-body);cursor:pointer;transition:all .15s}
-.scs .bt-log-head button:hover{color:var(--stage-white);background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
 .scs .bt-log ul,.scs .bt-hist ul{display:flex;flex-direction:column;gap:4px;margin:0;padding:8px;list-style:none;max-height:400px;overflow:auto}
 .scs .bt-log li,.scs .bt-hist li{display:flex;justify-content:space-between;gap:8px;padding:4px 8px;border-radius:var(--rc-radius);font:400 var(--rc-text-xs)/1.625 var(--font-body);color:var(--rc-zinc-300)}
 .scs .bt-log li:hover,.scs .bt-hist li:hover{background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
 .scs .bt-dice-title{display:flex;align-items:center;gap:8px;font:500 var(--rc-text-sm)/1.43 var(--font-body);color:var(--stage-white)}
 .scs .bt-dice-title svg{color:var(--bk-role-select-text)}
-.scs .bt-d20{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;border:0;border-radius:var(--rc-radius);background:color-mix(in srgb,var(--bk-role-select) 20%,transparent);color:var(--bk-role-select-text);font:500 var(--rc-text-xs)/1.33 var(--font-body);cursor:pointer;transition:background-color .15s}
-.scs .bt-d20:hover{background:color-mix(in srgb,var(--bk-role-select) 30%,transparent)}
 .scs .bt-dice-row{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
-.scs .bt-dice-row button{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;border:1px solid color-mix(in srgb,var(--stage-card) 5%,transparent);border-radius:var(--rc-radius);background:color-mix(in srgb,var(--rc-zinc-800) 60%,transparent);color:var(--rc-zinc-400);font:400 var(--rc-s-10px)/1.5 var(--font-body);cursor:pointer;transition:all .15s}
-.scs .bt-dice-row button svg{color:var(--rc-zinc-300)}
-.scs .bt-dice-row button:hover{border-color:color-mix(in srgb,var(--bk-role-select) 50%,transparent);background:color-mix(in srgb,var(--bk-role-select) 10%,transparent)}
-.scs .bt-dice-custom button{padding:8px 16px;background:color-mix(in srgb,var(--bk-role-select) 20%,transparent);color:var(--bk-role-select-text)}
-.scs .bt-dice-custom button:hover{background:color-mix(in srgb,var(--bk-role-select) 30%,transparent)}
-.scs .bt-dice-custom button:disabled{opacity:.5;cursor:default}
 .scs .bt-roll{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px;border:1px solid color-mix(in srgb,var(--bk-role-select) 20%,transparent);border-radius:var(--rc-radius-sm);background:linear-gradient(to bottom right,color-mix(in srgb,var(--bk-role-select) 10%,transparent),color-mix(in srgb,var(--bk-role-select) 10%,transparent))}
 .scs .bt-roll small{font:400 var(--rc-text-xs)/1.33 var(--font-body);color:var(--rc-zinc-400)}
 .scs .bt-roll b{font:700 2.25rem/1.11 var(--font-body);color:var(--stage-white)}

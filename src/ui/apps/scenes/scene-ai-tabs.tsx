@@ -5,22 +5,21 @@
  * The Model tab stays mounted (hidden) while Generation shows, so its search and place in the list are kept.
  */
 import { useState, type JSX } from "react";
+import { Tabs } from "../../components/button";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import { Ic } from "../../_shared/ic";
 import { tabOr } from "./scene-wing-data";
 
 type Tab = "model" | "generation";
+const AI_TABS: readonly { value: Tab; label: string }[] = [{ value: "model", label: "Model" }, { value: "generation", label: "Generation" }];
 
 export function AiTabs({ model, generation, initialTab }: { model: JSX.Element; generation?: JSX.Element; initialTab?: string }): JSX.Element {
   const [tab, setTab] = useState<Tab>(() => tabOr(["model", "generation"], initialTab, "model"));
-  const card = (id: Tab, label: string): JSX.Element => (
-    <button type="button" role="tab" aria-selected={tab === id} className={tab === id ? "on" : ""} onClick={() => setTab(id)}><b>{label}</b></button>
-  );
   return (
     <>
       <nav className="fold wfold" data-part="scene.ai">
         <div className="crumb">Tools <i>/</i> <b>AI</b></div>
-        <div className="tabs" role="tablist" aria-label="AI sections">{card("model", "Model")}{card("generation", "Generation")}</div>
+        <Tabs label="AI sections" items={AI_TABS} value={tab} onChange={setTab} />
       </nav>
       <div className="wtab" hidden={tab !== "model"} data-part="scene.ai.model"><ThemeSlot id="scene.wing.ai.model" />{model}</div>
       {tab === "generation" && (

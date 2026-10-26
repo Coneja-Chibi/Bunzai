@@ -1,6 +1,7 @@
 /**
  * Starters pane: recipe cards with English preview + use this / undo.
  */
+import { Button } from "../../../components/button";
 import type { JSX, ReactNode } from "react";
 import { WorkshopEhead } from "./ehead";
 import { summarizeRecipe } from "./explain";
@@ -36,14 +37,7 @@ export function WorkshopStarters({ emptyTriggers, undo, onApply }: WorkshopStart
             >
               {r.title}
             </strong>
-            <button
-              type="button"
-              className={styles.addmini}
-              style={{ marginLeft: "auto" }}
-              onClick={() => onApply(r.id)}
-            >
-              use this
-            </button>
+            <Button size="sm" onClick={() => onApply(r.id)}>Use this</Button>
           </div>
           <div className={styles.body}>
             <p className={styles.hint}>{r.blurb}</p>

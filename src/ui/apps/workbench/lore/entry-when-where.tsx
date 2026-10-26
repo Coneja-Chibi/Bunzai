@@ -2,6 +2,7 @@
  * When & where island: each instrument band is its own collapsible <details>.
  * Open/closed state is owned by the page fold prefs (survives entry/session switches).
  */
+import { Segmented } from "../../../components/button";
 import type { JSX, SyntheticEvent } from "react";
 import type { LorebookEntry } from "../../../../entities/lorebook/schema";
 import { fieldVisible, type LoreWriteForProfile } from "../../../../core/lore";
@@ -271,23 +272,17 @@ export function EntryWhenWhere({
               <div className={styles.wwFoldBody}>
                 <div className={themed ? f.fields : styles.wwCtrl}>
                   {fieldOr(themed, { label: "Recursion" }, (
-                    <div className={styles.wwSeg} role="group" aria-label="Recursion mode">
-                      {(["normal", "prevent", "delay"] as const).map((mode) => (
-                        <button
-                          key={mode}
-                          type="button"
-                          className={
-                            recursionMode === mode
-                              ? `${styles.wwSegBtn} ${styles.wwSegOn}`
-                              : styles.wwSegBtn
-                          }
-                          aria-pressed={recursionMode === mode}
-                          onClick={() => setRecursion(mode)}
-                        >
-                          {mode === "normal" ? "Norm" : mode === "prevent" ? "Prev" : "Delay"}
-                        </button>
-                      ))}
-                    </div>
+                    <Segmented
+                      label="Recursion mode"
+                      size="sm"
+                      items={[
+                        { value: "normal", label: "Norm" },
+                        { value: "prevent", label: "Prev" },
+                        { value: "delay", label: "Delay" },
+                      ]}
+                      value={recursionMode}
+                      onChange={setRecursion}
+                    />
                   ), (c) => c)}
                   {recursionMode === "delay" && (
                     fieldOr(themed, { label: "Delay until level" }, (

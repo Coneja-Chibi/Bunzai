@@ -7,5 +7,4 @@ html[data-surface-app-room="sticker-tray"] [data-part="css-workshop.room"] {
   & [data-part="css-workshop.stage"] { grid-column: 1; grid-row: 1; }
   & [data-part="css-workshop.head"] { grid-column: 2; grid-row: 1; flex-direction: column; flex-wrap: nowrap; border: 3px solid var(--bk-line-strong); box-shadow: 4px 4px 0 0 var(--bk-line-strong); padding: .9rem; }
   & [data-part="css-workshop.head"] > div { flex-direction: column; align-items: stretch; width: 100%; }
-  & [data-part="css-workshop.head"] button { width: 100%; }
 }

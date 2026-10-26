@@ -15,24 +15,7 @@
   padding: 0;
   gap: 0;
 }
-.newPackBtn {
-  font-family: var(--font-body);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid var(--control-boundary, var(--edge));
-  background: var(--face, var(--panel));
-  color: var(--text);
-  min-height: 2.25rem;
-  padding: 0.45rem 0.75rem;
-  cursor: pointer;
-  margin: 0;
-}
-.newPackBtn:hover {
-  border-color: var(--focus-ring, var(--accent));
-  color: var(--text);
-}
+
 .stage {
   position: relative;
   flex: 1;
@@ -188,15 +171,7 @@
   gap: 0.6rem;
   margin-top: 1.25rem;
 }
-.libraryBtn {
-  min-height: 2.25rem;
-  padding: 0.45rem 0.85rem;
-  border: 1px solid var(--action-primary);
-  background: var(--action-primary);
-  color: var(--action-primary-fg);
-  font: 600 var(--text-control)/1.2 var(--font-body);
-  cursor: pointer;
-}
+
 /* the recents rail: a low deck of recently imported/opened pieces, offered as "bring one up" */
 .recents {
   flex: none;
@@ -204,35 +179,7 @@
   flex-direction: column;
   gap: 0.4rem;
 }
-.rlabel {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  background: none;
-  border: none;
-  padding: 0;
-  width: 100%;
-  cursor: pointer;
-  text-align: left;
-}
-.rlabel:hover {
-  color: var(--text-soft);
-}
-.rlabel .rtog {
-  margin-left: auto;
-  color: var(--text-soft, var(--text-dim));
-  font-weight: 600;
-}
-.rlabel:hover .rtog {
-  color: var(--text-dim);
-}
-.rlabel .pip {
+.recents .pip {
   width: 8px;
   height: 8px;
   background: var(--accent);
@@ -244,26 +191,12 @@
   overflow-x: auto;
   padding: 0.1rem 0 0.35rem;
 }
-.rcard {
+.strip > [data-control="card"] {
   flex: none;
   width: clamp(3rem, 7vw, 4.4rem);
-  cursor: pointer;
-  background: var(--stage-panel);
-  border: 3px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--a, var(--rose));
-  padding: 0;
-  font: inherit;
-  text-align: left;
-  transition: transform 0.12s ease-out, box-shadow 0.12s ease-out;
-}
-.rcard:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 0 var(--a, var(--rose));
 }
 .rcov {
-  aspect-ratio: 2 / 3;
   background: var(--a, var(--rose));
-  border-bottom: 3px solid var(--stage-black);
   background-size: cover;
   background-position: center top;
   display: flex;
@@ -277,16 +210,6 @@
   color: var(--stage-ink);
   opacity: 0.82;
   line-height: 0.7;
-}
-.rnm {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control, 0.875rem);
-  color: var(--stage-card);
-  padding: 0.22rem 0.3rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 @container (max-width: 40rem) {
   .prosc {

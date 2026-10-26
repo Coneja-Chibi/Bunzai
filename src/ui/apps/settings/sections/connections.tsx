@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState, type JSX } from "react";
 import { apiFetchJson } from "../../../_shared/api-fetch";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { protect } from "../../../_shared/protected-control";
+import { Button } from "../../../components/button";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import styles from "./connections.module.css";
 
@@ -170,9 +171,9 @@ function ConnectionsSection(): JSX.Element {
             {/* Key NAMES only; the values never come back from the server. */}
             {row.envKeys.length > 0 && <span className={styles.env}>{`env: ${row.envKeys.join(", ")}`}</span>}
             <span className={styles.acts}>
-              <button type="button" disabled={busy} onClick={() => { void test(row.id); }}>{"Test"}</button>
-              <button
-                type="button"
+              <Button size="sm" disabled={busy} onClick={() => { void test(row.id); }}>{"Test"}</Button>
+              <Button
+                size="sm"
                 disabled={busy}
                 onClick={() => {
                   void post("/api/mcp/servers", {
@@ -181,9 +182,9 @@ function ConnectionsSection(): JSX.Element {
                 }}
               >
                 {row.enabled ? "Disable" : "Enable"}
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
+                size="sm"
                 disabled={busy}
                 onClick={() => {
                   setEditingExisting(true);
@@ -191,10 +192,10 @@ function ConnectionsSection(): JSX.Element {
                 }}
               >
                 {"Edit"}
-              </button>
-              <button type="button" disabled={busy} onClick={() => { void post("/api/mcp/servers/remove", { id: row.id }); }}>
+              </Button>
+              <Button size="sm" variant="danger" disabled={busy} onClick={() => { void post("/api/mcp/servers/remove", { id: row.id }); }}>
                 {"Remove"}
-              </button>
+              </Button>
             </span>
             {tested[row.id] && <span className={styles.tested}>{tested[row.id]}</span>}
           </li>
@@ -202,14 +203,15 @@ function ConnectionsSection(): JSX.Element {
       </ul>
 
       {draft === null ? (
-        <button
-          type="button"
-          className={styles.add}
-          disabled={busy}
-          onClick={() => { setEditingExisting(false); setDraft(emptyDraft); }}
-        >
-          {"Add a server"}
-        </button>
+        <div className={styles.add}>
+          <Button
+            variant="primary"
+            disabled={busy}
+            onClick={() => { setEditingExisting(false); setDraft(emptyDraft); }}
+          >
+            {"Add a server"}
+          </Button>
+        </div>
       ) : (
         <div className={styles.form}>
           <label>
@@ -248,8 +250,8 @@ function ConnectionsSection(): JSX.Element {
             />
           </label>
           <div className={styles.formActs}>
-            <button type="button" disabled={busy} onClick={() => { void save(); }}>{"Save"}</button>
-            <button type="button" disabled={busy} onClick={() => { setDraft(null); setProblem(null); }}>{"Cancel"}</button>
+            <Button variant="primary" disabled={busy} onClick={() => { void save(); }}>{"Save"}</Button>
+            <Button variant="quiet" disabled={busy} onClick={() => { setDraft(null); setProblem(null); }}>{"Cancel"}</Button>
           </div>
         </div>
       )}

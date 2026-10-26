@@ -10,8 +10,8 @@ ${p} .rail{justify-content:flex-start;max-width:50%}
 ${p} .rail.l{left:0;right:auto}
 ${p} .rail.r{left:auto;right:0}
 ${p}.open-l .rail.l,${p}.open-r .rail.r{width:auto}
-${p} .wi{width:auto;min-width:2.5rem;height:2.5rem;flex:none;display:flex;justify-content:center;align-items:center;gap:.4rem;padding:0 .5rem;border-bottom:0}
-${p} .wi .tip,${p} .wi .lbl{display:none}
+${p} [data-control="tile"][data-wing]{width:auto;min-width:2.5rem;height:2.5rem;flex:none;display:flex;justify-content:center;align-items:center;gap:.4rem;padding:0 .5rem;border-bottom:0}
+${p} [data-control="tile"][data-wing] .tip,${p} [data-control="tile"][data-wing] .lbl{display:none}
 ${p} .scroll{padding-top:6.5rem}
 ${p} .wing-panel.l,${p} .wing-panel.r{top:calc(44px + 3.25rem)}
 `;

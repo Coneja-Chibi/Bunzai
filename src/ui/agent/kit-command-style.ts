@@ -20,8 +20,10 @@ export const KIT_LIST_STYLE = `
    listing nobody scans. */
 .kit-list__row{display:grid;grid-template-columns:minmax(6rem,auto) 1fr;gap:.55rem;align-items:baseline;
   padding:.16rem .2rem;text-align:left;background:none;border:0;font:inherit;width:100%}
-.kit-list__row--act{cursor:pointer}
-.kit-list__row--act:hover,.kit-list__row--act:focus-visible{background:var(--kit-lift);outline:none}
+.kit-list__rows > [data-control="row"]{gap:.55rem;align-items:baseline;border-left:0;padding:.16rem .2rem;font:inherit;color:inherit}
+.kit-list__rows > [data-control="row"] > span:first-child{min-width:6rem}
+.kit-list__rows > [data-control="row"] > span:last-child > span{white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.kit-list__rows > [data-control="row"]:hover:not(:disabled),.kit-list__rows > [data-control="row"]:focus-visible{background:var(--kit-lift);outline:none}
 /* Kit's CLI signature: a bright key, a muted label. */
 .kit-list__key{font-family:var(--font-mono);font-size:.76rem;color:var(--kit-bright);
   overflow-wrap:anywhere}
@@ -75,11 +77,11 @@ export const KIT_SLASH_STYLE = `
 .kit-slash__head{font-family:var(--font-mono);font-size:var(--text-meta);letter-spacing:.08em;
   text-transform:uppercase;color:var(--kit-quiet);padding:.25rem .45rem;
   border-bottom:1px solid var(--kit-seam)}
-.kit-slash__row{display:grid;grid-template-columns:minmax(5.5rem,auto) 1fr;gap:.5rem;
-  align-items:baseline;padding:.22rem .45rem;text-align:left;background:none;border:0;font:inherit;
-  cursor:pointer;width:100%}
+.kit-slash [data-control="menuitem"]{grid-template-columns:minmax(5.5rem,auto) 1fr;gap:.5rem;
+  align-items:baseline;padding:.22rem .45rem;font:inherit;color:inherit}
+.kit-slash [data-control="menuitem"] > span:first-child{display:none}
 /* The highlight is the raised band, which is what Kit lifts an active list row with. */
-.kit-slash__row--on{background:var(--kit-lift)}
+.kit-slash [data-control="menuitem"][aria-selected="true"],.kit-slash [data-control="menuitem"]:hover:not(:disabled){background:var(--kit-lift)}
 .kit-slash__word{font-family:var(--font-mono);font-size:var(--text-control);color:var(--kit-bright)}
 .kit-slash__say{font-size:var(--text-body);color:var(--kit-quiet);overflow-wrap:anywhere}
 `;

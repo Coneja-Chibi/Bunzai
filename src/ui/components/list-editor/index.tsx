@@ -5,6 +5,7 @@
  * on. Give it the item field schema and the array; it hands back the next array. No bespoke list code
  * per module. Composes FieldForm.
  */
+import { Button } from "../button";
 import type { JSX } from "react";
 import { FieldForm, type FormField } from "../field-form";
 import styles from "./styles.module.css";
@@ -41,16 +42,18 @@ export function ListEditor({ items, fields, onChange, addLabel, itemTitle, makeI
         <div className={styles.item} key={i}>
           <div className={styles.ihead}>
             <span className={styles.ititle}>{titleOf(it, i)}</span>
-            <button type="button" className={styles.rm} onClick={() => removeItem(i)}>
-              remove
-            </button>
+            <Button size="sm" variant="danger" onClick={() => removeItem(i)}>
+              Remove
+            </Button>
           </div>
           <FieldForm fields={fields} value={it} onChange={(key, v) => editItem(i, key, v)} />
         </div>
       ))}
-      <button type="button" className={styles.add} onClick={add}>
-        {addLabel ?? "+ add"}
-      </button>
+      <div className={styles.add}>
+        <Button size="sm" onClick={add}>
+          {addLabel ?? "+ add"}
+        </Button>
+      </div>
     </div>
   );
 }

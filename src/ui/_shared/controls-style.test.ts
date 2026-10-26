@@ -23,7 +23,7 @@ test("each rule is scoped to a variant root attribute; element rules exclude the
 });
 
 test("square, token-only, focus-safe, and no control hidden", () => {
-  expect(variantCssProblems(CONTROLS_STYLE, /^html\[data-surface-ui-controls="[a-z]+"\]/, /(button|input|select|textarea|\.stamp)\b/)).toEqual([]);
+  expect(variantCssProblems(CONTROLS_STYLE, /^html\[data-surface-ui-controls="[a-z]+"\]/, /(button|input|select|textarea)\b|\[data-control\]/)).toEqual([]);
 });
 
 test("installControlsStyle paints one style element, once", async () => {

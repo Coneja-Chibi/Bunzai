@@ -4,6 +4,7 @@
  * block manuscript. The settings card, the row expansion, the toolbar and the right rail land in
  * the following P4 slices; this one makes a real, editable preset where the P1 stub was.
  */
+import { Tabs } from "../../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type ReactNode } from "react";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
 import { useAccentVars } from "../../../_shared/use-scoped-accents";
@@ -358,19 +359,8 @@ export function PresetEditorView({ entity, revision, ctx, piece, topRight }: Pre
   </div>;
   /* the rail: per-BLOCK truth (RC's panel) or whole-PRESET truth (the engine's build) */
   const railPane = <aside ref={railRef} className={s.sidebar} aria-label="Preset rail">
-    <div className={s.railTabs} role="tablist" aria-label="Rail view">
-      {RAIL_TABS.map((t) => (
-        <button
-          key={t.id}
-          type="button"
-          role="tab"
-          aria-selected={rail === t.id}
-          className={`${s.railTab} ${rail === t.id ? s.railTabOn : ""}`}
-          onClick={() => setRail(t.id)}
-        >
-          {t.label}
-        </button>
-      ))}
+    <div className={s.railTabs}>
+      <Tabs label="Rail view" items={RAIL_TABS.map((t) => ({ value: t.id, label: t.label }))} value={rail} onChange={setRail} />
     </div>
 
     {rail === "edit" ? (

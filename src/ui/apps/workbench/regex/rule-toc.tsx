@@ -4,6 +4,7 @@
  * toggle and the slow chip are placeholders for later slices (bulk ops / persisted telemetry) - shown
  * disabled/absent rather than faked, so the TOC never lies about state it does not have.
  */
+import { Button, Chip, ListRow } from "../../../components/button";
 import { useCallback, useEffect, useRef, type JSX, type KeyboardEvent } from "react";
 import type { RegexRule } from "../../../../entities/regex/schema";
 import { doesLine } from "./does-line";
@@ -49,14 +50,7 @@ export function RuleToc({ rules, focusedId, styles, onSelect, onAdd, slowIds }: 
     <aside className={styles.toc}>
       <p className={styles.tocTitle}>
         Rules
-        <button
-          type="button"
-          className={styles.selMode}
-          disabled
-          title="Bulk select comes in a later slice"
-        >
-          Select
-        </button>
+        <Chip disabled title="Bulk select comes in a later slice">Select</Chip>
       </p>
 
       <div className={styles.rows} ref={scrollRef} onFocus={onFocus} onKeyDown={onListKeyDown}>
@@ -66,32 +60,25 @@ export function RuleToc({ rules, focusedId, styles, onSelect, onAdd, slowIds }: 
             if (!rule) return null;
             const on = focusedId === rule.id;
             return (
-              <button
+              <ListRow
                 key={rowKeys[item.index]}
                 ref={virtualizer.measureElement}
                 data-index={item.index}
                 data-pick={rowKeys[item.index]}
-                type="button"
-                className={on ? `${styles.trow} ${styles.trowOn} ${styles.virtualRow}` : `${styles.trow} ${styles.virtualRow}`}
-                style={{ transform: `translateY(${String(item.start)}px)` }}
+                vars={{ "--row-y": `${String(item.start)}px` }}
+                selected={on}
                 aria-pressed={on}
                 onClick={() => onSelect(rule.id)}
-              >
-                <span className={styles.trowName}>
-                  <span className={rule.enabled ? `${styles.pip} ${styles.pipOn}` : `${styles.pip} ${styles.pipOff}`} aria-hidden="true" />
-                  {rule.label.trim() || "Untitled rule"}
-                  {slowIds?.has(rule.id) && <span className={styles.trowSlow}>slow</span>}
-                </span>
-                <span className={styles.trowDoes}>{doesLine(rule)}</span>
-              </button>
+                leading={<span className={rule.enabled ? `${styles.pip} ${styles.pipOn}` : `${styles.pip} ${styles.pipOff}`} aria-hidden="true" />}
+                label={<>{rule.label.trim() || "Untitled rule"}{slowIds?.has(rule.id) && <span className={styles.trowSlow}>slow</span>}</>}
+                subtitle={doesLine(rule)}
+              />
             );
           })}
         </div>
       </div>
 
-      <button type="button" className={styles.tocAdd} onClick={onAdd}>
-        + New rule
-      </button>
+      <Button size="sm" block onClick={onAdd}>+ New rule</Button>
     </aside>
   );
 }

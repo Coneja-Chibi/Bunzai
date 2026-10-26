@@ -1,29 +1,29 @@
 /**
  * Export dialog sheet extras (InkDialog owns overlay/sheet chrome).
  */
-.sheet {
+.sheet{
   max-width: 28rem;
 }
-.title {
+.title{
   font-family: var(--font-big);
   font-weight: 800;
   font-size: 1rem;
   margin: 0 0 0.35rem;
   letter-spacing: 0.02em;
 }
-.sub {
+.sub{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   color: var(--muted);
   margin: 0 0 0.9rem;
 }
-.chips {
+.chips{
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
   margin: 0 0 0.85rem;
 }
-.chip {
+.chip{
   font-family: var(--font-mono);
   font-size: var(--text-control);
   letter-spacing: 0.04em;
@@ -33,7 +33,7 @@
   color: var(--text);
   padding: 0.22rem 0.4rem;
 }
-.list {
+.list{
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -41,43 +41,13 @@
   max-height: 12rem;
   overflow: auto;
 }
-.opt {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.15rem;
-  text-align: left;
-  width: 100%;
-  background: var(--panel);
-  border: 2px solid var(--edge);
-  color: var(--text);
-  padding: 0.55rem 0.7rem;
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-.opt:hover {
-  border-color: var(--rose);
-}
-.optOn {
-  border-color: var(--rose);
-  box-shadow: 2px 2px 0 0 var(--edge);
-}
-.opt b {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-}
-.opt span {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  color: var(--muted);
-}
-.honesty {
+.honesty{
   border: 2px solid var(--edge);
   background: var(--panel);
   padding: 0.55rem 0.65rem;
   margin: 0 0 1rem;
 }
-.honesty h4 {
+.honesty h4{
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-meta);
@@ -86,49 +56,28 @@
   color: var(--muted);
   margin: 0 0 0.4rem;
 }
-.line {
+.line{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   line-height: 1.45;
   margin: 0.25rem 0;
   color: var(--text);
 }
-.lineKeep {
+.lineKeep{
   color: var(--muted);
 }
-.lineWarn {
+.lineWarn{
   color: var(--accent);
 }
-.lineDrop {
+.lineDrop{
   color: var(--stage-danger-text);
 }
-.actions {
+.actions{
   display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
 }
-.btn {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: var(--panel);
-  border: 2px solid var(--edge);
-  color: var(--text);
-  padding: 0.4rem 0.75rem;
-  cursor: pointer;
-}
-.btnPrimary {
-  background: var(--text);
-  color: var(--face);
-  border-color: var(--edge);
-}
-.btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.err {
+.err{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   color: var(--stage-danger-text);

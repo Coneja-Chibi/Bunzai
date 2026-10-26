@@ -7,12 +7,13 @@ import { useState, type ComponentProps, type JSX, type ReactNode } from "react";
 import { SceneArt } from "./scene-art";
 import { GalleryLightbox } from "./stage-gallery-lightbox";
 import { portraitItem } from "./stage-gallery-core";
+import { Tile } from "../../components/button";
 
 export function PortraitZoom({ chatId, snapshotVersion, name, children }: { chatId: string; snapshotVersion: number; name: string; children: ReactNode }): JSX.Element {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" className="pzoom" title="View portrait" aria-label={`View portrait of ${name}`} onClick={(e) => { e.stopPropagation(); setOpen(true); }}>{children}</button>
+      <Tile kind="thumb" size="fill" data-part="scene.portrait.zoom" title="View portrait" label={`View portrait of ${name}`} art={children} onClick={(e) => { e.stopPropagation(); setOpen(true); }} />
       {open && <span className="pzoom-dlg" onClick={(e) => e.stopPropagation()}><GalleryLightbox item={portraitItem(chatId, snapshotVersion, name)} onClose={() => setOpen(false)} /></span>}
     </>
   );

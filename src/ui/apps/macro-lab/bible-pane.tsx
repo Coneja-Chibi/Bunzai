@@ -12,6 +12,7 @@
  * Groups, names, descriptions and examples are the CATALOG's, shown as written. Nothing here
  * paraphrases an engine's own words, because a paraphrase is a claim we would then have to defend.
  */
+import { Chip, Disclosure } from "../../components/button";
 import { useMemo, useState, type JSX } from "react";
 import { MACRO_DIALECT_LABELS, type MacroDialect } from "../../../core/preset/macros";
 import { bibleFor, bibleSize, filterBible } from "./lab-core";
@@ -77,15 +78,12 @@ export function BiblePane({
             const isOpen = searching || open.has(group.name);
             return (
               <div key={group.name} className={styles.row}>
-                <button
-                  type="button"
-                  className={styles.groupHead}
-                  aria-expanded={isOpen}
+                <Disclosure
+                  open={isOpen}
                   onClick={() => toggle(group.name)}
-                >
-                  <span className={styles.token}>{group.name}</span>
-                  <span className={styles.verdict}>{group.macros.length}</span>
-                </button>
+                  label={<span className={styles.token}>{group.name}</span>}
+                  summary={<span className={styles.verdict}>{group.macros.length}</span>}
+                />
 
                 {isOpen ? (
                   <>
@@ -93,14 +91,12 @@ export function BiblePane({
                     <ul className={styles.entries}>
                       {group.macros.map((m) => (
                         <li key={m.macro} className={styles.entry}>
-                          <button
-                            type="button"
-                            className={styles.insert}
+                          <Chip
                             title={`Insert ${m.macro}`}
                             onClick={() => onInsert(m.macro)}
                           >
                             {m.macro}
-                          </button>
+                          </Chip>
                           <span className={styles.entryDesc}>{m.description}</span>
                           {m.example ? (
                             <span className={styles.example}>{`e.g. ${m.example}`}</span>

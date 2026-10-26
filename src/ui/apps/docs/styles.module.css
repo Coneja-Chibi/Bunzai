@@ -32,25 +32,6 @@
   border-bottom: var(--ink-border);
 }
 
-.mobileAction {
-  min-width: 4.25rem;
-  min-height: 2.75rem;
-  padding: 0.45rem 0.55rem;
-  color: var(--text);
-  background: var(--face);
-  border: var(--ink-border);
-  box-shadow: 2px 2px 0 0 var(--seam);
-  cursor: pointer;
-  font-family: var(--font-big);
-  font-size: var(--text-control);
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.mobileAction[aria-expanded="true"] { border-color: var(--accent); }
-.mobileAction:disabled { opacity: 0.42; cursor: default; box-shadow: none; }
-
 .mobileTitle { min-width: 0; text-align: center; }
 .mobileTitle b,
 .mobileTitle small {
@@ -128,25 +109,6 @@
   margin-bottom: var(--gap-m);
 }
 
-.shelf {
-  min-width: 0;
-  padding: 0.45rem 0.3rem;
-  color: var(--text-dim);
-  background: var(--face);
-  border: 2px solid var(--seam);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-}
-
-.shelf.on {
-  color: var(--stage-white);
-  background: var(--accent-deep); /* deep companion: 10px bold on bright accent missed AA */
-  border-color: var(--ink);
-  box-shadow: 2px 2px 0 0 var(--seam);
-}
-
 .group,
 .section { margin: 0; }
 
@@ -170,29 +132,6 @@
 
 .grp span { float: right; font-family: var(--font-mono); }
 .grp::marker { color: var(--accent); }
-
-.item {
-  display: block;
-  width: 100%;
-  margin: 1px 0;
-  padding: 0.35rem 0.55rem;
-  color: var(--text-soft);
-  background: none;
-  border: 0;
-  border-left: 3px solid transparent;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  text-align: left;
-}
-
-.item:hover { color: var(--text); background: var(--face); }
-.item.on {
-  color: var(--text);
-  background: var(--face);
-  border-left-color: var(--accent);
-  box-shadow: var(--stamp-x) var(--stamp-y) 0 0 var(--seam);
-}
 
 .noResults,
 .empty,
@@ -228,21 +167,7 @@
 }
 
 .crumb > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.github {
-  flex: none;
-  min-height: 2.5rem;
-  padding: 0.3rem 0.6rem;
-  color: var(--text);
-  background: var(--face);
-  border: var(--ink-border);
-  box-shadow: var(--stamp-x) var(--stamp-y) 0 0 var(--seam);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  text-transform: none;
-}
-
-.github:hover { transform: translate(-1px, -1px); }
+.github { flex: none; display: inline-flex; }
 .audience {
   display: inline-block;
   margin-bottom: 0.5rem;
@@ -359,24 +284,6 @@
   text-transform: uppercase;
 }
 
-.tocLink {
-  display: block;
-  width: 100%;
-  padding: 0.28rem 0 0.28rem 0.6rem;
-  color: var(--text-dim);
-  background: none;
-  border: 0;
-  border-left: 2px solid var(--seam);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  text-align: left;
-}
-
-.tocLink:hover { color: var(--text-soft); }
-.tocLink.sub { padding-left: 1.2rem; }
-.tocLink.on { color: var(--accent); border-left-color: var(--accent); }
-
 @container (min-width: 40rem) {
   .room {
     grid-template-columns: 15rem minmax(0, 1fr);
@@ -406,16 +313,14 @@
 :global(html[data-surface-ui-panel="gilt-frame"]) .toc {
   border-color: var(--chrome-structure);
 }
-:global(html[data-surface-ui-panel="gilt-frame"]) .mobileAction[aria-expanded="true"],
-:global(html[data-surface-ui-panel="gilt-frame"]) .shelf.on,
-:global(html[data-surface-ui-panel="gilt-frame"]) .item.on,
-:global(html[data-surface-ui-panel="gilt-frame"]) .tocLink.on {
+:global(html[data-surface-ui-panel="gilt-frame"]) .shelves [aria-pressed="true"],
+:global(html[data-surface-ui-panel="gilt-frame"]) .nav [data-control="row"][data-selected],
+:global(html[data-surface-ui-panel="gilt-frame"]) .toc [data-control="row"][data-selected] {
   color: var(--selection-fg);
   background: var(--selection);
   border-color: var(--selection);
 }
-:global(html[data-surface-ui-panel="gilt-frame"]) .search:focus,
-:global(html[data-surface-ui-panel="gilt-frame"]) .github:focus-visible {
+:global(html[data-surface-ui-panel="gilt-frame"]) .search:focus {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }

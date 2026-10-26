@@ -37,7 +37,7 @@ async function mount(initial: ChatPreset | null, provider: ProviderInfo | null =
   const GROUP_IDS: Record<string, string> = { "Nucleus Sampling": "nucleus", "Repetition Penalties": "penalties", "Output Constraints": "constraints", Advanced: "advanced" };
   const click = (el: Element | null | undefined): void => flushSync(() => (el as HTMLElement).click());
   const group = (title: string) => host.querySelector(`[data-part="scene.generation.group.${GROUP_IDS[title]}"]`) as HTMLElement;
-  const open = (title: string): void => { if (group(title).querySelector("[aria-expanded=false]")) click(group(title).querySelector(".gp-ghead")); };
+  const open = (title: string): void => { if (group(title).querySelector("[aria-expanded=false]")) click(group(title).querySelector("[data-control='disclosure']")); };
   const type = (el: HTMLTextAreaElement, value: string): void => {
     flushSync(() => {
       const set = Object.getOwnPropertyDescriptor(dom.window.HTMLTextAreaElement.prototype, "value")!.set!;
@@ -48,7 +48,7 @@ async function mount(initial: ChatPreset | null, provider: ProviderInfo | null =
   return { host, saves, click, group, open, type };
 }
 const own = (samplers: ChatPreset["samplers"] = {}): ChatPreset => ({ id: "p", toggles: {}, samplers });
-const counts = (host: HTMLElement) => [...host.querySelectorAll(".gp-gline small")].map((e) => e.textContent);
+const counts = (host: HTMLElement) => [...host.querySelectorAll(".gp-group:not(.gp-custom) > [data-control='disclosure'] small")].map((e) => e.textContent);
 
 describe("the groups", () => {
   test("four groups with RoleCall's counts and purposes, Nucleus open and the rest closed", async () => {
@@ -131,7 +131,7 @@ describe("a scene with no preset", () => {
 describe("Custom Request Parameters", () => {
   test("valid JSON saves, and blank text clears the field", async () => {
     const { host, click, type, saves } = await mount(own());
-    click(host.querySelector(".gp-custom .gp-ghead"));
+    click(host.querySelector(".gp-custom [data-control='disclosure']"));
     const body = host.querySelector<HTMLTextAreaElement>('textarea[aria-label="Include Body Parameters"]')!;
     type(body, '{"top_k": 40}');
     expect(saves.at(-1)!.samplers.customBody).toBe('{"top_k": 40}');
@@ -141,7 +141,7 @@ describe("Custom Request Parameters", () => {
 
   test("text that is not JSON, or sets a protected field, is said and not saved", async () => {
     const { host, click, type, saves } = await mount(own());
-    click(host.querySelector(".gp-custom .gp-ghead"));
+    click(host.querySelector(".gp-custom [data-control='disclosure']"));
     const body = host.querySelector<HTMLTextAreaElement>('textarea[aria-label="Include Body Parameters"]')!;
     type(body, "top_k: 40");
     expect(host.querySelector(".gp-custom .gp-hint.bad")?.textContent).toContain("not valid JSON");
@@ -152,7 +152,7 @@ describe("Custom Request Parameters", () => {
 
   test("an exclusion of a protected field is refused too", async () => {
     const { host, click, type, saves } = await mount(own());
-    click(host.querySelector(".gp-custom .gp-ghead"));
+    click(host.querySelector(".gp-custom [data-control='disclosure']"));
     type(host.querySelector<HTMLTextAreaElement>('textarea[aria-label="Exclude Body Parameters"]')!, "temperature\nmodel");
     expect(host.querySelector(".gp-custom .gp-hint.bad")?.textContent).toContain("model is a protected request field");
     expect(saves).toHaveLength(0);
@@ -200,7 +200,7 @@ describe("the Logit Bias manager", () => {
   test("the raw JSON path replaces the entries with raw-id entries and refuses a bad bias", async () => {
     const { host, open, click, type, saves } = await mount(withBias([entry("[7]", 5)]), null, {}, "gpt-4o");
     open("Output Constraints");
-    click([...host.querySelectorAll<HTMLButtonElement>(".gp-bias-rawtoggle")][0]);
+    click([...host.querySelectorAll<HTMLButtonElement>(".gp-bias button")].find((b) => b.textContent?.startsWith("Raw JSON")));
     const box = host.querySelector<HTMLTextAreaElement>('textarea[aria-label="Logit bias raw JSON"]')!;
     expect(JSON.parse(box.value)).toEqual({ "7": 5 });
     type(box, '{"1234": 900}');

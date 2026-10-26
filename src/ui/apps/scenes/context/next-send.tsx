@@ -5,6 +5,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Button, IconButton } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import { copyFormat, filterMessages, highlightParts, statusLine } from "./next-send-core";
@@ -25,13 +26,13 @@ export function NextSend({ state }: { state: ForecastState }): JSX.Element {
         <p>{statusLine(forecast ? { count: forecast.messages.length, tokens: forecast.tokens } : null, loading)}</p>
         <div>
           {loading && forecast && <span className="ns-upd"><Ic name="lucide:loader-circle" size={14} />Updating...</span>}
-          <button type="button" className="ns-copy" disabled={!forecast} onClick={copy}><Ic name={copied.value ? "lucide:check" : "lucide:copy"} size={14} />{copied.value ? "Copied!" : "Copy"}</button>
+          <Button size="sm" icon={copied.value ? "lucide:check" : "lucide:copy"} disabled={!forecast} onClick={copy}>{copied.value ? "Copied!" : "Copy"}</Button>
         </div>
       </div>
       <div className="ns-search">
         <Ic name="lucide:search" size={14} />
         <input type="text" aria-label="Search role or content" placeholder="Search role or content..." value={query} onChange={(e) => setQuery(e.target.value)} />
-        {query && <button type="button" aria-label="Clear search" onClick={() => setQuery("")}><Ic name="lucide:x" size={14} /></button>}
+        {query && <span className="ns-clear"><IconButton variant="quiet" size="sm" label="Clear search" icon="lucide:x" onClick={() => setQuery("")} /></span>}
         {forecast && query.trim() && <small>Showing {shown.length} of {forecast.messages.length} messages</small>}
       </div>
       <div className="ns-body">

@@ -21,6 +21,7 @@ import { entryTokens } from "./lore-core";
 import { LoreHelp, LoreNum, LoreSwitch } from "./lore-fields";
 import { CharacterFilter, CrossEntryBoost, Injection, SideEffects } from "./scene-lore-advanced";
 import { TriggerBox } from "./scene-lore-keys";
+import { Button, Chip, Disclosure, IconButton, MenuItem, Segmented } from "../../components/button";
 
 const LOGIC: readonly { value: SelectiveLogic; text: string }[] = [
   { value: "and_any", text: "Primary + any secondary matches" },
@@ -32,7 +33,7 @@ const LOGIC: readonly { value: SelectiveLogic; text: string }[] = [
 function Probability({ value, onChange }: { value: number; onChange(n: number): void }): JSX.Element {
   const [editing, setEditing] = useState(false);
   if (!editing) {
-    return <button type="button" className="wl-prob" title="Entry Probability. Chance that this entry activates after its triggers match. In simple mode, all triggers share this probability." aria-label="Entry probability" onClick={() => setEditing(true)}>{value}%</button>;
+    return <Chip data-part="scene.lore.probability" title="Entry Probability. Chance that this entry activates after its triggers match. In simple mode, all triggers share this probability." aria-label="Entry probability" onClick={() => setEditing(true)}>{value}%</Chip>;
   }
   return (
     <span className="wl-prob"><input type="number" min={0} max={100} autoFocus defaultValue={value} aria-label="Entry probability"
@@ -70,26 +71,26 @@ export function EntryEditor({ entry, globalScanDepth, boostCandidates, groups, a
           {advancedOpen && (
             <>
               <span className="wl-rel">
-                <button type="button" className={`wl-type${typeOpen ? " open" : ""}`} aria-haspopup="menu" aria-expanded={typeOpen} onClick={() => setTypeOpen(!typeOpen)} onBlur={() => setTimeout(() => setTypeOpen(false), 200)}>
-                  {entry.constant ? "Constant" : "Selective"}<Ic name="lucide:chevron-down" size={14} />
-                </button>
+                <Button data-part="scene.lore.type" size="sm" menu aria-expanded={typeOpen} onClick={() => setTypeOpen(!typeOpen)} onBlur={() => setTimeout(() => setTypeOpen(false), 200)}>
+                  {entry.constant ? "Constant" : "Selective"}
+                </Button>
                 <LoreHelp title="Entry Type" text="Constant entries are always injected into context. Selective entries are injected only when their keywords are found in chat history." />
                 {typeOpen && (
                   <div className="wl-dd r" role="menu">
-                    <button type="button" role="menuitem" className={entry.constant ? "" : "on"} onMouseDown={(e) => e.preventDefault()} onClick={() => { onPatch({ constant: false }); setTypeOpen(false); }}>Selective</button>
-                    <button type="button" role="menuitem" className={entry.constant ? "on" : ""} onMouseDown={(e) => e.preventDefault()} onClick={() => { onPatch({ constant: true }); setTypeOpen(false); }}>Constant</button>
+                    <MenuItem role="menuitemradio" checked={!entry.constant} onMouseDown={(e) => e.preventDefault()} onClick={() => { onPatch({ constant: false }); setTypeOpen(false); }}>Selective</MenuItem>
+                    <MenuItem role="menuitemradio" checked={entry.constant} onMouseDown={(e) => e.preventDefault()} onClick={() => { onPatch({ constant: true }); setTypeOpen(false); }}>Constant</MenuItem>
                   </div>
                 )}
               </span>
               {(() => {
                 const preserved = entry.metadata?.["preserve_during_standardize"] === true;
                 return (
-                  <button type="button" className={`wl-pre${preserved ? " on" : ""}`} aria-pressed={preserved}
+                  <Chip pressed={preserved}
                     aria-label={preserved ? "Preserved during standardize, click to allow rewrites" : "Preserve during standardize"}
                     title="Preserve During Standardization. When on, the Compendium's standardize run skips this entry entirely: its title, content, keys and metadata are never sent to the model for rewriting or splitting. Off (default): the run may classify, rewrite, split or rephrase it. On: it stays in classic form until you turn this off. Use it for a hand-curated entry whose exact wording matters."
                     onClick={() => onPatch({ metadata: { ...entry.metadata, preserve_during_standardize: !preserved } })}>
                     <Ic name="lucide:lock" size={14} />{preserved ? "Preserved" : "Preserve"}
-                  </button>
+                  </Chip>
                 );
               })()}
               <span className="wl-rel">
@@ -103,7 +104,7 @@ export function EntryEditor({ entry, globalScanDepth, boostCandidates, groups, a
             </>
           )}
           <span className="wl-tk" title="Token Estimate. Approximate token count for this entry content.">~{tokens}</span>
-          <button type="button" className="wl-x" aria-label="Close this entry panel" title="Close Panel. Closes this editor panel. The entry remains in the lorebook." onClick={onClose}><Ic name="lucide:x" size={16} /></button>
+          <IconButton variant="quiet" size="sm" icon="lucide:x" label="Close this entry panel" title="Close Panel. Closes this editor panel. The entry remains in the lorebook." onClick={onClose} />
         </div>
       </div>
 
@@ -111,9 +112,8 @@ export function EntryEditor({ entry, globalScanDepth, boostCandidates, groups, a
         <div>
           {advancedOpen && (
             <div className="wl-tm">
-              <button type="button" className={advancedKeys ? "" : "on"} onClick={() => onPatch({ triggerMode: "simple" })}>Simple</button>
-              <span className="sl">/</span>
-              <button type="button" className={advancedKeys ? "on" : ""} onClick={() => onPatch({ triggerMode: "advanced" })}>Advanced</button>
+              <Segmented label="Trigger mode" size="sm" items={[{ value: "simple", label: "Simple" }, { value: "advanced", label: "Advanced" }]}
+                value={advancedKeys ? "advanced" : "simple"} onChange={(triggerMode) => onPatch({ triggerMode })} />
               <LoreHelp title="Trigger Mode" text="Simple: all triggers share one probability. Advanced: each trigger has its own probability % and optional cooldown." />
               {advancedKeys && <em>per-trigger %</em>}
               {!advancedKeys && <Probability value={entry.probability} onChange={(probability) => onPatch({ probability })} />}
@@ -124,14 +124,14 @@ export function EntryEditor({ entry, globalScanDepth, boostCandidates, groups, a
             {advancedOpen && (
               <>
                 <div className="wl-lg">
-                  <button type="button" aria-haspopup="menu" aria-expanded={logicOpen} onClick={() => setLogicOpen(!logicOpen)} onBlur={() => setTimeout(() => setLogicOpen(false), 200)}>
-                    {entry.selectiveLogic.replace("_", " ").toUpperCase()} <Ic name="lucide:chevron-down" size={12} />
-                  </button>
+                  <Button data-part="scene.lore.logic" variant="quiet" size="sm" menu aria-expanded={logicOpen} onClick={() => setLogicOpen(!logicOpen)} onBlur={() => setTimeout(() => setLogicOpen(false), 200)}>
+                    {entry.selectiveLogic.replace("_", " ").toUpperCase()}
+                  </Button>
                   {logicOpen && (
                     <div className="wl-dd" role="menu">
                       {LOGIC.map((l) => (
-                        <button type="button" role="menuitem" key={l.value} className={entry.selectiveLogic === l.value ? "on" : ""} onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => { onPatch({ selectiveLogic: l.value }); setLogicOpen(false); }}>{l.value.replace("_", " ").toUpperCase()}<small>{l.text}</small></button>
+                        <MenuItem role="menuitemradio" key={l.value} checked={entry.selectiveLogic === l.value} description={l.text} onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => { onPatch({ selectiveLogic: l.value }); setLogicOpen(false); }}>{l.value.replace("_", " ").toUpperCase()}</MenuItem>
                       ))}
                     </div>
                   )}
@@ -156,10 +156,8 @@ export function EntryEditor({ entry, globalScanDepth, boostCandidates, groups, a
           </div>
         </div>
 
-        <button type="button" className="wl-adv" aria-expanded={advancedOpen} onClick={onToggleAdvanced}>
-          <span className="t"><b>{advancedOpen ? "Hide advanced settings" : "Show advanced settings"}</b><i>{advancedOpen ? "−" : "+"}</i></span>
-          <small>Order, timing, injection position, filters, and the rest of the machinery.</small>
-        </button>
+        <Disclosure data-part="scene.lore.advanced" open={advancedOpen} onClick={onToggleAdvanced} label={advancedOpen ? "Hide advanced settings" : "Show advanced settings"}
+          summary="Order, timing, injection position, filters, and the rest of the machinery." />
 
         {advancedOpen && (
           <>

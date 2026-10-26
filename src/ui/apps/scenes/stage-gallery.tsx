@@ -14,6 +14,7 @@ import { GalleryLightbox } from "./stage-gallery-lightbox";
 import { GALLERY_STYLE } from "./stage-gallery-style";
 import type { StageTab, StageTabProps } from "./stage-tabs";
 import { useStageGallery } from "./use-stage-gallery";
+import { Segmented } from "../../components/button";
 
 export function StageGallery({ ctx, chat, scene, onChat }: StageTabProps): JSX.Element {
   const gallery = useStageGallery(ctx, chat, scene);
@@ -39,9 +40,7 @@ export function StageGallery({ ctx, chat, scene, onChat }: StageTabProps): JSX.E
       <style>{GALLERY_STYLE}</style>
       {gallery.items.length > 0 && (
         <div className="sg-head">
-          <div className="sg-tabs" role="group" aria-label="Show">
-            {GALLERY_TABS.map((t) => <button type="button" key={t.id} aria-pressed={tab === t.id} onClick={() => setTab(t.id)}>{t.label}</button>)}
-          </div>
+          <Segmented label="Show" size="sm" items={GALLERY_TABS.map((t) => ({ value: t.id, label: t.label }))} value={tab} onChange={setTab} />
           <span className="sg-count">{countText(gallery.items.length)} in this scene</span>
         </div>
       )}

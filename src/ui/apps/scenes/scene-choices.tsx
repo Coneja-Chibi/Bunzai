@@ -10,6 +10,7 @@ import type { Chat } from "../../../stage/contracts/chat-store";
 import { buildPromptPeekMap, customizedCount } from "../../../core/preset/choice-stepper";
 import { PRESET_CHOICE_DEFAULTS_KEY } from "../../../core/preset/choices";
 import { recOr } from "../../../core/guards";
+import { Button } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { InkDialog } from "../../components/ink-dialog";
 import { ChoiceWalkthrough } from "./scene-choice-walkthrough";
@@ -39,7 +40,7 @@ export function ChoicesRow({ ctx, chat, body, choices }: { ctx: AppContext; chat
     <div className="ch-row-bar" data-part="scene.choices">
       <Ic name="lucide:sliders-horizontal" size={14} />
       <div><b>Choices</b><small>{customizedCount(groups, selections)} of {groups.length} customized</small></div>
-      <button type="button" className="pg-fold" onClick={() => setOpen(true)}>Open walkthrough</button>
+      <Button size="sm" onClick={() => setOpen(true)}>Open walkthrough</Button>
       {choices.error && <span className="ch-fail" role="alert">{choices.error}</span>}
       {offer && (
         <InkDialog onDismiss={() => setOffer(false)} ariaLabel="Preset walkthrough offer">
@@ -48,8 +49,8 @@ export function ChoicesRow({ ctx, chat, body, choices }: { ctx: AppContext; chat
             <h3>Set the <em>stage</em></h3>
             <p>This preset has options and a guided walkthrough. Set it up now?</p>
             <div className="row">
-              <button type="button" className="no" onClick={() => setOffer(false)}>Use defaults</button>
-              <button type="button" className="yes" autoFocus onClick={() => { setOffer(false); setOpen(true); }}>Walk me through</button>
+              <Button variant="quiet" onClick={() => setOffer(false)}>Use defaults</Button>
+              <Button variant="primary" autoFocus onClick={() => { setOffer(false); setOpen(true); }}>Walk me through</Button>
             </div>
           </div>
         </InkDialog>

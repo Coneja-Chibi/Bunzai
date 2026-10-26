@@ -90,7 +90,7 @@ let root: Root;
 let host: HTMLElement;
 type FlushSync = typeof import("react-dom")["flushSync"];
 const settle = async (flushSync: FlushSync, ms = 40): Promise<void> => { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); };
-const tiles = (): HTMLElement[] => [...dom.window.document.querySelectorAll<HTMLElement>(".sg-tile")];
+const tiles = (): HTMLElement[] => [...dom.window.document.querySelectorAll<HTMLElement>("[data-control='tile']")];
 const named = (text: string): HTMLButtonElement | undefined => [...dom.window.document.querySelectorAll("button")].find((b) => b.textContent?.trim() === text);
 
 async function mount(ctx: AppContext, scene = sceneOf(false)): Promise<FlushSync> {

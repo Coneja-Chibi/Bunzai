@@ -12,6 +12,7 @@ import { isEscapeClose } from "../../_shared/use-escape-key";
 import { dayStamp } from "./scene-meta-core";
 import type { TakeSummary } from "../../../studio/scenes";
 import { affordance, menuView } from "./scene-tree-core";
+import { Button, IconButton, ListRow } from "../../components/button";
 
 
 interface TakesMenuProps {
@@ -33,10 +34,10 @@ export function TakesControl({ open, onToggle, ...menu }: TakesMenuProps & { ope
   const sentence = affordance(original, others, active?.name);
   return (
     <span className="hold">
-      <button type="button" className="branch" aria-expanded={open} aria-haspopup="menu" aria-label={sentence} title={sentence} onClick={onToggle}>
-        <Ic name="lucide:film" size={14} />{original ? "Director's Cut" : active.name}
-        {others > 0 && <span className="cnt">{others + 1}</span>}<Ic name="lucide:chevron-down" size={12} />
-      </button>
+      <Button variant="quiet" size="sm" icon="lucide:film" menu tone="var(--bk-scene-accent-text, var(--bk-role-brand-text))" data-part="scene.takes.toggle" aria-expanded={open} aria-label={sentence} title={sentence} onClick={onToggle}>
+        {original ? "Director's Cut" : active.name}
+        {others > 0 && <span className="cnt">{others + 1}</span>}
+      </Button>
       {open && <TakesMenu {...menu} />}
     </span>
   );
@@ -64,13 +65,10 @@ export function TakesMenu({ takes, activeId, onSwitch, onRename, onDelete, onTre
             }} />
         </form>
       ) : (
-        <button type="button" className="tx" onClick={() => onSwitch(t.id)}>
-          <span className="tn">{t.name}</span>
-          <span className="meta">{meta(t)}</span>
-        </button>
+        <ListRow onClick={() => onSwitch(t.id)} label={t.name} subtitle={meta(t)} />
       )}
-      <button type="button" className="act" title="Rename" aria-label={`Rename ${t.name}`} onClick={() => setEditing({ id: t.id, name: t.name })}><Ic name="lucide:pencil" size={12} /></button>
-      <button type="button" {...protect("take-delete", "act x")} title="Delete take" aria-label={`Delete ${t.name}`} onClick={(e) => onDelete(t, e.shiftKey)}><Ic name="lucide:trash-2" size={12} /></button>
+      <IconButton variant="quiet" size="sm" icon="lucide:pencil" title="Rename" label={`Rename ${t.name}`} onClick={() => setEditing({ id: t.id, name: t.name })} />
+      <span {...protect("take-delete")}><IconButton variant="danger" size="sm" icon="lucide:trash-2" title="Delete take" label={`Delete ${t.name}`} onClick={(e) => onDelete(t, e.shiftKey)} /></span>
       {t.id === activeId && <span className="dot" />}
     </div>
   );
@@ -79,21 +77,15 @@ export function TakesMenu({ takes, activeId, onSwitch, onRename, onDelete, onTre
       <div className="hd"><b><Ic name="lucide:film" size={12} />Scene Takes</b><small>Switch between alternate versions</small></div>
       {original && (
         <div className="pad">
-          <button type="button" className={`take${original.id === activeId ? " main-on" : ""}`} onClick={() => onSwitch(original.id)}>
-            <span className="ic"><Ic name="lucide:clapperboard" size={14} /></span>
-            <span className="tx"><span className="tn">Original Take <span className="chip">Main</span></span><span className="meta">The original scene</span></span>
-            {original.id === activeId && <span className="dot" />}
-          </button>
+          <ListRow selected={original.id === activeId} onClick={() => onSwitch(original.id)} leading={<Ic name="lucide:clapperboard" size={14} />}
+            label={<>Original Take <span className="chip">Main</span></>} subtitle="The original scene" trailing={original.id === activeId ? <span className="dot" /> : undefined} />
         </div>
       )}
       {parent && (
         <>
           <div className="sep">Parent Branch</div>
           <div className="pad">
-            <button type="button" className="take" onClick={() => onSwitch(parent.id)}>
-              <span className="ic"><Ic name="lucide:film" size={14} /></span>
-              <span className="tx"><span className="tn">{parent.name}</span><span className="meta">{meta(parent)}</span></span>
-            </button>
+            <ListRow onClick={() => onSwitch(parent.id)} leading={<Ic name="lucide:film" size={14} />} label={parent.name} subtitle={meta(parent)} />
           </div>
         </>
       )}
@@ -107,7 +99,7 @@ export function TakesMenu({ takes, activeId, onSwitch, onRename, onDelete, onTre
         ))}
       </div>
       <div className="foot">
-        {onTree && <button type="button" className="tree" onClick={onTree}><Ic name="lucide:git-branch" size={14} />View Full Branching Tree<Ic name="lucide:chevron-right" size={12} /></button>}
+        {onTree && <ListRow variant="picker" onClick={onTree} leading={<Ic name="lucide:git-branch" size={14} />} label="View Full Branching Tree" />}
         <span className="hint"><Ic name="lucide:lightbulb" size={12} />Create new takes with Branch from here on any message</span>
       </div>
     </div>
@@ -125,7 +117,7 @@ export function ForkDialog({ number, defaultName, retake, onCancel, onCreate }: 
           <label>Fork name<input autoFocus value={name} maxLength={80} onChange={(e) => setName(e.target.value)} /></label>
           <div className="box"><div className="t">This fork includes</div><ul><li>Every message up to and including message {number}</li><li>The scene&apos;s cast, as it is in this scene</li>{retake && <li>A new reply, written when the take opens</li>}</ul></div>
         </div>
-        <footer className="ft"><button type="button" onClick={onCancel}>Cancel</button><button type="submit" className="go">{retake ? "Retake" : "Create fork"}</button></footer>
+        <footer className="ft"><Button variant="quiet" onClick={onCancel}>Cancel</Button><Button variant="primary" type="submit">{retake ? "Retake" : "Create fork"}</Button></footer>
       </form>
     </InkDialog>
   );
@@ -137,7 +129,7 @@ export function DeleteTakeDialog({ take, onCancel, onConfirm }: { take: TakeSumm
       <div className="scn-sheet">
         <header className="hd"><div className="eb">Scene takes</div><h2>Delete this take</h2><p>{take.name}</p></header>
         <div className="bd"><p>This take and its {take.messageCount} {take.messageCount === 1 ? "message go" : "messages go"} to the Trash. You can restore it for 3 days.</p></div>
-        <footer className="ft"><button type="button" autoFocus onClick={onCancel}>Keep take</button><button type="button" className="red" onClick={onConfirm}>Delete take</button></footer>
+        <footer className="ft"><Button autoFocus onClick={onCancel}>Keep take</Button><Button variant="danger" onClick={onConfirm}>Delete take</Button></footer>
       </div>
     </InkDialog>
   );

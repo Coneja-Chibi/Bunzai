@@ -4,6 +4,7 @@
  * and up to ten detail lines. It only reads; nothing is written, and the results are not kept.
  */
 import { useState, type JSX } from "react";
+import { Button } from "../../../../../components/button";
 import { TOOL_ROUNDS_DEFAULT } from "../../../../../../core/assembly/tool-rounds";
 import { accessOf, runDiagnostics, type Diagnostic, type DiagnosticBook } from "../../../../../../core/compendium";
 import { presetWindow, turnWindow } from "../../../../../../core/assembly/request";
@@ -38,7 +39,7 @@ export function DiagnosticsSection({ ctx, chat, compendium, lore }: SectionProps
   };
   return (
     <SettingsSection id="diagnostics" title="Diagnostics" blurb="Health checks against this compendium: duplicate detection, tree freshness, orphaned recaps, configuration sanity, and so on. Results group by category and severity." dot="var(--stage-mute)">
-      <button type="button" className="cps-btn wide" disabled={running} onClick={() => void run()}>{running ? "Running..." : "Run Diagnostics"}</button>
+      <Button block disabled={running} onClick={() => void run()}>{running ? "Running..." : "Run Diagnostics"}</Button>
       {results && (
         <div className="cps-diag" aria-label="Diagnostic results">
           {results.map((r, i) => (

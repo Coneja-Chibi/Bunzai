@@ -2,7 +2,7 @@
   "generated": "2026-10-26",
   "targetChars": 90000,
   "totalPages": 119,
-  "totalSourceChars": 1448695,
+  "totalSourceChars": 1455123,
   "batches": [
     {
       "id": "batch-001",
@@ -382,14 +382,14 @@
     },
     {
       "id": "batch-005",
-      "sourceChars": 130689,
+      "sourceChars": 134665,
       "pages": [
         {
           "docId": "reference/components",
           "sourcePath": "docs/reference/components.md",
           "sidecarPath": "docs/summaries/reference/components.json",
-          "sectionCount": 2,
-          "sourceChars": 130689,
+          "sectionCount": 3,
+          "sourceChars": 134665,
           "status": "APPROVED"
         }
       ]
@@ -1032,14 +1032,14 @@
     },
     {
       "id": "batch-016",
-      "sourceChars": 248842,
+      "sourceChars": 251294,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 33,
-          "sourceChars": 248842,
+          "sourceChars": 251294,
           "status": "APPROVED"
         }
       ]

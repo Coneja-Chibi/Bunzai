@@ -13,7 +13,7 @@ import type {
 } from "../../../../entities/regex/schema";
 import { fieldVisible, type RegexWriteForProfile } from "../../../../core/regex";
 import { numOrNull } from "../../../../core/guards";
-import { ToggleSwitch } from "../../../components/toggle-switch";
+import { Toggle } from "../../../components/button";
 
 export interface FinePrintProps {
   rule: RegexRule;
@@ -88,7 +88,7 @@ export function FinePrint({ rule, rules, writeFor, styles, onPatch }: FinePrintP
         )}
 
         {showRunOnEdit && row("Run again when a message is edited", (
-          <ToggleSwitch size="sm" on={rule.runOnEdit === true} aria-label="Run again when a message is edited" onChange={() => onPatch({ runOnEdit: !rule.runOnEdit })} />
+          <Toggle size="sm" on={rule.runOnEdit === true} aria-label="Run again when a message is edited" onChange={() => onPatch({ runOnEdit: !rule.runOnEdit })} />
         ))}
 
         {showSubstitute && row("Macros in the find", (
@@ -123,11 +123,11 @@ export function FinePrint({ rule, rules, writeFor, styles, onPatch }: FinePrintP
         ))}
 
         {row("Replace only the first match", (
-          <ToggleSwitch size="sm" on={rule.firstMatchOnly === true} aria-label="Replace only the first match" onChange={() => onPatch({ firstMatchOnly: !rule.firstMatchOnly })} />
+          <Toggle size="sm" on={rule.firstMatchOnly === true} aria-label="Replace only the first match" onChange={() => onPatch({ firstMatchOnly: !rule.firstMatchOnly })} />
         ))}
 
         {row("Draw over the text instead of changing it", (
-          <ToggleSwitch size="sm" on={rule.overlay === true} aria-label="Draw over the text instead of changing it" onChange={() => onPatch({ overlay: !rule.overlay })} />
+          <Toggle size="sm" on={rule.overlay === true} aria-label="Draw over the text instead of changing it" onChange={() => onPatch({ overlay: !rule.overlay })} />
         ))}
 
         {row("Only run after another rule", (

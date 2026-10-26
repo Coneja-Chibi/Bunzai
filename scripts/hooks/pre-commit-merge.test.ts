@@ -38,7 +38,7 @@ function sandbox(): string {
   }
   cpSync(join(REAL, "scripts", "hooks", "file-selection.ts"), join(dir, "scripts", "hooks", "file-selection.ts"));
   cpSync(join(REAL, "scripts", "code-map-core.ts"), join(dir, "scripts", "code-map-core.ts"));
-  for (const f of ["gate.ts", "no-hardcode-colors.ts"]) {
+  for (const f of ["gate.ts", "no-hardcode-colors.ts", "style-guard.ts", "clones.ts"]) {
     writeFileSync(join(dir, "scripts", "hooks", f), "process.exit(0);\n");
   }
   writeFileSync(join(dir, "scripts", "docs-index.ts"), GENERATOR_STUB);

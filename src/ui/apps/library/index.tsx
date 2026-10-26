@@ -55,6 +55,7 @@ import { TRASH_STYLE, TrashPanel, useTrashCount } from "./trash-panel";
 import { handOffScene, libraryTrash, SCENES_APP } from "../../_shared/scene-handoff";
 import { useSetMenu } from "./set-menu";
 import { useLibraryBookCovers } from "./book-cover-room";
+import { Button } from "../../components/button";
 const portraitUrl = (e: StudioEntitySummary): string | null =>
   e.hasPortrait ? storedPortraitUrl(e.kind, e.id) : null;
 
@@ -400,9 +401,9 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
           <OrderSwitch order={order} onOrder={setOrder} />
           <SizeDial ctx={ctx} sizeRem={sizeRem} setSizeRem={setSizeRem} rootRef={rootRef} prefKey={PREF_SIZE} />
             {drawn.length > 0 && selectedValid.size === 0 && !searchUnavailable && !searchPending && !searchResult.truncated && (
-            <button type="button" className="ltb" onClick={selectAll} title="Stage everything shown">
+            <Button size="sm" onClick={selectAll} title="Stage everything shown">
               Select all
-            </button>
+            </Button>
           )}
         </div>
 

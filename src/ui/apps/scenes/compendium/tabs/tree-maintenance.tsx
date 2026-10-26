@@ -7,6 +7,7 @@
  */
 import type { JSX } from "react";
 import type { CompendiumTreeStore } from "../use-compendium-tree";
+import { Button } from "../../../../components/button";
 
 export function TreeMaintenance({ store }: { store: CompendiumTreeStore }): JSX.Element {
   const building = store.busy === "build";
@@ -15,8 +16,8 @@ export function TreeMaintenance({ store }: { store: CompendiumTreeStore }): JSX.
       <summary>Tree maintenance</summary>
       <p>Sorts the book&apos;s entries into a tree with the Compendium model. Your Lock, Forbid, Reorganize and Move choices are kept. Undo last build shows the tree as it was. The book is not changed unless Refine entries during build is on in Settings; its splits and merges are undone from Activity.</p>
       <div className="row">
-        <button type="button" className="go" disabled={store.busy !== null} onClick={() => void store.build()}>{building ? "Repairing..." : "Repair tree from entries"}</button>
-        {store.layout && <button type="button" disabled={store.busy !== null} onClick={() => void store.undo()}>{store.busy === "undo" ? "Undoing..." : "Undo last build"}</button>}
+        <Button variant="primary" size="sm" disabled={store.busy !== null} onClick={() => void store.build()}>{building ? "Repairing..." : "Repair tree from entries"}</Button>
+        {store.layout && <Button size="sm" disabled={store.busy !== null} onClick={() => void store.undo()}>{store.busy === "undo" ? "Undoing..." : "Undo last build"}</Button>}
       </div>
       {store.notes.length > 0 && <ul className="notes" aria-label="What the build repaired">{store.notes.map((n) => <li key={n}>{n}</li>)}</ul>}
     </details>

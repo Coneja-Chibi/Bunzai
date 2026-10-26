@@ -1,6 +1,7 @@
 /**
  * Health pane: inspectBook findings grouped by rule, Fix All with rescan proof (vs-lore-health).
  */
+import { Button, IconButton, ListRow } from "../../../components/button";
 import { useMemo, type JSX } from "react";
 import type { LorebookBody } from "../../../../entities/lorebook/schema";
 import {
@@ -82,9 +83,7 @@ export function HealthPane({
             ? "clean"
             : `${findings.length} finding${findings.length === 1 ? "" : "s"}`}
         </i>
-        <button type="button" className={styles.x} aria-label="Close health" onClick={onClose}>
-          &times;
-        </button>
+        <IconButton label="Close health" variant="quiet" size="sm" icon="lucide:x" onClick={onClose} />
       </div>
       {groups.length === 0 && (
         <p className={styles.clean}>Nothing to fix. This book looks healthy.</p>
@@ -103,15 +102,9 @@ export function HealthPane({
               {RULE_TITLE[g.rule]} · {g.items.length}
             </b>
             {g.fixable ? (
-              <button
-                type="button"
-                className={styles.fixAll}
-                onClick={() => {
+              <Button size="sm" onClick={() => {
                   onTransform((b) => applyAllFixes(b, g.items));
-                }}
-              >
-                Fix all
-              </button>
+                }}>Fix all</Button>
             ) : (
               <span className={styles.byHand}>Fix by hand</span>
             )}
@@ -119,16 +112,14 @@ export function HealthPane({
           <ul className={styles.list}>
             {g.items.map((f, i) => (
               <li key={`${f.rule}-${f.entryId ?? "book"}-${i}`}>
-                <button
-                  type="button"
-                  className={styles.finding}
+                <ListRow
                   disabled={!f.entryId}
+                  title={f.message}
                   onClick={() => {
                     if (f.entryId) onJumpEntry(f.entryId);
                   }}
-                >
-                  {f.message}
-                </button>
+                  label={f.message}
+                />
               </li>
             ))}
           </ul>

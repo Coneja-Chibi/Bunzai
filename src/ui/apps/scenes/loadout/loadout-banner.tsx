@@ -5,6 +5,7 @@
  */
 import type { JSX } from "react";
 import type { LoadoutReceipt } from "../../../../studio/loadout-record";
+import { Button } from "../../../components/button";
 import { bannerView } from "./loadout-text";
 
 export function LoadoutBanner({ receipt, now, working, busy, onUndo }: { receipt: LoadoutReceipt; now: number; working: boolean; busy: boolean; onUndo(): void }): JSX.Element {
@@ -15,7 +16,7 @@ export function LoadoutBanner({ receipt, now, working, busy, onUndo }: { receipt
         <b>{v.headline}</b><span>{v.detail}</span>
         {v.lines.map((line) => <p key={line}>{line}</p>)}
       </div>
-      {v.undoable && <button type="button" className="ldb-btn" disabled={working || busy} onClick={onUndo}>Undo apply</button>}
+      {v.undoable && <Button size="sm" disabled={working || busy} onClick={onUndo}>Undo apply</Button>}
     </div>
   );
 }

@@ -81,7 +81,7 @@ describe("Profiles (persona-shelf.tsx) virtualized", () => {
     // the trailing "+ New persona" tile is not rendered until scrolled to (it rides along as the
     // cells' own last entry, same as every other virtualized New tile in this app) - it must NOT
     // be pinned outside virtualization, which not finding it here proves.
-    expect(host.querySelector(".psh-new")).toBeNull();
+    expect(host.querySelector('[data-part="library.persona.new"]')).toBeNull();
     await unmount();
   });
 

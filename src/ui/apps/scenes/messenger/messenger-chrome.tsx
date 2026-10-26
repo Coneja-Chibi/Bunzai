@@ -7,6 +7,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, type JSX, type ReactNode } from "react";
 import type { AppContext } from "../../../app-contract";
 import { handOffScene } from "../../../_shared/scene-handoff";
+import { IconButton, ListRow, Scrim } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import type { OpenScene } from "../../../../studio/scenes";
 import { ZoomArt } from "../scene-portrait-zoom";
@@ -70,7 +71,7 @@ export function MessengerChrome({ ctx, chatId, scene, name, personaName, program
   return (
     <div ref={shell} className="msn" data-has-portrait={scene?.hasPortrait === true} data-nav-open={navOpen}>
       <div className="msn-bg" inert={overlayOpen}>
-        {navOpen && <button type="button" className="msn-backdrop" aria-label="Close recent characters" onClick={focus.closeNav} />}
+        {navOpen && <Scrim label="Close recent characters" onClick={focus.closeNav} />}
         <div ref={left} className="msn-left">
           <Rail programs={programs} openId={tabOpen ? nav.tabId : null} onChat={nav.showChat} onOpen={(id) => open(id)} />
           <Sidebar ctx={ctx} recents={recents} activities={activities} hasCharacters={characters !== undefined} canSettings={programs.length > 0}
@@ -81,8 +82,8 @@ export function MessengerChrome({ ctx, chatId, scene, name, personaName, program
             onSettings={() => { const first = programs.find((p) => p.id !== persona?.id) ?? programs[0]; if (first) open(first.id, "modal"); }} />
         </div>
         <header className="msn-head" inert={navOpen}>
-          <button ref={menu} type="button" className="msn-mmenu" aria-label="Show recent characters" aria-expanded={navOpen} onClick={() => setNavOpen(!navOpen)}><Ic name="lucide:menu" /></button>
-          <button type="button" className="msn-back" aria-label="Back to Scenes" title="Back to Scenes" onClick={onBack}><Ic name="lucide:arrow-left" /></button>
+          <span className="msn-mmenu"><IconButton ref={menu} label="Show recent characters" icon="lucide:menu" aria-expanded={navOpen} onClick={() => setNavOpen(!navOpen)} /></span>
+          <IconButton label="Back to Scenes" icon="lucide:arrow-left" onClick={onBack} />
           {avatar}
           <div><strong>{name}</strong><small>Character conversation</small></div>
           <div className="msn-actions sh">{actions}</div>
@@ -100,14 +101,14 @@ export function MessengerChrome({ ctx, chatId, scene, name, personaName, program
           aria-label={overlayOpen ? (selected?.id === persona?.id ? "My Profile" : "Scene settings") : selected?.title ?? "Feature workspace"}>
           <nav className="msn-snav" hidden={!overlayOpen} aria-label="Scene settings sections">
             <span className="msn-cap">YOUR PROFILE</span>
-            {persona && <button type="button" aria-current={selectedId === persona.id ? "page" : undefined} onClick={() => open(persona.id, "modal")}>My Profile</button>}
+            {persona && <ListRow label="My Profile" selected={selectedId === persona.id} aria-current={selectedId === persona.id ? "page" : undefined} onClick={() => open(persona.id, "modal")} />}
             <span className="msn-cap">SCENE SETTINGS</span>
-            {programs.filter((p) => p.id !== persona?.id).map((p) => <button key={p.id} type="button" aria-current={selectedId === p.id ? "page" : undefined} onClick={() => open(p.id, "modal")}>{p.title}</button>)}
+            {programs.filter((p) => p.id !== persona?.id).map((p) => <ListRow key={p.id} label={p.title} selected={selectedId === p.id} aria-current={selectedId === p.id ? "page" : undefined} onClick={() => open(p.id, "modal")} />)}
           </nav>
           <section className="msn-scont">
             <header>
               <div><span>{overlayOpen ? "BUNRAKU SETTINGS" : "FEATURE WORKSPACE"}</span><h2>{selected?.id === persona?.id ? "My Profile" : selected?.title}</h2></div>
-              <button type="button" data-msn-close="" className="msn-x" aria-label={overlayOpen ? "Close settings" : "Back to chat"} onClick={overlayOpen ? nav.closeSettings : nav.showChat}><Ic name="lucide:x" />{overlayOpen && <small>ESC</small>}</button>
+              <IconButton data-msn-close="" label={overlayOpen ? "Close settings" : "Back to chat"} icon={<><Ic name="lucide:x" />{overlayOpen && <small>ESC</small>}</>} onClick={overlayOpen ? nav.closeSettings : nav.showChat} />
             </header>
             <div className="msn-outlets">
               {nav.visited.map((id) => {

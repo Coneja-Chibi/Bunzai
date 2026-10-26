@@ -5,6 +5,7 @@
  */
 import type { JSX } from "react";
 import { Ic } from "../../../../_shared/ic";
+import { Button } from "../../../../components/button";
 import type { BookModel } from "../compendium-core";
 import { Catalogue, type SubTab, type TreeUi } from "../browse/catalogue";
 import { EntryPage } from "../entry-page";
@@ -21,7 +22,7 @@ export function Browse({ model, bookName, state, onState, tree }: { model: BookM
       <div className="main">
         {open ? (
           <>
-            <button type="button" className="back" onClick={() => onState({ entryId: null })}><Ic name="lucide:chevron-left" size={14} />Back to list</button>
+            <div className="back"><Button variant="quiet" size="sm" icon="lucide:chevron-left" onClick={() => onState({ entryId: null })}>Back to list</Button></div>
             <EntryPage m={model} id={state.entryId!} bookName={bookName} onOpen={(entryId) => onState({ entryId })} />
           </>
         ) : (

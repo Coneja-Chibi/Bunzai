@@ -7,6 +7,7 @@
  * edited.
  */
 import { useEffect, useRef, useState, type CSSProperties, type JSX, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { Dot, IconButton } from "../../../../components/button";
 import type { AppContext } from "../../../../app-contract";
 import { useEscapeKey } from "../../../../_shared/use-escape-key";
 import type { Chat } from "../../../../../stage/contracts/chat-store";
@@ -40,6 +41,7 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
 
   const tracePop = usePopout(ctx, hareTracePopout.id);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const fabRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
   const chainsRef = useRef<HTMLElement>(null);
@@ -47,7 +49,7 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
   const restoreFocus = useRef<HTMLElement | null>(null);
 
   const containerSize = (): { width: number; height: number } => {
-    const parent = buttonRef.current?.parentElement;
+    const parent = fabRef.current?.parentElement;
     const box = parent?.getBoundingClientRect();
     return box ? { width: box.width, height: box.height } : { width: 0, height: 0 };
   };
@@ -169,20 +171,20 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
 
   const resize = useRef<{ pointerId: number; startX: number; startY: number; origSize: number } | null>(null);
 
-  function onResizePointerDown(e: ReactPointerEvent<HTMLDivElement>): void {
+  function onResizePointerDown(e: ReactPointerEvent<HTMLButtonElement>): void {
     e.stopPropagation();
     resize.current = { pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, origSize: rect.size };
     (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
   }
 
-  function onResizePointerMove(e: ReactPointerEvent<HTMLDivElement>): void {
+  function onResizePointerMove(e: ReactPointerEvent<HTMLButtonElement>): void {
     const r = resize.current;
     if (!r || r.pointerId !== e.pointerId) return;
     const delta = Math.max(e.clientX - r.startX, e.clientY - r.startY);
     setRect(clampButtonRect({ x: rect.x, y: rect.y, size: r.origSize + delta }, containerSize()));
   }
 
-  function onResizePointerUp(e: ReactPointerEvent<HTMLDivElement>): void {
+  function onResizePointerUp(e: ReactPointerEvent<HTMLButtonElement>): void {
     const r = resize.current;
     if (!r || r.pointerId !== e.pointerId) return;
     resize.current = null;
@@ -194,15 +196,14 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
 
   return (
     <>
-      <button type="button" ref={buttonRef} className="hare-btn" title="TrackHare (right-click for options)" data-part="props.trackhare.button"
-        style={{ left: rect.x, top: rect.y, width: rect.size, height: rect.size } as CSSProperties}
-        onPointerDown={onButtonPointerDown} onPointerMove={onButtonPointerMove} onPointerUp={onButtonPointerUp}
-        onPointerCancel={onButtonPointerUp} onContextMenu={onButtonContextMenu} onClick={onButtonClick}>
-        <HareLogo size={rect.size * 0.54} />
-        {count !== null && <span className="n">{count}</span>}
-        <span className="rh" role="presentation" aria-hidden="true"
+      <div ref={fabRef} className="hare-fab" style={{ left: rect.x, top: rect.y, width: rect.size, height: rect.size } as CSSProperties}>
+        <IconButton ref={buttonRef} size="fab" label="TrackHare" title="TrackHare (right-click for options)" data-part="props.trackhare.button" vars={{ "--fab-size": `${rect.size}px` }}
+          icon={<HareLogo size={rect.size * 0.54} />} badge={count !== null ? count : undefined}
+          onPointerDown={onButtonPointerDown} onPointerMove={onButtonPointerMove} onPointerUp={onButtonPointerUp}
+          onPointerCancel={onButtonPointerUp} onContextMenu={onButtonContextMenu} onClick={onButtonClick} />
+        <Dot kind="handle" label="Resize TrackHare" tabIndex={-1} aria-hidden="true" data-part="props.trackhare.resize"
           onPointerDown={onResizePointerDown} onPointerMove={onResizePointerMove} onPointerUp={onResizePointerUp} onPointerCancel={onResizePointerUp} />
-      </button>
+      </div>
 
       {panel === "popover" && tracePop.state.open && (
         <div className="hare-pop" ref={popoverRef} tabIndex={-1} role="dialog" aria-modal="false" aria-label="TrackHare"><PopoutPlaceholder kind={hareTracePopout} onBack={tracePop.close} /></div>

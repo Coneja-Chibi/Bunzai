@@ -6,7 +6,7 @@
  * the narrator's, which is the scene's. The Revert row acts on the book open in the Compendium.
  */
 import type { JSX } from "react";
-import { ToggleSwitch } from "../../../../../components/toggle-switch";
+import { Button, Toggle } from "../../../../../components/button";
 import { RANGES } from "../../../../../../core/compendium";
 import { GLYPH } from "../../compendium-core";
 import { useStandardize } from "../../standardize/use-standardize";
@@ -29,7 +29,7 @@ export function StandardizeSection({ ctx, chat, compendium, bookId, set }: Secti
       <SettingsToggle on={s.autoRetry} onChange={(autoRetry) => void set({ standardize: { autoRetry } })} label="Auto-retry failed entries once"
         hint="Entries that come back unusable get one more try before they are left as written. Trades a bit of time for a higher success rate on large batches." />
       <div className="cps-tg">
-        <ToggleSwitch on onChange={() => undefined} disabled tone="var(--cpa)" aria-label="Preserve original content" />
+        <Toggle on onChange={() => undefined} disabled tone="var(--cpa)" aria-label="Preserve original content" />
         <div>
           <span className="cps-lab">Preserve original content</span>
           <p className="cps-hint">Each run keeps the original text of every entry it rewrites in its receipts, so the conversion is fully reversible. Always on.</p>
@@ -38,9 +38,9 @@ export function StandardizeSection({ ctx, chat, compendium, bookId, set }: Secti
       <div data-part="compendium.settings.revert">
         <span className="cps-lab">{GLYPH.revert} Revert Last Standardization</span>
         <p className="cps-hint">Restores every rewritten entry to its original classic content, retires any brand-new split entries the run made, and brings back the entries it consumed. Use this if a run produced duplicates or incorrect typing.</p>
-        <button type="button" className="cps-quiet" disabled={!bookId || held === 0 || std.reverting(bookId)} onClick={() => bookId && void std.revert(bookId)}>
+        <Button variant="danger" size="sm" disabled={!bookId || held === 0 || std.reverting(bookId)} onClick={() => bookId && void std.revert(bookId)}>
           {bookId && std.reverting(bookId) ? "REVERTING..." : `${GLYPH.revert} REVERT LAST RUN`}
-        </button>
+        </Button>
         {bookId && held === 0 && !note && <p className="cps-hint">Nothing from a Standardize run is waiting to be reverted on this book.</p>}
         {note?.result && <p className="cps-hint">{GLYPH.check} Reverted: {note.result.rewrites} rewrites restored, {note.result.splits} splits retired, {note.result.consumed} consumed restored{note.result.skipped.length > 0 ? `, ${note.result.skipped.length} left as they are because they changed since` : ""}.</p>}
         {note?.error && <p className="cps-hint">{GLYPH.cross} Revert failed: {note.error}</p>}

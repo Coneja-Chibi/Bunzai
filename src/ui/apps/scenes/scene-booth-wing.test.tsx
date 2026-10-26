@@ -232,7 +232,7 @@ describe("Booth Narrator Model row", () => {
     const onChange = (search as unknown as Record<string, { onChange: (e: { target: { value: string } }) => void }>)[Object.keys(search).find((k) => k.startsWith("__reactProps$"))!]!.onChange;
     flushSync(() => onChange({ target: { value: "model-b" } }));
     expect(byText("model-b")).toBeDefined();
-    expect(host.querySelectorAll(".bth-opt").length).toBe(1);
+    expect(host.querySelectorAll(".bth-dlist [data-control='row']").length).toBe(1);
     unmount(flushSync);
   });
 
@@ -254,7 +254,7 @@ describe("Booth Narrator Model row", () => {
     flushSync = (await import("react-dom")).flushSync;
     flushSync(() => root.render(<AiWing ctx={modelCtx()} chat={chatWith({ connection: current })} onPicked={() => undefined} />));
     await settle(flushSync);
-    expect(host.querySelector(".mrow.cur")?.textContent).toContain("model-b");
+    expect(host.querySelector(".mwrap [data-control='row'][data-selected]")?.textContent).toContain("model-b");
     unmount(flushSync);
   });
 });
@@ -371,7 +371,7 @@ describe("Booth Active Preset and Generation", () => {
     flushSync = (await import("react-dom")).flushSync;
     flushSync(() => root.render(<Tab />));
     await settle(flushSync);
-    expect(host.querySelector(".sbar-row")?.textContent).toContain("Temp:0.30");
+    expect(host.querySelector("[data-part='scene.preset.samplers']")?.textContent).toContain("Temp:0.30");
     unmount(flushSync);
   });
 
@@ -379,7 +379,7 @@ describe("Booth Active Preset and Generation", () => {
     const flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: { maxContext: 200_000, maxTokens: 8_192 } }));
     const cards = [...host.querySelectorAll(".sliders.quick > .sl")];
     expect(cards.at(-1)?.querySelector("select")?.getAttribute("aria-label")).toBe("Prompt Post-Processing");
-    const readOut = (label: string) => cards.find((c) => c.querySelector(".slh span")?.textContent === label)?.querySelector(".slv")?.textContent;
+    const readOut = (label: string) => cards.find((c) => c.querySelector(".slh span")?.textContent === label)?.querySelector(".slv, [data-control='inline']")?.textContent;
     expect(readOut("Max Context")).toBe("200.0K");
     expect(readOut("Max Tokens")).toBe("8.2K");
     unmount(flushSync);

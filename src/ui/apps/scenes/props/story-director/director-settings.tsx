@@ -8,6 +8,7 @@ import { useState, type JSX } from "react";
 import type { AppContext } from "../../../../app-contract";
 import type { Chat } from "../../../../../stage/contracts/chat-store";
 import { DIRECTOR_CREATIVITY, DIRECTOR_INSTRUCTIONS_MAX, type DirectorCreativity } from "../../../../../stage/contracts/director-types";
+import { Button, Segmented } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { DirectorCommandMode, DirectorModel, DirectorReasoning } from "./director-model";
 import { AutoUpdate } from "./auto-update";
@@ -23,7 +24,7 @@ export function DirectorSettings({ ctx, chat, onChat }: { ctx: AppContext; chat:
   const [draft, setDraft] = useState<string | null>(null);
   if (data.load.state === "loading") return <div className="ds" data-part="props.story-director.settings"><p className="ds-help" role="status">Loading...</p></div>;
   if (data.load.state === "failed") {
-    return <div className="ds" data-part="props.story-director.settings"><p className="ds-err" role="alert">{data.load.why}</p><button type="button" className="ds-quiet" onClick={data.reload}>Try again</button></div>;
+    return <div className="ds" data-part="props.story-director.settings"><p className="ds-err" role="alert">{data.load.why}</p><div className="ds-quiet"><Button variant="quiet" size="sm" onClick={data.reload}>Try again</Button></div></div>;
   }
   const { panel } = data.load;
   const s = panel.settings;
@@ -43,9 +44,7 @@ export function DirectorSettings({ ctx, chat, onChat }: { ctx: AppContext; chat:
         <RuntimeNumbers panel={panel} save={save} />
         <div className="ds-row" title="How boldly the Director steers the story.">
           <span><Ic name="lucide:wand-sparkles" size={12} />Creativity</span>
-          <span className="ds-seg" role="group" aria-label="Creativity">
-            {DIRECTOR_CREATIVITY.map((c) => <button key={c} type="button" className={s.creativity === c ? "on" : ""} aria-pressed={s.creativity === c} onClick={() => void save({ creativity: c })}>{CREATIVITY_LABEL[c]}</button>)}
-          </span>
+          <Segmented size="sm" label="Creativity" items={DIRECTOR_CREATIVITY.map((c) => ({ value: c, label: CREATIVITY_LABEL[c] }))} value={s.creativity} onChange={(c) => void save({ creativity: c })} />
         </div>
         <AutoRetryRow panel={panel} save={save} />
         <div className="ds-instr">

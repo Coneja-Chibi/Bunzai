@@ -8,6 +8,7 @@
  * here it opens under the button it belongs to.
  */
 import { useState, type JSX } from "react";
+import { Chip, ListRow } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { useEscapeKey } from "../../_shared/use-escape-key";
 import type { ChatConnection } from "../../../stage/contracts/chat-store";
@@ -33,19 +34,16 @@ export function BoothModelPicker({ current, models, onPick }: { current: ChatCon
   const sub = !current ? "Select a model" : conns ? `${labelOf(current.id)}${ctxOf(windowOf(current))}` : "Loading model info...";
   return (
     <div className="bth-pickwrap">
-      <button type="button" className="bth-pick" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className="bth-tile"><Ic name="lucide:sparkles" size={20} /></span>
-        <span className="pn"><span>{current ? nameOf(current) : "No model selected"}</span><small>{sub}</small></span>
-        <span className={`bth-chev${open ? " up" : ""}`}><Ic name="lucide:chevron-down" size={16} /></span>
-      </button>
+      <ListRow variant="picker" aria-expanded={open} onClick={() => setOpen(!open)} leading={<Ic name="lucide:sparkles" size={20} />}
+        label={current ? nameOf(current) : "No model selected"} subtitle={sub} />
       {open && (
         <div className="bth-drop" data-part="scene.ai.picker">
           <div className="bth-df">
             <div className="bth-dl">Provider</div>
             <div className="bth-chips" role="group" aria-label="Provider">
-              <button type="button" className={`bth-fc${provider === "all" ? " on" : ""}`} onClick={() => setProvider("all")}>All<i>{(conns ?? []).reduce((n, c) => n + countOf(c.id), 0)}</i></button>
+              <Chip pressed={provider === "all"} onClick={() => setProvider("all")}>All<i>{(conns ?? []).reduce((n, c) => n + countOf(c.id), 0)}</i></Chip>
               {(conns ?? []).map((c) => (
-                <button type="button" key={c.id} className={`bth-fc${provider === c.id ? " on" : ""}${c.unavailable ? " off" : ""}`} title={c.unavailable} onClick={() => setProvider(c.id)}>{c.label}<i>{countOf(c.id)}</i></button>
+                <Chip key={c.id} pressed={provider === c.id} title={c.unavailable} onClick={() => setProvider(c.id)}>{c.label}<i>{countOf(c.id)}</i></Chip>
               ))}
             </div>
           </div>
@@ -61,12 +59,12 @@ export function BoothModelPicker({ current, models, onPick }: { current: ChatCon
                   const conn = { id: c.id, model: x.id };
                   const on = current !== undefined && keyOf(current) === keyOf(conn);
                   return (
-                    <button type="button" key={x.id} className={`bth-opt${on ? " cur" : ""}`} disabled={c.unavailable !== undefined} title={c.unavailable}
-                      onClick={() => { onPick(conn); setOpen(false); }}>
-                      <span className="bth-tile sm"><Ic name="lucide:sparkles" size={16} /></span>
-                      <span className="pn"><span>{x.label ?? x.id}{c.unavailable && <i className="bth-badge">Setup Required</i>}</span><small>{c.unavailable ?? `${c.label}${ctxOf(x.context)}`}</small></span>
-                      {!c.unavailable && on && <span className="bth-ck"><Ic name="lucide:check" size={16} /></span>}
-                    </button>
+                    <ListRow key={x.id} selected={on} disabled={c.unavailable !== undefined} title={c.unavailable}
+                      onClick={() => { onPick(conn); setOpen(false); }}
+                      leading={<Ic name="lucide:sparkles" size={16} />}
+                      label={<>{x.label ?? x.id}{c.unavailable && <i className="bth-badge">Setup Required</i>}</>}
+                      subtitle={c.unavailable ?? `${c.label}${ctxOf(x.context)}`}
+                      trailing={!c.unavailable && on ? <span className="bth-ck"><Ic name="lucide:check" size={16} /></span> : undefined} />
                   );
                 })}
               </div>

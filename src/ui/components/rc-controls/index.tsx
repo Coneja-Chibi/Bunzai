@@ -4,7 +4,7 @@
  * styles.module.css, taken from RoleCall's wing fields (PresetPanel.tsx:2845, 3386), ui/button.tsx and ui/badge.tsx.
  * Importing this also loads the number-spinner reset, so every number field loses the browser's arrows.
  */
-import { useId, type ButtonHTMLAttributes, type HTMLAttributes, type InputHTMLAttributes, type JSX, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
+import { useId, type HTMLAttributes, type InputHTMLAttributes, type JSX, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 import "./rc-reset.css";
 import styles from "./styles.module.css";
 
@@ -20,15 +20,6 @@ export function Textarea({ className, ...rest }: TextareaHTMLAttributes<HTMLText
 
 export function Select({ className, ...rest }: SelectHTMLAttributes<HTMLSelectElement>): JSX.Element {
   return <select {...rest} className={cx(styles.field, className)} />;
-}
-
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "outline" | "ghost" | "danger";
-  size?: "default" | "sm";
-}
-
-export function Button({ variant = "default", size = "default", className, type = "button", ...rest }: ButtonProps): JSX.Element {
-  return <button {...rest} type={type} className={cx(styles.btn, styles[variant], size === "sm" && styles.sm, className)} />;
 }
 
 export function Chip({ className, ...rest }: HTMLAttributes<HTMLSpanElement>): JSX.Element {

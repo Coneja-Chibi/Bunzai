@@ -5,6 +5,7 @@
  * duplicate), a Fix button that applies it to the SESSION - nothing is written until Save.
  * Hosted in the rail column exactly like the bench (never a modal, per the companion-pane law).
  */
+import { Button, IconButton } from "../../../components/button";
 import type { JSX } from "react";
 import type { RegexRule } from "../../../../entities/regex/schema";
 import type { RegexFinding } from "../../../../core/regex";
@@ -32,14 +33,10 @@ function Row({
       <p className={hp.rowMsg}>{finding.message}</p>
       <span className={hp.rowActs}>
         {finding.ruleId && (
-          <button type="button" className={hp.act} onClick={() => onGoTo(finding.ruleId!)}>
-            Go to rule
-          </button>
+          <Button size="sm" onClick={() => onGoTo(finding.ruleId!)}>Go to rule</Button>
         )}
         {finding.fix && (
-          <button type="button" className={`${hp.act} ${hp.actFix}`} onClick={() => onFix(finding)}>
-            Fix: switch it off
-          </button>
+          <Button size="sm" tone="var(--stage-ok)" onClick={() => onFix(finding)}>Fix: switch it off</Button>
         )}
       </span>
     </div>
@@ -56,9 +53,7 @@ export function HealthPane({ findings, rules, onClose, onGoTo, onFix }: HealthPa
       <div className={hp.phead}>
         <b className={hp.pheadB}>Full check</b>
         <span className={hp.pheadKick}>every rule, checked for real</span>
-        <button type="button" className={hp.close} aria-label="Close the full check" onClick={onClose}>
-          &#215;
-        </button>
+        <IconButton label="Close the full check" variant="quiet" size="sm" icon="lucide:x" onClick={onClose} />
       </div>
 
       {findings.length === 0 ? (

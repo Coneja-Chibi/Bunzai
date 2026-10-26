@@ -1,6 +1,7 @@
 /**
  * LoreCategories - edit body.categories (Risu folders / NAI categories / RC folders).
  */
+import { Button, IconButton } from "../button";
 import type { JSX } from "react";
 import type { LorebookCategory } from "../../../entities/lorebook/schema";
 import { newUiId } from "../../_shared/new-id";
@@ -39,9 +40,9 @@ export function LoreCategories({ categories, onChange }: LoreCategoriesProps): J
     <div className={styles.wrap} role="group" aria-label="Categories">
       <div className={styles.head}>
         <span className={styles.label}>Categories / folders</span>
-        <button type="button" className={styles.add} onClick={add}>
-          + category
-        </button>
+        <Button size="sm" onClick={add}>
+          + Category
+        </Button>
       </div>
       {list.length === 0 && (
         <p className={styles.empty}>None yet. Risu folders and NAI categories map here.</p>
@@ -69,9 +70,7 @@ export function LoreCategories({ categories, onChange }: LoreCategoriesProps): J
               />
               on
             </label>
-            <button type="button" className={styles.rm} onClick={() => removeAt(i)} aria-label="Remove">
-              &times;
-            </button>
+            <IconButton variant="quiet" size="sm" icon="lucide:x" label="Remove" onClick={() => removeAt(i)} />
           </li>
         ))}
       </ul>

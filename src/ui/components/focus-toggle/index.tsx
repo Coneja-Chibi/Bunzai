@@ -6,6 +6,7 @@
  * toolbar). Session-scoped by design: focus is a gesture, not a setting, so it is never persisted
  * and unmounting always exits focus - no surface can leave the shell chrome hidden behind it.
  */
+import { IconButton } from "../button";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AppActivity } from "../../_shared/app-activity";
 import type { JSX } from "react";
@@ -65,15 +66,12 @@ export function FocusToggle({ focused, onToggle }: FocusToggleProps): JSX.Elemen
 
   const label = focused ? "Exit focus (Esc)" : "Focus: hide the chrome, fill the window";
   return (
-    <button
-      type="button"
-      className={styles.btn}
+    <IconButton
+      size="sm"
+      icon={<span ref={iconHostRef} aria-hidden="true" />}
+      label={label}
       onClick={onToggle}
-      title={label}
-      aria-label={label}
       aria-pressed={focused}
-    >
-      <span ref={iconHostRef} aria-hidden="true" />
-    </button>
+    />
   );
 }

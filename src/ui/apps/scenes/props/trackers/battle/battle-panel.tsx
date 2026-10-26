@@ -6,6 +6,7 @@
  */
 import { useState, type JSX } from "react";
 import { applyBattle, battleLines, liveEnemies, readBattle, type BattleAction, type Enemy } from "../../../../../../core/trackers/battle";
+import { Button, IconButton, Tabs } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { TrackerFrame } from "../tracker-frame";
@@ -31,23 +32,23 @@ export function CombatPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
       onClear={() => view.apply(() => readBattle(undefined), "Cleared")}
       badge={b.inCombat ? <span className="bt-live">IN COMBAT</span> : null}
       actions={b.inCombat
-        ? <button type="button" className="trk-btn" title="End Combat" aria-label="End Combat" onClick={() => act({ kind: "end" })}><Ic name="lucide:flag-off" size={14} /></button>
-        : <button type="button" className="trk-btn" title="Start Combat" aria-label="Start Combat" onClick={() => act({ kind: "start", enemy: newEnemy({ name: "Unknown Enemy", hp: 50, maxHp: 50, isBoss: false, statusEffects: [], threat: "medium" }) })}><Ic name="lucide:flag" size={14} /></button>}>
+        ? <IconButton size="sm" label="End Combat" icon="lucide:flag-off" onClick={() => act({ kind: "end" })} />
+        : <IconButton size="sm" label="Start Combat" icon="lucide:flag" onClick={() => act({ kind: "start", enemy: newEnemy({ name: "Unknown Enemy", hp: 50, maxHp: 50, isBoss: false, statusEffects: [], threat: "medium" }) })} />}>
       {b.inCombat && (
         <div className="bt-round">
           <span className="bt-roundtag">ROUND {b.round}</span>
           <span className="bt-pips">{b.turnOrder.map((id) => <i key={id} className={id === b.currentTurn ? "now" : ""} title={enemies.find((e) => e.id === id)?.name ?? "Unknown"} />)}</span>
-          <button type="button" className="trk-btn" title="Next Turn" aria-label="Next Turn" onClick={() => act({ kind: "next" })}><Ic name="lucide:skip-forward" size={14} /></button>
+          <IconButton size="sm" label="Next Turn" icon="lucide:skip-forward" onClick={() => act({ kind: "next" })} />
         </div>
       )}
-      <div className="st-tabs bt-tabs" role="tablist">
-        {TABS.map((t) => <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : ""} onClick={() => setTab(t.id)}><Ic name={t.icon} size={14} /> {t.label}</button>)}
+      <div className="st-tabs bt-tabs">
+        <Tabs label="Combat sections" value={tab} onChange={setTab} items={TABS.map((t) => ({ value: t.id, label: <><Ic name={t.icon} size={14} /> {t.label}</> }))} />
       </div>
       <div className="st-body">
         {tab === "enemies" && (
           <>
             {adding ? <AddEnemy onCancel={() => setAdding(false)} onAdd={(e) => { act({ kind: "add", enemy: newEnemy(e) }); setAdding(false); }} />
-              : <button type="button" className="bt-new" onClick={() => setAdding(true)}><Ic name="lucide:plus" size={14} /> Add New Enemy</button>}
+              : <Button size="sm" block icon="lucide:plus" onClick={() => setAdding(true)}>Add New Enemy</Button>}
             {enemies.map((e) => (
               <EnemyCard key={e.id} enemy={e} current={e.id === b.currentTurn} onDamage={(amount) => act({ kind: "damage", id: e.id, amount })} onHeal={(amount) => act({ kind: "heal", id: e.id, amount })}
                 onRemove={() => act({ kind: "remove", id: e.id, at: Date.now() }, `Removed ${e.name}`)} />

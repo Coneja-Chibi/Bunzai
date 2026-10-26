@@ -111,43 +111,12 @@
   gap: 0.3rem;
 }
 
-.pcScanChip {
-  display: flex;
-  align-items: center;
-  gap: 0.38rem;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  padding: 0.36rem 0.42rem;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  color: var(--stage-soft);
-  text-align: left;
-}
-
-.pcScanChip:hover {
-  border-color: var(--stage-line);
-  color: var(--stage-card);
-}
-
-.pcScanOn {
-  border-color: var(--host);
-  color: var(--stage-card);
-  background: color-mix(in srgb, var(--host) 10%, var(--stage-sunken));
-}
-
 .pcScanBox {
   width: 0.72rem;
   height: 0.72rem;
   border: 1px solid var(--stage-line);
   background: var(--stage-row);
   flex: none;
-}
-
-.pcScanOn .pcScanBox {
-  border-color: var(--host);
-  background: var(--host);
 }
 
 /* Pair / cell cards for toggles with short prose */

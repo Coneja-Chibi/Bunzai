@@ -8,5 +8,4 @@ export default variantCss("scene.swipes", "margin-numbers", `
 & .swc .ct::before{content:"["}
 & .swc .ct::after{content:"]"}
 & .swc .n,& .swc .t{color:var(--text)}
-& .swc button{color:var(--text)}
 `, ".scs");

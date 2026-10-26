@@ -3,7 +3,7 @@ import { variantCss } from "../../../../_shared/variant-css";
 
 export default variantCss("scene.hud", "footnotes", `
 & .sh{background:var(--stage-well);border-bottom:var(--bk-frame-w) solid var(--bk-line)}
-& .sh .branch{background:none;border:0;border-bottom:var(--bk-frame-w) solid var(--text);color:var(--text);padding:.1rem .15rem}
+& .sh [data-part="scene.takes.toggle"]{background:none;border:0;border-bottom:var(--bk-frame-w) solid var(--text);color:var(--text);padding:.1rem .15rem}
 & .sh .nm{font-family:var(--font-mono);letter-spacing:.06em}
 & .hudline{position:absolute;top:0;right:1rem;z-index:36;height:44px;display:flex;align-items:center;gap:.9rem;font:500 .75rem/1.4 var(--font-mono);color:var(--text-soft);white-space:nowrap;max-width:45%;overflow:hidden}
 & .hudline small::after{content:":"}

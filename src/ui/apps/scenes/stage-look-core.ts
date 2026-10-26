@@ -28,10 +28,10 @@ export const LOOK_FONTS = [
   { id: "default", label: "Sans (Default)", stack: undefined },
   { id: "dyslexic", label: "OpenDyslexic", stack: '"OpenDyslexic", sans-serif', note: "Dyslexia-friendly" },
   { id: "lexend", label: "Lexend", stack: '"Lexend", sans-serif', note: "Easy reading" },
-  { id: "hyperlegible", label: "Atkinson Hyperlegible", stack: '"Atkinson Hyperlegible", sans-serif', note: "High legibility" },
+  { id: "hyperlegible", label: "Atkinson Hyperlegible", stack: '"Atkinson Hyperlegible", sans-serif', note: "High legibility" }, // style-ok: the reader's typeface catalog names fonts on purpose
   { id: "serif", label: "Serif", stack: '"Crimson Pro", Georgia, serif' },
-  { id: "editorial", label: "Editorial", stack: '"Playfair Display", Georgia, serif' },
-  { id: "mono", label: "Monospace", stack: '"JetBrains Mono", "IBM Plex Mono", monospace' },
+  { id: "editorial", label: "Editorial", stack: '"Playfair Display", Georgia, serif' }, // style-ok: reader typeface catalog
+  { id: "mono", label: "Monospace", stack: '"JetBrains Mono", "IBM Plex Mono", monospace' }, // style-ok: reader typeface catalog
 ] as const;
 export type FontId = (typeof LOOK_FONTS)[number]["id"];
 

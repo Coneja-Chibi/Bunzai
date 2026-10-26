@@ -9,6 +9,7 @@
 import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type RefObject } from "react";
 import type { AppContext } from "../../app-contract";
 import { Ic } from "../../_shared/ic";
+import { Button, Chip, IconButton, ListRow } from "../../components/button";
 import { FALLBACK_VIEWPORT, OVERSCAN, useVirtualRows } from "../../_shared/virtual-list";
 import type { Chat, ChatConnection } from "../../../stage/contracts/chat-store";
 import { modelRows, type ModelRow } from "./model-rows-core";
@@ -32,7 +33,7 @@ export function AiWing({ ctx, chat, onPicked, onClose }: { ctx: AppContext; chat
   const hero = (
     <>
       <Hero />
-      {onClose && <div className="ms-close"><button type="button" aria-label="Close panel" onClick={onClose}><Ic name="lucide:x" size={16} /></button></div>}
+      {onClose && <div className="ms-close"><IconButton variant="quiet" size="sm" label="Close panel" icon="lucide:x" onClick={onClose} /></div>}
     </>
   );
 
@@ -41,7 +42,7 @@ export function AiWing({ ctx, chat, onPicked, onClose }: { ctx: AppContext; chat
       <div className="wbody ms" data-part="scene.ai.models">
         {hero}
         <div className="ms-empty"><b>No connections yet</b>Bunraku talks to AI models through the connections you save in Kit: a provider, its key, and a model. Add one there, and it shows up here for every scene.<br />
-          <button type="button" className="go" onClick={() => openKitConnections(ctx)}>Open Kit connections</button></div>
+          <Button variant="primary" size="sm" onClick={() => openKitConnections(ctx)}>Open Kit connections</Button></div>
       </div>
     );
   }
@@ -50,11 +51,10 @@ export function AiWing({ ctx, chat, onPicked, onClose }: { ctx: AppContext; chat
       {hero}
       <div className="ms-sec"><label className="ms-search"><Ic name="lucide:search" /><input value={query} placeholder="Search models..." aria-label="Search models" onChange={(e) => setQuery(e.target.value)} /></label></div>
       <div className="ms-sec"><div className="pills">
-        <button type="button" className="pill add" onClick={() => openKitConnections(ctx)}><b>+</b> Connect Provider</button>
-        <button type="button" className={`pill all${filter === "all" ? " on" : ""}`} onClick={() => setFilter("all")}>All Providers</button>
+        <Chip onClick={() => openKitConnections(ctx)}><b>+</b> Connect Provider</Chip>
+        <Chip pressed={filter === "all"} onClick={() => setFilter("all")}>All Providers</Chip>
         {(conns ?? []).map((c) => (
-          <button type="button" key={c.id} className={`pill${filter === c.id ? " on" : ""}${c.unavailable ? " off" : ""}`} style={{ "--tone": tone.get(c.id) } as CSSProperties}
-            title={c.unavailable} onClick={() => setFilter(c.id)}><Ic name="lucide:cpu" size={12} />{c.label}</button>
+          <Chip key={c.id} pressed={filter === c.id} title={c.unavailable} onClick={() => setFilter(c.id)}><Ic name="lucide:cpu" size={12} />{c.label}</Chip>
         ))}
       </div></div>
       {conns ? <ModelList sm={sm} chat={chat} query={query} filter={filter} scroll={scroll} tone={tone} /> : <div className="ms-list"><div className="loading"><Ic name="lucide:loader-circle" />Reading your connections...</div></div>}
@@ -98,21 +98,18 @@ function RowView({ row, sm, tone }: { row: ModelRow; sm: SceneModels; tone: Map<
   if (row.kind === "load") return <div className="loading"><Ic name="lucide:loader-circle" />{row.text}</div>;
   if (row.kind === "note") {
     const retry = row.retry;
-    return <div className="ms-note">{row.text}{retry && <> <button type="button" className="retry" onClick={() => sm.retry(retry)}>Retry</button></>}</div>;
+    return <div className="ms-note">{row.text}{retry && <> <Button variant="quiet" size="sm" onClick={() => sm.retry(retry)}>Retry</Button></>}</div>;
   }
   if (row.kind === "na") return <div className="mrow na" style={{ "--tone": "var(--stage-mute)" } as CSSProperties}><div className="t">{row.name}</div><div className="sub">{row.sub}</div><div className="why">{row.why}</div></div>;
   const c: ChatConnection = row.conn;
   const chip = row.window ? contextOf(row.window).replace(/^ · /, "") : "";
   return (
     <div className="mwrap">
-      <button type="button" className={`mrow${row.current ? " cur" : ""}${row.on && !row.current ? " on" : ""}`} style={{ "--tone": tone.get(c.id) } as CSSProperties} onClick={() => sm.pick(c)}>
-        <div className="t">{row.current && <Ic name="lucide:layers" size={16} />}{row.name}{chip && <span className="chip">{chip}</span>}</div>
-        <div className="sub">{row.sub}</div>
-        {row.current && <span className="state">Active</span>}
-        {row.on && !row.current && <span className="tick"><Ic name="lucide:check" size={16} /></span>}
-      </button>
+      <ListRow variant="option" selected={row.on || row.current} accent={tone.get(c.id)} onClick={() => sm.pick(c)}
+        label={<>{row.current && <Ic name="lucide:layers" size={16} />}{row.name}{chip && <span className="chip">{chip}</span>}</>}
+        subtitle={row.sub} meta={row.current ? "Active" : undefined} />
       {!row.current && (
-        <button type="button" className={`star${row.favorite ? " on" : ""}`} aria-pressed={row.favorite} aria-label={row.favorite ? "Remove from favorites" : "Add to favorites"} onClick={() => sm.toggleFavorite(keyOf(c))}><Ic name="lucide:star" size={16} /></button>
+        <IconButton variant="quiet" size="sm" aria-pressed={row.favorite} label={row.favorite ? "Remove from favorites" : "Add to favorites"} icon={<Ic name="lucide:star" size={16} fill={row.favorite} />} onClick={() => sm.toggleFavorite(keyOf(c))} />
       )}
     </div>
   );

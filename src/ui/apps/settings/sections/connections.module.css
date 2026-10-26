@@ -73,31 +73,8 @@
   flex-wrap: wrap;
 }
 
-.acts button,
-.add,
-.formActs button {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: var(--face);
-  border: 2px solid var(--edge);
-  padding: 0.3rem 0.55rem;
-  cursor: pointer;
-}
-
-.acts button:hover,
-.add:hover,
-.formActs button:hover {
-  color: var(--text);
-}
-
 .add {
   align-self: flex-start;
-  border-width: 3px;
-  box-shadow: 3px 3px 0 0 var(--edge);
 }
 
 .form {
@@ -158,11 +135,6 @@
 }
 
 :global(html[data-surface-settings-shape="program-sections"]) .good { color: var(--stage-ok); }
-:global(html[data-surface-settings-shape="program-sections"]) .acts button:hover,
-:global(html[data-surface-settings-shape="program-sections"]) .add:hover,
-:global(html[data-surface-settings-shape="program-sections"]) .formActs button:hover {
-  border-color: var(--selection);
-}
 :global(html[data-surface-settings-shape="program-sections"]) .form input:focus,
 :global(html[data-surface-settings-shape="program-sections"]) .form textarea:focus {
   outline: 2px solid var(--focus-ring);

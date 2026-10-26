@@ -264,30 +264,6 @@
   flex-direction: column;
   gap: 0.6rem;
 }
-.cta > button {
-  /* white on the deep accent in both themes, as the wireframe draws it (the stamp would take its paper ink) */
-  color: var(--stage-white);
-  width: 100%;
-  justify-content: center;
-  font-size: var(--text-control);
-  padding: 0.85rem 1rem;
-}
-.ghost {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-meta);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: transparent;
-  border: 2px dashed var(--text-faint);
-  padding: 0.42rem 0.7rem;
-  cursor: pointer;
-}
-.ghost:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
 
 /* The stage theme: the marquee's hard punch, and the accent brightened on dark (PAPER.md drops both on paper). */
 :global(:root[data-surface-ui-panel="slab-frame"]) .marquee {

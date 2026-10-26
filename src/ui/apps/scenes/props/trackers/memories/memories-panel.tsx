@@ -6,6 +6,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { tokensOf } from "../../../../../../core/trackers/list";
 import { applyMemories, liveMemories, memoriesLines, npcNames, readMemories, titleOf, type Mem } from "../../../../../../core/trackers/memories";
+import { Button, Chip } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -52,9 +53,9 @@ export function MemoriesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX
       onClear={() => view.apply(() => readMemories(undefined), "Cleared")}>
       <div className="it-search">
         <div className="it-filters" role="group" aria-label="NPC" style={{ paddingBottom: 0 }}>
-          <button type="button" className={npc === null ? "on" : ""} aria-pressed={npc === null} onClick={() => setNpc(null)}><Ic name="lucide:users" size={14} /><span>All NPCs</span><span className="it-count">{all.length}</span></button>
+          <Chip pressed={npc === null} onClick={() => setNpc(null)}><Ic name="lucide:users" size={14} /><span>All NPCs</span><span className="it-count">{all.length}</span></Chip>
           {npcNames(j).map((n) => (
-            <button key={n} type="button" className={npc === n ? "on" : ""} aria-pressed={npc === n} onClick={() => setNpc(n)}><Ic name="lucide:user" size={14} /><span>{n}</span><span className="it-count">{all.filter((m) => m.npcName === n).length}</span></button>
+            <Chip key={n} pressed={npc === n} onClick={() => setNpc(n)}><Ic name="lucide:user" size={14} /><span>{n}</span><span className="it-count">{all.filter((m) => m.npcName === n).length}</span></Chip>
           ))}
         </div>
       </div>
@@ -69,7 +70,7 @@ export function MemoriesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX
                 right={<div className="it-pillcol"><Tag tone={WEIGHT_TONE[m.emotionalWeight]} icon={WEIGHT_ICON[m.emotionalWeight]}>{WEIGHT_NAME[m.emotionalWeight]}</Tag><Tag tone={SENT_TONE[m.sentiment]} icon={SENT_ICON[m.sentiment]}>{m.sentiment}</Tag></div>}
                 open={open === m.id} onToggle={() => setOpen(open === m.id ? null : m.id)}>
                 <RefreshByModel<Mem> ctx={ctx} chatId={chat.id} ask={ASK} noun="memory" existing={m} preview={(x) => <Preview m={x} />} accept={(x) => act({ kind: "refresh", id: m.id, memory: x })}
-                  extra={<button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete memory" onClick={inner(() => { act({ kind: "remove", id: m.id, at: Date.now() }, "Deleted the memory"); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>} />
+                  extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete memory" onClick={inner(() => { act({ kind: "remove", id: m.id, at: Date.now() }, "Deleted the memory"); setOpen(null); })}>Delete</Button></span>} />
                 <Block title="Memory"><p>{body(m.content)}</p></Block>
                 {m.linkedEventDescription && <div className="it-box" style={{ "--c": "var(--stage-link)" } as CSSProperties}><b><Ic name="lucide:calendar" size={14} />Linked Event</b><p>{m.linkedEventDescription}</p></div>}
                 <div className="it-chips">

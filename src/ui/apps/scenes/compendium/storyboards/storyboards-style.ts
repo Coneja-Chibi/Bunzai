@@ -9,9 +9,6 @@ export const STORYBOARDS_STYLE = `
 .scs .sb-health span{display:block;font:700 .58rem/1.4 var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--stage-mute)}
 .scs .sb-health strong{font:700 .7rem/1.4 var(--font-mono);color:var(--stage-soft);text-transform:capitalize}
 .scs .sb-health strong.good{color:var(--stage-ok)}
-.scs .sb-pick{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
-.scs .sb-pick button{padding:10px 12px;border:1px solid var(--stage-line);background:var(--stage-panel);text-align:left;cursor:pointer}
-.scs .sb-pick button.on{border-color:var(--stage-ok);box-shadow:4px 4px 0 color-mix(in srgb,var(--stage-ok) 35%,transparent)}
 .scs .sb-pick small{display:block;font:700 .6rem/1.4 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-mute)}
 .scs .sb-pick b{font:700 var(--text-control)/1.4 var(--font-ui);letter-spacing:.1em;text-transform:uppercase}
 .scs .sb-panel{display:flex;flex-direction:column;gap:12px}
@@ -19,10 +16,6 @@ export const STORYBOARDS_STYLE = `
 .scs .sb-stat{padding:10px 12px;border:1px solid var(--stage-line);background:var(--stage-panel)}
 .scs .sb-stat small{display:block;font:700 .6rem/1.4 var(--font-ui);letter-spacing:.18em;text-transform:uppercase;color:var(--c)}
 .scs .sb-stat b{font:700 1.55rem/1.2 var(--font-fancy);letter-spacing:.02em;color:var(--c)}
-.scs .sb-tabs{display:flex;gap:2px;border-bottom:1px solid var(--stage-line)}
-.scs .sb-tabs button{padding:8px 14px;border:0;border-bottom:2px solid transparent;background:none;color:var(--stage-mute);font:600 .78rem/1.4 var(--font-ui);letter-spacing:.06em;cursor:pointer}
-.scs .sb-tabs button.on{color:var(--stage-card);border-bottom-color:var(--stage-ok)}
-.scs .sb-tabs small{margin-left:6px;color:var(--stage-mute);font:400 .62rem var(--font-mono);letter-spacing:.08em}
 .scs .sb-split{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
 @container (max-width:760px){.scs .sb-split{grid-template-columns:minmax(0,1fr)}}
 .scs .sb-sec{margin-bottom:16px}
@@ -50,9 +43,6 @@ export const STORYBOARDS_STYLE = `
 .scs .sb-ai-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
 .scs .sb-ai-title{font:700 .66rem/1.4 var(--font-ui);letter-spacing:.18em;text-transform:uppercase;color:var(--stage-soft)}
 .scs .sb-ai-pills{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
-.scs .sb-ai-pills button,.scs .sb-ai-pills select{padding:3px 10px;border:1px solid var(--stage-line);background:var(--stage-black);color:var(--stage-soft);font:700 .62rem/1.4 var(--font-ui);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
-.scs .sb-ai-pills button.on{border-color:var(--stage-ok);color:var(--stage-ok)}
-.scs .sb-ai-pills button.off{border-color:var(--stage-danger-edge);color:var(--stage-danger-text)}
 .scs .sb-ai-text{margin:0;max-height:240px;overflow:auto;white-space:pre-wrap;font:400 .78rem/1.5 var(--font-mono);color:var(--stage-soft)}
 .scs .sb-mark{color:var(--stage-warn)}
 .scs .sb-slug{color:var(--stage-link)}

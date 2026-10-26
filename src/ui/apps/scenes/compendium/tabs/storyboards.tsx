@@ -4,6 +4,7 @@
  * Director's journal; here from the entries alone (core/compendium/dossiers). With none on it says so, as RoleCall does. The strip's Events and Last Write
  * read that journal, so they are not drawn; Calendar waits for it too (props/trackers/storyboards).
  */
+import { Segmented } from "../../../../components/button";
 import { useEffect, useMemo, useState, type JSX } from "react";
 import { buildDossier, normalizeProfile, type ContextMode, type DossierType } from "../../../../../core/compendium/dossiers";
 import { storyboardIncludedByDefault as includedByDefault } from "../../../../../core/trackers";
@@ -13,7 +14,7 @@ import type { AppContext } from "../../../../app-contract";
 import { STORYBOARDS } from "../../props/trackers/storyboards";
 import { useTracker } from "../../props/trackers/use-tracker";
 import { useSceneProps } from "../../props/use-scene-props";
-import { AiPanel, StatRow, toneVar } from "../storyboards/dossier-parts";
+import { AiPanel, StatRow } from "../storyboards/dossier-parts";
 import { CastBody, MapBody, QuestsBody, RenownBody } from "../storyboards/dossier-views";
 import { clearStoryboards, pendingStoryboards } from "../storyboards/storyboards-open";
 
@@ -58,11 +59,8 @@ export function Storyboards({ ctx, chat, entries, onChat, onOpen }: { ctx: AppCo
   return (
     <div className="sb" data-part="compendium.storyboards">
       <div className="sb-pick">
-        {visible.map((d) => (
-          <button key={d.type} type="button" aria-pressed={current.type === d.type} className={current.type === d.type ? "on" : ""} style={toneVar("ok")} onClick={() => setActive(d.type)}>
-            <small>{d.name}</small><b style={{ color: d.tone }}>{current.type === d.type ? "Live" : "Open"}</b>
-          </button>
-        ))}
+        <Segmented label="Storyboards" value={current.type} onChange={setActive}
+          items={visible.map((d) => ({ value: d.type, tone: "var(--stage-ok)", label: <><small>{d.name}</small><b style={{ color: d.tone }}>{current.type === d.type ? "Live" : "Open"}</b></> }))} />
       </div>
       <Panel key={current.type} ctx={ctx} chat={chat} type={current.type} entries={entries} {...(onChat ? { onChat } : {})} onOpen={onOpen} />
     </div>

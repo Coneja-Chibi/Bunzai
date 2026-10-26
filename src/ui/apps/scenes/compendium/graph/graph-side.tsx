@@ -4,6 +4,7 @@
  * RoleCall's list stops at nine types; here all eleven are offered.
  */
 import type { CSSProperties, JSX } from "react";
+import { Button, Chip, ListRow } from "../../../../components/button";
 import { ENTRY_TYPE_INFO, type CrossRefNode, type EntryType } from "../../../../../core/compendium";
 import { GLYPH } from "../compendium-core";
 import { EDGE_KINDS, edgeKindOf, edgeLabel, type EdgeKind, type Filters } from "./graph-core";
@@ -17,7 +18,7 @@ const TYPE_ROWS: readonly { type: EntryType; label: string }[] = [
 const KIND = new Map(EDGE_KINDS.map((e) => [e.kind, e]));
 
 function Toggle({ on, onClick, icon, label, count }: { on: boolean; onClick(): void; icon: JSX.Element; label: string; count?: number }): JSX.Element {
-  return <button type="button" className={`ft${on ? " on" : ""}`} aria-pressed={on} onClick={onClick}>{icon}<span>{label}</span>{count !== undefined && <small>{count}</small>}</button>;
+  return <Chip pressed={on} count={count} onClick={onClick}>{icon}{label}</Chip>;
 }
 const Group = ({ children }: { children: string }): JSX.Element => <div className="fg"><span aria-hidden="true">{GLYPH.star}</span>{children}</div>;
 const flip = <T,>(set: ReadonlySet<T>, v: T): Set<T> => { const next = new Set(set); if (!next.delete(v)) next.add(v); return next; };
@@ -94,13 +95,10 @@ export function GraphDetail({ node, connections, total, onPick, onOpen }: Detail
         <div className="cap">Connected to</div>
         {connections.length === 0 && <p className="none">No visible connections.</p>}
         {connections.map((c, i) => (
-          <button type="button" key={`${c.other.id}-${i}`} style={{ "--ek": `var(${KIND.get(edgeKindOf(c.edge))!.token})` } as CSSProperties} onClick={() => onPick(c.other.id)}>
-            <i className="dot" />
-            <span><b>{c.other.name}</b><small>{edgeLabel(c.edge)}</small></span>
-          </button>
+          <ListRow key={`${c.other.id}-${i}`} vars={{ "--ek": `var(${KIND.get(edgeKindOf(c.edge))!.token})` }} leading={<i className="dot" />} label={c.other.name} subtitle={edgeLabel(c.edge)} onClick={() => onPick(c.other.id)} />
         ))}
       </div>
-      <button type="button" className="open" onClick={onOpen}>OPEN IN CODEX {GLYPH.right}</button>
+      <Button block onClick={onOpen}>OPEN IN CODEX {GLYPH.right}</Button>
     </div>
   );
 }

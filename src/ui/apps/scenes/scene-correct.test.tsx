@@ -124,7 +124,7 @@ describe("Corrections", () => {
   test("lists correction guides only, with RoleCall's empty state when there are none", async () => {
     const m = await mountTools();
     await m.click(m.byText("Corrections"));
-    expect([...m.doc.querySelectorAll(".cx-guide b")].map((b) => b.textContent)).toEqual(["Past tense"]);
+    expect([...m.doc.querySelectorAll(".cx-guides [data-control='row']")].map((r) => r.querySelector("small")!.previousElementSibling!.textContent)).toEqual(["Past tense"]);
   });
 
   test("with no correction guides it says so, and where to make one", async () => {
@@ -138,7 +138,7 @@ describe("Corrections", () => {
     const m = await mountTools();
     await m.click(m.byText("Corrections"));
     expect((m.byText("Apply Correction") as HTMLButtonElement).disabled).toBe(true);
-    await m.click(m.doc.querySelector(".cx-guide"));
+    await m.click(m.doc.querySelector(".cx-guides [data-control='row']"));
     await m.click(m.byText("Apply Correction"));
     expect(m.asked[0]!.input).toEqual({ chatId: "c1", kind: "correct", text: "She walked quickly home.", guideId: "g1" });
     m.asked[0]!.settle("She had walked quickly home.");

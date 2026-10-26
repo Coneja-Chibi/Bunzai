@@ -10,7 +10,6 @@ import type { ChatPresetSamplers } from "../../../stage/contracts/chat-store";
 import { DEFAULT_MAX_MESSAGES, estimateMessageWindow } from "../../../core/assembly/message-window";
 import { countText } from "../../../core/tokens";
 import { Ic, type IconName } from "../../_shared/ic";
-import { ToggleSwitch } from "../../components/toggle-switch";
 import { Slider } from "../../components/slider";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
 import {
@@ -24,6 +23,7 @@ import { MacroPreview } from "./macro-preview";
 import { SamplerCard } from "./scene-sampler-card";
 import { LIST_WIDTH, parseSize } from "./size-core";
 import { SplitGrip } from "./split-grip";
+import { Disclosure, IconButton, Segmented, Tile, Toggle } from "../../components/button";
 
 /** The viewer's own preferences (`ctx.prefs`): the sizes they drag are theirs, not the scene's. */
 type Prefs = AppContext["prefs"];
@@ -93,9 +93,7 @@ export function SamplerBar({ preset, own, onSet, booth = false }: {
   const modeSwitch = (
     <div className="slm">
       <span>Context Mode</span>
-      <div className="seg" role="group" aria-label="Context Mode">
-        {(["tokens", "messages"] as const).map((m) => <button type="button" key={m} aria-pressed={mode === m} onClick={() => onSet("contextMode", m)}>{m}</button>)}
-      </div>
+      <Segmented label="Context Mode" size="sm" items={[{ value: "tokens", label: "Tokens" }, { value: "messages", label: "Messages" }]} value={mode} onChange={(m) => onSet("contextMode", m)} />
       {dot("contextMode")}
     </div>
   );
@@ -105,7 +103,7 @@ export function SamplerBar({ preset, own, onSet, booth = false }: {
     <div className="sl" style={{ "--c": "var(--stage-link)" } as CSSProperties}>
       <div className="slh">
         <span className="slh-pp">Prompt Post-Processing{dot("promptPostProcessing")}
-          <button type="button" className="slq" aria-label="Help" aria-expanded={helpMerge} onClick={() => setHelpMerge(!helpMerge)}><Ic name="lucide:circle-question-mark" size={12} /></button>
+          <IconButton variant="quiet" size="sm" icon="lucide:circle-question-mark" label="Help" aria-expanded={helpMerge} onClick={() => setHelpMerge(!helpMerge)} />
         </span>
       </div>
       <select value={merge} onChange={(e) => onSet("promptPostProcessing", e.target.value as Samplers["promptPostProcessing"])} aria-label="Prompt Post-Processing">
@@ -130,7 +128,7 @@ export function SamplerBar({ preset, own, onSet, booth = false }: {
   }
   return (
     <div className="sbar">
-      <button type="button" className="sbar-row" aria-expanded={open} onClick={() => setOpen(!open)}>
+      <Disclosure data-part="scene.preset.samplers" open={open} onClick={() => setOpen(!open)} label={
         <span className="sbar-vals">
           <span className="lbl">Samplers:</span>
           {quick("temperature", "Temp", "var(--deck-regex)", shown(value("temperature")))}
@@ -139,9 +137,7 @@ export function SamplerBar({ preset, own, onSet, booth = false }: {
           {quick("maxTokens", "Response", "var(--deck-lorebook)", shown(value("maxTokens")))}
           {quick("maxContext", "Context", "var(--stage-warn)", shown(value("maxContext")))}
           {quick("promptPostProcessing", "Post", "var(--stage-link)", MERGE_SHORT[merge] ?? merge)}
-        </span>
-        <span className={`chev${open ? " up" : ""}`}><Ic name="lucide:chevron-down" size={16} /></span>
-      </button>
+        </span>} />
       {open && (
         <div className="sliders">
           {SLIDERS.map((s) => s.key !== "maxContext" ? card(s) : (
@@ -172,7 +168,7 @@ function PromptRow({ p, selected, on, own, onSelect, onToggle }: {
 }): JSX.Element {
   return (
     <div className={`pi${selected ? " sel" : ""}${on ? "" : " off"}`} onClick={() => onSelect(p.id)}>
-      <ToggleSwitch size="sm" isolate on={on} aria-label={`${on ? "Turn off" : "Turn on"} ${p.name}`} onChange={(next) => onToggle(p, next)} />
+      <Toggle size="sm" isolate on={on} aria-label={`${on ? "Turn off" : "Turn on"} ${p.name}`} onChange={(next) => onToggle(p, next)} />
       <div className="pn">
         <span>{p.name}{own && <i className="ov" title="This scene's own switch" />}</span>
         {p.marker ? <small className="mk">{markerLabel(p.markerSlot ?? p.id)} slot</small> : <small>~{countText(p.content)} tok</small>}
@@ -275,12 +271,12 @@ export function PromptList({ body, toggles, selected, templates, prefs, onSelect
       <aside className={`side${rail ? " rail" : ""}`} style={{ "--side-w": `${String(width)}px` } as CSSProperties}>
         <div className="side-hd">
           {rail ? (
-            <button type="button" className="side-ex" title="Expand sidebar" aria-label="Expand sidebar" onClick={() => setFolded(false)}><Ic name="lucide:chevron-right" size={16} /></button>
+            <IconButton variant="quiet" size="sm" icon="lucide:chevron-right" label="Expand sidebar" onClick={() => setFolded(false)} />
           ) : (
             <>
               <span>Prompts</span>
               <span className="side-ct"><span>{onCount(body.prompts, toggles)}/{body.prompts.length}</span>
-                {selected !== null && <button type="button" className="side-co" title="Collapse sidebar" aria-label="Collapse sidebar" onClick={() => setFolded(true)}><Ic name="lucide:chevron-left" size={12} /></button>}
+                {selected !== null && <IconButton variant="quiet" size="sm" icon="lucide:chevron-left" label="Collapse sidebar" onClick={() => setFolded(true)} />}
               </span>
             </>
           )}
@@ -288,7 +284,7 @@ export function PromptList({ body, toggles, selected, templates, prefs, onSelect
         {!rail && (
           <div className="sbw"><div className="sb"><Ic name="lucide:search" size={12} />
             <input value={query} placeholder="Search prompts..." aria-label="Search prompts" onChange={(e) => setQuery(e.target.value)} />
-            {query && <button type="button" className="side-clr" title="Clear search" aria-label="Clear search" onClick={() => setQuery("")}><Ic name="lucide:x" size={12} /></button>}
+            {query && <IconButton variant="quiet" size="sm" icon="lucide:x" label="Clear search" onClick={() => setQuery("")} />}
           </div></div>
         )}
         {!rail && (
@@ -309,11 +305,9 @@ export function PromptList({ body, toggles, selected, templates, prefs, onSelect
                   return (
                     <div key={row.key} ref={virtualizer.measureElement} data-index={vRow.index} data-pick={row.key} className="side-listrow" style={style}>
                       <div className={`cat${g.id ? " acc" : ""}${g.depth > 0 ? " sub" : ""}`} style={g.depth > 0 ? { marginLeft: 12 * g.depth } : undefined}>
-                        <ToggleSwitch size="sm" on={all} mixed={!all && on > 0} aria-label={`${all ? "Turn off" : "Turn on"} everything in ${g.name}`} onChange={(next) => onToggleGroup(row.list, next)} />
-                        <button type="button" className="cat-t" aria-expanded={open}
-                          onClick={() => setOpened((s) => { const n = new Set(s); if (n.has(key)) n.delete(key); else n.add(key); return n; })}>
-                          <span className={`cv${open ? "" : " r"}`}><Ic name="lucide:chevron-down" size={g.depth > 0 ? 10 : 12} /></span><span className="cn">{g.name}</span>
-                        </button>
+                        <Toggle size="sm" on={all} mixed={!all && on > 0} aria-label={`${all ? "Turn off" : "Turn on"} everything in ${g.name}`} onChange={(next) => onToggleGroup(row.list, next)} />
+                        <Disclosure data-part="scene.preset.category" open={open} label={g.name}
+                          onClick={() => setOpened((s) => { const n = new Set(s); if (n.has(key)) n.delete(key); else n.add(key); return n; })} />
                         <span className="cc">{on}/{row.list.length}</span>
                       </div>
                     </div>
@@ -333,9 +327,7 @@ export function PromptList({ body, toggles, selected, templates, prefs, onSelect
         {rail && (
           <div className="side-rail">
             {body.prompts.map((p) => (
-              <button type="button" key={p.id} className={`rail-i${selected === p.id ? " sel" : ""}${isOn(p, toggles) ? "" : " off"}`} title={p.name} aria-label={p.name} onClick={() => onSelect(p.id)}>
-                <Ic name={railIcon(p)} size={16} />
-              </button>
+              <Tile key={p.id} kind="icon" icon={railIcon(p)} label={p.name} selected={selected === p.id} data-off={isOn(p, toggles) ? undefined : ""} onClick={() => onSelect(p.id)} />
             ))}
           </div>
         )}
@@ -384,12 +376,12 @@ export function PromptEditor({ prompt, loadedAt, presetName, note, prefs, onText
     <div className="ed-body">
       <div className="ed-hd">
         <span className="ed-l">
-          <button type="button" className="tbtn" aria-label="Back" title="Back" onClick={onClose}><Ic name="lucide:chevron-left" size={16} /></button>
+          <IconButton variant="quiet" size="sm" icon="lucide:chevron-left" label="Back" onClick={onClose} />
           <span className="nmx">{prompt.name}</span>
         </span>
         <span className="ed-r">
           <span className="tk">{prompt.marker ? "Marker" : `~${countText(text)} tok`}</span>
-          <button type="button" className="tbtn" title={full ? "Exit fullscreen" : "Fullscreen"} aria-label={full ? "Exit fullscreen" : "Fullscreen"} onClick={() => setFull(!full)}><Ic name={full ? "lucide:minimize-2" : "lucide:maximize-2"} size={14} /></button>
+          <IconButton variant="quiet" size="sm" icon={full ? "lucide:minimize-2" : "lucide:maximize-2"} label={full ? "Exit fullscreen" : "Fullscreen"} onClick={() => setFull(!full)} />
         </span>
       </div>
       <div className="ed-main">

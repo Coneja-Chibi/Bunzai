@@ -109,15 +109,15 @@ describe("renders totals and legend", () => {
 describe("the what-if", () => {
   test("clicking a legend row excludes it and the total drops; Reset restores it", async () => {
     const flushSync = await mount(trace(), () => undefined);
-    const loreRow = buttons().find((b) => b.className.includes("tok-legrow") && (b.textContent ?? "").includes("Lore"))!;
+    const loreRow = buttons().find((b) => b.closest(".tok-leg") !== null && (b.textContent ?? "").includes("Lore"))!;
 
     click(flushSync, loreRow);
     expect(host.textContent).toContain("2,894"); // 3014 - 120
-    expect(loreRow.className).toContain("tok-x");
+    expect(loreRow.hasAttribute("data-excluded")).toBe(true);
 
     click(flushSync, byText("Reset what-if")!);
     expect(host.textContent).toContain("3,014");
-    expect(loreRow.className).not.toContain("tok-x");
+    expect(loreRow.hasAttribute("data-excluded")).toBe(false);
     unmount();
   });
 });
@@ -238,7 +238,7 @@ describe("closing", () => {
     let closed = false;
     const flushSync = await mount(trace(), () => { closed = true; });
 
-    click(flushSync, byText("×")!);
+    click(flushSync, host.querySelector("button[aria-label=Close]")!);
 
     expect(closed).toBe(true);
     unmount();

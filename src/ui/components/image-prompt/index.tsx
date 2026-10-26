@@ -2,6 +2,7 @@
  * ImagePromptEditor - canonical persona.imagePrompt (affixes + full text + labeled rows).
  * Replaces the flat structured-subeditor wall and the duplicate Agnai Image Affixes card.
  */
+import { Button, IconButton } from "../button";
 import type { JSX } from "react";
 import {
   imagePromptToCanonical,
@@ -100,22 +101,23 @@ export function ImagePromptEditor({ value, onChange }: ImagePromptEditorProps): 
                 patch({ rows });
               }}
             />
-            <button
-              type="button"
-              className={styles.rm}
+            <IconButton
+              variant="quiet"
+              size="sm"
+              icon="lucide:x"
+              label="Remove row"
               onClick={() => patch({ rows: a.rows.filter((_, j) => j !== i) })}
-            >
-              ×
-            </button>
+            />
           </div>
         ))}
-        <button
-          type="button"
-          className={styles.add}
-          onClick={() => patch({ rows: [...a.rows, { label: "", value: "" }] })}
-        >
-          + row
-        </button>
+        <div className={styles.add}>
+          <Button
+            size="sm"
+            onClick={() => patch({ rows: [...a.rows, { label: "", value: "" }] })}
+          >
+            + Row
+          </Button>
+        </div>
       </div>
     </div>
   );

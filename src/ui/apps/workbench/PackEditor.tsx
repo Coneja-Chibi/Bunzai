@@ -2,6 +2,7 @@
  * PackEditor - open a library pack entity as a "folder": name, brief, full sprite grid.
  * Same SpritePack leaf as Manage Sprites; save writes the pack entity.
  */
+import { Button } from "../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type JSX, type ReactNode } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import {
@@ -156,14 +157,7 @@ export function PackEditor({ entity, revision, ctx, piece, topRight }: PackEdito
         />
         <span className={styles.flag}>{dirty ? "unsaved" : "saved"}</span>
         {topRight}
-        <button
-          type="button"
-          className={styles.save}
-          disabled={!dirty || saving}
-          onClick={() => void doSave()}
-        >
-          {saving ? "Saving…" : "Save"}
-        </button>
+        <Button variant="primary" disabled={!dirty || saving} onClick={() => void doSave()}>{saving ? "Saving…" : "Save"}</Button>
       </div>
 
       <div className={`${styles.room} scrollThin`}>

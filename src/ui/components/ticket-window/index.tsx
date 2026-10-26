@@ -6,7 +6,8 @@
  * serves deployments with their own thumb store (galleries, backgrounds) and renders only when one
  * is wired. Click or drop on the glass hangs art. The naked file input never renders.
  */
-import { useRef, useState, type DragEvent, type JSX, type RefCallback } from "react";
+import { Button, Card, Tile } from "../button";
+import { useRef, useState, type JSX, type RefCallback } from "react";
 import type { MediaAsset } from "../../../entities/character/schema";
 import { portraitFromRef } from "../../../core/media";
 import { useArtSrc } from "../../_shared/art-cache";
@@ -77,9 +78,9 @@ const readImageFile = async (file: File, upload?: AssetUpload): Promise<MediaAss
 };
 
 /** Every readable image from a picked/dropped file list; unreadable files skip (never hang the add). */
-const readImageFiles = async (files: FileList, upload?: AssetUpload): Promise<MediaAsset[]> => {
+const readImageFiles = async (files: ArrayLike<File>, upload?: AssetUpload): Promise<MediaAsset[]> => {
   const settled = await Promise.allSettled(
-    [...files].filter((f) => f.type.startsWith("image/")).map((file) => readImageFile(file, upload)),
+    Array.from(files).filter((f) => f.type.startsWith("image/")).map((file) => readImageFile(file, upload)),
   );
   return settled
     .filter((s): s is PromiseFulfilledResult<MediaAsset> => s.status === "fulfilled")
@@ -104,16 +105,10 @@ export function TicketWindow({
   const [dragOver, setDragOver] = useState(false);
   const canEdit = typeof onPick === "function";
 
-  const hangFirst = async (files: FileList | null): Promise<void> => {
+  const hangFirst = async (files: ArrayLike<File> | null): Promise<void> => {
     if (!canEdit || !files || files.length === 0) return;
     const [first] = await readImageFiles(files, uploadAsset);
     if (first) onPick(first);
-  };
-
-  const onDrop = (e: DragEvent): void => {
-    e.preventDefault();
-    setDragOver(false);
-    void hangFirst(e.dataTransfer.files);
   };
 
   return (
@@ -124,49 +119,49 @@ export function TicketWindow({
           {title ? <span className={styles.marqueeTitle}>{title}</span> : <span>·</span>}
         </div>
         {/* The observed element is the glass itself: it exists while the booth is empty, which is when stored art needs to start loading. */}
-        <button
-          ref={artRef}
-          type="button"
+        {/* The Card owns the drop and its art face; this frame only tracks drag-over so the stub below can say "release to replace". */}
+        <div
           className={`${styles.glass}${dragOver ? ` ${styles.glassDrag}` : ""}`}
-          title={canEdit ? "Click or drop to hang art" : undefined}
-          disabled={!canEdit}
-          onClick={() => pickRef.current?.click()}
-          onDragOver={(e) => {
-            if (!canEdit) return;
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={canEdit ? onDrop : undefined}
+          onDragOver={canEdit ? () => setDragOver(true) : undefined}
+          onDragLeave={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setDragOver(false); }}
+          onDrop={() => setDragOver(false)}
         >
-          {artUrl ? (
-            <img src={artUrl} alt="" />
-          ) : (
-            <>
-              <span className={styles.monogram}>{monogram}</span>
-              {canEdit && (
-                <span className={styles.emptyLine}>
-                  no art hung yet
-                  <br />
-                  drop it here · or click
-                </span>
-              )}
-            </>
-          )}
-        </button>
+          <Card
+            kind="drop"
+            ref={artRef}
+            title={canEdit ? "Click or drop to hang art" : undefined}
+            disabled={!canEdit}
+            art={artUrl ? <img src={artUrl} alt="" /> : undefined}
+            onFiles={canEdit ? (files) => void hangFirst(files) : undefined}
+            onClick={() => pickRef.current?.click()}
+          >
+            {!artUrl && (
+              <>
+                <span className={styles.monogram}>{monogram}</span>
+                {canEdit && (
+                  <span className={styles.emptyLine}>
+                    no art hung yet
+                    <br />
+                    drop it here · or click
+                  </span>
+                )}
+              </>
+            )}
+          </Card>
+        </div>
         {canEdit && (
           <div className={styles.stubs}>
             {dragOver ? (
               <span className={`${styles.stub} ${styles.stubPrimary}`}>release to replace</span>
             ) : (
               <>
-                <button type="button" className={`${styles.stub} ${styles.stubPrimary}`} onClick={() => pickRef.current?.click()}>
+                <Button size="sm" onClick={() => pickRef.current?.click()}>
                   {artUrl ? "change" : "choose art"}
-                </button>
+                </Button>
                 {artUrl && onRemove && (
-                  <button type="button" className={styles.stub} onClick={onRemove}>
-                    remove
-                  </button>
+                  <Button size="sm" variant="danger" onClick={onRemove}>
+                    Remove
+                  </Button>
                 )}
               </>
             )}
@@ -178,25 +173,20 @@ export function TicketWindow({
         <ShelfKicker>alternates</ShelfKicker>
         <div className={styles.strip}>
           {(alternates ?? []).map((alt) => (
-            <button
+            <Tile
               key={alt.id}
-              type="button"
-              className={`${styles.thumb}${alt.active ? ` ${styles.thumbOn}` : ""}`}
-              title={alt.label ?? "hang this art"}
+              kind="thumb"
+              label={alt.label ?? "Hang this art"}
+              selected={alt.active}
+              art={<span className={styles.thumbArt}><AlternateArt url={alt.url} />{alt.label ? <span className={styles.thumbTag}>{alt.label}</span> : null}</span>}
               onClick={() => onHang?.(alt.id)}
-            >
-              <AlternateArt url={alt.url} />
-              {alt.label ? <span className={styles.thumbTag}>{alt.label}</span> : null}
-            </button>
+            />
           ))}
-          <button
-            type="button"
-            className={`${styles.thumb} ${styles.thumbAdd}`}
-            title={onAdd ? "Add alternates" : "Hang new art"}
+          <Tile
+            kind="add"
+            label={onAdd ? "Add alternates" : "Hang new art"}
             onClick={() => (onAdd ? addRef.current : pickRef.current)?.click()}
-          >
-            +
-          </button>
+          />
         </div>
         </>
       )}
@@ -206,7 +196,7 @@ export function TicketWindow({
         accept={IMAGE_ACCEPT}
         className={styles.hiddenFile}
         onChange={(e) => {
-          void hangFirst(e.target.files);
+          void hangFirst(e.target.files ? [...e.target.files] : null);
           e.target.value = "";
         }}
       />

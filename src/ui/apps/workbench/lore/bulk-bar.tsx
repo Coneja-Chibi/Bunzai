@@ -2,6 +2,7 @@
  * Floating bulk action bar for the lore TOC select mode (vs-lore-page-2).
  * Delete is destructive: an InkDialog confirm sheet gates it (no bare browser confirm).
  */
+import { Button, IconButton } from "../../../components/button";
 import { useState } from "react";
 import type { JSX } from "react";
 import { InkDialog } from "../../../components/ink-dialog";
@@ -32,33 +33,20 @@ export function LoreBulkBar({
           <b>
             {count} selected
           </b>
-          <button type="button" className={styles.bx} aria-label="Clear selection" onClick={onClear}>
-            &times;
-          </button>
+          <IconButton label="Clear selection" variant="quiet" size="sm" icon="lucide:x" onClick={onClear} />
         </div>
         <div className={styles.bActs}>
-          <button type="button" className={styles.bAct} onClick={() => onEnable(true)}>
-            On
-          </button>
-          <button type="button" className={styles.bAct} onClick={() => onEnable(false)}>
-            Off
-          </button>
-          <button
-            type="button"
-            className={styles.bAct}
+          <Button size="sm" onClick={() => onEnable(true)}>On</Button>
+          <Button size="sm" onClick={() => onEnable(false)}>Off</Button>
+          <Button
+            size="sm"
             disabled={!onMove}
             title={onMove ? "Split selected entries into a new book" : "Move unavailable"}
             onClick={() => onMove?.()}
           >
             Move…
-          </button>
-          <button
-            type="button"
-            className={`${styles.bAct} ${styles.bActDanger}`}
-            onClick={() => setConfirmOpen(true)}
-          >
-            Delete
-          </button>
+          </Button>
+          <Button variant="danger" size="sm" onClick={() => setConfirmOpen(true)}>Delete</Button>
         </div>
       </div>
 
@@ -70,19 +58,17 @@ export function LoreBulkBar({
             </b>
             <p className={styles.bcBody}>There is no undo.</p>
             <div className={styles.bcActs}>
-              <button
-                type="button"
-                className={styles.bcGo}
+              <Button
+                variant="danger"
+                size="sm"
                 onClick={() => {
                   setConfirmOpen(false);
                   onDelete();
                 }}
               >
                 Delete
-              </button>
-              <button type="button" className={styles.bcKeep} onClick={() => setConfirmOpen(false)}>
-                Keep
-              </button>
+              </Button>
+              <Button variant="quiet" size="sm" onClick={() => setConfirmOpen(false)}>Keep</Button>
             </div>
           </div>
         </InkDialog>

@@ -6,6 +6,7 @@
  * must not fetch from the network.
  */
 import type { CSSProperties, JSX } from "react";
+import { Chip, ListRow } from "../../../components/button";
 import { ENTRY_TYPE_INFO, backlinksOf, linksOf, type CompendiumEntry } from "../../../../core/compendium";
 import { GLYPH, initialsOf, titled, typeRole, type BookModel } from "./compendium-core";
 import { EntryBody, FieldBlock } from "./fields/blocks";
@@ -39,7 +40,7 @@ function Linked({ m, id, onOpen }: { m: BookModel; id: string; onOpen(id: string
   };
   const part = (title: string, groups: ReturnType<typeof grouped>): JSX.Element => (
     <div><div className="lt">{title}</div>{groups.map(([edge, list]) => (
-      <div key={edge} className="lr"><span>{titled(edge)}</span><div>{list.map((l) => <button key={l.id} type="button" onClick={() => onOpen(l.id)}>{l.name}</button>)}</div></div>
+      <div key={edge} className="lr"><span>{titled(edge)}</span><div>{list.map((l) => <Chip key={l.id} onClick={() => onOpen(l.id)}>{l.name}</Chip>)}</div></div>
     ))}</div>
   );
   return (
@@ -58,7 +59,7 @@ function ReferencedBy({ m, e, onOpen }: { m: BookModel; e: CompendiumEntry; onOp
   const rows = [...bySource.values()];
   const group = (title: string, list: typeof rows): JSX.Element | null => list.length === 0 ? null : (
     <div><div className="lt">{title}</div>{list.map((x) => (
-      <button key={x.sourceEntryId} type="button" className="cp-rb" onClick={() => onOpen(x.sourceEntryId)}><span><b>{x.sourceTitle}</b>{x.notes && <i>{x.notes}</i>}</span><em>{x.nature ?? GLYPH.dot}</em></button>
+      <ListRow key={x.sourceEntryId} label={x.sourceTitle} subtitle={x.notes || undefined} meta={x.nature ?? GLYPH.dot} onClick={() => onOpen(x.sourceEntryId)} />
     ))}</div>
   );
   return (

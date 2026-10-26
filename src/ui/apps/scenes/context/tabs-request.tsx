@@ -5,6 +5,7 @@
  */
 import { useState, type CSSProperties, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Chip, IconButton } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import type { SceneTrace } from "../../../app-contract-scenes";
@@ -28,14 +29,14 @@ export function Sources({ trace, onHighlight }: { trace: SceneTrace; onHighlight
               <span className="ls-name">{n.label}<small>{n.children.length} {n.children.length === 1 ? "block" : "blocks"}</small></span>
               <span className="ls-num">{n.tokens.toLocaleString()}<small>{n.percent}%</small></span>
               <span className="ls-bar"><i style={{ width: `${n.percent}%` }} /></span>
-              <button type="button" title="Highlight in Compose" aria-label={`Highlight ${n.label} in Compose`} onClick={(e) => { e.stopPropagation(); onHighlight({ category: n.category }); }}><Ic name="lucide:target" size={12} /></button>
+              <IconButton variant="quiet" size="sm" title="Highlight in Compose" label={`Highlight ${n.label} in Compose`} icon="lucide:target" onClick={(e) => { e.stopPropagation(); onHighlight({ category: n.category }); }} />
             </div>
             {open.has(n.category) && n.children.map((c) => (
               <div key={c.index} className="ls-node child" style={tone(n.colorVar)}>
                 <span className="ls-name">{c.label}<small>{c.role}</small></span>
                 <span className="ls-num">{c.tokens.toLocaleString()}<small>{c.percent}%</small></span>
                 <span className="ls-bar"><i style={{ width: `${c.percent}%` }} /></span>
-                <button type="button" title="Highlight in Compose" aria-label={`Highlight ${c.label} in Compose`} onClick={() => onHighlight({ category: n.category, index: c.index })}><Ic name="lucide:target" size={12} /></button>
+                <IconButton variant="quiet" size="sm" title="Highlight in Compose" label={`Highlight ${c.label} in Compose`} icon="lucide:target" onClick={() => onHighlight({ category: n.category, index: c.index })} />
               </div>
             ))}
           </div>
@@ -74,7 +75,7 @@ export function Compose({ trace, highlight, onClear }: { trace: SceneTrace; high
   if (highlight !== seen) { setSeen(highlight); if (lit) setOpen(lit.index); }
   return (
     <div className="ls-pane">
-      {highlight && <div className="ls-hint"><button type="button" className="ls-chip" onClick={onClear}><Ic name="lucide:target" size={12} />Highlighted<Ic name="lucide:x" size={12} /></button></div>}
+      {highlight && <div className="ls-hint"><Chip onClick={onClear}><Ic name="lucide:target" size={12} />Highlighted<Ic name="lucide:x" size={12} /></Chip></div>}
       <div className="ls-list">
         {rows.map((r) => {
           const shown = open === r.index;
@@ -91,7 +92,7 @@ export function Compose({ trace, highlight, onClear }: { trace: SceneTrace; high
                 <div className="ls-body">
                   {r.text === undefined ? <p className="ls-note">Raw text is kept for each take's latest reply; this one shows sizes only.</p> : (
                     <>
-                      <button type="button" className="ls-copy" aria-label="Copy block" onClick={() => { void copyText(r.text!).then((ok) => { if (ok) copied.flash(r.index); }); }}><Ic name={copied.value === r.index ? "lucide:check" : "lucide:copy"} size={12} /></button>
+                      <span className="ls-copy"><IconButton variant="quiet" size="sm" label="Copy block" icon={copied.value === r.index ? "lucide:check" : "lucide:copy"} onClick={() => { void copyText(r.text!).then((ok) => { if (ok) copied.flash(r.index); }); }} /></span>
                       <pre>{r.text}</pre>
                     </>
                   )}

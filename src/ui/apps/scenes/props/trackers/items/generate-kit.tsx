@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, type JSX, type ReactNode } from "react";
 import type { TrackerModule } from "../../../../../../stage/contracts/chat-store";
 import { toErrorMessage } from "../../../../../_shared/error-message";
+import { Button, IconButton } from "../../../../../components/button";
 import { Ic } from "../../../../../_shared/ic";
 import type { AppContext } from "../../../../../app-contract";
 
@@ -42,9 +43,9 @@ function Proposal<T>({ phase, noun, preview, accept, again, discard }: { phase: 
       <div className="it-proposal-head">Proposed {noun}</div>
       {preview(phase.item)}
       <div className="it-buttons">
-        <button type="button" className="it-go" onClick={() => accept(phase.item)}><Ic name="lucide:check" size={12} /> Accept</button>
-        <button type="button" className="it-cancel" onClick={again}>Try again</button>
-        <button type="button" className="it-cancel" onClick={discard}>Discard</button>
+        <Button variant="primary" size="sm" icon="lucide:check" onClick={() => accept(phase.item)}>Accept</Button>
+        <Button variant="quiet" size="sm" onClick={again}>Try again</Button>
+        <Button variant="quiet" size="sm" onClick={discard}>Discard</Button>
       </div>
     </div>
   );
@@ -52,9 +53,9 @@ function Proposal<T>({ phase, noun, preview, accept, again, discard }: { phase: 
 
 function GenerateButton({ working, disabled, onClick }: { working: boolean; disabled: boolean; onClick(): void }): JSX.Element {
   return (
-    <button type="button" className="it-go" disabled={disabled || working} onClick={onClick}>
+    <Button size="sm" disabled={disabled || working} onClick={onClick}>
       {working ? <><span className="it-spin"><Ic name="lucide:loader-circle" size={12} /></span><span>Generating...</span></> : <><Ic name="lucide:sparkles" size={12} /><span>Generate</span></>}
-    </button>
+    </Button>
   );
 }
 
@@ -82,7 +83,7 @@ export function AddByModel<T>({ ctx, chatId, ask, label, noun, namePlaceholder, 
   const { phase, run, clear } = useProposal<T>(ctx, chatId, ask);
   const generate = (): void => { if (name.trim()) run("generate", { itemName: name.trim(), ...(guide.trim() ? { userGuide: guide.trim() } : {}) }); };
   const close = (): void => { clear(); setOpen(false); setName(""); setGuide(""); };
-  if (!open) return <button type="button" className="it-add" onClick={() => setOpen(true)}><Ic name="lucide:plus" size={14} /><span>{label}</span></button>;
+  if (!open) return <Button size="sm" block icon="lucide:plus" onClick={() => setOpen(true)}>{label}</Button>;
   return (
     <div className="it-form">
       {labels && <label className="it-label" htmlFor="it-add-name">{labels.name}</label>}
@@ -91,7 +92,7 @@ export function AddByModel<T>({ ctx, chatId, ask, label, noun, namePlaceholder, 
       <input id="it-add-guide" type="text" placeholder={guidePlaceholder} value={guide} aria-label="Guide the AI" onChange={(e) => setGuide(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") generate(); }} />
       <div className="it-buttons">
         <GenerateButton working={phase.at === "working"} disabled={!name.trim()} onClick={generate} />
-        <button type="button" className="it-cancel" onClick={close}>Cancel</button>
+        <Button variant="quiet" size="sm" onClick={close}>Cancel</Button>
       </div>
       <Proposal phase={phase} noun={noun} preview={preview} again={generate} discard={clear} accept={(item) => { accept(item, name.trim()); close(); }} />
     </div>
@@ -125,7 +126,7 @@ export function RefreshByModel<T>({ ctx, chatId, ask, noun, existing, preview, a
       <>
         <div className="it-actions">
           <input type="text" className="it-grow" placeholder="Guide the AI..." value={guide} aria-label="Guide the AI" disabled={phase.at === "working"} onChange={(e) => setGuide(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") generate(); }} />
-          <button type="button" className="it-act" title="Refresh with AI" aria-label="Refresh with AI" disabled={phase.at === "working"} onClick={generate}><span className={phase.at === "working" ? "it-spin" : ""}><Ic name="lucide:refresh-cw" size={14} /></span></button>
+          <IconButton size="sm" label="Refresh with AI" icon={<span className={phase.at === "working" ? "it-spin" : ""}><Ic name="lucide:refresh-cw" size={15} /></span>} disabled={phase.at === "working"} onClick={generate} />
           {extra}
         </div>
         <Proposal phase={phase} noun={noun} preview={preview} again={generate} discard={clear} accept={(item) => { accept(item); close(); }} />
@@ -135,9 +136,9 @@ export function RefreshByModel<T>({ ctx, chatId, ask, noun, existing, preview, a
   return (
     <>
       <div className="it-actions">
-        <button type="button" className="it-act" title="Refresh with AI" aria-expanded={open} onClick={() => (open ? close() : setOpen(true))}>
+        <Button size="sm" title="Refresh with AI" aria-expanded={open} onClick={() => (open ? close() : setOpen(true))}>
           <span className={phase.at === "working" ? "it-spin" : ""}><Ic name="lucide:refresh-cw" size={14} /></span><span>Refresh</span>
-        </button>
+        </Button>
         {extra}
       </div>
       {open && (
@@ -145,7 +146,7 @@ export function RefreshByModel<T>({ ctx, chatId, ask, noun, existing, preview, a
           <input type="text" placeholder="Guide the AI... (optional)" value={guide} aria-label="Guide the AI" onChange={(e) => setGuide(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") generate(); }} />
           <div className="it-buttons">
             <GenerateButton working={phase.at === "working"} disabled={false} onClick={generate} />
-            <button type="button" className="it-cancel" onClick={close}>Cancel</button>
+            <Button variant="quiet" size="sm" onClick={close}>Cancel</Button>
           </div>
           <Proposal phase={phase} noun={noun} preview={preview} again={generate} discard={clear} accept={(item) => { accept(item); close(); }} />
         </div>

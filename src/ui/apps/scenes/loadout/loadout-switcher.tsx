@@ -7,6 +7,7 @@ import { useState, type JSX } from "react";
 import { plural } from "../../../../core/text";
 import type { LoadoutReceipt, LoadoutRecord } from "../../../../studio/loadout-record";
 import type { AppContext } from "../../../app-contract";
+import { Button, IconButton } from "../../../components/button";
 import { InkDialog } from "../../../components/ink-dialog";
 import { LoadoutReview } from "./loadout-review";
 import type { LoadoutList } from "./use-scene-loadouts";
@@ -48,25 +49,25 @@ export function LoadoutSwitcher({ ctx, chatId, list, active, busy, onApply, onSa
               <p className="ldd-note">Apply a saved setup to this scene, or review its changes first. Messages and takes stay untouched.</p>
               {active && <p className="ldd-active">Active · {active.loadoutName} · {plural(activeCount, "setting")} · {active.code}</p>}
             </div>
-            <button type="button" className="ldd-x" aria-label="Close loadout switcher" disabled={applying !== null} onClick={onClose}>X</button>
+            <IconButton label="Close loadout switcher" icon="lucide:x" disabled={applying !== null} onClick={onClose} />
           </header>
           {say && <p className="ldd-err" role="alert">{say}</p>}
           <div className="ldd-list">
             {list.state === "loading" && <p className="ldd-quiet">Loading loadouts...</p>}
-            {list.state === "failed" && <p className="ldd-quiet" role="alert">Your loadouts could not be loaded. <button type="button" className="ldd-link" onClick={onRetry}>Try again</button></p>}
+            {list.state === "failed" && <p className="ldd-quiet" role="alert">Your loadouts could not be loaded. <Button variant="quiet" size="sm" onClick={onRetry}>Try again</Button></p>}
             {list.state === "ready" && list.loadouts.length === 0 && <p className="ldd-quiet">No saved loadouts yet. Save this scene's setup to start one.</p>}
             {list.state === "ready" && list.loadouts.map((l) => {
               const on = active?.loadoutId === l.id;
               return (
                 <div key={l.id} className={`ldd-item${on ? " on" : ""}`} data-loadout={l.id}>
                   <div className="pn"><b>{l.name}</b><small>{plural(l.panels.length, "setting")}{on ? " · active" : ""}</small></div>
-                  <button type="button" className="pri" aria-label={`Apply ${l.name}`} disabled={busy || applying !== null} onClick={() => void run(l)}>{applying === l.id ? "Applying..." : "Apply"}</button>
-                  <button type="button" disabled={busy || applying !== null} onClick={() => { setSay(null); setReview(l); }}>Review changes</button>
+                  <Button size="sm" aria-label={`Apply ${l.name}`} disabled={busy || applying !== null} onClick={() => void run(l)}>{applying === l.id ? "Applying..." : "Apply"}</Button>
+                  <Button variant="quiet" size="sm" disabled={busy || applying !== null} onClick={() => { setSay(null); setReview(l); }}>Review changes</Button>
                 </div>
               );
             })}
           </div>
-          <footer><button type="button" className="pri" disabled={applying !== null} onClick={onSaveCurrent}>Save current setup</button></footer>
+          <footer><Button variant="primary" disabled={applying !== null} onClick={onSaveCurrent}>Save current setup</Button></footer>
         </div>
       </InkDialog>
       {review && <LoadoutReview ctx={ctx} chatId={chatId} loadout={review} applying={applying !== null} onCancel={() => setReview(null)} onApply={() => void run(review)} />}

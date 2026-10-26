@@ -3,6 +3,7 @@
  * zone (the tiny standing app preview that reskins by presence). Copy is verbatim from the locked
  * vs-setup-hybrid artifact. Writes one of the persisted theme ids.
  */
+import { Card } from "../../../components/button";
 import type { JSX } from "react";
 import { DEFAULT_STUDIO_THEME, DEFAULT_THEME_NAME, SETTING_KEYS } from "../../../../studio/settings-shape";
 import type { SetupDraft, SetupOption, SetupStep } from "../../step-contract";
@@ -20,7 +21,8 @@ const flavorOf = (id: string): "light" | "dark" | "greenroom" | "theater" => FLA
 
 const CSS = `
 .pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,10rem),1fr));gap:.8rem}
-.thumb{display:flex;flex-direction:column;gap:.7rem;align-items:center;padding-top:.95rem}
+.pair [data-control="card"]{gap:.7rem;align-items:center;padding-top:.95rem}
+.pair [data-control="card"]>.mock{order:-1}
 .mock{width:100%;aspect-ratio:4/3;border:2px solid currentColor;display:flex;overflow:hidden}
 .mock .mbar{width:26%;border-right:2px solid currentColor;display:flex;flex-direction:column;gap:6px;padding:7px 6px}
 .mock .mbar span{height:6px;background:currentColor;opacity:.55;display:block}
@@ -105,17 +107,13 @@ function Preview({ theme }: { theme: string }): JSX.Element {
 function ThemeOption(opt: SetupOption, pressed: boolean, onPick: () => void): JSX.Element {
   const flavor = flavorOf(opt.id);
   return (
-    <button className={`opt thumb${pressed ? " on" : ""}`} aria-pressed={pressed ? "true" : "false"} onClick={onPick}>
-      {pressed && <span className="on-mark">Picked</span>}
+    <Card kind="choice" selected={pressed} aria-pressed={pressed ? "true" : "false"} onClick={onPick}
+      heading={<span className="thumb-name">{opt.title}{opt.isDefault && <span className="default-tag">default</span>}</span>}>
       <span className={`mock ${flavor}`}>
         <Bars cls="mbar" count={3} />
         <Bars cls="mbody" count={3} />
       </span>
-      <span className="thumb-name">
-        {opt.title}
-        {opt.isDefault && <span className="default-tag">default</span>}
-      </span>
-    </button>
+    </Card>
   );
 }
 

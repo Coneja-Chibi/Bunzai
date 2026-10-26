@@ -65,7 +65,7 @@ describe("a book open (rc-world-3)", () => {
     expect(byLabel("New entry")).not.toBeNull();
     expect(byLabel("Open full editor")).not.toBeNull();
     expect(q<HTMLInputElement>('input[type="search"]')!.placeholder).toBe("Search entries, text, or triggers...");
-    expect(qa(".wl-gh").map((h) => h.textContent)).toEqual(["Constant1", "Selective1"]);
+    expect(qa("[data-part='scene.lore.group-head']").map((h) => h.textContent)).toEqual(["Constant1", "Selective1"]);
     expect(text()).toContain("Select an Entry");
     expect(text()).toContain("Pick one from the list to edit its content, triggers, and placement.");
     expect(rig.loads).toEqual(["b1"]);
@@ -110,7 +110,7 @@ describe("a book open (rc-world-3)", () => {
     const flushSync = await mountWing();
     await openBook(flushSync);
     expect(entryRow("The storm")).toBeDefined();
-    await press(flushSync, byText(".wl-gh", "Selective"));
+    await press(flushSync, byText("[data-part='scene.lore.group-head']", "Selective"));
     expect(entryRow("The storm")).toBeUndefined();
     expect(entryRow("always1")).toBeDefined();
     unmount(flushSync);
@@ -123,7 +123,7 @@ describe("a book open (rc-world-3)", () => {
     const flushSync = await mountWing();
     await openBook(flushSync);
     expectWindowed(rig.host, ".wl-en", 213, 40);
-    expect(qa(".wl-gh").map((h) => h.textContent)).toEqual(["Constant5", "Selective208"]);
+    expect(qa("[data-part='scene.lore.group-head']").map((h) => h.textContent)).toEqual(["Constant5", "Selective208"]);
     expect(entryRow("Entry 212")).toBeUndefined(); // the last row is far below the window
     unmount(flushSync);
   });
@@ -136,11 +136,12 @@ describe("an entry open (rc-world-4)", () => {
     await openEntry(flushSync, "The storm");
     expect(q<HTMLInputElement>('input[aria-label="Entry title"]')!.value).toBe("The storm");
     expect(q('[role="switch"]')!.getAttribute("aria-checked")).toBe("true");
-    expect(qa(".wl-ch").map((c) => c.textContent)).toEqual(["storm×"]);
+    expect(qa(".wl-ch").map((c) => c.textContent)).toEqual(["storm"]);
+    expect(q(".wl-ch [aria-label='Remove storm']")).not.toBeNull();
     expect(q<HTMLTextAreaElement>("textarea.wl-ta")!.value).toBe("content-key1");
     expect(q(".wl-mac")!.textContent).toContain("{{user}}{{char}}macros");
     expect(q(".wl-mac .tk")!.textContent).toMatch(/^~\d+ tokens$/);
-    const card = q(".wl-adv")!;
+    const card = q("[data-part='scene.lore.advanced']")!;
     expect(card.textContent).toContain("Show advanced settings");
     expect(card.textContent).toContain("Order, timing, injection position, filters, and the rest of the machinery.");
     expect(q(".wl-ord")).toBeNull();
@@ -165,9 +166,9 @@ describe("advanced settings open (rc-world-5 and 7)", () => {
     const flushSync = await mountWing();
     await openBook(flushSync);
     await openEntry(flushSync, "The storm");
-    await press(flushSync, q(".wl-adv"));
-    expect(q(".wl-adv")!.textContent).toContain("Hide advanced settings");
-    expect(q(".wl-type")!.textContent).toBe("Selective");
+    await press(flushSync, q("[data-part='scene.lore.advanced']"));
+    expect(q("[data-part='scene.lore.advanced']")!.textContent).toContain("Hide advanced settings");
+    expect(q("[data-part='scene.lore.type']")!.textContent).toBe("Selective");
     expect(q(".wl-ord")!.textContent).toContain("Order");
     expect(q(".wl-scn")!.textContent).toContain("Scan");
     expect(q<HTMLInputElement>('input[aria-label="Scan depth"]')!.value).toBe("4"); // the book's own default, while the entry inherits it
@@ -175,7 +176,7 @@ describe("advanced settings open (rc-world-5 and 7)", () => {
     expect(qa(".wl-cf .modes button").map((b) => b.textContent)).toEqual(["Whitelist", "Blacklist", "None"]);
     expect(text()).toContain("(optional)");
     expect(text()).toContain("Injection");
-    expect(qa(".wl-pc").map((b) => b.textContent)).toEqual(["World", "Character", "Scene", "@ Depth", "Append", "Top", "Bottom"]);
+    expect(qa("[data-part='scene.lore.position'] button").map((b) => b.textContent)).toEqual(["World", "Character", "Scene", "@ Depth", "Append", "Top", "Bottom"]);
     expect(rig.prefs.get("scenes.loreAdvanced")).toBe(true);
     expect(text()).toContain("Side Effects");
     expect(byText("button", "Add Effect")).toBeDefined();
@@ -184,7 +185,7 @@ describe("advanced settings open (rc-world-5 and 7)", () => {
     // RoleCall's Preserve lock is read by the Standardize run: drawn in the header row, off until pressed
     expect(q('[aria-label="Preserve during standardize"]')!.getAttribute("aria-pressed")).toBe("false");
     await press(flushSync, qa(".wl-en").find((r) => r.textContent!.includes("always1")));
-    expect(q(".wl-adv")!.textContent).toContain("Hide advanced settings");
+    expect(q("[data-part='scene.lore.advanced']")!.textContent).toContain("Hide advanced settings");
     unmount(flushSync);
   });
 });
@@ -228,7 +229,7 @@ describe("adding a book", () => {
     await press(flushSync, byLabel("Browse / add lorebooks"));
     expect(q(".wl-t")!.textContent).toBe("Add Lorebook");
     expect(text()).toContain("My Library (2)");
-    const rows = qa<HTMLButtonElement>(".wl-lr");
+    const rows = qa<HTMLButtonElement>("[data-part='scene.lore.book-row']");
     expect(rows.map((r) => r.textContent)).toEqual(["Keeper's Log2 entries · In this scene", "Sea Reckoning7 entries"]);
     expect(rows[0]!.disabled).toBe(true);
     rig.held.set("b4", { entity: { kind: "lorebook", id: "b4", body: bodyOf("Sea Reckoning", []) }, revision: 1 });
@@ -242,7 +243,7 @@ describe("adding a book", () => {
     const flushSync = await mountWing();
     await press(flushSync, byLabel("Browse / add lorebooks"));
     typeInto(flushSync, byLabel("Search my library"), "reck");
-    expect(qa(".wl-lr").map((r) => r.querySelector("b")!.textContent)).toEqual(["Sea Reckoning"]);
+    expect(qa("[data-part='scene.lore.book-row']").map((r) => r.querySelector("[data-slot='label']")!.textContent)).toEqual(["Sea Reckoning"]);
     typeInto(flushSync, byLabel("Search my library"), "zzz");
     expect(text()).toContain("No lorebooks match your search");
     expect(text()).toContain("Try different keywords");

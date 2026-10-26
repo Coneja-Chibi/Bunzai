@@ -6,7 +6,7 @@ import { useState, type JSX } from "react";
 import type { AppContext } from "../../../../app-contract";
 import type { Chat } from "../../../../../stage/contracts/chat-store";
 import { MUSIC_TAB_PREF, musicTabShown } from "../../stage-music-core";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
+import { Toggle } from "../../../../components/button";
 
 export function MusicTabRow({ ctx }: { ctx: AppContext; chat: Chat }): JSX.Element {
   const [shown, setShown] = useState(() => musicTabShown(ctx.prefs));
@@ -14,7 +14,7 @@ export function MusicTabRow({ ctx }: { ctx: AppContext; chat: Chat }): JSX.Eleme
   return (
     <div className="pw-subrow" data-part="props.mood-music">
       <div><b>Show Music tab</b><small>Hide the right-side tab while keeping MoodMusic playback active.</small></div>
-      <ToggleSwitch size="sm" on={shown} aria-label={`${shown ? "Hide" : "Show"} Mood Music tab`} onChange={flip} />
+      <Toggle size="sm" on={shown} aria-label={`${shown ? "Hide" : "Show"} Mood Music tab`} onChange={flip} />
     </div>
   );
 }

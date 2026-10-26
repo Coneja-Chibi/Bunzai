@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import { toErrorMessage } from "../../_shared/error-message";
+import { Button, IconButton } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { InkDialog } from "../../components/ink-dialog";
 import type { Swipe } from "../../../stage/contracts/chat-store";
@@ -55,14 +56,14 @@ function Panel({ index, count, cell, onStep }: { index: number; count: number; c
   return (
     <section className="pane" aria-label={`Version ${index + 1} of ${count}`}>
       <header>
-        <button type="button" aria-label="Previous version" disabled={index <= 0} onClick={() => onStep(-1)}><Ic name="lucide:chevron-left" /></button>
+        <IconButton variant="quiet" size="sm" label="Previous version" icon="lucide:chevron-left" disabled={index <= 0} onClick={() => onStep(-1)} />
         <div className="who">
           <b>Version {index + 1}</b>
           {meta?.time && <span className="when">{meta.time}</span>}
           {meta && <span className={`mdl${meta.modelKnown ? "" : " unk"}`}>{meta.model}</span>}
           {meta && (meta.hasDetails ? (
             <>
-              <button type="button" className="fold" aria-expanded={open} onClick={() => setOpen(!open)}><Ic name="lucide:sliders-vertical" size={14} />Generation Details<Ic name="lucide:chevron-down" size={12} /></button>
+              <Button variant="quiet" size="sm" icon="lucide:sliders-vertical" aria-expanded={open} onClick={() => setOpen(!open)}>Generation Details<Ic name="lucide:chevron-down" size={12} /></Button>
               {open && (
                 <dl className="gen">
                   <div><dt>Preset</dt><dd className={meta.preset ? undefined : "unk"}>{meta.preset ?? "Unknown"}</dd></div>
@@ -72,7 +73,7 @@ function Panel({ index, count, cell, onStep }: { index: number; count: number; c
             </>
           ) : <span className="none">No generation details available</span>)}
         </div>
-        <button type="button" aria-label="Next version" disabled={index >= count - 1} onClick={() => onStep(1)}><Ic name="lucide:chevron-right" /></button>
+        <IconButton variant="quiet" size="sm" label="Next version" icon="lucide:chevron-right" disabled={index >= count - 1} onClick={() => onStep(1)} />
       </header>
       <div className="txt">
         {cell?.state === "ready" ? <Prose text={cell.swipe.content} /> : cell?.state === "failed" ? <p className="bad" role="alert">{cell.message}</p> : <p className="wait" role="status">Loading this version...</p>}
@@ -87,7 +88,7 @@ export function CompareDialog({ api, target, onClose, onStale, setStatus }: { ap
   return (
     <InkDialog onDismiss={onClose} ariaLabel="Compare versions" sheetClassName="cmp-sheet">
       <div className="cmp">
-        <header className="top"><h2>Compare Versions</h2><button type="button" aria-label="Close" onClick={onClose}><Ic name="lucide:x" /></button></header>
+        <header className="top"><h2>Compare Versions</h2><IconButton variant="quiet" size="sm" label="Close" icon="lucide:x" onClick={onClose} /></header>
         <div className="panes">
           <Panel index={at.left} count={target.count} cell={cells.get(at.left)} onStep={(d) => setAt((p) => ({ ...p, left: p.left + d }))} />
           <Panel index={at.right} count={target.count} cell={cells.get(at.right)} onStep={(d) => setAt((p) => ({ ...p, right: p.right + d }))} />

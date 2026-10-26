@@ -1,7 +1,7 @@
 /**
  * NativeCard - renders one platform's NATIVE fields (the extras it keeps to itself) as a card of real
  * controls, bound call-and-response to the entity's kept-whole original. Composes the reusable house
- * primitives (Slider, ToggleSwitch, and a compact note editor) so a platform's "everything else"
+ * primitives (Slider, Toggle, and a compact note editor) so a platform's "everything else"
  * becomes editable instead of frozen. The schema TYPES live in types.ts; control renderers in
  * field-control.tsx; the per-platform schema DATA lives in the editor platforms.
  */

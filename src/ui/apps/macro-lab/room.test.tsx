@@ -29,7 +29,6 @@ let installed: InstalledDom;
 
 const classNames = new Proxy({}, { get: (_t, property) => String(property) });
 mock.module("./styles.module.css", () => ({ default: classNames }));
-mock.module("../../components/stamp/styles.module.css", () => ({ default: classNames }));
 
 let root: Root;
 let asked: MacroResolveAsk[] = [];

@@ -16,7 +16,7 @@ import type { CharacterCardContext } from "../macros/handlers/character";
 import { appendAtDepth, buildConversation, defaultPrompts, DEFAULT_MAX_TOKENS, injectAtDepth, type Block } from "./conversation";
 import { stripReasoningTags } from "../reasoning-tags";
 import { minHistoryKeep, type DepthPlacement } from "./history-cut";
-import { applyLoreEffects, type LoreUndo } from "./lore-effects";
+import { applyLoreEffects, variableDiff, type LoreUndo } from "./lore-effects";
 import { placeLore } from "./lore-place";
 import { loreShareTokens, placeRecall, RECALL_NO_WINDOW_TOKENS } from "./recall-place";
 import { hideCovered } from "./chat-summary";
@@ -34,7 +34,6 @@ import { injectionTexts, placeBlock, trackersText } from "./trackers";
 import { storyboardsBlock } from "./storyboards";
 import { placeDirector } from "./director";
 import { DEFAULT_LORE_SHARE, type AssemblyInput, type HistoryMessage, type AssemblyResult, type AssembledMessage, type AssemblyLoreHit, type VariableDiff } from "./types";
-import { deepEq } from "../guards";
 import { resolveSelections } from "../macros/choice-groups";
 import { effectiveToggles, toChoiceGroups } from "../preset/choices";
 
@@ -395,8 +394,8 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   const nudge = input.continuation !== undefined ? input.preset?.systemPrompts?.continueNudge?.trim() : undefined;
   const continueNudge = nudge ? macros.write(nudge) : undefined;
 
-  const local = diff(input.localVariables, localVariables);
-  const global = diff(input.globalVariables, globalVariables);
+  const local = variableDiff(input.localVariables, localVariables);
+  const global = variableDiff(input.globalVariables, globalVariables);
   const changes = variableChanges({ local: input.localVariables, global: input.globalVariables }, { local, global });
   return {
     messages: blocks.map(toMessage),
@@ -437,16 +436,4 @@ function scanVariables(local: ReadonlyMap<string, MacroVariable>, global: Readon
   for (const [name, v] of global) if (typeof v.value === "string" || typeof v.value === "number") out[name] = v.value;
   for (const [name, v] of local) if (typeof v.value === "string" || typeof v.value === "number") out[name] = v.value;
   return out;
-}
-
-/** Only what this assembly changed (RoleCall writes changed keys only, so no writer reverts another's). */
-function diff(before: ReadonlyMap<string, MacroVariable>, after: ReadonlyMap<string, MacroVariable>): VariableDiff {
-  // fromEntries, not assignment: a variable may be named "__proto__".
-  const set = Object.fromEntries(
-    [...after].filter(([name, v]) => {
-      const was = before.get(name);
-      return !was || !deepEq(was.value, v.value);
-    }).map(([name, v]) => [name, v.value]),
-  );
-  return { set, delete: [...before.keys()].filter((name) => !after.has(name)) };
 }

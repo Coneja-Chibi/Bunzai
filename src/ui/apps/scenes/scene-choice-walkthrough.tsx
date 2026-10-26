@@ -8,10 +8,10 @@ import type { ChoiceGroup, ChoiceSelections } from "../../../core/macros/choice-
 import { strArray } from "../../../core/guards";
 import { buildSteps, buildSummary, canAdvance, selectionShortfall, type PromptPeek } from "../../../core/preset/choice-stepper";
 import type { ChoicePick } from "../../../stage/contracts/chat-store";
+import { Button, Card, Chip, IconButton, Toggle } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { InkDialog } from "../../components/ink-dialog";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
-import { ToggleSwitch } from "../../components/toggle-switch";
 
 const INPUT_COMMIT_MS = 400;
 const ADVANCE_MS = 350;
@@ -26,7 +26,7 @@ function InputStep({ group, value, onCommit }: { group: ChoiceGroup; value: stri
     <div>
       {group.suggestions && (
         <div className="ch-chips" role="group" aria-label={`${group.label} suggestions`}>
-          {group.suggestions.map((s) => <button type="button" key={s} className={`ch-chip${draft.trim() === s ? " on" : ""}`} onClick={() => { type(s); saver.flush(); }}>{s}</button>)}
+          {group.suggestions.map((s) => <Chip key={s} pressed={draft.trim() === s} onClick={() => { type(s); saver.flush(); }}>{s}</Chip>)}
         </div>
       )}
       <input className="ch-input" type="text" value={draft} placeholder={group.placeholder} aria-label={group.label} onChange={(e) => type(e.target.value)} onBlur={saver.flush} />
@@ -51,17 +51,16 @@ function Previews({ ids, peeks }: { ids: string[]; peeks: Record<string, PromptP
   );
 }
 
-function PeekButton({ open, onToggle, className }: { open: boolean; onToggle(): void; className?: string }): JSX.Element {
-  return (
-    <button type="button" className={`ch-eye${open ? " on" : ""}${className ? ` ${className}` : ""}`} aria-label={open ? "Hide prompt" : "View prompt"} aria-expanded={open} onClick={(e) => { e.stopPropagation(); onToggle(); }}><Ic name="lucide:eye" size={14} /></button>
-  );
+function PeekButton({ open, onToggle, corner }: { open: boolean; onToggle(): void; corner?: boolean }): JSX.Element {
+  const eye = <IconButton variant="quiet" size="sm" label={open ? "Hide prompt" : "View prompt"} icon="lucide:eye" aria-expanded={open} onClick={(e) => { e.stopPropagation(); onToggle(); }} />;
+  return corner ? <span className="ch-eye-corner">{eye}</span> : eye;
 }
 
 function GroupReadme({ readme }: { readme: string }): JSX.Element {
   const [open, setOpen] = useState(false);
   return (
     <div className="ch-more">
-      <button type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? "Read less" : "Read more"}</button>
+      <Button variant="quiet" size="sm" aria-expanded={open} onClick={() => setOpen((v) => !v)}>{open ? "Read less" : "Read more"}</Button>
       {open && <p>{readme}</p>}
     </div>
   );
@@ -108,7 +107,7 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
       const key = `${group.id}:toggle`;
       return (
         <div>
-          <ToggleSwitch on={on} className="ch-toggle" onChange={(next) => onSelect(group.id, next)}><span>{on ? "Enabled" : "Disabled"}</span></ToggleSwitch>
+          <Toggle on={on} card onChange={(next) => onSelect(group.id, next)}><span>{on ? "Enabled" : "Disabled"}</span></Toggle>
           {group.prompts.length > 0 && (
             <>
               <div className="ch-peekrow"><PeekButton open={openPeeks.has(key)} onToggle={() => peek(key)} /><span>View the prompt{group.prompts.length > 1 ? "s" : ""} this switch controls</span></div>
@@ -126,18 +125,15 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
           const key = `${group.id}:${o.id}`;
           const has = o.prompts.length > 0;
           return (
-            <div key={o.id} className="ch-optwrap">
-              <button type="button" role={many ? "checkbox" : "radio"} aria-checked={picked} className={`ch-opt${picked ? " on" : ""}${has ? " eye" : ""}`}
+            <div key={o.id} className={`ch-optwrap${has ? " eye" : ""}`}>
+              <Card kind="choice" role={many ? "checkbox" : "radio"} aria-checked={picked} selected={picked} heading={o.label} subtitle={o.description || undefined}
                 onClick={() => {
                   if (many) { const cur = new Set(strArray(selections[group.id])); if (!cur.delete(o.id)) cur.add(o.id); onSelect(group.id, [...cur]); return; }
                   onSelect(group.id, o.id);
                   if (advance.current) clearTimeout(advance.current);
                   advance.current = setTimeout(() => goTo(index + 1), ADVANCE_MS);
-                }}>
-                <span className="ch-optrow"><i className={`ch-box${many ? "" : " round"}${picked ? " on" : ""}`}>{picked && <Ic name="lucide:check" size={10} />}</i><b>{o.label}</b></span>
-                {o.description && <small>{o.description}</small>}
-              </button>
-              {has && <PeekButton open={openPeeks.has(key)} onToggle={() => peek(key)} className="corner" />}
+                }} />
+              {has && <PeekButton open={openPeeks.has(key)} onToggle={() => peek(key)} corner />}
               {has && openPeeks.has(key) && <Previews ids={o.prompts} peeks={peeks} />}
             </div>
           );
@@ -156,7 +152,7 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
           <div className="ch-dots" aria-label={`Step ${index + 1} of ${steps.length}`}>
             {steps.map((s, i) => <span key={s.kind === "group" ? s.group.id : s.kind} className={i === index ? "now" : visited.has(i) ? "seen" : ""} />)}
           </div>
-          <button type="button" className="ch-x" aria-label="Close walkthrough" onClick={onClose}><Ic name="lucide:x" size={14} /></button>
+          <IconButton variant="quiet" size="sm" label="Close walkthrough" icon="lucide:x" onClick={onClose} />
         </div>
         <div className="ch-body">
           {step.kind === "readme" ? (
@@ -185,7 +181,7 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
                       <b>{row.groupLabel}</b>
                       <span>{row.selectedLabels.length > 0 ? row.selectedLabels.join(", ") : <i>None</i>}{row.isDefault && <small> (default)</small>}</span>
                     </div>
-                    <button type="button" onClick={() => goTo(steps.findIndex((s) => s.kind === "group" && s.group.id === row.groupId))}>Change</button>
+                    <Button variant="quiet" size="sm" onClick={() => goTo(steps.findIndex((s) => s.kind === "group" && s.group.id === row.groupId))}>Change</Button>
                   </div>
                 ))}
               </div>
@@ -194,14 +190,14 @@ export function ChoiceWalkthrough({ groups, selections, onSelect, onSave, onClos
         </div>
         <div className="ch-foot">
           <div className="ch-left">
-            <button type="button" className="ch-btn" disabled={index === 0} onClick={() => goTo(index - 1)}><Ic name="lucide:chevron-left" size={14} /> Back</button>
-            {step.kind !== "summary" && <button type="button" className="ch-skip" onClick={onClose}>Skip - keep defaults</button>}
+            <Button icon="lucide:chevron-left" disabled={index === 0} onClick={() => goTo(index - 1)}>Back</Button>
+            {step.kind !== "summary" && <Button variant="quiet" onClick={onClose}>Skip - keep defaults</Button>}
           </div>
           <div className="ch-right">
             {blocked && step.kind === "group" && <span className="ch-need">pick at least {step.group.min ?? shortfall}</span>}
             {step.kind !== "summary"
-              ? <button type="button" className="ch-btn solid" disabled={blocked} onClick={() => goTo(index + 1)}>Next <Ic name="lucide:chevron-right" size={14} /></button>
-              : <button type="button" className="ch-btn solid" onClick={() => { onSave(); onClose(); }}><Ic name="lucide:check" size={14} /> Save &amp; done</button>}
+              ? <Button variant="primary" disabled={blocked} onClick={() => goTo(index + 1)}>Next <Ic name="lucide:chevron-right" size={14} /></Button>
+              : <Button variant="primary" icon="lucide:check" onClick={() => { onSave(); onClose(); }}>Save &amp; done</Button>}
           </div>
         </div>
       </div>

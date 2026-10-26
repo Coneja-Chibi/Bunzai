@@ -21,7 +21,7 @@ async function mount(pref: Record<string, unknown>, colors: PieceColors): Promis
   flushSync(() => root.render(<StageWing prefs={{ get: (k) => pref[k] }} colors={colors} onSet={(k, v) => sets.push([k, v])} />));
   return { host, sets, done: () => flushSync(() => root.unmount()) };
 }
-const chip = (host: HTMLElement, name: string): HTMLButtonElement => [...host.querySelectorAll<HTMLButtonElement>(".pg-chip")].find((b) => b.textContent === name)!;
+const chip = (host: HTMLElement, name: string): HTMLButtonElement => [...host.querySelectorAll<HTMLButtonElement>(".pg-chips button")].find((b) => b.textContent === name)!;
 
 describe("Stage wing: Chat Accent Color", () => {
   test("a source with no colour is disabled; the others are offered, and the pick is written to the preferences", async () => {

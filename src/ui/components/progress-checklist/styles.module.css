@@ -26,21 +26,6 @@
   background: var(--stage-ok);
 }
 
-.tap {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.32rem 0.45rem;
-  cursor: pointer;
-  white-space: nowrap;
-  min-height: 2.2rem;
-}
-
 .row {
   display: flex;
   align-items: center;

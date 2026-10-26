@@ -10,6 +10,7 @@ import { QueuedPiecePreview } from "../piece-preview";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, remToPx, useFocusedRangeIndex, useVirtualRows, type Range } from "../../../_shared/virtual-list";
 import { icSvg } from "../../../_shared/ic-svg";
+import { ListRow as RowPart } from "../../../components/button";
 
 const CSS = `
 .dv-listscroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.6rem,1.4vw,.9rem)}
@@ -50,27 +51,28 @@ function ListRow({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: Studi
       : `Stage ${e.name} for the Workbench`;
 
   return (
-    <button
+    <RowPart
+      accent={e.accent ?? deckMeta(e.kind).accent}
       ref={menuRef}
-      className={`dv-row${isOpen ? " cast" : ""}${staged ? " pick" : ""}`}
-      style={{ "--a": e.accent ?? deckMeta(e.kind).accent } as CSSProperties}
+      data-part="library.row"
+      selected={staged || isOpen}
       title={title}
       data-pick={key}
       aria-setsize={setsize}
       aria-posinset={posinset}
       onClick={() => ctx.onPiece(e)}
-    >
-      <span className="thumb">
-        {art ? <img ref={artRef} src={artSrc} alt="" loading="lazy" decoding="async" /> : e.name.charAt(0).toUpperCase()}
-      </span>
-      <span className="words">
-        <span className="nm">{e.name}</span>
+      leading={
+        <span className="thumb">
+          {art ? <img ref={artRef} src={artSrc} alt="" loading="lazy" decoding="async" /> : e.name.charAt(0).toUpperCase()}
+        </span>
+      }
+      label={e.name}
+      subtitle={<>
         {ctx.peeks && <QueuedPiecePreview e={e} queue={ctx.peeks} ctx={ctx} />}
         <span className="kd">{e.kind}{fmt ? ` · ${fmt}` : ""}</span>
-      </span>
-      {isOpen && <span className="bench">on the workbench</span>}
-      {!isOpen && staged && <span className="stag">staged</span>}
-    </button>
+      </>}
+      meta={isOpen ? <span className="bench">on the workbench</span> : staged ? <span className="stag">staged</span> : undefined}
+    />
   );
 }
 

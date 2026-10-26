@@ -23,7 +23,7 @@ describe("the + menu", () => {
   test("offers Expand as character under Write in character with the pill, Polish Input under Input, and Correct under Change the reply, in RoleCall's words", async () => {
     const flushSync = await mount(endsOnReply());
     click(flushSync, toolsButton()!);
-    const sections = [...rig.host.querySelectorAll('[data-part="scene.composer.tools"] [role="group"]:not(.ds-pill)')].map((g) => g.getAttribute("aria-label"));
+    const sections = [...rig.host.querySelectorAll('[data-part="scene.composer.tools"] [role="group"]:not(.ds-pill, .ds-pill *)')].map((g) => g.getAttribute("aria-label"));
     expect(sections).toEqual(["Change the reply", "Write in character", "Input", "Debug"]);
     expect(menuRow("Expand as character")!.textContent).toContain("turn your outline into a full in-character message");
     expect(menuRow("Polish Input")!.textContent).toContain("spellcheck what you typed");

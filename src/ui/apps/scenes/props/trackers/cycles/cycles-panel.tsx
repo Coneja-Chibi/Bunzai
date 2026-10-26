@@ -8,6 +8,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { CYCLE_TYPES, applyCycles, cyclesLines, daysRemaining, liveCycles, pregnancyProgress, readCycles, trimesterOf, trimesterProgress, typeCounts, type CycleType, type Cyc } from "../../../../../../core/trackers/cycles";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -77,7 +78,7 @@ export function CyclesPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
                   )}
                   open={open === c.id} onToggle={() => setOpen(open === c.id ? null : c.id)}>
                   <RefreshByModel<Cyc> ctx={ctx} chatId={chat.id} ask={ASK} noun="cycle" existing={c} preview={(x) => <Preview c={x} />} accept={(x) => act({ kind: "refresh", id: c.id, cycle: x })}
-                    extra={<button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete cycle" onClick={inner(() => { act({ kind: "remove", id: c.id, at: Date.now() }, `Deleted the cycle of ${c.characterName}`); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>} />
+                    extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete cycle" onClick={inner(() => { act({ kind: "remove", id: c.id, at: Date.now() }, `Deleted the cycle of ${c.characterName}`); setOpen(null); })}>Delete</Button></span>} />
                   {c.cycleType === "lunar" && c.linkedMoonName && (
                     <div className="it-box" style={{ "--c": "var(--stage-macro)" } as CSSProperties}>
                       <em>Link to calendar moon phases to track transformations</em>

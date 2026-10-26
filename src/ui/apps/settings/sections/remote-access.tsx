@@ -17,6 +17,7 @@ import type { SettingsSection } from "../section-contract";
 import { LanCard } from "./lan-card";
 import { HelperInstalledLine, HelperMissingCard, useHelper, type HelperControls } from "./helper-card";
 import { mask } from "./redact";
+import { Button, IconButton } from "../../../components/button";
 import styles from "./remote-access.module.css";
 import { Ic } from "../../../_shared/ic";
 
@@ -65,9 +66,9 @@ function StateCard({
             for you.
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.btn} disabled={a.busy} onClick={() => a.enable()}>
+            <Button size="sm" variant="primary" disabled={a.busy} onClick={() => a.enable()}>
               Enable remote access
-            </button>
+            </Button>
           </div>
           <HelperInstalledLine h={a.helper} />
         </div>
@@ -99,13 +100,9 @@ function StateCard({
               Waiting for sign-in
             </span>
             {signInUrl && (
-              <button
-                type="button"
-                className={styles.btnGhost}
-                onClick={() => requestExternal(signInUrl, "Tailscale sign-in")}
-              >
+              <Button size="sm" variant="quiet" onClick={() => requestExternal(signInUrl, "Tailscale sign-in")}>
                 Open sign-in again
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -121,9 +118,9 @@ function StateCard({
             need to come back here and click anything.
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.btn} onClick={() => a.openHttpsSettings()}>
+            <Button size="sm" variant="primary" onClick={() => a.openHttpsSettings()}>
               Open Tailscale HTTPS settings
-            </button>
+            </Button>
             <span className={styles.status}>
               <span className={`${styles.dot} ${styles.busy}`} />
               Waiting for HTTPS to be turned on
@@ -152,18 +149,13 @@ function StateCard({
           )}
           <div className={styles.actions}>
             {state.url && (
-              <button type="button" className={styles.btnGhost} onClick={() => a.copyLink()}>
+              <Button size="sm" onClick={() => a.copyLink()}>
                 {a.copied ? "Copied" : "Copy link"}
-              </button>
+              </Button>
             )}
-            <button
-              type="button"
-              className={`${styles.btnGhost} ${styles.btnDanger}`}
-              disabled={a.busy}
-              onClick={() => a.disable()}
-            >
+            <Button size="sm" variant="danger" disabled={a.busy} onClick={() => a.disable()}>
               Turn off
-            </button>
+            </Button>
           </div>
           <div className={styles.subtle}>
             To add a device: install the free Tailscale app on it, sign in with the same account, then open
@@ -177,13 +169,9 @@ function StateCard({
                   <span className={styles.deviceName}>
                     {redacted ? mask(d.name || d.nodeId) : d.name || d.nodeId}
                   </span>
-                  <button
-                    type="button"
-                    className={`${styles.btnGhost} ${styles.btnDanger}`}
-                    onClick={() => a.kick(d.nodeId)}
-                  >
+                  <Button size="sm" variant="danger" onClick={() => a.kick(d.nodeId)}>
                     Remove
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -200,9 +188,9 @@ function StateCard({
           </span>
           <div className={styles.cardBody}>Nothing else in Bunraku is affected.</div>
           <div className={styles.actions}>
-            <button type="button" className={styles.btn} disabled={a.busy} onClick={() => a.enable()}>
+            <Button size="sm" variant="primary" disabled={a.busy} onClick={() => a.enable()}>
               Try again
-            </button>
+            </Button>
           </div>
         </div>
       );
@@ -295,16 +283,13 @@ function RemoteAccessSection({ ctx }: { ctx: AppContext }): JSX.Element {
       <div>
         <div className={styles.titleRow}>
           <div className={styles.title}>Remote access</div>
-          <button
-            type="button"
-            className={styles.eyeBtn}
+          <IconButton
+            size="sm"
             aria-pressed={redacted}
-            title={redacted ? "Show details" : "Hide details for a screenshot"}
-            aria-label={redacted ? "Show details" : "Hide details for a screenshot"}
+            label={redacted ? "Show details" : "Hide details for a screenshot"}
+            icon={<EyeIcon off={redacted} />}
             onClick={() => setRedacted((v) => !v)}
-          >
-            <EyeIcon off={redacted} />
-          </button>
+          />
         </div>
         {/* The sign-in sentence is a promise only the mesh path can keep. When that path is absent from
             this build, LAN mode is what remains and it needs no account at all, so saying otherwise

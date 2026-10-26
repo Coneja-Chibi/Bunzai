@@ -5,6 +5,7 @@
  * URLs stay editable. Reusable value+onChange primitive: give it the array, it hands back the next
  * array.
  */
+import { Button, Tile } from "../button";
 import { useRef } from "react";
 import type { JSX } from "react";
 import styles from "./styles.module.css";
@@ -86,9 +87,9 @@ function AssetTile({ asset, onEdit, onRemove }: { asset: Asset; onEdit(next: Ass
       {external ? (
         <input className={styles.url} value={uri} onChange={(e) => onEdit({ ...asset, uri: e.target.value })} />
       ) : null}
-      <button type="button" className={styles.rm} onClick={onRemove}>
-        remove
-      </button>
+      <Button size="sm" variant="danger" onClick={onRemove}>
+        Remove
+      </Button>
     </div>
   );
 }
@@ -126,9 +127,9 @@ export function AssetManager({ assets, onChange, onOpenSprites, uploadAsset }: A
                 Expression faces are edited in Manage Sprites (one pack for every host).
                 {n > 0 ? ` ${n} on this card.` : ""}
               </p>
-              <button type="button" className={styles.handoffBtn} onClick={onOpenSprites}>
+              <Button size="sm" onClick={onOpenSprites}>
                 Open Manage Sprites
-              </button>
+              </Button>
             </div>
           );
         }
@@ -140,9 +141,7 @@ export function AssetManager({ assets, onChange, onOpenSprites, uploadAsset }: A
               {inGroup.map(({ a, i }) => (
                 <AssetTile key={i} asset={a} onEdit={(next) => editAt(i, next)} onRemove={() => removeAt(i)} />
               ))}
-              <button type="button" className={styles.drop} onClick={() => fileInputs.current[g.id]?.click()}>
-                + drop / add
-              </button>
+              <Tile kind="add" label="Drop or add a file" onClick={() => fileInputs.current[g.id]?.click()} />
               <input
                 ref={(el) => {
                   fileInputs.current[g.id] = el;

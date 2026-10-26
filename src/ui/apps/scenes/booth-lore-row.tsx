@@ -8,7 +8,7 @@
 import type { JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import { Ic } from "../../_shared/ic";
-import { ToggleSwitch } from "../../components/toggle-switch";
+import { Button, Toggle } from "../../components/button";
 import { useSceneLore } from "./use-scene-lore";
 
 export function BoothLoreRow({ ctx, chatId }: { ctx: AppContext; chatId: string }): JSX.Element {
@@ -17,13 +17,13 @@ export function BoothLoreRow({ ctx, chatId }: { ctx: AppContext; chatId: string 
     <section className="bth-sec" data-part="scene.booth.lore">
       <h3>Lorebooks</h3>
       {lore.state === "loading" && <p className="bth-quiet"><Ic name="lucide:loader-circle" size={16} /> Loading...</p>}
-      {lore.state === "failed" && <p className="bth-quiet" role="alert">{lore.why} <button type="button" className="bth-link" onClick={() => void reload()}>Try again</button></p>}
+      {lore.state === "failed" && <p className="bth-quiet" role="alert">{lore.why} <Button variant="quiet" size="sm" onClick={() => void reload()}>Try again</Button></p>}
       {lore.state === "ready" && lore.books.length === 0 && <p className="bth-quiet">No lorebooks active</p>}
       {lore.state === "ready" && lore.books.map((b) => (
         <div key={b.id} className={`bth-row${b.enabled ? "" : " off"}`}>
           <Ic name="lucide:book-open" size={16} />
           <div className="pn"><span>{b.name}</span><small>{b.missing ? "Not in your library" : `${b.tokens.toLocaleString()} tok · ${b.entries.toLocaleString()} entries`}</small></div>
-          <ToggleSwitch size="sm" on={b.enabled} aria-label={`${b.enabled ? "Switch off" : "Switch on"} ${b.name}`} onChange={() => toggle(b)} />
+          <Toggle size="sm" on={b.enabled} aria-label={`${b.enabled ? "Switch off" : "Switch on"} ${b.name}`} onChange={() => toggle(b)} />
         </div>
       ))}
     </section>

@@ -3,13 +3,15 @@
  * World Concepts, Of Note (item, org, event), Entry Counts, Recent Writes, Plots in Motion, Threat Radar, Historian's Recaps.
  * Every cell reads the Dashboard the core derived; none walks the book. Copy is RoleCall's, empty lines included.
  */
+import { Card, ListRow } from "../../../../components/button";
 import type { CSSProperties, JSX } from "react";
 import { canonicalSeverity, type CompendiumEntry, type Dashboard, type EntryType } from "../../../../../core/compendium";
 import { BLANK, GLYPH, severityRole, severityStep, titled, typeRole } from "../compendium-core";
-import { Cell, Empty, Hit } from "./cell";
+import { Cell, Empty } from "./cell";
 
 type Open = { onOpen(id: string): void };
 const tc = (type: string | null): CSSProperties => ({ "--tc": typeRole(type) } as CSSProperties);
+const tv = (type: string): Record<`--${string}`, string> => ({ "--tc": typeRole(type) });
 const str = (e: CompendiumEntry | undefined, key: string): string => (typeof e?.data[key] === "string" ? (e.data[key] as string) : "");
 const count = (e: CompendiumEntry | undefined, key: string): number => (Array.isArray(e?.data[key]) ? (e.data[key] as unknown[]).length : 0);
 const joined = (parts: readonly string[]): string => parts.filter(Boolean).join(` ${GLYPH.dot} `);
@@ -20,7 +22,7 @@ export function WorldConcepts({ d, onOpen }: { d: Dashboard } & Open): JSX.Eleme
     <Cell title="World Concepts" dot={typeRole("worldbuilding")}>
       {shown.length === 0 ? <Empty>{d.counts.worldbuilding ? `${d.counts.worldbuilding} concepts indexed.` : "No concepts yet."}</Empty> : (
         <div className="cp-rail" style={tc("worldbuilding")}>
-          {shown.map((w) => <Hit key={w.id} id={w.id} onOpen={onOpen} className="chip"><b>{str(w, "topic") || w.name || BLANK}</b>{str(w, "category") && <small>{str(w, "category")}</small>}</Hit>)}
+          {shown.map((w) => <ListRow key={w.id} label={str(w, "topic") || w.name || BLANK} subtitle={str(w, "category") || undefined} onClick={() => onOpen(w.id)} />)}
           {d.worldConcepts.length > 24 && <span className="more">+{d.worldConcepts.length - 24} more</span>}
         </div>
       )}
@@ -40,12 +42,9 @@ export function OfNote({ d, onOpen }: { d: Dashboard } & Open): JSX.Element {
       {OF_NOTE.map(({ type, label, foot }) => {
         const e = d.featured[type];
         return (
-          <button key={type} type="button" className="cp-of" style={tc(type)} disabled={!e} onClick={() => e && onOpen(e.id)}>
-            <span className="k">{label}</span>
-            <span className="n">{e?.name ?? BLANK}</span>
-            {e?.tagline && <span className="t">{e.tagline}</span>}
+          <Card key={type} kind="choice" vars={tv(type)} kicker={label} heading={e?.name ?? BLANK} subtitle={e?.tagline || undefined} disabled={!e} onClick={() => e && onOpen(e.id)}>
             <span className="f">{foot(e)}</span>
-          </button>
+          </Card>
         );
       })}
     </div>
@@ -71,9 +70,7 @@ export function RecentWrites({ writes, onOpen }: { writes: readonly RecentWrite[
   return (
     <Cell title="Recent Writes">
       {writes.length === 0 ? <Empty>No recent writes yet.</Empty> : writes.slice(0, 6).map((w) => (
-        <Hit key={`${w.entryId}:${w.at}`} id={w.entryId} onOpen={onOpen} className="cp-rw" style={tc(w.type)}>
-          <span>{w.name} {GLYPH.dot} <small>{w.detail}</small></span><small className="when">{w.at}</small>
-        </Hit>
+        <ListRow key={`${w.entryId}:${w.at}`} leading={<i className="cp-pip" style={tc(w.type)} />} label={w.name} subtitle={w.detail} meta={w.at} onClick={() => onOpen(w.entryId)} />
       ))}
     </Cell>
   );
@@ -83,10 +80,7 @@ export function PlotsInMotion({ d, onOpen }: { d: Dashboard } & Open): JSX.Eleme
   return (
     <Cell title="Plots in Motion" dot={typeRole("plot")}>
       {d.activePlots.length === 0 ? <Empty>No active plots.</Empty> : d.activePlots.slice(0, 5).map((p) => (
-        <Hit key={p.id} id={p.id} onOpen={onOpen} className="cp-plot" style={tc("plot")}>
-          <span className="r"><span className="n">{p.name}</span><span className="badge">{str(p, "status") || "active"}</span></span>
-          {p.tagline && <small>{p.tagline}</small>}
-        </Hit>
+        <ListRow key={p.id} label={p.name} subtitle={p.tagline || undefined} meta={str(p, "status") || "active"} onClick={() => onOpen(p.id)} />
       ))}
     </Cell>
   );
@@ -101,11 +95,10 @@ export function ThreatRadar({ d, onOpen }: { d: Dashboard } & Open): JSX.Element
         const status = str(t, "status");
         const scope = str(t, "scope");
         return (
-          <Hit key={t.id} id={t.id} onOpen={onOpen} className={`cp-threat ${severityRole(step)}`}>
-            <span className="r"><span className="n">{t.name}</span><span className="sev">{GLYPH.starOn.repeat(step)}{GLYPH.starOff.repeat(5 - step)} {titled(sev)}</span></span>
-            <span className="bar"><span style={{ width: `${step * 20}%` }} /></span>
-            {(status || scope) && <small>{joined([status && `Status: ${status}`, scope && `Scope: ${scope}`])}</small>}
-          </Hit>
+          <div key={t.id} className={`cp-threat ${severityRole(step)}`}>
+            <ListRow label={t.name} meta={<span className="sev">{GLYPH.starOn.repeat(step)}{GLYPH.starOff.repeat(5 - step)} {titled(sev)}</span>} onClick={() => onOpen(t.id)}
+              subtitle={<><span className="bar"><span style={{ width: `${step * 20}%` }} /></span>{(status || scope) && joined([status && `Status: ${status}`, scope && `Scope: ${scope}`])}</>} />
+          </div>
         );
       })}
     </Cell>
@@ -120,7 +113,7 @@ export function Recaps({ d, onOpen }: { d: Dashboard } & Open): JSX.Element {
         {d.recaps.map((g) => (
           <div key={g.plot} className="g" style={tc("plot")}>
             <div className="h">PLOT {GLYPH.sep} {g.plot.toUpperCase()}</div>
-            {g.summaries.map((s, i) => <Hit key={s.id} id={s.id} onOpen={onOpen} className="row"><i>{String(i + 1).padStart(2, "0")}</i><span>{s.name || "Untitled"}</span></Hit>)}
+            {g.summaries.map((s, i) => <ListRow key={s.id} leading={<i>{String(i + 1).padStart(2, "0")}</i>} label={s.name || "Untitled"} onClick={() => onOpen(s.id)} />)}
           </div>
         ))}
       </div>

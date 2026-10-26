@@ -3,6 +3,7 @@
  * seed with the letterpress row/stamp grammar. (Doctrine note, not user copy: attaching many books
  * is fine; each book's own Write-for stays single-select.)
  */
+import { Button } from "../button";
 import { useMemo, useState, type JSX } from "react";
 import type { StudioEntitySummary } from "../../app-contract";
 import { InkDialog } from "../ink-dialog";
@@ -65,17 +66,16 @@ export function AttachLoreDialog({
           </ul>
         )}
         <div className={styles.actions}>
-          <button type="button" className={styles.btn} onClick={onDismiss}>
+          <Button variant="quiet" onClick={onDismiss}>
             Cancel
-          </button>
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.primary}`}
+          </Button>
+          <Button
+            variant="primary"
             disabled={selected.length === 0}
             onClick={() => onConfirm(selected)}
           >
             {selected.length > 1 ? `Attach ${selected.length} books` : "Attach"}
-          </button>
+          </Button>
         </div>
       </div>
     </InkDialog>

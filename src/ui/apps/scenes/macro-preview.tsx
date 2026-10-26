@@ -5,7 +5,7 @@
  */
 import { useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
-import { Ic } from "../../_shared/ic";
+import { IconButton } from "../../components/button";
 import { FullscreenLayer } from "./fullscreen-layer";
 import { PREVIEW_HEIGHT, parseSize } from "./size-core";
 import { SplitGrip } from "./split-grip";
@@ -36,9 +36,7 @@ export function MacroPreview({ content, prefs }: { content: string; prefs: AppCo
     <div className="mp-hd">
       <span className="mp-t">Macro Preview</span>
       <span className="mp-n">{count} {count === 1 ? "macro" : "macros"}</span>
-      <button type="button" className="mp-x" title={open ? "Collapse macro preview" : "Expand macro preview"} aria-label={open ? "Collapse macro preview" : "Expand macro preview"} onClick={() => setOpen(!open)}>
-        <Ic name={open ? "lucide:minimize-2" : "lucide:maximize-2"} size={12} />
-      </button>
+      <IconButton variant="quiet" size="sm" label={open ? "Collapse macro preview" : "Expand macro preview"} icon={open ? "lucide:minimize-2" : "lucide:maximize-2"} onClick={() => setOpen(!open)} />
     </div>
   );
   const body = (

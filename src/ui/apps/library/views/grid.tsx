@@ -18,6 +18,7 @@ import { Lasso } from "../lasso";
 import { QueuedPiecePreview } from "../piece-preview";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, rowsOf, useFocusedRangeIndex, useGridColumns, useVirtualRows, type Range } from "../../../_shared/virtual-list";
 import { icSvg } from "../../../_shared/ic-svg";
+import { Card } from "../../../components/button";
 
 const CSS = `
 .dv-gridscroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
@@ -82,10 +83,12 @@ function GridCard({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: Stud
       : `Stage ${e.name} for the Workbench`;
 
   return (
-    <button
+    <Card
+      kind="art"
+      vars={{ "--a": e.accent ?? deckMeta(e.kind).accent }}
       ref={menuRef}
-      className={`dv-gcard${isOpen ? " cast" : ""}${staged ? " pick" : ""}`}
-      style={{ "--a": e.accent ?? deckMeta(e.kind).accent } as CSSProperties}
+      data-part="library.gcard"
+      selected={staged}
       title={title}
       data-pick={key}
       // C-2: "item N of M" survives virtualization - a screen reader has no other way to know
@@ -101,21 +104,21 @@ function GridCard({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: Stud
         if (selectedText(window.getSelection())) return;
         ctx.onPiece(e, { shift: ev.shiftKey, meta: ev.ctrlKey || ev.metaKey });
       }}
+      art={
+        <div className="cov">
+          {art
+            ? <img ref={artRef} src={artSrc} alt="" loading="lazy" decoding="async" />
+            : <b>{e.name.charAt(0).toUpperCase()}</b>}
+          <span className="kd">{e.kind}</span>
+        </div>
+      }
+      heading={e.name}
     >
-      <div className="cov">
-        {art
-          ? <img ref={artRef} src={artSrc} alt="" loading="lazy" decoding="async" />
-          : <b>{e.name.charAt(0).toUpperCase()}</b>}
-        <span className="kd">{e.kind}</span>
-      </div>
-      <div className="bd">
-        <div className="nm">{e.name}</div>
-        {ctx.peeks && <QueuedPiecePreview e={e} queue={ctx.peeks} ctx={ctx} />}
-        {fmt && <span className="fmt">{fmt}</span>}
-      </div>
+      {ctx.peeks && <QueuedPiecePreview e={e} queue={ctx.peeks} ctx={ctx} />}
+      {fmt && <span className="fmt">{fmt}</span>}
       {isOpen && <span className="tick">on the workbench</span>}
       {staged && <span className="check" />}
-    </button>
+    </Card>
   );
 }
 

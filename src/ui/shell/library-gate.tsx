@@ -19,7 +19,7 @@ import { useStudioChangeStream, useStudioChanges } from "../agent/use-studio-cha
 import { PieceStore } from "../_shared/piece-store";
 import { CueGrid, Direction, Dossier, GhostButton, Lines, SecretField, StageActions, StageNote, Voice } from "../components/stage-dossier";
 import { ProtectedDialog } from "../_shared/protected-dialog";
-import { ToggleSwitch } from "../components/toggle-switch";
+import { Toggle } from "../components/button";
 import styles from "./library-gate.module.css";
 
 export interface Status {
@@ -148,7 +148,7 @@ export function StageDoor({ status }: { status: Status }): JSX.Element {
                 <div className={styles.rowLabel}>Remember this computer</div>
                 <div className={styles.rowHint}>Next time it opens without asking. Only while no password is set.</div>
               </div>
-              <ToggleSwitch on={remember} onChange={setRemember} label="Remember" />
+              <Toggle on={remember} onChange={setRemember} label="Remember" />
             </div>
           ) : null}
           {problem ? <StageNote label="Line flub" tone="flub">{problem}</StageNote> : null}

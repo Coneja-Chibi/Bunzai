@@ -5,6 +5,7 @@
  * sealed `original` so an imported set still round-trips byte-true. Exported as RegexSetEditor so the
  * workbench mount point re-exports it unchanged.
  */
+import { Button, IconButton } from "../../../components/button";
 import {
   useCallback,
   useDeferredValue,
@@ -436,28 +437,10 @@ export function RegexSetEditor({ entity, revision, ctx, piece, topRight }: Regex
             page (design/vs-regex-shelf-gallery wire 3, bench frame carries no Contents/pager bar). */}
         {!benchOpen && (
         <div className={styles.mBar}>
-          <button type="button" className={styles.mContents} onClick={() => setTocOpen(true)}>
-            &#9776; Rules
-          </button>
+          <Button size="sm" onClick={() => setTocOpen(true)}>&#9776; Rules</Button>
           <span className={styles.mPageNo}>{rule ? `${ruleIndex + 1} / ${count}` : "empty"}</span>
-          <button
-            type="button"
-            className={styles.mPg}
-            aria-label="Previous rule"
-            disabled={!rule || ruleIndex <= 0}
-            onClick={() => flip(-1)}
-          >
-            &#8249;
-          </button>
-          <button
-            type="button"
-            className={styles.mPg}
-            aria-label="Next rule"
-            disabled={!rule || ruleIndex >= count - 1}
-            onClick={() => flip(1)}
-          >
-            &#8250;
-          </button>
+          <IconButton label="Previous rule" size="sm" icon="lucide:chevron-left" disabled={!rule || ruleIndex <= 0} onClick={() => flip(-1)} />
+          <IconButton label="Next rule" size="sm" icon="lucide:chevron-right" disabled={!rule || ruleIndex >= count - 1} onClick={() => flip(1)} />
         </div>
         )}
 

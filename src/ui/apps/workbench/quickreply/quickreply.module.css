@@ -93,20 +93,6 @@
   gap: 0.5rem;
 }
 
-.button {
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  font: 800 var(--text-control) var(--font-big);
-  padding: 0.4rem 0.6rem;
-  cursor: pointer;
-}
-
-.button:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
 .add {
   justify-self: start;
 }
@@ -126,12 +112,10 @@
   }
 }
 
-
 :global(html[data-surface-editor-frame="two-pane"]) .root {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);

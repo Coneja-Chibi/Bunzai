@@ -6,6 +6,7 @@
  * Recovery); Bunraku does not, so its help text does not promise them.
  */
 import type { JSX } from "react";
+import { Button, Chip, Segmented } from "../../../components/button";
 import { BUILTIN_CAPTURE_OPTIONS, CAPTURE_MAX_CUSTOM, CAPTURE_MAX_LENGTH, DEFAULT_ONLY_BUILTIN_TAGS, closingForOpening, normalizeCapture, prefillTag, type CaptureDelimiter, type CaptureMode, type ReasoningCapture } from "../../../../core/reasoning-capture";
 
 const MODE_HELP: Record<CaptureMode, string> = {
@@ -38,11 +39,7 @@ export function CatchThinking({ value, prefill, onChange }: { value: ReasoningCa
   return (
     <div className="gn-catch" data-part="scene.generation.catch">
       <div className="gn-ch"><span id="catch-thinking-label">Catch thinking</span><small>what goes in Behind the Scene</small></div>
-      <div role="radiogroup" aria-labelledby="catch-thinking-label" className="gn-seg3">
-        {(Object.keys(MODE_LABEL) as CaptureMode[]).map((mode) => (
-          <button key={mode} type="button" role="radio" aria-checked={policy.mode === mode} onClick={() => selectMode(mode)}>{MODE_LABEL[mode]}</button>
-        ))}
-      </div>
+      <Segmented label="Catch thinking" items={(Object.keys(MODE_LABEL) as CaptureMode[]).map((mode) => ({ value: mode, label: MODE_LABEL[mode] }))} value={policy.mode} onChange={selectMode} />
       <p className="gn-copy"><b>{MODE_LABEL[policy.mode]}:</b> {MODE_HELP[policy.mode]}</p>
       {policy.mode === "only" && (
         <div className="gn-only">
@@ -59,19 +56,19 @@ export function CatchThinking({ value, prefill, onChange }: { value: ReasoningCa
                     updateRow(index, { open, close });
                   }} />
                 <input type="text" className="gn-in" value={row.close} maxLength={CAPTURE_MAX_LENGTH} aria-label={`Closing text ${index + 1}`} placeholder="</plan>" onChange={(e) => updateRow(index, { close: e.target.value })} />
-                <button type="button" className="gn-rm" aria-label={`Remove tag ${index + 1}`} onClick={() => setCustom(policy.custom.filter((_, i) => i !== index))}>Remove</button>
+                <Button variant="danger" size="sm" aria-label={`Remove tag ${index + 1}`} onClick={() => setCustom(policy.custom.filter((_, i) => i !== index))}>Remove</Button>
               </div>
             ))}
-            {policy.custom.length < CAPTURE_MAX_CUSTOM && <button type="button" className="gn-link" onClick={() => setCustom([...policy.custom, { open: "", close: "" }])}>+ Add your own tag</button>}
+            {policy.custom.length < CAPTURE_MAX_CUSTOM && <Button variant="quiet" size="sm" onClick={() => setCustom([...policy.custom, { open: "", close: "" }])}>+ Add your own tag</Button>}
             <p className="gn-sub">Any text works, not just &lt;tags&gt;, for example Status: and ---. Type an opening tag and its closing tag fills in for you.</p>
           </div>
           <div className="gn-own">
             <div className="gn-pickh"><span className="gn-cap">Built-in thinking tags</span>
               <span className="gn-sub">{picked.size} of {BUILTIN_CAPTURE_OPTIONS.length} picked{" · "}
-                <button type="button" className="gn-link" onClick={() => onChange({ ...policy, builtinTags: [...BUILTIN_CAPTURE_OPTIONS] })}>All</button>{" · "}
-                <button type="button" className="gn-link" onClick={() => onChange({ ...policy, builtinTags: [] })}>None</button></span></div>
+                <Button variant="quiet" size="sm" onClick={() => onChange({ ...policy, builtinTags: [...BUILTIN_CAPTURE_OPTIONS] })}>All</Button>{" · "}
+                <Button variant="quiet" size="sm" onClick={() => onChange({ ...policy, builtinTags: [] })}>None</Button></span></div>
             <div className="gn-chips">
-              {BUILTIN_CAPTURE_OPTIONS.map((tag) => <button key={tag} type="button" className={`gn-chip${picked.has(tag) ? " on" : ""}`} aria-pressed={picked.has(tag)} onClick={() => toggle(tag)}>{picked.has(tag) ? "+ " : ""}{tag}</button>)}
+              {BUILTIN_CAPTURE_OPTIONS.map((tag) => <Chip key={tag} pressed={picked.has(tag)} onClick={() => toggle(tag)}>{picked.has(tag) ? "+ " : ""}{tag}</Chip>)}
             </div>
             <p className="gn-sub">Tap a tag to catch it or stop catching it. Each one catches its opening and matching closing tag, like &lt;think&gt; ... &lt;/think&gt;.</p>
           </div>

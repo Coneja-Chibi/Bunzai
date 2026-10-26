@@ -115,39 +115,9 @@
   border-color: var(--a, var(--accent));
 }
 
-.seg {
-  display: flex;
-  border: 3px solid var(--stage-black);
-}
 
-.seg button {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--stage-row);
-  border: none;
-  border-left: 3px solid var(--stage-black);
-  color: var(--stage-text-dim);
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-}
-
-.seg button:first-child {
-  border-left: none;
-}
-
-.seg button.on {
-  background: var(--stage-paper);
-  color: var(--stage-well);
-}
 
 /* a theme's editor.frame sets the arrangement, so the layout pair stays visible but reads as unavailable */
-.seg button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
 
 .col {
   display: flex;
@@ -245,75 +215,6 @@
   gap: 0.7rem;
 }
 
-.opt {
-  position: relative;
-  display: flex;
-  gap: 0.8rem;
-  align-items: flex-start;
-  width: 100%;
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-  background: var(--face);
-  border: 3px solid var(--edge);
-  box-shadow: 5px 5px 0 0 var(--ink);
-  padding: 0.8rem 0.95rem;
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
-}
-
-.opt:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 7px 7px 0 0 var(--ink);
-}
-
-.opt:active {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 0 0 var(--ink);
-}
-
-.optOn {
-  transform: translate(4px, 4px);
-  box-shadow: 1px 1px 0 0 var(--wb-selection, var(--rose));
-  border-color: var(--wb-selection, var(--rose));
-}
-
-.optOn .rank {
-  border-color: var(--wb-selection, var(--rose));
-  color: var(--text);
-}
-
-.optBody {
-  min-width: 0;
-}
-
-.optMark {
-  position: absolute;
-  top: -3px;
-  right: -3px;
-  background: var(--wb-primary, var(--rose-deep)); /* deep action fill keeps its text readable in either theme */
-  color: var(--action-primary-fg, var(--stage-white));
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.15rem 0.4rem;
-}
-
-.optTitle {
-  display: block;
-  font-family: var(--font-big);
-  font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: -0.01em;
-  color: var(--text);
-}
-
-.optSub {
-  font-size: 0.92rem;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-
 .k {
   display: block;
   font-family: var(--font-mono);
@@ -359,3 +260,5 @@
     display: none;
   }
 }
+
+.btnrow > * { flex: 1; }

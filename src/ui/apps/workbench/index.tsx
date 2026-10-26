@@ -7,6 +7,7 @@
  * Draft persistence: one CharacterPane stays mounted (hidden via CSS) per open character, so React
  * state IS the unsaved draft across tab switches - closing the tab unmounts it, which is the discard.
  */
+import { Button, Card, Disclosure } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
 import { AppActivity } from "../../_shared/app-activity";
 import { EditorKeyOwner } from "./editor-key-owner";
@@ -160,19 +161,19 @@ function RecentCard({ ctx, entity }: { ctx: AppContext; entity: StudioEntitySumm
   const menuRef = ctx.menus.useContextMenu(() => ({ type: "entity", label: entity.name, data: entity }));
   const url = portraitUrl(entity);
   return (
-    <button
+    <Card
       ref={menuRef}
-      type="button"
-      className={styles.rcard}
-      style={accentVars(entity.accent ?? deckMeta(entity.kind).accent) as CSSProperties}
+      kind="art"
+      vars={{ ...accentVars(entity.accent ?? deckMeta(entity.kind).accent), "--card-aspect": "2 / 3" } as Record<`--${string}`, string>}
       title={`Bring ${entity.name} up`}
       onClick={() => ctx.workbench.send(entity)}
-    >
-      <div className={styles.rcov} style={url ? { backgroundImage: `url("${url}")` } : undefined}>
-        {!url && <b>{entity.name.charAt(0).toUpperCase()}</b>}
-      </div>
-      <div className={styles.rnm}>{entity.name}</div>
-    </button>
+      art={
+        <div className={styles.rcov} style={url ? { backgroundImage: `url("${url}")` } : undefined}>
+          {!url && <b>{entity.name.charAt(0).toUpperCase()}</b>}
+        </div>
+      }
+      heading={entity.name}
+    />
   );
 }
 
@@ -201,11 +202,14 @@ function RecentsRail({ ctx, entities, foldOnEdit = true }: { ctx: AppContext; en
 
   return (
     <div className={styles.recents}>
-      <button type="button" className={styles.rlabel} aria-expanded={open} onClick={toggleOpen}>
-        <span className={styles.pip} />
-        recent · bring one up
-        <span className={styles.rtog}>{open ? "hide" : "show"}</span>
-      </button>
+      <Disclosure
+        variant="line"
+        open={open}
+        onClick={toggleOpen}
+        leading={<span className={styles.pip} />}
+        label="Recent · bring one up"
+        summary={open ? "hide" : "show"}
+      />
       {open && (
         <div className={styles.strip}>
           {recent.map((e) => (
@@ -328,9 +332,9 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
             <div className={styles.ghostActions}>
               {!restoring && (
                 <>
-                  <button type="button" className={styles.libraryBtn} onClick={() => ctx.openApp("library")}>Open Library</button>
-                  <button type="button" className={styles.newPackBtn} onClick={() => void newPack()}>New pack folder</button>
-                  <button type="button" className={styles.newPackBtn} onClick={() => void newLorebook()}>New lorebook</button>
+                  <Button onClick={() => ctx.openApp("library")}>Open Library</Button>
+                  <Button onClick={() => void newPack()}>New pack folder</Button>
+                  <Button onClick={() => void newLorebook()}>New lorebook</Button>
                 </>
               )}
               <ViewSwitch view={view} onChange={setView} />

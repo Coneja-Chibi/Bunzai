@@ -4,6 +4,7 @@
  * Under 600px the radial gives way to RoleCall's VIEW CROSS-REFERENCES button. Opening an entry from the explorer closes it first.
  */
 import { useState, type CSSProperties, type JSX, type KeyboardEvent } from "react";
+import { Button } from "../../../../components/button";
 import type { BookModel } from "../compendium-core";
 import { GLYPH, typeRole } from "../compendium-core";
 import { GraphExploreModal } from "../graph/graph-explore";
@@ -36,7 +37,7 @@ export function CrossRefCell({ m, onOpen }: { m: BookModel; onOpen(id: string): 
         )}
         <div className="cp-gnote">{edges.length} cross-references {GLYPH.dot} tap to explore</div>
       </div>
-      <button type="button" className="cp-gbtn" onClick={() => setOpen(true)}><span>VIEW CROSS-REFERENCES</span><span>{edges.length} {GLYPH.right}</span></button>
+      <div className="cp-gbtn"><Button block onClick={() => setOpen(true)}>VIEW CROSS-REFERENCES {edges.length} {GLYPH.right}</Button></div>
       {open && <GraphExploreModal m={m} onOpen={onOpen} onClose={() => setOpen(false)} />}
     </Cell>
   );

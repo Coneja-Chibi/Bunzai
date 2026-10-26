@@ -12,13 +12,10 @@ export const POPOUT_STYLE = `
 .scs .po-hd b{font:600 12px var(--font-body);letter-spacing:.05em;text-transform:uppercase;color:var(--stage-soft)}
 .scs .po-hd .grow{flex:1}
 .scs .po-hd .dot{width:6px;height:6px;border-radius:50%;background:var(--bk-scene-accent-text,var(--bk-role-brand-text))}
-.scs .po-hd button,.scs .po-btn{display:grid;place-items:center;width:24px;height:24px;border:0;background:none;color:var(--stage-mute);cursor:pointer}
-.scs .po-hd button:hover,.scs .po-btn:hover{color:var(--stage-soft);background:color-mix(in srgb,var(--stage-card) 8%,transparent)}
 .scs .po-body{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--stage-line) transparent}
 .scs .po-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 16px;text-align:center}
 .scs .po-ph .ring{display:grid;place-items:center;width:40px;height:40px;margin-bottom:12px;border-radius:50%;border:1px solid var(--stage-line);background:var(--stage-sunken);color:var(--stage-mute)}
-.scs .po-ph p{margin:0;font:500 12px var(--font-body);color:var(--stage-mute)}
-.scs .po-ph button{margin-top:8px;padding:0;border:0;background:none;color:var(--bk-scene-accent-text,var(--bk-role-brand-text));font:500 12px var(--font-body);cursor:pointer}
+.scs .po-ph p{margin:0 0 8px;font:500 12px var(--font-body);color:var(--stage-mute)}
 @media (prefers-reduced-motion:no-preference){.scs .po-hd .dot{animation:po-pulse 2s ease-in-out infinite}}
 @keyframes po-pulse{50%{opacity:.5}}
 `;

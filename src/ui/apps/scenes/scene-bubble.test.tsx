@@ -35,7 +35,7 @@ async function show(props: Partial<BubbleProps>): Promise<HTMLElement> {
 test("a visible message offers Hide from AI, and clicking names the message", async () => {
   const hid: string[] = [];
   const root = await show({ onHide: (id) => hid.push(id) });
-  const eye = root.querySelector<HTMLButtonElement>("button.hide")!;
+  const eye = root.querySelector<HTMLButtonElement>('[data-part="scene.message.hide"]')!;
   expect(eye.getAttribute("aria-label")).toBe("Hide from AI");
   expect(eye.getAttribute("aria-pressed")).toBe("false");
   expect(root.querySelector(".hidtag")).toBeNull();
@@ -48,14 +48,13 @@ test("a hidden message dims, wears the Hidden from AI tag, and the eye offers Sh
   const root = await show({ hidden: true, onHide: () => {} });
   expect(root.querySelector(".msg.hid")).not.toBeNull();
   expect(root.querySelector(".hidtag")?.textContent).toBe("Hidden from AI");
-  const eye = root.querySelector<HTMLButtonElement>("button.hide")!;
+  const eye = root.querySelector<HTMLButtonElement>('[data-part="scene.message.hide"]')!;
   expect(eye.getAttribute("aria-label")).toBe("Show to AI (currently hidden)");
   expect(eye.getAttribute("aria-pressed")).toBe("true");
-  expect(eye.className).toContain("on");
 });
 
 test("without a hide handler (a live reply, the greeting) there is no eye", async () => {
-  expect((await show({})).querySelector("button.hide")).toBeNull();
+  expect((await show({})).querySelector('[data-part="scene.message.hide"]')).toBeNull();
 });
 
 test("an earlier reply's More menu offers Retake from here, and Shift names the skip", async () => {
@@ -125,14 +124,14 @@ test("on a wide window a tap does not open the bar (hover owns it)", async () =>
 test("a reply Final Cut ran on wears a scissors button that opens its activity; a failed pass says so, and a reply it never ran on has none", async () => {
   const opened: string[] = [];
   const root = await show({ finalCut: { passes: 2, changed: true, failed: 0 }, onFinalCut: (id) => opened.push(id) });
-  const cut = root.querySelector<HTMLButtonElement>("button.fcut")!;
+  const cut = root.querySelector<HTMLButtonElement>('[data-part="scene.message.final-cut"]')!;
   expect(cut.getAttribute("aria-label")).toBe("Final Cut: 2 passes ran, text changed");
   expect(cut.classList.contains("bad")).toBe(false);
   await act(async () => { cut.click(); });
   expect(opened).toEqual(["m1"]);
   await act(async () => { tree!.render(createElement(Bubble, { id: "m1", n: 2, who: "Vera", tone: {}, art: createElement("span"), text: "Hello.", onCopy: () => Promise.resolve(true), finalCut: { passes: 1, changed: false, failed: 1 }, onFinalCut: () => {} })); });
-  expect(root.querySelector("button.fcut")!.getAttribute("aria-label")).toBe("Final Cut: 1 pass failed, original saved");
-  expect(root.querySelector("button.fcut")!.classList.contains("bad")).toBe(true);
+  expect(root.querySelector('[data-part="scene.message.final-cut"]')!.getAttribute("aria-label")).toBe("Final Cut: 1 pass failed, original saved");
+  expect(root.querySelector('[data-part="scene.message.final-cut"]')!.hasAttribute("data-bad")).toBe(true);
   await act(async () => { tree!.render(createElement(Bubble, { id: "m1", n: 2, who: "Vera", tone: {}, art: createElement("span"), text: "Hello.", onCopy: () => Promise.resolve(true) })); });
-  expect(root.querySelector("button.fcut")).toBeNull();
+  expect(root.querySelector('[data-part="scene.message.final-cut"]')).toBeNull();
 });

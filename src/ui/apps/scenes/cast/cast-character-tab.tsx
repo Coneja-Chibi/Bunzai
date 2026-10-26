@@ -7,6 +7,7 @@
  * save path (use-cast-editor.ts), so what the page does not show is never touched.
  */
 import type { JSX } from "react";
+import { Segmented } from "../../../components/button";
 import type { AppContext } from "../../../app-contract";
 import type { CharacterVariant } from "../../../../entities/character/schema";
 import { isPreviewablePortraitRef } from "../../../../core/media";
@@ -75,13 +76,9 @@ export function CharacterForm({ ctx, id, chatId, editor, summary, art, version, 
             {get("identity.tagline") && <p className="cw-tg">{get("identity.tagline")}</p>}
             <div className="badges"><span className="vb" title="The version of the card this scene plays">V{version}</span></div>
             {variants.length > 0 && (
-              <div className="vth" data-part="scene.cast.variants" role="group" aria-label="Looks">
-                <button type="button" className={!variantId ? "on" : undefined} aria-pressed={!variantId} disabled={busy} title="Original" onClick={() => onVariant(null)}>Base</button>
-                {variants.map((v) => (
-                  <button type="button" key={v.id} className={variantId === v.id ? "on" : undefined} aria-pressed={variantId === v.id} disabled={busy} title={v.label ?? v.id} onClick={() => onVariant(v.id)}>
-                    {(v.label ?? "?").slice(0, 5)}
-                  </button>
-                ))}
+              <div className="vth">
+                <Segmented data-part="scene.cast.variants" label="Looks" size="sm" value={variantId ?? ""} onChange={(id) => onVariant(id === "" ? null : id)}
+                  items={[{ value: "", label: "Base", title: "Original", disabled: busy }, ...variants.map((v) => ({ value: v.id, label: (v.label ?? "?").slice(0, 5), title: v.label ?? v.id, disabled: busy }))]} />
               </div>
             )}
           </>}

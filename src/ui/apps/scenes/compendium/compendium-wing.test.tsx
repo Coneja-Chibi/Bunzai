@@ -87,7 +87,7 @@ describe("the Dashboard (rc-world-comp-dashboard-full.png)", () => {
     expect(text()).toMatch(/TV Tree . \d+ nodes . depth \d+/);
     const titles = qa(".cp-cell .ct").map((t) => t.textContent);
     for (const t of ["World Concepts", "Featured Cast", "Entry Counts", "Recent Writes", "Plots in Motion", "Threat Radar", "TV Tree Structure", "Historian's Recaps (by Plot)", "Cross-Reference Graph", "Spotlight Location", "Featured Creature"]) expect(titles.some((x) => x?.includes(t)), t).toBe(true);
-    expect(qa(".cp-of .k").map((k) => k.textContent)).toEqual(["ITEM", "ORG", "EVENT"]);
+    expect(qa(".cp-note3 [data-control=card] > span:first-child").map((k) => k.textContent)).toEqual(["ITEM", "ORG", "EVENT"]);
     expect(qa(".cp-counts .l").map((l) => l.textContent)).toEqual(["Cast", "Places", "Items", "Orgs", "Events", "Plots", "Threats", "World", "Beasts", "Recaps"]);
     expect(text()).toContain("Currently:");
     expect(q("[data-mount='compendium.headerActions']")).not.toBeNull();
@@ -101,7 +101,7 @@ describe("the Dashboard (rc-world-comp-dashboard-full.png)", () => {
   test("a cell opens its entry in Browse", async () => {
     await mount([BOOK]);
     await waitFor(flushSync, () => q(".cp-dash"), "the dashboard");
-    await press(flushSync, q(".cp-cast .nm"));
+    await press(flushSync, q(".cp-cast .bd button"));
     await waitFor(flushSync, () => q(".cp-page"), "the entry page");
     expect(q(".cp-page h1")!.textContent).toBe("Mira Vance");
     expect(tab("Browse").getAttribute("aria-selected")).toBe("true");
@@ -115,7 +115,7 @@ describe("Browse (rc-world-comp-browse.png)", () => {
     await waitFor(flushSync, () => q(".cp-cat"), "the catalogue");
     expect(q(".cp-cat .hd")!.textContent).toBe("The Catalogue");
     expect(q<HTMLInputElement>(".cp-cat input")!.placeholder).toBe("Search the codex...");
-    expect(qa(".cp-cat .subs button").map((b) => b.textContent)).toEqual(["By Type", "TV Tree", "Summaries"]);
+    expect(qa('.cp-cat [role="tab"]').map((b) => b.textContent)).toEqual(["By Type", "TV Tree", "Summaries"]);
     expect(q(".cp-sel b")!.textContent).toBe("Select an entry");
     expect(text()).toContain("Choose any entry from the sidebar to read its compendium page.");
     expect(q(".cp-sh span")!.textContent).toBe("Cast");
@@ -123,17 +123,17 @@ describe("Browse (rc-world-comp-browse.png)", () => {
   test("a 213-entry book mounts a screenful of rows, not every row", async () => {
     await mount([BOOK]);
     await go("Browse");
-    await waitFor(flushSync, () => q(".cp-en"), "rows");
+    await waitFor(flushSync, () => q("[data-entry-id]"), "rows");
     expectWindowed(rig.host, ".cp-vs .vr", 213, 60);
     expect(Number(q(".cp-sh em")!.textContent)).toBeGreaterThan(40);
   });
   test("search narrows the list and says so when nothing matches", async () => {
     await mount([BOOK]);
     await go("Browse");
-    await waitFor(flushSync, () => q(".cp-en"), "rows");
+    await waitFor(flushSync, () => q("[data-entry-id]"), "rows");
     typeInto(flushSync, q(".cp-cat input"), "Mira");
     await settle(flushSync);
-    expect(qa(".cp-en").map((r) => r.textContent)).toContain("Mira Vance");
+    expect(qa("[data-entry-id]").map((r) => r.textContent)).toContain("Mira Vance");
     typeInto(flushSync, q(".cp-cat input"), "zzzzqqq");
     await settle(flushSync);
     expect(text()).toContain("No entries match.");
@@ -143,9 +143,9 @@ describe("Browse (rc-world-comp-browse.png)", () => {
     await go("Browse");
     await press(flushSync, byView("TV Tree"));
     expect(q(".cp-cat .st")!.textContent).toMatch(/\d+ nodes . depth \d+/);
-    expect(qa(".cp-nd").length).toBeGreaterThan(5);
+    expect(qa("[data-node-id]").length).toBeGreaterThan(5);
     await press(flushSync, byView("Summaries"));
-    expect(qa(".cp-en i").length).toBeGreaterThan(0);
+    expect(qa("[data-entry-id] i").length).toBeGreaterThan(0);
   });
   test("a book with no typed entries reads 'No typed entries yet.'", async () => {
     await mount([BOOK], [{ ...fixtureBook()[0]!, metadata: {} }]);
@@ -154,16 +154,16 @@ describe("Browse (rc-world-comp-browse.png)", () => {
     expect(text()).toContain("No typed entries yet.");
   });
 });
-const byView = (label: string): HTMLElement => qa(".cp-cat .subs button").find((b) => b.textContent === label)!;
+const byView = (label: string): HTMLElement => qa('.cp-cat [role="tab"]').find((b) => b.textContent === label)!;
 
 describe("an entry's page (rc-world-comp-dossier.png)", () => {
   test("shows the parsed fields, the arc and the relationships", async () => {
     await mount([BOOK]);
     await go("Browse");
-    await waitFor(flushSync, () => q(".cp-en"), "rows");
+    await waitFor(flushSync, () => q("[data-entry-id]"), "rows");
     typeInto(flushSync, q(".cp-cat input"), "Mira Vance");
     await settle(flushSync);
-    await press(flushSync, qa(".cp-en").find((r) => r.textContent === "Mira Vance"));
+    await press(flushSync, qa("[data-entry-id]").find((r) => r.textContent === "Mira Vance"));
     await waitFor(flushSync, () => q(".cp-page"), "the entry page");
     expect(q(".cp-page .crumb2")!.textContent).toBe("The Drowned Coast▸Character▸Mira Vance");
     expect(q(".cp-page .tchip")!.textContent).toContain("Character");
@@ -182,10 +182,10 @@ describe("an entry's page (rc-world-comp-dossier.png)", () => {
   test("lists who else names this character, and the entries it links to", async () => {
     await mount([BOOK]);
     await go("Browse");
-    await waitFor(flushSync, () => q(".cp-en"), "rows");
+    await waitFor(flushSync, () => q("[data-entry-id]"), "rows");
     typeInto(flushSync, q(".cp-cat input"), "Mira Vance");
     await settle(flushSync);
-    await press(flushSync, qa(".cp-en").find((r) => r.textContent === "Mira Vance"));
+    await press(flushSync, qa("[data-entry-id]").find((r) => r.textContent === "Mira Vance"));
     expect(byText2(".cp-fb", "Referenced By")!.textContent).toContain("Oz");
     expect(q(".cp-linked")!.textContent).toContain("Linked Entries");
     await press(flushSync, qa(".cp-linked button").find((b) => b.textContent === "Dov Ketter"));
@@ -195,8 +195,8 @@ describe("an entry's page (rc-world-comp-dossier.png)", () => {
     const odd = typedEntry("w1", "Salt", "worldbuilding", { topic: "Salt", category: "tide", description: "d", house_rule: "No iron.", key_facts: "not a list" });
     await mount([BOOK], [odd]);
     await go("Browse");
-    await waitFor(flushSync, () => q(".cp-en"), "rows");
-    await press(flushSync, q(".cp-en"));
+    await waitFor(flushSync, () => q("[data-entry-id]"), "rows");
+    await press(flushSync, q("[data-entry-id]"));
     expect(byText2(".cp-fb", "Other Fields")!.textContent).toContain("No iron.");
     expect(text()).toContain("Key Facts should be a list.");
   });
@@ -204,8 +204,8 @@ describe("an entry's page (rc-world-comp-dossier.png)", () => {
     await mount([BOOK], [{ ...fixtureBook()[0]!, metadata: {} }]);
     await go("Browse");
     await press(flushSync, byView("TV Tree"));
-    await press(flushSync, q(".cp-nd"));
-    await press(flushSync, q(".cp-en"));
+    await press(flushSync, q("[data-node-id]"));
+    await press(flushSync, q("[data-entry-id]"));
     expect(text()).toContain("No structured data for this entry.");
   });
 });
@@ -229,8 +229,8 @@ describe("read-only", () => {
     await mount([BOOK]);
     for (const t of ["Browse", "Storyboards", "Activity", "Settings", "Dashboard"]) await go(t);
     await go("Browse");
-    await waitFor(flushSync, () => q(".cp-en"), "rows");
-    await press(flushSync, q(".cp-en"));
+    await waitFor(flushSync, () => q("[data-entry-id]"), "rows");
+    await press(flushSync, q("[data-entry-id]"));
     expect(calls).toEqual(["getLightEditableEntity", "getCompendiumTree", "getSceneProps"]);
     expect(rig.patches).toEqual([]);
     expect(rig.setLore).toEqual([]);

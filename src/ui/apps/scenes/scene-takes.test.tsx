@@ -25,7 +25,7 @@ async function mount(activeId: string, open: boolean, tree?: () => void, takes: 
   return flushSync;
 }
 const unmount = (flushSync: FlushSync): void => { flushSync(() => rig.root.unmount()); rig.host.remove(); };
-const pill = (): HTMLElement => rig.host.querySelector(".branch")!;
+const pill = (): HTMLElement => rig.host.querySelector("[data-part='scene.takes.toggle']")!;
 
 describe("the take pill", () => {
   test("on the original it reads Director's Cut with a count and RoleCall's sentence", async () => {
@@ -64,15 +64,15 @@ describe("the take menu", () => {
     expect(text).toContain("msg 4");
     expect(text).toContain("5 msgs");
     expect(text).not.toContain("Parent Branch");
-    click(flushSync, rig.host.querySelector(".foot .tree")!);
+    click(flushSync, rig.host.querySelector(".foot [data-control='row']")!);
     expect(went).toBe(1);
-    expect(rig.host.querySelector(".foot .tree")!.textContent).toContain("View Full Branching Tree");
+    expect(rig.host.querySelector(".foot [data-control='row']")!.textContent).toContain("View Full Branching Tree");
     unmount(flushSync);
   });
 
   test("without a tree page there is no link, only the hint", async () => {
     const flushSync = await mount("m0", true);
-    expect(rig.host.querySelector(".foot .tree")).toBeNull();
+    expect(rig.host.querySelector(".foot [data-control='row']")).toBeNull();
     expect(rig.host.textContent).toContain("Create new takes with Branch from here on any message");
     unmount(flushSync);
   });
@@ -84,7 +84,7 @@ describe("the take menu", () => {
     const sections = [...rig.host.querySelectorAll(".sep")].map((s) => s.textContent);
     expect(sections).toEqual(["Parent Branch", "Alternate Takes"]);
     const rows = [...rig.host.querySelectorAll(".pad.list .take")];
-    expect(rows.map((r) => r.querySelector(".tn")!.textContent)).toEqual(["Deep", "Deeper"]);
+    expect(rows.map((r) => r.querySelector("[data-slot='label']")!.textContent)).toEqual(["Deep", "Deeper"]);
     expect(rows[1]!.className).toContain("sub");
     unmount(flushSync);
   });

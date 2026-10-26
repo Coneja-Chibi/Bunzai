@@ -2,6 +2,7 @@
  * CssWorkshop - Simple (starters/assist/source) or Advanced (code + breakdown).
  * Mode is a two-way toggle, not a fourth tab. Never applies CSS to Studio chrome.
  */
+import { Button, Segmented, Tabs } from "../button";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type JSX } from "react";
 import {
   appendRule,
@@ -230,33 +231,23 @@ export function CssWorkshop({
         </select>
 
         <span className={styles.packLabel}>Mode</span>
-        <div className={styles.modeToggle} role="group" aria-label="Editor mode" data-tour="css-mode">
-          <button
-            type="button"
-            className={mode === "simple" ? `${styles.modeBtn} ${styles.modeOn}` : styles.modeBtn}
-            aria-pressed={mode === "simple"}
-            onClick={() => setMode("simple")}
-          >
-            Simple
-          </button>
-          <button
-            type="button"
-            className={mode === "advanced" ? `${styles.modeBtn} ${styles.modeOn}` : styles.modeBtn}
-            aria-pressed={mode === "advanced"}
-            onClick={() => setMode("advanced")}
-          >
-            Advanced
-          </button>
+        <div data-tour="css-mode">
+          <Segmented
+            size="sm"
+            label="Editor mode"
+            value={mode}
+            onChange={setMode}
+            items={[{ value: "simple", label: "Simple" }, { value: "advanced", label: "Advanced" }]}
+          />
         </div>
 
-        <button
-          type="button"
-          className={styles.mini}
+        <Button
+          size="sm"
           onClick={() => fileRef.current?.click()}
           data-tour="css-import"
         >
-          import .css
-        </button>
+          Import .css
+        </Button>
         <input
           ref={fileRef}
           type="file"
@@ -266,27 +257,21 @@ export function CssWorkshop({
           onChange={onFileChange}
         />
         {undoStack.length > 0 && (
-          <button type="button" className={styles.mini} onClick={undo}>
-            undo
-          </button>
+          <Button size="sm" onClick={undo}>
+            Undo
+          </Button>
         )}
         {importMsg ? <span className={styles.importFlash}>{importMsg}</span> : null}
       </div>
 
       {mode === "simple" && (
-        <div className={styles.tabs} role="tablist" aria-label="Simple ladder" data-tour="css-tabs">
-          {SIMPLE_TABS.map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              role="tab"
-              aria-selected={simpleTab === id}
-              className={simpleTab === id ? `${styles.tab} ${styles.tabOn}` : styles.tab}
-              onClick={() => setSimpleTab(id)}
-            >
-              {label}
-            </button>
-          ))}
+        <div className={styles.tabs} data-tour="css-tabs">
+          <Tabs
+            label="Simple ladder"
+            value={simpleTab}
+            onChange={setSimpleTab}
+            items={SIMPLE_TABS.map(([id, label]) => ({ value: id, label }))}
+          />
         </div>
       )}
 

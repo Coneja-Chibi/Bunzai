@@ -3,7 +3,7 @@
  * owns the prefs write). */
 import type { JSX, RefObject } from "react";
 import type { SortMode } from "./hare-core";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
+import { Button, Toggle } from "../../../../components/button";
 
 const SORT_LABEL: Record<SortMode, string> = { placement: "Placement", az: "A to Z", size: "Size" };
 
@@ -22,7 +22,7 @@ export function HareOptions({ panelRef, group, sort, misses, onSetGroup, onSetSo
       <div className="hp-hd"><b>TrackHare options</b></div>
       <div className="r">
         <div>Group by book</div>
-        <ToggleSwitch size="sm" on={group} aria-label="Group by book" onChange={onSetGroup} />
+        <Toggle size="sm" on={group} aria-label="Group by book" onChange={onSetGroup} />
       </div>
       <div className="r">
         <div>Sort<small>Placement order, A to Z, or size</small></div>
@@ -32,11 +32,11 @@ export function HareOptions({ panelRef, group, sort, misses, onSetGroup, onSetSo
       </div>
       <div className="r">
         <div>Show &quot;Didn&apos;t fire&quot;</div>
-        <ToggleSwitch size="sm" on={misses} aria-label={'Show "Didn\'t fire"'} onChange={onSetMisses} />
+        <Toggle size="sm" on={misses} aria-label={'Show "Didn\'t fire"'} onChange={onSetMisses} />
       </div>
       <div className="r">
         <div>Button<small>Drag it anywhere; drag the corner to resize</small></div>
-        <button type="button" className="hbtn" onClick={onResetPlace}>Reset place</button>
+        <Button size="sm" onClick={onResetPlace}>Reset place</Button>
       </div>
     </div>
   );

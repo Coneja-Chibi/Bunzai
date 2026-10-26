@@ -73,7 +73,7 @@ const click = (el: Element): void => { rig.flush(() => (el as HTMLElement).click
 const press = (target: Element, k: string, init: KeyboardEventInit = {}): void => { rig.flush(() => { target.dispatchEvent(new installed.dom.window.KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true, ...init })); }); };
 const chat = (): HTMLElement => rig.host.querySelector<HTMLElement>("[data-msn-chat]")!;
 const rail = (): HTMLElement => rig.host.querySelector<HTMLElement>('nav[aria-label="Feature tabs"]')!;
-const pressed = (name: string): string | null => named(name, rail()).getAttribute("aria-pressed");
+const pressed = (name: string): string | null => named(name, rail()).getAttribute("aria-selected");
 const type = (el: HTMLElement, value: string): void => {
   const setter = Object.getOwnPropertyDescriptor(installed.dom.window.HTMLInputElement.prototype, "value")!.set!;
   setter.call(el, value);
@@ -164,8 +164,8 @@ describe("the Messenger shell", () => {
 
   test("recent characters show each character's newest scene first, mark the current one, and open a scene by its id", async () => {
     await mount();
-    const rows = all(".msn-dm");
-    expect(rows.map((r) => r.querySelector("strong")!.textContent)).toEqual(["Oskar", "Alex", "Marisol"]);
+    const rows = all(".msn-dms [data-control=\"row\"]");
+    expect(rows.map((r) => r.children[1]!.firstElementChild!.textContent)).toEqual(["Oskar", "Alex", "Marisol"]);
     expect(rows[1]!.getAttribute("aria-current")).toBe("page");
     expect(rows[0]!.getAttribute("aria-current")).toBeNull();
     click(rows[0]!);
@@ -182,7 +182,7 @@ describe("the Messenger shell", () => {
     click(named("Try again"));
     await settle();
     expect(rig.host.textContent).not.toContain(RECENTS_ERROR);
-    click(all(".msn-dm")[0]!);
+    click(all(".msn-dms [data-control=\"row\"]")[0]!);
     expect(handedScene()).toBeNull();
     unmount();
   });
@@ -192,7 +192,7 @@ describe("the Messenger shell", () => {
     expect(rig.listCalls).toBe(1);
     unmount();
     await mount();
-    expect(all(".msn-dm")).toHaveLength(3);
+    expect(all(".msn-dms [data-control=\"row\"]")).toHaveLength(3);
     expect(rig.listCalls).toBe(1);
     rig.listing = [scene("c9", "zed", "Zed", 99)];
     unmount();

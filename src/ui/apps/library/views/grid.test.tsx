@@ -118,9 +118,9 @@ beforeEach(async () => {
 });
 
 describe("Tiles (grid.tsx) virtualized", () => {
-  test(`5,000 entities render far fewer than 5,000 .dv-gcard nodes`, async () => {
+  test(`5,000 entities render far fewer than 5,000 library.gcard nodes`, async () => {
     await mount();
-    expectWindowed(host, ".dv-gcard", N); // the fallback 1024x720 viewport + overscan, nowhere near 5,000
+    expectWindowed(host, '[data-part="library.gcard"]', N); // the fallback 1024x720 viewport + overscan, nowhere near 5,000
   });
 
   test("range-select spans the full list even though the far end never mounted", async () => {
@@ -202,7 +202,7 @@ describe("Tiles (grid.tsx) virtualized", () => {
 
   test("C-2: aria-setsize/aria-posinset survive virtualization (\"item N of M\")", async () => {
     await mount();
-    const cards = [...host.querySelectorAll<HTMLElement>(".dv-gcard")];
+    const cards = [...host.querySelectorAll<HTMLElement>('[data-part="library.gcard"]')];
     expect(cards.length).toBeGreaterThan(0);
     for (const card of cards) {
       expect(card.getAttribute("aria-setsize")).toBe(String(N));

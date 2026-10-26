@@ -7,7 +7,7 @@
 .editor { display: grid; grid-template-columns: minmax(8rem, 1fr) 2fr; gap: 1.5rem; }
 .fields { display: flex; flex-direction: column; gap: 1rem; }
 .fields label { display: grid; gap: .4rem; }
-.fields input, .fields select, .dialog button { background: var(--premiere-hard); color: var(--premiere-text); border: 1px solid var(--premiere-gold); padding: .6rem; font: inherit; min-width: 0; }
+.fields input, .fields select { background: var(--premiere-hard); color: var(--premiere-text); border: 1px solid var(--premiere-gold); padding: .6rem; font: inherit; min-width: 0; }
 .dialog footer { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .6rem; margin-top: 1.5rem; }
 /* a thumbnail-sized cover has no room for its title (it read "Ligh"); the card names the book beside it */
 @container (max-width: 7rem) { .cover span { display: none; } }

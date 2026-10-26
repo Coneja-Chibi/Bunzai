@@ -14,6 +14,7 @@ import type { DragEvent, JSX, ReactNode } from "react";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { StudioDamagedEntry } from "../../app-contract";
 import { DamageNotice } from "./damage-notice";
+import { Card } from "../../components/button";
 
 interface DoorsBase {
   /** the room's injected stylesheet, which these full-screen states render outside of */
@@ -35,9 +36,7 @@ export function StudioUnreachable({
       <DamageNotice entries={damaged} studioDir={studioDir} />
       <div className="stagezone seam">
         <p className="voice">Could not reach the studio. Your pieces are still on disk.</p>
-        <button className="doorcard stamp" onClick={onRetry}>
-          Try again
-        </button>
+        <Card kind="entry" onClick={onRetry} heading="Try again" />
       </div>
     </div>
   );
@@ -64,12 +63,8 @@ export function FirstLanding({
       <style>{css}</style>
       <DamageNotice entries={damaged} studioDir={studioDir} />
       <div className="stagezone seam">
-        <button className="doorcard primary stamp" onClick={onPickImport}>
-          Drag and drop to import asset
-        </button>
-        <button className="doorcard stamp" onClick={onStartFresh}>
-          Click here to start fresh
-        </button>
+        <Card kind="entry" primary onClick={onPickImport} heading="Drag and drop to import asset" />
+        <Card kind="entry" onClick={onStartFresh} heading="Click here to start fresh" />
       </div>
       <p className="voice">Every pack starts with a first card.</p>
       <ThemeSlot id="library.empty" />

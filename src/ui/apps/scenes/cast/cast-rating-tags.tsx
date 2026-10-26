@@ -7,6 +7,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic, type IconName } from "../../../_shared/ic";
+import { Chip, ListRow, Segmented } from "../../../components/button";
 import { FormSection } from "./cast-parts";
 import { RATING_CHOICES } from "./cast-core";
 
@@ -20,16 +21,11 @@ const RATING_TONE: Record<string, { icon: IconName; tone: string }> = {
 export function RatingSection({ value, onChange }: { value: string; onChange(next: string): void }): JSX.Element {
   return (
     <FormSection title="Content Rating" icon="lucide:lock" tone="var(--stage-warn)" data-part="scene.cast.rating">
-      <div className="cw-rating" role="group" aria-label="Content rating">
-        {RATING_CHOICES.map((r) => {
+      <Segmented<string> label="Content rating" value={value} onChange={onChange}
+        items={RATING_CHOICES.map((r) => {
           const { icon, tone } = RATING_TONE[r.value]!;
-          return (
-            <button type="button" key={r.value} className={value === r.value ? "on" : undefined} style={{ "--rc": tone } as React.CSSProperties} aria-pressed={value === r.value} onClick={() => onChange(r.value)}>
-              <Ic name={icon} size={14} />{r.label}
-            </button>
-          );
-        })}
-      </div>
+          return { value: r.value, tone, label: <><span className="cw-rate-ic" style={{ color: tone }}><Ic name={icon} size={14} /></span>{r.label}</> };
+        })} />
     </FormSection>
   );
 }
@@ -40,11 +36,8 @@ export function TagsSection({ tags, onChange }: { tags: readonly string[]; onCha
   const [open, setOpen] = useState(false);
   return (
     <FormSection title="Tags" icon="lucide:tags" tone="var(--deck-lorebook)" data-part="scene.cast.tags">
-      <button type="button" className="cw-tagsheet" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <Ic name="lucide:tags" size={16} />
-        <span><b>Open Tagsheet</b><small>{tags.length ? `${tags.length} tags selected` : "No tags yet"}</small></span>
-        <Ic name="lucide:chevron-right" size={16} />
-      </button>
+      <ListRow variant="picker" aria-expanded={open} onClick={() => setOpen(!open)} leading={<Ic name="lucide:tags" size={16} />}
+        label="Open Tagsheet" subtitle={tags.length ? `${tags.length} tags selected` : "No tags yet"} />
       {tags.length > 0 && (
         <div className="cw-chips">
           {tags.slice(0, SHOWN).map((t) => <span key={t}>{t}</span>)}
@@ -53,7 +46,7 @@ export function TagsSection({ tags, onChange }: { tags: readonly string[]; onCha
       )}
       {open && (
         <div className="cw-tags">
-          {tags.map((t) => <button type="button" key={t} className="tag" title={`Remove tag ${t}`} onClick={() => onChange(tags.filter((x) => x !== t))}>{t} &times;</button>)}
+          {tags.map((t) => <Chip key={t} title={`Remove tag ${t}`} onClick={() => onChange(tags.filter((x) => x !== t))}>{t} &times;</Chip>)}
           <input placeholder="+ tag, enter" aria-label="Add a tag" onKeyDown={(e) => {
             if (e.key !== "Enter") return;
             const v = e.currentTarget.value.trim();

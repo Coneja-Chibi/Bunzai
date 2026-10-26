@@ -5,6 +5,7 @@
  */
 import { useRef, type JSX, type ReactNode } from "react";
 import { ExpandTextarea } from "../../../components/expand";
+import { Button, IconButton } from "../../../components/button";
 import { Ic, type IconName } from "../../../_shared/ic";
 import { portraitFromRef } from "../../../../core/media";
 import type { MediaAsset } from "../../../../entities/character/schema";
@@ -27,7 +28,7 @@ export function FormSection({ title, icon, tone, note, expand, children, "data-p
 }): JSX.Element {
   return (
     <section className="cw-sec" style={{ "--c": tone } as React.CSSProperties} data-part={part}>
-      <h3><Ic name={icon} size={16} />{title}{note && <small>{note}</small>}{expand && <button type="button" className="xp" aria-label={`Expand ${title}`} onClick={expand}><Ic name="lucide:maximize-2" size={14} /></button>}</h3>
+      <h3><Ic name={icon} size={16} />{title}{note && <small>{note}</small>}{expand && <span className="xp"><IconButton variant="quiet" size="sm" label={`Expand ${title}`} icon="lucide:maximize-2" onClick={expand} /></span>}</h3>
       {children}
     </section>
   );
@@ -69,9 +70,7 @@ export function CastFooter({ dirty, saving, busy, note, what, saveLabel, onSave,
       {dirty && !note && <p className="cw-note hint">Saves the Library {what}, then moves this scene to the new version. Other scenes show Update available.</p>}
       {busy && dirty && <p className="cw-note busy" role="status">A reply is being written. You can save when it finishes.</p>}
       {children}
-      <button type="button" className={`cw-save${dirty ? " go" : ""}`} disabled={!dirty || saving || busy} onClick={onSave}>
-        {!dirty && !saving && <Ic name="lucide:check" size={16} />}{label}
-      </button>
+      <Button block variant={dirty ? "primary" : "secondary"} icon={!dirty && !saving ? "lucide:check" : undefined} disabled={!dirty || saving || busy} onClick={onSave}>{label}</Button>
     </footer>
   );
 }
@@ -95,7 +94,7 @@ export function CastPortrait({ art, standIn, chip, name, lines, topLeft, upload,
       <div className="tl">{topLeft}</div>
       {onPick && (
         <div className="tr">
-          <button type="button" className="sqb" aria-label="Change image" title="Change image" onClick={() => file.current?.click()}><Ic name="lucide:image" size={16} /></button>
+          <IconButton size="sm" label="Change image" icon="lucide:image" onClick={() => file.current?.click()} />
           <input ref={file} type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden onChange={(e) => { void pick(e.target.files?.[0]); e.target.value = ""; }} />
         </div>
       )}

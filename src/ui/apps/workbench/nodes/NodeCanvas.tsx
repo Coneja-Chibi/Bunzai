@@ -3,9 +3,11 @@
  * node and board drags, wire drags from a port, Delete on a selected wire). It writes nothing itself;
  * linking and unlinking are handed to the caller.
  */
+import { Button, IconButton } from "../../../components/button";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, JSX, KeyboardEvent, PointerEvent, ReactNode } from "react";
 import { deckMeta } from "../../../_shared/decks";
+import { isEscapeClose } from "../../../_shared/use-escape-key";
 import { BoardLayer } from "./Board";
 import { PieceNode } from "./PieceNode";
 import { applyDrag, snapshotDrag, type BoardItem, type CanvasState } from "./canvas-state";
@@ -187,7 +189,7 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
     // keys from a dialog rendered through a portal (the request preview) bubble here in React: ignore them
     if (!root.current?.contains(e.target as Node)) return;
     if (/^(INPUT|TEXTAREA|SELECT)$/.test((e.target as HTMLElement).tagName)) return;
-    if (e.key === "Escape") {
+    if (isEscapeClose(e.nativeEvent)) {
       // Escape drops a wire being drawn (and stops any drag) without linking
       if (stop.current) { stop.current(); setWire(null); }
       return p.select(null);
@@ -270,9 +272,9 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
         {canvas.layers.pipeline && p.layer?.(onLayerDown)}
       </div>
       <div className={css.zoom} onPointerDown={(e) => e.stopPropagation()}>
-        <button type="button" aria-label="Zoom in" disabled={canvas.zoom >= MAX_ZOOM} onClick={() => zoomCentre(1.25)}>+</button>
-        <button type="button" aria-label="Reset zoom" title="Reset to 100%" onClick={() => zoomCentre(1 / canvas.zoom)}>{Math.round(canvas.zoom * 100)}%</button>
-        <button type="button" aria-label="Zoom out" disabled={canvas.zoom <= MIN_ZOOM} onClick={() => zoomCentre(0.8)}>-</button>
+        <IconButton label="Zoom in" size="sm" icon="lucide:plus" disabled={canvas.zoom >= MAX_ZOOM} onClick={() => zoomCentre(1.25)} />
+        <Button size="sm" aria-label="Reset zoom" title="Reset to 100%" onClick={() => zoomCentre(1 / canvas.zoom)}>{Math.round(canvas.zoom * 100)}%</Button>
+        <IconButton label="Zoom out" size="sm" icon="lucide:minus" disabled={canvas.zoom <= MIN_ZOOM} onClick={() => zoomCentre(0.8)} />
       </div>
       <div className={css.mini} aria-hidden="true" onPointerDown={onMiniDown}>
         {rects.map((r, i) => <i key={i} className={css.miniDot} style={mini(r)} />)}

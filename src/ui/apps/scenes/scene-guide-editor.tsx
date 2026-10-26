@@ -8,8 +8,8 @@ import { useState, type JSX } from "react";
 import { GUIDE_CATEGORIES, GUIDE_DEPTH_MAX, GUIDE_TYPES, GUIDE_CONTENT_MAX, GUIDE_TITLE_MAX, MACRO_TARGETS, type GuideInput } from "../../../core/guide-record";
 import type { GuideMode } from "../../../core/assembly/guides";
 import { countText } from "../../../core/tokens";
+import { Button, Chip, Disclosure, IconButton, Segmented, Toggle } from "../../components/button";
 import { Ic, type IconName } from "../../_shared/ic";
-import { ToggleSwitch } from "../../components/toggle-switch";
 import { CATEGORY_ICON, CATEGORY_LABEL, MODE_META, TYPE_META, withMode } from "./guides-core";
 
 const MODES: readonly GuideMode[] = ["standard", "depth", "append", "macro", "chat_start"];
@@ -17,6 +17,8 @@ const ROLES = ["system", "user", "assistant"] as const;
 const label = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 /** RoleCall's PLACEMENT_ICONS (guides-editor/primitives.tsx:38). */
 const MODE_ICON: Readonly<Record<GuideMode, IconName>> = { standard: "lucide:list-ordered", depth: "lucide:layers", append: "lucide:corner-down-right", macro: "lucide:link", chat_start: "lucide:play" };
+/** The color each placement mode wears when picked (the same hues as the pill on a guide row, .m-* in prompting-style.ts). */
+const MODE_TONE: Readonly<Record<GuideMode, string>> = { standard: "var(--rc-zinc-400)", depth: "var(--deck-preset)", append: "var(--stage-warn)", macro: "var(--deck-lorebook)", chat_start: "var(--stage-ok)" };
 
 export function GuideEditor({ draft, creating, on, busy, error, onChange, onToggleOn, onDuplicate, onDelete, onCancel, onSave }: {
   draft: GuideInput;
@@ -44,19 +46,19 @@ export function GuideEditor({ draft, creating, on, busy, error, onChange, onTogg
         <input className="pg-name" value={draft.title} maxLength={GUIDE_TITLE_MAX} placeholder="Guide name..." aria-label="Guide name" onChange={(e) => set({ title: e.target.value })} />
         {!creating && (
         <>
-            <button type="button" className="tbtn" title="Duplicate" onClick={onDuplicate}><Ic name="lucide:copy" size={15} /></button>
-            <button type="button" className="tbtn red" title="Delete" onClick={() => setAsking(true)}><Ic name="lucide:trash-2" size={15} /></button>
+            <IconButton variant="quiet" size="sm" label="Duplicate" icon="lucide:copy" onClick={onDuplicate} />
+            <IconButton variant="danger" size="sm" label="Delete" icon="lucide:trash-2" onClick={() => setAsking(true)} />
         </>
         )}
       </div>
       {asking && (
         <div className="note" role="alert">
           Delete this guide? It leaves every list and every scene using it; the library keeps the record.
-          <span className="pg-ask"><button type="button" className="pg-btn red" onClick={() => void onDelete()}>Delete</button><button type="button" className="pg-btn" onClick={() => setAsking(false)}>Keep</button></span>
+          <span className="pg-ask"><Button variant="danger" size="sm" onClick={() => void onDelete()}>Delete</Button><Button variant="quiet" size="sm" onClick={() => setAsking(false)}>Keep</Button></span>
         </div>
       )}
       <div className="pg-controls pg-top">
-        {!creating && <ToggleSwitch size="sm" on={on} aria-label="Use in this scene" title="Use in this scene: switches the guide on for this scene only" onChange={onToggleOn} />}
+        {!creating && <Toggle size="sm" on={on} aria-label="Use in this scene" title="Use in this scene: switches the guide on for this scene only" onChange={onToggleOn} />}
         <select value={draft.role} aria-label="Injection role" onChange={(e) => set({ role: e.target.value as GuideInput["role"] })}>{ROLES.map((r) => <option key={r} value={r}>{label(r)}</option>)}</select>
         <select value={draft.category} aria-label="Category" onChange={(e) => set({ category: e.target.value as GuideInput["category"] })}>{GUIDE_CATEGORIES.map((c) => <option key={c} value={c}>{CATEGORY_LABEL[c]}</option>)}</select>
       </div>
@@ -64,13 +66,13 @@ export function GuideEditor({ draft, creating, on, busy, error, onChange, onTogg
       <div className="pg-label"><Ic name="lucide:pencil" size={12} /><span>Content</span></div>
       <textarea className="pg-content" value={draft.content} maxLength={GUIDE_CONTENT_MAX} aria-label="Guide content" placeholder="What should the AI be told?" onChange={(e) => set({ content: e.target.value })} />
       <div className="pg-foot">
-        <span>{["{{user}}", "{{char}}"].map((m) => <button type="button" key={m} className="pg-mac" title={`Insert ${m}`} onClick={() => macro(m)}>{m}</button>)} macros</span>
+        <span>{["{{user}}", "{{char}}"].map((m) => <Chip key={m} title={`Insert ${m}`} onClick={() => macro(m)}>{m}</Chip>)} macros</span>
         <span>~{tokens} token{tokens === 1 ? "" : "s"}</span>
       </div>
 
       <div className="pg-label"><Ic name="lucide:sliders-horizontal" size={12} /><span>Placement</span></div>
       <div className="pg-modes">
-        {MODES.map((m) => <button type="button" key={m} className={`pg-mode m-${m}${draft.mode === m ? " on" : ""}`} title={MODE_META[m].hint} aria-pressed={draft.mode === m} onClick={() => onChange(withMode(draft, m))}><Ic name={MODE_ICON[m]} size={14} />{MODE_META[m].pill}</button>)}
+        <Segmented label="Placement" size="sm" value={draft.mode} items={MODES.map((m) => ({ value: m, tone: MODE_TONE[m], title: MODE_META[m].hint, label: <><Ic name={MODE_ICON[m]} size={14} />{MODE_META[m].pill}</> }))} onChange={(m) => onChange(withMode(draft, m))} />
       </div>
       {draft.mode === "macro" && (
         <div className="pg-controls">
@@ -87,7 +89,7 @@ export function GuideEditor({ draft, creating, on, busy, error, onChange, onTogg
       )}
 
       <div className="pg-acc">
-      <button type="button" className={`pg-fold${advanced ? " on" : ""}`} aria-expanded={advanced} onClick={() => setAdvanced(!advanced)}><Ic name="lucide:settings" size={15} />Advanced <Ic name={advanced ? "lucide:chevron-up" : "lucide:chevron-down"} size={15} /></button>
+      <Disclosure open={advanced} onClick={() => setAdvanced(!advanced)} leading={<Ic name="lucide:settings" size={15} />} label="Advanced" />
       {advanced && (
         <div className="pg-acc-body">
           <div className="pg-adv">
@@ -96,7 +98,7 @@ export function GuideEditor({ draft, creating, on, busy, error, onChange, onTogg
           </div>
           <div className="pg-adv">
             <div><b>Visible in Library</b><small>{draft.visible ? "Visible: shows up in your lists" : "Hidden: hidden everywhere, and left out of every prompt (saved on Save)"}</small></div>
-            <ToggleSwitch size="sm" on={draft.visible} aria-label="Visible in Library" onChange={() => set({ visible: !draft.visible })} />
+            <Toggle size="sm" on={draft.visible} aria-label="Visible in Library" onChange={() => set({ visible: !draft.visible })} />
           </div>
         </div>
       )}
@@ -104,8 +106,8 @@ export function GuideEditor({ draft, creating, on, busy, error, onChange, onTogg
 
       {error && <div className="note" role="alert">{error}</div>}
       <div className="pg-actions">
-        <button type="button" className="pg-btn" onClick={onCancel}>Cancel</button>
-        <button type="button" className="pg-btn go" disabled={busy} onClick={onSave}><Ic name="lucide:check" size={14} />{busy ? "Saving..." : "Save"}</button>
+        <Button variant="quiet" onClick={onCancel}>Cancel</Button>
+        <Button variant="primary" icon="lucide:check" disabled={busy} onClick={onSave}>{busy ? "Saving..." : "Save"}</Button>
       </div>
     </div>
   );

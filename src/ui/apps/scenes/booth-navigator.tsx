@@ -10,6 +10,7 @@ import { useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import type { OpenScene } from "../../../studio/scenes";
 import { bodyOf, isRecord, str, strArray } from "../../../core/guards";
+import { Button, ListRow } from "../../components/button";
 import { InkDialog } from "../../components/ink-dialog";
 import { usePortraitAsset } from "../../_shared/art-cache";
 import { portraitUrl } from "../../_shared/asset-url";
@@ -49,10 +50,7 @@ function CharacterLibrary({ ctx, currentId, onClose }: { ctx: AppContext; curren
           {list === null && <p className="bthl-quiet">Loading...</p>}
           {list !== null && shown.length === 0 && <p className="bthl-quiet">No characters found.</p>}
           {shown.map((s) => (
-            <button type="button" key={s.id} className="bthl-row" onClick={() => start(s.id)}>
-              <Face s={s} />
-              <span className="pn"><span>{s.name}</span><small>{s.id === currentId ? "Start fresh scene" : "Start scene"}</small></span>
-            </button>
+            <ListRow key={s.id} onClick={() => start(s.id)} leading={<Face s={s} />} label={s.name} subtitle={s.id === currentId ? "Start fresh scene" : "Start scene"} />
           ))}
         </div>
       </div>
@@ -71,7 +69,7 @@ export function BoothNavigator({ ctx, scene, art }: { ctx: AppContext; scene: Op
       <b>{str(identity["name"]) || "Unknown Character"}</b>
       {str(identity["tagline"]) && <span className="bth-tagline">{str(identity["tagline"])}</span>}
       {tags.length > 0 && <span className="bth-tags">{tags.map((t) => <span className="bth-tag" key={t}>{t}</span>)}</span>}
-      <button type="button" className="bth-change" aria-label="Open character navigator" aria-expanded={open} onClick={() => setOpen(true)}><Ic name="lucide:search" size={14} />Change Character</button>
+      <div className="bth-change"><Button size="sm" icon="lucide:search" aria-label="Open character navigator" aria-expanded={open} onClick={() => setOpen(true)}>Change Character</Button></div>
       {open && <CharacterLibrary ctx={ctx} currentId={scene.chat.cast.character.id} onClose={() => setOpen(false)} />}
     </section>
   );

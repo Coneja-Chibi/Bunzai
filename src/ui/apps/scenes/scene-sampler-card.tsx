@@ -5,10 +5,10 @@
  * (QuickPlayPanel.tsx:439-498): the label and the value as text, no help and no typing.
  */
 import { useState, type CSSProperties, type JSX, type ReactNode } from "react";
-import { Ic } from "../../_shared/ic";
 import { isEscapeClose } from "../../_shared/use-escape-key";
 import { Slider } from "../../components/slider";
 import { commitSampler, formatQuickSampler, formatSampler } from "./preset-core";
+import { Button, IconButton, InlineValue } from "../../components/button";
 
 export interface SamplerCardProps {
   label: string;
@@ -46,9 +46,9 @@ export function SamplerCard(p: SamplerCardProps): JSX.Element {
       {p.header && <div className="slhd">{p.header}</div>}
       <div className="slh">
         <span>{p.label}{p.own && <i className="ov" title="This scene's own value" />}{p.help && !p.plain && (
-          <button type="button" className="slq" aria-label="Help" aria-expanded={helping} onClick={() => setHelping(!helping)}><Ic name="lucide:circle-question-mark" size={12} /></button>
+          <IconButton variant="quiet" size="sm" icon="lucide:circle-question-mark" label="Help" aria-expanded={helping} onClick={() => setHelping(!helping)} />
         )}</span>
-        {p.own && p.back !== undefined && <button type="button" className="reset" title={`Back to the preset's ${p.back}`} onClick={p.onBack}>{p.back}</button>}
+        {p.own && p.back !== undefined && <Button variant="link" size="sm" title={`Back to the preset's ${p.back}`} onClick={p.onBack}>{p.back}</Button>}
         {p.plain ? (
           <span className="slv">{p.value === undefined ? "-" : formatQuickSampler(p.value, p.step)}</span>
         ) : draft !== null ? (
@@ -56,7 +56,7 @@ export function SamplerCard(p: SamplerCardProps): JSX.Element {
             onChange={(e) => setDraft(e.target.value)} onBlur={() => finish(true)}
             onKeyDown={(e) => { if (e.key === "Enter") finish(true); else if (isEscapeClose(e.nativeEvent)) finish(false); }} />
         ) : (
-          <button type="button" className="slv" title="Click to type a value" onClick={() => setDraft(String(p.value ?? p.unset))}>{p.value === undefined ? "-" : formatSampler(p.value, p.step)}</button>
+          <InlineValue title="Click to type a value" onClick={() => setDraft(String(p.value ?? p.unset))}>{p.value === undefined ? "-" : formatSampler(p.value, p.step)}</InlineValue>
         )}
       </div>
       {helping && p.help && <div className="slhelp">{p.help}</div>}

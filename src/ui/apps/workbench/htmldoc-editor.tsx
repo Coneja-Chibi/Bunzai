@@ -18,6 +18,7 @@
  * drawing is being LOOKED at rather than written, so the divider drags and the source hides
  * outright. Both are remembered in settings, because that is a working habit, not a per-file one.
  */
+import { Button } from "../../components/button";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState, type JSX, type ReactNode } from "react";
 import { AppActivity } from "../../_shared/app-activity";
 import { CANONICAL_SCHEMA_VERSION } from "../../../core/canonical";
@@ -206,13 +207,7 @@ export function HtmlDocEditor({ entity, revision, ctx, piece, topRight }: HtmlDo
         <span className={overCap ? styles.over : styles.count}>
           {`${body.html.length} / ${HTMLDOC_CAP}`}
         </span>
-        <button
-          type="button"
-          className={styles.paneAct}
-          onClick={() => { setSourceOpen(false); ctx.prefs.set(SOURCE_KEY, false); }}
-        >
-          {"Hide"}
-        </button>
+        <Button variant="quiet" size="sm" onClick={() => { setSourceOpen(false); ctx.prefs.set(SOURCE_KEY, false); }}>{"Hide"}</Button>
       </div>
       <textarea
         className={styles.source}
@@ -238,14 +233,7 @@ export function HtmlDocEditor({ entity, revision, ctx, piece, topRight }: HtmlDo
       <div className={styles.paneHead}>
         <span className={styles.paneTitle}>Drawing</span>
         <span className={styles.count}>scripts and network off</span>
-        <button
-          type="button"
-          className={styles.paneAct}
-          onClick={() => { void goBig(); }}
-          disabled={!body.html.trim()}
-        >
-          {"Fullscreen"}
-        </button>
+        <Button size="sm" onClick={() => { void goBig(); }} disabled={!body.html.trim()}>{"Fullscreen"}</Button>
       </div>
       {/*
         The element that goes fullscreen is this container, never the iframe: the seal inside it
@@ -254,9 +242,9 @@ export function HtmlDocEditor({ entity, revision, ctx, piece, topRight }: HtmlDo
       */}
       <div className={big ? `${styles.frame} ${styles.big}` : styles.frame} ref={frameRef}>
         {big && (
-          <button type="button" className={styles.close} onClick={() => { void comeBack(); }}>
-            {"Close (Esc)"}
-          </button>
+          <span className={styles.close}>
+            <Button variant="quiet" size="sm" onClick={() => { void comeBack(); }}>{"Close (Esc)"}</Button>
+          </span>
         )}
         {body.html.trim()
           ? <SealedHtmlPreview html={body.html} title="This drawing" fill />
@@ -276,9 +264,9 @@ export function HtmlDocEditor({ entity, revision, ctx, piece, topRight }: HtmlDo
   // Hidden, not unmounted-and-forgotten: the source is still the piece being edited, so the way back
   // is a control in the same place the pane was, never a menu somewhere else.
   const revealButton = !sourceOpen && (
-    <button type="button" className={styles.reveal} onClick={() => { setSourceOpen(true); ctx.prefs.set(SOURCE_KEY, true); }}>
-      {"Show source"}
-    </button>
+    <span className={styles.reveal}>
+      <Button size="sm" onClick={() => { setSourceOpen(true); ctx.prefs.set(SOURCE_KEY, true); }}>{"Show source"}</Button>
+    </span>
   );
 
   return (

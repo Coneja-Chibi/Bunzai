@@ -9,6 +9,7 @@ import { useEffect, useRef, useState, type CSSProperties, type JSX } from "react
 import { readResources } from "../../../../../../core/trackers/resources";
 import { tokensOf } from "../../../../../../core/trackers/list";
 import { TEMPLATES, applySpellbook, castSpell, liveSpells, masteryLabel, masteryOf, readSpellbook, spellbookLines, type EditPatch, type Spell, type SpellMade, type Template } from "../../../../../../core/trackers/spellbook";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -107,7 +108,7 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
       onClear={() => view.apply((d) => ({ ...readSpellbook(undefined), subs: d.subs }), "Cleared")}>
       <div className="it-search"><span><Ic name="lucide:search" size={16} /></span><input type="text" placeholder="Search spells..." aria-label="Search spells" value={query} onChange={(e) => setQuery(e.target.value)} /></div>
       {book.pendingCast !== undefined && (
-        <div className="sp-pending" role="status"><span><Ic name="lucide:sparkles" size={14} /> A cast is waiting: your next message carries it to the narrator.</span><button type="button" className="it-cancel" onClick={() => act({ kind: "clearPending" })}>Cancel cast</button></div>
+        <div className="sp-pending" role="status"><span><Ic name="lucide:sparkles" size={14} /> A cast is waiting: your next message carries it to the narrator.</span><Button variant="quiet" size="sm" onClick={() => act({ kind: "clearPending" })}>Cancel cast</Button></div>
       )}
       {hasStats && r.maxMp > 0 && (
         <div className="sp-pool">
@@ -154,18 +155,18 @@ export function SpellbookPanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
                       <div className="sp-cast">
                         <input type="text" placeholder="Your intent... (optional)" aria-label="Your intent" value={intent} onChange={(e) => setIntent(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") cast(s); }} />
                         <div className="it-buttons">
-                          <button type="button" className="it-go" disabled={cooling} onClick={() => cast(s)}><Ic name={tactical ? "lucide:dice-5" : "lucide:sparkles"} size={14} /><span>{tactical ? "Cast" : "Invoke"}</span></button>
-                          <button type="button" className="it-cancel" onClick={() => { setCasting(null); setIntent(""); }}>Cancel</button>
+                          <Button size="sm" icon={tactical ? "lucide:dice-5" : "lucide:sparkles"} disabled={cooling} onClick={() => cast(s)}>{tactical ? "Cast" : "Invoke"}</Button>
+                          <Button variant="quiet" size="sm" onClick={() => { setCasting(null); setIntent(""); }}>Cancel</Button>
                         </div>
                       </div>
-                    ) : <button type="button" className="it-go" disabled={cooling} onClick={inner(() => setCasting(s.id))}><Ic name={tactical ? "lucide:dice-5" : "lucide:sparkles"} size={14} /><span>{tactical ? "Cast" : "Invoke"}</span></button>)}
+                    ) : <Button size="sm" icon={tactical ? "lucide:dice-5" : "lucide:sparkles"} disabled={cooling} onClick={inner(() => setCasting(s.id))}>{tactical ? "Cast" : "Invoke"}</Button>)}
                     {s.status === "learned" && (
-                      <button type="button" className={`it-act${s.isSignature ? " on" : ""}`} title={s.isSignature ? "Remove signature" : "Set as signature spell (max 2)"} onClick={inner(() => act({ kind: s.isSignature ? "unsignature" : "signature", id: s.id }))}><Ic name="lucide:star" size={14} /><span>{s.isSignature ? "Signature" : "Set Signature"}</span></button>
+                      <Button size="sm" icon="lucide:star" aria-pressed={s.isSignature} title={s.isSignature ? "Remove signature" : "Set as signature spell (max 2)"} onClick={inner(() => act({ kind: s.isSignature ? "unsignature" : "signature", id: s.id }))}>{s.isSignature ? "Signature" : "Set Signature"}</Button>
                     )}
-                    <button type="button" className={`it-act${editing === s.id ? " on" : ""}`} onClick={inner(() => (editing === s.id ? saveEdit(s) : startEdit(s)))}><Ic name={editing === s.id ? "lucide:check" : "lucide:pencil"} size={14} /><span>{editing === s.id ? "Save" : "Edit"}</span></button>
-                    {editing === s.id && <button type="button" className="it-act" onClick={inner(() => setEditing(null))}><Ic name="lucide:x" size={14} /><span>Cancel</span></button>}
-                    {cooling && <button type="button" className="it-act" title="Make this spell ready now" onClick={inner(() => act({ kind: "ready", id: s.id }))}><Ic name="lucide:clock" size={14} /><span>Ready now</span></button>}
-                    <button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete spell" onClick={inner(() => { act({ kind: "remove", id: s.id, at: Date.now() }, `Deleted ${s.name}`); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>
+                    <Button size="sm" tone={editing === s.id ? "var(--stage-ok)" : undefined} icon={editing === s.id ? "lucide:check" : "lucide:pencil"} onClick={inner(() => (editing === s.id ? saveEdit(s) : startEdit(s)))}>{editing === s.id ? "Save" : "Edit"}</Button>
+                    {editing === s.id && <Button variant="quiet" size="sm" icon="lucide:x" onClick={inner(() => setEditing(null))}>Cancel</Button>}
+                    {cooling && <Button size="sm" icon="lucide:clock" title="Make this spell ready now" onClick={inner(() => act({ kind: "ready", id: s.id }))}>Ready now</Button>}
+                    <span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete spell" onClick={inner(() => { act({ kind: "remove", id: s.id, at: Date.now() }, `Deleted ${s.name}`); setOpen(null); })}>Delete</Button></span>
                   </div>
                   <RefreshByModel<SpellMade> ctx={ctx} chatId={chat.id} ask={ASK} noun="spell" existing={s} preview={(m) => <Preview s={m} />} accept={(m) => act({ kind: "refresh", id: s.id, spell: m })} />
                   {here && <div className={`sp-feedback ${here.ok ? "ok" : "bad"}`} role="status">{here.text}</div>}

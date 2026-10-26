@@ -54,51 +54,20 @@
   border-color: transparent;
 }
 
-.chev {
-  font-family: var(--font-mono); /* buttons do not inherit fonts */
-  border: 0;
-  background: none;
-  color: var(--stage-mute);
-  font-size: 1.1rem;
-  line-height: 1;
-  width: 1.2rem;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  flex: none;
-  transition: transform 0.15s ease, color 0.1s ease;
-}
-
-.chev:hover {
-  color: var(--stage-card);
-}
-
-.chevOpen {
-  transform: rotate(90deg);
-}
 
 .check {
-  width: 1.15rem;
-  height: 1.15rem;
-  border: 1px solid color-mix(in srgb, var(--stage-card) 14%, transparent);
-  background: none;
-  color: var(--pa);
-  font-size: var(--text-control);
-  line-height: 1;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
+  display: inline-flex;
   flex: none;
   opacity: 0;
 }
 
-.prow:hover .check {
+.prow:hover .check,
+.check:focus-within {
   opacity: 1;
 }
 
 .checkOn {
   opacity: 1;
-  border-color: var(--pa);
 }
 
 .grip {
@@ -227,32 +196,4 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 0.6rem;
-}
-
-.actBtn {
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  padding: 0.35rem 0.6rem;
-  cursor: pointer;
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  transition: transform 0.1s ease, box-shadow 0.1s ease, color 0.1s ease;
-}
-
-.actBtn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  color: var(--stage-card);
-}
-
-.actBtn:active {
-  transform: translate(1px, 1px);
-  box-shadow: none;
-}
-
-.actDanger {
-  color: var(--stage-danger, var(--stage-warn));
 }

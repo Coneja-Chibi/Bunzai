@@ -4,6 +4,7 @@
  * behind an "Actions" dropdown; there are only four, so they sit inline here rather than behind an
  * extra click. Delete is separated and styled as the destructive one.
  */
+import { Button } from "../../../components/button";
 import type { JSX } from "react";
 import { Ic } from "../../../_shared/ic";
 import s from "./toolbar.module.css";
@@ -22,26 +23,12 @@ export function BulkBar({ count, onClear, onEnable, onDisable, onDuplicate, onDe
   return (
     <div className={s.bulk} role="toolbar" aria-label="Bulk actions">
       <span className={s.bulkCount}>{count} selected</span>
-      <button type="button" className={s.bulkBtn} onClick={onClear}>
-        Clear
-      </button>
+      <Button variant="quiet" size="sm" onClick={onClear}>Clear</Button>
       <span className={s.bulkSep} />
-      <button type="button" className={s.bulkBtn} onClick={onEnable}>
-        <Ic name="lucide:check" size={14} />
-        Enable
-      </button>
-      <button type="button" className={s.bulkBtn} onClick={onDisable}>
-        <Ic name="lucide:x" size={14} />
-        Disable
-      </button>
-      <button type="button" className={s.bulkBtn} onClick={onDuplicate}>
-        <Ic name="lucide:copy" size={14} />
-        Duplicate
-      </button>
-      <button type="button" className={`${s.bulkBtn} ${s.bulkDanger}`} onClick={onDelete}>
-        <Ic name="lucide:trash-2" size={14} />
-        Delete
-      </button>
+      <Button size="sm" icon="lucide:check" onClick={onEnable}>Enable</Button>
+      <Button size="sm" icon="lucide:x" onClick={onDisable}>Disable</Button>
+      <Button size="sm" icon="lucide:copy" onClick={onDuplicate}>Duplicate</Button>
+      <Button variant="danger" size="sm" icon="lucide:trash-2" onClick={onDelete}>Delete</Button>
     </div>
   );
 }

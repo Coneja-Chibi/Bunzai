@@ -9,6 +9,7 @@
  * rejects it - plus the fixed confession line. No free-text claim about what it catches. An escape link
  * jumps to Pattern mode. Powered by the deterministic builder only; there is NO model call.
  */
+import { Button } from "../../../components/button";
 import { useMemo, useState, type JSX } from "react";
 import type { RegexPhase, RegexRule } from "../../../../entities/regex/schema";
 import {
@@ -139,28 +140,18 @@ export function ModeGuided({ rule, writeFor, styles, onPatch, onEscape }: ModeGu
         )}
 
         <div className={styles.qnav}>
-          <button
-            type="button"
-            className={styles.qback}
-            disabled={step === 0}
-            onClick={() => setStep((s) => Math.max(0, s - 1))}
-          >
-            &larr; Back
-          </button>
-          <button
-            type="button"
-            className={styles.qnext}
+          <Button variant="quiet" disabled={step === 0} onClick={() => setStep((s) => Math.max(0, s - 1))}>&larr; Back</Button>
+          <Button
+            variant="primary"
             disabled={step === STEPS.length - 1}
             onClick={() => setStep((s) => Math.min(STEPS.length - 1, s + 1))}
           >
             {nextLabel} {step < STEPS.length - 1 && <>&rarr;</>}
-          </button>
+          </Button>
         </div>
       </div>
 
-      <button type="button" className={styles.escapePlan} onClick={onEscape}>
-        I know patterns - take me to Pattern mode
-      </button>
+      <Button variant="quiet" size="sm" onClick={onEscape}>I know patterns - take me to Pattern mode</Button>
     </div>
   );
 }

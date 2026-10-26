@@ -7,9 +7,9 @@
  */
 import { useState, type JSX } from "react";
 import { isRecord } from "../../../core/guards";
+import { IconButton, Toggle } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { Slider } from "../../components/slider";
-import { ToggleSwitch } from "../../components/toggle-switch";
 import type { ParamDef, ParamValue } from "../../../stage/params";
 import type { CardState } from "./generation-params-core";
 import { LogitBiasManager } from "./generation-params-bias";
@@ -77,7 +77,7 @@ function Control({ def, state, model, onChange }: Pick<Props, "def" | "state" | 
       return (
         <div className="gp-send">
           <span>Send as: <b className={v ? "yes" : "no"}>{v ? "true" : "false"}</b></span>
-          <ToggleSwitch on={!!v} onChange={(on) => onChange({ value: on })} />
+          <Toggle on={!!v} onChange={(on) => onChange({ value: on })} />
         </div>
       );
     case "array": {
@@ -109,12 +109,12 @@ export function ParamCard({ def, state, provider, greyed, model, onChange }: Pro
         <div className="gp-id">
           <div className="gp-name">
             <label>{def.label}</label>
-            <button type="button" className="gp-info" aria-label={`About ${def.label}`} aria-expanded={info} onMouseEnter={() => setInfo(true)} onMouseLeave={() => setInfo(false)} onFocus={() => setInfo(true)} onBlur={() => setInfo(false)} onClick={() => setInfo(!info)}><Ic name="mdi:information-outline" size={16} /></button>
+            <IconButton variant="quiet" size="sm" label={`About ${def.label}`} icon="mdi:information-outline" aria-expanded={info} onMouseEnter={() => setInfo(true)} onMouseLeave={() => setInfo(false)} onFocus={() => setInfo(true)} onBlur={() => setInfo(false)} onClick={() => setInfo(!info)} />
           </div>
           {def.aliases && def.aliases.length > 0 && <div className="gp-key">{def.aliases.join(" · ")}</div>}
           {refused && <div className="gp-refused" data-part="scene.generation.not-sent">Not sent to {provider.label}</div>}
         </div>
-        <ToggleSwitch on={state.on} onChange={(on) => onChange({ on })} />
+        <Toggle on={state.on} onChange={(on) => onChange({ on })} />
       </div>
       {info && (
         <div className="gp-tip" role="note">{def.description}

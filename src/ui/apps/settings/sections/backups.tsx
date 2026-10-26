@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { JSX } from "react";
 import type { SettingsSection } from "../section-contract";
 import { SettingsRow } from "../section-contract";
+import { Button } from "../../../components/button";
 import { StageNote } from "../../../components/stage-dossier";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { ProtectedDialog } from "../../../_shared/protected-dialog";
@@ -128,18 +129,18 @@ function Backups(): JSX.Element {
             {sentence(problem ?? state.lastError ?? "")}
           </StageNote>
           <div className={styles.actions}>
-            <button type="button" className={styles.btn} disabled={busy} onClick={() => void makeOne()}>
+            <Button size="sm" disabled={busy} onClick={() => void makeOne()}>
               Try again now
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}
 
       <div className={styles.card}>
         <SettingsRow label="Back up now" hint="Makes a copy right away. Hourly copies carry on as usual.">
-          <button type="button" className={styles.btn} disabled={busy} onClick={() => void makeOne()}>
+          <Button size="sm" variant="primary" disabled={busy} onClick={() => void makeOne()}>
             Back up now
-          </button>
+          </Button>
         </SettingsRow>
         <SettingsRow
           label="What is kept"
@@ -162,22 +163,22 @@ function Backups(): JSX.Element {
             </div>
             <div className={styles.actions}>
               {removable(c) ? (
-                <button type="button" className={styles.btnGhost} title="Moves the copy to the trash folder beside the copies; nothing is deleted" onClick={() => void remove(c)}>
+                <Button size="sm" variant="danger" title="Moves the copy to the trash folder beside the copies; nothing is deleted" onClick={() => void remove(c)}>
                   Remove
-                </button>
+                </Button>
               ) : null}
-              <button type="button" className={styles.btnGhost} disabled={!state.unlocked} onClick={() => setRestoring(c)}>
+              <Button size="sm" disabled={!state.unlocked} onClick={() => setRestoring(c)}>
                 Restore
-              </button>
+              </Button>
             </div>
           </div>
         ))}
         {total > SHOWN ? (
           <>
             <p className={styles.subtle}>{`Showing the ${all ? "whole list" : `newest ${SHOWN}`} of ${total}. Newest first; a copy is named by when it was made.`}</p>
-            <button type="button" className={styles.btnGhost} onClick={() => setAll(!all)}>
+            <Button size="sm" variant="quiet" onClick={() => setAll(!all)}>
               {all ? "Show fewer" : "Show all copies"}
-            </button>
+            </Button>
           </>
         ) : null}
       </div>

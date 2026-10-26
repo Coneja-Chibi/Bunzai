@@ -6,6 +6,7 @@
  * list the plan's Behavior section asks for.
  */
 import { useState, type JSX, type RefObject } from "react";
+import { Button, IconButton, MenuItem, Segmented } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import type { AsyncState } from "../../../../_shared/async-state";
 import type { SceneTrace } from "../../../../app-contract-scenes";
@@ -43,12 +44,9 @@ export function HarePopover({ panelRef, traceState, density, group, sort, showMi
         <b>TrackHare</b>
         {trace && <span className="cnt">{badgeCount(trace)}</span>}
         <span className="grow" />
-        <span className="seg2">
-          <button type="button" className={density === "detailed" ? "on" : undefined} onClick={() => onToggleDensity("detailed")}>Detailed</button>
-          <button type="button" className={density === "compact" ? "on" : undefined} onClick={() => onToggleDensity("compact")}>Compact</button>
-        </span>
+        <Segmented size="sm" label="Panel density" items={[{ value: "detailed", label: "Detailed" }, { value: "compact", label: "Compact" }]} value={density} onChange={onToggleDensity} />
         {pop && <PopoutButton id={pop.id} onClick={pop.open} />}
-        <button type="button" className="close" aria-label="Close" onClick={onClose}><Ic name="lucide:x" size={14} /></button>
+        <IconButton size="sm" label="Close" icon="lucide:x" onClick={onClose} />
       </div>
 
       {traceState.state === "loading" && <div className="hare-none">Loading...</div>}
@@ -59,16 +57,14 @@ export function HarePopover({ panelRef, traceState, density, group, sort, showMi
         <>
           <HareHits trace={trace} group={group} sort={sort} showMisses={showMisses} />
           <div className="hp-ft">
-            <button type="button" className="hbtn pri" onClick={onOpenTokens} disabled={!trace}><Ic name="lucide:chart-pie" size={14} />Tokens</button>
-            <button type="button" className="hbtn" onClick={onOpenChains} disabled={!lore}><Ic name="lucide:link" size={14} />Chains</button>
-            <button type="button" className="hbtn" onClick={() => setRepliesOpen((v) => !v)} disabled={trace.replies.length === 0}>
-              <Ic name="lucide:arrow-left" size={14} />Earlier replies
-            </button>
+            <Button variant="primary" size="sm" icon="lucide:chart-pie" onClick={onOpenTokens} disabled={!trace}>Tokens</Button>
+            <Button size="sm" icon="lucide:link" onClick={onOpenChains} disabled={!lore}>Chains</Button>
+            <Button size="sm" icon="lucide:arrow-left" onClick={() => setRepliesOpen((v) => !v)} disabled={trace.replies.length === 0}>Earlier replies</Button>
           </div>
           {repliesOpen && (
             <div className="hare-replies">
               {trace.replies.map((r) => (
-                <button type="button" key={r.messageId} onClick={() => { setRepliesOpen(false); onPickReply(r.messageId); }}>Reply #{r.number}</button>
+                <MenuItem key={r.messageId} onClick={() => { setRepliesOpen(false); onPickReply(r.messageId); }}>Reply #{r.number}</MenuItem>
               ))}
             </div>
           )}

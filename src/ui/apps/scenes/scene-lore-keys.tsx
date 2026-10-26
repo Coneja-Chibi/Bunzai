@@ -11,6 +11,7 @@ import { SPECIAL_TRIGGER_PRESETS } from "../../components/lore-special-triggers"
 import { Ic } from "../../_shared/ic";
 import { isEscapeClose } from "../../_shared/use-escape-key";
 import { parseTriggerInput } from "./lore-core";
+import { Button, Chip as PillChip, IconButton, MenuItem } from "../../components/button";
 
 const MAX_VISIBLE = 3;
 /** Special keys the engine evaluates (triggers-special.ts, triggers-emotion.ts); the narrative ones always read false here, and the active-book and group-chat ones are fixed. */
@@ -41,9 +42,9 @@ function Chip({ trigger, two, advanced, onRemove, onPatch }: {
       );
     }
     return (
-      <button type="button" className="pc" aria-label={name === "probability" ? "Change trigger probability" : "Change trigger cooldown"}
+      <PillChip aria-label={name === "probability" ? "Change trigger probability" : "Change trigger cooldown"}
         title={name === "probability" ? "Trigger Probability. Change this individual trigger chance." : "Trigger Cooldown. Set how many messages must pass before this trigger can fire again."}
-        onClick={() => setEditing(name)}>{name === "probability" ? `${value}${unit}` : <><Ic name="lucide:clock" size={12} />{trigger.frequency ? trigger.frequency : ""}</>}</button>
+        onClick={() => setEditing(name)}>{name === "probability" ? `${value}${unit}` : <><Ic name="lucide:clock" size={12} />{trigger.frequency ? trigger.frequency : ""}</>}</PillChip>
     );
   };
   return (
@@ -51,7 +52,7 @@ function Chip({ trigger, two, advanced, onRemove, onPatch }: {
       <span>{label(trigger)}</span>
       {advanced && field("probability", "%", 100)}
       {advanced && field("frequency", "", 0)}
-      <button type="button" aria-label={`Remove ${label(trigger)}`} title="Remove Trigger. Delete this trigger from the entry." onClick={onRemove}>&times;</button>
+      <IconButton variant="quiet" size="sm" icon="lucide:x" label={`Remove ${label(trigger)}`} title="Remove Trigger. Delete this trigger from the entry." onClick={onRemove} />
     </span>
   );
 }
@@ -60,14 +61,14 @@ function Condition({ advanced, onAdd }: { advanced: boolean; onAdd(t: Trigger): 
   const [open, setOpen] = useState(false);
   return (
     <span className="wl-rel">
-      <button type="button" className="wl-more-c" aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((v) => !v)}>+ Condition</button>
+      <Button variant="quiet" size="sm" menu aria-expanded={open} onClick={() => setOpen((v) => !v)}>+ Condition</Button>
       {open && (
         <div className="wl-dd" role="menu" aria-label="Insert special condition" style={{ right: 0, minWidth: 220 }}>
           {CONDITIONS.map((p) => (
-            <button type="button" key={p.keyword} role="menuitem" title={p.hint ?? p.keyword}
+            <MenuItem key={p.keyword} title={p.hint ?? p.keyword} hint={p.keyword}
               onClick={() => { onAdd({ keyword: p.keyword, isRegex: false, ...(advanced ? { probability: 100 } : {}) }); setOpen(false); }}>
-              {p.label}<small>{p.keyword}</small>
-            </button>
+              {p.label}
+            </MenuItem>
           ))}
         </div>
       )}
@@ -99,9 +100,9 @@ export function TriggerBox({ triggers, two = false, advanced, placeholder, onCha
             onPatch={(patch) => onChange(triggers.map((x, j) => (j === i ? { ...x, ...patch } : x)))} />
         ))}
         {!expanded && hidden > 0 && (
-          <button type="button" className={`wl-more-c${two ? " two" : ""}`} aria-label={`Show ${hidden} more trigger${hidden > 1 ? "s" : ""}`} onClick={() => setExpanded(true)}><Ic name="lucide:plus" size={12} />and {hidden} more</button>
+          <PillChip aria-label={`Show ${hidden} more trigger${hidden > 1 ? "s" : ""}`} onClick={() => setExpanded(true)}><Ic name="lucide:plus" size={12} />and {hidden} more</PillChip>
         )}
-        {expanded && triggers.length > MAX_VISIBLE && <button type="button" className="wl-more-c less" aria-label="Show fewer triggers" onClick={() => setExpanded(false)}>Show less</button>}
+        {expanded && triggers.length > MAX_VISIBLE && <PillChip aria-label="Show fewer triggers" onClick={() => setExpanded(false)}>Show less</PillChip>}
         <input type="text" value={draft} placeholder={triggers.length === 0 ? placeholder : ""} aria-label={two ? "Add secondary keyword" : "Add keyword"}
           title="Type a keyword or regex pattern and press Enter to add" onChange={(e) => setDraft(e.target.value)}
           onKeyDown={(e) => {

@@ -9,29 +9,6 @@
 }
 .modes {
   display: flex;
-  border: 3px solid var(--ink);
-  box-shadow: 3px 3px 0 0 var(--ink);
-}
-.modes button {
-  flex: 1;
-  border: none;
-  border-left: 3px solid var(--ink);
-  background: var(--paper);
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink);
-  padding: 0.42rem;
-  cursor: pointer;
-}
-.modes button:first-child {
-  border-left: none;
-}
-.modes button.on {
-  background: var(--ink);
-  color: var(--paper);
 }
 .grad {
   display: flex;
@@ -79,44 +56,9 @@
 }
 .seg {
   display: flex;
-  border: 3px solid var(--ink);
-}
-.seg button {
-  border: none;
-  border-left: 3px solid var(--ink);
-  background: var(--paper);
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ink);
-  padding: 0.32rem 0.55rem;
-  cursor: pointer;
-}
-.seg button:first-child {
-  border-left: none;
-}
-.seg button.on {
-  background: var(--ink);
-  color: var(--paper);
 }
 .rm {
   margin-left: auto;
-  font-family: var(--font-mono), monospace;
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: var(--paper);
-  border: 3px solid var(--ink);
-  color: var(--ink);
-  padding: 0.32rem 0.55rem;
-  cursor: pointer;
-}
-.rm:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 .angle {
   display: flex;

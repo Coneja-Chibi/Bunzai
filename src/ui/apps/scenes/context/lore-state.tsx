@@ -4,8 +4,9 @@
  * tabs State, Lore, Macros, Sources, Flow and Compose over the one trace. The Est. Cost line is left out (Bunraku has no price source) and the
  * Tracker / History toggle (the request itself is Compose's text and This turn's Raw JSON). The meter's marks and target are per-viewer prefs.
  */
-import { useState, type CSSProperties, type JSX } from "react";
+import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Tabs } from "../../../components/button";
 import type { AppContext } from "../../../app-contract";
 import type { SceneTrace } from "../../../app-contract-scenes";
 import type { Chat } from "../../../../stage/contracts/chat-store";
@@ -20,13 +21,13 @@ import { neighbours } from "./this-turn-core";
 import type { TraceState } from "./use-reply-trace";
 
 type Tab = "state" | "lore" | "macros" | "sources" | "flow" | "compose";
-const TABS: { id: Tab; label: string; tone: string }[] = [
-  { id: "state", label: "State", tone: "--stage-ok" },
-  { id: "lore", label: "Lore", tone: "--deck-lorebook" },
-  { id: "macros", label: "Macros", tone: "--stage-macro" },
-  { id: "sources", label: "Sources", tone: "--deck-character" },
-  { id: "flow", label: "Flow", tone: "--deck-persona" },
-  { id: "compose", label: "Compose", tone: "--stage-var" },
+const TABS: { value: Tab; label: string }[] = [
+  { value: "state", label: "State" },
+  { value: "lore", label: "Lore" },
+  { value: "macros", label: "Macros" },
+  { value: "sources", label: "Sources" },
+  { value: "flow", label: "Flow" },
+  { value: "compose", label: "Compose" },
 ];
 
 const MESSAGE_KINDS = new Set(["greeting", "history", "current"]);
@@ -72,11 +73,7 @@ export function LoreState({ ctx, chat, state }: { ctx: AppContext; chat: Chat; s
         <Pressure meter={meter} thresholds={thresholds} target={target}
           onThresholds={(t) => { setThresholds(t); ctx.prefs.set(THRESHOLDS_KEY, t); }}
           onTarget={(n) => { setTarget(n); ctx.prefs.set(TARGET_KEY, n); }} />
-        <div className="ls-tabs" role="tablist" aria-label="Lore and state">
-          {TABS.map((t) => (
-            <button type="button" key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : undefined} style={{ "--c": `var(${t.tone})` } as CSSProperties} onClick={() => setTab(t.id)}>{t.label}</button>
-          ))}
-        </div>
+        <Tabs label="Lore and state" items={TABS} value={tab} onChange={setTab} />
       </div>
       <div className="ls-main">
         {tab === "state" && <StateTab ctx={ctx} chatId={chat.id} version={chat.updatedAt} trace={trace} />}

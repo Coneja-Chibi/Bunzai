@@ -2,7 +2,6 @@
 export const SPELLBOOK_STYLE = `
 .scs .it-card.observed{opacity:.7}
 .scs .it-card.theory{border-style:dashed}
-.scs .it-act.on{background:color-mix(in srgb,var(--stage-ok) 20%,transparent);color:var(--stage-ok)}
 .scs .sp-pool{display:flex;flex-direction:column;gap:6px;padding:8px 12px;border-bottom:1px solid color-mix(in srgb,var(--w) 10%,transparent);background:color-mix(in srgb,var(--stage-black) 20%,transparent)}
 .scs .sp-pool>div{display:flex;align-items:center;gap:8px}
 .scs .sp-pool .st-track{flex:1}
@@ -28,8 +27,6 @@ export const SPELLBOOK_STYLE = `
 .scs .sp-row ul{margin:0;padding-left:16px;font-size:var(--rc-text-xs)}
 .scs .sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font:400 var(--rc-text-xs)/1.4 var(--font-body);color:var(--stage-mute)}
 .scs .sp-grid .wide{grid-column:span 2}
-.scs .sp-histbtn{display:flex;align-items:center;gap:6px;border:0;background:none;color:var(--stage-mute);font:400 var(--rc-text-xs)/1.4 var(--font-body);cursor:pointer;border-radius:var(--rc-radius-sm)}
-.scs .sp-histbtn:hover{color:var(--stage-soft)}
 .scs .sp-hist{display:flex;flex-direction:column;gap:4px;margin-top:8px}
 .scs .sp-hist>div{display:flex;gap:8px;padding-left:4px;font:400 var(--rc-text-xs)/1.4 var(--font-body);color:var(--stage-mute)}
 .scs .sp-hist span:first-child{min-width:60px;color:var(--stage-line)}

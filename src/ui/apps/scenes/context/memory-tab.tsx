@@ -5,6 +5,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Button, IconButton } from "../../../components/button";
 import { bodyOf, recOr, str } from "../../../../core/guards";
 import { rollingPrompt, PAIR_PROMPT } from "../../../../core/summary/prompts";
 import { SUMMARY_DEFAULTS, automationActive, contextWindow, resolveSummary, summaryWindow } from "../../../../core/summary/settings";
@@ -69,7 +70,7 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
           <BoothModelPicker current={model} models={models} onPick={(c) => put({ model: c })} />
         </Field>
         {r.model ? (
-          <div className="mm-note"><span>This chat overrides its normal model for summaries.</span><button type="button" onClick={() => put({ model: null })}>Use chat model</button></div>
+          <div className="mm-note"><span>This chat overrides its normal model for summaries.</span><Button variant="quiet" size="sm" onClick={() => put({ model: null })}>Use chat model</Button></div>
         ) : null}
         <Field label="Temperature" hint="Lower values make recaps steadier; higher values allow looser wording.">
           <NumberBox label="Temperature" value={r.temperature} min={0} step={0.1} float onCommit={(n) => put({ temperature: n === null ? null : Math.min(1, Math.max(0, n)) })} />
@@ -112,7 +113,7 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
           <Disclosure open={folds.prompt} onToggle={(o) => fold("prompt", o)} icon="lucide:scroll-text" title="Prompt template" hint="Custom">
             <div className="mm-vars">
               <span>Variables: {promptVariables(option).map((v) => <code key={v}>{v}</code>)}. {option === "pair" ? "Missing source variables are appended automatically." : "Missing history is appended automatically."}</span>
-              <button type="button" disabled={!r.prompt} onClick={() => put({ prompt: null })}><Ic name="lucide:refresh-cw" size={14} />Reset prompt</button>
+              <Button size="sm" icon="lucide:refresh-cw" disabled={!r.prompt} onClick={() => put({ prompt: null })}>Reset prompt</Button>
             </div>
             <PromptBox key={r.prompt ?? ""} saved={r.prompt} fallback={option === "pair" ? PAIR_PROMPT : rollingPrompt(r.mode, false)} onCommit={(text) => put({ prompt: text.trim() === "" ? null : text })} />
             {!r.prompt ? <p className="mm-line">No custom prompt: the built-in prompt for {methodLabel(option)} is used.</p> : null}
@@ -122,7 +123,7 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
 
       <section className="mm-card" aria-label="Current Summary">
         <div className="mm-sec"><Ic name="lucide:scroll-text" size={14} />Current Summary<small>{s.text ? `${s.text.length} chars` : "Empty"}</small>
-          {editing === null && s.text ? <button type="button" className="mm-icon" title="Edit summary" aria-label="Edit summary" onClick={() => { setSaveError(null); setEditing(s.text); }}><Ic name="lucide:pencil" size={14} /></button> : null}
+          {editing === null && s.text ? <IconButton size="sm" label="Edit summary" icon="lucide:pencil" onClick={() => { setSaveError(null); setEditing(s.text); }} /> : null}
         </div>
         {s.running ? (
           <div className="mm-wait"><Ic name="lucide:loader-circle" size={24} /><p>Generating summary...</p></div>
@@ -131,8 +132,8 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
             <textarea className="mm-in tall" aria-label="Summary text" autoFocus placeholder="Write the context the AI should carry forward..." value={editing} onChange={(e) => setEditing(e.target.value)} />
             {saveError ? <p role="alert" className="mm-err">{saveError}</p> : null}
             <div className="mm-acts">
-              <button type="button" className="mm-btn" disabled={view.busy} onClick={() => { setEditing(null); setSaveError(null); }}>Cancel</button>
-              <button type="button" className="mm-btn go" disabled={editing.trim() === "" || view.busy} onClick={() => void save()}><Ic name={view.busy ? "lucide:loader-circle" : "lucide:check"} size={14} />Save</button>
+              <Button variant="quiet" size="sm" disabled={view.busy} onClick={() => { setEditing(null); setSaveError(null); }}>Cancel</Button>
+              <Button variant="primary" size="sm" icon={view.busy ? "lucide:loader-circle" : "lucide:check"} disabled={editing.trim() === "" || view.busy} onClick={() => void save()}>Save</Button>
             </div>
           </div>
         ) : s.text ? (
@@ -142,13 +143,13 @@ export function MemoryTab({ ctx, scene, onChat }: ContextProps): JSX.Element {
             <Ic name="lucide:sparkles" size={24} />
             <p>No summary yet</p>
             <small>{r.auto ? "Write the starting context yourself, or let the next eligible exchange create it." : "Write the context you want the AI to carry forward."}</small>
-            <button type="button" className="mm-btn go" onClick={() => { setSaveError(null); setEditing(""); }}><Ic name="lucide:pencil" size={14} />Write summary</button>
+            <Button variant="primary" size="sm" icon="lucide:pencil" onClick={() => { setSaveError(null); setEditing(""); }}>Write summary</Button>
           </div>
         )}
         {editing === null ? (
           <div className="mm-back">
             <p>This run: <b>{backfillLabel(option)}</b>. Full history is loaded and split adaptively for the selected model. You can switch methods afterward.</p>
-            <button type="button" className="mm-btn" disabled={s.running || view.busy} onClick={() => void view.backfill()}><Ic name={s.running ? "lucide:loader-circle" : "lucide:refresh-cw"} size={14} />Backfill history</button>
+            <Button size="sm" icon={s.running ? "lucide:loader-circle" : "lucide:refresh-cw"} disabled={s.running || view.busy} onClick={() => void view.backfill()}>Backfill history</Button>
           </div>
         ) : null}
       </section>

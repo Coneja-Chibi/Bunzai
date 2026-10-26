@@ -75,7 +75,7 @@ test("each panel steps on its own, a version already loaded is not asked for aga
   expect(panes()[1]!.textContent).toContain("Version 2");
   expect(sheet().textContent).toContain("Both panels are showing the same version");
   expect(asked.filter((i) => i === 1)).toHaveLength(1);
-  await click(panes()[0]!.querySelector(".fold"));
+  await click([...panes()[0]!.querySelectorAll("button")].find((b) => b.textContent?.includes("Generation Details")));
   expect(panes()[0]!.textContent).toContain("Velvet Quill");
   expect(panes()[0]!.textContent).toContain("0.70");
   await click(panes()[0]!.querySelector('[aria-label="Next version"]'));

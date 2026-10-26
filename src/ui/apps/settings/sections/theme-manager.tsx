@@ -7,6 +7,7 @@ import { apiFetchJson } from "../../../_shared/api-fetch";
 import { DEFAULT_STUDIO_THEME, SETTING_KEYS } from "../../../../studio/settings-shape";
 import type { ThemePackagePreview } from "../../../../extensions/theme-contract";
 import type { ThemeCatalogEntry } from "../../../../extensions/theme-lifecycle";
+import { Button } from "../../../components/button";
 import styles from "./theme-manager.module.css";
 
 interface Inspection { preview: ThemePackagePreview; challenge: string }
@@ -146,8 +147,8 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
       <div className={styles.example} key={example.id}>
         <div><strong>{example.name}</strong><span>Shipped example · not active</span></div>
         <div className={styles.actions}>
-          <button type="button" disabled={busy} onClick={() => void inspectExample(example.id)}>Review example</button>
-          <button type="button" disabled={busy} onClick={() => void downloadExample(example.id, example.name)}>Download package</button>
+          <Button size="sm" disabled={busy} onClick={() => void inspectExample(example.id)}>Review example</Button>
+          <Button size="sm" disabled={busy} onClick={() => void downloadExample(example.id, example.name)}>Download package</Button>
         </div>
       </div>)}
     <p className={styles.hint}>A package sets checked colors, fonts, shapes and screen layouts, and may add its own checked styles, fonts, images and slot content. It cannot run scripts, reach the network, or restyle this panel. Every power it uses is listed here for you to approve.</p>
@@ -158,8 +159,8 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
       <ul>{inspection.preview.derivedScopes.map((scope) => <li key={scope}>{scopeLabels[scope] ?? scope}</li>)}</ul>
       <p>Approval applies to this exact digest. A changed package needs a new review and approval.</p>
       <div className={styles.actions}>
-        <button type="button" disabled={busy} onClick={() => void approve()}>Approve and install</button>
-        <button type="button" disabled={busy} onClick={() => void deny()}>Deny</button>
+        <Button size="sm" variant="primary" disabled={busy} onClick={() => void approve()}>Approve and install</Button>
+        <Button size="sm" variant="quiet" disabled={busy} onClick={() => void deny()}>Deny</Button>
       </div>
     </div>}
     {catalog[0]?.stateError && <p className={styles.state} role="status">{catalog[0].stateError} Installed themes are hidden until it is repaired.</p>}
@@ -168,14 +169,14 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
         <div><strong>{item.name}</strong><span>{item.builtIn ? "Bundled" : "Imported"} · {item.enabled ? "enabled" : "disabled or revoked"}</span>
           <code>{item.invalid ? `This theme no longer passes checks: ${item.invalid.replace(/\.$/, "")}. Remove it or install it again.` : item.grantedScopes.length ? item.grantedScopes.join(" · ") : "No active grants"}</code></div>
         <div className={styles.actions}>
-          {item.invalid ? examples.some((example) => example.id === item.id) && <button type="button" disabled={busy} onClick={() => void inspectExample(item.id)}>Reinstall</button>
+          {item.invalid ? examples.some((example) => example.id === item.id) && <Button size="sm" disabled={busy} onClick={() => void inspectExample(item.id)}>Reinstall</Button>
             : item.builtIn && (item.grantedScopes.length === 0 || item.updateAvailable)
-            ? <button type="button" disabled={busy} onClick={() => void inspectRestore(item)}>{item.updateAvailable ? "Review host update" : "Review and restore"}</button>
+            ? <Button size="sm" disabled={busy} onClick={() => void inspectRestore(item)}>{item.updateAvailable ? "Review host update" : "Review and restore"}</Button>
             : item.enabled || item.grantedScopes.length > 0
-              ? <button type="button" disabled={busy} onClick={() => void mutate(item.enabled ? "disable" : "enable", item)}>{item.enabled ? "Disable" : "Enable"}</button>
+              ? <Button size="sm" disabled={busy} onClick={() => void mutate(item.enabled ? "disable" : "enable", item)}>{item.enabled ? "Disable" : "Enable"}</Button>
               : <span>Reinspect the package to request fresh grants.</span>}
-          {!item.invalid && <button type="button" disabled={busy} onClick={() => void mutate("revoke", item)}>Revoke grants</button>}
-          {!item.builtIn && <button type="button" disabled={busy} onClick={() => void mutate("remove", item)}>Remove</button>}
+          {!item.invalid && <Button size="sm" variant="danger" disabled={busy} onClick={() => void mutate("revoke", item)}>Revoke grants</Button>}
+          {!item.builtIn && <Button size="sm" variant="danger" disabled={busy} onClick={() => void mutate("remove", item)}>Remove</Button>}
         </div>
       </li>)}
     </ul>
@@ -188,8 +189,8 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
       <code>SHA-256 · {restoreReview.item.digest}</code>
       <ul>{restoreReview.item.requestedScopes.map((scope) => <li key={scope}>{scopeLabels[scope] ?? scope}</li>)}</ul>
       <div className={styles.actions}>
-        <button type="button" disabled={busy} onClick={() => void mutate("restore", restoreReview.item)}>Approve restore</button>
-        <button type="button" disabled={busy} onClick={() => setRestoreReview(null)}>Cancel</button>
+        <Button size="sm" variant="primary" disabled={busy} onClick={() => void mutate("restore", restoreReview.item)}>Approve restore</Button>
+        <Button size="sm" variant="quiet" disabled={busy} onClick={() => setRestoreReview(null)}>Cancel</Button>
       </div>
     </div>}
     {note && <p className={styles.state} role="status">{note}</p>}

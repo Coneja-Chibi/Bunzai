@@ -7,5 +7,4 @@ html[data-surface-app-room="sticker-tray"] .agent-room[data-room="docked"] {
   & .agent-room__line--user { margin-left: auto; }
   & .agent-room__compose { padding: .5rem .8rem .8rem; }
   & .agent-room__composer { border: 3px solid var(--bk-line-strong); box-shadow: 4px 4px 0 0 var(--bk-line-strong); padding: .4rem; gap: .4rem; }
-  & .agent-room__composer button { border-width: 3px; padding-inline: 1.2rem; }
 }

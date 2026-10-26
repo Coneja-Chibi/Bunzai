@@ -15,6 +15,7 @@
  * CSS renders faithfully; JavaScript never runs and no external image or webfont is fetched. Static
  * wireframes and mockups are what this is for.
  */
+import { Button } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
 import type { AppContext, BunrakuApp } from "../../app-contract";
@@ -131,13 +132,14 @@ export function HtmlView({ ctx }: { ctx: AppContext }): JSX.Element {
         // Fullscreen is asked of this container, never of the sealed iframe: the seal is unchanged
         // by being large, and the sandboxed frame is deliberately not given that permission.
         <div className={big ? `${styles.frame} ${styles.big}` : styles.frame} ref={frameRef}>
-          <button
-            type="button"
-            className={styles.expand}
-            onClick={() => { void (big ? comeBack() : goBig()); }}
-          >
-            {big ? "Close (Esc)" : "Fullscreen"}
-          </button>
+          <div className={styles.expand}>
+            <Button
+              size="sm"
+              onClick={() => { void (big ? comeBack() : goBig()); }}
+            >
+              {big ? "Close (Esc)" : "Fullscreen"}
+            </Button>
+          </div>
           <SealedHtmlPreview html={html} title="The page the agent wrote" fill />
         </div>
       ) : (

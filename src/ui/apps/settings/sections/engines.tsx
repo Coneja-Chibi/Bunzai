@@ -22,6 +22,7 @@ import { apiFetchJson } from "../../../_shared/api-fetch";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { SettingsRow } from "../section-contract";
 import { engineState, type EngineRow } from "./engines-core";
+import { Button } from "../../../components/button";
 import styles from "./engines.module.css";
 
 /** One row per engine Bunraku can drive: where its checkout is, and whether one answered. */
@@ -106,21 +107,22 @@ export function EngineRoots(): JSX.Element {
                 engine-roots.ts serializes the write as well, because a second tab cannot see this.
               */}
               <div className={styles.acts}>
-                <button
-                  type="button"
+                <Button
+                  size="sm"
                   disabled={locked || busy !== null}
                   onClick={() => { void save(row, draft[row.id] ?? ""); }}
                 >
                   {"Save"}
-                </button>
+                </Button>
                 {row.saved !== "" && (
-                  <button
-                    type="button"
+                  <Button
+                    size="sm"
+                    variant="quiet"
                     disabled={locked || busy !== null}
                     onClick={() => { void save(row, ""); }}
                   >
                     {"Clear"}
-                  </button>
+                  </Button>
                 )}
               </div>
               <p className={ok ? styles.good : styles.note}>{note}</p>

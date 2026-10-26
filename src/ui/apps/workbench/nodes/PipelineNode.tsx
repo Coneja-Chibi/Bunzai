@@ -3,6 +3,7 @@
  * onto another to move it; both are single preset writes made by the caller. Marker blocks are inputs
  * (a port dot in the source's color); off blocks are struck through.
  */
+import { ListRow } from "../../../components/button";
 import { useRef } from "react";
 import type { CSSProperties, JSX, PointerEvent } from "react";
 import { dirtyTitle } from "./link-write";
@@ -78,9 +79,13 @@ export function PipelineNode(p: PipelineNodeProps): JSX.Element {
             }}
           >
             <span className={css.grip} aria-hidden="true">::</span>
-            <button type="button" className={css.blkName} aria-pressed={row.on} disabled={locked} title={why ?? (row.on ? "Click to switch off" : "Click to switch on")} onClick={() => p.onToggle(row.id, !row.on)}>
-              {row.name}{src && <em> · {src}</em>}
-            </button>
+            <ListRow
+              aria-pressed={row.on}
+              disabled={locked}
+              title={why ?? (row.on ? "Click to switch off" : "Click to switch on")}
+              onClick={() => p.onToggle(row.id, !row.on)}
+              label={<>{row.name}{src && <em> · {src}</em>}</>}
+            />
             <small>{row.tokens === null ? "slot" : tokLabel(row.tokens)}</small>
           </div>
         );

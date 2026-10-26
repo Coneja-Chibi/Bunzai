@@ -15,6 +15,7 @@ import type { OpenScene, SceneAction, TakeSummary } from "../../../studio/scenes
 import { DeleteTakeDialog } from "./scene-takes";
 import { TakeCompare } from "./scene-tree-compare";
 import { takeLabel, takeMeta, takeTree, type TreeNode } from "./scene-tree-core";
+import { Button, IconButton, ListRow } from "../../components/button";
 
 export function BranchTree({ ctx, chatId, onBack, onOpen }: { ctx: AppContext; chatId: string; onBack(): void; onOpen(): void }): JSX.Element {
   const { api } = ctx;
@@ -95,16 +96,14 @@ export function BranchTree({ ctx, chatId, onBack, onOpen }: { ctx: AppContext; c
                 else if (isEscapeClose(e.nativeEvent)) { e.stopPropagation(); setEditing(null); }
               }} />
           ) : (
-            <button type="button" className="open" disabled={busy === t.id} onClick={() => void open(t)}>
-              <span className="nm"><b>{takeLabel(t)}</b>{main && <span className="chip">Main</span>}{here && <span className="chip here">Viewing</span>}</span>
-              <span className="meta">{takeMeta(t)}</span>
-            </button>
+            <ListRow disabled={busy === t.id} onClick={() => void open(t)}
+              label={<><b>{takeLabel(t)}</b>{main && <span className="chip">Main</span>}{here && <span className="chip here">Viewing</span>}</>} subtitle={takeMeta(t)} />
           )}
-          {editing?.id !== t.id && <button type="button" className={`act${pick === t.id ? " on" : ""}`} title="Compare takes" aria-label={`Compare ${t.name}`} aria-pressed={pick === t.id} onClick={() => compare(t.id)}><Ic name="lucide:columns-2" size={14} /></button>}
+          {editing?.id !== t.id && <IconButton variant={pick === t.id ? "primary" : "quiet"} size="sm" icon="lucide:columns-2" title="Compare takes" label={`Compare ${t.name}`} aria-pressed={pick === t.id} onClick={() => compare(t.id)} />}
           {!main && editing?.id !== t.id && (
             <>
-              <button type="button" className="act" title="Rename" aria-label={`Rename ${t.name}`} onClick={() => setEditing({ id: t.id, name: t.name })}><Ic name="lucide:pencil" size={14} /></button>
-              <button type="button" {...protect("take-delete", "act x")} title="Delete take" aria-label={`Delete ${t.name}`} disabled={busy === t.id} onClick={(e) => { if (e.shiftKey) void remove(t); else setAsk(t); }}><Ic name="lucide:trash-2" size={16} /></button>
+              <IconButton variant="quiet" size="sm" icon="lucide:pencil" title="Rename" label={`Rename ${t.name}`} onClick={() => setEditing({ id: t.id, name: t.name })} />
+              <span {...protect("take-delete")}><IconButton variant="danger" size="sm" icon="lucide:trash-2" title="Delete take" label={`Delete ${t.name}`} disabled={busy === t.id} onClick={(e) => { if (e.shiftKey) void remove(t); else setAsk(t); }} /></span>
             </>
           )}
           <span className="go"><Ic name="lucide:chevron-right" size={16} /></span>
@@ -119,7 +118,7 @@ export function BranchTree({ ctx, chatId, onBack, onOpen }: { ctx: AppContext; c
     <div className="sct" data-part="scene.tree">
       <div className="pg">
         <div className="hd">
-          <button type="button" className="back" onClick={onBack}><Ic name="lucide:arrow-left" size={16} />Back to Scene</button>
+          <Button variant="quiet" icon="lucide:arrow-left" onClick={onBack}>Back to Scene</Button>
           <div className="ttl">
             <span className="tile"><Ic name="lucide:git-branch" size={20} /></span>
             <div><h1>Branching Tree</h1><p className="sub">Full conversation timeline with all branches</p></div>
@@ -130,7 +129,7 @@ export function BranchTree({ ctx, chatId, onBack, onOpen }: { ctx: AppContext; c
         {trashed && (
           <div className="note" role="status">
             <span>{trashed.name} is in the Trash for 3 days.</span>
-            <button type="button" {...protect("take-delete")} onClick={() => void restore()}>Restore</button>
+            <span {...protect("take-delete")}><Button onClick={() => void restore()}>Restore</Button></span>
           </div>
         )}
         {!scene && !problem && <div className="empty">Loading branching tree...</div>}

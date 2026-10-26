@@ -38,31 +38,36 @@ async function mount(onPick: (c: ChatConnection) => void) {
   return { host, done: () => { act(() => root.unmount()); host.remove(); } };
 }
 
+const TRIGGER = '.bth-pickwrap > [data-control="row"]';
+const OPTIONS = '.bth-dlist [data-control="row"]';
+/** The first line of a ListRow (its title), without the second line. */
+const titleOf = (row: Element): string | null => row.querySelector("small")!.previousElementSibling!.textContent;
+
 describe("the Booth model picker", () => {
   test("the button shows the display name, its provider and window; opening lists display names under a head per connection, with counts on the provider chips", async () => {
     const m = await mount(() => undefined);
-    expect(m.host.querySelector(".bth-pick .pn")!.textContent).toBe("Claude X OneHarbor · 200K ctx");
-    expect(m.host.querySelector(".bth-pick .bth-tile")).not.toBeNull();
-    act(() => m.host.querySelector<HTMLButtonElement>(".bth-pick")!.click());
+    expect(m.host.querySelector(TRIGGER)!.textContent).toBe("Claude X OneHarbor · 200K ctx");
+    expect(m.host.querySelector(`${TRIGGER} svg`)).not.toBeNull();
+    act(() => m.host.querySelector<HTMLButtonElement>(TRIGGER)!.click());
     expect([...m.host.querySelectorAll(".bth-grp .grp-hd")].map((h) => h.textContent)).toEqual(["Harbor", "Cove"]);
-    expect([...m.host.querySelectorAll(".bth-opt .pn > span")].map((n) => n.textContent)).toEqual(["Claude X One", "plain-2", "m" + "Setup Required"]);
-    expect([...m.host.querySelectorAll(".bth-fc")].map((c) => c.textContent)).toEqual(["All2", "Harbor2", "Cove0"]);
+    expect([...m.host.querySelectorAll(OPTIONS)].map(titleOf)).toEqual(["Claude X One", "plain-2", "m" + "Setup Required"]);
+    expect([...m.host.querySelectorAll(".bth-chips button")].map((c) => c.textContent)).toEqual(["All2", "Harbor2", "Cove0"]);
     expect(m.host.querySelector(".bth-dlist")).not.toBeNull();
-    expect(m.host.querySelector(".bth-opt.cur .bth-ck")).not.toBeNull();
+    expect(m.host.querySelector(`${OPTIONS}[data-selected] > span:last-child svg`)).not.toBeNull();
     m.done();
   });
 
   test("a search narrows by display name or id, a connection that cannot be used cannot be picked, and a pick closes the list", async () => {
     const picked: ChatConnection[] = [];
     const m = await mount((c) => picked.push(c));
-    act(() => m.host.querySelector<HTMLButtonElement>(".bth-pick")!.click());
+    act(() => m.host.querySelector<HTMLButtonElement>(TRIGGER)!.click());
     const input = m.host.querySelector<HTMLInputElement>(".bth-ds input")!;
     const key = Object.keys(input).find((k) => k.startsWith("__reactProps$"))!;
     act(() => (input as unknown as Record<string, { onChange(e: unknown): void }>)[key]!.onChange({ target: { value: "one" } }));
-    expect([...m.host.querySelectorAll(".bth-opt")].map((b) => b.textContent)).toEqual(["Claude X OneHarbor · 200K ctx"]);
+    expect([...m.host.querySelectorAll(OPTIONS)].map((b) => b.textContent)).toEqual(["Claude X OneHarbor · 200K ctx"]);
     act(() => (input as unknown as Record<string, { onChange(e: unknown): void }>)[key]!.onChange({ target: { value: "" } }));
-    expect(m.host.querySelectorAll<HTMLButtonElement>(".bth-opt")[2]!.disabled).toBe(true);
-    act(() => m.host.querySelectorAll<HTMLButtonElement>(".bth-opt")[1]!.click());
+    expect(m.host.querySelectorAll<HTMLButtonElement>(OPTIONS)[2]!.disabled).toBe(true);
+    act(() => m.host.querySelectorAll<HTMLButtonElement>(OPTIONS)[1]!.click());
     expect(picked).toEqual([{ id: "k1", model: "plain-2" }]);
     expect(m.host.querySelector(".bth-drop")).toBeNull();
     m.done();

@@ -6,7 +6,7 @@
 import { useState, type JSX } from "react";
 import { InkDialog } from "../../components/ink-dialog";
 import { SealedMedia } from "../../components/sealed-media";
-import { Stamp } from "../../components/stamp";
+import { Button } from "../../components/button";
 import { artCache, useArtSrc } from "../../_shared/art-cache";
 import { toErrorMessage } from "../../_shared/error-message";
 import { isVideoRef, refSha } from "./scene-backdrop-core";
@@ -37,9 +37,9 @@ export function GalleryLightbox({ item, busy = false, onUse, onClose }: { item: 
       </div>
       {note && <p className="hint">{note}</p>}
       <div className="actions">
-        <Stamp onClick={() => void download(item).catch((e: unknown) => setNote(`Could not download: ${toErrorMessage(e)}`))}>Download</Stamp>
-        {onUse && <Stamp onClick={onUse} disabled={busy}>{busy ? "Working..." : "Use as background"}</Stamp>}
-        <Stamp onClick={onClose}>Close</Stamp>
+        <Button onClick={() => void download(item).catch((e: unknown) => setNote(`Could not download: ${toErrorMessage(e)}`))}>Download</Button>
+        {onUse && <Button variant="primary" onClick={onUse} disabled={busy}>{busy ? "Working..." : "Use as background"}</Button>}
+        <Button variant="quiet" onClick={onClose}>Close</Button>
       </div>
     </InkDialog>
   );

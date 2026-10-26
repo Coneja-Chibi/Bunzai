@@ -14,6 +14,7 @@ import { Icon } from "./icon";
 import { FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, remToPx, useFocusedRangeIndex, useVirtualRows, type Range } from "../../_shared/virtual-list";
 import { plural } from "../../../core/text";
 import { icSvg } from "../../_shared/ic-svg";
+import { Button, Segmented } from "../../components/button";
 
 /** One Trash row: a piece from the content store, or a scene or take from the chat store. */
 type Row = { key: string; name: string; type: string; scene: boolean; deletedAt: number; /** A removed version never expires (ChatStore rule 32), so it shows no countdown. */ kept?: boolean; restore(): Promise<unknown> };
@@ -93,7 +94,7 @@ function TrashRows({ shown, restore }: { shown: readonly Row[]; restore(g: Row):
                   <div className="nm">{g.name}</div>
                   <div className={`ty${g.scene ? " scene" : ""}`}>{g.type} <span className="ago">{g.kept ? "kept until restored" : daysLeft(g.deletedAt, Date.now())}</span></div>
                 </div>
-                <button type="button" onClick={() => void restore(g)}>Restore</button>
+                <Button size="sm" onClick={() => void restore(g)}>Restore</Button>
               </div>
             </div>
           );
@@ -146,7 +147,7 @@ export function TrashPanel({ ctx, onBack, onRestored }: { ctx: AppContext; onBac
         <Icon svg={TRASH_GLYPH} />
         <h2>Trash is empty</h2>
         <p>Deleted pieces and scenes remain here for 3 days, ready to restore.</p>
-        <button type="button" onClick={onBack}>Back to library</button>
+        <Button onClick={onBack}>Back to library</Button>
       </div>
     );
   }
@@ -163,10 +164,18 @@ export function TrashPanel({ ctx, onBack, onRestored }: { ctx: AppContext; onBac
           </p>
         </div>
       </div>
-      <div className="lrail-toggle tfilter" role="group" aria-label="Show">
-        {([["all", `All ${graves.length}`], ["pieces", `Pieces ${graves.length - scenes}`], ["scenes", `Scenes ${scenes}`]] as const).map(([f, label]) => (
-          <button type="button" key={f} className={filter === f ? "on" : undefined} aria-pressed={filter === f} onClick={() => setFilter(f)}>{label}</button>
-        ))}
+      <div className="lrail-toggle tfilter">
+        <Segmented
+          label="Show"
+          size="sm"
+          value={filter}
+          onChange={setFilter}
+          items={[
+            { value: "all", label: `All ${graves.length}` },
+            { value: "pieces", label: `Pieces ${graves.length - scenes}` },
+            { value: "scenes", label: `Scenes ${scenes}` },
+          ]}
+        />
       </div>
       <TrashRows shown={shown} restore={restore} />
     </section>
@@ -174,9 +183,8 @@ export function TrashPanel({ ctx, onBack, onRestored }: { ctx: AppContext; onBac
 }
 
 export const TRASH_STYLE = `
-.lrail .lrow.trash .tile{color:var(--stage-danger-text)}
-.lrail .lrow.trash.on{background:linear-gradient(90deg,color-mix(in srgb,var(--stage-danger-edge) 14%,transparent),transparent);border-left-color:var(--stage-danger-edge)}
-.lrail .lrow.trash.on .tile{background:color-mix(in srgb,var(--stage-danger-edge) 22%,var(--stage-sunken));border-color:var(--stage-danger-edge)}
+.lrail [data-part="library.trash"] .tile{color:var(--stage-danger-text)}
+.lrail [data-part="library.trash"][data-selected] .tile{background:color-mix(in srgb,var(--stage-danger-edge) 22%,var(--stage-sunken));border-color:var(--stage-danger-edge)}
 .ltrash{max-width:48rem;margin:0 auto;padding:1.75rem;border:1px solid color-mix(in srgb,var(--stage-danger-edge) 45%,transparent);background:color-mix(in srgb,var(--stage-danger-bg) 18%,transparent)}
 .ltrash .head{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:1.5rem;color:var(--stage-danger-text)}
 .ltrash h2{margin:0;font-family:var(--font-fancy);font-size:1.125rem;font-weight:600;color:var(--text)}
@@ -192,11 +200,10 @@ export const TRASH_STYLE = `
 .ltrash .ty.scene{color:var(--deck-character);text-transform:none}
 .ltrash .ty .ago{color:var(--text-faint);text-transform:none}
 .ltrash .tfilter{margin:0 0 .75rem}
-.ltrash .trow button{flex:none;padding:.375rem .75rem;font: 600 var(--text-control) var(--font-big);background:transparent;border:1px solid var(--accent);color:var(--accent);cursor:pointer}
-.ltrash .trow button:hover{background:color-mix(in srgb,var(--text) 10%,transparent)}
+.ltrash .trow > :last-child{flex:none}
 .ltrash-empty{max-width:28rem;margin:12vh auto 0;text-align:center;color:var(--text-dim)}
 .ltrash-empty h2{margin:.75rem 0 0;font-family:var(--font-fancy);font-size:1.25rem;color:var(--text)}
 .ltrash-empty p{margin:.375rem 0 0;font-size: var(--text-body);color:var(--text-soft)}
-.ltrash-empty button{margin-top:1.125rem;padding:.625rem 1.125rem;font: 700 var(--text-control) var(--font-big);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-ink);background:var(--accent);border:2px solid var(--stage-black);box-shadow:3px 3px 0 var(--stage-black);cursor:pointer}
+.ltrash-empty > :last-child{margin-top:1.125rem}
 @container (max-width:40rem){.ltrash{padding:1.125rem}}
 `;

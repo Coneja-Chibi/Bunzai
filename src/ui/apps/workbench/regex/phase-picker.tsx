@@ -4,6 +4,7 @@
  * with any FOREIGN phase already on the rule, which draws dashed amber (the position-picker law's
  * isForeign, transcribed). Toggling never deletes a foreign phase's data; the lens just marks it.
  */
+import { Chip } from "../../../components/button";
 import type { JSX } from "react";
 import type { RegexPhase } from "../../../../entities/regex/schema";
 import { phasesForProfile, REGEX_WRITE_FOR_LABELS, type RegexWriteForProfile } from "../../../../core/regex";
@@ -44,11 +45,9 @@ export function PhasePicker({ phases, writeFor, styles, onToggle }: PhasePickerP
           .filter(Boolean)
           .join(" ");
         return (
-          <button
+          <Chip
             key={phase}
-            type="button"
-            className={cls}
-            aria-pressed={on}
+            pressed={on}
             title={
               isForeign
                 ? `Set under another platform; ${lensName} folds this to its closest home on export`
@@ -57,7 +56,7 @@ export function PhasePicker({ phases, writeFor, styles, onToggle }: PhasePickerP
             onClick={() => onToggle(phase)}
           >
             {phaseLabel(phase)}
-          </button>
+          </Chip>
         );
       })}
     </div>

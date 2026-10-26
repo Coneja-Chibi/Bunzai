@@ -4,6 +4,7 @@
  * { version: 1, lora_filename, weight, base_tags?, source_url? }
  * source_url is display-only; never fetch.
  */
+import { Button } from "../button";
 import type { JSX } from "react";
 import { ExpandTextarea } from "../expand";
 import { Slider } from "../slider";
@@ -97,9 +98,11 @@ export function PortableLora({ value, onChange }: PortableLoraProps): JSX.Elemen
           onChange={(e) => set({ source_url: e.target.value })}
         />
       </label>
-      <button type="button" className={styles.clear} onClick={() => onChange(null)}>
-        Clear LoRA hint
-      </button>
+      <div className={styles.clear}>
+        <Button size="sm" variant="quiet" onClick={() => onChange(null)}>
+          Clear LoRA hint
+        </Button>
+      </div>
     </div>
   );
 }

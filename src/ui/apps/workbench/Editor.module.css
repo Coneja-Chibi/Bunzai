@@ -8,39 +8,7 @@
   gap: 0.6rem;
 }
 
-.save {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  background: var(--wb-primary, var(--a-deep, var(--accent-deep))); /* deep companion keeps the saved accent readable */
-  color: var(--action-primary-fg, var(--stage-white));
-  border: 3px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  padding: 0.45rem 0.9rem;
-  cursor: pointer;
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
-}
 
-.save:hover:not(:disabled) {
-  border-color: var(--chrome-structure);
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 0 var(--stage-black);
-}
-
-.save:active:not(:disabled) {
-  border-color: var(--chrome-structure);
-  transform: translate(3px, 3px);
-  box-shadow: 0 0 0 0 var(--stage-black);
-}
-
-.save:disabled {
-  opacity: 0.45;
-  cursor: default;
-  transform: none;
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-}
 
 /* fluid law: the editor lives in a workbench pane (a size container) - every collapse below
    queries the PANE, so a half-width split, a drawer, and a phone all compose the same way */
@@ -137,24 +105,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .opt { transition: none; }
-}
-
-.rank {
-  flex: none;
-  width: 1.6rem;
-  height: 1.6rem;
-  border: 2px solid var(--edge);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  background: var(--paper-2);
-  color: var(--text);
 }
 
 .cr {
@@ -274,46 +224,6 @@
   margin-right: 0.35rem;
 }
 
-.escaleStep {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--text-dim);
-  background: transparent;
-  border: none;
-  padding: 0.12rem 0.45rem;
-  cursor: pointer;
-}
-
-.escaleStep:hover:not(:disabled) {
-  color: var(--text);
-}
-
-.escaleStep:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-.escalePct {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.03em;
-  color: var(--text-dim);
-  background: transparent;
-  border: none;
-  border-left: 2px solid var(--seam);
-  border-right: 2px solid var(--seam);
-  padding: 0.15rem 0.4rem;
-  min-width: 3em;
-  text-align: center;
-  cursor: pointer;
-}
-
-.escalePct:hover {
-  color: var(--text);
-}
-
 .frac {
   font-family: var(--font-mono);
   font-size: var(--text-meta);
@@ -344,20 +254,6 @@
   font-size: 1.05rem;
   letter-spacing: 0.02em;
   color: var(--stage-paper);
-}
-
-.back {
-  width: 2rem;
-  height: 2rem;
-  flex: none;
-  border: 3px solid var(--stage-black);
-  background: var(--stage-panel);
-  color: var(--stage-paper);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  cursor: pointer;
 }
 
 .vchip {
@@ -398,19 +294,8 @@
   margin: 0;
 }
 
-.kaff {
-  display: flex;
-  gap: 0.25rem;
-}
 
-.kaff > button {
-  cursor: pointer;
-}
 
-.kaff > button:disabled {
-  cursor: default;
-  opacity: 0.7;
-}
 
 .variants {
   display: flex;
@@ -481,7 +366,6 @@
     display: none;
   }
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);

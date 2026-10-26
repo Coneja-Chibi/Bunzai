@@ -2,14 +2,14 @@
 import { describe, expect, test } from "bun:test";
 import {
   lumiExpressionsFromPack,
-  packFromLumiExpressions,
   packsFromLumiGroups,
   lumiGroupsFromPacks,
 } from "./lumi-expressions";
+import { packFromExpressionMap } from "../../../core/media";
 
 describe("lumi-expressions", () => {
   test("pack round-trip", () => {
-    const pack = packFromLumiExpressions({
+    const pack = packFromExpressionMap({
       enabled: true,
       defaultExpression: "happy",
       mappings: { happy: "data:a", sad: "data:b" },

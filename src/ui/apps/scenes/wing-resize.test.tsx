@@ -189,7 +189,7 @@ describe("a press outside the wing", () => {
     const flushSync = await open("ai");
     press(flushSync, rig.host.querySelector(".scroll")!);
     expect(width()).toBe("720px");
-    fire(flushSync, rig.host.querySelector(".paused-mark")!, "click");
+    fire(flushSync, rig.host.querySelector("[data-part='scene.paused'] [data-control='tile']")!, "click");
     expect(width()).toBe("");
     unmount(flushSync);
   });

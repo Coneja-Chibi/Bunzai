@@ -84,11 +84,11 @@ describe("the Branching Tree", () => {
 
   test("a click switches the active take and opens it; the take already open just opens", async () => {
     const flushSync = await mount();
-    click(flushSync, rows()[1]!.querySelector(".open")!);
+    click(flushSync, rows()[1]!.querySelector("[data-control='row']")!);
     await settle(flushSync);
     expect(asked).toEqual([["take", { chatId: "chat1", branchId: "a1" }]]);
     expect(opened).toBe(1);
-    click(flushSync, rows()[1]!.querySelector(".open")!);
+    click(flushSync, rows()[1]!.querySelector("[data-control='row']")!);
     await settle(flushSync);
     expect(asked).toHaveLength(1);
     expect(opened).toBe(2);

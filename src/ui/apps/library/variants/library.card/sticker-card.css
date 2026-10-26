@@ -25,6 +25,4 @@ html[data-surface-library-card="sticker-card"] {
   & .lib.rc .rcard .rcgenre { background: var(--bk-text-on-tint); color: var(--bk-text); }
   & .lib.rc .raicon, & .lib.rc .rpicon { border-radius: 0; background: var(--bk-surface-panel); border: var(--bk-frame-w) solid var(--bk-line); color: var(--bk-text); }
   & .lib.rc .rtag { border-radius: 0; background: var(--bk-surface-panel); color: var(--bk-text); box-shadow: inset 0 0 0 1px var(--bk-line); }
-  & .lib.rc .rmore { background: var(--bk-surface-panel); border: var(--bk-frame-w) solid var(--bk-line); }
-  & .lib.rc .rstart { border-radius: 0; background: var(--bk-role-action); color: var(--bk-text-on-tint); border: var(--bk-frame-w) solid var(--bk-line); box-shadow: 2px 2px 0 0 var(--bk-line); }
 }

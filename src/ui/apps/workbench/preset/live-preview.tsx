@@ -9,6 +9,7 @@
  * All edit decisions are pure functions in core/preset/live-edit.ts (tested there); this file is
  * only the surface. A stale segment refuses to splice and says so - never a wrong-range write.
  */
+import { Button, Chip, InlineValue, ListRow } from "../../../components/button";
 import { useCallback, useMemo, useRef, useState, type JSX, type KeyboardEvent } from "react";
 import type { PresetBody } from "../../../../entities/preset";
 import { renderLivePreview, type LiveRenderLine } from "../../../../core/preset/live-render";
@@ -129,12 +130,8 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
         }}
       />
       <span className={s.editActs}>
-        <button type="button" className={s.editSave} onClick={() => commitEdit(seg)}>
-          save to block
-        </button>
-        <button type="button" className={s.editCancel} onClick={cancelEdit}>
-          cancel
-        </button>
+        <Button size="sm" onClick={() => commitEdit(seg)}>Save to block</Button>
+        <Button variant="quiet" size="sm" onClick={cancelEdit}>Cancel</Button>
         {stale ? <span className={s.staleNote}>the block changed under this preview - reroll and retry</span> : null}
       </span>
     </span>
@@ -147,14 +144,12 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
         {sameTarget(editing, { blockId: line.id, segIndex, optionIndex: -1 }) ? (
           editorFor(seg, 2)
         ) : (
-          <button
-            type="button"
-            className={s.detailExpr}
+          <InlineValue
             title="Edit the whole expression"
             onClick={() => beginEdit({ blockId: line.id, segIndex, optionIndex: -1 }, seg.raw)}
           >
             {seg.raw}
-          </button>
+          </InlineValue>
         )}
       </span>
       {seg.detail?.kind === "choice" ? (
@@ -165,15 +160,14 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
             return sameTarget(editing, target) ? (
               <span key={oi} className={s.optionEdit}>{editorFor(seg, 1)}</span>
             ) : (
-              <button
+              <Chip
                 key={oi}
-                type="button"
-                className={`${s.option} ${rolled ? s.optionRolled : ""}`}
+                pressed={rolled}
                 title={rolled ? "This branch rolled - click to edit it" : "Click to edit this branch"}
                 onClick={() => beginEdit(target, opt)}
               >
                 {opt}
-              </button>
+              </Chip>
             );
           })}
         </span>
@@ -190,22 +184,19 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
       return sameTarget(editing, target) ? (
         editorFor(seg, Math.min(6, seg.value.split("\n").length + 1))
       ) : (
-        <button
-          type="button"
-          className={s.lit}
+        <InlineValue
           title="Click to edit this text - it saves to the block it came from"
           onClick={() => beginEdit(target, seg.value)}
         >
           {seg.value || " "}
-        </button>
+        </InlineValue>
       );
     }
     const open = openMacro !== null && openMacro.blockId === line.id && openMacro.segIndex === segIndex;
     return (
       <>
-        <button
-          type="button"
-          className={`${s.mac} ${open ? s.macOpen : ""}`}
+        <InlineValue
+          aria-expanded={open}
           title={seg.raw}
           onClick={() => {
             setOpenMacro(open ? null : { blockId: line.id, segIndex });
@@ -213,7 +204,7 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
           }}
         >
           {seg.value || `⟨${seg.name}⟩`}
-        </button>
+        </InlineValue>
         {open ? macroDetail(line, seg, segIndex) : null}
       </>
     );
@@ -224,9 +215,7 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
       <div className={s.head}>
         <span className={s.headline}>resolved build</span>
         {render.volatile ? <span className={s.volatile}>volatile</span> : null}
-        <button type="button" className={s.reroll} onClick={() => setSeed(freshSeed())} title="Roll the volatile macros again">
-          reroll
-        </button>
+        <Button variant="quiet" size="sm" onClick={() => setSeed(freshSeed())} title="Roll the volatile macros again">Reroll</Button>
       </div>
 
       {render.lines.length === 0 ? (
@@ -239,11 +228,12 @@ export function LivePreview({ body, onPatchContent, onSelect }: LivePreviewProps
             if (!line) return null;
             return (
             <li key={rowKeys[item.index]} ref={virtualizer.measureElement} data-index={item.index} data-pick={rowKeys[item.index]} className={s.line} style={{ transform: `translateY(${String(item.start)}px)` }}>
-              <button type="button" className={s.lineHead} onClick={() => onSelect(line.id)}>
-                <span className={s.ord}>{String(item.index + 1).padStart(2, "0")}</span>
-                <span className={s.lineName}>{line.name || "Untitled block"}</span>
-                <span className={s.role}>{line.role}</span>
-              </button>
+              <ListRow
+                onClick={() => onSelect(line.id)}
+                leading={String(item.index + 1).padStart(2, "0")}
+                label={line.name || "Untitled block"}
+                meta={line.role}
+              />
               {line.isMarker ? (
                 <pre className={s.markerText}>{line.resolved}</pre>
               ) : (

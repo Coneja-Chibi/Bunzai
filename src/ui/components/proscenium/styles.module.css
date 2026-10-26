@@ -9,7 +9,7 @@
 .frame .content h2 { font-size: clamp(.8rem, 3.1cqw, 1.65rem); margin: .25rem 0; }
 .frame .content p { font-size: clamp(.6rem, 1.6cqw, .75rem); margin: .25rem 0; }
 .frame .content h2, .frame .content p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; flex-shrink: 0; overflow-wrap: anywhere; }
-.frame .content button { min-height: 28px; padding: .4rem; flex-shrink: 0; }
+.frame .content > * { flex-shrink: 0; }
 @container (max-width: 430px) {
   .frame { aspect-ratio: auto; }
   .inset { position: relative; inset: auto; display: block; padding-top: 44.05%; }

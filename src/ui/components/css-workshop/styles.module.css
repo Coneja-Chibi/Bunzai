@@ -1,14 +1,14 @@
 /**
  * CssWorkshop - assisted CSS editor. Tokens only.
  */
-.root {
+.root{
   container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
   min-width: 0;
 }
-.banner {
+.banner{
   font-family: var(--font-body);
   font-size: var(--text-body);
   color: var(--stage-mute, var(--muted));
@@ -17,80 +17,29 @@
   padding: 0.4rem 0.55rem;
   line-height: 1.35;
 }
-.banner strong {
+.banner strong{
   color: var(--stage-soft, var(--text-soft));
   font-weight: 700;
 }
-.modeToggle {
-  display: inline-flex;
-  border: 2px solid var(--stage-black, var(--edge));
-  background: var(--stage-well, var(--paper));
-}
-.modeBtn {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.6rem;
-  border: none;
-  border-right: 2px solid var(--stage-black, var(--edge));
-  background: transparent;
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-}
-.modeBtn:last-child {
-  border-right: none;
-}
-.modeOn {
-  background: var(--stage-panel, var(--panel));
-  color: var(--stage-soft, var(--text-soft));
-}
-.tabs {
+.tabs{
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
 }
-.tab {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.55rem;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-}
-.tabOn {
-  border-color: var(--stage-black, var(--edge));
-  background: var(--stage-panel, var(--panel));
-  color: var(--stage-soft, var(--text-soft));
-}
-.packRow {
+.packRow{
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
   align-items: center;
 }
-.packLabel {
+.packLabel{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--stage-mute, var(--muted));
 }
-.sel {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  background: var(--stage-well, var(--field, var(--paper)));
-  border: 2px solid var(--stage-seam, var(--seam));
-  color: var(--stage-soft, var(--text-soft));
-  padding: 0.3rem 0.4rem;
-  max-width: 100%;
-}
-.recipe {
+.recipe{
   border: 2px solid var(--stage-seam, var(--seam));
   background: var(--stage-panel, var(--panel));
   padding: 0.45rem 0.55rem;
@@ -98,41 +47,31 @@
   flex-direction: column;
   gap: 0.3rem;
 }
-.recipeHead {
+.recipeHead{
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
-.recipeTitle {
+.recipeTitle{
   font-family: var(--font-body);
   font-weight: 700;
   font-size: var(--text-control);
   color: var(--stage-soft, var(--text));
 }
-.useBtn {
+.useBtn{
   margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.28rem 0.45rem;
-  border: 2px solid var(--stage-black, var(--edge));
-  background: var(--stage-well, var(--paper));
-  color: var(--stage-soft, var(--text-soft));
-  cursor: pointer;
 }
-.blurb {
+.blurb{
   font-family: var(--font-body);
   font-size: var(--text-body);
   color: var(--stage-mute, var(--muted));
   margin: 0;
 }
-.previewBlock {
+.previewBlock{
   border: 2px solid var(--stage-seam, var(--seam));
   background: var(--stage-well, var(--paper));
 }
-.frame {
+.frame{
   display: block;
   width: 100%;
   min-height: 10rem;
@@ -141,58 +80,42 @@
   background: #0c0b10;
   box-sizing: border-box;
 }
-.assist {
+.assist{
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.ruleList {
+.ruleList{
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
   max-height: 8rem;
   overflow: auto;
 }
-.ruleBtn {
-  text-align: left;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  padding: 0.3rem 0.4rem;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-  word-break: break-word;
-}
-.ruleBtnOn {
-  border-color: var(--stage-black, var(--edge));
-  color: var(--stage-soft, var(--text-soft));
-  background: var(--stage-panel, var(--panel));
-}
-.knobGrid {
+.knobGrid{
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 0.45rem;
 }
-.knob {
+.knob{
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
 }
-.knobLabel {
+.knobLabel{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--stage-mute, var(--muted));
 }
-.row {
+.row{
   display: flex;
   flex-wrap: wrap;
   gap: 0.35rem;
   align-items: center;
 }
-.input {
+.input{
   flex: 1;
   min-width: 6rem;
   font-family: var(--font-mono);
@@ -202,7 +125,7 @@
   color: var(--stage-soft, var(--text-soft));
   padding: 0.3rem 0.4rem;
 }
-.check {
+.check{
   display: flex;
   align-items: center;
   gap: 0.3rem;
@@ -210,13 +133,13 @@
   font-size: var(--text-control);
   color: var(--stage-mute, var(--muted));
 }
-.hint {
+.hint{
   font-family: var(--font-body);
   font-size: var(--text-body);
   color: var(--stage-mute, var(--muted));
   margin: 0;
 }
-.english {
+.english{
   font-family: var(--font-mono);
   font-size: var(--text-control);
   color: var(--stage-soft, var(--text-soft));
@@ -225,79 +148,53 @@
   padding: 0.35rem 0.45rem;
   word-break: break-word;
 }
-.actions {
+.actions{
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem;
 }
-.mini {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.28rem 0.4rem;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
-  color: var(--stage-soft, var(--text-soft));
-  cursor: pointer;
-}
-.sourceHead {
+.sourceHead{
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.4rem;
 }
-.sourceLabel {
+.sourceLabel{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--stage-mute, var(--muted));
 }
-.chips {
+.chips{
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
 }
-.chip {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  padding: 0.22rem 0.4rem;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-}
-.chip:hover {
-  color: var(--stage-soft, var(--text-soft));
-  border-color: var(--stage-black, var(--edge));
-}
 
 /* advanced: code + breakdown */
-.advanced {
+.advanced{
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.advGrid {
+.advGrid{
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(12rem, 0.95fr);
   gap: 0.65rem;
   align-items: start;
 }
 @container (max-width: 48rem) {
-  .advGrid {
+  .advGrid{
     grid-template-columns: 1fr;
-  }
-}
-.advCode {
+  }}
+.advCode{
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
   min-width: 0;
 }
-.advBreak {
+.advBreak{
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -308,7 +205,7 @@
   background: var(--stage-well, var(--paper));
   padding: 0.45rem 0.5rem;
 }
-.advKnobs {
+.advKnobs{
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -316,7 +213,7 @@
   padding-top: 0.45rem;
   margin-top: 0.2rem;
 }
-.freeformBlock {
+.freeformBlock{
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
@@ -328,7 +225,7 @@
   border: 2px dashed var(--stage-seam, var(--seam));
   padding: 0.35rem 0.4rem;
 }
-.fileInput {
+.fileInput{
   position: absolute;
   width: 1px;
   height: 1px;
@@ -336,35 +233,26 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
 }
-.importFlash {
+.importFlash{
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   color: var(--stage-mute, var(--muted));
 }
 
-:global(html[data-surface-ui-controls="quiet"]) .modeToggle,
-:global(html[data-surface-ui-controls="quiet"]) .modeBtn,
-:global(html[data-surface-ui-controls="quiet"]) .tab,
-:global(html[data-surface-ui-controls="quiet"]) .tabOn,
-:global(html[data-surface-ui-controls="quiet"]) .sel,
 :global(html[data-surface-ui-controls="quiet"]) .recipe,
-:global(html[data-surface-ui-controls="quiet"]) .useBtn,
-:global(html[data-surface-ui-controls="quiet"]) .ruleBtn,
-:global(html[data-surface-ui-controls="quiet"]) .input,
-:global(html[data-surface-ui-controls="quiet"]) .mini,
-:global(html[data-surface-ui-controls="quiet"]) .chip {
+:global(html[data-surface-ui-controls="quiet"]) .input{
   border-color: var(--control-boundary);
 }
-:global(html[data-surface-ui-controls="quiet"]) .modeOn,
-:global(html[data-surface-ui-controls="quiet"]) .tabOn,
-:global(html[data-surface-ui-controls="quiet"]) .ruleBtnOn {
-  background: var(--selection);
-  color: var(--selection-fg);
-  border-color: var(--selection);
+
+.sel{
+  font-family: var(--font-mono);
+  font-size: var(--text-control);
+  background: var(--stage-well, var(--field, var(--paper)));
+  border: 2px solid var(--stage-seam, var(--seam));
+  color: var(--stage-soft, var(--text-soft));
+  padding: 0.3rem 0.4rem;
+  max-width: 100%;
 }
-:global(html[data-surface-ui-controls="quiet"]) .useBtn:hover,
-:global(html[data-surface-ui-controls="quiet"]) .mini:hover,
-:global(html[data-surface-ui-controls="quiet"]) .chip:hover {
-  border-color: var(--chrome-structure);
-  color: var(--text);
+:global(html[data-surface-ui-controls="quiet"]) .sel{
+  border-color: var(--control-boundary);
 }

@@ -4,11 +4,11 @@
  * get the same immediate theme switch without animation.
  * Source inspiration: https://magicui.design/docs/components/animated-theme-toggler (MIT).
  */
+import { IconButton } from "../button";
 import { Ic } from "../../_shared/ic";
 import { useCallback, useRef } from "react";
 import type { JSX } from "react";
 import { flushSync } from "react-dom";
-import { Stamp } from "../stamp";
 import { DEFAULT_THEME_NAME, nextStudioTheme, type BuiltinStudioTheme, type StudioTheme } from "../../../studio/settings-shape";
 import { canvasColorFor, runOverlayReveal } from "./overlay-reveal";
 import {
@@ -52,7 +52,7 @@ export function AnimatedThemeToggler({
   const isDark = theme !== "paper";
 
   const toggle = useCallback(
-    (button: HTMLButtonElement): void => {
+    (target: HTMLButtonElement): void => {
       const root = document.documentElement;
       const viewDocument = document as ThemeDocument;
       const strategy = themeRevealStrategy({
@@ -67,7 +67,7 @@ export function AnimatedThemeToggler({
       if (transitioning.current || root.dataset.vaudeThemeTransition === "active") return;
 
       const viewport = { width: window.innerWidth, height: window.innerHeight };
-      const rect = button.getBoundingClientRect();
+      const rect = target.getBoundingClientRect();
       const origin = transitionOrigin(rect, viewport, fromCenter);
       const clipPath = circleTransitionClipPaths(origin, viewport);
 
@@ -133,11 +133,16 @@ export function AnimatedThemeToggler({
 
   const label = `Switch to ${BUILTIN_THEME_NAMES[nextTheme as BuiltinStudioTheme] ?? nextTheme} theme`;
   return (
-    <Stamp id={id} onClick={(event) => toggle(event.currentTarget)} title={label} aria-label={label}>
-      <span className={styles.iconStack} aria-hidden="true">
+    <IconButton
+      id={id}
+      label={label}
+      onClick={(event) => toggle(event.currentTarget)}
+      icon={
+        <span className={styles.iconStack} aria-hidden="true">
         <Ic name="lucide:moon" className={isDark ? styles.hidden : styles.shown} size={16} />
         <Ic name="lucide:sun" className={isDark ? styles.shown : styles.hidden} size={16} />
       </span>
-    </Stamp>
+      }
+    />
   );
 }

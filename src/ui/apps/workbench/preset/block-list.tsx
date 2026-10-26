@@ -16,6 +16,7 @@
  * short segments with small gaps between rows instead of one unbroken line (row.module.css's
  * `.rowIndent` docblock).
  */
+import { Button, Disclosure } from "../../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type KeyboardEvent } from "react";
 import type { PresetGroup, PresetPrompt } from "../../../../entities/preset";
 import { groupSections, type PromptFilterTab, type PromptSection } from "../../../../core/preset";
@@ -73,9 +74,7 @@ function ListEmpty({
     return (
       <div className={s.empty}>
         <p className={s.emptyTitle}>No prompts match &ldquo;{query.trim()}&rdquo;</p>
-        <button type="button" className={s.emptyAction} onClick={onClearQuery}>
-          Clear search
-        </button>
+        <Button size="sm" onClick={onClearQuery}>Clear search</Button>
       </div>
     );
   }
@@ -89,9 +88,7 @@ function ListEmpty({
       <div className={s.empty}>
         <p className={s.emptyTitle}>No {what}</p>
         <p className={s.emptyHint}>{how}</p>
-        <button type="button" className={s.emptyAction} onClick={onShowAll}>
-          Show all
-        </button>
+        <Button size="sm" onClick={onShowAll}>Show all</Button>
       </div>
     );
   }
@@ -246,9 +243,7 @@ export function BlockList({
     return (
       <div className={s.list}>
         <ListEmpty totalBlocks={totalBlocks} tab={tab} query={query} onClearQuery={onClearQuery} onShowAll={onShowAll} />
-        <button type="button" className={s.addBlock} onClick={onAdd}>
-          + Add block
-        </button>
+        <Button size="sm" onClick={onAdd}>+ Add block</Button>
       </div>
     );
   }
@@ -263,9 +258,7 @@ export function BlockList({
           if (row.kind === "add") {
             return (
               <div key={rowKeys[vRow.index]} ref={virtualizer.measureElement} data-index={vRow.index} data-pick={rowKeys[vRow.index]} className={s.listRow} style={style}>
-                <button type="button" className={s.addBlock} onClick={onAdd}>
-                  + Add block
-                </button>
+                <Button size="sm" onClick={onAdd}>+ Add block</Button>
               </div>
             );
           }
@@ -275,16 +268,12 @@ export function BlockList({
             return (
               <div key={rowKeys[vRow.index]} ref={virtualizer.measureElement} data-index={vRow.index} data-pick={rowKeys[vRow.index]} className={s.listRow} style={style}>
                 <div className={s.section} data-depth={sec.depth} style={{ "--preset-group-depth": sec.depth } as CSSProperties}>
-                  <button
-                    type="button"
-                    className={s.sectionHead}
-                    aria-expanded={open}
+                  <Disclosure
+                    open={open}
                     onClick={() => onToggleGroup(sec.group!.id)}
-                  >
-                    <span className={`${s.sectionChev} ${open ? s.sectionChevOpen : ""}`}>&#8250;</span>
-                    <span className={s.sectionName}>{sec.group!.name || "Untitled category"}</span>
-                    <span className={s.sectionCount}>{sec.totalPromptCount}</span>
-                  </button>
+                    label={sec.group!.name || "Untitled category"}
+                    summary={sec.totalPromptCount}
+                  />
                 </div>
               </div>
             );

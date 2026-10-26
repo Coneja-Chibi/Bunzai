@@ -20,8 +20,8 @@ const SHARED = `
 .scs .msg .pw .pstamp{display:none}
 html .scs[data-look~="noavatar"] .msg .pw{display:none}
 .scs .dd .menu-rule{margin:4px 0;border:0;border-top:1px solid var(--stage-seam)}
-.scs .pzoom{position:absolute;inset:0;padding:0;border:0;background:none;cursor:zoom-in;transition:filter .15s}
-.scs .pzoom:hover{filter:brightness(1.1)}
+.scs [data-part="scene.portrait.zoom"]{position:absolute;inset:0;width:auto;height:auto;padding:0;border:0;background:none;box-shadow:none;cursor:zoom-in;transition:filter .15s}
+.scs [data-part="scene.portrait.zoom"]:hover{filter:brightness(1.1)}
 `;
 
 const ROLECALL = `
@@ -50,47 +50,22 @@ ${RC} .scs:not([data-look~="noavatar"]) .msg .meta:not(:has(>:not(.ts))){display
 .scs .msg .bub::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 30px ${seeThrough("var(--stage-black)", 35)},inset 0 1px 0 ${seeThrough("var(--stage-card)", 6)}}
 .scs .msg.user .bub::before{box-shadow:0 0 28px ${seeThrough("var(--tone)", 12)},inset 0 1px 0 ${seeThrough("var(--stage-card)", 5)}}
 .scs .msg .bub.live{border-color:color-mix(in srgb,var(--tone) 20%,transparent)}
-.scs .msg .prose{font-family:var(--rc-font-inter);line-height:1.85;color:color-mix(in srgb,var(--stage-card) 95%,transparent);text-shadow:0 1px 3px color-mix(in srgb,var(--stage-black) 70%,transparent)}
+.scs .msg .prose{font-family:var(--font-body);line-height:1.85;color:color-mix(in srgb,var(--stage-card) 95%,transparent);text-shadow:0 1px 3px color-mix(in srgb,var(--stage-black) 70%,transparent)}
 .scs .msg.user .prose{color:var(--tone)}
 .scs .msg .hidtag{display:block;margin:4px 0 0;font:500 ${rcSize("10px")}/1.5 var(--font-ui);letter-spacing:.05em;text-transform:uppercase;color:color-mix(in srgb,var(--stage-warn) 60%,transparent)}
 .scs .msg .bub .acts{position:absolute;right:6px;bottom:6px;z-index:20;display:flex;flex-wrap:nowrap;gap:4px;margin:0;padding:4px;border-radius:var(--rc-radius-sm);background:${BLACK};border:1px solid ${EDGE};backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
 .scs .msg.user .bub .acts{right:8px;bottom:8px}
 @media (hover:hover){.scs .msg:hover .bub .acts{opacity:1;pointer-events:auto}}
 .scs .msg.tap .bub .acts,.scs .msg .bub .acts.held,.scs .msg .bub .acts:focus-within{opacity:1;pointer-events:auto}
-.scs .msg .bub .acts>button,.scs .msg .bub .acts>.hold>button{width:auto;height:auto;padding:6px;border-radius:var(--rc-radius);color:var(--rc-zinc-400);transition:background-color .15s,color .15s}
-.scs .msg .bub .acts>button:hover,.scs .msg .bub .acts>.hold>button:hover{background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
-.scs .msg .bub .acts>button:disabled{opacity:.5;cursor:not-allowed}
-.scs .msg .bub .acts>button.edit{color:var(--bk-role-action-text)}
-.scs .msg .bub .acts>button.copy{color:color-mix(in srgb,var(--bk-role-action-text) 50%,var(--bk-role-ok-text))}
-.scs .msg .bub .acts>button.copy[data-state="copied"]{color:var(--stage-ok)}
-.scs .msg .bub .acts>button.copy[data-state="failed"]{color:var(--stage-danger-text)}
-.scs .msg .bub .acts>button.gen{color:var(--bk-role-select-text)}
-.scs .msg .bub .acts>button.gen.cont{color:var(--bk-role-ok-text)}
-.scs .msg .bub .acts>button.hide{color:var(--stage-warn)}
-.scs .msg .bub .acts>button.hide.on{color:var(--tone)}
-.scs .msg .bub .acts>button.fcut{color:var(--bk-role-select-text)}
-.scs .msg .bub .acts>.hold>button[aria-label="More message actions"]{color:var(--bk-role-action-text)}
-.scs .msg .bub .acts>.hold>button.on{color:var(--tone)}
-.scs .msg .bub .acts>.hold>button.del,.scs .msg .bub .acts>.hold>button.del svg{color:var(--stage-danger-text)}
-.scs .msg .bub .acts>.hold>button.del.on{color:var(--tone)}
 .scs .msg .bub .acts .sep{width:1px;height:16px;align-self:center;margin:0 2px;background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
 .scs .msg .bub .acts .menu{width:240px;right:0;padding:4px 0;border-radius:0;background:var(--stage-panel)}
-.scs .msg .bub .acts .menu button{min-height:0;gap:10px;padding:8px 12px;font:400 var(--rc-text-xs)/1.5 var(--font-ui);color:var(--rc-zinc-100)}
-.scs .msg .bub .acts .menu button svg{color:var(--rc-zinc-400)}
-.scs .msg .bub .acts .menu button:hover{background:color-mix(in srgb,var(--stage-card) 5%,transparent)}
 .scs .msg .bub .acts .menu .sec{padding:10px 12px 4px;font:600 ${rcSize("11px")}/1.5 var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--rc-zinc-500)}
-.scs .msg .bub .acts .menu button.danger,.scs .msg .bub .acts .menu button.danger svg{color:var(--stage-danger-text)}
 .scs .msg .bub .acts .dd{right:0;bottom:calc(100% + 8px);width:184px;min-width:0;padding:4px 0;border:2px solid var(--stage-black);border-radius:0;background:var(--stage-panel);box-shadow:4px 4px 0 0 var(--stage-black)}
-.scs .msg .bub .acts .dd button{min-height:0;gap:8px;padding:8px 12px;font:400 var(--rc-text-xs)/1.5 var(--font-ui);color:var(--stage-danger-text)}
-.scs .msg .bub .acts .dd button:hover{background:color-mix(in srgb,var(--stage-danger-text) 10%,transparent)}
 .scs .msg .bub .acts .dd .menu-rule{margin:4px 0;border:0;height:1px;background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
 .scs .msg .meta{gap:10px;margin-top:8px;padding:0 4px}
 .scs .msg .meta .mdl{font-size:${rcSize("11px")};color:var(--rc-zinc-500);opacity:.7}
 .scs .msg .meta .swc{gap:2px;padding:2px 4px;border-radius:var(--rc-radius-sm);font-size:var(--rc-text-xs);background:${BLACK};border:1px solid ${EDGE};transition:background-color .3s,border-color .3s,box-shadow .3s}
 .scs .msg .meta .swc.new{background:color-mix(in srgb,var(--tone) 15%,transparent);border-color:color-mix(in srgb,var(--tone) 40%,transparent);box-shadow:0 0 10px color-mix(in srgb,var(--tone) 15%,transparent)}
-.scs .msg .meta .swc button{width:auto;height:auto;padding:4px;border-radius:var(--rc-radius-sm);color:var(--rc-zinc-300);transition:all .15s}
-.scs .msg .meta .swc button:hover{color:var(--stage-white);background:color-mix(in srgb,var(--stage-card) 10%,transparent)}
-.scs .msg .meta .swc button:disabled{color:var(--rc-zinc-600);background:none}
 .scs .msg .meta .swc .ct{gap:6px;padding:2px 8px}
 .scs .msg .meta .swc .sl{color:var(--rc-zinc-500)}
 .scs .msg .meta .swc .nw{margin-left:2px;padding:2px 6px;border-radius:var(--rc-radius-sm);font-size:${rcSize("10px")};letter-spacing:.05em;color:var(--stage-ink)}

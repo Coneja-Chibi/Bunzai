@@ -9,7 +9,7 @@ import type { AppContext } from "../../app-contract";
 import type { Chat } from "../../../stage/contracts/chat-store";
 import { toErrorMessage } from "../../_shared/error-message";
 import { Ic } from "../../_shared/ic";
-import { ToggleSwitch } from "../../components/toggle-switch";
+import { Toggle } from "../../components/button";
 
 /** Switches Last Message as User on or off for a scene; answers the saved scene. */
 export const setLastAsUser = (ctx: AppContext, chatId: string, on: boolean): Promise<Chat> => ctx.api.setScenePrompting(chatId, { lastAsUser: on });
@@ -31,7 +31,7 @@ export function LastAsUserRow({ ctx, chat, onChanged }: { ctx: AppContext; chat:
     <div className="prop-row" style={{ "--tone": "var(--stage-ok)" } as CSSProperties}>
       <span className="prop-ic"><Ic name="lucide:user-round-check" size={20} /></span>
       <div><b>Last Message as User</b><small>Re-tag the final outbound message as user for models that reject assistant prefills.</small></div>
-      <ToggleSwitch size="sm" tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} last message as user`} onChange={() => void flip()} />
+      <Toggle size="sm" tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} last message as user`} onChange={() => void flip()} />
     </div>
   );
 }

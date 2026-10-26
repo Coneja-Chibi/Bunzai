@@ -8,6 +8,7 @@ import { useState, type CSSProperties, type JSX } from "react";
 import { hpBand, hpPercent } from "../../../../../../core/trackers/battle";
 import { applyParty, liveMembers, partyLines, readParty, POSITIONS, type Member } from "../../../../../../core/trackers/party";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button, IconButton } from "../../../../../components/button";
 import { Ic } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -62,7 +63,7 @@ export function PartyPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                     <header>
                       <span className="pt-face"><Ic name="lucide:user" size={20} />{lead && <i><Ic name="lucide:crown" size={10} /></i>}</span>
                       <div className="pt-who"><b>{m.name}</b>{lead && <span className="pt-lead">LEADER</span>}<small><span className="cap">{m.combatRole}</span> • <span className="cap">{m.formationPosition}</span></small></div>
-                      {!lead && <button type="button" className="it-act" title="Make Leader" aria-label={`Make ${m.name} leader`} onClick={() => act({ kind: "leader", id: m.profileId })}><Ic name="lucide:crown" size={16} /></button>}
+                      {!lead && <IconButton size="sm" label={`Make ${m.name} leader`} title="Make Leader" icon="lucide:crown" onClick={() => act({ kind: "leader", id: m.profileId })} />}
                     </header>
                     <div className="pt-hp">
                       <div><span><i><Ic name="lucide:heart" size={12} /></i> HP</span><b>{m.hp}<small>/{m.maxHp}</small></b></div>
@@ -70,7 +71,7 @@ export function PartyPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                     </div>
                     {m.level > 0 && <div className="pt-level"><i><Ic name="lucide:star" size={12} /></i><span>Level</span><b>{m.level}</b></div>}
                     <RefreshByModel<Made> ctx={ctx} chatId={chat.id} ask={ASK} noun="member" existing={m} preview={(x) => <Preview m={x} />} accept={(x) => act({ kind: "refresh", id: m.profileId, member: x })}
-                      extra={lead ? null : <button type="button" {...protect("tracker-delete", "it-act bad")} title="Remove member" onClick={inner(() => act({ kind: "remove", id: m.profileId, at: Date.now() }, `Removed ${m.name}`))}><Ic name="lucide:trash-2" size={14} /><span>Remove</span></button>} />
+                      extra={lead ? null : <span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Remove member" onClick={inner(() => act({ kind: "remove", id: m.profileId, at: Date.now() }, `Removed ${m.name}`))}>Remove</Button></span>} />
                   </article>
                 );
               })}

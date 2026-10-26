@@ -9,6 +9,7 @@ import type { AppContext } from "../../app-contract";
 import { Ic } from "../../_shared/ic";
 import { toErrorMessage } from "../../_shared/error-message";
 import type { Chat, ChatBackdrop } from "../../../stage/contracts/chat-store";
+import { Button } from "../../components/button";
 import { itemOf } from "./scene-backdrop-core";
 import { BackdropThumb } from "./scene-backdrop-layer";
 import { BackdropPicker } from "./scene-backdrop-picker";
@@ -41,7 +42,7 @@ export function BackdropRow({ ctx, chat, cardPinned, onChat }: { ctx: AppContext
         <div><b>Backdrop</b><small>{problem ?? hint}</small></div>
         <div className="bd-act">
           {item && <BackdropThumb refValue={item.ref} {...(item.mime ? { mime: item.mime } : {})} className="bd-thumb" />}
-          <button type="button" className="chg" onClick={() => setOpen(true)}>{chat.backdrop ? "Change" : "Pick"}</button>
+          <Button size="sm" onClick={() => setOpen(true)}>{chat.backdrop ? "Change" : "Pick"}</Button>
         </div>
       </div>
       {open && <BackdropPicker ctx={ctx} backdrop={chat.backdrop} onPick={pick} onClose={() => setOpen(false)} />}

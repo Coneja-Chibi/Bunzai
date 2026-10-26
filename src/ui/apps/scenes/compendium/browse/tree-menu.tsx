@@ -9,6 +9,7 @@ import { useEscapeKey } from "../../../../_shared/use-escape-key";
 import type { CompendiumEntry, Flags } from "../../../../../core/compendium";
 import { ENTRY_TYPE_INFO } from "../../../../../core/compendium";
 import { Ic, type IconName } from "../../../../_shared/ic";
+import { Button, ListRow, MenuItem } from "../../../../components/button";
 import { InkDialog } from "../../../../components/ink-dialog";
 
 export interface MenuTarget {
@@ -48,17 +49,17 @@ export function TreeMenu({ target, flags, bounds, onToggle, onMove, onClose }: {
         const on = flags[item.kind];
         const [label, hint] = item[target.mode];
         return (
-          <button key={item.kind} type="button" role="menuitemcheckbox" aria-checked={on} className={on ? "on" : undefined} onClick={() => { onToggle(item.kind, !on); onClose(); }}>
-            <Ic name={item.icon} size={14} /><span><b>{on ? `✓ ${label}` : label}</b><small>{hint}</small></span>
-          </button>
+          <MenuItem key={item.kind} role="menuitemcheckbox" checked={on} description={hint} onClick={() => { onToggle(item.kind, !on); onClose(); }}>
+            <b><Ic name={item.icon} size={14} />{label}</b>
+          </MenuItem>
         );
       })}
       {target.mode === "entry" && onMove && (
-        <button type="button" role="menuitem" onClick={() => { onMove(); onClose(); }}>
-          <Ic name="lucide:folder-input" size={14} /><span><b>Move to...</b><small>Pin this entry under another entry of your choice. Removes it from its default home (no dual placement).</small></span>
-        </button>
+        <MenuItem icon="lucide:folder-input" description="Pin this entry under another entry of your choice. Removes it from its default home (no dual placement)." onClick={() => { onMove(); onClose(); }}>
+          <b>Move to...</b>
+        </MenuItem>
       )}
-      <div className="ft"><button type="button" onClick={onClose}><Ic name="lucide:x" size={12} /> Close</button></div>
+      <div className="ft"><Button variant="quiet" size="sm" icon="lucide:x" onClick={onClose}>Close</Button></div>
     </div>
   );
 }
@@ -81,12 +82,12 @@ export function EntryPicker({ title, entries, exclude, onPick, onCancel }: { tit
       <small className="ct">{pool.length} {pool.length === 1 ? "entry" : "entries"}</small>
       <div className="list">
         {pool.slice(0, SHOWN).map((e) => (
-          <button key={e.id} type="button" onClick={() => onPick(e)}><i style={e.type ? { background: `var(${ENTRY_TYPE_INFO[e.type].token})` } : undefined} /><span>{e.name}</span><em>{e.type ? ENTRY_TYPE_INFO[e.type].label : "Classic"}</em></button>
+          <ListRow key={e.id} onClick={() => onPick(e)} leading={<i style={e.type ? { background: `var(${ENTRY_TYPE_INFO[e.type].token})` } : undefined} />} label={e.name} meta={e.type ? ENTRY_TYPE_INFO[e.type].label : "Classic"} />
         ))}
         {pool.length === 0 && <p className="none">No entries match.</p>}
         {pool.length > SHOWN && <p className="none">Showing the first {SHOWN}. Search to narrow the list.</p>}
       </div>
-      <footer><button type="button" onClick={onCancel}>Cancel</button></footer>
+      <footer><Button variant="quiet" onClick={onCancel}>Cancel</Button></footer>
     </InkDialog>
   );
 }

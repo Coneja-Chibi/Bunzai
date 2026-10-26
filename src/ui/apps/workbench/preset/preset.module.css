@@ -96,28 +96,6 @@
   line-height: 1.5;
 }
 
-.emptyAction {
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  color: var(--pa);
-  font: 800 var(--text-control) var(--font-big);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
-  transition: transform 0.1s ease;
-}
-
-.emptyAction:hover {
-  transform: translate(-1px, -1px);
-}
-
-.emptyAction:active {
-  transform: translate(1px, 1px);
-  box-shadow: none;
-}
-
 /* ---------- the rail (owns the aside; tabs between per-block and whole-preset truth) ---------- */
 
 /* No border-left: the SplitPane grip between the columns IS the divider now, and a painted one
@@ -141,33 +119,6 @@
   background: var(--stage-panel);
 }
 
-.railTab {
-  flex: 1;
-  border: 0;
-  border-right: 2px solid var(--stage-black);
-  background: color-mix(in srgb, var(--stage-card) 3%, transparent);
-  color: var(--stage-mute);
-  font: 800 var(--text-control) var(--font-big);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  padding: 0.45rem 0.4rem;
-  cursor: pointer;
-}
-
-.railTab:last-child {
-  border-right: 0;
-}
-
-.railTab:hover {
-  color: var(--stage-soft);
-}
-
-.railTabOn {
-  background: var(--pa);
-  color: var(--stage-ink, var(--stage));
-}
-html[data-surface-ui-tabs="underline-ink"] .railTabOn { background: var(--accent-deep); color: var(--selection-fg); }
-
 @container (max-width: 48rem) {
   .sidebar {
     height: 100%;
@@ -187,58 +138,6 @@ html[data-surface-ui-tabs="underline-ink"] .railTabOn { background: var(--accent
   margin-inline-start: min(calc(var(--preset-group-depth, 0) * 0.85rem), 2.55rem);
 }
 
-.section[data-depth="1"] .sectionHead {
-  border-left-width: 5px;
-}
-
-.sectionHead {
-  font: inherit; /* buttons do not inherit fonts */
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  width: 100%;
-  text-align: left;
-  border: 2px solid var(--stage-black);
-  background: color-mix(in srgb, var(--pa) 10%, transparent);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  padding: 0.4rem 0.6rem;
-  cursor: pointer;
-}
-
-.sectionHead:hover {
-  background: color-mix(in srgb, var(--pa) 16%, transparent);
-}
-
-.sectionChev {
-  font-size: var(--text-control);
-  line-height: 1;
-  color: var(--pa);
-  transition: transform 0.12s ease;
-}
-
-.sectionChevOpen {
-  transform: rotate(90deg);
-}
-
-.sectionName {
-  flex: 1;
-  font: 900 var(--text-control) var(--font-big);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-card);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sectionCount {
-  font: 800 var(--text-meta) var(--font-mono);
-  color: var(--pa);
-  background: color-mix(in srgb, var(--stage-black) 35%, transparent);
-  border: 1px solid color-mix(in srgb, var(--pa) 30%, transparent);
-  padding: 0.05rem 0.35rem;
-}
-
 .sectionEmpty {
   font: 500 var(--text-control) var(--font-body);
   color: var(--stage-text-dim);
@@ -246,24 +145,6 @@ html[data-surface-ui-tabs="underline-ink"] .railTabOn { background: var(--accent
   margin-inline-start: min(calc(var(--preset-group-depth, 0) * 0.85rem), 2.55rem);
   padding: 0.4rem 0.7rem;
   border-left: 2px solid color-mix(in srgb, var(--pa) 25%, transparent);
-}
-
-.addBlock {
-  margin-top: 0.5rem;
-  border: 2px dashed color-mix(in srgb, var(--stage-card) 15%, transparent);
-  background: none;
-  color: var(--stage-soft);
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.55rem 0.8rem;
-  cursor: pointer;
-  align-self: flex-start;
-}
-
-.addBlock:hover {
-  border-color: var(--pa);
-  color: var(--pa);
 }
 
 /* ---------- inline content ---------- */
@@ -340,12 +221,10 @@ html[data-surface-ui-tabs="underline-ink"] .railTabOn { background: var(--accent
   }
 }
 
-
 :global(html[data-surface-editor-frame="two-pane"]) .root {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);

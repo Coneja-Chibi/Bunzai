@@ -5,6 +5,7 @@
  * Depth stop, a number and a role for ST's in-chat), RC's wrapper text. `locked` is RoleCall's "a preset block already
  * seats the persona": the stops stay shown, cannot change, and the depth control goes. `lens` adds the Workbench's platform note.
  */
+import { ListRow } from "../../../components/button";
 import type { JSX } from "react";
 import type { PersonaBody } from "../../../../entities/persona/schema";
 import { Slider } from "../../../components/slider";
@@ -34,24 +35,27 @@ export function InjectionCard({ body, onBody, stops, labels, showWrapper, locked
           const on = current === stop;
           const meta = labels[stop] ?? { label: stop, hint: "" };
           return (
-            <button
+            <ListRow
               key={stop}
-              type="button"
-              className={on ? `${s.stop} ${s.stopOn}` : s.stop}
+              selected={on}
               aria-pressed={on}
               disabled={locked}
+              title={meta.hint || undefined}
               onClick={() => onBody((b) => patchInjection(b, { position: stop }), "chatInjection")}
-            >
-              <b className={s.stopB}>{meta.label}</b>
-              <span className={s.stopHint}>{meta.hint}</span>
-            </button>
+              label={meta.label}
+              subtitle={meta.hint}
+            />
           );
         })}
         {foreign && (
-          <button type="button" className={`${s.stop} ${s.stopOn} ${s.stopForeign}`} aria-pressed disabled>
-            <b className={s.stopB}>{labels[current]?.label ?? current}</b>
-            <span className={s.stopHint}>set on another platform's lens - kept, not carried here</span>
-          </button>
+          <ListRow
+            selected
+            accent="var(--stage-warn)"
+            aria-pressed
+            disabled
+            label={labels[current]?.label ?? current}
+            subtitle="set on another platform's lens - kept, not carried here"
+          />
         )}
       </div>
 

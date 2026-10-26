@@ -9,6 +9,7 @@ import { useMemo, useRef, useState, type CSSProperties, type JSX } from "react";
 import type { SceneTrace, TraceBlockView, TraceCategory } from "../../../../app-contract-scenes";
 import { copyText } from "../../../../_shared/clipboard";
 import { exportBlob, triggerDownload } from "../../../../components/export-dialog/download";
+import { Button, Disclosure, IconButton, ListRow } from "../../../../components/button";
 import { DialogCore } from "../../../../components/dialog-core";
 import { Ic } from "../../../../_shared/ic";
 import { HareLogo } from "./hare-logo";
@@ -106,14 +107,14 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
     return (
       <div className="tok-sec" key={i}>
         {trace.rawAvailable
-          ? <button type="button" className="tok-sec-open" onClick={() => toggleOpenBlock(i)} aria-expanded={open}>{b.label}</button>
+          ? <Disclosure variant="line" open={open} onClick={() => toggleOpenBlock(i)} label={b.label} />
           : <span className="tok-sec-lbl">{b.label}</span>}
         <em>{b.tokens.toLocaleString()}</em>
         {open && b.text !== undefined && (
           <div className="tok-raw">
             {b.text}
             <div className="tok-raw-ft">
-              <button type="button" className="tok-btn" onClick={() => copyText(b.text ?? "")}>Copy</button>
+              <Button size="sm" onClick={() => copyText(b.text ?? "")}>Copy</Button>
             </div>
           </div>
         )}
@@ -137,7 +138,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
         <b>Tokens</b>
         <small>Reply #{trace.reply.number} &middot; exactly what was sent, section by section</small>
         <span className="tok-grow" />
-        <button type="button" className="tok-close" aria-label="Close" onClick={onClose}>&times;</button>
+        <IconButton size="sm" label="Close" icon="lucide:x" onClick={onClose} />
       </div>
       <div className="tok-body">
         <aside className="tok-side">
@@ -146,10 +147,9 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
           </div>
           <div className="tok-leg">
             {order.map((cat) => (
-              <button
-                type="button"
+              <ListRow
                 key={cat}
-                className={`tok-legrow${excluded.has(cat) ? " tok-x" : ""}`}
+                data-excluded={excluded.has(cat) || undefined}
                 draggable
                 onDragStart={() => { dragCat.current = cat; }}
                 onDragOver={(e) => e.preventDefault()}
@@ -157,12 +157,10 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
                 onClick={() => toggleExcluded(cat)}
                 aria-pressed={excluded.has(cat)}
                 title={excluded.has(cat) ? `Include ${CATEGORY_LABELS[cat]}` : `Leave out ${CATEGORY_LABELS[cat]}`}
-              >
-                <span className="tok-sw" style={{ "--c": `var(${CATEGORY_COLOR_VARS[cat]})` } as CSSProperties} />
-                <span className="tok-nm">{CATEGORY_LABELS[cat]}</span>
-                <em>{totals[cat].toLocaleString()}</em>
-                <span className="tok-grip" aria-hidden="true">::</span>
-              </button>
+                leading={<span className="tok-sw" style={{ "--c": `var(${CATEGORY_COLOR_VARS[cat]})` } as CSSProperties} />}
+                label={<span className={excluded.has(cat) ? "tok-x" : undefined}>{CATEGORY_LABELS[cat]}</span>}
+                meta={<><em>{totals[cat].toLocaleString()}</em><span className="tok-grip" aria-hidden="true">::</span></>}
+              />
             ))}
           </div>
           <div className="tok-bud">
@@ -198,11 +196,7 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
             const header = cat === "preset" && trace.presetName ? trace.presetName : catMeta(cat, rows.filter((r) => r.b.kind !== "summary").length, trace.trimmed, trace.summarized);
             return (
               <div className="tok-cat" key={cat} style={{ "--c": `var(${CATEGORY_COLOR_VARS[cat]})` } as CSSProperties}>
-                <button type="button" className={`tok-ch${isCollapsed ? " tok-closed" : ""}`} onClick={() => toggleCollapsed(cat)} aria-expanded={!isCollapsed}>
-                  <Ic name="lucide:chevron-down" size={12} />
-                  {CATEGORY_LABELS[cat]} ({header})
-                  <em>{totals[cat].toLocaleString()}</em>
-                </button>
+                <Disclosure open={!isCollapsed} onClick={() => toggleCollapsed(cat)} label={`${CATEGORY_LABELS[cat]} (${header})`} trailing={<em>{totals[cat].toLocaleString()}</em>} />
                 {!isCollapsed && (cat === "lore"
                   // th-t4-gaps 4: Lore sub-groups under the book each entry came from.
                   ? loreBookGroups(trace.blocks, trace.lore).map((g) => (
@@ -218,12 +212,12 @@ export function TokensSheet({ trace, model, onClose }: { trace: SceneTrace; mode
         </div>
       </div>
       <div className="tok-ft">
-        <button type="button" className="tok-btn" onClick={() => copyText(traceJsonText(trace))}>Copy as JSON</button>
-        {rawText && <button type="button" className="tok-btn" onClick={() => copyText(rawText)}>Copy the raw request</button>}
-        <button type="button" className="tok-btn" onClick={exportJson}>Export .json</button>
-        {rawText && <button type="button" className="tok-btn" onClick={exportTxt}>Export .txt</button>}
+        <Button size="sm" onClick={() => copyText(traceJsonText(trace))}>Copy as JSON</Button>
+        {rawText && <Button size="sm" onClick={() => copyText(rawText)}>Copy the raw request</Button>}
+        <Button size="sm" onClick={exportJson}>Export .json</Button>
+        {rawText && <Button size="sm" onClick={exportTxt}>Export .txt</Button>}
         <span className="tok-grow" />
-        <button type="button" className="tok-btn" onClick={resetWhatIf} disabled={!hasWhatIf}>Reset what-if</button>
+        <Button variant="quiet" size="sm" onClick={resetWhatIf} disabled={!hasWhatIf}>Reset what-if</Button>
       </div>
     </DialogCore>
   );

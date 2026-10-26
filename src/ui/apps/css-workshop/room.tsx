@@ -2,6 +2,7 @@
  * CSS Workshop room: head, actions, stage with shared CssWorkshop leaf, optional tour.
  * Mode (simple | advanced) is owned here and mirrored in the leaf toggle.
  */
+import { Button, Segmented } from "../../components/button";
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import {
@@ -148,37 +149,25 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
           </p>
         </div>
         <div className={styles.actions}>
-          <div className={styles.modeToggle} role="group" aria-label="Editor mode">
-            <button
-              type="button"
-              className={mode === "simple" ? `${styles.modeBtn} ${styles.modeOn}` : styles.modeBtn}
-              aria-pressed={mode === "simple"}
-              onClick={() => persistMode("simple")}
-            >
-              Simple
-            </button>
-            <button
-              type="button"
-              className={mode === "advanced" ? `${styles.modeBtn} ${styles.modeOn}` : styles.modeBtn}
-              aria-pressed={mode === "advanced"}
-              onClick={() => persistMode("advanced")}
-            >
-              Advanced
-            </button>
-          </div>
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnPrimary}`}
+          <Segmented
+            label="Editor mode"
+            value={mode}
+            onChange={persistMode}
+            items={[{ value: "simple", label: "Simple" }, { value: "advanced", label: "Advanced" }]}
+          />
+          <Button
+            size="sm"
+            variant="primary"
             onClick={() => void onCopy()}
           >
-            copy CSS
-          </button>
-          <button type="button" className={styles.btn} onClick={onDownload}>
-            download .css
-          </button>
-          <button type="button" className={styles.btn} onClick={() => fileRef.current?.click()}>
-            import .css
-          </button>
+            Copy CSS
+          </Button>
+          <Button size="sm" onClick={onDownload}>
+            Download .css
+          </Button>
+          <Button size="sm" onClick={() => fileRef.current?.click()}>
+            Import .css
+          </Button>
           <input
             ref={fileRef}
             type="file"
@@ -187,20 +176,20 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
             aria-label="Import CSS file"
             onChange={onFileChange}
           />
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnGhost}`}
+          <Button
+            size="sm"
+            variant="quiet"
             onClick={() => setClearOpen(true)}
           >
-            clear draft
-          </button>
-          <button
-            type="button"
-            className={`${styles.btn} ${styles.btnGhost}`}
+            Clear draft
+          </Button>
+          <Button
+            size="sm"
+            variant="quiet"
             onClick={() => setTourOpen(true)}
           >
-            tour
-          </button>
+            Tour
+          </Button>
           {flash ? <span className={styles.flash}>{flash}</span> : null}
         </div>
       </header>
@@ -229,12 +218,12 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
             <b className={styles.clearTitle}>Clear the draft?</b>
             <p className={styles.clearBody}>Your unsaved CSS goes away.</p>
             <div className={styles.clearActs}>
-              <button type="button" className={styles.clearGo} onClick={onClear}>
+              <Button variant="danger" onClick={onClear}>
                 Clear
-              </button>
-              <button type="button" className={styles.clearKeep} onClick={() => setClearOpen(false)}>
+              </Button>
+              <Button variant="quiet" onClick={() => setClearOpen(false)}>
                 Keep
-              </button>
+              </Button>
             </div>
           </div>
         </InkDialog>

@@ -3,12 +3,12 @@
  * from AppContext manifests, never a second list. Catalog-only tools such as CSS Workshop remain
  * fully bundled and mountable without occupying the everyday Dock.
  */
+import { Button } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
 import { useEffect } from "react";
 import type { CSSProperties, JSX } from "react";
 import type { AppContext, AppManifestEntry, BunrakuApp } from "../../app-contract";
 import { AppMark } from "../../components/app-mark";
-import { Stamp } from "../../components/stamp";
 import { officialCatalogApps } from "./catalog-core";
 import styles from "./styles.module.css";
 import { icSvg } from "../../_shared/ic-svg";
@@ -28,7 +28,7 @@ function AppCard({ app, ctx }: { app: AppManifestEntry; ctx: AppContext }): JSX.
       <p className={styles.description}>{descriptionFor(app)}</p>
       <div className={styles.cardFoot}>
         <span className={styles.status}>{app.catalogOnly ? "Included app" : "On your Dock"}</span>
-        <Stamp onClick={() => ctx.openApp(app.id)}>Open</Stamp>
+        <Button size="sm" onClick={() => ctx.openApp(app.id)}>Open</Button>
       </div>
     </article>
   );

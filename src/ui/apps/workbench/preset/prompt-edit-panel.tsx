@@ -11,6 +11,7 @@
  * NOT ported (deliberate): RC's per-block Cancel/Save footer (vaud saves the whole preset from the
  * ehead) and its non-marker "Use + Add marker slot" card (vaud has no marker-slot picker yet).
  */
+import { IconButton } from "../../../components/button";
 import { useMemo, type JSX } from "react";
 import type { PresetGroup, PresetPrompt, PromptRole } from "../../../../entities/preset";
 import {
@@ -80,9 +81,7 @@ export function PromptEditPanel({
       <div className={s.sideHead}>
         <span className={s.sideHeadTitle}>{block ? block.name || "Untitled block" : "Edit Prompt"}</span>
         {block && (
-          <button type="button" className={s.sideClose} aria-label="Close editor" onClick={onClose}>
-            &#215;
-          </button>
+          <IconButton label="Close editor" variant="quiet" size="sm" icon="lucide:x" onClick={onClose} />
         )}
       </div>
 

@@ -5,6 +5,7 @@
  * Settings once the tour is done; the Fields | Workshop pair shows whenever the card carries behavior.
  * Pure toggles over injected state.
  */
+import { Segmented } from "../../../components/button";
 import type { JSX } from "react";
 
 type Styles = Readonly<Record<string, string>>;
@@ -31,32 +32,42 @@ export function EditorModeBar(props: EditorModeBarProps): JSX.Element {
           tour-seen flag made every REPLAYED tour highlight nothing (the proven first-user report).
           The context menu keeps its duplicate for people who prefer it. */}
       {mode === "grid" && (
-        <span className={styles.seg} data-tour="layout" title={layoutLocked ? "This theme sets how the editor is arranged" : undefined}>
-          <button type="button" disabled={layoutLocked} title={layoutLocked ? "This theme sets how the editor is arranged" : undefined} className={editorLayout === "bento" ? styles.on : undefined} onClick={() => setEditorLayout("bento")}>
-            Bento
-          </button>
-          <button type="button" disabled={layoutLocked} title={layoutLocked ? "This theme sets how the editor is arranged" : undefined} className={editorLayout === "playbill" ? styles.on : undefined} onClick={() => setEditorLayout("playbill")}>
-            Playbill
-          </button>
+        <span data-tour="layout" title={layoutLocked ? "This theme sets how the editor is arranged" : undefined}>
+          <Segmented
+            label="Editor layout"
+            size="sm"
+            items={[
+              { value: "bento", label: "Bento", disabled: layoutLocked, title: layoutLocked ? "This theme sets how the editor is arranged" : undefined },
+              { value: "playbill", label: "Playbill", disabled: layoutLocked, title: layoutLocked ? "This theme sets how the editor is arranged" : undefined },
+            ]}
+            value={editorLayout}
+            onChange={setEditorLayout}
+          />
         </span>
       )}
-      <span className={styles.seg} data-tour="mode">
-        <button type="button" className={mode === "grid" ? styles.on : undefined} onClick={() => setMode("grid")}>
-          Grid
-        </button>
-        <button type="button" className={mode === "interview" ? styles.on : undefined} onClick={() => setMode("interview")}>
-          Steps
-        </button>
+      <span data-tour="mode">
+        <Segmented
+          label="Editor mode"
+          size="sm"
+          items={[
+            { value: "grid", label: "Grid" },
+            { value: "interview", label: "Steps" },
+          ]}
+          value={mode}
+          onChange={setMode}
+        />
       </span>
       {hasBehavior && (
-        <span className={styles.seg}>
-          <button type="button" className={!workshop ? styles.on : undefined} onClick={() => setWorkshop(false)}>
-            Fields
-          </button>
-          <button type="button" className={workshop ? styles.on : undefined} onClick={() => setWorkshop(true)}>
-            Workshop
-          </button>
-        </span>
+        <Segmented
+          label="Editor surface"
+          size="sm"
+          items={[
+            { value: "fields", label: "Fields" },
+            { value: "workshop", label: "Workshop" },
+          ]}
+          value={workshop ? "workshop" : "fields"}
+          onChange={(v) => setWorkshop(v === "workshop")}
+        />
       )}
     </>
   );

@@ -7,6 +7,7 @@
  * proseBody } (proseBody is also used by the quiz's answerFor). Bodies are verbatim; only the ctx wrap
  * is new. Composite kinds live in field-control-composites.tsx.
  */
+import { Button, Chip, IconButton } from "../../../components/button";
 import type { JSX } from "react";
 import { greetingsOf, str, type Greeting } from "../editor-derive";
 import { readPath } from "../editor-core";
@@ -40,29 +41,23 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
   const tagsControl = (
     <>
       <div className={styles.tagbar}>
-        <button type="button" className={styles.tagsheet} disabled title="The tagsheet taxonomy lands with the discovery milestone">
-          Open Tagsheet
-        </button>
-        <button type="button" className={styles.autotag} disabled title="Auto-tag lands with the brain milestone">
-          Auto-tag
-        </button>
+        <Button size="sm" disabled title="The tagsheet taxonomy lands with the discovery milestone">Open Tagsheet</Button>
+        <Button size="sm" disabled title="Auto-tag lands with the brain milestone">Auto-tag</Button>
       </div>
       <label className={styles.k}>{`selected tags (${strArray(readPath(draft, "discovery.tags")).length})`}</label>
       <div className={styles.tags}>
         {strArray(readPath(draft, "discovery.tags")).map((tag) => {
           const cs = TAG_CATEGORY_STYLE[categorizeTag(tag)];
           return (
-            <button
+            <Chip
               key={tag}
-              type="button"
-              className={styles.tag}
-              style={{ color: cs.color, borderColor: `${cs.color}80`, background: `${cs.color}1f` }}
               title={`Remove tag ${tag}`}
               onClick={() => setField("discovery.tags", strArray(readPath(draft, "discovery.tags")).filter((t) => t !== tag))}
+              color={cs.color}
             >
               <span className={styles.tagIco}>{cs.icon}</span>
               {tag} <i>x</i>
-            </button>
+            </Chip>
           );
         })}
         <input
@@ -101,9 +96,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
   const baseBtn = (path: string): JSX.Element | null => {
     if (!variantActive || !inheritField || !hasOverride?.(path)) return null;
     return (
-      <button type="button" className={styles.rm} onClick={() => inheritField(path)} title="Remove this variant override and use the base value">
-        Use base
-      </button>
+      <Button variant="quiet" size="sm" onClick={() => inheritField(path)} title="Remove this variant override and use the base value">Use base</Button>
     );
   };
 
@@ -147,9 +140,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
                 value={g.title ?? ""}
                 onChange={(e) => setRows(rows.map((x, j) => (j === i ? { ...x, title: e.target.value || undefined } : x)))}
               />
-              <button type="button" className={styles.rm} onClick={() => setRows(rows.filter((_, j) => j !== i))}>
-                remove
-              </button>
+              <Button variant="danger" size="sm" onClick={() => setRows(rows.filter((_, j) => j !== i))}>Remove</Button>
             </div>
             <RenderBox value={g.text} format="markdown">
               <ExpandTextarea
@@ -163,9 +154,7 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
             </RenderBox>
           </div>
         ))}
-        <button type="button" className={styles.add} onClick={() => setRows([...rows, { text: "" }])}>
-          + add a greeting
-        </button>
+        <Button size="sm" onClick={() => setRows([...rows, { text: "" }])}>+ Add a greeting</Button>
       </>
     );
   };
@@ -214,17 +203,16 @@ export function makeControlFor(ctx: FieldCtx): FieldControlApi {
         return (
           <div className={styles.spoilRow} key={key}>
             <span className={styles.ud}>
-              <button type="button" onClick={() => moveSpoil(key, -1)} title={`Move ${label} up`}>&#8593;</button>
-              <button type="button" onClick={() => moveSpoil(key, 1)} title={`Move ${label} down`}>&#8595;</button>
+              <IconButton label={`Move ${label} up`} variant="quiet" size="sm" icon="lucide:arrow-up" onClick={() => moveSpoil(key, -1)} />
+              <IconButton label={`Move ${label} down`} variant="quiet" size="sm" icon="lucide:arrow-down" onClick={() => moveSpoil(key, 1)} />
             </span>
             <span>{label}</span>
-            <button
-              type="button"
-              className={`${styles.spoil}${on ? ` ${styles.spoilOn}` : ""}`}
+            <Chip
               onClick={() => setField("presentation.spoilers", { ...spoilers, fields: { ...spoilFields, [key]: !on } })}
+              pressed={on}
             >
               {on ? "SPOILERED" : "visible"}
-            </button>
+            </Chip>
           </div>
         );
       })}

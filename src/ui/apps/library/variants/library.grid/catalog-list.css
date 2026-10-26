@@ -8,6 +8,6 @@ html[data-surface-library-grid="catalog-list"] {
   /* the Start scene button rides at the end of its entry instead of under it */
   & .lib.rc .rgrid-row .rcell { flex-direction: row; align-items: stretch; gap: .5rem; }
   & .lib.rc .rgrid-row .rcell > .rcard { flex: 1; width: auto; }
-  & .lib.rc .rgrid-row .rstart { margin-top: 0; width: 9rem; height: auto; flex: none; }
-  & .lib.rc .rnewtile { border: 1px dashed var(--bk-line-control); min-height: 3rem; font: italic 400 1rem var(--font-big); letter-spacing: 0; text-transform: none; }
+  & .lib.rc .rgrid-row .rstart { margin-top: 0; width: 9rem; flex: none; }
+  & .lib.rc [data-control="tile"][data-kind="add"] { border: 1px dashed var(--bk-line-control); min-height: 3rem; font: italic 400 1rem var(--font-big); letter-spacing: 0; text-transform: none; }
 }

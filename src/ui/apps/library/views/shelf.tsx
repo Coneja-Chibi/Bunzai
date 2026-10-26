@@ -8,9 +8,9 @@ import { deckMeta } from "../../../_shared/decks";
 import { pieceKey, type DeckView, type DeckViewContext } from "../view-contract";
 import { searchAllPages } from "../search-runner";
 import { plural } from "../../../../core/text";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 import { icSvg } from "../../../_shared/ic-svg";
 import { QueuedPiecePreview } from "../piece-preview";
+import { Button, Toggle } from "../../../components/button";
 
 const CSS = `
 .dv-shelfscroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
@@ -21,8 +21,8 @@ const CSS = `
 .dv-book:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 0 var(--a)}
 .dv-book .spine{position:absolute;left:0;top:0;bottom:0;width:.45rem;background:var(--spine);border-right:2px solid var(--stage-black)}
 .dv-book .body{padding:.7rem .7rem .55rem 1.05rem;display:flex;flex-direction:column;gap:.3rem;min-height:6.2rem}
-.dv-book button.nm{display:block;width:100%;background:none;border:0;padding:0;text-align:left;cursor:pointer}
-.dv-book button.nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.dv-book .nm{display:block;width:100%;text-align:left}
+.dv-book .nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
 .dv-book .nm{font-family:var(--font-big);font-weight:800;font-size:.95rem;color:var(--stage-card);line-height:1.1;
   overflow-wrap:anywhere}
 .dv-book .meta{font-family:var(--font-mono);font-size: var(--text-meta);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stage-soft)}
@@ -111,7 +111,7 @@ function BookCard({
       <div className="body">
         {/* The NAME is the card's one keyboard control, so the switch, Split, and Copy are never
             buttons nested inside another button; its click bubbles to the card's own handler. */}
-        <button type="button" className="nm" aria-pressed={staged}>{e.name || "(unnamed)"}</button>
+        <Button variant="link" data-part="library.shelf.name" aria-pressed={staged}>{e.name || "(unnamed)"}</Button>
         <div className="meta">
           {typeof count === "number"
             ? plural(count, "entry", "entries")
@@ -122,39 +122,16 @@ function BookCard({
       </div>
       {lore && e.kind === "lorebook" && (
         <div className="foot" onClick={(ev) => ev.stopPropagation()}>
-          <ToggleSwitch size="sm" on={enabled} aria-label={enabled ? "Book is on" : "Book is off"} title="Off books skip export and Rehearsal listing" onChange={() => lore.onToggleEnabled(e, !enabled)} />
+          <Toggle size="sm" on={enabled} aria-label={enabled ? "Book is on" : "Book is off"} title="Off books skip export and Rehearsal listing" onChange={() => lore.onToggleEnabled(e, !enabled)} />
           <span className="meta">{enabled ? "On" : "Off"}</span>
-          <button
-            type="button"
-            className="meta"
-            style={{
-              marginLeft: "auto",
-              fontSize: "max(14px, var(--text-control))",
-              border: "1px solid var(--stage-seam)",
-              background: "var(--stage-row)",
-              padding: "0.12rem 0.3rem",
-              cursor: "pointer",
-              color: "var(--stage-soft)",
-            }}
-            onClick={() => lore.onSplit(e)}
-          >
-            Split
-          </button>
-          <button
-            type="button"
-            className="meta"
-            style={{
-              fontSize: "max(14px, var(--text-control))",
-              border: "1px solid var(--stage-seam)",
-              background: "var(--stage-row)",
-              padding: "0.12rem 0.3rem",
-              cursor: "pointer",
-              color: "var(--stage-soft)",
-            }}
-            onClick={() => lore.onDuplicate(e)}
-          >
+          <span style={{ marginLeft: "auto" }}>
+            <Button size="sm" onClick={() => lore.onSplit(e)}>
+              Split
+            </Button>
+          </span>
+          <Button size="sm" onClick={() => lore.onDuplicate(e)}>
             Copy
-          </button>
+          </Button>
         </div>
       )}
       {isOpen && <span className="tick">open</span>}
@@ -236,7 +213,7 @@ const view: DeckView = {
             }}
           />
         </label>
-        {q && (!currentSearch || unavailable || (currentSearch && searchResult.truncated)) && <p role="status">{unavailable ? <>Search unavailable; showing every book. <button type="button" onClick={() => setSearchRetry((value) => value + 1)}>Retry</button></> : currentSearch && searchResult.truncated ? "The result limit was reached; only the first matching books are shown." : "Searching books…"}</p>}
+        {q && (!currentSearch || unavailable || (currentSearch && searchResult.truncated)) && <p role="status">{unavailable ? <>Search unavailable; showing every book. <Button size="sm" variant="quiet" onClick={() => setSearchRetry((value) => value + 1)}>Retry</Button></> : currentSearch && searchResult.truncated ? "The result limit was reached; only the first matching books are shown." : "Searching books…"}</p>}
         <div className="dv-shelf">
           {filtered.map((e) => (
             <BookCard

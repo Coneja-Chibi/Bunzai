@@ -14,6 +14,7 @@ import { backupsApi, sizeLabel, whenLabel, type Copy } from "./backups-core";
 import { allWell, chipOf, healthApi, isDanger, repairButton, stoppedWords, type Finding, type RepairKind, type RepairOutcome, type ScanJob } from "./health-core";
 import { RESTORE_OPEN_ATTRIBUTE } from "./backups-dialogs";
 import { sentence } from "./security-flows";
+import { Button } from "../../../components/button";
 import styles from "./security.module.css";
 
 type Done = Extract<ScanJob, { state: "done" }>;
@@ -32,9 +33,9 @@ function Notice({ finding, busy, onRepair }: { finding: Finding; busy: boolean; 
         {finding.repairs.map((kind) => {
           const b = repairButton(kind, finding);
           return (
-            <button key={kind} type="button" className={b.primary ? styles.btn : styles.btnGhost} disabled={busy} onClick={() => onRepair(kind)}>
+            <Button key={kind} size="sm" variant={b.primary ? "primary" : "secondary"} disabled={busy} onClick={() => onRepair(kind)}>
               {b.label}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -119,9 +120,9 @@ export function HealthReport(): JSX.Element {
         </div>
         <div className={styles.status}>{`${job.done} of ${job.total} parts looked at`}</div>
         <div className={styles.actions}>
-          <button type="button" className={styles.btnGhost} onClick={() => void healthApi.stop()}>
+          <Button size="sm" onClick={() => void healthApi.stop()}>
             Stop
-          </button>
+          </Button>
         </div>
       </>
     );
@@ -135,9 +136,9 @@ export function HealthReport(): JSX.Element {
           {job.state === "failed" ? sentence(job.error) : "Opens every saved piece and chat and compares it with what was saved. Nothing changes until you confirm a repair, and a repair sets things aside, never deletes. No backup is needed first."}
         </div>
         <div className={styles.actions}>
-          <button type="button" className={styles.btn} disabled={busy} onClick={() => void check()}>
+          <Button size="sm" variant="primary" disabled={busy} onClick={() => void check()}>
             Check my library
-          </button>
+          </Button>
         </div>
       </>
     );
@@ -154,9 +155,9 @@ export function HealthReport(): JSX.Element {
           <div className={styles.cardBody}>{sentence(outcome.summary)}</div>
           {reload ? (
             <div className={styles.actions}>
-              <button type="button" className={styles.btn} onClick={() => window.location.reload()}>
+              <Button size="sm" variant="primary" onClick={() => window.location.reload()}>
                 Reload to show it
-              </button>
+              </Button>
             </div>
           ) : null}
         </div>
@@ -182,9 +183,9 @@ export function HealthReport(): JSX.Element {
                         <div className={styles.pcName}>{whenLabel(c.takenAt)}</div>
                         <div className={styles.pcMeta}>{sizeLabel(c.bytes)}</div>
                       </div>
-                      <button type="button" className={styles.btnGhost} disabled={busy} onClick={() => void repair(asking.restore, "restore-snapshot", c.id)}>
+                      <Button size="sm" disabled={busy} onClick={() => void repair(asking.restore, "restore-snapshot", c.id)}>
                         Restore
-                      </button>
+                      </Button>
                     </div>
                   ))}
                   <StageActions cta="Cancel" onCta={() => setAsking(null)} />
@@ -206,9 +207,9 @@ function Report({ job, busy, onCheck, onRepair }: { job: Done; busy: boolean; on
           <p className={styles.noticeBody}>The check did not finish, so this is not a clean result. If the library locked, unlock it and check again.</p>
         </div>
         <div className={styles.actions}>
-          <button type="button" className={styles.btn} disabled={busy} onClick={onCheck}>
+          <Button size="sm" variant="primary" disabled={busy} onClick={onCheck}>
             Check again
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -234,9 +235,9 @@ function Report({ job, busy, onCheck, onRepair }: { job: Done; busy: boolean; on
         </>
       )}
       <div className={styles.actions}>
-        <button type="button" className={styles.btnGhost} disabled={busy} onClick={onCheck}>
+        <Button size="sm" disabled={busy} onClick={onCheck}>
           Check again
-        </button>
+        </Button>
       </div>
     </>
   );

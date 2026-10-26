@@ -4,6 +4,7 @@
  * jumps to the dedicated editor (wired via onAction once that editor exists; until then it renders a
  * quiet "opens here soon" stub, never a fake button). An empty state offers to attach one.
  */
+import { Button } from "../button";
 import type { JSX, ReactNode } from "react";
 import styles from "./styles.module.css";
 
@@ -40,9 +41,9 @@ export function LinkOut({ icon, title, meta, action, onAction, empty, emptyLabel
       </div>
       {action ? (
         onAction ? (
-          <button type="button" className={styles.go} onClick={onAction}>
+          <Button size="sm" onClick={onAction}>
             {action} &rarr;
-          </button>
+          </Button>
         ) : (
           <span className={styles.pending} title="Opens here when that editor lands">
             {action}

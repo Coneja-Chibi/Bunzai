@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
+import { Button } from "../../../components/button";
 import type { SceneLoreBook } from "../../../app-contract-scenes";
 import type { Chat } from "../../../../stage/contracts/chat-store";
 import { accessOf, canWrite, pairKey, type ReconcileRow } from "../../../../core/compendium";
@@ -42,7 +43,7 @@ export function ReconcileButton({ ctx, chat, books, locked = false }: { ctx: App
   if (n === 0 && !open) return null;
   return (
     <>
-      <button type="button" className="cp-rec-btn" data-part="compendium.reconcile" disabled={locked} title={locked ? LOCK_TEXT : undefined} onClick={() => setOpen(true)}>Reconcile ({n})</button>
+      <Button size="sm" tone="var(--bk-role-danger-text)" data-part="compendium.reconcile" disabled={locked} title={locked ? LOCK_TEXT : undefined} onClick={() => setOpen(true)}>Reconcile ({n})</Button>
       {open && <ReconcileModal ctx={ctx} chatId={chat.id} groups={groups} onClose={() => { setOpen(false); void reload(); }} />}
     </>
   );
@@ -83,7 +84,7 @@ function ReconcileModal({ ctx, chatId, groups, onClose }: { ctx: AppContext; cha
         <h3>Reconcile Relationships</h3>
         <b>{all.length === 0 ? "All Relationships Reciprocated" : `${all.length} One-Sided ${all.length === 1 ? "Edge" : "Edges"}`}</b>
         <p>These are relationships that exist on one side but not the other. Mirror to add the missing reference, or keep asymmetric if the one-sidedness is intentional (unrequited feelings, oblivious rivalries, one-way reverence).</p>
-        {unresolved(all).length > 1 && <button type="button" className="go" disabled={busy} onClick={() => void apply("mirror", unresolved(all))}>Mirror all</button>}
+        {unresolved(all).length > 1 && <Button variant="primary" size="sm" disabled={busy} onClick={() => void apply("mirror", unresolved(all))}>Mirror all</Button>}
       </header>
       {note && <div className="note" role="status">{note}</div>}
       <div className="body">
@@ -92,7 +93,7 @@ function ReconcileModal({ ctx, chatId, groups, onClose }: { ctx: AppContext; cha
           return (
             <section key={`${g.bookId}:${target}`}>
               <div className="gh"><b>{target}</b><small>{initial.length > 1 ? g.name : ""}</small>
-                {unresolved(picks).length > 1 && <button type="button" disabled={busy} onClick={() => void apply("mirror", unresolved(picks))}>Mirror group</button>}
+                {unresolved(picks).length > 1 && <Button size="sm" disabled={busy} onClick={() => void apply("mirror", unresolved(picks))}>Mirror group</Button>}
               </div>
               {picks.map((p) => {
                 const mark = markOf(p);
@@ -102,8 +103,8 @@ function ReconcileModal({ ctx, chatId, groups, onClose }: { ctx: AppContext; cha
                     {mark && mark !== "failed" ? <em className="done">{mark === "mirrored" ? "Mirrored" : "Kept"}</em> : (
                       <span className="acts">
                         {mark === "failed" && <em className="bad">Failed</em>}
-                        <button type="button" disabled={busy} onClick={() => void apply("mirror", [p])}>Mirror</button>
-                        <button type="button" disabled={busy} onClick={() => void apply("keep", [p])}>Keep</button>
+                        <Button size="sm" disabled={busy} onClick={() => void apply("mirror", [p])}>Mirror</Button>
+                        <Button size="sm" disabled={busy} onClick={() => void apply("keep", [p])}>Keep</Button>
                       </span>
                     )}
                   </div>
@@ -113,7 +114,7 @@ function ReconcileModal({ ctx, chatId, groups, onClose }: { ctx: AppContext; cha
           );
         }))}
       </div>
-      <footer><small>{resolved} / {all.length} resolved</small><button type="button" className="go" onClick={onClose}>Done</button></footer>
+      <footer><small>{resolved} / {all.length} resolved</small><Button variant="primary" onClick={onClose}>Done</Button></footer>
     </InkDialog>
   );
 }

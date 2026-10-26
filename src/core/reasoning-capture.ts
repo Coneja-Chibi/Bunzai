@@ -8,6 +8,7 @@
  * (reasoning-rescue.ts).
  */
 import type { ReasoningFormat } from "./reasoning-tags";
+import { editDistance } from "./text";
 
 export type CaptureMode = "auto" | "only" | "off";
 export interface CaptureDelimiter { open: string; close: string }
@@ -108,17 +109,7 @@ const HTML = new Set(["a", "article", "b", "blockquote", "body", "br", "button",
 const COMPOUND = new Set(["chainofthought", "chainofreasoning", "chainofthoughts", "innerthought", "innerthoughts", "innerreasoning", "internalmonologue", "internalthought", "internalthoughts", "internalreasoning", "modelthought", "modelthinking", "privatethought", "privatethoughts", "privatereasoning", "hiddenreasoning", "hiddenthoughts", "scratchpad", "scratchwork", "scratchnotes", "stepbystep", "thoughtprocess", "thinkingprocess", "reasoningprocess"]);
 const ANCHORS = ["think", "thinking", "thought", "thoughts", "reason", "reasoning", "rationale", "analysis", "reflection", "planning", "plan", "cot", "scratch", "scratchpad", "deliberation"];
 
-function distance(a: string, b: string): number {
-  let row = Array.from({ length: b.length + 1 }, (_, j) => j);
-  for (let i = 1; i <= a.length; i++) {
-    const next = [i];
-    for (let j = 1; j <= b.length; j++) next[j] = Math.min(row[j]! + 1, next[j - 1]! + 1, row[j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
-    row = next;
-  }
-  return row[b.length]!;
-}
-
-const similar = (word: string): boolean => ANCHORS.includes(word) || (word.length >= 5 && ANCHORS.some((a) => a.length >= 5 && (distance(word, a) <= 1 || (Math.max(word.length, a.length) >= 8 && distance(word, a) <= 2))));
+const similar = (word: string): boolean => ANCHORS.includes(word) || (word.length >= 5 && ANCHORS.some((a) => a.length >= 5 && (editDistance(word, a) <= 1 || (Math.max(word.length, a.length) >= 8 && editDistance(word, a) <= 2))));
 
 /** Whether a tag's NAME is a thinking tag: in the list, a known compound, or looking like one (never ordinary markup). Only the wrapper's name is read, never its content. */
 export function isThinkingTagName(name: string): boolean {

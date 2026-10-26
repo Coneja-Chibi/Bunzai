@@ -11,6 +11,7 @@ import {
 } from "../../../../../../core/trackers/inventory";
 import { sameName, tokensOf } from "../../../../../../core/trackers/list";
 import { isEscapeClose } from "../../../../../_shared/use-escape-key";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -151,15 +152,15 @@ function ItemActions({ item, onEquip, onUnequip, onUse, onDelete }: { item: InvI
   return (
     <>
       {item.isEquipped
-        ? <button type="button" className="it-act" onClick={inner(onUnequip)}><Ic name="lucide:chevron-down" size={14} /><span>Unequip</span></button>
+        ? <Button size="sm" icon="lucide:chevron-down" onClick={inner(onUnequip)}>Unequip</Button>
         : (
           <>
             <select aria-label="Slot to equip in" value={slot} onChange={(e) => setSlot(e.target.value as EquipSlot)}>{SLOTS.map((s) => <option key={s} value={s}>{SLOT_NAME[s]}{s === "ring1" ? " 1" : s === "ring2" ? " 2" : ""}</option>)}</select>
-            <button type="button" className="it-act" onClick={inner(() => onEquip(slot))}><Ic name="lucide:shield" size={14} /><span>Equip</span></button>
+            <Button size="sm" icon="lucide:shield" onClick={inner(() => onEquip(slot))}>Equip</Button>
           </>
         )}
-      {isConsumable(item) && <button type="button" className="it-act" onClick={inner(onUse)}><Ic name="lucide:flask-conical" size={14} /><span>Use</span></button>}
-      <button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete item" onClick={inner(onDelete)}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>
+      {isConsumable(item) && <Button size="sm" icon="lucide:flask-conical" onClick={inner(onUse)}>Use</Button>}
+      <span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete item" onClick={inner(onDelete)}>Delete</Button></span>
     </>
   );
 }

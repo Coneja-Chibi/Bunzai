@@ -5,6 +5,7 @@
  */
 import type { JSX } from "react";
 import { InkDialog } from "../../../../../components/ink-dialog";
+import { Button } from "../../../../../components/button";
 import { Ic } from "../../../../../_shared/ic";
 import { DiffSections, countOf } from "./refresh-diff";
 import type { Refresh } from "./use-refresh";
@@ -13,10 +14,10 @@ export function RefreshButton({ r, label }: { r: Refresh; label: string }): JSX.
   if (!r.enabled) return null;
   const busy = r.phase.at === "working";
   return (
-    <button type="button" className={`trk-btn lbl${busy ? " busy" : ""}`} title="Refresh from chat history" aria-label={busy ? `Refreshing ${label}` : "Refresh from chat history"} aria-busy={busy}
+    <Button size="sm" title="Refresh from chat history" aria-label={busy ? `Refreshing ${label}` : "Refresh from chat history"} aria-busy={busy}
       disabled={busy} data-part="props.tracker.refresh" onClick={r.run}>
       <span className={busy ? "rf-spin" : ""}><Ic name="lucide:refresh-cw" size={14} /></span><span>{busy ? "Refreshing" : "Refresh"}</span>
-    </button>
+    </Button>
   );
 }
 
@@ -24,13 +25,13 @@ export function RefreshButton({ r, label }: { r: Refresh; label: string }): JSX.
 export function RefreshNotice({ r, label }: { r: Refresh; label: string }): JSX.Element | null {
   const p = r.phase;
   if (p.at === "working") {
-    return <div className="trk-status" role="status"><span className="rf-spin"><Ic name="lucide:loader-circle" size={14} /></span><span className="grow">Reading the chat for {label}.</span><button type="button" onClick={r.cancel}>Cancel</button></div>;
+    return <div className="trk-status" role="status"><span className="rf-spin"><Ic name="lucide:loader-circle" size={14} /></span><span className="grow">Reading the chat for {label}.</span><Button variant="quiet" size="sm" onClick={r.cancel}>Cancel</Button></div>;
   }
   if (p.at === "failed") {
-    return <div className="trk-error rf-fail" role="alert"><div className="grow">{p.error}{p.hint && <small>{p.hint}</small>}</div><button type="button" onClick={r.run}>Try again</button><button type="button" onClick={r.dismiss}>Dismiss</button></div>;
+    return <div className="trk-error rf-fail" role="alert"><div className="grow">{p.error}{p.hint && <small>{p.hint}</small>}</div><Button size="sm" onClick={r.run}>Try again</Button><Button variant="quiet" size="sm" onClick={r.dismiss}>Dismiss</Button></div>;
   }
   if (p.at === "same" || p.at === "cancelled") {
-    return <div className="trk-undo" role="status"><span>{p.at === "same" ? `${label} already matches the chat.` : `Refresh cancelled. ${label} is unchanged.`}</span><button type="button" onClick={r.dismiss}>Dismiss</button></div>;
+    return <div className="trk-undo" role="status"><span>{p.at === "same" ? `${label} already matches the chat.` : `Refresh cancelled. ${label} is unchanged.`}</span><Button variant="quiet" size="sm" onClick={r.dismiss}>Dismiss</Button></div>;
   }
   return null;
 }
@@ -56,9 +57,9 @@ export function RefreshSheet({ r, label }: { r: Refresh; label: string }): JSX.E
           <p className="rv-help">Matched by name. Entries the chat does not mention are marked removed, and Undo brings them back.</p>
         </div>
         <footer className="ft"><span className="rv-count">{count} {count === 1 ? "change" : "changes"}</span>
-          <button type="button" data-part="props.tracker.review.discard" onClick={r.dismiss}>Discard</button>
-          <button type="button" data-part="props.tracker.review.retry" onClick={r.run}>Try again</button>
-          <button type="button" className="go" autoFocus data-part="props.tracker.review.accept" onClick={r.accept}>Accept</button></footer>
+          <Button variant="quiet" data-part="props.tracker.review.discard" onClick={r.dismiss}>Discard</Button>
+          <Button data-part="props.tracker.review.retry" onClick={r.run}>Try again</Button>
+          <Button variant="primary" autoFocus data-part="props.tracker.review.accept" onClick={r.accept}>Accept</Button></footer>
       </div>
     </InkDialog>
   );

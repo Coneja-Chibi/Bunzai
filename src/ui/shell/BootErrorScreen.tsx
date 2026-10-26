@@ -1,8 +1,8 @@
 /** Studio boot-failure screen with direct recovery and Remote Access setup links. */
+import { Button } from "../components/button";
 import type { JSX } from "react";
 import { copyText } from "../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../_shared/use-flash";
-import { Stamp } from "../components/stamp";
 import type { BootProblem } from "./boot-error";
 
 export function BootErrorScreen({ problem }: { problem: BootProblem | null }): JSX.Element {
@@ -72,9 +72,9 @@ export function BootErrorScreen({ problem }: { problem: BootProblem | null }): J
                   {problem.sshCommand}
                 </code>
                 <div style={{ marginTop: "0.75rem" }}>
-                  <Stamp onClick={copyCommand}>
+                  <Button onClick={copyCommand}>
                     {copied ? "SSH command copied" : "Copy SSH command"}
-                  </Stamp>
+                  </Button>
                 </div>
               </>
             ) : null}

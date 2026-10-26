@@ -160,7 +160,7 @@ const bodyText = (scope: ParentNode = host): string => (scope as HTMLElement).te
 const docBody = (): HTMLElement => dom.window.document.body;
 /** The Cutting Room skin's confirm button - found by class, never by text, since a "Delete N"
  * selbar button elsewhere on the page also contains the word "Delete". */
-const dialogYes = (): HTMLButtonElement => docBody().querySelector(".scn-cut .yes") as HTMLButtonElement;
+const dialogYes = (): HTMLButtonElement => [...docBody().querySelectorAll<HTMLButtonElement>(".scn-cut .row button")].find((b) => b.textContent === "Delete")!;
 
 type FlushSync = typeof import("react-dom")["flushSync"];
 
@@ -196,7 +196,7 @@ async function press(flushSync: FlushSync, btn: HTMLButtonElement, ms = 20): Pro
 describe("ScenesList: rail and folder filters", () => {
   test("the rail filters the grid to one character", async () => {
     const flushSync = await mountList(makeCtx());
-    const veraTile = buttons().find((b) => b.querySelector(".cr-tip b")?.textContent === "Vera")!;
+    const veraTile = buttons().find((b) => b.dataset["part"] === "scenes.cast.tile" && b.getAttribute("aria-label") === "Vera")!;
     await press(flushSync, veraTile);
     // the sidebar's own recent rows never filter by rail - only the main content does.
     const main = bodyText(host.querySelector(".main")!);
@@ -208,7 +208,7 @@ describe("ScenesList: rail and folder filters", () => {
 
   test("a folder filters the grid", async () => {
     const flushSync = await mountList(makeCtx());
-    const folderRow = host.querySelector<HTMLButtonElement>(".chapter:not(.smart)")!;
+    const folderRow = host.querySelector<HTMLButtonElement>("[data-part='scenes.folder.row']")!;
     await press(flushSync, folderRow);
     const main = bodyText(host.querySelector(".main")!);
     expect(main).toContain("Cut the deck");
@@ -232,7 +232,7 @@ describe("ScenesList: a search with no match", () => {
     const empty = host.querySelector('[data-part="scenes.nomatch"]')!;
     expect(empty.textContent).toContain('Nothing matches "zzzz"');
     expect(empty.hasAttribute("data-empty")).toBe(true);
-    expect(host.querySelector(".hero")).toBeNull();
+    expect(host.querySelector("[data-part='scenes.hero.open']")).toBeNull();
     await press(flushSync, byText("Clear search")!);
     expect(host.querySelector('[data-part="scenes.nomatch"]')).toBeNull();
     expect(search().value).toBe("");
@@ -313,8 +313,8 @@ describe("ScenesList: folders", () => {
 describe("ScenesList: hero", () => {
   test("the hero scene is not repeated in the grid", async () => {
     const flushSync = await mountList(makeCtx());
-    expect(host.querySelector(".hero")?.textContent).toContain("The long storm");
-    const gridCards = [...host.querySelectorAll(".grid .sc")];
+    expect(host.querySelector("[data-part='scenes.hero.open']")?.textContent).toContain("The long storm");
+    const gridCards = [...host.querySelectorAll(".grid [data-part='scenes.card.open']")];
     expect(gridCards.some((c) => (c.textContent ?? "").includes("The long storm"))).toBe(false);
     unmountList(flushSync);
   });
@@ -323,7 +323,7 @@ describe("ScenesList: hero", () => {
     getSceneTailImpl = async () => { throw new Error("network down"); };
     const flushSync = await mountList(makeCtx());
     await settle(flushSync, 40);
-    expect(host.querySelector(".hero")?.textContent).toContain("The long storm");
+    expect(host.querySelector("[data-part='scenes.hero.open']")?.textContent).toContain("The long storm");
     expect(bodyText()).toContain("Your Stage");
     unmountList(flushSync);
   });
@@ -335,7 +335,7 @@ describe("ScenesList: hero", () => {
     ];
     const flushSync = await mountList(makeCtx());
     await settle(flushSync, 40);
-    const preview = host.querySelector(".preview");
+    const preview = host.querySelector("[data-part='scenes.hero.preview']");
     expect(preview?.textContent).toContain("She opened the door.");
     expect(preview?.textContent).not.toContain("planning the scene");
     expect(preview?.textContent).not.toContain("think");
@@ -359,7 +359,7 @@ describe("ScenesList: Select mode", () => {
   test("still bulk-deletes through the Cutting Room dialog", async () => {
     const flushSync = await mountList(makeCtx());
     await press(flushSync, byText("Select")!);
-    const card = [...host.querySelectorAll(".grid .sc")].find((c) => (c.textContent ?? "").includes("Cut the deck")) as HTMLButtonElement;
+    const card = [...host.querySelectorAll(".grid [data-part='scenes.card.open']")].find((c) => (c.textContent ?? "").includes("Cut the deck")) as HTMLButtonElement;
     await press(flushSync, card);
     await press(flushSync, byText("Delete 1")!);
     expect(bodyText(docBody())).toContain("Cut this story?");
@@ -437,7 +437,7 @@ describe("ScenesList: optimistic updates (P3b item 2)", () => {
     const folderOption = byText("Main Plot", docBody().querySelector(".folder-pick")!)!;
     await press(flushSync, folderOption);
     expect(setFolderCalls).toEqual([{ id: "s1", folderId: "f1" }]);
-    const folderRow = host.querySelector<HTMLButtonElement>(".chapter:not(.smart)")!;
+    const folderRow = host.querySelector<HTMLButtonElement>("[data-part='scenes.folder.row']")!;
     await press(flushSync, folderRow);
     const main = bodyText(host.querySelector(".main")!);
     expect(main).toContain("The long storm"); // now shows under its new folder, before the reload
@@ -462,7 +462,7 @@ describe("ScenesList: the row a theme's scenes.list pick draws", () => {
       const rows = [...host.querySelectorAll(".scene-list .scene-entry")];
       expect(rows.length).toBeGreaterThan(0);
       for (const row of rows) {
-        expect(row.querySelector("button.sc")).not.toBeNull();
+        expect(row.querySelector("button[data-part='scenes.card.open']")).not.toBeNull();
         expect(row.querySelector(".scene-more")).not.toBeNull();
         expect(row.querySelector(".art")).toBeNull(); // the picture body is replaced, not stacked
       }
@@ -476,7 +476,7 @@ describe("ScenesList: the row a theme's scenes.list pick draws", () => {
     for (const pick of [{}, { "scenes.list": "marquee-hero" } as const]) {
       const flushSync = await withPick(pick);
       expect(host.querySelector(".scene-list")).toBeNull();
-      expect(host.querySelector(".grid .sc .art")).not.toBeNull();
+      expect(host.querySelector(".grid [data-part='scenes.card.open'] .art")).not.toBeNull();
       unmountList(flushSync);
     }
   });

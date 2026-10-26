@@ -40,6 +40,11 @@ test("reads an id-keyed template part as a `<id>` family, whatever the expressio
   ]);
 });
 
+test("reads a part handed to the button family as an item key", () => {
+  expect(partsIn('<Tabs label="x" items={[{ value: "a", label: "A", "data-part": "settings.tab" }]} />', "a.tsx")).toEqual([{ part: "settings.tab", tag: "item", file: "a.tsx" }]);
+  expect(partsIn('const { "data-part": part } = props;', "b.tsx")).toEqual([]);
+});
+
 test("reads both names of a two-literal choice, and a part forwarded as a literal `data-part` prop is read at its call site", () => {
   const source = '<div data-part={stopped ? "compendium.standardize.stopped" : "compendium.standardize.complete"}>\n<FormSection data-part="scene.cast.palette" title="x">';
   expect(partsIn(source, "a.tsx").map((h) => h.part)).toEqual(["compendium.standardize.stopped", "compendium.standardize.complete", "scene.cast.palette"]);

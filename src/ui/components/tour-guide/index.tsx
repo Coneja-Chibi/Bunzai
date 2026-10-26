@@ -9,6 +9,7 @@
  * sequencing math is delegated to tour-core. Tolerant: a step whose anchor is not in the DOM simply
  * shows without a highlight - never a crash.
  */
+import { Button, Card } from "../button";
 import { useEffect, useState } from "react";
 import type { JSX } from "react";
 import type { AppContext } from "../../app-contract";
@@ -107,9 +108,11 @@ export function TourGuide({ tour, ctx, onClose }: TourGuideProps): JSX.Element {
     <aside className={styles.rail} role="dialog" aria-label={`${tour.manifest.title} tour`}>
       <div className={styles.kick}>
         <MonoTag>{tour.manifest.title}</MonoTag>
-        <button type="button" className={styles.skip} onClick={finish}>
-          skip
-        </button>
+        <div className={styles.skip}>
+          <Button size="sm" variant="quiet" onClick={finish}>
+            Skip
+          </Button>
+        </div>
       </div>
 
       <div className={styles.dots} aria-hidden="true">
@@ -132,33 +135,32 @@ export function TourGuide({ tour, ctx, onClose }: TourGuideProps): JSX.Element {
           {step.choice.options.map((o) => {
             const on = ctx.prefs.get(step.choice!.prefKey) === o.value;
             return (
-              <button
+              <Card
                 key={o.value}
-                type="button"
-                className={on ? `${styles.pick} ${styles.pickOn}` : styles.pick}
+                kind="choice"
+                heading={o.label}
+                subtitle={o.sub || undefined}
+                selected={on}
                 onClick={() => ctx.prefs.set(step.choice!.prefKey, o.value)}
                 aria-pressed={on}
-              >
-                <b>{o.label}</b>
-                {o.sub ? <span>{o.sub}</span> : null}
-              </button>
+              />
             );
           })}
         </div>
       )}
 
       <div className={styles.ctl}>
-        <button type="button" className={styles.back} disabled={pos.isFirst} onClick={() => setIndex(prevIndex(index))}>
-          back
-        </button>
+        <Button variant="quiet" disabled={pos.isFirst} onClick={() => setIndex(prevIndex(index))}>
+          Back
+        </Button>
         {pos.isLast ? (
-          <button type="button" className={styles.next} onClick={finish}>
+          <Button variant="primary" onClick={finish}>
             Done
-          </button>
+          </Button>
         ) : (
-          <button type="button" className={styles.next} onClick={() => setIndex(nextIndex(tour, index))}>
+          <Button variant="primary" onClick={() => setIndex(nextIndex(tour, index))}>
             Next
-          </button>
+          </Button>
         )}
       </div>
     </aside>

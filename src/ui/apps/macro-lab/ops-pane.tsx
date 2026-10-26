@@ -15,6 +15,7 @@
  * no operation and are not rows here - they are in the bible. This table answers "where do the
  * engines disagree", which is a smaller and more useful question than "what macros exist".
  */
+import { Chip } from "../../components/button";
 import { type JSX } from "react";
 import { MACRO_DIALECT_LABELS } from "../../../core/preset/macros";
 import { OPERATION_ABSENT, OPERATION_LENSES, operationRows } from "./lab-core";
@@ -68,15 +69,13 @@ export function OpsPane({ onInsert }: { onInsert: (token: string) => void }): JS
                       <span className={grid.gapWord}>none</span>
                     ) : (
                       cell.forms.map((form) => (
-                        <button
+                        <Chip
                           key={form.macro}
-                          type="button"
-                          className={styles.insert}
                           title={form.description}
                           onClick={() => onInsert(form.macro)}
                         >
                           {form.macro}
-                        </button>
+                        </Chip>
                       ))
                     )}
                   </td>

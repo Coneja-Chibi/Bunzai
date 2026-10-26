@@ -14,7 +14,7 @@ import { AutoUpdateBooth } from "./auto-update";
 import { AutoRetryRow, RuntimeNumbers } from "./director-runtime";
 import { PersonalityPicker } from "./personality-picker";
 import { useDirectorPanel } from "./use-director-panel";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
+import { Toggle } from "../../../../components/button";
 
 export function DirectorBooth({ ctx, chat, busy, onProps }: { ctx: AppContext; chat: Chat; busy: boolean; /** The Props changed here: the page reads them again. */ onProps(): void }): JSX.Element {
   const data = useDirectorPanel(ctx, chat);
@@ -43,7 +43,7 @@ export function DirectorBooth({ ctx, chat, busy, onProps }: { ctx: AppContext; c
       <div className="prop-row" style={{ "--tone": "var(--deck-persona)" } as CSSProperties} data-part="scene.booth.narrator.director">
         <span className="prop-ic"><Ic name="mdi:drama-masks" size={20} /></span>
         <div><b>Story Director</b><small>Scene direction and narrator context</small></div>
-        <ToggleSwitch size="sm" tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} the Story Director`} disabled={panel === null || busy} onChange={() => void flip()} />
+        <Toggle size="sm" tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} the Story Director`} disabled={panel === null || busy} onChange={() => void flip()} />
       </div>
       {busy && on && <p className="bth-note" role="status">A reply is being written. Changes apply from the next reply.</p>}
       {panel && on && (

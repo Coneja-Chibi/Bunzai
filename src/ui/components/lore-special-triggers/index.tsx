@@ -3,6 +3,7 @@
  * Context/engine specials first; narrative/LLM ones labeled honestly. Studio only
  * authors the keyword strings; it never evaluates them.
  */
+import { Button, MenuItem } from "../button";
 import { useEffect, useRef, useState, type JSX } from "react";
 import type { Trigger } from "../../../entities/lorebook/schema";
 import styles from "./styles.module.css";
@@ -141,30 +142,26 @@ export function LoreSpecialTriggers({
 
   return (
     <div className={styles.wrap} ref={rootRef}>
-      <button
-        type="button"
-        className={open ? `${styles.trigger} ${styles.triggerOn}` : styles.trigger}
+      <Button
+        size="sm"
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
       >
         + Condition
-      </button>
+      </Button>
       {open && (
         <div className={styles.menu} role="menu" aria-label="Insert special condition">
           <div className={styles.section}>Engine</div>
           {context.map((p) => (
-            <button
+            <MenuItem
               key={p.keyword}
-              type="button"
-              role="menuitem"
-              className={styles.item}
               title={p.hint ?? p.keyword}
+              hint={p.keyword}
               onClick={() => add(p.keyword)}
             >
-              <span className={styles.itemLabel}>{p.label}</span>
-              <span className={styles.itemKey}>{p.keyword}</span>
-            </button>
+              {p.label}
+            </MenuItem>
           ))}
           <div className={styles.section}>
             Scene-aware <span className={styles.badge}>LLM</span>
@@ -173,19 +170,14 @@ export function LoreSpecialTriggers({
             Narrative keys need a chat runtime that evaluates them. Studio only stores the string.
           </p>
           {narrative.map((p) => (
-            <button
+            <MenuItem
               key={p.keyword}
-              type="button"
-              role="menuitem"
-              className={styles.item}
               title={p.hint ?? p.keyword}
+              hint={p.keyword}
               onClick={() => add(p.keyword)}
             >
-              <span className={styles.itemLabel}>
-                {p.label} <span className={styles.badge}>LLM</span>
-              </span>
-              <span className={styles.itemKey}>{p.keyword}</span>
-            </button>
+              {p.label} <span className={styles.badge}>LLM</span>
+            </MenuItem>
           ))}
         </div>
       )}

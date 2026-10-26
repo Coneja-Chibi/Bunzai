@@ -9,6 +9,7 @@ import { InkDialog } from "../../components/ink-dialog";
 import type { SceneFolder } from "../../../stage/contracts/chat-store";
 import type { SceneSummary } from "../../../studio/scenes";
 import { folderTint } from "./scenes-core";
+import { Button, ListRow } from "../../components/button";
 
 export function RenameSceneDialog({ title, onCancel, onSave }: { title: string; onCancel(): void; onSave(title: string): void }): JSX.Element {
   const [value, setValue] = useState(title);
@@ -17,7 +18,7 @@ export function RenameSceneDialog({ title, onCancel, onSave }: { title: string; 
       <form className="scn-cut" onSubmit={(e) => { e.preventDefault(); onSave(value); }}>
         <h3>Rename scene</h3>
         <input autoFocus value={value} onChange={(e) => setValue(e.target.value)} aria-label="Scene title" />
-        <div className="row"><button type="button" className="no" onClick={onCancel}>Cancel</button><button type="submit" className="yes">Rename</button></div>
+        <div className="row"><Button onClick={onCancel}>Cancel</Button><Button type="submit" variant="primary">Rename</Button></div>
       </form>
     </InkDialog>
   );
@@ -32,7 +33,7 @@ export function CutSceneDialog({ scenes, onCancel, onCut }: { scenes: SceneSumma
         <p>{scenes.length === 1
           ? `"${scenes[0]!.title}" and every message in it, all of its takes included, go to the Trash. You can restore it for 3 days.`
           : "Every message in them, all of their takes included, go to the Trash. You can restore them for 3 days."}</p>
-        <div className="row"><button type="button" className="no" onClick={onCancel}>Cancel</button><button type="button" className="yes" onClick={onCut}>Delete</button></div>
+        <div className="row"><Button onClick={onCancel}>Cancel</Button><Button variant="danger" onClick={onCut}>Delete</Button></div>
       </div>
     </InkDialog>
   );
@@ -45,7 +46,7 @@ export function FolderNameDialog({ mode, initial, onCancel, onSave }: { mode: "n
       <form className="scn-cut" onSubmit={(e) => { e.preventDefault(); if (value.trim()) onSave(value.trim()); }}>
         <h3>{mode === "new" ? "New folder" : "Rename folder"}</h3>
         <input autoFocus value={value} onChange={(e) => setValue(e.target.value)} aria-label="Folder name" placeholder="Chapter name" />
-        <div className="row"><button type="button" className="no" onClick={onCancel}>Cancel</button><button type="submit" className="yes">{mode === "new" ? "Create" : "Rename"}</button></div>
+        <div className="row"><Button onClick={onCancel}>Cancel</Button><Button type="submit" variant="primary">{mode === "new" ? "Create" : "Rename"}</Button></div>
       </form>
     </InkDialog>
   );
@@ -58,7 +59,7 @@ export function DeleteFolderDialog({ name, onCancel, onDelete }: { name: string;
         <div className="eb">The Cutting Room</div>
         <h3>Delete "{name}"?</h3>
         <p>The folder goes away; the scenes in it stay on your stage, just out of any folder.</p>
-        <div className="row"><button type="button" className="no" onClick={onCancel}>Cancel</button><button type="button" className="yes" onClick={onDelete}>Delete</button></div>
+        <div className="row"><Button onClick={onCancel}>Cancel</Button><Button variant="danger" onClick={onDelete}>Delete</Button></div>
       </div>
     </InkDialog>
   );
@@ -75,14 +76,12 @@ export function MoveToFolderDialog({ scene, folders, onCancel, onPick }: {
       <div className="scn-cut folder-pick">
         <h3>Move &ldquo;{scene.title}&rdquo;</h3>
         <div className="pick-list">
-          <button type="button" className={!scene.folderId ? "on" : undefined} onClick={() => onPick(null)}>No folder</button>
+          <ListRow selected={!scene.folderId} onClick={() => onPick(null)} label="No folder" />
           {folders.map((f) => (
-            <button type="button" key={f.id} className={scene.folderId === f.id ? "on" : undefined} onClick={() => onPick(f.id)}>
-              <span className="ch-dot" style={{ background: folderTint(f.id) }} />{f.name}
-            </button>
+            <ListRow key={f.id} selected={scene.folderId === f.id} onClick={() => onPick(f.id)} leading={<span className="ch-dot" style={{ background: folderTint(f.id) }} />} label={f.name} />
           ))}
         </div>
-        <div className="row"><button type="button" className="no" onClick={onCancel}>Cancel</button></div>
+        <div className="row"><Button onClick={onCancel}>Cancel</Button></div>
       </div>
     </InkDialog>
   );

@@ -11,6 +11,8 @@ of the work even though commit messages do not require special trailers.
 | --- | --- | --- | --- |
 | structural | pre-commit, Stop | the line cap, core purity/sibling, HTML sink, or shell import rules fail | fix the structural violation |
 | staged-colors | pre-commit | staged UI additions contain hardcoded colors | use theme tokens |
+| style | pre-commit | staged UI additions name a font or use a viewport width media query | theme font tokens; `@container` queries; `style-ok: <reason>` |
+| clones | pre-commit | a staged function or CSS rule nearly copies one in another file and the pair is not in `clones-baseline.json` | call or extend the existing one; `clone-ok: <reason>`; `bun run clones:baseline` after a merge |
 | component-catalog | relevant pre-commit changes | the generated component reference is stale | regenerate the catalog |
 | code-map | pre-commit, when mapped source changes | the map cannot be written; otherwise it regenerates docs/generated/CODE-MAP.md from the staged files and stages it | fix the generator error |
 | staged-ui-lint | pre-commit | staged live UI TSX has an ESLint error or warning | fix the staged files |

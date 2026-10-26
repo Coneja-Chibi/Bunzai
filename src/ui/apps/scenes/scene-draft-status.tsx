@@ -7,6 +7,7 @@
  */
 import { useState, type JSX } from "react";
 import type { Perspective } from "../../../core/draft-prompts";
+import { Button, IconButton, Segmented } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { PERSPECTIVE_PILL, ribbonCopy } from "./draft-core";
 import type { ComposerDrafts } from "./use-composer-drafts";
@@ -15,10 +16,8 @@ import type { ComposerDrafts } from "./use-composer-drafts";
 export function PerspectivePill({ onPick, disabled }: { onPick(perspective: Perspective): void; disabled?: boolean }): JSX.Element {
   const [active, setActive] = useState<Perspective>("1st");
   return (
-    <div className="ds-pill" role="group" aria-label="Perspective">
-      {PERSPECTIVE_PILL.map((p) => (
-        <button key={p.key} type="button" title={p.title} aria-pressed={active === p.key} disabled={disabled} onClick={() => { setActive(p.key); onPick(p.key); }}>{p.label}</button>
-      ))}
+    <div className="ds-pill">
+      <Segmented label="Perspective" size="sm" value={active} items={PERSPECTIVE_PILL.map((p) => ({ value: p.key, label: p.label, title: p.title, disabled }))} onChange={(key) => { setActive(key); onPick(key); }} />
     </div>
   );
 }
@@ -34,7 +33,7 @@ export function DraftStatusStrip({ drafts, persona }: { drafts: ComposerDrafts; 
         <div className="ds-rib" role="status">
           <span className="ds-eye">{status.tag === "working" && <Ic name="lucide:loader-circle" size={14} />}{ribbon.eyebrow}</span>
           <span className="ds-help">{ribbon.helper}</span>
-          <button type="button" className="ds-btn" onClick={drafts.cancel}>Cancel</button>
+          <Button variant="quiet" size="sm" onClick={drafts.cancel}>Cancel</Button>
         </div>
       )}
       {status.tag === "expand" && <PerspectivePill onPick={drafts.expand} />}
@@ -43,9 +42,9 @@ export function DraftStatusStrip({ drafts, persona }: { drafts: ComposerDrafts; 
           <div className="ds-rib">
             <span className="ds-eye">Polished</span>
             <span className="ds-help">Input updated. Review the diff or revert.</span>
-            <button type="button" className="ds-btn" aria-expanded={diff} onClick={() => setDiff(!diff)}>{diff ? "Hide" : "Show"} diff</button>
-            <button type="button" className="ds-btn" title="Restore original draft" onClick={() => { setDiff(false); drafts.revert(); }}>Revert</button>
-            <button type="button" className="ds-btn" title="Keep polished, hide this panel" aria-label="Keep polished draft and close comparison" onClick={drafts.dismiss}><Ic name="lucide:x" size={14} /></button>
+            <Button size="sm" aria-expanded={diff} onClick={() => setDiff(!diff)}>{diff ? "Hide" : "Show"} diff</Button>
+            <Button size="sm" title="Restore original draft" onClick={() => { setDiff(false); drafts.revert(); }}>Revert</Button>
+            <IconButton variant="quiet" size="sm" title="Keep polished, hide this panel" label="Keep polished draft and close comparison" icon="lucide:x" onClick={drafts.dismiss} />
           </div>
           {diff && (
             <div className="ds-cols">
@@ -58,7 +57,7 @@ export function DraftStatusStrip({ drafts, persona }: { drafts: ComposerDrafts; 
       {(status.tag === "note" || status.tag === "error") && (
         <div className={`ds-rib${status.tag === "error" ? " bad" : ""}`} role={status.tag === "error" ? "alert" : "status"}>
           <span className="ds-help">{status.text}</span>
-          <button type="button" className="ds-btn" aria-label="Dismiss" onClick={drafts.dismiss}><Ic name="lucide:x" size={14} /></button>
+          <IconButton variant="quiet" size="sm" label="Dismiss" icon="lucide:x" onClick={drafts.dismiss} />
         </div>
       )}
     </div>

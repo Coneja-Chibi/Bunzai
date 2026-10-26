@@ -114,7 +114,7 @@ describe("ScenePage: the Stage look", () => {
   test("a Chat Theme card repaints the root theme; Basic keeps the Stage button so the way back stays", async () => {
     const flushSync = await mount({});
     click(flushSync, host.querySelector("[aria-label='Stage']")!);
-    click(flushSync, [...host.querySelectorAll(".sa-card")].find((c) => c.textContent?.startsWith("Basic"))!);
+    click(flushSync, [...host.querySelectorAll(".sa-cards [data-control='card']")].find((c) => c.textContent?.startsWith("Basic"))!);
     expect(scs().dataset["chatTheme"]).toBe("basic");
     expect(host.querySelector("[aria-label='Stage'][data-wing='stage']")).not.toBeNull();
     expect(host.querySelector("[aria-label='AI'][data-wing='ai']")).not.toBeNull();

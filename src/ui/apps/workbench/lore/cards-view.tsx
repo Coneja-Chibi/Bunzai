@@ -3,6 +3,7 @@
  * Wireframe-faithful: title + mode, 3-line peek, key chips, tok/on foot.
  * Mode chip cycles Keyword / Always on / By meaning. Click tile opens Pages.
  */
+import { Chip, Tile } from "../../../components/button";
 import { useCallback, useMemo, useRef, type JSX, type KeyboardEvent } from "react";
 import type { LorebookEntry } from "../../../../entities/lorebook/schema";
 import { estimateEntryTokens, fieldVisible, type LoreWriteForProfile } from "../../../../core/lore";
@@ -24,11 +25,10 @@ const MODE_LABEL: Record<EntryFireMode, string> = {
   meaning: "By meaning",
 };
 
-const modeClass = (mode: EntryFireMode): string => {
-  const base = styles.mode ?? "mode";
-  if (mode === "always") return `${base} ${styles.mAlways ?? ""}`.trim();
-  if (mode === "meaning") return `${base} ${styles.mMeaning ?? ""}`.trim();
-  return `${base} ${styles.mKey ?? ""}`.trim();
+const MODE_TONE: Record<EntryFireMode, string> = {
+  keyed: "var(--stage-ok)",
+  always: "var(--stage-var)",
+  meaning: "var(--accent)",
 };
 
 const cycleMode = (mode: EntryFireMode, vectorOk: boolean): EntryFireMode => {
@@ -84,7 +84,7 @@ export function CardsView({
           data-index={virtualRow.index} style={{ transform: `translateY(${String(virtualRow.start)}px)` }}>
       {(rows[virtualRow.index] ?? []).map((cell) => {
         const flat = virtualRow.index * Math.max(1, cols) + rows[virtualRow.index]!.indexOf(cell);
-        if ("add" in cell) return <button key={rowKeys[flat]} data-pick={rowKeys[flat]} type="button" className={styles.ghost} onClick={onAdd}>+ New entry</button>;
+        if ("add" in cell) return <Tile key={rowKeys[flat]} kind="add" label="New entry" data-pick={rowKeys[flat]} onClick={onAdd} />;
         const e = cell.entry;
         const mode = entryFireMode(e);
         const keys = e.triggers.map((t) => t.keyword).filter(Boolean);
@@ -109,16 +109,15 @@ export function CardsView({
           >
             <div className={styles.echead}>
               <b className={styles.etitle}>{e.title || "(untitled)"}</b>
-              <button
-                type="button"
-                className={modeClass(mode)}
+              <Chip
+                color={MODE_TONE[mode]}
                 onClick={(ev) => {
                   ev.stopPropagation();
                   onPatch(e.id, fireModePatch(cycleMode(mode, vectorOk)));
                 }}
               >
                 {MODE_LABEL[mode]}
-              </button>
+              </Chip>
             </div>
             <p className={styles.esnip}>
               {preview || "No passage yet."}

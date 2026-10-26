@@ -3,6 +3,7 @@
  * one square tile per panel the wing owns, the open one marked, each with a small subtitle. The strip sticks to the
  * top of the panel. A wing with one panel shows the breadcrumb alone, the panel's name (and its subtitle) at the far end.
  */
+import { Tabs } from "../../components/button";
 import type { JSX } from "react";
 
 export interface FoldoutTab<Id extends string = string> { id: Id; label: string; meta?: string }
@@ -16,13 +17,7 @@ export function FoldoutTabs<Id extends string>({ area, group, tabs, active, onSe
     <nav className="fold" aria-label={`${area} navigation, ${group}`} data-part="scene.wings.tabs">
       <div className="crumb">{area} <i>/</i> <b>{group}</b>{only && <span className="cl">{only.label}{only.meta ? ` · ${only.meta}` : ""}</span>}</div>
       {!only && (
-        <div className="tabs" role="tablist" aria-label={`${group} sections`}>
-          {tabs.map((t) => (
-            <button type="button" key={t.id} role="tab" aria-selected={t.id === active} className={t.id === active ? "on" : undefined} onClick={() => onSelect(t.id)}>
-              <b>{t.label}</b>{t.meta && <small>{t.meta}</small>}
-            </button>
-          ))}
-        </div>
+        <Tabs label={`${group} sections`} items={tabs.map((t) => ({ value: t.id, label: <><b>{t.label}</b>{t.meta && <small>{t.meta}</small>}</> }))} value={active} onChange={onSelect} />
       )}
     </nav>
   );

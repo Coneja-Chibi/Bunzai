@@ -8,6 +8,7 @@
  */
 import type { JSX, ReactNode } from "react";
 import type { AppContext } from "../../app-contract";
+import { Segmented } from "../../components/button";
 import styles from "./styles.module.css";
 
 export interface SettingsSection {
@@ -40,27 +41,19 @@ export function SegControl<T extends string>({
   current,
   onPick,
   disabled = false,
+  label = "Choose one",
 }: {
   options: { value: T; label: string }[];
   current: T;
   onPick: (value: T) => void;
   /** Reads as it is but cannot be changed (a setting another one has switched off). */
   disabled?: boolean;
+  /** Spoken name of the group. */
+  label?: string;
 }): JSX.Element {
   return (
-    <div className={styles.seg} data-sx="seg">
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          disabled={disabled}
-          className={opt.value === current ? styles.on : undefined}
-          aria-pressed={opt.value === current}
-          onClick={() => onPick(opt.value)}
-        >
-          {opt.label}
-        </button>
-      ))}
+    <div data-sx="seg">
+      <Segmented label={label} items={options.map((o) => ({ ...o, disabled }))} value={current} onChange={onPick} />
     </div>
   );
 }

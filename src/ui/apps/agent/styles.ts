@@ -99,9 +99,6 @@ html[data-surface-ui-panel="gilt-frame"] .agent-room{--agent-primary:var(--actio
 export const AGENT_TALK_STYLE = `
 /* Attached pictures, above the composer. Clicking one removes it, so the whole tile is the button. */
 .agent-room__shots{display:flex;gap:.4rem;flex-wrap:wrap;padding:.4rem .5rem 0}
-.agent-room__shots button{position:relative;padding:0;border:1px solid var(--kit-line);background:none;cursor:pointer;line-height:0}
-.agent-room__shots img{width:3rem;height:3rem;object-fit:cover;display:block}
-.agent-room__shots button:hover{border-color:var(--kit-bad)}
 .agent-room__composer{position:relative;display:flex;align-items:stretch;gap:0;background:var(--kit-well);
   border-top:1px solid var(--kit-seam);padding:.5rem .7rem;flex:none}
 /* The rose prompt block, fused to the field's left border. Kit: "a real stamp, not a marker". */
@@ -114,24 +111,10 @@ export const AGENT_TALK_STYLE = `
 .agent-room__composer textarea::placeholder{color:var(--kit-quiet)}
 .agent-room__composer textarea:focus{outline:none;border-color:var(--accent)}
 .agent-room__composer textarea:disabled{color:var(--kit-quiet);cursor:not-allowed}
-.agent-room__composer button{flex:none;border:1px solid var(--kit-line);border-left:0;
-  background:var(--kit-panel);color:var(--kit-text);font-family:var(--font-mono);font-weight:700;
-  font-size:var(--text-control);letter-spacing:.04em;text-transform:uppercase;padding:0 .8rem;cursor:pointer}
-.agent-room__composer button:hover:not(:disabled){background:var(--kit-lift)}
-.agent-room__composer button:disabled{color:var(--kit-quiet);cursor:not-allowed}
-/* Stopping is the rose act while a turn runs, the way "working" turns rose in Kit's status bar. */
-.agent-room__stop{flex:none;border:1px solid var(--kit-line);border-left:0;
-  background:var(--agent-danger);color:var(--danger-fg);font-family:var(--font-mono);
-  font-weight:700;font-size:var(--text-control);letter-spacing:.04em;text-transform:uppercase;
-  padding:0 .8rem;cursor:pointer}
 `;
 
 /** The offered actions, drawn as Kit's key hints rather than as buttons. */
 export const AGENT_CHIP_STYLE = `
-/* the band fold: a hairline key in the corner, never competing with the conversation */
-.agent-room__fold{position:absolute;top:.15rem;right:.35rem;z-index:2;background:transparent;
-  border:none;cursor:pointer;color:var(--kit-quiet);font-size:var(--text-control);line-height:1;padding:.15rem .3rem}
-.agent-room__fold:hover{color:var(--kit-text)}
 /* queued messages: waiting, and visibly so. A send that sat silent would read as one that failed. */
 .agent-room__queue{list-style:none;margin:0;padding:.25rem .7rem;display:flex;flex-direction:column;gap:.25rem;flex:none}
 .agent-room__queue li{display:flex;align-items:center;gap:.4rem;min-width:0;
@@ -140,16 +123,7 @@ export const AGENT_CHIP_STYLE = `
   text-transform:uppercase;color:var(--kit-quiet);flex:none}
 .agent-room__queuetext{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   font-size:var(--text-body);color:var(--kit-soft)}
-.agent-room__queue button{flex:none;background:transparent;border:1px solid var(--kit-line);
-  color:var(--kit-quiet);cursor:pointer;font-family:var(--kit-mono);font-size:var(--text-control);
-  letter-spacing:.04em;text-transform:uppercase;padding:.15rem .35rem}
-.agent-room__queue button:hover{color:var(--kit-text);border-color:var(--kit-mut)}
 .agent-room__chips{display:flex;flex-wrap:wrap;gap:.3rem;padding:.3rem .7rem;flex:none}
-.agent-room__chips button{background:var(--kit-stamp);border:1px solid var(--kit-line);
-  color:var(--kit-soft);font-family:var(--font-mono);font-size:var(--text-control);letter-spacing:.04em;
-  text-transform:uppercase;padding:.25rem .55rem;cursor:pointer}
-.agent-room__chips button:hover:not(:disabled){background:var(--kit-lift);color:var(--kit-text)}
-.agent-room__chips button:disabled{color:var(--kit-quiet);cursor:not-allowed}
 `;
 
 /**
@@ -160,11 +134,11 @@ export const AGENT_GATE_STYLE = `
 .gate-card{display:flex;flex-direction:column;gap:.4rem;
   background:var(--kit-panel);border:1px solid var(--agent-structure);
   border-left:3px solid var(--agent-selection);padding:.6rem .7rem}
-.gate-card.host-protected{--font-body:"Atkinson Hyperlegible",sans-serif;--font-big:"Fraunces",serif;
-  --font-fancy:"Cinzel",serif;--font-mono:"IBM Plex Mono",monospace;
+.gate-card.host-protected{--font-body:"Atkinson Hyperlegible",sans-serif;--font-big:"Fraunces",serif; /* style-ok: protected host screen pins its fonts */
+  --font-fancy:"Cinzel",serif;--font-mono:"IBM Plex Mono",monospace; /* style-ok: protected host screen pins its fonts */
   --agent-primary:var(--host-rose);--agent-selection:var(--host-rose);--agent-action:var(--host-rose-deep);
   --agent-danger:var(--host-danger);--agent-structure:var(--host-edge);--agent-control:var(--host-boundary);
-  font-family:"Atkinson Hyperlegible",sans-serif;font-size:1rem;color:var(--host-ink)}
+  font-family:"Atkinson Hyperlegible",sans-serif;font-size:1rem;color:var(--host-ink)} /* style-ok: protected host screen pins its fonts */
 .gate-card__kick{margin:0;font-family:var(--font-mono);font-size:var(--text-meta);letter-spacing:.08em;
   text-transform:uppercase;color:var(--kit-rose)}
 .gate-card__title{font-family:var(--font-big);font-weight:900;font-size:.95rem;
@@ -177,14 +151,7 @@ export const AGENT_GATE_STYLE = `
   padding:.5rem .6rem;font-family:var(--font-mono);font-size:var(--text-control);line-height:1.5;
   color:var(--kit-soft);white-space:pre-wrap;overflow-wrap:anywhere;max-height:16rem;overflow:auto}
 .gate-card__row{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.15rem}
-.gate-card__row button{background:var(--kit-floor);border:1px solid var(--kit-line);
-  color:var(--kit-soft);font-family:var(--font-mono);font-weight:700;font-size:var(--text-control);
-  letter-spacing:.08em;text-transform:uppercase;padding:.28rem .6rem;cursor:pointer}
-.gate-card__row button:hover:not(:disabled){background:var(--kit-lift);color:var(--kit-text)}
-.gate-card__row button:disabled{color:var(--kit-quiet);cursor:not-allowed}
-.gate-card__yes{color:var(--kit-teal);border-color:var(--kit-teal-deep)}
-.gate-card__abort{margin-left:auto;color:var(--agent-danger);border-color:var(--agent-danger)}
-html[data-surface-ui-controls="quiet"] .gate-card__abort{background:var(--danger);color:var(--danger-fg)}
+.gate-card__row > :last-child{margin-left:auto}
 `;
 
 /**
@@ -218,9 +185,6 @@ export const AGENT_KIT_STYLE = `
 
 /* The landed trace: one indented line, not a megablock. */
 .kit-trace{padding:.15rem .7rem .15rem 1.4rem}
-.kit-trace__line{background:none;border:0;padding:0;cursor:pointer;font-family:var(--font-mono);
-  font-size:var(--text-control);color:var(--kit-mut);text-align:left}
-.kit-trace__line:hover{color:var(--kit-quiet)}
 .kit-trace__full{margin:.3rem 0 0;font-family:var(--font-mono);font-size:var(--text-body);line-height:1.5;
   color:var(--kit-quiet);white-space:pre-wrap;overflow-wrap:anywhere}
 

@@ -69,101 +69,14 @@
   gap: 0.35rem;
 }
 
-.iconBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  color: var(--stage-soft);
-  padding: 0.3rem;
-  cursor: pointer;
-  transition: transform 0.1s ease, color 0.1s ease;
-}
-
-.iconBtn:hover {
-  transform: translate(-1px, -1px);
-  color: var(--pa);
-}
-
-.iconBtn:active {
-  transform: translate(1px, 1px);
-  box-shadow: none;
-}
-
-.addBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border: 2px solid var(--stage-black);
-  background: var(--pa);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  color: var(--stage-ink, var(--stage));
-  font: 800 var(--text-control) var(--font-big);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
-  transition: transform 0.1s ease;
-}
-html[data-surface-ui-controls="ink"] .addBtn,
-html[data-surface-ui-controls="ink"] .tabOn { background: var(--accent-deep); color: var(--selection-fg); }
-
-.addBtn:hover {
-  transform: translate(-1px, -1px);
-}
-
-.addBtn:active {
-  transform: translate(1px, 1px);
-  box-shadow: none;
-}
-
 /* ---------- filter tabs ---------- */
 
-.tabs {
-  display: flex;
-  border: 2px solid var(--stage-black);
-}
 
-.tab {
-  flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  border: 0;
-  border-right: 2px solid var(--stage-black);
-  background: color-mix(in srgb, var(--stage-card) 3%, transparent);
-  color: var(--stage-mute);
-  font: 700 var(--text-control) var(--font-body);
-  padding: 0.4rem 0.5rem;
-  cursor: pointer;
-}
-
-.tab:last-child {
-  border-right: 0;
-}
-
-.tab:hover {
-  color: var(--stage-soft);
-}
-
-.tabOn {
-  background: var(--pa);
-  color: var(--stage-ink, var(--stage));
-}
 
 .tabCount {
   font: 800 var(--text-meta) var(--font-mono);
   background: color-mix(in srgb, var(--stage-card) 8%, transparent);
   padding: 0.05rem 0.3rem;
-}
-
-.tabCountOn {
-  /* solid ink chip: a translucent wash over an arbitrary accent fill cannot promise contrast */
-  background: var(--stage-ink);
-  color: var(--stage-white);
 }
 
 /* ---------- bulk bar ---------- */
@@ -191,26 +104,4 @@ html[data-surface-ui-controls="ink"] .tabOn { background: var(--accent-deep); co
   width: 2px;
   align-self: stretch;
   background: color-mix(in srgb, var(--pa) 30%, transparent);
-}
-
-.bulkBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  font: 700 var(--text-control) var(--font-body);
-  padding: 0.22rem 0.45rem;
-  cursor: pointer;
-}
-
-.bulkBtn:hover {
-  border-color: var(--pa);
-  color: var(--pa);
-}
-
-.bulkDanger:hover {
-  border-color: var(--stage-danger-edge, var(--stage-warn));
-  color: var(--stage-danger-text, var(--stage-warn));
 }

@@ -5,6 +5,7 @@
  * A storyboard tile is the taller card with its description and the Live or Off chip.
  */
 import type { CSSProperties, JSX, KeyboardEvent, MouseEvent } from "react";
+import { IconButton } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { PropTip } from "./prop-tip";
 import { reachNotes, type SceneProp } from "./prop-contract";
@@ -26,7 +27,7 @@ export function PropTile({ prop, on, tips, onToggle, onGear, subOn }: { prop: Sc
         <span className="pw-tile-name">{prop.name}</span>
         {story && <span className="pw-chip">{on ? "Live" : "Off"}</span>}
         {!story && dots("pw-dots")}
-        {on && onGear && <button type="button" className="pw-gear" aria-label={`Open ${prop.name} panel`} title={`Open ${prop.name} panel`} onClick={stop(onGear)}><Ic name="lucide:settings" size={14} /></button>}
+        {on && onGear && <IconButton size="sm" label={`Open ${prop.name} panel`} icon="lucide:settings" onClick={stop(onGear)} />}
       </div>
       {story && <p className="pw-tile-blurb">{prop.blurb}</p>}
       {story && dots("pw-dots low")}

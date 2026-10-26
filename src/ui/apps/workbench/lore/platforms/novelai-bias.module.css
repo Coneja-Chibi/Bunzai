@@ -29,19 +29,6 @@
   margin-left: auto;
 }
 
-.pcBiasDel {
-  border: 1px solid var(--stage-danger-edge);
-  background: transparent;
-  color: var(--stage-danger-text);
-  padding: 0.2rem 0.35rem;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
 .pcBiasPhrases {
   display: grid;
   gap: 0.2rem;
@@ -65,23 +52,4 @@
   flex-wrap: wrap;
   gap: 0.3rem;
   margin-top: 0.4rem;
-}
-
-.pcBiasAdd {
-  width: 100%;
-  border: 1px dashed var(--stage-seam);
-  background: transparent;
-  color: var(--stage-soft);
-  padding: 0.35rem;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.pcBiasAdd:hover {
-  border-color: var(--host);
-  color: var(--stage-card);
 }

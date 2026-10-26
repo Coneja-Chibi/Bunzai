@@ -20,11 +20,12 @@
   overflow-y: auto;
 }
 
-.virtualRow {
+.rows [data-control="row"] {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
+  transform: translateY(var(--row-y));
 }
 
 .tocTitle {
@@ -37,65 +38,6 @@
   margin: 0 0 0.5rem;
   display: flex;
   align-items: center;
-}
-
-.selMode {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  padding: 0.12rem 0.35rem;
-  cursor: pointer;
-}
-
-.selMode:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.trow {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  padding: 0.4rem 0.45rem;
-  cursor: pointer;
-  border-left: 3px solid transparent;
-  text-align: left;
-  width: 100%;
-  background: none;
-}
-
-.trowName {
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: var(--text-control);
-  color: var(--stage-soft);
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.trowDoes {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
-  font-size: var(--text-control);
-  line-height: 1.35;
-  color: var(--stage-kicker);
-}
-
-.trowOn {
-  background: color-mix(in srgb, var(--a, var(--accent)) 12%, transparent);
-  border-left-color: var(--a, var(--accent));
-}
-
-.trowOn .trowName {
-  color: var(--stage-card);
 }
 
 .pip {
@@ -125,26 +67,6 @@
   flex: none;
 }
 
-.tocAdd {
-  width: 100%;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 2px dashed var(--stage-seam);
-  background: none;
-  color: var(--stage-mute);
-  padding: 0.4rem;
-  margin-top: 0.7rem;
-  cursor: pointer;
-}
-
-.tocAdd:hover {
-  color: var(--a, var(--accent));
-  border-color: var(--a, var(--accent));
-}
-
 /* the quiet slow chip (R4 health): a heavy pattern flagged at author time, never a blocker */
 .trowSlow {
   flex: none;
@@ -156,3 +78,5 @@
   padding: 0.08rem 0.28rem;
   margin-left: auto;
 }
+
+.tocTitle > :last-child { margin-left: auto; }

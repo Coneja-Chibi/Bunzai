@@ -13,5 +13,4 @@ export default variantCss("scene.message", "prose", `
 & .prose q{color:color-mix(in srgb,var(--tone) 60%,var(--text))}
 & .acts{right:0;bottom:auto;top:-2.2rem;padding:0;background:none;border:0;backdrop-filter:none}
 & .rb-list{margin-bottom:2.4rem}
-& .acts button{color:var(--text-dim)}
 `, ".scs");

@@ -4,20 +4,18 @@
  * next beat (the Director writes one every turn and RoleCall never shows it).
  */
 import { useState, type JSX } from "react";
+import { Button, Disclosure } from "../../../../components/button";
 import { Ic, type IconName } from "../../../../_shared/ic";
 import type { DirectorArc, DirectorState } from "../../../../../stage/contracts/director-types";
 import { groupArcs, sectionArcs } from "./director-core";
-import { Badge, Chevron, HorizonBadge, StatusBadge } from "./director-parts";
+import { Badge, HorizonBadge, StatusBadge } from "./director-parts";
 
 function ArcCard({ arc, seeds, open, onToggle, dimmed, onResolve, locked }: { arc: DirectorArc; seeds: DirectorState["seeds"]; open: boolean; onToggle(): void; dimmed: boolean; onResolve?: () => void; locked: boolean }): JSX.Element {
   const beat = arc.nextBeat?.status === "pending" ? arc.nextBeat : undefined;
   const planted = seeds.filter((s) => s.relatedArcId === arc.id);
   return (
     <div className={`dr-arc${dimmed ? " dim" : ""}${open ? " open" : ""}`} data-part="scene.director.arc">
-      <button type="button" className="dr-arc-h" aria-expanded={open} onClick={onToggle}>
-        <span className="dr-arc-t"><HorizonBadge horizon={arc.horizon} /><b>{arc.title}</b></span>
-        <span className="dr-arc-s"><StatusBadge status={arc.status} /><Chevron open={open} /></span>
-      </button>
+      <Disclosure open={open} onClick={onToggle} label={<span className="dr-arc-t"><HorizonBadge horizon={arc.horizon} /><b>{arc.title}</b></span>} trailing={<StatusBadge status={arc.status} />} />
       {open && (
         <div className="dr-arc-b">
           {arc.description && <p className="dr-dim big">{arc.description}</p>}
@@ -55,7 +53,7 @@ function ArcCard({ arc, seeds, open, onToggle, dimmed, onResolve, locked }: { ar
             </div>
           )}
           {onResolve && (
-            <button type="button" className="dr-resolve" disabled={locked} data-part="scene.director.arc.complete" onClick={onResolve}><Ic name="lucide:circle-check" size={14} />Mark as Complete</button>
+            <div className="dr-resolve"><Button size="sm" tone="var(--stage-ok)" icon="lucide:circle-check" disabled={locked} data-part="scene.director.arc.complete" onClick={onResolve}>Mark as Complete</Button></div>
           )}
         </div>
       )}

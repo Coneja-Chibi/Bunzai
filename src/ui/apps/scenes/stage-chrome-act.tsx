@@ -7,6 +7,7 @@ import type { JSX } from "react";
 import { SwitchRow } from "./stage-controls";
 import type { EdgeStyle } from "./stage-look-core";
 import type { StageActProps } from "./stage-message-act";
+import { Card } from "../../components/button";
 
 const EDGES: readonly { id: EdgeStyle; label: string; hint: string }[] = [
   { id: "single", label: "Single", hint: "Clean glow line" },
@@ -23,9 +24,10 @@ export function ChromeAct({ look, set }: StageActProps): JSX.Element {
           <span className="sa-cap">Edge Indicator Style</span>
           <div className="sa-tiles">
             {EDGES.map((e) => (
-              <button type="button" key={e.id} className={`sa-tile${look.collapseStyle === e.id ? " on" : ""}`} aria-pressed={look.collapseStyle === e.id} onClick={() => set("collapseStyle", e.id)}>
-                <span className={`sa-edgeprev ${e.id}`} aria-hidden="true" /><span>{e.label}</span><small>{e.hint}</small>
-              </button>
+              <Card key={e.id} data-part="scene.stage.edge" kind="choice" selected={look.collapseStyle === e.id} aria-pressed={look.collapseStyle === e.id} onClick={() => set("collapseStyle", e.id)}
+                heading={e.label} subtitle={e.hint}>
+                <span className={`sa-edgeprev ${e.id}`} aria-hidden="true" />
+              </Card>
             ))}
           </div>
         </div>

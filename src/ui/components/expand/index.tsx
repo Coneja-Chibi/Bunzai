@@ -8,6 +8,7 @@
  * by hand - that is what expand-core's caret helpers are for. ExpandTextarea is the drop-in for the
  * common case: a plain textarea whose value lives in its parent.
  */
+import { Button } from "../button";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { JSX, ReactNode, TextareaHTMLAttributes } from "react";
 import { DialogCore } from "../dialog-core";
@@ -74,16 +75,18 @@ export function ExpandBox({ label, children, onExpandedChange }: ExpandBoxProps)
   return (
     <div ref={inlineRef} className={styles.frame}>
       {expanded ? <div className={styles.away}>Editing fullscreen</div> : children}
-      <button
-        type="button"
-        ref={triggerRef}
-        className={`${styles.toggle} ${styles.inlineToggle}`}
-        onClick={open}
-        aria-expanded={expanded}
-        aria-label={`Expand ${label}`}
-      >
-        Expand
-      </button>
+      <span className={styles.inlineToggle}>
+        <Button
+          size="sm"
+          variant="quiet"
+          ref={triggerRef}
+          onClick={open}
+          aria-expanded={expanded}
+          aria-label={`Expand ${label}`}
+        >
+          Expand
+        </Button>
+      </span>
       {expanded &&
         <DialogCore
           placement="fullscreen"
@@ -102,9 +105,9 @@ export function ExpandBox({ label, children, onExpandedChange }: ExpandBoxProps)
                   {label}
                 </span>
                 <span className={styles.hint}>Esc closes</span>
-                <button type="button" className={styles.toggle} onClick={close} aria-label={`Collapse ${label}`}>
+                <Button size="sm" variant="quiet" onClick={close} aria-label={`Collapse ${label}`}>
                   Collapse
-                </button>
+                </Button>
               </div>
               <div className={styles.body}>{children}</div>
         </DialogCore>

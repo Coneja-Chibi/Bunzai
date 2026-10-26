@@ -5,6 +5,7 @@
  * sub-tab is the wing's to keep (it survives a visit to Memory); the bodies are mount points the slices fill.
  */
 import type { JSX } from "react";
+import { Button, Tabs } from "../../../components/button";
 
 export type InspectorTab = "this-turn" | "next-send" | "lore-state";
 
@@ -30,17 +31,10 @@ export function InspectorShell({ bodies, tab, onTab, onReview }: { bodies: Inspe
         <p className="cx-eb">Prompt Inspector</p>
         <h2>What the AI was sent</h2>
         <p className="cx-sub">Recorded calls for each turn. Next send is a forecast.</p>
-        <div className="cx-tabs" role="tablist" aria-label="Prompt Inspector">
-          {TABS.map((t) => (
-            <button type="button" key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : undefined} onClick={() => onTab(t.id)}>
-              <b>{t.label}</b>
-              <small>{metaOf[t.id]}</small>
-            </button>
-          ))}
-          <button type="button" onClick={onReview}>
-            <b>Review</b>
-            <small>open review</small>
-          </button>
+        <div className="cx-tabs">
+          <Tabs label="Prompt Inspector" value={tab} onChange={onTab}
+            items={TABS.map((t) => ({ value: t.id, label: <><b>{t.label}</b><small>{metaOf[t.id]}</small></> }))} />
+          <Button size="sm" onClick={onReview}><b>Review</b><small>open review</small></Button>
         </div>
       </div>
       <div className="cx-body">{tab === "this-turn" ? bodies.thisTurn : tab === "next-send" ? bodies.nextSend : bodies.loreState}</div>

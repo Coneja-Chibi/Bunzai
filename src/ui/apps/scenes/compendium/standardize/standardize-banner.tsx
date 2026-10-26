@@ -9,6 +9,7 @@
  */
 import { useState, type JSX } from "react";
 import type { AppContext } from "../../../../app-contract";
+import { Button, Chip, IconButton, Segmented } from "../../../../components/button";
 import { accessOf, canWrite, isActive, RANGES, type ResolvedCompendium } from "../../../../../core/compendium";
 import type { Chat, ChatCompendiumPatch } from "../../../../../stage/contracts/chat-store";
 import { toErrorMessage } from "../../../../_shared/error-message";
@@ -25,9 +26,9 @@ function Stepper({ label, hint, value, min, max, step, wide, onChange, extra }: 
     <div className="fld">
       <label>{label}</label>
       <div className="stp">
-        <button type="button" aria-label={`${label}: less`} disabled={value <= min} onClick={() => onChange(Math.max(min, value - step))}>-</button>
+        <IconButton size="sm" label={`${label}: less`} icon="lucide:minus" disabled={value <= min} onClick={() => onChange(Math.max(min, value - step))} />
         <input type="number" aria-label={label} className={wide ? "w" : undefined} min={min} max={max} value={value} onChange={(e) => { const n = Number.parseInt(e.target.value, 10); if (!Number.isNaN(n) && n >= min && n <= max) onChange(n); }} />
-        <button type="button" aria-label={`${label}: more`} disabled={value >= max} onClick={() => onChange(Math.min(max, value + step))}>+</button>
+        <IconButton size="sm" label={`${label}: more`} icon="lucide:plus" disabled={value >= max} onClick={() => onChange(Math.min(max, value + step))} />
         {extra}
       </div>
       <small>{hint}</small>
@@ -84,34 +85,31 @@ export function StandardizeBanner({ ctx, chat, onChat, bookId, model, std }: { c
               <h2>{waiting} classic {waiting === 1 ? "entry" : "entries"} waiting to convert</h2>
               <p>This lorebook has {waiting} classic {waiting === 1 ? "entry" : "entries"} that haven&apos;t been converted to the compendium format yet. This workflow converts them, and the typed tree follows from the entries. Your original content is kept in the run&apos;s receipts and the change is fully reversible.</p>
             </div>
-            <button type="button" className="cp-std-go" disabled={blocked !== null} title={blocked?.reason} onClick={() => void std.start(bookId, by === "tokens" ? { by, tokenBudget: budget } : { by })}>
+            <Button variant="primary" disabled={blocked !== null} title={blocked?.reason} onClick={() => void std.start(bookId, by === "tokens" ? { by, tokenBudget: budget } : { by })}>
               {blocked ? "STANDARDIZATION BLOCKED" : `STANDARDIZE ${GLYPH.right}`}
-            </button>
+            </Button>
           </div>
           {blocked && (
             <div className="why" role="note">
               <span>{blocked.reason}</span>
-              <button type="button" className="cp-std-btn" onClick={blocked.apply}>{blocked.fix}</button>
+              <Button size="sm" onClick={blocked.apply}>{blocked.fix}</Button>
             </div>
           )}
           <div className="ctl">
             <div className="mode">
               <label>Batch By</label>
-              <div className="seg">
-                <button type="button" aria-pressed={by === "entries"} className={by === "entries" ? "on" : undefined} onClick={() => setBy("entries")}>Entries</button>
-                <button type="button" aria-pressed={by === "tokens"} className={by === "tokens" ? "on" : undefined} onClick={() => setBy("tokens")}>Tokens</button>
-              </div>
+              <Segmented label="Standardize by" size="sm" value={by} onChange={setBy} items={[{ value: "entries", label: "Entries" }, { value: "tokens", label: "Tokens" }]} />
               {avg > 0 && <small>{GLYPH.dot} avg ~{avg.toLocaleString()} tokens/entry</small>}
             </div>
             <div className="row">
               {by === "entries" ? (
                 <Stepper label="Entries Per Batch" value={s.batchSize} min={RANGES.batchSize[0]} max={RANGES.batchSize[1]} step={5} onChange={(n) => write({ batchSize: n })}
                   hint={perBatch >= waiting && waiting > 0 ? "Single-batch run, best dedup" : `${batches} batch${batches === 1 ? "" : "es"} of ${perBatch}`}
-                  extra={<button type="button" className="all" disabled={waiting === 0} title={`Set to ${waiting} (process everything in one batch)`} onClick={() => write({ batchSize: Math.min(RANGES.batchSize[1], Math.max(1, waiting)) })}>ALL</button>} />
+                  extra={<Chip disabled={waiting === 0} title={`Set to ${waiting} (process everything in one batch)`} onClick={() => write({ batchSize: Math.min(RANGES.batchSize[1], Math.max(1, waiting)) })}>ALL</Chip>} />
               ) : (
                 <Stepper label="Token Budget Per Batch" value={budget} min={1_000} max={2_000_000} step={10_000} wide onChange={setBudget}
                   hint={avg === 0 ? "Nothing to measure yet" : `≈ ${perBatch} entries/batch ${GLYPH.dot} ${batches} batch${batches === 1 ? "" : "es"} total`}
-                  extra={<>{PRESETS.map((p) => <button key={p} type="button" className={`all${budget === p ? " on" : ""}`} onClick={() => setBudget(p)}>{p / 1000}K</button>)}</>} />
+                  extra={<>{PRESETS.map((p) => <Chip key={p} pressed={budget === p} onClick={() => setBudget(p)}>{p / 1000}K</Chip>)}</>} />
               )}
               <Stepper label="Parallelism" value={s.parallelism} min={RANGES.parallelism[0]} max={RANGES.parallelism[1]} step={1} hint="Concurrent batches" onChange={(n) => write({ parallelism: n })} />
               <Stepper label="Tool Loop Cap" value={s.maxRounds} min={RANGES.maxRounds[0]} max={RANGES.maxRounds[1]} step={1} hint="Max LLM rounds per batch" onChange={(n) => write({ maxRounds: n })} />
@@ -124,7 +122,7 @@ export function StandardizeBanner({ ctx, chat, onChat, bookId, model, std }: { c
             {revertable > 0 && (
               <div className="rev">
                 <div><span>Bad run? </span>Revert to undo all standardize writes (restores originals, retires splits). Export from the header first to keep a backup.</div>
-                <button type="button" className="cp-std-btn danger" disabled={std.reverting(bookId)} onClick={() => void std.revert(bookId)}>{std.reverting(bookId) ? "REVERTING..." : `${GLYPH.revert} REVERT`}</button>
+                <Button variant="danger" size="sm" disabled={std.reverting(bookId)} onClick={() => void std.revert(bookId)}>{std.reverting(bookId) ? "REVERTING..." : `${GLYPH.revert} REVERT`}</Button>
               </div>
             )}
           </div>

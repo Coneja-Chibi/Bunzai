@@ -9,6 +9,7 @@
  * The timings live in kit-widgets-core.ts and are Kit's own numbers, not approximations of them.
  */
 import { useState, type JSX } from "react";
+import { Disclosure } from "../components/button";
 import { useVisibleInterval } from "../_shared/use-visible-interval";
 import { breathInk, clockText, rehearsalTail, stageLabel, traceSummary } from "./kit-widgets-core";
 
@@ -81,9 +82,7 @@ export function RehearsalTrace({
 }): JSX.Element {
   return (
     <div className="kit-trace">
-      <button type="button" className="kit-trace__line" onClick={onToggle}>
-        {`· ${open ? "hide the rehearsal" : traceSummary(seconds, [...text].length)}`}
-      </button>
+      <Disclosure variant="line" chevron={false} open={open} label={`· ${open ? "hide the rehearsal" : traceSummary(seconds, [...text].length)}`} onClick={onToggle} />
       {open && <p className="kit-trace__full">{text}</p>}
     </div>
   );

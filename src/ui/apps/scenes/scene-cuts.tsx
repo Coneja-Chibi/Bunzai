@@ -5,6 +5,7 @@
  * place for 1 day.
  */
 import type { JSX } from "react";
+import { Button, MenuItem } from "../../components/button";
 import { InkDialog } from "../../components/ink-dialog";
 import { Ic } from "../../_shared/ic";
 
@@ -13,9 +14,9 @@ export type CutScope = "one" | "from";
 export function DeleteMenu({ onPick }: { onPick(scope: CutScope, skipConfirm: boolean): void }): JSX.Element {
   return (
     <div className="dd" role="menu">
-      <button type="button" role="menuitem" onClick={(e) => onPick("one", e.shiftKey)}><Ic name="lucide:trash-2" size={14} />Delete this message</button>
+      <MenuItem icon="lucide:trash-2" onClick={(e) => onPick("one", e.shiftKey)}>Delete this message</MenuItem>
       <hr className="menu-rule" />
-      <button type="button" role="menuitem" className="red" onClick={(e) => onPick("from", e.shiftKey)}><Ic name="lucide:trash-2" size={14} />Delete this &amp; all after</button>
+      <MenuItem danger icon="lucide:trash-2" onClick={(e) => onPick("from", e.shiftKey)}>Delete this &amp; all after</MenuItem>
     </div>
   );
 }
@@ -28,7 +29,7 @@ export function CutLine({ count, onRestore }: { count: number; onRestore(): void
       <span>{count === 1 ? "A message was cut here" : `${count} messages were cut here`}</span>
       <small>you can restore {count === 1 ? "it" : "them"} for 1 day</small>
       <span className="grow" />
-      <button type="button" onClick={onRestore}>Restore</button>
+      <Button size="sm" onClick={onRestore}>Restore</Button>
     </div>
   );
 }
@@ -41,8 +42,8 @@ export function CutFromDialog({ onCancel, onConfirm }: { onCancel(): void; onCon
         <h3>Cut from <em>here?</em></h3>
         <p>This cuts this message and every one after it. A restore line stays in their place for 1 day.</p>
         <div className="row">
-          <button type="button" className="no" autoFocus onClick={onCancel}>Cancel</button>
-          <button type="button" className="yes" onClick={onConfirm}>Delete from here</button>
+          <Button variant="quiet" autoFocus onClick={onCancel}>Cancel</Button>
+          <Button variant="danger" onClick={onConfirm}>Delete from here</Button>
         </div>
       </div>
     </InkDialog>

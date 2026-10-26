@@ -50,21 +50,6 @@
   gap: 0.25rem;
   margin-bottom: 0.35rem;
 }
-.mood {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  text-transform: uppercase;
-  border: 2px solid var(--edge);
-  background: var(--panel);
-  color: var(--text);
-  padding: 0.2rem 0.35rem;
-  cursor: pointer;
-}
-.moodOn {
-  background: var(--rose-deep); /* deep companion: bright rose fill can't carry small text at AA */
-  color: var(--stage-white);
-  border-color: var(--rose);
-}
 .ta {
   width: 100%;
   min-height: 2.8rem;

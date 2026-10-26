@@ -22,6 +22,7 @@ import { useFloatingPanel } from "./use-floating";
 import type { Edge } from "./dock-position";
 import { kitVars } from "./kit-vars";
 import { PREF_PANEL_MINIMISED } from "../apps/agent/styles";
+import { Button, IconButton } from "../components/button";
 import styles from "./floating-agent.module.css";
 
 /** Every edge and corner, in one place, so the handles and the geometry cannot disagree. */
@@ -58,17 +59,17 @@ export function FloatingAgent({
    */
   if (minimised) {
     return (
-      <button
-        type="button"
-        data-agent-panel="min"
-        className={styles.tab}
-        style={kitVars()}
-        title="Open the agent"
-        onClick={() => { setMinimised(false); ctx.prefs.set(PREF_PANEL_MINIMISED, false); }}
-      >
-        <span className={styles.grip} aria-hidden="true" />
-        {"THE AGENT"}
-      </button>
+      <div className={styles.tab} style={kitVars()}>
+        <Button
+          size="sm"
+          data-agent-panel="min"
+          title="Open the agent"
+          onClick={() => { setMinimised(false); ctx.prefs.set(PREF_PANEL_MINIMISED, false); }}
+        >
+          <span className={styles.grip} aria-hidden="true" />
+          {"THE AGENT"}
+        </Button>
+      </div>
     );
   }
 
@@ -95,26 +96,22 @@ export function FloatingAgent({
       <header className={styles.bar} onPointerDown={panel.onGrab}>
         <span className={styles.grip} aria-hidden="true" />
         <span className={styles.title}>{"THE AGENT"}</span>
-        <button
-          type="button"
-          className={styles.close}
-          aria-label="Minimise the agent"
+        <IconButton
+          size="sm"
+          icon="lucide:minus"
+          label="Minimise the agent"
           title="Shrink to a tab; nothing is lost"
           onPointerDown={(e) => { e.stopPropagation(); }}
           onClick={() => { setMinimised(true); ctx.prefs.set(PREF_PANEL_MINIMISED, true); }}
-        >
-          {"–"}
-        </button>
-        <button
-          type="button"
-          className={styles.close}
-          aria-label="Close the agent"
+        />
+        <IconButton
+          size="sm"
+          icon="lucide:x"
+          label="Close the agent"
           // Stopped, or pressing close would start a drag on the way down.
           onPointerDown={(e) => { e.stopPropagation(); }}
           onClick={onClose}
-        >
-          {"x"}
-        </button>
+        />
       </header>
 
       <div className={styles.body}>

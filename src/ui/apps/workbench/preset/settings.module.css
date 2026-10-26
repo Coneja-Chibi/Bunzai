@@ -9,41 +9,6 @@
   flex: none;
 }
 
-.head {
-  font: inherit; /* buttons do not inherit fonts */
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  width: 100%;
-  text-align: left;
-  border: 0;
-  background: none;
-  padding: 0.45rem 0.85rem;
-  cursor: pointer;
-}
-
-.head:hover .title {
-  color: var(--pa);
-}
-
-.chev {
-  color: var(--pa);
-  flex: none;
-}
-
-.title {
-  font: 900 var(--text-control) var(--font-big);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-soft);
-}
-
-.summary {
-  margin-left: auto;
-  font: 500 var(--text-control) var(--font-mono);
-  color: var(--stage-text-dim);
-}
-
 .body {
   display: flex;
   flex-direction: column;

@@ -11,6 +11,7 @@ import { Ic, type IconName } from "../../_shared/ic";
 import { Slider } from "../../components/slider";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
 import { FREQUENCIES, depthHint, frequencyHint, sameNote } from "./guides-core";
+import { Card, Chip, Button } from "../../components/button";
 
 /** How the tab reads in the fold: RoleCall's fixed "ongoing direction". */
 export const NOTE_TAB_META = "Ongoing direction";
@@ -86,9 +87,8 @@ export function SceneNoteWing({ saved, onSave }: { saved: ChatNote | undefined; 
         <div className="pg-label"><span>Position</span></div>
         <div className="pg-opts">
           {POSITIONS.map((p) => (
-            <button type="button" key={p.id} className={`pg-opt${note.position === p.id ? " on" : ""}`} aria-pressed={note.position === p.id} onClick={() => set({ position: p.id })}>
-              <Ic name={p.icon} size={20} /><span><b>{p.label}</b><small>{p.text}</small></span>
-            </button>
+            <Card key={p.id} kind="choice" selected={note.position === p.id} aria-pressed={note.position === p.id} onClick={() => set({ position: p.id })}
+              heading={<><Ic name={p.icon} size={20} />{p.label}</>} subtitle={p.text} />
           ))}
         </div>
       </section>
@@ -108,14 +108,14 @@ export function SceneNoteWing({ saved, onSave }: { saved: ChatNote | undefined; 
         <div className="pg-label"><Ic name="mdi:repeat" size={14} /><span>Frequency</span></div>
         <div className="pg-chips">
           {FREQUENCIES.map((f) => (
-            <button type="button" key={f.value} className={`pg-chip${note.frequency === f.value ? " on" : ""}`} aria-pressed={note.frequency === f.value} onClick={() => set({ frequency: f.value })}>{f.label}</button>
+            <Chip key={f.value} pressed={note.frequency === f.value} onClick={() => set({ frequency: f.value })}>{f.label}</Chip>
           ))}
         </div>
         <p className="pg-help pg-hint">{frequencyHint(note.frequency)}</p>
       </section>
 
       <div>
-        <button type="button" className="pg-fold pg-tipsbtn" aria-expanded={tips} onClick={() => setTips(!tips)}><Ic name="lucide:info" size={14} />Tips &amp; Examples <Ic name={tips ? "lucide:chevron-up" : "lucide:chevron-down"} size={14} /></button>
+        <Button variant="quiet" size="sm" icon="lucide:info" aria-expanded={tips} onClick={() => setTips(!tips)}>Tips &amp; Examples <Ic name={tips ? "lucide:chevron-up" : "lucide:chevron-down"} size={14} /></Button>
         {tips && (
           <section className="pg-card pg-tips">
             {TIPS.map((t) => <div key={t.label}><b>{t.label}</b><code>{t.sample}</code></div>)}

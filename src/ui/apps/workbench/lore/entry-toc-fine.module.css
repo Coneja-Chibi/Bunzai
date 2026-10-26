@@ -295,20 +295,6 @@
   margin-top: 0.3rem;
 }
 
-.texpBtn {
-  font: inherit;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.16rem 0.3rem;
-  cursor: pointer;
-}
-
 .texpDanger {
   border-color: var(--stage-danger-edge);
   color: var(--stage-danger-text);

@@ -2,7 +2,8 @@
  * What fired on a reply, shared by TrackHare's popover and its pop-out: the reply line, the lore entries grouped and sorted, the
  * entries the Compendium recalled, and the Didn't-fire section. Presentational: grouping and sorting come from hare-core.ts.
  */
-import { useState, type CSSProperties, type JSX } from "react";
+import { useState, type JSX } from "react";
+import { Disclosure, ListRow } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import type { SceneTrace } from "../../../../app-contract-scenes";
 import { bookGroups, reasonBadge, rollBadge, sortHits, type SortMode } from "./hare-core";
@@ -27,16 +28,10 @@ export function HareHits({ trace, group, sort, showMisses }: { trace: SceneTrace
             const badge = reasonBadge(hit, lore.chains);
             const roll = rollBadge(hit);
             return (
-              <button type="button" key={`${hit.bookId}:${hit.entryId}`} className="he" style={{ "--c": badge.tone } as CSSProperties}>
-                <Ic name={badge.icon} size={16} />
-                <div>
-                  <b>{hit.title}</b>
-                  <span className="rs">{badge.text}</span>
-                  {roll && <span className="rs">{roll.text}</span>}
-                  <div className="tags"><span>{hit.place}</span>{hit.loop > 0 && <span>loop {hit.loop}</span>}</div>
-                </div>
-                <span className="tk">~{hit.tokens}</span>
-              </button>
+              <ListRow key={`${hit.bookId}:${hit.entryId}`} data-part="props.trackhare.hit" vars={{ "--c": badge.tone }}
+                leading={<Ic name={badge.icon} size={16} className="he-ic" />} label={hit.title}
+                subtitle={<><span className="rs">{badge.text}</span>{roll && <span className="rs">{roll.text}</span>}<span className="tags"><span>{hit.place}</span>{hit.loop > 0 && <span>loop {hit.loop}</span>}</span></>}
+                meta={<span className="tk">~{hit.tokens}</span>} />
             );
           })}
         </div>
@@ -45,15 +40,10 @@ export function HareHits({ trace, group, sort, showMisses }: { trace: SceneTrace
         <div>
           <div className="bkh"><Ic name="lucide:book" size={14} />Recalled by the Compendium{recall.cached ? " (kept from the last reply)" : ""}</div>
           {recall.injected.map((hit) => (
-            <button type="button" key={`${hit.bookId}:${hit.entryId}`} className="he" style={{ "--c": "var(--deck-lorebook)" } as CSSProperties}>
-              <Ic name="lucide:book" size={16} />
-              <div>
-                <b>{hit.title}</b>
-                <span className="rs">{hit.reason || "Picked by the Compendium"}</span>
-                <div className="tags"><span>{hit.bookName}</span></div>
-              </div>
-              <span className="tk">~{hit.tokens}</span>
-            </button>
+            <ListRow key={`${hit.bookId}:${hit.entryId}`} data-part="props.trackhare.hit" vars={{ "--c": "var(--deck-lorebook)" }}
+              leading={<Ic name="lucide:book" size={16} className="he-ic" />} label={hit.title}
+              subtitle={<><span className="rs">{hit.reason || "Picked by the Compendium"}</span><span className="tags"><span>{hit.bookName}</span></span></>}
+              meta={<span className="tk">~{hit.tokens}</span>} />
           ))}
           {recall.injected.length === 0 && <div className="hare-none">{recall.status === "failed" ? `Recall failed: ${recall.reason ?? "no reason given"}` : recall.status === "skipped" ? `Recall skipped: ${recall.reason ?? "nothing to read"}` : "Recall picked nothing for this reply."}</div>}
           {recall.cut.length > 0 && <div className="hare-none">Left out for space: {recall.cut.map((h) => h.title).join(", ")}</div>}
@@ -61,9 +51,7 @@ export function HareHits({ trace, group, sort, showMisses }: { trace: SceneTrace
       )}
       {lore && showMisses && misses.length > 0 && (
         <div className="hare-miss">
-          <button type="button" className="mh" onClick={() => setMissesOpen((v) => !v)}>
-            <span>Didn&apos;t fire ({misses.length})</span><span>{missesOpen ? "hide" : "show"}</span>
-          </button>
+          <Disclosure variant="line" open={missesOpen} onClick={() => setMissesOpen((v) => !v)} label={`Didn't fire (${misses.length})`} summary={missesOpen ? "hide" : "show"} />
           {missesOpen && misses.map((m) => <div className="mi" key={`${m.bookId}:${m.entryId}`}><span>{m.title}</span><em>{m.why}</em></div>)}
         </div>
       )}

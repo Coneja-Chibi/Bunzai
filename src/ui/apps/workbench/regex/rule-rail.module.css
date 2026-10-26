@@ -103,26 +103,6 @@
   color: var(--stage-kicker);
 }
 
-.openFull {
-  width: 100%;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.4rem;
-  cursor: pointer;
-  margin-top: 0.4rem;
-}
-
-.openFull:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
 .healthLine {
   font-family: var(--font-mono);
   font-weight: 500;

@@ -9,12 +9,12 @@ import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import { InkDialog } from "../../components/ink-dialog";
 import { Slider } from "../../components/slider";
-import { Stamp } from "../../components/stamp";
 import { SegControl } from "../settings/section-contract";
 import { toErrorMessage } from "../../_shared/error-message";
 import { useDebouncedSave } from "../../_shared/use-debounced-value";
 import type { ChatBackdrop } from "../../../stage/contracts/chat-store";
 import { DEFAULT_DIM, MAX_DIM, MAX_RATE, MIN_RATE, dimOf, isVideoRef, rateOf } from "./scene-backdrop-core";
+import { Button, Tile } from "../../components/button";
 import { addImagesToPack, addLinkToPack } from "./scene-backdrop-add";
 import { BackdropThumb } from "./scene-backdrop-layer";
 import { useBackdropPack } from "./use-backdrop-pack";
@@ -105,15 +105,13 @@ export function BackdropPicker({ ctx, backdrop, onPick, onClose }: {
             <span className="hint">{shown.state === "ready" ? `${String(shown.pack.items.length)} ${shown.pack.items.length === 1 ? "picture" : "pictures"}` : ""}</span>
           </div>
           <div className="grid" role="listbox" aria-label="Backdrops">
-            <button type="button" role="option" aria-selected={!backdrop} className={`tile none${backdrop ? "" : " on"}`} onClick={() => pickNow(null)}>None</button>
+            <Tile kind="thumb" size="fill" role="option" aria-selected={!backdrop} selected={!backdrop} label="None" art="None" onClick={() => pickNow(null)} />
             {items.map((i) => {
               const on = backdrop?.pack === packId && backdrop?.item === i.id;
               return (
-                <button type="button" key={i.id} role="option" aria-selected={on} className={`tile${on ? " on" : ""}`} title={i.label}
-                  onClick={() => packId && pickNow({ pack: packId, item: i.id, ...(dim === DEFAULT_DIM ? {} : { dim }) })}>
-                  <BackdropThumb refValue={i.ref} {...(i.mime ? { mime: i.mime } : {})} />
-                  <span className="cap">{i.label}</span>
-                </button>
+                <Tile key={i.id} kind="thumb" size="fill" role="option" aria-selected={on} selected={on} label={i.label}
+                  onClick={() => packId && pickNow({ pack: packId, item: i.id, ...(dim === DEFAULT_DIM ? {} : { dim }) })}
+                  art={<><BackdropThumb refValue={i.ref} {...(i.mime ? { mime: i.mime } : {})} /><span className="cap">{i.label}</span></>} />
               );
             })}
           </div>
@@ -131,7 +129,7 @@ export function BackdropPicker({ ctx, backdrop, onPick, onClose }: {
           )}
           <div className="bar">
             <input type="url" value={link} placeholder="Add from a link: https picture or video" aria-label="Add from a link" disabled={adding} onChange={(e) => setLink(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void addLink(); }} />
-            <Stamp onClick={() => void addLink()} disabled={adding || !link.trim()}>Add link</Stamp>
+            <Button onClick={() => void addLink()} disabled={adding || !link.trim()}>Add link</Button>
           </div>
           <p className="hint">{note ?? "Picking one hangs it on this scene at once, and None undoes it. Add image puts new pictures and videos into this pack; a link is fetched once and kept in the pack."}</p>
         </>
@@ -140,10 +138,10 @@ export function BackdropPicker({ ctx, backdrop, onPick, onClose }: {
         {!empty && packId && (
           <>
             <input ref={file} type="file" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple hidden onChange={(e) => void add(e.target.files)} />
-            <Stamp onClick={() => file.current?.click()} disabled={adding}>{adding ? "Adding..." : "Add image or video"}</Stamp>
+            <Button onClick={() => file.current?.click()} disabled={adding}>{adding ? "Adding..." : "Add image or video"}</Button>
           </>
         )}
-        <Stamp onClick={onClose}>Done</Stamp>
+        <Button variant="primary" onClick={onClose}>Done</Button>
       </div>
     </InkDialog>
   );

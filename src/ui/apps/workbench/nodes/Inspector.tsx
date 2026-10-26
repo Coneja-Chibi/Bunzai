@@ -3,7 +3,7 @@
  * every other write go through the callbacks; this component only presents them.
  */
 import type { CSSProperties, JSX } from "react";
-import { Stamp } from "../../../components/stamp";
+import { Button } from "../../../components/button";
 import { deckMeta } from "../../../_shared/decks";
 import { dirtyTitle } from "./link-write";
 import { metaOf } from "./PieceNode";
@@ -32,9 +32,9 @@ export function Inspector(p: InspectorProps): JSX.Element | null {
     const src = byKey.get(edge.from);
     const locked = p.readOnly || p.dirty[edge.from] === true;
     return (
-      <Stamp key={edge.id} disabled={locked} title={p.dirty[edge.from] ? dirtyTitle(src?.name ?? "this piece") : undefined} onClick={() => p.onUnlink(edge)}>
+      <Button key={edge.id} variant="danger" size="sm" disabled={locked} title={p.dirty[edge.from] ? dirtyTitle(src?.name ?? "this piece") : undefined} onClick={() => p.onUnlink(edge)}>
         Unlink from {src?.name ?? "piece"}
-      </Stamp>
+      </Button>
     );
   };
 
@@ -60,7 +60,7 @@ export function Inspector(p: InspectorProps): JSX.Element | null {
             </select>
           </label>
         )}
-        <div className={css.acts}><Stamp disabled={p.readOnly} onClick={() => p.onRemove(it.id)}>Remove</Stamp></div>
+        <div className={css.acts}><Button variant="danger" size="sm" disabled={p.readOnly} onClick={() => p.onRemove(it.id)}>Remove</Button></div>
       </aside>
     );
   }
@@ -86,8 +86,8 @@ export function Inspector(p: InspectorProps): JSX.Element | null {
         {incoming.length > 0 && <div className={css.inspRow}><span>Linked by</span><b>{incoming.map((e) => byKey.get(e.from)?.name).join(", ")}</b></div>}
         <div className={css.acts}>
           {n.ghost
-            ? n.summary && <Stamp accent="var(--accent-deep)" onClick={() => p.onBringUp(n)}>Bring up</Stamp>
-            : <Stamp accent="var(--accent-deep)" onClick={() => p.onOpen(n)}>Open in Desk</Stamp>}
+            ? n.summary && <Button variant="primary" onClick={() => p.onBringUp(n)}>Bring up</Button>
+            : <Button variant="primary" onClick={() => p.onOpen(n)}>Open in Desk</Button>}
           {incoming.map(unlink)}
         </div>
       </aside>

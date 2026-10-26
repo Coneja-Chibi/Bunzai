@@ -5,6 +5,7 @@
  * Delete is soft: the bank leaves the list and the prompt and the library keeps the record.
  */
 import { useState, type JSX } from "react";
+import { Button, IconButton } from "../../../components/button";
 import { BANK_KINDS, BANK_SCOPES } from "../../../../core/final-cut/banks";
 import type { BankRecord } from "../../../../studio/final-cut-library";
 import type { FinalCutLibrary } from "./use-final-cut-library";
@@ -32,10 +33,10 @@ function Form({ draft, set }: { draft: Draft; set(next: Draft): void }): JSX.Ele
       {draft.examples.map((example, i) => (
         <div className="fc-example" key={i}>
           <input className="fc-field" value={example} maxLength={1000} placeholder="Example phrase" aria-label={`Example ${i + 1}`} onChange={(e) => set({ ...draft, examples: draft.examples.map((x, j) => (j === i ? e.target.value : x)) })} />
-          <button type="button" className="fc-btn red" aria-label="Remove example" disabled={draft.examples.length === 1} onClick={() => set({ ...draft, examples: draft.examples.filter((_, j) => j !== i) })}>x</button>
+          <IconButton variant="quiet" size="sm" label="Remove example" icon="lucide:x" disabled={draft.examples.length === 1} onClick={() => set({ ...draft, examples: draft.examples.filter((_, j) => j !== i) })} />
         </div>
       ))}
-      <button type="button" className="fc-btn" disabled={draft.examples.length >= 30} onClick={() => set({ ...draft, examples: [...draft.examples, ""] })}>+ Add example</button>
+      <Button size="sm" disabled={draft.examples.length >= 30} onClick={() => set({ ...draft, examples: [...draft.examples, ""] })}>+ Add example</Button>
     </div>
   );
 }
@@ -60,13 +61,13 @@ export function UserBanksCard({ lib }: { lib: FinalCutLibrary }): JSX.Element {
           <h3>Custom Banks</h3>
           <p>{lib.state === "loading" ? "Loading..." : lib.banks.length === 0 ? "Author your own bank below." : `${enabled} of ${lib.banks.length} firing in your anti-slop pipeline.`}</p>
         </div>
-        <button type="button" className="fc-btn" onClick={() => setDraft(draft && !draft.id ? null : empty())}>{draft && !draft.id ? "Cancel" : "+ New Bank"}</button>
+        <Button size="sm" onClick={() => setDraft(draft && !draft.id ? null : empty())}>{draft && !draft.id ? "Cancel" : "+ New Bank"}</Button>
       </header>
       {lib.error && <div className="fc-error" role="alert">{lib.error}</div>}
       {draft && !draft.id && (
         <div className="fc-create">
           <Form draft={draft} set={setDraft} />
-          <div className="acts"><button type="button" className="fc-btn go" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</button><button type="button" className="fc-btn" onClick={() => setDraft(null)}>Cancel</button></div>
+          <div className="acts"><Button variant="primary" size="sm" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</Button><Button variant="quiet" size="sm" onClick={() => setDraft(null)}>Cancel</Button></div>
         </div>
       )}
       {lib.banks.length > 0 && (
@@ -82,15 +83,15 @@ export function UserBanksCard({ lib }: { lib: FinalCutLibrary }): JSX.Element {
                     <p>{b.pattern.slice(0, 160)}</p>
                   </div>
                   <div className="acts">
-                    <button type="button" className="fc-btn" aria-expanded={open === b.id} onClick={() => setOpen(open === b.id ? null : b.id)}>{open === b.id ? "Hide" : "View"}</button>
-                    <button type="button" className="fc-btn" onClick={() => setDraft(editing ? null : draftOf(b))}>{editing ? "Cancel" : "Edit"}</button>
-                    <button type="button" className={`fc-btn red${confirm === b.id ? " hot" : ""}`} onClick={() => { if (confirm === b.id) { void lib.deleteBank(b.id); setConfirm(null); setDraft(null); } else setConfirm(b.id); }}>{confirm === b.id ? "Confirm" : "Delete"}</button>
+                    <Button size="sm" aria-expanded={open === b.id} onClick={() => setOpen(open === b.id ? null : b.id)}>{open === b.id ? "Hide" : "View"}</Button>
+                    <Button size="sm" onClick={() => setDraft(editing ? null : draftOf(b))}>{editing ? "Cancel" : "Edit"}</Button>
+                    <Button variant="danger" size="sm" onClick={() => { if (confirm === b.id) { void lib.deleteBank(b.id); setConfirm(null); setDraft(null); } else setConfirm(b.id); }}>{confirm === b.id ? "Confirm" : "Delete"}</Button>
                   </div>
                 </div>
                 {open === b.id && !editing && <div className="view"><ul>{b.examples.map((e, i) => <li key={i}>{e}</li>)}</ul>{b.replace && <p><b>Replace with:</b> {b.replace}</p>}{b.why && <p><b>Why:</b> {b.why}</p>}</div>}
                 {editing && draft && (
                   <div className="fc-create"><Form draft={draft} set={setDraft} />
-                    <div className="acts"><button type="button" className="fc-btn go" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save changes"}</button><button type="button" className="fc-btn" onClick={() => setDraft(null)}>Cancel</button></div></div>
+                    <div className="acts"><Button variant="primary" size="sm" disabled={saving} onClick={() => void save()}>{saving ? "Saving..." : "Save changes"}</Button><Button variant="quiet" size="sm" onClick={() => setDraft(null)}>Cancel</Button></div></div>
                 )}
               </li>
             );

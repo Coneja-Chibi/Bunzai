@@ -1,2 +1,2 @@
 /* Sticker widgets: a slab shadow and display headings, with square corners and the same layout. */
-html[data-surface-shell-overlay="sticker-widgets"] [data-part="shell.overlay"] { --overlay-heading: var(--bk-font-display); --overlay-shadow: 4px 4px 0 var(--bk-line); }
+html[data-surface-shell-overlay="sticker-widgets"] [data-part="shell.overlay"] { --overlay-heading: var(--font-fancy); --overlay-shadow: 4px 4px 0 var(--bk-line); }

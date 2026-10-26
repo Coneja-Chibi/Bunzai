@@ -20,21 +20,6 @@
 /* header: the shared EditorEhead (components/editor-ehead) owns the spine + save.
    These two are lore's own middle controls, passed into the ehead as meta/children. */
 
-.rulesLink {
-  font: inherit;
-  border: 0;
-  background: none;
-  color: var(--stage-text-dim);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-  padding: 0;
-}
-
-.rulesLink:hover {
-  color: var(--a, var(--accent));
-}
-
 .lensSel {
   font: inherit;
   font-family: var(--font-big);
@@ -218,21 +203,6 @@
   display: contents;
 }
 
-.mContents {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-row);
-  color: var(--stage-paper);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  padding: 0.4rem 0.65rem;
-  cursor: pointer;
-  min-height: 2.2rem;
-}
-
 .mPageNo {
   margin-left: auto;
   font-family: var(--font-mono);
@@ -241,24 +211,6 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--a, var(--accent));
-}
-
-.mPg {
-  width: 2.2rem;
-  height: 2.2rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  cursor: pointer;
-  flex: none;
-}
-
-.mPg:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
 
 @container (max-width: 34rem) {
@@ -285,37 +237,11 @@
 }
 
 /* view switch Pages / Cards / Web (vs-lore-lenses) */
-.viewSwitch {
-  display: inline-flex;
-  border: 2px solid var(--stage-black);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-}
-.viewBtn {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 0;
-  background: var(--stage-row);
-  color: var(--stage-text-dim);
-  padding: 0.28rem 0.5rem;
-  cursor: pointer;
-}
-.viewBtn + .viewBtn {
-  border-left: 2px solid var(--stage-black);
-}
-.viewBtnOn {
-  background: var(--selection);
-  color: var(--selection-fg);
-}
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);

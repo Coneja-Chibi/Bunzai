@@ -14,7 +14,3 @@
   cursor: pointer;
   padding: 0;
 }
-.btn:hover {
-  color: var(--stage-paper);
-  border-color: var(--stage-mute);
-}

@@ -50,18 +50,21 @@ export const KIT_MD_STYLE = `
 .kit-md__table th{color:var(--kit-text);font-weight:700;background:var(--kit-sunken);white-space:nowrap}
 .kit-md__table td{color:var(--kit-soft)}
 /* the pop-out key: in the corner of the table, not in the flow of the sentence around it */
-.kit-md__tableout{position:absolute;top:0;right:0;background:var(--kit-panel);border:1px solid var(--kit-line);
-  color:var(--kit-quiet);cursor:pointer;font-family:var(--kit-mono);font-size:var(--text-control);letter-spacing:.1em;
-  text-transform:uppercase;padding:.1rem .3rem}
-.kit-md__tableout:hover{color:var(--kit-text);border-color:var(--kit-mut)}
+.kit-md__tableout{position:absolute;top:0;right:0}
+.kit-md__tableout [data-control="button"][type="button"]:not(:disabled){min-height:0;background:var(--kit-panel);border:1px solid var(--kit-line);
+  color:var(--kit-quiet);font-family:var(--kit-mono);font-size:var(--text-control);font-weight:400;letter-spacing:.1em;
+  text-transform:uppercase;padding:.1rem .3rem;transform:none;box-shadow:none}
+.kit-md__tableout [data-control="button"][type="button"]:not(:disabled):hover{color:var(--kit-text);background:var(--kit-panel);border-color:var(--kit-mut)}
 /* opened: the same table, at a size that fits a five-column comparison */
 .kit-md__sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
   padding:2rem;background:rgb(0 0 0 / 62%)} /* hardcode-ok: a scrim is depth, not a themed colour */
 .kit-md__sheetbody{position:relative;max-width:min(96vw,72rem);max-height:88vh;overflow:auto;
   background:var(--kit-panel);border:1px solid var(--kit-line);padding:1.4rem 1rem 1rem}
-.kit-md__sheetclose{position:absolute;top:.3rem;right:.4rem;background:transparent;border:1px solid var(--kit-line);
-  color:var(--kit-quiet);cursor:pointer;font-family:var(--kit-mono);font-size:var(--text-control);letter-spacing:.1em;
-  text-transform:uppercase;padding:.15rem .35rem}
+.kit-md__sheetclose{position:absolute;top:.3rem;right:.4rem}
+.kit-md__sheetclose [data-control="button"][type="button"]:not(:disabled){min-height:0;background:transparent;border:1px solid var(--kit-line);
+  color:var(--kit-quiet);font-family:var(--kit-mono);font-size:var(--text-control);font-weight:400;letter-spacing:.1em;
+  text-transform:uppercase;padding:.15rem .35rem;transform:none;box-shadow:none}
+.kit-md__sheetclose [data-control="button"][type="button"]:not(:disabled):hover{background:transparent;color:var(--kit-text)}
 
 /* A code slab: the recessed field fill IS the slab, exactly as in the terminal. */
 .kit-md__slab{display:flex;flex-direction:column;margin:0;background:var(--kit-sunken);
@@ -85,18 +88,23 @@ export const KIT_BAND_STYLE = `
 
 /* HOVER-ONLY AND LAYERED. A control that took a row would move every message down the moment a
    mouse crossed it, and a transcript that reflows under the pointer is one you cannot read. */
-.kit-band__copy{position:absolute;top:0;right:0;opacity:0;background:var(--kit-panel);
+.kit-band__copy{position:absolute;top:0;right:0;opacity:0}
+.kit-band:hover .kit-band__copy,.kit-band__copy:focus-within{opacity:1}
+.kit-band__copy [data-control="button"][type="button"]:not(:disabled){min-height:0;background:var(--kit-panel);
   border:1px solid var(--kit-line);color:var(--kit-quiet);font-family:var(--font-mono);
-  font-size:var(--text-control);letter-spacing:.04em;text-transform:uppercase;padding:.1rem .35rem;
-  cursor:pointer}
-.kit-band:hover .kit-band__copy,.kit-band__copy:focus-visible{opacity:1}
-.kit-band__copy:hover{color:var(--kit-text);background:var(--kit-lift)}
+  font-size:var(--text-control);font-weight:400;letter-spacing:.04em;text-transform:uppercase;padding:.1rem .35rem;
+  transform:none;box-shadow:none}
+.kit-band__copy [data-control="button"][type="button"]:not(:disabled):hover{color:var(--kit-text);background:var(--kit-lift)}
 
 /* The folded reply: one indented row, never a full-width block of its own. */
-.kit-fold{display:block;width:100%;text-align:left;background:none;border:0;cursor:pointer;
-  padding:.2rem .7rem .2rem 1.4rem;font-family:var(--font-mono);font-size:.7rem;
-  color:var(--kit-quiet)}
-.kit-fold:hover{color:var(--kit-soft)}
+.kit-fold{display:block;width:100%;padding:.2rem .7rem .2rem 1.4rem}
+.kit-fold [data-control="disclosure"][aria-expanded]{width:auto;padding:0;gap:0;font-family:var(--font-mono);font-size:.7rem;
+  font-weight:400;color:var(--kit-quiet)}
+.kit-fold [data-control="disclosure"][aria-expanded]:hover{background:none;color:var(--kit-soft)}
+/* The rehearsal trace is the same quiet line. */
+.kit-trace [data-control="disclosure"][aria-expanded]{width:auto;padding:0;gap:0;font-family:var(--font-mono);
+  font-size:var(--text-control);font-weight:400;color:var(--kit-mut)}
+.kit-trace [data-control="disclosure"][aria-expanded]:hover{background:none;color:var(--kit-quiet)}
 .kit-fold__dot{color:var(--accent-deep)}
 
 /* A failure: a red spine and a bang, so it never reads as something the agent said. */
@@ -139,10 +147,11 @@ export const KIT_ASK_STYLE = `
 
 .kit-ask__opt{display:flex;flex-direction:column}
 .kit-ask__opt--on{background:var(--kit-lift)}
-.kit-ask__pick{display:flex;gap:.3rem;align-items:baseline;width:100%;text-align:left;
-  background:none;border:0;cursor:pointer;padding:.2rem .5rem;font-family:var(--font-mono);
-  font-size:var(--text-control);color:var(--kit-soft)}
-.kit-ask__pick:disabled{cursor:not-allowed;color:var(--kit-quiet)}
+.kit-ask__opt > [data-control="row"]{gap:.3rem;align-items:baseline;border-left:0;padding:.2rem .5rem;
+  font-family:var(--font-mono);font-size:var(--text-control);font-weight:400;color:var(--kit-soft)}
+.kit-ask__opt > [data-control="row"][data-selected],.kit-ask__opt > [data-control="row"]:hover:not(:disabled){background:none}
+.kit-ask__opt > [data-control="row"]:disabled{color:var(--kit-quiet)}
+.kit-ask__opt > [data-control="row"] > span:last-child > span{white-space:normal;overflow:visible}
 .kit-ask__caret{color:var(--bk-role-brand-text);width:1ch;flex:none}
 .kit-ask__num{color:var(--kit-quiet);flex:none}
 .kit-ask__val{color:var(--kit-soft);overflow-wrap:anywhere}
@@ -164,11 +173,6 @@ export const KIT_ASK_STYLE = `
 .kit-ask__armText{font-family:var(--font-mono);font-size:.66rem;color:var(--kit-quiet);
   overflow-wrap:anywhere}
 .kit-ask__arm--ready .kit-ask__armText{color:var(--kit-soft)}
-.kit-ask__send{flex:none;background:var(--kit-floor);border:1px solid var(--accent);
-  color:var(--bk-role-brand-text);font-family:var(--font-mono);font-weight:700;font-size:var(--text-control);
-  letter-spacing:.08em;text-transform:uppercase;padding:.22rem .6rem;cursor:pointer}
-.kit-ask__send:hover:not(:disabled){background:var(--kit-lift);color:var(--kit-text)}
-.kit-ask__send:disabled{color:var(--kit-quiet);border-color:var(--kit-line);cursor:not-allowed}
 
 /* An answered panel collapses to what was said: live options in the scrollback invite answering
    the same question twice, and the model has already moved on. */

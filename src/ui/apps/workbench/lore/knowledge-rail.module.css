@@ -28,44 +28,14 @@
   flex-wrap: wrap;
 }
 
-.book {
+.row > [data-control="row"] {
   flex: 1;
   min-width: 0;
-  text-align: left;
-  font: inherit;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  padding: 0.35rem 0.45rem;
-  cursor: pointer;
-  color: var(--stage-soft);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  width: auto;
 }
 
-.bookMissing {
+.rowMissing > [data-control="row"] [data-slot="label"] {
   color: var(--stage-danger-text);
-  border-color: var(--stage-danger-edge);
-}
-
-.op {
-  font: inherit;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-text-dim);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  flex: none;
-}
-
-.op:disabled {
-  opacity: 0.4;
-  cursor: default;
 }
 
 .attach {

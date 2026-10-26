@@ -43,7 +43,7 @@ import { selectedText } from "./select-core";
 import { pieceKey, versionedArtUrl, type DeckViewContext, type PiecePeek } from "./view-contract";
 import { Ic } from "../../_shared/ic";
 import { plural } from "../../../core/text";
-import { ToggleSwitch } from "../../components/toggle-switch";
+import { Button, Toggle } from "../../components/button";
 
 export interface CardProps {
   ctx: DeckViewContext;
@@ -136,10 +136,10 @@ function CardShell(props: CardProps & {
       {props.children(
         peek,
         // Native Enter and Space fire a click that bubbles to the card's one handler above.
-        <button type="button" className={`rname ${props.nameClass}`} aria-pressed={staged} title={e.name}>
+        <Button variant="link" block data-part="library.card.name" aria-pressed={staged} title={e.name}>
           {/* an inner span, because Chrome draws no ellipsis on a button itself */}
-          <span className="rnmx">{e.name}</span>
-        </button>,
+          <span className={`rnmx ${props.nameClass}`}>{e.name}</span>
+        </Button>,
       )}
       {over && <span className="rdroptip">{`Drop to merge into ${e.name}`}</span>}
       {isOpen && <span className="rtick">on the workbench</span>}
@@ -186,12 +186,14 @@ function Tools(props: {
   const stop = (ev: MouseEvent): void => ev.stopPropagation();
   return (
     <div className="rtools" onClick={stop}>
-      <ToggleSwitch size="sm" on={on} title={on ? `Switch ${e.name} off` : `Switch ${e.name} on`} onChange={props.onToggle} />
+      <Toggle size="sm" on={on} title={on ? `Switch ${e.name} off` : `Switch ${e.name} on`} onChange={props.onToggle} />
       <span className="rswl">{on ? "On" : props.offWords}</span>
       {props.extra}
       <span className="grow" />
-      <button type="button" className="ract" title={`Split ${e.name} into two`} onClick={props.onSplit}>Split</button>
-      <button type="button" className="ract" title={`Make a copy of ${e.name}`} onClick={props.onCopy}>Copy</button>
+      <span className="ract">
+        <Button size="sm" title={`Split ${e.name} into two`} onClick={props.onSplit}>Split</Button>
+        <Button size="sm" title={`Make a copy of ${e.name}`} onClick={props.onCopy}>Copy</Button>
+      </span>
       <ContextMenuButton name={e.name} className="rmore" />
     </div>
   );
@@ -427,9 +429,11 @@ export function CharacterCard(props: CardProps): JSX.Element {
       }}
     </CardShell>
     {start && (
-      <button type="button" className="rstart" onClick={() => start(e)} title={`Start a new scene with ${e.name}`}>
-        <Ic name="lucide:play" size={14} />Start Scene
-      </button>
+      <div className="rstart">
+        <Button block variant="primary" icon="lucide:play" onClick={() => start(e)} title={`Start a new scene with ${e.name}`}>
+          Start Scene
+        </Button>
+      </div>
     )}
     </>
   );

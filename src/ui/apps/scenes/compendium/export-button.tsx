@@ -7,7 +7,7 @@ import { useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import { drainToBlob, saveBlob } from "../../../_shared/download-sink";
 import { toErrorMessage } from "../../../_shared/error-message";
-import { Ic } from "../../../_shared/ic";
+import { Button } from "../../../components/button";
 
 /** RoleCall's file name rule (`BentoDashboard.tsx:539-543`). */
 export const exportName = (bookName: string, now: Date): string =>
@@ -27,9 +27,9 @@ export function ExportButton({ ctx, bookId, bookName }: { ctx: AppContext; bookI
     }
   };
   return (
-    <button type="button" className="cp-exp-btn" data-part="compendium.export" disabled={busy} onClick={() => void run()}
+    <Button size="sm" icon="lucide:download" data-part="compendium.export" disabled={busy} onClick={() => void run()}
       title="Download the full compendium as JSON: keeps every entry type, structured field, category and entry setting">
-      <Ic name="lucide:download" size={12} />Export
-    </button>
+      Export
+    </Button>
   );
 }

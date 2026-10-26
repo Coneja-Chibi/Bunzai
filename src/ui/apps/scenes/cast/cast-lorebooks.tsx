@@ -7,12 +7,12 @@
  * hold here, so every bundled book is a switch. Bundling more is the card's own edit, in the full editor.
  */
 import { useState, type JSX } from "react";
+import { Button, Disclosure, IconButton, Toggle } from "../../../components/button";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
 import type { SceneLoreBook } from "../../../app-contract-scenes";
 import { Ic } from "../../../_shared/ic";
 import { LibraryPicker } from "../scene-lore-books";
 import { useSceneLore } from "../use-scene-lore";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 
 function Row({ book, children }: { book: SceneLoreBook; children: JSX.Element }): JSX.Element {
   return (
@@ -24,7 +24,7 @@ function Row({ book, children }: { book: SceneLoreBook; children: JSX.Element })
 }
 
 function Switch({ book, onToggle }: { book: SceneLoreBook; onToggle(): void }): JSX.Element {
-  return <ToggleSwitch on={book.enabled} aria-label={`Switch ${book.enabled ? "off" : "on"} ${book.name}`} onChange={onToggle} />;
+  return <Toggle on={book.enabled} aria-label={`Switch ${book.enabled ? "off" : "on"} ${book.name}`} onChange={onToggle} />;
 }
 
 export function LorebooksSection({ ctx, chatId, onOpenEditor }: { ctx: AppContext; chatId: string; onOpenEditor(): void }): JSX.Element {
@@ -42,11 +42,8 @@ export function LorebooksSection({ ctx, chatId, onOpenEditor }: { ctx: AppContex
   return (
     <>
       <section className="cw-lore" data-part="scene.cast.lorebooks">
-        <button type="button" className="cw-lore-h" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
-          <Ic name="lucide:book" size={16} /><h3>Lorebooks</h3>
-          {books.length > 0 && <small>({bundled.length} bundled{added.length > 0 ? `, ${added.length} added` : ""})</small>}
-          <Ic name={expanded ? "lucide:chevron-up" : "lucide:chevron-down"} size={16} />
-        </button>
+        <Disclosure open={expanded} onClick={() => setExpanded(!expanded)} leading={<Ic name="lucide:book" size={16} />} label="Lorebooks"
+          summary={books.length > 0 ? `(${bundled.length} bundled${added.length > 0 ? `, ${added.length} added` : ""})` : undefined} />
         {expanded && (
           <div className="cw-lore-b">
             {lore.state === "failed" && <p className="notice gone">{lore.why}</p>}
@@ -57,16 +54,16 @@ export function LorebooksSection({ ctx, chatId, onOpenEditor }: { ctx: AppContex
             {added.map((b) => (
               <Row key={b.id} book={b}>
                 <span className="acts"><Switch book={b} onToggle={() => toggle(b)} />
-                  <button type="button" className="rm" title="Remove from session" aria-label={`Remove ${b.name} from this scene`} onClick={() => remove(b)}><Ic name="lucide:x" size={14} /></button></span>
+                  <IconButton variant="quiet" size="sm" icon="lucide:x" title="Remove from session" label={`Remove ${b.name} from this scene`} onClick={() => remove(b)} /></span>
               </Row>
             ))}
-            <button type="button" className="cw-lore-add" aria-expanded={picking} onClick={pick}><Ic name="lucide:plus" size={14} />Add Your Lorebook</button>
+            <Button size="sm" block icon="lucide:plus" aria-expanded={picking} onClick={pick}>Add Your Lorebook</Button>
             {picking && <LibraryPicker library={library} inScene={new Set(books.map((b) => b.id))} onPick={(id) => { add(id); setPicking(false); }} />}
-            <p className="cw-lore-man">Manage bundled lorebooks in the <button type="button" onClick={onOpenEditor}>full editor</button></p>
+            <p className="cw-lore-man">Manage bundled lorebooks in the <Button variant="link" size="sm" onClick={onOpenEditor}>full editor</Button></p>
           </div>
         )}
       </section>
-      <button type="button" className="cw-fulled" onClick={onOpenEditor}><Ic name="lucide:external-link" size={16} />Open Full Editor</button>
+      <Button block icon="lucide:external-link" onClick={onOpenEditor}>Open Full Editor</Button>
     </>
   );
 }

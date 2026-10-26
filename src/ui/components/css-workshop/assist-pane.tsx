@@ -1,6 +1,7 @@
 /**
  * Assist pane: add rule for target, rule list, knobs, delete.
  */
+import { Button, ListRow } from "../button";
 import type { JSX } from "react";
 import type { CssDoc, CssRule } from "./model";
 import { summarizeRule } from "./model";
@@ -54,9 +55,9 @@ export function CssAssistPane({
             </option>
           ))}
         </select>
-        <button type="button" className={styles.mini} onClick={() => onAddRule(".card")}>
-          + blank rule
-        </button>
+        <Button size="sm" onClick={() => onAddRule(".card")}>
+          + Blank rule
+        </Button>
       </div>
 
       {doc.rules.length === 0 ? (
@@ -64,16 +65,12 @@ export function CssAssistPane({
       ) : (
         <div className={styles.ruleList}>
           {doc.rules.map((r) => (
-            <button
+            <ListRow
               key={r.id}
-              type="button"
-              className={
-                selected?.id === r.id ? `${styles.ruleBtn} ${styles.ruleBtnOn}` : styles.ruleBtn
-              }
+              label={summarizeRule(r)}
+              selected={selected?.id === r.id}
               onClick={() => onSelectRule(r.id)}
-            >
-              {summarizeRule(r)}
-            </button>
+            />
           ))}
         </div>
       )}
@@ -83,9 +80,9 @@ export function CssAssistPane({
           <div className={styles.english}>{summarizeRule(selected)}</div>
           <RuleKnobs rule={selected} onChange={onRuleChange} />
           <div className={styles.actions}>
-            <button type="button" className={styles.mini} onClick={() => onDeleteRule(selected.id)}>
-              delete rule
-            </button>
+            <Button size="sm" variant="danger" onClick={() => onDeleteRule(selected.id)}>
+              Delete rule
+            </Button>
           </div>
         </>
       )}

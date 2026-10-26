@@ -7,6 +7,7 @@
  */
 import { useEffect, useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
+import { Disclosure } from "../../components/button";
 import { Ic, type IconName } from "../../_shared/ic";
 import type { PresetSamplers } from "../../../entities/preset/schema";
 import { PARAMS, paramsIn, type ParamDef, type ParamGroup, type ParamValue } from "../../../stage/params";
@@ -64,11 +65,9 @@ function Group({ id, title, icon, purpose, defs, samplers, typed, provider, open
   const expanded = open || query.trim() !== "";
   return (
     <section className="gp-group" data-part={`scene.generation.group.${id}`}>
-      <button type="button" className="gp-ghead" aria-expanded={expanded} aria-label={`${title} category ${expanded ? "expanded" : "collapsed"}`} onClick={() => setOpen(!open)}>
-        <Ic name={icon} size={16} />
-        <span className="gp-gtext"><span className="gp-gline"><b>{title}</b><small>{query.trim() ? `${shown.length} found` : `${n}/${defs.length} enabled`}</small></span><span className="gp-purpose">{purpose}</span></span>
-        <Ic name={expanded ? "mdi:chevron-up" : "mdi:chevron-down"} size={16} />
-      </button>
+      <Disclosure open={expanded} aria-label={`${title} category ${expanded ? "expanded" : "collapsed"}`} onClick={() => setOpen(!open)} leading={<Ic name={icon} size={16} />}
+        label={<span className="gp-gtext"><b>{title}</b><span className="gp-purpose">{purpose}</span></span>}
+        summary={query.trim() ? `${shown.length} found` : `${n}/${defs.length} enabled`} />
       {expanded && (
         <div className="gp-cards">
           {shown.map((d) => <ParamCard key={d.id} def={d} state={cardState(d, samplers.params, typed)} provider={provider} greyed={!parentOn(d, samplers.params, typed, PARAMS)} model={model} onChange={(c) => onChange(d, c)} />)}

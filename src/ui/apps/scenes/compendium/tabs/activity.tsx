@@ -6,8 +6,9 @@
  * carries the PRE cards read from the replies' traces, and `extraWhy` says when they could not be read. The pop-out itself is the
  * registry's (popout/); this draws only the button.
  */
-import { useId, useState, type JSX, type KeyboardEvent } from "react";
+import { useId, useState, type JSX } from "react";
 import { Ic } from "../../../../_shared/ic";
+import { IconButton, Tabs } from "../../../../components/button";
 import type { AppContext } from "../../../../app-contract";
 import { toErrorMessage } from "../../../../_shared/error-message";
 import { PopoutButton } from "../../popout/popout-panel";
@@ -42,33 +43,20 @@ export function ActivityTab({ ctx, chatId, feed, extra = [], extraWhy, pop }: {
     }, "Undo failed"),
     again: (id: string) => void run(() => ctx.api.fileCompendiumAgain(chatId, id), "Filing again failed"),
   };
-  const roving = (e: KeyboardEvent<HTMLButtonElement>, at: number): void => {
-    const next = e.key === "ArrowRight" ? (at + 1) % TABS.length : e.key === "ArrowLeft" ? (at + TABS.length - 1) % TABS.length : e.key === "Home" ? 0 : e.key === "End" ? TABS.length - 1 : null;
-    if (next === null) return;
-    e.preventDefault();
-    setTab(TABS[next]!.id);
-    e.currentTarget.parentElement?.querySelector<HTMLButtonElement>(`[data-feed-tab="${TABS[next]!.id}"]`)?.focus();
-  };
-
   return (
     <div className="cp-feed" data-part="compendium.activity">
       <div className="bar">
-        <div className="seg" role="tablist" aria-label="Compendium activity filters">
-          {TABS.map((t, i) => (
-            <button key={t.id} type="button" role="tab" id={`${base}-tab-${t.id}`} data-feed-tab={t.id} aria-selected={tab === t.id} aria-controls={`${base}-panel`}
-              tabIndex={tab === t.id ? 0 : -1} className={tab === t.id ? "on" : ""} onKeyDown={(e) => roving(e, i)} onClick={() => setTab(t.id)}>{t.label}</button>
-          ))}
-        </div>
+        <Tabs label="Compendium activity filters" idPrefix={base} value={tab} onChange={setTab} items={TABS.map((t) => ({ value: t.id, label: t.label }))} />
         <div className="acts">
           {pop && <PopoutButton id={pop.id} onClick={pop.open} />}
-          <button type="button" className="ib" title="Clear feed" aria-label="Clear feed" disabled={feed.receipts.length === 0 && extra.length === 0} onClick={() => void run(feed.clear, "The feed could not be cleared")}><Ic name="lucide:trash-2" size={14} /></button>
+          <IconButton variant="quiet" size="sm" label="Clear feed" icon="lucide:trash-2" disabled={feed.receipts.length === 0 && extra.length === 0} onClick={() => void run(feed.clear, "The feed could not be cleared")} />
         </div>
       </div>
       {note && <div className="cp-note" role="status">{note}</div>}
       {feed.state === "failed" && <div className="cp-load bad">{feed.why}</div>}
       {extraWhy && <div className="cp-load bad">{extraWhy}</div>}
       {feed.state === "loading" && <div className="cp-load">Loading activity...</div>}
-      <div id={`${base}-panel`} role="tabpanel" aria-labelledby={`${base}-tab-${tab}`}>
+      <div id={`${base}-panel-${tab}`} role="tabpanel" aria-labelledby={`${base}-tab-${tab}`}>
         {feed.state === "ready" && rows.length === 0 && (
           <div className="empty"><span className="ring"><Ic name="lucide:zap" size={20} /></span><b>No activity yet</b><small>Compendium tool calls will stream here in real-time.</small></div>
         )}

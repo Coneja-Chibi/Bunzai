@@ -6,6 +6,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Disclosure, IconButton } from "../../../components/button";
 import type { SceneTrace } from "../../../app-contract-scenes";
 import { dateTimeStamp } from "../scene-meta-core";
 import { CallDetail } from "./this-turn-call";
@@ -20,16 +21,14 @@ function Row({ row, trace, open, onToggle }: { row: CallRow; trace: SceneTrace; 
   const failed = row.state === "Failed";
   return (
     <li className={`tt-call ${failed ? "failed" : row.confidence}${open ? " open" : ""}`}>
-      <button type="button" aria-expanded={open} onClick={onToggle}>
-        <span className="tt-main">
-          <span className="tt-top"><b>{row.label}</b>{row.model && <code>{row.model}</code>}<em className={failed ? "bad" : row.state === "Done" ? "ok" : ""}>{row.state}</em></span>
-          <span className="tt-trig">{row.trigger}</span>
-        </span>
-        <span className="tt-side">
-          <span className="tt-num"><b>{formatDuration(row.ms ?? null) || " "}</b>{failed ? "no reply" : `${count(row.sent, row.confidence === "estimated")} sent · ${count(row.back, false)} back`}</span>
-          <Ic name={open ? "lucide:chevron-down" : "lucide:chevron-right"} size={16} />
-        </span>
-      </button>
+      <Disclosure open={open} onClick={onToggle}
+        label={
+          <span className="tt-main">
+            <span className="tt-top"><b>{row.label}</b>{row.model && <code>{row.model}</code>}<em className={failed ? "bad" : row.state === "Done" ? "ok" : ""}>{row.state}</em></span>
+            <span className="tt-trig">{row.trigger}</span>
+          </span>
+        }
+        summary={<span className="tt-num"><b>{formatDuration(row.ms ?? null) || " "}</b>{failed ? "no reply" : `${count(row.sent, row.confidence === "estimated")} sent · ${count(row.back, false)} back`}</span>} />
       {open && <CallDetail row={row} trace={trace} />}
     </li>
   );
@@ -44,10 +43,10 @@ export function ThisTurn({ state, onPick, onRefresh }: { state: TraceState; onPi
   return (
     <div className="tt" data-part="scene.context.this-turn">
       <div className="tt-pager">
-        <button type="button" aria-label="Earlier turn" disabled={!near?.older} onClick={() => near?.older && onPick(near.older)}><Ic name="lucide:chevron-left" size={16} /></button>
+        <IconButton size="sm" label="Earlier turn" icon="lucide:chevron-left" disabled={!near?.older} onClick={() => near?.older && onPick(near.older)} />
         <div className="tt-pl">{trace ? (near!.latest ? "Latest turn" : "Earlier turn") : "Turn"}{trace?.turn && <span> · {dateTimeStamp(trace.turn.at)}</span>}</div>
-        <button type="button" aria-label="Later turn" disabled={!near?.newer} onClick={() => near?.newer && onPick(near.newer)}><Ic name="lucide:chevron-right" size={16} /></button>
-        <button type="button" aria-label="Refresh" onClick={onRefresh}><Ic name="lucide:refresh-cw" size={14} /></button>
+        <IconButton size="sm" label="Later turn" icon="lucide:chevron-right" disabled={!near?.newer} onClick={() => near?.newer && onPick(near.newer)} />
+        <IconButton size="sm" label="Refresh" icon="lucide:refresh-cw" onClick={onRefresh} />
       </div>
       {trace && (
         <div>

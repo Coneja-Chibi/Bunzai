@@ -5,6 +5,7 @@
  * it replaces joins the list and a restore can itself be undone..
  */
 import { useLayoutEffect, useRef, useState, type JSX } from "react";
+import { Button } from "../../components/button";
 import { historyRows } from "./scene-history-core";
 
 export interface HistoryView {
@@ -39,7 +40,7 @@ export function HistoryList({ history, onRestore }: { history: HistoryView; onRe
                   <div className="n">{r.index === null ? r.label : `${r.label} · ${r.words} ${r.words === 1 ? "word" : "words"}`}</div>
                   <div className="p">{r.preview}</div>
                 </div>
-                {r.index !== null && <button type="button" onClick={() => onRestore(r.index!)}>Restore</button>}
+                {r.index !== null && <Button size="sm" onClick={() => onRestore(r.index!)}>Restore</Button>}
               </div>
             ))}
           </div>

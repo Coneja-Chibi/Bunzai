@@ -2,6 +2,7 @@
  * ExpressionGroups - Lumiverse multi-character expression packs.
  * Wire: extensions.expression_groups Record<charName, Record<label, imageId>>.
  */
+import { Button } from "../button";
 import type { JSX } from "react";
 import { ExpressionMap, normalizeExpressionMap, type ExpressionMapValue } from "./index";
 import styles from "./groups.module.css";
@@ -54,13 +55,13 @@ export function ExpressionGroups({ value, onChange }: ExpressionGroupsProps): JS
                 write(next);
               }}
             />
-            <button
-              type="button"
-              className={styles.rm}
+            <Button
+              size="sm"
+              variant="danger"
               onClick={() => write(rows.filter((_, ix) => ix !== i))}
             >
-              remove
-            </button>
+              Remove
+            </Button>
           </div>
           <ExpressionMap
             hideEnabled
@@ -72,13 +73,14 @@ export function ExpressionGroups({ value, onChange }: ExpressionGroupsProps): JS
           />
         </div>
       ))}
-      <button
-        type="button"
-        className={styles.add}
-        onClick={() => write([...rows, { name: "", map: { enabled: true, mappings: {} } }])}
-      >
-        + add character group
-      </button>
+      <div className={styles.add}>
+        <Button
+          size="sm"
+          onClick={() => write([...rows, { name: "", map: { enabled: true, mappings: {} } }])}
+        >
+          + Add character group
+        </Button>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@
  * WorkshopView shell: composes rail + center panes + Test Bench. State and pure cores only;
  * each pane is one file. Non-coder door per design/vs-workspace-3.
  */
+import { Button } from "../../../components/button";
 import { useEffect, useMemo, useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import type { TriggerScript } from "../../../../entities/character/schema";
@@ -154,9 +155,7 @@ export function WorkshopView({
   });
 
   const undoBtn = recipeSnap ? (
-    <button type="button" className={styles.undo} onClick={undoRec}>
-      Undo last starter
-    </button>
+    <Button variant="quiet" size="sm" onClick={undoRec}>Undo last starter</Button>
   ) : null;
 
   const codeParts = new Set(["virtual", "background", "modlua", "modregex", "modlore", "regex"]);

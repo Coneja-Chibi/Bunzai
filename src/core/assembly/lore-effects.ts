@@ -56,14 +56,22 @@ export function revertEffects(vars: Vars, undo: readonly LoreUndo[], scope: Lore
   return out;
 }
 
+/** Only what changed from `before` to `after` (RoleCall writes changed keys only, so no writer reverts another's). */
+export function variableDiff(before: ReadonlyMap<string, MacroVariable>, after: ReadonlyMap<string, MacroVariable>): VariableDiff {
+  // fromEntries, not assignment: a variable may be named "__proto__".
+  const set = Object.fromEntries(
+    [...after].filter(([name, v]) => {
+      const was = before.get(name);
+      return !was || !deepEq(was.value, v.value);
+    }).map(([name, v]) => [name, v.value]),
+  );
+  return { set, delete: [...before.keys()].filter((name) => !after.has(name)) };
+}
+
 /** What to write so the library ends where a turn assembled over `reverted` ended: the turn's own diff, measured against what is stored. */
 export function rebaseDiff(stored: ReadonlyMap<string, MacroVariable>, reverted: ReadonlyMap<string, MacroVariable>, turn: VariableDiff): VariableDiff {
   const final = new Map(reverted);
   for (const [name, value] of Object.entries(turn.set)) final.set(name, { value, createdAt: final.get(name)?.createdAt ?? 0, updatedAt: 0 });
   for (const name of turn.delete) final.delete(name);
-  const set = Object.fromEntries([...final].filter(([name, v]) => {
-    const was = stored.get(name);
-    return !was || !deepEq(was.value, v.value);
-  }).map(([name, v]) => [name, v.value]));
-  return { set, delete: [...stored.keys()].filter((name) => !final.has(name)) };
+  return variableDiff(stored, final);
 }

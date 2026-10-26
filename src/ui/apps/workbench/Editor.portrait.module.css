@@ -102,7 +102,7 @@
   aspect-ratio: 2/3;
   border: 2px dashed var(--stage-line);
   margin: 0.6rem;
-  background: linear-gradient(160deg, var(--stage-danger-bg), #160b1e 65%); /* hardcode-ok: gradient stop residue */
+  background: linear-gradient(160deg, var(--stage-danger-bg), #160b1e 65%); /* hardcode-ok: gradient stop residue */
   display: flex;
   align-items: flex-end;
   padding: 0;
@@ -143,49 +143,11 @@
   margin-top: 0.2rem;
 }
 
-.stampBtn {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--stage-row);
-  border: 3px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  color: var(--stage-paper);
-  padding: 0.45rem 0.6rem;
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-}
-
-.stampBtn:disabled {
-  opacity: 0.45;
-  cursor: default;
-}
-
 .palGrid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
   gap: 0.4rem;
   padding: 0.1rem 0 0.4rem;
-}
-
-.palTile {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: var(--stage-well);
-  border: 2px solid var(--stage-seam);
-  padding: 0.25rem 0.4rem 0.25rem 0.25rem;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  color: var(--stage-soft);
-}
-
-.palTileOn {
-  border-color: var(--a, var(--accent, var(--stage-paper)));
 }
 
 .palChip {
@@ -193,27 +155,6 @@
   height: 1.1rem;
   flex: none;
   border: 2px solid var(--stage-black);
-}
-
-.palName {
-  white-space: nowrap;
-}
-
-.palAdd {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  background: transparent;
-  border: 2px dashed var(--stage-seam);
-  color: var(--stage-mute);
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-}
-
-.palAdd:hover {
-  border-color: var(--stage-mute);
-  color: var(--stage-soft);
 }
 
 .palEdit {

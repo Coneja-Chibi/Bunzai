@@ -1,11 +1,11 @@
 /**
  * Assist knobs for one CSS rule. Heavily assisted property panel, not no-code only.
- * Composes house PaintPicker, Slider, ToggleSwitch.
+ * Composes house PaintPicker, Slider, Toggle.
  */
+import { Button, Toggle } from "../button";
 import type { JSX } from "react";
 import { PaintPicker } from "../paint-picker";
 import { Slider } from "../slider";
-import { ToggleSwitch } from "../toggle-switch";
 import { paintToCss, solidPaint, type Paint } from "../../_shared/paint";
 import { getProp, setProp, type CssRule } from "./model";
 import { numOr } from "../../../core/guards";
@@ -207,25 +207,24 @@ export function RuleKnobs({ rule, onChange }: RuleKnobsProps): JSX.Element {
       <div className={styles.knob}>
         <span className={styles.knobLabel}>Visibility</span>
         <div className={styles.row}>
-          <button type="button" className={styles.mini} onClick={() => set("display", "none")}>
-            hide
-          </button>
-          <button
-            type="button"
-            className={styles.mini}
+          <Button size="sm" onClick={() => set("display", "none")}>
+            Hide
+          </Button>
+          <Button
+            size="sm"
             onClick={() => {
               let next = setProp(rule, "display", "");
               next = setProp(next, "visibility", "");
               onChange(next);
             }}
           >
-            show
-          </button>
+            Show
+          </Button>
           <span className={styles.hint}>{display?.value === "none" ? "currently hidden" : "visible"}</span>
         </div>
       </div>
 
-      <ToggleSwitch
+      <Toggle
         on={important}
         label="force with !important (often needed on host sites)"
         onChange={(on) => {

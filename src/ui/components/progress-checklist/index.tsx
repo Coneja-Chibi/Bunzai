@@ -2,6 +2,7 @@
  * ProgressChecklist - the narrow-pane form of the editor's done-chips: one bar plus a count
  * chip; tapping opens a BottomSheet checklist (design/vs-mobile-editors.html frame 2).
  */
+import { Button } from "../button";
 import { useState, type JSX } from "react";
 import { BottomSheet } from "../bottom-sheet";
 import styles from "./styles.module.css";
@@ -24,9 +25,9 @@ export function ProgressChecklist({ items, extraStat }: ProgressChecklistProps):
       <span className={styles.bar} role="progressbar" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
         <i style={{ width: `${pct}%` }} />
       </span>
-      <button type="button" className={styles.tap} onClick={() => setOpen(true)}>
+      <Button size="sm" onClick={() => setOpen(true)}>
         {`${done}/${items.length} done${extraStat !== undefined ? ` · ${extraStat}` : ""}`}
-      </button>
+      </Button>
       {open && (
         <BottomSheet title={`What's done · ${done}/${items.length}`} onDismiss={() => setOpen(false)}>
           {items.map(([label, ok]) => (

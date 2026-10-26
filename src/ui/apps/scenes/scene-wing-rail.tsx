@@ -4,7 +4,8 @@
  * shows its label for 1.4 seconds. The labels start past the open wing's live edge, so they never cover the panel (`tipOffset` follows the panel's width as it is dragged). The long help sits
  * past the label like RoleCall's, except where that would leave the window (a wide wing open): there it sits on the label's inner side, over the panel. RoleCall clips it there.
  */
-import { useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
+import { Tile } from "../../components/button";
+import { useEffect, useRef, useState, type JSX } from "react";
 import { Ic } from "../../_shared/ic";
 import { WINGS, type Wing } from "./scene-wing-data";
 import { pushesAside } from "./wing-dismiss";
@@ -46,14 +47,15 @@ function RailItem({ wing, on, offset, help: helpAt, railHovered, onToggle }: { w
   }, [pointed]);
   const show = flash || help || railHovered;
   return (
-    <button type="button" data-wing={wing.id} className={`wi${on ? " on" : ""}`} style={{ "--w": wing.tone, "--tip-off": `${offset}px`, "--help-off": `${helpAt}px` } as CSSProperties}
-      aria-pressed={on} aria-label={wing.label} {...(pushesAside() ? {} : { title: wing.blurb })} onClick={() => onToggle(wing.id)}
-      onPointerEnter={() => setPointed(true)} onPointerLeave={() => setPointed(false)} onFocus={() => setPointed(true)} onBlur={() => setPointed(false)}>
-      <Ic name={wing.icon} size={20} fill={wing.id === "booth"} />
-      <span className="lbl">{wing.label}</span>
-      <span className={`tip${show ? " show" : ""}`}><b>{wing.label}</b><span>{wing.blurb}</span></span>
-      <span className={`tipd${help ? " show" : ""}`} aria-hidden={!help}>{wing.detail}</span>
-    </button>
+    <Tile kind="icon" data-wing={wing.id} selected={on} vars={{ "--w": wing.tone, "--tip-off": `${offset}px`, "--help-off": `${helpAt}px` }}
+      aria-pressed={on} label={wing.label} {...(pushesAside() ? { title: "" } : { title: wing.blurb })} onClick={() => onToggle(wing.id)}
+      onPointerEnter={() => setPointed(true)} onPointerLeave={() => setPointed(false)} onFocus={() => setPointed(true)} onBlur={() => setPointed(false)}
+      icon={<>
+        <Ic name={wing.icon} size={20} fill={wing.id === "booth"} />
+        <span className="lbl">{wing.label}</span>
+        <span className={`tip${show ? " show" : ""}`}><b>{wing.label}</b><span>{wing.blurb}</span></span>
+        <span className={`tipd${help ? " show" : ""}`} aria-hidden={!help}>{wing.detail}</span>
+      </>} />
   );
 }
 

@@ -25,73 +25,9 @@ import {
 } from "../../core/lore/engine";
 import { setTokenCacheInsertHook } from "../../core/tokens";
 import { derivedCacheBytes, lockDerived, trimDerivedCache } from "../../core/derive/derive";
+import { createCacheRegistry, every64 } from "../../core/caches/registry";
 import { LIBRARY_LOCKED_EVENT } from "./api-fetch";
-import { artCache, type ArtCache } from "./art-cache";
-
-export interface RegisteredCache {
-  name: string;
-  budgetBytes: number;
-  bytes(): number;
-  trim(toBytes: number): void;
-}
-
-/** `clear()` is required exactly when `plaintext: true` - mirrors src/stage/caches.ts's CacheEntry:
- * a cache that holds decrypted content but supplies no way to empty it does not type-check. */
-export type CacheEntry = (RegisteredCache & { plaintext: true; clear(): void }) | (RegisteredCache & { plaintext: false; clear?(): void });
-
-const caches = new Map<string, CacheEntry>();
-
-export function registerCache(entry: CacheEntry): void {
-  caches.set(entry.name, entry);
-}
-
-/** Test-only: drops every registration and re-registers the real caches this module wires at load
- * (below), so a test's own fakes never leak into another test file, and neither does their absence.
- * Never called by production code. */
-export function __resetCachesForTests(): void {
-  caches.clear();
-  registerCoreCaches();
-}
-
-/** Test-only introspection. Never read by production code. */
-export function __registeredCachesForTests(): readonly CacheEntry[] {
-  return [...caches.values()];
-}
-
-/** No 10.2 row gives a client-side total; chosen for S1 as the art cache's own 200 MB default plus
- * headroom for the three smaller core caches beside it. A later phase may lower it once S10 shrinks
- * the art cache to thumbnails (10.2's 64 MB target). */
-export const GLOBAL_BUDGET_BYTES = 300 * 1024 * 1024;
-
-/** No RSS reading in a browser tab (section 6: "the client has no reliable RSS reading, so its
- * registry trims on its own byte accounting"), so this is the client's whole budget story: trim any
- * cache currently over its own budget back to it, largest overage first, then, if the sum still
- * exceeds the global budget, keep trimming the largest remaining cache until it fits. A no-op when
- * nothing is over. The art cache already self-enforces the same 200 MB through its own `get()`, so
- * this rarely has anything to do for it; it is still registered so a future, smaller art budget
- * (10.2's 64 MB target, after S10) needs no new wiring here. */
-export function enforceBudgets(globalBudgetBytes: number = GLOBAL_BUDGET_BYTES): void {
-  for (const c of [...caches.values()].filter((c) => c.bytes() > c.budgetBytes).sort((a, b) => b.bytes() - b.budgetBytes - (a.bytes() - a.budgetBytes))) {
-    c.trim(c.budgetBytes);
-  }
-  let total = [...caches.values()].reduce((sum, c) => sum + c.bytes(), 0);
-  if (total <= globalBudgetBytes) return;
-  for (const c of [...caches.values()].sort((a, b) => b.bytes() - a.bytes())) {
-    if (total <= globalBudgetBytes) return;
-    const before = c.bytes();
-    c.trim(Math.max(0, before - (total - globalBudgetBytes)));
-    total -= before - c.bytes();
-  }
-}
-
-/** Clears every plaintext cache - the one lock funnel `attachCacheLockListener` below calls. Scrubs
- * JSC's legacy `RegExp.input`/`$_`/`lastMatch` statics too; see `src/stage/caches.ts`'s `lockAll()`
- * for why (found by the S1 heap canary - the same engine-level retention applies here, since
- * Chromium/V8 implements the same ECMA-262 Annex B legacy properties). */
-export function lockAll(): void {
-  for (const c of caches.values()) if (c.plaintext) c.clear();
-  /x/.test("x");
-}
+import { artCache } from "./art-cache";
 
 /** Wires `lockAll()` to the event every way this tab learns the library just locked already raises
  * (a 423 mid-request, the idle-lock poll's own discovery) - the ONE listener `shell/library-gate.tsx`
@@ -107,7 +43,7 @@ export function attachCacheLockListener(target: Pick<typeof window, "addEventLis
  * load, and __resetCachesForTests above) just overwrites the same entries. Budgets for the two caches
  * without a 10.2 row (keyword-regex, key-index) match src/stage/caches.ts's own choice for the same
  * code running server-side. */
-function registerCoreCaches(art: ArtCache = artCache): void {
+const { registerCache, enforceBudgets, lockAll, __registeredCachesForTests, __resetCachesForTests } = createCacheRegistry((registerCache) => {
   registerCache({ name: "derived", budgetBytes: 64 * 1024 * 1024, bytes: derivedCacheBytes, trim: trimDerivedCache, clear: lockDerived, plaintext: true });
   registerCache({
     name: "keyword-regex",
@@ -117,12 +53,13 @@ function registerCoreCaches(art: ArtCache = artCache): void {
     clear: clearKeywordRegexCaches,
     plaintext: true,
   });
-  registerCache({ name: "art", budgetBytes: 200 * 1024 * 1024, bytes: () => art.bytes(), trim: (toBytes) => art.trim(toBytes), clear: () => art.clear(), plaintext: true });
-}
-registerCoreCaches();
+  registerCache({ name: "art", budgetBytes: 200 * 1024 * 1024, bytes: () => artCache.bytes(), trim: (toBytes) => artCache.trim(toBytes), clear: () => artCache.clear(), plaintext: true });
+});
+export { registerCache, enforceBudgets, lockAll, __registeredCachesForTests, __resetCachesForTests };
+export { GLOBAL_BUDGET_BYTES } from "../../core/caches/registry";
+export type { CacheEntry, RegisteredCache } from "../../core/caches/registry";
 // Stateless (the functions themselves), so this runs once, here, at module load.
 // Same sampling as the server registry (src/stage/caches.ts): small per-text entries check every 64th insert.
-const every64 = (check: () => void): (() => void) => { let n = 0; return () => { if ((++n & 63) === 0) check(); }; };
 setTokenCacheInsertHook(every64(() => enforceBudgets()));
 setKeywordRegexCacheInsertHook(every64(() => enforceBudgets()));
 setLoreKeyIndexCacheInsertHook(() => enforceBudgets());

@@ -19,6 +19,7 @@ import {
 } from "./collections-ops";
 import { isEscapeClose } from "../../_shared/use-escape-key";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, remToPx, useFocusedRangeIndex, useOccurrenceKeys, useVirtualRows, type Range } from "../../_shared/virtual-list";
+import { Button, Chip } from "../../components/button";
 
 export function CollectionsBar(input: CollectionsBarInput): JSX.Element | null {
   const [naming, setNaming] = useState(false);
@@ -86,39 +87,27 @@ export function CollectionsBar(input: CollectionsBarInput): JSX.Element | null {
         return (
           <span key={rowKeys[item.index]} ref={virtualizer.measureElement} data-index={item.index} data-pick={rowKeys[item.index]}
             className={`colchip colbar-item${on ? " on" : ""}`} style={{ transform: `translateX(${String(item.start)}px)` }}>
-            <button
-              type="button"
-              className="colname"
-              title={
+            <Chip pressed={on} title={
                 on
                   ? "Showing this collection - click to stop filtering"
                   : `Show only what is in ${collection.name}`
               }
               // A second click clears it. Without that the only way out of a collection is to find
               // and delete the term by hand, which is a trap for anyone who clicked to look.
-              onClick={() => onQuery(on ? "" : collectionQuery(collection.id))}
-            >
+              onClick={() => onQuery(on ? "" : collectionQuery(collection.id))}>
               {collection.name}
               <span className="colcount">{collection.members.length}</span>
-            </button>
+            </Chip>
             {staged.length > 0 && (
-              <button
-                type="button"
-                className="coladd"
-                title={`Add ${String(staged.length)} staged ${staged.length === 1 ? "piece" : "pieces"} to ${collection.name}`}
-                onClick={() => onAddStaged(collection.id)}
-              >
-                add
-              </button>
+              <Button size="sm" variant="quiet" title={`Add ${String(staged.length)} staged ${staged.length === 1 ? "piece" : "pieces"} to ${collection.name}`}
+                onClick={() => onAddStaged(collection.id)}>
+                Add
+              </Button>
             )}
-            <button
-              type="button"
-              className="coldel"
-              title={`Delete the collection ${collection.name}. The pieces stay in the studio.`}
-              onClick={() => onDelete(collection)}
-            >
-              remove
-            </button>
+            <Button size="sm" variant="danger" title={`Delete the collection ${collection.name}. The pieces stay in the studio.`}
+              onClick={() => onDelete(collection)}>
+              Remove
+            </Button>
           </span>
         );
         })}
@@ -147,26 +136,22 @@ export function CollectionsBar(input: CollectionsBarInput): JSX.Element | null {
           }}
         />
       ) : (
-        <button
-          type="button"
-          className="colmake"
-          title={
+        <Button size="sm" title={
             staged.length > 0
               ? `Make a collection from the ${String(staged.length)} staged ${staged.length === 1 ? "piece" : "pieces"}`
               : "Make a collection"
           }
-          onClick={() => setNaming(true)}
-        >
-          new group
-        </button>
+          onClick={() => setNaming(true)}>
+          New group
+        </Button>
       )}
 
       {notice && (
         <span className="colnote" role="status">
           {notice}
-          <button type="button" title="Dismiss" aria-label="Dismiss" onClick={() => setNotice("")}>
-            ok
-          </button>
+          <Button size="sm" variant="quiet" title="Dismiss" aria-label="Dismiss" onClick={() => setNotice("")}>
+            OK
+          </Button>
         </span>
       )}
     </div>

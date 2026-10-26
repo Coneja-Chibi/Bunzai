@@ -12,6 +12,7 @@ import { portraitUrl } from "../../_shared/asset-url";
 import { Ic } from "../../_shared/ic";
 import { useEscapeKey } from "../../_shared/use-escape-key";
 import { filterPersonas, gridColumns } from "./cast/cast-core";
+import { Button, Tile } from "../../components/button";
 
 /** What a tile needs, read off a persona's library summary. */
 export interface PickerPersona { id: string; name: string; emoji?: string; tagline?: string; hasPortrait: boolean; version?: number; revision?: string }
@@ -103,7 +104,7 @@ export function PersonaPicker({ ctx, personas, activeId, defaultId, busy, onCast
       <aside className="cw-cc" role="dialog" aria-label="Casting Call" data-part="scene.cast.picker" ref={box} onKeyDown={trap}>
         <div className="hd"><b>Casting Call</b><span>Select your role</span></div>
         <div className="empty"><b>No Talent Yet</b>Make your first persona with New persona, then come back here.</div>
-        <div className="cw-acts"><button type="button" className="go" onClick={onNew}>New persona</button><button type="button" onClick={onClose}>Close</button></div>
+        <div className="cw-acts"><Button variant="primary" onClick={onNew}>New persona</Button><Button variant="quiet" onClick={onClose}>Close</Button></div>
       </aside>
     );
   }
@@ -115,11 +116,9 @@ export function PersonaPicker({ ctx, personas, activeId, defaultId, busy, onCast
       )}
       <div className="grid" style={{ "--cols": gridColumns(shown.length) } as React.CSSProperties} role="listbox" aria-label="Personas" onKeyDown={walk}>
         {shown.map((p) => (
-          <button type="button" key={p.id} role="option" aria-selected={p.id === selected} tabIndex={p.id === (selected ?? shown[0]?.id) ? 0 : -1} className={`tile${p.id === selected ? " sel" : ""}`} onClick={() => setSelected(p.id)}>
-            {p.id === defaultId && <span className="cw-dd" title="Your default persona" />}
-            <PersonaFace persona={p} className="ph" />
-            <span className="cw-cap">{p.name}</span>
-          </button>
+          <Tile key={p.id} kind="thumb" role="option" aria-selected={p.id === selected} tabIndex={p.id === (selected ?? shown[0]?.id) ? 0 : -1} selected={p.id === selected} label={p.name} size="fill" caption={p.name} onClick={() => setSelected(p.id)}
+            badge={p.id === defaultId ? <span title="Your default persona" aria-hidden="true" /> : undefined}
+            art={<PersonaFace persona={p} className="ph" />} />
         ))}
       </div>
       {lead && (
@@ -130,10 +129,10 @@ export function PersonaPicker({ ctx, personas, activeId, defaultId, busy, onCast
         </div>
       )}
       <div className="cw-acts">
-        <button type="button" disabled={busy || activeId === null} onClick={() => onCast(null)}>Clear role</button>
-        <button type="button" className="go" disabled={busy || !selected || selected === activeId} onClick={() => selected && onCast(selected)}>Cast</button>
+        <Button disabled={busy || activeId === null} onClick={() => onCast(null)}>Clear role</Button>
+        <Button variant="primary" disabled={busy || !selected || selected === activeId} onClick={() => selected && onCast(selected)}>Cast</Button>
       </div>
-      <div className="cw-acts"><button type="button" onClick={onNew}>New persona</button><button type="button" className="close" onClick={onClose}>Close</button></div>
+      <div className="cw-acts"><Button onClick={onNew}>New persona</Button><Button variant="quiet" onClick={onClose}>Close</Button></div>
     </aside>
   );
 }

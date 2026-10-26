@@ -4,6 +4,7 @@ import { DialogCore } from "../../components/dialog-core";
 import { docAssetUrl } from "../../_shared/asset-url";
 import { coverDesigns, coverBackgrounds, type BookCoverChoice } from "./book-cover-core";
 import styles from "./book-cover.module.css";
+import { Button } from "../../components/button";
 
 export function BookCover({ title, choice }: { title: string; choice: BookCoverChoice }): JSX.Element {
   const design = coverDesigns.find((a) => a.slug === choice.design);
@@ -40,8 +41,8 @@ export function BookCoverDialog({ title, initial, onSave, onDismiss }: {
         {!ready && <p>The cover collection is still being prepared.</p>}
       </div>
     </div>
-    <footer><button type="button" onClick={onDismiss}>Cancel</button>
-      <button type="button" onClick={() => onSave(null)}>Use original art</button>
-      <button type="button" disabled={!ready} onClick={() => onSave(choice)}>Save cover</button></footer>
+    <footer><Button variant="quiet" onClick={onDismiss}>Cancel</Button>
+      <Button onClick={() => onSave(null)}>Use original art</Button>
+      <Button variant="primary" disabled={!ready} onClick={() => onSave(choice)}>Save cover</Button></footer>
   </DialogCore>;
 }

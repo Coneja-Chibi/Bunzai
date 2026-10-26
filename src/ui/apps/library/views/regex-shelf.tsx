@@ -13,8 +13,8 @@ import { useState, type CSSProperties, type DragEvent, type JSX } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
 import { deckMeta } from "../../../_shared/decks";
 import { pieceKey, type DeckView, type DeckViewContext } from "../view-contract";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 import { icSvg } from "../../../_shared/ic-svg";
+import { Button, Tile, Toggle } from "../../../components/button";
 
 const CSS = `
 .rgx-scroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
@@ -32,8 +32,8 @@ const CSS = `
 .rgx-mark{width:2.3rem;height:2.3rem;flex:none;display:grid;place-items:center;font:900 .95rem var(--font-mono);
   background:var(--spine);color:var(--stage-ink);border:3px solid var(--stage-black);box-shadow:2px 2px 0 0 var(--stage-black)}
 .rgx-name{min-width:0}
-button.rgx-nm{background:none;border:0;padding:0;text-align:left;cursor:pointer;width:100%}
-button.rgx-nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.rgx-nm{text-align:left;width:100%}
+.rgx-nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
 .rgx-nm{display:block;font:900 1rem/1.1 var(--font-big);letter-spacing:.02em;text-transform:uppercase;color:var(--stage-card);overflow-wrap:anywhere}
 .rgx-sub{font: 500 var(--text-meta) var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-text-dim)}
 .rgx-does{flex:1;padding:0 .7rem;font:italic 600 var(--text-body)/1.4 var(--font-body);color:var(--stage-mute);overflow-wrap:anywhere}
@@ -41,8 +41,6 @@ button.rgx-nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
 .rgx-count b{display:block;font:900 1.5rem/1 var(--font-big);color:var(--stage-card)}
 .rgx-count span{font: 500 var(--text-meta) var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--stage-text-dim)}
 .rgx-slow{align-self:center;font: 700 var(--text-meta) var(--font-mono);letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--stage-warn);color:var(--stage-warn);padding:.1rem .3rem}
-.rgx-act{align-self:center;cursor:pointer;font: 700 max(14px,var(--text-control)) var(--font-mono);letter-spacing:.05em;text-transform:uppercase;padding:.22rem .4rem;
-  color:var(--stage-soft);background:var(--stage-row);border:1px solid var(--stage-seam)}
 .rgx-new{display:grid;place-items:center;min-height:11rem;cursor:pointer;font: 700 var(--text-meta) var(--font-mono);letter-spacing:.09em;text-transform:uppercase;
   color:var(--stage-mute);background:none;border:2px dashed var(--stage-seam)}
 .rgx-empty{font-family:var(--font-body);font-style:italic;color:var(--stage-kicker)}
@@ -123,7 +121,7 @@ function SetCard({
         </span>
         <div className="rgx-name">
           {/* The name is the card's keyboard control; the switch and actions stay siblings of it. */}
-          <button type="button" className="rgx-nm" aria-pressed={staged}>{e.name || "(unnamed)"}</button>
+          <Button variant="link" data-part="library.regex.name" aria-pressed={staged}>{e.name || "(unnamed)"}</Button>
           <span className="rgx-sub">{ctx.sourceLabel(e) ?? "regex set"}</span>
         </div>
       </div>
@@ -141,13 +139,13 @@ function SetCard({
         {slow > 0 && <span className="rgx-slow">{`${slow} slow`}</span>}
         {rgx && (
           <>
-            <ToggleSwitch size="sm" on={enabled} aria-label={enabled ? "Set is on" : "Set is off"} title="Off sets skip export" onChange={() => rgx.onToggleEnabled(e, !enabled)} />
-            <button type="button" className="rgx-act" onClick={() => rgx.onSplit(e)}>
+            <Toggle size="sm" on={enabled} aria-label={enabled ? "Set is on" : "Set is off"} title="Off sets skip export" onChange={() => rgx.onToggleEnabled(e, !enabled)} />
+            <Button size="sm" onClick={() => rgx.onSplit(e)}>
               Split
-            </button>
-            <button type="button" className="rgx-act" onClick={() => rgx.onDuplicate(e)}>
+            </Button>
+            <Button size="sm" onClick={() => rgx.onDuplicate(e)}>
               Copy
-            </button>
+            </Button>
           </>
         )}
       </div>
@@ -178,9 +176,7 @@ const view: DeckView = {
             />
           ))}
           {rgx && (
-            <button type="button" className="rgx-new" onClick={() => rgx.onNew()}>
-              + New set · or drop a file
-            </button>
+            <Tile kind="add" data-part="library.regex.new" label="New set" title="New set, or drop a file" icon={<span>+ New set · or drop a file</span>} onClick={() => rgx.onNew()} />
           )}
         </div>
         {ctx.entities.length === 0 && <p className="rgx-empty">No regex sets yet.</p>}

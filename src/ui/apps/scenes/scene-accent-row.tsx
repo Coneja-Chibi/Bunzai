@@ -4,6 +4,7 @@
  * the house SwatchRow's custom picker below the chips. Saved to the app preferences the moment it is picked, like the switches above it.
  */
 import type { JSX } from "react";
+import { Chip } from "../../components/button";
 import { SwatchRow } from "../../components/swatch-row";
 import { ACCENT_CUSTOM_KEY, ACCENT_SOURCE_KEY, ACCENT_SOURCES, accentSourceAvailable, accentSourceOf, sceneAccentHex, type AccentSource, type PieceColors } from "./scene-accent-core";
 
@@ -23,7 +24,7 @@ export function AccentRow({ prefs, colors, onSet }: { prefs: { get(key: string):
       <div className="pg-chips">
         {ACCENT_SOURCES.map((s) => {
           const available = accentSourceAvailable(s, colors);
-          return <button type="button" key={s} className={`pg-chip${source === s ? " on" : ""}`} aria-pressed={source === s} disabled={!available} title={available ? LABELS[s].hint : `${LABELS[s].hint} It has no colour yet.`} onClick={() => onSet(ACCENT_SOURCE_KEY, s)}>{LABELS[s].name}</button>;
+          return <Chip key={s} pressed={source === s} disabled={!available} title={available ? LABELS[s].hint : `${LABELS[s].hint} It has no colour yet.`} onClick={() => onSet(ACCENT_SOURCE_KEY, s)}>{LABELS[s].name}</Chip>;
         })}
       </div>
       <p className="pg-help">{LABELS[source].hint} It tints the replies, the composer and the scene's panels.</p>

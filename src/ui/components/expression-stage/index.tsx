@@ -1,6 +1,7 @@
 /**
  * ExpressionStage - sealed local match: sample text -> pack face. No network.
  */
+import { Segmented } from "../button";
 import { useMemo, useState, type JSX } from "react";
 import {
   matchExpression,
@@ -49,19 +50,19 @@ export function ExpressionStage({ pack, profile }: ExpressionStageProps): JSX.El
         </div>
         <div>
           <div className={styles.moods}>
-            {MOODS.map((m) => (
-              <button
-                key={m}
-                type="button"
-                className={`${styles.mood}${mood === m ? ` ${styles.moodOn}` : ""}`}
-                onClick={() => {
-                  setMood(m);
-                  setText("");
-                }}
-              >
-                {m}
-              </button>
-            ))}
+            <Segmented
+              size="sm"
+              label="Mood"
+              multiple
+              value={mood ? [mood as (typeof MOODS)[number]] : []}
+              onChange={(picked) => {
+                const m = picked.find((x) => x !== mood) ?? picked[0];
+                if (!m) return;
+                setMood(m);
+                setText("");
+              }}
+              items={MOODS.map((m) => ({ value: m, label: m }))}
+            />
           </div>
           <ExpandTextarea
             label="Sample line"

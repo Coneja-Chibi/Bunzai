@@ -5,6 +5,7 @@
  * Output language is drawn with the filing pass that reads it.
  */
 import type { JSX } from "react";
+import { Button } from "../../../../../components/button";
 import { BoothModelPicker } from "../../../booth-model-picker";
 import { SettingsField, SettingsSection } from "./parts";
 import type { SectionProps } from "./deps";
@@ -15,7 +16,7 @@ export function ModelSection({ chat, compendium, models, set }: SectionProps): J
     <SettingsSection id="model" title="Model" blurb="Choose the model Compendium uses to pick what the narrator should see.">
       <SettingsField label={chosen ? "Compendium Model" : "Compendium Model - uses this scene's model"} hint="AI model for compendium retrieval. Leave it unset to use this scene's own model.">
         <BoothModelPicker current={chosen ?? chat.connection} models={models} onPick={(model) => void set({ model })} />
-        {chosen && <button type="button" className="cps-quiet" onClick={() => void set({ model: null })}>Use this scene&apos;s model</button>}
+        {chosen && <Button variant="quiet" size="sm" onClick={() => void set({ model: null })}>Use this scene&apos;s model</Button>}
       </SettingsField>
     </SettingsSection>
   );

@@ -17,7 +17,7 @@ const SMALL = "639px";
 export const WING_STYLE = `
 /* Opening a wing pushes the chat aside and a press outside closes it: no blur, no Scene Paused mark (WingPanelContainer.tsx: flex-basis 300ms ease-out, content margin 80 to 0) */
 ${C}.paused .play{filter:none;pointer-events:auto}
-${C} .paused-mark{display:none}
+${C} [data-part="scene.paused"]{display:none}
 ${C} .chat{left:80px;right:80px;transition:left .3s ${OUT},right .3s ${OUT}}
 ${C} .scroll{left:0;right:0}
 ${C}.open-l .chat{left:min(var(--wing-w),100%)}
@@ -53,17 +53,17 @@ ${C} .rail{transition:width .5s ${OUT},opacity .5s ${OUT}}
 ${C}.open-l .rail.l:hover,${C}.open-r .rail.r:hover{opacity:.8}
 ${C} .rail.l{background-image:linear-gradient(to left,${mix(ZINC950, 60)},transparent)}
 ${C} .rail.r{background-image:linear-gradient(to right,${mix(ZINC950, 60)},transparent)}
-${C} .wi::before{border-radius:var(--rc-radius-full);transition:all .5s ${STD}}
-${C} .wi{color:${mix(WHITE, 45)}}
-${C} .wi svg{transition:all .3s ${OUT}}
-${C} .wi:hover{color:var(--w)}
-${C} .wi.on,${C} .wi.on:hover{color:${WHITE}}
+${C} [data-control="tile"][data-wing]::before{border-radius:var(--rc-radius-full);transition:all .5s ${STD}}
+${C} [data-control="tile"][data-wing]{color:${mix(WHITE, 45)}}
+${C} [data-control="tile"][data-wing] svg{transition:all .3s ${OUT}}
+${C} [data-control="tile"][data-wing]:hover{color:var(--w)}
+${C} [data-control="tile"][data-wing][data-selected],${C} [data-control="tile"][data-wing][data-selected]:hover{color:${WHITE}}
 /* Labels: 260px, the label fill with a 3px black border and the wing's color as a hard 6px shadow; Cinzel 900 title, Inter task line (WingItem.tsx tooltip) */
 ${C} .tip{top:50%;width:260px;padding:12px 16px;background:var(--rc-tip,var(--stage-panel));border:3px solid ${BLACK};box-shadow:6px 6px 0 0 var(--w);opacity:0;transform:translateY(-60%);transition:opacity .2s ${OUT},transform .2s ${OUT}}
 ${C} .rail.l .tip{left:var(--tip-off)}
 ${C} .rail.r .tip{right:var(--tip-off)}
-${C} .wi:hover .tip{opacity:0;transform:translateY(-60%)}
-${C} .wi .tip.show{opacity:1;transform:translateY(-50%);pointer-events:auto}
+${C} [data-control="tile"][data-wing]:hover .tip{opacity:0;transform:translateY(-60%)}
+${C} [data-control="tile"][data-wing] .tip.show{opacity:1;transform:translateY(-50%);pointer-events:auto}
 ${C} .tip b{font-size:.95rem;line-height:1.05}
 ${C} .tip span{margin-top:6px;font-family:var(--font-ui,var(--font-body));font-size:.76rem;font-weight:600;line-height:1.375;color:var(--rc-zinc-100)}
 ${C} .tipd{display:block;position:absolute;top:50%;z-index:30;width:290px;padding:12px 16px;background:var(--rc-tip-detail,var(--stage-panel));border:2px solid var(--w);box-shadow:5px 5px 0 0 ${BLACK};color:var(--rc-zinc-200);font:400 .82rem/1.45 var(--font-ui,var(--font-body));text-align:left;white-space:normal;opacity:0;transform:translateY(-58%);transition:opacity .2s ${OUT},transform .2s ${OUT};pointer-events:none}
@@ -77,10 +77,6 @@ ${C} .crumb b{font-weight:600;color:var(--rc-zinc-200)}
 ${C} .crumb i{color:var(--rc-zinc-700)}
 ${C} .crumb .cl{margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* Tabs: flex-wrap gap-1.5 pb-1; each tab flex-1 basis-24 min-w-0 px-2 py-2 text-left, label and meta stacked (FoldoutTabs.tsx:43-59) */
-${C} .tabs{flex-wrap:wrap;gap:6px;margin-top:0;padding-bottom:4px}
-${C} .tabs button{flex:1 1 96px;min-width:0;padding:8px;text-align:left;border:1px solid ${mix(WHITE, 10)};background:${mix(WHITE, 3)};color:var(--rc-zinc-400);font-family:var(--font-ui,var(--font-body));transition:border-color .15s ${STD},color .15s ${STD}}
-${C} .tabs button:hover{border-color:${mix(WHITE, 20)};color:var(--rc-zinc-100)}
-${C} .tabs button.on{border-color:${mix(WHITE, 30)};background:${mix(WHITE, 10)};color:var(--rc-zinc-50)}
 ${C} .tabs b{display:block;overflow-wrap:break-word;font-size:.75rem;line-height:1.25;font-weight:600;text-transform:uppercase;letter-spacing:.025em}
 ${C} .tabs small{display:block;margin-top:4px;font-size:.75rem;line-height:1rem;opacity:.6}
 /* The body and the hero (WingShell.tsx: WingBody px-6 py-5 space-y-5, WingHero) */

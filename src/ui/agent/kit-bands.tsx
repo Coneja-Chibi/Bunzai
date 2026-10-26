@@ -12,6 +12,7 @@
  * you cannot read.
  */
 import { useCallback, type JSX, type ReactNode } from "react";
+import { Button, Disclosure } from "../components/button";
 import { copyText } from "../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../_shared/use-flash";
 import { boundedError, foldSummary } from "./kit-bands-core";
@@ -24,14 +25,16 @@ import { boundedError, foldSummary } from "./kit-bands-core";
  */
 function CopyCorner({ onCopy }: { onCopy: () => void }): JSX.Element {
   return (
-    <button
-      type="button"
-      className="kit-band__copy"
-      // The band underneath may be foldable; copying must not also collapse what was copied.
-      onClick={(event) => { event.stopPropagation(); onCopy(); }}
-    >
-      {"copy"}
-    </button>
+    <span className="kit-band__copy">
+      <Button
+        variant="quiet"
+        size="sm"
+        // The band underneath may be foldable; copying must not also collapse what was copied.
+        onClick={(event) => { event.stopPropagation(); onCopy(); }}
+      >
+        {"copy"}
+      </Button>
+    </span>
   );
 }
 
@@ -88,10 +91,9 @@ export function CopyableBand({
  */
 export function FoldedSay({ text, onToggle }: { text: string; onToggle: () => void }): JSX.Element {
   return (
-    <button type="button" className="kit-fold" onClick={onToggle}>
-      <span className="kit-fold__dot">{"· "}</span>
-      {foldSummary(text)}
-    </button>
+    <div className="kit-fold">
+      <Disclosure variant="line" chevron={false} open={false} leading={<span className="kit-fold__dot">{"· "}</span>} label={foldSummary(text)} onClick={onToggle} />
+    </div>
   );
 }
 

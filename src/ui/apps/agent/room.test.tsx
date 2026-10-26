@@ -116,7 +116,7 @@ describe("AgentRoom", () => {
     expect(html).toContain("Type / for a command, or connect a model in Settings");
     // The field takes a command; the send key is genuinely disabled, not merely styled that way.
     expect(html).not.toContain('<textarea rows="2" placeholder="Type / for a command, or connect a model in Settings" disabled=""');
-    expect(html).toContain('<button type="submit" disabled=""');
+    expect(html).toMatch(/<button[^>]*disabled=""[^>]*type="submit"/);
   });
 
   test("NO GATE CARD UNTIL THERE IS SOMETHING TO DECIDE", () => {

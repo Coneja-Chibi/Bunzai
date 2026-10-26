@@ -231,7 +231,7 @@ describe("changing the setup", () => {
     const ctx = ctxOf();
     Object.assign(ctx.api, { sceneConnections: async () => [{ id: "new", label: "Harbor", kind: "openai", model: "new-model" }], connectionModels: async () => ({ models: [{ id: "new-model", context: 64000 }], saved: "new-model" }) });
     await read(<AiWing ctx={ctx} chat={chat} onPicked={() => undefined} />);
-    expect(host.querySelector(".mrow.cur")?.textContent).toContain("new-model");
+    expect(host.querySelector(".mwrap [data-control='row'][data-selected]")?.textContent).toContain("new-model");
     unmount();
     const { PromptingWing } = await import("../scene-prompting");
     await read(<PromptingWing ctx={ctx} chat={chat} presetBody={null} onChanged={() => undefined} onBody={() => undefined} />);

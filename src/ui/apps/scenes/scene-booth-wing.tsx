@@ -11,7 +11,7 @@ import type { AppContext } from "../../app-contract";
 import type { Chat } from "../../../stage/contracts/chat-store";
 import type { OpenScene } from "../../../studio/scenes";
 import { Ic } from "../../_shared/ic";
-import { ToggleSwitch } from "../../components/toggle-switch";
+import { Toggle } from "../../components/button";
 import { protect } from "../../_shared/protected-control";
 import { toErrorMessage } from "../../_shared/error-message";
 import { TOOL_ROUNDS_DEFAULT, TOOL_ROUNDS_MAX, TOOL_ROUNDS_MIN } from "../../../core/assembly/tool-rounds";
@@ -119,7 +119,7 @@ function ToolAccessRows({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat;
       <div {...protect("narrator-tools", "prop-row")} style={{ "--tone": "var(--stage-ok)" } as CSSProperties}>
         <span className="prop-ic"><Ic name="mdi:tune-vertical" size={20} /></span>
         <div><b>Narrator Tool Access</b><small>Off means the writing model receives no tools. Director and Compendium helpers still work separately.</small></div>
-        <ToggleSwitch size="sm" tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} narrator tool access`} onChange={() => void flip()} />
+        <Toggle size="sm" tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} narrator tool access`} onChange={() => void flip()} />
       </div>
       {on && (
         <div {...protect("narrator-tools", "prop-row")} style={{ "--tone": "var(--stage-ok)" } as CSSProperties}>

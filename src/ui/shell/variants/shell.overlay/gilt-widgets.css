@@ -1,2 +1,2 @@
 /* Gilt widgets: a fine outer rule and display headings; the overlay layout stays fixed. */
-html[data-surface-shell-overlay="gilt-widgets"] [data-part="shell.overlay"] { --overlay-outline: 1px solid var(--bk-line); --overlay-heading: var(--bk-font-display); }
+html[data-surface-shell-overlay="gilt-widgets"] [data-part="shell.overlay"] { --overlay-outline: 1px solid var(--bk-line); --overlay-heading: var(--font-fancy); }

@@ -5,6 +5,7 @@
  */
 import { useState, type JSX } from "react";
 import { InkDialog } from "../../../components/ink-dialog";
+import { Button } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 
 /** The confirm before the scene plays someone else: what changes and what does not. */
@@ -19,7 +20,7 @@ export function CastConfirm({ from, to, onCancel, onConfirm }: { from: string | 
           <div className="box"><div className="t">What changes</div><ul><li>Everything you already wrote stays under {from ?? "User"}.</li><li>The lorebooks of {who} join the scene, and {from ?? "the previous persona"}&apos;s leave it.</li></ul></div>
           <div className="box"><div className="t">What does not</div><ul><li>Your default persona for new scenes.</li><li>The Library: nothing is saved or deleted.</li></ul></div>
         </div>
-        <footer className="ft"><button type="button" autoFocus onClick={onCancel}>Cancel</button><button type="button" className="go" onClick={onConfirm}>{to ? `Play as ${to}` : "Play with no persona"}</button></footer>
+        <footer className="ft"><Button variant="quiet" autoFocus onClick={onCancel}>Cancel</Button><Button variant="primary" tone="var(--stage-warn)" onClick={onConfirm}>{to ? `Play as ${to}` : "Play with no persona"}</Button></footer>
       </div>
     </InkDialog>
   );
@@ -41,9 +42,9 @@ export function NewPersona({ busy, onCreate, onCancel }: { busy: boolean; onCrea
       <label className="cw-line"><span className="lb">Identity text</span>
         <textarea className="cw-ta" rows={5} value={content} placeholder="Who they are, in your words. This is what the AI reads." aria-label="Identity text" onChange={(e) => setContent(e.target.value)} /></label>
       <div className="cw-acts">
-        <button type="button" onClick={onCancel}>Cancel</button>
-        <button type="button" disabled={missing || busy} onClick={() => onCreate({ name: name.trim(), content }, false)}>Create</button>
-        <button type="button" className="go" disabled={missing || busy} onClick={() => onCreate({ name: name.trim(), content }, true)}>Create and cast</button>
+        <Button variant="quiet" onClick={onCancel}>Cancel</Button>
+        <Button disabled={missing || busy} onClick={() => onCreate({ name: name.trim(), content }, false)}>Create</Button>
+        <Button variant="primary" disabled={missing || busy} onClick={() => onCreate({ name: name.trim(), content }, true)}>Create and cast</Button>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 /**
  * Macro snippet chips + expand preview line for Workshop value fields.
  */
+import { Chip } from "../../../../components/button";
 import type { JSX } from "react";
 import styles from "./chips.module.css";
 import { expandAgainstVars, MACRO_CHIPS, stillHasMacro } from "./expand";
@@ -18,15 +19,7 @@ export function MacroAssist({ value, onInsert, vars }: MacroAssistProps): JSX.El
     <div className={styles.macroAssist}>
       <div className={styles.macroChips}>
         {MACRO_CHIPS.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className={styles.macroChip}
-            title={c.insert}
-            onClick={() => onInsert(c.insert)}
-          >
-            {c.label}
-          </button>
+          <Chip key={c.id} title={c.insert} onClick={() => onInsert(c.insert)}>{c.label}</Chip>
         ))}
       </div>
       {value.includes("{{") && (

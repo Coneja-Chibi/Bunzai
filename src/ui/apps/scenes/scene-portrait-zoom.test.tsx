@@ -78,7 +78,7 @@ describe("portrait click-to-zoom", () => {
     expect(dom.window.document.querySelector(".sgl")).toBeNull();
     await settle(flushSync, 100);
     expect(requested.some((u) => u.includes("/api/chats/portrait?id=c1&v=2"))).toBe(true);
-    const zoom = host.querySelector<HTMLButtonElement>("button.pzoom")!;
+    const zoom = host.querySelector<HTMLButtonElement>("button[data-part='scene.portrait.zoom']")!;
     expect(zoom.getAttribute("aria-label")).toBe("View portrait of Vera");
     flushSync(() => zoom.click());
     await settle(flushSync);
@@ -96,7 +96,7 @@ describe("portrait click-to-zoom", () => {
   test("the click and the buttons in the enlarged view do not reach the message's own click handler", async () => {
     let reached = 0;
     const flushSync = await mount(<div onClick={() => { reached++; }}><PortraitZoom chatId="c1" snapshotVersion={2} name="Vera"><img alt="" /></PortraitZoom></div>);
-    flushSync(() => host.querySelector<HTMLButtonElement>("button.pzoom")!.click());
+    flushSync(() => host.querySelector<HTMLButtonElement>("button[data-part='scene.portrait.zoom']")!.click());
     await settle(flushSync);
     flushSync(() => named("Close")!.click());
     expect(reached).toBe(0);
@@ -105,7 +105,7 @@ describe("portrait click-to-zoom", () => {
 
   test("a scene without art keeps its initial and offers nothing to enlarge", async () => {
     const flushSync = await mount(<ZoomArt ctx={ctx} chatId="c1" characterId="k1" snapshotVersion={2} hasArt={false} name="vera" />);
-    expect(host.querySelector("button.pzoom")).toBeNull();
+    expect(host.querySelector("button[data-part='scene.portrait.zoom']")).toBeNull();
     expect(host.querySelector(".ini")?.textContent).toBe("V");
     unmount(flushSync);
   });

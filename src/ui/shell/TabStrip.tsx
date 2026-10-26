@@ -2,12 +2,14 @@
  * Open-piece tabs above the canvas. The strip only shows while a piece is open or an update waits; the overlay
  * opens from the dock's Overlay tile or Ctrl+K.
  */
-import type { CSSProperties, JSX, MouseEvent } from "react";
+import type { JSX, MouseEvent } from "react";
 import type { StudioEntitySummary } from "../app-contract";
+import { DocTab, IconButton } from "../components/button";
 import { deckMeta } from "../_shared/decks";
 import { StudioUpdate } from "./StudioUpdate";
 import { keyOf, paneKeyOf } from "./store-core";
 import { useContextMenu, useShellStore } from "./store";
+import styles from "./premiere-shell.module.css";
 
 function Tab({ piece, active, beside }: { piece: StudioEntitySummary; active: boolean; beside: boolean }): JSX.Element {
   const focusPiece = useShellStore((s) => s.focusPiece);
@@ -23,11 +25,15 @@ function Tab({ piece, active, beside }: { piece: StudioEntitySummary; active: bo
   };
 
   return (
-    <button
+    <DocTab
       ref={menuRef}
       data-part="shell.tabs.tab"
-      className={`tab${active ? " active" : ""}${beside ? " beside" : ""}`}
-      style={piece.accent ? ({ "--a": piece.accent } as CSSProperties) : undefined}
+      data-beside={beside || undefined}
+      selected={active}
+      accent={piece.accent}
+      kind={deckMeta(piece.kind).short}
+      onClose={onClose}
+      closeLabel={`Close ${piece.name}`}
       onClick={() => focusPiece(piece.id, piece.kind, focusHint)}
       // Delete-to-close is the WAI-ARIA dismissible-tab pattern: the visible x is a mouse
       // affordance (a nested real button inside a button is invalid HTML), so the keyboard path
@@ -40,14 +46,9 @@ function Tab({ piece, active, beside }: { piece: StudioEntitySummary; active: bo
       }}
       title={`${focusHint ? `${piece.name} (focused entry)` : piece.name} · Delete closes`}
     >
-      <span className="pip" />
       {label}
-      {dirty && <span className="dirty" title="unsaved changes">&#9679;</span>}
-      <span className="kind">{deckMeta(piece.kind).short}</span>
-      <span className="close" aria-hidden="true" onClick={onClose}>
-        &times;
-      </span>
-    </button>
+      {dirty && <span className={styles.dirty} title="unsaved changes">&#9679;</span>}
+    </DocTab>
   );
 }
 
@@ -75,9 +76,7 @@ export function TabStrip(): JSX.Element | null {
           beside={paneKeyOf(p) === splitKey}
         />
       ))}
-      <button id="tabadd" title="Open another" onClick={openAnother}>
-        +
-      </button>
+      <IconButton id="tabadd" variant="quiet" size="sm" icon="lucide:plus" label="Open another" onClick={openAnother} />
       <span className="tabfill" />
       <span id="topact">
         <StudioUpdate compact />

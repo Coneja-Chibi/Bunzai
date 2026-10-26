@@ -4,6 +4,7 @@
  * list has an add box RoleCall's does not. A deleted note or hidden arc of the person's own is kept in the scene's archive, not erased.
  */
 import { useState, type JSX } from "react";
+import { Button, IconButton } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { DIRECTOR_HORIZONS, type DirectorEdit, type DirectorHorizon, type DirectorInvisibleArc, type DirectorNote } from "../../../../../stage/contracts/director-types";
 import { HIDDEN_TEXT_MAX, HIDDEN_TITLE_MAX, NOTE_MAX, overdueOf } from "./director-core";
@@ -29,7 +30,7 @@ function HiddenCard({ arc, open, onToggle, onDelete, locked }: { arc: DirectorIn
         <span className="dr-arc-s">
           <Badge tone={due.overdue ? "danger" : "mute"}>{due.text}</Badge>
           <Badge tone={STATUS_TONE[arc.status]}>{arc.status.replace("_", " ")}</Badge>
-          <button type="button" className="dr-ico" title="Delete arc" aria-label={`Delete ${arc.title}`} disabled={locked} onClick={(e) => { e.stopPropagation(); onDelete(); }}><Ic name="lucide:trash-2" size={12} /></button>
+          <IconButton variant="danger" size="sm" label={`Delete ${arc.title}`} title="Delete arc" icon="lucide:trash-2" disabled={locked} onClick={(e) => { e.stopPropagation(); onDelete(); }} />
           <Chevron open={open} />
         </span>
       </div>
@@ -75,13 +76,13 @@ function PlantForm({ onSubmit, onCancel }: { onSubmit(arc: { title: string; desc
   };
   return (
     <form className="dr-form" data-part="scene.director.hidden.form" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
-      <div className="dr-row"><span className="dr-formhead"><Ic name="lucide:eye-off" size={12} /><b>Plant invisible arc</b></span><button type="button" className="dr-ico" aria-label="Cancel" onClick={onCancel}><Ic name="lucide:x" size={14} /></button></div>
+      <div className="dr-row"><span className="dr-formhead"><Ic name="lucide:eye-off" size={12} /><b>Plant invisible arc</b></span><IconButton size="sm" label="Cancel" icon="lucide:x" onClick={onCancel} /></div>
       <label>Title*<input value={title} maxLength={HIDDEN_TITLE_MAX} placeholder="The Faction War" onChange={(e) => setTitle(e.target.value)} /></label>
       <label>Description*<textarea value={description} maxLength={HIDDEN_TEXT_MAX} rows={3} placeholder="What's really happening behind the scenes?" onChange={(e) => setDescription(e.target.value)} /></label>
       <label>Horizon<select value={horizon} onChange={(e) => setHorizon(e.target.value as DirectorHorizon)}>{DIRECTOR_HORIZONS.map((h) => <option key={h} value={h}>{h}</option>)}</select></label>
       <label>Surface condition<input value={surface} maxLength={HIDDEN_TEXT_MAX} placeholder="When the player visits the capital" onChange={(e) => setSurface(e.target.value)} /></label>
       {error && <p className="dr-err" role="alert">{error}</p>}
-      <div className="dr-row end"><button type="button" className="dr-btn" onClick={onCancel}>Cancel</button><button type="submit" className="dr-btn go">Plant arc</button></div>
+      <div className="dr-row end"><Button variant="quiet" size="sm" onClick={onCancel}>Cancel</Button><Button variant="primary" size="sm" type="submit">Plant arc</Button></div>
     </form>
   );
 }
@@ -102,7 +103,7 @@ export function HiddenWorld({ arcs, notes, onEdit, locked }: { arcs: readonly Di
       {adding ? (
         <PlantForm onCancel={() => setAdding(false)} onSubmit={async (arc) => { const why = await onEdit({ op: "add-hidden", ...arc }, "The arc could not be added. Reload this story before trying again."); if (!why) setAdding(false); return why; }} />
       ) : (
-        <button type="button" className="dr-plant" disabled={locked} onClick={() => setAdding(true)}><Ic name="lucide:plus" size={14} />Plant invisible arc</button>
+        <Button size="sm" block icon="lucide:plus" disabled={locked} onClick={() => setAdding(true)}>Plant invisible arc</Button>
       )}
       {live.length > 0 && (
         <div className="dr-stack tight">
@@ -119,12 +120,12 @@ export function HiddenWorld({ arcs, notes, onEdit, locked }: { arcs: readonly Di
       <div className="dr-stack tight" data-part="scene.director.notes">
         <div className="dr-sub up"><Ic name="lucide:file-text" size={12} />DM Notes <Badge>{notes.length}</Badge></div>
         {notes.map((n) => (
-          <div key={n.id} className="dr-note"><Ic name="lucide:pencil" size={12} /><p>{n.content}</p><button type="button" className="dr-ico" title="Delete note" aria-label="Delete note" disabled={locked} onClick={() => void onEdit({ op: "remove-note", id: n.id }, "The note could not be deleted. Reload this story before trying again.")}><Ic name="lucide:trash-2" size={12} /></button></div>
+          <div key={n.id} className="dr-note"><Ic name="lucide:pencil" size={12} /><p>{n.content}</p><IconButton variant="danger" size="sm" label="Delete note" icon="lucide:trash-2" disabled={locked} onClick={() => void onEdit({ op: "remove-note", id: n.id }, "The note could not be deleted. Reload this story before trying again.")} /></div>
         ))}
         <div className="dr-form">
           <label>Add a note for the Director<textarea value={draft} rows={2} maxLength={NOTE_MAX} placeholder="Something the Director should keep in mind" onChange={(e) => setDraft(e.target.value)} /></label>
           {noteError && <p className="dr-err" role="alert">{noteError}</p>}
-          <div className="dr-row end"><span className="dr-meta">{draft.length}/{NOTE_MAX}</span><button type="button" className="dr-btn go" disabled={locked || draft.trim() === ""} onClick={() => void addNote()}>Add note</button></div>
+          <div className="dr-row end"><span className="dr-meta">{draft.length}/{NOTE_MAX}</span><Button size="sm" disabled={locked || draft.trim() === ""} onClick={() => void addNote()}>Add note</Button></div>
         </div>
       </div>
     </div>

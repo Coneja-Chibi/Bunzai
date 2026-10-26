@@ -12,6 +12,7 @@
  * label. Every colour is a `--kit-*` variable, so this cannot drift from the terminal's palette.
  */
 import type { JSX } from "react";
+import { ListRow } from "../components/button";
 import type { DoctorRow, KitWidget, WidgetRow } from "./command-core";
 
 /**
@@ -61,9 +62,7 @@ function Rows({
           return act === null
             ? <div key={key} className="kit-list__row">{label}{note}</div>
             : (
-              <button key={key} type="button" className="kit-list__row kit-list__row--act" onClick={act}>
-                {label}{note}
-              </button>
+              <ListRow key={key} leading={label} label={note} onClick={act} />
             );
         })}
       </div>

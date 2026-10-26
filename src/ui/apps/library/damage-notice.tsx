@@ -5,6 +5,7 @@ import type { JSX } from "react";
 import type { StudioDamagedEntry } from "../../app-contract";
 import { damageHidden, damageSeenList, PREF_DAMAGE_SEEN } from "./damage-dismiss";
 import { plural } from "../../../core/text";
+import { Button } from "../../components/button";
 
 /**
  * Why one file did not open, in words that say what to do about it.
@@ -56,15 +57,11 @@ export function DamageNotice(props: {
         {`${plural(count, "file")} in your studio folder could not be read`}
       </strong>
       {prefs && (
-        <button
-          type="button"
-          className="dnx"
-          title="Put this away. It comes back if another file stops loading."
+        <Button size="sm" variant="quiet" title="Put this away. It comes back if another file stops loading."
           aria-label="Dismiss this notice"
-          onClick={() => prefs.set(PREF_DAMAGE_SEEN, damageSeenList(props.entries))}
-        >
-          dismiss
-        </button>
+          onClick={() => prefs.set(PREF_DAMAGE_SEEN, damageSeenList(props.entries))}>
+          Dismiss
+        </Button>
       )}
       <p>The files are still on disk and Bunraku did not change them.</p>
       <details>

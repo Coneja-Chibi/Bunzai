@@ -1,4 +1,5 @@
 /** Center reader pane: safe Markdown segments, trusted docs assets, and gated GitHub links. */
+import { Button } from "../../components/button";
 import { useEffect, useMemo, type JSX } from "react";
 import type { DocFigure, DocRecord } from "../../docs-types";
 import { requestExternal } from "../../_shared/link-gate";
@@ -43,7 +44,7 @@ export function DocContent({ doc, docs, figures, body, anchor, loading, onPick }
       <div className={styles.inner}>
         <div className={styles.crumb}>
           <span>{doc.audience === "user" ? "User Docs" : "Developer Docs"} / {displayDocTitle(doc)}</span>
-          <button type="button" className={styles.github} onClick={openGitHub}>view on GitHub</button>
+          <span className={styles.github}><Button size="sm" variant="quiet" onClick={openGitHub}>View on GitHub</Button></span>
         </div>
         <span className={styles.audience}>{doc.audience}</span>
         {loading ? <p className={styles.empty}>Opening the page…</p> : (

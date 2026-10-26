@@ -6,6 +6,7 @@
  * mode is derived from the rule (an empty or words-decompilable rule opens in Plain words; an advanced
  * pattern opens in Pattern). The `replace` string is only ever plain text here - never innerHTML.
  */
+import { Button, Chip, IconButton, Segmented } from "../../../components/button";
 import { useState, type JSX } from "react";
 import type { RegexRule } from "../../../../entities/regex/schema";
 import {
@@ -77,60 +78,22 @@ export function RulePage({
     });
   };
 
-  const modeButton = (m: Mode, label: string): JSX.Element => (
-    <button
-      type="button"
-      className={mode === m ? `${styles.md} ${styles.mdOn}` : styles.md}
-      aria-pressed={mode === m}
-      onClick={() => setMode(m)}
-    >
-      {label}
-    </button>
-  );
-
   return (
     <div className={styles.page}>
       <div className={styles.pager}>
         <span className={styles.pageNo}>
           Rule {index + 1} of {count}
         </span>
-        <button
-          type="button"
-          className={styles.pgBtn}
-          aria-label="Previous rule"
-          disabled={index <= 0}
-          onClick={onPrev}
-        >
-          &#8249;
-        </button>
-        <button
-          type="button"
-          className={styles.pgBtn}
-          aria-label="Next rule"
-          disabled={index >= count - 1}
-          onClick={onNext}
-        >
-          &#8250;
-        </button>
+        <IconButton label="Previous rule" size="sm" icon="lucide:chevron-left" disabled={index <= 0} onClick={onPrev} />
+        <IconButton label="Next rule" size="sm" icon="lucide:chevron-right" disabled={index >= count - 1} onClick={onNext} />
         <span className={styles.fill} />
         {onDuplicate && (
-          <button type="button" className={styles.pgQuiet} onClick={onDuplicate}>
-            Duplicate
-          </button>
+          <Button variant="quiet" size="sm" onClick={onDuplicate}>Duplicate</Button>
         )}
         {onDelete && (
-          <button type="button" className={`${styles.pgQuiet} ${styles.pgDanger}`} onClick={onDelete}>
-            Delete
-          </button>
+          <Button variant="danger" size="sm" onClick={onDelete}>Delete</Button>
         )}
-        <button
-          type="button"
-          className={rule.enabled ? styles.onoff : `${styles.onoff} ${styles.onoffOff}`}
-          aria-pressed={rule.enabled}
-          onClick={() => onPatch({ enabled: !rule.enabled })}
-        >
-          {rule.enabled ? "● On" : "○ Off"}
-        </button>
+        <Chip pressed={rule.enabled} tone={rule.enabled ? "var(--stage-ok)" : undefined} onClick={() => onPatch({ enabled: !rule.enabled })}>{rule.enabled ? "● On" : "○ Off"}</Chip>
       </div>
 
       {fieldOr(themed, { label: "Rule name", wide: true }, (
@@ -146,11 +109,17 @@ export function RulePage({
 
       {/* the mode switch: all three edit the same rule */}
       <div className={styles.modeBar}>
-        <span className={styles.modeSet} role="group" aria-label="Authoring mode">
-          {modeButton("guided", "Guided")}
-          {modeButton("words", "Plain words")}
-          {modeButton("pattern", "Pattern")}
-        </span>
+        <Segmented
+          label="Authoring mode"
+          size="sm"
+          items={[
+            { value: "guided", label: "Guided" },
+            { value: "words", label: "Plain words" },
+            { value: "pattern", label: "Pattern" },
+          ]}
+          value={mode}
+          onChange={setMode}
+        />
         {mode !== "guided" && <span className={styles.modeNote}>{modeNote}</span>}
       </div>
 
@@ -173,14 +142,7 @@ export function RulePage({
               ) : (
                 <>
                   <i className={styles.cheadI}>pattern &middot; flags</i>
-                  <button
-                    type="button"
-                    className={styles.escBtn}
-                    disabled
-                    title="Escape helper comes in a later slice"
-                  >
-                    Escape a literal&hellip;
-                  </button>
+                  <Button size="sm" disabled title="Escape helper comes in a later slice">Escape a literal&hellip;</Button>
                 </>
               )}
             </div>

@@ -2,6 +2,7 @@
  * ExportDialog - pick a platform, read honesty lines, download the file.
  * Uses InkDialog chrome; honesty is pure (honesty.ts). Download is the only DOM edge.
  */
+import { Button, ListRow } from "../button";
 import { useEffect, useMemo, useState, type JSX } from "react";
 import type { AppContext, CoverageInfo, FormatInfo } from "../../app-contract";
 import { InkDialog } from "../ink-dialog";
@@ -143,17 +144,16 @@ export function ExportDialog({
 
       <div className={styles.list} role="listbox" aria-label="Export formats">
         {formats.map((f) => (
-          <button
+          <ListRow
             key={f.id}
-            type="button"
+            variant="option"
             role="option"
             aria-selected={f.id === targetId}
-            className={`${styles.opt}${f.id === targetId ? ` ${styles.optOn}` : ""}`}
+            selected={f.id === targetId}
+            label={f.friendly || f.label}
+            subtitle={f.outputExtensions.map((e) => `.${e.replace(/^\./, "")}`).join(" · ") || f.id}
             onClick={() => { setTargetId(f.id); setExtension(""); }}
-          >
-            <b>{f.friendly || f.label}</b>
-            <span>{f.outputExtensions.map((e) => `.${e.replace(/^\./, "")}`).join(" · ") || f.id}</span>
-          </button>
+          />
         ))}
         {formats.length === 0 && (
           <p className={styles.sub}>No export formats loaded yet.</p>
@@ -177,18 +177,17 @@ export function ExportDialog({
              */
             const picked = extension === ext;
             return (
-              <button
+              <ListRow
                 key={ext}
-                type="button"
+                variant="option"
                 role="radio"
                 aria-checked={picked}
-                className={`${styles.opt}${picked ? ` ${styles.optOn}` : ""}`}
+                selected={picked}
+                label={`.${ext}`}
+                /* Said plainly, because "which one do I send someone" is the actual question. */
+                subtitle={ext === "png" ? "the card image other apps import" : "plain data file"}
                 onClick={() => setExtension(ext)}
-              >
-                <b>{`.${ext}`}</b>
-                {/* Said plainly, because "which one do I send someone" is the actual question. */}
-                <span>{ext === "png" ? "the card image other apps import" : "plain data file"}</span>
-              </button>
+              />
             );
           })}
         </div>
@@ -218,17 +217,16 @@ export function ExportDialog({
       {err && <p className={styles.err}>{err}</p>}
 
       <div className={styles.actions}>
-        <button type="button" className={styles.btn} onClick={onClose} disabled={busy}>
+        <Button variant="quiet" onClick={onClose} disabled={busy}>
           Cancel
-        </button>
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnPrimary}`}
+        </Button>
+        <Button
+          variant="primary"
           onClick={() => void doExport()}
           disabled={busy || !targetId}
         >
           {busy ? "Exporting…" : honesty?.level === "warn" ? "Export anyway" : "Export"}
-        </button>
+        </Button>
       </div>
     </InkDialog>
   );

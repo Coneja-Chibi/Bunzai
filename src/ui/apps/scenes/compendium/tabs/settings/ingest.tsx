@@ -6,6 +6,7 @@
  * is the Compendium's model / the scene's model. The drawer adds Undo this ingest, which RoleCall has no equivalent of.
  */
 import { useEffect, useState, type JSX } from "react";
+import { Button } from "../../../../../components/button";
 import { RANGES, accessOf, canWrite } from "../../../../../../core/compendium";
 import { useIngest } from "../../use-ingest";
 import { SettingsField, SettingsRange, SettingsSection, SettingsSegmented, SettingsToggle } from "./parts";
@@ -42,8 +43,8 @@ export function IngestSection({ ctx, chat, compendium, bookId, set }: SectionPro
           <small>of {ingest.total}</small>
         </div>
         <div className="cps-rr go">
-          <button type="button" className="cps-btn" disabled={!can} onClick={() => void ingest.start(bookId!, from, to)}>{ingest.running ? "Ingesting..." : "Ingest Messages"}</button>
-          {ingest.running && <button type="button" className="cps-btn off" onClick={() => void ingest.cancel()}>Cancel</button>}
+          <Button variant="primary" disabled={!can} onClick={() => void ingest.start(bookId!, from, to)}>{ingest.running ? "Ingesting..." : "Ingest Messages"}</Button>
+          {ingest.running && <Button variant="quiet" onClick={() => void ingest.cancel()}>Cancel</Button>}
         </div>
         {!writable && <p className="cps-note">{bookId === undefined ? "Open a book in the Compendium to ingest into it." : "This book does not allow the Compendium to write. Give it Read and write in Books in this chat."}</p>}
       </SettingsField>
@@ -60,7 +61,7 @@ export function IngestSection({ ctx, chat, compendium, bookId, set }: SectionPro
               </li>
             ))}
           </ol>
-          {run.status !== "running" && run.lines.some((l) => l.status === "filed") && <button type="button" className="cps-quiet" onClick={() => void ingest.undo()}>Undo this ingest</button>}
+          {run.status !== "running" && run.lines.some((l) => l.status === "filed") && <Button variant="quiet" size="sm" onClick={() => void ingest.undo()}>Undo this ingest</Button>}
         </div>
       )}
     </SettingsSection>

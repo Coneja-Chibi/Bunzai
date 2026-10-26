@@ -69,7 +69,7 @@ describe("BlockList: category/tree grouping", () => {
       />,
     );
     const names = [...host.querySelectorAll("[data-index]")].map((row) =>
-      row.querySelector(".sectionName")?.textContent ?? row.querySelector(".ptitle")?.textContent)
+      row.querySelector('[data-control="disclosure"] > span:nth-of-type(1)')?.textContent ?? row.querySelector(".ptitle")?.textContent)
       .filter((name): name is string => name !== undefined);
     // loose block, then Top's header, then a, then Child's header (depth 1), then b
     expect(names).toEqual(["loose", "Top", "a", "Child", "b"]);

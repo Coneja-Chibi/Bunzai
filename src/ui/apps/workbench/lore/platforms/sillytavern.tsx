@@ -2,11 +2,11 @@
  * SillyTavern lore long tail: scan surface, match/groups, editor chrome, character filter.
  * Codec: formats/sillytavern/lorebook.ts. Layout: design/vs-lore-platform-extras.html pass 3.2.
  */
+import { Chip, Toggle } from "../../../../components/button";
 import type { JSX } from "react";
 import { fieldOr, useFramed } from "../../framed";
 import type { LorePlatformCard, LorePlatformCardProps } from "./card-contract";
 import { CharacterFilterBlock } from "./filter-block";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
 
 const SCAN_KEYS = [
   ["scanCharacterDescription", "Description"],
@@ -45,16 +45,10 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
             {SCAN_KEYS.map(([key, label]) => {
               const on = entry[key] === true;
               return (
-                <button
-                  key={key}
-                  type="button"
-                  className={on ? `${styles.pcScanChip} ${styles.pcScanOn}` : styles.pcScanChip}
-                  aria-pressed={on}
-                  onClick={() => onPatch({ [key]: on ? false : true })}
-                >
+                <Chip key={key} pressed={on} onClick={() => onPatch({ [key]: on ? false : true })}>
                   <span className={styles.pcScanBox} aria-hidden="true" />
                   {label}
-                </button>
+                </Chip>
               );
             })}
           </div>
@@ -74,7 +68,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
                   <b>Vectorized</b>
                   <span>RAG / by meaning instead of exact keys.</span>
                 </div>
-                <ToggleSwitch size="sm" on={entry.vectorized === true} aria-label="Vectorized (RAG)" onChange={() =>
+                <Toggle size="sm" on={entry.vectorized === true} aria-label="Vectorized (RAG)" onChange={() =>
                     onPatch({ vectorized: entry.vectorized === true ? false : true })
                   } />
               </div>
@@ -86,7 +80,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
                     <b>Group override</b>
                     <span>Always wins its inclusion group.</span>
                   </div>
-                  <ToggleSwitch size="sm" on={entry.groupOverride === true} aria-label="Group override" onChange={() =>
+                  <Toggle size="sm" on={entry.groupOverride === true} aria-label="Group override" onChange={() =>
                       onPatch({
                         // explicit false clears the ST wire flag (undefined leaves a twin on)
                         groupOverride: entry.groupOverride === true ? false : true,
@@ -98,7 +92,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
                     <b>Group scoring</b>
                     <span>Pick the group winner by match score, not weight.</span>
                   </div>
-                  <ToggleSwitch size="sm" on={entry.useGroupScoring === true} aria-label="Group scoring" onChange={() =>
+                  <Toggle size="sm" on={entry.useGroupScoring === true} aria-label="Group scoring" onChange={() =>
                       onPatch({
                         useGroupScoring: entry.useGroupScoring === true ? false : true,
                       })

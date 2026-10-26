@@ -6,11 +6,15 @@
  * state. RoleCall's "Load All Messages" button is gone because the store searches the whole take at once.
  */
 import type { JSX, KeyboardEvent, RefObject } from "react";
+import { Chip, IconButton, ListRow, Segmented } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { markSegments } from "../../../core/scene-search";
 import { MAX_SEARCH_HITS } from "../../../core/search/contracts";
 import type { SceneSearchHit } from "../../../studio/scene-search";
 import { FIND_FILTERS, findStamp, kindOf, scriptParts, type FindFilter, type FindSort } from "./scene-find-core";
+
+/** The speaker color of a hit row: the character deck color unless the hit is the persona or a thinking block. */
+const SPEAKER_TONE: Record<string, string> = { character: "var(--deck-character)", user: "var(--deck-persona)", thinking: "var(--stage-warn)" };
 
 export interface FindPanelProps {
   rootRef: RefObject<HTMLDivElement | null>;
@@ -46,6 +50,9 @@ function Context({ text, terms }: { text: string; terms: string[] }): JSX.Elemen
   return <>{scriptParts(text).map((part, i) => part.action ? <i key={i} className="act">{marked(part.text, `a${i}`)}</i> : marked(part.text, `t${i}`))}</>;
 }
 
+const SORTS: readonly { value: FindSort; label: string }[] = [{ value: "newest", label: "Newest" }, { value: "oldest", label: "Oldest" }];
+const FILTER_COLOR: Partial<Record<FindFilter, string>> = { character: "var(--deck-character)", user: "var(--deck-persona)", thinking: "var(--stage-warn)" };
+
 export function FindPanel(p: FindPanelProps): JSX.Element {
   const onKeyDown = (e: KeyboardEvent): void => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -67,14 +74,14 @@ export function FindPanel(p: FindPanelProps): JSX.Element {
           {p.hits.length > 0 && (
             <div className="fnav">
               <span className="fct" aria-live="polite">{p.selected + 1}/{p.hits.length}</span>
-              <button type="button" aria-label="Previous result" title="Previous result" onClick={() => p.onStep(-1)}><Ic name="lucide:chevron-up" size={14} /></button>
-              <button type="button" aria-label="Next result" title="Next result" onClick={() => p.onStep(1)}><Ic name="lucide:chevron-down" size={14} /></button>
+              <IconButton variant="quiet" size="sm" label="Previous result" icon="lucide:chevron-up" onClick={() => p.onStep(-1)} />
+              <IconButton variant="quiet" size="sm" label="Next result" icon="lucide:chevron-down" onClick={() => p.onStep(1)} />
             </div>
           )}
         </div>
         {p.hits.length > 1 && (
           <div className="fsort"><small>Sort</small>
-            {(["newest", "oldest"] as const).map((s) => <button key={s} type="button" className={p.sort === s ? "on" : undefined} aria-pressed={p.sort === s} onClick={() => p.onSort(s)}>{s === "newest" ? "Newest" : "Oldest"}</button>)}
+            <Segmented label="Sort results" size="sm" value={p.sort} items={SORTS} onChange={p.onSort} />
           </div>
         )}
       </div>
@@ -83,9 +90,9 @@ export function FindPanel(p: FindPanelProps): JSX.Element {
           const count = p.counts[f];
           const empty = p.searched && count === 0 && p.filter !== f;
           return (
-            <button key={f} type="button" className={`${f}${p.filter === f ? " on" : ""}`} aria-pressed={p.filter === f} disabled={empty} onClick={() => p.onFilter(f)}>
+            <Chip key={f} pressed={p.filter === f} {...(FILTER_COLOR[f] ? { color: FILTER_COLOR[f] } : {})} disabled={empty} onClick={() => p.onFilter(f)}>
               {filterLabel(f)}{p.searched && p.filter !== f && <span className="n">({count})</span>}
-            </button>
+            </Chip>
           );
         })}
       </div>
@@ -95,14 +102,14 @@ export function FindPanel(p: FindPanelProps): JSX.Element {
             : p.searching && p.hits.length === 0 ? <p className="fnone" role="status">Searching...</p>
             : p.hits.length === 0 ? <p className="fnone" role="status">No matches found in this scene</p>
             : p.hits.map((h, i) => (
-              <button key={h.messageId} type="button" role="option" aria-selected={i === p.selected} data-index={i} className={`fhit${i === p.selected ? " on" : ""}`} data-kind={kindOf(h) ?? "system"} onClick={() => p.onGo(i)}>
-                <span className="who">{speaker(h)}
+              <ListRow key={h.messageId} wrap role="option" aria-selected={i === p.selected} data-index={i} selected={i === p.selected} data-kind={kindOf(h) ?? "system"}
+                accent={SPEAKER_TONE[kindOf(h) ?? ""] ?? SPEAKER_TONE["character"]!} vars={{ "--sp": SPEAKER_TONE[kindOf(h) ?? ""] ?? SPEAKER_TONE["character"]! }} onClick={() => p.onGo(i)}
+                label={<span className="who">{speaker(h)}
                   {h.thinking && <em className="ftag">thinking</em>}
                   {h.hidden && <em className="ftag">hidden</em>}
                   <small>{findStamp(h.createdAt, p.now)}</small>
-                </span>
-                <span className="ctx"><Context text={h.context} terms={p.terms} /></span>
-              </button>
+                </span>}
+                subtitle={<span className="ctx"><Context text={h.context} terms={p.terms} /></span>} />
             ))}
         </div>
       )}

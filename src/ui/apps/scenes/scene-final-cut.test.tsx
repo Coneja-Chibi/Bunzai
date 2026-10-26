@@ -50,7 +50,7 @@ async function mount(opens: "cut" | "regex" = "regex"): Promise<FlushSync> {
   const render = (): void => flushSync(() => rig.root.render(createElement(FinalCutWing, { ctx: ctx(), chat, onChanged: (c: Chat) => { chat = c; render(); } })));
   render();
   await settle(flushSync);
-  if (opens === "regex") { click(flushSync, [...rig.host.querySelectorAll<HTMLElement>(".tabs button")].find((b) => b.textContent?.startsWith("Regex"))!); await settle(flushSync); }
+  if (opens === "regex") { click(flushSync, [...rig.host.querySelectorAll<HTMLElement>('[role="tab"]')].find((b) => b.textContent?.startsWith("Regex"))!); await settle(flushSync); }
   return flushSync;
 }
 const text = (): string => rig.host.textContent ?? "";
@@ -63,7 +63,7 @@ describe("the wing's tabs", () => {
     chat = { ...chat, regex: { sets: ["b"] } };
     const flushSync = await mount("cut");
     expect(rig.host.querySelector(".crumb")!.textContent).toBe("Scene / Final Cut / Final Cut");
-    expect([...rig.host.querySelectorAll(".tabs button")].map((b) => b.textContent)).toEqual(["Final Cut", "Regex1 active"]);
+    expect([...rig.host.querySelectorAll('[role="tab"]')].map((b) => b.textContent)).toEqual(["Final Cut", "Regex1 active"]);
     expect(rig.host.querySelector('[data-part="scene.finalcut"]')).not.toBeNull();
     expect(text()).toContain("The Final Cut");
     click(flushSync, named("Regex1 active"));
@@ -80,7 +80,7 @@ describe("the Regex tab", () => {
     const flushSync = await mount();
     expect(text()).toContain("Text Transformations");
     expect(text()).toContain("Pattern rules that rewrite messages before they reach the model: strip stage directions, normalize quotes, redact, or substitute on the fly.");
-    expect(rig.host.querySelector(".tabs")!.textContent).toContain("1 active");
+    expect(rig.host.querySelector('[role="tablist"]')!.textContent).toContain("1 active");
     expect(row("Beta").textContent).toContain("About Beta");
     expect(row("Beta").textContent).toContain("3rules");
     expect(row("Alpha").textContent).toContain("1rule");
@@ -98,15 +98,15 @@ describe("the Regex tab", () => {
 
   test("Use switches a script on for this scene, and Selected switches it off; the scene runs them in the order they were switched on", async () => {
     const flushSync = await mount();
-    click(flushSync, row("Beta").querySelector(".rx-main")!);
+    click(flushSync, row("Beta").querySelector("[data-control='disclosure']")!);
     click(flushSync, named("Select for chat"));
     await settle(flushSync);
-    click(flushSync, row("Alpha").querySelector(".rx-main")!);
-    click(flushSync, row("Alpha").querySelector<HTMLElement>(".rx-use")!);
+    click(flushSync, row("Alpha").querySelector("[data-control='disclosure']")!);
+    click(flushSync, row("Alpha").querySelector<HTMLElement>("[data-control='chip']")!);
     await settle(flushSync);
     expect(writes).toEqual([{ sets: ["b"] }, { sets: ["b", "a"] }]);
     expect(row("Beta").textContent).toContain("Selected");
-    click(flushSync, row("Beta").querySelector<HTMLElement>(".rx-use")!);
+    click(flushSync, row("Beta").querySelector<HTMLElement>("[data-control='chip']")!);
     await settle(flushSync);
     expect(writes.at(-1)).toEqual({ sets: ["a"] });
     unmount(flushSync);
@@ -115,12 +115,12 @@ describe("the Regex tab", () => {
   test("moving a script with the keyboard saves the list order as a preference and reorders only the selected scripts", async () => {
     chat = { ...chat, regex: { sets: ["a", "c"] } };
     const flushSync = await mount();
-    const grip = row("Alpha").querySelector<HTMLElement>(".rx-grip")!;
+    const grip = row("Alpha").querySelector<HTMLElement>("[data-control='icon']")!;
     flushSync(() => props(grip)["onKeyDown"]!({ key: "ArrowDown", preventDefault: () => undefined }));
     await settle(flushSync);
     expect(prefs.get("scenes.regexOrder")).toEqual(["b", "a", "c"]);
     expect(writes).toEqual([{ sets: ["a", "c"] }]);
-    const second = row("Gamma").querySelector<HTMLElement>(".rx-grip")!;
+    const second = row("Gamma").querySelector<HTMLElement>("[data-control='icon']")!;
     flushSync(() => props(second)["onKeyDown"]!({ key: "ArrowUp", preventDefault: () => undefined }));
     await settle(flushSync);
     expect(prefs.get("scenes.regexOrder")).toEqual(["b", "c", "a"]);
@@ -131,7 +131,7 @@ describe("the Regex tab", () => {
 
   test("Edit opens the script in the Workbench", async () => {
     const flushSync = await mount();
-    click(flushSync, row("Gamma").querySelector(".rx-main")!);
+    click(flushSync, row("Gamma").querySelector("[data-control='disclosure']")!);
     click(flushSync, named("Edit Gamma"));
     expect(opened).toEqual([{ id: "c", kind: "regex", name: "Gamma" }]);
     unmount(flushSync);
@@ -140,7 +140,7 @@ describe("the Regex tab", () => {
   test("Delete asks RoleCall's question first, removes the script from the library and switches it off for the scene", async () => {
     chat = { ...chat, regex: { sets: ["c"] } };
     const flushSync = await mount();
-    click(flushSync, row("Gamma").querySelector(".rx-main")!);
+    click(flushSync, row("Gamma").querySelector("[data-control='disclosure']")!);
     click(flushSync, named("Delete Gamma"));
     expect(rig.dom.window.document.body.textContent).toContain("Are you sure you want to delete this regex script?");
     expect(deleted).toEqual([]);
@@ -162,7 +162,7 @@ describe("the Regex tab", () => {
     rig.root = createRoot(rig.host);
     flushSync(() => rig.root.render(createElement(FinalCutWing, { ctx: bad, chat, onChanged: () => undefined })));
     await settle(flushSync);
-    click(flushSync, [...rig.host.querySelectorAll<HTMLElement>(".tabs button")].find((b) => b.textContent?.startsWith("Regex"))!);
+    click(flushSync, [...rig.host.querySelectorAll<HTMLElement>('[role="tab"]')].find((b) => b.textContent?.startsWith("Regex"))!);
     await settle(flushSync);
     expect(text()).toContain("library offline");
     expect(named("Try again")).toBeDefined();

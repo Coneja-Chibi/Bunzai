@@ -14,17 +14,13 @@ import { QueuedPiecePreview } from "../piece-preview";
 import { useArtSrc } from "../../../_shared/art-cache";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
 import { icSvg } from "../../../_shared/ic-svg";
+import { Button, IconButton, Tile } from "../../../components/button";
 
 const CSS = `
 .dv-show{flex:1;min-height:0;display:flex;flex-direction:column}
 .dv-show .sc-empty{margin:auto;font-family:var(--font-body);font-style:italic;color:var(--stage-kicker)}
 .dv-show .main{flex:1;min-height:0;display:flex;align-items:center;gap:clamp(.7rem,2vw,1.4rem);
   padding:clamp(.8rem,2vw,1.4rem)}
-.dv-show .nav{flex:none;width:2.4rem;height:2.4rem;display:flex;align-items:center;justify-content:center;
-  background:var(--stage-panel);color:var(--stage-paper);border:3px solid var(--stage-black);box-shadow:3px 3px 0 0 var(--stage-black);cursor:pointer;
-  font-family:var(--font-big);font-weight:900;font-size:1rem;transition:transform .1s ease-out,box-shadow .1s ease-out}
-.dv-show .nav:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 0 var(--stage-black)}
-.dv-show .nav:active{transform:translate(3px,3px);box-shadow:0 0 0 0 var(--stage-black)}
 .dv-show .hero{flex:none;width:clamp(8rem,calc(var(--card-w) * 1.6),24rem);background:var(--stage-panel);border:3px solid var(--stage-black);
   box-shadow:0 24px 38px -14px var(--shadow-ink-deep)}
 .dv-show .hero .cov{aspect-ratio:2/3;background:var(--a);border-bottom:3px solid var(--stage-black);position:relative;
@@ -39,15 +35,7 @@ const CSS = `
   letter-spacing:-.01em;color:var(--stage-card);line-height:1;overflow-wrap:anywhere}
 .dv-show .plate .meta{font-family:var(--font-mono);font-size: var(--text-meta);font-weight:600;letter-spacing:.08em;
   text-transform:uppercase;color:var(--stage-soft)}
-.dv-show .plate .stage-btn{align-self:flex-start;font-family:var(--font-big);font-weight:900;font-size: var(--text-meta);
-  letter-spacing:.1em;text-transform:uppercase;padding:.55rem .9rem;border:3px solid var(--stage-black);cursor:pointer;
-  background:var(--a);color:var(--stage-ink);box-shadow:4px 4px 0 0 var(--stage-black);
-  transition:transform .1s ease-out,box-shadow .1s ease-out}
-.dv-show .plate .stage-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 0 var(--stage-black)}
-.dv-show .plate .stage-btn:active{transform:translate(3px,3px);box-shadow:0 0 0 0 var(--stage-black)}
-.dv-show .plate .stage-btn.off{background:var(--stage-panel);color:var(--stage-soft);border-color:var(--a)}
-.dv-show .plate .stage-btn.open{background:transparent;color:var(--a);border-color:var(--a);cursor:default;box-shadow:none}
-.dv-show .plate .stage-btn.open:hover{transform:none;box-shadow:none}
+.dv-show .plate .stage-btn{align-self:flex-start}
 .dv-show .rail{flex:none;display:flex;gap:.4rem;padding:.5rem .8rem .8rem;overflow-x:auto}
 .dv-show .mini{flex:none;width:2.2rem;aspect-ratio:2/3;border:2px solid var(--stage-black);background:var(--a);cursor:pointer;
   position:relative;opacity:.55;transition:opacity .1s ease-out,transform .1s ease-out}
@@ -123,9 +111,7 @@ function ShowcaseFocus({ ctx }: { ctx: DeckViewContext }): JSX.Element {
   return (
     <div className="dv-show" style={{ "--a": accent } as CSSProperties}>
       <div className="main">
-        <button className="nav" title="Previous" onClick={() => step(-1)}>
-          &lsaquo;
-        </button>
+        <IconButton label="Previous" icon="lucide:chevron-left" onClick={() => step(-1)} />
         <div className="hero" ref={menuRef}>
           <div className="cov">
             {art
@@ -142,28 +128,29 @@ function ShowcaseFocus({ ctx }: { ctx: DeckViewContext }): JSX.Element {
           <div className="meta">
             {idx + 1} / {ctx.entities.length}
           </div>
-          <button className={`stage-btn${isOpen ? " open" : staged ? " off" : ""}`} onClick={() => ctx.onPiece(e)}>
-            {stageLabel}
-          </button>
+          <div className="stage-btn">
+            <Button variant={isOpen || staged ? "secondary" : "primary"} onClick={() => ctx.onPiece(e)}>
+              {stageLabel}
+            </Button>
+          </div>
         </div>
-        <button className="nav" title="Next" onClick={() => step(1)}>
-          &rsaquo;
-        </button>
+        <IconButton label="Next" icon="lucide:chevron-right" onClick={() => step(1)} />
       </div>
       <div className="rail">
         {ctx.entities.map((m, i) => (
-          <button
+          <Tile
+            kind="thumb"
             key={pieceKey(m)}
-            className={`mini${i === idx ? " now" : ""}`}
-            style={{ "--a": m.accent ?? deckMeta(m.kind).accent } as CSSProperties}
-            title={m.name}
+            vars={{ "--a": m.accent ?? deckMeta(m.kind).accent }}
+            selected={i === idx}
+            aria-current={i === idx ? "true" : undefined}
+            label={m.name}
             onClick={() => {
               focusByKind.set(ctx.deck.kind, i);
               bump();
             }}
-          >
-            <MiniThumb ctx={ctx} e={m} />
-          </button>
+            art={<MiniThumb ctx={ctx} e={m} />}
+          />
         ))}
       </div>
     </div>

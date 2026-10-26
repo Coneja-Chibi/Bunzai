@@ -26,15 +26,4 @@
 }
 .reset {
   margin-top: 1rem;
-  padding: 0.4rem 0.9rem;
-  border: 2px solid var(--edge);
-  background: var(--panel);
-  font-family: inherit;
-  font-size: var(--text-control);
-  color: var(--text);
-  cursor: pointer;
-}
-.reset:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
 }

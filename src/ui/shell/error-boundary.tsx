@@ -10,6 +10,7 @@
  * regenerated the moment you pick a deck again.
  */
 import { Component, type ErrorInfo, type JSX, type ReactNode } from "react";
+import { Button } from "../components/button";
 import { useShellStore } from "./store";
 import { isBrowserStudio } from "../../browser-mode";
 
@@ -78,13 +79,13 @@ export class ShellErrorBoundary extends Component<Props, State> {
         )}
         <pre className="shell-crash-msg">{error.message || String(error)}</pre>
         <div className="shell-crash-actions">
-          <button type="button" className="shell-crash-btn" onClick={this.reload}>
+          <Button variant="primary" onClick={this.reload}>
             {browser ? "Discard page and reload" : "Reload"}
-          </button>
+          </Button>
           {!browser && (
-            <button type="button" className="shell-crash-btn" onClick={() => void this.resetViewPrefs()}>
+            <Button onClick={() => void this.resetViewPrefs()}>
               Reset view settings and reload
-            </button>
+            </Button>
           )}
         </div>
       </div>

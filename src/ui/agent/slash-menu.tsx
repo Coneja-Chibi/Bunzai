@@ -13,6 +13,7 @@
  * word - is the failure people notice.
  */
 import { useEffect, useState, type JSX } from "react";
+import { MenuItem } from "../components/button";
 import type { CommandInfo } from "./command-core";
 
 export interface SlashChoice {
@@ -43,7 +44,7 @@ export function SlashMenu({
    */
   const [box, setBox] = useState<HTMLDivElement | null>(null);
   useEffect(() => {
-    box?.querySelector<HTMLElement>(".kit-slash__row--on")?.scrollIntoView({ block: "nearest" });
+    box?.querySelector<HTMLElement>('[aria-selected="true"]')?.scrollIntoView({ block: "nearest" });
   }, [box, active]);
 
   if (choices.length === 0) return null;
@@ -51,12 +52,11 @@ export function SlashMenu({
     <div className="kit-slash" ref={setBox} role="listbox" aria-label={title}>
       <div className="kit-slash__head">{title}</div>
       {choices.map((choice, at) => (
-        <button
+        <MenuItem
           key={`${choice.value}${String(at)}`}
-          type="button"
           role="option"
           aria-selected={at === active}
-          className={at === active ? "kit-slash__row kit-slash__row--on" : "kit-slash__row"}
+          hint={<span className="kit-slash__say">{choice.note}</span>}
           /**
            * MOUSE DOWN, NOT CLICK. The composer is a textarea with focus; a click fires after the
            * blur, so by the time it lands the caret has left the box somebody is typing into and
@@ -65,8 +65,7 @@ export function SlashMenu({
           onMouseDown={(event) => { event.preventDefault(); onPick(at); }}
         >
           <span className="kit-slash__word">{choice.value}</span>
-          <span className="kit-slash__say">{choice.note}</span>
-        </button>
+        </MenuItem>
       ))}
     </div>
   );

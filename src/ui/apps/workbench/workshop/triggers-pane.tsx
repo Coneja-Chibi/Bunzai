@@ -1,6 +1,7 @@
 /**
  * Triggers list pane: cards + add rule + optional undo trailing.
  */
+import { Button } from "../../../components/button";
 import type { JSX, ReactNode } from "react";
 import type { TriggerScript } from "../../../../entities/character/schema";
 import { appendTo } from "../behavior-edit";
@@ -32,9 +33,8 @@ export function WorkshopTriggersPane({
       {triggers.map((t, ti) => (
         <WorkshopTriggerCard key={ti} trigger={t} index={ti} triggers={triggers} onWrite={onWrite} vars={vars} />
       ))}
-      <button
-        type="button"
-        className={styles.add}
+      <Button
+        size="sm"
         onClick={() => onWrite(appendTo(triggers, {
           label: "new rule",
           event: "output",
@@ -42,8 +42,8 @@ export function WorkshopTriggersPane({
           effects: [{ type: "setvar", var: "", operator: "=", value: "" }],
         }))}
       >
-        + add a trigger rule
-      </button>
+        + Add a trigger rule
+      </Button>
     </>
   );
 }

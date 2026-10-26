@@ -9,7 +9,7 @@ import { CUSTOM_INSTRUCTION_MAX, textRange, type RewriteAction, type TextRange }
 import type { GuideRecord } from "../../../core/guide-record";
 import type { ScenesApi } from "../../app-contract-scenes";
 import { toErrorMessage } from "../../_shared/error-message";
-import { Ic } from "../../_shared/ic";
+import { Button, IconButton, ListRow, Tabs } from "../../components/button";
 import { InkDialog } from "../../components/ink-dialog";
 import { CORRECT_TABS, REWRITE_BUTTONS, applied, correctionGuides, selectionPreview, type CorrectTab, type Preview } from "./correct-core";
 
@@ -29,8 +29,8 @@ function PreviewPane({ preview, tail, onCancel, onApply, busy }: { preview: Prev
         <section className="new"><h4>{rewrite ? "Revised Message" : tail}</h4><pre>{preview.corrected}</pre></section>
       </div>
       <div className="cx-acts">
-        <button type="button" className="cx-btn" onClick={onCancel} disabled={busy}>Cancel</button>
-        <button type="button" className="cx-btn go" onClick={onApply} disabled={busy}><Ic name="lucide:check" size={14} />Apply</button>
+        <Button variant="quiet" onClick={onCancel} disabled={busy}>Cancel</Button>
+        <Button variant="primary" icon="lucide:check" onClick={onApply} disabled={busy}>Apply</Button>
       </div>
     </div>
   );
@@ -100,22 +100,20 @@ export function CorrectionTools({ api, chatId, message, selection, onApply, onCl
   return (
     <InkDialog onDismiss={onClose} ariaLabel="Correction Tools" sheetClassName="cx-sheet">
       <div className="cx" data-part="scene.correct">
-        <header className="cx-top"><h2>Correction Tools</h2><button type="button" aria-label="Close correction tools" onClick={onClose}><Ic name="lucide:x" /></button></header>
-        <div className="cx-tabs" role="tablist">
-          {CORRECT_TABS.map((t) => <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} onClick={() => pick(t.key)}>{t.label}</button>)}
-        </div>
+        <header className="cx-top"><h2>Correction Tools</h2><IconButton variant="quiet" size="sm" label="Close correction tools" icon="lucide:x" onClick={onClose} /></header>
+        <Tabs label="Correction tools" items={CORRECT_TABS.map((t) => ({ value: t.key, label: t.label }))} value={tab} onChange={pick} />
         <div className="cx-body">
           {error && <p className="cx-err" role="alert">{error}</p>}
           <p className="cx-blurb">{blurb}</p>
-          {tab === "spellcheck" && (review ?? <button type="button" className="cx-btn go wide" disabled={busy} onClick={() => void spellcheck()}>{working === "spellcheck" ? "Checking..." : "Run Spellcheck"}</button>)}
+          {tab === "spellcheck" && (review ?? <Button variant="primary" block disabled={busy} onClick={() => void spellcheck()}>{working === "spellcheck" ? "Checking..." : "Run Spellcheck"}</Button>)}
           {tab === "corrections" && (guides === null ? <p className="cx-note" role="status">Loading...</p>
             : guides.length === 0 ? <div className="cx-note"><b>No correction guides available</b><small>Create correction guides in the Guides panel</small></div>
             : review ?? (
               <div className="cx-guides">
                 {guides.map((g) => (
-                  <button key={g.id} type="button" className={`cx-guide${guideId === g.id ? " on" : ""}`} aria-pressed={guideId === g.id} onClick={() => setGuideId(g.id)}><b>{g.title}</b><small>{g.content}</small></button>
+                  <ListRow key={g.id} wrap variant="option" selected={guideId === g.id} aria-pressed={guideId === g.id} onClick={() => setGuideId(g.id)} label={g.title} subtitle={g.content} />
                 ))}
-                <button type="button" className="cx-btn go wide" disabled={!guideId || busy} onClick={() => void correct()}>{working === "correct" ? "Correcting..." : "Apply Correction"}</button>
+                <Button variant="primary" block disabled={!guideId || busy} onClick={() => void correct()}>{working === "correct" ? "Correcting..." : "Apply Correction"}</Button>
               </div>
             ))}
           {tab === "rewrite" && (review ?? (
@@ -123,11 +121,11 @@ export function CorrectionTools({ api, chatId, message, selection, onApply, onCl
               <textarea ref={area} readOnly value={message} aria-label="Message" onSelect={track} onMouseUp={track} onKeyUp={track} />
               <div className="cx-sel">
                 <span>{range ? `Selected ${range.text.length.toLocaleString()} chars: ${range.text.slice(0, 80)}${range.text.length > 80 ? "..." : ""}` : "No text selected"}</span>
-                <button type="button" onClick={() => { setRange(textRange(message, 0, message.length)); area.current?.select(); }}>Select all</button>
+                <Button variant="quiet" size="sm" onClick={() => { setRange(textRange(message, 0, message.length)); area.current?.select(); }}>Select all</Button>
               </div>
               <input className="cx-instr" aria-label="Custom instruction" placeholder="How should this change?" maxLength={CUSTOM_INSTRUCTION_MAX} value={instruction} onChange={(e) => setInstruction(e.target.value)} />
               <div className="cx-grid">
-                {REWRITE_BUTTONS.map((b) => <button key={b.action} type="button" className="cx-btn" disabled={!range || busy || (b.action === "custom" && instruction.trim() === "")} onClick={() => void rewrite(b.action)}>{working === b.action ? "Working..." : b.label}</button>)}
+                {REWRITE_BUTTONS.map((b) => <Button key={b.action} block disabled={!range || busy || (b.action === "custom" && instruction.trim() === "")} onClick={() => void rewrite(b.action)}>{working === b.action ? "Working..." : b.label}</Button>)}
               </div>
             </div>
           ))}

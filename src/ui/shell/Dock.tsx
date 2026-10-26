@@ -2,6 +2,7 @@
 import { useLayoutEffect, useMemo, useRef, type JSX, type KeyboardEvent } from "react";
 import type { AppManifestEntry } from "../app-contract";
 import { AppMark } from "../components/app-mark";
+import { IconButton, Tile } from "../components/button";
 import { Ic } from "../_shared/ic";
 import { ThemeSlot } from "../_shared/theme-slot";
 import { appRoster, chordFor, isMacLike } from "./app-keys";
@@ -12,11 +13,9 @@ import styles from "./bottom-dock.module.css";
 function DockTile({ app, chord, collapsed, pending, onNavigate }: { app: AppManifestEntry; chord: string | null; collapsed: boolean; pending: boolean; onNavigate?(): void }): JSX.Element {
   const active = useShellStore(state => state.activeAppId === app.id);
   const menuRef = useContextMenu(() => ({ type: "app", label: app.title, data: app }));
-  return <button ref={menuRef} className={styles.app} data-app-id={app.id} data-part="shell.nav.tile" data-pending={pending} aria-busy={pending || undefined}
-    tabIndex={collapsed ? -1 : 0} aria-label={app.title} aria-current={active ? "page" : undefined} title={chord ? `${app.title} (${chord})` : app.title}
-    onClick={() => { useShellStore.getState().mountApp(app.id); onNavigate?.(); }}>
-    {pending && <i className={styles.pending} aria-hidden="true" />}<AppMark markSvg={app.markSvg} className={styles.mark} /><span>{app.title}</span>
-  </button>;
+  return <Tile ref={menuRef} kind="app" label={app.title} icon={<AppMark markSvg={app.markSvg} className={styles.mark} />} data-app-id={app.id} data-part="shell.nav.tile" data-pending={pending}
+    aria-busy={pending || undefined} tabIndex={collapsed ? -1 : 0} aria-current={active ? "page" : undefined} title={chord ? `${app.title} (${chord})` : app.title}
+    onClick={() => { useShellStore.getState().mountApp(app.id); onNavigate?.(); }} />;
 }
 
 export function Dock({ onNavigate, pendingAppId }: { onNavigate?: () => void; pendingAppId?: string } = {}): JSX.Element {
@@ -65,15 +64,12 @@ export function Dock({ onNavigate, pendingAppId }: { onNavigate?: () => void; pe
       <nav ref={nav} className={styles.bar} aria-label="Apps" aria-hidden={collapsed} inert={collapsed} onKeyDown={moveFocus}>
         <ThemeSlot id="shell.nav.start" />
         <div className={styles.apps}>{groups.present.map(tile)}{groups.foot.length > 0 && <span className={styles.divider} aria-hidden="true" />}{groups.foot.map(tile)}
-          <button className={styles.app} data-part="shell.nav.overlay" tabIndex={collapsed ? -1 : 0} aria-label="Overlay" title="Overlay (Ctrl+K)" onClick={openOverlay}>
-            <span className={styles.mark}><Ic name="lucide:layers" size={20} /></span><span>Overlay</span>
-          </button>
+          <Tile kind="app" label="Overlay" icon={<span className={styles.mark}><Ic name="lucide:layers" size={20} /></span>} data-part="shell.nav.overlay" tabIndex={collapsed ? -1 : 0}
+            title="Overlay (Ctrl+K)" onClick={openOverlay} />
         </div>
         <ThemeSlot id="shell.nav.end" />
-        <button className={styles.collapse} tabIndex={collapsed ? -1 : 0} data-part="shell.nav.toggle" aria-label="Hide dock" title="Hide dock" aria-expanded={!collapsed} onClick={toggleDock}>
-          <Ic name="lucide:chevron-down" size={16} />
-        </button>
+        <IconButton variant="quiet" size="sm" icon="lucide:chevron-down" label="Hide dock" tabIndex={collapsed ? -1 : 0} data-part="shell.nav.toggle" aria-expanded={!collapsed} onClick={toggleDock} />
       </nav>
-      <button className={styles.handle} aria-label="Show dock" title="Show dock" aria-hidden={!collapsed} tabIndex={collapsed ? 0 : -1} onClick={toggleDock}><span aria-hidden="true" /></button>
+      <IconButton variant="quiet" icon={<span aria-hidden="true" />} label="Show dock" data-part="shell.nav.handle" aria-hidden={!collapsed} tabIndex={collapsed ? 0 : -1} onClick={toggleDock} />
   </div>;
 }

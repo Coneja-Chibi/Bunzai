@@ -4,6 +4,7 @@
  */
 import type { JSX } from "react";
 import type { PieceStore } from "../../../_shared/piece-store";
+import { Button, Card } from "../../../components/button";
 import { ThemeSlot } from "../../../_shared/theme-slot";
 import RecentArt from "../../title-art";
 import type { TitleState } from "../../use-title";
@@ -27,11 +28,10 @@ export default function TitlePageTitle({ state, pieces }: { state: TitleState; p
           <ol className={styles.toc}>
             {contents.map(([action, label, folio, run]) => (
               <li key={action}>
-                <button type="button" data-title-action={action} className={styles.entry} disabled={closing} onClick={run}>
-                  <span className={styles.name}>{label}</span>
+                <Card kind="entry" data-title-action={action} heading={label} disabled={closing} onClick={run}>
                   <span className={styles.leader} aria-hidden="true" />
                   <span className={styles.folio} aria-hidden="true">{folio}</span>
-                </button>
+                </Card>
               </li>
             ))}
           </ol>
@@ -44,7 +44,7 @@ export default function TitlePageTitle({ state, pieces }: { state: TitleState; p
               <div>
                 <p className={styles.readTitle}>{recent.title}</p>
                 <p className={styles.readMeta}>{recent.characterName}, {recent.messageCount} messages</p>
-                <button type="button" data-title-action="resume" className={styles.resume} disabled={closing} onClick={continueStory}>Return to scene</button>
+                <Button size="sm" data-title-action="resume" disabled={closing} onClick={continueStory}>Return to scene</Button>
               </div>
             </div>
           ) : <p className={styles.readMeta}>Choose a character from your Library, or bring one in to begin.</p>}

@@ -5,21 +5,9 @@
  */
 import type { ReactNode } from "react";
 import type { LoopPhase } from "../../loop/state";
-import { theme, colorForVerb } from "../theme";
+import { theme } from "../theme";
+import { MoveRow } from "./backstage-move";
 import { lifecycleLabel } from "./lifecycle-label";
-
-function MoveRow({ raw }: { raw: string }): ReactNode {
-  const verb = raw.match(/^\S+/)?.[0] ?? raw;
-  const rest = raw.slice(verb.length);
-  const color = colorForVerb(verb);
-  return (
-    <text fg={theme.soft}>
-      <span fg={color}>{"| "}</span>
-      <span fg={color}>{verb}</span>
-      <span fg={theme.soft}>{rest}</span>
-    </text>
-  );
-}
 
 export function BackstageRow({
   moves,
@@ -61,7 +49,7 @@ export function BackstageRow({
         <text fg={theme.quiet}>{String(seconds)}s · click folds it</text>
       </box>
       <box flexDirection="column" paddingLeft={1} paddingRight={1}>
-        {moves.map((move, index) => <MoveRow key={index} raw={move} />)}
+        {moves.map((move, index) => <MoveRow key={index} raw={move} spine="| " />)}
       </box>
     </box>
   );

@@ -62,7 +62,7 @@ describe("the panel", () => {
     expect(text()).toContain("Ch. 1: The Keeper's Ledger");
     expect(text()).toContain("Unchaptered");
     expect(text()).not.toContain("Next beat");
-    await m!.click(m!.host.querySelector(".dr-arc-h"));
+    await m!.click(m!.host.querySelector('.dr-arc [data-control="disclosure"]'));
     for (const s of ["It has burned blue since the third ship.", "7 turns active", "short horizon", "Next beat", "Marguerite finds the torn ledger page.", "Planned for turn 16", "Stages (2)", "Planted Seeds (1)", "Salt in a dry room", "Mark as Complete"]) expect(text()).toContain(s);
     expect(m!.host.querySelectorAll(".dr-arc.dim .dr-resolve").length).toBe(0);
   });
@@ -70,7 +70,7 @@ describe("the panel", () => {
   test("a delivered beat is not shown as next", async () => {
     await open(story({ arcs: [arcOf({ id: "arc-1", nextBeat: { description: "Old beat", plannedAtTurn: 3, status: "delivered" } })] }));
     await m!.click(tab("Arcs"));
-    await m!.click(m!.host.querySelector(".dr-arc-h"));
+    await m!.click(m!.host.querySelector('.dr-arc [data-control="disclosure"]'));
     expect(text()).not.toContain("Next beat");
   });
 
@@ -128,9 +128,9 @@ describe("the panel", () => {
     await m!.click(m!.button("Show Debug Data"));
     expect(text()).toContain("Hide Spoilers");
     for (const s of ["Shadow World", "Narrative Seeds", "Raw DM Hidden Data", "Last Directive", "Story size", "1 note, 0 hidden arcs", "close to its size limit"]) expect(text()).toContain(s);
-    await m!.click(m!.host.querySelector('[data-part="scene.director.debug.shadow"] .dr-fold-h'));
+    await m!.click(m!.host.querySelector('[data-part="scene.director.debug.shadow"] [data-control="disclosure"]'));
     for (const s of ["Plant invisible arc", "The harbormaster sold the salvage", "yours", "~T20", "3/3", "Keep the lantern color a surprise."]) expect(text()).toContain(s);
-    await m!.click(m!.host.querySelector('[data-part="scene.director.debug.seeds"] .dr-fold-h'));
+    await m!.click(m!.host.querySelector('[data-part="scene.director.debug.seeds"] [data-control="disclosure"]'));
     expect(text()).toContain("Salt in a dry room");
     expect(text()).toContain("Payoff: long");
   });
@@ -226,7 +226,7 @@ describe("the turn stepper", () => {
     expect(text()).toContain("Edits are off until you jump to latest.");
     expect(m!.button("Reset DM")?.disabled).toBe(true);
     await m!.click(tab("Arcs"));
-    await m!.click(m!.host.querySelector(".dr-arc-h"));
+    await m!.click(m!.host.querySelector('.dr-arc [data-control="disclosure"]'));
     expect(m!.button("Mark as Complete")?.disabled).toBe(true);
     await m!.click(tab("Activity"));
     expect(m!.button("Clear activity log")?.disabled).toBe(true);

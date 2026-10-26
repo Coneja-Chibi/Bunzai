@@ -40,18 +40,6 @@
   letter-spacing: 0.04em;
   color: var(--stage-mute, var(--muted));
 }
-.go {
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--link, var(--rose));
-  border: 2px solid var(--link, var(--rose));
-  background: transparent;
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
-}
 .pending {
   flex: none;
   font-family: var(--font-mono);

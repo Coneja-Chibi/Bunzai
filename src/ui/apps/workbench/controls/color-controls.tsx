@@ -5,6 +5,7 @@
  * passes a plain value + onChange; these just draw the tiles, the open-gated ColorPicker popover, and
  * add/remove. This deletes the 4 popover useState from the parent.
  */
+import { Button, ListRow } from "../../../components/button";
 import { useState, type JSX } from "react";
 import { ColorPicker } from "../../../components/color-picker";
 import { normalizeHex } from "../../../_shared/color-math";
@@ -34,25 +35,22 @@ export function GradientControl({ value, onChange, styles }: GradientControlProp
       <span className={styles.hint}>one color is solid; add up to 3 to blend them into a gradient</span>
       <div className={styles.palGrid}>
         {value.map((hex, i) => (
-          <button
+          <ListRow
             key={i}
-            type="button"
-            className={`${styles.palTile}${i === at && open ? ` ${styles.palTileOn}` : ""}`}
+            selected={i === at && open}
             onClick={() => {
               const closing = i === sel && open;
               setSel(i);
               setOpen(!closing);
             }}
             title={hex}
-          >
-            <span className={styles.palChip} style={{ background: hex }} />
-            <span className={styles.palName}>{hex}</span>
-          </button>
+            leading={<span className={styles.palChip} style={{ background: hex }} />}
+            label={hex}
+          />
         ))}
         {value.length < 3 && (
-          <button
-            type="button"
-            className={styles.palAdd}
+          <Button
+            size="sm"
             onClick={() => {
               const next = [...value, defaultSwatchHex()];
               onChange(next);
@@ -60,8 +58,8 @@ export function GradientControl({ value, onChange, styles }: GradientControlProp
               setOpen(true);
             }}
           >
-            + add
-          </button>
+            + Add
+          </Button>
         )}
       </div>
       {value.length === 0 ? (
@@ -77,20 +75,18 @@ export function GradientControl({ value, onChange, styles }: GradientControlProp
                 onChange={(hex) => onChange(value.map((c, i) => (i === at ? hex : c)))}
               />
               <div className={styles.palRow}>
-                <button type="button" className={styles.rm} onClick={() => setOpen(false)}>
-                  done
-                </button>
-                <button
-                  type="button"
-                  className={styles.rm}
+                <Button variant="quiet" size="sm" onClick={() => setOpen(false)}>Done</Button>
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => {
                     onChange(value.filter((_, i) => i !== at));
                     setSel(Math.max(0, at - 1));
                     setOpen(false);
                   }}
                 >
-                  remove color
-                </button>
+                  Remove color
+                </Button>
               </div>
             </div>
           )}
@@ -128,24 +124,21 @@ export function PaletteControl({ value, onChange, styles, twoField }: PaletteCon
     <>
       <div className={styles.palGrid}>
         {value.map((s, i) => (
-          <button
+          <ListRow
             key={i}
-            type="button"
-            className={`${styles.palTile}${i === at && open ? ` ${styles.palTileOn}` : ""}`}
+            selected={i === at && open}
             onClick={() => {
               const closing = i === sel && open;
               setSel(i);
               setOpen(!closing);
             }}
             title={s.name ?? s.label ?? s.hex}
-          >
-            <span className={styles.palChip} style={{ background: s.hex }} />
-            <span className={styles.palName}>{tileName(s)}</span>
-          </button>
+            leading={<span className={styles.palChip} style={{ background: s.hex }} />}
+            label={tileName(s)}
+          />
         ))}
-        <button
-          type="button"
-          className={styles.palAdd}
+        <Button
+          size="sm"
           onClick={() => {
             const next = [...value, { name: "", hex: defaultSwatchHex() }];
             onChange(next);
@@ -153,8 +146,8 @@ export function PaletteControl({ value, onChange, styles, twoField }: PaletteCon
             setOpen(true);
           }}
         >
-          + add
-        </button>
+          + Add
+        </Button>
       </div>
       {value.length === 0 ? (
         <span className={styles.hint}>
@@ -186,20 +179,18 @@ export function PaletteControl({ value, onChange, styles, twoField }: PaletteCon
               onChange={(hex) => onChange(value.map((s, i) => (i === at ? { ...s, hex } : s)))}
             />
             <div className={styles.palRow}>
-              <button type="button" className={styles.rm} onClick={() => setOpen(false)}>
-                done
-              </button>
-              <button
-                type="button"
-                className={styles.rm}
+              <Button variant="quiet" size="sm" onClick={() => setOpen(false)}>Done</Button>
+              <Button
+                variant="danger"
+                size="sm"
                 onClick={() => {
                   onChange(value.filter((_, i) => i !== at));
                   setSel(Math.max(0, at - 1));
                   setOpen(false);
                 }}
               >
-                remove swatch
-              </button>
+                Remove swatch
+              </Button>
             </div>
           </div>
         )

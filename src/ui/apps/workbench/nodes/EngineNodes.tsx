@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { CSSProperties, JSX, PointerEvent } from "react";
 import type { SceneSummary } from "../../../../studio/scenes";
 import { InkDialog } from "../../../components/ink-dialog";
-import { Stamp } from "../../../components/stamp";
+import { Button } from "../../../components/button";
 import { ENGINE_W, LORE_H, REQUEST_H, tokLabel, type LoreStats, type RequestView } from "./pipeline";
 import css from "./nodes.module.css";
 
@@ -73,7 +73,7 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
       )}
       <div className={css.engMeta}>{p.view.lines.map((l) => <div key={l}>{l}</div>)}</div>
       <div className={css.engAct} onPointerDown={(e) => e.stopPropagation()}>
-        <Stamp onClick={() => setOpen(true)}>Preview</Stamp>
+        <Button size="sm" onClick={() => setOpen(true)}>Preview</Button>
       </div>
       {open && (
         <InkDialog ariaLabel="Request preview" onDismiss={() => setOpen(false)}>
@@ -87,7 +87,7 @@ export function RequestNode(p: RequestNodeProps): JSX.Element {
                 <pre>{m.content}</pre>
               </div>
             ))}
-            <div className={css.engAct}><Stamp onClick={() => setOpen(false)}>Close</Stamp></div>
+            <div className={css.engAct}><Button variant="quiet" onClick={() => setOpen(false)}>Close</Button></div>
           </div>
         </InkDialog>
       )}

@@ -387,7 +387,7 @@ describe("Library: R1, the refetch storm - ctx churn alone must not reload", () 
 });
 
 describe("Library: the shelf layout a theme's library.grid pick opens on", () => {
-  const layoutOn = (): string => host.querySelector(".lrail-toggle button.on")?.textContent ?? "";
+  const layoutOn = (): string => host.querySelector('.lrail-toggle button[aria-pressed="true"]')?.textContent ?? "";
   const open = async (pick: Parameters<typeof setSurfacePicks>[0], prefs?: Record<string, unknown>): Promise<FlushSync> => {
     setSurfacePicks(pick);
     const flushSync = await mountLibrary(makeCtx({ studioInventory: async () => ({ entities: [piece("vera")], damaged: [] }), prefs }));

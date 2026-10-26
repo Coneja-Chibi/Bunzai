@@ -1,6 +1,7 @@
 /** Temporary game-style app launcher over the mounted workspace, using host-owned navigation and import. */
 import { useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext, BunrakuApp } from "../app-contract";
+import { Button, Chip, IconButton, ListRow } from "../components/button";
 import { DialogCore } from "../components/dialog-core";
 import { AppMark } from "../components/app-mark";
 import { AnimatedThemeToggler } from "../components/animated-theme-toggler";
@@ -37,11 +38,11 @@ function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClo
     overlayClassName={styles.scrim} className={styles.sheet} dismissOnScrim={false}>
     <div data-part="shell.overlay" className={styles.layout}>
       <header className={styles.header}><div><h2>Bunraku</h2><p>Overlay menu <kbd>Ctrl+K / Cmd+K</kbd></p></div>
-        <StudioUpdate /><button onClick={onClose}>Close overlay <kbd>Esc</kbd> <span aria-hidden="true">&times;</span></button></header>
+        <StudioUpdate /><Button variant="quiet" onClick={onClose}>Close overlay <kbd>Esc</kbd> <span aria-hidden="true">&times;</span></Button></header>
       <section className={`${styles.panel} ${styles.quick}`} aria-label="Quick actions" data-part="shell.overlay.quick">
-        <button onClick={() => setPanel("app")} aria-pressed={panel === "app"}>Current app</button>
-        <button ref={importAction} onClick={() => setPanel("import")} aria-pressed={panel === "import"}>Import files</button>
-        {preferences && <button onClick={() => navigate(preferences.id)}>Preferences</button>}
+        <Chip onClick={() => setPanel("app")} pressed={panel === "app"}>Current app</Chip>
+        <Chip ref={importAction} onClick={() => setPanel("import")} pressed={panel === "import"}>Import files</Chip>
+        {preferences && <Chip onClick={() => navigate(preferences.id)}>Preferences</Chip>}
         <AnimatedThemeToggler theme={theme} onToggle={toggleTheme} />
       </section>
       <div className={styles.body}>
@@ -59,25 +60,24 @@ function Overlay({ onClose, onNavigate, ctx, Widgets, onSurfaceTarget }: { onClo
             const at = buttons.indexOf(document.activeElement as HTMLButtonElement);
             e.preventDefault(); buttons[(at + (e.key === "ArrowDown" ? 1 : -1) + buttons.length) % buttons.length]?.focus();
           }}>
-            {apps.map((m) => <button key={m.id} className={styles.app} aria-current={activeAppId === m.id ? "page" : undefined} onClick={() => navigate(m.id)}>
-              <AppMark markSvg={m.markSvg} className={styles.mark} /><span><strong>{m.title}</strong><small>{m.subtitle ?? "App"}</small></span>
-            </button>)}
+            {apps.map((m) => <ListRow key={m.id} label={m.title} subtitle={m.subtitle ?? "App"} leading={<AppMark markSvg={m.markSvg} className={styles.mark} />}
+              selected={activeAppId === m.id} aria-current={activeAppId === m.id ? "page" : undefined} onClick={() => navigate(m.id)} />)}
           </div>
           {!apps.length && <p>No matching apps</p>}
         </nav>
         <div className={styles.floating}>
           <section hidden={panel !== "app"} className={`${styles.panel} ${styles.appWindow}`} data-part="shell.overlay.widget" data-overlay-app={activeAppId} aria-label={`${activeApp?.title ?? "App"} widget`}>
-            <header className={styles.windowHeader}><h3>{activeApp?.title ?? "App"}</h3><button onClick={() => { useShellStore.getState().promoteOverlay(); onNavigate(); }}>Open full workspace</button></header>
+            <header className={styles.windowHeader}><h3>{activeApp?.title ?? "App"}</h3><Button size="sm" onClick={() => { useShellStore.getState().promoteOverlay(); onNavigate(); }}>Open full workspace</Button></header>
             <div ref={onSurfaceTarget} className={styles.appSurface} />
             {Widgets && ctx && <details className={styles.shortcuts} onToggle={(event) => setShortcutsOpen(event.currentTarget.open)}><summary>App shortcuts</summary>{panel === "app" && shortcutsOpen && <div className={styles.widgets} data-part="shell.overlay.widgets"><Widgets ctx={ctx} onActivate={() => setPanel("app")} /></div>}</details>}
           </section>
           {panel === "import" && <section className={`${styles.panel} ${styles.import}`} data-part="shell.overlay.import" aria-labelledby="overlay-import-title">
-            <header><div><p>Quick actions</p><h3 id="overlay-import-title">Bring something into your library</h3></div><button aria-label="Hide import panel" onClick={() => { setPanel(null); importAction.current?.focus(); }}>&times;</button></header>
+            <header><div><p>Quick actions</p><h3 id="overlay-import-title">Bring something into your library</h3></div><IconButton variant="quiet" size="sm" icon="lucide:x" label="Hide import panel" onClick={() => { setPanel(null); importAction.current?.focus(); }} /></header>
             <div className={styles.intake}><p>Choose files to inspect in the Library. Review the results before saving.</p>
-              <button disabled={!landing} onClick={() => {
+              <Button variant="primary" disabled={!landing} onClick={() => {
                 if (!landing) return;
                 navigate(landing.id); requestImport();
-              }}>Choose files</button></div>
+              }}>Choose files</Button></div>
           </section>}
           {panel !== "app" && <p className={styles.note}>Your workspace stays beneath the overlay.</p>}
         </div>

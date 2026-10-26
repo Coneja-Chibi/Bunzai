@@ -17,6 +17,7 @@ import { ACTS, CHAT_THEMES, LOOK_KEYS, actStatus, closedActs, readLook, toggleAc
 import { MessageAct } from "./stage-message-act";
 import { MotionAct } from "./stage-motion-act";
 import { TypeAct } from "./stage-type-act";
+import { Card } from "../../components/button";
 
 export interface AppearanceProps {
   prefs: { get(key: string): unknown };
@@ -67,9 +68,8 @@ export function StageAppearance({ prefs, onSet, backdrop, backdropSet, colors }:
         <span className="sa-lbl"><Ic name="lucide:panels-top-left" size={14} />Chat Theme</span>
         <div className="sa-cards" role="group" aria-label="Chat Theme">
           {CHAT_THEMES.map((id) => (
-            <button type="button" key={id} className={`sa-card${look.chatTheme === id ? " on" : ""}`} aria-pressed={look.chatTheme === id} onClick={() => set("chatTheme", id)}>
-              <b>{THEMES[id].name}</b><small>{THEMES[id].hint}</small>
-            </button>
+            <Card key={id} kind="choice" accent="var(--stage-warn)" selected={look.chatTheme === id} aria-pressed={look.chatTheme === id} onClick={() => set("chatTheme", id)}
+              heading={THEMES[id].name} subtitle={THEMES[id].hint} />
           ))}
         </div>
         <p className="sa-help">Theme changes the chrome, not the scene engine. Basic keeps only the AI and Stage wings; Full Stage restores every wing; Immersive is Full Stage with the house lights down.</p>

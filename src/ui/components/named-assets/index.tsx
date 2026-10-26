@@ -2,6 +2,7 @@
  * NamedAssets - multipurpose named file bag (Risu additional assets).
  * value+onChange; sealed previews via resolveAssetRef when map provided.
  */
+import { Button } from "../button";
 import { useCallback, useEffect, useMemo, useRef, type JSX, type KeyboardEvent } from "react";
 import {
   extFromNameOrRef,
@@ -194,21 +195,22 @@ export function NamedAssets({
                   </td>
                   <td>
                     <div className={styles.ops}>
-                      <button
-                        type="button"
+                      <Button
+                        size="sm"
                         onClick={() => {
                           replaceId.current = it.id;
                           fileRef.current?.click();
                         }}
                       >
                         Replace
-                      </button>
-                      <button
-                        type="button"
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
                         onClick={() => commit(bag.items.filter((row) => row.id !== it.id))}
                       >
                         Remove
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>
@@ -219,16 +221,16 @@ export function NamedAssets({
         </div>
       )}
       <div className={styles.addRow}>
-        <button
-          type="button"
-          className={`${styles.btn} ${styles.btnPri}`}
+        <Button
+          size="sm"
+          variant="primary"
           onClick={() => {
             replaceId.current = null;
             fileRef.current?.click();
           }}
         >
           + Add files
-        </button>
+        </Button>
         <span className={styles.hint}>mp3 mp4 png webp ttf css …</span>
       </div>
       {macroHint ? (

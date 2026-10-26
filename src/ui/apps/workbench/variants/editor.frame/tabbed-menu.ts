@@ -6,7 +6,6 @@ export default variantCss("editor.frame", "tabbed-menu", `
 & [data-editor="head"]{position:relative;background:var(--stage-panel);border-bottom:2px solid var(--bk-line-strong);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.06em}
 & [data-editor="head"]::after{content:"";position:absolute;inset:3px;pointer-events:none;background:${brackets("var(--bk-line-strong)", ".6rem")}}
 & [data-editor="tabs"]{background:var(--stage-row);border-bottom:var(--bk-frame-w) solid var(--bk-line-strong);font-family:var(--font-mono)}
-& [data-editor="tabs"] button{border:var(--bk-frame-w) solid var(--bk-line-strong)}
 
 & [data-editor="frame"] [data-ef="layout"]{display:grid;grid-template-columns:16rem minmax(0,1fr);grid-template-areas:"rail nav" "rail panels";grid-template-rows:auto 1fr;gap:.75rem 1rem;padding:1rem .9rem;align-items:start}
 & [data-editor="frame"] [data-ef="rail"]{grid-area:rail}

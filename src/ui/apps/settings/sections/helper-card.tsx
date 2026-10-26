@@ -16,6 +16,7 @@ import type { JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import type { AuxHelperStatus } from "../../../remote/sidecar-status";
 
+import { Button } from "../../../components/button";
 import styles from "./remote-access.module.css";
 
 export interface HelperControls {
@@ -111,9 +112,9 @@ export function HelperMissingCard({ detail, h }: { detail?: string; h: HelperCon
       </div>
       {offered && (
         <div className={styles.actions}>
-          <button type="button" className={styles.btn} disabled={h.busy} onClick={() => h.download()}>
+          <Button size="sm" variant="primary" disabled={h.busy} onClick={() => h.download()}>
             {h.busy ? "Downloading..." : "Download the extra piece"}
-          </button>
+          </Button>
           {h.busy && (
             <span className={styles.status}>
               <span className={`${styles.dot} ${styles.busy}`} />
@@ -149,14 +150,9 @@ export function HelperInstalledLine({ h }: { h: HelperControls }): JSX.Element |
       <div className={styles.subtle}>
         Mesh helper downloaded
         {h.status.installedTag ? ` with ${h.status.installedTag}` : ""}.{" "}
-        <button
-          type="button"
-          className={styles.btnGhost}
-          disabled={h.busy}
-          onClick={() => h.download()}
-        >
+        <Button size="sm" variant="quiet" disabled={h.busy} onClick={() => h.download()}>
           {h.busy ? "Downloading..." : "Get it again"}
-        </button>
+        </Button>
       </div>
       <HelperError h={h} />
     </>

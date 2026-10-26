@@ -6,6 +6,7 @@
  */
 import { useState } from "react";
 import type { JSX } from "react";
+import { Button } from "../components/button";
 import { InkDialog } from "../components/ink-dialog";
 import { useShellStore } from "./store";
 
@@ -31,12 +32,12 @@ export function FollowDialog(): JSX.Element | null {
         Never ask me this again
       </label>
       <div className="actions">
-        <button className="yes" autoFocus onClick={() => answer(true)}>
+        <Button variant="primary" autoFocus onClick={() => answer(true)}>
           Yes
-        </button>
-        <button className="no" onClick={() => answer(false)}>
+        </Button>
+        <Button onClick={() => answer(false)}>
           No
-        </button>
+        </Button>
       </div>
     </InkDialog>
   );

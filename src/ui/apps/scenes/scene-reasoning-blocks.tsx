@@ -12,6 +12,7 @@ import { Ic } from "../../_shared/ic";
 import { useSurfaceVariant } from "../../_shared/surface-variant";
 import { chooseOpen, durationLabel, isOpen, snippetOf, type ReasoningKind, type ReasoningProps } from "./scene-reasoning-core";
 import { useCopyFeedback } from "../../_shared/use-copy-feedback";
+import { Disclosure, Button } from "../../components/button";
 
 export interface ReasoningBlocksProps extends ReasoningProps {
   /** The reply has no text of its own: the thinking is all there is, so its blocks open. */
@@ -44,18 +45,18 @@ function Block({ segment, kind, text, ms, no, live, thinking, core, auto, cap, o
   const native = kind === "native";
   return (
     <div className={`rb rb-${native ? "nat" : "tag"}${open ? " rb-open" : ""}${core ? " rb-core" : ""}${thinking ? " rb-thinking" : ""}`} data-part="scene.reasoning" data-kind={native ? "native" : "tags"} data-open={open}>
-      <button type="button" className="rb-hd" aria-expanded={open} data-part="scene.reasoning.header" onClick={() => { chooseOpen(segment, kind, !open); redraw(); }}>
-        {core && <span className="rb-ico" data-part="scene.reasoning.icon"><Ic name={native ? "lucide:theater" : "lucide:clapperboard"} size={16} /></span>}
-        <span className="rb-info">
+      <Disclosure chevron={false} open={open} data-part="scene.reasoning.header" onClick={() => { chooseOpen(segment, kind, !open); redraw(); }}
+        leading={core ? <span className="rb-ico" data-part="scene.reasoning.icon"><Ic name={native ? "lucide:theater" : "lucide:clapperboard"} size={16} /></span> : undefined}
+        label={<span className="rb-info">
           <span className="rb-chip" data-part="scene.reasoning.label">{no && <b className="rb-no" data-part="scene.reasoning.number">{no}</b>}{LABEL[kind]}</span>
           <span className="rb-dur" data-part="scene.reasoning.duration">{durationLabel(kind, ms, thinking)}{thinking && <span className="rb-dots" data-dots="" aria-hidden="true"><i /><i /><i /></span>}</span>
           {!open && <span className="rb-snip" data-part="scene.reasoning.snippet">{snippetOf(text)}</span>}
-        </span>
-        <span className="rb-cv" data-part="scene.reasoning.chevron"><Ic name="lucide:chevron-down" size={14} /></span>
-      </button>
-      <button type="button" className="rb-copy" aria-label={`Copy ${native ? "native reasoning" : "thinking"}`} data-part="scene.reasoning.copy" onClick={copy}>
-        {copied === "copied" ? "Copied" : copied === "failed" ? "Copy failed" : "Copy"}
-      </button>
+        </span>} trailing={<span className="rb-cv" data-part="scene.reasoning.chevron"><Ic name="lucide:chevron-down" size={14} /></span>} />
+      <span className="rb-copy">
+        <Button variant="quiet" size="sm" aria-label={`Copy ${native ? "native reasoning" : "thinking"}`} data-part="scene.reasoning.copy" onClick={copy}>
+          {copied === "copied" ? "Copied" : copied === "failed" ? "Copy failed" : "Copy"}
+        </Button>
+      </span>
       {open && (
         <div className="rb-bd" data-part="scene.reasoning.body" {...(cap ? { "data-cap": "true", tabIndex: 0 } : {})}>
           {core && native && <div className="rb-cur" data-part="scene.reasoning.curtain">Before the curtain</div>}

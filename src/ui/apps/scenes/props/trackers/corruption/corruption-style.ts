@@ -9,9 +9,6 @@ export const CORRUPTION_STYLE = `
 .scs .cr-head>span{display:inline-flex;align-items:center;gap:8px}
 .scs .cr-head i{display:grid;place-items:center}
 .scs .cr-metric.small .cr-head{font-size:var(--rc-text-xs);color:var(--stage-mute)}
-.scs .cr-step{padding:2px 6px;border:0;font:400 var(--rc-text-xs)/1.4 var(--font-body);cursor:pointer;border-radius:var(--rc-radius-sm)}
-.scs .cr-step.down{background:color-mix(in srgb,var(--stage-ok) 20%,transparent);color:var(--stage-ok)}
-.scs .cr-step.up{background:color-mix(in srgb,var(--stage-danger-text) 20%,transparent);color:var(--stage-danger-text)}
 .scs .cr-val{min-width:2rem;text-align:right;font:700 var(--rc-text-sm)/1.4 var(--font-body)}
 .scs .cr-bar{position:relative;height:8px;border:1px solid color-mix(in srgb,var(--stage-line) 50%,transparent);background:color-mix(in srgb,var(--stage-black) 50%,transparent);overflow:hidden;border-radius:var(--rc-radius-full)}
 .scs .cr-bar.thin{height:4px;border-radius:var(--rc-radius-full)}

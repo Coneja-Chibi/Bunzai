@@ -6,6 +6,7 @@
 import { useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import type { Chat } from "../../../stage/contracts/chat-store";
+import { Tabs } from "../../components/button";
 import { FinalCutTab } from "./final-cut/final-cut-tab";
 import { SceneRegexWing, regexTabMetaOf } from "./scene-regex-wing";
 import { ThemeSlot } from "../../_shared/theme-slot";
@@ -22,9 +23,7 @@ export function FinalCutWing({ ctx, chat, onChanged, initialTab }: { ctx: AppCon
     <>
       <nav className="fold" data-part="scene.finalcut.tabs">
         <div className="crumb">Scene <i>/</i> <b>Final Cut</b> <i>/</i> <b>{tabs.find((t) => t.id === tab)!.label}</b></div>
-        <div className="tabs">
-          {tabs.map((t) => <button type="button" key={t.id} className={tab === t.id ? "on" : ""} aria-pressed={tab === t.id} onClick={() => setTab(t.id)}><b>{t.label}</b>{t.meta && <small>{t.meta}</small>}</button>)}
-        </div>
+        <Tabs label="Final Cut sections" items={tabs.map((t) => ({ value: t.id, label: <><b>{t.label}</b>{t.meta && <small>{t.meta}</small>}</> }))} value={tab} onChange={setTab} />
       </nav>
       {tab === "cut" ? <><ThemeSlot id="scene.wing.finalcut.cut" /><FinalCutTab ctx={ctx} chat={chat} onChanged={onChanged} /></> : <><ThemeSlot id="scene.wing.finalcut.regex" /><SceneRegexWing ctx={ctx} picks={picks} /></>}
     </>

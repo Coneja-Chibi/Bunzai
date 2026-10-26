@@ -90,7 +90,7 @@ describe("Activity (rc-world-comp-activity.png)", () => {
     await activity();
     expect(text()).toContain("No activity yet");
     expect(text()).toContain("Compendium tool calls will stream here in real-time.");
-    expect(qa(".cp-feed .seg button").map((b) => b.textContent)).toEqual(["All", "Entries", "Tools"]);
+    expect(qa(".cp-feed [role=\"tab\"]").map((b) => b.textContent)).toEqual(["All", "Entries", "Tools"]);
     expect(q('[aria-label="Clear feed"]')).not.toBeNull();
   });
 
@@ -123,7 +123,7 @@ describe("Activity (rc-world-comp-activity.png)", () => {
     expect(empty!.querySelector(".chip.phase")!.textContent).toBe("HIST");
     await press(flushSync, [...card!.querySelectorAll<HTMLElement>("button")].find((b) => b.textContent?.includes("Undo")));
     expect(calls.at(-1)).toEqual({ name: "undo", args: ["chat1", "h1"] });
-    await press(flushSync, qa(".cp-feed .seg button")[1]!);
+    await press(flushSync, qa(".cp-feed [role=\"tab\"]")[1]!);
     expect(qa(".cp-act")).toHaveLength(1);
   });
 
@@ -133,9 +133,9 @@ describe("Activity (rc-world-comp-activity.png)", () => {
     await mount();
     await activity();
     expect(qa(".cp-act")).toHaveLength(3);
-    await press(flushSync, qa(".cp-feed .seg button")[1]!);
+    await press(flushSync, qa(".cp-feed [role=\"tab\"]")[1]!);
     expect(qa(".cp-act").map((c) => c.textContent)).toEqual([expect.stringContaining("Updated")]);
-    await press(flushSync, qa(".cp-feed .seg button")[2]!);
+    await press(flushSync, qa(".cp-feed [role=\"tab\"]")[2]!);
     expect(qa(".cp-act")).toHaveLength(1);
     expect(qa(".cp-act")[0]!.textContent).toContain("Searched");
   });
@@ -144,7 +144,7 @@ describe("Activity (rc-world-comp-activity.png)", () => {
     await mount();
     await activity();
     const key = async (k: string): Promise<void> => { flushSync(() => { document.activeElement!.dispatchEvent(new rig.dom.window.KeyboardEvent("keydown", { key: k, bubbles: true, cancelable: true })); }); await settle(flushSync); };
-    const seg = (): HTMLElement[] => qa(".cp-feed .seg button");
+    const seg = (): HTMLElement[] => qa(".cp-feed [role=\"tab\"]");
     seg()[0]!.focus();
     await key("ArrowRight");
     expect(seg().map((b) => b.getAttribute("aria-selected"))).toEqual(["false", "true", "false"]);

@@ -3,6 +3,7 @@
  * around both; inside the frame the page is the author's own and nothing here styles it.
  */
 .room {
+  container-type: inline-size;
   --wb-selection: var(--rose);
   --wb-primary: var(--rose-deep);
   flex: 1;
@@ -52,7 +53,7 @@
   position: relative;
 }
 
-@media (max-width: 60rem) {
+@container (max-width: 60rem) {
   /* Stacked: a dragged column split means nothing when the panes are one above the other. */
   .split { grid-template-columns: minmax(0, 1fr) !important; }
   .grip { display: none; }
@@ -75,39 +76,6 @@
 }
 
 /* Sits over the drawing's top-left corner, so the way back is where the pane used to be. */
-.reveal {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: var(--face);
-  border: 2px solid var(--edge);
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-}
-
-.reveal:hover { color: var(--text); }
-
-.paneAct {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: transparent;
-  border: 2px solid var(--edge);
-  padding: 0.15rem 0.4rem;
-  cursor: pointer;
-}
-
-.paneAct:hover { color: var(--text); }
 
 .pane {
   min-width: 0;
@@ -194,23 +162,6 @@
   background: var(--face);
 }
 
-.close {
-  position: absolute;
-  z-index: 1;
-  top: 0.5rem;
-  right: 0.5rem;
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text);
-  background: var(--face);
-  border: 2px solid var(--edge);
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
-}
-
 .empty {
   margin: auto;
   padding: 1rem;
@@ -218,12 +169,10 @@
   color: var(--text-dim);
 }
 
-
 :global(html[data-surface-editor-frame="two-pane"]) .room {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .room :focus-visible {
   outline: 2px solid var(--focus-ring);
@@ -243,3 +192,7 @@
   width: 100%;
   box-sizing: border-box;
 }
+
+.reveal { position: absolute; z-index: 1; top: 0; left: 0; }
+
+.close { position: absolute; z-index: 1; top: 0.5rem; right: 0.5rem; }

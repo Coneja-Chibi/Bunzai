@@ -2,6 +2,7 @@
  * TriggerEditor - RC-style key row: chips (+ per-key % in advanced) and optional + Condition menu.
  * Advanced still exposes regex/frequency riders when a chip is picked.
  */
+import { Chip } from "../../../components/button";
 import { useState, type JSX } from "react";
 import type { Trigger } from "../../../../entities/lorebook/schema";
 import { LoreSpecialTriggers } from "../../../components/lore-special-triggers";
@@ -63,15 +64,7 @@ export function TriggerEditor({
       {advanced && current && (
         <div className={styles.riderRow} role="group" aria-label={`Dials for ${current.keyword}`}>
           <span className={styles.riderName}>{current.keyword}</span>
-          <button
-            type="button"
-            className={current.isRegex ? `${styles.fldBtn} ${styles.fldOn}` : styles.fldBtn}
-            aria-pressed={current.isRegex}
-            title="Treat this key as a regular expression"
-            onClick={() => patch({ isRegex: !current.isRegex })}
-          >
-            Regex
-          </button>
+          <Chip pressed={current.isRegex} title="Treat this key as a regular expression" onClick={() => patch({ isRegex: !current.isRegex })}>Regex</Chip>
           {current.isRegex && fieldOr(themed, { label: "Flags" }, (
               <input
                 className={styles.groupIn}

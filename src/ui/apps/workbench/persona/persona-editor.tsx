@@ -5,6 +5,7 @@
  * inject.ts output + the shared token convention) + the default star. Save preserves the sealed
  * `original` so imported personas round-trip byte-true.
  */
+import { Chip } from "../../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type ReactNode } from "react";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
 import { toErrorMessage } from "../../../_shared/error-message";
@@ -219,9 +220,7 @@ export function PersonaEditorView({ entity, revision, ctx, piece, topRight }: Pe
     {
       id: "default", title: "Default Persona", column: 2,
       node: (
-        <button type="button" className={defaultId === piece.id ? `${s.defaultBtn} ${s.defaultOn}` : s.defaultBtn} aria-pressed={defaultId === piece.id} onClick={toggleDefault}>
-          {defaultId === piece.id ? "★ Default persona" : "☆ Set as default persona"}
-        </button>
+        <Chip pressed={defaultId === piece.id} tone={defaultId === piece.id ? "var(--stage-warn)" : undefined} onClick={toggleDefault}>{defaultId === piece.id ? "★ Default persona" : "☆ Set as default persona"}</Chip>
       ),
     },
   ];

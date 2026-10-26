@@ -1,4 +1,5 @@
 /** Current-page heading rail, derived entirely from generated docs anchors. */
+import { ListRow } from "../../components/button";
 import type { JSX } from "react";
 import type { DocAnchor } from "../../docs-types";
 import { flattenAnchors } from "../../../kit/docs/navigation";
@@ -16,14 +17,14 @@ export function DocToc({ anchors, activeSlug, onJump }: DocTocProps): JSX.Elemen
     <aside className={styles.toc} aria-label="On this page" data-tour="toc">
       {flat.length > 0 && <div className={styles.tocHead}>On this page</div>}
       {flat.map((anchor) => (
-        <button
+        <ListRow
           key={`${anchor.slug}-${anchor.level}`}
-          type="button"
-          className={`${styles.tocLink}${anchor.level >= 3 ? ` ${styles.sub}` : ""}${activeSlug === anchor.slug ? ` ${styles.on}` : ""}`}
+          depth={anchor.level >= 3 ? 1 : 0}
+          selected={activeSlug === anchor.slug}
+          aria-current={activeSlug === anchor.slug ? "location" : undefined}
           onClick={() => onJump(anchor.slug)}
-        >
-          {anchor.text}
-        </button>
+          label={anchor.text}
+        />
       ))}
     </aside>
   );

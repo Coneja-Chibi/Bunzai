@@ -5,6 +5,7 @@
  * automatic-candidate rules (`lib/character-mind/participant-candidate.ts`), drops names already on the roster by RoleCall's duplicate
  * ladder (`lib/character-mind/resolve-participant.ts`), and only proposes: nothing is stored until the person confirms. Pure.
  */
+import { editDistance } from "../text";
 import { isRecord, optStr } from "../guards";
 import { extractObject } from "../compendium/filing-schema";
 
@@ -93,19 +94,10 @@ export const canonicalName = (name: string): string => {
 const tokens = (name: string): string[] => canonicalName(name).split(/[\s\-_,;]+/).map((t) => t.replace(/[^\w]/g, "")).filter((t) => t.length >= 2);
 const strictSubset = (a: string[], b: string[]): boolean => { const A = new Set(a); const B = new Set(b); return A.size < B.size && [...A].every((t) => B.has(t)); };
 
-function distance(a: string, b: string): number {
-  let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
-  for (let i = 1; i <= a.length; i++) {
-    const cur = [i];
-    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(cur[j - 1]! + 1, prev[j]! + 1, prev[j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
-    prev = cur;
-  }
-  return prev[b.length]!;
-}
 const nearTypo = (a: string, b: string): boolean => {
   const max = Math.max(a.length, b.length);
   if (max < 8) return false;
-  const d = distance(a, b);
+  const d = editDistance(a, b);
   return d <= 1 || (max >= 12 && d / max <= 0.16);
 };
 

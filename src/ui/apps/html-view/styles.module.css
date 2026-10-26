@@ -74,27 +74,11 @@
   z-index: 1;
   top: 0.5rem;
   right: 0.5rem;
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: var(--face);
-  border: 2px solid var(--edge);
-  padding: 0.3rem 0.6rem;
-  cursor: pointer;
 }
-
-.expand:hover { color: var(--text); }
 
 :global(html[data-surface-ui-panel="gilt-frame"]) .frame {
   border-color: var(--chrome-structure);
   box-shadow: 0 0 0 2px var(--chrome-structure);
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .expand {
-  color: var(--text);
-  border-color: var(--control-boundary);
 }
 
 /* The room's one child: the drawing's page, or, when there is none, the message the ui.empty variant frames. */

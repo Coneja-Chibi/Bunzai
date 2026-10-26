@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import type { LorebookEntry } from "../../../entities/lorebook/schema";
 import type { SceneLoreFired } from "../../app-contract-scenes";
 import { InkDialog } from "../../components/ink-dialog";
+import { Button, Disclosure, IconButton, MenuItem, Scrim } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { protect } from "../../_shared/protected-control";
 import { useEscapeKey } from "../../_shared/use-escape-key";
@@ -42,8 +43,8 @@ const EntryRow = memo(function EntryRow({ entry, selected, fire, onSelect, onMen
       <div className="wl-en-r">
         <span className="wl-en-n">{title}</span>
         {fire && <span className={`wl-why ${fire.cls}`}>{fire.text}</span>}
-        <button type="button" className="wl-more" aria-label={`Actions for ${title}`} aria-haspopup="menu"
-          onClick={(e) => { e.stopPropagation(); onMenu(entry.id, e.currentTarget); }}><Ic name="lucide:ellipsis-vertical" size={16} /></button>
+        <IconButton variant="quiet" size="sm" label={`Actions for ${title}`} aria-haspopup="menu" icon="lucide:ellipsis-vertical"
+          onClick={(e) => { e.stopPropagation(); onMenu(entry.id, e.currentTarget); }} />
       </div>
       <div className="wl-en-t">~{entryTokens(entry)}</div>
     </div>
@@ -75,15 +76,15 @@ function EntryMenu({ entry, anchor, host, atTop, atBottom, actions, onClose }: {
   const run = (fn: () => void) => (): void => { onClose(); fn(); };
   return createPortal(
     <>
-      <button type="button" className="wl-ov" aria-label="Close entry actions" tabIndex={-1} onClick={onClose} />
+      <Scrim transparent data-part="scene.lore.menu-away" label="Close entry actions" tabIndex={-1} onClick={onClose} />
       <div className="wl-menu" role="menu" aria-label={`Entry actions for ${entry.title || "Untitled"}`} style={style}>
-        <button type="button" role="menuitem" onClick={run(() => actions.onSelect(entry.id))}><Ic name="lucide:pencil" size={16} />Open and edit</button>
-        <button type="button" role="menuitem" onClick={run(() => actions.onToggleEnabled(entry.id))}><Ic name="lucide:power" size={16} />{entry.enabled ? "Disable entry" : "Enable entry"}</button>
+        <MenuItem icon="lucide:pencil" onClick={run(() => actions.onSelect(entry.id))}>Open and edit</MenuItem>
+        <MenuItem icon="lucide:power" onClick={run(() => actions.onToggleEnabled(entry.id))}>{entry.enabled ? "Disable entry" : "Enable entry"}</MenuItem>
         <div className="two">
-          <button type="button" role="menuitem" disabled={atTop} onClick={run(() => actions.onMove(entry.id, "up"))}><Ic name="lucide:arrow-up" size={16} />Move up</button>
-          <button type="button" role="menuitem" disabled={atBottom} onClick={run(() => actions.onMove(entry.id, "down"))}><Ic name="lucide:arrow-down" size={16} />Move down</button>
+          <MenuItem icon="lucide:arrow-up" disabled={atTop} onClick={run(() => actions.onMove(entry.id, "up"))}>Move up</MenuItem>
+          <MenuItem icon="lucide:arrow-down" disabled={atBottom} onClick={run(() => actions.onMove(entry.id, "down"))}>Move down</MenuItem>
         </div>
-        <button type="button" role="menuitem" {...protect("entry-delete", "red")} onClick={run(() => actions.onDeleteRequest(entry.id))}><Ic name="lucide:trash-2" size={16} />Delete entry</button>
+        <div {...protect("entry-delete")}><MenuItem danger icon="lucide:trash-2" onClick={run(() => actions.onDeleteRequest(entry.id))}>Delete entry</MenuItem></div>
       </div>
     </>,
     host,
@@ -157,13 +158,13 @@ export function EntriesPanel({ entries, selectedId, query, onQuery, bookId, last
       <div className="wl-ar">
         <div className="wl-ar-r">
           {saving && <span className="wl-sv"><Ic name="lucide:loader-circle" size={12} />Saving...</span>}
-          <button type="button" className="wl-pl" title="New entry" aria-label="New entry" onClick={onAddEntry}><Ic name="lucide:plus" size={14} /></button>
-          <button type="button" className="wl-ex" title="Open full editor" aria-label="Open full editor" onClick={onOpenBook}><Ic name="lucide:external-link" size={14} /></button>
+          <IconButton size="sm" label="New entry" icon="lucide:plus" onClick={onAddEntry} />
+          <IconButton variant="quiet" size="sm" label="Open full editor" icon="lucide:external-link" onClick={onOpenBook} />
         </div>
         <label className="wl-se">
           <Ic name="lucide:search" size={16} />
           <input type="search" value={query} placeholder="Search entries, text, or triggers..." aria-label="Search lorebook entries" onChange={(e) => onQuery(e.target.value)} />
-          {query && <button type="button" onClick={() => onQuery("")}>Clear</button>}
+          {query && <Button variant="quiet" size="sm" onClick={() => onQuery("")}>Clear</Button>}
         </label>
       </div>
       <div className="wl-split" data-open={selectedId !== null}>
@@ -180,10 +181,8 @@ export function EntriesPanel({ entries, selectedId, query, onQuery, bookId, last
                 return (
                   <div key={row.key} data-index={v.index} data-pick={row.key} className="wl-vr" style={{ transform: `translateY(${String(v.start)}px)` }}>
                     {row.kind === "head" ? (
-                      <button type="button" className={`wl-gh${row.group === "selective" ? " v" : ""}`} aria-expanded={row.open}
-                        onClick={() => setCollapsed((s) => { const n = new Set(s); if (n.has(row.group)) n.delete(row.group); else n.add(row.group); return n; })}>
-                        <Ic name={row.open ? "lucide:chevron-down" : "lucide:chevron-right"} size={10} /><span>{row.group === "constant" ? "Constant" : "Selective"}</span><em>{row.count}</em>
-                      </button>
+                      <Disclosure data-part="scene.lore.group-head" open={row.open} label={row.group === "constant" ? "Constant" : "Selective"} summary={row.count}
+                        onClick={() => setCollapsed((s) => { const n = new Set(s); if (n.has(row.group)) n.delete(row.group); else n.add(row.group); return n; })} />
                     ) : (
                       <EntryRow entry={row.entry} selected={row.entry.id === selectedId} fire={fired.has(row.entry.id) ? fireLabel(fired.get(row.entry.id)!) : null}
                         onSelect={actions.onSelect} onMenu={openMenu} />
@@ -194,11 +193,11 @@ export function EntriesPanel({ entries, selectedId, query, onQuery, bookId, last
             </div>
             {entries.length === 0 && (
               <div className="wl-lempty"><span className="box"><Ic name="lucide:book" size={20} /></span><b>No entries</b><small>This lorebook is empty.</small>
-                <button type="button" className="wl-cta" onClick={onAddEntry}><Ic name="lucide:plus" size={12} />Add entry</button></div>
+                <Button size="sm" icon="lucide:plus" onClick={onAddEntry}>Add entry</Button></div>
             )}
             {entries.length > 0 && rows.length === 0 && (
               <div className="wl-lempty"><span className="box"><Ic name="lucide:search" size={20} /></span><b>No matching entries</b>
-                <button type="button" className="wl-cta" onClick={() => onQuery("")}>Clear search</button></div>
+                <Button size="sm" onClick={() => onQuery("")}>Clear search</Button></div>
             )}
           </div>
           <LastTurnFoot lastTurn={lastTurn} />
@@ -220,7 +219,7 @@ export function DetailHint({ empty, onAdd }: { empty: boolean; onAdd(): void }):
       <span className="box"><Ic name="lucide:book" size={24} /></span>
       <b>{empty ? "Empty Lorebook" : "Select an Entry"}</b>
       <small>{empty ? "Add an entry to start feeding world details into the scene." : "Pick one from the list to edit its content, triggers, and placement."}</small>
-      {empty && <button type="button" className="wl-cta big" onClick={onAdd}><Ic name="lucide:plus" size={16} />Add your first entry</button>}
+      {empty && <Button variant="primary" icon="lucide:plus" onClick={onAdd}>Add your first entry</Button>}
     </div></div>
   );
 }
@@ -231,7 +230,7 @@ export function DeleteEntryDialog({ title, onCancel, onConfirm }: { title: strin
       <div className="scn-sheet">
         <header className="hd"><div className="eb">World Info</div><h2>Delete this entry</h2><p>{title || "Untitled"}</p></header>
         <div className="bd"><p>This removes it from the book. The library keeps versions, so you can recover it there.</p></div>
-        <footer className="ft"><button type="button" autoFocus onClick={onCancel}>Keep entry</button><button type="button" className="red" onClick={onConfirm}>Delete entry</button></footer>
+        <footer className="ft"><Button autoFocus onClick={onCancel}>Keep entry</Button><Button variant="danger" onClick={onConfirm}>Delete entry</Button></footer>
       </div>
     </InkDialog>
   );

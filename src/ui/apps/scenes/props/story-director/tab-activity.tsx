@@ -3,6 +3,7 @@
  * one line open at a time. NEW against RoleCall: the feed is part of the saved story (the last 200 lines), so it is still here after a reload; Clear hides, it does not delete.
  */
 import { useState, type JSX } from "react";
+import { IconButton, Segmented } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import type { DirectorActivity } from "../../../../../stage/contracts/director-types";
 import { ACTIVITY_FILTERS, activityNewestFirst, type ActivityFilter } from "./director-core";
@@ -15,10 +16,10 @@ export function ActivityTab({ entries, now, onClear, locked }: { entries: readon
   return (
     <div className="dr-activity" data-part="scene.director.activity">
       <div className="dr-filters">
-        {ACTIVITY_FILTERS.map((f) => <button key={f.id} type="button" className={filter === f.id ? "on" : ""} aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>{f.label}</button>)}
+        <Segmented size="sm" label="Activity filter" items={ACTIVITY_FILTERS.map((f) => ({ value: f.id, label: f.label }))} value={filter} onChange={setFilter} />
         <span className="dr-filters-r">
           <small>{shown.length} entries</small>
-          {entries.length > 0 && <button type="button" className="dr-ico" title="Clear activity log" aria-label="Clear activity log" disabled={locked} onClick={onClear}><Ic name="lucide:trash-2" size={12} /></button>}
+          {entries.length > 0 && <IconButton variant="danger" size="sm" label="Clear activity log" icon="lucide:trash-2" disabled={locked} onClick={onClear} />}
         </span>
       </div>
       {shown.length === 0 ? (

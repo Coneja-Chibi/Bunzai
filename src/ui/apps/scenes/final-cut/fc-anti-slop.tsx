@@ -5,6 +5,7 @@
  * switch that also checks your own message before it is sent. Copy is RoleCall's.
  */
 import type { JSX } from "react";
+import { Chip } from "../../../components/button";
 import { BANK_DEPTH, type BankDepth } from "../../../../core/final-cut/banks";
 import type { FinalCutPass } from "../../../../core/final-cut/pass";
 import { QUALITY_CHECKS } from "../../../../core/final-cut/validate";
@@ -14,7 +15,7 @@ import { BankPicker } from "./fc-bank-picker";
 import { FailureModeSelect, OutputModeToggle, PassChrome, type Change } from "./fc-pass-chrome";
 
 export function LiveSwitch({ on, onToggle }: { on: boolean; onToggle(): void }): JSX.Element {
-  return <button type="button" className={`fc-live${on ? " on" : ""}`} aria-pressed={on} onClick={onToggle}>{on ? "Live" : "Off"}</button>;
+  return <span className="fc-live"><Chip pressed={on} onClick={onToggle}>{on ? "Live" : "Off"}</Chip></span>;
 }
 
 const DEPTHS = Object.fromEntries(Object.entries(BANK_DEPTH).map(([id, d]) => [id, { label: `${d.label}: ${d.hint}` }]));

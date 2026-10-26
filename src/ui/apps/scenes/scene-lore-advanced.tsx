@@ -10,7 +10,8 @@
 import { useState, type JSX } from "react";
 import type { EntrySideEffect, EntrySideEffects, InjectionPosition, LorebookEntry, MessageRole, SideEffectType } from "../../../entities/lorebook/schema";
 import { recursionModeOf, recursionPatch, type RecursionMode } from "../../_shared/lore-recursion";
-import { Ic, type IconName } from "../../_shared/ic";
+import { Button, Disclosure, IconButton, MenuItem, Segmented, type ChoiceItem } from "../../components/button";
+import { Ic } from "../../_shared/ic";
 import { resolveBoostTarget } from "./lore-core";
 import { LoreHelp, LoreNum } from "./lore-fields";
 
@@ -28,25 +29,41 @@ const TIPS = {
   bottom: ["Append Preset (Bottom)", "Pins this entry to the very END of the assembled prompt, after chat history, post-history prompts, and the Scene Note."],
 } as const;
 
-function Card({ pos, entry, label, tip, cls, onPatch }: { pos: InjectionPosition; entry: LorebookEntry; label: string; tip: readonly [string, string]; cls?: string; onPatch: Patch }): JSX.Element {
-  return <button type="button" className={`wl-pc${cls ? ` ${cls}` : ""}${entry.position === pos ? " on" : ""}`} title={`${tip[0]}. ${tip[1]}`} onClick={() => onPatch({ position: pos })}>{label}</button>;
-}
+const tipOf = (tip: readonly [string, string]): string => `${tip[0]}. ${tip[1]}`;
+const POSITIONS: readonly ChoiceItem<InjectionPosition>[] = [
+  { value: "world", label: "World", title: tipOf(TIPS.world) },
+  { value: "character", label: "Character", title: tipOf(TIPS.character) },
+  { value: "scene", label: "Scene", title: tipOf(TIPS.scene) },
+  { value: "depth", label: <><Ic name="lucide:map-pin" size={14} />@ Depth</>, title: tipOf(TIPS.depth) },
+  { value: "append", label: <><Ic name="lucide:corner-down-right" size={14} />Append</>, title: tipOf(TIPS.append) },
+  { value: "prepend_top", label: <><Ic name="lucide:arrow-up-to-line" size={14} />Top</>, title: tipOf(TIPS.top) },
+  { value: "append_bottom", label: <><Ic name="lucide:arrow-down-to-line" size={14} />Bottom</>, title: tipOf(TIPS.bottom) },
+];
 
-/** The @ Depth and Append cards: a plain button until chosen, then the depth and the role to place it as. */
-function DepthCard({ pos, entry, icon, label, tip, cls, onPatch }: { pos: "depth" | "append"; entry: LorebookEntry; icon: IconName; label: string; tip: readonly [string, string]; cls: string; onPatch: Patch }): JSX.Element {
-  if (entry.position !== pos) {
-    return <button type="button" className={`wl-pc ${cls}`} title={`${tip[0]}. ${tip[1]}`} onClick={() => onPatch({ position: pos })}><Ic name={icon} size={14} />{label}</button>;
-  }
+/** The seven position cards as one picker; @ Depth and Append add a row below for the depth and the role to place it as. */
+function PositionPicker({ entry, onPatch }: { entry: LorebookEntry; onPatch: Patch }): JSX.Element {
+  const pos = entry.position;
   return (
-    <div className={`wl-pc ${cls} on`} title={`${tip[0]}. ${tip[1]}`}>
-      <Ic name={icon} size={14} />
-      <LoreNum className="" label={pos === "depth" ? "Injection depth" : "Append depth"} value={entry.depth} min={0} fallback={pos === "depth" ? 4 : 0} onChange={(depth) => onPatch({ depth })} />
-      <select value={entry.role} aria-label="Injection role" onChange={(e) => onPatch({ role: e.target.value as MessageRole })}>
-        {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-      </select>
-    </div>
+    <>
+      <Segmented data-part="scene.lore.position" label="Injection position" items={POSITIONS} value={pos} onChange={(position) => onPatch({ position })} />
+      {(pos === "depth" || pos === "append") && (
+        <div className="wl-pd" title={tipOf(pos === "depth" ? TIPS.depth : TIPS.append)}>
+          <LoreNum className="" label={pos === "depth" ? "Injection depth" : "Append depth"} value={entry.depth} min={0} fallback={pos === "depth" ? 4 : 0} onChange={(depth) => onPatch({ depth })} />
+          <select value={entry.role} aria-label="Injection role" onChange={(e) => onPatch({ role: e.target.value as MessageRole })}>
+            {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+          </select>
+        </div>
+      )}
+    </>
   );
 }
+
+const RECURSION_ITEMS = [
+  { value: "normal", label: "Normal", title: "Normal Recursion. This entry's content is scanned for other entries' triggers, potentially activating them." },
+  { value: "prevent", label: "Prevent", title: "Prevent Recursion. This entry's content will NOT trigger other entries." },
+  { value: "delay", label: "Delay", title: "Delay Until Recursion. This entry only activates on a later pass of scanning, after other entries have been processed." },
+] as const;
+const FILTER_MODES = [{ value: "whitelist", label: "Whitelist" }, { value: "blacklist", label: "Blacklist" }, { value: "none", label: "None" }] as const;
 
 function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: readonly string[]; onPatch: Patch }): JSX.Element {
   const [input, setInput] = useState("");
@@ -56,7 +73,7 @@ function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: reado
     return (
       <span className="wl-gp">{entry.groupName}<span aria-hidden="true">&times;</span>
         <LoreNum label="Group weight" value={entry.groupWeight} fallback={100} onChange={(groupWeight) => onPatch({ groupWeight })} />
-        <button type="button" aria-label="Remove from group" title="Remove From Group. Clears this entry group assignment and resets its group weight." onClick={() => onPatch({ groupName: null, groupWeight: 100 })}>&times;</button>
+        <IconButton variant="quiet" size="sm" label="Remove from group" title="Remove From Group. Clears this entry group assignment and resets its group weight." icon={<span aria-hidden="true">&times;</span>} onClick={() => onPatch({ groupName: null, groupWeight: 100 })} />
       </span>
     );
   }
@@ -68,9 +85,9 @@ function Group({ entry, groups, onPatch }: { entry: LorebookEntry; groups: reado
         onChange={(e) => { setInput(e.target.value); setOpen(true); }} onFocus={() => setOpen(true)} onBlur={() => setTimeout(() => setOpen(false), 200)}
         onKeyDown={(e) => { if (e.key === "Enter" && input.trim()) assign(input); }} />
       {open && (matches.length > 0 || input.trim()) && (
-        <div className="wl-dd" style={{ left: 0, width: 160 }}>
-          {matches.map((g) => <button type="button" key={g} onMouseDown={(e) => e.preventDefault()} onClick={() => assign(g)}>{g}</button>)}
-          {input.trim() && !groups.some((g) => g.toLowerCase() === q) && <button type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => assign(input)}>+ Create &quot;{input}&quot;</button>}
+        <div className="wl-dd" role="menu" aria-label="Groups" style={{ left: 0, width: 160 }}>
+          {matches.map((g) => <MenuItem key={g} onMouseDown={(e) => e.preventDefault()} onClick={() => assign(g)}>{g}</MenuItem>)}
+          {input.trim() && !groups.some((g) => g.toLowerCase() === q) && <MenuItem onMouseDown={(e) => e.preventDefault()} onClick={() => assign(input)}>+ Create &quot;{input}&quot;</MenuItem>}
         </div>
       )}
     </span>
@@ -86,23 +103,13 @@ export function Injection({ entry, groups, onPatch }: { entry: LorebookEntry; gr
   return (
     <div>
       <div className="wl-sec"><span className="wl-lb">Injection</span><span className="r wl-lb"><LoreHelp title={TIPS.position[0]} text={TIPS.position[1]} /> Position</span></div>
-      <div className="wl-pos">
-        <Card pos="world" entry={entry} label="World" tip={TIPS.world} onPatch={onPatch} />
-        <Card pos="character" entry={entry} label="Character" tip={TIPS.character} onPatch={onPatch} />
-        <Card pos="scene" entry={entry} label="Scene" tip={TIPS.scene} onPatch={onPatch} />
-        <DepthCard pos="depth" entry={entry} icon="lucide:map-pin" label="@ Depth" tip={TIPS.depth} cls="dp" onPatch={onPatch} />
-        <DepthCard pos="append" entry={entry} icon="lucide:corner-down-right" label="Append" tip={TIPS.append} cls="ap am" onPatch={onPatch} />
-        <button type="button" className={`wl-pc pn am${entry.position === "prepend_top" ? " on" : ""}`} title={`${TIPS.top[0]}. ${TIPS.top[1]}`} onClick={() => onPatch({ position: "prepend_top" })}><Ic name="lucide:arrow-up-to-line" size={14} />Top</button>
-        <button type="button" className={`wl-pc pn am${entry.position === "append_bottom" ? " on" : ""}`} title={`${TIPS.bottom[0]}. ${TIPS.bottom[1]}`} onClick={() => onPatch({ position: "append_bottom" })}><Ic name="lucide:arrow-down-to-line" size={14} />Bottom</button>
-      </div>
+      <div className="wl-pos"><PositionPicker entry={entry} onPatch={onPatch} /></div>
       <div className="wl-row3">
         <div><span className="wl-lb" title="Entry Timing. Control when and how often this entry can activate using sticky, cooldown, and delay settings.">Timing</span>
           <span className="grp">{timing("sticky", "Sticky")}{timing("cooldown", "Cool")}{timing("delay", "Delay")}</span></div>
         <div><span className="wl-lb" title="Recursion Behavior. Control whether this entry's content can trigger other entries, creating chains of activations.">Recursion</span>
           <span className="grp">
-            <button type="button" className={`wl-rc g${mode === "normal" ? " on" : ""}`} title="Normal Recursion. This entry's content is scanned for other entries' triggers, potentially activating them." onClick={() => recursion("normal")}>Normal</button>
-            <button type="button" className={`wl-rc v${mode === "prevent" ? " on" : ""}`} title="Prevent Recursion. This entry's content will NOT trigger other entries." onClick={() => recursion("prevent")}>Prevent</button>
-            <button type="button" className={`wl-rc b${mode === "delay" ? " on" : ""}`} title="Delay Until Recursion. This entry only activates on a later pass of scanning, after other entries have been processed." onClick={() => recursion("delay")}>Delay</button>
+            <Segmented label="Recursion" size="sm" value={mode} onChange={recursion} items={RECURSION_ITEMS} />
           </span></div>
         <div><span className="wl-lb" title="Entry Groups. Group entries together so only one from the group activates per turn. Weights determine selection probability.">Group</span>
           <Group entry={entry} groups={groups} onPatch={onPatch} /></div>
@@ -135,7 +142,7 @@ function EffectRow({ effect, onUpdate, onRemove }: { effect: EntrySideEffect; on
       <select className="sc" value={effect.scope} aria-label="Scope" title="Scope. Local (this chat only) or Global (across all chats)." onChange={(e) => onUpdate({ scope: e.target.value as "local" | "global" })}>
         <option value="local">Local</option><option value="global">Global</option>
       </select>
-      <button type="button" className="rm" aria-label="Remove this side effect" title="Remove Side Effect. Delete this variable operation from the entry." onClick={onRemove}><Ic name="lucide:trash-2" size={14} /></button>
+      <IconButton variant="quiet" size="sm" data-part="scene.lore.effect-remove" label="Remove this side effect" title="Remove Side Effect. Delete this variable operation from the entry." icon="lucide:trash-2" onClick={onRemove} />
     </div>
   );
 }
@@ -150,14 +157,10 @@ export function SideEffects({ value, onChange }: { value: EntrySideEffects | nul
   return (
     <div className="wl-fx">
       <div className="wl-fxh">
-        <button type="button" aria-expanded={open || has} onClick={() => setOpen(!open)}>
-          <span className="z"><Ic name="lucide:zap" size={16} /></span><span className="wl-lb">Side Effects</span>
-          {has && <span className="n">{effects.length}</span>}
-          <span className={`cv${open ? " open" : ""}`}><Ic name="lucide:chevron-down" size={16} /></span>
-        </button>
+        <Disclosure data-part="scene.lore.side-effects" open={open || has} onClick={() => setOpen(!open)} leading={<Ic name="lucide:zap" size={16} />} label="Side Effects" summary={has ? effects.length : undefined} />
         <LoreHelp title="Side Effects" text="Modify variables when this entry triggers. Variables can be used in content with {{getvar::name}}. Local scope: the variable exists only in this chat. Global scope: it persists across all chats." />
-        <button type="button" className="wl-ae" aria-label="Add a new side effect" title="Add Side Effect. Add a variable operation that runs when this entry activates."
-          onClick={() => { onChange({ ...base(), effects: [...effects, { type: "setvar", variable: "", value: "", scope: "local" }] }); setOpen(true); }}><Ic name="lucide:plus" size={14} />Add Effect</button>
+        <Button size="sm" icon="lucide:plus" data-part="scene.lore.effect-add" aria-label="Add a new side effect" title="Add Side Effect. Add a variable operation that runs when this entry activates."
+          onClick={() => { onChange({ ...base(), effects: [...effects, { type: "setvar", variable: "", value: "", scope: "local" }] }); setOpen(true); }}>Add Effect</Button>
       </div>
       {(open || has) && (
         <div className="wl-fxl">
@@ -207,7 +210,7 @@ export function CrossEntryBoost({ entry, candidates, onPatch }: { entry: Loreboo
             {ids.map((id, i) => (
               <span key={`${id}-${i}`} className="tag bst" title={titleOf.has(id) ? id : "This target is not an entry in this lorebook; remove it."}>
                 {titleOf.get(id) ?? `${id} (not found)`}
-                <button type="button" aria-label={`Remove ${titleOf.get(id) ?? id} from boost list`} title="Remove Boost Target. Remove this linked entry from the cross-entry boost list." onClick={() => onPatch({ boostIds: ids.filter((_, j) => j !== i) })}>&times;</button>
+                <IconButton variant="quiet" size="sm" label={`Remove ${titleOf.get(id) ?? id} from boost list`} title="Remove Boost Target. Remove this linked entry from the cross-entry boost list." icon={<span aria-hidden="true">&times;</span>} onClick={() => onPatch({ boostIds: ids.filter((_, j) => j !== i) })} />
               </span>
             ))}
           </div>
@@ -233,7 +236,7 @@ export function CharacterFilter({ entry, onPatch }: { entry: LorebookEntry; onPa
     setInput("");
   };
   const chip = (text: string, key: string, remove: () => void, aria: string): JSX.Element => (
-    <span key={key} className={`tag${f?.isExclude ? " ex" : ""}`}>{text}<button type="button" aria-label={aria} title="Remove Filter Item. Remove this character name or tag from the entry filter." onClick={remove}>&times;</button></span>
+    <span key={key} className={`tag${f?.isExclude ? " ex" : ""}`}>{text}<IconButton variant="quiet" size="sm" label={aria} title="Remove Filter Item. Remove this character name or tag from the entry filter." icon={<span aria-hidden="true">&times;</span>} onClick={remove} /></span>
   );
   return (
     <div>
@@ -241,9 +244,8 @@ export function CharacterFilter({ entry, onPatch }: { entry: LorebookEntry; onPa
         <div className="wl-lbl"><span className="wl-lb">Character Filter</span><LoreHelp title="Character Filter" text="Limit this entry to specific characters. Whitelist makes it only activate for listed characters; blacklist excludes them. Use #tag to match characters by tag instead of name." /><small>(optional)</small></div>
         <div className="wl-cf">
           <div className="modes">
-            <button type="button" className={`wl-wh${f && !f.isExclude ? " on" : ""}`} onClick={() => mode(false)}>Whitelist</button>
-            <button type="button" className={`wl-bl2${f?.isExclude ? " on" : ""}`} onClick={() => mode(true)}>Blacklist</button>
-            <button type="button" className={`wl-no${f ? "" : " on"}`} onClick={() => onPatch({ characterFilter: null })}>None</button>
+            <Segmented label="Character filter mode" size="sm" value={f ? (f.isExclude ? "blacklist" : "whitelist") : "none"} items={FILTER_MODES}
+              onChange={(m) => { if (m === "none") onPatch({ characterFilter: null }); else mode(m === "blacklist"); }} />
           </div>
           {f && (
             <>

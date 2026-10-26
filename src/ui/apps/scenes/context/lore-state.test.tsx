@@ -145,7 +145,7 @@ describe("Sources, Flow and Compose", () => {
     expect(tab(m.host, "Compose").getAttribute("aria-selected")).toBe("true");
     expect(m.host.querySelectorAll(".ls-sec.lit")).toHaveLength(1);
     expect(m.host.textContent).toContain("Mira keeps the lighthouse.");
-    await click(m.host.querySelector(".ls-chip")!);
+    await click(m.host.querySelector(".ls-hint button")!);
     expect(m.host.querySelectorAll(".ls-sec.lit")).toHaveLength(0);
     m.done();
   });
@@ -210,10 +210,10 @@ describe("State", () => {
     const m = await mount(ready(trace()));
     const chips = [...m.host.querySelectorAll(".ls-chips button")].map((b) => b.textContent);
     expect(chips).toEqual(["session 1", "character 1", "arc 1", "scene 0", "global 1", "internal 1"]);
-    expect([...m.host.querySelectorAll(".ls-var code")].map((c) => c.textContent)).toEqual(["mood", "trust", "chapter", "gold"]);
+    expect([...m.host.querySelectorAll(".ls-list [data-control=disclosure] code")].map((c) => c.textContent)).toEqual(["mood", "trust", "chapter", "gold"]);
     await click([...m.host.querySelectorAll<HTMLElement>(".ls-chips button")].find((b) => b.textContent === "internal 1"));
-    expect([...m.host.querySelectorAll(".ls-var code")].map((c) => c.textContent)).toContain("__once_fired");
-    await click([...m.host.querySelectorAll(".ls-var")].find((b) => b.textContent?.includes("trust")));
+    expect([...m.host.querySelectorAll(".ls-list [data-control=disclosure] code")].map((c) => c.textContent)).toContain("__once_fired");
+    await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("trust")));
     expect(m.host.textContent).toContain("character: vera");
     expect(m.host.textContent).toContain("stored as _char_vera_trust");
     m.done();
@@ -221,7 +221,7 @@ describe("State", () => {
   test("search filters by key or value; a failed read says why; no variables is RoleCall's empty line", async () => {
     let m = await mount(ready(trace()));
     await type(m.host.querySelector('[aria-label="Search variables"]') as HTMLInputElement, "calm");
-    expect([...m.host.querySelectorAll(".ls-var code")].map((c) => c.textContent)).toEqual(["mood"]);
+    expect([...m.host.querySelectorAll(".ls-list [data-control=disclosure] code")].map((c) => c.textContent)).toEqual(["mood"]);
     m.done();
     m = await mount(ready(trace()), { getSceneVariables: async () => { throw new Error("library locked"); } });
     expect(m.host.querySelector('[role="alert"]')?.textContent).toContain("library locked");
@@ -300,28 +300,28 @@ describe("a variable's history", () => {
     const m = await mount(ready(trace()), {
       getSceneVariableHistory: async (_id, scope, key) => { asked.push([scope, key]); return { truncated: false, entries: [{ number: 6, messageId: "m3", at: Date.UTC(2026, 9, 12), before: "calm", after: "wary" }, { number: 2, messageId: "m1", at: Date.UTC(2026, 9, 11), after: "calm" }] }; },
     });
-    await click([...m.host.querySelectorAll(".ls-var")].find((b) => b.textContent?.includes("mood")));
+    await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("mood")));
     const rows = [...m.host.querySelectorAll(".ls-hist li")].map((r) => r.textContent ?? "");
     expect(rows[0]).toContain("#6");
     expect(rows[0]).toContain("calm → wary");
     expect(rows[1]).toContain("(not set) → calm");
     expect(asked).toEqual([["local", "mood"]]);
-    await click([...m.host.querySelectorAll(".ls-var")].find((b) => b.textContent?.includes("gold")));
+    await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("gold")));
     expect(asked.at(-1)).toEqual(["global", "gold"]);
     m.done();
   });
   test("a deletion reads as one, no changes recorded says so, and a failed read says why", async () => {
     let m = await mount(ready(trace()), { getSceneVariableHistory: async () => ({ truncated: true, entries: [{ number: 8, messageId: "m", at: 1, before: "wary", deleted: true }] }) });
-    await click([...m.host.querySelectorAll(".ls-var")].find((b) => b.textContent?.includes("mood")));
+    await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("mood")));
     expect(m.host.querySelector(".ls-hist li")?.textContent).toContain("wary → (deleted)");
     expect(m.host.textContent).toContain("Only the newest 400 replies were read.");
     m.done();
     m = await mount(ready(trace()), { getSceneVariableHistory: async () => ({ truncated: false, entries: [] }) });
-    await click([...m.host.querySelectorAll(".ls-var")].find((b) => b.textContent?.includes("mood")));
+    await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("mood")));
     expect(m.host.textContent).toContain("No changes recorded for this variable in this take's replies.");
     m.done();
     m = await mount(ready(trace()), { getSceneVariableHistory: async () => { throw new Error("trace unreadable"); } });
-    await click([...m.host.querySelectorAll(".ls-var")].find((b) => b.textContent?.includes("mood")));
+    await click([...m.host.querySelectorAll(".ls-list [data-control=disclosure]")].find((b) => b.textContent?.includes("mood")));
     expect(m.host.textContent).toContain("trace unreadable");
     m.done();
   });

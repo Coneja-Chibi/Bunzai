@@ -3,6 +3,7 @@
  * cards (Keys, When & where, passage, note, platforms). Each card is collapsible; open state
  * is persisted in prefs so it survives entry and session switches.
  */
+import { Chip, IconButton, Segmented } from "../../../components/button";
 import { useEffect, useRef, useState, type JSX, type SyntheticEvent } from "react";
 import type { LorebookEntry, SelectiveLogic } from "../../../../entities/lorebook/schema";
 import { fieldVisible, type LoreWriteForProfile } from "../../../../core/lore";
@@ -96,30 +97,19 @@ export function LoreEntryPage({
         <span className={styles.pageNo}>
           Entry {index + 1} of {count}
         </span>
-        <button type="button" className={styles.pgBtn} aria-label="Previous entry" disabled={index <= 0} onClick={onPrev}>
-          &#8249;
-        </button>
-        <button
-          type="button"
-          className={styles.pgBtn}
-          aria-label="Next entry"
-          disabled={index >= count - 1}
-          onClick={onNext}
-        >
-          &#8250;
-        </button>
+        <IconButton label="Previous entry" size="sm" icon="lucide:chevron-left" disabled={index <= 0} onClick={onPrev} />
+        <IconButton label="Next entry" size="sm" icon="lucide:chevron-right" disabled={index >= count - 1} onClick={onNext} />
         <span className={styles.pgFill} />
         <span className={styles.tokchip}>~{tokenEstimate} tokens</span>
         {show("enabled") && (
-          <button
-            type="button"
-            className={entry.enabled ? styles.onoff : `${styles.onoff} ${styles.onoffOff}`}
-            aria-pressed={entry.enabled}
+          <Chip
+            pressed={entry.enabled}
+            tone={entry.enabled ? "var(--stage-ok)" : undefined}
             title={entry.enabled ? "This entry is on" : "This entry is off"}
             onClick={() => onPatch({ enabled: !entry.enabled })}
           >
             &#9679; {entry.enabled ? "On" : "Off"}
-          </button>
+          </Chip>
         )}
       </div>
       {show("title") && (
@@ -154,22 +144,16 @@ export function LoreEntryPage({
                 onClick={(ev) => ev.stopPropagation()}
                 onKeyDown={(ev) => ev.stopPropagation()}
               >
-                <button
-                  type="button"
-                  className={simpleMode ? `${styles.modeTab} ${styles.modeOn}` : styles.modeTab}
-                  aria-pressed={simpleMode}
-                  onClick={() => onPatch({ triggerMode: "simple" })}
-                >
-                  Simple
-                </button>
-                <button
-                  type="button"
-                  className={!simpleMode ? `${styles.modeTab} ${styles.modeOn}` : styles.modeTab}
-                  aria-pressed={!simpleMode}
-                  onClick={() => onPatch({ triggerMode: "advanced" })}
-                >
-                  Advanced
-                </button>
+                <Segmented
+                  label="Trigger editor mode"
+                  size="sm"
+                  items={[
+                    { value: "simple", label: "Simple" },
+                    { value: "advanced", label: "Advanced" },
+                  ]}
+                  value={simpleMode ? "simple" : "advanced"}
+                  onChange={(m) => onPatch({ triggerMode: m })}
+                />
               </span>
             )}
           </summary>
@@ -242,26 +226,22 @@ export function LoreEntryPage({
             {show("matchOverrides") && (
               fieldOr(themed, { label: "Matching" }, (
                 <>
-<button
-                  type="button"
-                  className={styles.matchSeg}
-                  title="Override book default for whole-word matching"
-                  onClick={() => {
+<Chip
+  title="Override book default for whole-word matching"
+  onClick={() => {
                     const v = entry.matchWholeWords;
                     const next = v === null ? true : v ? false : null;
                     onPatch({ matchWholeWords: next });
                   }}
-                >
-                  Whole words ·{" "}
+>
+  Whole words ·{" "}
                   {entry.matchWholeWords === null
                     ? "inherit"
                     : entry.matchWholeWords
                       ? "on"
                       : "off"}
-                </button>
-                <button
-                  type="button"
-                  className={styles.matchSeg}
+</Chip>
+                <Chip
                   title="Override book default for case sensitivity"
                   onClick={() => {
                     const v = entry.caseSensitive;
@@ -275,7 +255,7 @@ export function LoreEntryPage({
                     : entry.caseSensitive
                       ? "on"
                       : "off"}
-                </button>
+                </Chip>
                 </>
               ), (c) => (
                 <div className={styles.matchRow} role="group" aria-label="Matching overrides">
@@ -312,22 +292,8 @@ export function LoreEntryPage({
               onClick={(ev) => ev.stopPropagation()}
               onKeyDown={(ev) => ev.stopPropagation()}
             >
-              <button
-                type="button"
-                className={styles.macro}
-                title="Insert {{user}}"
-                onClick={() => onPatch({ content: insertMacro(entry.content, "{{user}}") })}
-              >
-                {"{{user}}"}
-              </button>
-              <button
-                type="button"
-                className={styles.macro}
-                title="Insert {{char}}"
-                onClick={() => onPatch({ content: insertMacro(entry.content, "{{char}}") })}
-              >
-                {"{{char}}"}
-              </button>
+              <Chip title="Insert {{user}}" onClick={() => onPatch({ content: insertMacro(entry.content, "{{user}}") })}>{"{{user}}"}</Chip>
+              <Chip title="Insert {{char}}" onClick={() => onPatch({ content: insertMacro(entry.content, "{{char}}") })}>{"{{char}}"}</Chip>
             </span>
           </summary>
           <div className={styles.bcbody}>

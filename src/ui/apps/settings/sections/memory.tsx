@@ -13,6 +13,7 @@ import type { SummarySettings, SummarySettingsPatch } from "../../../../stage/co
 import { checkSummarySettings, mergeSummarySettings, summaryDefaultsOf } from "../../../../stage/store/summary-rules";
 import { numOrNull } from "../../../../core/guards";
 import { toErrorMessage } from "../../../_shared/error-message";
+import { Button } from "../../../components/button";
 import { SegControl, SettingsRow, type SettingsSection } from "../section-contract";
 import styles from "./memory.module.css";
 
@@ -87,7 +88,7 @@ function MemorySection({ ctx }: { ctx: AppContext }): JSX.Element {
       <SettingsRow label="Max output tokens" hint="The most a summary may use.">
         <NumberInput label="Max output tokens" value={r.maxTokens} min={1} onCommit={(n) => put({ maxTokens: n !== null && n > 0 ? n : null })} />
       </SettingsRow>
-      <button type="button" className={styles.reset} onClick={() => { ctx.prefs.set(DEFAULT_SUMMARY_PREF, null); setSaved(undefined); }}>Back to built-in defaults</button>
+      <div className={styles.reset}><Button size="sm" onClick={() => { ctx.prefs.set(DEFAULT_SUMMARY_PREF, null); setSaved(undefined); }}>Back to built-in defaults</Button></div>
     </>
   );
 }

@@ -1,4 +1,5 @@
 /** Windowed quick-reply rows, keeping each controlled button's fields mounted only near the view. */
+import { Button } from "../../../components/button";
 import { useCallback, useRef, type JSX, type KeyboardEvent } from "react";
 import type { QuickReply } from "../../../../entities/quickreply/schema";
 import { ExpandTextarea } from "../../../components/expand";
@@ -70,14 +71,14 @@ export function QuickReplyList({ replies, onAdd, onPatch, onRemove }: {
                 )}
                 <div className={s.actions}>
                   <label><input type="checkbox" checked={reply.hidden === true} onChange={(event) => onPatch(reply.id, { hidden: event.target.checked })} /> Hidden</label>
-                  <button className={s.button} type="button" onClick={() => onRemove(reply.id)}>Remove</button>
+                  <Button variant="danger" size="sm" onClick={() => onRemove(reply.id)}>Remove</Button>
                 </div>
               </section>
             );
           })}
         </div>
       </div>
-      <button className={`${s.button} ${s.add}`} type="button" onClick={onAdd}>Add button</button>
+      <Button size="sm" onClick={onAdd}>Add button</Button>
     </>
   );
 }

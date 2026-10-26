@@ -7,7 +7,7 @@
  * snippet (sceneTail is a per-scene call; fetching one per recent row would be N+1 requests, so
  * these rows show the character's name instead, same data the plain list showed).
  */
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type JSX, type KeyboardEvent } from "react";
 import type { AppContext } from "../../app-contract";
 import type { SceneFolder } from "../../../stage/contracts/chat-store";
 import type { SceneGrave, SceneSummary } from "../../../studio/scenes";
@@ -18,6 +18,10 @@ import { useVisibleInterval } from "../../_shared/use-visible-interval";
 import { SceneArt } from "./scene-art";
 import { castRail, fanFavorites, folderTint, sinceShort, splitByWeek, type CastTile } from "./scenes-core";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, useFocusedRangeIndex, useOccurrenceKeys, useVirtualRows, type Range } from "../../_shared/virtual-list";
+import { Button, Card, Dot, IconButton, ListRow, Tile } from "../../components/button";
+
+/** A scene accent as the CSS custom properties its parts read. */
+type ToneVars = Record<`--${string}`, string> | undefined;
 
 export type RailSelection = { kind: "all" } | { kind: "char"; id: string } | { kind: "folder"; id: string } | { kind: "smart" };
 
@@ -49,11 +53,11 @@ function FavCarousel({ ctx, favorites, onOpen }: { ctx: AppContext; favorites: S
 
   if (favorites.length === 0) return <div className="fav-empty-card">Star a scene to keep it here.</div>;
   const s = favorites[Math.min(i, favorites.length - 1)]!;
-  const tone = accentVars(s.accent ?? "var(--accent)") as CSSProperties;
+  const tone = accentVars(s.accent ?? "var(--accent)") as ToneVars;
   return (
     <div ref={(el) => { elRef.current = el; }} className="fav-carousel" onMouseEnter={() => { hoveredRef.current = true; }} onMouseLeave={() => { hoveredRef.current = false; }}>
       <div className="fav-slide">
-        <button type="button" className="fav-card" style={tone} onClick={() => onOpen(s.id)}>
+        <Card kind="art" data-part="scenes.fav.open" vars={tone} onClick={() => onOpen(s.id)}>
           <div className="fav-art">
             <SceneArt ctx={ctx} chatId={s.id} characterId={s.cast.character.id} snapshotVersion={s.snapshotVersion} hasArt={s.hasPortrait} name={s.characterName} />
             <div className="fav-ov">
@@ -61,15 +65,15 @@ function FavCarousel({ ctx, favorites, onOpen }: { ctx: AppContext; favorites: S
               <div className="fav-title">{s.title}</div>
             </div>
           </div>
-        </button>
+        </Card>
         <div className="fav-stat">{s.messageCount} {s.messageCount === 1 ? "msg" : "msgs"}{s.takeCount > 1 ? ` · ${s.takeCount} takes` : ""}</div>
-        <button type="button" className="fav-continue" onClick={() => onOpen(s.id)}>Continue Story</button>
+        <Button variant="quiet" size="sm" block onClick={() => onOpen(s.id)}>Continue Story</Button>
       </div>
       {favorites.length > 1 && (
         <div className="fav-nav">
-          <button type="button" className="fav-arrow prev" aria-label="Previous favorite" onClick={() => setI((n) => (n - 1 + favorites.length) % favorites.length)}>&lsaquo;</button>
+          <IconButton size="sm" icon="lucide:chevron-left" label="Previous favorite" onClick={() => setI((n) => (n - 1 + favorites.length) % favorites.length)} />
           <FavoriteDots favorites={favorites} selected={i} onSelect={setI} />
-          <button type="button" className="fav-arrow next" aria-label="Next favorite" onClick={() => setI((n) => (n + 1) % favorites.length)}>&rsaquo;</button>
+          <IconButton size="sm" icon="lucide:chevron-right" label="Next favorite" onClick={() => setI((n) => (n + 1) % favorites.length)} />
         </div>
       )}
     </div>
@@ -97,9 +101,8 @@ function FavoriteDots({ favorites, selected, onSelect }: { favorites: readonly S
     <div className="fav-dot-space" style={{ width: virtualizer.getTotalSize() }}>
       {virtualizer.getVirtualItems().map((item) => {
         const favorite = favorites[item.index]!;
-        return <button type="button" key={rowKeys[item.index]} data-pick={rowKeys[item.index]} ref={virtualizer.measureElement} data-index={item.index}
-          className={`fav-dot${item.index === selected ? " on" : ""}`} style={{ transform: `translateX(${String(item.start)}px)` }}
-          aria-label={`Show ${favorite.title}`} aria-current={item.index === selected} onClick={() => onSelect(item.index)} />;
+        return <Dot key={rowKeys[item.index]} data-pick={rowKeys[item.index]} ref={virtualizer.measureElement} data-index={item.index}
+          vars={{ "--dx": `${String(item.start)}px` }} label={`Show ${favorite.title}`} current={item.index === selected} onClick={() => onSelect(item.index)} />;
       })}
     </div>
   </div>;
@@ -107,14 +110,12 @@ function FavoriteDots({ favorites, selected, onSelect }: { favorites: readonly S
 
 function RecentRow({ ctx, s, focusKey, onOpen }: { ctx: AppContext; s: SceneSummary; focusKey: string; onOpen(): void }): JSX.Element {
   const accentVars = useAccentVars();
-  const tone = accentVars(s.accent ?? "var(--accent)") as CSSProperties;
+  const tone = accentVars(s.accent ?? "var(--accent)") as ToneVars;
   return (
-    <button type="button" data-pick={focusKey} className="rec" style={tone} onClick={onOpen}>
-      <span className="rec-art"><SceneArt ctx={ctx} chatId={s.id} characterId={s.cast.character.id} snapshotVersion={s.snapshotVersion} hasArt={s.hasPortrait} name={s.characterName} /></span>
-      <span className="rec-tx"><b>{s.title}</b><small>{s.characterName}</small></span>
-      {s.takeCount > 1 && <span className="rec-pip" />}
-      <time>{sinceShort(s.updatedAt, Date.now())}</time>
-    </button>
+    <ListRow data-pick={focusKey} vars={tone} onClick={onOpen}
+      leading={<span className="rec-art"><SceneArt ctx={ctx} chatId={s.id} characterId={s.cast.character.id} snapshotVersion={s.snapshotVersion} hasArt={s.hasPortrait} name={s.characterName} /></span>}
+      label={s.title} subtitle={s.characterName}
+      meta={<>{s.takeCount > 1 && <span className="rec-pip" />}<time>{sinceShort(s.updatedAt, Date.now())}</time></>} />
   );
 }
 
@@ -124,20 +125,18 @@ function GoneRow({ g, focusKey, onRestore }: { g: SceneGrave; focusKey: string; 
       <span className="rec-av">{g.of.charAt(0).toUpperCase()}</span>
       <span className="rec-tx"><b>{g.name}</b><small>{g.of}</small></span>
       <time>{daysLeft(g.deletedAt, Date.now())}</time>
-      <button type="button" className="rs" onClick={onRestore}>Restore</button>
+      <Button variant="quiet" size="sm" onClick={onRestore}>Restore</Button>
     </div>
   );
 }
 
 function CastTileButton({ ctx, t, focusKey, on, onSelect }: { ctx: AppContext; t: CastTile; focusKey: string; on: boolean; onSelect(): void }): JSX.Element {
   const accentVars = useAccentVars();
-  const tone = accentVars(t.accent ?? "var(--accent)") as CSSProperties;
+  const tone = accentVars(t.accent ?? "var(--accent)") as ToneVars;
   return (
-    <button type="button" data-pick={focusKey} className={`cr-tile${on ? " on" : ""}`} style={tone} onClick={onSelect}>
-      <span className="cr-art"><SceneArt ctx={ctx} chatId={t.latestSceneId} characterId={t.characterId} snapshotVersion={t.snapshotVersion} hasArt={t.hasPortrait} name={t.name} /></span>
-      {t.playing && <span className="cr-playing" title="Now playing"><Ic name="lucide:play" size={10} /></span>}
-      <span className="cr-tip"><b>{t.name}</b><span>{t.count} {t.count === 1 ? "scene" : "scenes"}</span></span>
-    </button>
+    <Tile kind="thumb" data-part="scenes.cast.tile" data-pick={focusKey} vars={tone} selected={on} label={t.name} title={`${t.name}: ${t.count} ${t.count === 1 ? "scene" : "scenes"}`}
+      badge={t.playing ? <span title="Now playing"><Ic name="lucide:play" size={10} /></span> : undefined} onClick={onSelect}
+      art={<span className="cr-art"><SceneArt ctx={ctx} chatId={t.latestSceneId} characterId={t.characterId} snapshotVersion={t.snapshotVersion} hasArt={t.hasPortrait} name={t.name} /></span>} />
   );
 }
 
@@ -219,9 +218,8 @@ function CastRailList({ ctx, tiles, rail, onSelect }: { ctx: AppContext; tiles: 
 function FolderRow({ ctx, f, focusKey, on, onSelect }: { ctx: AppContext; f: SceneFolder & { count: number }; focusKey: string; on: boolean; onSelect(): void }): JSX.Element {
   const menuRef = ctx.menus.useContextMenu(() => ({ type: "scene-folder", label: f.name, data: f }));
   return (
-    <button type="button" ref={menuRef} data-pick={focusKey} className={`chapter${on ? " on" : ""}`} style={{ "--c": folderTint(f.id) } as CSSProperties} onClick={onSelect}>
-      <span className="ch-dot" /><span className="ch-name">{f.name}</span><span className="ch-count">{f.count}</span>
-    </button>
+    <ListRow ref={menuRef} data-part="scenes.folder.row" data-pick={focusKey} selected={on} vars={{ "--c": folderTint(f.id) }} onClick={onSelect}
+      leading={<span className="ch-dot" />} label={f.name} meta={f.count} />
   );
 }
 
@@ -276,13 +274,9 @@ export function ScenesSide({ ctx, scenes, cut, folders, rail, onSelect, onOpen, 
   return (
     <div className={`scn-side${drawerOpen ? " open" : ""}`} data-part="scenes.side">
       <aside className="char-rail">
-        <button type="button" className="cr-mark" title="Scenes" onClick={() => onSelect({ kind: "all" })}>
-          <Ic name="lucide:film" size={20} />
-        </button>
+        <IconButton variant="quiet" icon="lucide:film" label="Scenes" onClick={() => onSelect({ kind: "all" })} />
         <div className="cr-div" />
-        <button type="button" className={`cr-all${rail.kind === "all" ? " on" : ""}`} title="All Scenes" onClick={() => onSelect({ kind: "all" })}>
-          <Ic name="lucide:drama" size={16} />
-        </button>
+        <Tile kind="icon" icon="lucide:drama" label="All Scenes" selected={rail.kind === "all"} onClick={() => onSelect({ kind: "all" })} />
         <CastRailList ctx={ctx} tiles={tiles} rail={rail} onSelect={onSelect} />
       </aside>
 
@@ -299,15 +293,13 @@ export function ScenesSide({ ctx, scenes, cut, folders, rail, onSelect, onOpen, 
 
           <div className="sp-sec">
             <div className="lab"><span className="sq" />Smart Folders</div>
-            <button type="button" className={`chapter smart${rail.kind === "smart" ? " on" : ""}`} onClick={() => onSelect({ kind: "smart" })}>
-              <Ic name="lucide:git-branch" size={14} /><span className="ch-name">Longest Stories</span><span className="ch-count">{scenes.length}</span>
-            </button>
+            <ListRow data-part="scenes.rail.longest" selected={rail.kind === "smart"} onClick={() => onSelect({ kind: "smart" })} leading={<Ic name="lucide:git-branch" size={14} />} label="Longest Stories" meta={scenes.length} />
           </div>
 
           <div className="sp-sec">
             <div className="lab"><span className="sq" />Folders</div>
             <FolderList ctx={ctx} folders={folders ?? []} rail={rail} onSelect={onSelect} />
-            <button type="button" className="newchapter" onClick={onNewFolder}><Ic name="lucide:plus" size={14} />New Folder&hellip;</button>
+            <Button variant="quiet" size="sm" icon="lucide:plus" onClick={onNewFolder}>New Folder&hellip;</Button>
           </div>
         </div>
       </aside>

@@ -1,11 +1,11 @@
 /** scenes.list save-file-slots: the row shell. A flat HUD frame with a tint crown, a bracket on the one you hover. */
 html[data-surface-scenes-list="save-file-slots"] .scn .scene-list {
   & .grid { gap: .5rem; }
-  & .sc { height: 5.4rem; background: var(--bk-surface-panel); border: 0; border-top: 0; box-shadow: 0 0 0 1px var(--bk-line), inset 0 3px 0 var(--a); transform: none; }
-  & .sc:hover { box-shadow: 0 0 0 1px var(--a), inset 0 3px 0 var(--a); transform: none; }
-  & .sc.picked { background: var(--bk-surface-sunken); box-shadow: 0 0 0 2px var(--a), inset 0 3px 0 var(--a); }
+  & [data-part="scenes.card.open"] { height: 5.4rem; background: var(--bk-surface-panel); border: 0; border-top: 0; box-shadow: 0 0 0 1px var(--bk-line), inset 0 3px 0 var(--a); transform: none; }
+  & [data-part="scenes.card.open"]:hover { box-shadow: 0 0 0 1px var(--a), inset 0 3px 0 var(--a); transform: none; }
+  & [data-part="scenes.card.open"][data-selected] { background: var(--bk-surface-sunken); box-shadow: 0 0 0 2px var(--a), inset 0 3px 0 var(--a); }
   & .scene-period { font: 500 .8125rem var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--bk-role-brand-text); }
   & .grid-scroll { padding-right: .2rem; }
 }
 html[data-surface-scenes-list="save-file-slots"] .scn .stagerow { height: 13.5rem; }
-html[data-surface-scenes-list="save-file-slots"] .scn .stagerow :is(.hero, .preview) { height: 13.5rem; }
+html[data-surface-scenes-list="save-file-slots"] .scn .stagerow :is([data-part="scenes.hero.open"], [data-part="scenes.hero.preview"]) { height: 13.5rem; }

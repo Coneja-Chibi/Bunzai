@@ -1,6 +1,7 @@
 /**
  * Fire-mode dropdown for TOC rows: Keywords / Always on / By meaning (icons + color).
  */
+import { Button, MenuItem } from "../../../components/button";
 import { useEffect, useRef, useState, type JSX } from "react";
 import { Ic, type IconName } from "../../../_shared/ic";
 import { type EntryFireMode } from "./entry-fire-mode";
@@ -14,12 +15,6 @@ const MODE_OPTS: readonly {
   { mode: "always", label: "Always on", icon: "lucide:pin" },
   { mode: "meaning", label: "By meaning", icon: "lucide:sparkles" },
 ];
-
-function modeTone(mode: EntryFireMode, styles: Readonly<Record<string, string>>): string {
-  if (mode === "always") return styles.modeAlways ?? "";
-  if (mode === "meaning") return styles.modeMeaning ?? "";
-  return styles.modeKey ?? "";
-}
 
 export function ModeSelect({
   mode,
@@ -46,10 +41,12 @@ export function ModeSelect({
   }, [open]);
 
   return (
-    <div className={styles.modeSelect} ref={wrap}>
-      <button
-        type="button"
-        className={`${styles.modeTrigger} ${modeTone(mode, styles)}`.trim()}
+    <div className={styles.modeSelect} data-mode={mode} ref={wrap}>
+      <Button
+        size="sm"
+        variant="quiet"
+        menu
+        icon={current.icon}
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={`Trigger method: ${current.label}`}
@@ -59,28 +56,20 @@ export function ModeSelect({
           setOpen((o) => !o);
         }}
       >
-        <Ic name={current.icon} size={12} />
-        <span>{current.label}</span>
-      </button>
+        {current.label}
+      </Button>
       {open && (
         <ul className={styles.modeMenu} role="listbox" aria-label="Trigger method">
           {MODE_OPTS.map(({ mode: m, label, icon }) => {
             const gated = m === "meaning" && !vectorOk;
             return (
-              <li key={m}>
-                <button
-                  type="button"
+              <li key={m} data-mode={m}>
+                <MenuItem
                   role="option"
                   aria-selected={m === mode}
                   disabled={gated}
-                  className={[
-                    styles.modeOpt,
-                    modeTone(m, styles),
-                    m === mode ? styles.modeOptOn : "",
-                    gated ? styles.modeOptGated : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ")}
+                  icon={<span className={styles.modeTone}><Ic name={icon} size={14} /></span>}
+                  hint={m === mode ? <Ic name="lucide:check" size={12} /> : undefined}
                   title={
                     gated
                       ? "This host cannot carry by-meaning (vectorized) entries."
@@ -93,9 +82,8 @@ export function ModeSelect({
                     setOpen(false);
                   }}
                 >
-                  <Ic name={icon} size={12} />
-                  <span>{label}</span>
-                </button>
+                  {label}
+                </MenuItem>
               </li>
             );
           })}

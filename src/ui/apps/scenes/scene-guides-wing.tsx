@@ -6,12 +6,12 @@
  */
 import { useState, type JSX } from "react";
 import type { GuideInput, GuideRecord } from "../../../core/guide-record";
+import { Button, IconButton, Toggle } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import { toErrorMessage } from "../../_shared/error-message";
 import { CATEGORY_ICON, CATEGORY_LABEL, MODE_META, activeCount, draftOf, groupGuides } from "./guides-core";
 import { GuideEditor } from "./scene-guide-editor";
 import type { ScenePrompting } from "./use-scene-prompting";
-import { ToggleSwitch } from "../../components/toggle-switch";
 
 /** How the tab reads in the fold: "2 active" (RoleCall's "n ACTIVE"). */
 export const guidesTabMeta = (prompting: ScenePrompting, on: readonly string[]): string =>
@@ -30,7 +30,7 @@ export function SceneGuidesWing({ prompting, on }: { prompting: ScenePrompting; 
       <div className="wbody pp">
         <div className="pp-top">
           <header className="hero bad"><span className="hi"><Ic name="mdi:alert-octagon-outline" size={20} /></span><div><div className="eb">Guides Error</div><h2>Could not <em>load</em></h2><p>{library.why}</p></div></header>
-          <div className="hero-tools"><button type="button" className="tbtn" title="Try again" onClick={prompting.reload}><Ic name="lucide:refresh-cw" size={14} /></button></div>
+          <div className="hero-tools"><IconButton variant="quiet" size="sm" label="Try again" icon="lucide:refresh-cw" onClick={prompting.reload} /></div>
         </div>
       </div>
     );
@@ -90,7 +90,7 @@ export function SceneGuidesWing({ prompting, on }: { prompting: ScenePrompting; 
       <div className="pg-body">
       {!open && error && <div className="note" role="alert">{error}</div>}
       <div className="pg-rail">
-        <button type="button" className="pg-new" onClick={() => { setError(null); setOpen({ id: null, draft: draftOf() }); }}><Ic name="lucide:plus" size={15} /> New Guide</button>
+        <div className="pg-new"><Button variant="primary" block icon="lucide:plus" onClick={() => { setError(null); setOpen({ id: null, draft: draftOf() }); }}>New Guide</Button></div>
         <label className="pg-search"><Ic name="lucide:search" size={14} /><input value={query} placeholder="Search guides..." aria-label="Search guides" onChange={(e) => setQuery(e.target.value)} /></label>
         {guides.length === 0 && <div className="ed-note">No guides yet. Make one with New Guide.</div>}
         {groups.map(({ category, rows }) => (
@@ -98,8 +98,8 @@ export function SceneGuidesWing({ prompting, on }: { prompting: ScenePrompting; 
             <div className={`pg-cat c-${category}`}><Ic name={CATEGORY_ICON[category]} size={14} /><b>{CATEGORY_LABEL[category]}</b><small>{rows.length}</small></div>
             {rows.map((g) => (
               <div key={g.id} className={`pg-row${open?.id === g.id ? " sel" : ""}`}>
-                <ToggleSwitch size="sm" on={on.includes(g.id)} aria-label={`Use ${g.title} in this scene`} title="Use in this scene: switches the guide on for this scene only" onChange={() => toggle(g.id, !on.includes(g.id))} />
-                <button type="button" className="pg-title" onClick={() => show(g)}>{g.title || "Untitled"}</button>
+                <Toggle size="sm" on={on.includes(g.id)} aria-label={`Use ${g.title} in this scene`} title="Use in this scene: switches the guide on for this scene only" onChange={() => toggle(g.id, !on.includes(g.id))} />
+                <Button variant="link" onClick={() => show(g)}>{g.title || "Untitled"}</Button>
                 <span className={`pg-pill m-${g.mode}`}>{MODE_META[g.mode].pill}</span>
               </div>
             ))}

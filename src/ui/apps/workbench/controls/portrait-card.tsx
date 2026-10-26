@@ -4,6 +4,7 @@
  * token/edited meta and the media stamps. Expressions live behind the Manage Sprites stamp alone;
  * a preview strip beside it was a second entry point to the same place.
  */
+import { Button } from "../../../components/button";
 import type { JSX, RefCallback } from "react";
 import type { MediaAsset } from "../../../../entities/character/schema";
 import { ShelfKicker, TicketWindow } from "../../../components/ticket-window";
@@ -103,25 +104,19 @@ export function PortraitCard({
       </div>
       <div className={styles.btnrow}>
         {showSprites ? (
-          <button
-            type="button"
-            className={styles.stampBtn}
+          <Button
+            size="sm"
             disabled={!canSprites}
             title={canSprites ? "Edit expression / sprite pack" : "Sprites unavailable for this lens"}
             onClick={() => onOpenSprites?.()}
           >
             {spriteCount > 0 ? `Manage Sprites · ${spriteCount}` : "Manage Sprites"}
-          </button>
+          </Button>
         ) : null}
         {canNamed ? (
-          <button
-            type="button"
-            className={styles.stampBtn}
-            title="Named card assets (audio, video, fonts)"
-            onClick={() => onOpenCardAssets?.()}
-          >
+          <Button size="sm" title="Named card assets (audio, video, fonts)" onClick={() => onOpenCardAssets?.()}>
             {cardAssetCount > 0 ? `Card assets · ${cardAssetCount}` : "Card assets"}
-          </button>
+          </Button>
         ) : null}
       </div>
     </section>

@@ -13,19 +13,11 @@ export const PREF_FIRST_DECK = "firstDeck"; // written by the setup wizard; the 
 export const LIBRARY_STYLE = `
 .lib{container-type:inline-size;display:flex;flex-direction:column;gap:.7rem;padding:clamp(.7rem,1.8vw,1.1rem);min-height:100%}
 .lib .stagezone{flex:1;display:flex;flex-wrap:wrap;gap:var(--gap-l);align-items:center;justify-content:center;padding:var(--gap-l)}
-.doorcard{aspect-ratio:2/3;width:clamp(11rem,22vw,16rem);display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:var(--gap-m);background:var(--panel);color:var(--ink);cursor:pointer;padding:var(--gap-m);text-align:center;
-  font-family:var(--font-big);font-weight:900;font-size:clamp(1rem,1.6vw,1.3rem);line-height:1.15}
-.doorcard.primary{background:var(--rose);color:var(--stage-ink)}
+.lib .stagezone>[data-control="card"]{width:clamp(11rem,22vw,16rem);align-items:center;justify-content:center;text-align:center}
 .voice{font-style:italic;font-weight:600;color:var(--muted);text-align:center;font-size:1.05rem}
 .damage-note{position:relative;border:3px solid var(--stage-danger-edge);box-shadow:4px 4px 0 0 var(--edge);
   background:var(--panel);color:var(--text);padding:.65rem .8rem}
 .damage-note strong{display:block;font-family:var(--font-big);font-weight:900;padding-right:5rem}
-/* sits in the notice's own corner, clear of the heading it belongs to */
-.dnx{position:absolute;top:.55rem;right:.6rem;font-family:var(--font-mono);font-weight:700;
-  font-size: var(--text-meta);letter-spacing:.1em;text-transform:uppercase;background:transparent;
-  color:var(--text-dim);border:2px solid var(--text-faint);cursor:pointer;padding:.2rem .45rem}
-.dnx:hover{color:var(--text);border-color:var(--rose)}
 .damage-note p{margin:.35rem 0 0;color:var(--text-dim);font-size:.85rem}
 .damage-note details{margin-top:.45rem}
 .damage-note summary{cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);
@@ -77,47 +69,17 @@ export const LIBRARY_STYLE = `
 .impreport li{font-family:var(--font-body);font-size:var(--text-body);color:var(--text-soft);margin:.15rem 0;
   overflow-wrap:anywhere}
 .impacts{display:flex;gap:.5rem;flex-wrap:wrap}
-.impbtn{font-family:var(--font-big);font-weight:900;font-size:var(--text-control);letter-spacing:.07em;
-  text-transform:uppercase;background:var(--panel);color:var(--text);cursor:pointer;padding:.45rem .8rem}
-/* deep fill carries the label (AA law); the BRIGHT picked accent rides the border so the button
-   visibly belongs to the user's accent choice instead of reading as an unrelated dark color */
-.impbtn.primary{background:var(--accent-deep);color:var(--stage-white);border-color:var(--accent)}
-.impbtn:disabled{opacity:.45;cursor:default}
 .wbbar{display:flex;align-items:center;gap:.6rem;flex:none;flex-wrap:wrap}
 /* the staging action bar: appears only when pieces are picked (the distributed tray's commit) */
 .sendbar{display:flex;align-items:center;gap:.6rem;flex:none;flex-wrap:wrap;background:var(--stamp-bg);
   border:3px solid var(--edge);box-shadow:4px 4px 0 0 var(--accent);padding:.4rem .55rem .4rem .7rem}
 .sendbar .cnt{font-family:var(--font-big);font-weight:900;font-size: var(--text-control);letter-spacing:.04em;color:var(--stamp-fg)}
-.sendbar .send{font-family:var(--font-big);font-weight:900;font-size: var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:var(--accent-deep);color:var(--stage-white);border:3px solid var(--edge);cursor:pointer;
-  padding:.4rem .8rem;box-shadow:3px 3px 0 0 var(--edge);transition:transform .1s ease-out,box-shadow .1s ease-out}
-.sendbar .send:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--edge)}
-.sendbar .clear{font-family:var(--font-mono);font-weight:700;font-size: var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:transparent;color:var(--stamp-fg);
-  border:2px solid color-mix(in srgb,var(--stamp-fg) 45%,transparent);
-  cursor:pointer;padding:.35rem .6rem}
-.sendbar .clear:hover{border-color:var(--stamp-fg)}
-.sendbar .del{font-family:var(--font-big);font-weight:900;font-size: var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:var(--danger);color:var(--danger-fg);border:3px solid var(--stage-danger-edge);
-  cursor:pointer;padding:.4rem .8rem;transition:transform .1s ease-out,box-shadow .1s ease-out}
-.sendbar .del:hover{transform:translate(-1px,-1px);box-shadow:2px 2px 0 0 var(--edge)}
-.stage-crumb .crumbsel{font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);
-  letter-spacing:.1em;text-transform:uppercase;background:transparent;color:var(--text-dim);
-  border:2px solid var(--text-faint);cursor:pointer;padding:.25rem .5rem}
-.stage-crumb .crumbsel:hover{color:var(--text);border-color:var(--edge)}
 .delsheet{padding:1rem 1.1rem;max-width:24rem}
 .delsheet .deltitle{display:block;font-family:var(--font-big);font-weight:900;font-size:.95rem;
   color:var(--text);margin:0 0 .45rem}
 .delsheet .delbody{font-family:var(--font-body);font-size:var(--text-body);color:var(--text-dim);margin:0 0 .8rem;
   line-height:1.5}
 .delsheet .delacts{display:flex;gap:.5rem}
-.delsheet .delgo{font-family:var(--font-big);font-weight:900;font-size:var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:var(--danger);color:var(--danger-fg);border:3px solid var(--edge);
-  cursor:pointer;padding:.45rem .9rem;box-shadow:3px 3px 0 0 var(--edge)}
-.delsheet .delno{font-family:var(--font-mono);font-weight:700;font-size:var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:transparent;color:var(--text-dim);border:2px solid var(--text-faint);
-  cursor:pointer;padding:.45rem .8rem}
-.delsheet .delno:hover{color:var(--text);border-color:var(--edge)}
 .delsheet .renamein{width:100%;font-family:var(--font-body);font-size:16px;color:var(--text);
   background:var(--face);border:2px solid var(--edge);padding:.45rem .55rem;margin:0 0 .8rem}
 .deckchips{display:flex;gap:.4rem;flex:1;min-width:0;overflow-x:auto;padding-bottom:2px}
@@ -130,12 +92,7 @@ export const LIBRARY_STYLE = `
 .dchip:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--edge)}
 .dchip.on{background:var(--stamp-bg);color:var(--stamp-fg);box-shadow:3px 3px 0 0 var(--a)}
 .dchip.on .dc{color:var(--stamp-fg);opacity:.7}
-.viewseg{display:flex;flex:none;border:3px solid var(--edge);box-shadow:3px 3px 0 0 var(--edge)}
-.viewseg button{border:none;border-left:3px solid var(--edge);background:var(--face);color:var(--text-dim);
-  font-family:var(--font-big);font-weight:800;font-size: var(--text-control);letter-spacing:.1em;text-transform:uppercase;
-  padding:.4rem .6rem;cursor:pointer;display:flex;align-items:center;gap:.35rem}
-.viewseg button:first-child{border-left:none}
-.viewseg button.on{background:var(--stamp-bg);color:var(--stamp-fg)}
+.viewseg{flex:none}
 .viewseg svg{display:block}
 .sizedial{display:flex;align-items:center;gap:.45rem;flex:none;border:3px solid var(--edge);
   box-shadow:3px 3px 0 0 var(--edge);background:var(--face);padding:.3rem .6rem}
@@ -157,10 +114,6 @@ export const LIBRARY_STYLE = `
 .findbox input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--text);
   font-family:var(--font-mono);font-size: var(--text-control);padding:.15rem 0}
 .findbox input::placeholder{color:var(--text-dim);opacity:1}
-.findx{flex:none;font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);letter-spacing:.1em;
-  text-transform:uppercase;background:transparent;color:var(--text-dim);border:2px solid var(--text-faint);
-  cursor:pointer;padding:.15rem .35rem}
-.findx:hover{color:var(--text);border-color:var(--edge)}
 /* HANGS OFF THE FIELD rather than sitting in the toolbar's flow. In flow it grew the bar by three
    lines the moment a typo appeared, shoving every deck chip down mid-keystroke. */
 .findnote{position:absolute;top:calc(100% + .25rem);left:0;right:0;z-index:2;background:var(--panel);
@@ -182,14 +135,6 @@ export const LIBRARY_STYLE = `
 .nomatch .nmjumps{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .nomatch .nmk{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.12em;text-transform:uppercase;
   color:var(--stage-kicker)}
-.nomatch .nmjump{font-family:var(--font-big);font-weight:800;font-size:var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:var(--stage-panel);color:var(--stage-soft);
-  border:2px solid var(--stage-seam);cursor:pointer;padding:.3rem .5rem}
-.nomatch .nmjump:hover{color:var(--stage-card);border-color:var(--stage-line)}
-.nomatch .nmclear{font-family:var(--font-mono);font-weight:700;font-size:var(--text-control);letter-spacing:.1em;
-  text-transform:uppercase;background:transparent;color:var(--stage-mute);border:2px solid var(--stage-faint);
-  cursor:pointer;padding:.3rem .55rem}
-.nomatch .nmclear:hover{color:var(--stage-paper);border-color:var(--stage-line)}
 /* THE PERSON'S OWN GROUPINGS. Quieter than the deck chips on purpose: decks are the studio's own
    shape and are always true, while a group is a private note about some of it. Same chip grammar so
    the row still reads as one toolbar, one weight down. */
@@ -199,49 +144,24 @@ export const LIBRARY_STYLE = `
 .colbar-item{position:absolute;left:0;top:0;height:100%}
 .colbar>.sk{flex:none;font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.12em;
   text-transform:uppercase;color:var(--text-dim)}
-.colchip{display:flex;align-items:stretch;flex:none;border:2px solid var(--edge);background:var(--face)}
-.colchip.on{box-shadow:2px 2px 0 0 var(--accent)}
-.colchip button{border:none;background:transparent;cursor:pointer;font-family:var(--font-big);
-  font-weight:800;font-size: var(--text-control);letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);
-  padding:.3rem .45rem}
-.colname{display:flex;align-items:center;gap:.35rem}
-.colchip.on .colname{background:var(--stamp-bg);color:var(--stamp-fg)}
+.colchip{display:flex;align-items:center;gap:.25rem;flex:none}
 .colcount{font-family:var(--font-mono);font-weight:600;font-size: var(--text-meta);opacity:.75}
-/* the two verbs only ever act on the chip they sit in, so they stay inside its border */
-.coladd,.coldel{border-left:2px solid var(--edge)!important;color:var(--text-faint)}
-.coladd:hover{color:var(--accent)}
-.coldel:hover{color:var(--text)}
-.colmake{flex:none;font-family:var(--font-big);font-weight:800;font-size: var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:transparent;color:var(--text-dim);border:2px dashed var(--text-faint);
-  cursor:pointer;padding:.3rem .5rem}
-.colmake:hover{color:var(--text);border-color:var(--edge);border-style:solid}
 .colnew{flex:none;width:9rem;border:2px solid var(--accent);background:var(--face);color:var(--text);
   font-family:var(--font-mono);font-size: var(--text-meta);padding:.25rem .4rem;outline:none}
 /* the bar says what happened, because the mono status bar cannot: see collections-ops.ts on say */
 .colnote{display:flex;align-items:center;gap:.4rem;flex:none;font-family:var(--font-mono);
   font-size: var(--text-meta);color:var(--text-soft);border:2px solid var(--text-faint);padding:.25rem .45rem}
-.colnote button{border:none;background:transparent;cursor:pointer;font-family:var(--font-mono);
-  font-weight:700;font-size: var(--text-control);letter-spacing:.1em;text-transform:uppercase;color:var(--text-dim)}
-.colnote button:hover{color:var(--text)}
 .prosc{position:relative;flex:1;min-height:0;background:var(--shell-panel-2);border:3px solid var(--edge);
   box-shadow:6px 6px 0 0 var(--edge);padding:.55rem;display:flex}
 .libstage{position:relative;flex:1;min-height:0;background:var(--stage-well);border:3px solid var(--stage-black);overflow:hidden;
   box-shadow:inset 8px 8px 0 0 var(--shadow-ink-deep);display:flex;flex-direction:column}
 .stage-crumb{display:flex;align-items:center;gap:.5rem;border-bottom:3px solid var(--stage-black);background:var(--stage-sunken);padding:.5rem .75rem;flex:none}
 .stage-crumb .pip{width:11px;height:11px;border:2px solid var(--stage-black);background:var(--a)}
-.stage-crumb .cn{font-family:var(--font-big);font-weight:900;font-size: var(--text-meta);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-paper)}
 .stage-crumb .cc{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.1em;text-transform:uppercase;color:var(--stage-mute);margin-left:auto}
 .ghost-shelf{margin:auto;width:clamp(9rem,30vw,14rem);aspect-ratio:2/3;border:2px dashed var(--stage-faint);
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.8rem;
   font-family:var(--font-mono);font-size: var(--text-meta);font-weight:600;letter-spacing:.06em;line-height:1.6;
   text-transform:uppercase;color:var(--stage-soft)}
-/* the ghost shelf's create button: the send stamp, which only .sendbar styled before (it rendered
-   as a naked browser button out here) */
-.ghost-shelf .send{font-family:var(--font-big);font-weight:900;font-size: var(--text-control);letter-spacing:.08em;
-  text-transform:uppercase;background:var(--rose);color:var(--stage-ink);border:3px solid var(--stage-black);
-  cursor:pointer;padding:.45rem .85rem;box-shadow:3px 3px 0 0 var(--stage-black);
-  transition:transform .1s ease-out,box-shadow .1s ease-out}
-.ghost-shelf .send:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--stage-black)}
 /* scrollbars wear the house ink, never the OS chrome */
 .lib *{scrollbar-width:thin;scrollbar-color:var(--stage-seam) transparent}
 .lib *::-webkit-scrollbar{width:8px;height:8px}
@@ -261,6 +181,6 @@ export const LIBRARY_STYLE = `
   .sizedial input{flex:1;width:auto;min-width:0}
   .prosc{padding:.3rem;box-shadow:4px 4px 0 0 var(--edge)}
   .lib .stagezone{gap:var(--gap-m);padding:var(--gap-m)}
-  .doorcard{width:clamp(9rem,42vw,12rem)}
+  .lib .stagezone>[data-control="card"]{width:clamp(9rem,42vw,12rem)}
 }
 `;

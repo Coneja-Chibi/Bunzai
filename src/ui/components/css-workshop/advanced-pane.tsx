@@ -2,6 +2,7 @@
  * Advanced pane: code-first CodeEditor with live rule breakdown + knobs.
  * For people who want to write CSS, with Assist still one click away on a selected rule.
  */
+import { Chip, ListRow } from "../button";
 import type { JSX } from "react";
 import { CodeEditor } from "../code-editor";
 import type { CssDoc, CssRule } from "./model";
@@ -44,15 +45,13 @@ export function CssAdvancedPane({
           </div>
           <div className={styles.chips}>
             {CSS_SNIPPET_CHIPS.map((c) => (
-              <button
+              <Chip
                 key={c.label}
-                type="button"
-                className={styles.chip}
                 title={c.insert}
                 onClick={() => onChip(c.insert)}
               >
                 {c.label}
-              </button>
+              </Chip>
             ))}
           </div>
           <CodeEditor
@@ -74,16 +73,12 @@ export function CssAdvancedPane({
           ) : null}
           <div className={styles.ruleList}>
             {doc.rules.map((r) => (
-              <button
+              <ListRow
                 key={r.id}
-                type="button"
-                className={
-                  selected?.id === r.id ? `${styles.ruleBtn} ${styles.ruleBtnOn}` : styles.ruleBtn
-                }
+                label={summarizeRule(r)}
+                selected={selected?.id === r.id}
                 onClick={() => onSelectRule(r.id)}
-              >
-                {summarizeRule(r)}
-              </button>
+              />
             ))}
           </div>
           {freeform ? (

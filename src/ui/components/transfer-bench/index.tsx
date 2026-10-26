@@ -2,6 +2,7 @@
  * Dual-list transfer bench for lorebook split/merge workshop (vs-lore-workshop).
  * Generic over {id,label,meta} items. Hosted in InkDialog by the caller.
  */
+import { Button, IconButton, ListRow } from "../button";
 import { useState, type JSX } from "react";
 import styles from "./styles.module.css";
 
@@ -48,9 +49,11 @@ function List({
     <div className={styles.col}>
       <div className={styles.colHead}>
         <b>{title}</b>
-        <button type="button" className={styles.small} onClick={onSelectAll}>
-          All
-        </button>
+        <span className={styles.small}>
+          <Button size="sm" variant="quiet" onClick={onSelectAll}>
+            All
+          </Button>
+        </span>
       </div>
       <ul className={styles.list}>
         {items.length === 0 && <li className={styles.empty}>Empty</li>}
@@ -58,15 +61,13 @@ function List({
           const on = selected.has(it.id);
           return (
             <li key={it.id}>
-              <button
-                type="button"
-                className={on ? `${styles.row} ${styles.rowOn}` : styles.row}
+              <ListRow
+                variant="option"
+                selected={on}
+                label={it.label}
+                meta={it.meta || undefined}
                 onClick={(ev) => onToggle(it.id, ev.ctrlKey || ev.metaKey)}
-              >
-                <span className={on ? `${styles.cb} ${styles.cbOn}` : styles.cb} />
-                <span className={styles.lbl}>{it.label}</span>
-                {it.meta && <span className={styles.meta}>{it.meta}</span>}
-              </button>
+              />
             </li>
           );
         })}
@@ -133,56 +134,48 @@ export function TransferBench({
           onSelectAll={() => setSelLeft(new Set(left.map((i) => i.id)))}
         />
         <div className={styles.mid}>
-          <button
-            type="button"
-            className={styles.arrow}
+          <IconButton
+            size="sm"
+            icon="lucide:arrow-right"
             disabled={selLeft.size === 0}
-            aria-label="Move selected to right"
+            label="Move selected to right"
             onClick={() => {
               onMoveToRight([...selLeft]);
               setSelLeft(new Set());
             }}
-          >
-            &#8594;
-          </button>
-          <button
-            type="button"
-            className={styles.arrow}
+          />
+          <IconButton
+            size="sm"
+            icon="lucide:arrow-left"
             disabled={selRight.size === 0}
-            aria-label="Move selected to left"
+            label="Move selected to left"
             onClick={() => {
               onMoveToLeft([...selRight]);
               setSelRight(new Set());
             }}
-          >
-            &#8592;
-          </button>
+          />
           {onReorderRight && (
             <>
-              <button
-                type="button"
-                className={styles.arrow}
+              <IconButton
+                size="sm"
+                icon="lucide:arrow-up"
                 disabled={selRight.size !== 1}
-                aria-label="Move selected up"
+                label="Move selected up"
                 onClick={() => {
                   const id = [...selRight][0];
                   if (id) onReorderRight(id, -1);
                 }}
-              >
-                &#8593;
-              </button>
-              <button
-                type="button"
-                className={styles.arrow}
+              />
+              <IconButton
+                size="sm"
+                icon="lucide:arrow-down"
                 disabled={selRight.size !== 1}
-                aria-label="Move selected down"
+                label="Move selected down"
                 onClick={() => {
                   const id = [...selRight][0];
                   if (id) onReorderRight(id, 1);
                 }}
-              >
-                &#8595;
-              </button>
+              />
             </>
           )}
         </div>
@@ -195,17 +188,12 @@ export function TransferBench({
         />
       </div>
       <div className={styles.foot}>
-        <button type="button" className={styles.cancel} onClick={onCancel} disabled={busy}>
+        <Button variant="quiet" onClick={onCancel} disabled={busy}>
           Cancel
-        </button>
-        <button
-          type="button"
-          className={styles.apply}
-          disabled={!canApply}
-          onClick={onApply}
-        >
+        </Button>
+        <Button variant="primary" disabled={!canApply} onClick={onApply}>
           {busy ? "Working…" : applyLabel}
-        </button>
+        </Button>
       </div>
     </div>
   );

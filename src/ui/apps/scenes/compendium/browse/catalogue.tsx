@@ -8,6 +8,7 @@
 import { useCallback, useMemo, useRef, useState, type CSSProperties, type JSX, type MouseEvent } from "react";
 import type { CompendiumEntry, ConstraintKind, Flags, TreeNode } from "../../../../../core/compendium";
 import { Ic } from "../../../../_shared/ic";
+import { Disclosure, ListRow, Tabs } from "../../../../components/button";
 import { FALLBACK_VIEWPORT, OVERSCAN, useVirtualRows } from "../../../../_shared/virtual-list";
 import { GLYPH, typeRole, type BookModel } from "../compendium-core";
 import { byTypeRows, summaryRows, treeRows, type Row } from "./browse-rows";
@@ -32,7 +33,7 @@ const Flagged = ({ flags }: { flags: Flags }): JSX.Element | null =>
 
 export type SubTab = "by-type" | "tv-tree" | "summaries";
 const SUBS: readonly { id: SubTab; label: string }[] = [{ id: "by-type", label: "By Type" }, { id: "tv-tree", label: "TV Tree" }, { id: "summaries", label: "Summaries" }];
-const HEIGHT = { head: 36, entry: 40, node: 30 } as const;
+const HEIGHT = { head: 36, entry: 40, node: 40 } as const;
 const EMPTY: Record<SubTab, [string, string]> = { "by-type": ["No typed entries yet.", "No entries match."], "tv-tree": ["No tree built yet.", "No entries match."], summaries: ["No recaps yet.", "No recaps match."] };
 
 function RowView({ row, selectedId, onOpen, onToggle, tree }: { row: Row; selectedId: string | null; onOpen(id: string): void; onToggle(node: TreeNode): void; tree?: Hooks }): JSX.Element {
@@ -41,19 +42,18 @@ function RowView({ row, selectedId, onOpen, onToggle, tree }: { row: Row; select
     const has = row.node.children.length > 0 || row.node.entryIds.length > 0;
     const n = row.node;
     const real = tree && tree.sub === "tv-tree";
-    return (
-      <button type="button" className="cp-nd" data-node-id={n.id} style={{ paddingLeft: 12 + row.depth * 14 }} aria-expanded={has ? row.open : undefined} onClick={() => onToggle(n)}
-        {...(real ? { onContextMenu: (e: MouseEvent) => tree.onMenu(e, { id: n.id, label: n.label, mode: "node" }), onDragOver: (e: React.DragEvent) => e.preventDefault(), onDrop: (e: React.DragEvent) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (id) tree.ui.drop(id, n.id, n.label); } } : {})}>
-        {has ? (row.open ? "▾" : GLYPH.sep) : GLYPH.dot} <span>{n.label}</span>{real && <Flagged flags={tree.ui.flagsOf(n.id)} />}<em>{n.entryCount}</em>
-      </button>
-    );
+    const handlers = real ? { onContextMenu: (e: MouseEvent) => tree.onMenu(e, { id: n.id, label: n.label, mode: "node" }), onDragOver: (e: React.DragEvent) => e.preventDefault(), onDrop: (e: React.DragEvent) => { e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (id) tree.ui.drop(id, n.id, n.label); } } : {};
+    const flags = real ? <Flagged flags={tree.ui.flagsOf(n.id)} /> : undefined;
+    // A branch with nothing under it has nothing to open, so it is a plain tree row and carries no aria-expanded.
+    return has
+      ? <Disclosure data-node-id={n.id} depth={row.depth} open={row.open} label={n.label} summary={n.entryCount} trailing={flags} onClick={() => onToggle(n)} {...handlers} />
+      : <ListRow variant="tree" data-node-id={n.id} depth={row.depth} leading={GLYPH.dot} label={n.label} meta={n.entryCount} trailing={flags} onClick={() => onToggle(n)} {...handlers} />;
   }
   const e = row.entry;
   return (
-    <button type="button" className={`cp-en${e.id === selectedId ? " sel" : ""}${e.enabled ? "" : " off"}`} data-entry-id={e.id} style={{ paddingLeft: 12 + row.depth * 14 }} onClick={() => onOpen(e.id)}
-      {...(tree ? { onContextMenu: (ev: MouseEvent) => tree.onMenu(ev, { id: e.id, label: e.name, mode: "entry" }), ...(tree.sub === "tv-tree" ? { draggable: true, onDragStart: (ev: React.DragEvent) => ev.dataTransfer.setData("text/plain", e.id) } : {}) } : {})}>
-      {row.ordinal !== undefined && <i>{String(row.ordinal).padStart(2, "0")}</i>}<span>{e.name}</span>{tree && <Flagged flags={tree.ui.flagsOf(e.id)} />}
-    </button>
+    <ListRow variant="tree" data-entry-id={e.id} data-off={e.enabled ? undefined : ""} depth={row.depth} selected={e.id === selectedId} onClick={() => onOpen(e.id)}
+      leading={row.ordinal !== undefined ? <i>{String(row.ordinal).padStart(2, "0")}</i> : undefined} label={e.name} trailing={tree ? <Flagged flags={tree.ui.flagsOf(e.id)} /> : undefined}
+      {...(tree ? { onContextMenu: (ev: MouseEvent) => tree.onMenu(ev, { id: e.id, label: e.name, mode: "entry" }), ...(tree.sub === "tv-tree" ? { draggable: true, onDragStart: (ev: React.DragEvent) => ev.dataTransfer.setData("text/plain", e.id) } : {}) } : {})} />
   );
 }
 
@@ -73,7 +73,7 @@ export function Catalogue({ model, sub, onSub, query, onQuery, selectedId, onOpe
     <div className="cp-cat" ref={cat} data-part="compendium.catalogue">
       <div className="hd">The Catalogue</div>
       <label className="se"><Ic name="lucide:search" size={12} /><input type="search" value={query} placeholder="Search the codex..." aria-label="Search the codex" onChange={(e) => onQuery(e.target.value)} /></label>
-      <div className="subs" role="tablist" aria-label="Catalogue views">{SUBS.map((s) => <button key={s.id} type="button" role="tab" aria-selected={sub === s.id} className={sub === s.id ? "on" : ""} onClick={() => onSub(s.id)}>{s.label}</button>)}</div>
+      <Tabs label="Catalogue views" value={sub} onChange={onSub} items={SUBS.map((s) => ({ value: s.id, label: s.label }))} />
       {sub === "tv-tree" && <div className="st">{model.tree.stats.nodeCount} nodes {GLYPH.dot} depth {model.tree.stats.maxDepth}</div>}
       <div className="cp-vs" ref={scroll}>
         <div className="in" style={{ height: virtual.getTotalSize() }}>

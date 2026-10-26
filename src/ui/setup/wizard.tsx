@@ -8,6 +8,7 @@
  * paper setup was rejected in review), `pageVars` repaints the selection marks in the picked
  * accent (brand mark + CTAs stay rose, DECISIONS #3), and `stageVars` paints the stage root.
  */
+import { Button, Card } from "../components/button";
 import { useEffect, useState } from "react";
 import type { CSSProperties, JSX, ReactNode } from "react";
 import type { StudioSettings } from "../../studio/settings-shape";
@@ -28,7 +29,7 @@ interface LoadedStep {
 }
 
 const CSS = `
-.vsetup{position:fixed;inset:0;z-index:100;overflow:auto;background:var(--paper);color:var(--ink);
+.vsetup{position:fixed;inset:0;z-index:100;overflow:auto;container-type:inline-size;background:var(--paper);color:var(--ink);
   font-family:var(--font-body);line-height:1.5}
 .vsetup .frame{max-width:73.75rem;margin:0 auto;padding:clamp(1.5rem,4vw,2.75rem) clamp(1rem,3vw,1.625rem) 4rem}
 .vsetup .screen{display:grid;grid-template-columns:minmax(0,26.875rem) minmax(0,1fr);
@@ -52,17 +53,6 @@ const CSS = `
   line-height:1.02;letter-spacing:-.02em;margin:1.4rem 0 .4rem}
 .vsetup .q-say{font-style:italic;font-weight:600;font-size:clamp(1.05rem,1rem+.3vw,1.125rem);
   color:var(--muted);margin:0 0 1.35rem}
-.vsetup .opt{display:block;width:100%;text-align:left;font:inherit;cursor:pointer;
-  background:var(--panel);color:var(--ink);border:var(--ink-border);box-shadow:5px 5px 0 0 var(--ink);
-  padding:.9rem 1.05rem;position:relative;
-  transition:transform .1s ease-out,box-shadow .1s ease-out,border-color .1s ease-out}
-.vsetup .opt:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 0 var(--ink)}
-.vsetup .opt:active{transform:translate(4px,4px);box-shadow:1px 1px 0 0 var(--ink)}
-.vsetup .opt.on{transform:translate(4px,4px);box-shadow:1px 1px 0 0 var(--wiz-a,var(--rose));border-color:var(--wiz-a,var(--rose))}
-.vsetup .opt .on-mark{position:absolute;top:-3px;right:-3px;background:var(--wiz-a,var(--rose));color:var(--stage-white);
-  font-family:var(--font-mono);font-size:.5625rem;letter-spacing:.1em;text-transform:uppercase;
-  padding:3px 7px;display:none}
-.vsetup .opt.on .on-mark{display:block}
 .vsetup .opt-title{font-family:var(--font-big);font-weight:600;
   font-size:clamp(1rem,.97rem+.2vw,1.0625rem);letter-spacing:-.01em}
 .vsetup .opt-sub{font-size:clamp(.95rem,.92rem+.15vw,1rem);color:var(--muted);margin-top:2px}
@@ -70,16 +60,7 @@ const CSS = `
   text-transform:uppercase;color:var(--muted);margin-left:.5rem;font-weight:400}
 .vsetup .stack{display:flex;flex-direction:column;gap:.7rem}
 .vsetup .controls{display:flex;align-items:center;justify-content:space-between;gap:.9rem;margin-top:1.6rem}
-.vsetup .back{font-family:var(--font-mono);font-size:.75rem;letter-spacing:.08em;
-  color:var(--muted);background:none;border:none;cursor:pointer;text-transform:uppercase;padding:.4rem 2px}
-.vsetup .back:hover{color:var(--ink)}
-.vsetup .back.ghost{visibility:hidden}
-.vsetup .next{font-family:var(--font-big);font-weight:900;font-size:.875rem;letter-spacing:.1em;
-  text-transform:uppercase;padding:.9rem 1.75rem;border:var(--ink-border);
-  background:var(--rose);color:var(--stage-ink);box-shadow:6px 6px 0 0 var(--ink);cursor:pointer;
-  transition:transform .1s ease-out,box-shadow .1s ease-out}
-.vsetup .next:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 0 var(--ink)}
-.vsetup .next:active{transform:translate(4px,4px);box-shadow:2px 2px 0 0 var(--ink)}
+.vsetup .controls .ghost{visibility:hidden}
 .vsetup .skip{text-align:center;margin-top:1rem}
 .vsetup .skip a{font-family:var(--font-mono);font-size:.6875rem;letter-spacing:.06em;
   color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
@@ -114,24 +95,16 @@ const CSS = `
 .vsetup .recap span b{color:var(--text);font-weight:700;
   text-decoration:underline;text-decoration-color:var(--wiz-a,var(--rose));
   text-decoration-thickness:2px;text-underline-offset:3px}
-.vsetup .open{font-family:var(--font-big);font-weight:900;font-size:1rem;letter-spacing:.1em;
-  text-transform:uppercase;padding:1.1rem 2.6rem;border:var(--ink-border);
-  background:var(--rose);color:var(--stage-ink);box-shadow:8px 8px 0 0 var(--ink);cursor:pointer;
-  display:inline-flex;align-items:baseline;gap:2px;
-  transition:transform .1s ease-out,box-shadow .1s ease-out}
-.vsetup .open:hover{transform:translate(-2px,-2px);box-shadow:10px 10px 0 0 var(--ink)}
-.vsetup .open:active{transform:translate(5px,5px);box-shadow:3px 3px 0 0 var(--ink)}
-.vsetup .open .q2{display:inline-block;width:.16em;height:.16em;background:var(--stage-white);margin-left:.06em}
+.vsetup .q2{display:inline-block;width:.16em;height:.16em;background:var(--stage-white);margin-left:.06em}
 .vsetup .change{font-style:italic;font-weight:600;font-size:clamp(1rem,.97rem+.2vw,1.0625rem);
   color:var(--muted);margin-top:1.1rem}
 @media(prefers-reduced-motion:reduce){.vsetup *{transition:none!important}}
-@media(max-width:57.5rem){
+@container(max-width:57.5rem){
   .vsetup .screen{grid-template-columns:1fr;gap:1.6rem}
   .vsetup .house{position:static}
 }
-@media(max-width:32.5rem){
+@container(max-width:32.5rem){
   .vsetup .controls{flex-direction:column-reverse;align-items:stretch;gap:.75rem}
-  .vsetup .next{width:100%}
 }
 `;
 
@@ -183,14 +156,9 @@ function fillAllDefaults(steps: LoadedStep[], draft: SetupDraft): SetupDraft {
 
 function DefaultOption({ opt, pressed, onPick }: { opt: SetupOption; pressed: boolean; onPick: () => void }): JSX.Element {
   return (
-    <button className="opt" aria-pressed={pressed ? "true" : "false"} onClick={onPick}>
-      {pressed && <span className="on-mark">Picked</span>}
-      <div className="opt-title">
-        {opt.title}
-        {opt.isDefault && <span className="default-tag">default</span>}
-      </div>
-      {opt.sub && <div className="opt-sub">{opt.sub}</div>}
-    </button>
+    <Card kind="choice" selected={pressed} aria-pressed={pressed ? "true" : "false"} onClick={onPick}
+      heading={<span className="opt-title">{opt.title}{opt.isDefault && <span className="default-tag">default</span>}</span>}
+      subtitle={opt.sub ? <span className="opt-sub">{opt.sub}</span> : undefined} />
   );
 }
 
@@ -276,12 +244,14 @@ function QuestionScreen({ steps, index, draft, onPick, onBack, onNext, onSkipAll
           {entry.step.renderOptions ? entry.step.renderOptions(entry.options, draft, onPick) : entry.options.map(optionNode)}
         </div>
         <div className="controls">
-          <button className={`back${index === 0 ? " ghost" : ""}`} onClick={onBack}>
+          <span className={index === 0 ? "ghost" : undefined}>
+            <Button variant="quiet" tabIndex={index === 0 ? -1 : undefined} onClick={onBack}>
             ← Back
-          </button>
-          <button className="next" onClick={onNext}>
+            </Button>
+          </span>
+          <Button variant="primary" onClick={onNext}>
             Next →
-          </button>
+          </Button>
         </div>
         <div className="skip">
           <a onClick={onSkipAll}>Skip all · you can change everything later</a>
@@ -319,10 +289,10 @@ function FinalScreen({ steps, draft, onOpen }: { steps: LoadedStep[]; draft: Set
             </span>
           ))}
         </div>
-        <button className="open" onClick={onOpen}>
+        <Button variant="primary" onClick={onOpen}>
           Open Bunraku
           <span className="q2" />
-        </button>
+        </Button>
         <p className="change">Everything here can change later, whenever you want.</p>
       </div>
       <House note="fully set" steps={steps} draft={draft} />

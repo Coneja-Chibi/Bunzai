@@ -5,6 +5,7 @@
  */
 import { useState, type CSSProperties, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Disclosure } from "../../../components/button";
 import type { SceneTrace, TraceLoreHit } from "../../../app-contract-scenes";
 import { bookGroups, reasonBadge, rollBadge } from "../props/trackhare/hare-core";
 
@@ -70,7 +71,7 @@ export function Lore({ trace }: { trace: SceneTrace }): JSX.Element {
         )}
         {missed.length > 0 && (
           <div className="ls-book">
-            <button type="button" className="ls-bk" aria-expanded={misses} onClick={() => setMisses(!misses)}><Ic name={misses ? "lucide:chevron-down" : "lucide:chevron-right"} size={14} /><span>Didn't fire ({missed.length})</span></button>
+            <Disclosure open={misses} onClick={() => setMisses(!misses)} label={`Didn't fire (${missed.length})`} />
             {misses && missed.filter((m) => matches(q, m.title, m.why)).map((m) => <div className="ls-node lore" style={{ "--c": "var(--stage-mute)" } as CSSProperties} key={`${m.bookId}:${m.entryId}`}><span className="ls-name">{m.title}<small>{m.why}</small></span></div>)}
           </div>
         )}

@@ -4,5 +4,5 @@ html[data-surface-ui-toolbar="hud-command-bar"] {
   & :is(.lib.rc :is(.findbox, .sizedial), .scn .search) { border: 1px solid var(--bk-line-track); box-shadow: none; background: var(--bk-surface-well); }
   & .lib.rc .findwrap.on .findbox { box-shadow: inset 0 0 0 1px var(--bk-role-action); }
   & .lib.rc .findbox .sk::after { content: " >"; }
-  & :is(.lib.rc .ltb, .scn .plaque-actions > .s-btn) { border: 1px solid var(--bk-line-control); box-shadow: none; background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); }
+  & :is(.lib.rc .ltop > [data-control="button"], .scn .plaque-actions > :is([data-control="button"], [data-control="chip"])) { border: 1px solid var(--bk-line-control); box-shadow: none; background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); }
 }

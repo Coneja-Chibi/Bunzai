@@ -3,84 +3,23 @@
  * .swpanel/.swpanel.open display toggle is dropped: React conditionally renders the panel instead
  * of hiding it with CSS, so only its own padding survives here.
  */
-.wrap {
+.wrap{
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.row {
+.row{
   display: flex;
   column-gap: 1.5rem;
-  row-gap: 1.75rem;
+  row-gap: 1rem;
   flex-wrap: wrap;
   justify-content: flex-start;
-  padding: 0.4rem 0 1.9rem;
+  padding: 0.4rem 0;
 }
-.sw {
-  width: clamp(3rem, 8vw, 3.5rem);
-  aspect-ratio: 1;
-  border: 3px solid var(--ink);
-  cursor: pointer;
-  position: relative;
-  font-family: var(--font-mono);
-  font-size: max(14px, var(--text-control));
-  box-shadow: 4px 4px 0 0 var(--ink);
-  padding: 0;
-  transition:
-    transform 0.1s ease-out,
-    box-shadow 0.1s ease-out;
-}
-.sw:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 0 var(--ink);
-}
-.sw:active,
-.sw.on {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 0 var(--ink);
-}
-.sw.on::after {
-  content: "";
-  position: absolute;
-  inset: -9px;
-  border: 3px solid var(--ink);
-}
-.sw .lbl {
-  position: absolute;
-  left: 50%;
-  right: auto;
-  width: 4.25rem;
-  transform: translateX(-50%);
-  bottom: -1.4rem;
-  white-space: nowrap;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: max(14px, var(--text-control));
-  letter-spacing: 0.07em;
-  color: var(--text);
-}
-.sw.custom {
-  background: conic-gradient(from 0deg, var(--rose), #f59e0b, #10b981, #3b82f6, #8b5cf6, var(--rose)); /* hardcode-ok: fixed rainbow spectrum swatch icon, not a themed surface */
-}
-.sw.custom.empty::before {
-  content: "+";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: 1.4rem;
-  color: var(--stage-white);
-  text-shadow: 0 1px 3px var(--shadow-ink);
-}
-.panel {
+.panel{
   padding-top: 0.2rem;
 }
-@media (prefers-reduced-motion: reduce) {
-  .sw {
-    transition: none;
-  }
-}
+.wrap { --swatch-spectrum: conic-gradient(from 0deg, var(--rose), #f59e0b, #10b981, #3b82f6, #8b5cf6, var(--rose)); /* hardcode-ok: fixed rainbow spectrum swatch icon, not a themed surface */ }
+.cell { position: relative; display: inline-block; }
+.cell.empty [data-slot="mark"] { position: relative; }
+.cell.empty [data-slot="mark"]::before { content: "+"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-big); font-weight: 900; font-size: 1.4rem; color: var(--stage-white); text-shadow: 0 1px 3px var(--shadow-ink); }

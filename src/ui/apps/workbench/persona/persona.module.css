@@ -28,7 +28,6 @@
 
 /* ---------- face plate extras (the plate itself is editor-styles' .lcard/.portrait) ---------- */
 
-
 /* ---------- identity + section field bits (inside BentoCards) ---------- */
 
 .idRow {
@@ -50,30 +49,12 @@
   padding-top: 0.45rem;
 }
 
-.trait {
-  font: 700 var(--text-control) var(--font-mono);
-  border: 1px solid var(--a, var(--accent));
-  background: none;
-  color: var(--a, var(--accent));
-  padding: 0.12rem 0.4rem;
-  cursor: pointer;
-}
-
 .traitsHead {
   margin: 0.6rem 0 0;
   font: 700 var(--text-control) var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--a, var(--accent));
-}
-
-.traitPlus {
-  font: 600 var(--text-control) var(--font-mono);
-  background: var(--stage-row);
-  border: 1px solid var(--stage-seam);
-  color: var(--stage-soft);
-  padding: 0.12rem 0.55rem;
-  cursor: pointer;
 }
 
 .traitAdd {
@@ -91,42 +72,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
-}
-
-.stop {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  padding: 0.45rem 0.6rem;
-  cursor: pointer;
-  text-align: left;
-  font: inherit; /* buttons do not inherit fonts; without this the button itself reads as the UA default */
-}
-
-.stopB {
-  display: block;
-  font: 800 var(--text-control) var(--font-big);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-soft);
-}
-
-.stopHint {
-  font: 500 var(--text-meta) var(--font-mono);
-  color: var(--stage-text-dim);
-}
-
-.stopOn {
-  border-color: var(--a, var(--accent));
-  background: var(--stage-sunken);
-}
-
-.stopOn .stopB {
-  color: var(--stage-card);
-}
-
-.stopForeign {
-  border-style: dashed;
-  border-color: var(--stage-warn);
 }
 
 .depthRow {
@@ -149,7 +94,6 @@
   padding: 0.2rem 0.3rem;
   text-align: center;
 }
-
 
 .depthBox {
   margin-top: 0.5rem;
@@ -228,26 +172,6 @@
   color: var(--stage-card);
 }
 
-
-.defaultBtn {
-  width: 100%;
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-sunken);
-  color: var(--a, var(--accent));
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  padding: 0.5rem;
-  cursor: pointer;
-  margin-bottom: 1rem;
-}
-
-.defaultOn {
-  background: var(--stage-warn-ink);
-  color: var(--stage-warn);
-}
-
 /* ---------- mobile head ---------- */
 
 .mHeadGate {
@@ -264,12 +188,10 @@
   }
 }
 
-
 :global(html[data-surface-editor-frame="two-pane"]) .root {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);

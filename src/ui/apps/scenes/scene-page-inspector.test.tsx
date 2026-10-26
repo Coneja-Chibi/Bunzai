@@ -19,7 +19,7 @@ const regenerate = async (flushSync: FlushSync): Promise<void> => {
   click(flushSync, menuRow("Regenerate")!);
   await settle(flushSync);
 };
-const pill = (): HTMLButtonElement | null => rig.dom.window.document.querySelector(".pi-paused");
+const pill = (): HTMLButtonElement | null => rig.dom.window.document.querySelector(".pi-paused [data-control='button']");
 const pause = async (flushSync: FlushSync): Promise<void> => {
   flushSync(() => rig.handler!({ type: "review", turnId: "t1", messages: [{ role: "system", content: "Be Vera." }, { role: "user", content: "Hi Vera." }], tokens: 12 }));
   await settle(flushSync);

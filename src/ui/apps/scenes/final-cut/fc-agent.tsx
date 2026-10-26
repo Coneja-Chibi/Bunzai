@@ -5,6 +5,7 @@
  * instruction, preset, model, temperature and context, so loading one sets exactly what saving read.
  */
 import { useEffect, useState, type JSX } from "react";
+import { Button } from "../../../components/button";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
 import type { FinalCutPass } from "../../../../core/final-cut/pass";
 import { bodyOf } from "../../../../core/guards";
@@ -45,14 +46,14 @@ function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCu
           <h4>Saved Agents</h4>
           <p>{lib.state === "loading" ? "Loading..." : lib.agents.length === 0 ? "Save this agent to reuse it on any chat. Its instruction, model, and preset travel with it." : `${lib.agents.length} saved · load one onto this pass, or save the current setup.`}</p>
         </div>
-        <button type="button" className="fc-btn" aria-expanded={name !== null} onClick={() => setName(name === null ? (pass.label && pass.label !== "Custom Department" ? pass.label : "") : null)}>{name === null ? "+ Save current" : "Cancel"}</button>
+        <Button size="sm" aria-expanded={name !== null} onClick={() => setName(name === null ? (pass.label && pass.label !== "Custom Department" ? pass.label : "") : null)}>{name === null ? "+ Save current" : "Cancel"}</Button>
       </header>
       {lib.error && <div className="fc-error" role="alert">{lib.error}</div>}
       {name !== null && (
         <div className="fc-save-row">
           <div className="line">
             <input className="fc-field" value={name} maxLength={120} autoFocus placeholder="Name this agent (e.g. Pacing Doctor)" aria-label="Agent name" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") void save(); }} />
-            <button type="button" className="fc-btn go" disabled={saving || !name.trim()} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</button>
+            <Button variant="primary" size="sm" disabled={saving || !name.trim()} onClick={() => void save()}>{saving ? "Saving..." : "Save to account"}</Button>
           </div>
           <small>Captures the instruction, attached preset, model, and sampling from the controls below. Reusing an existing name overwrites it.</small>
         </div>
@@ -68,8 +69,8 @@ function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCu
                   <p>{a.instructions ? a.instructions.slice(0, 160) : "(no instruction)"}</p>
                 </div>
                 <div className="acts">
-                  <button type="button" className={`fc-btn${loaded ? " go" : ""}`} onClick={() => { onChange(passOf(a)); setConfirm(null); }}>{loaded ? "Loaded" : "Load"}</button>
-                  <button type="button" className={`fc-btn red${confirm === a.id ? " hot" : ""}`} onClick={() => { if (confirm === a.id) { void lib.deleteAgent(a.id); setConfirm(null); } else setConfirm(a.id); }}>{confirm === a.id ? "Confirm" : "Delete"}</button>
+                  <Button size="sm" onClick={() => { onChange(passOf(a)); setConfirm(null); }}>{loaded ? "Loaded" : "Load"}</Button>
+                  <Button variant="danger" size="sm" onClick={() => { if (confirm === a.id) { void lib.deleteAgent(a.id); setConfirm(null); } else setConfirm(a.id); }}>{confirm === a.id ? "Confirm" : "Delete"}</Button>
                 </div>
               </li>
             );

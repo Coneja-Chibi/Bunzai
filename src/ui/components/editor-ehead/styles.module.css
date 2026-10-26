@@ -80,25 +80,3 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
-
-.save {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.65rem;
-  border: 2px solid var(--stage-black);
-  background: var(--a-deep, var(--accent-deep)); /* deep companion: white on bright rose/accent misses AA */
-  color: var(--stage-white);
-  cursor: pointer;
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-}
-
-.save:disabled {
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  border-color: var(--stage-seam);
-  box-shadow: none;
-  cursor: default;
-}

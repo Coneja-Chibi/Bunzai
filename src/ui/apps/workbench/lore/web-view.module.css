@@ -16,25 +16,6 @@
   margin-bottom: 0.4rem;
 }
 
-.fbtn {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-text-dim);
-  padding: 0.22rem 0.45rem;
-  cursor: pointer;
-}
-
-.fbtnOn {
-  border-color: var(--a, var(--accent));
-  color: var(--stage-card);
-  background: color-mix(in srgb, var(--a, var(--accent)) 18%, var(--stage-row));
-}
-
 .svg {
   flex: 1;
   min-height: 16rem;
@@ -87,17 +68,4 @@
   flex-direction: column;
   gap: 0.6rem;
   align-items: flex-start;
-}
-
-.link {
-  border: 2px solid var(--stage-black);
-  background: var(--action-primary);
-  color: var(--action-primary-fg);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.55rem;
-  cursor: pointer;
 }

@@ -6,7 +6,7 @@ html[data-surface-app-room="sticker-tray"] [data-part="press.room"] {
   gap: 1.5rem;
   & [data-part="press.rail"] { order: 2; border-width: 3px; box-shadow: 5px 5px 0 0 var(--bk-line-strong); }
   & [data-part="press.offers"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
-  & [data-part="press.offers"] > button { flex-direction: column; justify-content: space-between; min-height: 3.8rem; border: 2px solid var(--bk-line-strong); box-shadow: 2px 2px 0 0 var(--bk-line-strong); }
+  & [data-part="press.offer"] { flex-direction: column; justify-content: space-between; min-height: 3.8rem; border: 2px solid var(--bk-line-strong); box-shadow: 2px 2px 0 0 var(--bk-line-strong); }
   & [data-part="press.bundle"] { border-width: 3px; box-shadow: 5px 5px 0 0 var(--bk-line-strong); }
   & [data-part="press.queue"] { padding: 1rem; border: 3px dashed var(--bk-line); }
 }

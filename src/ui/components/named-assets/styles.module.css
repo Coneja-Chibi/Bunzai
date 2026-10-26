@@ -71,20 +71,6 @@
   gap: 0.25rem;
   flex-wrap: wrap;
 }
-.ops button {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  text-transform: uppercase;
-  border: 2px solid var(--seam);
-  background: var(--panel);
-  color: var(--muted);
-  padding: 0.25rem 0.35rem;
-  cursor: pointer;
-}
-.ops button:hover {
-  border-color: var(--rose);
-  color: var(--rose);
-}
 .addRow {
   display: flex;
   gap: 0.4rem;

@@ -12,6 +12,7 @@
  * "plain" fields (a version string, a URL) have nothing to render, so they show inline with no toggle;
  * the button only appears where markup actually transforms the text.
  */
+import { Button } from "../button";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { JSX, MouseEvent, ReactNode } from "react";
 import { renderMarkup } from "../../_shared/render-markup";
@@ -119,16 +120,15 @@ export function RenderBox({
   return (
     <div className={styles.box}>
       <div className={styles.bar}>
-        <button
-          type="button"
-          className={`stamp ${styles.toggle}`}
+        <Button
+          size="sm"
           aria-pressed={showRendered}
           title={showRendered ? "Showing rendered output - click to edit the source" : "Showing source - click to render"}
           onClick={() => setRendered((r) => !r)}
         >
           {showRendered ? EyeIcon : CodeIcon}
           <span>{showRendered ? "Rendered" : "Source"}</span>
-        </button>
+        </Button>
       </div>
       {showRendered ? (
         <SanitizedHtml

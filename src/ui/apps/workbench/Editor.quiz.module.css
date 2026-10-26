@@ -166,40 +166,6 @@
   margin-top: 1.5rem;
 }
 
-.qskip {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-}
-
-.qskip:disabled {
-  opacity: 0.35;
-  cursor: default;
-  text-decoration: none;
-}
-
-.qnext {
-  font-family: var(--font-big);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  color: var(--action-primary-fg, var(--stage-white));
-  background: var(--wb-primary, var(--rose-deep)); /* deep action fill keeps its text readable in either theme */
-  padding: 0.65rem 1.3rem;
-}
-
-.qnext:disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 .stagecol {
   align-self: start;
   min-width: 0;

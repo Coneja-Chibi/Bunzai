@@ -12,5 +12,10 @@
 :global(html) :global(#shell[data-navigation="dock"] #main) { grid-column: 1; grid-row: 1; }
 :global(html) :global(#shell[data-navigation="dock"] #status) { flex: none; }
 :global(html) :global(#shell[data-navigation="dock"] #status:empty) { display: none; }
-:global(html) :global(#shell[data-navigation="dock"] .tourHelp) { bottom: calc(.6rem + var(--bk-dock-reserve, 0px)); }
 :global(html:has(#shell[data-navigation="dock"])) { --bk-nav-reserve: 0rem; }
+/* The tour replay mark pinned to the corner (its IconButton keeps the family look). */
+.tourHelp { position: fixed; right: 1.1rem; bottom: calc(1.1rem + var(--bk-status-reserve, 1.8rem) + var(--bk-nav-reserve, 0rem)); z-index: 55; }
+:global(html) :global(#shell[data-navigation="dock"]) .tourHelp { bottom: calc(.6rem + var(--bk-dock-reserve, 0px)); }
+/* Open-piece tab extras: the unsaved mark and the piece pinned beside the active one. */
+.dirty { color: var(--doctab-accent, var(--rose)); font-size: .6rem; line-height: 1; }
+:global(#tabstrip) [data-control="doctab"][data-beside] { color: var(--text); box-shadow: inset 0 3px 0 0 var(--doctab-accent, var(--text-dim)); }

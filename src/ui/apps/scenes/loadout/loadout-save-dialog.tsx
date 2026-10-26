@@ -9,6 +9,7 @@ import { LOADOUT_NAME_MAX, PANEL_META } from "../../../../core/loadout-panels";
 import type { LoadoutRecord } from "../../../../studio/loadout-record";
 import type { AppContext } from "../../../app-contract";
 import type { SceneSettings } from "../../../app-contract-scenes";
+import { Button, IconButton, Segmented } from "../../../components/button";
 import { InkDialog } from "../../../components/ink-dialog";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { captureLoadout } from "./loadout-capture";
@@ -57,18 +58,15 @@ export function LoadoutSaveDialog({ ctx, chatId, loadouts, onSaved, onClose }: {
     }
   };
   const flip = (id: string, on: boolean): void => setTicked((t) => { const n = new Set(t); if (on) n.add(id); else n.delete(id); return n; });
-  const shortcut = (label: string, next: () => Set<string>): JSX.Element => <button type="button" className="ldd-link" onClick={() => setTicked(next())}>{label}</button>;
+  const shortcut = (label: string, next: () => Set<string>): JSX.Element => <Button variant="quiet" size="sm" onClick={() => setTicked(next())}>{label}</Button>;
 
   return (
     <InkDialog ariaLabel={TITLE} onDismiss={onClose} sheetClassName="ldd-sheet">
       <div className="ldd">
-        <header><h2>{TITLE}</h2><button type="button" className="ldd-x" aria-label="Close save loadout dialog" onClick={onClose}>X</button></header>
+        <header><h2>{TITLE}</h2><IconButton label="Close save loadout dialog" icon="lucide:x" onClick={onClose} /></header>
         <p className="ldd-note">This saves reusable settings only. Messages, takes, and variables stay out.</p>
         <div className="ldd-lbl">Save action</div>
-        <div className="ldd-modes">
-          <button type="button" aria-pressed={mode === "new"} onClick={() => setMode("new")}>New loadout</button>
-          <button type="button" aria-pressed={mode === "update"} disabled={loadouts.length === 0} onClick={() => setMode("update")}>Update existing</button>
-        </div>
+        <Segmented label="Save action" items={[{ value: "new", label: "New loadout" }, { value: "update", label: "Update existing", disabled: loadouts.length === 0 }]} value={mode} onChange={setMode} />
         <label className="ldd-lbl" htmlFor="ldd-name">{mode === "new" ? "Name" : "Loadout to update"}</label>
         {mode === "update" ? (
           <select id="ldd-name" aria-label="Loadout to update" value={target} onChange={(e) => pick(e.target.value)}>
@@ -101,8 +99,8 @@ export function LoadoutSaveDialog({ ctx, chatId, loadouts, onSaved, onClose }: {
         </div>
         {error && <p className="ldd-err" role="alert">{error}</p>}
         <footer>
-          <button type="button" onClick={onClose}>Cancel</button>
-          <button type="button" className="pri" disabled={saving || (mode === "new" ? !name.trim() : !target)} onClick={() => void save()}>{mode === "update" ? "Update selected loadout" : "Save selected settings"}</button>
+          <Button variant="quiet" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" disabled={saving || (mode === "new" ? !name.trim() : !target)} onClick={() => void save()}>{mode === "update" ? "Update selected loadout" : "Save selected settings"}</Button>
         </footer>
       </div>
     </InkDialog>

@@ -335,7 +335,7 @@ describe("PropsWing: RoleCall's Legacy Trackers box and a prop's own panel", () 
     const list = [legacy("t"), legacy("tracker-inventory", { name: "Inventory" })];
     const draw = (on: string[]): JSX.Element => <PropsWing list={list} load={{ state: "ready", on }} onToggle={() => undefined} onRetry={() => undefined} prefs={ctx.prefs} host={{ ctx, chat: { id: "chat1" } as Chat }} />;
     flushSync(() => root.render(draw(["t"])));
-    const button = (): HTMLButtonElement => host.querySelector<HTMLButtonElement>("[data-part='props.trackers.refresh-all'] .rall")!;
+    const button = (): HTMLButtonElement => host.querySelector<HTMLButtonElement>("[data-part='props.trackers.refresh-all'] > button")!;
     expect(button().textContent).toBe("Refresh Enabled Boards");
     expect(button().disabled).toBe(true);
     flushSync(() => root.render(draw(["t", "tracker-inventory"])));

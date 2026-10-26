@@ -9,6 +9,7 @@ import { useState, type JSX } from "react";
 import type { ChatPreset } from "../../../../stage/contracts/chat-store";
 import { CORE_FIELD, CORE_PARAMS, type CoreId } from "../../../../stage/params/core";
 import type { ParamDef } from "../../../../stage/params";
+import { Button, Disclosure } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { coreChangedCount, coreValue } from "./generation-core";
 import type { GenerationEnv } from "./generation-env";
@@ -24,12 +25,9 @@ export function CoreGroup({ env, params, searching }: { env: GenerationEnv; para
   const expanded = open || searching;
   return (
     <section className="gn-grp" data-part="scene.generation.core">
-      <button type="button" className="gn-gh" aria-expanded={expanded} aria-label={`Core category ${expanded ? "expanded" : "collapsed"}`} onClick={() => setOpen(!open)}>
-        <span className="gn-ico"><Ic name="mdi:star-four-points-outline" size={16} /></span>
-        <b>Core</b>
-        <small>{searching ? `${params.length} found` : changed === 0 ? "from preset" : `${changed}/${CORE_PARAMS.length} changed for this chat`}</small>
-        <span className={`chev${expanded ? " up" : ""}`}><Ic name="mdi:chevron-down" size={16} /></span>
-      </button>
+      <Disclosure open={expanded} aria-label={`Core category ${expanded ? "expanded" : "collapsed"}`} onClick={() => setOpen(!open)}
+        leading={<span className="gn-ico"><Ic name="mdi:star-four-points-outline" size={16} /></span>} label="Core"
+        summary={searching ? `${params.length} found` : changed === 0 ? "from preset" : `${changed}/${CORE_PARAMS.length} changed for this chat`} />
       {expanded && (
         <div className="gn-gb">
           {!own.own || !body ? (
@@ -46,7 +44,7 @@ export function CoreGroup({ env, params, searching }: { env: GenerationEnv; para
                     <SettingCard def={def} enabled toggle={false} value={value} onChange={(v) => { if (typeof v === "number" && Number.isFinite(v)) set(v); }} />
                     <div className="gn-foot">
                       {from === "scene" ? (
-                        <><span>Changed for this chat</span><button type="button" aria-label={`Reset ${def.label} to preset`} onClick={() => set(body.samplers?.[field])}>Reset to preset</button></>
+                        <><span>Changed for this chat</span><Button variant="quiet" size="sm" aria-label={`Reset ${def.label} to preset`} onClick={() => set(body.samplers?.[field])}>Reset to preset</Button></>
                       ) : <span>{from === "preset" ? "From preset" : "Not set: the provider decides"}</span>}
                     </div>
                   </div>

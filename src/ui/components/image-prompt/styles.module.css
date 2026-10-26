@@ -49,21 +49,5 @@
   gap: 0.35rem;
   align-items: center;
 }
-.rm,
-.add {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  background: transparent;
-  border: 1px solid var(--stage-seam, var(--seam));
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-  padding: 0.25rem 0.45rem;
-}
-.add {
-  align-self: flex-start;
-}
-.rm:hover,
-.add:hover {
-  color: var(--stage-soft, var(--text));
-  border-color: var(--stage-soft, var(--text));
-}
+
+.add { align-self: flex-start; }

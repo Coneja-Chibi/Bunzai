@@ -7,6 +7,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { applyEvents, criticalCount, eventsLines, ongoing, readEvents, resolved, type Ev, type Urgency } from "../../../../../../core/trackers/events";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button } from "../../../../../components/button";
 import { Ic } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -82,10 +83,10 @@ export function EventsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.E
                 {e.actualOutcome && !e.isOngoing && <Block title="Outcome"><div className="ev-out"><p>{e.actualOutcome}</p></div></Block>}
                 <div className="it-fine"><div>Started: {new Date(e.startedAt).toLocaleString()}</div>{e.resolvedAt && <div>Resolved: {new Date(e.resolvedAt).toLocaleString()}</div>}</div>
                 {e.playerAwareness && e.playerAwareness !== "aware" && <div className="it-line"><Ic name={e.playerAwareness === "suspicious" ? "lucide:search" : "lucide:eye-off"} size={14} /><span>Player is {e.playerAwareness}</span></div>}
-                {e.isOngoing && <div className="it-actions"><button type="button" className="it-go" style={{ "--w": "var(--stage-ok)" } as CSSProperties} onClick={inner(() => act({ kind: "resolve", id: e.id, at: Date.now() }, `Resolved ${e.title}`))}><Ic name="lucide:circle-check" size={14} />Resolve Event</button></div>}
+                {e.isOngoing && <div className="it-actions"><Button size="sm" icon="lucide:circle-check" onClick={inner(() => act({ kind: "resolve", id: e.id, at: Date.now() }, `Resolved ${e.title}`))}>Resolve Event</Button></div>}
                 <RefreshByModel<Ev> ctx={ctx} chatId={chat.id} ask={ASK} noun="event" inline existing={e} preview={(x) => <Preview e={x} />} accept={(x) => act({ kind: "refresh", id: e.id, event: x })}
                   extra={null} />
-                <div className="it-actions"><button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete event" onClick={inner(() => { act({ kind: "remove", id: e.id, at: Date.now() }, `Deleted ${e.title}`); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete Event</span></button></div>
+                <div className="it-actions"><span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete event" onClick={inner(() => { act({ kind: "remove", id: e.id, at: Date.now() }, `Deleted ${e.title}`); setOpen(null); })}>Delete Event</Button></span></div>
               </ItemCard>
             ))}
           </div>

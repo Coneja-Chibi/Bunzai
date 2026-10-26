@@ -49,15 +49,6 @@
   background: transparent;
   padding: 0.05rem 0.3rem;
 }
-.aff :global(button) {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  color: var(--stage-mute);
-  border: 2px solid var(--stage-seam);
-  background: transparent;
-  padding: 0.05rem 0.3rem;
-  cursor: pointer;
-}
 .dot {
   width: 7px;
   height: 7px;
@@ -83,29 +74,8 @@
   display: flex;
   gap: 0.25rem;
 }
-.move button {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  line-height: 1;
-  color: var(--stage-mute);
-  background: transparent;
-  border: 2px solid var(--stage-seam);
-  padding: 0.15rem 0.4rem;
-  cursor: pointer;
-}
-.move button:hover {
-  color: var(--stage-paper);
-  border-color: var(--stage-mute);
-}
 .fold {
   margin-left: auto;
-  font-family: var(--font-mono);
-  color: var(--stage-line);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0 0.2rem;
 }
 .move + .fold {
   margin-left: 0.2rem;

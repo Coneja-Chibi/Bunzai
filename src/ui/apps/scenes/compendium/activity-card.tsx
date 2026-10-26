@@ -6,6 +6,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Button } from "../../../components/button";
 import { ENTRY_TYPE_INFO } from "../../../../core/compendium";
 import { ago, type ActivityRow } from "./activity-core";
 
@@ -47,10 +48,10 @@ export function ActivityCard({ row, now, actions }: { row: ActivityRow; now: num
       )}
       {(detailed || row.why || row.canUndo || row.canFileAgain) && (
         <div className="foot">
-          {detailed && <button type="button" className="lnk" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? OPEN : SHUT} Details</button>}
-          {row.why && <button type="button" className="lnk" aria-expanded={whyOpen} onClick={() => setWhyOpen(!whyOpen)}><Ic name="lucide:message-square" size={12} /> {whyOpen ? OPEN : SHUT} Why this entry</button>}
-          {row.canUndo && <button type="button" className="act" disabled={actions.busy} onClick={() => actions.undo(row.id)}><Ic name="lucide:rotate-ccw" size={12} /> Undo</button>}
-          {row.canFileAgain && <button type="button" className="act" disabled={actions.busy} onClick={() => actions.again(row.id)}><Ic name="lucide:refresh-cw" size={12} /> File again</button>}
+          {detailed && <Button variant="quiet" size="sm" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? OPEN : SHUT} Details</Button>}
+          {row.why && <Button variant="quiet" size="sm" icon="lucide:message-square" aria-expanded={whyOpen} onClick={() => setWhyOpen(!whyOpen)}>{whyOpen ? OPEN : SHUT} Why this entry</Button>}
+          {row.canUndo && <Button size="sm" icon="lucide:rotate-ccw" disabled={actions.busy} onClick={() => actions.undo(row.id)}>Undo</Button>}
+          {row.canFileAgain && <Button size="sm" icon="lucide:refresh-cw" disabled={actions.busy} onClick={() => actions.again(row.id)}>File again</Button>}
         </div>
       )}
       {open && (

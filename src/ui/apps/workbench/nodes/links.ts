@@ -2,6 +2,7 @@
  * The Nodes view's link table and graph (pure): which stored reference fields become ports and wires,
  * the graph derived from the open pieces' bodies, and the one body edit that adds or removes a link.
  */
+import { strArray } from "../../../../core/guards";
 import { keyOf } from "../../../_shared/piece-key";
 import type { StudioEntitySummary } from "../../../app-contract";
 import { attachKnowledgeRef, detachKnowledgeRef } from "../lore/knowledge-refs";
@@ -30,8 +31,7 @@ export const canLink = (fromKind: string, field: RefField, toKind: string): bool
   LINK_PORTS.some((p) => p.from === fromKind && p.field === field && p.to === toKind);
 
 export function refsOf(body: unknown, field: RefField): string[] {
-  const refs = (body as Record<string, unknown> | null | undefined)?.[field];
-  return Array.isArray(refs) ? refs.filter((r): r is string => typeof r === "string") : [];
+  return strArray((body as Record<string, unknown> | null | undefined)?.[field]);
 }
 
 /** The body with one id attached or detached; an emptied field is removed, as the editors do. */

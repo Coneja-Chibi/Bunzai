@@ -7,6 +7,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { activeBonds, applyBonds, bondsLines, brokenBonds, intensityOf, readBonds, strongest, totalStrength, type Bond, type BondType, type Intensity } from "../../../../../../core/trackers/bonds";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -71,7 +72,7 @@ export function BondsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                   foot={b.isActive ? (
                     <RefreshByModel<Bond> ctx={ctx} chatId={chat.id} ask={ASK} noun="bond" existing={b} preview={(x) => <Preview b={x} />} accept={(x) => act({ kind: "refresh", id: b.id, bond: x })}
                       extra={b.canBeBroken
-                        ? <button type="button" {...protect("tracker-delete", "it-act bad")} title="Break bond" aria-label={`Break the bond with ${b.partnerName}`} onClick={inner(() => act({ kind: "break", id: b.id }, `Broke the bond with ${b.partnerName}`))}><Ic name="lucide:trash-2" size={14} /><span>Break</span></button>
+                        ? <span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Break bond" aria-label={`Break the bond with ${b.partnerName}`} onClick={inner(() => act({ kind: "break", id: b.id }, `Broke the bond with ${b.partnerName}`))}>Break</Button></span>
                         : <span className="it-note" title="This bond cannot be broken">Unbreakable</span>} />
                   ) : undefined}>
                   {b.description && <Block title="Description"><p>{b.description}</p></Block>}

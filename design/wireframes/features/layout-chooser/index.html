@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Layout Chooser</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+/* Chat layout chooser restyle, WIREFRAME ONLY. Colors are app tokens. The rays are the real LightRays renderer
+   (bundled to rays.bundle.js for this page only); the build reuses src/ui/components/light-rays as-is. */
+body { padding: 24px 16px; }
+.page { max-width: 92rem; }
+.seg { display: inline-flex; border: 1px solid var(--stage-line); }
+.seg button { font: 700 11px/1 var(--font-big); letter-spacing: .14em; text-transform: uppercase; padding: 9px 12px; color: var(--stage-soft); background: none; border: 0; cursor: pointer; }
+.seg button[aria-pressed="true"] { color: var(--stage-card); background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 0 -2px 0 var(--accent); }
+
+/* The page itself (stands in for the Scenes room at 1440 x 900) */
+.room { position: relative; isolation: isolate; height: 900px; overflow: hidden; background: var(--premiere-hard); color: var(--premiere-text); font-family: var(--rc-font-inter); border: 1px solid var(--stage-line); }
+
+/* Layer 1: the hovered (or selected) layout fills the background, dimmed, then rays on top */
+.backdrop { position: absolute; inset: 0; z-index: -3; }
+.backdrop img { position: absolute; inset: -2%; width: 104%; height: 104%; object-fit: cover; opacity: 0; filter: blur(1.5px) saturate(1.1); transform: scale(1.03); transition: opacity .45s ease, transform 1.2s ease; }
+.backdrop img.on { opacity: .62; transform: scale(1); }
+.veil { position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  background: radial-gradient(ellipse 80% 60% at 50% 38%, transparent, color-mix(in srgb, var(--premiere-hard) 60%, transparent) 85%),
+              linear-gradient(to bottom, color-mix(in srgb, var(--premiere-hard) 45%, transparent), transparent 30%, transparent 70%, color-mix(in srgb, var(--premiere-hard) 85%, transparent)); }
+.rays { position: absolute; inset: 0; z-index: -1; pointer-events: none; mix-blend-mode: screen; }
+.rays canvas { width: 100%; height: 100%; display: block; }
+
+.content { position: relative; height: 100%; display: flex; flex-direction: column; max-width: 1180px; margin: 0 auto; padding: 0 40px; }
+
+/* ---------- Header A: Marquee (centered, title-screen grammar) ---------- */
+.hA { display: none; flex-direction: column; align-items: center; text-align: center; padding-top: 64px; }
+[data-head="A"] .hA { display: flex; }
+.kicker { color: var(--premiere-gold); font: 500 .625rem var(--font-mono); letter-spacing: .22em; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+.kicker::before, .kicker::after { content: ""; width: 48px; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 60%, transparent); }
+.hA h1 { margin: 18px 0 0; font: 700 clamp(40px, 4.4vw, 64px)/1.05 var(--font-fancy); letter-spacing: .02em; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.hA h1 em { font-style: normal; color: color-mix(in srgb, var(--deck-character) 60%, white); }
+.hA .tag { margin-top: 16px; font-size: 18px; color: var(--premiere-text); }
+.hA .sub { margin-top: 6px; font-size: 13px; color: var(--rc-zinc-300); }
+
+/* ---------- Header B: Playbill (left title, framed by gold hairlines) ---------- */
+.hB { display: none; padding-top: 36px; }
+[data-head="B"] .hB { display: block; }
+.bill { display: flex; align-items: center; gap: 16px; padding: 10px 0; border-block: 1px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent); font: 500 .625rem var(--font-mono); letter-spacing: .22em; text-transform: uppercase; color: var(--premiere-gold); }
+.bill b { font: 700 15px var(--font-fancy); letter-spacing: .08em; color: var(--premiere-text); }
+.bill .grow { flex: 1; }
+.hB .row { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; margin-top: 34px; }
+.hB h1 { margin: 0; font: 700 clamp(40px, 4.2vw, 60px)/1.05 var(--font-fancy); letter-spacing: .02em; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.hB h1 em { font-style: normal; color: color-mix(in srgb, var(--deck-character) 60%, white); display: block; }
+.hB .tag { font-size: 18px; margin: 0 0 6px; }
+.hB .sub { font-size: 13px; color: var(--rc-zinc-300); margin: 0; padding-left: 14px; border-left: 2px solid var(--premiere-rose); }
+
+/* ---------- Cards (unchanged parts: number, title, check, screenshot, copy, Preview) ---------- */
+.choices { display: flex; justify-content: center; gap: 28px; margin-top: 44px; }
+[data-head="B"] .choices { margin-top: 38px; }
+.card { width: 400px; display: flex; flex-direction: column; background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 86%, transparent); border: 3px solid var(--premiere-hard); box-shadow: 5px 5px var(--premiere-hard); cursor: pointer; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; backdrop-filter: blur(6px); }
+.card:hover, .card:focus-within { transform: translateY(-6px); box-shadow: 5px 5px var(--premiere-hard), 0 18px 60px color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+.card[data-selected="true"] { border-color: var(--accent); box-shadow: 5px 5px var(--deck-character); }
+.card[data-selected="true"]:hover { box-shadow: 5px 5px var(--deck-character), 0 18px 60px color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+.hd { display: flex; align-items: center; gap: 10px; padding: 14px; }
+.hd .n { font: 500 12px var(--font-mono); letter-spacing: .15em; color: color-mix(in srgb, var(--deck-character) 55%, white); }
+.hd .t { font: 700 19px var(--font-fancy); letter-spacing: .02em; }
+.hd .ck { margin-left: auto; width: 24px; height: 24px; border: 2px solid var(--rc-zinc-400); display: grid; place-items: center; font-size: 14px; }
+.card[data-selected="true"] .ck { border-color: var(--premiere-text); }
+.card img.shot { width: 100%; display: block; border-block: 1px solid var(--rc-zinc-800); }
+.copy { padding: 16px 16px 6px; font-size: 14px; line-height: 1.6; }
+.copy b { display: block; margin-bottom: 8px; }
+.copy span { color: var(--rc-zinc-300); }
+.pv { align-self: flex-end; margin: 4px 10px 10px; font: 600 12px var(--rc-font-inter); color: var(--premiere-text); background: none; border: 0; }
+
+.caption { text-align: center; margin-top: 18px; font-size: 12px; color: var(--rc-zinc-300); }
+.footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding: 18px 0 26px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); font-size: 14px; }
+.use { min-height: 48px; padding: 12px 24px; border: 2px solid var(--accent); background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); color: var(--premiere-text); box-shadow: 4px 4px var(--deck-character); font-weight: 800; font-size: 14px; }
+
+.notes { display: grid; gap: 10px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="wf-head">
+    <div>
+      <div class="wf-title">Chat layout chooser, restyled</div>
+      <p class="wf-lede">The first-run "Choose your chat layout" page in Scenes. Three changes: a designed header, the real
+        title-screen light rays behind the page, and hovering a card fills the background with that layout under the rays.
+        Hover the cards. Every existing piece stays: both cards, real screenshots, Preview, the check, the footer and Use button.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Header option">
+      <button type="button" data-pick="A" aria-pressed="true">A. Marquee</button>
+      <button type="button" data-pick="B" aria-pressed="false">B. Playbill</button>
+    </div>
+  </header>
+
+  <section class="room" id="room" data-head="A">
+    <div class="backdrop" aria-hidden="true">
+      <img src="../../../../docs/media/chat-layouts/full-chat.jpg" data-layout="stage" class="on" alt="">
+      <img src="../../../../docs/media/chat-layouts/messenger.jpg" data-layout="messenger" alt="">
+    </div>
+    <div class="veil"></div>
+    <div class="rays"><canvas id="rays"></canvas></div>
+
+    <div class="content">
+      <div class="hA">
+        <div class="kicker">Bunraku · A space for your stories</div>
+        <h1>Choose your <em>chat layout.</em></h1>
+        <p class="tag">Same characters. Same stories. Your kind of stage.</p>
+        <p class="sub">Choose a layout for all your chats. You can change it anytime in Appearance.</p>
+      </div>
+
+      <div class="hB">
+        <div class="bill"><b>Bunraku</b><span>Your space / your stories</span><span class="grow"></span><span>Tonight's stage</span></div>
+        <div class="row">
+          <h1>Choose your<em>chat layout.</em></h1>
+          <div><p class="tag">Same characters. Same stories. Your kind of stage.</p>
+            <p class="sub">Choose a layout for all your chats. You can change it anytime in Appearance.</p></div>
+        </div>
+      </div>
+
+      <div class="choices" role="radiogroup" aria-label="Chat layout">
+        <article class="card" tabindex="0" data-layout="stage" data-selected="true">
+          <div class="hd"><span class="n">01</span><span class="t">Full Chat</span><span class="ck">✓</span></div>
+          <img class="shot" src="../../../../docs/media/chat-layouts/full-chat.jpg" alt="Full Chat layout">
+          <div class="copy"><b>Your complete writing workspace.</b><span>Keep the conversation, character details and trackers together, with your tools close at hand.</span></div>
+          <button class="pv" type="button">⤢ Preview</button>
+        </article>
+        <article class="card" tabindex="0" data-layout="messenger" data-selected="false">
+          <div class="hd"><span class="n">02</span><span class="t">Messenger</span><span class="ck"></span></div>
+          <img class="shot" src="../../../../docs/media/chat-layouts/messenger.jpg" alt="Messenger layout">
+          <div class="copy"><b>A familiar place to catch up.</b><span>Recent characters, your persona profile and a conversation with one settings workspace.</span></div>
+          <button class="pv" type="button">⤢ Preview</button>
+        </article>
+      </div>
+      <p class="caption">Actual screenshots from a test chat. Every layout runs the same scene.</p>
+      <footer class="footer"><span id="status">Full Chat selected</span><button class="use" type="button" id="use">Use Full Chat →</button></footer>
+    </div>
+  </section>
+
+  <section class="notes">
+    <p class="wf-note"><b>Backdrop.</b> Resting state shows the selected layout. Hover or keyboard focus on a card cross-fades
+      the background to that layout (62% opacity, light blur, soft vignette) in 0.45 s. Leaving the cards returns to the
+      selected one. Reduced motion: no fade or zoom, just a swap; rays fall back to the static gradient the component
+      already has.</p>
+    <p class="wf-note"><b>Rays.</b> The same LightRays component as the title screen (rose and violet beams, NO floor fog: the component gets a fog switch,
+      off here; it still follows the mouse a little). The page's current two flat gradients go away.</p>
+    <p class="wf-note"><b>Header A, Marquee.</b> Centered like the title screen: gold kicker with the brand folded in, one-line
+      title, tagline and helper line under it. The separate BUNRAKU / YOUR SPACE bar is gone.</p>
+    <p class="wf-note"><b>Header B, Playbill.</b> Brand bar kept but drawn as a playbill strip between gold hairlines;
+      title left, tagline right with a rose rule. Closer to today's layout, just finished properly.</p>
+    <p class="wf-note"><b>Cards.</b> Same content and controls. Hover lifts a card 6px with a violet glow; the panel is
+      slightly see-through so the backdrop reads through it. Phone width: header stacks, cards go full width.</p>
+  </section>
+</main>
+<script type="module">
+import { startLightRays } from "./rays.bundle.js";
+const room = document.getElementById("room");
+startLightRays(document.getElementById("rays"), true, .35);
+const imgs = [...room.querySelectorAll(".backdrop img")];
+const cards = [...room.querySelectorAll(".card")];
+let selected = "stage";
+const show = (layout) => imgs.forEach((img) => img.classList.toggle("on", img.dataset.layout === layout));
+cards.forEach((card) => {
+  card.addEventListener("pointerenter", () => show(card.dataset.layout));
+  card.addEventListener("focus", () => show(card.dataset.layout));
+  card.addEventListener("pointerleave", () => show(selected));
+  card.addEventListener("click", () => {
+    selected = card.dataset.layout;
+    cards.forEach((c) => { const on = c === card; c.dataset.selected = String(on); c.querySelector(".ck").textContent = on ? "✓" : ""; });
+    const name = card.querySelector(".t").textContent;
+    document.getElementById("status").textContent = `${name} selected`;
+    document.getElementById("use").textContent = `Use ${name} →`;
+    show(selected);
+  });
+});
+document.querySelectorAll("[data-pick]").forEach((button) => button.addEventListener("click", () => {
+  room.dataset.head = button.dataset.pick;
+  document.querySelectorAll("[data-pick]").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+}));
+</script>
+</body>
+</html>

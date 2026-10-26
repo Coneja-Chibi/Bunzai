@@ -161,7 +161,7 @@ type FlushSync = typeof import("react-dom")["flushSync"];
 async function settle(flushSync: FlushSync, ms = 20): Promise<void> {
   await new Promise((r) => setTimeout(r, ms));
   flushSync(() => undefined);
-  for (const head of host.querySelectorAll<HTMLButtonElement>(".cat-t[aria-expanded=false]")) flushSync(() => head.click());
+  for (const head of host.querySelectorAll<HTMLButtonElement>("[data-part='scene.preset.category'][aria-expanded=false]")) flushSync(() => head.click());
 }
 
 /** What the Prompting wing does: one text writer owned above the tab, handed to it. `text` is that writer, for the tests that drive it. */

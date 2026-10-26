@@ -7,5 +7,5 @@ html[data-surface-library-grid="inventory-slots"] {
   & .lib.rc .lrow-cards { gap: .6rem; padding-bottom: 1rem; }
   & .lib.rc .rgrid-row { gap: .6rem; grid-template-columns: repeat(auto-fill, minmax(min(max(7rem, calc(var(--cw) * .7)), 100%), 1fr)); }
   & .lib.rc .rgrid-row.presets { grid-template-columns: repeat(auto-fill, minmax(min(calc(var(--cw) * .9), 100%), 1fr)); }
-  & .lib.rc .rnewtile { border: 1px dashed var(--bk-line-control); }
+  & .lib.rc [data-control="tile"][data-kind="add"] { border: 1px dashed var(--bk-line-control); }
 }

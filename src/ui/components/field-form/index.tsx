@@ -3,12 +3,12 @@
  * reuse keystone for structured native data: give it a list of fields (text / number / select /
  * slider / toggle / textarea) and a value object, it renders the right control per field and reports
  * each edit by key. Every tracker module's value-set and every list item is one of these, so a new
- * shape is DATA (a schema), never new component code. Composes the house Slider and ToggleSwitch.
+ * shape is DATA (a schema), never new component code. Composes the house Slider and Toggle.
  */
 import type { JSX } from "react";
 import { ExpandTextarea } from "../expand";
 import { Slider } from "../slider";
-import { ToggleSwitch } from "../toggle-switch";
+import { Toggle } from "../button";
 import styles from "./styles.module.css";
 import { numOr, str } from "../../../core/guards";
 
@@ -80,7 +80,7 @@ function control(field: FormField, value: unknown, set: (v: unknown) => void): J
       );
     }
     case "toggle":
-      return <ToggleSwitch on={value === true} onChange={set} label={value === true ? "Yes" : "No"} />;
+      return <Toggle on={value === true} onChange={set} label={value === true ? "Yes" : "No"} />;
     case "text":
     default:
       return <input className={styles.text} value={str(value)} placeholder={field.placeholder} onChange={(e) => set(e.target.value)} />;

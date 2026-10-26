@@ -12,6 +12,7 @@
  * - Preview: absolute img sized so crop maps to a circular clip (Marinara-style).
  * - Wire: { srcX, srcY, srcWidth, srcHeight }. Legacy zoom/offset is clear-only.
  */
+import { Button, Dot } from "../button";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as RE } from "react";
 import type { JSX } from "react";
 import styles from "./styles.module.css";
@@ -257,9 +258,9 @@ export function AvatarCrop({ value, onChange, imageSrc }: AvatarCropProps): JSX.
           {String(v!.offsetY ?? "?")}
         </div>
         <div className={styles.actions}>
-          <button type="button" className={styles.btn} onClick={() => onChange(null)}>
+          <Button size="sm" variant="quiet" onClick={() => onChange(null)}>
             Clear legacy crop
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -278,12 +279,12 @@ export function AvatarCrop({ value, onChange, imageSrc }: AvatarCropProps): JSX.
     <div className={styles.wrap}>
       <div className={styles.help}>Drag the square to pan. Corners resize (stays square). Outside is dimmed.</div>
       <div className={styles.actions}>
-        <button type="button" className={styles.btn} onClick={reset} disabled={!imgRect}>
+        <Button size="sm" onClick={reset} disabled={!imgRect}>
           Reset center
-        </button>
-        <button type="button" className={styles.btn} onClick={() => onChange(null)}>
+        </Button>
+        <Button size="sm" variant="quiet" onClick={() => onChange(null)}>
           Clear crop
-        </button>
+        </Button>
       </div>
       <div className={styles.row}>
         <div
@@ -307,11 +308,11 @@ export function AvatarCrop({ value, onChange, imageSrc }: AvatarCropProps): JSX.
               {...ptr}
             >
               {(["tl", "tr", "bl", "br"] as const).map((pos) => (
-                <button
+                <Dot
                   key={pos}
-                  type="button"
-                  className={`${styles.handle} ${styles[pos]}`}
-                  aria-label={`Resize ${pos}`}
+                  kind="handle"
+                  data-corner={pos}
+                  label={`Resize ${pos}`}
                   onPointerDown={(e) => onPointerDown(e, pos)}
                   {...ptr}
                 />

@@ -4,7 +4,7 @@ import { variantCss } from "../../../../_shared/variant-css";
 export default variantCss("scene.reasoning", "footnote", `
 & .rb{background:none;border-top:1px solid var(--z-strong)}
 & .rb.rb-nat{border-top:3px double var(--z-strong)}
-& .rb .rb-hd{padding-block:8px;padding-left:0}
+& .rb [data-part="scene.reasoning.header"]{padding-block:8px;padding-left:0}
 & .rb .rb-copy{top:6px;background:none}
 & .rb .rb-chip{padding:0;text-transform:none;letter-spacing:0;font-family:var(--z-serif);font-size:14px;font-weight:700;color:var(--z-text)}
 & .rb .rb-no{display:inline-grid;place-items:center;min-width:20px;height:20px;border:1px solid var(--z-strong);margin-right:8px;font-size:12px}

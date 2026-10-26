@@ -8,6 +8,7 @@
  */
 import { useMemo, type JSX } from "react";
 import { clearConstraints, constrainedIds, flagsOf, withLabels } from "../../../../../../core/compendium";
+import { IconButton } from "../../../../../components/button";
 import { Ic } from "../../../../../_shared/ic";
 import { useCompendiumBook } from "../../use-compendium-book";
 import { useCompendiumTree } from "../../use-compendium-tree";
@@ -77,7 +78,7 @@ export function ConstraintsSection({ ctx, chat, bookId, set }: SectionProps): JS
                   {f.pinned && <em className="pinned"><Ic name="lucide:pin" size={12} /> Pinned under {labels.get(target ?? "")?.label ?? target}</em>}
                 </span>
               </div>
-              <button type="button" title="Clear all flags on this item" aria-label={`Clear every choice on ${r.label}`} onClick={() => clear(r.id)}><Ic name="lucide:x" size={14} /></button>
+              <IconButton variant="danger" size="sm" title="Clear all flags on this item" label={`Clear every choice on ${r.label}`} icon="lucide:x" onClick={() => clear(r.id)} />
             </div>
           );
         })}

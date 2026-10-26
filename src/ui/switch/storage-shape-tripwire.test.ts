@@ -342,7 +342,10 @@ async function shapeFiles(): Promise<string[]> {
 // director_states table (one story-state snapshot per version of a reply, keyed and cascaded like swipe_traces), and row-fingerprints.ts covers the chats column (chats spec v13, so a v12 fingerprint is adopted, not flagged).
 // ADDITIVE and COMPATIBLE: existing rows carry null and the table starts empty; an older build ignores both. The table also joins the health check (row_fingerprints spec, the three fp_ triggers in the same migration, cell and structure scans). No SCHEMA_BUMPS entry. The pin was recomputed twice.
 // Comment-only edits to migrations.ts and migration-18-parts.ts (stale plan pointers removed) changed the pinned text, not the shape; the pin was recomputed again.
-const PINNED_SHAPE_HASH = "97fd7f8e6c4667b8f0ca0d7b9624140a3170dd18c84e19d9935c6cbe20e7c46f";
+// 2026-10-26, the dock overlay (always open on launch): settings-shape.ts drops the `dockSlim` key name ("shell.dockSlim"); hiding the dock
+// is now session-only. COMPATIBLE: parseSettings keeps unknown keys, so a saved "shell.dockSlim" stays on disk untouched and is simply
+// not read; an older build still reads it. No SCHEMA_BUMPS entry. The pin was recomputed.
+const PINNED_SHAPE_HASH = "ac3e6af2475e9c3ba5a5a2570b0a94c7dedad6134c680867f739619932f5f0aa";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

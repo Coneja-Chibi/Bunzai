@@ -8,5 +8,4 @@ html[data-surface-library-card="playbill-cover"] {
   & .lib.rc .rasset.book > .rart { padding: 0; aspect-ratio: 2 / 3; flex-shrink: 0; }
   & .lib.rc .rasset.book .rart::before { display: none; }
   & .lib.rc .rasset.book :is(.rameta, .rabody, .rstats) { display: none; }
-  & .lib.rc .rstart { background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); box-shadow: none; }
 }

@@ -1,6 +1,7 @@
 /**
  * StructuredPersona - Agnai persona kind + attribute map editor (approved vs-agnai-components).
  */
+import { Button, IconButton, Segmented } from "../button";
 import { useState, type JSX, type KeyboardEvent } from "react";
 import {
   PERSONA_KINDS,
@@ -26,17 +27,14 @@ export function StructuredPersona({ value, onChange }: StructuredPersonaProps): 
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.kinds} role="group" aria-label="Persona format">
-        {PERSONA_KINDS.map((k) => (
-          <button
-            key={k}
-            type="button"
-            className={persona.kind === k ? `${styles.kind} ${styles.kindOn}` : styles.kind}
-            onClick={() => commit(setKind(persona, k))}
-          >
-            {k}
-          </button>
-        ))}
+      <div className={styles.kinds}>
+        <Segmented
+          size="sm"
+          label="Persona format"
+          value={persona.kind}
+          onChange={(k) => commit(setKind(persona, k))}
+          items={PERSONA_KINDS.map((k) => ({ value: k, label: k }))}
+        />
       </div>
 
       {persona.kind === "text" ? (
@@ -55,9 +53,11 @@ export function StructuredPersona({ value, onChange }: StructuredPersonaProps): 
               onRemove={() => commit(removeAttribute(persona, key))}
             />
           ))}
-          <button type="button" className={styles.add} onClick={() => commit(addAttribute(persona))}>
-            + attribute row
-          </button>
+          <div className={styles.add}>
+            <Button size="sm" onClick={() => commit(addAttribute(persona))}>
+              + Attribute row
+            </Button>
+          </div>
         </>
       )}
     </div>
@@ -97,22 +97,17 @@ function AttrRow(props: {
           onChange={(e) => onKeyChange(e.target.value)}
           aria-label="Attribute name"
         />
-        <button type="button" className={styles.rm} onClick={onRemove}>
-          remove
-        </button>
+        <div className={styles.rm}>
+          <Button size="sm" variant="danger" onClick={onRemove}>
+            Remove
+          </Button>
+        </div>
       </div>
       <div className={styles.chips}>
         {values.filter(Boolean).map((v, i) => (
           <span className={styles.chip} key={`${v}-${i}`}>
             {v}
-            <button
-              type="button"
-              className={styles.chipX}
-              aria-label={`Remove ${v}`}
-              onClick={() => onValuesChange(values.filter((_, j) => j !== i))}
-            >
-              ×
-            </button>
+            <IconButton variant="quiet" size="sm" icon="lucide:x" label={`Remove ${v}`} onClick={() => onValuesChange(values.filter((_, j) => j !== i))} />
           </span>
         ))}
         <input

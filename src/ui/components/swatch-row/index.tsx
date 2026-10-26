@@ -7,6 +7,7 @@
  * Fully controlled, hex-only contract: `value` in, `onChange(hex)` out - the setup accent step
  * (src/ui/setup/steps/accent/index.tsx) already assumes exactly this shape.
  */
+import { Tile } from "../button";
 import { useState } from "react";
 import type { JSX } from "react";
 import { PaintPicker } from "../paint-picker";
@@ -51,29 +52,14 @@ export function SwatchRow({ palette, value, onChange, allowCustom }: SwatchRowPr
     <div className={styles.wrap}>
       <div className={styles.row}>
         {palette.map((choice) => (
-          <button
-            key={choice.id}
-            type="button"
-            className={eq(choice.hex, current) ? `${styles.sw} ${styles.on}` : styles.sw}
-            style={{ background: choice.hex }}
-            title={choice.label}
-            aria-pressed={eq(choice.hex, current)}
-            onClick={() => onChange(choice.hex)}
-          >
-            <span className={styles.lbl}>{choice.label}</span>
-          </button>
+          <span key={choice.id} className={styles.cell}>
+            <Tile kind="swatch" label={choice.label} caption={choice.label} color={choice.hex} selected={eq(choice.hex, current)} aria-pressed={eq(choice.hex, current)} onClick={() => onChange(choice.hex)} />
+          </span>
         ))}
         {allowCustom && (
-          <button
-            type="button"
-            className={`${styles.sw} ${styles.custom} ${isCustom ? styles.on : styles.empty}`}
-            style={isCustom ? { background: current } : undefined}
-            title="Custom color"
-            aria-pressed={isCustom}
-            onClick={() => setOpen((o) => !o)}
-          >
-            <span className={styles.lbl}>custom</span>
-          </button>
+          <span className={`${styles.cell}${isCustom ? "" : ` ${styles.empty}`}`}>
+            <Tile kind="swatch" label="Custom color" caption="custom" color={isCustom ? current : "var(--swatch-spectrum)"} selected={isCustom} aria-pressed={isCustom} onClick={() => setOpen((o) => !o)} />
+          </span>
         )}
       </div>
       {allowCustom && open && (

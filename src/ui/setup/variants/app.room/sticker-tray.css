@@ -3,11 +3,11 @@ html[data-surface-app-room="sticker-tray"] .vsetup {
   & .screen { grid-template-columns: minmax(0, 1fr) minmax(0, 19rem); }
   & .qcard { box-shadow: 6px 6px 0 0 var(--ink); border-width: 4px; }
   & .stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
-  & .opt { border-width: 3px; box-shadow: 4px 4px 0 0 var(--ink); min-height: 5.5rem; }
+  & .stack [data-control="card"] { border-width: 3px; box-shadow: 4px 4px 0 0 var(--ink); min-height: 5.5rem; }
   & .dots i { width: 2rem; height: .7rem; }
   & .house { position: static; }
   & .proscenium { border-width: 4px; box-shadow: 6px 6px 0 0 var(--ink); }
   & .proscenium::before, & .orn { display: none; }
   & .stage { min-height: 18rem; }
 }
-@media (max-width: 57.5rem) { html[data-surface-app-room="sticker-tray"] .vsetup .stack { grid-template-columns: 1fr; } }
+@container (max-width: 57.5rem) { html[data-surface-app-room="sticker-tray"] .vsetup .stack { grid-template-columns: 1fr; } }

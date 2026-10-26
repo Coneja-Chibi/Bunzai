@@ -24,7 +24,6 @@ export {
 } from "./risu-named";
 
 export {
-  packFromLumiExpressions,
   lumiExpressionsFromPack,
   packsFromLumiGroups,
   lumiGroupsFromPacks,

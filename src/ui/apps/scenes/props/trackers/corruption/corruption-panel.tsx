@@ -10,6 +10,7 @@ import {
   type Level, type Metric, type Npc,
 } from "../../../../../../core/trackers/corruption";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -40,8 +41,8 @@ function Preview({ n }: { n: Made }): JSX.Element {
 function Pm({ onMinus, onPlus, label }: { onMinus(): void; onPlus(): void; label: string }): JSX.Element {
   return (
     <>
-      <button type="button" className="cr-step down" aria-label={`Lower ${label} by 5`} onClick={onMinus}>-5</button>
-      <button type="button" className="cr-step up" aria-label={`Raise ${label} by 5`} onClick={onPlus}>+5</button>
+      <Button size="sm" tone="var(--stage-ok)" aria-label={`Lower ${label} by 5`} onClick={onMinus}>-5</Button>
+      <Button size="sm" tone="var(--stage-danger-text)" aria-label={`Raise ${label} by 5`} onClick={onPlus}>+5</Button>
     </>
   );
 }
@@ -106,7 +107,7 @@ export function CorruptionPanel({ ctx, chat, onChat, popOut }: PopoutContext): J
                     <Chips items={n.effects ?? []} />
                     {n.description && <em className="it-note">{n.description}</em>}
                     <RefreshByModel<Made> ctx={ctx} chatId={chat.id} ask={ASK} noun="NPC" existing={n} preview={(x) => <Preview n={x} />} accept={(x) => act({ kind: "npcRefresh", id: n.id, npc: x })}
-                      extra={<button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete" onClick={inner(() => act({ kind: "npcRemove", id: n.id, at: Date.now() }, `Deleted ${n.npcName}`))}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>} />
+                      extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete" onClick={inner(() => act({ kind: "npcRemove", id: n.id, at: Date.now() }, `Deleted ${n.npcName}`))}>Delete</Button></span>} />
                   </div>
                 ))}
               </div>

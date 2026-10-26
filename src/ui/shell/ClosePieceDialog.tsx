@@ -1,5 +1,6 @@
 /** Shell-owned confirmation before closing an editor that still has unsaved changes. */
 import type { JSX } from "react";
+import { Button } from "../components/button";
 import { InkDialog } from "../components/ink-dialog";
 import { useShellStore } from "./store";
 
@@ -18,12 +19,12 @@ export function ClosePiecePrompt({
     <>
       <p className="msg">{name} has unsaved changes. Close this tab and discard them?</p>
       <div className="actions">
-        <button className="yes" onClick={onDiscard}>
+        <Button variant="danger" onClick={onDiscard}>
           Discard changes
-        </button>
-        <button className="no" autoFocus onClick={onKeep}>
+        </Button>
+        <Button autoFocus onClick={onKeep}>
           Keep editing
-        </button>
+        </Button>
       </div>
     </>
   );

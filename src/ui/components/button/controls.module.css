@@ -1,0 +1,27 @@
+/* Small control parts of the button family (section 2 of the button-family wireframe). Theme colors only, square. */
+.toggle { display: inline-flex; align-items: center; gap: .5rem; flex: none; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; font: 500 calc(var(--text-control, .875rem) * .9) var(--font-body); color: var(--text-soft); }
+.toggle:disabled { cursor: not-allowed; opacity: .5; }
+.whole { display: flex; width: 100%; justify-content: space-between; text-align: left; color: inherit; font: inherit; }
+.track { position: relative; flex: none; width: 2.75rem; height: 1.5rem; border: 2px solid var(--control-boundary); background: var(--stamp-shadow); transition: background-color var(--bk-dur-base) var(--bk-ease-move), border-color var(--bk-dur-base) var(--bk-ease-move); }
+.knob { position: absolute; top: 2px; left: 2px; width: calc(1.5rem - 8px); height: calc(1.5rem - 8px); background: var(--text-soft); transition: left var(--bk-dur-base) var(--bk-ease-move), background-color var(--bk-dur-base) var(--bk-ease-move); }
+.on .track { border-color: var(--toggle-on, var(--accent)); background: color-mix(in srgb, var(--toggle-on, var(--accent)) 30%, var(--stamp-shadow)); }
+.on .knob { left: calc(100% - (1.5rem - 8px) - 2px); background: var(--text); }
+.mixed .track { border-color: var(--toggle-on, var(--accent)); }
+.mixed .knob { left: calc(50% - (1.5rem - 8px) / 2); background: var(--toggle-on, var(--accent)); }
+.sm .track { width: 2rem; height: 1rem; }
+.sm .knob { width: calc(1rem - 8px); height: calc(1rem - 8px); }
+.sm.on .knob { left: calc(100% - (1rem - 8px) - 2px); }
+.sm.mixed .knob { left: calc(50% - (1rem - 8px) / 2); }
+.toggle:focus-visible .track { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.inline { margin: 0; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: text; border-bottom: 1px dashed color-mix(in srgb, var(--text) 40%, transparent); }
+.inline:hover:not(:disabled) { border-bottom-color: var(--accent); }
+.inline:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.scrim { position: absolute; inset: 0; margin: 0; padding: 0; border: 0; background: color-mix(in srgb, var(--stamp-shadow) 45%, transparent); cursor: pointer; display: grid; place-items: center; color: var(--text-soft); font: inherit; }
+.scrim:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -4px; }
+@media (prefers-reduced-motion: reduce) { .track, .knob { transition: none; } }
+.card { align-items: center; gap: 16px; padding: 12px 14px; border: 2px solid var(--control-boundary); background: var(--chrome); transition: border-color var(--bk-dur-base) var(--bk-ease-move), background-color var(--bk-dur-base) var(--bk-ease-move); }
+.card:hover:not(:disabled) { border-color: var(--text-soft); }
+.card.on { border-color: var(--toggle-on, var(--accent)); background: color-mix(in srgb, var(--toggle-on, var(--accent)) 12%, var(--chrome)); }
+.scrim[data-transparent] { background: none; }

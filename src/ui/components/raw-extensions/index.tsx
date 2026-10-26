@@ -8,7 +8,7 @@
 import { useState } from "react";
 import type { JSX } from "react";
 import { ExpandTextarea } from "../expand";
-import { ToggleSwitch } from "../toggle-switch";
+import { Toggle } from "../button";
 import { numOr } from "../../../core/guards";
 import styles from "./styles.module.css";
 
@@ -49,7 +49,7 @@ function JsonField({ label, value, onCommit }: { label: string; value: unknown; 
 }
 
 function valueControl(key: string, value: unknown, onChange: (v: unknown) => void): JSX.Element {
-  if (typeof value === "boolean") return <ToggleSwitch on={value} onChange={onChange} label={value ? "On" : "Off"} />;
+  if (typeof value === "boolean") return <Toggle on={value} onChange={onChange} label={value ? "On" : "Off"} />;
   if (typeof value === "number") {
     return (
       <input

@@ -1,6 +1,7 @@
 /**
  * Workshop left rail: Starters door, card parts, package parts + honesty banner.
  */
+import { ListRow } from "../../../components/button";
 import type { JSX } from "react";
 import { PACKAGE_BANNER } from "./board";
 import { WorkshopNotice } from "./notice";
@@ -20,16 +21,16 @@ export function WorkshopRail({ parts, part, onPart, hasPackage }: WorkshopRailPr
   const pack = parts.filter((p) => p.id.startsWith("mod"));
 
   const btn = (p: RailPart): JSX.Element => (
-    <button
+    <ListRow
       key={p.id}
-      type="button"
       data-tour={p.tour}
-      className={`${styles.part}${p.id === part ? ` ${styles.partOn}` : ""}${p.sealed ? ` ${styles.sealed}` : ""}`}
+      selected={p.id === part}
+      aria-current={p.id === part ? "true" : undefined}
       onClick={() => onPart(p.id)}
-    >
-      <span className={styles.ico}>{p.ico}</span> {p.label}
-      {p.count !== undefined && <span className={styles.ct}>{p.count}</span>}
-    </button>
+      leading={<span className={p.sealed ? styles.icoSealed : undefined}>{p.ico}</span>}
+      label={p.label}
+      meta={p.count}
+    />
   );
 
   return (

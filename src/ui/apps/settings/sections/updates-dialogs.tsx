@@ -7,6 +7,7 @@
 import type { JSX } from "react";
 import { isFeatureAware } from "../../../_shared/switch-decision";
 import type { SwitchOutcome } from "../../../_shared/pending-switch";
+import { Button } from "../../../components/button";
 import styles from "./updates.module.css";
 import { Ic } from "../../../_shared/ic";
 
@@ -55,12 +56,12 @@ export function ConfirmSwitch({
           restarts itself when it is ready.
         </div>
         <div className={styles.actions}>
-          <button type="button" className={rollback ? `${styles.btn} ${styles.btnDanger}` : styles.btn} onClick={onConfirm}>
+          <Button variant={rollback ? "danger" : "primary"} onClick={onConfirm}>
             {rollback ? "Roll back" : "Update"}
-          </button>
-          <button type="button" className={styles.btnGhost} onClick={onCancel}>
+          </Button>
+          <Button size="sm" variant="quiet" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </>
     </Modal>
@@ -103,12 +104,12 @@ export function SwitchResult({
           <div className={styles.big}>You are now on {outcome.to}</div>
           <div className={styles.sub}>Done. Everything is ready.</div>
           <div className={styles.actionsCenter}>
-            <button type="button" className={styles.btn} onClick={onDone}>
+            <Button variant="primary" onClick={onDone}>
               Done
-            </button>
-            <button type="button" className={styles.btnGhost} onClick={() => onUndo(outcome.from)}>
+            </Button>
+            <Button size="sm" onClick={() => onUndo(outcome.from)}>
               Undo, back to {outcome.from}
-            </button>
+            </Button>
           </div>
         </>
       </Modal>
@@ -126,9 +127,9 @@ export function SwitchResult({
             The switch to {outcome.to} did not complete, so nothing changed. Your app is exactly as it was.
           </div>
           <div className={styles.actionsCenter}>
-            <button type="button" className={styles.btn} onClick={onDone}>
+            <Button variant="primary" onClick={onDone}>
               OK
-            </button>
+            </Button>
           </div>
         </>
       </Modal>

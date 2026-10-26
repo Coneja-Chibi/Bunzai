@@ -6,6 +6,7 @@
  * keyword pass that reads it. A book the scene switched off in the World wing is shown, and says it is not read.
  */
 import { useRef, useState, type JSX } from "react";
+import { Button, Chip } from "../../../../../components/button";
 import { accessOf, canWrite } from "../../../../../../core/compendium/defaults";
 import type { ChatCompendiumPatch, CompendiumAccess } from "../../../../../../stage/contracts/chat-store";
 import type { SceneLoreBook } from "../../../../../app-contract-scenes";
@@ -31,9 +32,9 @@ function BookCard({ book, access, isDefault, set }: { book: SceneLoreBook; acces
           <em>{book.missing ? "Not in your library" : !book.enabled ? "Switched off in the World wing" : `${book.entries} entries`}</em>
         </span>
         {on && canWrite(access) && (
-          <button type="button" className={`cps-chip${isDefault ? " on" : ""}`} aria-pressed={isDefault}
+          <Chip pressed={isDefault}
             title={isDefault ? "Clear the default write book" : "Use this book when a Compendium write does not name a book"}
-            onClick={() => void set({ writeBook: isDefault ? null : book.id })}>{isDefault ? "Default write book · Clear" : "Make default"}</button>
+            onClick={() => void set({ writeBook: isDefault ? null : book.id })}>{isDefault ? "Default write book · Clear" : "Make default"}</Chip>
         )}
       </div>
       {on && <SettingsSegmented label="Access" hint="Choose exactly how Compendium may use this book." value={access} options={LEVELS}
@@ -68,7 +69,7 @@ export function BooksSection({ ctx, chat, compendium, lore, set }: SectionProps)
       {lore.lore.state === "ready" && books.length === 0 && <p className="cps-hint">No lorebook is attached to this scene.</p>}
       {books.map((b) => <BookCard key={b.id} book={b} access={accessOf(compendium.saved, b.id)} isDefault={compendium.saved?.writeBook === b.id} set={set} />)}
       <div className="cps-make">
-        <button type="button" className="cps-btn" disabled={making || lore.lore.state !== "ready"} onClick={() => void make()}>Make a book for this scene</button>
+        <Button disabled={making || lore.lore.state !== "ready"} onClick={() => void make()}>Make a book for this scene</Button>
         <p className="cps-hint">Creates a library lorebook named &quot;{chat.title} Compendium&quot;, adds it to this scene and makes it the default write book.</p>
       </div>
     </SettingsSection>

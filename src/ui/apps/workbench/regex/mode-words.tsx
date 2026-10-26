@@ -10,6 +10,7 @@
  * advanced pattern opened here is preserved until the author actually types. The pattern is rendered
  * as plain text only - never innerHTML.
  */
+import { Chip, Segmented, Toggle } from "../../../components/button";
 import { useMemo, useState, type JSX } from "react";
 import type { RegexRule } from "../../../../entities/regex/schema";
 import {
@@ -21,7 +22,6 @@ import {
   type WordsBuilderState,
 } from "../../../../core/regex";
 import { mulberry32 } from "../../../../core/lore/rng";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 import { ExampleMode } from "./example-mode";
 import { fieldOr, framed as f, useFramed } from "../framed";
 
@@ -89,24 +89,16 @@ export function ModeWords({ rule, styles, onPatch }: ModeWordsProps): JSX.Elemen
 
   return (
     <>
-      <span className={styles.subMode} role="group" aria-label="How to describe the match">
-        <button
-          type="button"
-          className={subMode === "words" ? `${styles.sm} ${styles.smOn}` : styles.sm}
-          aria-pressed={subMode === "words"}
-          onClick={() => pickSubMode("words")}
-        >
-          Match these words
-        </button>
-        <button
-          type="button"
-          className={subMode === "example" ? `${styles.sm} ${styles.smOn}` : styles.sm}
-          aria-pressed={subMode === "example"}
-          onClick={() => pickSubMode("example")}
-        >
-          Match by example
-        </button>
-      </span>
+      <Segmented
+        label="How to describe the match"
+        size="sm"
+        items={[
+          { value: "words", label: "Match these words" },
+          { value: "example", label: "Match by example" },
+        ]}
+        value={subMode}
+        onChange={pickSubMode}
+      />
 
       {partial && (
         <p className={styles.wordNote}>
@@ -130,13 +122,7 @@ export function ModeWords({ rule, styles, onPatch }: ModeWordsProps): JSX.Elemen
           {canOptimize && (
             <div className={styles.optimize}>
               <span className={styles.optLabel}>It sees a family:</span>
-              <button
-                type="button"
-                className={styles.optChip}
-                onClick={() => update({ wordsInput: built.optimizedWords.join(", ") })}
-              >
-                use {built.optimizedWords.join(", ")}
-              </button>
+              <Chip onClick={() => update({ wordsInput: built.optimizedWords.join(", ") })}>Use {built.optimizedWords.join(", ")}</Chip>
             </div>
           )}
           {built.familyWarning && <div className={styles.famWarn}>{built.familyWarning}</div>}
@@ -198,8 +184,8 @@ export function ModeWords({ rule, styles, onPatch }: ModeWordsProps): JSX.Elemen
                 {c}
               </label>
             ))}
-            <ToggleSwitch size="sm" on={state.wholeWordsOnly} label="Whole words only" onChange={(wholeWordsOnly) => update({ wholeWordsOnly })} />
-            <ToggleSwitch size="sm" on={state.caseSensitive} label="Match case exactly" onChange={(caseSensitive) => update({ caseSensitive })} />
+            <Toggle size="sm" on={state.wholeWordsOnly} label="Whole words only" onChange={(wholeWordsOnly) => update({ wholeWordsOnly })} />
+            <Toggle size="sm" on={state.caseSensitive} label="Match case exactly" onChange={(caseSensitive) => update({ caseSensitive })} />
           </div>
 
           {built.wholeWordDropped && (

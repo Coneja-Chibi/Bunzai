@@ -54,7 +54,7 @@ test("the Overlay tile opens the overlay without changing the active app", () =>
   try {
     useShellStore.setState({ manifests: [{ id: "library", title: "The Library", markSvg: "<svg/>", accent: "var(--accent)", order: 1 }], activeAppId: "library", overlayOpen: false, dockSlim: false });
     flushSync(() => root.render(<Dock />));
-    const tile = dom.window.document.querySelector<HTMLButtonElement>('[aria-label="Overlay"]'); expect(tile !== null).toBe(true);
+    const tile = dom.window.document.querySelector<HTMLButtonElement>('[data-part="shell.nav.overlay"]'); expect(tile !== null).toBe(true);
     flushSync(() => tile!.click());
     expect(useShellStore.getState().overlayOpen).toBe(true); expect(useShellStore.getState().activeAppId).toBe("library");
   } finally { flushSync(() => root.unmount()); useShellStore.setState(original); }

@@ -12,6 +12,7 @@
  * editor, in a conversion, and on its own with no piece open at all. The last one is the common
  * case and had nowhere to live: every other surface here needs a piece first.
  */
+import { Button, IconButton, Segmented, Tabs } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
 import {
   useCallback,
@@ -178,20 +179,13 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
         </p>
       </header>
 
-      <div className={styles.lenses} role="radiogroup" aria-label="Platform">
-        {LAB_LENSES.map((id) => (
-          <button
-            key={id}
-            type="button"
-            role="radio"
-            aria-checked={id === lens}
-            className={`${styles.lens}${id === lens ? ` ${styles.lensOn}` : ""}`}
-            onClick={() => setLens(id)}
-          >
-            {MACRO_DIALECT_LABELS[id]}
-            {engines.some((e) => e.id === id) ? " ·" : ""}
-          </button>
-        ))}
+      <div className={styles.lenses}>
+        <Segmented
+          label="Platform"
+          value={lens}
+          onChange={setLens}
+          items={LAB_LENSES.map((id) => ({ value: id, label: `${MACRO_DIALECT_LABELS[id]}${engines.some((e) => e.id === id) ? " ·" : ""}` }))}
+        />
       </div>
 
       <div className={styles.boxes}>
@@ -255,23 +249,23 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
                   aria-label={`Variable ${i + 1} value`}
                   onChange={(e) => setVar(i, { value: e.target.value })}
                 />
-                <button
-                  type="button"
-                  className={styles.drop}
-                  aria-label={`Remove variable ${i + 1}`}
+                <IconButton
+                  variant="quiet"
+                  size="sm"
+                  icon="lucide:x"
+                  label={`Remove variable ${i + 1}`}
                   onClick={() => setVars(vars.length === 1 ? [{ key: "", value: "" }] : vars.filter((_, j) => j !== i))}
-                >
-                  x
-                </button>
+                />
               </div>
             ))}
-            <button
-              type="button"
-              className={styles.more}
-              onClick={() => setVars([...vars, { key: "", value: "" }])}
-            >
-              Add a variable
-            </button>
+            <div className={styles.more}>
+              <Button
+                size="sm"
+                onClick={() => setVars([...vars, { key: "", value: "" }])}
+              >
+                Add a variable
+              </Button>
+            </div>
           </div>
         </section>
 
@@ -283,19 +277,13 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
             onResolve={() => void resolve()}
           />
 
-          <div className={styles.tabs} role="tablist" aria-label="Reference">
-            {VIEWS.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                role="tab"
-                aria-selected={v.id === view}
-                className={`${styles.tab}${v.id === view ? ` ${styles.tabOn}` : ""}`}
-                onClick={() => setView(v.id)}
-              >
-                {v.label}
-              </button>
-            ))}
+          <div className={styles.tabs}>
+            <Tabs
+              label="Reference"
+              value={view}
+              onChange={setView}
+              items={VIEWS.map((v) => ({ value: v.id, label: v.label }))}
+            />
           </div>
 
           {view === "reading" ? <ReadingPane text={text} lens={lens} /> : null}

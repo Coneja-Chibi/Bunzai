@@ -17,7 +17,7 @@ async function edit(act: (flushSync: FlushSync) => Promise<void> | void, opts: {
   const flushSync = await mountWing();
   await openBook(flushSync);
   await openEntry(flushSync, "The storm");
-  if (opts.advanced && !q(".wl-ord")) await press(flushSync, q(".wl-adv")); // the open state is remembered across entries
+  if (opts.advanced && !q(".wl-ord")) await press(flushSync, q("[data-part='scene.lore.advanced']")); // the open state is remembered across entries
   await act(flushSync);
   unmount(flushSync);
   await settle(flushSync, 80);
@@ -37,7 +37,7 @@ describe("the header", () => {
   });
   test("the type dropdown writes constant, and the status dot follows", async () => {
     const saved = await edit(async (f) => {
-      await press(f, q(".wl-type"), 5);
+      await press(f, q("[data-part='scene.lore.type']"), 5);
       await choose(f, ".wl-dd button", "Constant");
       expect(q(".wl-eh1 .dot")!.className).toContain("con");
     }, { advanced: true });
@@ -136,18 +136,18 @@ describe("injection, timing, recursion and group", () => {
   test("each position card writes its position", async () => {
     for (const [card, position] of [["World", "world"], ["Character", "character"], ["Scene", "scene"], ["Top", "prepend_top"], ["Bottom", "append_bottom"]] as const) {
       resetLore();
-      expect((await edit((f) => choose(f, ".wl-pc", card), { advanced: true })).position).toBe(position);
+      expect((await edit((f) => choose(f, "[data-part='scene.lore.position'] button", card), { advanced: true })).position).toBe(position);
     }
   });
   test("@ Depth and Append take a depth and a role once chosen", async () => {
     const depth = await edit(async (f) => {
-      await choose(f, ".wl-pc", "@ Depth");
+      await choose(f, "[data-part='scene.lore.position'] button", "@ Depth");
       number(f, "Injection depth", "6");
       typeInto(f, byLabel("Injection role"), "user");
     }, { advanced: true });
     expect([depth.position, depth.depth, depth.role]).toEqual(["depth", 6, "user"]);
     resetLore();
-    const append = await edit(async (f) => { await choose(f, ".wl-pc", "Append"); number(f, "Append depth", "2"); }, { advanced: true });
+    const append = await edit(async (f) => { await choose(f, "[data-part='scene.lore.position'] button", "Append"); number(f, "Append depth", "2"); }, { advanced: true });
     expect([append.position, append.depth]).toEqual(["append", 2]);
   });
   test("Sticky, Cool and Delay write their message counts", async () => {
@@ -155,11 +155,11 @@ describe("injection, timing, recursion and group", () => {
     expect([saved.sticky, saved.cooldown, saved.delay]).toEqual([3, 2, 1]);
   });
   test("Normal, Prevent and Delay write the recursion fields", async () => {
-    expect(await edit((f) => choose(f, ".wl-rc", "Prevent"), { advanced: true })).toMatchObject({ preventRecursion: true, delayUntilRecursion: 0 });
+    expect(await edit((f) => choose(f, '[aria-label="Recursion"] button', "Prevent"), { advanced: true })).toMatchObject({ preventRecursion: true, delayUntilRecursion: 0 });
     resetLore();
-    expect(await edit((f) => choose(f, ".wl-rc", "Delay"), { advanced: true })).toMatchObject({ preventRecursion: false, delayUntilRecursion: 1 });
+    expect(await edit((f) => choose(f, '[aria-label="Recursion"] button', "Delay"), { advanced: true })).toMatchObject({ preventRecursion: false, delayUntilRecursion: 1 });
     resetLore([entry("key1", { title: "The storm", preventRecursion: true })]);
-    expect(await edit((f) => choose(f, ".wl-rc", "Normal"), { advanced: true })).toMatchObject({ preventRecursion: false, delayUntilRecursion: 0 });
+    expect(await edit((f) => choose(f, '[aria-label="Recursion"] button', "Normal"), { advanced: true })).toMatchObject({ preventRecursion: false, delayUntilRecursion: 0 });
   });
   test("a group is named in the box (existing ones are offered), weighted, and removed", async () => {
     resetLore([entry("key1", { title: "The storm" }), entry("key2", { title: "Sun", groupName: "weather" })]);

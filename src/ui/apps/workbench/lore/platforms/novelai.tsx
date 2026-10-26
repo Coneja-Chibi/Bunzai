@@ -7,7 +7,7 @@ import { patchContextConfig } from "../entry-extras";
 import { fieldOr, useFramed } from "../../framed";
 import type { LorePlatformCard, LorePlatformCardProps } from "./card-contract";
 import { NovelAiBiasBlock } from "./novelai-bias";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
+import { Toggle } from "../../../../components/button";
 
 const openOptions = (known: readonly string[], current: string | undefined): string[] =>
   current && !known.includes(current) ? [...known, current] : [...known];
@@ -35,7 +35,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
                 <b>Key-relative</b>
                 <span>Keys match near this entry's insertion, not only the story tail.</span>
               </div>
-              <ToggleSwitch size="sm" on={entry.keyRelative === true} aria-label="Keys match near the entry" onChange={() =>
+              <Toggle size="sm" on={entry.keyRelative === true} aria-label="Keys match near the entry" onChange={() =>
                   onPatch({ keyRelative: entry.keyRelative === true ? undefined : true })
                 } />
             </div>
@@ -44,7 +44,7 @@ function Component({ entry, show, styles, onPatch }: LorePlatformCardProps): JSX
                 <b>Non-story</b>
                 <span>Can activate outside story text (UI and other sources).</span>
               </div>
-              <ToggleSwitch size="sm" on={entry.nonStoryActivatable === true} aria-label="Can activate outside story text" onChange={() =>
+              <Toggle size="sm" on={entry.nonStoryActivatable === true} aria-label="Can activate outside story text" onChange={() =>
                   onPatch({
                     nonStoryActivatable: entry.nonStoryActivatable === true ? undefined : true,
                   })

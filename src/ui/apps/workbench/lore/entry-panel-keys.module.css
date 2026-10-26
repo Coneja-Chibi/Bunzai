@@ -68,17 +68,6 @@
   align-items: center;
 }
 
-.keyx {
-  font: inherit;
-  font-family: var(--font-mono);
-  border: 0;
-  background: transparent;
-  color: var(--stage-text-dim);
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
-
 .keyPct {
   font: inherit;
   font-family: var(--font-mono);
@@ -136,10 +125,6 @@
 
 .keyPicked {
   background: var(--selection);
-  color: var(--selection-fg);
-}
-
-.keyPicked .keyx {
   color: var(--selection-fg);
 }
 
@@ -295,21 +280,6 @@
   margin-left: auto;
 }
 
-.macro {
-  font: inherit;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-text-dim);
-  padding: 0.15rem 0.35rem;
-  cursor: pointer;
-}
-
-.macro:hover {
-  color: var(--stage-soft);
-  border-color: var(--stage-soft);
-}
 
 .textarea {
   font: inherit;
@@ -348,27 +318,9 @@
   color: var(--stage-text-dim);
 }
 
-.fldBtn {
-  font: inherit;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.26rem 0.42rem;
-  cursor: pointer;
-}
-
 .fldHot {
   border-color: var(--stage-warn);
   color: var(--stage-warn);
-}
-
-.fldOn {
-  border-color: var(--stage-ok);
-  color: var(--stage-ok);
 }
 
 .num {

@@ -8,6 +8,7 @@
 import type { CSSProperties, JSX } from "react";
 import type { Speaker } from "../../../core/participants/roster";
 import { Ic } from "../../_shared/ic";
+import { Button } from "../../components/button";
 import { Bubble } from "./scene-bubble";
 import type { ReasoningFormat } from "../../../core/reasoning-tags";
 import { reasoningOf } from "./scene-reasoning-core";
@@ -33,7 +34,7 @@ export function LiveBubble({ n, who, tone, art, live, format, prefs, speakers }:
 export function CutOff({ busy, onRegenerate }: { busy: boolean; onRegenerate(): void }): JSX.Element {
   return (
     <div className="cutoff"><Ic name="lucide:circle-alert" size={14} /><span className="grow">Cut off when Bunraku closed. <small>What arrived is kept.</small></span>
-      <button type="button" disabled={busy} onClick={onRegenerate}>Regenerate</button></div>
+      <Button size="sm" disabled={busy} onClick={onRegenerate}>Regenerate</Button></div>
   );
 }
 
@@ -44,8 +45,8 @@ export function FailCard({ code, message, draft, onDismiss, onRetry }: { code: s
       <div className="top">
         <span className="ic"><Ic name="lucide:circle-alert" size={20} /></span>
         <div><div className="tt">Generation Failed</div><div className="ln"><code>{code}</code>{message}</div></div>
-        <button type="button" className="dis" onClick={onDismiss}>Dismiss</button>
-        {onRetry && <button type="button" className="dis go" onClick={onRetry}>Retry</button>}
+        <span className="dis"><Button variant="quiet" size="sm" onClick={onDismiss}>Dismiss</Button>
+          {onRetry && <Button size="sm" onClick={onRetry}>Retry</Button>}</span>
       </div>
       {draft && (
         <div className="dr">Interrupted draft (not saved)
@@ -64,8 +65,8 @@ export function HeldCard({ draft, onDiscard, onKeep }: { draft: string; onDiscar
       <div className="top">
         <span className="ic warn"><Ic name="lucide:circle-alert" size={20} /></span>
         <div><div className="tt">The scene changed while it answered</div><div className="ln">Something was added to this take while the reply was being written. The reply is kept, waiting.</div></div>
-        <button type="button" className="dis" onClick={onDiscard}>Discard</button>
-        <button type="button" className="dis go" onClick={onKeep}>Add it at the end</button>
+        <span className="dis"><Button variant="danger" size="sm" onClick={onDiscard}>Discard</Button>
+          <Button size="sm" onClick={onKeep}>Add it at the end</Button></span>
       </div>
       <div className="dr">Waiting reply<textarea readOnly value={draft} aria-label="Waiting reply" /></div>
     </div>

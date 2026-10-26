@@ -10,6 +10,7 @@
  * (`workbench/regex/bench-pane.tsx`) - a keystroke resets the timer, so only the latest input ever
  * feeds `runLore`, and no run started for an older keystroke can land after a newer one's.
  */
+import { Button } from "../../../components/button";
 import { useMemo, useState, type JSX } from "react";
 import type { LorebookBody, LorebookEntry } from "../../../../entities/lorebook/schema";
 import { cryptoUnit, loreWakeGraph, runLore, type LoreHealthNote, type LoreVerdict } from "../../../../core/lore";
@@ -128,13 +129,7 @@ export function LoreEntryRail({
                 <ul className={styles.matchList}>
                   {fired.slice(0, 8).map((v) => (
                     <li key={v.entryId} className={styles.matchHit}>
-                      <button
-                        type="button"
-                        className={styles.linkish}
-                        onClick={() => onSelectEntry?.(v.entryId)}
-                      >
-                        {titleOf(v.entryId)}
-                      </button>
+                      <Button variant="quiet" size="sm" onClick={() => onSelectEntry?.(v.entryId)}>{titleOf(v.entryId)}</Button>
                       <span>
                         {" "}
                         · {loreVerdictText(v, entryOf(v))}
@@ -150,9 +145,7 @@ export function LoreEntryRail({
             </>
           )}
           {onOpenRehearsal && (
-            <button type="button" className={styles.texpBtn} onClick={onOpenRehearsal}>
-              Open Rehearsal
-            </button>
+            <Button size="sm" onClick={onOpenRehearsal}>Open Rehearsal</Button>
           )}
         </div>
       </div>
@@ -195,13 +188,7 @@ export function LoreEntryRail({
                   <ul className={styles.matchList}>
                     {wake.inbound.map((e) => (
                       <li key={`${e.from}-${e.keyword}`} className={styles.matchHit}>
-                        <button
-                          type="button"
-                          className={styles.linkish}
-                          onClick={() => onSelectEntry?.(e.from)}
-                        >
-                          {titleOf(e.from)}
-                        </button>
+                        <Button variant="quiet" size="sm" onClick={() => onSelectEntry?.(e.from)}>{titleOf(e.from)}</Button>
                         <span> · via &quot;{e.keyword}&quot;</span>
                       </li>
                     ))}
@@ -218,13 +205,7 @@ export function LoreEntryRail({
                   <ul className={styles.matchList}>
                     {wake.outbound.map((e) => (
                       <li key={`${e.to}-${e.keyword}`} className={styles.matchHit}>
-                        <button
-                          type="button"
-                          className={styles.linkish}
-                          onClick={() => onSelectEntry?.(e.to)}
-                        >
-                          {titleOf(e.to)}
-                        </button>
+                        <Button variant="quiet" size="sm" onClick={() => onSelectEntry?.(e.to)}>{titleOf(e.to)}</Button>
                         <span> · via &quot;{e.keyword}&quot;</span>
                       </li>
                     ))}
@@ -256,14 +237,10 @@ export function LoreEntryRail({
             </div>
           ))}
           {onOpenHealth && (
-            <button type="button" className={styles.texpBtn} onClick={onOpenHealth}>
-              Open the full check
-            </button>
+            <Button size="sm" onClick={onOpenHealth}>Open the full check</Button>
           )}
           {onOpenChanges && (
-            <button type="button" className={styles.texpBtn} onClick={onOpenChanges}>
-              Open Changes
-            </button>
+            <Button size="sm" onClick={onOpenChanges}>Open Changes</Button>
           )}
         </div>
       </div>

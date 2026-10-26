@@ -4,6 +4,7 @@
  */
 import { useState, type JSX } from "react";
 import type { AppContext } from "../../../../app-contract";
+import { Button } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 
 export const TOUR_PREF = "scenes.director.tour";
@@ -28,7 +29,7 @@ export function DirectorTour({ ctx }: { ctx: AppContext }): JSX.Element | null {
         <ul>{STEPS.map((s) => <li key={s.title}><b>{s.title}.</b> {s.message}</li>)}</ul>
         <p>You're Ready! The Story Director works in the background. Just chat naturally and it'll weave the narrative threads, track your arcs, and make sure no storyline gets forgotten!</p>
       </div>
-      <button type="button" className="dr-btn go" onClick={dismiss}>Got it</button>
+      <Button variant="primary" size="sm" onClick={dismiss}>Got it</Button>
     </aside>
   );
 }

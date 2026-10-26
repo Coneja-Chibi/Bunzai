@@ -8,6 +8,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { CATEGORIES, applyKnowledge, counts, knowledgeLines, liveEntries, readKnowledge, type KnowCategory, type KnowEntry, type Reliability } from "../../../../../../core/trackers/knowledge";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -89,7 +90,7 @@ export function KnowledgePanel({ ctx, chat, onChat, popOut }: PopoutContext): JS
                 )}
                 open={open === e.id} onToggle={() => setOpen(open === e.id ? null : e.id)}>
                 <RefreshByModel<Made> ctx={ctx} chatId={chat.id} ask={ASK} noun="entry" existing={e} preview={(m) => <Preview entry={m} />} accept={(m) => act({ kind: "refresh", id: e.id, entry: m })}
-                  extra={<button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete entry" onClick={inner(() => { act({ kind: "remove", id: e.id, at: Date.now() }, `Deleted ${e.subject}`); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>} />
+                  extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete entry" onClick={inner(() => { act({ kind: "remove", id: e.id, at: Date.now() }, `Deleted ${e.subject}`); setOpen(null); })}>Delete</Button></span>} />
                 <Block title="Knowledge"><p>{e.content}</p></Block>
                 {e.actuallyTrue !== undefined && (
                   <div className="it-box" style={{ "--c": e.actuallyTrue ? "var(--stage-ok)" : "var(--stage-danger-text)" } as CSSProperties}>

@@ -2,6 +2,7 @@
  * row naming what it woke or what woke it and with which word. Presentational; chainGroups (hare-core)
  * does the classifying. */
 import type { CSSProperties, JSX, RefObject } from "react";
+import { IconButton } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { DialogCore } from "../../../../components/dialog-core";
 import type { SceneTrace } from "../../../../app-contract-scenes";
@@ -38,7 +39,7 @@ export function ChainsSheet({ sheetRef, lore, replyNumber, onClose }: {
         <b>Chains</b>
         <small>Reply #{replyNumber} &middot; an entry&apos;s text can wake another entry&apos;s keys</small>
         <span className="grow" />
-        <button type="button" className="tbtn" title="Close" aria-label="Close" onClick={onClose}><Ic name="lucide:x" size={14} /></button>
+        <IconButton size="sm" label="Close" icon="lucide:x" onClick={onClose} />
       </div>
       {groups === null
         ? <div className="hare-none">No lorebooks fired in this reply.</div>

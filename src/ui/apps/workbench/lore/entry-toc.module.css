@@ -244,25 +244,6 @@
   margin: 0 0 0.35rem;
 }
 
-.selMode {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-text-dim);
-  padding: 0.12rem 0.35rem;
-  cursor: pointer;
-}
-
-.selModeOn {
-  border-color: var(--a, var(--accent));
-  color: var(--a, var(--accent));
-}
-
 .tocTitle {
   display: flex;
   align-items: center;
@@ -305,48 +286,6 @@
   gap: 0.35rem;
 }
 
-.bAct {
-  flex: 1;
-  white-space: nowrap;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
-  padding: 0.3rem 0.2rem;
-  cursor: pointer;
-  text-align: center;
-}
-
-.bAct:hover:not(:disabled) {
-  border-color: var(--stage-line);
-  color: var(--stage-card);
-}
-
-.bAct:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-.bActDanger {
-  border-color: var(--stage-danger-edge);
-  color: var(--stage-danger-text);
-}
-
-.bx {
-  margin-left: auto;
-  border: 0;
-  background: none;
-  color: var(--stage-text-dim);
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  line-height: 1;
-}
-
 /* Delete confirm sheet (InkDialog child): the delsheet grammar, re-keyed to stage tokens
    since the binder lives on the dark stage, not the paper library chrome. */
 .bcSheet {
@@ -378,38 +317,6 @@
   gap: 0.5rem;
 }
 
-.bcGo {
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--wb-primary, var(--rose-deep));
-  color: var(--stage-white);
-  border: 3px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  cursor: pointer;
-  padding: 0.45rem 0.9rem;
-}
-
-.bcKeep {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: transparent;
-  color: var(--stage-text-dim);
-  border: 2px solid var(--stage-seam);
-  cursor: pointer;
-  padding: 0.45rem 0.8rem;
-}
-
-.bcKeep:hover {
-  color: var(--stage-card);
-  border-color: var(--stage-black);
-}
-
 .trowOn {
   color: var(--stage-card);
   background: linear-gradient(90deg, color-mix(in srgb, var(--a, var(--accent)) 13%, transparent), transparent);
@@ -439,23 +346,6 @@
   margin: 0;
 }
 
-.tocAdd {
-  width: 100%;
-  font: inherit;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 2px dashed var(--stage-seam);
-  background: none;
-  color: var(--stage-text-dim);
-  padding: 0.4rem;
-  margin-top: 0.7rem;
-  cursor: pointer;
-}
 
-.tocAdd:hover {
-  color: var(--a, var(--accent));
-  border-color: var(--a, var(--accent));
-}
+.tocTitle > :last-child, .bTop > :last-child { margin-left: auto; }
+.bActs > * { flex: 1; }

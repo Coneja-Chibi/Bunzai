@@ -2,6 +2,7 @@
  * Changes pane: facing From/To panels from diffBooks (vs-lore-changes).
  * Baseline is the body as it arrived this sitting (importBaseline).
  */
+import { Button, IconButton, ListRow } from "../../../components/button";
 import { useMemo, type JSX } from "react";
 import type { LorebookBody, LorebookEntry } from "../../../../entities/lorebook/schema";
 import { diffBooks, type FieldChange } from "../../../../core/lore";
@@ -64,9 +65,7 @@ function FieldRow({
           {highlight(change.toText, change.words?.toRanges, "ins")}
         </div>
       </div>
-      <button type="button" className={styles.revert} onClick={onRevert}>
-        Revert
-      </button>
+      <Button size="sm" onClick={onRevert}>Revert</Button>
     </div>
   );
 }
@@ -92,9 +91,7 @@ export function ChangesPane({
       <div className={styles.head}>
         <b>Changes</b>
         <i>since this sitting opened</i>
-        <button type="button" className={styles.x} aria-label="Close changes" onClick={onClose}>
-          &times;
-        </button>
+        <IconButton label="Close changes" variant="quiet" size="sm" icon="lucide:x" onClick={onClose} />
       </div>
       {empty && <p className={styles.clean}>No changes yet this sitting.</p>}
 
@@ -105,14 +102,10 @@ export function ChangesPane({
           ed.entryId;
         return (
           <section key={ed.entryId} className={styles.block}>
-            <button
-              type="button"
-              className={styles.blockHead}
+            <ListRow
               onClick={() => onJumpEntry(ed.entryId)}
-            >
-              {title}
-              {ed.wasTitle ? ` (was ${ed.wasTitle})` : ""}
-            </button>
+              label={`${title}${ed.wasTitle ? ` (was ${ed.wasTitle})` : ""}`}
+            />
             {ed.changes.map((ch) => (
               <FieldRow
                 key={String(ch.field)}
@@ -128,9 +121,7 @@ export function ChangesPane({
       {diff.reordered.map((pair) => (
         <div key={`${pair.aId}-${pair.bId}`} className={styles.swap}>
           <span>Order swapped</span>
-          <button type="button" className={styles.revert} onClick={() => onUndoSwap(pair.aId, pair.bId)}>
-            Undo swap
-          </button>
+          <Button size="sm" onClick={() => onUndoSwap(pair.aId, pair.bId)}>Undo swap</Button>
         </div>
       ))}
 
@@ -146,9 +137,7 @@ export function ChangesPane({
       {diff.removed.map((e) => (
         <div key={e.id} className={styles.removed}>
           <span>Removed: {e.title || e.id}</span>
-          <button type="button" className={styles.revert} onClick={() => onRestoreEntry(e)}>
-            Bring back
-          </button>
+          <Button size="sm" onClick={() => onRestoreEntry(e)}>Bring back</Button>
         </div>
       ))}
     </aside>

@@ -1,7 +1,7 @@
 /**
  * MobileEditorHead styles - transcribed from design/vs-mobile-editors.html (.mhead family).
  */
-.head {
+.head{
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -9,25 +9,12 @@
   border-bottom: 2px solid var(--stage-seam);
 }
 
-.back {
-  width: 2.2rem;
-  height: 2.2rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  flex: none;
-  cursor: pointer;
-}
-
-.name {
+.name{
   min-width: 0;
   flex: 1;
 }
 
-.name b {
+.name b{
   display: block;
   font-family: var(--font-big);
   font-weight: 900;
@@ -41,7 +28,7 @@
   text-overflow: ellipsis;
 }
 
-.name i {
+.name i{
   font-style: normal;
   font-family: var(--font-mono);
   font-weight: 500;
@@ -52,46 +39,12 @@
   white-space: nowrap;
 }
 
-.save {
-  width: 2.2rem;
-  height: 2.2rem;
-  border: 2px solid var(--stage-black);
-  background: var(--a, var(--accent));
-  color: var(--stage-ink);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  font-weight: 800;
-  font-size: var(--text-control);
-  flex: none;
-  cursor: pointer;
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-}
-
-.save:disabled {
-  opacity: 0.45;
-  cursor: default;
-  box-shadow: none;
-}
-
-.kebabWrap {
+.kebabWrap{
   position: relative;
   flex: none;
 }
 
-.kebab {
-  width: 2.2rem;
-  height: 2.2rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-  cursor: pointer;
-}
-
-.menu {
+.menu{
   position: absolute;
   top: 2.5rem;
   right: 0;
@@ -102,28 +55,4 @@
   box-shadow: 4px 4px 0 0 var(--stage-black);
   display: flex;
   flex-direction: column;
-}
-
-.menu button {
-  border: 0;
-  background: none;
-  color: var(--stage-soft);
-  font-family: var(--font-big);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-align: left;
-  padding: 0.55rem 0.7rem;
-  cursor: pointer;
-  min-height: 2.2rem;
-}
-
-.menu button:hover:not(:disabled) {
-  background: var(--stage-panel);
-  color: var(--stage-paper);
-}
-
-.menu button:disabled {
-  opacity: 0.45;
-  cursor: default;
 }

@@ -4,17 +4,17 @@
  * and the filmstrip of alternates riding under the booth in every deployment. Stage tokens only;
  * accent chips wear dark ink per the tokens contract (reads in both themes).
  */
-.sheet {
+.sheet{
   width: 100%;
 }
 
-.booth {
+.booth{
   border: 3px solid var(--stage-black);
   box-shadow: 7px 7px 0 0 var(--stage-black);
   background: var(--stage-row);
 }
 
-.marquee {
+.marquee{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29,7 +29,7 @@
   padding: 0.4rem 0.6rem;
 }
 
-.marqueeTitle {
+.marqueeTitle{
   color: var(--a);
   font-style: normal;
   white-space: nowrap;
@@ -37,9 +37,9 @@
   text-overflow: ellipsis;
 }
 html[data-surface-ui-panel="ruled-frame"] .marquee,
-html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-card); }
+html[data-surface-ui-panel="ruled-frame"] .marqueeTitle{ color: var(--stage-card); }
 
-.glass {
+.glass{
   aspect-ratio: 3 / 4;
   margin: 0.6rem;
   border: 2px solid var(--stage-black);
@@ -50,12 +50,20 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   justify-content: center;
   overflow: hidden;
   background: var(--stage-sunken);
-  cursor: pointer;
-  padding: 0;
   width: calc(100% - 1.2rem);
 }
 
-.glass::after {
+.glass [data-control="card"]{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: none;
+  padding: 0;
+}
+
+.glass::after{
   content: "";
   position: absolute;
   inset: 0;
@@ -68,7 +76,7 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   );
 }
 
-.glass img {
+.glass img{
   position: absolute;
   inset: 0;
   width: 100%;
@@ -76,19 +84,19 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   object-fit: cover;
 }
 
-.glassDrag {
+.glassDrag{
   outline: 3px dashed var(--a);
   outline-offset: -8px;
 }
 
-.monogram {
+.monogram{
   font-family: var(--font-big);
   font-size: 3rem;
   font-weight: 800;
   color: var(--stage-faint);
 }
 
-.emptyLine {
+.emptyLine{
   position: absolute;
   left: 0;
   right: 0;
@@ -102,13 +110,13 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   line-height: 2;
 }
 
-.stubs {
+.stubs{
   display: flex;
   gap: 0.45rem;
   padding: 0 0.6rem 0.65rem;
 }
 
-.stub {
+.stub{
   flex: 1;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
@@ -124,13 +132,13 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   cursor: pointer;
 }
 
-.stubPrimary {
+.stubPrimary{
   background: var(--a-deep, var(--accent-deep)); /* bare var(--a) vanished outside accent roots (measured 1.04:1) */
   color: var(--stage-white);
   border-left-style: solid;
 }
 
-.strip {
+.strip{
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -139,7 +147,7 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
 
 /* Shelf kicker - names each strip under the booth (alternates / variants / expressions). Three
    unlabeled dashed + tiles from three different strips read as one broken control. */
-.shelfKick {
+.shelfKick{
   display: block;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
@@ -149,32 +157,7 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   margin-top: 0.6rem;
 }
 
-.thumb {
-  width: 46px;
-  height: 46px;
-  border: 2px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  cursor: pointer;
-  position: relative;
-  padding: 0;
-  background: var(--stage-sunken);
-  overflow: hidden;
-}
-
-.thumb img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumbOn {
-  outline: 2px solid var(--a);
-  outline-offset: 2px;
-}
-
-.thumbTag {
+.thumbTag{
   position: absolute;
   left: 0;
   bottom: 0;
@@ -192,19 +175,9 @@ html[data-surface-ui-panel="ruled-frame"] .marqueeTitle { color: var(--stage-car
   text-overflow: ellipsis;
 }
 
-.thumbAdd {
-  border-style: dashed;
-  border-color: var(--stage-line);
-  box-shadow: none;
-  background: var(--stage-sunken);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--stage-mute);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-}
-
-.hiddenFile {
+.hiddenFile{
   display: none;
 }
+.strip [data-control="tile"] { width: 46px; height: 46px; }
+.thumbArt { position: relative; display: block; }
+.thumbArt img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }

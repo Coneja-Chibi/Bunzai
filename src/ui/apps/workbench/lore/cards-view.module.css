@@ -68,35 +68,6 @@
   min-width: 0;
 }
 
-.mode {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid;
-  background: transparent;
-  padding: 0.14rem 0.34rem;
-  flex: none;
-  cursor: pointer;
-  line-height: 1.2;
-}
-
-.mKey {
-  border-color: var(--stage-ok);
-  color: var(--stage-ok);
-}
-
-.mAlways {
-  border-color: var(--stage-var);
-  color: var(--stage-var);
-}
-
-.mMeaning {
-  border-color: var(--a, var(--accent));
-  color: var(--a, var(--accent));
-}
-
 .esnip {
   font-family: var(--font-body);
   font-weight: 400;
@@ -172,24 +143,4 @@
 .onoffOff {
   border-color: var(--stage-faint, var(--stage-seam));
   color: var(--stage-text-dim, var(--stage-mute));
-}
-
-.ghost {
-  border: 2px dashed var(--stage-seam);
-  background: transparent;
-  color: var(--stage-mute);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  min-height: 10.5rem;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.ghost:hover {
-  border-color: var(--a, var(--accent));
-  color: var(--stage-card);
 }

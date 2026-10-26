@@ -6,6 +6,7 @@
  * ColorPicker, Paint round-trips losslessly through hex/stops, so the caller's `value` is the only
  * source of truth - only the selected gradient stop index is local, transient UI state.
  */
+import { Button, Segmented } from "../button";
 import { useState } from "react";
 import type { JSX, PointerEvent as ReactPointerEvent } from "react";
 import { ColorPicker } from "../color-picker";
@@ -72,18 +73,12 @@ export function PaintPicker({ value, allow: allowProp, onChange }: PaintPickerPr
     <div className={styles.pp}>
       {allow.length > 1 && (
         <div className={styles.modes}>
-          {(["solid", "gradient"] as const)
-            .filter((m) => allow.includes(m))
-            .map((m) => (
-              <button
-                key={m}
-                type="button"
-                className={paint.kind === m ? styles.on : undefined}
-                onClick={() => switchMode(m)}
-              >
-                {m}
-              </button>
-            ))}
+          <Segmented
+            label="Paint mode"
+            value={paint.kind}
+            onChange={switchMode}
+            items={(["solid", "gradient"] as const).filter((m) => allow.includes(m)).map((m) => ({ value: m, label: m }))}
+          />
         </div>
       )}
       {paint.kind === "solid" ? (
@@ -160,20 +155,19 @@ function GradientEditor({
       <div className={styles.row}>
         <div className={styles.out} style={{ background: paintToCss(paint) }} />
         <div className={styles.seg}>
-          {(["linear", "radial"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              className={paint.type === t ? styles.on : undefined}
-              onClick={() => onChange({ ...paint, type: t })}
-            >
-              {t}
-            </button>
-          ))}
+          <Segmented
+            size="sm"
+            label="Gradient shape"
+            value={paint.type}
+            onChange={(t) => onChange({ ...paint, type: t })}
+            items={(["linear", "radial"] as const).map((t) => ({ value: t, label: t }))}
+          />
         </div>
-        <button type="button" className={styles.rm} disabled={paint.stops.length <= 2} onClick={removeStop}>
-          remove
-        </button>
+        <div className={styles.rm}>
+          <Button size="sm" variant="danger" disabled={paint.stops.length <= 2} onClick={removeStop}>
+            Remove
+          </Button>
+        </div>
       </div>
       {paint.type === "linear" && (
         <div className={styles.angle}>

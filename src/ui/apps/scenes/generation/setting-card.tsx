@@ -7,8 +7,8 @@
 import { useState, type JSX } from "react";
 import type { ParamDef, ParamValue } from "../../../../stage/params";
 import { Ic } from "../../../_shared/ic";
+import { IconButton, Toggle } from "../../../components/button";
 import { Slider } from "../../../components/slider";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 
 export interface SettingCardProps {
   def: ParamDef;
@@ -46,7 +46,7 @@ function Control({ def, value, options, onChange }: Pick<SettingCardProps, "def"
     case "boolean":
       return (
         <div className="gn-bool"><span>Send as: <b className={value ? "ok" : "no"}>{value ? "true" : "false"}</b></span>
-          <ToggleSwitch on={!!value} size="sm" aria-label={`${def.label} value`} onChange={onChange} /></div>
+          <Toggle on={!!value} size="sm" aria-label={`${def.label} value`} onChange={onChange} /></div>
       );
     case "select":
       return (
@@ -66,10 +66,10 @@ export function SettingCard({ def, enabled, value, toggle = true, options, inden
       <div className="gn-hd">
         <div>
           <div className="gn-name"><b>{def.label}</b>
-            <button type="button" className="gn-i" aria-label={`About ${def.label}`} aria-expanded={info} onMouseEnter={() => setInfo(true)} onMouseLeave={() => setInfo(false)} onClick={() => setInfo(!info)}><Ic name="mdi:information-outline" size={14} /></button></div>
+            <IconButton size="sm" label={`About ${def.label}`} icon="mdi:information-outline" aria-expanded={info} onMouseEnter={() => setInfo(true)} onMouseLeave={() => setInfo(false)} onClick={() => setInfo(!info)} /></div>
           {def.aliases && def.aliases.length > 0 && <div className="gn-key">{def.aliases.join(" · ")}</div>}
         </div>
-        {toggle && <ToggleSwitch on={enabled} size="sm" aria-label={`Send ${def.label}`} onChange={(on) => onToggle?.(on)} />}
+        {toggle && <Toggle on={enabled} size="sm" aria-label={`Send ${def.label}`} onChange={(on) => onToggle?.(on)} />}
       </div>
       {info && <div className="gn-tip">{def.description}{def.notes && <div className="gn-note"><Ic name="mdi:lightbulb-outline" size={12} /> {def.notes}</div>}</div>}
       {enabled && <Control def={def} value={value} options={options} onChange={onChange} />}

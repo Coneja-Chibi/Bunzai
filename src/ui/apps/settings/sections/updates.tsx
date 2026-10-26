@@ -22,6 +22,7 @@ import { switchKind } from "../../../_shared/switch-decision";
 import { reducePendingSwitch, type SwitchOutcome } from "../../../_shared/pending-switch";
 import { ConfirmSwitch, SwitchProgress, SwitchResult } from "./updates-dialogs";
 import type { SettingsSection } from "../section-contract";
+import { Button } from "../../../components/button";
 import styles from "./updates.module.css";
 
 type Phase =
@@ -112,9 +113,9 @@ function VersionRow({
           <span>· {commits.length === 1 ? "1 commit" : `${commits.length} commits`}</span>
         </div>
         {commits.length > 0 ? (
-          <button type="button" className={styles.caret} onClick={() => setOpen((v) => !v)}>
+          <Button size="sm" variant="quiet" onClick={() => setOpen((v) => !v)}>
             {open ? "Hide" : "Show"} the {commits.length === 1 ? "commit" : `${commits.length} commits`}
-          </button>
+          </Button>
         ) : (
           <div className={styles.noLog}>commit log unavailable for this release</div>
         )}
@@ -131,9 +132,9 @@ function VersionRow({
       </div>
       <div className={styles.vact}>
         {action ? (
-          <button type="button" className={styles.btnGhost} onClick={() => onSwitch(r.version)}>
+          <Button size="sm" onClick={() => onSwitch(r.version)}>
             {action}
-          </button>
+          </Button>
         ) : (
           <span className={styles.hereMark}>current</span>
         )}
@@ -304,13 +305,9 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
           <div className={styles.cardTitle}>Could not load the release history</div>
           <div className={styles.cardBody}>GitHub could not be reached. Nothing else is affected.</div>
           <div className={styles.actions}>
-            <button
-              type="button"
-              className={styles.btnGhost}
-              onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}
-            >
+            <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}>
               Open releases on GitHub
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -329,13 +326,9 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
               )}
             </div>
             <div className={styles.actions}>
-              <button
-                type="button"
-                className={styles.btnGhost}
-                onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}
-              >
+              <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}>
                 Open releases on GitHub
-              </button>
+              </Button>
             </div>
           </div>
         </>
@@ -367,9 +360,9 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
             <div className={styles.cardTitle}>Could not switch</div>
             <div className={styles.sub}>{switchError}</div>
             <div className={styles.actionsCenter}>
-              <button type="button" className={styles.btn} onClick={() => setSwitchError(null)}>
+              <Button variant="primary" onClick={() => setSwitchError(null)}>
                 OK
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -380,9 +373,9 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
             <div className={styles.cardTitle}>Download ready</div>
             <div className={styles.sub}>{manualDone}</div>
             <div className={styles.actionsCenter}>
-              <button type="button" className={styles.btn} onClick={() => setManualDone(null)}>
+              <Button variant="primary" onClick={() => setManualDone(null)}>
                 OK
-              </button>
+              </Button>
             </div>
           </div>
         </div>

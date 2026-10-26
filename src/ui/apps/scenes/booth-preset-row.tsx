@@ -9,6 +9,7 @@
 import type { JSX } from "react";
 import type { PresetBody } from "../../../entities/preset/schema";
 import { countText } from "../../../core/tokens";
+import { Button, ListRow } from "../../components/button";
 import { Ic } from "../../_shared/ic";
 import type { Chat, ChatPreset } from "../../../stage/contracts/chat-store";
 import { contextMaxed } from "./booth-generation-core";
@@ -24,17 +25,15 @@ export function BoothPresetCard({ chat, preset, own, onOpen }: { chat: Chat; pre
   return (
     <section className="bth-sec" data-part="scene.booth.preset">
       <h3>Active Preset</h3>
-      {!chat.preset && <button type="button" className="bth-empty" onClick={onOpen}>No preset selected. Choose in Prompting</button>}
+      {!chat.preset && <Button block onClick={onOpen}>No preset selected. Choose in Prompting</Button>}
       {chat.preset && preset.state === "loading" && <p className="bth-quiet"><Ic name="lucide:loader-circle" size={16} /> Loading...</p>}
       {chat.preset && preset.state === "failed" && <p className="bth-quiet" role="alert">The preset could not be read: {preset.why}.</p>}
       {chat.preset && preset.state === "gone" && (
         <p className="bth-note warn" role="status">This scene&apos;s preset is no longer in your library. Choose another, or restore it from the Trash.</p>
       )}
       {chat.preset && preset.state === "ready" && (
-        <button type="button" className="bth-pick" aria-label="Open Prompting to change the active preset" onClick={onOpen}>
-          <span className="bth-tile"><Ic name="mdi:tune" size={20} /></span>
-          <span className="pn"><span>{preset.body.name}</span><small>~{tokensOf(preset.body, own.own?.toggles ?? chat.preset.toggles).toLocaleString()} tokens</small></span>
-        </button>
+        <ListRow aria-label="Open Prompting to change the active preset" onClick={onOpen} leading={<Ic name="mdi:tune" size={20} />}
+          label={preset.body.name} subtitle={`~${tokensOf(preset.body, own.own?.toggles ?? chat.preset.toggles).toLocaleString()} tokens`} />
       )}
     </section>
   );

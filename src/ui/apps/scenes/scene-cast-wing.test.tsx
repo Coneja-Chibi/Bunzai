@@ -161,7 +161,7 @@ describe("Cast wing: Character tab", () => {
   test("shows RoleCall's sections in RoleCall's order, and the form says Saved while nothing is edited", async () => {
     const flushSync = await mount(sceneOf());
     expect(titles()).toEqual(["Color Palette", "Description", "Personality", "Scenario", "First Message", "Example Dialogue", "Advanced", "Content Rating", "Tags"]);
-    expect(doc().body.querySelector(".cw-lore h3")?.textContent).toBe("Lorebooks");
+    expect(doc().body.querySelector("[data-part='scene.cast.lorebooks'] [data-slot='label']")?.textContent).toBe("Lorebooks");
     const identityLabels = [...doc().body.querySelectorAll(".cw-card .lb")].map((l) => (l.textContent ?? "").trim());
     expect(identityLabels).toEqual(["Theme", "Stage name", "Full name", "Title / Epithet", "Age", "Pronouns", "Tagline"]);
     expect(byText("Saved")?.disabled).toBe(true);
@@ -264,7 +264,7 @@ describe("Cast wing: Persona tab", () => {
     const flushSync = await mount(sceneOf());
     await press(flushSync, tab("Persona"), 120);
     expect(has("Starring")).toBe(true);
-    expect(doc().body.querySelector(".cw-star .emo")?.textContent).toBe("\u{1F989}");
+    expect(doc().body.querySelector('.cw-star [aria-label="Pick an emoji"]')?.textContent).toBe("\u{1F989}");
     expect((field("Persona name") as HTMLInputElement).value).toBe("Nuit");
     expect((field("Tagline") as HTMLInputElement).value).toBe("Keeps a notebook");
     expect([...doc().body.querySelectorAll(".cw-por .stats span")].map((s) => s.textContent)).toEqual(["412", "6", "3"]);
@@ -295,7 +295,7 @@ describe("Cast wing: Persona tab", () => {
     expect(has("Casting Call")).toBe(true);
     expect(doc().body.querySelector('input[aria-label="Search talent"]')).not.toBeNull();
     expect(doc().body.querySelectorAll('[role="option"]')).toHaveLength(4);
-    const castButton = (): HTMLButtonElement => doc().body.querySelector(".cw-cc .go") as HTMLButtonElement;
+    const castButton = (): HTMLButtonElement => [...doc().body.querySelectorAll<HTMLButtonElement>(".cw-cc .cw-acts button")].find((b) => b.textContent === "Cast")!;
     expect(castButton().disabled).toBe(true); // Nuit is already the lead role
     await press(flushSync, [...doc().body.querySelectorAll('[role="option"]')].find((o) => (o.textContent ?? "").includes("Corvin")) as HTMLElement);
     expect(castButton().disabled).toBe(false);
@@ -323,7 +323,7 @@ describe("Cast wing: Persona tab", () => {
     await press(flushSync, tab("Persona"), 120);
     expect(has("A reply is being written. You can swap persona or save when it finishes.")).toBe(true);
     await press(flushSync, doc().body.querySelector('[aria-label="Open the Casting Call"]') as HTMLElement);
-    expect((doc().body.querySelector(".cw-cc .go") as HTMLButtonElement).disabled).toBe(true);
+    expect(([...doc().body.querySelectorAll<HTMLButtonElement>(".cw-cc .cw-acts button")].find((b) => b.textContent === "Cast")!).disabled).toBe(true);
     unmount(flushSync);
   });
 
@@ -333,7 +333,7 @@ describe("Cast wing: Persona tab", () => {
     await press(flushSync, tab("Persona"), 120);
     await press(flushSync, doc().body.querySelector('[aria-label="Open the Casting Call"]') as HTMLElement);
     await press(flushSync, [...doc().body.querySelectorAll('[role="option"]')].find((o) => (o.textContent ?? "").includes("Corvin")) as HTMLElement);
-    await press(flushSync, doc().body.querySelector(".cw-cc .go") as HTMLElement);
+    await press(flushSync, [...doc().body.querySelectorAll<HTMLElement>(".cw-cc .cw-acts button")].find((b) => b.textContent === "Cast")!);
     await press(flushSync, byText("Play as Corvin"), 120);
     expect(has("this scene changed in another window while you were choosing")).toBe(true);
     expect(scenes).toHaveLength(0);
@@ -357,7 +357,7 @@ describe("Cast wing: one colour component, one quiet banner", () => {
     const flushSync = await mount(sceneOf());
     const swatch = (): string[][] => [...doc().body.querySelectorAll(".cw-sw")].map((s) => [...s.querySelectorAll("input[type=text], input:not([type])")].map((i) => (i as HTMLInputElement).value));
     // Character: the signature (Theme), then Hair/Silver, then Add
-    expect(doc().body.querySelectorAll(".cw-tile").length).toBeGreaterThanOrEqual(3);
+    expect(doc().body.querySelectorAll("[data-control='tile'][data-kind='swatch']").length).toBeGreaterThanOrEqual(3);
     expect(swatch().some((v) => v.includes("Silver") && v.includes("Hair"))).toBe(true);
     expect(doc().body.querySelector(".cw-sw.cw-sig .cw-nm")?.textContent).toBe("Theme");
     await press(flushSync, tab("Persona"), 120);

@@ -7,7 +7,7 @@
 import type { JSX } from "react";
 import { ListEditor } from "../list-editor";
 import { FieldForm, type FormField } from "../field-form";
-import { ToggleSwitch } from "../toggle-switch";
+import { Toggle } from "../button";
 import styles from "./styles.module.css";
 import { numOr, type Rec, recOr } from "../../../core/guards";
 
@@ -55,7 +55,7 @@ export function RpgStats({ value, onChange }: RpgStatsProps): JSX.Element {
     <div className={styles.wrap}>
       <div className={styles.row}>
         <span className={styles.k}>Stats enabled</span>
-        <ToggleSwitch
+        <Toggle
           on={v.enabled === true}
           onChange={(on) => set({ enabled: on })}
           label={v.enabled === true ? "On" : "Off"}

@@ -2,6 +2,7 @@
  * Workshop code / stub panes: virtual script, background, package scripts, regex/lore stubs.
  * Reuses CodeEditor + SealedHtmlPreview from the house registry.
  */
+import { Chip } from "../../../components/button";
 import type { JSX } from "react";
 import { CodeEditor } from "../../../components/code-editor";
 import { SealedHtmlPreview } from "../../../components/sealed-html-preview";
@@ -89,15 +90,7 @@ export function WorkshopCodePane(props: WorkshopCodePaneProps): JSX.Element {
         </p>
         <div className={styles.hostPalette}>
           {hostSnips.map((s) => (
-            <button
-              key={s.label}
-              type="button"
-              className={macroStyles.macroChip}
-              title={s.insert}
-              onClick={() => onLua(`${luaCode}${luaCode.endsWith("\n") || !luaCode ? "" : "\n"}${s.insert}`)}
-            >
-              {s.label}
-            </button>
+            <Chip key={s.label} title={s.insert} onClick={() => onLua(`${luaCode}${luaCode.endsWith("\n") || !luaCode ? "" : "\n"}${s.insert}`)}>{s.label}</Chip>
           ))}
         </div>
         <CodeEditor

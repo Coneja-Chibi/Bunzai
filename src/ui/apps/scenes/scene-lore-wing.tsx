@@ -33,6 +33,7 @@ import { useSceneLore } from "./use-scene-lore";
 import { AddPopover, BookList, LibraryPicker, LoreHeader, PickHint } from "./scene-lore-books";
 import { DeleteEntryDialog, DetailHint, EntriesPanel } from "./scene-lore-entries";
 import { EntryEditor } from "./scene-lore-entry";
+import { IconButton } from "../../components/button";
 
 type Entity = { kind: string; id: string; body: LorebookBody };
 type Ready = { entity: Entity; revision: string };
@@ -266,7 +267,7 @@ export function LoreWing({ ctx, chat, characterName, onLore }: {
     return (
       <div className="wbody pp">
         <header className="hero bad"><span className="hi"><Ic name="mdi:alert-octagon-outline" size={20} /></span><div><div className="eb">World Error</div><h2>Could not <em>load</em></h2><p>{lore.why}</p></div>
-          <div className="hero-tools"><button type="button" className="tbtn" title="Try again" onClick={() => void loadLore()}><Ic name="lucide:refresh-cw" size={14} /></button></div>
+          <div className="hero-tools"><IconButton variant="quiet" size="sm" icon="lucide:refresh-cw" label="Try again" onClick={() => void loadLore()} /></div>
         </header>
       </div>
     );

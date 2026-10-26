@@ -8,28 +8,14 @@
  * one-line summary. The box seals into a foldable line when the model speaks (see BackstageRow).
  */
 import type { ReactNode } from "react";
-import { theme, colorForVerb } from "../theme";
+import { theme } from "../theme";
 import type { ToolMove } from "../turn-events";
 import type { LoopPhase } from "../../loop/state";
 import { lifecycleLabel } from "./lifecycle-label";
+import { MoveRow } from "./backstage-move";
 import { useTick } from "./use-tick";
 
 const DOTS = [" ·  ", " ·· ", " ···"];
-
-/** Split a move line into its verb (first token, colored by palette) and the rest (soft). */
-function MoveRow({ raw, running, dots }: { raw: string; running: boolean; dots: string }): ReactNode {
-  const verb = raw.match(/^\S+/)?.[0] ?? raw;
-  const rest = raw.slice(verb.length);
-  const color = colorForVerb(verb);
-  return (
-    <text fg={theme.soft}>
-      <span fg={color}>{"▌ "}</span>
-      <span fg={color}>{verb}</span>
-      <span fg={theme.soft}>{rest}</span>
-      {running ? <span fg={color}>{dots}</span> : null}
-    </text>
-  );
-}
 
 export function BackstageBox({ moves, phase }: { moves: ToolMove[]; phase?: LoopPhase }): ReactNode {
   const tick = useTick(220);
@@ -46,7 +32,7 @@ export function BackstageBox({ moves, phase }: { moves: ToolMove[]; phase?: Loop
       </box>
       <box flexDirection="column" paddingLeft={1} paddingRight={1}>
         {moves.map((move, index) => (
-          <MoveRow key={index} raw={move.summary ?? move.name} running={move.summary === undefined} dots={dots} />
+          <MoveRow key={index} raw={move.summary ?? move.name} spine="▌ " dots={move.summary === undefined ? dots : undefined} />
         ))}
       </box>
     </box>

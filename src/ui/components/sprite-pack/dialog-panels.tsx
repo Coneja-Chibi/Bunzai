@@ -2,6 +2,7 @@
  * Attach / sprite-sheet tool panels for SpritePackDialog.
  * Extracted so dialog.tsx stays under the line cap.
  */
+import { Button } from "../button";
 import type { JSX, RefObject } from "react";
 import styles from "./styles.module.css";
 
@@ -39,14 +40,9 @@ export function AttachPanel({
           </option>
         ))}
       </select>
-      <button
-        type="button"
-        className={styles.toolBtn}
-        disabled={!attachId || attachBusy}
-        onClick={onAttach}
-      >
+      <Button size="sm" disabled={!attachId || attachBusy} onClick={onAttach}>
         {attachBusy ? "Loading…" : "Attach"}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -95,14 +91,9 @@ export function SheetSlicePanel({
           aria-label="Sheet rows"
         />
       </label>
-      <button
-        type="button"
-        className={styles.toolBtn}
-        onClick={onPick}
-        title="Slice a grid sheet into pack faces"
-      >
+      <Button size="sm" onClick={onPick} title="Slice a grid sheet into pack faces">
         Slice sheet
-      </button>
+      </Button>
       <input
         ref={sheetRef}
         type="file"

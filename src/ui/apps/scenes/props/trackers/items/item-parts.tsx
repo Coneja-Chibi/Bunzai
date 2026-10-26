@@ -5,6 +5,7 @@
  * the card as well.
  */
 import type { CSSProperties, JSX, KeyboardEvent, MouseEvent, ReactNode } from "react";
+import { IconButton, Segmented, Tabs as FamilyTabs } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 
 export interface CardProps {
@@ -67,21 +68,17 @@ export const inner = (fn: () => void) => (e: MouseEvent): void => { e.stopPropag
 export function Stepper({ value, onMinus, onPlus, label }: { value: number; onMinus(): void; onPlus(): void; label: string }): JSX.Element {
   return (
     <div className="it-qty">
-      <button type="button" aria-label={`Decrease ${label}`} onClick={inner(onMinus)}>-</button>
+      <IconButton size="sm" label={`Decrease ${label}`} icon="lucide:minus" onClick={inner(onMinus)} />
       <span>{value}</span>
-      <button type="button" aria-label={`Increase ${label}`} onClick={inner(onPlus)}>+</button>
+      <IconButton size="sm" label={`Increase ${label}`} icon="lucide:plus" onClick={inner(onPlus)} />
     </div>
   );
 }
 
 export function Filters<T extends string>({ options, value, onChange, icons }: { options: readonly T[]; value: T; onChange(v: T): void; icons?: Partial<Record<T, IconName>> }): JSX.Element {
   return (
-    <div className="it-filters" role="group" aria-label="Filter">
-      {options.map((o) => (
-        <button key={o} type="button" className={value === o ? "on" : ""} aria-pressed={value === o} onClick={() => onChange(o)}>
-          {icons?.[o] && <Ic name={icons[o]!} size={14} />}<span>{o}</span>
-        </button>
-      ))}
+    <div className="it-filters">
+      <Segmented size="sm" label="Filter" items={options.map((o) => ({ value: o, label: <>{icons?.[o] && <Ic name={icons[o]!} size={14} />}<span>{o}</span></> }))} value={value} onChange={onChange} />
     </div>
   );
 }
@@ -104,8 +101,9 @@ export interface TabDef<T extends string> { id: T; icon: IconName; label: string
 /** The module's tab strip, drawn with the Stats panel's classes. */
 export function Tabs<T extends string>({ tabs, value, onChange }: { tabs: readonly TabDef<T>[]; value: T; onChange(v: T): void }): JSX.Element {
   return (
-    <div className="st-tabs" role="tablist">
-      {tabs.map((t) => <button key={t.id} type="button" role="tab" aria-selected={value === t.id} className={value === t.id ? "on" : ""} onClick={() => onChange(t.id)}><Ic name={t.icon} size={16} /> {t.label}{t.count !== undefined && <span className="it-count">{t.count}</span>}</button>)}
+    <div className="st-tabs">
+      <FamilyTabs label="Sections" value={value} onChange={onChange}
+        items={tabs.map((t) => ({ value: t.id, label: <><Ic name={t.icon} size={16} /> {t.label}{t.count !== undefined && <span className="it-count">{t.count}</span>}</> }))} />
     </div>
   );
 }

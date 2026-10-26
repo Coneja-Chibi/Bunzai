@@ -4,7 +4,7 @@
  * every number comes from the trace, and a reply whose text was not kept says so and shows sizes only.
  */
 import { useState, type JSX } from "react";
-import { Ic } from "../../../_shared/ic";
+import { Button, Disclosure, Tabs } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import type { SceneTrace } from "../../../app-contract-scenes";
@@ -24,10 +24,9 @@ function Request({ trace }: { trace: SceneTrace }): JSX.Element {
         const shown = !b.long || open.has(i);
         return (
           <div className="tt-msg" key={i}>
-            <button type="button" onClick={() => b.long && flip(i)}>
-              <span className={`tt-role ${b.role}`}>{b.role} <i>{b.label}</i></span>
-              <span className="tt-tk">~{b.tokens.toLocaleString()} tokens{b.long ? (shown ? " · fold" : " · open") : ""}</span>
-            </button>
+            <Disclosure open={shown} onClick={() => b.long && flip(i)}
+              label={<span className={`tt-role ${b.role}`}>{b.role} <i>{b.label}</i></span>}
+              summary={<span className="tt-tk">~{b.tokens.toLocaleString()} tokens{b.long ? (shown ? " · fold" : " · open") : ""}</span>} />
             {b.text !== undefined && <pre className={shown ? "" : "folded"}>{b.text || " "}</pre>}
           </div>
         );
@@ -98,18 +97,14 @@ export function CallDetail({ row, trace }: { row: CallRow; trace: SceneTrace }):
   const tabs: { id: Tab; label: string }[] = [{ id: "request", label: "Request" }, ...(tools ? [{ id: "tools" as const, label: "Tools" }] : []), ...(trace.route ? [{ id: "route" as const, label: "Route" }] : []), ...(timed ? [{ id: "time" as const, label: "Time" }] : []), { id: "raw", label: "Raw JSON" }];
   return (
     <div className="tt-detail">
-      <div role="tablist" className="tt-dtabs">
-        {tabs.map((t) => <button type="button" key={t.id} role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : undefined} onClick={() => setTab(t.id)}>{t.label}</button>)}
-      </div>
+      <Tabs label="Call detail" value={tab} onChange={setTab} items={tabs.map((t) => ({ value: t.id, label: t.label }))} />
       {tab === "request" && <Request trace={trace} />}
       {tab === "tools" && tools && <Tools tools={tools} />}
       {tab === "route" && trace.route && <Route route={trace.route} />}
       {tab === "time" && <Time trace={trace} />}
       {tab === "raw" && (raw ? <pre className="tt-raw">{raw}</pre> : <p className="tt-note">{KEPT}</p>)}
       {raw && tab !== "tools" && tab !== "route" && tab !== "time" && (
-        <button type="button" className="tt-copy" onClick={() => { void copyText(raw).then((ok) => { if (ok) copied.flash(true); }); }}>
-          <Ic name={copied.value ? "lucide:check" : "lucide:copy"} size={14} />{copied.value ? "Copied" : "Copy request"}
-        </button>
+        <div className="tt-copy"><Button size="sm" icon={copied.value ? "lucide:check" : "lucide:copy"} onClick={() => { void copyText(raw).then((ok) => { if (ok) copied.flash(true); }); }}>{copied.value ? "Copied" : "Copy request"}</Button></div>
       )}
     </div>
   );

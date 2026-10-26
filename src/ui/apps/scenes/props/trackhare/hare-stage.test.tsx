@@ -118,7 +118,7 @@ async function press(flushSync: FlushSync, btn: HTMLButtonElement, ms = 20): Pro
 }
 
 async function openPopover(flushSync: FlushSync): Promise<void> {
-  await press(flushSync, host.querySelector(".hare-btn") as HTMLButtonElement);
+  await press(flushSync, host.querySelector("[data-part='props.trackhare.button']") as HTMLButtonElement);
 }
 
 async function rightClick(flushSync: FlushSync, el: Element, ms = 20): Promise<void> {
@@ -136,17 +136,17 @@ async function escape(flushSync: FlushSync, ms = 20): Promise<void> {
 describe("HareStage: the button", () => {
   test("shows with the injected count as its badge", async () => {
     const flushSync = await mount(makeCtx(), fakeChat());
-    const btn = host.querySelector(".hare-btn") as HTMLButtonElement;
+    const btn = host.querySelector("[data-part='props.trackhare.button']") as HTMLButtonElement;
     expect(btn).toBeTruthy();
-    expect(btn.querySelector(".n")?.textContent).toBe("3");
+    expect(btn.querySelector("[data-slot='badge']")?.textContent).toBe("3");
     unmount(flushSync);
   });
 
   test("a null trace shows 'No reply yet.' and hides the badge", async () => {
     getImpl = async () => null;
     const flushSync = await mount(makeCtx(), fakeChat());
-    const btn = host.querySelector(".hare-btn") as HTMLButtonElement;
-    expect(btn.querySelector(".n")).toBeNull();
+    const btn = host.querySelector("[data-part='props.trackhare.button']") as HTMLButtonElement;
+    expect(btn.querySelector("[data-slot='badge']")).toBeNull();
     await openPopover(flushSync);
     expect(bodyText()).toContain("No reply yet.");
     unmount(flushSync);
@@ -178,7 +178,7 @@ describe("HareStage: the popover", () => {
   test("Compact hides the tags", async () => {
     const flushSync = await mount(makeCtx(), fakeChat());
     await openPopover(flushSync);
-    expect(host.querySelector(".he .tags")).toBeTruthy();
+    expect(host.querySelector('[data-part="props.trackhare.hit"] .tags')).toBeTruthy();
     await press(flushSync, byText("Compact")!);
     expect(prefsStore["trackhare.density"]).toBe("compact");
     expect(host.querySelector(".hare-pop")?.className).toContain("compact");
@@ -218,7 +218,7 @@ describe("HareStage: the popover", () => {
 describe("HareStage: options (right-click)", () => {
   test("right-click opens options instead of the popover", async () => {
     const flushSync = await mount(makeCtx(), fakeChat());
-    await rightClick(flushSync, host.querySelector(".hare-btn")!);
+    await rightClick(flushSync, host.querySelector("[data-part='props.trackhare.button']")!);
     expect(host.querySelector(".cfg")).toBeTruthy();
     expect(host.querySelector(".hare-pop")).toBeNull();
     unmount(flushSync);
@@ -226,7 +226,7 @@ describe("HareStage: options (right-click)", () => {
 
   test("toggling Group by book re-renders and saves the pref", async () => {
     const flushSync = await mount(makeCtx(), fakeChat());
-    await rightClick(flushSync, host.querySelector(".hare-btn")!);
+    await rightClick(flushSync, host.querySelector("[data-part='props.trackhare.button']")!);
     await press(flushSync, byLabel("Group by book")!);
     expect(prefsStore["trackhare.group"]).toBe(false);
     unmount(flushSync);
@@ -234,7 +234,7 @@ describe("HareStage: options (right-click)", () => {
 
   test("changing Sort saves the pref and re-renders the popover's order", async () => {
     const flushSync = await mount(makeCtx(), fakeChat());
-    await rightClick(flushSync, host.querySelector(".hare-btn")!);
+    await rightClick(flushSync, host.querySelector("[data-part='props.trackhare.button']")!);
     const select = host.querySelector('select[aria-label="Sort"]') as HTMLSelectElement;
     flushSync(() => {
       select.value = "az";
@@ -257,7 +257,7 @@ describe("HareStage: the Compendium's recall", () => {
   test("the badge counts what recall placed with what fired, and the popover lists it under its own heading with the selector's reason and what was cut", async () => {
     getImpl = async () => trace({ recall: recall() });
     const flushSync = await mount(makeCtx(), fakeChat());
-    expect((host.querySelector(".hare-btn .n"))?.textContent).toBe("4");
+    expect((host.querySelector("[data-part='props.trackhare.button'] [data-slot='badge']"))?.textContent).toBe("4");
     await openPopover(flushSync);
     expect(bodyText()).toContain("Recalled by the Compendium");
     expect(bodyText()).toContain("Mira Vance");

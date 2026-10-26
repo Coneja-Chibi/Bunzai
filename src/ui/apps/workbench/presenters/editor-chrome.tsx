@@ -3,6 +3,7 @@
  * Pure presentational; state stays in Editor.tsx. Renders BOTH the desktop chrome and the
  * mobile grammar (design/vs-mobile-editors.html); Editor.module.css picks one by pane width.
  */
+import { Button, IconButton } from "../../../components/button";
 import type { JSX, ReactNode } from "react";
 import type { CoverageInfo } from "../../../app-contract";
 import { LensRail } from "../../../components/lens-rail";
@@ -162,24 +163,16 @@ export function EditorHeader({
       />
     </div>
     <div className={`${styles.hdr} ${styles.desktopChrome}`} data-editor="head">
-      <button type="button" className={styles.back} aria-label="Close" title="Close" onClick={onClose}>
-        &#8592;
-      </button>
+      <IconButton label="Close" size="sm" icon="lucide:arrow-left" onClick={onClose} />
       <b>{name.toUpperCase()}</b>
       {version !== "" && version.length <= 16 && (
         <span className={styles.vchip}>{version}</span>
       )}
       <span className={styles.hdrRight}>
         <span className={styles.escale} title="Scale the editor">
-          <button type="button" className={styles.escaleStep} onClick={() => stepScale(-1)} disabled={editorScale <= scaleMin} aria-label="Scale editor down" title="Smaller">
-            &#8722;
-          </button>
-          <button type="button" className={styles.escalePct} onClick={() => setEditorScale(1)} title="Reset to 100%">
-            {`${Math.round(editorScale * 100)}%`}
-          </button>
-          <button type="button" className={styles.escaleStep} onClick={() => stepScale(1)} disabled={editorScale >= scaleMax} aria-label="Scale editor up" title="Bigger">
-            &#43;
-          </button>
+          <IconButton label="Scale editor down" size="sm" icon="lucide:minus" onClick={() => stepScale(-1)} disabled={editorScale <= scaleMin} title="Smaller" />
+          <Button variant="quiet" size="sm" onClick={() => setEditorScale(1)} title="Reset to 100%">{`${Math.round(editorScale * 100)}%`}</Button>
+          <IconButton label="Scale editor up" size="sm" icon="lucide:plus" onClick={() => stepScale(1)} disabled={editorScale >= scaleMax} title="Bigger" />
         </span>
         <EditorModeBar
           mode={mode}
@@ -192,17 +185,16 @@ export function EditorHeader({
           setWorkshop={setWorkshop}
           styles={styles}
         />
-        <button type="button" className={styles.save} data-tour="save" disabled={saving || !dirty} onClick={() => void doSave()} title="Save · ctrl+s">
-          {saving ? "Saving…" : dirty ? "Save" : "● Saved locally"}
-        </button>
-        <button
-          type="button"
-          className={styles.save}
-          onClick={openExport}
-          title="Export to a platform file"
+        <Button
+          variant="primary"
+          data-tour="save"
+          disabled={saving || !dirty}
+          onClick={() => void doSave()}
+          title="Save · ctrl+s"
         >
-          Export
-        </button>
+          {saving ? "Saving…" : dirty ? "Save" : "● Saved locally"}
+        </Button>
+        <Button onClick={openExport} title="Export to a platform file">Export</Button>
         {topRight}
       </span>
     </div>

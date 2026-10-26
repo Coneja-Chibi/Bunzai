@@ -8,21 +8,18 @@ import { useState, type JSX } from "react";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import { pendingStoryboards } from "./compendium/storyboards/storyboards-open";
 import { tabOr } from "./scene-wing-data";
+import { Tabs } from "../../components/button";
 
 type Tab = "lorebook" | "compendium";
 
 export function WorldWing({ lore, compendium, linked, initialTab }: { lore: JSX.Element; compendium: JSX.Element; linked: string; initialTab?: string }): JSX.Element {
   const [tab, setTab] = useState<Tab>(() => tabOr(["lorebook", "compendium"], initialTab, pendingStoryboards() ? "compendium" : "lorebook"));
-  const card = (id: Tab, label: string, meta?: string): JSX.Element => (
-    <button type="button" role="tab" aria-selected={tab === id} className={tab === id ? "on" : ""} onClick={() => setTab(id)}>
-      <b>{label}</b>{meta && <small>{meta}</small>}
-    </button>
-  );
+  const card = (label: string, meta?: string): JSX.Element => <><b>{label}</b>{meta && <small>{meta}</small>}</>;
   return (
     <>
       <nav className="fold wfold" data-part="scene.world.tabs">
         <div className="crumb">Scene <i>/</i> <b>World</b></div>
-        <div className="tabs" role="tablist" aria-label="World sections">{card("lorebook", "Lorebook", linked)}{card("compendium", "Compendium")}</div>
+        <div className="tabs"><Tabs label="World sections" items={[{ value: "lorebook", label: card("Lorebook", linked) }, { value: "compendium", label: card("Compendium") }]} value={tab} onChange={setTab} /></div>
       </nav>
       <div className="wtab" hidden={tab !== "lorebook"} data-part="scene.world.lorebook"><ThemeSlot id="scene.wing.world.lorebook" />{lore}</div>
       {tab === "compendium" && <div className="wtab" data-part="scene.world.compendium"><ThemeSlot id="scene.wing.world.compendium" />{compendium}</div>}

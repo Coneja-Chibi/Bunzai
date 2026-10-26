@@ -1,6 +1,7 @@
 /**
  * Lite state-graph editor: states + transitions, apply compiles into trigger scripts.
  */
+import { Button, IconButton } from "../../../../components/button";
 import { useMemo, useState, type JSX } from "react";
 import type { TriggerScript } from "../../../../../entities/character/schema";
 import { WorkshopEhead } from "../ehead";
@@ -105,16 +106,10 @@ export function StateGraphPane({
             }
           />
           <span className={styles.hint} style={{ margin: 0 }}>id: {s.id}</span>
-          <button
-            type="button"
-            className={styles.rm}
-            onClick={() => {
+          <IconButton label="Remove state" variant="danger" size="sm" icon="lucide:x" onClick={() => {
               setStates(graph.states.filter((x) => x.id !== s.id));
               setTransitions(graph.transitions.filter((t) => t.from !== s.id && t.to !== s.id));
-            }}
-          >
-            &times;
-          </button>
+            }} />
         </div>
       ))}
       <div className={styles.ruleRow}>
@@ -124,7 +119,7 @@ export function StateGraphPane({
           placeholder="new state name"
           onChange={(e) => setNewLabel(e.target.value)}
         />
-        <button type="button" className={styles.addmini} onClick={addState}>+ state</button>
+        <Button size="sm" onClick={addState}>+ State</Button>
       </div>
 
       <div className={styles.ehead} style={{ marginTop: "1rem" }}>
@@ -142,14 +137,7 @@ export function StateGraphPane({
             <span className={styles.kw}>TO</span>
             <MiniSelect opts={stateOpts} value={t.to} onChange={(v) => patchT(t.id, { to: v })} />
             <MiniSelect opts={WORKSHOP_EVENTS} value={t.event} onChange={(v) => patchT(t.id, { event: v })} />
-            <button
-              type="button"
-              className={styles.rm}
-              style={{ marginLeft: "auto" }}
-              onClick={() => setTransitions(graph.transitions.filter((x) => x.id !== t.id))}
-            >
-              &times;
-            </button>
+            <IconButton label="Remove move" variant="danger" size="sm" icon="lucide:x" onClick={() => setTransitions(graph.transitions.filter((x) => x.id !== t.id))} />
           </div>
           <div className={styles.body}>
             <p className={styles.summary}>{transitionSummary(t, graph.states)}</p>
@@ -168,10 +156,10 @@ export function StateGraphPane({
           </div>
         </div>
       ))}
-      <button type="button" className={styles.add} onClick={addTransition}>+ add a move</button>
+      <Button size="sm" onClick={addTransition}>+ Add a move</Button>
       <div className={styles.ruleRow} style={{ marginTop: "0.8rem" }}>
-        <button type="button" className={styles.addmini} onClick={apply}>Apply to triggers</button>
-        <button type="button" className={styles.addmini} onClick={reset}>Reset map</button>
+        <Button size="sm" onClick={apply}>Apply to triggers</Button>
+        <Button variant="quiet" size="sm" onClick={reset}>Reset map</Button>
       </div>
     </>
   );

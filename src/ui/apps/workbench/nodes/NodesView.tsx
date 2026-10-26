@@ -3,10 +3,10 @@
  * notes and frames, and the head row (view switch, layers, Add, Tidy up, Fit). Positions, zoom and the
  * board persist in ctx.prefs; links are written through link-write.ts, never from here directly.
  */
+import { Button, Chip } from "../../../components/button";
 import { useMemo, useRef, useState, useEffect } from "react";
 import type { JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
-import { Stamp } from "../../../components/stamp";
 import { AddMenu, newBoardItem } from "./Board";
 import { Inspector } from "./Inspector";
 import { NodeCanvas, type Selection, type Size } from "./NodeCanvas";
@@ -125,14 +125,19 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
       <div className={css.head}>
         <ViewSwitch view="nodes" onChange={onView} />
         {LAYERS.map(([id, label, color]) => (
-          <button key={id} type="button" className={`${css.chip}${canvas.layers[id] ? ` ${css.chipOn}` : ""}`} aria-pressed={canvas.layers[id]} onClick={() => edit((s) => ({ ...s, layers: { ...s.layers, [id]: !s.layers[id] } }))}>
+          <Chip
+            key={id}
+            pressed={canvas.layers[id]}
+            onClick={() => edit((s) => ({ ...s, layers: { ...s.layers, [id]: !s.layers[id] } }))}
+            color={color}
+          >
             <i style={{ background: color }} />{label}
-          </button>
+          </Chip>
         ))}
         <span className={css.grow} />
         <AddMenu disabled={readOnly} onAdd={add} />
-        <Stamp disabled={readOnly || !canvas.layers.links} onClick={tidyUp}>Tidy up</Stamp>
-        <Stamp onClick={fit}>Fit</Stamp>
+        <Button size="sm" disabled={readOnly || !canvas.layers.links} onClick={tidyUp}>Tidy up</Button>
+        <Button size="sm" onClick={fit}>Fit</Button>
       </div>
       <div className={css.area}>
         <NodeCanvas
@@ -190,7 +195,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
             <div>
               <h3>Nothing on the canvas yet</h3>
               <p>Bring pieces up from the Library. Their links draw themselves. Notes and frames go on the board with Add.</p>
-              <Stamp accent="var(--accent-deep)" onClick={() => ctx.openApp("library")}>Open the Library</Stamp>
+              <Button variant="primary" onClick={() => ctx.openApp("library")}>Open the Library</Button>
             </div>
           </div>
         )}

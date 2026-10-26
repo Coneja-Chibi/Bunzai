@@ -29,6 +29,7 @@ import { stripReasoningTags } from "../../../core/reasoning-tags";
 import { SceneArt } from "./scene-art";
 import { Prose } from "./prose";
 import { since, takePips } from "./scenes-core";
+import { Card } from "../../components/button";
 
 function PreviewSlide({ tail }: { tail: SceneTailMessage[] }): JSX.Element {
   return (
@@ -66,7 +67,7 @@ export function SceneHero({ ctx, scene, picked, onOpen }: { ctx: AppContext; sce
 
   return (
     <div className="stagerow" data-part="scenes.hero" style={tone}>
-      <button type="button" className={`hero${picked ? " picked" : ""}`} aria-pressed={picked} onClick={onOpen}>
+      <Card kind="art" data-part="scenes.hero.open" selected={picked} aria-pressed={picked} onClick={onOpen}>
         <div className="art"><SceneArt ctx={ctx} chatId={scene.id} characterId={scene.cast.character.id} snapshotVersion={scene.snapshotVersion} hasArt={scene.hasPortrait} name={scene.characterName} /></div>
         <span className="badge"><span className="dot" />Live</span>
         <div className="hero-ov">
@@ -85,12 +86,12 @@ export function SceneHero({ ctx, scene, picked, onOpen }: { ctx: AppContext; sce
           </div>
           <span className="s-btn">Continue Story</span>
         </div>
-      </button>
+      </Card>
 
-      <button type="button" className="preview" onClick={onOpen}>
+      <Card kind="art" data-part="scenes.hero.preview" onClick={onOpen}>
         <div className="art" />
         {tail && tail.length > 0 && <PreviewSlide tail={tail} />}
-      </button>
+      </Card>
     </div>
   );
 }

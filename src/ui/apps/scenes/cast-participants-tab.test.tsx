@@ -89,7 +89,7 @@ describe("the Participants tab", () => {
     expect(text()).toContain("#ffc9ae, #aabbcc");
     expect(text()).not.toMatch(/voice/i);
     expect(text()).not.toContain("Roster director");
-    expect(rows().map((r) => r.querySelector("button.del") !== null)).toEqual([false, false]);
+    expect(rows().map((r) => r.querySelector('[data-protected="participant-delete"] button') !== null)).toEqual([false, false]);
     expect(rows()[1]!.textContent).toContain("Set Main");
     expect(changes).toEqual([]);
     expect(stored).toBeNull();
@@ -134,7 +134,7 @@ describe("the Participants tab", () => {
     expect(text()).toContain("Unset Main");
     expect(doc().body.textContent).toContain("No NPCs registered yet.");
     await press(f, button("Unset Main"));
-    await press(f, doc().body.querySelector("button.del") as HTMLElement);
+    await press(f, doc().body.querySelector('[data-protected="participant-delete"] button') as HTMLElement);
     expect(changes.at(-1)).toEqual({ op: "edit", id: "n9", edit: { retired: true } });
     expect(text()).toContain("Retired");
     await press(f, button("Restore"));

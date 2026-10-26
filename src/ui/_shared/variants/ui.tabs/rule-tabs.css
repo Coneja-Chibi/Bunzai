@@ -1,8 +1,8 @@
 /** ui.tabs rule-tabs (Theater): segmented tabs set between two gold hairlines, divided by thin rules; the open one is raised and underlined in brand gold. Library views, layout and order, Scenes layout, period and order. */
 html[data-surface-ui-tabs="rule-tabs"] {
-  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) { border: 0; border-block: 1px solid var(--bk-line); box-shadow: none; background: transparent; padding: 0; gap: 0; }
-  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button { background: transparent; border: 0; border-left: 1px solid var(--bk-line-track); box-shadow: none; color: var(--bk-text-dim); }
-  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:first-child { border-left: 0; }
-  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:hover { color: var(--bk-text); }
-  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.scene-view-switch, .segs)) button:is(.on, [aria-pressed="true"]) { background: var(--bk-surface-raised); color: var(--bk-role-brand-text); box-shadow: inset 0 -2px 0 var(--bk-role-brand); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.plaque-actions, .filters)) [data-control="segmented"] { border: 0; border-block: 1px solid var(--bk-line); box-shadow: none; background: transparent; padding: 0; gap: 0; }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.plaque-actions, .filters)) [data-control="segmented"] button { background: transparent; border: 0; border-left: 1px solid var(--bk-line-track); box-shadow: none; color: var(--bk-text-dim); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.plaque-actions, .filters)) [data-control="segmented"] button:first-child { border-left: 0; }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.plaque-actions, .filters)) [data-control="segmented"] button:hover { color: var(--bk-text); }
+  & :is(.lib.rc :is(.viewseg, .lrail-toggle, .lfilter), .scn :is(.plaque-actions, .filters)) [data-control="segmented"] button[aria-pressed="true"] { background: var(--bk-surface-raised); color: var(--bk-role-brand-text); box-shadow: inset 0 -2px 0 var(--bk-role-brand); }
 }

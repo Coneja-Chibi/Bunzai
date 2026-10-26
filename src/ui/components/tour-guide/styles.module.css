@@ -3,7 +3,7 @@
  * surgery, plus the global highlight the anchored piece wears. Tokens only; the rose border and
  * offset shadow give the rail presence over the dark stage without a blocking scrim.
  */
-.rail {
+.rail{
   position: fixed;
   right: 1.1rem;
   top: 50%;
@@ -22,33 +22,20 @@
   padding: 1rem 1.1rem;
   font-family: var(--font-body);
 }
-.kick {
+.kick{
   display: flex;
   align-items: center;
   gap: 0.6rem;
 }
-.skip {
+.skip{
   margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: var(--text-control, 0.875rem);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-decoration: underline;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.3rem;
 }
-.skip:hover {
-  color: var(--text);
-}
-.dots {
+.dots{
   display: flex;
   gap: 5px;
   margin-top: 0.3rem;
 }
-.dots i {
+.dots i{
   width: 9px;
   height: 9px;
   flex: none;
@@ -56,21 +43,21 @@
   background: var(--panel);
   display: block;
 }
-.dots i.done {
+.dots i.done{
   background: var(--edge);
 }
-.dots i.now {
+.dots i.now{
   background: var(--rose);
   border-color: var(--rose);
 }
-.count {
+.count{
   font-family: var(--font-mono);
   font-size: var(--text-meta, 0.75rem);
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--muted);
 }
-.title {
+.title{
   font-family: var(--font-big);
   font-weight: 900;
   font-size: 1.3rem;
@@ -79,7 +66,7 @@
   color: var(--text);
   margin: 0.1rem 0 0.2rem;
 }
-.noAnchor {
+.noAnchor{
   font-family: var(--font-body);
   font-size: var(--text-body, 1rem);
   line-height: 1.5;
@@ -89,51 +76,19 @@
   margin: 0.4rem 0 0;
 }
 
-.body {
+.body{
   font-size: 1rem;
   line-height: 1.5;
   color: var(--text-soft, var(--stage-soft)); /* --soft was never defined */
   margin: 0;
 }
-.choice {
+.choice{
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
   margin-top: 0.3rem;
 }
-.pick {
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
-  background: var(--face, var(--panel));
-  border: 3px solid var(--edge);
-  box-shadow: 3px 3px 0 0 var(--edge);
-  padding: 0.45rem 0.6rem;
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out, border-color 0.1s ease-out;
-}
-.pick:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 5px 5px 0 0 var(--edge);
-}
-.pickOn {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 0 var(--rose);
-  border-color: var(--rose);
-}
-.pick b {
-  font-family: var(--font-big);
-  font-weight: 700;
-  font-size: var(--text-body);
-  color: var(--text);
-  display: block;
-}
-.pick span {
-  font-family: var(--font-body);
-  font-size: var(--text-meta, 0.75rem);
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-.ctl {
+.ctl{
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -142,76 +97,20 @@
   padding-top: 0.7rem;
   margin-top: 0.3rem;
 }
-.back {
-  font-family: var(--font-body);
-  font-size: var(--text-control, 0.875rem);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-.back:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-.next {
-  font-family: var(--font-big);
-  font-weight: 700;
-  font-size: var(--text-control, 0.875rem);
-  letter-spacing: 0.02em;
-  color: var(--stage-white);
-  background: var(--rose-deep);
-  border: 3px solid var(--edge);
-  box-shadow: 4px 4px 0 0 var(--edge);
-  padding: 0.45rem 0.95rem;
-  cursor: pointer;
-  transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
-}
-.next:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 0 var(--edge);
-}
-.next:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 0 var(--edge);
-}
 
 /* the highlight the anchored piece wears while its step is active (global: the target lives in
    another component's module scope, so the class is un-hashed and matched globally) */
-:global(.tourHl) {
+:global(.tourHl){
   outline: 3px solid var(--rose);
   outline-offset: 3px;
   border-radius: 0;
   scroll-margin: 6rem;
 }
 
-:global(html[data-surface-ui-controls="quiet"]) .rail {
+:global(html[data-surface-ui-controls="quiet"]) .rail{
   border-color: var(--chrome-structure);
   box-shadow: 6px 6px 0 0 var(--stage-seam);
 }
-:global(html[data-surface-ui-controls="quiet"]) .pickOn {
-  box-shadow: 1px 1px 0 0 var(--selection);
-  border-color: var(--selection);
-}
-:global(html[data-surface-ui-controls="quiet"]) .next {
-  background: var(--action-primary);
-  border-color: var(--control-boundary);
-  box-shadow: 4px 4px 0 0 var(--control-boundary);
-}
-:global(html[data-surface-ui-controls="quiet"]) :global(.tourHl) {
+:global(html[data-surface-ui-controls="quiet"]) :global(.tourHl){
   outline-color: var(--focus-ring);
-}
-.skip:focus-visible, .back:focus-visible, .next:focus-visible, .pick:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pick,
-  .next {
-    transition: none;
-  }
 }

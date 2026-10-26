@@ -6,6 +6,7 @@
  */
 import { OverlayWidgets } from "./overlay";
 import { useEffect, useState } from "react";
+import { Tabs } from "../../components/button";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { JSX } from "react";
 import type { AppContext, BunrakuApp } from "../../app-contract";
@@ -48,19 +49,7 @@ function SettingsRoom({ ctx }: { ctx: AppContext }): JSX.Element | null {
     <style>{SETTINGS_VARIANTS_STYLE}</style>
     <div className={`${styles.room} scrollThin`} data-sx="room">
       <div className={styles.tabs} data-sx="tabs" data-part="settings.tabs">
-        {sections.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            className={s.id === active.id ? `${styles.tab} ${styles.on}` : styles.tab}
-            data-sx="tab"
-            data-part="settings.tab"
-            aria-current={s.id === active.id ? "page" : undefined}
-            onClick={() => setActiveId(s.id)}
-          >
-            {s.label}
-          </button>
-        ))}
+        <Tabs label="Settings sections" items={sections.map((s) => ({ value: s.id, label: s.label, "data-part": "settings.tab" }))} value={active.id} onChange={setActiveId} />
       </div>
       <div className={styles.body} data-sx="body" data-part="settings.body">
         <ThemeSlot id="settings.header" />

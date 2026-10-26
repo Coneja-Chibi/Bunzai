@@ -63,13 +63,4 @@
 }
 .clear {
   align-self: flex-start;
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-card, var(--panel)); /* --card was never defined; --panel is the fill-role flip token */
-  color: var(--stage-mute, var(--muted));
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
 }

@@ -13,6 +13,7 @@ import { InkDialog } from "../../components/ink-dialog";
 import { createAndOpenRegexSet } from "../library/new-regex-set";
 import { REGEX_ORDER_KEY, inSavedOrder, movedTo, regexTabMeta, selectedInOrder } from "./scene-regex-core";
 import type { SceneRegexPicks } from "./use-scene-regex-picks";
+import { Chip, Disclosure, IconButton, Button } from "../../components/button";
 
 /** How the tab reads in the fold: "2 active" (RoleCall's "n active"), counting only sets the library still has. */
 export const regexTabMetaOf = (picks: SceneRegexPicks): string => {
@@ -32,7 +33,7 @@ export function SceneRegexWing({ ctx, picks }: { ctx: AppContext; picks: SceneRe
     return (
       <div className="wbody pp">
         <header className="hero bad"><span className="hi"><Ic name="mdi:alert-octagon-outline" size={20} /></span><div><div className="eb">Regex Error</div><h2>Could not <em>load</em></h2><p>{library.why}</p></div>
-          <div className="hero-tools"><button type="button" className="tbtn" title="Try again" onClick={picks.reload}><Ic name="lucide:refresh-cw" size={14} /></button></div>
+          <div className="hero-tools"><IconButton variant="quiet" size="sm" icon="lucide:refresh-cw" label="Try again" onClick={picks.reload} /></div>
         </header>
       </div>
     );
@@ -72,7 +73,7 @@ export function SceneRegexWing({ ctx, picks }: { ctx: AppContext; picks: SceneRe
         <div><div className="eb">Text Transformations</div><h2>Regex <em>Scripts</em></h2><p>Pattern rules that rewrite messages before they reach the model: strip stage directions, normalize quotes, redact, or substitute on the fly.</p></div>
       </header>
       <div className="pg-rail">
-        <button type="button" className="pg-new" onClick={make}><Ic name="lucide:plus" size={14} /> New Regex Script</button>
+        <Button variant="primary" size="sm" icon="lucide:plus" onClick={make}>New Regex Script</Button>
       </div>
       {list.length === 0 ? (
         <div className="rx-none"><span className="box"><Ic name="lucide:code-xml" size={24} /></span><b>No regex scripts yet</b><small>Create or import regex scripts to get started</small></div>
@@ -85,23 +86,21 @@ export function SceneRegexWing({ ctx, picks }: { ctx: AppContext; picks: SceneRe
             return (
               <div key={s.id} className={`rx-item${on ? " on" : ""}${dragging === s.id ? " drag" : ""}`} onDragOver={(e) => dragging && e.preventDefault()} onDrop={(e) => drop(e, s.id)}>
                 <div className="rx-head">
-                  <button type="button" className="rx-grip" draggable title="Drag to reorder" aria-label={`Drag ${s.name} to reorder`} onDragStart={() => setDragging(s.id)} onDragEnd={() => setDragging(null)}
+                  <IconButton variant="quiet" size="sm" icon="lucide:grip-vertical" draggable title="Drag to reorder" label={`Drag ${s.name} to reorder`} onDragStart={() => setDragging(s.id)} onDragEnd={() => setDragging(null)}
                     onKeyDown={(e) => {
                       const at = list.findIndex((x) => x.id === s.id);
                       const to = e.key === "ArrowUp" ? list[at - 1] : e.key === "ArrowDown" ? list[at + 1] : undefined;
                       if (to) { e.preventDefault(); reorder(s.id, to.id); }
-                    }}><Ic name="lucide:grip-vertical" size={16} /></button>
-                  <button type="button" className="rx-main" aria-expanded={isOpen} onClick={() => fold(s.id)}>
-                    <Ic name={isOpen ? "lucide:chevron-down" : "lucide:chevron-right"} size={16} />
-                    <span className="rx-text"><b>{s.name}</b>{s.facts?.description && <small>{s.facts.description}</small>}</span>
-                    {rules !== undefined && <span className="rx-count"><b>{rules}</b><small>{rules === 1 ? "rule" : "rules"}</small></span>}
-                  </button>
+                    }} />
+                  <Disclosure open={isOpen} onClick={() => fold(s.id)}
+                    label={<span className="rx-text"><b>{s.name}</b>{s.facts?.description && <small>{s.facts.description}</small>}</span>}
+                    summary={rules !== undefined ? <span className="rx-count"><b>{rules}</b><small>{rules === 1 ? "rule" : "rules"}</small></span> : undefined} />
                 </div>
                 {isOpen && (
                   <div {...protect("regex-switches", "rx-acts")}>
-                    <button type="button" className={`rx-use${on ? " on" : ""}`} title={on ? "Deselect" : "Select for chat"} aria-pressed={on} onClick={() => toggle(s.id)}><Ic name={on ? "lucide:circle-check" : "lucide:code-xml"} size={14} /> {on ? "Selected" : "Use"}</button>
-                    <button type="button" className="rx-sq" title="Edit" aria-label={`Edit ${s.name}`} onClick={() => edit(s)}><Ic name="lucide:pen" size={14} /></button>
-                    <button type="button" className="rx-sq red" title="Delete" aria-label={`Delete ${s.name}`} onClick={() => setAsk(s)}><Ic name="lucide:trash-2" size={14} /></button>
+                    <Chip pressed={on} title={on ? "Deselect" : "Select for chat"} onClick={() => toggle(s.id)}><Ic name={on ? "lucide:circle-check" : "lucide:code-xml"} size={14} /> {on ? "Selected" : "Use"}</Chip>
+                    <IconButton variant="quiet" size="sm" icon="lucide:pen" label={`Edit ${s.name}`} title="Edit" onClick={() => edit(s)} />
+                    <IconButton variant="danger" size="sm" icon="lucide:trash-2" label={`Delete ${s.name}`} title="Delete" onClick={() => setAsk(s)} />
                   </div>
                 )}
               </div>
@@ -117,8 +116,8 @@ export function SceneRegexWing({ ctx, picks }: { ctx: AppContext; picks: SceneRe
             <h3>Delete <em>script?</em></h3>
             <p>Are you sure you want to delete this regex script?</p>
             <div className="row">
-              <button type="button" className="no" autoFocus onClick={() => setAsk(null)}>Cancel</button>
-              <button type="button" {...protect("regex-switches", "yes")} onClick={() => void remove(ask)}>Delete</button>
+              <Button autoFocus onClick={() => setAsk(null)}>Cancel</Button>
+              <span {...protect("regex-switches")}><Button variant="danger" onClick={() => void remove(ask)}>Delete</Button></span>
             </div>
           </div>
         </InkDialog>

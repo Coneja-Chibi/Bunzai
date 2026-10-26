@@ -49,25 +49,6 @@
   align-items: center;
 }
 
-.lens {
-  font-family: var(--font-big);
-  font-size: var(--text-control);
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.4rem 0.7rem;
-  color: var(--text-soft);
-  background: var(--face);
-  border: 3px solid var(--edge);
-  cursor: pointer;
-}
-
-.lensOn {
-  color: var(--stage-ink);
-  background: var(--a);
-  box-shadow: 3px 3px 0 0 var(--edge);
-}
-
 /* -- the two boxes -------------------------------------------------------------------------- */
 
 .boxes {
@@ -164,17 +145,6 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
   gap: 0.35rem;
   align-items: center;
-}
-
-.drop {
-  font-family: var(--font-mono);
-  font-size: var(--text-body);
-  line-height: 1;
-  padding: 0.3rem 0.5rem;
-  color: var(--text-dim);
-  background: transparent;
-  border: 2px solid var(--edge);
-  cursor: pointer;
 }
 
 .actions {
@@ -322,19 +292,6 @@
 
 .travelFlag { color: var(--text); font-weight: 600; }
 
-.more {
-  align-self: flex-start;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.2rem 0.4rem;
-  color: var(--text-dim);
-  background: transparent;
-  border: 2px solid var(--edge);
-  cursor: pointer;
-}
-
 .tokens {
   display: flex;
   flex-wrap: wrap;
@@ -365,40 +322,6 @@
   gap: 0.35rem;
 }
 
-.tab {
-  font-family: var(--font-big);
-  font-size: var(--text-control);
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.65rem;
-  color: var(--text-soft);
-  background: var(--face);
-  border: 2px solid var(--edge);
-  cursor: pointer;
-}
-
-.tabOn {
-  color: var(--stage-ink);
-  background: var(--a);
-  box-shadow: 2px 2px 0 0 var(--edge);
-}
-
-/* -- the bible ------------------------------------------------------------------------------ */
-
-.groupHead {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.6rem;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  cursor: pointer;
-  text-align: left;
-}
-
 .entries {
   list-style: none;
   margin: 0.5rem 0 0;
@@ -416,24 +339,6 @@
   gap: 0.4rem;
 }
 
-.insert {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  padding: 0.15rem 0.4rem;
-  color: var(--text);
-  background: var(--face);
-  border: 2px solid var(--edge);
-  cursor: pointer;
-  overflow-wrap: anywhere;
-}
-
-.insert:hover,
-.insert:focus-visible {
-  color: var(--stage-ink);
-  background: var(--a);
-}
-
 .entryDesc {
   flex: 1;
   min-width: 8rem;
@@ -443,36 +348,22 @@
 }
 
 :global(html[data-surface-ui-panel="gilt-frame"]) .box,
-:global(html[data-surface-ui-panel="gilt-frame"]) .lens,
-:global(html[data-surface-ui-panel="gilt-frame"]) .tab,
 :global(html[data-surface-ui-panel="gilt-frame"]) .source,
 :global(html[data-surface-ui-panel="gilt-frame"]) .field,
 :global(html[data-surface-ui-panel="gilt-frame"]) .resolved,
 :global(html[data-surface-ui-panel="gilt-frame"]) .row,
-:global(html[data-surface-ui-panel="gilt-frame"]) .verdict,
-:global(html[data-surface-ui-panel="gilt-frame"]) .more,
-:global(html[data-surface-ui-panel="gilt-frame"]) .insert {
+:global(html[data-surface-ui-panel="gilt-frame"]) .verdict {
   border-color: var(--control-boundary);
   border-width: 1px;
 }
-:global(html[data-surface-ui-panel="gilt-frame"]) .box,
-:global(html[data-surface-ui-panel="gilt-frame"]) .lensOn,
-:global(html[data-surface-ui-panel="gilt-frame"]) .tabOn {
+:global(html[data-surface-ui-panel="gilt-frame"]) .box {
   box-shadow: none;
 }
 :global(html[data-surface-ui-panel="gilt-frame"]) .title,
 :global(html[data-surface-ui-panel="gilt-frame"]) .boxTitle {
   font-weight: 600;
 }
-:global(html[data-surface-ui-panel="gilt-frame"]) .lens,
-:global(html[data-surface-ui-panel="gilt-frame"]) .tab {
-  font-weight: 600;
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .lensOn,
-:global(html[data-surface-ui-panel="gilt-frame"]) .tabOn,
-:global(html[data-surface-ui-panel="gilt-frame"]) .verdictKnown,
-:global(html[data-surface-ui-panel="gilt-frame"]) .insert:hover,
-:global(html[data-surface-ui-panel="gilt-frame"]) .insert:focus-visible {
+:global(html[data-surface-ui-panel="gilt-frame"]) .verdictKnown {
   background: var(--selection);
   color: var(--selection-fg);
   border-color: var(--selection);
@@ -480,3 +371,5 @@
 :global(html[data-surface-ui-panel="gilt-frame"]) .problem {
   border-left-color: var(--danger);
 }
+
+.more { align-self: flex-start; }

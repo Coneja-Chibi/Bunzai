@@ -18,9 +18,10 @@ import ContentsEntry from "./variants/scenes.list/table-of-contents";
 import { SceneArt } from "./scene-art";
 import { ContextMenuButton } from "../../_shared/context-menu-button";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, rowsOf, useFocusedRangeIndex, useGridColumns, useOccurrenceKeys, useVirtualRows, type Range } from "../../_shared/virtual-list";
+import { Card } from "../../components/button";
 
 /** No specific scene backs "Start New Story", so it wears the house accent. */
-const TONE = { "--t": "var(--accent)" } as CSSProperties;
+const TONE: Record<`--${string}`, string> = { "--t": "var(--accent)" };
 
 function TakeStrip({ s, always }: { s: SceneSummary; always?: boolean }): JSX.Element | null {
   if (!always && s.takeCount <= 1) return null;
@@ -57,7 +58,7 @@ export function SceneCard({ ctx, s, picked, onClick, posinset, setsize, focusKey
     takes: { ...takePips(s.takeCount), on: s.activeTake.original ? 0 : takePips(s.takeCount).pips - 1, label: `${s.takeCount} ${s.takeCount === 1 ? "take" : "takes"}` } } : null;
   return (
     <div className="scene-entry" data-part="scenes.card" data-pick={focusKey} ref={menuRef} style={tone}>
-    <button type="button" aria-posinset={posinset} aria-setsize={setsize} className={`sc${s.takeCount > 1 || compact ? " hastakes" : ""}${picked ? " picked" : ""}`} onClick={onClick}>
+    <Card kind="art" data-part="scenes.card.open" aria-posinset={posinset} aria-setsize={setsize} data-hastakes={s.takeCount > 1 || compact ? "" : undefined} selected={picked === true} onClick={onClick}>
       {Row && rowProps ? <Row {...rowProps} /> : <div className="art">
         <SceneArt ctx={ctx} chatId={s.id} characterId={s.cast.character.id} snapshotVersion={s.snapshotVersion} hasArt={s.hasPortrait} name={s.characterName} />
         <div className="cont"><span>Continue &rarr;</span></div>
@@ -70,7 +71,7 @@ export function SceneCard({ ctx, s, picked, onClick, posinset, setsize, focusKey
         <TakeStrip s={s} always={compact} />
       </div>}
       {picked !== null && <span className="tick" />}
-    </button>
+    </Card>
     {compact && <ContextMenuButton name={s.title} className="scene-more" />}
     </div>
   );
@@ -78,11 +79,11 @@ export function SceneCard({ ctx, s, picked, onClick, posinset, setsize, focusKey
 
 export function NewStoryCard({ characterName, onStart }: { characterName: string; onStart(): void }): JSX.Element {
   return (
-    <button type="button" className="sc newcard" style={TONE} onClick={onStart}>
+    <Card kind="art" data-part="scenes.card.new" vars={TONE} onClick={onStart}>
       <span className="plus"><Ic name="lucide:plus" size={20} /></span>
       <b>Start New Story</b>
       <span className="with">with {characterName}</span>
-    </button>
+    </Card>
   );
 }
 

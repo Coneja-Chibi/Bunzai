@@ -34,45 +34,7 @@
   color: var(--stage-card);
 }
 
-.tabs {
-  display: inline-flex;
-  border: 2px solid var(--stage-black);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-}
 
-.tab {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 0;
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  padding: 0.32rem 0.6rem;
-  cursor: pointer;
-}
-
-.tab + .tab {
-  border-left: 2px solid var(--stage-black);
-}
-
-.tabOn {
-  background: var(--a, var(--accent));
-  color: var(--stage-ink);
-}
-
-.pclose {
-  margin-left: auto;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  width: 1.7rem;
-  height: 1.7rem;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  flex: none;
-}
 
 .pbody {
   padding: 0.9rem;
@@ -116,20 +78,6 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--stage-kicker);
-}
-
-.escBtn {
-  margin-left: auto;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  padding: 0.2rem 0.45rem;
-  cursor: pointer;
 }
 
 .scbody {
@@ -177,24 +125,6 @@
 
 .phaseOr {
   margin-left: auto;
-}
-
-.ghostBtn {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.24rem 0.5rem;
-  cursor: pointer;
-}
-
-.ghostBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 /* ---------- the chain ---------- */
@@ -452,26 +382,6 @@
   margin-top: 0.7rem;
 }
 
-.escCopy {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--stage-card);
-  color: var(--stage-ink);
-  border: 2px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-}
-
-.escCopy:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
 /* Collapse blocks at FILE END: container queries add no specificity, so a later base rule would win.
    Fold by the PANE's width, never the viewport's (the fluid law). Below 34rem the pane sits under the
    editor as a top-bordered strip (the set-editor grid stacks it; full-height takeover handled there). */
@@ -481,3 +391,5 @@
     border-top: 2px solid var(--stage-seam);
   }
 }
+
+.phead > :last-child, .schead > :last-child { margin-left: auto; }

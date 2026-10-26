@@ -5,6 +5,7 @@
  * and the wing reads the reply's trace once for the sub-tabs that show it.
  */
 import { useState, type JSX } from "react";
+import { Button } from "../../../components/button";
 import { draftKey, readDraft } from "../composer-tools-core";
 import { Ic } from "../../../_shared/ic";
 import type { AppContext } from "../../../app-contract";
@@ -64,7 +65,7 @@ export function ContextWing({ initialTab, ...props }: ContextProps & { initialTa
         <div className="cx-toast" role="status" data-part="scene.context.toast">
           <Ic name="lucide:circle-alert" size={20} />
           <span>No calls are awaiting review.</span>
-          <button type="button" onClick={() => setNone(false)}>Close</button>
+          <Button variant="quiet" size="sm" onClick={() => setNone(false)}>Close</Button>
         </div>
       )}
     </>

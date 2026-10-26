@@ -197,26 +197,6 @@
   gap: 0.35rem;
 }
 
-.modeTab {
-  font: inherit;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--stage-text-dim);
-  padding: 0.1rem 0.15rem;
-  cursor: pointer;
-}
-
-.modeOn {
-  color: var(--stage-card);
-  border-bottom-color: var(--a, var(--accent));
-}
-
 .modeHint {
   font-family: var(--font-mono);
   font-size: var(--text-meta);

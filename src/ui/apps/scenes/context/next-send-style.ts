@@ -8,12 +8,10 @@ export const NEXT_SEND_STYLE = `
 .scs .ns-hd p{margin:0;font:400 var(--text-meta) var(--font-ui);color:var(--stage-soft)}
 .scs .ns-hd>div{display:flex;align-items:center;gap:8px}
 .scs .ns-upd{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid color-mix(in srgb,var(--stage-var) 20%,transparent);background:color-mix(in srgb,var(--stage-var) 10%,transparent);font:var(--text-meta) var(--font-ui);color:var(--stage-var)}
-.scs .ns-copy{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid color-mix(in srgb,var(--stage-var) 30%,transparent);background:color-mix(in srgb,var(--stage-var) 20%,transparent);font:500 var(--text-meta) var(--font-ui);color:var(--stage-var);cursor:pointer}
-.scs .ns-copy:disabled{border-color:transparent;background:var(--stage-sunken);color:var(--stage-dim);cursor:not-allowed}
 .scs .ns-search{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-sunken) 40%,transparent);color:var(--stage-dim)}
 .scs .ns-search input{flex:1;height:36px;padding:0 36px 0 12px;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-sunken) 80%,transparent);font:var(--text-meta) var(--font-ui);color:var(--stage-card)}
 .scs .ns-search input::placeholder{color:var(--stage-dim)}
-.scs .ns-search button{position:absolute;right:24px;display:grid;place-items:center;width:20px;height:20px;padding:0;border:0;background:none;color:var(--stage-dim);cursor:pointer}
+.scs .ns-clear{position:absolute;right:20px;display:flex}
 .scs .ns-search small{flex-basis:100%;font:var(--text-meta) var(--font-ui);color:var(--stage-dim)}
 .scs .ns-body{flex:1;display:flex;flex-direction:column;gap:12px;padding:16px}
 .scs .ns-empty{margin:auto;padding:48px 12px;text-align:center;color:var(--stage-dim)}
@@ -31,5 +29,5 @@ export const NEXT_SEND_STYLE = `
 .scs .ns-foot p{display:flex;align-items:center;gap:8px;margin:0;font:var(--text-meta) var(--font-ui);color:var(--stage-dim)}
 .scs .ns-foot p+p{margin-top:6px}
 .scs .ns-foot i{flex:none;width:6px;height:6px;border-radius:50%;background:var(--stage-var)}
-.scs .ns button:focus-visible,.scs .ns input:focus-visible{outline:2px solid var(--focus-ring);outline-offset:1px}
+.scs .ns input:focus-visible{outline:2px solid var(--focus-ring);outline-offset:1px}
 `;

@@ -33,7 +33,7 @@ describe("variant stylesheets", () => {
   });
 
   test("every rule is scoped to its variant root, square, colorless, focus-safe, and hides no control", () => {
-    const kept = /\.(acts|meta|swc|rail|wi|cap|dockbar|scroll|paused-mark|send|stop|hint|branch|back)$/;
+    const kept = /(\.(acts|meta|swc|rail|cap|dockbar|scroll|send|stop|hint|back)|\[data-wing\]|\[data-part="scene\.paused"\]|\[data-part="scene\.takes\.toggle"\])$/;
     expect(variantCssProblems(SCENE_VARIANTS_STYLE, /^html\[data-surface-scene-[a-z]+="[a-z-]+"\] \.scs/, kept)).toEqual([]);
   });
 });

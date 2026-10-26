@@ -96,21 +96,3 @@
   gap: 0.6rem;
   margin-top: 0.6rem;
 }
-.back,
-.go {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.5rem 0.9rem;
-}
-.go {
-  color: var(--stage-white);
-  background: var(--rose-deep); /* deep companion: cream --paper on bright rose measured 4.43, under AA */
-}
-.back:disabled,
-.go:disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}

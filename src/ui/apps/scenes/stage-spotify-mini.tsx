@@ -9,6 +9,7 @@ import { safeArt } from "./stage-spotify-core";
 import type { SpotifyFeed } from "./stage-spotify-feed";
 import { openStageTab } from "./stage-open";
 import { useStageSpotify } from "./use-stage-spotify";
+import { IconButton } from "../../components/button";
 
 export function SpotifyMini({ feed, onExpand = () => openStageTab("spotify") }: { feed: SpotifyFeed; onExpand?: () => void }): JSX.Element | null {
   const { state } = useStageSpotify(feed);
@@ -22,9 +23,9 @@ export function SpotifyMini({ feed, onExpand = () => openStageTab("spotify") }: 
         {track ? <><p>{track.name}</p><p>{track.artists.join(", ")}</p></> : <p className="sp-mini-none">No track playing</p>}
       </div>
       <div className="mm-mini-btns">
-        <button type="button" disabled={!track} onClick={() => void feed.toggle()} aria-label={state.playback?.playing ? "Pause" : "Play"}><Ic name={state.playback?.playing ? "lucide:pause" : "lucide:play"} size={16} /></button>
-        <button type="button" disabled={!track} onClick={() => void feed.act({ action: "next" })} aria-label="Skip to next"><Ic name="lucide:skip-forward" size={16} /></button>
-        <button type="button" onClick={onExpand} aria-label="Open Spotify panel"><Ic name="lucide:chevron-up" size={16} /></button>
+        <IconButton variant="quiet" size="sm" icon={state.playback?.playing ? "lucide:pause" : "lucide:play"} label={state.playback?.playing ? "Pause" : "Play"} disabled={!track} onClick={() => void feed.toggle()} />
+        <IconButton variant="quiet" size="sm" icon="lucide:skip-forward" label="Skip to next" disabled={!track} onClick={() => void feed.act({ action: "next" })} />
+        <IconButton variant="quiet" size="sm" icon="lucide:chevron-up" label="Open Spotify panel" onClick={onExpand} />
       </div>
     </div>
   );

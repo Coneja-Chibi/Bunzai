@@ -4,13 +4,12 @@
  * kept per user (scenes.stageActs), where RoleCall kept it per browser (F11).
  */
 import type { JSX, ReactNode } from "react";
+import { Disclosure } from "../../components/button";
 
 export function Act({ id, title, status, open, onToggle, children }: { id: string; title: string; status: string; open: boolean; onToggle(): void; children: ReactNode }): JSX.Element {
   return (
     <section className={`sa-act${open ? " open" : ""}`} aria-label={title} data-part={`scene.stage.act.${id}`}>
-      <button type="button" aria-expanded={open} onClick={onToggle}>
-        <span className="chev" aria-hidden="true">›</span><span className="ttl">{title}</span><span className="sp" />{!open && <span className="st">{status}</span>}
-      </button>
+      <Disclosure open={open} onClick={onToggle} label={title} summary={!open ? status : undefined} />
       {open && <div className="sa-body">{children}</div>}
     </section>
   );

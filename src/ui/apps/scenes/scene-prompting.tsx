@@ -18,6 +18,7 @@ import { useScenePrompting } from "./use-scene-prompting";
 import { ThemeSlot } from "../../_shared/theme-slot";
 import { useScenePresetText } from "./use-scene-preset-text";
 import { tabOr } from "./scene-wing-data";
+import { Tabs } from "../../components/button";
 
 type TabId = "preset" | "guides" | "note" | "tools";
 
@@ -51,7 +52,7 @@ export function PromptingWing({ ctx, chat, presetBody, onChanged, onBody, initia
       <nav className="fold" data-part="scene.prompting">
         <div className="crumb">Prompting <i>/</i> <b>{tabs.find((t) => t.id === tab)!.label}</b></div>
         <div className="tabs" data-part="scene.prompting.tabs">
-          {tabs.map((t) => <button type="button" key={t.id} className={tab === t.id ? "on" : ""} aria-pressed={tab === t.id} onClick={() => setTab(t.id)}><b>{t.label}</b><small>{t.meta}</small></button>)}
+          <Tabs label="Prompting sections" items={tabs.map((t) => ({ value: t.id, label: <><b>{t.label}</b><small>{t.meta}</small></> }))} value={tab} onChange={setTab} />
         </div>
       </nav>
       {tab === "preset" && <><ThemeSlot id="scene.wing.prompting.preset" /><PresetWing ctx={ctx} chat={chat} text={presetText} onChanged={onChanged} /></>}

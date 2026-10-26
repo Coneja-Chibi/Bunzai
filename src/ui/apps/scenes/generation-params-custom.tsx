@@ -6,6 +6,7 @@
  * or removed. A header's value never shows outside this box.
  */
 import { useState, type JSX } from "react";
+import { Disclosure } from "../../components/button";
 import { Ic, type IconName } from "../../_shared/ic";
 import { customProblem } from "../../../stage/params/custom";
 import type { SceneGeneration } from "../../../stage/params/scene";
@@ -38,12 +39,7 @@ export function CustomRequestParams({ samplers, onSave }: { samplers: SceneGener
   const [open, setOpen] = useState(false);
   return (
     <div className="gp-group gp-custom" data-part="scene.generation.custom">
-      <button type="button" className="gp-ghead" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <Ic name="mdi:code-braces" size={16} />
-        <span className="gp-ctitle">Custom Request Parameters</span>
-        <span className="gp-ctag">Advanced</span>
-        <Ic name={open ? "mdi:chevron-up" : "mdi:chevron-down"} size={16} />
-      </button>
+      <Disclosure open={open} onClick={() => setOpen(!open)} leading={<span className="gp-ctic"><Ic name="mdi:code-braces" size={16} /></span>} label="Custom Request Parameters" summary={<span className="gp-ctag">Advanced</span>} />
       {open && (
         <div className="gp-cbody">
           <p className="gp-hint">Add HTTP headers and body parameters to each API request. Use a JSON object. The request&apos;s own fields (model, messages, stream, tools) cannot be set or removed.</p>

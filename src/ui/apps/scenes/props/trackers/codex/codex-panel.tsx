@@ -7,6 +7,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { applyCodex, codexLines, creaturesOf, liveCreatures, liveSpecies, readCodex, speciesByName, type Creature, type CreatureMade, type Species, type SpeciesMade } from "../../../../../../core/trackers/codex";
 import { tokensOf } from "../../../../../../core/trackers/list";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import { protect } from "../../../../../_shared/protected-control";
 import type { PopoutContext } from "../../../popout/popout-kind";
@@ -73,7 +74,7 @@ export function CodexPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
                 right={<div className="it-pillcol"><Tag tone={tone}>{sp.rarity}</Tag><Tag tone={DISPOSITION_TONE[sp.disposition]}>{sp.disposition}</Tag></div>}
                 open={open === sp.id} onToggle={() => setOpen(open === sp.id ? null : sp.id)}>
                 <RefreshByModel<SpeciesMade> ctx={ctx} chatId={chat.id} ask={SPECIES_ASK} noun="species" existing={sp} preview={(m) => <SpeciesPreview s={m} />} accept={(m) => act({ kind: "refreshSpecies", id: sp.id, species: m })}
-                  extra={<button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete species" onClick={inner(() => { act({ kind: "removeSpecies", id: sp.id, at: Date.now() }, `Deleted ${sp.name} and its creatures`); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>} />
+                  extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete species" onClick={inner(() => { act({ kind: "removeSpecies", id: sp.id, at: Date.now() }, `Deleted ${sp.name} and its creatures`); setOpen(null); })}>Delete</Button></span>} />
                 {sp.description && <Block title="Description"><p>{sp.description}</p></Block>}
                 {sp.appearance && <Block title="Appearance"><p>{sp.appearance}</p></Block>}
                 {sp.baseTraits.length > 0 && <Block title="Traits"><Chips items={sp.baseTraits} /></Block>}
@@ -96,7 +97,7 @@ export function CodexPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
               under={c.bond !== undefined || c.trust !== undefined ? <div className="cx-bt">{c.bond !== undefined && <div><small>Bond</small><div className="bd-bar thin"><div style={{ width: `${c.bond}%`, background: "var(--stage-danger-text)" }} /></div></div>}{c.trust !== undefined && <div><small>Trust</small><div className="bd-bar thin"><div style={{ width: `${c.trust}%`, background: "var(--stage-link)" }} /></div></div>}</div> : null}
               open={open === c.id} onToggle={() => setOpen(open === c.id ? null : c.id)}>
               <RefreshByModel<CreatureMade> ctx={ctx} chatId={chat.id} ask={CREATURE_ASK} noun="creature" existing={{ ...c, speciesName: speciesName(c) }} preview={(m) => <CreaturePreview c={m} known />} accept={(m) => act({ kind: "refreshCreature", id: c.id, creature: m })}
-                extra={<button type="button" {...protect("tracker-delete", "it-act bad")} title="Delete creature" onClick={inner(() => { act({ kind: "removeCreature", id: c.id, at: Date.now() }, `Deleted ${c.nickname || "the creature"}`); setOpen(null); })}><Ic name="lucide:trash-2" size={14} /><span>Delete</span></button>} />
+                extra={<span {...protect("tracker-delete")}><Button variant="danger" size="sm" icon="lucide:trash-2" title="Delete creature" onClick={inner(() => { act({ kind: "removeCreature", id: c.id, at: Date.now() }, `Deleted ${c.nickname || "the creature"}`); setOpen(null); })}>Delete</Button></span>} />
               {c.temperament && <Block title="Temperament"><p>{c.temperament}</p></Block>}
               {c.appearance && <Block title="Appearance"><p>{c.appearance}</p></Block>}
               {c.traits && c.traits.length > 0 && <Block title="Traits"><Chips items={c.traits} /></Block>}

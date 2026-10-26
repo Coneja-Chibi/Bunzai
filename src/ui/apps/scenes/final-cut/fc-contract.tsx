@@ -4,6 +4,7 @@
  * not a second written copy. Tokens are Bunraku's estimate (the same count the Tokens view starts from), not a tokenizer's.
  */
 import { useState, type JSX } from "react";
+import { Button, Chip } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import type { FinalCutPass } from "../../../../core/final-cut/pass";
 import type { RulebookEntry } from "../../../../core/final-cut/prompts";
@@ -36,15 +37,15 @@ export function Contract({ passes, rulebook }: { passes: readonly FinalCutPass[]
         <div className="fc-tokens"><b>{one?.type === "validator" ? "-" : `~${shownTokens.toLocaleString()}`}</b><small>{one ? (one.type === "validator" ? "no model call" : "tokens · this pass") : "tokens total"}</small></div>
       </header>
       <div className="fc-chips">
-        {one && <button type="button" className="pg-chip" onClick={() => setPicked(null)}>All passes ~{total.toLocaleString()}</button>}
+        {one && <Chip onClick={() => setPicked(null)}>All passes ~{total.toLocaleString()}</Chip>}
         {list.map((c, i) => (
-          <button type="button" key={c.type} className={`pg-chip${picked === c.type ? " on" : ""}`} aria-pressed={picked === c.type} style={{ opacity: picked && picked !== c.type ? 0.55 : 1 }} onClick={() => setPicked(picked === c.type ? null : c.type)}>
+          <Chip key={c.type} pressed={picked === c.type} muted={!!picked && picked !== c.type} onClick={() => setPicked(picked === c.type ? null : c.type)}>
             {i + 1} {c.label} {c.type === "validator" ? "-" : `~${c.tokens.toLocaleString()}`}
-          </button>
+          </Chip>
         ))}
       </div>
       <div className="fc-copy">
-        <button type="button" className="fc-btn" onClick={() => { void copyText(xml).then((ok) => { setNote(ok ? "Copied" : "Copy failed"); setTimeout(() => setNote(null), 1200); }); }}>{note ?? label}</button>
+        <Button size="sm" onClick={() => { void copyText(xml).then((ok) => { setNote(ok ? "Copied" : "Copy failed"); setTimeout(() => setNote(null), 1200); }); }}>{note ?? label}</Button>
         <small>estimated tokens (the Tokens view's count), not a tokenizer's</small>
       </div>
       <details className="fc-fold" open={one !== null}>

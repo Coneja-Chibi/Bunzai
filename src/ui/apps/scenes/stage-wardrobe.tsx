@@ -16,6 +16,7 @@ import type { StageTab, StageTabProps } from "./stage-tabs";
 import { useSceneChoices } from "./use-scene-choices";
 import { useSceneRegexSets } from "./use-scene-regex";
 import { useSceneRegexPicks } from "./use-scene-regex-picks";
+import { Chip } from "../../components/button";
 
 interface Dress { entry: WardrobeEntry; setId: string; setName: string }
 
@@ -108,9 +109,9 @@ function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
                   <div key={entry.ruleId} className={`wd-row${on ? " on" : ""}`}>
                     <Swatch colors={entry.swatch} />
                     <b>{entry.displayName}</b>
-                    <button type="button" className={`pg-chip${on ? " on" : ""}`} aria-pressed={on} disabled={busy === `${groupId}:${optionId}`} onClick={() => void toggleRoster(group, optionId)}>
+                    <Chip pressed={on} disabled={busy === `${groupId}:${optionId}`} onClick={() => void toggleRoster(group, optionId)}>
                       {busy === `${groupId}:${optionId}` ? "..." : on ? "In rotation" : "Resting"}
-                    </button>
+                    </Chip>
                   </div>
                 );
               })}
@@ -129,9 +130,9 @@ function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
                 <div key={setId} className={`wd-row${on ? " on" : ""}`}>
                   <Swatch colors={entry.swatch} />
                   <span className="wd-name"><b>{entry.displayName}</b><small>{setName}</small></span>
-                  <button type="button" className={`pg-chip${on ? " on" : ""}`} aria-pressed={on} disabled={busy === setId} onClick={() => void guard(setId, () => picks.wear(setId, !on))}>
+                  <Chip pressed={on} disabled={busy === setId} onClick={() => void guard(setId, () => picks.wear(setId, !on))}>
                     {busy === setId ? "..." : on ? "Worn" : "Hang it"}
-                  </button>
+                  </Chip>
                 </div>
               );
             })}

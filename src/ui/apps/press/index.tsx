@@ -7,6 +7,7 @@
  * one zip out. Ledger and drag-reorder are follow-up slices, named here so absence reads as
  * not-yet, never as done.
  */
+import { Button, ListRow, Segmented } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
 import { useEffect, useMemo, useState, type JSX } from "react";
 import type { AppContext, CoverageInfo, StudioEntitySummary, BunrakuApp } from "../../app-contract";
@@ -273,9 +274,9 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
           {borrowed ? " · prints as a CCv3 card" : ""}
         </span>
         {rider && (
-          <button
-            type="button"
-            className={styles.riderDrop}
+          <Button
+            size="sm"
+            variant="quiet"
             onClick={() => {
               setDropped((prev) => {
                 const next = new Set(prev);
@@ -287,7 +288,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
             }}
           >
             {isDropped ? "ride again" : "drop from this run"}
-          </button>
+          </Button>
         )}
         {!isDropped && ready && (
           <span className={`${styles.jinfo}${ready.tone === "warn" ? ` ${styles.jnote}` : ready.tone === "bad" ? ` ${styles.jnote} ${styles.jnoteFail}` : ""}`}>
@@ -295,9 +296,9 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
             {ready.tone !== "ok" && ready.tone !== "dim" && (
               <>
                 {" · "}
-                <button type="button" className={styles.fixLink} onClick={() => ctx.workbench.send(p)}>
-                  open in the editor
-                </button>
+                <Button size="sm" variant="quiet" onClick={() => ctx.workbench.send(p)}>
+                  Open in the editor
+                </Button>
               </>
             )}
           </span>
@@ -313,17 +314,15 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
               aria-label={`filename for ${p.name}`}
               onChange={(e) => setFileNames((prev) => ({ ...prev, [key]: e.target.value }))}
             />
-            {flavorChoosable(adapter.outputExtensions[0] ?? "") &&
-              (["normal", "txt", "md"] as const).map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  className={`${styles.flavor}${(flavors[key] ?? "normal") === f ? ` ${styles.flavorOn}` : ""}`}
-                  onClick={() => setFlavors((prev) => ({ ...prev, [key]: f }))}
-                >
-                  {f === "normal" ? `.${(adapter.outputExtensions[0] ?? "json").replace(/^\./, "")}` : `.${f}`}
-                </button>
-              ))}
+            {flavorChoosable(adapter.outputExtensions[0] ?? "") && (
+              <Segmented
+                size="sm"
+                label={`file type for ${p.name}`}
+                value={flavors[key] ?? "normal"}
+                onChange={(f) => setFlavors((prev) => ({ ...prev, [key]: f }))}
+                items={(["normal", "txt", "md"] as const).map((f) => ({ value: f, label: f === "normal" ? `.${(adapter.outputExtensions[0] ?? "json").replace(/^\./, "")}` : `.${f}` }))}
+              />
+            )}
           </span>
         )}
       </div>
@@ -338,10 +337,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
           {loadNote && <p className={styles.empty}>{loadNote}</p>}
           <div className={styles.offerList} data-part="press.offers">
             {offers.map((s) => (
-              <button key={pieceKeyOf(s)} type="button" className={styles.offer} onClick={() => ctx.press.stage([s])}>
-                <span className={styles.offerName}>{s.name || s.id}</span>
-                <span className={styles.jkind}>{s.kind}</span>
-              </button>
+              <ListRow key={pieceKeyOf(s)} data-part="press.offer" onClick={() => ctx.press.stage([s])} label={s.name || s.id} meta={s.kind} />
             ))}
             {offers.length === 0 && <p className={styles.empty}>everything is staged</p>}
           </div>
@@ -353,19 +349,16 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
               {`the queue · ${queue.length} staged${dropped.size > 0 ? ` · ${dropped.size} dropped` : ""}`}
             </span>
             <span className={styles.targets}>
-              {platforms.map((p) => (
-                <button
-                  key={p.friendly}
-                  type="button"
-                  className={`${styles.tchip}${p.friendly === target ? ` ${styles.tchipOn}` : ""}`}
-                  onClick={() => {
-                    setTarget(p.friendly);
-                    resetRun();
-                  }}
-                >
-                  {p.friendly}
-                </button>
-              ))}
+              <Segmented
+                size="sm"
+                label="Target platform"
+                value={target ?? ""}
+                onChange={(friendly) => {
+                  setTarget(friendly);
+                  resetRun();
+                }}
+                items={platforms.map((p) => ({ value: p.friendly, label: p.friendly }))}
+              />
             </span>
           </div>
 
@@ -381,9 +374,9 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
                   <div className={styles.bundleMarq}>
                     <span>{`bundle · ${bundle.owner.name}`}</span>
                     <i>{bundle.riders.length > 0 ? `character + ${bundle.riders.length} linked` : "character"}</i>
-                    <button type="button" className={styles.unstage} onClick={() => ctx.press.unstage(bundle.owner.id, bundle.owner.kind)}>
-                      unstage ×
-                    </button>
+                    <Button size="sm" variant="quiet" onClick={() => ctx.press.unstage(bundle.owner.id, bundle.owner.kind)}>
+                      Unstage ×
+                    </Button>
                   </div>
                   {card(bundle.owner)}
                   {bundle.riders.map((r) => card(r, { of: bundle.owner.name }))}
@@ -394,9 +387,9 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
                   <div className={styles.bundleMarq}>
                     <span>{`solo · ${s.name}`}</span>
                     <i>{s.kind}</i>
-                    <button type="button" className={styles.unstage} onClick={() => ctx.press.unstage(s.id, s.kind)}>
-                      unstage ×
-                    </button>
+                    <Button size="sm" variant="quiet" onClick={() => ctx.press.unstage(s.id, s.kind)}>
+                      Unstage ×
+                    </Button>
                   </div>
                   {card(s)}
                 </div>
@@ -413,29 +406,28 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
                   : `${set.length} in the run · pick a platform`}
             </span>
             {zip && (
-              <button type="button" className={styles.stamp} onClick={() => void saveBlob(zip.blob, zip.filename)}>
-                download the bundle
-              </button>
+              <Button onClick={() => void saveBlob(zip.blob, zip.filename)}>
+                Download the bundle
+              </Button>
             )}
             {rows && !running && (
-              <button type="button" className={styles.stamp} onClick={resetRun}>
-                clear the results
-              </button>
+              <Button variant="quiet" onClick={resetRun}>
+                Clear the results
+              </Button>
             )}
             {queue.length > 0 && !running && (
-              <button type="button" className={styles.stamp} onClick={() => { ctx.press.clear(); resetRun(); }}>
-                clear the queue
-              </button>
+              <Button variant="danger" onClick={() => { ctx.press.clear(); resetRun(); }}>
+                Clear the queue
+              </Button>
             )}
-            <button
-              type="button"
-              className={`${styles.stamp} ${styles.stampRun}`}
+            <Button
+              variant="primary"
               disabled={!platform || set.length === 0 || running}
               title={!platform ? "Pick a target platform first" : undefined}
               onClick={() => void run()}
             >
               {running ? "printing…" : "run the press"}
-            </button>
+            </Button>
           </div>
         </section>
       </div>

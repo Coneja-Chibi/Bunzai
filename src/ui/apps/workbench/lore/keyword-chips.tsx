@@ -2,6 +2,7 @@
  * KeywordChips - RC-dense trigger chips. Enter/comma commits; Backspace on empty input
  * drops the last chip. Advanced mode shows per-key % on the chip (RC per-trigger %).
  */
+import { Chip, IconButton } from "../../../components/button";
 import { useState, type JSX, type KeyboardEvent } from "react";
 import type { Trigger } from "../../../../entities/lorebook/schema";
 
@@ -66,15 +67,7 @@ export function KeywordChips({
           className={i === pickedIndex ? `${styles.key} ${styles.keyPicked}` : styles.key}
         >
           {onPick ? (
-            <button
-              type="button"
-              className={styles.keyLabel}
-              aria-pressed={i === pickedIndex}
-              title="Edit this key's dials"
-              onClick={() => onPick(i)}
-            >
-              {t.isRegex ? `/${t.keyword}/` : t.keyword}
-            </button>
+            <Chip pressed={i === pickedIndex} title="Edit this key's dials" onClick={() => onPick(i)}>{t.isRegex ? `/${t.keyword}/` : t.keyword}</Chip>
           ) : (
             <span className={styles.keyLabel}>{t.isRegex ? `/${t.keyword}/` : t.keyword}</span>
           )}
@@ -91,14 +84,7 @@ export function KeywordChips({
               onClick={(ev) => ev.stopPropagation()}
             />
           )}
-          <button
-            type="button"
-            className={styles.keyx}
-            aria-label={`remove ${t.keyword}`}
-            onClick={() => onChange(triggers.filter((_, j) => j !== i))}
-          >
-            &times;
-          </button>
+          <IconButton label={`remove ${t.keyword}`} variant="quiet" size="sm" icon="lucide:x" onClick={() => onChange(triggers.filter((_, j) => j !== i))} />
         </span>
       ))}
       <input

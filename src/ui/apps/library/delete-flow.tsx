@@ -13,6 +13,7 @@ import { isRecord } from "../../../core/guards";
 import type { ParsedCanonicalEntity } from "../../../entities/runtime-schema";
 import { buildPiecePatch } from "../../_shared/editor-patch";
 import { plural } from "../../../core/text";
+import { Button } from "../../components/button";
 
 export interface EntityDelete {
   /** open the confirm sheet for this batch (empty batches are ignored) */
@@ -150,12 +151,12 @@ export function useEntityDelete(ctx: AppContext, onDeleted: () => void): EntityD
           {pending.length === 1 ? "It" : "They"} will no longer appear in your Library or selection menus while deleted.
         </p>
         <div className="delacts">
-          <button className="delgo" onClick={() => void doDelete()}>
+          <Button variant="danger" onClick={() => void doDelete()}>
             Delete
-          </button>
-          <button className="delno" onClick={() => setPending(null)}>
+          </Button>
+          <Button variant="quiet" onClick={() => setPending(null)}>
             Keep
-          </button>
+          </Button>
         </div>
       </div>
     </InkDialog>
@@ -180,12 +181,12 @@ export function useEntityDelete(ctx: AppContext, onDeleted: () => void): EntityD
           onChange={(ev) => setRenameText(ev.target.value)}
         />
         <div className="delacts">
-          <button className="delgo" type="submit">
+          <Button variant="primary" type="submit">
             Rename
-          </button>
-          <button className="delno" type="button" onClick={() => setRenaming(null)}>
+          </Button>
+          <Button variant="quiet" onClick={() => setRenaming(null)}>
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </InkDialog>

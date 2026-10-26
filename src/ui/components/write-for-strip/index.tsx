@@ -5,6 +5,7 @@
  * The character editor's multi-select coverage lens is PlatformTabs - a different semantic
  * (target SET + off-target treatment), not served by this strip.
  */
+import { Segmented } from "../button";
 import type { JSX } from "react";
 import styles from "./styles.module.css";
 
@@ -24,17 +25,13 @@ export function WriteForStrip<P extends string>({
   return (
     <span className={styles.strip} role="group" aria-label="Write for one host">
       <i className={styles.stripLabel}>Write for</i>
-      {profiles.map((p) => (
-        <button
-          key={p}
-          type="button"
-          className={value === p ? `${styles.pill} ${styles.pillOn}` : styles.pill}
-          aria-pressed={value === p}
-          onClick={() => onChange(p)}
-        >
-          {labels[p]}
-        </button>
-      ))}
+      <Segmented
+        size="sm"
+        label="Write for one host"
+        value={value}
+        onChange={onChange}
+        items={profiles.map((p) => ({ value: p, label: labels[p] }))}
+      />
     </span>
   );
 }

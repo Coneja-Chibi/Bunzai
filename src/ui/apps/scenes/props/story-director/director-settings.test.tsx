@@ -64,7 +64,7 @@ describe("the settings block", () => {
 
   test("the personality card opens a list of ten, and a pick sends it", async () => {
     const rig = await settings();
-    await m!.click(m!.host.querySelector(".dp-card"));
+    await m!.click(m!.host.querySelector('.dp [data-control="row"]'));
     const options = [...m!.host.querySelectorAll('[role="option"]')];
     expect(options.length).toBe(10);
     expect(text()).toContain("Favorite Story Arcs");
@@ -76,11 +76,11 @@ describe("the settings block", () => {
 
   test("command mode, creativity and auto-retry each send their own patch", async () => {
     const rig = await settings();
-    await m!.click(m!.host.querySelector('.ds-modes button:nth-child(2)'));
+    await m!.click(m!.host.querySelector('.ds-modes [data-control="card"]:nth-child(2)'));
     await m!.click(m!.button("Dramatic"));
     await m!.click(m!.button("Disable auto-retry invalid tool responses"));
     expect(rig.patches).toEqual([{ commandMode: "tagged" }, { creativity: "dramatic" }, { autoRetry: false }]);
-    expect(m!.host.querySelector('.ds-modes button.on')?.textContent).toContain("Tagged");
+    expect(m!.host.querySelector('.ds-modes [data-control="card"][data-selected]')?.textContent).toContain("Tagged");
   });
 
   test("temperature is clamped to 0 to 2 when it loses focus", async () => {
@@ -110,8 +110,8 @@ describe("the settings block", () => {
   test("a model pick sends the model; Use the narrator's model clears it and its reasoning", async () => {
     const rig = await settings();
     expect(text()).toContain("Unset: the Director uses the narrator's model.");
-    await m!.click(m!.host.querySelector(".bth-pick"));
-    await m!.click([...m!.host.querySelectorAll(".bth-opt")].find((o) => o.textContent?.includes("haiku")));
+    await m!.click(m!.host.querySelector(".bth-pickwrap > [data-control=\"row\"]"));
+    await m!.click([...m!.host.querySelectorAll("[data-part=\"scene.ai.picker\"] [data-control=\"row\"]")].find((o) => o.textContent?.includes("haiku")));
     expect(rig.patches).toEqual([{ model: { id: "c1", model: "haiku" } }]);
     await m!.click(m!.button("Use the narrator's model"));
     expect(rig.patches.at(-1)).toEqual({ model: null, reasoning: null });
@@ -176,7 +176,7 @@ describe("the floating button", () => {
     m = await mounted(dom, <div><DirectorFab ctx={rig.ctx} chat={chat} /></div>);
     expect(m!.host.querySelector('[data-part="scene.director.fab.badge"]')?.textContent).toBe("12");
     const button = m!.host.querySelector('[data-part="scene.director.fab.button"]')!;
-    expect(button.className).toContain("pulse");
+    expect(button.hasAttribute("data-pulse")).toBe(true);
     expect(button.getAttribute("title")).toBe("DM: Arc");
     await m!.click(button);
     const lines = [...m!.host.querySelectorAll('[data-part="scene.director.fab.popover"] .dr-act')];

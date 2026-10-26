@@ -7,7 +7,7 @@
  */
 import type { CSSProperties, JSX, KeyboardEvent, MouseEvent } from "react";
 import { Ic, type IconName } from "../../../_shared/ic";
-import { ToggleSwitch } from "../../../components/toggle-switch";
+import { IconButton, Toggle } from "../../../components/button";
 import { reachNotes, type PropReach, type PropTip as PropTipContent } from "./prop-contract";
 import { PropTip } from "./prop-tip";
 
@@ -26,8 +26,8 @@ export function PropRow({ prop, on, tips, onToggle, onGear }: { prop: RowProps; 
       <span className="pw-ic"><Ic name={prop.icon} size={16} /></span>
       <div className="pw-text"><div className="pw-name">{prop.name}</div><div className="pw-tier">{prop.tier}</div></div>
       <div className="pw-end">
-        {on && onGear && <button type="button" className="pw-gear" aria-label={`Open ${prop.name} panel`} title={`Open ${prop.name} panel`} onClick={stop(onGear)}><Ic name="lucide:settings" size={14} /></button>}
-        <ToggleSwitch size="sm" isolate tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} ${prop.name}`} onChange={onToggle} />
+        {on && onGear && <IconButton size="sm" label={`Open ${prop.name} panel`} icon="lucide:settings" onClick={stop(onGear)} />}
+        <Toggle size="sm" isolate tone="var(--tone)" on={on} aria-label={`${on ? "Turn off" : "Turn on"} ${prop.name}`} onChange={onToggle} />
       </div>
     </div>
     </PropTip>

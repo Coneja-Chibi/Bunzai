@@ -6,6 +6,7 @@
  */
 import { useState, type CSSProperties, type JSX } from "react";
 import { applyResources, hpBand, needBand, percentOf, readResources, resourcesLines, type Need, type ResourceAction, type ResourceKind, type Resources } from "../../../../../../core/trackers/resources";
+import { Button, IconButton, Tabs } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { TrackerFrame } from "../tracker-frame";
@@ -23,9 +24,9 @@ function Bar({ label, icon, current, max, tone, onMinus, onPlus }: { label: stri
     <div className="st-bar" style={{ "--c": tone } as CSSProperties}>
       <div className="st-bar-head"><span className="st-ic"><Ic name={icon} size={16} /></span><b>{label}</b><span className="st-val">{current}/{max}</span></div>
       <div className="st-bar-row">
-        <button type="button" className="st-step" aria-label={`Decrease ${label}`} onClick={onMinus}><Ic name="lucide:minus" size={12} /></button>
+        <IconButton size="sm" label={`Decrease ${label}`} icon="lucide:minus" onClick={onMinus} />
         <div className="st-track"><div style={{ width: `${percentOf(current, max)}%` }} /></div>
-        <button type="button" className="st-step" aria-label={`Increase ${label}`} onClick={onPlus}><Ic name="lucide:plus" size={12} /></button>
+        <IconButton size="sm" label={`Increase ${label}`} icon="lucide:plus" onClick={onPlus} />
       </div>
     </div>
   );
@@ -38,9 +39,9 @@ function NeedBar({ id, need, onChange }: { id: string; need: Need; onChange(delt
     <div className="st-need" style={{ "--c": TONE[needBand(percent)] } as CSSProperties}>
       <span className="st-ic"><Ic name={NEED_ICON[id.toLowerCase()] ?? "lucide:gauge"} size={14} /></span>
       <span className="st-need-label">{label}</span>
-      <button type="button" className="st-step" aria-label={`Decrease ${label}`} onClick={() => onChange(-5)}><Ic name="lucide:minus" size={10} /></button>
+      <IconButton size="sm" label={`Decrease ${label}`} icon="lucide:minus" onClick={() => onChange(-5)} />
       <div className="st-track thin"><div style={{ width: `${percent}%` }} /></div>
-      <button type="button" className="st-step" aria-label={`Increase ${label}`} onClick={() => onChange(5)}><Ic name="lucide:plus" size={10} /></button>
+      <IconButton size="sm" label={`Increase ${label}`} icon="lucide:plus" onClick={() => onChange(5)} />
       <span className="st-need-val">{need.value}/{need.maxValue}</span>
     </div>
   );
@@ -56,10 +57,12 @@ export function StatsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
     <TrackerFrame label="Stats" title="Player Stats" icon="lucide:heart" tone="var(--stage-ok)" tokens={Math.ceil(resourcesLines(r).join("\n").length / 4)} view={view} {...(popOut ? { popOut } : {})}
       description="Tracks player stats: HP, MP, AP, XP, gold, and custom needs. The AI adjusts encounters based on your current state."
       onClear={() => act({ kind: "reset" }, "Cleared")}
-      actions={<button type="button" className="trk-btn" title="Full Restore" aria-label="Full Restore" onClick={() => act({ kind: "restore", reason: "Manual restore" })}><Ic name="lucide:sparkles" size={14} /></button>}>
-      <div className="st-tabs" role="tablist">
-        <button type="button" role="tab" aria-selected={tab === "bars"} className={tab === "bars" ? "on" : ""} onClick={() => setTab("bars")}><Ic name="lucide:chart-no-axes-column" size={14} /> Stats</button>
-        <button type="button" role="tab" aria-selected={tab === "log"} className={tab === "log" ? "on" : ""} onClick={() => setTab("log")}><Ic name="lucide:scroll" size={14} /> History</button>
+      actions={<IconButton size="sm" label="Full Restore" icon="lucide:sparkles" onClick={() => act({ kind: "restore", reason: "Manual restore" })} />}>
+      <div className="st-tabs">
+        <Tabs label="Stats sections" value={tab} onChange={setTab} items={[
+          { value: "bars", label: <><Ic name="lucide:chart-no-axes-column" size={14} /> Stats</> },
+          { value: "log", label: <><Ic name="lucide:scroll" size={14} /> History</> },
+        ]} />
       </div>
       <div className="st-body">
         {tab === "bars" ? (
@@ -91,7 +94,7 @@ export function StatsPanel({ ctx, chat, onChat, popOut }: PopoutContext): JSX.El
           </>
         ) : (
           <div className="st-logwrap">
-            <div className="st-loghead"><span>Recent Changes</span><button type="button" onClick={() => act({ kind: "clearLog" })}>Clear</button></div>
+            <div className="st-loghead"><span>Recent Changes</span><Button variant="quiet" size="sm" onClick={() => act({ kind: "clearLog" })}>Clear</Button></div>
             {r.log.length === 0 ? (
               <div className="st-empty"><Ic name="lucide:scroll" size={40} /><p>No changes recorded</p></div>
             ) : (

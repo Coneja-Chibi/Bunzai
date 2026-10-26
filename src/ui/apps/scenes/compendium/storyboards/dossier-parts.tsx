@@ -5,6 +5,7 @@
  * Director's journal.
  */
 import { Fragment, type CSSProperties, type JSX, type ReactNode } from "react";
+import { Segmented, Tabs as ButtonTabs } from "../../../../components/button";
 import { CONTEXT_MODES, RADIUS_CHOICES, profileLabel, type ContextMode, type ContextProfile, type DossierAiContext } from "../../../../../core/compendium/dossiers";
 
 export type Tone = "ok" | "warn" | "danger" | "pink" | "link" | "macro" | "gold";
@@ -40,11 +41,7 @@ export function Meter({ label, value, max = 100, tone }: { label: string; value:
 
 export function Tabs<T extends string>({ tabs, active, onChange, label }: { tabs: readonly { id: T; label: string; count?: ReactNode }[]; active: T; onChange(id: T): void; label: string }): JSX.Element {
   return (
-    <div className="sb-tabs" role="tablist" aria-label={label} data-part="compendium.dossier.tabs">
-      {tabs.map((t) => (
-        <button key={t.id} type="button" role="tab" aria-selected={active === t.id} className={active === t.id ? "on" : ""} onClick={() => onChange(t.id)}>{t.label}{t.count !== undefined && <small>{t.count}</small>}</button>
-      ))}
-    </div>
+    <ButtonTabs label={label} data-part="compendium.dossier.tabs" value={active} onChange={onChange} items={tabs.map((t) => ({ value: t.id, label: <>{t.label}{t.count !== undefined && <small>{t.count}</small>}</> }))} />
   );
 }
 
@@ -66,8 +63,8 @@ export function AiPanel({ ai, included, onOff, onMode, onRadius }: {
       <div className="sb-ai-head">
         <div className="sb-ai-title">AI Context - what the<br />model is using</div>
         <div className="sb-ai-pills">
-          <button type="button" className={!included ? "off" : ""} aria-pressed={!included} onClick={onOff}>Off</button>
-          {CONTEXT_MODES.map((m) => <button key={m} type="button" className={included && profile.mode === m ? "on" : ""} aria-pressed={included && profile.mode === m} onClick={() => onMode(m)}>{profileLabel(m)}</button>)}
+          <Segmented<"off" | ContextMode> label="AI context mode" size="sm" value={included ? profile.mode : "off"} onChange={(v) => (v === "off" ? onOff() : onMode(v))}
+            items={[{ value: "off", label: "Off", tone: "var(--stage-danger-text)" }, ...CONTEXT_MODES.map((m) => ({ value: m, label: profileLabel(m), tone: "var(--stage-ok)" }))]} />
           {profile.mode === "radius" && (
             <select aria-label="AI context radius" value={profile.radius} onChange={(e) => onRadius(Number(e.target.value))}>
               {(RADIUS_CHOICES as readonly number[]).includes(profile.radius) ? null : <option value={profile.radius}>{profile.radius} lines</option>}

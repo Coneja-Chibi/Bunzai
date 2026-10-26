@@ -6,8 +6,6 @@
 export const THIS_TURN_STYLE = `
 .scs .tt{display:flex;flex-direction:column;gap:12px;padding:16px 20px;font-family:var(--font-ui);color:var(--stage-soft)}
 .scs .tt-pager{display:flex;align-items:center;gap:8px}
-.scs .tt-pager button{display:grid;place-items:center;width:32px;height:32px;padding:0;border:1px solid color-mix(in srgb,var(--stage-card) 18%,transparent);background:none;color:var(--stage-card);cursor:pointer}
-.scs .tt-pager button:disabled{opacity:.3;cursor:default}
 .scs .tt-pl{flex:1;min-width:0;font:600 var(--text-control)/1.4 var(--font-ui);color:var(--stage-card)}
 .scs .tt-pl span{font-weight:400;color:var(--stage-mute)}
 .scs .tt-tot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent)}
@@ -31,7 +29,6 @@ export const THIS_TURN_STYLE = `
 .scs .tt-call.estimated{border-color:color-mix(in srgb,var(--stage-var) 70%,transparent)}
 .scs .tt-call.failed{border-color:color-mix(in srgb,var(--stage-danger-text) 55%,transparent)}
 .scs .tt-call.open:not(.failed){border-color:color-mix(in srgb,var(--w) 55%,transparent)}
-.scs .tt-call>button{display:grid;width:100%;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:12px;padding:10px 12px;text-align:left;border:0;background:none;color:inherit;cursor:pointer}
 .scs .tt-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .scs .tt-top b{font:800 var(--rc-text-14p5, 14.5px) var(--font-ui);color:var(--stage-card)}
 .scs .tt-top code{padding:2px 6px;border:1px solid color-mix(in srgb,var(--w) 55%,transparent);background:var(--stage-black);font:var(--text-meta) var(--font-mono);color:var(--w)}
@@ -39,17 +36,12 @@ export const THIS_TURN_STYLE = `
 .scs .tt-top em.ok{border-color:color-mix(in srgb,var(--stage-ok) 50%,transparent);color:var(--stage-ok)}
 .scs .tt-top em.bad{border-color:color-mix(in srgb,var(--stage-danger-text) 55%,transparent);color:var(--stage-danger-text)}
 .scs .tt-trig{display:block;margin-top:2px;font:400 var(--rc-text-13, 13px)/1.4 var(--font-ui);color:var(--stage-mute)}
-.scs .tt-side{display:flex;align-items:center;gap:8px;color:var(--stage-mute)}
 .scs .tt-num{text-align:right;font:400 var(--rc-text-12p5, 12.5px) var(--font-ui);font-variant-numeric:tabular-nums;color:var(--stage-mute)}
 .scs .tt-num b{display:block;font:700 var(--text-control) var(--font-ui);color:var(--stage-card)}
 .scs .tt-detail{display:flex;flex-direction:column;gap:12px;padding:12px;border-top:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
-.scs .tt-dtabs{display:flex;width:max-content;max-width:100%;overflow-x:auto;border:1px solid color-mix(in srgb,var(--stage-card) 12%,transparent)}
-.scs .tt-dtabs button{white-space:nowrap;padding:6px 10px;border:0;border-right:1px solid color-mix(in srgb,var(--stage-card) 12%,transparent);background:none;font:700 var(--rc-text-11, 11px) var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-mute);cursor:pointer}
-.scs .tt-dtabs button:last-child{border-right:0}
-.scs .tt-dtabs button.on{background:color-mix(in srgb,var(--w) 10%,transparent);color:var(--stage-card);box-shadow:inset 0 -2px 0 var(--w)}
 .scs .tt-msgs{display:flex;flex-direction:column;gap:8px}
 .scs .tt-msg{border:1px solid color-mix(in srgb,var(--stage-card) 8%,transparent);background:var(--stage-black)}
-.scs .tt-msg>button,.scs .tt-tool{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;border:0;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent);background:none;text-align:left;cursor:pointer;color:inherit}
+.scs .tt-tool{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;border:0;border-bottom:1px solid color-mix(in srgb,var(--stage-card) 6%,transparent);background:none;text-align:left;cursor:pointer;color:inherit}
 .scs .tt-tool{cursor:default}
 .scs .tt-role{font:700 var(--rc-text-11, 11px) var(--font-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--w)}
 .scs .tt-role.user{color:var(--stage-var)}
@@ -66,10 +58,9 @@ export const THIS_TURN_STYLE = `
 .scs .tt-attempt.failed .tt-role{color:var(--stage-warn)}
 .scs .tt-note{margin:0;font:400 var(--text-meta)/1.6 var(--font-ui);color:var(--stage-mute)}
 .scs .tt-fail{margin:0;padding-left:12px;border-left:3px solid var(--stage-danger-text);font:400 var(--text-control)/1.5 var(--font-ui);color:var(--stage-card)}
-.scs .tt-copy{display:inline-flex;align-items:center;gap:8px;min-height:32px;padding:0 10px;border:1px solid color-mix(in srgb,var(--w) 55%,transparent);background:color-mix(in srgb,var(--w) 10%,transparent);font:700 var(--text-meta) var(--font-ui);color:var(--w);cursor:pointer;align-self:flex-start}
+.scs .tt-copy{align-self:flex-start}
 .scs .tt-legend{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin:0;padding-top:4px;font:400 var(--text-meta) var(--font-ui);color:var(--stage-dim)}
 .scs .tt-legend span{display:inline-flex;align-items:center;gap:6px}
 .scs .tt-legend span::before{content:"";width:10px;height:10px;border:2px solid var(--stage-ok)}
 .scs .tt-legend .es::before{border-color:var(--stage-var)}
-.scs .tt button:focus-visible{outline:2px solid var(--focus-ring);outline-offset:1px}
 `;

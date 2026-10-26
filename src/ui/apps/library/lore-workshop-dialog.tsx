@@ -18,6 +18,7 @@ import type {
 import { InkDialog } from "../../components/ink-dialog";
 import { TransferBench, type TransferItem } from "../../components/transfer-bench";
 import { isRecord, recOr } from "../../../core/guards";
+import { Button } from "../../components/button";
 
 export type WorkshopMode = "split" | "merge";
 
@@ -259,9 +260,9 @@ export function LoreWorkshopDialog({
       {error && !sourceBody ? (
         <div style={{ padding: "1rem" }}>
           <p>{error}</p>
-          <button type="button" onClick={onDismiss}>
+          <Button onClick={onDismiss}>
             Close
-          </button>
+          </Button>
         </div>
       ) : (
         <TransferBench

@@ -8,6 +8,7 @@ import { useMemo, useState, type JSX } from "react";
 import { BANKS, BANK_DEPTH, SETS, bankIdsInSet, depthFor, getBank, getSet, resolveBankId, resolveSetId, stripMd, type Bank, type BankDepth } from "../../../../core/final-cut/banks";
 import type { FinalCutPass } from "../../../../core/final-cut/pass";
 import { Ic } from "../../../_shared/ic";
+import { Button, Chip, Disclosure, IconButton, ListRow, Segmented } from "../../../components/button";
 import { searchBanks } from "./fc-core";
 import type { Change } from "./fc-pass-chrome";
 
@@ -49,8 +50,7 @@ function BankRow({ bankId, bank, pass, open, onOpen, edit }: { bankId: string; b
   return (
     <div className={`fc-bank${on ? " on" : ""}${open ? " open" : ""}`}>
       <div className="head">
-        <button type="button" className="main" aria-pressed={on} onClick={() => edit(toggleBank(bankId))}>
-          <span className="fc-tick" aria-hidden="true">{on && <Ic name="lucide:check" size={12} />}</span>
+        <ListRow variant="option" wrap selected={on} aria-pressed={on} onClick={() => edit(toggleBank(bankId))} label={
           <span className="fc-bank-body">
             <span className="row">
               <b>{bank.label}</b><span className={`fc-kind k-${bank.kind}`}>{bank.kind}</span>
@@ -68,16 +68,19 @@ function BankRow({ bankId, bank, pass, open, onOpen, edit }: { bankId: string; b
               </span>
             )}
           </span>
-        </button>
-        <button type="button" className="more" aria-expanded={open} title={open ? "Hide examples" : "Show examples & replacement guidance"} onClick={onOpen}>{open ? "-" : "?"}</button>
+        } />
+        <IconButton size="sm" variant="quiet" icon={open ? "lucide:minus" : "lucide:circle-question-mark"} label={open ? "Hide examples" : "Show examples & replacement guidance"} aria-expanded={open} onClick={onOpen} />
       </div>
       {open && (
         <div className="detail">
           <div className="fc-depth">
             <b>Depth in prompt</b>
             <div className="opts">
-              <button type="button" className={overrides[bankId] ? undefined : "on"} onClick={() => setDepth(null)}><b>Use default</b><span>({BANK_DEPTH[defaultDepth].label.toLowerCase()})</span></button>
-              {(Object.keys(BANK_DEPTH) as BankDepth[]).map((k) => <button type="button" key={k} className={overrides[bankId] === k ? "on" : undefined} onClick={() => setDepth(k)}><b>{BANK_DEPTH[k].label}</b><span>{BANK_DEPTH[k].hint}</span></button>)}
+              <Segmented<"default" | BankDepth> label="Depth for this bank" size="sm" value={overrides[bankId] ?? "default"} onChange={(v) => setDepth(v === "default" ? null : v)}
+                items={[
+                  { value: "default", label: <><b>Use default</b><span>({BANK_DEPTH[defaultDepth].label.toLowerCase()})</span></> },
+                  ...(Object.keys(BANK_DEPTH) as BankDepth[]).map((k) => ({ value: k, label: <><b>{BANK_DEPTH[k].label}</b><span>{BANK_DEPTH[k].hint}</span></> })),
+                ]} />
             </div>
             <small>In prompt at this depth: pattern{cap.action ? " + action" : ""}, {sent}/{bank.examples.length} examples{cap.replace ? ", replacement guidance" : ", no replacement"}</small>
           </div>
@@ -116,14 +119,14 @@ function Results({ pass, query, onOpen, edit }: { pass: FinalCutPass; query: str
         return (
           <article key={r.bankId} className={on ? "on" : undefined}>
             <div className="head"><div><b>{bank.label}</b><small>{r.setLabel} · {bank.kind}</small></div>
-              <button type="button" className={`fc-btn${on ? " go" : ""}`} aria-pressed={on} onClick={() => edit(toggleBank(r.bankId))}>{on ? "Enabled" : "Enable bank"}</button></div>
+              <Chip pressed={on} onClick={() => edit(toggleBank(r.bankId))}>{on ? "Enabled" : "Enable bank"}</Chip></div>
             <p>{stripMd(bank.why ?? bank.pattern)}</p>
             {r.matching.length > 0
               ? <div className="hits" aria-label={`Matching entries in ${bank.label}`}>{r.matching.map((e, i) => (
                 <div key={i}><span>{e}</span>
-                  <button type="button" className={`fc-btn${pins.includes(e) ? " go" : ""}`} aria-pressed={pins.includes(e)} aria-label={`${pins.includes(e) ? "Unpin" : "Pin"} "${stripMd(e)}" ${pins.includes(e) ? "from" : "to"} the prompt`} onClick={() => edit(togglePin(r.bankId, e))}>{pins.includes(e) ? "Pinned" : "Pin entry"}</button></div>))}</div>
+                  <Chip pressed={pins.includes(e)} aria-label={`${pins.includes(e) ? "Unpin" : "Pin"} "${stripMd(e)}" ${pins.includes(e) ? "from" : "to"} the prompt`} onClick={() => edit(togglePin(r.bankId, e))}>{pins.includes(e) ? "Pinned" : "Pin entry"}</Chip></div>))}</div>
               : <small>The bank's name, rule, or replacement guidance matches this search.</small>}
-            <button type="button" className="fc-link" onClick={() => onOpen(r.setId, r.bankId)}>Open full bank</button>
+            <Button variant="quiet" size="sm" onClick={() => onOpen(r.setId, r.bankId)}>Open full bank</Button>
           </article>
         );
       })}
@@ -147,7 +150,7 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
       <label className="fc-search"><span>Find a bank, rule, or banned phrase</span>
         <span className="box">
           <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Try &ldquo;breath hitched&rdquo;, &ldquo;filter words&rdquo;, or a bank name..." aria-label="Search slopism banks and banned entries" autoComplete="off" />
-          {query && <button type="button" onClick={() => setQuery("")} aria-label="Clear Slopism search">Clear</button>}
+          {query && <Button size="sm" onClick={() => setQuery("")} aria-label="Clear Slopism search">Clear</Button>}
         </span>
       </label>
       {query.trim() ? (
@@ -165,17 +168,15 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
             const drop = (c: FinalCutPass): Partial<FinalCutPass> => { const pins = { ...c.pinnedBankExamples }; for (const id of ids) delete pins[id]; return { enabledBanks: (c.enabledBanks ?? []).filter((b) => !ids.includes(resolveBankId(b))), pinnedBankExamples: pins }; };
             return (
               <div key={raw} className={`fc-set${open ? " open" : ""}`}>
-                <button type="button" className="head" aria-expanded={open} onClick={() => setOpenSets(flip(openSets, raw))}>
-                  <Ic name={open ? "lucide:chevron-down" : "lucide:chevron-right"} size={14} />
-                  <span className="id"><b>{set.label}</b><small>{set.description}</small></span>
-                  <span className={`count${on === 0 ? " zero" : on === ids.length ? " full" : ""}`}>{on}/{ids.length} on</span>
-                </button>
+                <Disclosure open={open} onClick={() => setOpenSets(flip(openSets, raw))}
+                  label={<span className="id"><b>{set.label}</b><small>{set.description}</small></span>}
+                  trailing={<span className={`count${on === 0 ? " zero" : on === ids.length ? " full" : ""}`}>{on}/{ids.length} on</span>} />
                 <div className="acts">
-                  <button type="button" className="fc-btn" onClick={() => edit((c) => ({ enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...ids])] }))}>Enable all</button>
-                  <button type="button" className="fc-btn" onClick={() => edit(drop)}>Disable all</button>
-                  {idx > 0 && <button type="button" className="fc-btn" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx - 1, idx) }))}><Ic name="lucide:chevron-up" size={12} />up</button>}
-                  {idx < attached.length - 1 && <button type="button" className="fc-btn" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx, idx + 1) }))}><Ic name="lucide:chevron-down" size={12} />down</button>}
-                  <button type="button" className="fc-btn red" onClick={() => edit((c) => ({ ...drop(c), attachedSets: (c.attachedSets ?? []).filter((s) => s !== raw) }))}>Detach</button>
+                  <Button size="sm" onClick={() => edit((c) => ({ enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...ids])] }))}>Enable all</Button>
+                  <Button size="sm" onClick={() => edit(drop)}>Disable all</Button>
+                  {idx > 0 && <Button size="sm" icon="lucide:chevron-up" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx - 1, idx) }))}>Up</Button>}
+                  {idx < attached.length - 1 && <Button size="sm" icon="lucide:chevron-down" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx, idx + 1) }))}>Down</Button>}
+                  <Button variant="danger" size="sm" onClick={() => edit((c) => ({ ...drop(c), attachedSets: (c.attachedSets ?? []).filter((s) => s !== raw) }))}>Detach</Button>
                 </div>
                 {open && <div className="banks">{ids.map((id) => <BankRow key={id} bankId={id} bank={BANKS[id]!} pass={pass} open={openBanks.has(id)} onOpen={() => setOpenBanks(flip(openBanks, id))} edit={edit} />)}</div>}
               </div>

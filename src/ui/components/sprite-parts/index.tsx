@@ -2,6 +2,7 @@
  * SpriteParts - Agnai FullSprite editor (approved vs-agnai-components).
  * visualType is a sibling field; optional onVisualTypeChange when parent wires it.
  */
+import { Button, IconButton } from "../button";
 import type { JSX } from "react";
 import { normalizeSprite, spriteToCanonical, type SpritePartsValue } from "./core";
 import styles from "./styles.module.css";
@@ -87,18 +88,17 @@ export function SpriteParts({
       <div className={styles.parts}>
         {Object.entries(s.parts).map(([k, v]) => (
           <div className={styles.part} key={k}>
-            <button
-              type="button"
-              className={styles.rm}
-              aria-label={`Remove ${k}`}
+            <IconButton
+              variant="quiet"
+              size="sm"
+              icon="lucide:x"
+              label={`Remove ${k}`}
               onClick={() => {
                 const parts = { ...s.parts };
                 delete parts[k];
                 commit({ ...s, parts });
               }}
-            >
-              ×
-            </button>
+            />
             <span className={styles.lbl}>{k}</span>
             <input
               className={styles.input}
@@ -109,10 +109,10 @@ export function SpriteParts({
           </div>
         ))}
       </div>
-      <button
-        type="button"
-        className={styles.add}
-        onClick={() => {
+      <div className={styles.add}>
+        <Button
+          size="sm"
+          onClick={() => {
           let i = 1;
           let key = "part";
           while (Object.hasOwn(s.parts, key)) {
@@ -121,9 +121,10 @@ export function SpriteParts({
           }
           commit({ ...s, parts: { ...s.parts, [key]: "" } });
         }}
-      >
-        + part key
-      </button>
+        >
+          + Part key
+        </Button>
+      </div>
     </div>
   );
 }

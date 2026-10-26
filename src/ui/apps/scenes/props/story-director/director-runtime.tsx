@@ -7,7 +7,7 @@ import { useState, type JSX } from "react";
 import { DIRECTOR_TEMPERATURE_MAX, type DirectorSettingsPatch } from "../../../../../stage/contracts/director-types";
 import type { DirectorPanel } from "../../../../../studio/scene-director-edit";
 import { Ic, type IconName } from "../../../../_shared/ic";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
+import { Toggle } from "../../../../components/button";
 
 type Save = (patch: DirectorSettingsPatch) => Promise<string | null>;
 
@@ -43,7 +43,7 @@ export function AutoRetryRow({ panel, save }: { panel: DirectorPanel; save: Save
   return (
     <div className="ds-row" title="Retries once when the model returns malformed tool data for Story Director. May add one extra model call.">
       <span><Ic name="lucide:refresh-cw" size={12} />Auto-retry invalid tool responses</span>
-      <ToggleSwitch size="sm" on={on} aria-label={`${on ? "Disable" : "Enable"} auto-retry invalid tool responses`} onChange={(autoRetry) => void save({ autoRetry })} />
+      <Toggle size="sm" on={on} aria-label={`${on ? "Disable" : "Enable"} auto-retry invalid tool responses`} onChange={(autoRetry) => void save({ autoRetry })} />
     </div>
   );
 }

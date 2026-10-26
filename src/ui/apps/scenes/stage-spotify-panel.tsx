@@ -11,12 +11,11 @@ import { Slider } from "../../components/slider";
 import { deviceGlyph, formatMs, progressPct, safeArt, seekTo } from "./stage-spotify-core";
 import type { SpotifyFeed } from "./stage-spotify-feed";
 import { useStageSpotify } from "./use-stage-spotify";
+import { Disclosure, IconButton, Button, ListRow } from "../../components/button";
 
 function Section({ label, open, onToggle }: { label: string; open: boolean; onToggle(): void }): JSX.Element {
   return (
-    <button type="button" className="sp-sec" aria-expanded={open} onClick={onToggle}>
-      <span>{label}</span><span className={`sp-chev${open ? " open" : ""}`}><Ic name="lucide:chevron-down" size={16} /></span>
-    </button>
+    <Disclosure open={open} onClick={onToggle} label={label} />
   );
 }
 
@@ -67,9 +66,9 @@ export function SpotifyPanel({ feed }: { feed: SpotifyFeed }): JSX.Element {
             </div>
             <div className="sp-controls">
               <div className="sp-btns">
-                <button type="button" className="sp-sq" onClick={() => void feed.act({ action: "previous" })} aria-label="Previous"><Ic name="lucide:skip-back" size={20} /></button>
-                <button type="button" className="sp-play" onClick={() => void feed.toggle()} aria-label={playback?.playing ? "Pause" : "Play"}><Ic name={playback?.playing ? "lucide:pause" : "lucide:play"} size={24} /></button>
-                <button type="button" className="sp-sq" onClick={() => void feed.act({ action: "next" })} aria-label="Next"><Ic name="lucide:skip-forward" size={20} /></button>
+                <IconButton icon="lucide:skip-back" label="Previous" onClick={() => void feed.act({ action: "previous" })} />
+                <IconButton variant="primary" icon={playback?.playing ? "lucide:pause" : "lucide:play"} label={playback?.playing ? "Pause" : "Play"} onClick={() => void feed.toggle()} />
+                <IconButton icon="lucide:skip-forward" label="Next" onClick={() => void feed.act({ action: "next" })} />
               </div>
               {volume !== null && (
                 <div className="sp-vol"><Ic name="lucide:volume-2" size={16} />
@@ -89,15 +88,13 @@ export function SpotifyPanel({ feed }: { feed: SpotifyFeed }): JSX.Element {
         <Section label={`Devices${devices.length > 0 ? ` (${String(devices.length)})` : ""}`} open={devicesOpen} onToggle={() => setDevicesOpen((v) => !v)} />
         {devicesOpen && (
           <div className="sp-devices">
-            <div className="sp-refresh"><button type="button" onClick={() => void feed.refreshDevices()}><Ic name="lucide:refresh-cw" size={14} />Refresh</button></div>
+            <div className="sp-refresh"><Button variant="quiet" size="sm" icon="lucide:refresh-cw" onClick={() => void feed.refreshDevices()}>Refresh</Button></div>
             {devices.length === 0
               ? <p className="sp-none">No devices found. Open Spotify on any device.</p>
               : devices.map((d) => (
-                <button type="button" key={d.id} className={`sp-device${d.active ? " on" : ""}`} onClick={() => void feed.act({ action: "transfer", deviceId: d.id })}>
-                  <Ic name={deviceGlyph(d.type)} size={16} />
-                  <span className="sp-dname"><b>{d.name}</b><small>{d.type.toLowerCase()}</small></span>
-                  {d.active && <Ic name="lucide:check" size={14} />}
-                </button>
+                <ListRow key={d.id} selected={d.active} onClick={() => void feed.act({ action: "transfer", deviceId: d.id })}
+                  leading={<Ic name={deviceGlyph(d.type)} size={16} />} label={d.name} subtitle={d.type.toLowerCase()}
+                  trailing={d.active ? <Ic name="lucide:check" size={14} /> : undefined} />
               ))}
           </div>
         )}

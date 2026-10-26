@@ -4,38 +4,38 @@
 .bar { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(0); transition: transform .4s cubic-bezier(.32,.72,0,1),opacity .3s ease; pointer-events: auto; z-index: 145; display: flex; align-items: center; justify-content: space-evenly; gap: 4px; width: max-content; max-width: calc(100% - 16px); padding: 8px 8px calc(4px + env(safe-area-inset-bottom)); border-radius: 0; backdrop-filter: blur(24px); background: linear-gradient(180deg,var(--bk-dock-top) 0%,var(--bk-dock-bottom) 100%); border: 1px solid color-mix(in srgb,var(--accent) 15%,transparent); box-shadow: 0 4px 24px color-mix(in srgb,var(--bk-dock-shadow) 50%,transparent),0 0 40px color-mix(in srgb,var(--accent) 8%,transparent),inset 0 1px 0 color-mix(in srgb,var(--bk-dock-light) 3%,transparent); }
 .bar { overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: none; }
 .apps { display: contents; }
-.app { position: relative; flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px; border: 0; border-radius: 0; background: transparent; color: var(--bk-dock-muted); cursor: pointer; transition: all .2s cubic-bezier(.4,0,.2,1); }
+.bar [data-control="tile"]:not(:disabled) { position: relative; width: auto; height: auto; flex: none; flex-direction: column; align-items: center; justify-content: flex-start; gap: 6px; padding: 10px 16px; border: 0; border-radius: 0; box-shadow: none; background: transparent; color: var(--bk-dock-muted); transition: all .2s cubic-bezier(.4,0,.2,1); }
 /* RoleCall's native 10px labels, kept rather than a redesigned type scale. */
-.app > span:last-child { font: 500 10px/15px var(--bk-dock-font); white-space: nowrap; }
-.app:hover { background: color-mix(in srgb,var(--bk-dock-light) 3%,transparent); }
-.app[aria-current="page"] { color: var(--accent); background: color-mix(in srgb,var(--accent) 12%,transparent); }
-.app[data-pending="true"] { color: var(--accent); background: color-mix(in srgb,var(--accent) 18%,transparent); animation: pending 2s cubic-bezier(.4,0,.6,1) infinite; }
-.pending { position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.bar [data-control="tile"] > span:last-child { padding: 0; font: 500 10px/15px var(--bk-dock-font); white-space: nowrap; overflow: visible; }
+.bar [data-control="tile"]:not(:disabled):hover { color: var(--bk-dock-muted); border-color: transparent; background: color-mix(in srgb,var(--bk-dock-light) 3%,transparent); }
+.bar [data-control="tile"]:not(:disabled)[aria-current="page"] { color: var(--accent); background: color-mix(in srgb,var(--accent) 12%,transparent); }
+.bar [data-control="tile"]:not(:disabled)[data-pending="true"] { color: var(--accent); background: color-mix(in srgb,var(--accent) 18%,transparent); animation: pending 2s cubic-bezier(.4,0,.6,1) infinite; }
+.bar [data-control="tile"][data-pending="true"]::before { content: ""; position: absolute; top: -4px; left: 50%; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 @keyframes pending { 50% { opacity: .5; } }
 .mark { display: grid; place-items: center; width: 20px; height: 20px; transition: all .2s cubic-bezier(.4,0,.2,1); }
 .mark svg { width: 20px; height: 20px; }
-.app:hover .mark { transform: scale(1.1); }
-.app[aria-current="page"] .mark { filter: drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 20%,transparent)); }
-.app[data-pending="true"] .mark { filter: drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 20%,transparent)); animation: pending 2s cubic-bezier(.4,0,.6,1) infinite; }
+.bar [data-control="tile"]:hover .mark { transform: scale(1.1); }
+.bar [data-control="tile"][aria-current="page"] .mark { filter: drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 20%,transparent)); }
+.bar [data-control="tile"][data-pending="true"] .mark { filter: drop-shadow(0 0 8px color-mix(in srgb,var(--accent) 20%,transparent)); animation: pending 2s cubic-bezier(.4,0,.6,1) infinite; }
 .divider { flex: none; width: 1px; height: 32px; margin: 0 4px; background: color-mix(in srgb,var(--accent) 20%,transparent); }
 .collapse { position: relative; flex: none; display: grid; place-items: center; width: 16px; height: 28px; margin-left: 2px; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--bk-dock-toggle); cursor: pointer; transition: color .15s cubic-bezier(.4,0,.2,1); }
 .collapse::before { content: ""; position: absolute; inset: 0 -4px; }
 .collapse svg { width: 14px; height: 14px; }
 .collapse:hover { color: var(--bk-dock-toggle-hover); }
-.app:focus-visible,.collapse:focus-visible,.handle:focus-visible { outline: 2px solid var(--bk-focus-color); outline-offset: -2px; }
-.handle { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%) translateY(120%); transition: transform .4s cubic-bezier(.32,.72,0,1),opacity .3s ease; pointer-events: none; z-index: 145; padding: 6px 18px calc(6px + env(safe-area-inset-bottom)); border-radius: 10px 10px 0 0; background: linear-gradient(180deg,var(--bk-dock-pill-top),var(--bk-dock-pill-bottom)); border: 1px solid color-mix(in srgb,var(--accent) 18%,transparent); border-bottom: none; box-shadow: 0 -2px 16px color-mix(in srgb,var(--bk-dock-shadow) 35%,transparent),0 0 20px color-mix(in srgb,var(--accent) 6%,transparent); cursor: pointer; }
-.handle > span { display: block; height: 4px; width: 36px; border-radius: 999px; background: color-mix(in srgb,var(--accent) 50%,transparent); }
+.bar [data-control="tile"]:focus-visible,.collapse:focus-visible,.lane > [data-control="icon"][data-part="shell.nav.handle"]:focus-visible { outline: 2px solid var(--bk-focus-color); outline-offset: -2px; }
+.lane > [data-control="icon"][data-part="shell.nav.handle"]:not(:disabled) { position: fixed; left: 50%; bottom: 0; width: auto; min-height: 0; transform: translateX(-50%) translateY(120%); transition: transform .4s cubic-bezier(.32,.72,0,1),opacity .3s ease; pointer-events: none; z-index: 145; padding: 6px 18px calc(6px + env(safe-area-inset-bottom)); border-radius: 10px 10px 0 0; background: linear-gradient(180deg,var(--bk-dock-pill-top),var(--bk-dock-pill-bottom)); border: 1px solid color-mix(in srgb,var(--accent) 18%,transparent); border-bottom: none; box-shadow: 0 -2px 16px color-mix(in srgb,var(--bk-dock-shadow) 35%,transparent),0 0 20px color-mix(in srgb,var(--accent) 6%,transparent); cursor: pointer; }
+.lane > [data-control="icon"][data-part="shell.nav.handle"] > span { display: block; height: 4px; width: 36px; border-radius: 999px; background: color-mix(in srgb,var(--accent) 50%,transparent); }
 .lane[data-collapsed="true"] .bar { transform: translateX(-50%) translateY(calc(100% + 40px)); pointer-events: none; }
-.lane[data-collapsed="true"] .handle { transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.lane[data-collapsed="true"] > [data-control="icon"][data-part="shell.nav.handle"]:not(:disabled) { transform: translateX(-50%) translateY(0); pointer-events: auto; }
 :global(body.focus-editor) .lane { display: none; }
 @container (max-width: 767px) or (((max-width: 768px) or (max-height: 600px)) and (aspect-ratio > 1/1)) {
   .bar { width: 100%; max-width: 100%; gap: 0; padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); border-radius: 2px 2px 0 0; }
-  .app { gap: 0; padding: 4px 6px; min-height: 28px; }
-  .app > span:last-child { display: none; }
+  .bar [data-control="tile"]:not(:disabled) { gap: 0; padding: 4px 6px; min-height: 28px; }
+  .bar [data-control="tile"] > span:last-child { display: none; }
   .divider { height: 24px; margin: 0 2px; }
 }
 @container ((max-width: 768px) or (max-height: 600px)) and (aspect-ratio > 1/1) {
   .bar { bottom: 0; }
 }
-@media (prefers-reduced-motion: reduce) { .bar,.handle,.app,.mark { transition: none; animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { .bar,.lane > [data-control="icon"][data-part="shell.nav.handle"],.bar [data-control="tile"],.mark { transition: none; animation: none !important; } }
 @media (prefers-reduced-transparency: reduce) { .bar { backdrop-filter: none; background: var(--bk-dock-bottom); } }

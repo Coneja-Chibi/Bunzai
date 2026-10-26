@@ -17,6 +17,7 @@
 import type { JSX } from "react";
 import type { StudioEntitySummary } from "../../app-contract";
 import { pieceKey } from "./view-contract";
+import { Button } from "../../components/button";
 
 export interface SendBarProps {
   /** "kind:id" keys of the staged pieces, already validated against what is still on the shelf */
@@ -45,18 +46,18 @@ export function SendBar({
   return (
     <div className="sendbar">
       <span className="cnt">{`${String(staged.size)} ${staged.size === 1 ? "piece" : "pieces"} staged`}</span>
-      <button className="send" onClick={() => onSend(batch())}>
+      <Button size="sm" variant="primary" onClick={() => onSend(batch())}>
         {`Send ${many} to the Workbench`}
-      </button>
-      <button className="del" onClick={() => onDelete(batch())}>
+      </Button>
+      <Button size="sm" variant="danger" onClick={() => onDelete(batch())}>
         {`Delete ${many}`}
-      </button>
-      <button className="clear" onClick={onSelectAll}>
+      </Button>
+      <Button size="sm" variant="quiet" onClick={onSelectAll}>
         Select all
-      </button>
-      <button className="clear" onClick={onClear}>
+      </Button>
+      <Button size="sm" variant="quiet" onClick={onClear}>
         Clear
-      </button>
+      </Button>
     </div>
   );
 }

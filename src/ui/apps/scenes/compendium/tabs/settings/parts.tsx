@@ -4,7 +4,7 @@
  */
 import type { CSSProperties, JSX, ReactNode } from "react";
 import { Slider } from "../../../../../components/slider";
-import { ToggleSwitch } from "../../../../../components/toggle-switch";
+import { IconButton, Segmented, Toggle } from "../../../../../components/button";
 
 export function SettingsSection({ id, title, blurb, dot, children }: { id: string; title: string; blurb?: string; dot?: string; children: ReactNode }): JSX.Element {
   return (
@@ -27,7 +27,7 @@ export function SettingsField({ label, hint, children }: { label: string; hint?:
 }
 
 export function SettingsSwitch({ on, onChange, label }: { on: boolean; onChange(on: boolean): void; label: string }): JSX.Element {
-  return <ToggleSwitch on={on} onChange={onChange} tone="var(--cpa)" aria-label={label} />;
+  return <Toggle on={on} onChange={onChange} tone="var(--cpa)" aria-label={label} />;
 }
 
 export function SettingsToggle({ on, onChange, label, hint }: { on: boolean; onChange(on: boolean): void; label: string; hint?: string }): JSX.Element {
@@ -46,9 +46,9 @@ export function SettingsStepper({ label, hint, value, min, max, step = 1, onChan
   return (
     <SettingsField label={label} {...(hint ? { hint } : {})}>
       <div className="cps-step" role="group" aria-label={label}>
-        <button type="button" aria-label={`${label}: one less`} disabled={value <= min} onClick={() => onChange(Math.max(min, value - step))}>-</button>
+        <IconButton size="sm" label={`${label}: one less`} icon="lucide:minus" disabled={value <= min} onClick={() => onChange(Math.max(min, value - step))} />
         <output>{value}</output>
-        <button type="button" aria-label={`${label}: one more`} disabled={value >= max} onClick={() => onChange(Math.min(max, value + step))}>+</button>
+        <IconButton size="sm" label={`${label}: one more`} icon="lucide:plus" disabled={value >= max} onClick={() => onChange(Math.min(max, value + step))} />
       </div>
     </SettingsField>
   );
@@ -57,9 +57,7 @@ export function SettingsStepper({ label, hint, value, min, max, step = 1, onChan
 export function SettingsSegmented<T extends string>({ label, hint, value, options, onChange }: { label: string; hint?: string; value: T; options: readonly { value: T; label: string }[]; onChange(v: T): void }): JSX.Element {
   return (
     <SettingsField label={label} {...(hint ? { hint } : {})}>
-      <div className="cps-seg" role="group" aria-label={label}>
-        {options.map((o) => <button type="button" key={o.value} aria-pressed={o.value === value} className={o.value === value ? "on" : undefined} onClick={() => onChange(o.value)}>{o.label}</button>)}
-      </div>
+      <div className="cps-seg"><Segmented label={label} value={value} onChange={onChange} items={options} /></div>
     </SettingsField>
   );
 }

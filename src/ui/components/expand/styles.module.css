@@ -23,24 +23,6 @@
   padding-right: 5rem !important;
 }
 
-.toggle {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--stage-panel);
-  border: 1px solid var(--stage-seam);
-  color: var(--stage-mute);
-  padding: 0.1rem 0.32rem;
-  cursor: pointer;
-}
-
-.toggle:hover,
-.toggle:focus-visible {
-  color: var(--stage-card);
-  border-color: var(--stage-line);
-}
-
 /* parked in the corner: anywhere else it costs every editor in the app a row of vertical space */
 .inlineToggle {
   position: absolute;
@@ -51,7 +33,7 @@
 }
 
 .inlineToggle:hover,
-.inlineToggle:focus-visible {
+.inlineToggle:focus-within {
   opacity: 1;
 }
 

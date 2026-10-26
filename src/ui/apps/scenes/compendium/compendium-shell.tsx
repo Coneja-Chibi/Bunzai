@@ -6,6 +6,7 @@
 import { useState, type JSX } from "react";
 import type { SceneLoreBook } from "../../../app-contract-scenes";
 import { Ic, type IconName } from "../../../_shared/ic";
+import { Button, ListRow, Tabs } from "../../../components/button";
 import type { CompendiumAccess } from "../../../../stage/contracts/chat-settings-types";
 
 export type TabId = "dashboard" | "browse" | "storyboards" | "activity" | "settings";
@@ -37,10 +38,8 @@ export function Hero(): JSX.Element {
 export function TabStrip({ tab, onTab }: { tab: TabId; onTab(t: TabId): void }): JSX.Element {
   return (
     <>
-      <div className="cp-tabs" role="tablist" aria-label="Compendium sections" data-part="compendium.tabs">
-        {TABS.map((t) => (
-          <button key={t.id} type="button" role="tab" aria-selected={tab === t.id} className={tab === t.id ? "on" : ""} onClick={() => onTab(t.id)}><Ic name={t.icon} size={14} />{t.label}</button>
-        ))}
+      <div className="cp-tabs">
+        <Tabs label="Compendium sections" data-part="compendium.tabs" value={tab} onChange={onTab} items={TABS.map((t) => ({ value: t.id, label: <><Ic name={t.icon} size={14} />{t.label}</> }))} />
       </div>
       <div className="cp-tabsel"><select aria-label="Compendium section" value={tab} onChange={(e) => onTab(e.target.value as TabId)}>{TABS.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}</select></div>
     </>
@@ -55,11 +54,11 @@ export function BookBar({ books, bookId, onBook, access, chip }: { books: readon
     <div className="cp-bar" data-part="compendium.bar">
       <div className="cp-bk">
         {books.length > 1 ? (
-          <button type="button" aria-expanded={open} onClick={() => setOpen(!open)}>{label}<Ic name="lucide:chevron-down" size={14} /></button>
+          <Button variant="quiet" menu aria-expanded={open} onClick={() => setOpen(!open)}>{label}</Button>
         ) : <div className="cur">{label}</div>}
         {open && (
           <div className="pick" role="listbox" aria-label="Books in this scene">
-            {books.map((b) => <button key={b.id} type="button" role="option" aria-selected={b.id === bookId} className={b.id === bookId ? "on" : ""} onClick={() => { setOpen(false); onBook(b.id); }}>{b.name}</button>)}
+            {books.map((b) => <ListRow key={b.id} variant="option" role="option" aria-selected={b.id === bookId} selected={b.id === bookId} label={b.name} onClick={() => { setOpen(false); onBook(b.id); }} />)}
           </div>
         )}
       </div>

@@ -16,6 +16,7 @@ import { apiFetchJson } from "../../../_shared/api-fetch";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { protect } from "../../../_shared/protected-control";
 import { SettingsRow, type SettingsSection } from "../section-contract";
+import { Button } from "../../../components/button";
 import styles from "./models.module.css";
 import {
   draftFrom,
@@ -180,38 +181,39 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
             <span className={styles.key}>{p.hasKey ? "key saved" : "no key"}</span>
             <span className={styles.tested}>{tested[p.id] ?? ""}</span>
             <span className={styles.acts}>
-              <button type="button" disabled={busy} onClick={() => { void test(p.id); }}>{"Test"}</button>
-              <button
-                type="button"
+              <Button size="sm" disabled={busy} onClick={() => { void test(p.id); }}>{"Test"}</Button>
+              <Button
+                size="sm"
                 disabled={busy}
                 onClick={() => { setDraft(draftFrom(p, kindOf(p.kind))); setModels([]); setTyping(false); void loadModels({ id: p.id }); }}
               >
                 {"Edit"}
-              </button>
-              <button type="button" disabled={busy} onClick={() => { void act("remove", p.id, "model removed"); }}>
+              </Button>
+              <Button size="sm" variant="danger" disabled={busy} onClick={() => { void act("remove", p.id, "model removed"); }}>
                 {"Remove"}
-              </button>
+              </Button>
             </span>
           </li>
         ))}
       </ul>
 
       {draft === null ? (
-        <button
-          type="button"
-          className={styles.add}
-          disabled={busy || kinds.length === 0}
-          onClick={() => {
-            const first = kinds[0];
-            setDraft(emptyDraft(first));
-            setModels([]);
-            setTyping(false);
-            // The add form opens already knowing what its first provider offers.
-            if (first) void loadModels({ kind: first.id });
-          }}
-        >
-          {"Add a model"}
-        </button>
+        <div className={styles.add}>
+          <Button
+            variant="primary"
+            disabled={busy || kinds.length === 0}
+            onClick={() => {
+              const first = kinds[0];
+              setDraft(emptyDraft(first));
+              setModels([]);
+              setTyping(false);
+              // The add form opens already knowing what its first provider offers.
+              if (first) void loadModels({ kind: first.id });
+            }}
+          >
+            {"Add a model"}
+          </Button>
+        </div>
       ) : (
         <div className={styles.form}>
           <label>
@@ -330,10 +332,10 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
           )}
 
           <div className={styles.formActs}>
-            <button type="button" disabled={busy} onClick={() => { void save(); }}>{"Save"}</button>
-            <button type="button" disabled={busy} onClick={() => { setDraft(null); setProblem(null); }}>
+            <Button variant="primary" disabled={busy} onClick={() => { void save(); }}>{"Save"}</Button>
+            <Button variant="quiet" disabled={busy} onClick={() => { setDraft(null); setProblem(null); }}>
               {"Cancel"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

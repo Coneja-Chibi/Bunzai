@@ -121,13 +121,13 @@ describe("showing the tab", () => {
     expect(byLabel("Use Compendium in this scene")!.getAttribute("aria-checked")).toBe("false");
     expect(byLabel("Recall from Compendium")!.getAttribute("aria-checked")).toBe("true");
     expect(byLabel("Use Book b1")!.getAttribute("aria-checked")).toBe("true");
-    expect([...host.querySelectorAll(".cps-seg button.on")].map((b) => b.textContent)).toEqual(["Read only", "Read only"]);
+    expect([...host.querySelectorAll(".cps-seg button[aria-pressed=\"true\"]")].map((b) => b.textContent)).toEqual(["Read only", "Read only"]);
     expect(text()).toContain("Compendium Model - uses this scene's model");
     await advanced(flushSync);
     const r = resolveCompendium(undefined).recall;
     const shown = [...section("Retrieval tuning").querySelectorAll(".cps-step output")].map((o) => Number(o.textContent));
     expect(shown).toEqual([r.maxEntries, r.minEntries, r.contextMessages, r.depth]);
-    expect([...section("Retrieval tuning").querySelectorAll(".cps-seg button.on")].map((b) => b.textContent)).toEqual(["Names + Taglines", "Unified"]);
+    expect([...section("Retrieval tuning").querySelectorAll(".cps-seg button[aria-pressed=\"true\"]")].map((b) => b.textContent)).toEqual(["Names + Taglines", "Unified"]);
   });
 
   test("what is saved is what is shown, the same values the recall pass resolves", async () => {
@@ -140,7 +140,7 @@ describe("showing the tab", () => {
     await advanced(flushSync);
     const r = resolveCompendium(saved).recall;
     expect([...section("Retrieval tuning").querySelectorAll(".cps-step output")].map((o) => Number(o.textContent))).toEqual([r.maxEntries, r.minEntries, r.contextMessages, r.depth]);
-    expect([...section("Retrieval tuning").querySelectorAll(".cps-seg button.on")].map((b) => b.textContent)).toEqual(["Names + Taglines + Preview", "Per-Book"]);
+    expect([...section("Retrieval tuning").querySelectorAll(".cps-seg button[aria-pressed=\"true\"]")].map((b) => b.textContent)).toEqual(["Names + Taglines + Preview", "Per-Book"]);
   });
 });
 
@@ -220,8 +220,8 @@ describe("the rows write one field each", () => {
   test("the model: the scene's own until one is picked, a pick is one patch, and the way back is one click", async () => {
     const flushSync = await mount(chatWith());
     expect(text()).toContain("m-own");
-    await press(flushSync, host.querySelector(".bth-pick") as HTMLElement);
-    await press(flushSync, buttons().find((b) => b.className.includes("bth-opt") && (b.textContent ?? "").includes("m-tiny")));
+    await press(flushSync, host.querySelector(".bth-pickwrap > [data-control=row]") as HTMLElement);
+    await press(flushSync, buttons().find((b) => b.matches(".bth-dlist [data-control=row]") && (b.textContent ?? "").includes("m-tiny")));
     expect(patches).toEqual([{ model: { id: "k1", model: "m-tiny" } }]);
     const again = await mount(chatWith({ model: { id: "k1", model: "m-tiny" } }));
     expect(text()).toContain("Compendium Model");
@@ -311,16 +311,19 @@ describe("the book bar's access chip", () => {
   test("reads Read-Only by default, offers RoleCall's four choices, and a pick is the same patch the Access row sends", async () => {
     const flushSync = await mountChip(chatWith());
     expect(text()).toContain("Read-Only");
-    await press(flushSync, host.querySelector(".cp-chip") as HTMLElement);
+    await press(flushSync, host.querySelector(".cp-chipw button") as HTMLElement);
     expect(text()).toContain('AI Access for "Book b1"');
-    expect([...host.querySelectorAll(".cp-chipp button span")].map((s) => s.textContent)).toEqual(["Read + Write", "Read-Only", "Write-Only", "Disabled"]);
+    const labels = ["Read + Write", "Read-Only", "Write-Only", "Disabled"];
+    const cards = [...host.querySelectorAll(".cp-chipp [data-control=card]")];
+    expect(cards.map((c, i) => (c.textContent ?? "").replace(/^Picked/, "").startsWith(labels[i]!))).toEqual([true, true, true, true]);
+    expect(cards.map((c) => c.getAttribute("aria-pressed"))).toEqual(["false", "true", "false", "false"]);
     await press(flushSync, buttons().find((b) => b.textContent?.startsWith("Read + Write")));
     expect(patches).toEqual([{ books: { b1: { access: "read_write" } } }]);
   });
 
   test("Disabled on the default write book takes the default with it", async () => {
     const flushSync = await mountChip(chatWith({ books: { b1: { access: "read_write" } }, writeBook: "b1" }));
-    await press(flushSync, host.querySelector(".cp-chip") as HTMLElement);
+    await press(flushSync, host.querySelector(".cp-chipw button") as HTMLElement);
     await press(flushSync, buttons().find((b) => b.textContent?.startsWith("Disabled")));
     expect(patches).toEqual([{ books: { b1: { access: "off" } }, writeBook: null }]);
   });

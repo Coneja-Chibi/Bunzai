@@ -10,7 +10,7 @@ import {
   type EditorProfileId,
 } from "../../../../core/final-cut/options";
 import type { FinalCutPass } from "../../../../core/final-cut/pass";
-import { Ic } from "../../../_shared/ic";
+import { ListRow } from "../../../components/button";
 import { Area, Check, Sel } from "./fc-controls";
 import { PROFILE_CONTROLS } from "./fc-core";
 import { FailureModeSelect, OutputModeToggle, type Change } from "./fc-pass-chrome";
@@ -28,10 +28,8 @@ function CraftFloor({ pass, onChange }: { pass: FinalCutPass; onChange(next: str
       </div>
       <div className="fc-rules">
         {RULES.map((rule) => (
-          <button type="button" key={rule.id} className={`fc-bank${attached.has(rule.id) ? " on" : ""}`} aria-pressed={attached.has(rule.id)} onClick={() => toggle(rule.id)}>
-            <span className="fc-tick" aria-hidden="true">{attached.has(rule.id) && <Ic name="lucide:check" size={12} />}</span>
-            <span className="fc-bank-body"><span className="row"><b>{rule.label}</b><small>{rule.scope}</small></span><span className="why">{rule.target}</span></span>
-          </button>
+          <ListRow key={rule.id} variant="option" wrap selected={attached.has(rule.id)} aria-pressed={attached.has(rule.id)} onClick={() => toggle(rule.id)}
+            label={<span className="fc-bank-body"><span className="row"><b>{rule.label}</b><small>{rule.scope}</small></span><span className="why">{rule.target}</span></span>} />
         ))}
       </div>
       {RULES.some((r) => attached.has(r.id) && r.scope === "turn-history") && (

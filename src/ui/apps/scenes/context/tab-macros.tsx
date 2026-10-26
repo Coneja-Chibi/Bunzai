@@ -6,6 +6,7 @@
  */
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { IconButton } from "../../../components/button";
 import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import type { MacroReport } from "../../../../core/assembly/types";
@@ -51,7 +52,7 @@ export function Macros({ trace }: { trace: SceneTrace }): JSX.Element {
             </div>
             {open === u.name && (
               <div className="ls-body">
-                <button type="button" className="ls-copy" aria-label="Copy value" onClick={() => { void copyText(u.value).then((ok) => { if (ok) copied.flash(u.name); }); }}><Ic name={copied.value === u.name ? "lucide:check" : "lucide:copy"} size={12} /></button>
+                <span className="ls-copy"><IconButton variant="quiet" size="sm" label="Copy value" icon={copied.value === u.name ? "lucide:check" : "lucide:copy"} onClick={() => { void copyText(u.value).then((ok) => { if (ok) copied.flash(u.name); }); }} /></span>
                 <pre>{u.value}</pre>
               </div>
             )}

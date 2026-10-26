@@ -100,6 +100,14 @@ starting.
     speculative extensibility; no parallel copy of logic that already exists. If the same behavior
     fits in fewer lines with no loss of correctness, clarity, or tests, the longer version is a
     defect.
+13. **One button family.** Every clickable thing is a named part of `src/ui/components/button`
+    (Button, IconButton, Segmented, Tabs, DocTab, Chip, ListRow, MenuItem, Disclosure, Tile, Card,
+    Dot, Toggle, InlineValue, Scrim). Rooms never style a button. Lint blocks a raw `<button>`.
+14. **Fonts come from the theme.** Use `--font-fancy`, `--font-body` and `--font-mono`, never a font
+    name. The style guard blocks named fonts and viewport width media queries in new lines.
+15. **No copy-paste-and-tweak.** The clone guard blocks a new function or CSS rule that nearly copies
+    one in another file. Call or extend the existing one; a genuine twin carries a
+    `clone-ok: <reason>` comment.
 
 ## 4. Gates: run before you claim anything is done
 
@@ -118,6 +126,8 @@ Or individually while iterating:
 | `bun run perf:check` | the speed budget: no everyday action freezes the app for more than 100 ms, on a realistic encrypted library |
 | `bun run scan:lines` | 500-line file cap |
 | `bun run scan:colors:check` | no hardcoded colors outside the token sheet |
+| `bun run scan:style` | named fonts and viewport width media queries (report; pre-commit blocks new ones) |
+| `bun run scan:clones` | near-duplicate functions and CSS rules outside the baseline (report; pre-commit blocks new ones) |
 | `bun run scan:emdash` | no em dashes in prose |
 | `bun run scan:headers` | every authored TS/TSX file opens with a purpose docblock |
 | `bun run scan:emoji` | no emoji pictographs in authored TS/TSX code |

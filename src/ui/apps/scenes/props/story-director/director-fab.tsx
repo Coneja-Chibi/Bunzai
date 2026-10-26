@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type JSX, type PointerEvent as ReactPointerEvent } from "react";
 import type { AppContext } from "../../../../app-contract";
 import type { Chat } from "../../../../../stage/contracts/chat-store";
+import { Button, IconButton } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { useEscapeKey } from "../../../../_shared/use-escape-key";
 import { ACTIVITY_LABELS, ACTIVITY_TONES, PULSE_MS, activityNewestFirst, recentCount } from "./director-core";
@@ -81,7 +82,7 @@ export function DirectorFab({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX
     }
     setOpen(!open);
   };
-  const style: CSSProperties = spot ? { left: spot.x, top: spot.y } : { right: 96, bottom: 144 };
+  const style = { ...(spot ? { left: spot.x, top: spot.y } : { right: 96, bottom: 144 }), "--c": ACTIVITY_TONES[newest.type] } as unknown as CSSProperties;
 
   return (
     <div className="dr-fab" ref={box} style={style} data-part="scene.director.fab">
@@ -91,14 +92,12 @@ export function DirectorFab({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX
           <div className="dr-fab-list">
             {entries.slice(0, 10).map((e) => <ActivityLine key={e.id} entry={e} now={now} clamp />)}
           </div>
-          <button type="button" className="dr-fab-all" onClick={() => { setOpen(false); requestDirectorTab(chat.id, "activity"); pop.open(); }}>View All Activity {"->"}</button>
+          <div className="dr-fab-foot"><Button variant="quiet" size="sm" block onClick={() => { setOpen(false); requestDirectorTab(chat.id, "activity"); pop.open(); }}>View All Activity {"->"}</Button></div>
         </div>
       )}
-      <button key={pulsing ? newest.id : "rest"} type="button" className={`dr-fab-btn${pulsing ? " pulse" : ""}${open ? " open" : ""}`} data-part="scene.director.fab.button"
-        style={{ "--c": ACTIVITY_TONES[newest.type] } as CSSProperties} title={pulsing ? `DM: ${ACTIVITY_LABELS[newest.type]}` : "Story Director Activity"} aria-label="Story Director Activity" aria-expanded={open}
-        onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClick={click}>
-        <Ic name="mdi:drama-masks" size={16} />
-      </button>
+      <IconButton key={pulsing ? newest.id : "rest"} size="fab" label="Story Director Activity" icon="mdi:drama-masks" data-part="scene.director.fab.button" data-pulse={pulsing || undefined}
+        title={pulsing ? `DM: ${ACTIVITY_LABELS[newest.type]}` : "Story Director Activity"} aria-expanded={open}
+        onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onClick={click} />
       {count > 0 && !open && <span className="dr-fab-badge" data-part="scene.director.fab.badge">{count > 99 ? "99+" : count}</span>}
     </div>
   );

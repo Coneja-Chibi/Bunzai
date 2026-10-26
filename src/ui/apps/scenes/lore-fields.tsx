@@ -5,7 +5,7 @@
  * and the 40 by 24 switch. Each is the one copy; nothing else in the wing draws these.
  */
 import { useEffect, useState, type JSX } from "react";
-import { ToggleSwitch } from "../../components/toggle-switch";
+import { Toggle } from "../../components/button";
 
 export function LoreNum({ value, onChange, fallback, min, max, step, float, className, label }: {
   value: number;
@@ -43,6 +43,6 @@ export function LoreHelp({ title, text }: { title: string; text: string }): JSX.
 
 export function LoreSwitch({ on, onChange, label }: { on: boolean; onChange(on: boolean): void; label: string }): JSX.Element {
   return (
-    <ToggleSwitch on={on} aria-label={label} title={on ? "Entry Toggle. Enabled: this entry is checked for triggers." : "Entry Toggle. Disabled: this entry is skipped during context building."} onChange={onChange} />
+    <Toggle on={on} aria-label={label} title={on ? "Entry Toggle. Enabled: this entry is checked for triggers." : "Entry Toggle. Disabled: this entry is skipped during context building."} onChange={onChange} />
   );
 }

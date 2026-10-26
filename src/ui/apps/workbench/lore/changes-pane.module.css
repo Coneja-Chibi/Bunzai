@@ -37,15 +37,6 @@
   color: var(--stage-text-dim);
 }
 
-.x {
-  margin-left: auto;
-  border: 0;
-  background: none;
-  color: var(--stage-text-dim);
-  cursor: pointer;
-  font-size: 1.1rem;
-}
-
 .clean {
   font-family: var(--font-body);
   font-style: italic;
@@ -57,23 +48,6 @@
   border: 2px solid var(--stage-black);
   background: var(--stage-row);
   margin-bottom: 0.65rem;
-}
-
-.blockHead {
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: 0;
-  border-bottom: 2px solid var(--stage-seam);
-  background: none;
-  color: var(--stage-card);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.45rem 0.55rem;
-  cursor: pointer;
 }
 
 .field {
@@ -118,19 +92,6 @@
   background: color-mix(in srgb, var(--stage-ok) 28%, transparent);
 }
 
-.revert {
-  margin-top: 0.3rem;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.18rem 0.4rem;
-  cursor: pointer;
-}
-
 .swap,
 .added,
 .removed {
@@ -156,3 +117,5 @@
     grid-template-columns: 1fr;
   }
 }
+
+.head > :last-child { margin-left: auto; }

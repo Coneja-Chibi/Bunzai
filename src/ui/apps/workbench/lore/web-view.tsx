@@ -1,6 +1,7 @@
 /**
  * Web lens: recursion wake graph (vs-lore-lenses). Links from loreWakeGraph only.
  */
+import { Button, Segmented } from "../../../components/button";
 import { useEffect, useMemo, useRef, useState, type JSX, type PointerEvent } from "react";
 import type { LorebookBody } from "../../../../entities/lorebook/schema";
 import {
@@ -101,9 +102,7 @@ export function WebView({ body, onSelect, onFallbackCards }: WebViewProps): JSX.
     return (
       <div className={styles.notice}>
         This book has {allIds.length} entries (cap {WEB_NODE_CAP}). Showing Cards instead of the web.
-        <button type="button" className={styles.link} onClick={onFallbackCards}>
-          Open Cards
-        </button>
+        <Button variant="quiet" size="sm" onClick={onFallbackCards}>Open Cards</Button>
       </div>
     );
   }
@@ -149,24 +148,18 @@ export function WebView({ body, onSelect, onFallbackCards }: WebViewProps): JSX.
 
   return (
     <div className={styles.wrap} aria-label="Wake web">
-      <div className={styles.filters} role="group" aria-label="Web filter">
-        {(
-          [
-            ["all", "All"],
-            ["connected", "Connected"],
-            ["loners", "Loners"],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            className={filter === id ? `${styles.fbtn} ${styles.fbtnOn}` : styles.fbtn}
-            aria-pressed={filter === id}
-            onClick={() => setFilter(id)}
-          >
-            {label}
-          </button>
-        ))}
+      <div className={styles.filters}>
+        <Segmented
+          label="Web filter"
+          size="sm"
+          items={[
+            { value: "all", label: "All" },
+            { value: "connected", label: "Connected" },
+            { value: "loners", label: "Loners" },
+          ]}
+          value={filter}
+          onChange={setFilter}
+        />
       </div>
       <svg
         ref={svgRef}

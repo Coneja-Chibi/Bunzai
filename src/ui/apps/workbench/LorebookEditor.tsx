@@ -1,4 +1,5 @@
 /** LorebookEditor owns lorebook editing, history, TOC search, and revision-checked saves. */
+import { Button, IconButton, Segmented } from "../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type ReactNode, type SetStateAction } from "react";
 import { useEditorKeys } from "./editor-key-owner";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
@@ -329,9 +330,7 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
           <>
             {summary.entryCount} {summary.entryCount === 1 ? "entry" : "entries"} · ~{bookEstimate}
             {session.body.tokenBudget > 0 ? ` / ${session.body.tokenBudget}` : ""} tok ·{" "}
-            <button type="button" className={styles.rulesLink} onClick={() => setRulesOpen(true)}>
-              book rules
-            </button>
+            <Button variant="quiet" size="sm" onClick={() => setRulesOpen(true)}>Book rules</Button>
           </>
         }
         dirty={dirty}
@@ -339,25 +338,17 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
         onSave={() => void doSave()}
         topRight={topRight}
       >
-        <span className={styles.viewSwitch} role="group" aria-label="Binder view">
-          {(
-            [
-              ["pages", "Pages"],
-              ["cards", "Cards"],
-              ["web", "Web"],
-            ] as const
-          ).map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              className={view === id ? `${styles.viewBtn} ${styles.viewBtnOn}` : styles.viewBtn}
-              aria-pressed={view === id}
-              onClick={() => setView(id)}
-            >
-              {label}
-            </button>
-          ))}
-        </span>
+        <Segmented
+          label="Binder view"
+          size="sm"
+          items={[
+            { value: "pages", label: "Pages" },
+            { value: "cards", label: "Cards" },
+            { value: "web", label: "Web" },
+          ]}
+          value={view}
+          onChange={setView}
+        />
         <select
           className={styles.lensSel}
           value={writeFor}
@@ -384,18 +375,12 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
       ) : (
         <>
         <div className={styles.mBar}>
-          <button type="button" className={styles.mContents} onClick={() => setTocOpen(true)}>
-            &#9776; Contents
-          </button>
+          <Button size="sm" onClick={() => setTocOpen(true)}>&#9776; Contents</Button>
           <span className={styles.mPageNo}>
             {entry ? `${entryIndex + 1} / ${session.body.entries.length}` : "empty"}
           </span>
-          <button type="button" className={styles.mPg} aria-label="Previous entry" disabled={!entry || entryIndex <= 0} onClick={() => flip(-1)}>
-            &#8249;
-          </button>
-          <button type="button" className={styles.mPg} aria-label="Next entry" disabled={!entry || entryIndex >= session.body.entries.length - 1} onClick={() => flip(1)}>
-            &#8250;
-          </button>
+          <IconButton label="Previous entry" size="sm" icon="lucide:chevron-left" disabled={!entry || entryIndex <= 0} onClick={() => flip(-1)} />
+          <IconButton label="Next entry" size="sm" icon="lucide:chevron-right" disabled={!entry || entryIndex >= session.body.entries.length - 1} onClick={() => flip(1)} />
         </div>
 
         <div className={styles.cols}>
@@ -445,14 +430,7 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
             <div className={styles.rulesHead}>
               <b>Book rules</b>
               <i>name · description · matching defaults · budget</i>
-              <button
-                type="button"
-                className={styles.pgBtn}
-                aria-label="Close book rules"
-                onClick={() => setRulesOpen(false)}
-              >
-                &times;
-              </button>
+              <IconButton label="Close book rules" variant="quiet" size="sm" icon="lucide:x" onClick={() => setRulesOpen(false)} />
             </div>
             <LoreBookSettings
               body={session.body}

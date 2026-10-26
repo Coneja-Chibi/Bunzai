@@ -8,6 +8,7 @@
  * display text otherwise (lorebook edits its name elsewhere). `meta` is a ReactNode so an editor can
  * embed an inline control (the lorebook's "book rules" link).
  */
+import { Button } from "../button";
 import type { JSX, ReactNode } from "react";
 import s from "./styles.module.css";
 
@@ -66,15 +67,15 @@ export function EditorEhead({
       </div>
       <span className={s.acts}>
         {children}
-        <button
-          type="button"
-          className={s.save}
+        <Button
+          size="sm"
+          variant="primary"
           disabled={saving || !dirty}
           onClick={onSave}
           title={saveTitle}
         >
           {saving ? "Saving…" : dirty ? "Save" : "Saved"}
-        </button>
+        </Button>
         {topRight}
       </span>
     </header>

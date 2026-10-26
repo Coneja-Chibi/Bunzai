@@ -12,6 +12,7 @@
  * IT NOTICES THE DISK. The studio-change stream reports the folder rather than an actor, so a file
  * the agent wrote and a file dragged in from Explorer arrive the same way.
  */
+import { Button, Chip, IconButton, Tile } from "../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type JSX, type KeyboardEvent } from "react";
 import type { AppContext } from "../../app-contract";
 import { briefText, readSurface } from "../../agent/surface";
@@ -240,15 +241,14 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
         you were reading the conversation through. Folded, the one live fact stays: the meter, which
         is the thing you would reopen it to check.
       */}
-      <button
-        type="button"
-        className="agent-room__fold"
+      <IconButton
+        variant="quiet"
+        size="sm"
+        icon={bandFolded ? "lucide:chevron-right" : "lucide:chevron-down"}
+        label={bandFolded ? "Show the model and screen" : "Fold this band away"}
         aria-expanded={!bandFolded}
-        title={bandFolded ? "Show the model and screen" : "Fold this band away"}
         onClick={() => { setBandFolded(!bandFolded); ctx.prefs.set(PREF_BAND_FOLDED, !bandFolded); }}
-      >
-        {bandFolded ? "▸" : "▾"}
-      </button>
+      />
 
       {!bandFolded && (
       <header className="agent-room__head">
@@ -334,20 +334,19 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
       {reading && reading.actions.length > 0 && model.connected && !chat.gate && (
         <div className="agent-room__chips">
           {reading.actions.map((action) => (
-            <button
+            <Chip
               key={action.id}
-              type="button"
               disabled={chat.busy}
               onClick={() => { void chat.send(action.describe, brief); }}
             >
               {action.label}
-            </button>
+            </Chip>
           ))}
         </div>
       )}
 
       {/*
-        THE POPUP IS A SIBLING OF THE FORM, NOT A CHILD. `.agent-room__composer button` styles the
+        THE POPUP IS A SIBLING OF THE FORM, NOT A CHILD. the composer key rules style the
         Ask and Stop keys and outranks any single-class rule a popup row could carry, so a row placed
         inside the form would silently wear the composer's key styling. One positioned wrapper is
         cheaper than a specificity war.
@@ -363,12 +362,12 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
             <li key={`${String(at)}:${text.slice(0, 24)}`}>
               <span className="agent-room__queuekick">waiting</span>
               <span className="agent-room__queuetext">{text}</span>
-              <button type="button" title="Stop the turn and send this now" onClick={() => { chat.sendQueuedNow(at); }}>
-                send now
-              </button>
-              <button type="button" title="Forget this one" onClick={() => { chat.dropQueued(at); }}>
-                drop
-              </button>
+              <Button size="sm" title="Stop the turn and send this now" onClick={() => { chat.sendQueuedNow(at); }}>
+                Send now
+              </Button>
+              <Button size="sm" variant="danger" title="Forget this one" onClick={() => { chat.dropQueued(at); }}>
+                Drop
+              </Button>
             </li>
           ))}
         </ul>
@@ -389,14 +388,13 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
         {shots.length > 0 && (
           <div className="agent-room__shots">
             {shots.map((src, at) => (
-              <button
+              <Tile
+                kind="thumb"
                 key={at}
-                type="button"
-                title="Remove this picture"
+                label="Remove this picture"
                 onClick={() => { setShots((prior) => prior.filter((_, i) => i !== at)); }}
-              >
-                <img src={src} alt="attached" />
-              </button>
+                art={<img src={src} alt="attached" />}
+              />
             ))}
           </div>
         )}
@@ -443,15 +441,15 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
           {chat.busy ? (
             <>
               {/* Queue is the primary action while a turn runs; Stop is still one key away. */}
-              <button type="submit" disabled={!draft.trim()} title="Send this when the turn finishes">
+              <Button type="submit" disabled={!draft.trim()} title="Send this when the turn finishes">
                 {"Queue"}
-              </button>
-              <button type="button" className="agent-room__stop" onClick={chat.stop}>{"Stop"}</button>
+              </Button>
+              <Button variant="danger" onClick={chat.stop}>{"Stop"}</Button>
             </>
           ) : (
-            <button type="submit" disabled={!draft.trim() || (!model.connected && !draft.trim().startsWith("/"))}>
+            <Button type="submit" variant="primary" disabled={!draft.trim() || (!model.connected && !draft.trim().startsWith("/"))}>
               {draft.trim().startsWith("/") ? "Run" : "Ask"}
-            </button>
+            </Button>
           )}
         </form>
       </div>

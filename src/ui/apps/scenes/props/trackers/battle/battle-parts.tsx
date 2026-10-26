@@ -6,6 +6,7 @@
  */
 import { useState, type CSSProperties, type JSX } from "react";
 import { hpBand, hpPercent, THREATS, type DiceRoll, type Enemy, type Threat } from "../../../../../../core/trackers/battle";
+import { Button, Chip, IconButton } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 
 const THREAT: Readonly<Record<Threat, { tone: string; icon: IconName; label: string }>> = {
@@ -34,16 +35,16 @@ export function EnemyCard({ enemy, current, onDamage, onHeal, onRemove }: { enem
           <b>{enemy.name}</b>{enemy.level !== undefined && <span className="bt-tag">Lv.{enemy.level}</span>}{enemy.isBoss && <span className="bt-tag boss">BOSS</span>}
           <div className="bt-hp">HP: <span style={{ color: tone }}>{enemy.hp}/{enemy.maxHp}</span></div>
         </div>
-        <button type="button" className="bt-icon" title="Damage" aria-label={`Damage ${enemy.name}`} onClick={() => setOpen(!open)}><Ic name="lucide:swords" size={16} /></button>
-        <button type="button" className="bt-icon" title="Remove" aria-label={`Remove ${enemy.name}`} onClick={onRemove}><Ic name="lucide:x" size={16} /></button>
+        <IconButton size="sm" label={`Damage ${enemy.name}`} title="Damage" icon="lucide:swords" onClick={() => setOpen(!open)} />
+        <IconButton variant="danger" size="sm" label={`Remove ${enemy.name}`} title="Remove" icon="lucide:x" onClick={onRemove} />
       </header>
       <div className="bt-bar"><div style={{ width: `${Math.min(100, percent)}%`, background: tone }} /></div>
       {enemy.statusEffects.length > 0 && <div className="bt-tags">{enemy.statusEffects.map((s) => <span className="bt-tag" key={s}>{s}</span>)}</div>}
       {open && (
         <div className="bt-dmg">
           <input type="number" value={value} placeholder="Damage (+) or Heal (-)" aria-label="Damage or heal" autoFocus onChange={(e) => setValue(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") apply(); }} />
-          <button type="button" className="bt-go" onClick={apply}>Apply</button>
-          <button type="button" className="bt-cancel" onClick={() => { setValue(""); setOpen(false); }}>Cancel</button>
+          <Button size="sm" onClick={apply}>Apply</Button>
+          <Button variant="quiet" size="sm" onClick={() => { setValue(""); setOpen(false); }}>Cancel</Button>
         </div>
       )}
     </article>
@@ -71,7 +72,7 @@ export function AddEnemy({ onAdd, onCancel }: { onAdd(e: Omit<Enemy, "id">): voi
       <div className="bt-two"><label>Level<input type="number" value={level} placeholder="Optional" onChange={(e) => setLevel(e.target.value)} /></label>
         <label>Threat<select value={threat} onChange={(e) => setThreat(e.target.value as Threat)}>{THREATS.map((x) => <option key={x} value={x}>{THREAT[x].label}</option>)}</select></label></div>
       <label className="bt-check"><input type="checkbox" checked={boss} onChange={(e) => setBoss(e.target.checked)} /> Boss enemy</label>
-      <div className="bt-two"><button type="button" className="bt-cancel" onClick={onCancel}>Cancel</button><button type="button" className="bt-go" onClick={submit}>Add Enemy</button></div>
+      <div className="bt-two"><Button variant="quiet" size="sm" onClick={onCancel}>Cancel</Button><Button variant="primary" size="sm" onClick={submit}>Add Enemy</Button></div>
     </div>
   );
 }
@@ -79,7 +80,7 @@ export function AddEnemy({ onAdd, onCancel }: { onAdd(e: Omit<Enemy, "id">): voi
 export function TurnList({ order, current, round, enemies, onNext }: { order: readonly string[]; current: string | null; round: number; enemies: readonly Enemy[]; onNext(): void }): JSX.Element {
   return (
     <div className="bt-turns">
-      <div className="bt-turns-head"><span><Ic name="lucide:list-ordered" size={16} /> Turn Order</span><span>Round {round}<button type="button" className="bt-go" onClick={onNext}><Ic name="lucide:skip-forward" size={12} /> Next Turn</button></span></div>
+      <div className="bt-turns-head"><span><Ic name="lucide:list-ordered" size={16} /> Turn Order</span><span>Round {round}<Button size="sm" icon="lucide:skip-forward" onClick={onNext}>Next Turn</Button></span></div>
       {order.length === 0 ? <p className="bt-empty">Nobody in the turn order.</p> : order.map((id) => {
         const e = enemies.find((x) => x.id === id);
         return <div key={id} className={`bt-turn${id === current ? " now" : ""}${e && e.hp <= 0 ? " down" : ""}`}><i /> <b>{e?.name ?? "Unknown"}</b>{e?.isBoss && <span className="bt-tag boss">BOSS</span>}</div>;
@@ -91,7 +92,7 @@ export function TurnList({ order, current, round, enemies, onNext }: { order: re
 export function CombatLog({ log, onClear }: { log: readonly string[]; onClear(): void }): JSX.Element {
   return (
     <div className="bt-log">
-      <div className="bt-log-head"><span>Combat Log</span>{log.length > 0 && <button type="button" onClick={onClear}>Clear</button>}</div>
+      <div className="bt-log-head"><span>Combat Log</span>{log.length > 0 && <Button variant="quiet" size="sm" onClick={onClear}>Clear</Button>}</div>
       {log.length === 0 ? <p className="bt-empty">No combat activity yet...</p> : <ul>{log.map((l, i) => <li key={i}>{l}</li>)}</ul>}
     </div>
   );
@@ -106,11 +107,11 @@ export function Dice({ history, onRoll, onClear }: { history: readonly DiceRoll[
   return (
     <div className="bt-dice">
       <div className="bt-dice-title"><Ic name="lucide:dice-5" size={16} /> Dice Roller</div>
-      <button type="button" className="bt-d20" onClick={() => roll("d20")}>Roll d20</button>
-      <div className="bt-dice-row">{DICE.map((s) => <button type="button" key={s} title={`Roll d${s}`} onClick={() => roll(`d${s}`)}>d{s}</button>)}</div>
+      <Button size="sm" block tone="var(--stage-warn)" onClick={() => roll("d20")}>Roll d20</Button>
+      <div className="bt-dice-row">{DICE.map((s) => <Chip key={s} title={`Roll d${s}`} onClick={() => roll(`d${s}`)}>d{s}</Chip>)}</div>
       <div className="bt-dice-custom">
         <input value={custom} placeholder="2d6+3, 4d8-2..." aria-label="Dice expression" onChange={(e) => setCustom(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && custom.trim()) { roll(custom.trim()); setCustom(""); } }} />
-        <button type="button" disabled={!custom.trim()} onClick={() => { roll(custom.trim()); setCustom(""); }}>Roll</button>
+        <Button size="sm" disabled={!custom.trim()} onClick={() => { roll(custom.trim()); setCustom(""); }}>Roll</Button>
       </div>
       {last && (
         <div className="bt-roll" style={{ "--c": "var(--stage-warn)" } as CSSProperties}>
@@ -119,7 +120,7 @@ export function Dice({ history, onRoll, onClear }: { history: readonly DiceRoll[
         </div>
       )}
       {history.length > 0 && (
-        <div className="bt-hist"><div className="bt-log-head"><span>History</span><button type="button" onClick={onClear}>Clear</button></div>
+        <div className="bt-hist"><div className="bt-log-head"><span>History</span><Button variant="quiet" size="sm" onClick={onClear}>Clear</Button></div>
           <ul>{[...history].reverse().map((h, i) => <li key={`${h.at}:${i}`}><span>{h.expression}</span><b>{h.total}</b></li>)}</ul></div>
       )}
     </div>

@@ -65,7 +65,7 @@ describe("the explorer", () => {
     expect(dq(".gx-hd")!.textContent).toContain("Lorebook");
     expect(dq(".gx-hd")!.textContent).toContain("The Drowned Coast");
     expect(dq(".gx-hd")!.textContent).toContain("Cross-Reference Graph");
-    expect(dqa(".gx-side .ft").map((b) => b.textContent!.replace(/\d+$/, ""))).toEqual(["Cast", "Places", "Items", "Orgs", "Events", "Plots", "Threats", "Worldbuilding", "Summaries", "Powers", "Creatures", "Relationships", "Affiliations", "Location Links", "Participation", "In Summaries", "Show orphaned nodes", "Show edge labels"]);
+    expect(dqa(".gx-side [data-control=chip]").map((b) => b.textContent!.replace(/\d+$/, ""))).toEqual(["Cast", "Places", "Items", "Orgs", "Events", "Plots", "Threats", "Worldbuilding", "Summaries", "Powers", "Creatures", "Relationships", "Affiliations", "Location Links", "Participation", "In Summaries", "Show orphaned nodes", "Show edge labels"]);
     expect(dq(".gx-status")!.textContent).toContain("GRAPH 6 NODES");
     expect(dq(".gx-status")!.textContent).toContain("VISIBLE 6 NODES");
     expect(dq(".gx-status")!.textContent).toContain("SCROLL TO ZOOM");
@@ -326,7 +326,7 @@ describe("the Dashboard cell", () => {
     flushSync(() => rig.root.render(createElement(CrossRefCell, { m: modelOf([]), onOpen: () => undefined })));
     await settle(flushSync);
     expect(rig.host.textContent).toContain("No cross-references yet.");
-    await click(rig.host.querySelector(".cp-gbtn"));
+    await click(rig.host.querySelector(".cp-gbtn button"));
     expect(dq(".gx-none")!.textContent).toBe("No nodes match the current filters.");
   });
 });

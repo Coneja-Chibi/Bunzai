@@ -15,6 +15,7 @@ import type { AppContext } from "../../../app-contract";
 import type { LanStatus } from "../../../remote/sidecar-status";
 import { useVisibleInterval } from "../../../_shared/use-visible-interval";
 import { mask } from "./redact";
+import { Button } from "../../../components/button";
 import styles from "./remote-access.module.css";
 
 const OFF: LanStatus = { on: false, code: "", url: "", fingerprint: "", pending: [], connected: [] };
@@ -73,9 +74,9 @@ export function LanCard({
           before it gets in.
         </div>
         <div className={styles.actions}>
-          <button type="button" className={styles.btn} disabled={busy} onClick={() => run(ctx.api.remoteLanEnable())}>
+          <Button size="sm" variant="primary" disabled={busy} onClick={() => run(ctx.api.remoteLanEnable())}>
             Enable local access
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -108,16 +109,12 @@ export function LanCard({
             <div key={d.id} className={styles.deviceRow}>
               <span className={styles.deviceName}>{redacted ? mask(d.label) : d.label}</span>
               <div className={styles.actions}>
-                <button type="button" className={styles.btn} onClick={() => settle(ctx.api.remoteLanApprove(d.id))}>
+                <Button size="sm" onClick={() => settle(ctx.api.remoteLanApprove(d.id))}>
                   Approve
-                </button>
-                <button
-                  type="button"
-                  className={`${styles.btnGhost} ${styles.btnDanger}`}
-                  onClick={() => settle(ctx.api.remoteLanDeny(d.id))}
-                >
+                </Button>
+                <Button size="sm" variant="danger" onClick={() => settle(ctx.api.remoteLanDeny(d.id))}>
                   Deny
-                </button>
+                </Button>
               </div>
             </div>
           ))}
@@ -130,27 +127,18 @@ export function LanCard({
           {lan.connected.map((d) => (
             <div key={d.id} className={styles.deviceRow}>
               <span className={styles.deviceName}>{redacted ? mask(d.label) : d.label}</span>
-              <button
-                type="button"
-                className={`${styles.btnGhost} ${styles.btnDanger}`}
-                onClick={() => settle(ctx.api.remoteLanKick(d.id))}
-              >
+              <Button size="sm" variant="danger" onClick={() => settle(ctx.api.remoteLanKick(d.id))}>
                 Remove
-              </button>
+              </Button>
             </div>
           ))}
         </div>
       )}
 
       <div className={styles.actions}>
-        <button
-          type="button"
-          className={`${styles.btnGhost} ${styles.btnDanger}`}
-          disabled={busy}
-          onClick={() => run(ctx.api.remoteLanDisable())}
-        >
+        <Button size="sm" variant="danger" disabled={busy} onClick={() => run(ctx.api.remoteLanDisable())}>
           Turn off local access
-        </button>
+        </Button>
       </div>
     </div>
   );

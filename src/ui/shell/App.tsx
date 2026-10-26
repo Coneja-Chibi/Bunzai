@@ -22,6 +22,7 @@ import { DropVeil } from "./DropVeil";
 import { FollowDialog } from "./FollowDialog";
 import { ClosePieceDialog } from "./ClosePieceDialog";
 import { Menu } from "./Menu";
+import { IconButton } from "../components/button";
 import { LeavingGate } from "../components/leaving-gate";
 import { TourGuide } from "../components/tour-guide";
 import type { Tour } from "../tours/tour-contract";
@@ -445,15 +446,9 @@ export function App({ forceSkipTitle = false, testListRetryDelaysMs, pieces: inj
       <Menu />
       <LeavingGate />
       {tour && isRunnable(tour) && !tourOpen && !overlayTarget && (
-        <button
-          className="tourHelp"
-          type="button"
-          onClick={() => setTourOpen(true)}
-          aria-label="Replay the tour"
-          title="Replay the tour"
-        >
-          ?
-        </button>
+        <div className={premiere.tourHelp}>
+          <IconButton variant="quiet" size="sm" icon={<span aria-hidden="true">?</span>} label="Replay the tour" onClick={() => setTourOpen(true)} />
+        </div>
       )}
       {/* !showTitle: the tour never mounts over the title screen; it opens the instant the title
           screen unmounts (below), since tourOpen was already set true underneath it. */}

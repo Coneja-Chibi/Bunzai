@@ -4607,6 +4607,20 @@
       ],
       "anchors": [
         {
+          "text": "Use this for",
+          "slug": "use-this-for",
+          "level": 2,
+          "summary": "A short table answers the common UI needs before anyone searches the full catalog. Any action with text uses the Button from the button family, with one primary per view, danger for destructive actions and quiet for low emphasis. An icon-only action is an IconButton with a label; a few options are a Segmented; sections of a room or editor are Tabs; a small on/off filter or tag is a Chip; a clickable row is a ListRow, a menu entry a MenuItem, a fold a Disclosure, a small square target a Tile, a larger face a Card, a tiny mark a Dot. It also names the icon door Ic, SwatchRow and PaintPicker for colors, Toggle for switches, InkDialog or DialogCore for dialogs, and the three theme font tokens. For buttons, color pickers and fonts, lint and the style guard block the alternatives; the rest is the house answer that review checks.",
+          "topics": [
+            "button family",
+            "IconButton and Segmented",
+            "Tabs and Chip",
+            "ListRow, Tile and Card",
+            "theme font tokens"
+          ],
+          "children": []
+        },
+        {
           "text": "Components (React, `.tsx`)",
           "slug": "components-react-tsx",
           "level": 2,
@@ -14759,7 +14773,7 @@
       "summary": "uses. Optional remote listeners are separately enabled and gated. One engine, two shells - no format logic exists in the UI layer.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization, transcript previews, take metadata and real favorites. Other page proposals await approval. Prior storage delivery retains its documented focused-fixture evidence and pending live-proof limitations. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries.",
+      "semanticSummary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization, transcript previews, take metadata and real favorites. Other page proposals await approval. Prior storage delivery retains its documented focused-fixture evidence and pending live-proof limitations. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries.",
       "topics": [
         "Kit conversational terminal",
         "temporary browser Studio",
@@ -15221,12 +15235,12 @@
           "text": "Shared components (`src/ui/_shared/` and `src/ui/components/`)",
           "slug": "shared-components-srcui_shared-and-srcuicomponents",
           "level": 2,
-          "summary": "Shared visual controls are extracted once for setup, settings, and future editors. SwatchRow exposes the house palette as quick choices and optionally opens PaintPicker for a custom solid color. ColorPicker provides a branded saturation/value square, hue strip, and hex input while retaining HSV internally to avoid grayscale-state loss. Pure color math normalizes and converts values fail-closed and shares pointer fractions across color and gradient controls. The Paint model is a validated discriminated union for solid, linear, and radial output; gradients require at least two valid stops. PaintPicker composes color editing, stop add/drag/remove, angle adjustment, and curved previews behind allowed-mode gates. Solid accent use is live; tested gradient editing awaits its first entity or pack background consumer.",
+          "summary": "Every clickable control is a named part of the button family in src/ui/components/button (Button, IconButton, Segmented, Tabs, DocTab, Chip, ListRow, MenuItem, Disclosure, Tile, Card, Dot, Toggle, InlineValue, Scrim), each tagged with data-control (and data-kind where it has kinds) as theme hooks; lint blocks raw buttons and the style guard blocks button CSS elsewhere. Shared visual controls are extracted once for setup, settings, and future editors. SwatchRow exposes the house palette as quick choices and optionally opens PaintPicker for a custom solid color. ColorPicker provides a branded saturation/value square, hue strip, and hex input while retaining HSV internally to avoid grayscale-state loss. Pure color math normalizes and converts values fail-closed and shares pointer fractions across color and gradient controls. The Paint model is a validated discriminated union for solid, linear, and radial output; gradients require at least two valid stops. PaintPicker composes color editing, stop add/drag/remove, angle adjustment, and curved previews behind allowed-mode gates. Solid accent use is live; tested gradient editing awaits its first entity or pack background consumer.",
           "topics": [
+            "button family parts",
             "SwatchRow house palette",
             "HSV ColorPicker",
             "fail-closed color math",
-            "shared dragFraction",
             "validated Paint union",
             "gradient stop editing",
             "mode-gated PaintPicker",
@@ -15237,7 +15251,7 @@
               "text": "Control variants (`ui.controls`)",
               "slug": "control-variants-uicontrols",
               "level": 3,
-              "summary": "ui.controls is a global variant painted once into the head by the shell; it sets Stamp offset and frame, field frames and the focus ring, and every element rule excludes .host-protected. variant-css-check.ts holds the proofs each variant owes. The app.room surface rearranges the setup wizard, Press, Agent room and CSS Workshop per theme, and ui.empty frames every element marked data-empty, including the workbench empty room.",
+              "summary": "ui.controls is a global variant painted once into the head by the shell; it sets the button family offset and frame through the data-control hook on Button and IconButton, field frames and the focus ring, and every element rule excludes .host-protected. variant-css-check.ts holds the proofs each variant owes. The app.room surface rearranges the setup wizard, Press, Agent room and CSS Workshop per theme, and ui.empty frames every element marked data-empty, including the workbench empty room.",
               "topics": [
                 "ui.controls",
                 "protected layer",

@@ -7,6 +7,7 @@
  */
 import { useCallback, useEffect, useMemo, useState, type CSSProperties, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Chip, Disclosure, IconButton } from "../../../components/button";
 import type { AppContext } from "../../../app-contract";
 import type { SceneTrace, SceneVariable } from "../../../app-contract-scenes";
 import { MacroErrors } from "./tab-macros";
@@ -55,11 +56,11 @@ export function StateTab({ ctx, chatId, version, trace }: { ctx: AppContext; cha
     <div className="ls-pane">
       <div className="ls-sum">
         <div><b>{rows.length}</b><small>Variables</small></div>
-        {report && <div><button type="button" aria-label="Show Mutations Last Render" aria-pressed={panel === "mutations"} onClick={() => setPanel(panel === "mutations" ? null : "mutations")}><b>{report.mutations.length}</b><small>Mutations Last Render</small></button></div>}
-        {report && <div><button type="button" aria-label="Show Macro Errors" aria-pressed={panel === "errors"} onClick={() => setPanel(panel === "errors" ? null : "errors")}><b>{report.errors.length}</b><small>Macro Errors</small></button></div>}
+        {report && <div><Chip aria-label="Show Mutations Last Render" pressed={panel === "mutations"} onClick={() => setPanel(panel === "mutations" ? null : "mutations")}><b>{report.mutations.length}</b><small>Mutations Last Render</small></Chip></div>}
+        {report && <div><Chip aria-label="Show Macro Errors" pressed={panel === "errors"} onClick={() => setPanel(panel === "errors" ? null : "errors")}><b>{report.errors.length}</b><small>Macro Errors</small></Chip></div>}
         <div className="ls-chips">
           {ORDER.map((s) => (
-            <button type="button" key={s} className={hidden.has(s) ? "off" : undefined} style={{ "--c": `var(${TONE[s]})` } as CSSProperties} aria-pressed={!hidden.has(s)} title={hidden.has(s) ? `Show ${s} variables` : `Hide ${s} variables`} onClick={() => flip(s)}>{s} {counts[s]}</button>
+            <Chip key={s} color={`var(${TONE[s]})`} pressed={!hidden.has(s)} title={hidden.has(s) ? `Show ${s} variables` : `Hide ${s} variables`} onClick={() => flip(s)}>{s} {counts[s]}</Chip>
           ))}
         </div>
       </div>
@@ -72,19 +73,16 @@ export function StateTab({ ctx, chatId, version, trace }: { ctx: AppContext; cha
       {report && panel === "errors" && (report.errors.length === 0 ? <div className="ls-merrs"><p className="ls-meta">No macro failed in the last request.</p></div> : <MacroErrors errors={report.errors} />)}
       <div className="ls-search">
         <Ic name="lucide:search" size={14} /><input type="search" placeholder="Search variables..." aria-label="Search variables" value={query} onChange={(e) => setQuery(e.target.value)} />
-        <button type="button" className="ls-ref" aria-label="Refresh variables" title="Refresh variables" disabled={load.state === "loading"} onClick={read}><Ic name={load.state === "loading" ? "lucide:loader-circle" : "lucide:refresh-cw"} size={14} /></button>
+        <IconButton size="sm" label="Refresh variables" icon={load.state === "loading" ? "lucide:loader-circle" : "lucide:refresh-cw"} disabled={load.state === "loading"} onClick={read} />
       </div>
       <div className="ls-list">
         {load.state === "failed" && <p className="ls-err" role="alert"><Ic name="lucide:triangle-alert" size={14} />{load.why}</p>}
         {load.state === "ready" && shown.length === 0 && <div className="ls-none"><Ic name="lucide:info" size={24} /><p>No variables{q ? " match the search" : " set yet"}</p><small>{"{{state.set::session:key::value}}"} and {"{{setvar}}"} state appears here</small></div>}
         {shown.map((r) => (
           <div key={r.id}>
-            <button type="button" className="ls-var" aria-expanded={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)}>
-              <Ic name={open === r.id ? "lucide:chevron-down" : "lucide:chevron-right"} size={12} />
-              <span className="ls-scope" style={{ "--c": `var(${TONE[r.scope]})` } as CSSProperties}>{r.scope}</span>
-              <code>{r.display}</code>
-              <span className="ls-val">{previewInspectorValue(r.value)}</span>
-            </button>
+            <Disclosure open={open === r.id} onClick={() => setOpen(open === r.id ? null : r.id)}
+              leading={<span className="ls-scope" style={{ "--c": `var(${TONE[r.scope]})` } as CSSProperties}>{r.scope}</span>}
+              label={<code>{r.display}</code>} summary={<span className="ls-val">{previewInspectorValue(r.value)}</span>} />
             {open === r.id && (
               <div className="ls-body">
                 <pre>{formatInspectorValue(r.value)}</pre>

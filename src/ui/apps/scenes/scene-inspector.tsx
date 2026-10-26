@@ -8,7 +8,7 @@
  * definitions follow the messages, read-only: they are sent as the request's tool fields, not as text anyone could edit.
  */
 import { useEffect, useState, type JSX } from "react";
-import { Ic } from "../../_shared/ic";
+import { Button, IconButton } from "../../components/button";
 import { protect } from "../../_shared/protected-control";
 import { InkDialog } from "../../components/ink-dialog";
 import { editsOf } from "./inspector-core";
@@ -45,7 +45,7 @@ export function PromptInspector({ review, onAnswer }: { review: Review; onAnswer
   const changed = Object.keys(edits).length;
   const answer = (next: Parameters<typeof onAnswer>[0]): void => { setBusy(true); void onAnswer(next).finally(() => setBusy(false)); };
   const later = (): void => { if (!busy) setDismissed(true); };
-  if (dismissed) return <button type="button" className="pi-paused" onClick={() => setDismissed(false)}>Turn paused for Prompt Inspector</button>;
+  if (dismissed) return <div className="pi-paused"><Button block tone="var(--stage-warn)" onClick={() => setDismissed(false)}>Turn paused for Prompt Inspector</Button></div>;
   return (
     <InkDialog onDismiss={later} ariaLabel="Prompt Inspector" sheetClassName="pi-sheet">
       <div className="pi" data-part="scene.inspector">
@@ -53,7 +53,7 @@ export function PromptInspector({ review, onAnswer }: { review: Review; onAnswer
           <h2>Prompt Inspector</h2>
           <span className="pi-chip">about {review.tokens.toLocaleString()} tokens</span>
           <span className="pi-chip">Before send</span>
-          <button type="button" aria-label="Close Prompt Inspector" onClick={later}><Ic name="lucide:x" /></button>
+          <IconButton variant="quiet" size="sm" label="Close Prompt Inspector" icon="lucide:x" onClick={later} />
         </header>
         <div className="pi-body">
           {review.messages.map((m, i) => (
@@ -71,9 +71,9 @@ export function PromptInspector({ review, onAnswer }: { review: Review; onAnswer
           {review.params && <RequestParamsView params={review.params} />}
         </div>
         <footer {...protect("inspector-actions", "pi-acts")}>
-          <button type="button" className="pi-btn" disabled={busy} onClick={later}>Review later</button>
-          <button type="button" className="pi-btn" disabled={busy} onClick={() => answer({ kind: "cancel" })}>Stop turn</button>
-          <button type="button" className="pi-btn go" disabled={busy} onClick={() => answer({ kind: "send", edits })}><Ic name="lucide:chevron-right" size={14} />{changed > 0 ? "Edit and send" : "Send"}</button>
+          <Button variant="quiet" disabled={busy} onClick={later}>Review later</Button>
+          <Button variant="danger" disabled={busy} onClick={() => answer({ kind: "cancel" })}>Stop turn</Button>
+          <Button variant="primary" icon="lucide:chevron-right" disabled={busy} onClick={() => answer({ kind: "send", edits })}>{changed > 0 ? "Edit and send" : "Send"}</Button>
         </footer>
       </div>
     </InkDialog>

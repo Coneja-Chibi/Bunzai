@@ -37,16 +37,6 @@
   color: var(--stage-kicker);
 }
 
-.close {
-  margin-left: auto;
-  font: 700 var(--text-control) var(--font-mono);
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  padding: 0.1rem 0.45rem;
-  cursor: pointer;
-}
-
 .allClear {
   font-family: var(--font-body);
   font-size: var(--text-control);
@@ -96,24 +86,6 @@
   gap: 0.4rem;
 }
 
-.act {
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.22rem 0.45rem;
-  cursor: pointer;
-}
 
-.act:hover {
-  color: var(--stage-card);
-  border-color: var(--a, var(--accent));
-}
 
-.actFix {
-  background: var(--stage-ok-bg);
-  color: var(--stage-ok);
-  border-color: var(--stage-ok);
-}
+.phead > :last-child { margin-left: auto; }

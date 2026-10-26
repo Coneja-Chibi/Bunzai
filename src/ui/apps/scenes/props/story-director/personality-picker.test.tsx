@@ -35,7 +35,7 @@ describe("PersonalityPicker portraits", () => {
 
   test("the chosen narrator's tile is its portrait, from the docs media route", () => {
     const m = mount("the-jester");
-    const img = m.querySelector<HTMLImageElement>(".dp-card .dp-av img")!;
+    const img = m.querySelector<HTMLImageElement>('.dp [data-control="row"] .dp-av img')!;
     expect(img.getAttribute("src")).toContain(encodeURIComponent("docs/media/dm-personalities/jester.png"));
     expect(img.alt).toBe(personalityOf("the-jester").name);
     unmount();
@@ -43,24 +43,24 @@ describe("PersonalityPicker portraits", () => {
 
   test("a personality with no picture shows its initials", () => {
     const m = mount("the-architect");
-    expect(m.querySelector(".dp-card .dp-av img")).toBeNull();
-    expect(m.querySelector(".dp-card .dp-av [role=img]")?.textContent).toBe(initialsOf(personalityOf("the-architect").name));
+    expect(m.querySelector('.dp [data-control="row"] .dp-av img')).toBeNull();
+    expect(m.querySelector('.dp [data-control="row"] .dp-av [role=img]')?.textContent).toBe(initialsOf(personalityOf("the-architect").name));
     unmount();
   });
 
   test("a portrait that fails to load falls back to the initials", () => {
     const m = mount("the-jester");
-    const img = m.querySelector<HTMLImageElement>(".dp-card .dp-av img")!;
+    const img = m.querySelector<HTMLImageElement>('.dp [data-control="row"] .dp-av img')!;
     act(() => { img.dispatchEvent(new window.Event("error")); });
-    expect(m.querySelector(".dp-card .dp-av img")).toBeNull();
-    expect(m.querySelector(".dp-card .dp-av [role=img]")?.textContent).toBe(initialsOf(personalityOf("the-jester").name));
+    expect(m.querySelector('.dp [data-control="row"] .dp-av img')).toBeNull();
+    expect(m.querySelector('.dp [data-control="row"] .dp-av [role=img]')?.textContent).toBe(initialsOf(personalityOf("the-jester").name));
     unmount();
   });
 
   test("the opened list shows a portrait tile for each personality that has one and initials for the rest", () => {
     const m = mount("the-balanced");
-    act(() => { m.querySelector<HTMLButtonElement>(".dp-card")!.click(); });
-    const options = [...m.querySelectorAll(".dp-opt")];
+    act(() => { m.querySelector<HTMLButtonElement>('.dp [data-control="row"]')!.click(); });
+    const options = [...m.querySelectorAll(".dp-list [role=option]")];
     expect(options).toHaveLength(PERSONALITIES.length);
     expect(options.filter((o) => o.querySelector(".dp-av img")).length).toBe(Object.keys(PORTRAITS).length);
     expect(options.filter((o) => o.querySelector(".dp-av [role=img]")).length).toBe(PERSONALITIES.length - Object.keys(PORTRAITS).length);

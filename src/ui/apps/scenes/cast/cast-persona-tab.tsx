@@ -8,6 +8,7 @@
  * changed by a swap) and Save.
  */
 import { useEffect, useRef, useState, type JSX } from "react";
+import { Button, IconButton } from "../../../components/button";
 import type { AppContext } from "../../../app-contract";
 import type { PersonaBody } from "../../../../entities/persona/schema";
 import type { CharacterBody } from "../../../../entities/character/schema";
@@ -80,7 +81,7 @@ export function PersonaForm({ ctx, id, editor, summary, art, stats, defaultId, b
           chip="Now live" name={body.name || "Unnamed persona"}
           upload={editor.uploads.uploadAsset}
           onPick={(asset) => onBody((b) => setPortrait(b, asset), "media")}
-          topLeft={<button type="button" className="pass" onClick={onOpenPicker} aria-label="Open the Casting Call" title="Casting Call"><Ic name="lucide:bookmark" size={16} />Pass</button>}
+          topLeft={<Button size="sm" icon="lucide:bookmark" onClick={onOpenPicker} aria-label="Open the Casting Call" title="Casting Call">Pass</Button>}
           lines={<>
             {identityPart.tagline && <p className="cw-tg">{identityPart.tagline}</p>}
             {identityPart.pronouns && <p className="cw-tg mut">{prettyPronouns(identityPart.pronouns)}</p>}
@@ -95,7 +96,7 @@ export function PersonaForm({ ctx, id, editor, summary, art, stats, defaultId, b
               <div className="t"><Ic name="lucide:star" size={14} />Starring<Ic name="lucide:star" size={14} /></div>
               <div className="nm">
                 <span className="cw-emoji-hold">
-                  <button type="button" ref={emojiButton} className="emo" aria-label="Pick an emoji" aria-expanded={emojiOpen} onClick={() => setEmojiOpen(!emojiOpen)}>{emoji || <Ic name="lucide:user" size={16} />}</button>
+                  <IconButton ref={emojiButton} variant="quiet" size="sm" label="Pick an emoji" aria-expanded={emojiOpen} onClick={() => setEmojiOpen(!emojiOpen)} icon={emoji ? <span aria-hidden="true">{emoji}</span> : <Ic name="lucide:user" size={16} />} />
                   {emojiOpen && <EmojiPicker anchor={emojiButton.current} onClose={() => setEmojiOpen(false)} onPick={(e) => { setPresentation({ emoji: e }); setEmojiOpen(false); }} />}
                 </span>
                 <input value={body.name} placeholder="Character Name" aria-label="Persona name" onChange={(e) => onBody((b) => patchBody(b, { name: e.target.value }), "name")} />
@@ -126,9 +127,7 @@ export function PersonaForm({ ctx, id, editor, summary, art, stats, defaultId, b
             </FormSection>
           </div>
           <CastFooter dirty={editor.dirty} saving={editor.saving} busy={busy} note={editor.note} what="persona" onSave={() => void editor.save()}>
-            <button type="button" className={`cw-default${isDefault ? " on" : ""}`} aria-pressed={isDefault} disabled={isDefault} onClick={onSetDefault} data-part="scene.cast.default">
-              <Ic name={isDefault ? "lucide:check" : "lucide:star"} size={16} />{isDefault ? "Default persona" : "Set as default persona"}
-            </button>
+            <Button block data-part="scene.cast.default" icon={isDefault ? "lucide:check" : "lucide:star"} aria-pressed={isDefault} disabled={isDefault} onClick={onSetDefault}>{isDefault ? "Default persona" : "Set as default persona"}</Button>
           </CastFooter>
         </div>
       </div>

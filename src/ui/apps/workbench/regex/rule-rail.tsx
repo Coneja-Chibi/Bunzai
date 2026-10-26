@@ -8,6 +8,7 @@
  * matched input, then the result is shown plainly below - not the output-side marks the wireframe
  * draws (those would need re-running the replacement in the UI, duplicating the engine).
  */
+import { Button } from "../../../components/button";
 import { useEffect, useMemo, useState, type JSX, type ReactNode } from "react";
 import type { RegexRule } from "../../../../entities/regex/schema";
 import { validateRule } from "../../../../core/regex";
@@ -133,15 +134,14 @@ export function RuleRail({ rule, styles, onOpenBench, findings, onOpenHealth }: 
             </div>
           )}
 
-          <button
-            type="button"
-            className={styles.openFull}
+          <Button
+            size="sm"
             disabled={!onOpenBench}
             title={onOpenBench ? "Open the full test bench beside the editor" : "The full test bench comes in a later slice"}
             onClick={onOpenBench}
           >
             Open the full test bench
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -167,15 +167,14 @@ export function RuleRail({ rule, styles, onOpenBench, findings, onOpenHealth }: 
               &#9679; {health.error ?? "Check this pattern."}
             </p>
           )}
-          <button
-            type="button"
-            className={styles.openFull}
+          <Button
+            size="sm"
             disabled={!onOpenHealth}
             title={onOpenHealth ? "Check every rule in this set" : "The full check needs the set editor"}
             onClick={onOpenHealth}
           >
             Open the full check
-          </button>
+          </Button>
         </div>
       </div>
     </aside>

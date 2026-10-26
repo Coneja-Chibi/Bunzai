@@ -7,6 +7,7 @@ import { useRef, type CSSProperties, type JSX } from "react";
 import type { Chat, JsonValue, TrackerModule } from "../../../../../stage/contracts/chat-store";
 import type { SubFeature } from "../../../../../core/trackers/subfeatures";
 import { subsOf, withSubs } from "../../../../../core/trackers";
+import { ListRow } from "../../../../components/button";
 import { Ic, type IconName } from "../../../../_shared/ic";
 import type { AppContext } from "../../../../app-contract";
 
@@ -24,9 +25,8 @@ export function SubFeatureList({ ctx, chat, onChat, module, subs, tone }: { ctx:
   return (
     <div className="pw-subs" style={{ "--tone": tone } as CSSProperties}>
       {subs.map((s) => (
-        <button key={s.id} type="button" role="radio" aria-checked={on[s.id] === true} title={s.description} aria-label={`${s.label}: ${s.description}`} onClick={() => toggle(s.id)}>
-          <i className={on[s.id] ? "on" : ""} /><Ic name={s.icon as IconName} size={12} /><span>{s.label}</span>
-        </button>
+        <ListRow key={s.id} variant="option" selected={on[s.id] === true} role="radio" aria-checked={on[s.id] === true} title={s.description} aria-label={`${s.label}: ${s.description}`} onClick={() => toggle(s.id)}
+          label={<span className="psb-l"><Ic name={s.icon as IconName} size={12} />{s.label}</span>} />
       ))}
     </div>
   );

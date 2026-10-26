@@ -14,6 +14,7 @@ import { createAndOpenRegexSet } from "./new-regex-set";
 import { createAndOpenPersona } from "./new-persona";
 import { createAndOpenPreset } from "./new-preset";
 import { createAndOpenQuickReplies } from "./new-quickreply";
+import { Button, Tile } from "../../components/button";
 
 interface NewSpec {
   label: string;
@@ -59,23 +60,21 @@ export function NewInDeckButton({ kind, ctx, onCreated, compact = false, tile = 
   };
   if (tile) {
     return (
-      <button type="button" className="rnewtile" onClick={create}>
-        + {spec.label}
-      </button>
+      <Tile kind="add" size="fill" data-part="library.new.tile" label={spec.label} icon={<span className="rnewlbl">+ {spec.label}</span>} onClick={create} />
     );
   }
   if (compact) {
     return (
-      <button type="button" className="crumbsel" onClick={create}>
+      <Button size="sm" data-part="library.new.compact" onClick={create}>
         + {spec.label}
-      </button>
+      </Button>
     );
   }
   return (
     <div style={{ marginTop: "0.75rem" }}>
-      <button type="button" className="send" onClick={create}>
+      <Button variant="primary" onClick={create}>
         {spec.label}
-      </button>
+      </Button>
     </div>
   );
 }

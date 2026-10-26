@@ -9,8 +9,8 @@ import { plural } from "../../../core/text";
 import type { TakeComparison } from "../../../studio/scene-take-compare";
 import type { ScenesApi } from "../../app-contract-scenes";
 import { toErrorMessage } from "../../_shared/error-message";
-import { Ic } from "../../_shared/ic";
 import { InkDialog } from "../../components/ink-dialog";
+import { IconButton } from "../../components/button";
 
 type Side = NonNullable<TakeComparison["rows"][number]["a"]>;
 
@@ -41,7 +41,7 @@ export function TakeCompare({ api, chatId, a, b, onClose }: { api: Pick<ScenesAp
   return (
     <InkDialog onDismiss={onClose} ariaLabel="Compare takes" sheetClassName="cx-sheet">
       <div className="cx" data-part="scene.tree.compare">
-        <header className="cx-top"><h2>Compare takes</h2><button type="button" aria-label="Close compare takes" onClick={onClose}><Ic name="lucide:x" /></button></header>
+        <header className="cx-top"><h2>Compare takes</h2><IconButton variant="quiet" size="sm" icon="lucide:x" label="Close compare takes" onClick={onClose} /></header>
         <div className="cx-body">
           {error && <p className="cx-err" role="alert">{error}</p>}
           {!out && !error && <p className="cx-note" role="status">Loading...</p>}

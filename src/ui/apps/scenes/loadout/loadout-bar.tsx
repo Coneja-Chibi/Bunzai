@@ -9,6 +9,7 @@ import { LOADOUT_UNITS, type LoadoutUnit } from "../../../../core/loadout-panels
 import type { LoadoutRecord } from "../../../../studio/loadout-record";
 import type { OpenScene } from "../../../../studio/scenes";
 import type { AppContext } from "../../../app-contract";
+import { Button } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { useVisibleInterval } from "../../../_shared/use-visible-interval";
@@ -89,8 +90,8 @@ export function LoadoutBar({ ctx, scene, busy, onSettings, now = Date.now, tickM
       {receipt && isOpen(receipt, t) && <LoadoutBanner receipt={receipt} now={t} working={undoing} busy={busy} onUndo={() => void undo()} />}
       {notice && <p className={`bth-note${notice.tone === "ok" ? "" : " warn"}`} role={notice.tone === "error" ? "alert" : "status"}>{notice.text}</p>}
       <div className="ldb-acts">
-        <button type="button" className="ldb-btn" onClick={() => { setOpen("switcher"); void refresh(); }}><Ic name="lucide:bookmark" size={14} />Change setup</button>
-        <button type="button" className="ldb-btn" onClick={() => setOpen("save")}><Ic name="lucide:bookmark" size={14} />Save this scene as a loadout</button>
+        <Button size="sm" icon="lucide:bookmark" onClick={() => { setOpen("switcher"); void refresh(); }}>Change setup</Button>
+        <Button size="sm" icon="lucide:bookmark" onClick={() => setOpen("save")}>Save this scene as a loadout</Button>
         {saved !== null && <span className="ldb-chip" role="status"><Ic name="lucide:check" size={14} />Saved "{saved}"</span>}
       </div>
       {open === "switcher" && (

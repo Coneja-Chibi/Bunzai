@@ -1,2 +1,2 @@
 /** scenes.list marquee-hero: the hero marquee over the picture cards (the current rendering). */
-html[data-surface-scenes-list="marquee-hero"] .scn .scene-list .sc { transition: transform var(--bk-dur-base) var(--bk-ease-move); }
+html[data-surface-scenes-list="marquee-hero"] .scn .scene-list [data-part="scenes.card.open"] { transition: transform var(--bk-dur-base) var(--bk-ease-move); }

@@ -3,6 +3,7 @@
  * of their own. EditorLayout (via persona-editor.tsx) supplies the title and the arrangement for
  * whichever editor.frame is picked, and EditorField the label for whichever editor.fields.
  */
+import { Chip } from "../../../components/button";
 import { useMemo, useState, type JSX } from "react";
 import type { PersonaBody } from "../../../../entities/persona/schema";
 import type { PersonaWriteForProfile } from "../../../../core/persona";
@@ -101,13 +102,10 @@ export function SectionCard({
           <p className={s.traitsHead}>Traits</p>
           <div className={s.traits}>
             {(body.traits ?? []).map((t) => (
-              <button key={t} type="button" className={s.trait} title="Remove this trait"
-                onClick={() => onBody((b) => toggleTrait(b, t), "traits")}>
-                {t} &#215;
-              </button>
+              <Chip key={t} title="Remove this trait" onClick={() => onBody((b) => toggleTrait(b, t), "traits")}>{t} &#215;</Chip>
             ))}
             {newTrait === null ? (
-              <button type="button" className={s.traitPlus} onClick={() => setNewTrait("")}>+ Add</button>
+              <Chip onClick={() => setNewTrait("")}>+ Add</Chip>
             ) : (
               <input
                 className={s.traitAdd}

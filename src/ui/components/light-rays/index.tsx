@@ -1,9 +1,9 @@
-/** Vaudeville OGL LightRays and evolving floor fog, with reduced-motion CSS fallback. */
+/** Vaudeville OGL LightRays and evolving floor fog (fog can be switched off), with reduced-motion CSS fallback. */
 import { useEffect, useRef, type JSX } from "react";
 import { startLightRays } from "./renderer";
 import styles from "./styles.module.css";
 
-export function LightRays({ followMouse = true, mouseInfluence = .35 }: { followMouse?: boolean; mouseInfluence?: number }): JSX.Element {
+export function LightRays({ followMouse = true, mouseInfluence = .35, fog = true }: { followMouse?: boolean; mouseInfluence?: number; fog?: boolean }): JSX.Element {
   const canvas = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     const node = canvas.current;
@@ -14,11 +14,11 @@ export function LightRays({ followMouse = true, mouseInfluence = .35 }: { follow
       stop?.();
       stop = null;
       node.dataset.raysReady = "false";
-      if (!motion.matches) stop = startLightRays(node, followMouse, mouseInfluence);
+      if (!motion.matches) stop = startLightRays(node, followMouse, mouseInfluence, fog);
     };
     update();
     motion.addEventListener("change", update);
     return () => { motion.removeEventListener("change", update); stop?.(); };
-  }, [followMouse, mouseInfluence]);
+  }, [followMouse, mouseInfluence, fog]);
   return <div className={styles.rays} aria-hidden="true"><canvas ref={canvas} className={styles.canvas} /><div className={styles.fallback} /></div>;
 }

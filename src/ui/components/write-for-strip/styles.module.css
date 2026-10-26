@@ -16,20 +16,3 @@
   color: var(--stage-text-dim);
   padding: 0 0.45rem;
 }
-
-.pill {
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 0;
-  border-left: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  padding: 0.32rem 0.5rem;
-  cursor: pointer;
-}
-
-.pillOn {
-  background: var(--a-deep, var(--accent-deep)); /* deep companion: bright accents cannot carry small text */
-  color: var(--stage-white);
-}

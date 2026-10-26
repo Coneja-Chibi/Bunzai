@@ -30,12 +30,12 @@ describe("shared surface variants", () => {
 
   for (const variant of SURFACES["ui.tabs"]) test(`ui.tabs/${variant} dresses all five tab groups`, () => {
     const css = read("ui.tabs", variant);
-    for (const group of [".viewseg", ".lrail-toggle", ".lfilter", ".scene-view-switch", ".segs"]) expect(css, group).toContain(group);
+    for (const group of [".viewseg", ".lrail-toggle", ".lfilter", ".plaque-actions", ".filters"]) expect(css, group).toContain(group);
     expect(css).toContain('[aria-pressed="true"]'); // the open tab reads from the same state the button reports
   });
   for (const variant of SURFACES["ui.toolbar"]) test(`ui.toolbar/${variant} dresses the row, the fields and the button, and keeps the live-search mark`, () => {
     const css = read("ui.toolbar", variant);
-    for (const part of [".ltop", ".filters", ".findbox", ".sizedial", ".search", ".ltb", ".findwrap.on"]) expect(css, part).toContain(part);
+    for (const part of [".ltop", ".filters", ".findbox", ".sizedial", ".search", '.ltop > [data-control="button"]', ".findwrap.on"]) expect(css, part).toContain(part);
   });
   for (const variant of SURFACES["ui.label-type"]) test(`ui.label-type/${variant} never changes size, so the type floors hold`, () => {
     expect(read("ui.label-type", variant)).not.toMatch(/font-size|font:\s/);

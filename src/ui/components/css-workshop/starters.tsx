@@ -1,6 +1,7 @@
 /**
  * Starters pane: drop-in recipe cards with use this.
  */
+import { Button } from "../button";
 import type { JSX } from "react";
 import { listCssRecipes } from "./recipes/registry";
 import styles from "./styles.module.css";
@@ -23,9 +24,11 @@ export function CssStarters({ packId, packBlurb, onApply }: CssStartersProps): J
         <div className={styles.recipe} key={r.id}>
           <div className={styles.recipeHead}>
             <span className={styles.recipeTitle}>{r.title}</span>
-            <button type="button" className={styles.useBtn} onClick={() => onApply(r.css)}>
-              use this
-            </button>
+            <span className={styles.useBtn}>
+              <Button size="sm" onClick={() => onApply(r.css)}>
+                Use this
+              </Button>
+            </span>
           </div>
           <p className={styles.blurb}>{r.blurb}</p>
         </div>

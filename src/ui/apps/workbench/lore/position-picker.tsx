@@ -2,6 +2,7 @@
  * Placement stop-rail. Stops from placementRailStops (depth-like last). @ depth is an
  * end-cap that arms on depth-like positions. Single-slot hosts get a quiet floor line.
  */
+import { Segmented } from "../../../components/button";
 import type { JSX } from "react";
 import { fieldOr, useFramed } from "../framed";
 import type { InjectionPosition, MessageRole } from "../../../../entities/lorebook/schema";
@@ -57,8 +58,6 @@ export function PositionPicker({
   const stops = placementRailStops(writeFor, position);
   const isForeign = !profileStops.includes(position);
   const depthOn = isDepthLikePosition(position);
-  const idx = Math.max(0, stops.indexOf(position));
-  const pct = stops.length <= 1 ? 0 : (idx / (stops.length - 1)) * 100;
 
   if (profileStops.length <= 1) {
     return (
@@ -136,41 +135,20 @@ export function PositionPicker({
         </div>
       )}
       {/* Equal-width stop cells: no absolute labels (they smush past ~5 stops) */}
-      <div className={styles.placeStops} style={{ ["--n" as string]: String(stops.length) }}>
-        <div className={styles.placeLine} aria-hidden="true">
-          <span className={styles.placeFill} style={{ width: `${pct}%` }} />
-          <span className={styles.placeThumb} style={{ left: `${pct}%` }} />
-        </div>
-        <div className={styles.placeStopRow}>
-          {stops.map((slot) => {
-            const on = slot === position;
-            const foreignSlot = isForeign && slot === position;
-            return (
-              <button
-                key={slot}
-                type="button"
-                className={
-                  on
-                    ? `${styles.placeStop} ${styles.placeStopOn}${foreignSlot ? ` ${styles.placeLblForeign}` : ""}`
-                    : styles.placeStop
-                }
-                aria-pressed={on}
-                title={
-                  foreignSlot
-                    ? "Set by another platform; this host will place it at its closest slot on export"
-                    : RAIL_LABEL[slot]
-                }
-                onClick={() => onPatch({ position: slot })}
-              >
-                <span
-                  className={on ? `${styles.placeDot} ${styles.placeDotOn}` : styles.placeDot}
-                  aria-hidden="true"
-                />
-                <span className={styles.placeStopLbl}>{RAIL_LABEL[slot]}</span>
-              </button>
-            );
-          })}
-        </div>
+      <div className={styles.placeStops}>
+        <Segmented
+          label="Placement"
+          items={stops.map((slot) => ({
+            value: slot,
+            label: RAIL_LABEL[slot],
+            tone: isForeign && slot === position ? "var(--stage-warn)" : undefined,
+            title: isForeign && slot === position
+              ? "Set by another platform; this host will place it at its closest slot on export"
+              : RAIL_LABEL[slot],
+          }))}
+          value={position}
+          onChange={(slot) => onPatch({ position: slot })}
+        />
       </div>
     </div>
   );

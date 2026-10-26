@@ -47,24 +47,6 @@
   text-transform: uppercase;
   color: var(--muted);
 }
-.save {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: var(--wb-primary, var(--rose-deep)); /* deep action fill keeps its text readable in either theme */
-  color: var(--action-primary-fg, var(--stage-white));
-  border: 3px solid var(--edge);
-  box-shadow: 3px 3px 0 0 var(--edge);
-  padding: 0.4rem 0.75rem;
-  cursor: pointer;
-}
-.save:disabled {
-  opacity: 0.45;
-  cursor: default;
-  box-shadow: none;
-}
 .room {
   flex: 1;
   min-height: 0;
@@ -142,12 +124,10 @@
   }
 }
 
-
 :global(html[data-surface-editor-frame="two-pane"]) .root {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
 }
-
 
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);

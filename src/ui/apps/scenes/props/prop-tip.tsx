@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type CSSProperties, type JSX, type ReactNode } from "react";
 import { useEscapeKey } from "../../../_shared/use-escape-key";
 import { createPortal } from "react-dom";
+import { IconButton } from "../../../components/button";
 import { tipPosition, type TipPoint } from "./prop-tip-core";
 import type { PropTip as PropTipContent } from "./prop-contract";
 
@@ -60,7 +61,7 @@ export function PropTip({ title, tip, notes = [], tone, enabled, children }: { t
       <span ref={trigger} className="pw-trig" onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide} aria-describedby={peek ? id : undefined}>{children}</span>
       {shown && createPortal(
         <div id={id} ref={card} className="pw-rt" role={help ? "dialog" : "tooltip"} aria-label={help ? `${title} help` : undefined} style={{ left: at.x, top: at.y, "--tone": tone, pointerEvents: help ? "auto" : "none" } as CSSProperties}>
-          <div className="pw-rt-head"><span>{title}</span>{help && <button type="button" aria-label="Close help" onClick={() => setHelp(false)}>X</button>}</div>
+          <div className="pw-rt-head"><span>{title}</span>{help && <span className="pw-rt-x"><IconButton size="sm" label="Close help" icon="lucide:x" onClick={() => setHelp(false)} /></span>}</div>
           <div className="pw-rt-body">
             <p>{tip.description}</p>
             {notes.length > 0 && <p className="pw-rt-note">{notes.join(". ")}</p>}

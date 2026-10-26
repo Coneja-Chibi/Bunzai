@@ -10,6 +10,7 @@
  * ($1/$2 ...) below the diff rather than tinted inline inside the struck match - the token diff and
  * the group spans index the same input, and chips keep the render honest without re-running anything.
  */
+import { Button, IconButton, Tabs } from "../../../components/button";
 import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import type { RegexRule } from "../../../../entities/regex/schema";
@@ -111,29 +112,16 @@ export function BenchPane({
     <aside className={styles.pane} aria-label="Regex test bench">
       <div className={styles.phead}>
         <b className={styles.pheadB}>Test bench</b>
-        <span className={styles.tabs} role="tablist" aria-label="Test bench mode">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === "try"}
-            className={tab === "try" ? `${styles.tab} ${styles.tabOn}` : styles.tab}
-            onClick={() => setTab("try")}
-          >
-            Try text
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={tab === "import"}
-            className={tab === "import" ? `${styles.tab} ${styles.tabOn}` : styles.tab}
-            onClick={() => setTab("import")}
-          >
-            Import preview
-          </button>
-        </span>
-        <button type="button" className={styles.pclose} aria-label="Close test bench" onClick={onClose}>
-          &times;
-        </button>
+        <Tabs
+          label="Test bench mode"
+          items={[
+            { value: "try", label: "Try text" },
+            { value: "import", label: "Import preview" },
+          ]}
+          value={tab}
+          onChange={setTab}
+        />
+        <IconButton label="Close test bench" variant="quiet" size="sm" icon="lucide:x" onClick={onClose} />
       </div>
 
       <div className={styles.pbody}>
@@ -145,16 +133,15 @@ export function BenchPane({
               <div className={styles.schead}>
                 <b className={styles.scheadB}>Sample</b>
                 <i className={styles.scheadI}>runs on every keystroke</i>
-                <button
-                  type="button"
-                  className={styles.escBtn}
+                <Button
+                  size="sm"
                   onClick={() => {
                     setEscInput("");
                     setEscOpen(true);
                   }}
                 >
                   Escape a literal&hellip;
-                </button>
+                </Button>
               </div>
               <div className={styles.scbody}>
                 <ExpandTextarea
@@ -179,14 +166,7 @@ export function BenchPane({
                     ))}
                   </select>
                   <span className={styles.phaseOr}>or</span>
-                  <button
-                    type="button"
-                    className={styles.ghostBtn}
-                    disabled
-                    title="Lands with Rehearsal"
-                  >
-                    Pull real chat lines&hellip;
-                  </button>
+                  <Button size="sm" disabled title="Lands with Rehearsal">Pull real chat lines&hellip;</Button>
                 </div>
               </div>
             </div>
@@ -309,17 +289,8 @@ export function BenchPane({
               {escaped || <span style={{ opacity: 0.5 }}>the escaped pattern shows here</span>}
             </div>
             <div className={styles.escActs}>
-              <button
-                type="button"
-                className={styles.escCopy}
-                disabled={escInput === ""}
-                onClick={copyEscaped}
-              >
-                {copied ? "Copied" : "Copy pattern"}
-              </button>
-              <button type="button" className={styles.ghostBtn} onClick={() => setEscOpen(false)}>
-                Close
-              </button>
+              <Button size="sm" disabled={escInput === ""} onClick={copyEscaped}>{copied ? "Copied" : "Copy pattern"}</Button>
+              <Button variant="quiet" size="sm" onClick={() => setEscOpen(false)}>Close</Button>
             </div>
           </div>
         </InkDialog>

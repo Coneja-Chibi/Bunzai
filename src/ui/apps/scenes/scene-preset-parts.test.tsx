@@ -89,7 +89,7 @@ describe("PromptList virtualized (B20)", () => {
   test("C-1: a wheel/scrollbar scroll never drops the focused row - activeElement stays put", async () => {
     await mount();
     // Groups start folded (RoleCall's initialCategoriesCollapsed): open the one group the rows are in.
-    act(() => host.querySelector<HTMLButtonElement>(".cat-t")!.click());
+    act(() => host.querySelector<HTMLButtonElement>("[data-part='scene.preset.category']")!.click());
     const scroller = host.querySelector(".side-list") as HTMLElement;
     // Focus the toggle switch inside the last visible prompt row - something inside the row, same
     // as every sibling's own C-1 proof focuses a real interactive descendant, not the row itself.

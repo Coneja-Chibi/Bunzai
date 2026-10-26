@@ -11,6 +11,7 @@
  * are not registered adapters; wiring them to detection is a separate server-side task (they need to be
  * added to their format index arrays). The bare-array case the task verifies is fully covered here.
  */
+import { Button, ListRow } from "../../../components/button";
 import { useEffect, useRef, useState, type DragEvent, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import type { RegexRule } from "../../../../entities/regex/schema";
@@ -211,16 +212,7 @@ export function BenchImport({
             const label = rule.label?.trim() || rule.id;
             return (
               <div key={rule.id} className={styles.impRow}>
-                <button
-                  type="button"
-                  className={styles.impHead}
-                  aria-pressed={on}
-                  onClick={() => toggle(rule.id)}
-                >
-                  <span className={on ? `${styles.cb} ${styles.cbOn}` : styles.cb} aria-hidden="true" />
-                  <b>{label}</b>
-                  <i>{metaFor(rule, matched)}</i>
-                </button>
+                <ListRow variant="option" selected={on} aria-pressed={on} onClick={() => toggle(rule.id)} label={label} meta={metaFor(rule, matched)} />
                 <div className={styles.impEffect}>
                   <div className={styles.impCell}>
                     <b>Your sample</b>
@@ -239,21 +231,17 @@ export function BenchImport({
             <span className={styles.pickCount}>
               {pickedCount} of {detected.rules.length} picked
             </span>
-            <button
-              type="button"
-              className={styles.ghostBtn}
+            <Button
+              variant="quiet"
+              size="sm"
               onClick={() =>
                 setPicked(allPicked ? new Set() : new Set(detected.rules.map((r) => r.id)))
               }
             >
               {allPicked ? "Select none" : "Select all"}
-            </button>
-            <button type="button" className={styles.ghostBtn} onClick={() => setDetected(null)}>
-              Add another
-            </button>
-            <button type="button" className={styles.primary} disabled={pickedCount === 0} onClick={doImport}>
-              Import {pickedCount} rule{pickedCount === 1 ? "" : "s"}
-            </button>
+            </Button>
+            <Button variant="quiet" size="sm" onClick={() => setDetected(null)}>Add another</Button>
+            <Button variant="primary" size="sm" disabled={pickedCount === 0} onClick={doImport}>Import {pickedCount} rule{pickedCount === 1 ? "" : "s"}</Button>
           </div>
         </>
       )}

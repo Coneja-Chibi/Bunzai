@@ -6,6 +6,7 @@
  * keyboard step lands; callers coalesce their own writes. Without a label it is the bare styled range, with
  * the readout beside it unless `readout={false}`. Every other prop lands on the range input itself.
  */
+import { IconButton, InlineValue } from "../button";
 import { useRef, useState, type CSSProperties, type InputHTMLAttributes, type JSX } from "react";
 import { Ic } from "../../_shared/ic";
 import "../rc-controls/rc-reset.css";
@@ -74,7 +75,7 @@ export function Slider({ value, defaultValue, min, max, step = 1, onChange, form
 
   const shown = draft === null ? (
     editable ? (
-      <button type="button" className={styles.value} title="Click to type a value" onClick={() => { editing.current = true; setDraft(String(cur)); }}>{show(cur)}</button>
+      <InlineValue title="Click to type a value" onClick={() => { editing.current = true; setDraft(String(cur)); }}>{show(cur)}</InlineValue>
     ) : (
       <span className={styles.value} data-static="">{show(cur)}</span>
     )
@@ -104,9 +105,7 @@ export function Slider({ value, defaultValue, min, max, step = 1, onChange, form
         <span className={styles.label}>
           {label}
           {help && (
-            <button type="button" className={styles.helpBtn} aria-label={`About ${label}`} aria-expanded={showHelp} onClick={() => setShowHelp(!showHelp)}>
-              <Ic name="lucide:circle-question-mark" size={12} />
-            </button>
+            <IconButton variant="quiet" size="sm" icon="lucide:circle-question-mark" label={`About ${label}`} aria-expanded={showHelp} onClick={() => setShowHelp(!showHelp)} />
           )}
         </span>
         {readout && shown}

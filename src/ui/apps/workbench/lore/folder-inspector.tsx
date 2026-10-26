@@ -4,10 +4,10 @@
  * subtree gate switch, clone + collapse, and promote-delete. Cascade delete exists in the Marinara
  * engine but no engine UI reaches it, so per the locked wireframe promote is the only delete here.
  */
+import { Button, Toggle } from "../../../components/button";
 import type { JSX } from "react";
 import type { LorebookCategory } from "../../../../entities/lorebook/schema";
 import { legalParents, type ParentEdges } from "./folder-tree";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 
 export interface FolderInspectorProps {
   category: LorebookCategory;
@@ -85,22 +85,16 @@ export function FolderInspector({
               is kept for when you switch it back.
             </p>
           </div>
-          <ToggleSwitch size="sm" on={enabled} aria-label={enabled ? "Folder enabled" : "Folder disabled"} onChange={() => onToggleEnabled(!enabled)} />
+          <Toggle size="sm" on={enabled} aria-label={enabled ? "Folder enabled" : "Folder disabled"} onChange={() => onToggleEnabled(!enabled)} />
         </div>
 
         <div className={styles.mfActRow}>
-          <button type="button" className={styles.mfAct} onClick={onClone}>
-            Clone folder
-          </button>
-          <button type="button" className={styles.mfAct} onClick={onToggleCollapse}>
-            {collapsed ? "Expand" : "Collapse"}
-          </button>
+          <Button size="sm" onClick={onClone}>Clone folder</Button>
+          <Button size="sm" onClick={onToggleCollapse}>{collapsed ? "Expand" : "Collapse"}</Button>
         </div>
 
         <div className={styles.mfDanger}>
-          <button type="button" className={styles.mfDbtn} onClick={onDeletePromote}>
-            Delete (promote)
-          </button>
+          <Button variant="danger" size="sm" onClick={onDeletePromote}>Delete (promote)</Button>
           <p className={styles.mfDangerHint}>
             Removes only this folder. Its entries drop to the root and its direct subfolders lift up
             one level. Nothing inside is lost.

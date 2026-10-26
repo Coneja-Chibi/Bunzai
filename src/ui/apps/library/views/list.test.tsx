@@ -59,14 +59,14 @@ async function settle(): Promise<void> {
 }
 
 describe("List (list.tsx) virtualized", () => {
-  test(`5,000 entities render far fewer than 5,000 .dv-row nodes`, async () => {
+  test(`5,000 entities render far fewer than 5,000 library.row nodes`, async () => {
     const host = dom.window.document.createElement("div");
     dom.window.document.body.appendChild(host);
     const root = createRoot(host);
     await act(async () => { root.render(<listView.Component ctx={makeCtx()} />); });
     await settle();
 
-    expectWindowed(host, ".dv-row", N);
+    expectWindowed(host, '[data-part="library.row"]', N);
 
     await act(async () => { root.unmount(); });
     host.remove();
@@ -105,7 +105,7 @@ describe("List (list.tsx) virtualized", () => {
     await act(async () => { root.render(<listView.Component ctx={makeCtx()} />); });
     await settle();
 
-    const rows = [...host.querySelectorAll<HTMLElement>(".dv-row")];
+    const rows = [...host.querySelectorAll<HTMLElement>('[data-part="library.row"]')];
     expect(rows.length).toBeGreaterThan(0);
     for (const row of rows) {
       expect(row.getAttribute("aria-setsize")).toBe(String(N));

@@ -83,7 +83,7 @@ describe("the Spotify tab", () => {
     await mount(<SpotifyPanel feed={feedOf()} />);
     expect(text()).toContain("Spotify is not connected");
     expect(text()).toContain("Connect it in Settings, under Spotify.");
-    expect(doc().querySelector(".sp-play")).toBeNull();
+    expect(doc().querySelector('[aria-label="Play"], [aria-label="Pause"]')).toBeNull();
   });
 
   test("now playing: art, track, artists, clock, and the Premium pill", async () => {
@@ -143,9 +143,9 @@ describe("the Spotify tab", () => {
     const flushSync = await mount(<SpotifyPanel feed={feedOf()} />);
     expect(doc().querySelector(".sp-devices")).toBeNull();
     flushSync(() => button("Devices (2)")!.click());
-    expect([...doc().querySelectorAll(".sp-device b")].map((b) => b.textContent)).toEqual(["Desk", "Pixel"]);
-    expect(doc().querySelector(".sp-device.on b")!.textContent).toBe("Desk");
-    flushSync(() => doc().querySelectorAll<HTMLButtonElement>(".sp-device")[1]!.click());
+    expect([...doc().querySelectorAll(".sp-devices [data-control='row'] [data-slot='label']")].map((b) => b.textContent)).toEqual(["Desk", "Pixel"]);
+    expect(doc().querySelector(".sp-devices [data-control='row'][data-selected] [data-slot='label']")!.textContent).toBe("Desk");
+    flushSync(() => doc().querySelectorAll<HTMLButtonElement>(".sp-devices [data-control='row']")[1]!.click());
     await settle(flushSync);
     expect(posts).toEqual(['/api/spotify/control {"action":"transfer","deviceId":"d2"}']);
   });

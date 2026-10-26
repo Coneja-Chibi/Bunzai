@@ -66,8 +66,9 @@ async function mount(el: ReactElement): Promise<void> {
   await settle();
 }
 const unmount = (): void => { flushSync(() => root.unmount()); host.remove(); };
-const mrows = (): HTMLElement[] => [...host.querySelectorAll<HTMLElement>(".mrow")];
-const names = (): (string | null)[] => mrows().map((m) => m.querySelector(".t")!.textContent);
+/** The model rows: a pickable one is a ListRow beside its star; one a provider cannot serve is a plain note (`.mrow.na`). */
+const mrows = (): HTMLElement[] => [...host.querySelectorAll<HTMLElement>(".mwrap [data-control='row'], .mrow.na")];
+const names = (): (string | null)[] => mrows().map((m) => (m.classList.contains("mrow") ? m.querySelector(".t")! : m.querySelector("small")!.previousElementSibling!).textContent);
 const text = (): string => host.textContent ?? "";
 const search = (value: string): void => {
   const input = host.querySelector<HTMLInputElement>('input[aria-label="Search models"]')!;
@@ -96,9 +97,9 @@ describe("the Model tab as RoleCall draws it", () => {
     expect(host.querySelector("h2")!.textContent).toBe("Select AI Model");
     expect(host.querySelector(".hero p")!.textContent).toBe("Pick which model writes the scene. Switch any time mid-chat; the new model picks up where the last left off using the same preset and lorebooks.");
     expect(host.querySelector('input[aria-label="Search models"]')!.getAttribute("placeholder")).toBe("Search models...");
-    expect([...host.querySelectorAll(".pill")].map((p) => p.textContent)).toEqual(["+ Connect Provider", "All Providers", "Harbor", "Lantern"]);
+    expect([...host.querySelectorAll(".pills button")].map((p) => p.textContent)).toEqual(["+ Connect Provider", "All Providers", "Harbor", "Lantern"]);
     expect(text()).toContain("Currently Selected");
-    expect(host.querySelector(".mrow.cur")!.textContent).toBe("model-a200k contextHarborActive");
+    expect(host.querySelector(".mwrap [data-control='row'][data-selected]")!.textContent).toBe("model-a200k contextHarborActive");
     expect(text()).toContain("Model from Lantern");
     expect(names()).toContain("Lamp Two");
     flushSync(() => host.querySelector<HTMLElement>('[aria-label="Close panel"]')!.click());
@@ -110,7 +111,7 @@ describe("the Model tab as RoleCall draws it", () => {
     const r = rig(two);
     await mount(createElement(AiWing, { ctx: r.ctx, chat: chatWith(), onPicked: () => undefined }));
     const asked = r.asked.length;
-    flushSync(() => [...host.querySelectorAll<HTMLElement>(".pill")].find((p) => p.textContent === "Lantern")!.click());
+    flushSync(() => [...host.querySelectorAll<HTMLElement>(".pills button")].find((p) => p.textContent === "Lantern")!.click());
     expect(names()).toEqual(["lamp-1", "Lamp Two"]);
     expect(r.asked.length).toBe(asked);
     unmount();
@@ -138,7 +139,7 @@ describe("the backend", () => {
     expect(names()).toEqual(["model-a", "lamp-1", "Lamp Two"]);
     r.asked.length = 0;
     r.ctx.api.connectionModels = (async (id: string) => { r.asked.push(id); return two.k1; }) as typeof r.ctx.api.connectionModels;
-    flushSync(() => host.querySelector<HTMLElement>(".retry")!.click());
+    flushSync(() => [...host.querySelectorAll<HTMLElement>(".ms-note button")].find((b) => b.textContent === "Retry")!.click());
     await settle();
     expect(r.asked).toEqual(["k1"]);
     expect(text()).not.toContain("Couldn't list");

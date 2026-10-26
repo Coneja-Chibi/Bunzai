@@ -2,6 +2,7 @@
  * Rehearsal companion: Try lines with real runLore verdicts + real crypto RNG for chance.
  * Playback tab for chat jsonl. Canned stand-in replies only - never a model call.
  */
+import { Button, IconButton, ListRow, Segmented, Tabs } from "../../../components/button";
 import { useMemo, useRef, useState, type FormEvent, type JSX } from "react";
 import type { LorebookBody, LorebookEntry } from "../../../../entities/lorebook/schema";
 import { cryptoUnit, runLore, type LoreFire, type LoreRun, type LoreVerdict, type ScanLine } from "../../../../core/lore";
@@ -112,58 +113,37 @@ export function RehearsalPane({
       <div className={styles.head}>
         <b>Rehearsal</b>
         <i>try lines · real chance rolls</i>
-        <button type="button" className={styles.x} aria-label="Close rehearsal" onClick={onClose}>
-          &times;
-        </button>
+        <IconButton label="Close rehearsal" variant="quiet" size="sm" icon="lucide:x" onClick={onClose} />
       </div>
 
-      <div className={styles.tabs} role="tablist" aria-label="Rehearsal mode">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "try"}
-          className={tab === "try" ? `${styles.tab} ${styles.tabOn}` : styles.tab}
-          onClick={() => setTab("try")}
-        >
-          Try lines
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "playback"}
-          className={tab === "playback" ? `${styles.tab} ${styles.tabOn}` : styles.tab}
-          onClick={() => setTab("playback")}
-        >
-          Playback
-        </button>
-      </div>
+      <Tabs
+        label="Rehearsal mode"
+        items={[
+          { value: "try", label: "Try lines" },
+          { value: "playback", label: "Playback" },
+        ]}
+        value={tab}
+        onChange={setTab}
+      />
 
       {tab === "playback" ? (
         <PlaybackTab body={body} onJumpEntry={onJumpEntry} />
       ) : (
         <>
-          <div className={styles.budgetBar} role="group" aria-label="Token budget for this rehearsal">
+          <div className={styles.budgetBar}>
             <span className={styles.budgetLbl}>Budget</span>
-            {(
-              [
-                ["off", "Off"],
-                ["book", "Book"],
-                ["512", "512"],
-                ["1024", "1024"],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                type="button"
-                className={
-                  budgetPreset === id ? `${styles.tab} ${styles.tabOn}` : styles.tab
-                }
-                aria-pressed={budgetPreset === id}
-                onClick={() => setBudgetPreset(id)}
-              >
-                {label}
-              </button>
-            ))}
+            <Segmented
+              label="Token budget for this rehearsal"
+              size="sm"
+              items={[
+                { value: "off", label: "Off" },
+                { value: "book", label: "Book" },
+                { value: "512", label: "512" },
+                { value: "1024", label: "1024" },
+              ]}
+              value={budgetPreset}
+              onChange={setBudgetPreset}
+            />
           </div>
 
           <div className={styles.chat}>
@@ -186,9 +166,7 @@ export function RehearsalPane({
               placeholder="Type something to test…"
               aria-label="Rehearsal line"
             />
-            <button type="submit" disabled={!input.trim()}>
-              Say
-            </button>
+            <Button variant="primary" type="submit" disabled={!input.trim()}>Say</Button>
           </form>
 
           {last && (
@@ -199,25 +177,15 @@ export function RehearsalPane({
                 const kw = v.reason === "key" || v.reason === "recursion" ? v.matched[0] : null;
                 return (
                   <div key={v.entryId} className={styles.hitRow}>
-                    <button
-                      type="button"
-                      className={styles.hit}
+                    <ListRow
+                      selected
+                      accent="var(--stage-ok)"
                       onClick={() => onJumpEntry(v.entryId)}
-                    >
-                      <b>{titleOf(v.entryId)}</b>
-                      <span>
-                        {loreVerdictText(v, entryOf(v))} · ~{v.tokens}t
-                      </span>
-                    </button>
+                      label={titleOf(v.entryId)}
+                      subtitle={`${loreVerdictText(v, entryOf(v))} · ~${String(v.tokens)}t`}
+                    />
                     {kw && onAddKeyword && (
-                      <button
-                        type="button"
-                        className={styles.addKey}
-                        title={`Add "${kw}" as a key on this entry`}
-                        onClick={() => onAddKeyword(v.entryId, kw)}
-                      >
-                        + key
-                      </button>
+                      <Button size="sm" title={`Add "${kw}" as a key on this entry`} onClick={() => onAddKeyword(v.entryId, kw)}>+ Key</Button>
                     )}
                   </div>
                 );
@@ -234,15 +202,14 @@ export function RehearsalPane({
               <details className={styles.miss}>
                 <summary>Didn&apos;t fire ({skipped.length})</summary>
                 {skipped.map((v) => (
-                  <button
+                  <ListRow
                     key={v.entryId}
-                    type="button"
-                    className={styles.skip}
+                    selected
+                    accent="var(--stage-warn)"
                     onClick={() => onJumpEntry(v.entryId)}
-                  >
-                    <b>{titleOf(v.entryId)}</b>
-                    <span>{loreVerdictText(v, entryOf(v))}</span>
-                  </button>
+                    label={titleOf(v.entryId)}
+                    subtitle={loreVerdictText(v, entryOf(v))}
+                  />
                 ))}
               </details>
             </div>

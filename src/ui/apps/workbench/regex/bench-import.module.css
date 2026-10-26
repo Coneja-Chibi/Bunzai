@@ -57,58 +57,6 @@
   flex-direction: column;
 }
 
-.impHead {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.7rem;
-  border: 0;
-  border-bottom: 1px solid var(--stage-faint);
-  background: none;
-  cursor: pointer;
-  text-align: left;
-  width: 100%;
-}
-
-.cb {
-  width: 0.9rem;
-  height: 0.9rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  flex: none;
-}
-
-.cbOn {
-  background: var(--a, var(--accent));
-  border-color: var(--stage-black);
-}
-
-.impHead b {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-card);
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.impHead i {
-  font-style: normal;
-  font-family: var(--font-mono);
-  font-weight: 500;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
-  margin-left: auto;
-  flex: none;
-  padding-left: 0.5rem;
-}
-
 .impEffect {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -157,19 +105,6 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--stage-soft);
-}
-
-.ghostBtn {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.35rem 0.6rem;
-  cursor: pointer;
 }
 
 .primary {

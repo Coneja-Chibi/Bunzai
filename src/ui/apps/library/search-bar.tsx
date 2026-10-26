@@ -14,6 +14,7 @@
 import type { JSX } from "react";
 import { deckMeta } from "../../_shared/decks";
 import { isEscapeClose } from "../../_shared/use-escape-key";
+import { Button, Chip } from "../../components/button";
 
 export interface SearchBoxProps {
   value: string;
@@ -48,19 +49,15 @@ export function SearchBox({ value, onChange, hint, status, onRetry }: SearchBoxP
           }}
         />
         {value && (
-          <button
-            type="button"
-            className="findx"
-            title="Clear search"
+          <Button size="sm" variant="quiet" title="Clear search"
             aria-label="Clear search"
-            onClick={() => onChange("")}
-          >
-            clear
-          </button>
+            onClick={() => onChange("")}>
+            Clear
+          </Button>
         )}
       </label>
       {hint && <p className="findnote">{hint}</p>}
-      {status && <p className="findnote" role="status">{status}{onRetry && <> <button type="button" onClick={onRetry}>Retry</button></>}</p>}
+      {status && <p className="findnote" role="status">{status}{onRetry && <> <Button size="sm" variant="quiet" onClick={onRetry}>Retry</Button></>}</p>}
     </div>
   );
 }
@@ -100,15 +97,15 @@ export function NoMatchNotice({
         <div className="nmjumps">
           <span className="nmk">also matching</span>
           {elsewhere.map(({ kind, count }) => (
-            <button key={kind} type="button" className="nmjump" onClick={() => onJump(kind)}>
+            <Chip key={kind} onClick={() => onJump(kind)}>
               {`${deckMeta(kind).plural} ${String(count)}`}
-            </button>
+            </Chip>
           ))}
         </div>
       )}
-      <button type="button" className="nmclear" onClick={onClear}>
+      <Button size="sm" variant="quiet" onClick={onClear}>
         Clear search
-      </button>
+      </Button>
     </div>
   );
 }

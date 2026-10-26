@@ -6,6 +6,7 @@
  */
 import { useEffect, useRef, type JSX, type ReactNode } from "react";
 import { isActive, type RevertResult, type RunLine, type RunSnapshot } from "../../../../../core/compendium";
+import { Button } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { GLYPH, titled } from "../compendium-core";
 
@@ -37,7 +38,7 @@ export function Drawer({ run, onCancel }: { run: RunSnapshot; onCancel(): void }
           <div className="phase">{stopping ? "Stopping after the entries already being written..." : `Batch ${Math.min(run.batches.done + 1, run.batches.total)}/${run.batches.total}`}</div>
           {run.current && <div className="cur">Currently processing: {run.current}</div>}
         </div>
-        <button type="button" className="cp-std-btn danger" disabled={stopping} onClick={onCancel}>{stopping ? "STOPPING..." : "CANCEL"}</button>
+        <Button variant="danger" size="sm" disabled={stopping} onClick={onCancel}>{stopping ? "STOPPING..." : "CANCEL"}</Button>
       </div>
       <div className="bar"><i style={{ width: `${pct}%` }} /></div>
       <div className="stats">
@@ -78,8 +79,8 @@ export function Finished({ run, reverting, canRevert, onDismiss, onRevert }: { r
           )}
         </div>
         <div className="side">
-          <button type="button" className="cp-std-btn" onClick={onDismiss}>DISMISS</button>
-          {canRevert && <button type="button" className="cp-std-btn danger" disabled={reverting} onClick={onRevert}>{reverting ? "REVERTING..." : `${GLYPH.revert} REVERT RUN`}</button>}
+          <Button variant="quiet" size="sm" onClick={onDismiss}>DISMISS</Button>
+          {canRevert && <Button variant="danger" size="sm" disabled={reverting} onClick={onRevert}>{reverting ? "REVERTING..." : `${GLYPH.revert} REVERT RUN`}</Button>}
         </div>
       </div>
     </div>
@@ -102,7 +103,7 @@ export function RevertDone({ result, onDismiss }: { result: RevertResult; onDism
           </div>
           {result.skipped.length > 0 && <div className="log">{result.skipped.map((s, i) => <div key={i}>{s}</div>)}</div>}
         </div>
-        <button type="button" className="cp-std-btn" onClick={onDismiss}>DISMISS</button>
+        <Button variant="quiet" size="sm" onClick={onDismiss}>DISMISS</Button>
       </div>
     </div>
   );
@@ -117,7 +118,7 @@ export function Problem({ title, text, log, onDismiss }: { title: string; text: 
           <div className="line">{text}</div>
           {log && log.length > 0 && <Details summary={`Live log (${log.length} lines), click to expand`}><Log lines={log} /></Details>}
         </div>
-        <button type="button" className="cp-std-btn" onClick={onDismiss}>DISMISS</button>
+        <Button variant="quiet" size="sm" onClick={onDismiss}>DISMISS</Button>
       </div>
     </div>
   );

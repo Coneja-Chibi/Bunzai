@@ -4,6 +4,7 @@
  * merge mode (mirror vs full override), and remove it. Selecting a tile drives the editor's active
  * variant; the merge itself is applyVariant. Tokens only.
  */
+import { Button, Tile } from "../button";
 import type { JSX } from "react";
 import type { CharacterVariant } from "../../../entities/character/schema";
 import styles from "./styles.module.css";
@@ -27,7 +28,8 @@ function VariantTile({ active, label, own, onSelect, title }: { active: boolean;
   const external = !!own?.startsWith("http");
   const art = useArtSrc(external ? null : own);
   const src = external ? own : art.src;
-  return <button ref={art.ref} type="button" className={`${styles.thumb}${active ? ` ${styles.on}` : ""}`} style={src ? { backgroundImage: `url("${src}")` } : undefined} onClick={onSelect} title={title}><i>{label}</i></button>;
+  return <Tile ref={art.ref} kind="thumb" label={label} title={title} selected={active} onClick={onSelect}
+    art={<span className={styles.face} style={src ? { backgroundImage: `url("${src}")` } : undefined}><i>{label}</i></span>} />;
 }
 
 export function VariantStrip({
@@ -50,9 +52,7 @@ export function VariantStrip({
           const own = variantArt[v.id] ?? null;
           return <VariantTile key={v.id} active={activeId === v.id} label={v.label || "Variant"} own={own} onSelect={() => onSelect(v.id)} title={own ? `${v.label || "Variant"} · own art` : `${v.label || "Variant"} · inherits base art (change art while this variant is selected)`} />;
         })}
-        <button type="button" className={styles.add} onClick={onAdd} title="Add a variant">
-          +
-        </button>
+        <Tile kind="add" label="Add a variant" onClick={onAdd} />
       </div>
       {active && (
         <div className={styles.editRow}>
@@ -66,9 +66,9 @@ export function VariantStrip({
             <input type="checkbox" checked={active.mirrorBase === false} onChange={(e) => onMode(active.id, !e.target.checked)} />
             full
           </label>
-          <button type="button" className={styles.rm} onClick={() => onRemove(active.id)} title="Remove this variant">
-            remove
-          </button>
+          <Button size="sm" variant="danger" onClick={() => onRemove(active.id)} title="Remove this variant">
+            Remove
+          </Button>
         </div>
       )}
     </div>

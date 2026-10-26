@@ -10,14 +10,11 @@ export const CONTEXT_STYLE = `
 .scs .cx-eb{margin:0;font:700 var(--rc-text-11, 11px) var(--font-ui);letter-spacing:.28em;text-transform:uppercase;color:var(--w)}
 .scs .cx-hd h2{margin:4px 0 0;font:400 1.25rem/1.75rem var(--font-fancy);color:var(--rc-zinc-100)}
 .scs .cx-hd p.cx-sub{margin:4px 0 0;font:400 var(--rc-text-13, 13px)/1.5 var(--font-ui);color:var(--rc-zinc-400)}
-.scs .cx-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;margin-top:16px}
-.scs .cx-tabs button{padding:8px 10px;text-align:left;border:1px solid color-mix(in srgb,var(--stage-card) 10%,transparent);background:color-mix(in srgb,var(--stage-card) 3%,transparent);color:var(--rc-zinc-400);cursor:pointer;transition:border-color .15s,color .15s}
-.scs .cx-tabs button:hover{border-color:color-mix(in srgb,var(--stage-card) 20%,transparent)}
-.scs .cx-tabs button.on{border-color:var(--w);background:var(--w-soft);color:var(--rc-zinc-50)}
-.scs .cx-tabs b{display:block;font:700 var(--rc-text-11p5, 11.5px) var(--font-ui);letter-spacing:.12em;text-transform:uppercase}
-.scs .cx-tabs small{display:block;margin-top:2px;font:600 var(--rc-text-10p5, 10.5px) var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--rc-zinc-500)}
+.scs .cx-tabs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:16px}
+.scs .cx-tabs b,.scs .cx-tabs small{display:block}
+.scs .cx-tabs small{margin-top:2px;opacity:.7}
 .scs .cx-body{flex:1;min-height:0;overflow-y:auto}
 .scs .cx-toast{position:fixed;left:50%;bottom:24px;z-index:150;display:flex;width:min(92vw,42rem);transform:translateX(-50%);align-items:flex-start;gap:12px;padding:12px 16px;border:2px solid var(--stage-mute);background:var(--stage-panel);box-shadow:5px 5px 0 0 var(--stage-black);font:700 var(--text-control)/1.4 var(--font-ui);color:var(--stage-card)}
 .scs .cx-toast svg{flex:none;margin-top:2px}
-.scs .cx-toast button{margin-left:auto;padding:4px 12px;border:2px solid var(--stage-mute);background:var(--stage-black);font:inherit;color:var(--stage-card);cursor:pointer}
+.scs .cx-toast span{flex:1}
 `;

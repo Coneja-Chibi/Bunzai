@@ -15,6 +15,7 @@ import { ProtectedDialog } from "../../../_shared/protected-dialog";
 import { HealthReport } from "./health-report";
 import { OpeningLines, ProveThen, Recast, Rehearsal, TheKey } from "./security-flows";
 import { lockName, longDate, REHEARSAL_DUE_MS, shortDate, securityApi, type LibraryStatus, type RememberedComputer } from "./security-api";
+import { Button } from "../../../components/button";
 import styles from "./security.module.css";
 
 type Dialog = null | "lines" | "key" | "key-after-lines" | "rehearse" | "remove-password" | { forget: RememberedComputer };
@@ -126,13 +127,13 @@ function Security(): JSX.Element {
           </StageNote>
           <div className={styles.actions}>
             {status.deviceLock.strongerAvailable ? (
-              <button type="button" className={styles.btn} onClick={() => void securityApi.upgradeDeviceLock().then(refresh, (e: unknown) => setNotice(toErrorMessage(e, "could not move the lock")))}>
+              <Button size="sm" variant="primary" onClick={() => void securityApi.upgradeDeviceLock().then(refresh, (e: unknown) => setNotice(toErrorMessage(e, "could not move the lock")))}>
                 Move to the stronger lock
-              </button>
+              </Button>
             ) : null}
-            <button type="button" className={styles.btnGhost} onClick={() => setDialog("key")}>
+            <Button size="sm" onClick={() => setDialog("key")}>
               Set a password instead
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}
@@ -150,12 +151,12 @@ function Security(): JSX.Element {
           <div className={styles.cardTitle}>Still know your lines?</div>
           <div className={styles.cardBody}>Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.</div>
           <div className={styles.actions}>
-            <button type="button" className={styles.btn} onClick={() => setDialog("rehearse")}>
+            <Button size="sm" onClick={() => setDialog("rehearse")}>
               Run my lines
-            </button>
-            <button type="button" className={styles.btnGhost} onClick={() => setDialog("lines")}>
+            </Button>
+            <Button size="sm" onClick={() => setDialog("lines")}>
               Write new lines
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}
@@ -163,13 +164,13 @@ function Security(): JSX.Element {
       <div className={styles.card}>
         <SettingsRow label="Password" hint={hasPassword ? `On. ${askWhen}.` : "Off. This computer opens your library by itself."}>
           <div className={styles.actions}>
-            <button type="button" className={styles.btn} onClick={() => setDialog("key")}>
+            <Button size="sm" onClick={() => setDialog("key")}>
               {hasPassword ? "Change it" : "Set a password"}
-            </button>
+            </Button>
             {hasPassword ? (
-              <button type="button" className={`${styles.btnGhost} ${styles.btnDanger}`} onClick={() => setDialog("remove-password")}>
+              <Button size="sm" variant="danger" onClick={() => setDialog("remove-password")}>
                 Remove
-              </button>
+              </Button>
             ) : null}
           </div>
         </SettingsRow>
@@ -184,25 +185,25 @@ function Security(): JSX.Element {
           <div className={styles.actions}>
             {hasWords ? (
               <>
-                <button type="button" className={styles.btn} onClick={() => setDialog("rehearse")}>
+                <Button size="sm" onClick={() => setDialog("rehearse")}>
                   Rehearse
-                </button>
-                <button type="button" className={styles.btnGhost} onClick={() => setDialog("lines")}>
+                </Button>
+                <Button size="sm" onClick={() => setDialog("lines")}>
                   Write new lines
-                </button>
+                </Button>
               </>
             ) : (
-              <button type="button" className={styles.btn} onClick={() => setDialog("lines")}>
+              <Button size="sm" onClick={() => setDialog("lines")}>
                 Write my opening lines
-              </button>
+              </Button>
             )}
           </div>
         </SettingsRow>
         {hasPassword ? (
           <SettingsRow label="Lock now" hint="Closes the stage door until the password or your lines are given.">
-            <button type="button" className={styles.btnGhost} onClick={() => void securityApi.lock().then(() => window.location.reload(), (e: unknown) => setNotice(toErrorMessage(e, "could not lock")))}>
+            <Button size="sm" onClick={() => void securityApi.lock().then(() => window.location.reload(), (e: unknown) => setNotice(toErrorMessage(e, "could not lock")))}>
               Lock now
-            </button>
+            </Button>
           </SettingsRow>
         ) : null}
       </div>
@@ -221,9 +222,9 @@ function Security(): JSX.Element {
                 <div className={styles.pcName}>{c.label}</div>
                 <div className={styles.pcMeta}>{`Since ${longDate(c.createdAt)} / ${lockName(c.lock)}`}</div>
               </div>
-              <button type="button" className={`${styles.btnGhost} ${styles.btnDanger}`} onClick={() => setDialog({ forget: c })}>
+              <Button size="sm" variant="danger" onClick={() => setDialog({ forget: c })}>
                 Forget
-              </button>
+              </Button>
             </div>
           ))}
         </div>

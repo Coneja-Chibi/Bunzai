@@ -8,44 +8,30 @@
  * records). Registered in scenes/index.tsx alongside the other scene style sheets.
  */
 export const HARE_STYLE = `
-.scs .hare-btn{position:absolute;z-index:44;display:grid;place-items:center;background:var(--stage-panel);border:1px solid color-mix(in srgb,var(--prop-hare) 45%,transparent);color:var(--prop-hare);cursor:pointer;box-shadow:4px 4px 0 var(--stage-black);touch-action:none}
-.scs .hare-btn .n{position:absolute;top:-8px;right:-8px;min-width:20px;height:20px;padding:0 5px;display:grid;place-items:center;background:var(--prop-hare);color:var(--stage-black);font:700 11px var(--font-mono)}
-.scs .hare-btn .rh{position:absolute;bottom:-4px;right:-4px;width:12px;height:12px;border-radius:0;background:var(--prop-hare);cursor:se-resize;touch-action:none}
+.scs .hare-fab{position:absolute;z-index:44}
+.scs .hare-fab [data-part="props.trackhare.button"]{color:var(--prop-hare);touch-action:none}
+.scs .hare-fab [data-part="props.trackhare.resize"]{position:absolute;bottom:-4px;right:-4px;cursor:se-resize;touch-action:none}
 .scs .hare-pop{position:absolute;z-index:44;width:min(440px,calc(100% - 32px));max-height:calc(100% - 150px);overflow:auto;background:var(--stage-panel);border:1px solid color-mix(in srgb,var(--prop-hare) 40%,transparent);box-shadow:6px 6px 0 var(--stage-black);font-family:var(--font-big);animation:hare-in .15s ease-out}
 .scs .hp-hd{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--stage-seam)}
 .scs .hp-hd svg.logo{color:var(--prop-hare)}
 .scs .hp-hd b{font-size:.92rem;color:var(--stage-card)}
 .scs .hp-hd .cnt{font: 600 var(--text-meta) var(--font-mono);color:var(--stage-black);background:var(--prop-hare);padding:1px 6px}
 .scs .hp-hd .grow{flex:1}
-.scs .hp-hd .close{border:0;background:none;color:var(--stage-soft);cursor:pointer;display:grid;place-items:center}
-.scs .seg2{display:inline-flex;border:1px solid var(--stage-seam)}
-.scs .seg2 button{padding:3px 8px;font-size: var(--text-control);color:var(--stage-mute);cursor:pointer;border:0;background:none;font-family:inherit}
-.scs .seg2 button.on{background:var(--stage-row);color:var(--stage-card)}
 .scs .hp-sub{display:flex;justify-content:space-between;padding:6px 12px;font: 500 var(--text-meta) var(--font-mono);color:var(--stage-mute);letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--stage-seam)}
 .scs .bkh{display:flex;align-items:center;gap:6px;padding:8px 12px 4px;font-size: var(--text-meta);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--deck-lorebook)}
-.scs .he{margin:4px 10px;padding:8px 10px;background:var(--stage-row);border:0;border-left:3px solid var(--c);width:calc(100% - 20px);display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:start;cursor:pointer;text-align:left;color:inherit;font-family:inherit}
-.scs .he:hover{background:color-mix(in srgb,var(--stage-row) 70%,var(--stage-card) 6%)}
-.scs .he>svg{color:var(--c);margin-top:2px}
-.scs .he b{display:block;font-size:.86rem;font-weight:600;color:var(--stage-card)}
-.scs .he .rs{display:inline-block;margin-top:4px;padding:1px 6px;font: 600 var(--text-meta) var(--font-mono);color:var(--c)}
-.scs .he .rs+.rs{margin-left:4px;color:var(--stage-warn)}
-.scs .he .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.scs .he .tags span{font-size: var(--text-meta);padding:1px 5px;color:var(--stage-soft);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
-.scs .he .tk{font: 500 var(--text-meta) var(--font-mono);color:var(--stage-mute)}
-.scs.compact .he .tags,.scs.compact .he .tk{display:none}
+.scs [data-part="props.trackhare.hit"]{border-left-color:var(--c)}
+.scs .he-ic{color:var(--c)}
+.scs [data-part="props.trackhare.hit"] .rs{display:inline-block;margin-top:4px;padding:1px 6px;font: 600 var(--text-meta) var(--font-mono);color:var(--c)}
+.scs [data-part="props.trackhare.hit"] .rs+.rs{margin-left:4px;color:var(--stage-warn)}
+.scs [data-part="props.trackhare.hit"] .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.scs [data-part="props.trackhare.hit"] .tags span{font-size: var(--text-meta);padding:1px 5px;color:var(--stage-soft);background:color-mix(in srgb,var(--stage-black) 40%,transparent)}
+.scs [data-part="props.trackhare.hit"] .tk{font: 500 var(--text-meta) var(--font-mono);color:var(--stage-mute)}
+.scs.compact [data-part="props.trackhare.hit"] .tags,.scs.compact [data-part="props.trackhare.hit"] .tk{display:none}
 .scs .hare-miss{margin:8px 10px 4px;border:1px dashed var(--stage-seam)}
-.scs .hare-miss .mh{display:flex;width:100%;justify-content:space-between;padding:8px 10px;font-size: var(--text-control);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--stage-soft);border:0;background:none;cursor:pointer;font-family:inherit}
 .scs .hare-miss .mi{display:grid;grid-template-columns:1fr auto;gap:8px;padding:6px 10px;border-top:1px solid var(--stage-seam);font-size:.82rem;color:var(--stage-text-dim)}
 .scs .hare-miss .mi em{font-style:normal;font: 500 var(--text-meta) var(--font-mono);color:var(--stage-mute)}
 .scs .hp-ft{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--stage-seam);position:sticky;bottom:0;background:var(--stage-panel)}
-.scs .hbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;font-size: var(--text-control);color:var(--stage-card);background:var(--stage-row);border:1px solid var(--stage-seam);cursor:pointer;font-family:inherit}
-.scs .hbtn:disabled{opacity:.4;cursor:default}
-.scs .hbtn.pri{background:var(--prop-hare);color:var(--stage-black);border-color:var(--prop-hare)}
-.scs .hbtn.pri svg{color:var(--stage-black)}
-.scs .hbtn svg{color:var(--prop-hare)}
 .scs .hare-replies{padding:8px 12px;display:flex;flex-direction:column;gap:4px}
-.scs .hare-replies button{text-align:left;padding:6px 8px;border:0;background:none;color:var(--stage-card);cursor:pointer;font:var(--text-control) var(--font-big)}
-.scs .hare-replies button:hover{background:var(--stage-row)}
 .scs .hare-none{padding:20px 16px;color:var(--stage-mute);font-size:.86rem}
 .scs .hare-none .hint{display:block;margin-top:6px;font-size: var(--text-body);color:var(--stage-mute)}
 .scs .hare-err{padding:10px 12px;color:var(--stage-danger-text);font-size:.8rem}

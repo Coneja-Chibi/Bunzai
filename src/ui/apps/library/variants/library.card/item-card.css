@@ -18,7 +18,7 @@ html[data-surface-library-card="item-card"] {
   & .lib.rc .rcard.rasset.book { aspect-ratio: 380 / 800; }
   & .lib.rc .rcard.rasset.book > .rart { aspect-ratio: 2 / 3; }
   /* narrow cards cut a name to one line; the tall HUD cards have room for two before the ellipsis */
-  & .lib.rc .rcard .rname .rnmx { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; overflow-wrap: anywhere; overflow: hidden; }
+  & .lib.rc .rcard [data-part="library.card.name"] .rnmx { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; overflow-wrap: anywhere; overflow: hidden; }
   /* the slot tag sits at the top of the card: keep the asset title below it, whether or not the cover art is drawn */
   & .lib.rc .rcard.rasset > .rahead { margin-top: 2rem; }
   & .lib.rc .rart { background-image: none; }
@@ -28,6 +28,5 @@ html[data-surface-library-card="item-card"] {
   & .lib.rc .raicon, & .lib.rc .rpicon { border-radius: 0; background: transparent; border: 1px solid var(--t); }
   & .lib.rc .rfoot, & .lib.rc .rtools { background: transparent; border-top: 1px solid var(--bk-line-track); }
   & .lib.rc .rtag { border-radius: 0; background: transparent; box-shadow: inset 0 0 0 1px var(--bk-line-control); }
-  & .lib.rc .rstart { border-radius: 0; background: var(--bk-role-action-deep); color: var(--bk-text-on-deep); box-shadow: none; }
   & .lib.rc .rcard .ratitle, & .lib.rc .rcard .rptitle, & .lib.rc .rcard .rctitle { text-shadow: none; letter-spacing: .06em; text-transform: uppercase; }
 }

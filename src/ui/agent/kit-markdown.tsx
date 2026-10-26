@@ -25,6 +25,7 @@
 import { lazy, Suspense, useState, type JSX, type ReactNode } from "react";
 import { classifyDiff } from "../../kit/render/diff-classify";
 import { parseMarkdown, type Block, type Inline } from "../../kit/render/markdown";
+import { Button, Chip } from "../components/button";
 import { DIFF_LINE_CAP, diffInk } from "./kit-markdown-core";
 import { safeOutwardHref } from "../_shared/render-policy";
 
@@ -108,14 +109,9 @@ function PlainSlab({ block }: { block: Extract<Block, { t: "code" }> }): JSX.Ele
   return (
     <div className="kit-md__slabwrap">
       {canDraw && (
-        <button
-          type="button"
-          className="kit-md__preview"
-          aria-pressed={preview}
-          onClick={() => setPreview(!preview)}
-        >
+        <Chip pressed={preview} onClick={() => setPreview(!preview)}>
           {preview ? "Show source" : "Preview"}
-        </button>
+        </Chip>
       )}
       {/*
         The same drawing at tab size. Inline is for a glance beside the reply that produced it; a
@@ -123,9 +119,9 @@ function PlainSlab({ block }: { block: Extract<Block, { t: "code" }> }): JSX.Ele
         transcript is not looking at it.
       */}
       {canDraw && (
-        <button type="button" className="kit-md__preview" onClick={() => handOffHtml(source)}>
+        <Button size="sm" variant="quiet" onClick={() => handOffHtml(source)}>
           Open as tab
-        </button>
+        </Button>
       )}
       {canDraw && preview ? (
         <Suspense fallback={<p className="kit-md__p">Loading preview…</p>}>
@@ -234,14 +230,16 @@ function TableBlock({ block }: { block: Extract<Block, { t: "table" }> }): JSX.E
     <div className="kit-md__tablewrap">
       {/* The scroller is the wrapper, so a wide table never pushes the conversation sideways. */}
       <div className="kit-md__tablescroll">{grid}</div>
-      <button
-        type="button"
-        className="kit-md__tableout"
-        title="Open this table over the window"
-        onClick={() => { setOpen(true); }}
-      >
-        {"open"}
-      </button>
+      <span className="kit-md__tableout">
+        <Button
+          variant="quiet"
+          size="sm"
+          title="Open this table over the window"
+          onClick={() => { setOpen(true); }}
+        >
+          {"open"}
+        </Button>
+      </span>
       {open && (
         <div
           className="kit-md__sheet"
@@ -251,9 +249,11 @@ function TableBlock({ block }: { block: Extract<Block, { t: "table" }> }): JSX.E
           onClick={() => { setOpen(false); }}
         >
           <div className="kit-md__sheetbody" onClick={(e) => { e.stopPropagation(); }}>
-            <button type="button" className="kit-md__sheetclose" onClick={() => { setOpen(false); }}>
-              {"close"}
-            </button>
+            <span className="kit-md__sheetclose">
+              <Button variant="quiet" size="sm" onClick={() => { setOpen(false); }}>
+                {"close"}
+              </Button>
+            </span>
             <div className="kit-md__tablescroll">{grid}</div>
           </div>
         </div>

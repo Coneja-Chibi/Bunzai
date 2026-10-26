@@ -12,6 +12,7 @@ import { SystemPromptItem } from "./scene-preset-templates";
 import { TEMPLATE_FIELDS } from "./preset-core";
 import type { PresetText } from "./use-scene-preset-text";
 import { TOOL_SECTIONS, toolsIn, type ToolSectionId, type WritingTool } from "./writing-tools-core";
+import { Disclosure } from "../../components/button";
 
 const ICONS: Readonly<Record<ToolSectionId, IconName>> = { reply: "lucide:refresh-cw", character: "lucide:drama", draft: "lucide:wand-sparkles" };
 /** RoleCall opens "Change the reply" and "Write in character", and keeps "Your draft" closed. */
@@ -42,7 +43,7 @@ function Tool({ tool, text }: { tool: WritingTool; text: PresetText }): JSX.Elem
       {tool.promptKey && <ToolPrompt tool={tool} text={text} />}
       {tool.sends && (
         <>
-          <button type="button" className="wt-sends" aria-expanded={sends} onClick={() => setSends(!sends)}>What this sends <Ic name="lucide:chevron-down" size={12} /></button>
+          <Disclosure variant="line" data-part="scene.prompting.tools.sends" open={sends} onClick={() => setSends(!sends)} label="What this sends" />
           {sends && <p className="wt-sends-text">{tool.sends}</p>}
         </>
       )}
@@ -66,10 +67,8 @@ export function SceneWritingTools({ text }: { text: PresetText }): JSX.Element {
         if (tools.length === 0) return null;
         return (
           <section key={section.id} className="wt-group" data-part={`scene.prompting.tools.section.${section.id}`}>
-            <button type="button" className="wt-hd" aria-expanded={open[section.id] === true} onClick={() => setOpen({ ...open, [section.id]: !open[section.id] })}>
-              <Ic name={ICONS[section.id]} size={16} /><span>{section.label}</span><small>{tools.length} {tools.length === 1 ? "tool" : "tools"}</small>
-              <span className="cv"><Ic name={open[section.id] ? "lucide:chevron-up" : "lucide:chevron-down"} size={16} /></span>
-            </button>
+            <Disclosure open={open[section.id] === true} onClick={() => setOpen({ ...open, [section.id]: !open[section.id] })}
+              leading={<Ic name={ICONS[section.id]} size={16} />} label={section.label} summary={`${tools.length} ${tools.length === 1 ? "tool" : "tools"}`} />
             {open[section.id] && <ul className="wt-tools">{tools.map((t) => <Tool key={t.id} tool={t} text={text} />)}</ul>}
           </section>
         );

@@ -9,6 +9,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { JSX } from "react";
+import { MenuItem } from "../components/button";
 import { findMenuTarget, menuSectionsFor, useShellStore } from "./store";
 import { isEscapeClose, useEscapeKey } from "../_shared/use-escape-key";
 
@@ -84,10 +85,9 @@ export function Menu(): JSX.Element | null {
         <div key={i}>
           {i > 0 && <div className="sep" />}
           {section.map((item, j) => (
-            <button
+            <MenuItem
               key={j}
-              className={`it${item.danger ? " danger" : ""}`}
-              role="menuitem"
+              danger={item.danger}
               disabled={item.disabled}
               onClick={() => {
                 closeMenu();
@@ -95,7 +95,7 @@ export function Menu(): JSX.Element | null {
               }}
             >
               {item.label}
-            </button>
+            </MenuItem>
           ))}
         </div>
       ))}

@@ -7,16 +7,17 @@
  */
 import { useState, type JSX } from "react";
 import { ColorPicker } from "../../../components/color-picker";
+import { Button, IconButton, Tile as SwatchTile } from "../../../components/button";
 import { normalizeHex } from "../../../_shared/color-math";
-import { resolveCssColor } from "../../../_shared/css-color";
 import { Ic } from "../../../_shared/ic";
+import { resolveCssColor } from "../../../_shared/css-color";
 
 export interface NamedSwatch { label?: string; name?: string; hex: string }
 
 const fresh = (): string => resolveCssColor("var(--deck-lorebook)");
 
-function Tile({ hex, big, label, on, onToggle }: { hex: string; big?: boolean; label: string; on: boolean; onToggle(): void }): JSX.Element {
-  return <button type="button" className={`cw-tile${big ? " big" : ""}${on ? " on" : ""}`} style={{ background: hex }} aria-label={label} aria-expanded={on} onClick={onToggle} />;
+function Tile({ hex, label, on, big, onToggle }: { hex: string; label: string; on: boolean; big?: boolean; onToggle(): void }): JSX.Element {
+  return <SwatchTile kind="swatch" size={big ? "lg" : "md"} color={hex} label={label} selected={on} aria-expanded={on} onClick={onToggle} />;
 }
 
 function Picker({ hex, onPick, onDone }: { hex: string; onPick(hex: string): void; onDone(): void }): JSX.Element {
@@ -24,7 +25,7 @@ function Picker({ hex, onPick, onDone }: { hex: string; onPick(hex: string): voi
     <div className="cw-pick" data-part="scene.cast.picker.color">
       {/* eslint-disable-next-line no-restricted-syntax -- rendered only while its swatch is open (open-gated), as the Workbench palette does */}
       <ColorPicker value={normalizeHex(hex) ?? hex} onChange={onPick} />
-      <button type="button" onClick={onDone}>Done</button>
+      <Button size="sm" onClick={onDone}>Done</Button>
     </div>
   );
 }
@@ -67,18 +68,18 @@ export function NamedSwatches({ value, onChange, signature, onSignature, signatu
           <div className="cw-sw" key={i}>
             <span className="cw-hold">
               <Tile hex={s.hex} label={`${s.label || s.name || "Color"} swatch`} on={open === i} onToggle={() => toggle(i)} />
-              <button type="button" className="cw-rm" aria-label={`Remove ${s.label || s.name || "color"}`} onClick={() => { setOpen(null); onChange(value.filter((_, at) => at !== i)); }}><Ic name="lucide:x" size={10} /></button>
+              <IconButton variant="quiet" size="sm" icon="lucide:x" label={`Remove ${s.label || s.name || "color"}`} onClick={() => { setOpen(null); onChange(value.filter((_, at) => at !== i)); }} />
             </span>
             <input className="cw-nm" value={s.name ?? ""} placeholder="Name" aria-label={`Name of ${s.label || "color"} ${i + 1}`} onChange={(e) => set(i, { name: e.target.value })} />
             <input className="cw-lab" value={s.label ?? ""} placeholder="Label" aria-label={`Label of color ${i + 1}`} onChange={(e) => set(i, { label: e.target.value })} />
             <span className="cw-ar">
-              <button type="button" aria-label="Move left" disabled={i === 0} onClick={() => move(i, -1)}><Ic name="lucide:chevron-left" size={12} /></button>
-              <button type="button" aria-label="Move right" disabled={i === value.length - 1} onClick={() => move(i, 1)}><Ic name="lucide:chevron-right" size={12} /></button>
+              <IconButton variant="quiet" size="sm" label="Move left" icon="lucide:chevron-left" disabled={i === 0} onClick={() => move(i, -1)} />
+              <IconButton variant="quiet" size="sm" label="Move right" icon="lucide:chevron-right" disabled={i === value.length - 1} onClick={() => move(i, 1)} />
             </span>
           </div>
         ))}
         <div className="cw-sw cw-add">
-          <button type="button" className="cw-tile plus" aria-label="Add a color" onClick={() => onChange([...value, { hex: fresh() }])}><Ic name="lucide:plus" size={14} /></button>
+          <SwatchTile kind="add" label="Add a color" onClick={() => onChange([...value, { hex: fresh() }])} />
           <span className="cw-nm">Add</span>
         </div>
       </div>
@@ -100,11 +101,11 @@ export function ThemeSwatches({ value, onChange, max = 3 }: { value: readonly st
           <span className="cw-sw" key={i}>
             <span className="cw-hold">
               <Tile hex={hex} label={`Theme color ${i + 1}`} on={open === i} onToggle={() => setOpen(open === i ? null : i)} />
-              {value.length > 1 && <button type="button" className="cw-rm" aria-label={`Remove theme color ${i + 1}`} onClick={() => { setOpen(null); onChange(value.filter((_, at) => at !== i)); }}><Ic name="lucide:x" size={10} /></button>}
+              {value.length > 1 && <IconButton variant="quiet" size="sm" icon="lucide:x" label={`Remove theme color ${i + 1}`} onClick={() => { setOpen(null); onChange(value.filter((_, at) => at !== i)); }} />}
             </span>
           </span>
         ))}
-        {value.length < max && <button type="button" className="cw-tile plus" aria-label="Add a theme color" onClick={() => onChange([...value, fresh()])}><Ic name="lucide:plus" size={14} /></button>}
+        {value.length < max && <SwatchTile kind="add" label="Add a theme color" onClick={() => onChange([...value, fresh()])} />}
       </div>
       <div className="cw-gbar" style={{ background: css }} aria-hidden="true" />
       {open !== null && value[open] !== undefined && <Picker hex={value[open]!} onDone={() => setOpen(null)} onPick={(h) => onChange(value.map((x, at) => (at === open ? h : x)))} />}

@@ -1,4 +1,5 @@
 /** Generated docs navigation and catalog search for the reader's left rail. */
+import { ListRow, Segmented } from "../../components/button";
 import { useEffect, useState, type JSX } from "react";
 import type { DocRecord } from "../../docs-types";
 import { displayDocTitle, groupDocs, searchDocs } from "./docs-core";
@@ -31,18 +32,13 @@ export function DocNav({ docs, activeId, query, onQuery, onPick }: DocNavProps):
         data-tour="search"
       />
       {!query.trim() && (
-        <div className={styles.shelves} aria-label="Documentation audience">
-          {groupDocs(docs).map((group) => (
-            <button
-              key={group.id}
-              type="button"
-              className={`${styles.shelf}${shelf === group.id ? ` ${styles.on}` : ""}`}
-              aria-pressed={shelf === group.id}
-              onClick={() => setShelf(group.id)}
-            >
-              {group.label}
-            </button>
-          ))}
+        <div className={styles.shelves}>
+          <Segmented
+            label="Documentation audience"
+            items={groupDocs(docs).map((group) => ({ value: group.id, label: group.label }))}
+            value={shelf}
+            onChange={setShelf}
+          />
         </div>
       )}
       {visibleGroups.map((group) => (
@@ -56,15 +52,13 @@ export function DocNav({ docs, activeId, query, onQuery, onPick }: DocNavProps):
             >
               <summary className={styles.grp}>{section.label} <span>{section.docs.length}</span></summary>
               {section.docs.map((doc) => (
-                <button
+                <ListRow
                   key={doc.id}
-                  type="button"
-                  className={`${styles.item}${doc.id === activeId ? ` ${styles.on}` : ""}`}
+                  selected={doc.id === activeId}
                   aria-current={doc.id === activeId ? "page" : undefined}
                   onClick={() => onPick(doc.id)}
-                >
-                  {displayDocTitle(doc)}
-                </button>
+                  label={displayDocTitle(doc)}
+                />
               ))}
             </details>
           ))}

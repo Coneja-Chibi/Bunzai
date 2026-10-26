@@ -27,29 +27,6 @@
   white-space: nowrap;
 }
 
-.sideClose {
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  font-size: 0.9rem;
-  line-height: 1;
-  padding: 0.15rem 0.4rem;
-  cursor: pointer;
-  flex: none;
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  transition: transform 0.1s ease, color 0.1s ease;
-}
-
-.sideClose:hover {
-  transform: translate(-1px, -1px);
-  color: var(--pa);
-}
-
-.sideClose:active {
-  transform: translate(1px, 1px);
-  box-shadow: none;
-}
-
 .sideEmpty {
   padding: 2rem 1rem;
   display: flex;
@@ -209,4 +186,3 @@
   font: 500 var(--text-meta) var(--font-mono);
   color: var(--stage-text-dim);
 }
-

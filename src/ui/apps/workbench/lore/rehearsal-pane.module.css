@@ -39,15 +39,6 @@
   color: var(--stage-text-dim);
 }
 
-.x {
-  margin-left: auto;
-  border: 0;
-  background: none;
-  color: var(--stage-text-dim);
-  cursor: pointer;
-  font-size: 1.1rem;
-}
-
 .chat {
   flex: 1;
   min-height: 8rem;
@@ -107,23 +98,6 @@
   padding: 0.35rem 0.5rem;
 }
 
-.composer button {
-  border: 2px solid var(--stage-black);
-  background: var(--action-primary);
-  color: var(--action-primary-fg);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.55rem;
-  cursor: pointer;
-}
-
-.composer button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
 
 .results {
   border-top: 2px solid var(--stage-seam);
@@ -139,41 +113,6 @@
   font-size: var(--text-control);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--stage-text-dim);
-}
-
-.hit,
-.skip {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.1rem;
-  border: 0;
-  background: var(--stage-row);
-  border-left: 3px solid var(--stage-ok);
-  color: var(--stage-soft);
-  text-align: left;
-  padding: 0.3rem 0.45rem;
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-
-.skip {
-  border-left-color: var(--stage-warn);
-}
-
-.hit b,
-.skip b {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-card);
-}
-
-.hit span,
-.skip span {
-  font-size: var(--text-control);
   color: var(--stage-text-dim);
 }
 
@@ -209,33 +148,6 @@
 }
 
 /* tabs + playback */
-.tabs {
-  display: inline-flex;
-  border: 2px solid var(--stage-black);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-}
-
-.tab {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 0;
-  background: var(--stage-row);
-  color: var(--stage-text-dim);
-  padding: 0.28rem 0.5rem;
-  cursor: pointer;
-}
-
-.tab + .tab {
-  border-left: 2px solid var(--stage-black);
-}
-
-.tabOn {
-  background: var(--selection);
-  color: var(--selection-fg);
-}
 
 .playback {
   display: flex;
@@ -269,17 +181,6 @@
   padding: 0 0.1rem;
 }
 
-.close {
-  border: 0;
-  background: color-mix(in srgb, var(--stage-warn) 35%, transparent);
-  color: var(--stage-card);
-  font: inherit;
-  padding: 0 0.1rem;
-  cursor: pointer;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-}
-
 .firedList {
   margin-top: 0.25rem;
   font-family: var(--font-mono);
@@ -311,25 +212,9 @@
   gap: 0.25rem;
 }
 
-.hitRow .hit {
+.hitRow > [data-control="row"] {
   flex: 1;
   min-width: 0;
 }
 
-.addKey {
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.2rem 0.35rem;
-  cursor: pointer;
-  flex: none;
-}
-
-.addKey:hover {
-  border-color: var(--stage-ok);
-  color: var(--stage-ok);
-}
+.head > :last-child { margin-left: auto; }

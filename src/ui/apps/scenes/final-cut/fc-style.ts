@@ -18,13 +18,11 @@ const SHARED = `
 .scs .fc-card p,.scs .fc-hint{margin:0 0 8px;font:var(--text-body)/1.5 var(--font-ui);color:var(--stage-text-dim)}
 .scs .fc-hint{font-size:var(--text-meta);color:var(--stage-mute)}
 .scs .fc-meta{display:inline-block;padding:3px 8px;border:1px solid var(--stage-seam);font:700 var(--text-meta) var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-soft)}
-.scs .fc-live{flex:none;padding:6px 14px;border:2px solid var(--stage-line);background:none;color:var(--stage-text-dim);font:800 var(--text-control) var(--font-ui);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
-.scs .fc-live.on{border-color:var(--p,var(--w));background:var(--p,var(--w));color:var(--stage-black)}
+.scs .fc-live{flex:none;align-self:start}
 .scs .fc-master{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-panel) 70%,transparent);padding:12px 14px}
 .scs .fc-master b{font:800 1rem var(--font-fancy);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-card)}
 .scs .fc-master p{margin:2px 0 0;font:var(--text-body)/1.4 var(--font-ui);color:var(--stage-text-dim)}
 .scs .fc-master.on{border-color:var(--w)}
-.scs .fc-master .fc-live{--p:var(--w)}
 .scs .fc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
 .scs .fc-stats div{border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-panel) 70%,transparent);padding:10px 12px}
 .scs .fc-stats small{display:block;font:700 var(--text-meta) var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--stage-mute)}
@@ -58,13 +56,6 @@ const SHARED = `
 .scs .fc-sub{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
 .scs .fc-sub b{font:700 var(--text-meta) var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-soft)}
 .scs .fc-sub small{font:var(--text-meta)/1.4 var(--font-ui);color:var(--stage-mute)}
-.scs .fc-link{margin-top:6px;padding:0;border:0;background:none;color:var(--w);font:var(--text-control) var(--font-ui);text-decoration:underline;cursor:pointer}
-.scs .fc-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border:1px solid var(--stage-line);background:none;color:var(--stage-text-dim);font:700 var(--text-meta) var(--font-ui);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
-.scs .fc-btn:hover{border-color:var(--stage-mute);color:var(--stage-card)}
-.scs .fc-btn.go{border-color:var(--p,var(--w));background:color-mix(in srgb,var(--p,var(--w)) 18%,transparent);color:var(--stage-card)}
-.scs .fc-btn.red:hover{border-color:var(--stage-danger-edge);background:var(--stage-danger-bg);color:var(--stage-danger-text)}
-.scs .fc-btn.hot{border-color:var(--stage-danger-edge);background:var(--stage-danger-bg);color:var(--stage-danger-text)}
-.scs .fc-btn:disabled{opacity:.5;cursor:default}
 .scs .fc-chip,.scs .fc-tag{padding:2px 6px;border:1px solid var(--stage-seam);font:700 var(--text-meta) var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--stage-soft)}
 .scs .fc-tag.warn{border-color:var(--stage-warn);color:var(--stage-warn);display:inline-flex;align-items:center;gap:3px}
 .scs .fc-fold{border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-black) 30%,transparent)}
@@ -75,7 +66,7 @@ const SHARED = `
 .scs .fc-explain b{font:800 var(--text-control) var(--font-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--stage-card)}
 .scs .fc-explain p{margin:4px 0 0;font:var(--text-body)/1.45 var(--font-ui);color:var(--stage-text-dim)}
 .scs .fc-explain code{display:block;margin-top:6px;font:var(--text-meta) var(--font-mono);color:var(--stage-soft)}
-.scs .fc-mode .pg-opt small code{font-family:var(--font-mono)}
+.scs .fc-mode code{font-family:var(--font-mono)}
 .scs .fc-sec{display:flex;flex-direction:column;gap:2px}
 .scs .fc-sec h4{margin:0}
 .scs .fc-sec span{font:var(--text-meta) var(--font-ui);color:var(--stage-mute)}
@@ -83,12 +74,10 @@ const SHARED = `
 .scs .fc-search{display:flex;flex-direction:column;gap:6px;font:700 var(--text-meta) var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-soft)}
 .scs .fc-search .box{display:flex;gap:6px}
 .scs .fc-search input{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--stage-line);background:color-mix(in srgb,var(--stage-black) 60%,transparent);color:var(--stage-card);font:var(--text-control) var(--font-ui);text-transform:none;letter-spacing:0}
-.scs .fc-search button{padding:6px 10px;border:1px solid var(--stage-line);background:none;color:var(--stage-text-dim);cursor:pointer}
 .scs .fc-setlist,.scs .fc-results,.scs .fc-rules,.scs .fc-floor{display:flex;flex-direction:column;gap:8px}
 .scs .fc-set{border:1px solid var(--stage-seam);background:color-mix(in srgb,var(--stage-black) 30%,transparent)}
 .scs .fc-set.open{border-color:var(--p,var(--w))}
-.scs .fc-set .head{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;border:0;background:none;text-align:left;color:var(--stage-text-dim);cursor:pointer}
-.scs .fc-set .id{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.scs .fc-set .id{display:flex;flex-direction:column;gap:2px;white-space:normal}
 .scs .fc-set .id b{font:800 var(--text-control) var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-card)}
 .scs .fc-set .id small{font:var(--text-meta)/1.4 var(--font-ui);color:var(--stage-mute);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .scs .fc-set .count{flex:none;padding:2px 8px;border:1px solid var(--stage-seam);font:700 var(--text-meta) var(--font-mono);color:var(--stage-soft)}
@@ -98,13 +87,9 @@ const SHARED = `
 .scs .fc-set .banks{display:flex;flex-direction:column;gap:6px;padding:0 12px 12px}
 .scs .fc-bank{border:1px solid var(--stage-seam);background:none;text-align:left}
 .scs .fc-bank.on{border-color:var(--p,var(--w));background:color-mix(in srgb,var(--p,var(--w)) 8%,transparent)}
-button.fc-bank{display:flex;width:100%;padding:8px 10px;color:inherit;cursor:pointer}
 .scs .fc-bank .head{display:flex;align-items:stretch}
-.scs .fc-bank .main{flex:1;min-width:0;display:flex;gap:10px;padding:8px 10px;border:0;background:none;text-align:left;color:inherit;cursor:pointer}
-.scs .fc-bank .more{flex:none;width:32px;border:0;border-left:1px solid var(--stage-seam);background:none;color:var(--stage-soft);cursor:pointer;font:700 var(--text-control) var(--font-mono)}
-.scs .fc-tick{flex:none;width:18px;height:18px;margin-top:1px;display:grid;place-items:center;border:2px solid var(--stage-mute);color:var(--stage-black)}
-.scs .fc-bank.on .fc-tick{border-color:var(--p,var(--w));background:var(--p,var(--w))}
-.scs .fc-bank-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.scs .fc-bank-body{display:flex;flex-direction:column;gap:4px}
+.scs .fc-bank .head>[data-control=row]{flex:1;min-width:0;width:auto}
 .scs .fc-bank-body .row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .scs .fc-bank-body .row b{font:800 var(--text-control) var(--font-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-card)}
 .scs .fc-bank-body .row small{font:var(--text-meta) var(--font-mono);color:var(--stage-mute);text-transform:uppercase}
@@ -114,9 +99,7 @@ button.fc-bank{display:flex;width:100%;padding:8px 10px;color:inherit;cursor:poi
 .scs .fc-bank .bans em{padding:1px 6px;border:1px solid var(--stage-seam);font:var(--text-meta) var(--font-mono);font-style:normal;color:var(--stage-soft)}
 .scs .fc-bank .bans small{font:var(--text-meta) var(--font-mono);color:var(--stage-mute)}
 .scs .fc-bank .detail{display:flex;flex-direction:column;gap:10px;padding:10px 12px;border-top:1px solid var(--stage-seam)}
-.scs .fc-depth .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px;margin:6px 0}
-.scs .fc-depth .opts button{display:flex;flex-direction:column;gap:2px;padding:6px 8px;border:1px solid var(--stage-seam);background:none;text-align:left;color:var(--stage-text-dim);cursor:pointer}
-.scs .fc-depth .opts button.on{border-color:var(--p,var(--w));background:color-mix(in srgb,var(--p,var(--w)) 12%,transparent);color:var(--stage-card)}
+.scs .fc-depth .opts{margin:6px 0}
 .scs .fc-depth .opts span,.scs .fc-depth small{font:var(--text-meta) var(--font-mono);color:var(--stage-mute)}
 .scs .fc-bank .block .bh{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px;font:700 var(--text-meta) var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--stage-soft)}
 .scs .fc-bank .block.skipped{opacity:.6}
@@ -190,8 +173,6 @@ const ROLECALL = `
 .scs .fc-card p,.scs .fc-hint{margin:0 0 14px;font:var(--rc-text-ctl)/1.55 var(--font-ui);color:var(--rc-zinc-400)}
 .scs .fc-hint{font-size:var(--rc-s-p72rem);color:var(--rc-zinc-500)}
 .scs .fc-meta{display:inline-block;padding:3px 8px;border:2px solid var(--bk-role-brand);background:color-mix(in srgb,var(--bk-role-brand) 14%,var(--stage-black));font:800 var(--rc-text-micro)/1.5 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bk-role-brand-text)}
-.scs .fc-live{flex:none;align-self:start;min-width:72px;padding:9px 10px;border:2px solid var(--stage-black);border-radius:0;box-shadow:3px 3px 0 0 var(--stage-black);background:var(--stage-black);color:var(--stage-card);font:900 var(--rc-s-p68rem)/1.5 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
-.scs .fc-live.on{border-color:var(--stage-black);background:var(--p,var(--w));color:var(--stage-black)}
 .scs .fc-master{display:flex;align-items:center;justify-content:space-between;gap:12px;border:3px solid var(--stage-black);border-radius:0;box-shadow:3px 3px 0 0 var(--stage-black);background:var(--stage-panel);padding:14px 16px}
 .scs .fc-master b{font:900 1rem/1.3 var(--font-fancy);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-card)}
 .scs .fc-master p{margin:2px 0 0;font:var(--rc-text-ctl)/1.55 var(--font-ui);color:var(--rc-zinc-400)}
@@ -214,8 +195,6 @@ const ROLECALL = `
 .scs .fc-check:has(input:checked),.scs .fc-entry:has(input:checked),.scs .fc-switch:has(input:checked){border-color:var(--p,var(--w));color:var(--stage-card)}
 .scs .fc-check:has(input:focus-visible),.scs .fc-entry:has(input:focus-visible),.scs .fc-switch:has(input:focus-visible){outline:2px solid var(--p,var(--w));outline-offset:2px}
 .scs .fc-entry em{display:block;margin-top:4px;font:400 var(--rc-s-p72rem)/1.35 var(--font-ui);font-style:normal;text-transform:none;letter-spacing:0;color:var(--rc-zinc-500)}
-.scs .fc-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:2px solid var(--rc-zinc-600);border-radius:0;background:var(--stage-black);color:var(--rc-zinc-500);font:800 var(--rc-s-p62rem)/1.5 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
-.scs .fc-btn:hover{border-color:var(--bk-role-brand);color:var(--bk-role-brand-text)}
 .scs .fc-chip,.scs .fc-tag{padding:2px 6px;border:2px solid var(--stage-black);background:var(--stage-black);font:900 var(--rc-s-p55rem)/1.5 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--rc-zinc-300)}
 .scs .fc-set{border:2px solid var(--rc-zinc-600);background:var(--stage-sunken);box-shadow:4px 4px 0 0 var(--stage-black)}
 .scs .fc-set.open{border-color:var(--bk-role-brand);box-shadow:4px 4px 0 0 var(--bk-role-brand)}
@@ -224,8 +203,6 @@ const ROLECALL = `
 .scs .fc-set .count{flex:none;padding:4px 8px;border:2px solid var(--bk-role-brand);background:color-mix(in srgb,var(--bk-role-brand) 14%,var(--stage-black));font:900 var(--rc-text-micro)/1.5 var(--font-mono);letter-spacing:.08em;color:var(--bk-role-brand)}
 .scs .fc-set .count.full{border-color:var(--stage-ok);background:color-mix(in srgb,var(--stage-ok) 16%,var(--stage-black));color:var(--stage-ok)}
 .scs .fc-set .count.zero{border-color:var(--rc-zinc-600);background:var(--stage-black);color:var(--rc-zinc-600)}
-.scs .fc-tick{flex:none;width:18px;height:18px;margin-top:2px;display:grid;place-items:center;border:2px solid var(--rc-zinc-600);background:var(--stage-black);color:var(--bk-role-brand)}
-.scs .fc-bank.on .fc-tick{border-color:var(--bk-role-brand);background:color-mix(in srgb,var(--bk-role-brand) 18%,var(--stage-black))}
 .scs .fc-bank-body .row b{font:900 var(--rc-s-p7rem)/1.5 var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--rc-zinc-200)}
 .scs .fc-bank-body .why{font:var(--rc-text-wing)/1.45 var(--font-ui);color:var(--rc-zinc-200)}
 .scs .fc-kind{padding:2px 6px;border:2px solid currentColor;font:900 var(--rc-s-p55rem)/1.5 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--rc-zinc-300)}

@@ -69,7 +69,7 @@ describe("TrackHare's pop-out", () => {
 
   test("the popover pops the trace out; the popover then reads the placeholder and Bring back restores it", async () => {
     await mount(stage(trackHareProp.popouts!));
-    await click(host.querySelector(".hare-btn"));
+    await click(host.querySelector("[data-part='props.trackhare.button']"));
     expect(host.querySelector(".hare-pop")!.textContent).toContain("The lighthouse");
     await click(byLabel("Pop out"));
     const floating = panel("trackhare.trace")!;

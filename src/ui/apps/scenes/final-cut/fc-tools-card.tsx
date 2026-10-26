@@ -5,6 +5,7 @@
  * listed (a row with nothing behind it would be a dead control).
  */
 import type { JSX } from "react";
+import { Button } from "../../../components/button";
 import { TOOL_IDS, TOOL_LABELS, TOOL_MAX_TOKENS, type FinalCutTools, type ToolConfig, type ToolId } from "../../../../core/final-cut/pass";
 import { Slider } from "../../../components/slider";
 import { BoothModelPicker } from "../booth-model-picker";
@@ -72,7 +73,7 @@ export function ToolsCard({ tools, models, onChange }: { tools: FinalCutTools | 
                     }} />
                   </label>
                 </div>
-                {(cfg?.connection || hasTemp || hasMax) && <button type="button" className="fc-btn red" onClick={() => onChange(patchTool(tools, id, null))}>Reset to scene defaults</button>}
+                {(cfg?.connection || hasTemp || hasMax) && <Button variant="danger" size="sm" onClick={() => onChange(patchTool(tools, id, null))}>Reset to scene defaults</Button>}
               </div>
             </details>
           );

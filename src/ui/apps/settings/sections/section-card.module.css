@@ -77,39 +77,6 @@
   flex-wrap: wrap;
   align-items: center;
 }
-.btn {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-body);
-  letter-spacing: 0.03em;
-  border: 2px solid var(--edge);
-  background: var(--accent);
-  color: var(--stage-ink); /* dark plum ink on the soft pastel rose (the soft identity: dark text on pastel fills) */
-  box-shadow: 3px 3px 0 0 var(--edge);
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-.btn:disabled {
-  opacity: 0.55;
-  cursor: default;
-}
-.btnGhost {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-body);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: transparent;
-  border: 2px dashed var(--text-faint);
-  padding: 0.42rem 0.7rem;
-  cursor: pointer;
-}
-.btnDanger {
-  border-style: solid;
-  border-color: var(--stage-danger-edge);
-  color: var(--stage-danger-text);
-}
 
 .status {
   display: inline-flex;
@@ -155,27 +122,9 @@
 :global(html[data-surface-settings-shape="program-sections"]) .cardTitle {
   font-weight: 600;
 }
-:global(html[data-surface-settings-shape="program-sections"]) .btn,
-:global(html[data-surface-settings-shape="program-sections"]) .btnGhost {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: var(--text-control);
-}
-:global(html[data-surface-settings-shape="program-sections"]) .btn {
-  background: var(--action-primary);
-  color: var(--action-primary-fg);
-  border-color: var(--control-boundary);
-  box-shadow: none;
-}
-:global(html[data-surface-settings-shape="program-sections"]) .btnGhost,
 :global(html[data-surface-settings-shape="program-sections"]) .chip {
   color: var(--text);
   border-color: var(--control-boundary);
-}
-:global(html[data-surface-settings-shape="program-sections"]) .btnDanger {
-  background: var(--danger);
-  color: var(--danger-fg);
-  border-color: var(--danger);
 }
 :global(html[data-surface-settings-shape="program-sections"]) .statusBad {
   color: var(--danger-fg);

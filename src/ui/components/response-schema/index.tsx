@@ -1,6 +1,7 @@
 /**
  * ResponseSchema - Agnai json ResponseSchema editor (approved wireframe).
  */
+import { Button, IconButton } from "../button";
 import type { JSX } from "react";
 import {
   normalizeSchema,
@@ -51,27 +52,28 @@ export function ResponseSchema({ value, onChange }: ResponseSchemaProps): JSX.El
             placeholder="description"
             onChange={(e) => setField(i, { description: e.target.value })}
           />
-          <button
-            type="button"
-            className={styles.rm}
+          <IconButton
+            variant="quiet"
+            size="sm"
+            icon="lucide:x"
+            label="Remove field"
             onClick={() => commit({ ...s, fields: s.fields.filter((_, j) => j !== i) })}
-          >
-            ×
-          </button>
+          />
         </div>
       ))}
-      <button
-        type="button"
-        className={styles.add}
-        onClick={() =>
-          commit({
-            ...s,
-            fields: [...s.fields, { name: "", type: "string", description: "" }],
-          })
-        }
-      >
-        + field
-      </button>
+      <div className={styles.add}>
+        <Button
+          size="sm"
+          onClick={() =>
+            commit({
+              ...s,
+              fields: [...s.fields, { name: "", type: "string", description: "" }],
+            })
+          }
+        >
+          + Field
+        </Button>
+      </div>
       <div className={styles.grid}>
         <div>
           <span className={styles.lbl}>System prompt</span>

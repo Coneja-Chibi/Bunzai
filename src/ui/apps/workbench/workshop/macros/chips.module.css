@@ -11,22 +11,7 @@
   flex-wrap: wrap;
   gap: 0.3rem;
 }
-.macroChip {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  background: var(--stage-well);
-  border: 1px solid var(--stage-seam);
-  color: var(--stage-macro);
-  padding: 0.18rem 0.4rem;
-  cursor: pointer;
-}
-.macroChip:hover {
-  border-color: var(--stage-macro);
-  color: var(--stage-paper);
-}
+
 .macroPreview {
   font-family: var(--font-mono);
   font-size: var(--text-control);

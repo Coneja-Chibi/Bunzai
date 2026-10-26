@@ -144,54 +144,5 @@
   margin-top: 0.9rem;
 }
 
-.qback {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.4rem 0.7rem;
-  cursor: pointer;
-}
 
-.qback:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.qnext {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 3px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  background: var(--wb-primary, var(--rose-deep)); /* deep action fill keeps its text readable in either theme */
-  color: var(--action-primary-fg, var(--stage-white));
-  padding: 0.45rem 1.1rem;
-  cursor: pointer;
-  margin-left: auto;
-}
-
-.qnext:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-.escapePlan {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
-  border: 0;
-  background: none;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
+.qnav > :nth-child(2) { margin-left: auto; }

@@ -9,6 +9,7 @@ export interface PartHit {
 /** A literal name, a choice between two literals, or a template whose `${...}` pieces (an id the code keys on) are written `<id>` in the page. */
 const ATTRIBUTE = /data-part=(?:"([^"]*)"|\{`([^`]*)`\}|\{[^"'`{}?]+\?\s*"([^"]*)"\s*:\s*"([^"]*)"\})/g;
 const NAME = /^[a-z][a-z0-9-]*(?:\.[a-z][a-z0-9-]*)+(?:\.<id>)*$/;
+const ITEM_KEY = /"data-part":\s*"([^"]*)"/g;
 
 /** Each stable part name in one source file, with the element it sits on (the nearest opening tag before it). */
 export function partsIn(source: string, file: string): PartHit[] {
@@ -19,6 +20,8 @@ export function partsIn(source: string, file: string): PartHit[] {
     const tag = /<([A-Za-z][\w.]*)(?![\s\S]*<[A-Za-z])[\s\S]*$/.exec(before)?.[1] ?? "?";
     for (const part of names) if (NAME.test(part)) hits.push({ part, tag, file });
   }
+  // a part handed to the button family as an item (`items={[{ ..., "data-part": "settings.tab" }]}`) lands on that item's button
+  for (const match of source.matchAll(ITEM_KEY)) if (NAME.test(match[1]!)) hits.push({ part: match[1]!, tag: "item", file });
   return hits;
 }
 

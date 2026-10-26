@@ -94,6 +94,8 @@ function main(): number {
   const checks: Array<readonly [string, string[]]> = [
     ["structural", ["bun", "run", "scripts/hooks/gate.ts", "--staged"]],
     ["colors", ["bun", "run", "scripts/hooks/no-hardcode-colors.ts", "--staged"]],
+    ["style", ["bun", "run", "scripts/hooks/style-guard.ts", "--staged"]],
+    ["clones", ["bun", "run", "scripts/hooks/clones.ts", "--staged"]],
   ];
   if (needsComponentCatalog(paths)) {
     checks.push(["component-catalog", ["bun", "run", "scripts/hooks/component-catalog.ts", "--check"]]);

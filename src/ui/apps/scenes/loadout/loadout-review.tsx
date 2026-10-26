@@ -7,6 +7,7 @@ import { useEffect, useState, type JSX } from "react";
 import { PANEL_META, type LoadoutPanelId } from "../../../../core/loadout-panels";
 import type { LoadoutRecord } from "../../../../studio/loadout-record";
 import type { AppContext } from "../../../app-contract";
+import { Button } from "../../../components/button";
 import { InkDialog } from "../../../components/ink-dialog";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { planLoadout, type Plan } from "./loadout-plan";
@@ -46,8 +47,8 @@ export function LoadoutReview({ ctx, chatId, loadout, applying, onCancel, onAppl
         </ul>
         <p className="ldd-note">Always protected: messages · takes · variables</p>
         <footer>
-          <button type="button" disabled={applying} onClick={onCancel}>Cancel</button>
-          <button type="button" className="pri" disabled={applying || !plan} onClick={onApply}>{applying ? "Applying" : "Apply loadout"}</button>
+          <Button variant="quiet" disabled={applying} onClick={onCancel}>Cancel</Button>
+          <Button variant="primary" disabled={applying || !plan} onClick={onApply}>{applying ? "Applying" : "Apply loadout"}</Button>
         </footer>
       </div>
     </InkDialog>

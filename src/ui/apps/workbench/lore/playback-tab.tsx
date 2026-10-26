@@ -1,6 +1,7 @@
 /**
  * Rehearsal Playback tab: drop/open a chat file, replay runLore with exact marks + near-misses.
  */
+import { InlineValue } from "../../../components/button";
 import { useState, type JSX } from "react";
 import type { LorebookBody } from "../../../../entities/lorebook/schema";
 import { nearMisses, parseChatJsonl, runLore, type LoreFire, type ScanLine } from "../../../../core/lore";
@@ -182,10 +183,8 @@ function PlaybackLine({
         const n = nearByWord.get(lower);
         if (n) {
           return (
-            <button
+            <InlineValue
               key={i}
-              type="button"
-              className={styles.close}
               title={`Close to: ${n.keys.join(", ")}`}
               onClick={() => {
                 const id = n.entryIds[0];
@@ -193,7 +192,7 @@ function PlaybackLine({
               }}
             >
               {part}
-            </button>
+            </InlineValue>
           );
         }
         return <span key={i}>{part}</span>;

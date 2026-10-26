@@ -56,7 +56,7 @@ async function mountList(saved: Record<string, unknown> = {}, pick: string | nul
 const unmount = (): void => { act(() => root.unmount()); host.remove(); };
 const $ = <T extends HTMLElement = HTMLElement>(sel: string): T | null => host.querySelector<T>(sel);
 const rows = (): string[] => [...host.querySelectorAll(".pi .pn span")].map((e) => e.textContent ?? "");
-const heads = (): string[] => [...host.querySelectorAll(".cat .cn")].map((e) => e.textContent ?? "");
+const heads = (): string[] => [...host.querySelectorAll(".cat [data-part='scene.preset.category']")].map((e) => e.textContent ?? "");
 const pointer = (target: Element, type: string, clientX: number, clientY = 0): void => act(() => { target.dispatchEvent(new dom.window.MouseEvent(type, { bubbles: true, clientX, clientY })); });
 const sideW = (): string => $<HTMLElement>(".side")!.style.getPropertyValue("--side-w");
 
@@ -65,9 +65,9 @@ describe("the prompt list", () => {
     await mountList();
     expect(heads()).toEqual(["Uncategorized", "Style"]);
     expect(rows()).toEqual([]);
-    act(() => host.querySelectorAll<HTMLButtonElement>(".cat-t")[1]!.click());
+    act(() => host.querySelectorAll<HTMLButtonElement>("[data-part='scene.preset.category']")[1]!.click());
     expect(rows().map((r) => r.trim())).toEqual(["Prompt a", "Pacing"]);
-    act(() => host.querySelectorAll<HTMLButtonElement>(".cat-t")[1]!.click());
+    act(() => host.querySelectorAll<HTMLButtonElement>("[data-part='scene.preset.category']")[1]!.click());
     expect(rows()).toEqual([]);
     unmount();
   });
@@ -76,15 +76,15 @@ describe("the prompt list", () => {
     await mountList();
     const scroller = $(".side-list")!;
     expect(scroller.querySelector(".tpl")).not.toBeNull();
-    expect($(".side-clr")).toBeNull();
+    expect($("[aria-label='Clear search']")).toBeNull();
     const input = $<HTMLInputElement>("input[aria-label='Search prompts']")!;
     const key = Object.keys(input).find((k) => k.startsWith("__reactProps$"))!;
     act(() => (input as unknown as Record<string, { onChange(e: unknown): void }>)[key]!.onChange({ target: { value: "pacing" } }));
     expect(rows().map((r) => r.trim())).toEqual(["Pacing"]);
     expect(scroller.querySelector(".tpl")!.getAttribute("data-q")).toBe("pacing");
-    act(() => $<HTMLButtonElement>(".side-clr")!.click());
+    act(() => $<HTMLButtonElement>("[aria-label='Clear search']")!.click());
     expect(rows()).toEqual([]);
-    expect($(".side-clr")).toBeNull();
+    expect($("[aria-label='Clear search']")).toBeNull();
     unmount();
   });
 });
@@ -142,17 +142,17 @@ describe("the list's grip", () => {
 describe("folding the list to a rail", () => {
   test("the fold button shows only while a prompt is open; folding leaves a rail of prompt icons and no grip, and the expand button brings the list back", async () => {
     const m = await mountList();
-    expect($(".side-co")).toBeNull();
+    expect($("[aria-label='Collapse sidebar']")).toBeNull();
     m.select("a");
-    act(() => $<HTMLButtonElement>(".side-co")!.click());
+    act(() => $<HTMLButtonElement>("[aria-label='Collapse sidebar']")!.click());
     expect($(".side")!.classList.contains("rail")).toBe(true);
     expect($(".grip")).toBeNull();
     expect($(".side-list")).toBeNull();
-    expect([...host.querySelectorAll(".rail-i")].map((b) => b.getAttribute("aria-label"))).toEqual(["Prompt loose", "Prompt a", "Pacing"]);
-    expect($(".rail-i.sel")!.getAttribute("aria-label")).toBe("Prompt a");
-    act(() => $<HTMLButtonElement>(".rail-i[aria-label='Pacing']")!.click());
-    expect($(".rail-i.sel")!.getAttribute("aria-label")).toBe("Pacing");
-    act(() => $<HTMLButtonElement>(".side-ex")!.click());
+    expect([...host.querySelectorAll(".side-rail [data-control='tile']")].map((b) => b.getAttribute("aria-label"))).toEqual(["Prompt loose", "Prompt a", "Pacing"]);
+    expect($(".side-rail [data-control='tile'][data-selected]")!.getAttribute("aria-label")).toBe("Prompt a");
+    act(() => $<HTMLButtonElement>(".side-rail [data-control='tile'][aria-label='Pacing']")!.click());
+    expect($(".side-rail [data-control='tile'][data-selected]")!.getAttribute("aria-label")).toBe("Pacing");
+    act(() => $<HTMLButtonElement>("[aria-label='Expand sidebar']")!.click());
     expect($(".side")!.classList.contains("rail")).toBe(false);
     expect($(".grip.col")).not.toBeNull();
     unmount();
@@ -160,7 +160,7 @@ describe("folding the list to a rail", () => {
 
   test("closing the open prompt while folded gives the list back rather than an empty rail", async () => {
     const m = await mountList({}, "a");
-    act(() => $<HTMLButtonElement>(".side-co")!.click());
+    act(() => $<HTMLButtonElement>("[aria-label='Collapse sidebar']")!.click());
     m.select(null);
     expect($(".side")!.classList.contains("rail")).toBe(false);
     expect($(".side-list")).not.toBeNull();

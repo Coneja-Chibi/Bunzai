@@ -3,6 +3,7 @@
  * link ports (outgoing for characters, personas and presets; "Linked by" for what they point at).
  * A referenced piece that is not open renders faded, with a Bring up action.
  */
+import { Button, Dot } from "../../../components/button";
 import type { JSX, PointerEvent } from "react";
 import type { CSSProperties } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
@@ -61,7 +62,7 @@ export function PieceNode(p: PieceNodeProps): JSX.Element {
       <div className={css.meta}>
         <span>{metaOf(node)}</span>
         {node.ghost && node.summary && (
-          <button type="button" className={css.bring} onPointerDown={(e) => e.stopPropagation()} onClick={p.onBringUp}>Bring up</button>
+          <Button size="sm" onPointerDown={(e) => e.stopPropagation()} onClick={p.onBringUp}>Bring up</Button>
         )}
       </div>
       {portsOf(node.kind).map((port) => {
@@ -70,10 +71,10 @@ export function PieceNode(p: PieceNodeProps): JSX.Element {
           <div key={port.field} className={`${css.port} ${count ? css.full : ""}`} style={{ "--pc": deckMeta(port.to).accent } as CSSProperties}>
             <span>{port.label}</span>
             <small>{count}</small>
-            <button
-              type="button"
-              className={css.dot}
-              aria-label={`Link ${port.label} from ${node.name}`}
+            <Dot
+              kind="port"
+              color={deckMeta(port.to).accent}
+              label={`Link ${port.label} from ${node.name}`}
               disabled={locked}
               title={p.dirty ? dirtyTitle(node.name) : p.readOnly ? "Linking needs a wider window" : `Drag onto a ${deckMeta(port.to).singular.toLowerCase()} to link it`}
               onPointerDown={(e) => { e.stopPropagation(); p.onPortDown(e, port.field); }}

@@ -1,6 +1,7 @@
 /**
  * Card variables pane (mirrors Test Bench board; writes defaultVariables).
  */
+import { Button, IconButton } from "../../../components/button";
 import type { JSX } from "react";
 import { EMPTY_VARS_MESSAGE } from "./board";
 import { WorkshopEhead } from "./ehead";
@@ -39,22 +40,10 @@ export function WorkshopVariablesPane({ vars, onChange }: WorkshopVariablesPaneP
             placeholder="value"
             onChange={(e) => onChange(setAt(vars, i, { ...v, value: e.target.value }))}
           />
-          <button
-            type="button"
-            className={styles.rm}
-            onClick={() => onChange(vars.filter((_, j) => j !== i))}
-          >
-            &times;
-          </button>
+          <IconButton label="Remove variable" variant="danger" size="sm" icon="lucide:x" onClick={() => onChange(vars.filter((_, j) => j !== i))} />
         </div>
       ))}
-      <button
-        type="button"
-        className={styles.add}
-        onClick={() => onChange([...vars, { name: "", value: "" }])}
-      >
-        + add variable
-      </button>
+      <Button size="sm" onClick={() => onChange([...vars, { name: "", value: "" }])}>+ Add variable</Button>
     </>
   );
 }

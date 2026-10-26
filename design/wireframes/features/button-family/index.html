@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button Family</title>
+<link rel="stylesheet" href="../../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="../../house.css">
+<style>
+/* The one button family, WIREFRAME ONLY. Colors are app tokens. Replaces the ~1,400 room-made buttons. */
+body { padding: 24px 16px; background: var(--premiere-hard); }
+.page { max-width: 84rem; }
+.seg-wf { display: inline-flex; border: 1px solid var(--stage-line); }
+.seg-wf button { font: 700 11px/1 var(--font-big); letter-spacing: .14em; text-transform: uppercase; padding: 9px 12px; color: var(--stage-soft); background: none; border: 0; cursor: pointer; }
+.seg-wf button[aria-pressed="true"] { color: var(--stage-card); background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 0 -2px 0 var(--accent); }
+
+.stage { position: relative; isolation: isolate; overflow: hidden; border: 1px solid var(--stage-line); background: var(--premiere-hard); color: var(--premiere-text); font-family: var(--font-body); padding: 36px 32px 40px; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; mix-blend-mode: screen; }
+.kicker { color: var(--premiere-gold); font: 500 .625rem var(--font-mono); letter-spacing: .22em; text-transform: uppercase; }
+.stage h2 { font: 700 30px/1.1 var(--font-fancy); margin: 8px 0 26px; }
+.grid { display: grid; grid-template-columns: 190px 1fr 1fr; gap: 0; }
+.grid > div { padding: 18px 16px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.grid > .h { font: 500 .625rem var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--premiere-gold); padding-block: 8px; }
+.grid > .name { display: block; }
+.grid > .name b { display: block; font-size: 15px; }
+.grid > .name span { font-size: 12px; color: var(--rc-zinc-300); }
+.panelbg { background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 86%, transparent); }
+
+/* ---------- The family ---------- */
+.bk-btn { --sx: 4px; --sy: 4px; --sh: var(--premiere-hard); display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 18px; font: 700 14px var(--font-body); letter-spacing: .01em; cursor: pointer;
+  color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); border: 2px solid color-mix(in srgb, var(--premiere-text) 55%, transparent);
+  box-shadow: var(--sx) var(--sy) 0 0 var(--sh); transition: transform .15s ease, box-shadow .15s ease, background .15s ease; }
+.bk-btn:hover { transform: translateY(-2px); box-shadow: var(--sx) calc(var(--sy) + 2px) 0 0 var(--sh); }
+.bk-btn:active { transform: translateY(1px); box-shadow: 1px 1px 0 0 var(--sh); }
+.bk-btn:focus-visible { outline: 3px solid var(--premiere-text); outline-offset: 4px; }
+.bk-btn.primary { background: var(--premiere-rose); border-color: var(--premiere-rose); color: var(--premiere-text); --sh: color-mix(in srgb, var(--deck-character) 85%, black); }
+.bk-btn.secondary { --sh: var(--premiere-hard); }
+.bk-btn.quiet { background: transparent; border-color: transparent; box-shadow: none; padding: 0 10px; color: var(--rc-zinc-300); }
+.bk-btn.quiet:hover { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-text) 8%, transparent); transform: none; }
+.bk-btn.danger { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.bk-btn.sm { min-height: 32px; padding: 0 12px; font-size: 13px; --sx: 3px; --sy: 3px; }
+.bk-btn:disabled { cursor: not-allowed; opacity: .45; transform: none; box-shadow: none; }
+.bk-icon { width: 40px; padding: 0; justify-content: center; }
+.bk-icon.sm { width: 32px; }
+.bk-icon svg { width: 18px; height: 18px; flex: none; }
+
+.bk-seg { display: inline-flex; border: 2px solid color-mix(in srgb, var(--premiere-text) 35%, transparent); box-shadow: 3px 3px 0 0 var(--premiere-hard); background: color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-hard)); }
+.bk-seg button { font: 600 13px var(--font-body); padding: 8px 14px; color: var(--rc-zinc-300); background: none; border: 0; cursor: pointer; }
+.bk-seg button + button { border-left: 1px solid color-mix(in srgb, var(--premiere-text) 15%, transparent); }
+.bk-seg button[aria-pressed="true"] { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-rose) 26%, transparent); box-shadow: inset 0 -3px 0 var(--premiere-rose); }
+.bk-tabs { display: flex; gap: 22px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.bk-tabs button { font: 600 14px var(--font-body); padding: 10px 0; color: var(--rc-zinc-300); background: none; border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px; cursor: pointer; }
+.bk-tabs button[aria-selected="true"] { color: var(--premiere-text); border-bottom-color: var(--premiere-rose); }
+.bk-chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 11px; font: 600 12px var(--font-body); color: var(--rc-zinc-300); background: transparent; border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); cursor: pointer; }
+.bk-chip i { width: 8px; height: 8px; display: inline-block; }
+.bk-chip[aria-pressed="true"] { color: var(--premiere-text); border-color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.bk-row { all: unset; display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; cursor: pointer; box-sizing: border-box; font: 500 14px var(--font-body); color: var(--premiere-text); }
+.bk-row:hover { background: color-mix(in srgb, var(--premiere-text) 6%, transparent); }
+.bk-row:focus-visible { outline: 2px solid var(--premiere-text); outline-offset: -2px; }
+.rowdemo { width: 100%; border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.rowdemo .bk-row span { font-size: 13px; color: var(--rc-zinc-300); }
+.av { width: 28px; height: 28px; display: grid; place-items: center; background: var(--deck-character); color: var(--premiere-hard) !important; font: 800 12px var(--font-body); }
+
+/* Label case switch (sheet control) */
+[data-case="caps"] .bk-btn:not(.bk-icon), [data-case="caps"] .bk-seg button, [data-case="caps"] .bk-tabs button, [data-case="caps"] .bk-chip { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; }
+
+/* ---------- Section 2: the types that replace RowButton ---------- */
+.stage2 { margin-top: 0; }
+.ex { display: flex; flex-direction: column; gap: 0; width: 100%; }
+.ex.box { border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.ex.row { flex-direction: row; flex-wrap: wrap; gap: 12px; align-items: center; }
+.cap { font: 500 .625rem var(--font-mono); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); margin: 10px 0 6px; }
+
+.lr { all: unset; box-sizing: border-box; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; width: 100%; padding: 9px 12px; cursor: pointer; font: 500 14px var(--font-body); color: var(--premiere-text); border-left: 3px solid transparent; }
+.lr + .lr { border-top: 1px solid color-mix(in srgb, var(--premiere-text) 8%, transparent); }
+.lr:hover { background: color-mix(in srgb, var(--premiere-text) 6%, transparent); }
+.lr[aria-selected="true"], .lr[aria-pressed="true"], .lr[aria-current="true"] { background: color-mix(in srgb, var(--accent) 14%, transparent); border-left-color: var(--accent); }
+.lr .lead { width: 30px; height: 30px; display: grid; place-items: center; font: 800 12px var(--font-body); color: var(--premiere-hard); }
+.lr .lead.ic { background: none; color: var(--rc-zinc-300); border: 1px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); }
+.lr .tx { display: flex; flex-direction: column; min-width: 0; }
+.lr .tx small { font-size: 12px; color: var(--rc-zinc-300); font-weight: 400; }
+.lr .meta { font: 600 12px var(--font-body); color: var(--rc-zinc-300); display: flex; align-items: center; gap: 8px; }
+.lr .count { min-width: 24px; text-align: center; padding: 2px 6px; border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); font-size: 11px; }
+.lr .tick { width: 16px; height: 16px; border: 2px solid var(--rc-zinc-400); display: grid; place-items: center; font-size: 11px; }
+.lr[aria-selected="true"] .tick { border-color: var(--premiere-text); }
+.lr.d1 { padding-left: 30px; } .lr.d2 { padding-left: 48px; }
+
+.mi-pop { width: 260px; background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); box-shadow: 4px 4px 0 0 var(--premiere-hard); padding: 4px 0; }
+.mi { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 20px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 8px 12px; cursor: pointer; font: 500 13px var(--font-body); color: var(--premiere-text); }
+.mi:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.mi small { color: var(--rc-zinc-300); font-size: 11px; }
+.mi.danger { color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.mi[aria-checked="true"] { background: color-mix(in srgb, var(--premiere-text) 8%, transparent); }
+.mi .ck { visibility: hidden; } .mi[aria-checked="true"] .ck { visibility: visible; }
+.mi-sep { height: 1px; margin: 4px 0; background: color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+
+.dc { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 16px 1fr auto; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; cursor: pointer; font: 700 14px var(--font-body); color: var(--premiere-text); }
+.dc:hover { background: color-mix(in srgb, var(--premiere-text) 5%, transparent); }
+.dc .chev { transition: transform .15s ease; color: var(--rc-zinc-300); }
+.dc[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.dc small { font: 500 12px var(--font-body); color: var(--rc-zinc-300); }
+.dc.line { font-weight: 500; font-size: 13px; color: var(--rc-zinc-300); padding: 6px 0; grid-template-columns: 14px 1fr; }
+.dc-body { padding: 4px 12px 12px 38px; font-size: 13px; color: var(--rc-zinc-300); }
+
+.tl { all: unset; box-sizing: border-box; display: grid; place-items: center; cursor: pointer; color: var(--rc-zinc-300); border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); background: color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-hard)); }
+.tl:hover { color: var(--premiere-text); border-color: color-mix(in srgb, var(--premiere-text) 50%, transparent); }
+.tl[aria-pressed="true"] { border-color: var(--accent); color: var(--premiere-text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.tl.icon { width: 40px; height: 40px; }
+.tl.swatch { width: 32px; height: 32px; border-width: 1px; }
+.tl.thumb { width: 64px; height: 64px; padding: 0; overflow: hidden; }
+.tl.thumb i { width: 100%; height: 100%; display: block; background: linear-gradient(160deg, var(--premiere-violet), var(--premiere-rose)); }
+.tl.app { width: 76px; height: 64px; display: flex; flex-direction: column; gap: 6px; font: 600 11px var(--font-body); }
+.tl.add { width: 64px; height: 64px; border-style: dashed; font: 700 22px var(--font-body); }
+
+.cd { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; text-align: left; color: var(--premiere-text); }
+.cd.choice { width: 220px; padding: 14px; gap: 6px; border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); background: color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-hard)); box-shadow: 4px 4px 0 0 var(--premiere-hard); }
+.cd.choice b { font: 700 15px var(--font-body); }
+.cd.choice span { font-size: 13px; color: var(--rc-zinc-300); }
+.cd.choice[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--premiere-hard)); box-shadow: 4px 4px 0 0 var(--deck-character); }
+.cd.choice .pk { align-self: flex-start; font: 600 10px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); visibility: hidden; }
+.cd.choice[aria-pressed="true"] .pk { visibility: visible; }
+.cd.art { width: 150px; gap: 8px; }
+.cd.art .face { aspect-ratio: 3/4; background: linear-gradient(170deg, color-mix(in srgb, var(--premiere-violet) 60%, black), color-mix(in srgb, var(--premiere-rose) 50%, black)); border: 2px solid var(--premiere-hard); box-shadow: 4px 4px 0 0 var(--premiere-hard); transition: transform .2s ease; }
+.cd.art:hover .face { transform: translateY(-3px); }
+.cd.art b { font: 700 14px var(--font-body); } .cd.art small { font-size: 12px; color: var(--rc-zinc-300); }
+.cd.entry { width: 180px; aspect-ratio: 2/3; justify-content: flex-end; padding: 16px; border: 2px solid color-mix(in srgb, var(--premiere-gold) 60%, transparent); background: linear-gradient(to top, var(--premiere-hard), transparent), linear-gradient(160deg, color-mix(in srgb, var(--premiere-rose) 40%, black), color-mix(in srgb, var(--premiere-violet) 40%, black)); box-shadow: 5px 5px 0 0 var(--premiere-hard); }
+.cd.entry .k { font: 500 .6rem var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--premiere-gold); }
+.cd.entry b { font: 700 20px var(--font-fancy); }
+.cd.drop { width: 220px; height: 130px; display: grid; place-items: center; text-align: center; border: 2px dashed color-mix(in srgb, var(--premiere-text) 35%, transparent); color: var(--rc-zinc-300); font-size: 13px; }
+.cd.drop.over { border-color: var(--accent); color: var(--premiere-text); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+.dt { all: unset; box-sizing: border-box; cursor: pointer; width: 10px; height: 10px; background: color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.dt[aria-current="true"] { background: var(--accent); }
+.dt.port { width: 12px; height: 12px; border: 2px solid var(--deck-lorebook); background: var(--premiere-hard); }
+.dt.handle { width: 14px; height: 14px; border: 2px solid var(--premiere-text); background: var(--premiere-hard); cursor: nwse-resize; }
+
+.iv { all: unset; cursor: text; border-bottom: 1px dashed color-mix(in srgb, var(--premiere-text) 40%, transparent); font: inherit; color: var(--premiere-text); }
+.iv:hover { border-bottom-color: var(--accent); }
+
+.tg { all: unset; box-sizing: border-box; cursor: pointer; width: 44px; height: 24px; padding: 2px; border: 2px solid color-mix(in srgb, var(--premiere-text) 35%, transparent); background: var(--premiere-hard); display: flex; }
+.tg i { width: 16px; height: 16px; background: var(--rc-zinc-400); transition: transform .15s ease; }
+.tg[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 30%, var(--premiere-hard)); }
+.tg[aria-checked="true"] i { transform: translateX(20px); background: var(--premiere-text); }
+
+.scrim-demo { position: relative; width: 260px; height: 120px; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); overflow: hidden; }
+.scrim-demo .sc { all: unset; position: absolute; inset: 0; cursor: pointer; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); display: grid; place-items: center; color: var(--rc-zinc-300); font-size: 12px; }
+.scrim-demo .panel { position: absolute; right: 0; top: 0; bottom: 0; width: 120px; background: color-mix(in srgb, var(--premiere-violet) 10%, var(--premiere-hard)); border-left: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+
+/* extensions to section 1 parts */
+.bk-btn.link { background: none; border-color: transparent; box-shadow: none; padding: 0; min-height: 0; color: var(--premiere-text); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--accent) 70%, transparent); }
+.bk-btn.link:hover { transform: none; box-shadow: none; text-decoration-color: var(--accent); }
+.bk-btn .chv { margin-left: 2px; opacity: .8; }
+.bk-btn.fab { width: 52px; height: 52px; padding: 0; justify-content: center; }
+.vtabs { display: flex; flex-direction: column; gap: 4px; border-left: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.vtabs button { all: unset; cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; color: var(--rc-zinc-300); margin-left: -1px; border-left: 3px solid transparent; }
+.vtabs button[aria-selected="true"] { color: var(--premiere-text); border-left-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.doctabs { display: flex; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.doctabs .dtab { display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 12px; font: 600 13px var(--font-body); color: var(--rc-zinc-300); border-right: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); border-top: 3px solid transparent; cursor: pointer; }
+.doctabs .dtab[aria-selected="true"] { color: var(--premiere-text); border-top-color: var(--deck-preset); background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); }
+.doctabs .dtab small { font: 500 10px var(--font-mono); color: var(--rc-zinc-400); }
+.doctabs .x { opacity: .6; } .doctabs .x:hover { opacity: 1; }
+.bk-chip .n { font-size: 11px; padding: 0 5px; margin-left: 2px; border-left: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+
+/* ---------- What goes away ---------- */
+.gone { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; padding: 18px; border: 1px dashed var(--stage-line); background: var(--stage-black); }
+.gone b { font: 700 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; padding: 8px 12px; }
+.g1 { border: 2px solid var(--stage-soft); color: var(--stage-card); }
+.g2 { background: color-mix(in srgb, var(--premiere-rose) 40%, white); color: var(--premiere-hard); font-family: var(--font-mono) !important; text-transform: none !important; letter-spacing: 0 !important; font-size: 14px !important; }
+.g3 { background: var(--deck-preset); color: var(--premiere-hard); filter: saturate(2.4) brightness(.75); text-transform: none !important; letter-spacing: 0 !important; }
+.g4 { background: var(--premiere-violet); color: var(--premiere-hard); }
+.g5 { border: 2px solid var(--premiere-text); color: var(--premiere-text); }
+.g6 { background: var(--premiere-rose); color: var(--premiere-text); }
+.g7 { border: 1px dashed var(--premiere-rose); color: var(--premiere-rose); }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="wf-head">
+    <div>
+      <div class="wf-title">One button family</div>
+      <p class="wf-lede">Five parts replace every room-made button (about 1,400 today). Built on the Premiere look: the stamp's hard
+        offset shadow and lift, the rose from the title screen, the bold label from the chat layout chooser. Hover and click them.</p>
+    </div>
+    <div class="seg-wf" role="group" aria-label="Label case">
+      <button type="button" data-case="sentence" aria-pressed="true">Sentence case</button>
+      <button type="button" data-case="caps" aria-pressed="false">All caps</button>
+    </div>
+  </header>
+
+  <section class="stage" id="stage" data-case="sentence">
+    <canvas id="rays"></canvas>
+    <div class="kicker">Bunraku · The house buttons</div>
+    <h2>One family, every room</h2>
+    <div class="grid">
+      <div class="h">Part</div><div class="h">On the stage</div><div class="h panelbg">On a panel</div>
+
+      <div class="name"><b>Button</b><span>Every action. Primary is one per view, the main thing to do.</span></div>
+      <div><button class="bk-btn primary">Use Full Chat</button><button class="bk-btn secondary">Preview</button><button class="bk-btn quiet">Cancel</button><button class="bk-btn danger">Delete</button></div>
+      <div class="panelbg"><button class="bk-btn primary sm">Save</button><button class="bk-btn secondary sm">Duplicate</button><button class="bk-btn quiet sm">Skip</button><button class="bk-btn secondary sm" disabled>Disabled</button></div>
+
+      <div class="name"><b>IconButton</b><span>Icon only, always with a label for screen readers and a tooltip.</span></div>
+      <div><button class="bk-btn secondary bk-icon" aria-label="Expand"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button><button class="bk-btn quiet bk-icon" aria-label="Close"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button><button class="bk-btn primary bk-icon" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4z"/></svg></button></div>
+      <div class="panelbg"><button class="bk-btn secondary bk-icon sm" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button><button class="bk-btn secondary bk-icon sm" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button><button class="bk-btn quiet bk-icon sm" aria-label="More"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div>
+
+      <div class="name"><b>Segmented</b><span>Pick one (or several) of a few. Replaces Desk / Nodes, Write for, mode switches.</span></div>
+      <div><div class="bk-seg" data-group><button aria-pressed="true">Desk</button><button aria-pressed="false">Nodes</button></div><div class="bk-seg" data-group><button aria-pressed="true">Bunraku</button><button aria-pressed="false">SillyTavern</button><button aria-pressed="false">RoleCall</button><button aria-pressed="false">Risu</button></div></div>
+      <div class="panelbg"><div class="bk-seg" data-group><button aria-pressed="false">Guided</button><button aria-pressed="false">Plain words</button><button aria-pressed="true">Pattern</button></div></div>
+
+      <div class="name"><b>Tabs</b><span>Sections of one room. Replaces the boxed Settings tabs.</span></div>
+      <div style="display:block"><div class="bk-tabs" data-tabs><button aria-selected="true">Appearance</button><button aria-selected="false">Models</button><button aria-selected="false">Connections</button><button aria-selected="false">Security</button><button aria-selected="false">Backups</button></div></div>
+      <div class="panelbg" style="display:block"><div class="bk-tabs" data-tabs><button aria-selected="false">All prompts</button><button aria-selected="true">Relative</button><button aria-selected="false">In-chat</button></div></div>
+
+      <div class="name"><b>Chip</b><span>Small on/off filters and layer toggles, with an optional kind color.</span></div>
+      <div><button class="bk-chip" aria-pressed="true"><i style="background:var(--deck-character)"></i>Links</button><button class="bk-chip" aria-pressed="false"><i style="background:var(--deck-preset)"></i>Pipeline</button><button class="bk-chip" aria-pressed="true"><i style="background:var(--premiere-gold)"></i>Board</button><button class="bk-chip" aria-pressed="false">Has art</button></div>
+      <div class="panelbg"><button class="bk-chip" aria-pressed="false">Model output</button><button class="bk-chip" aria-pressed="true">Display</button><button class="bk-chip" aria-pressed="false">Prompt</button></div>
+
+      <div class="name"><b>Additions</b><span>Looks the first five were missing (found in the inventory).</span></div>
+      <div><button class="bk-btn link">Open the full editor</button><button class="bk-btn secondary sm">Prompt order<span class="chv">▾</span></button><button class="bk-btn primary fab" aria-label="Story Director"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 3-1.9 5.8L4 10l6.1 1.2L12 17l1.9-5.8L20 10l-6.1-1.2Z"/></svg></button><button class="bk-chip" aria-pressed="true">Keys<span class="n">12</span></button></div>
+      <div class="panelbg" style="gap:22px"><div class="vtabs" data-tabs><button aria-selected="true" aria-label="Chats">▭</button><button aria-selected="false" aria-label="Lore">▤</button><button aria-selected="false" aria-label="Settings">✦</button></div>
+        <div class="doctabs" data-tabs><span class="dtab" aria-selected="true">Test preset <small>SET</small><span class="x">×</span></span><span class="dtab" aria-selected="false">Vera <small>CHAR</small><span class="x">×</span></span></div></div>
+    </div>
+  </section>
+
+  <section class="stage stage2" id="stage2" data-case="sentence">
+    <div class="kicker">Bunraku · Every other clickable thing</div>
+    <h2>Rows, menus, tiles and cards</h2>
+    <div class="grid">
+      <div class="h">Type</div><div class="h">Examples from the app</div><div class="h panelbg">More</div>
+
+      <div class="name"><b>ListRow</b><span>A full-width row in a list, rail or picker. 68 today. Variants: plain, option (tick), tree (indent), nav, toggle, picker.</span></div>
+      <div style="display:block"><div class="ex box" data-sel>
+        <button class="lr" aria-selected="true"><span class="lead" style="background:var(--deck-character)">C</span><span class="tx">Characters<small>Your cast</small></span><span class="meta"><span class="count">4</span></span></button>
+        <button class="lr" aria-selected="false"><span class="lead" style="background:var(--deck-lorebook)">L</span><span class="tx">Lorebooks<small>World knowledge</small></span><span class="meta"><span class="count">1</span></span></button>
+        <button class="lr" aria-selected="false"><span class="lead" style="background:var(--deck-preset)">P</span><span class="tx">Presets<small>Prompts and samplers</small></span><span class="meta"><span class="count">2</span></span></button>
+      </div></div>
+      <div class="panelbg" style="display:block"><div class="ex box" data-sel>
+        <button class="lr" aria-selected="true"><span class="tick">✓</span><span class="tx">Narrator bank<small>Prose and pacing passes</small></span><span class="meta">option</span></button>
+        <button class="lr d1" aria-selected="false"><span class="lead ic">▸</span><span class="tx">Canal District<small>3 entries</small></span><span class="meta">tree</span></button>
+        <button class="lr" aria-selected="false"><span class="lead" style="background:var(--deck-persona)">G</span><span class="tx">GPT-5 mini<small>OpenRouter · 128k</small></span><span class="meta">picker ›</span></button>
+      </div></div>
+
+      <div class="name"><b>MenuItem</b><span>A row inside a popup menu. 36 today. Icon, label, shortcut hint, danger, checked.</span></div>
+      <div><div class="mi-pop" role="menu">
+        <button class="mi" role="menuitem"><span>✎</span>Edit<small>E</small></button>
+        <button class="mi" role="menuitem"><span>⧉</span>Copy text<small>C</small></button>
+        <button class="mi" role="menuitem"><span>↻</span>Regenerate<small>R</small></button>
+        <div class="mi-sep"></div>
+        <button class="mi danger" role="menuitem"><span>✕</span>Delete message<small></small></button>
+      </div></div>
+      <div class="panelbg"><div class="mi-pop" role="listbox" data-check>
+        <button class="mi" role="menuitemradio" aria-checked="true"><span class="ck">✓</span>Newest first<small></small></button>
+        <button class="mi" role="menuitemradio" aria-checked="false"><span class="ck">✓</span>Oldest first<small></small></button>
+        <button class="mi" role="menuitemradio" aria-checked="false"><span class="ck">✓</span>Longest stories<small></small></button>
+      </div></div>
+
+      <div class="name"><b>Disclosure</b><span>A header that opens and closes a section. 36 today, one chevron everywhere. Variants: section, line, tree.</span></div>
+      <div style="display:block"><div class="ex box">
+        <button class="dc" aria-expanded="true" data-fold><span class="chev">›</span><span>Arc 2 · The flooded archive</span><small>3 beats · active</small></button>
+        <div class="dc-body">Vera learns the canal maps were forged.</div>
+        <button class="dc" aria-expanded="false" data-fold><span class="chev">›</span><span>Sampling</span><small>temp 0.9 · top p 0.95</small></button>
+      </div></div>
+      <div class="panelbg" style="display:block"><button class="dc line" aria-expanded="false" data-fold><span class="chev">›</span><span>Show the rehearsal</span></button></div>
+
+      <div class="name"><b>Tile</b><span>A small square target. 33 today. Variants: icon (rails), swatch, thumb (art), app, add.</span></div>
+      <div><div class="ex row" data-sel>
+        <button class="tl icon" aria-pressed="true" aria-label="Booth">ϟ</button><button class="tl icon" aria-pressed="false" aria-label="Cast">◐</button>
+        <button class="tl swatch" aria-pressed="false" aria-label="Rose" style="background:var(--premiere-rose)"></button><button class="tl swatch" aria-pressed="true" aria-label="Violet" style="background:var(--premiere-violet)"></button><button class="tl swatch" aria-pressed="false" aria-label="Gold" style="background:var(--premiere-gold)"></button>
+        <button class="tl thumb" aria-pressed="false" aria-label="Vera portrait"><i></i></button>
+      </div></div>
+      <div class="panelbg"><div class="ex row"><button class="tl app">✎<span>Workbench</span></button><button class="tl app">▥<span>Library</span></button><button class="tl add" aria-label="Add a sprite">+</button></div></div>
+
+      <div class="name"><b>Card</b><span>A larger surface with its own face. 32 today. Variants: choice (pick one, "Picked" mark), art (scenes, pieces), entry (title screen, Library doors), drop (click or drop a file).</span></div>
+      <div><div class="ex row" data-sel>
+        <button class="cd choice" aria-pressed="true"><span class="pk">Picked</span><b>Full Chat</b><span>The conversation with your tools close at hand.</span></button>
+        <button class="cd choice" aria-pressed="false"><span class="pk">Picked</span><b>Messenger</b><span>A familiar place to catch up.</span></button>
+      </div></div>
+      <div class="panelbg"><div class="ex row">
+        <button class="cd art"><span class="face"></span><b>The flooded archive</b><small>Vera · 2 days ago</small></button>
+        <button class="cd entry"><span class="k">Your collection</span><b>Characters</b></button>
+        <button class="cd drop" id="drop">Drop art here, or click to choose</button>
+      </div></div>
+
+      <div class="name"><b>Dot</b><span>A tiny mark with a spoken label. 6 today. Variants: pager, port (canvas link), handle (crop).</span></div>
+      <div><div class="ex row" data-cur><button class="dt" aria-current="false" aria-label="Version 1"></button><button class="dt" aria-current="true" aria-label="Version 2"></button><button class="dt" aria-current="false" aria-label="Version 3"></button><button class="dt" aria-current="false" aria-label="Version 4"></button></div></div>
+      <div class="panelbg"><div class="ex row"><button class="dt port" aria-label="Link a lorebook"></button><span style="font-size:12px;color:var(--rc-zinc-300)">port</span><button class="dt handle" aria-label="Resize the crop"></button><span style="font-size:12px;color:var(--rc-zinc-300)">handle</span></div></div>
+
+      <div class="name"><b>InlineValue</b><span>A value inside text that becomes an input on click. 6 today.</span></div>
+      <div><span style="font-size:14px">Temperature <button class="iv" title="Click to type a value">0.9</button> · max tokens <button class="iv" title="Click to type a value">800</button></span></div>
+      <div class="panelbg"><span style="font-size:13px;color:var(--rc-zinc-300)">The value keeps the text's own font; a dashed underline says it can be edited.</span></div>
+
+      <div class="name"><b>Toggle</b><span>The on/off switch (today's ToggleSwitch joins the family).</span></div>
+      <div><div class="ex row"><button class="tg" role="switch" aria-checked="true" aria-label="Main prompt on"><i></i></button><button class="tg" role="switch" aria-checked="false" aria-label="Extra rules on"><i></i></button></div></div>
+      <div class="panelbg"><span style="font-size:13px;color:var(--rc-zinc-300)">Square, from tokens: no more mint pills.</span></div>
+
+      <div class="name"><b>Scrim</b><span>The click-away layer behind a wing or menu. 3 today. Tap to close.</span></div>
+      <div><div class="scrim-demo"><button class="sc" aria-label="Close the wing">Tap outside to close</button><div class="panel"></div></div></div>
+      <div class="panelbg"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wf-state">What goes away (a sample of what rooms draw today)</div>
+    <div class="gone">
+      <b class="g1">Outline caps</b><b class="g2">Write my opening lines</b><b class="g3">Revoke grants</b><b class="g4">Sillytavern</b><b class="g5">Open</b><b class="g6">Run the press</b><b class="g7">+ Add block</b>
+      <b class="g1">Boxed tab</b>
+    </div>
+  </section>
+
+  <section class="notes">
+    <p class="wf-note"><b>Rules.</b> Primary at most once per view. Danger only for destructive actions, always with the existing
+      confirm. Icon buttons always carry a label. Rows never look like buttons. No room may style a button itself; a guard blocks it.</p>
+    <p class="wf-note"><b>Under the hood.</b> The Stamp becomes this Button (its hover-lift and shadow stay); RoleCall's ported Button
+      and every room-made one are replaced. Themes still recolor all of it through tokens.</p>
+    <p class="wf-note"><b>Label case.</b> Sentence case reads like the chooser you liked; all caps matches today's chrome. Pick one;
+      it applies everywhere.</p>
+    <p class="wf-note"><b>Section 2.</b> Replaces the bare clickable row: every clickable thing is a named type with one shared look.
+      Inventory: 300 rows today; 220 become these types, 76 were really Button, IconButton, Chip, Segmented or Tabs, and the
+      last 4 become a Toggle, a drop Card and two of the types above. Art and per-item colors still pass through (a card's
+      picture, a swatch's color, a deck's tint); the frame, spacing, hover and selected look are shared. Theme variants
+      (title screen skins, Messenger) restyle these types through stable hooks, the way they restyle buttons now.</p>
+  </section>
+</main>
+<script type="module">
+import { startLightRays } from "./rays.bundle.js";
+startLightRays(document.getElementById("rays"), true, .35);
+const stage = document.getElementById("stage");
+document.querySelectorAll("[data-case]").forEach((b) => b.tagName === "BUTTON" && b.addEventListener("click", () => {
+  stage.dataset.case = b.dataset.case;
+  document.querySelectorAll("button[data-case]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+}));
+document.querySelectorAll("[data-group]").forEach((g) => g.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => g.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b))))));
+document.querySelectorAll("[data-tabs]").forEach((g) => g.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => g.querySelectorAll("button").forEach((x) => x.setAttribute("aria-selected", String(x === b))))));
+document.querySelectorAll(".bk-chip").forEach((c) => c.addEventListener("click", () => c.setAttribute("aria-pressed", String(c.getAttribute("aria-pressed") !== "true"))));
+const pick = (group, attr) => group.querySelectorAll(":scope > button").forEach((b) => b.addEventListener("click", () => group.querySelectorAll(":scope > button").forEach((x) => x.setAttribute(attr, String(x === b)))));
+document.querySelectorAll("[data-sel]").forEach((g) => pick(g, g.querySelector("[aria-pressed]") ? "aria-pressed" : "aria-selected"));
+document.querySelectorAll("[data-check]").forEach((g) => pick(g, "aria-checked"));
+document.querySelectorAll("[data-cur]").forEach((g) => pick(g, "aria-current"));
+document.querySelectorAll("[data-fold]").forEach((b) => b.addEventListener("click", () => b.setAttribute("aria-expanded", String(b.getAttribute("aria-expanded") !== "true"))));
+document.querySelectorAll(".tg").forEach((t) => t.addEventListener("click", () => t.setAttribute("aria-checked", String(t.getAttribute("aria-checked") !== "true"))));
+const drop = document.getElementById("drop");
+drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); });
+</script>
+</body>
+</html>

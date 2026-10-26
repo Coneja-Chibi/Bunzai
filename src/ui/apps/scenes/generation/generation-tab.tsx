@@ -12,6 +12,7 @@ import { useMemo, useRef, useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import type { Chat } from "../../../../stage/contracts/chat-store";
 import { PARAMS, paramsIn, type ParamDef } from "../../../../stage/params";
+import { Button, IconButton } from "../../../components/button";
 import { Ic } from "../../../_shared/ic";
 import { useBoothPreset } from "../use-booth-preset";
 import { useScenePresetOwn } from "../use-scene-preset-own";
@@ -56,10 +57,10 @@ export function GenerationTab({ ctx, chat, onChat }: { ctx: AppContext; chat: Ch
         </div>
         <div className="gn-body">
         <div className="gn-bar"><span>{total} parameter{total === 1 ? "" : "s"} enabled</span>
-          <button type="button" className="gn-reset" onClick={() => { own.edit(resetCore); resets.current.forEach((reset) => reset()); }}><Ic name="mdi:refresh" size={14} /> Reset</button></div>
+          <Button size="sm" icon="mdi:refresh" onClick={() => { own.edit(resetCore); resets.current.forEach((reset) => reset()); }}>Reset</Button></div>
         <div role="search" aria-label="Search sampler parameters" className="gn-search"><Ic name="mdi:magnify" size={16} />
           <input type="text" value={query} placeholder="Search parameters by name, description, or alias..." aria-label="Search parameters by name, description, or alias" onChange={(e) => setQuery(e.target.value)} />
-          {query && <button type="button" aria-label="Clear search" onClick={() => setQuery("")}><Ic name="mdi:close" size={16} /></button>}</div>
+          {query && <IconButton size="sm" label="Clear search" icon="mdi:close" onClick={() => setQuery("")} />}</div>
         <div className="sr-only" aria-live="polite">{searching && (none ? `No parameters found matching "${query}"` : "")}</div>
         {none && <p className="gn-none" role="status">No parameters match &quot;{query}&quot;.</p>}
         <CoreGroup env={env} params={hit("core")} searching={searching} />

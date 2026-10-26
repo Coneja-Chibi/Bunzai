@@ -42,7 +42,7 @@ describe("Next send", () => {
     expect(m.host.textContent).toContain("Type a message to see preview");
     expect(m.host.textContent).toContain("Type a message to see the preview");
     expect(m.host.textContent).toContain("Preview updates in real-time as you type");
-    expect((m.host.querySelector(".ns-copy") as HTMLButtonElement).disabled).toBe(true);
+    expect((m.host.querySelector(".ns-hd button") as HTMLButtonElement).disabled).toBe(true);
     m.done();
   });
   test("the forecast: the count line, a block per message with its role and the assembler's count, the footer and what it leaves out", async () => {
@@ -81,10 +81,10 @@ describe("Next send", () => {
     const copied: string[] = [];
     Object.defineProperty(dom.window.navigator, "clipboard", { value: { writeText: async (t: string) => { copied.push(t); } }, configurable: true });
     const m = await mountView({ forecast, loading: false, error: null });
-    await click(m.host.querySelector(".ns-copy"));
+    await click(m.host.querySelector(".ns-hd button"));
     await settle();
     expect(copied[0]).toBe("[SYSTEM]\nBe Vera, who keeps the light.\n\n---\n\n[USER]\nAny storms?\n");
-    expect(m.host.querySelector(".ns-copy")?.textContent).toBe("Copied!");
+    expect(m.host.querySelector(".ns-hd button")?.textContent).toBe("Copied!");
     m.done();
   });
 });

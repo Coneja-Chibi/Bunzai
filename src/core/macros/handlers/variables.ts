@@ -10,7 +10,7 @@
  * is RoleCall's own duplicate of `listItemToString` (../lists); it is not re-defined here, only
  * imported under its RoleCall name, so there is one implementation, not two (AGENTS.md rule 7).
  */
-import type { MacroContext, MacroDefinition, MacroResult, MacroVariable, MacroVariableValue } from "../types";
+import type { MacroContext, MacroDefinition, MacroHandler, MacroResult, MacroVariable, MacroVariableValue } from "../types";
 import { effectTypesForTarget, mapForTarget, resolveVariableTarget, type ResolvedVariableTarget } from "../scopes";
 import { listItemToString as valueToString } from "../lists";
 import { VARIABLES_GLOBAL_MACROS } from "./variables-global";
@@ -80,6 +80,95 @@ export function parseValue(value: string): MacroVariableValue {
   return value;
 }
 
+// ---- Handlers shared by the chat-local and global families ---------------------------------------
+// Each takes the one thing that differs: how a name resolves to its storage map. Function
+// declarations, not consts, because variables-global.ts calls them while this module is still loading.
+
+/** Where a name's value lives and which side effect writes it back. */
+export type VarResolver = (name: string, context: MacroContext) => { vars: Map<string, MacroVariable>; target: { key: string }; setType: ResolvedVar["setType"] };
+
+export function getHandler(resolve: VarResolver): MacroHandler {
+  return (args, context) => {
+    const name = args[0];
+    if (!name) return { value: "", success: false, error: "Variable name required" };
+
+    const { vars, target } = resolve(name, context);
+    const variable = vars.get(target.key);
+    if (!variable) return { value: "", success: true }; // Undefined variables return empty
+
+    if (args[1]) {
+      const nested = getNestedValue(variable.value, args[1]);
+      return { value: valueToString(nested), success: true };
+    }
+    return { value: valueToString(variable.value), success: true };
+  };
+}
+
+export function setHandler(resolve: VarResolver): MacroHandler {
+  return (args, context) => {
+    if (context.readOnly) return { value: "", success: true };
+    if (args.length < 2) return { value: "", success: false, error: "Name and value required" };
+
+    const name = args[0]!;
+    const { vars, target, setType } = resolve(name, context);
+    let value: MacroVariableValue;
+
+    if (args.length === 2) {
+      value = parseValue(args[1]!);
+    } else {
+      const key = args[1]!;
+      const newValue = parseValue(args[2]!);
+      const existing = vars.get(target.key)?.value || {};
+      value = setNestedValue(existing, key, newValue);
+    }
+
+    return { value: "", success: true, sideEffects: [{ type: setType, key: target.key, value }] };
+  };
+}
+
+/** `echo`: whether the result text is the new value (the global family) or empty (the local one). */
+export function addHandler(resolve: VarResolver, echo: boolean): MacroHandler {
+  return (args, context) => {
+    if (context.readOnly) return { value: "", success: true };
+
+    const name = args[0];
+    const rawValue = args[1];
+    if (!name) return { value: "", success: false, error: "Variable name required" };
+    if (rawValue === undefined || rawValue === null) return { value: "", success: false, error: "Value required" };
+
+    const { vars, target, setType } = resolve(name, context);
+    const current = vars.get(target.key)?.value;
+    const numericValue = parseFloat(rawValue);
+
+    let newValue: string | number;
+    if (!Number.isNaN(numericValue) && Number.isFinite(numericValue) && String(numericValue) === rawValue.trim()) {
+      const currentNum = typeof current === "number" ? current : 0;
+      newValue = currentNum + numericValue;
+    } else {
+      const currentStr = typeof current === "string" ? current : current != null ? String(current) : "";
+      newValue = currentStr + rawValue;
+    }
+
+    return { value: echo ? String(newValue) : "", success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
+  };
+}
+
+/** Increment (+1) or decrement (-1) by `delta`, returning the new value. */
+export function stepHandler(resolve: VarResolver, delta: 1 | -1): MacroHandler {
+  return (args, context) => {
+    if (context.readOnly) return { value: "", success: true };
+
+    const name = args[0];
+    if (!name) return { value: "", success: false, error: "Variable name required" };
+
+    const { vars, target, setType } = resolve(name, context);
+    const current = vars.get(target.key)?.value;
+    const newValue = (typeof current === "number" ? current : 0) + delta;
+
+    return { value: newValue.toString(), success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
+  };
+}
+
 // ---- Local variables (per chat) ------------------------------------------------------------------
 
 /**
@@ -97,20 +186,7 @@ const getvarMacro: MacroDefinition = {
     { name: "key", description: "Nested key (optional)", required: false },
   ],
   category: "variables",
-  handler: (args: string[], context: MacroContext): MacroResult => {
-    const name = args[0];
-    if (!name) return { value: "", success: false, error: "Variable name required" };
-
-    const { vars, target } = resolveVar(name, context);
-    const variable = vars.get(target.key);
-    if (!variable) return { value: "", success: true }; // Undefined variables return empty
-
-    if (args[1]) {
-      const nested = getNestedValue(variable.value, args[1]);
-      return { value: valueToString(nested), success: true };
-    }
-    return { value: valueToString(variable.value), success: true };
-  },
+  handler: getHandler(resolveVar),
 };
 
 /** {{setvar::name::value}} / {{setvar::name::key::value}}. `setvarkey` alias: see getvar's note. */
@@ -124,25 +200,7 @@ const setvarMacro: MacroDefinition = {
   ],
   category: "variables",
   hasSideEffects: true,
-  handler: (args: string[], context: MacroContext): MacroResult => {
-    if (context.readOnly) return { value: "", success: true };
-    if (args.length < 2) return { value: "", success: false, error: "Name and value required" };
-
-    const name = args[0]!;
-    const { vars, target, setType } = resolveVar(name, context);
-    let value: MacroVariableValue;
-
-    if (args.length === 2) {
-      value = parseValue(args[1]!);
-    } else {
-      const key = args[1]!;
-      const newValue = parseValue(args[2]!);
-      const existing = vars.get(target.key)?.value || {};
-      value = setNestedValue(existing, key, newValue);
-    }
-
-    return { value: "", success: true, sideEffects: [{ type: setType, key: target.key, value }] };
-  },
+  handler: setHandler(resolveVar),
 };
 
 /**
@@ -158,29 +216,7 @@ const addvarMacro: MacroDefinition = {
   ],
   category: "variables",
   hasSideEffects: true,
-  handler: (args: string[], context: MacroContext): MacroResult => {
-    if (context.readOnly) return { value: "", success: true };
-
-    const name = args[0];
-    const rawValue = args[1];
-    if (!name) return { value: "", success: false, error: "Variable name required" };
-    if (rawValue === undefined || rawValue === null) return { value: "", success: false, error: "Value required" };
-
-    const { vars, target, setType } = resolveVar(name, context);
-    const current = vars.get(target.key)?.value;
-    const numericValue = parseFloat(rawValue);
-
-    let newValue: string | number;
-    if (!Number.isNaN(numericValue) && Number.isFinite(numericValue) && String(numericValue) === rawValue.trim()) {
-      const currentNum = typeof current === "number" ? current : 0;
-      newValue = currentNum + numericValue;
-    } else {
-      const currentStr = typeof current === "string" ? current : current != null ? String(current) : "";
-      newValue = currentStr + rawValue;
-    }
-
-    return { value: "", success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
-  },
+  handler: addHandler(resolveVar, false),
 };
 
 /** {{incvar::name}}. Increment by 1, return the new value. */
@@ -190,19 +226,7 @@ const incvarMacro: MacroDefinition = {
   args: [{ name: "name", description: "Variable name", required: true }],
   category: "variables",
   hasSideEffects: true,
-  handler: (args: string[], context: MacroContext): MacroResult => {
-    if (context.readOnly) return { value: "", success: true };
-
-    const name = args[0];
-    if (!name) return { value: "", success: false, error: "Variable name required" };
-
-    const { vars, target, setType } = resolveVar(name, context);
-    const current = vars.get(target.key)?.value;
-    const currentNum = typeof current === "number" ? current : 0;
-    const newValue = currentNum + 1;
-
-    return { value: newValue.toString(), success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
-  },
+  handler: stepHandler(resolveVar, 1),
 };
 
 /** {{decvar::name}}. Decrement by 1, return the new value. */
@@ -212,19 +236,7 @@ const decvarMacro: MacroDefinition = {
   args: [{ name: "name", description: "Variable name", required: true }],
   category: "variables",
   hasSideEffects: true,
-  handler: (args: string[], context: MacroContext): MacroResult => {
-    if (context.readOnly) return { value: "", success: true };
-
-    const name = args[0];
-    if (!name) return { value: "", success: false, error: "Variable name required" };
-
-    const { vars, target, setType } = resolveVar(name, context);
-    const current = vars.get(target.key)?.value;
-    const currentNum = typeof current === "number" ? current : 0;
-    const newValue = currentNum - 1;
-
-    return { value: newValue.toString(), success: true, sideEffects: [{ type: setType, key: target.key, value: newValue }] };
-  },
+  handler: stepHandler(resolveVar, -1),
 };
 
 /** {{hasvar::name}}. Does the variable exist? */

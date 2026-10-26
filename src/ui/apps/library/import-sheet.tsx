@@ -23,6 +23,7 @@ import {
   type BadGroup,
   type ReadFile,
 } from "./import-triage";
+import { Button } from "../../components/button";
 
 export type ImportState =
   | { phase: "reading"; reads: ReadFile[]; done: number; total: number; archiveReports: ArchiveReportEntry[] }
@@ -202,9 +203,9 @@ export function ImportOverlay({
         </p>
         {state.phase === "reading" && (
           <div className="impacts">
-            <button type="button" className="impbtn stamp" onClick={onCancel}>
+            <Button variant="quiet" onClick={onCancel}>
               Cancel
-            </button>
+            </Button>
           </div>
         )}
       </InkDialog>
@@ -282,25 +283,21 @@ export function ImportOverlay({
         )}
       </div>
       <div className="impacts">
-        <button type="button" className="impbtn stamp" onClick={() => setChecked(new Set(checkable))}>
+        <Button onClick={() => setChecked(new Set(checkable))}>
           Select all
-        </button>
+        </Button>
         {onAddMore && (
-          <button type="button" className="impbtn stamp" onClick={onAddMore}>
+          <Button onClick={onAddMore}>
             Add more files
-          </button>
+          </Button>
         )}
-        <button
-          type="button"
-          className="impbtn primary stamp"
-          disabled={selectedGood.length === 0}
-          onClick={() => onCommit(selectedGood)}
-        >
+        <Button variant="primary" disabled={selectedGood.length === 0}
+          onClick={() => onCommit(selectedGood)}>
           {`Import ${selectedGood.length}`}
-        </button>
-        <button type="button" className="impbtn stamp" onClick={onCancel}>
+        </Button>
+        <Button variant="quiet" onClick={onCancel}>
           Not now
-        </button>
+        </Button>
       </div>
     </InkDialog>
   );

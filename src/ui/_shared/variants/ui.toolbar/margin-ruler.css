@@ -3,5 +3,5 @@ html[data-surface-ui-toolbar="margin-ruler"] {
   & :is(.lib.rc .ltop, .scn .filters) { gap: 1.6rem; align-items: center; margin-bottom: .6rem; padding: .4rem 0; border-bottom: 1px solid var(--bk-line-control); }
   & :is(.lib.rc :is(.findbox, .sizedial), .scn .search) { border: 0; border-bottom: 1px solid var(--bk-line-control); box-shadow: none; background: transparent; }
   & .lib.rc .findwrap.on .findbox { border-bottom: 2px solid var(--bk-text); box-shadow: none; }
-  & :is(.lib.rc .ltb, .scn .plaque-actions > .s-btn) { border: 0; border-bottom: 1px solid var(--bk-text); box-shadow: none; background: transparent; color: var(--bk-text); padding-inline: .2rem; }
+  & :is(.lib.rc .ltop > [data-control="button"], .scn .plaque-actions > :is([data-control="button"], [data-control="chip"])) { border: 0; border-bottom: 1px solid var(--bk-text); box-shadow: none; background: transparent; color: var(--bk-text); padding-inline: .2rem; }
 }

@@ -9,6 +9,7 @@ import type { AppContext } from "../../../app-contract";
 import { requestExternal } from "../../../_shared/link-gate";
 import { updateStatusOf, type UpdateStatus } from "../../../_shared/update-check";
 import { clearWindowMemory } from "../../../_shared/window-memory";
+import { Button } from "../../../components/button";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import styles from "../styles.module.css";
 
@@ -79,25 +80,20 @@ function AboutSection({ ctx }: { ctx: AppContext }): JSX.Element {
           {mode === "browser" ? (
             <span className={styles.statusNote}>Reload after a new hosted version is deployed.</span>
           ) : (
-            <button
-              type="button"
-              className={styles.plate}
-              disabled={status.state === "checking"}
-              onClick={() => void check()}
-            >
+            <Button size="sm" disabled={status.state === "checking"} onClick={() => void check()}>
               Check for updates
-            </button>
+            </Button>
           )}
           {status.state === "available" && (
-            <button
-              type="button"
+            <Button
+              size="sm"
               // the highlight belongs to the ACTION for this mode: downloading is the exe's
               // path, only a footnote for a checkout that should git pull instead
-              className={mode === "source" ? styles.plate : `${styles.plate} ${styles.on}`}
+              variant={mode === "source" ? "secondary" : "primary"}
               onClick={() => requestExternal(status.latest.url, "GitHub release")}
             >
               View release
-            </button>
+            </Button>
           )}
           {line && <span role="status" className={styles.statusNote}>{line}</span>}
         </div>
@@ -112,16 +108,12 @@ function AboutSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
       <SettingsRow label="Project" hint="Open source under AGPL-3.0. Bugs and wishes welcome.">
         <div className={styles.plates}>
-          <button type="button" className={styles.plate} onClick={() => requestExternal(REPO_PAGE, "Bunraku on GitHub")}>
+          <Button size="sm" onClick={() => requestExternal(REPO_PAGE, "Bunraku on GitHub")}>
             GitHub
-          </button>
-          <button
-            type="button"
-            className={styles.plate}
-            onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}
-          >
+          </Button>
+          <Button size="sm" onClick={() => requestExternal(RELEASES_PAGE, "Bunraku releases")}>
             Releases
-          </button>
+          </Button>
         </div>
       </SettingsRow>
 
@@ -204,27 +196,26 @@ function LifecycleRow({ ctx }: { ctx: AppContext }): JSX.Element {
       hint="Restart relaunches the studio in place; Quit stops it fully (browser tabs stop working until you start it again). Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers - the app you were on, the agent conversation, the overlay's position - and never touches your studio, your tabs or your settings."
     >
       <div className={styles.plates}>
-        <button
-          type="button"
-          className={armed === "restart" ? `${styles.plate} ${styles.on}` : styles.plate}
+        <Button
+          size="sm"
+          variant={armed === "restart" ? "primary" : "secondary"}
           onClick={() => (armed === "restart" ? void doRestart() : arm("restart"))}
         >
           {armed === "restart" ? "Really restart?" : "Restart Bunraku"}
-        </button>
-        <button
-          type="button"
-          className={armed === "quit" ? `${styles.plate} ${styles.plateDanger}` : styles.plate}
+        </Button>
+        <Button
+          size="sm"
+          variant={armed === "quit" ? "danger" : "secondary"}
           onClick={() => (armed === "quit" ? void doQuit() : arm("quit"))}
         >
           {armed === "quit" ? "Really quit?" : "Quit Bunraku"}
-        </button>
+        </Button>
         {/*
           * Not armed like the other two: nothing here can be lost that is not named on the button,
           * so a "really?" would be ceremony. See reset-window.ts for what it does and does not touch.
           */}
-        <button
-          type="button"
-          className={styles.plate}
+        <Button
+          size="sm"
           title="Forget the app you were on, the agent conversation, and where you put the overlay. Your tabs, settings and studio are untouched."
           onClick={() => {
             clearWindowMemory();
@@ -232,7 +223,7 @@ function LifecycleRow({ ctx }: { ctx: AppContext }): JSX.Element {
           }}
         >
           Reset this window
-        </button>
+        </Button>
       </div>
     </SettingsRow>
   );

@@ -12,6 +12,7 @@ import { PASS_TYPE_LABEL, STATUS_DESCRIPTION, STATUS_LABEL, effectiveStatus, for
 import type { ScenesApi } from "../../../app-contract-scenes";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { Ic } from "../../../_shared/ic";
+import { Button, IconButton, Tabs } from "../../../components/button";
 import { InkDialog } from "../../../components/ink-dialog";
 
 type Tab = "changelog" | "diff";
@@ -81,16 +82,13 @@ export function FinalCutActivity({ api, chatId, messageId, enabled, onApply, onA
   return (
     <InkDialog onDismiss={onClose} ariaLabel="Final Cut Activity" sheetClassName="cx-sheet">
       <div className="cx" data-part="scene.finalcut.activity">
-        <header className="cx-top"><h2>Final Cut Activity</h2><button type="button" aria-label="Close Final Cut activity" onClick={onClose}><Ic name="lucide:x" /></button></header>
+        <header className="cx-top"><h2>Final Cut Activity</h2><IconButton variant="quiet" size="sm" label="Close Final Cut activity" icon="lucide:x" onClick={onClose} /></header>
         <div className="cx-body">
           {error && <p className="cx-err" role="alert">{error}</p>}
           {loaded === null ? <p className="cx-note" role="status">Loading...</p> : !trace ? <p className="cx-note">This reply has no saved Final Cut run.</p> : (
             <>
               <p className="cx-blurb">{summaryTitle(trace)}{formatDuration(trace.ms) ? ` (${formatDuration(trace.ms)})` : ""}{trace.stopped ? ` - stopped (${trace.stopped === "cancelled" ? "cancelled" : "timed out"}); the text kept is what the finished passes left` : ""}</p>
-              <div className="cx-tabs" role="tablist">
-                <button type="button" role="tab" aria-selected={tab === "changelog"} onClick={() => setTab("changelog")}>Changelog</button>
-                <button type="button" role="tab" aria-selected={tab === "diff"} onClick={() => setTab("diff")}>Before / After</button>
-              </div>
+              <Tabs label="Final Cut activity" value={tab} onChange={setTab} items={[{ value: "changelog", label: "Changelog" }, { value: "diff", label: "Before / After" }]} />
               {tab === "changelog" ? (
                 <ul className="fa-passes">
                   {trace.passes.map((p) => {
@@ -111,7 +109,7 @@ export function FinalCutActivity({ api, chatId, messageId, enabled, onApply, onA
               ) : trace.original === undefined ? <p className="cx-note">The passes left this reply unchanged.</p> : (
                 <>
                   <Diff before={trace.original} after={loaded.text} className="fa-diff" />
-                  {trace.original !== loaded.text && <div className="cx-acts"><button type="button" className="cx-btn" disabled={busy} onClick={() => void apply(trace.original!)}>Undo</button></div>}
+                  {trace.original !== loaded.text && <div className="cx-acts"><Button disabled={busy} onClick={() => void apply(trace.original!)}>Undo</Button></div>}
                 </>
               )}
               {tab === "changelog" && trace.reruns && trace.reruns.length > 0 && (
@@ -123,7 +121,7 @@ export function FinalCutActivity({ api, chatId, messageId, enabled, onApply, onA
                         <details>
                           <summary>Re-run {i + 1}: {plural(r.passes.length, "pass", "passes")}{formatDuration(r.ms) ? `, ${formatDuration(r.ms)}` : ""}</summary>
                           <Diff before={r.before} after={r.after} className="fa-diff" />
-                          {i === all.length - 1 && loaded.text === r.after && <div className="cx-acts"><button type="button" className="cx-btn" disabled={busy} onClick={() => void apply(r.before)}>Undo this re-run</button></div>}
+                          {i === all.length - 1 && loaded.text === r.after && <div className="cx-acts"><Button disabled={busy} onClick={() => void apply(r.before)}>Undo this re-run</Button></div>}
                         </details>
                       </li>
                     ))}
@@ -135,14 +133,14 @@ export function FinalCutActivity({ api, chatId, messageId, enabled, onApply, onA
                   <h4>Rerun preview</h4>
                   {preview.before === preview.after ? <p className="cx-note">The rerun changed nothing.</p> : <Diff before={preview.before} after={preview.after} className="fa-diff" />}
                   <div className="cx-acts">
-                    <button type="button" className="cx-btn" disabled={busy} onClick={() => setPreview(null)}>Cancel</button>
-                    {preview.before !== preview.after && <button type="button" className="cx-btn go" disabled={busy} onClick={() => void apply({ rerunId: preview.rerunId })}><Ic name="lucide:check" size={14} />Apply</button>}
+                    <Button variant="quiet" disabled={busy} onClick={() => setPreview(null)}>Cancel</Button>
+                    {preview.before !== preview.after && <Button variant="primary" icon="lucide:check" disabled={busy} onClick={() => void apply({ rerunId: preview.rerunId })}>Apply</Button>}
                   </div>
                 </div>
               ) : (
-                <button type="button" className="cx-btn wide" disabled={busy || enabled === 0} title={enabled === 0 ? "Enable a pass in the Final Cut wing first" : undefined} onClick={() => void rerun()}>
+                <Button variant="primary" block disabled={busy || enabled === 0} title={enabled === 0 ? "Enable a pass in the Final Cut wing first" : undefined} onClick={() => void rerun()}>
                   {working === "rerun" ? "Rerunning..." : enabled === 0 ? "Rerun enabled passes" : `Rerun ${enabled} enabled ${enabled === 1 ? "pass" : "passes"}`}
-                </button>
+                </Button>
               )}
             </>
           )}

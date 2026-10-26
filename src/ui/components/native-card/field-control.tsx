@@ -4,7 +4,7 @@
  */
 import { useEffect, useState, type JSX } from "react";
 import { Slider } from "../slider";
-import { ToggleSwitch } from "../toggle-switch";
+import { Toggle } from "../button";
 import { LinkOut } from "../link-out";
 import { AssetManager, type Asset } from "../asset-manager";
 import { TrackerSetup } from "../tracker-setup";
@@ -142,7 +142,7 @@ export function fieldControl(
     }
     case "toggle": {
       const on = read(field.path) === true;
-      return <ToggleSwitch on={on} onChange={(next) => write(field.path, next)} label={on ? "On" : "Off"} />;
+      return <Toggle on={on} onChange={(next) => write(field.path, next)} label={on ? "On" : "Off"} />;
     }
     case "note": {
       const p = field.path;

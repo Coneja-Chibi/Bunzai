@@ -13,6 +13,7 @@ import { useArtSrc } from "../../../_shared/art-cache";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, rowsOf, useFocusedRangeIndex, useGridColumns, useVirtualRows, type Range } from "../../../_shared/virtual-list";
 import { icSvg } from "../../../_shared/ic-svg";
+import { Tile } from "../../../components/button";
 
 const CSS = `
 .psh-scroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
@@ -148,9 +149,7 @@ function PersonaShelfView(ctx: DeckViewContext): JSX.Element {
             {(rows[row.index] ?? []).map((cell, i) => cell.e
               ? <PersonaCard key={pieceKey(cell.e)} ctx={ctx} e={cell.e} posinset={row.index * Math.max(1, cols) + i + 1} setsize={personas.length} />
               : (
-                <button type="button" className="psh-new" key="new" onClick={() => ctx.personaShelf!.onNew()}>
-                  + New persona
-                </button>
+                <Tile kind="add" data-part="library.persona.new" key="new" label="New persona" icon={<span>+ New persona</span>} onClick={() => ctx.personaShelf!.onNew()} />
               ))}
           </div>
         ))}

@@ -1,13 +1,13 @@
 /* Widget decorations inherit the registered shell.overlay surface; layouts adapt to their own container. */
 .overlay-widget { border: 1px solid var(--bk-line-control); outline: var(--overlay-outline, none); outline-offset: 3px; background: var(--bk-surface-panel); box-shadow: var(--overlay-shadow, none); container-type: inline-size; }
 .overlay-widget > header { padding: 16px; border-bottom: 1px solid var(--bk-line); }
-.overlay-widget h3 { font: 600 16px var(--overlay-heading, var(--bk-font-body)); text-transform: var(--overlay-case, none); }
+.overlay-widget h3 { font: 600 16px var(--overlay-heading, var(--font-body)); text-transform: var(--overlay-case, none); }
 .overlay-widget-content { padding: 18px; display: grid; gap: 16px; }
-.overlay-widget-content :is(p, strong, span, dd, li, button) { min-width: 0; overflow-wrap: anywhere; }
+.overlay-widget-content :is(p, strong, span, dd, li) { min-width: 0; overflow-wrap: anywhere; }
 .overlay-widget-content :is(ul, ol) { padding: 0; margin: 0; list-style: none; display: grid; gap: 8px; }
-.overlay-widget-content li > button { width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.overlay-widget-content li > * { min-width: 0; overflow-wrap: anywhere; width: 100%; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .overlay-widget-content small { display: block; }
-.overlay-widget-content pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; padding: 16px; border-left: 3px solid var(--bk-role-select-text); background: var(--bk-surface-field); font: 12px/1.6 var(--bk-font-mono); max-height: 180px; overflow: auto; }
+.overlay-widget-content pre { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; padding: 16px; border-left: 3px solid var(--bk-role-select-text); background: var(--bk-surface-field); font: 12px/1.6 var(--font-mono); max-height: 180px; overflow: auto; }
 .overlay-widget-content dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .overlay-widget-content dd { margin: 0; font-weight: 700; }
 .overlay-widget-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

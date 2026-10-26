@@ -68,7 +68,7 @@ async function mount(): Promise<FlushSync> {
 const text = (): string => rig.host.textContent ?? "";
 const unmount = (flushSync: FlushSync): void => { flushSync(() => rig.root.unmount()); rig.host.remove(); };
 const card = (title: string): HTMLElement => [...rig.host.querySelectorAll<HTMLElement>(".fc-card")].find((c) => c.querySelector("h3")?.textContent === title)!;
-const live = (title: string): HTMLButtonElement => card(title).querySelector<HTMLButtonElement>(".fc-live")!;
+const live = (title: string): HTMLButtonElement => card(title).querySelector<HTMLButtonElement>(".fc-live button")!;
 const input = (flushSync: FlushSync, el: Element, prop: "onChange", event: Record<string, unknown>): void => { flushSync(() => props(el)[prop]!({ target: event })); };
 const label = (root: ParentNode, name: string): HTMLElement => [...root.querySelectorAll<HTMLElement>("label")].find((l) => l.textContent?.startsWith(name))!;
 const saveSoon = (flushSync: FlushSync): Promise<void> => settle(flushSync, 400);
@@ -91,7 +91,7 @@ describe("the tab's words and numbers", () => {
 describe("the switches", () => {
   test("the master switch keeps the scene's Final Cut on after a pause; turning a pass Live shows its controls and writes it with RoleCall's defaults", async () => {
     const flushSync = await mount();
-    click(flushSync, rig.host.querySelector<HTMLElement>(".fc-master .fc-live")!);
+    click(flushSync, rig.host.querySelector<HTMLElement>(".fc-master .fc-live button")!);
     click(flushSync, live("Scene Editor"));
     expect(text()).toContain("Editor profile");
     expect(text()).toContain("Voicekeeper");
@@ -160,7 +160,7 @@ describe("the editor", () => {
   test("craft-floor rules attach one by one and the stats count them; a turn-history rule is flagged", async () => {
     const flushSync = await mount();
     click(flushSync, live("Scene Editor"));
-    const rules = [...rig.host.querySelectorAll<HTMLElement>(".fc-rules .fc-bank")];
+    const rules = [...rig.host.querySelectorAll<HTMLElement>(".fc-rules [data-control=row]")];
     expect(rules).toHaveLength(8);
     click(flushSync, rules[0]!);
     click(flushSync, rules[1]!);
@@ -251,7 +251,7 @@ describe("Anti-Slop", () => {
     const flushSync = await mount();
     click(flushSync, live("Anti-Slop Engine"));
     const bank = rig.host.querySelector<HTMLElement>(".fc-set .fc-bank.on")!;
-    click(flushSync, bank.querySelector<HTMLElement>(".more")!);
+    click(flushSync, bank.querySelector<HTMLElement>(".head > [aria-expanded]")!);
     expect(bank.textContent).toContain("Depth in prompt");
     click(flushSync, [...bank.querySelectorAll<HTMLElement>(".fc-depth .opts button")].find((b) => b.textContent?.startsWith("Minimal"))!);
     expect(bank.textContent).toContain("pattern, 0/");
@@ -264,7 +264,7 @@ describe("Anti-Slop", () => {
 describe("Custom Banks and Saved Agents", () => {
   test("a new bank is saved to the library with its examples, then switched off, edited and deleted on the second click", async () => {
     const flushSync = await mount();
-    click(flushSync, [...rig.host.querySelectorAll<HTMLElement>(".fc-banks header .fc-btn")].find((b) => b.textContent === "+ New Bank")!);
+    click(flushSync, [...rig.host.querySelectorAll<HTMLElement>(".fc-banks header button")].find((b) => b.textContent === "+ New Bank")!);
     const form = rig.host.querySelector<HTMLElement>(".fc-bankform")!;
     input(flushSync, label(form, "Label").querySelector("input")!, "onChange", { value: "Melodrama tells" });
     input(flushSync, label(form, "Pattern").querySelector("textarea")!, "onChange", { value: "Overwrought stock beats." });
@@ -291,17 +291,17 @@ describe("Custom Banks and Saved Agents", () => {
     const flushSync = await mount();
     click(flushSync, live("Your Department"));
     input(flushSync, label(card("Your Department"), "Agent instruction").querySelector("textarea")!, "onChange", { value: "Tighten pacing." });
-    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-saved header .fc-btn")].find((b) => b.textContent === "+ Save current")!);
+    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-saved header button")].find((b) => b.textContent === "+ Save current")!);
     input(flushSync, card("Your Department").querySelector('input[aria-label="Agent name"]')!, "onChange", { value: "Pacing Doctor" });
-    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-save-row .fc-btn")].find((b) => b.textContent === "Save to account")!);
+    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-save-row button")].find((b) => b.textContent === "Save to account")!);
     await settle(flushSync);
     expect(saved[0]).toMatchObject({ name: "Pacing Doctor", instructions: "Tighten pacing.", contextMessages: 3 });
     expect(text()).toContain("1 saved · load one onto this pass, or save the current setup.");
     input(flushSync, label(card("Your Department"), "Agent instruction").querySelector("textarea")!, "onChange", { value: "Something else." });
-    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-list .fc-btn")].find((b) => b.textContent === "Load")!);
+    click(flushSync, [...card("Your Department").querySelectorAll<HTMLElement>(".fc-list button")].find((b) => b.textContent === "Load")!);
     expect((label(card("Your Department"), "Agent instruction").querySelector("textarea") as HTMLTextAreaElement).value).toBe("Tighten pacing.");
     expect((label(card("Your Department"), "Department name").querySelector("input") as HTMLInputElement).value).toBe("Pacing Doctor");
-    const del = (): HTMLElement => [...card("Your Department").querySelectorAll<HTMLElement>(".fc-list .fc-btn.red")][0]!;
+    const del = (): HTMLElement => [...card("Your Department").querySelectorAll<HTMLElement>(".fc-list button")].find((b) => b.textContent === "Delete" || b.textContent === "Confirm")!;
     click(flushSync, del());
     click(flushSync, del());
     await settle(flushSync);
@@ -337,12 +337,12 @@ describe("the contract", () => {
     click(flushSync, live("Output Safety Check"));
     click(flushSync, live("Scene Editor"));
     click(flushSync, live("Anti-Slop Engine"));
-    const chips = (): string[] => [...rig.host.querySelectorAll(".fc-chips .pg-chip")].map((c) => c.textContent ?? "");
+    const chips = (): string[] => [...rig.host.querySelectorAll(".fc-chips button")].map((c) => c.textContent ?? "");
     expect(chips()[0]).toBe("1 Safety -");
     expect(chips()[1]).toMatch(/^2 Editor ~\d/);
     expect(chips()[2]).toMatch(/^3 Anti-Slop ~\d/);
     expect(rig.host.querySelector(".fc-tokens small")!.textContent).toBe("tokens total");
-    click(flushSync, rig.host.querySelectorAll<HTMLElement>(".fc-chips .pg-chip")[1]!);
+    click(flushSync, rig.host.querySelectorAll<HTMLElement>(".fc-chips button")[1]!);
     expect(text()).toContain("What this agent receives.");
     expect(rig.host.querySelector(".fc-xml")!.textContent).toContain('<editor_pass profile="voicekeeper" failure="fallback">');
     expect(rig.host.querySelector(".fc-xml")!.textContent).toContain("Profile: Voicekeeper");

@@ -37,11 +37,7 @@ export const PARTICIPANTS_STYLE = `
 .scs .cw-reg .lines dt{width:3rem;flex:none;font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-faint)}
 .scs .cw-reg .lines dd{margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-mono);color:var(--stage-soft)}
 .scs .cw-reg .acts{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
-.scs .cw-reg button,.scs .cw-reg select{font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--stage-line);background:var(--stage-sunken);color:var(--stage-soft);cursor:pointer}
-.scs .cw-reg button[disabled]{opacity:.5;cursor:not-allowed}
-.scs .cw-reg button.go{border-color:color-mix(in srgb,var(--acc) 60%,transparent);background:color-mix(in srgb,var(--acc) 14%,transparent);color:var(--acc-t)}
-.scs .cw-reg button.setmain{border-color:color-mix(in srgb,var(--stage-warn-ink) 45%,transparent);background:color-mix(in srgb,var(--stage-warn-ink) 12%,transparent);color:var(--stage-warn-ink)}
-.scs .cw-reg button.del{border-color:var(--stage-danger-edge);background:var(--stage-danger-bg);color:var(--stage-danger-text)}
+.scs .cw-reg select{font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;border:1px solid var(--stage-line);background:var(--stage-sunken);color:var(--stage-soft);cursor:pointer}
 .scs .cw-reg .anch{border:1px solid var(--stage-seam);padding:6px 8px;font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-mute)}
 .scs .cw-reg .anch.card{border-color:color-mix(in srgb,var(--acc) 30%,transparent);color:var(--acc-t)}
 .scs .cw-reg .scene{display:flex;align-items:center;gap:8px;border:1px solid color-mix(in srgb,var(--deck-persona) 30%,transparent);background:color-mix(in srgb,var(--deck-persona) 8%,transparent);padding:2px 8px;font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-card)}
@@ -50,6 +46,5 @@ export const PARTICIPANTS_STYLE = `
 .scs .cw-reg .colors .box{display:flex;align-items:center;gap:8px;border:1px solid var(--stage-line);background:var(--stage-sunken);padding:4px 8px;font:700 10px var(--font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--stage-mute)}
 .scs .cw-reg .colors .box.off{opacity:.45}
 .scs .cw-reg .colors .stop{width:28px;height:20px;border:1px solid var(--stage-line)}
-.scs .cw-reg .colors .box button{border:0;background:none;padding:0;color:inherit}
 .scs .cw-reg .colors small{font-size:10px;line-height:1.2;color:var(--stage-faint)}
 `;

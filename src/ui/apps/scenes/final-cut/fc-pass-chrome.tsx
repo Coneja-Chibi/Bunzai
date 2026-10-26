@@ -5,6 +5,7 @@
  * to input" is not here: Bunraku's regex has no such placement, so there is nothing for it to do.
  */
 import type { JSX } from "react";
+import { Button, Card } from "../../../components/button";
 import { defaultTemperature, type FailureMode, type FinalCutPass, type OutputMode } from "../../../../core/final-cut/pass";
 import { contextMessagesOf, temperatureOf } from "../../../../core/final-cut/pass";
 import { BoothModelPicker } from "../booth-model-picker";
@@ -30,7 +31,7 @@ export function ModelPick({ pass, models, onChange }: { pass: FinalCutPass; mode
     <div className="fc-model" data-part="scene.finalcut.model">
       <div className="fc-sub"><b>{framing.label}</b><small>{framing.description}</small></div>
       <BoothModelPicker current={pass.connection} models={models} onPick={(connection) => onChange({ connection })} />
-      {pass.connection && <button type="button" className="fc-link" onClick={() => onChange({ connection: undefined })}>Use the scene's model</button>}
+      {pass.connection && <Button variant="quiet" size="sm" onClick={() => onChange({ connection: undefined })}>Use the scene's model</Button>}
     </div>
   );
 }
@@ -59,14 +60,10 @@ export function OutputModeToggle({ value, onChange }: { value: OutputMode | unde
     <div className="fc-mode" data-part="scene.finalcut.mode">
       <span className="fc-sub"><b>Output mode</b></span>
       <div className="pg-opts">
-        <button type="button" className={`pg-opt${active === "tool-call" ? " on" : ""}`} aria-pressed={active === "tool-call"} onClick={() => onChange("tool-call")}>
-          <b>Tool call (default)</b>
-          <small>Model is required to call a structured function with the refined body and a typed changelog as separate fields. Output shape is enforced by the API's tool-call layer. Every modern provider supports this; it's the most reliable mode.</small>
-        </button>
-        <button type="button" className={`pg-opt${active === "tagged" ? " on" : ""}`} aria-pressed={active === "tagged"} onClick={() => onChange("tagged")}>
-          <b>Tagged (legacy)</b>
-          <small>Model returns a plain-text reply containing <code>[CHANGELOG]</code> and <code>[REFINED]</code> sections that we parse. Use only if your provider doesn't honor tool calls: markers can drift and the parser can lose output.</small>
-        </button>
+        <Card kind="choice" selected={active === "tool-call"} aria-pressed={active === "tool-call"} onClick={() => onChange("tool-call")} heading="Tool call (default)"
+          subtitle="Model is required to call a structured function with the refined body and a typed changelog as separate fields. Output shape is enforced by the API's tool-call layer. Every modern provider supports this; it's the most reliable mode." />
+        <Card kind="choice" selected={active === "tagged"} aria-pressed={active === "tagged"} onClick={() => onChange("tagged")} heading="Tagged (legacy)"
+          subtitle={<>Model returns a plain-text reply containing <code>[CHANGELOG]</code> and <code>[REFINED]</code> sections that we parse. Use only if your provider doesn't honor tool calls: markers can drift and the parser can lose output.</>} />
       </div>
       <small className="fc-hint">If the model can't comply with the chosen mode (no tool call returned, or empty/malformed body), the pass routes through its failure-mode setting above. A connection that takes no tool calls runs in tagged mode and says so.</small>
     </div>

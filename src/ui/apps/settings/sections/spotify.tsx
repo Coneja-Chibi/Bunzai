@@ -11,6 +11,7 @@ import type { JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import { toErrorMessage } from "../../../_shared/error-message";
 import { protect } from "../../../_shared/protected-control";
+import { Button } from "../../../components/button";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import styles from "./connections.module.css";
 
@@ -99,8 +100,8 @@ function SpotifySection({ ctx }: { ctx: AppContext }): JSX.Element {
           : "Connect opens Spotify's sign-in in your browser. Bunraku sees only the playback state and the controls, never your password."}
       >
         {connected
-          ? <button type="button" className={styles.add} disabled={busy} onClick={() => { void run(async () => { await send("/api/spotify/disconnect", {}); await load(); }); }}>Disconnect</button>
-          : <button type="button" className={styles.add} disabled={busy || waiting || !draft.trim()} onClick={() => { void connect(); }}>Connect</button>}
+          ? <div className={styles.add}><Button variant="danger" disabled={busy} onClick={() => { void run(async () => { await send("/api/spotify/disconnect", {}); await load(); }); }}>Disconnect</Button></div>
+          : <div className={styles.add}><Button variant="primary" disabled={busy || waiting || !draft.trim()} onClick={() => { void connect(); }}>Connect</Button></div>}
       </SettingsRow>
 
       {waiting && <p className={styles.state}>A browser window opened to sign in to Spotify. Come back here when you are done.</p>}

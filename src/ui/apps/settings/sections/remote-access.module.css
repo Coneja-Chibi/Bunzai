@@ -33,15 +33,6 @@
 .actions {
   composes: actions from "./section-card.module.css";
 }
-.btn {
-  composes: btn from "./section-card.module.css";
-}
-.btnGhost {
-  composes: btnGhost from "./section-card.module.css";
-}
-.btnDanger {
-  composes: btnDanger from "./section-card.module.css";
-}
 .status {
   composes: status from "./section-card.module.css";
 }
@@ -64,25 +55,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.7rem;
-}
-.eyeBtn {
-  flex: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-dim);
-  background: transparent;
-  border: 2px solid var(--edge);
-  box-shadow: 3px 3px 0 0 var(--edge);
-  padding: 0.32rem;
-  cursor: pointer;
-}
-.eyeBtn:hover {
-  color: var(--text);
-}
-.eyeBtn[aria-pressed="true"] {
-  color: var(--accent);
-  border-color: var(--accent);
 }
 
 /* remote-specific: the URL bar + lock icon */

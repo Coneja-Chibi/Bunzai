@@ -4,6 +4,7 @@
  * clock, a new callback closure does not.
  */
 import type { JSX } from "react";
+import { Button } from "../components/button";
 import { FLASH_MS, useAutoDismiss } from "./use-flash";
 
 export function Toast({ message, actionLabel, onAction, onDismiss }: { message: string; actionLabel: string; onAction(): void; onDismiss?: () => void }): JSX.Element {
@@ -11,7 +12,7 @@ export function Toast({ message, actionLabel, onAction, onDismiss }: { message: 
   return (
     <div className="edittoast" role="status">
       <span className="grow">{message}</span>
-      <button type="button" onClick={onAction}>{actionLabel}</button>
+      <Button size="sm" onClick={onAction}>{actionLabel}</Button>
     </div>
   );
 }

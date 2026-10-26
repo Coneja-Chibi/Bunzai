@@ -5,6 +5,7 @@
  * "not carried on: X". Platform-blind by construction - callers compute verdicts from coverage
  * data (editor-core lensVerdict); this component only wears them.
  */
+import { IconButton } from "../button";
 import { useState, type JSX, type ReactNode } from "react";
 import styles from "./styles.module.css";
 
@@ -42,19 +43,20 @@ export function BentoCard({ title, icon, aff, filled, off, offMode = "dim", miss
         )}
         {onMove && (
           <span className={styles.move}>
-            <button type="button" onClick={() => onMove(-1)} title={`Move ${title} up`}>&#8593;</button>
-            <button type="button" onClick={() => onMove(1)} title={`Move ${title} down`}>&#8595;</button>
+            <IconButton variant="quiet" size="sm" icon="lucide:arrow-up" label={`Move ${title} up`} onClick={() => onMove(-1)} />
+            <IconButton variant="quiet" size="sm" icon="lucide:arrow-down" label={`Move ${title} down`} onClick={() => onMove(1)} />
           </span>
         )}
-        <button
-          type="button"
-          className={styles.fold}
-          onClick={() => setFolded((f) => !f)}
-          aria-expanded={!folded}
-          title={folded ? `Unfold ${title}` : `Fold ${title}`}
-        >
-          {folded ? "▸" : "▾"}
-        </button>
+        <span className={styles.fold}>
+          <IconButton
+            variant="quiet"
+            size="sm"
+            icon={folded ? "lucide:chevron-right" : "lucide:chevron-down"}
+            label={folded ? `Unfold ${title}` : `Fold ${title}`}
+            aria-expanded={!folded}
+            onClick={() => setFolded((f) => !f)}
+          />
+        </span>
       </header>
       {!folded && <div className={styles.body}>{children}</div>}
     </section>

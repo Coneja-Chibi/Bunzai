@@ -93,10 +93,10 @@ describe("which Storyboards show", () => {
     on = ["tracker-quests", "tracker-cast"];
     openStoryboards("cast");
     const { flushSync } = await mount();
-    expect(host.querySelector(".sb-pick button.on")?.textContent).toBe("CastLive");
+    expect(host.querySelector(".sb-pick button[aria-pressed=true]")?.textContent).toBe("CastLive");
     unmount(flushSync);
     const again = await mount();
-    expect(host.querySelector(".sb-pick button.on")?.textContent).toBe("Quest BoardLive");
+    expect(host.querySelector(".sb-pick button[aria-pressed=true]")?.textContent).toBe("Quest BoardLive");
     unmount(again.flushSync);
   });
 });
@@ -128,7 +128,7 @@ describe("Cast, Map and Renown", () => {
     expect(sections).toEqual([["In the scene", 1], ["Offstage", 1]]);
     const mira = host.querySelector(".sb-card")!;
     expect(mira.textContent).toContain("Mira Vance");
-    expect(mira.textContent).toContain("in scene");
+    expect(mira.textContent).toContain("In scene");
     expect(mira.textContent).toContain("Affinity");
     expect(mira.textContent).toContain("Dov Ketter (ally)");
     unmount(flushSync);
@@ -139,10 +139,10 @@ describe("Cast, Map and Renown", () => {
     const { flushSync } = await mount();
     await press(flushSync, byText(".sb-pick button", "Map"));
     expect(host.querySelector(".sb-card")?.textContent).toContain("Harbor City");
-    expect(host.querySelector(".sb-card")?.textContent).toContain("visited");
+    expect(host.querySelector(".sb-card")?.textContent).toContain("Visited");
     await press(flushSync, byText(".sb-pick button", "Renown"));
     expect(host.querySelector(".sb-card")?.textContent).toContain("Salt Court");
-    expect(host.querySelector(".sb-card")?.textContent).toContain("wanted");
+    expect(host.querySelector(".sb-card")?.textContent).toContain("Wanted");
     unmount(flushSync);
   });
 });

@@ -26,47 +26,10 @@
   color: var(--a, var(--accent));
 }
 
-.pgBtn {
-  width: 1.7rem;
-  height: 1.7rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  font-family: var(--font-mono);
-}
-
-.pgBtn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
 .fill {
   flex: 1;
 }
 
-.onoff {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  border: 2px solid var(--stage-ok);
-  background: none;
-  color: var(--stage-ok);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.18rem 0.4rem;
-  cursor: pointer;
-}
-
-.onoffOff {
-  border-color: var(--stage-faint);
-  color: var(--stage-mute);
-}
 
 .ruleName {
   width: 100%;
@@ -102,34 +65,6 @@
   gap: 0.6rem;
   margin-bottom: 0.8rem;
   flex-wrap: wrap;
-}
-
-.modeSet {
-  display: inline-flex;
-  border: 2px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-}
-
-.md {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 0;
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  padding: 0.42rem 0.9rem;
-  cursor: pointer;
-}
-
-.md + .md {
-  border-left: 2px solid var(--stage-black);
-}
-
-.mdOn {
-  background: var(--selection);
-  color: var(--selection-fg);
 }
 
 .modeNote {
@@ -246,20 +181,6 @@
   color: var(--stage-kicker);
 }
 
-.escBtn {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-mute);
-  padding: 0.2rem 0.45rem;
-  cursor: pointer;
-  margin-left: auto;
-}
-
 /* travel notes: quiet dashed-amber lines under the active lens */
 .travelWrap {
   display: flex;
@@ -283,36 +204,7 @@
    fills the pane at thumb height so the three modes stay tappable. At FILE END and PANE-scoped so the
    base .modeSet/.md rules do not out-specificity it (container queries add no specificity). 2.2rem is
    the repo's touch-target size (mPg / mback / mkebab). */
-@container (max-width: 34rem) {
-  .modeSet {
-    display: flex;
-    width: 100%;
-  }
-  .md {
-    flex: 1;
-    min-height: 2.2rem;
-    text-align: center;
-  }
-}
 
 /* quiet pager actions (Duplicate / Delete - found missing by the R6 audit) */
-.pgQuiet {
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: none;
-  color: var(--stage-mute);
-  padding: 0.2rem 0.45rem;
-  cursor: pointer;
-}
 
-.pgQuiet:hover {
-  color: var(--stage-card);
-  border-color: var(--stage-line);
-}
-
-.pgDanger:hover {
-  color: var(--stage-danger-text);
-  border-color: var(--stage-danger-edge);
-}
+.chead > :last-child { margin-left: auto; }

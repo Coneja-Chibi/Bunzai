@@ -1,6 +1,7 @@
 /**
  * Workshop Test Bench: event picker, Run rules / package scripts, vars board, log.
  */
+import { Button, IconButton } from "../../../components/button";
 import type { JSX } from "react";
 import { EMPTY_VARS_MESSAGE } from "./board";
 import { MiniSelect, WORKSHOP_EVENTS } from "./mini-select";
@@ -36,25 +37,16 @@ export function WorkshopConsole(props: WorkshopConsoleProps): JSX.Element {
       <div className={styles.conhead}>
         <span className={styles.dot} /> Test Bench
         <MiniSelect opts={WORKSHOP_EVENTS} value={event} onChange={onEvent} />
-        <button
-          type="button"
-          className={styles.runBtn}
-          data-tour="ws-run"
-          onClick={onRunRules}
-          disabled={luaBusy}
-        >
-          Run rules
-        </button>
+        <Button variant="primary" size="sm" data-tour="ws-run" onClick={onRunRules} disabled={luaBusy}>Run rules</Button>
         {hasPackage && (
-          <button
-            type="button"
-            className={`${styles.runBtn} ${styles.runBtnSec}`}
+          <Button
+            size="sm"
             onClick={onRunPackage}
             disabled={luaBusy}
             title="Advanced: load package scripts in the sealed room"
           >
             {luaBusy ? "Loading..." : "Run package scripts"}
-          </button>
+          </Button>
         )}
       </div>
       <div className={styles.vars} data-tour="ws-vars">
@@ -79,24 +71,11 @@ export function WorkshopConsole(props: WorkshopConsoleProps): JSX.Element {
                 placeholder="value"
                 onChange={(e) => onVars(setAt(vars, i, { ...v, value: e.target.value }))}
               />
-              <button
-                type="button"
-                className={styles.rm}
-                onClick={() => onVars(vars.filter((_, j) => j !== i))}
-              >
-                &times;
-              </button>
+              <IconButton label="Remove variable" variant="danger" size="sm" icon="lucide:x" onClick={() => onVars(vars.filter((_, j) => j !== i))} />
             </div>
           ))
         )}
-        <button
-          type="button"
-          className={styles.addmini}
-          style={{ width: "100%" }}
-          onClick={() => onVars([...vars, { name: "", value: "" }])}
-        >
-          + add variable
-        </button>
+        <Button size="sm" block onClick={() => onVars([...vars, { name: "", value: "" }])}>+ Add variable</Button>
         {delta.length > 0 && (
           <>
             <div className={styles.vlabel} style={{ marginTop: "0.7rem" }}>After Run · moved first</div>

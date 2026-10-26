@@ -125,7 +125,7 @@ describe("default Cards (shelves.tsx) virtualized", () => {
     const { host, unmount } = await mountInLcar(baseProps("grid"));
     await settle();
     // the CardShell's own focusable control is its name button, not the [data-pick] shell itself.
-    const focused = host.querySelector<HTMLElement>('[data-pick="character:card-0"] .rname')!;
+    const focused = host.querySelector<HTMLElement>('[data-pick="character:card-0"] [data-part="library.card.name"]')!;
     await act(async () => { focused.focus(); });
     expect(dom.window.document.activeElement).toBe(focused);
 

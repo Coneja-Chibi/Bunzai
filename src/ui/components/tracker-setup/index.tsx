@@ -11,7 +11,7 @@ import type { JSX } from "react";
 import { ExpandTextarea } from "../expand";
 import { FieldForm } from "../field-form";
 import { ListEditor } from "../list-editor";
-import { ToggleSwitch } from "../toggle-switch";
+import { Toggle } from "../button";
 import { TRACKER_MODULES, WORLD_THEMES, type TrackerModule } from "./schemas";
 import styles from "./styles.module.css";
 import { str, recOr } from "../../../core/guards";
@@ -87,7 +87,7 @@ export function TrackerSetup({ value, onChange }: TrackerSetupProps): JSX.Elemen
           <div className={on ? `${styles.mod} ${styles.on}` : styles.mod} key={m.id}>
             <div className={styles.mhead}>
               <div className={styles.mtitle}>{m.label}</div>
-              <ToggleSwitch on={on} onChange={(v) => setEnabled(m.id, v)} />
+              <Toggle on={on} onChange={(v) => setEnabled(m.id, v)} />
             </div>
             {on ? <div className={styles.mseed}>{seedEditor(m)}</div> : <div className={styles.mdesc}>{m.description}</div>}
           </div>

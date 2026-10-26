@@ -25,6 +25,7 @@ import { ScenesSide, type RailSelection } from "./scenes-side";
 import { useSummarySearch } from "./use-summary-search";
 import { fanFavorites, filterScenes, folderTint, shownScenes, sortScenes, type CharSort, type Period, type SceneOrder } from "./scenes-core";
 import { plural } from "../../../core/text";
+import { Button, Chip, Segmented } from "../../components/button";
 
 const TONE = { "--t": "var(--accent)" } as CSSProperties;
 const PERIODS: [Period, string][] = [["all", "All Time"], ["week", "Week"], ["month", "Month"], ["year", "Year"]];
@@ -211,7 +212,7 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
   if (problem) {
     return (
       <div className="scn"><main className="main"><div className="empty"><b>Scenes are unavailable</b><p>{problem}</p>
-        <button type="button" className="btn" onClick={load}>Try again</button></div></main></div>
+        <Button onClick={load}>Try again</Button></div></main></div>
     );
   }
 
@@ -233,15 +234,15 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
       <ScenesSide ctx={ctx} scenes={all} cut={cut} folders={folders} rail={rail} onSelect={select}
         onOpen={onOpen} onRestore={(g) => void restore(g)} onNewFolder={() => setNewFolder(true)} drawerOpen={drawerOpen} />
       <main className="main" data-part="scenes.main">
-        <button type="button" className="drawer-toggle" onClick={() => setDrawerOpen(!drawerOpen)} aria-label="Cast and chapters"><Ic name="lucide:drama" size={16} /> Cast</button>
+        <Button size="sm" icon="lucide:drama" onClick={() => setDrawerOpen(!drawerOpen)} aria-label="Cast and chapters">Cast</Button>
 
         {rail.kind === "char" && (
           <div className="charroot">
-            <button type="button" className="backlink" onClick={() => select({ kind: "all" })}><Ic name="lucide:chevron-left" size={14} />All scenes</button>
+            <Button variant="quiet" size="sm" icon="lucide:chevron-left" onClick={() => select({ kind: "all" })}>All scenes</Button>
             <div className="charhead">
               <span className="ch-avatar" style={TONE}>{initial(charName)}</span>
               <div><span className="s-act"><b>Starring</b></span><h1>{charName}</h1><p>{charScenes.length} {charScenes.length === 1 ? "scene" : "scenes"} played</p></div>
-              <div className="sortpills"><span>Sort:</span>{CHAR_SORTS.map(([o, label]) => <button type="button" key={o} className={o === charSort ? "on" : undefined} onClick={() => setCharSort(o)}>{label}</button>)}</div>
+              <div className="sortpills"><span>Sort:</span><Segmented label="Sort" size="sm" items={CHAR_SORTS.map(([value, label]) => ({ value, label }))} value={charSort} onChange={setCharSort} /></div>
             </div>
             <SceneGrid ctx={ctx} scenes={charScenes} picked={picked} onPick={pick} layout={view} groupByTime={charSort === "recent"}>
               <NewStoryCard characterName={charName} onStart={() => void startNew(rail.id)} />
@@ -251,7 +252,7 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
 
         {rail.kind === "folder" && folder && (
           <div className="folderroot">
-            <button type="button" className="backlink" onClick={() => select({ kind: "all" })}><Ic name="lucide:chevron-left" size={14} />All scenes</button>
+            <Button variant="quiet" size="sm" icon="lucide:chevron-left" onClick={() => select({ kind: "all" })}>All scenes</Button>
             <div className="folderhead">
               <span className="ch-dot big" style={{ background: folderTint(folder.id) }} />
               <div><span className="s-act"><b>Chapter</b></span><h1>{folder.name}</h1><p>{folderScenes.length} {folderScenes.length === 1 ? "story" : "stories"} in this chapter</p></div>
@@ -269,11 +270,10 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
                 <p className="s-lede">{scenes ? `${plural(scenes.length, "story", "stories")} across ${plural(characters, "character")}` : "Loading..."}</p>
               </div>
               <div className="plaque-actions">
-                <div className="scene-view-switch" aria-label="Scene layout">{(["cards", "list"] as const).map((layout) =>
-                  <button type="button" key={layout} className={`s-btn ghost${view === layout ? " on" : ""}`} aria-pressed={view === layout}
-                    onClick={() => { setView(layout); ctx.prefs.set("scenes.view", layout); }}>{layout === "cards" ? "Pictures" : "List"}</button>)}</div>
-                <button type="button" className={`s-btn ghost${picked ? " on" : ""}`} onClick={() => setPicked(picked ? null : new Set())}><Ic name="lucide:square-check-big" size={16} />Select</button>
-                <button type="button" className="s-btn ghost" onClick={openTrash}><Ic name="lucide:trash-2" size={16} />Trash{cut.length > 0 ? ` ${cut.length}` : ""}</button>
+                <Segmented label="Scene layout" items={[{ value: "cards", label: "Pictures" }, { value: "list", label: "List" }]} value={view}
+                  onChange={(layout) => { setView(layout); ctx.prefs.set("scenes.view", layout); }} />
+                <Chip pressed={picked !== null} onClick={() => setPicked(picked ? null : new Set())}><Ic name="lucide:square-check-big" size={16} />Select</Chip>
+                <Button variant="quiet" size="sm" icon="lucide:trash-2" onClick={openTrash}>Trash{cut.length > 0 ? ` ${cut.length}` : ""}</Button>
                 <label className="search"><Ic name="lucide:search" size={16} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search..." aria-label="Search scenes" /></label>
               </div>
             </header>
@@ -281,15 +281,15 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
             {picked && (
               <div className="selbar">
                 {picked.size} {picked.size === 1 ? "scene" : "scenes"} selected
-                {picked.size > 0 && <button type="button" className="del" onClick={() => setCutting(all.filter((s) => picked.has(s.id)))}>Delete {picked.size}</button>}
-                <button type="button" className="s-btn ghost" onClick={() => setPicked(null)}>Cancel</button>
+                {picked.size > 0 && <Button variant="danger" size="sm" onClick={() => setCutting(all.filter((s) => picked.has(s.id)))}>Delete {picked.size}</Button>}
+                <Button variant="quiet" size="sm" onClick={() => setPicked(null)}>Cancel</Button>
               </div>
             )}
             {summaryHits.failed && <p className="sumfail" role="status">Summaries could not be searched. Titles and characters still match.</p>}
             {scenes && scenes.length > 0 && !smart && (
               <div className="filters" data-part="scenes.filters">
-                <div className="segs">{PERIODS.map(([p, label]) => <button type="button" key={p} className={p === period ? "on" : undefined} onClick={() => setPeriod(p)}>{label}</button>)}</div>
-                <div className="segs">{ORDERS.map(([o, label]) => <button type="button" key={o} className={o === order ? "on" : undefined} onClick={() => setOrder(o)}>{label}</button>)}</div>
+                <Segmented label="Period" size="sm" items={PERIODS.map(([value, label]) => ({ value, label }))} value={period} onChange={setPeriod} />
+                <Segmented label="Order" size="sm" items={ORDERS.map(([value, label]) => ({ value, label }))} value={order} onChange={setOrder} />
               </div>
             )}
             {scenes && scenes.length === 0 && (
@@ -297,7 +297,7 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
                 <div className="mark"><Ic name="lucide:drama" size={32} /></div>
                 <b>Your stage is empty</b>
                 <p>Discover a character in the Library and start your first scene. Every scene you play shows up here, gathered by cast member and chapter.</p>
-                <button type="button" className="s-btn" onClick={() => ctx.openApp(LIBRARY_APP)}>Discover Characters</button>
+                <Button variant="primary" onClick={() => ctx.openApp(LIBRARY_APP)}>Discover Characters</Button>
               </div>
             )}
             {q && shown.length === 0 && (rail.kind === "all" || rail.kind === "smart") && (
@@ -305,7 +305,7 @@ export function ScenesList({ ctx, onOpen }: { ctx: AppContext; onOpen(id: string
                 <div className="mark"><Ic name="lucide:search" size={32} /></div>
                 <b>Nothing matches {JSON.stringify(query.trim())}</b>
                 <p>Search checks scene titles, character names and chat summaries, within the period shown. Clear the search to see every scene again.</p>
-                <button type="button" className="s-btn" onClick={() => setQuery("")}>Clear search</button>
+                <Button onClick={() => setQuery("")}>Clear search</Button>
               </div>
             )}
             {hero && <SceneHero key={hero.id} ctx={ctx} scene={hero} picked={picked ? picked.has(hero.id) : undefined} onOpen={() => (picked ? pick(hero) : onOpen(hero.id))} />}

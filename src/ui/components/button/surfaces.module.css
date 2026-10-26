@@ -1,0 +1,66 @@
+/* Surface parts of the button family (section 2 of the button-family wireframe). Theme colors only. */
+.tile, .card, .dot { box-sizing: border-box; margin: 0; font: inherit; color: var(--text-soft); cursor: pointer; position: relative; }
+.tile:focus-visible, .card:focus-visible, .dot:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.tile:disabled, .card:disabled, .dot:disabled { cursor: not-allowed; opacity: .5; }
+
+.tile { display: grid; place-items: center; padding: 0; border: 2px solid var(--control-boundary); background: var(--chrome); transition: border-color var(--bk-dur-base) var(--bk-ease-move); }
+.tile:hover:not(:disabled) { color: var(--text); border-color: var(--text-soft); }
+.tile[data-selected] { color: var(--text); border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.icon { width: 40px; height: 40px; }
+.swatch { width: 32px; height: 32px; border-width: 1px; background: var(--tile-color, var(--chrome)); }
+.thumb { width: 64px; height: 64px; overflow: hidden; }
+.thumb .mark, .thumb .mark > * { width: 100%; height: 100%; object-fit: cover; }
+.app { width: 76px; height: 64px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+.caption { font: 600 calc(var(--text-control, .875rem) * .8) var(--font-body); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
+.add { width: 64px; height: 64px; border-style: dashed; background: transparent; }
+
+.card { display: flex; flex-direction: column; text-align: left; color: var(--text); border: 0; background: none; padding: 0; }
+.card_choice { gap: 6px; padding: 14px; border: 2px solid var(--control-boundary); background: var(--chrome); box-shadow: 4px 4px 0 0 var(--stamp-shadow); }
+.card_choice:hover:not(:disabled) { border-color: var(--text-soft); }
+.card_choice[data-selected] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--chrome)); box-shadow: 4px 4px 0 0 var(--deck-character); }
+.markWord { align-self: flex-start; font: 600 .625rem var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); }
+.cardTitle { font: 700 var(--text-control, .875rem) var(--font-body); }
+.cardSub { font: 400 calc(var(--text-control, .875rem) * .93) var(--font-body); color: var(--text-soft); }
+.card_art { gap: 8px; }
+.card_art .face { aspect-ratio: var(--card-aspect, 3 / 4); }
+.face { display: block; overflow: hidden; border: 2px solid var(--stamp-shadow); box-shadow: 4px 4px 0 0 var(--stamp-shadow); transition: transform var(--bk-dur-base) var(--bk-ease-move); }
+.face > * { display: block; width: 100%; height: 100%; object-fit: cover; /* clone-ok: the cover-image idiom */ }
+.card_art:hover:not(:disabled) .face { transform: translateY(-3px); }
+.card_entry { aspect-ratio: var(--card-aspect, 2 / 3); justify-content: flex-end; padding: 16px; gap: 4px; border: 2px solid color-mix(in srgb, var(--premiere-gold) 60%, transparent); box-shadow: 5px 5px 0 0 var(--stamp-shadow); overflow: hidden; }
+.card_entry .face { position: absolute; inset: 0; border: 0; box-shadow: none; z-index: 0; }
+.card_entry .kicker, .card_entry .cardTitle { position: relative; z-index: 1; }
+.card_entry .cardTitle { font: 700 calc(var(--text-control, .875rem) * 1.4) var(--font-fancy); }
+.kicker { font: 500 .6rem var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--premiere-gold); }
+.card_drop { display: grid; place-items: center; text-align: center; padding: 18px; border: 2px dashed var(--control-boundary); color: var(--text-soft); }
+.card_drop[data-over] { border-color: var(--accent); color: var(--text); background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+.dot { border: 0; padding: 0; width: 10px; height: 10px; background: color-mix(in srgb, var(--text) 25%, transparent); }
+.dot_pager[aria-current="true"] { background: var(--accent); }
+.dot_port { width: 12px; height: 12px; border: 2px solid var(--dot-color, var(--accent)); background: var(--stamp-shadow); }
+.dot_handle { width: 14px; height: 14px; border: 2px solid var(--text); background: var(--stamp-shadow); }
+@media (prefers-reduced-motion: reduce) { .tile, .face { transition: none; } .card_art:hover .face { transform: none; } }
+
+/* sizes, captions and slots */
+.mark { display: grid; place-items: center; }
+.tile[data-size="sm"].icon, .tile[data-size="sm"].add, .tile[data-size="sm"].thumb { width: 28px; height: 28px; }
+.tile[data-size="sm"].swatch { width: 22px; height: 22px; }
+.tile[data-size="lg"].icon, .tile[data-size="lg"].add, .tile[data-size="lg"].thumb { width: 96px; height: 96px; }
+.tile[data-size="lg"].swatch { width: 48px; height: 48px; }
+.tile[data-size="fill"] { width: 100%; height: 100%; min-height: 64px; }
+.captioned { height: auto; display: flex; flex-direction: column; gap: 4px; padding-bottom: 4px; }
+.captioned.swatch { background: none; border: 0; }
+.captioned.swatch .mark { width: 32px; height: 32px; background: var(--tile-color, var(--chrome)); border: 1px solid var(--control-boundary); }
+.captioned.swatch[data-selected] .mark { border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 35%, transparent); }
+.captioned.swatch[data-selected] { box-shadow: none; }
+
+/* card accent, primary and the drop face */
+.card { --card-accent: var(--accent); }
+.card_choice[data-selected] { border-color: var(--card-accent); background: color-mix(in srgb, var(--card-accent) 12%, var(--chrome)); }
+.card[data-primary].card_entry, .card[data-primary].card_choice { border-color: var(--card-accent); box-shadow: 5px 5px 0 0 color-mix(in srgb, var(--card-accent) 60%, var(--stamp-shadow)); }
+.card_drop { position: relative; overflow: hidden; }
+.card_drop .face { position: absolute; inset: 0; border: 0; box-shadow: none; z-index: 0; }
+.card_drop .face ~ * { position: relative; z-index: 1; }
+
+/* the check dot */
+.dot_check { width: 14px; height: 14px; display: grid; place-items: center; border: 2px solid var(--control-boundary); background: var(--stamp-shadow); color: var(--text); }
+.dot_check[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 30%, var(--stamp-shadow)); }

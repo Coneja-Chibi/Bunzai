@@ -2,6 +2,7 @@
  * Character knowledge rail: list/attach/detach/reorder library lorebooks via knowledgeRefs.
  * Stage-token skin in knowledge-rail.module.css (the rail is dark in both themes).
  */
+import { Button, IconButton, ListRow } from "../../../components/button";
 import { useEffect, useState, type JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../../app-contract";
 import { AttachLoreDialog } from "../../../components/attach-lore-dialog";
@@ -36,51 +37,24 @@ export function KnowledgeRail({ ctx, refs, onChange }: KnowledgeRailProps): JSX.
       <div className={styles.head}>Knowledge</div>
       {refs.length === 0 && <div className={styles.empty}>No library books linked.</div>}
       {refs.map((id, i) => (
-        <div key={id} className={styles.row}>
-          <button
-            type="button"
-            className={missing.includes(id) ? `${styles.book} ${styles.bookMissing}` : styles.book}
+        <div key={id} className={missing.includes(id) ? `${styles.row} ${styles.rowMissing}` : styles.row}>
+          <ListRow
+            selected={missing.includes(id)}
+            accent="var(--stage-danger-edge)"
             onClick={() => {
               const hit = books.find((b) => b.id === id);
               if (hit) ctx.workbench.send(hit);
               else ctx.setStatus(`missing lorebook · ${id}`);
             }}
             title={missing.includes(id) ? "Missing from library" : "Open in Workbench"}
-          >
-            {nameOf(id)}
-            {missing.includes(id) ? " (missing)" : ""}
-          </button>
-          <button
-            type="button"
-            className={styles.op}
-            disabled={i === 0}
-            onClick={() => onChange(reorderKnowledgeRef(refs, id, i - 1))}
-            aria-label="Move up"
-          >
-            &#8593;
-          </button>
-          <button
-            type="button"
-            className={styles.op}
-            disabled={i >= refs.length - 1}
-            onClick={() => onChange(reorderKnowledgeRef(refs, id, i + 1))}
-            aria-label="Move down"
-          >
-            &#8595;
-          </button>
-          <button
-            type="button"
-            className={styles.op}
-            onClick={() => onChange(detachKnowledgeRef(refs, id))}
-            aria-label="Detach"
-          >
-            &times;
-          </button>
+            label={`${nameOf(id)}${missing.includes(id) ? " (missing)" : ""}`}
+          />
+          <IconButton label="Move up" variant="quiet" size="sm" icon="lucide:arrow-up" disabled={i === 0} onClick={() => onChange(reorderKnowledgeRef(refs, id, i - 1))} />
+          <IconButton label="Move down" variant="quiet" size="sm" icon="lucide:arrow-down" disabled={i >= refs.length - 1} onClick={() => onChange(reorderKnowledgeRef(refs, id, i + 1))} />
+          <IconButton label="Detach" variant="quiet" size="sm" icon="lucide:x" onClick={() => onChange(detachKnowledgeRef(refs, id))} />
         </div>
       ))}
-      <button type="button" className={styles.attach} onClick={() => setDialogOpen(true)}>
-        Attach lorebook…
-      </button>
+      <Button size="sm" onClick={() => setDialogOpen(true)}>Attach lorebook…</Button>
       {dialogOpen && (
         <AttachLoreDialog
           books={books}

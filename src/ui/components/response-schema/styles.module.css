@@ -1,4 +1,5 @@
 .wrap {
+  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -49,27 +50,10 @@
   grid-template-columns: 1fr 1fr;
   gap: 0.45rem;
 }
-@media (max-width: 28rem) {
+@container (max-width: 28rem) {
   .grid {
     grid-template-columns: 1fr;
   }
-}
-.rm {
-  font-family: var(--font-mono);
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: none;
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-}
-.add {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px dashed var(--stage-seam, var(--seam));
-  background: none;
-  color: var(--stage-mute, var(--muted));
-  padding: 0.28rem 0.5rem;
-  cursor: pointer;
+}.add {
   align-self: flex-start;
 }

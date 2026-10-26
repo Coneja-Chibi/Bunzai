@@ -6,6 +6,7 @@
 import { useState, type CSSProperties, type JSX } from "react";
 import { type Template } from "../../../../../../core/trackers/spellbook";
 import type { Spell } from "../../../../../../core/trackers/spellbook";
+import { Button } from "../../../../../components/button";
 import { Ic, type IconName } from "../../../../../_shared/ic";
 
 export const TEMPLATE_ICON: Readonly<Record<Template, IconName>> = { attack: "lucide:sword", buff: "lucide:arrow-up", debuff: "lucide:arrow-down", heal: "lucide:heart", utility: "lucide:wrench", summon: "lucide:ghost", passive: "lucide:shield", ritual: "lucide:flame" };
@@ -80,7 +81,7 @@ export function SpellDetail({ spell, tactical }: { spell: Spell; tactical: boole
       </div>
       {entries.length > 0 && (
         <div>
-          <button type="button" className="sp-histbtn" aria-expanded={history} onClick={() => setHistory(!history)}><Ic name={history ? "lucide:chevron-down" : "lucide:chevron-right"} size={12} /><Ic name="lucide:history" size={12} /><span>Cast History ({entries.length})</span></button>
+          <Button variant="quiet" size="sm" aria-expanded={history} onClick={() => setHistory(!history)}><Ic name={history ? "lucide:chevron-down" : "lucide:chevron-right"} size={12} /><Ic name="lucide:history" size={12} /><span>Cast History ({entries.length})</span></Button>
           {history && (
             <div className="sp-hist">
               {entries.slice(-5).reverse().map((h, i) => <div key={`${h.castAt}${i}`}><span>{ago(h.castAt)}</span><span>{h.context}</span>{h.diceResult && <b>{h.diceResult}</b>}</div>)}

@@ -5,14 +5,13 @@
  * read is a 409 with the reason, never a default item.
  */
 import { str } from "../core/guards";
-import { ProviderError } from "../stage/contracts/provider";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import { isTrackerModule } from "../core/trackers";
 import { StudioValidationError } from "../studio/errors";
 import type { StudioStoreLike } from "../studio/contracts";
 import { proposeTrackerItem, type TrackerItemDeps, type TrackerItemInput } from "../studio/scene-tracker-item";
 import { connect } from "./server-chats-turn";
-import { json } from "./server-security";
+import { providerJson } from "./server-provider-json";
 
 type Body = Record<string, unknown>;
 
@@ -38,10 +37,5 @@ export async function handleTrackerItemRoute(req: Request, p: string, chats: Cha
   if (p !== "/api/chats/tracker-item" || req.method !== "POST" || !b) return null;
   const input = parseTrackerItem(b);
   const deps: TrackerItemDeps = { chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined };
-  try {
-    return json(await proposeTrackerItem(deps, input, req.signal));
-  } catch (e) {
-    if (e instanceof ProviderError) return json({ error: e.message, code: e.code, category: e.category, ...(e.retryAfterSec ? { retryAfterSec: e.retryAfterSec } : {}) }, 502);
-    throw e;
-  }
+  return providerJson(() => proposeTrackerItem(deps, input, req.signal));
 }

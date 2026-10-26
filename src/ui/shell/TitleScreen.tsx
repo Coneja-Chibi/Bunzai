@@ -2,8 +2,8 @@
  * The title screen. The behavior lives in use-title.ts; the look is the theme's shell.title pick: the velvet
  * premiere proscenium here (the approved theater look and the fallback), or one of the variants beside it.
  */
+import { Button, Card } from "../components/button";
 import type { CSSProperties, JSX } from "react";
-import { Stamp } from "../components/stamp";
 import { LightRays } from "../components/light-rays";
 import { docAssetUrl } from "../_shared/asset-url";
 import { api } from "../api";
@@ -42,10 +42,10 @@ function ProsceniumTitle({ state, pieces }: { state: TitleState; pieces?: PieceS
           <h1 className={styles.word}>Bun<em>raku</em></h1>
           <p className={styles.tag}>Every story deserves a stage.</p>
           <div className={styles.actions}>
-            <Stamp disabled={closing} onClick={enter}>Enter the theater</Stamp>
-            <Stamp disabled={closing} onClick={continueStory}>Continue your story</Stamp>
+            <Button variant="primary" disabled={closing} onClick={enter}>Enter the theater</Button>
+            <Button disabled={closing} onClick={continueStory}>Continue your story</Button>
           </div>
-          <div className={styles.importLink}><Stamp disabled={closing} onClick={importPiece}>Have a character or world already? Bring it in →</Stamp></div>
+          <div className={styles.importLink}><Button variant="quiet" size="sm" disabled={closing} onClick={importPiece}>Have a character or world already? Bring it in →</Button></div>
         </div>
         <div className={styles.floor}>
           <Proscenium label="Now playing" art={recent && pieces ? <SceneArt ctx={{ pieces }} chatId={recent.id} characterId={recent.cast.character.id} snapshotVersion={recent.snapshotVersion} hasArt={recent.hasPortrait} name={recent.characterName} trimTop /> : <div className={styles.emptyScreen}><Ic name="lucide:film" /><span>Your next scene</span></div>}>
@@ -53,7 +53,7 @@ function ProsceniumTitle({ state, pieces }: { state: TitleState; pieces?: PieceS
             {recent ? <>
               <h2>{recent.title}</h2>
               <p>{recent.characterName} · {recent.messageCount} messages</p>
-              <Stamp disabled={closing} onClick={continueStory}>Return to scene</Stamp>
+              <Button size="sm" disabled={closing} onClick={continueStory}>Return to scene</Button>
             </> : <>
               <h2>Your stories belong here.</h2>
               <p>Choose a character from your Library, or bring one in to begin.</p>
@@ -62,9 +62,9 @@ function ProsceniumTitle({ state, pieces }: { state: TitleState; pieces?: PieceS
           <nav className={styles.quickStart} aria-label="Quick start">
             <div className={styles.quickHeading}><span className={styles.kicker}>Quick start</span><span>Three ways in</span></div>
             <div className={styles.tickets}>
-              <Stamp aria-label="Start a story" disabled={closing} onClick={startStory}><Ic name="lucide:drama" /><span><strong>Start a story</strong><small>Choose a character</small></span><span aria-hidden="true">→</span></Stamp>
-              <Stamp aria-label="Import a piece" disabled={closing} onClick={importPiece}><Ic name="lucide:copy" /><span><strong>Import a piece</strong><small>Bring a card or world</small></span><span aria-hidden="true">→</span></Stamp>
-              <Stamp aria-label="Browse stories" disabled={closing} onClick={browseStories}><Ic name="lucide:film" /><span><strong>Browse stories</strong><small>Find another scene</small></span><span aria-hidden="true">→</span></Stamp>
+              <Card kind="entry" aria-label="Start a story" heading="Start a story" subtitle="Choose a character" disabled={closing} onClick={startStory}><Ic name="lucide:drama" /><span className={styles.arrow} aria-hidden="true">→</span></Card>
+              <Card kind="entry" aria-label="Import a piece" heading="Import a piece" subtitle="Bring a card or world" disabled={closing} onClick={importPiece}><Ic name="lucide:copy" /><span className={styles.arrow} aria-hidden="true">→</span></Card>
+              <Card kind="entry" aria-label="Browse stories" heading="Browse stories" subtitle="Find another scene" disabled={closing} onClick={browseStories}><Ic name="lucide:film" /><span className={styles.arrow} aria-hidden="true">→</span></Card>
             </div>
           </nav>
         </div>

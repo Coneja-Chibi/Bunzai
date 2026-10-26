@@ -13,6 +13,7 @@ import { InkDialog } from "../../components/ink-dialog";
 import { TransferBench, type TransferItem } from "../../components/transfer-bench";
 import { mergeSets, splitSet, type RegexWorkshopState } from "./regex-shelf-ops";
 import { isRecord, recOr } from "../../../core/guards";
+import { Button } from "../../components/button";
 
 export interface RegexWorkshopDialogProps {
   ctx: AppContext;
@@ -217,9 +218,9 @@ export function RegexWorkshopDialog({
       {error && !sourceBody ? (
         <div style={{ padding: "1rem" }}>
           <p>{error}</p>
-          <button type="button" onClick={onDismiss}>
+          <Button onClick={onDismiss}>
             Close
-          </button>
+          </Button>
         </div>
       ) : (
         <TransferBench

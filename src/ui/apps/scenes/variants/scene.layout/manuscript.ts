@@ -15,7 +15,7 @@ export default variantCss("scene.layout", "manuscript", `
 & .msg.user .spk{text-align:left}
 & .msg.user .badge{float:none}
 & .sh .back{color:var(--text)}
-& .paused-mark .sq,& .paused-mark small{color:var(--text)}
+& [data-part="scene.paused"] [data-control="tile"],& [data-part="scene.paused"] [data-control="tile"] [data-slot="caption"]{color:var(--text)}
 @container (max-width:1023px){
 & .scroll{padding:4rem 1rem 7rem;background:none}
 & .msg{padding-left:3rem}

@@ -23,7 +23,12 @@ beforeAll(() => {
   installed = installDom("<!doctype html><html><body></body></html>", { url: "http://127.0.0.1:8326/", extraGlobals: ["HTMLInputElement", "SVGElement", "Event", "MouseEvent", "KeyboardEvent"] });
   dom = installed.dom;
 });
-beforeEach(() => { installed.reinstall(); store = new Map(); });
+beforeEach(() => {
+  installed.reinstall();
+  store = new Map();
+  // Reduced motion keeps the page's LightRays on its CSS fallback (no WebGL in the test DOM).
+  (dom.window as unknown as { matchMedia: typeof window.matchMedia }).matchMedia = ((query: string) => ({ matches: true, media: query, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
+});
 
 const ctx = (): AppContext => ({ prefs: { get: (k: string) => store.get(k), set: (k: string, v: unknown) => void store.set(k, v) } }) as unknown as AppContext;
 
@@ -71,6 +76,19 @@ describe("chat layout gate", () => {
     expect(dom.window.document.querySelector("[role=dialog]")).toBeNull();
     expect(host.querySelector<HTMLInputElement>("input[value=messenger]")!.checked).toBe(true);
     expect(store.has(CHAT_LAYOUT_KEY)).toBe(false);
+  });
+
+  test("the background shows the focused card's layout, then the selected one again", async () => {
+    await mount(<LayoutGate ctx={ctx()}><Scene /></LayoutGate>);
+    const shown = (): string[] => [...host.querySelectorAll("[aria-hidden=true] img[data-shown=true]")].map((img) => img.getAttribute("data-layout")!);
+    expect(shown()).toEqual(["stage"]);
+    host.querySelector<HTMLInputElement>("input[value=messenger]")!.focus();
+    await settle();
+    expect(shown()).toEqual(["messenger"]);
+    host.querySelector<HTMLInputElement>("input[value=messenger]")!.blur();
+    await settle();
+    expect(shown()).toEqual(["stage"]);
+    expect(host.querySelector<HTMLInputElement>("input[value=stage]")!.checked).toBe(true);
   });
 
   test("a saved layout shows the scene directly", async () => {

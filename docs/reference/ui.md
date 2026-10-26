@@ -47,7 +47,7 @@ leaves that haze still.
 `components/light-rays/` adds two rose/violet beams aligned with the painted spotlights for each
 art composition. The vertex and fragment shaders are copied unchanged from Vaudeville RoleCall's
 `light-rays.tsx`. Its OGL Renderer, Program, Triangle and Mesh setup runs
-both sources and the fog on one canvas,
+both sources and the fog on one canvas (`fog={false}` leaves the fog out; the chat layout chooser uses that),
 capped at 640 pixels per dimension and 24 frames per second, with hidden-tab suspension and GPU
 resource cleanup. Reduced motion or unavailable WebGL uses still CSS beams. OGL is bundled locally.
 The `followMouse` flag is enabled: both spotlights ease toward the mouse using LightRays' existing
@@ -652,7 +652,7 @@ Import (drop anywhere, the rail's Add button, plain-words receipts) lives here. 
 
 ## Scenes (the library's chats)
 
-A scene opens only after a chat layout is chosen (`scenes/layout-chooser/`, wireframe `design/wireframes/rc-port/messenger.html` view 1; RoleCall's `ChatAppearanceChooser`): `LayoutGate` shows `LayoutChooser` (Full Chat preselected, Messenger, Preview dialog with Choose, "Use <name>") in place of the scene while `scenes.chatLayout` is unset or unreadable (`chat-layout.ts`), saves the pick, then renders the scene. Each card shows a real screenshot of one synthetic test scene in that layout (`docs/media/chat-layouts/full-chat.jpg` and `messenger.jpg`, 1920 by 947), under the caption "Actual screenshots from a test chat. Every layout runs the same scene." Settings > Appearance > Chat layout changes the same key.
+A scene opens only after a chat layout is chosen (`scenes/layout-chooser/`, wireframes `design/wireframes/rc-port/messenger.html` view 1 and `design/wireframes/features/layout-chooser/` header A; RoleCall's `ChatAppearanceChooser`): `LayoutGate` shows `LayoutChooser` (Full Chat preselected, Messenger, Preview dialog with Choose, "Use <name>") in place of the scene while `scenes.chatLayout` is unset or unreadable (`chat-layout.ts`), saves the pick, then renders the scene. Each card shows a real screenshot of one synthetic test scene in that layout (`docs/media/chat-layouts/full-chat.jpg` and `messenger.jpg`, 1920 by 947), under the caption "Actual screenshots from a test chat. Every layout runs the same scene." The page has a centered marquee header (gold kicker "Bunraku · A space for your stories", the title, then the two lines of copy) over the title screen's `LightRays` without fog. Behind it, the hovered or focused card's screenshot fills the page under a vignette, and the selected layout shows there otherwise. Settings > Appearance > Chat layout changes the same key.
 
 `src/ui/apps/scenes/`: RoleCall's /scenes list, gamified onto the wireframe
 (`design/wireframes/soft/scenes-game.html`), and the scene page, ported from the earlier approved
@@ -685,7 +685,7 @@ gathered on `options.html`). Scenes live in the encrypted library's ChatStore.
   The main scene-card grid, cast rail, recents and cut rows, folders, and Fan Favorites navigation
   dots use measured windows. Keyboard Tab continues through each window as rows enter it.
   Deferred Tab jumps cancel on another Tab, pointer interaction, focus departure, or viewport disposal.
-- **A scene that is not there.** Opening a scene id this library does not hold (a remembered or handed-off id that this library does not hold) answers 404. The page does not strand: it returns to the list, shows the toast "That scene is not in this library.", and forgets the remembered id. Any other failure (busy, network) keeps a card with Try again and Back to Scenes, drawn with the shell's Stamp buttons. A scene whose character was deleted before it froze a copy (only pre-migration-22 rows; no current path creates one) answers 410 with code `cast_missing` from open and tail; the list marks it `castMissing`, its preview skips the tail request, and the page says why and offers Move to Trash (the soft-delete path) instead of Try again.
+- **A scene that is not there.** Opening a scene id this library does not hold (a remembered or handed-off id that this library does not hold) answers 404. The page does not strand: it returns to the list, shows the toast "That scene is not in this library.", and forgets the remembered id. Any other failure (busy, network) keeps a card with Try again (primary) and Back to Scenes (quiet), drawn with the button family. A scene whose character was deleted before it froze a copy (only pre-migration-22 rows; no current path creates one) answers 410 with code `cast_missing` from open and tail; the list marks it `castMissing`, its preview skips the tail request, and the page says why and offers Move to Trash (the soft-delete path) instead of Try again.
 - **The scene page.** The header (back, name, tagline, the take pill), then the messages as RoleCall
   shows them: every message, the greeting included, runs through the full macro engine each time it
   is shown, against the scene's frozen cast; each bubble's random seed follows its global live-message
@@ -1551,6 +1551,23 @@ become a printed program, a menu list, big sticker tabs, or a numbered table of 
 
 ## Shared components (`src/ui/_shared/` and `src/ui/components/`)
 Extracted-once UI, layered so a single implementation serves every consumer:
+- `components/button/` - the one button family (wireframe `design/wireframes/features/button-family/`), every clickable
+  thing in the studio. Actions: `Button` (primary at most once per view, secondary, quiet, danger, link; md or sm; an
+  optional leading icon; `block`; `menu` adds a chevron and `aria-haspopup`), `IconButton` (a required `label` that is
+  also the tooltip; `size="fab"` for floating actions), `Segmented` (one or several of a few options, `aria-pressed`),
+  `Tabs` (a tablist with arrow, Home and End keys, horizontal or vertical; the caller renders the panel), `DocTab` (a
+  closable, draggable document tab) and `Chip` (on/off or plain, an optional kind color and count). Rows and surfaces
+  (`rows.tsx`, `surfaces.tsx`, `controls.tsx`): `ListRow` (plain, option, tree, picker), `MenuItem` (icon, hint,
+  danger, checked), `Disclosure` (section or line, `aria-expanded`), `Tile` (icon, swatch, thumb, app, add), `Card`
+  (choice with a "Picked" mark, art, entry, file drop), `Dot` (pager, port, handle), `Toggle` (the on/off switch, `card`
+  for a whole-row setting card), `InlineValue` (a value inside text) and `Scrim` (a click-away layer). Colors come from
+  theme tokens, so every theme recolors it. Parts take no className or style; per-item data goes through named props or
+  `vars` (CSS custom properties only). A state that means something (needs attention, done, destructive) keeps its
+  color through `tone` on `Button`, `IconButton` and `Chip` (a quiet icon colors only its glyph), a `Segmented` item
+  `tone`, or `variant="danger"`, never through room CSS. Every part carries `data-control` (and `data-kind` where it has kinds), the hooks
+  theme variants restyle; the `ui.controls` variants target `Button` and `IconButton`. Lint blocks a raw `<button>`
+  anywhere else in `src/ui`, and the style guard blocks CSS that styles the button element
+  outside the family and the theme variants.
 - `components/swatch-row/` - `SwatchRow` (+ the `HOUSE_PALETTE` constant), the house color-swatch
   row. Preset tiles are the fast path; with `allowCustom` a final `custom` tile opens `PaintPicker`
   (solid mode) for any color. Controlled: `value` in, `onChange(hex)` out. Consumers: setup accent
@@ -1580,8 +1597,8 @@ Extracted-once UI, layered so a single implementation serves every consumer:
 ### Control variants (`ui.controls`)
 
 `ui.controls` (quiet, game, sticker, ink) is global, so the shell paints it once into `<style id="bk-controls">`
-(`_shared/controls-style.ts`, called by the painter). It sets the Stamp's offset and frame, field frames, and the focus
-ring. Every element rule excludes `.host-protected`, so the lock, recovery words, Kit Gate and theme manager keep the
+(`_shared/controls-style.ts`, called by the painter). It sets the button family's shadow offset and frame (through the
+`data-control` hook on `Button` and `IconButton`), field frames, and the focus ring. Every element rule excludes `.host-protected`, so the lock, recovery words, Kit Gate and theme manager keep the
 host look. The checks every variant stylesheet owes (scoped, square, token-only, focus visible, nothing hidden) live in
 `_shared/variant-css-check.ts`; `_shared/variant-css.ts` builds the scoped selectors.
 

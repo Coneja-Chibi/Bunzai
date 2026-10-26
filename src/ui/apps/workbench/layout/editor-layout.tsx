@@ -7,6 +7,7 @@
  * that is not open is only `hidden`), so no field, action or piece of local state is lost by switching frames.
  * Frames change arrangement and look only; the editor's data and handlers live in the editor.
  */
+import { ListRow } from "../../../components/button";
 import { useId, useState, type JSX, type KeyboardEvent, type ReactNode } from "react";
 import { useSurfaceVariant } from "../../../_shared/surface-variant";
 import { BentoCard } from "../../../components/bento-card";
@@ -88,21 +89,30 @@ export function EditorLayout({ label, sections, rail, active: activeProp, onActi
     el?.focus({ preventScroll: true });
     el?.scrollIntoView?.({ block: "start" });
   };
-  const entry = (sec: EditorSection, at: number): JSX.Element[] => [
-    <span key="n" data-ef="no" aria-hidden="true">{numeral(sec, at)}</span>,
-    <span key="t" data-ef="tab-title">{sec.title}</span>,
-  ];
+  const numeralOf = (sec: EditorSection, at: number): JSX.Element => <span data-ef="no" aria-hidden="true">{numeral(sec, at)}</span>;
+  const titleOf = (sec: EditorSection): JSX.Element => <span data-ef="tab-title">{sec.title}</span>;
 
   const nav = tabbed ? (
     <div role="tablist" aria-label={label} aria-orientation={frame === "two-pane" ? "vertical" : "horizontal"} data-ef="nav" data-part="editor.nav" onKeyDown={move}>
       {sections.map((sec, at) => (
-        <button key={sec.id} type="button" role="tab" id={`${domId(sec.id)}-t`} data-sec={sec.id} aria-selected={sec.id === active}
-          aria-controls={domId(sec.id)} tabIndex={sec.id === active ? 0 : -1} data-ef="tab" onClick={() => setOpen(sec.id)}>{entry(sec, at)}</button>
+        <ListRow
+          key={sec.id}
+          role="tab"
+          id={`${domId(sec.id)}-t`}
+          data-sec={sec.id}
+          aria-selected={sec.id === active}
+          aria-controls={domId(sec.id)}
+          tabIndex={sec.id === active ? 0 : -1}
+          data-ef="tab"
+          onClick={() => setOpen(sec.id)}
+          leading={numeralOf(sec, at)}
+          label={titleOf(sec)}
+        />
       ))}
     </div>
   ) : frame === "long-form" ? (
     <nav aria-label={`${label} contents`} data-ef="nav" data-part="editor.nav">
-      {sections.map((sec, at) => <button key={sec.id} type="button" data-ef="tab" onClick={() => jump(sec.id)}>{entry(sec, at)}</button>)}
+      {sections.map((sec, at) => <ListRow key={sec.id} data-ef="tab" onClick={() => jump(sec.id)} leading={numeralOf(sec, at)} label={titleOf(sec)} />)}
     </nav>
   ) : null;
 

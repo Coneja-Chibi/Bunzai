@@ -8,6 +8,7 @@
 import { useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import { FALLBACK_KEY, readFallback } from "./fallback-model";
+import { Segmented } from "../../components/button";
 import { BoothModelPicker } from "./booth-model-picker";
 import type { ChatConnection } from "../../../stage/contracts/chat-store";
 import type { SceneModels } from "./use-scene-models";
@@ -34,9 +35,7 @@ export function BoothFallbackRow({ ctx, models }: { ctx: AppContext; models: Sce
     <div className="bth-fb" data-part="scene.booth.fallback">
       <h4>Fallback Model</h4>
       <p>When your model fails, this decides what answers instead. Applies to all your scenes.</p>
-      <div className="bth-modes" role="group" aria-label="Fallback mode">
-        {MODES.map((m) => <button type="button" key={m.id} className={`bth-mode${mode === m.id ? " on" : ""}`} aria-pressed={mode === m.id} onClick={() => choose(m.id)}>{m.label}</button>)}
-      </div>
+      <Segmented label="Fallback mode" items={MODES.map((m) => ({ value: m.id, label: m.label }))} value={mode} onChange={choose} />
       <small>{MODES.find((m) => m.id === mode)!.hint}</small>
       {mode === "custom" && (
         <>

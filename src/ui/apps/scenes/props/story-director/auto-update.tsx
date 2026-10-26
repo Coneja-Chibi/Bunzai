@@ -11,10 +11,10 @@ import { PROMPT_ORDER, isStoryboard, refreshSpecOf } from "../../../../../core/t
 import { TRACKER_PROP_PREFIX, type Chat, type ChatTrackers, type TrackerAuto, type TrackerModule } from "../../../../../stage/contracts/chat-store";
 import { DIRECTOR_CALLS_MAX, DIRECTOR_CALLS_MIN, DIRECTOR_EVERY_MAX, type DirectorSettingsPatch } from "../../../../../stage/contracts/director-types";
 import type { DirectorPanel } from "../../../../../studio/scene-director-edit";
+import { Button, IconButton, Toggle } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { openDirectorSettings } from "./director-live";
 import { legacyProps } from "../trackers/legacy";
-import { ToggleSwitch } from "../../../../components/toggle-switch";
 
 type Save = (patch: DirectorSettingsPatch) => Promise<string | null>;
 const replies = (n: number): string => (n === 1 ? "reply" : "replies");
@@ -27,9 +27,9 @@ function Stepper({ label, value, min, max, lead, unit, disabled, onCommit }: { l
   return (
     <span className="stp">
       {lead && <span>{lead}</span>}
-      <button type="button" aria-label={`Fewer: ${label}`} disabled={disabled || value <= min} onClick={() => onCommit(clamp(value - 1))}>-</button>
+      <IconButton size="sm" label={`Fewer: ${label}`} icon="lucide:minus" disabled={disabled || value <= min} onClick={() => onCommit(clamp(value - 1))} />
       <input type="number" aria-label={label} min={min} max={max} step={1} disabled={disabled} value={text ?? String(value)} onChange={(e) => setText(e.target.value)} onBlur={commit} onKeyDown={(e) => { if (e.key === "Enter") commit(); }} />
-      <button type="button" aria-label={`More: ${label}`} disabled={disabled || value >= max} onClick={() => onCommit(clamp(value + 1))}>+</button>
+      <IconButton size="sm" label={`More: ${label}`} icon="lucide:plus" disabled={disabled || value >= max} onClick={() => onCommit(clamp(value + 1))} />
       {unit && <small className="unit">{unit}</small>}
     </span>
   );
@@ -68,7 +68,7 @@ export function AutoUpdate({ ctx, chat, panel, save, onChat }: { ctx: AppContext
     <div className="ds-aware" data-part="props.story-director.auto-update">
       <div className="ds-row" title="Whether the Story Director updates the trackers that are on after a reply. Off means trackers change only when you edit or Refresh them.">
         <span><Ic name="lucide:refresh-cw" size={12} />Update trackers automatically</span>
-        <ToggleSwitch size="sm" on={s.autoUpdate} aria-label="Update trackers automatically" onChange={(autoUpdate) => void save({ autoUpdate })} />
+        <Toggle size="sm" on={s.autoUpdate} aria-label="Update trackers automatically" onChange={(autoUpdate) => void save({ autoUpdate })} />
       </div>
       {!s.autoUpdate && <p className="ds-hint">Trackers change only when you edit or Refresh them.</p>}
       {s.autoUpdate && (
@@ -93,9 +93,9 @@ export function AutoUpdate({ ctx, chat, panel, save, onChat }: { ctx: AppContext
                   <span className="ev">
                     <Stepper label={`${name}, every N replies`} value={every} min={1} max={DIRECTOR_EVERY_MAX} lead="every" unit={replies(every)} disabled={!on}
                       onCommit={(n) => void write(id, autoOf(on, n === s.every ? undefined : n))} />
-                    {own?.every !== undefined && own.every !== s.every && on && <button type="button" className="linkish" onClick={() => void write(id, autoOf(on, undefined))}>Use default</button>}
+                    {own?.every !== undefined && own.every !== s.every && on && <Button variant="quiet" size="sm" onClick={() => void write(id, autoOf(on, undefined))}>Use default</Button>}
                   </span>
-                  <ToggleSwitch size="sm" on={on} aria-label={`${name} automatic updates`} onChange={(next) => void write(id, autoOf(next, own?.every))} />
+                  <Toggle size="sm" on={on} aria-label={`${name} automatic updates`} onChange={(next) => void write(id, autoOf(next, own?.every))} />
                 </div>
               );
             })}
@@ -119,11 +119,11 @@ export function AutoUpdateBooth({ panel, save }: { panel: DirectorPanel; save: S
     <div className="ds-aware" data-part="scene.booth.narrator.auto-update">
       <div className="ds-row" title="Whether the Story Director updates the trackers that are on after a reply. Off means trackers change only when you edit or Refresh them.">
         <span><Ic name="lucide:refresh-cw" size={12} />Update trackers automatically</span>
-        <ToggleSwitch size="sm" on={s.autoUpdate} aria-label="Update trackers automatically" onChange={(autoUpdate) => void save({ autoUpdate })} />
+        <Toggle size="sm" on={s.autoUpdate} aria-label="Update trackers automatically" onChange={(autoUpdate) => void save({ autoUpdate })} />
       </div>
       <p className="ds-hint">
         {s.autoUpdate ? `Every ${s.every === 1 ? "reply" : `${s.every} replies`}. ` : "Trackers change only when you edit or Refresh them. "}
-        <button type="button" className="linkish" onClick={openDirectorSettings}>Change in Story Director</button>
+        <Button variant="quiet" size="sm" onClick={openDirectorSettings}>Change in Story Director</Button>
       </p>
     </div>
   );

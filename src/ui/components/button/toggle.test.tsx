@@ -2,7 +2,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import type { JSDOM } from "jsdom";
 import { installDom, type InstalledDom } from "../../_shared/test-dom";
-import type { ToggleSwitchProps } from "./index";
+import type { ToggleProps } from "./index";
 
 let dom: JSDOM;
 let installed: InstalledDom;
@@ -12,17 +12,17 @@ beforeAll(() => {
 });
 afterAll(() => installed.teardown());
 
-async function mount(props: Partial<ToggleSwitchProps> = {}): Promise<{ host: HTMLElement; calls: boolean[]; done(): void; click(): void }> {
-  const [{ flushSync }, { createRoot }, { ToggleSwitch }] = await Promise.all([import("react-dom"), import("react-dom/client"), import("./index")]);
+async function mount(props: Partial<ToggleProps> = {}): Promise<{ host: HTMLElement; calls: boolean[]; done(): void; click(): void }> {
+  const [{ flushSync }, { createRoot }, { Toggle }] = await Promise.all([import("react-dom"), import("react-dom/client"), import("./index")]);
   const calls: boolean[] = [];
   const host = dom.window.document.createElement("div");
   dom.window.document.body.appendChild(host);
   const root = createRoot(host);
-  flushSync(() => root.render(<ToggleSwitch on={false} onChange={(v) => calls.push(v)} aria-label="Use it" {...props} />));
+  flushSync(() => root.render(<Toggle on={false} onChange={(v) => calls.push(v)} aria-label="Use it" {...props} />));
   return { host, calls, click: () => flushSync(() => host.querySelector("button")!.click()), done: () => { flushSync(() => root.unmount()); host.remove(); } };
 }
 
-describe("ToggleSwitch", () => {
+describe("Toggle", () => {
   test("is a switch that reports the opposite state on click", async () => {
     const m = await mount();
     const b = m.host.querySelector("button")!;

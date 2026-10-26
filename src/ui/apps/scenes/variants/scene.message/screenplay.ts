@@ -11,7 +11,6 @@ export default variantCss("scene.message", "screenplay", `
 & .prose em{color:var(--text-soft)}
 & .prose p+p{margin-top:1rem}
 & .acts{position:static;display:flex;justify-content:center;margin-top:.6rem;padding:0;background:none;border:0;backdrop-filter:none}
-& .acts button{color:var(--text-dim)}
 & .meta{justify-content:center}
 @container (max-width:1023px){
 & .badge,& .msg.user .badge{position:static;margin:0 0 .15rem;text-align:right}

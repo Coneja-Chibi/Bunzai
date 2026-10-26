@@ -27,15 +27,6 @@
 .actions {
   composes: actions from "./section-card.module.css";
 }
-.btn {
-  composes: btn from "./section-card.module.css";
-}
-.btnGhost {
-  composes: btnGhost from "./section-card.module.css";
-}
-.btnDanger {
-  composes: btnDanger from "./section-card.module.css";
-}
 .status {
   composes: status from "./section-card.module.css";
 }
@@ -197,19 +188,6 @@
   composes: chip;
   background: var(--accent);
   color: var(--stage-white);
-}
-.caret {
-  cursor: pointer;
-  color: var(--text-soft, var(--text-dim));
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  background: transparent;
-  border: none;
-  padding: 0.4rem 0 0;
-  text-align: left;
-}
-.caret:hover {
-  color: var(--text);
 }
 .noLog {
   color: var(--text-faint);

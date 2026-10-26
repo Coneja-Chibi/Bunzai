@@ -5,14 +5,13 @@
  * answer that cannot be read is a 409 with the reason, never the tracker's defaults.
  */
 import { str } from "../core/guards";
-import { ProviderError } from "../stage/contracts/provider";
 import type { ChatStore } from "../stage/contracts/chat-store";
 import { isTrackerModule } from "../core/trackers";
 import { StudioValidationError } from "../studio/errors";
 import type { StudioStoreLike } from "../studio/contracts";
 import { proposeTrackerRefresh, type TrackerRefreshDeps, type TrackerRefreshInput } from "../studio/scene-tracker-refresh";
 import { connect } from "./server-chats-turn";
-import { json } from "./server-security";
+import { providerJson } from "./server-provider-json";
 
 type Body = Record<string, unknown>;
 
@@ -30,10 +29,5 @@ export async function handleTrackerRefreshRoute(req: Request, p: string, chats: 
   if (p !== "/api/chats/tracker-refresh" || req.method !== "POST" || !b) return null;
   const input = parseTrackerRefresh(b);
   const deps: TrackerRefreshDeps = { chats, connect, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, now: Date.now, newId: () => crypto.randomUUID() };
-  try {
-    return json(await proposeTrackerRefresh(deps, input, req.signal));
-  } catch (e) {
-    if (e instanceof ProviderError) return json({ error: e.message, code: e.code, category: e.category, ...(e.retryAfterSec ? { retryAfterSec: e.retryAfterSec } : {}) }, 502);
-    throw e;
-  }
+  return providerJson(() => proposeTrackerRefresh(deps, input, req.signal));
 }

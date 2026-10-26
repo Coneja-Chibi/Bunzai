@@ -1,0 +1,34 @@
+/* Row parts of the button family (section 2 of the button-family wireframe). Theme colors only. */
+.row, .item, .fold { box-sizing: border-box; margin: 0; border: 0; background: none; font: inherit; color: var(--text); text-align: left; cursor: pointer; width: 100%; }
+.row:focus-visible, .item:focus-visible, .fold:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.row:disabled, .item:disabled, .fold:disabled { cursor: not-allowed; color: var(--disabled-fg); }
+
+.row { --row-accent: var(--accent); display: flex; align-items: center; gap: 12px; padding: 9px 12px; padding-left: calc(12px + var(--row-depth, 0) * 16px); border-left: 3px solid transparent; font: 500 var(--text-control, .875rem) var(--font-body); }
+.row:hover:not(:disabled) { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.row[data-selected] { background: color-mix(in srgb, var(--row-accent) 14%, transparent); border-left-color: var(--row-accent); }
+.lead { display: grid; place-items: center; flex: none; }
+.text { flex: 1; display: flex; flex-direction: column; min-width: 0; /* clone-ok: a plain column stack */ }
+.clip { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; /* clone-ok: the one-line ellipsis idiom, shared by every family label */ }
+.sub { font: 400 calc(var(--text-control, .875rem) * .86) var(--font-body); color: var(--text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.meta { flex: none; display: flex; align-items: center; gap: 8px; font: 600 calc(var(--text-control, .875rem) * .86) var(--font-body); color: var(--text-soft); }
+.tick { width: 16px; height: 16px; display: grid; place-items: center; border: 2px solid var(--control-boundary); }
+.row[data-selected] .tick { border-color: var(--text); }
+
+.item { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 8px 12px; font: 500 calc(var(--text-control, .875rem) * .93) var(--font-body); }
+.item:hover:not(:disabled), .item:focus-visible { background: color-mix(in srgb, var(--item-accent, var(--accent)) 16%, transparent); }
+.item[aria-checked="true"] { background: color-mix(in srgb, var(--text) 8%, transparent); }
+.icon { display: grid; place-items: center; color: var(--item-accent, var(--text-soft)); }
+.hint { font: 500 calc(var(--text-control, .875rem) * .8) var(--font-body); color: var(--text-soft); }
+.danger, .danger .icon { color: var(--bk-role-danger-text); }
+
+.fold { display: flex; align-items: center; gap: 10px; padding: 10px 12px; padding-left: calc(12px + var(--row-depth, 0) * 16px); font: 700 var(--text-control, .875rem) var(--font-body); }
+.fold:hover:not(:disabled) { background: color-mix(in srgb, var(--text) 5%, transparent); }
+.chev { color: var(--text-soft); transition: transform var(--bk-dur-base) var(--bk-ease-move); }
+.fold[aria-expanded="true"] .chev { transform: rotate(90deg); }
+.line { width: auto; padding: 6px 0; font-weight: 500; color: var(--text-soft); }
+.line:hover:not(:disabled) { background: none; color: var(--text); }
+@media (prefers-reduced-motion: reduce) { .chev { transition: none; } }
+.foldTitle { flex: 1; }
+.row[data-wrap] .clip, .row[data-wrap] .sub { white-space: normal; overflow: visible; }
+.item .label { display: flex; flex-direction: column; }
+.desc { font: 400 calc(var(--text-control, .875rem) * .82) var(--font-body); color: var(--text-soft); white-space: normal; }

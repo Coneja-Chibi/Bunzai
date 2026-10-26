@@ -8,6 +8,7 @@
  */
 import { useState, type JSX, type ReactNode } from "react";
 import { TRACKER_CONTEXTS, type TrackerContext } from "../../../../../stage/contracts/chat-store";
+import { Button, IconButton } from "../../../../components/button";
 import { Ic, type IconName } from "../../../../_shared/ic";
 import { RefreshButton, RefreshNotice, RefreshOverlay, RefreshSheet } from "./refresh/refresh-ui";
 import { useRefresh } from "./refresh/use-refresh";
@@ -53,9 +54,9 @@ export function TrackerFrame({ label, title, description, icon, tone, tokens, vi
         <div className="trk-actions">
           <RefreshButton r={refresh} label={label} />
           {actions}
-          <button type="button" className={`trk-btn${settings ? " on" : ""}`} title="Panel AI settings" aria-label="Panel AI settings" aria-pressed={settings}
-            onClick={() => { setSettings(!settings); if (settings) setConfirm(false); }}><Ic name="lucide:settings" size={14} /></button>
-          {popOut && <button type="button" className="trk-btn" title="Pop out to floating panel" aria-label="Pop out to floating panel" onClick={popOut}><Ic name="lucide:external-link" size={14} /></button>}
+          <IconButton size="sm" label="Panel AI settings" icon="lucide:settings" aria-pressed={settings}
+            onClick={() => { setSettings(!settings); if (settings) setConfirm(false); }} />
+          {popOut && <IconButton size="sm" label="Pop out to floating panel" icon="lucide:external-link" onClick={popOut} />}
         </div>
       </div>
       {settings && (
@@ -68,19 +69,19 @@ export function TrackerFrame({ label, title, description, icon, tone, tokens, vi
           </label>
           <div className="trk-rule" />
           {!confirm ? (
-            <button type="button" className="trk-clear" onClick={() => setConfirm(true)}><Ic name="lucide:trash-2" size={14} /> Clear All Data</button>
+            <Button variant="danger" size="sm" icon="lucide:trash-2" onClick={() => setConfirm(true)}>Clear All Data</Button>
           ) : (
             <div className="trk-confirm">
               <p>This will erase all data for this tracker. Are you sure?</p>
-              <div><button type="button" className="trk-yes" onClick={() => { onClear(); setConfirm(false); setSettings(false); }}>Yes, clear</button>
-                <button type="button" className="trk-no" onClick={() => setConfirm(false)}>Cancel</button></div>
+              <div><Button variant="danger" size="sm" onClick={() => { onClear(); setConfirm(false); setSettings(false); }}>Yes, clear</Button>
+                <Button variant="quiet" size="sm" onClick={() => setConfirm(false)}>Cancel</Button></div>
             </div>
           )}
         </div>
       )}
       <RefreshNotice r={refresh} label={label} />
       {view.error && <p className="trk-error" role="alert">{view.error}</p>}
-      {view.undo && <div className="trk-undo" role="status"><span>{view.undo.label}</span><button type="button" onClick={view.undo.run}>Undo</button></div>}
+      {view.undo && <div className="trk-undo" role="status"><span>{view.undo.label}</span><Button size="sm" onClick={view.undo.run}>Undo</Button></div>}
       <DirectorUpdateLine dm={dm} />
       <div className="trk-body">{children}</div>
       <RefreshOverlay r={refresh} label={title} />

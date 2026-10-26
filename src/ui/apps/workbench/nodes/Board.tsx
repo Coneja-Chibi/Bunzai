@@ -5,8 +5,9 @@
  */
 import { useState } from "react";
 import type { JSX, PointerEvent } from "react";
-import { Stamp } from "../../../components/stamp";
+import { Button } from "../../../components/button";
 import { newUiId } from "../../../_shared/new-id";
+import { isEscapeClose } from "../../../_shared/use-escape-key";
 import type { BoardItem } from "./canvas-state";
 import css from "./nodes.module.css";
 
@@ -22,11 +23,11 @@ export function AddMenu({ disabled, onAdd }: { disabled: boolean; onAdd(type: "n
   const [open, setOpen] = useState(false);
   return (
     <span className={css.addWrap}>
-      <Stamp accent="var(--accent-deep)" disabled={disabled} title={disabled ? "Adding needs a wider window" : "Add to the board"} onClick={() => setOpen((o) => !o)}>+ Add</Stamp>
+      <Button variant="primary" disabled={disabled} title={disabled ? "Adding needs a wider window" : "Add to the board"} onClick={() => setOpen((o) => !o)}>+ Add</Button>
       {open && (
         <span role="menu" className={css.addMenu}>
-          <Stamp onClick={() => { setOpen(false); onAdd("note"); }}>Note</Stamp>
-          <Stamp onClick={() => { setOpen(false); onAdd("frame"); }}>Frame</Stamp>
+          <Button size="sm" onClick={() => { setOpen(false); onAdd("note"); }}>Note</Button>
+          <Button size="sm" onClick={() => { setOpen(false); onAdd("frame"); }}>Frame</Button>
         </span>
       )}
     </span>
@@ -76,7 +77,7 @@ export function BoardLayer(p: BoardLayerProps): JSX.Element {
                 // saved as it is typed (the canvas save waits for a pause), so leaving the view or Escape keeps it
                 onChange={(e) => p.onText(item.id, e.currentTarget.value)}
                 onBlur={() => p.onEdit(null)}
-                onKeyDown={(e) => { if (e.key === "Escape") p.onEdit(null); }}
+                onKeyDown={(e) => { if (isEscapeClose(e.nativeEvent)) p.onEdit(null); }}
               />
             ) : (
               <span className={css.noteText}>{item.text || "Double-click to write"}</span>

@@ -10,6 +10,7 @@ import type { Chat, ChatReasoningEffort } from "../../../../../stage/contracts/c
 import type { DirectorCommandMode, DirectorSettingsPatch } from "../../../../../stage/contracts/director-types";
 import type { DirectorPanel } from "../../../../../studio/scene-director-edit";
 import { Ic, type IconName } from "../../../../_shared/ic";
+import { Button, Card, Segmented } from "../../../../components/button";
 import { protect } from "../../../../_shared/protected-control";
 import { BoothModelPicker } from "../../booth-model-picker";
 import { useSceneModels } from "../../use-scene-models";
@@ -28,7 +29,7 @@ export function DirectorModel({ ctx, chat, panel, save, label, description }: { 
       <div className="ds-h">{label}</div>
       <BoothModelPicker current={own ?? chat.connection} models={models} onPick={(model) => void save({ model })} />
       <p className="ds-help">{own ? description : `${description} Unset: the Director uses the narrator's model.`}</p>
-      {own && <button type="button" className="ds-quiet" onClick={() => void save({ model: null, reasoning: null })}>Use the narrator&apos;s model</button>}
+      {own && <div className="ds-quiet"><Button variant="quiet" size="sm" onClick={() => void save({ model: null, reasoning: null })}>Use the narrator&apos;s model</Button></div>}
       {panel.tools === "none" && <p className="ds-amber" role="status">This model reports no tool-calling support. The Story Director needs it and will fall back every turn.</p>}
     </div>
   );
@@ -40,9 +41,8 @@ export function DirectorReasoning({ panel, save }: { panel: DirectorPanel; save:
     <div className="ds-box" data-part="props.story-director.reasoning">
       <div className="ds-h">Reasoning</div>
       <p className="ds-help">Auto follows the model default. Other choices request only levels this route reports supporting.</p>
-      <div className="ds-seg" role="group" aria-label="Reasoning effort">
-        {EFFORTS.map((e) => <button key={e.label} type="button" className={now === e.id ? "on" : ""} aria-pressed={now === e.id} onClick={() => void save({ reasoning: e.id })}>{e.label}</button>)}
-      </div>
+      <Segmented size="sm" label="Reasoning effort" items={EFFORTS.map((e) => ({ value: e.label, label: e.label }))} value={EFFORTS.find((e) => e.id === now)?.label ?? ""}
+        onChange={(label) => void save({ reasoning: EFFORTS.find((e) => e.label === label)?.id ?? null })} />
     </div>
   );
 }
@@ -65,9 +65,8 @@ export function DirectorCommandMode({ panel, save }: { panel: DirectorPanel; sav
       <p className="ds-help">Both modes use the same Director rules and state; only the command transport changes.</p>
       <div className="ds-modes" role="group" aria-label="Story Director command mode">
         {MODES.map((m) => (
-          <button key={m.id} type="button" className={panel.settings.commandMode === m.id ? "on" : ""} aria-pressed={panel.settings.commandMode === m.id} onClick={() => void save({ commandMode: m.id })}>
-            <b><Ic name={m.icon} size={14} />{m.label}</b><span>{m.description}</span>
-          </button>
+          <Card key={m.id} kind="choice" heading={<><Ic name={m.icon} size={14} />{m.label}</>} subtitle={m.description} selected={panel.settings.commandMode === m.id}
+            aria-pressed={panel.settings.commandMode === m.id} onClick={() => void save({ commandMode: m.id })} />
         ))}
       </div>
       <div className={`ds-cap ${cap.tone}`} title={cap.description}><Ic name={cap.icon} size={14} />{cap.label}</div>

@@ -1,6 +1,7 @@
 /**
  * Source pane: snippet chips + CodeEditor (plain CSS truth).
  */
+import { Chip } from "../button";
 import type { JSX } from "react";
 import { CodeEditor } from "../code-editor";
 import styles from "./styles.module.css";
@@ -30,15 +31,13 @@ export function CssSourcePane({ value, onChange, onChip }: CssSourcePaneProps): 
       </div>
       <div className={styles.chips}>
         {CSS_SNIPPET_CHIPS.map((c) => (
-          <button
+          <Chip
             key={c.label}
-            type="button"
-            className={styles.chip}
             title={c.insert}
             onClick={() => onChip(c.insert)}
           >
             {c.label}
-          </button>
+          </Chip>
         ))}
       </div>
       <CodeEditor

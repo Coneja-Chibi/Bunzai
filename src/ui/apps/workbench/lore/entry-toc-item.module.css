@@ -68,44 +68,6 @@
   margin-top: 0.45rem;
 }
 
-.eiOpen,
-.eiBeside,
-.eiMove,
-.eiCopy,
-.eiDel {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.22rem;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
-  padding: 0.22rem 0.38rem;
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.eiOpen {
-  border-color: var(--a, var(--accent));
-  color: var(--stage-card);
-}
-
-.eiBeside:hover,
-.eiMove:hover,
-.eiCopy:hover {
-  border-color: var(--stage-line);
-  color: var(--stage-card);
-}
-
-.eiDel {
-  color: var(--stage-danger-text);
-  border-color: var(--stage-danger-edge);
-}
-
 .eiMoveWrap {
   position: relative;
 }
@@ -130,43 +92,6 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--stage-text-dim);
-}
-
-.eiMoveOpt {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  width: 100%;
-  border: 0;
-  background: transparent;
-  color: var(--stage-soft);
-  padding: 0.3rem 0.35rem;
-  cursor: pointer;
-  text-align: left;
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: var(--text-control);
-}
-
-.eiMoveOpt:hover,
-.eiMoveOptOn {
-  background: var(--stage-row);
-  color: var(--stage-card);
-}
-
-.eiMoveCheck {
-  display: inline-grid;
-  place-items: center;
-  width: 1rem;
-  flex: none;
-  color: var(--a, var(--accent));
-}
-
-.eiMoveName {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .eiMoveSep {

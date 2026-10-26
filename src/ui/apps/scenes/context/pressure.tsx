@@ -6,6 +6,7 @@
  */
 import { useState, type CSSProperties, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
+import { Button, IconButton } from "../../../components/button";
 import { Slider } from "../../../components/slider";
 import { THRESHOLD_RANGES, TARGET_RANGE, parseTarget, type Level, type Meter, type Thresholds } from "./pressure-core";
 
@@ -25,7 +26,7 @@ export function Pressure({ meter, thresholds, target, onThresholds, onTarget }: 
       <div className="ps-top">
         <span>Context Pressure{meter.level !== "healthy" && <Ic name="lucide:triangle-alert" size={12} />}</span>
         <span className="ps-pct">{meter.percent}%
-          <button type="button" className={gear ? "on" : undefined} aria-label="Thresholds" aria-expanded={gear} onClick={() => setGear(!gear)}><Ic name="lucide:settings" size={12} /></button>
+          <IconButton variant="quiet" size="sm" label="Thresholds" icon="lucide:settings" aria-expanded={gear} onClick={() => setGear(!gear)} />
         </span>
       </div>
       <div className="ps-bar" role="meter" aria-valuenow={meter.percent} aria-valuemin={0} aria-valuemax={100} aria-label="Context pressure">
@@ -50,7 +51,7 @@ export function Pressure({ meter, thresholds, target, onThresholds, onTarget }: 
           <small>Context Target</small>
           <div className="ps-target">
             <input type="number" min={TARGET_RANGE[0]} max={TARGET_RANGE[1]} step={1024} aria-label="Context Target" placeholder="Auto (this model's window)" value={draft} onChange={(e) => type(e.target.value)} />
-            {target !== null && <button type="button" onClick={() => type("")}>Reset</button>}
+            {target !== null && <Button variant="quiet" size="sm" onClick={() => type("")}>Reset</Button>}
           </div>
           {target !== null && <p className="ps-watch">Watching {target.toLocaleString()} tokens instead of this model's window</p>}
         </div>

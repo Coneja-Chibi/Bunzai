@@ -5,6 +5,7 @@
  * served by docAssetUrl); the Architect and the Oracle have none in RoleCall either, and a tile whose picture is missing shows the initial, RoleCall's own fallback.
  */
 import { useState, type CSSProperties, type JSX } from "react";
+import { ListRow, MenuItem } from "../../../../components/button";
 import { Ic } from "../../../../_shared/ic";
 import { docAssetUrl } from "../../../../_shared/asset-url";
 import { PERSONALITIES, personalityOf, type DirectorPersonalityDef } from "../../../../../core/director/personalities";
@@ -36,7 +37,7 @@ function Avatar({ p, xl }: { p: DirectorPersonalityDef; xl?: boolean }): JSX.Ele
 }
 
 function Style({ p }: { p: DirectorPersonalityDef }): JSX.Element {
-  return <div className="dp-chips"><span>{p.philosophy.improvisation} improv</span><span>{p.philosophy.playerAgency} agency</span><span>{p.philosophy.informationControl} info control</span></div>;
+  return <span className="dp-chips"><span>{p.philosophy.improvisation} improv</span><span>{p.philosophy.playerAgency} agency</span><span>{p.philosophy.informationControl} info control</span></span>;
 }
 
 export function PersonalityPicker({ value, onPick, disabled }: { value: DirectorPersonality; onPick(id: DirectorPersonality): void; disabled?: boolean }): JSX.Element {
@@ -44,24 +45,18 @@ export function PersonalityPicker({ value, onPick, disabled }: { value: Director
   const chosen = personalityOf(value);
   return (
     <div className="dp" data-part="props.story-director.personality">
-      <button type="button" className="dp-card" style={toneOf(chosen)} aria-expanded={open} disabled={disabled} onClick={() => setOpen(!open)}>
-        <Avatar p={chosen} xl />
-        <span className="dp-tx">
-          <span className="dp-name"><b>{chosen.name}</b><i>{chosen.title}</i></span>
-          <em>&ldquo;{chosen.tagline}&rdquo;</em>
-          <small>{chosen.description}</small>
-          <Style p={chosen} />
-        </span>
-        <span className={`dr-chev${open ? " open" : ""}`}><Ic name="lucide:chevron-down" size={20} /></span>
-      </button>
+      <div className="dp-ctx" style={toneOf(chosen)}><ListRow variant="picker" wrap aria-expanded={open} disabled={disabled} onClick={() => setOpen(!open)}
+        leading={<Avatar p={chosen} xl />}
+        label={<span className="dp-name"><b>{chosen.name}</b><i>{chosen.title}</i></span>}
+        subtitle={<span className="dp-sub"><em>&ldquo;{chosen.tagline}&rdquo;</em><span className="dp-desc">{chosen.description}</span><Style p={chosen} /></span>} /></div>
       {open && (
         <div className="dp-list" role="listbox" aria-label="Story Director personality">
           {PERSONALITIES.map((p, i) => {
             const on = p.id === value;
             return (
-              <button key={p.id} type="button" role="option" aria-selected={on} className={`dp-opt${on ? " on" : ""}`} style={{ ...toneOf(p), "--i": i } as CSSProperties} disabled={disabled}
+              <div key={p.id} className="dp-ctx" style={{ ...toneOf(p), "--i": i } as CSSProperties}><MenuItem role="option" aria-selected={on} disabled={disabled}
                 onClick={() => { onPick(p.id as DirectorPersonality); setOpen(false); }}>
-                <span className="dp-head">
+                <span className="dp-body"><span className="dp-head">
                   <Avatar p={p} />
                   <span className="dp-tx"><span className="dp-name"><b>{p.name}</b><i>{p.title}</i></span><em>{p.tagline}</em></span>
                   {on && <span className="dp-check"><Ic name="lucide:check" size={16} /></span>}
@@ -75,8 +70,8 @@ export function PersonalityPicker({ value, onPick, disabled }: { value: Director
                   <span className="dp-h">Emotional Focus</span>
                   <span className="dp-chips">{p.preferences.emotionalFocus.map((a, i) => <span key={i}>{a}</span>)}</span>
                   <Style p={p} />
-                </span>
-              </button>
+                </span></span>
+              </MenuItem></div>
             );
           })}
         </div>

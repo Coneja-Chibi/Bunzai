@@ -58,38 +58,6 @@
   margin-top: 0.55rem;
 }
 
-.offer {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  text-align: left;
-  font-family: var(--font-body);
-  font-size: var(--text-control);
-  color: var(--stage-soft);
-  background: var(--stage-sunken);
-  border: 2px solid var(--stage-black);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  padding: 0.35rem 0.5rem;
-  cursor: pointer;
-}
-
-.offer:hover {
-  color: var(--stage-paper);
-  background: var(--stage-row);
-}
-
-.offer:active {
-  box-shadow: none;
-  transform: translate(2px, 2px);
-}
-
-.offerName {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 /* ---- bundles: a marquee'd group of proof cards ---- */
 .bundle {
   border: 2px solid var(--stage-black);
@@ -115,22 +83,6 @@
   font-style: normal;
   color: var(--stage-dim);
   margin-right: auto;
-}
-
-.unstage {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-dim);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.1rem 0.2rem;
-}
-
-.unstage:hover {
-  color: var(--stage-danger-text);
 }
 
 /* ---- the proof card: one piece's row inside a bundle ---- */
@@ -159,32 +111,6 @@
   white-space: nowrap;
 }
 
-.riderDrop {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-dim);
-  background: none;
-  border: 1px dashed var(--stage-line);
-  padding: 0.2rem 0.4rem;
-  cursor: pointer;
-}
-
-.riderDrop:hover {
-  color: var(--stage-paper);
-}
-
-.fixLink {
-  font: inherit;
-  color: inherit;
-  background: none;
-  border: none;
-  padding: 0;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
 /* ---- the queue head: count left, target chips right ---- */
 .sheetHead {
   display: flex;
@@ -206,25 +132,6 @@
   flex-wrap: wrap;
 }
 
-.tchip {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-black);
-  padding: 0.26rem 0.5rem;
-  cursor: pointer;
-  color: var(--stage-soft);
-  background: var(--stage-sunken);
-}
-
-.tchipOn {
-  background: var(--accent-deep); /* deep companion: dark ink on bright accent misses AA */
-  color: var(--stage-white);
-  font-weight: 800;
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-}
-
 /* pre-run controls on a waiting card: the file's base name and its flavor */
 .fileEdit {
   grid-column: 2 / -1;
@@ -242,23 +149,6 @@
   border: 2px solid var(--stage-black);
   padding: 0.26rem 0.4rem;
   min-width: 11rem;
-}
-
-.flavor {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-black);
-  padding: 0.22rem 0.4rem;
-  cursor: pointer;
-  color: var(--stage-soft);
-  background: var(--stage-sunken);
-}
-
-.flavorOn {
-  background: var(--accent-deep); /* deep companion: dark ink on bright accent misses AA */
-  color: var(--stage-white);
 }
 
 .jkind {
@@ -334,41 +224,4 @@
   font-size: var(--text-meta);
   color: var(--stage-mute);
   margin-right: auto;
-}
-
-.stamp {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-paper);
-  background: var(--stage-panel);
-  border: 2px solid var(--stage-black);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-}
-
-.stamp:active {
-  box-shadow: none;
-  transform: translate(2px, 2px);
-}
-
-.stamp:disabled {
-  opacity: 1;
-  color: var(--disabled-fg);
-  background: var(--disabled-bg);
-  border-color: var(--control-boundary);
-  cursor: default;
-  box-shadow: none;
-}
-
-.stampRun {
-  background: var(--action-primary);
-  color: var(--action-primary-fg);
-  border-color: var(--control-boundary);
-  font-weight: 800;
-  font-size: var(--text-control);
-  padding: 0.5rem 1.1rem;
-  box-shadow: 4px 4px 0 0 var(--stage-black);
 }

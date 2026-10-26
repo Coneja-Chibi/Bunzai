@@ -8,6 +8,7 @@
  * This is the UX half. The route is the enforcement half; this page cannot open anything the route
  * would refuse, so a styling or logic slip here degrades to "nothing opens", never "unsafe open".
  */
+import { Button } from "../button";
 import { useEffect, useState } from "react";
 import type { JSX } from "react";
 import type { ExternalLink } from "../../_shared/external-url";
@@ -96,12 +97,12 @@ export function LeavingGate(): JSX.Element | null {
           <div className={styles.warn}>Could not open the link. Copy the address above into your browser.</div>
         )}
         <div className={styles.row}>
-          <button type="button" className={`stamp ${styles.back}`} onClick={dismiss} disabled={busy}>
+          <Button onClick={dismiss} disabled={busy}>
             Go back
-          </button>
-          <button type="button" className={`stamp ${styles.go}`} onClick={() => void proceed()} disabled={busy}>
+          </Button>
+          <Button variant="primary" onClick={() => void proceed()} disabled={busy}>
             {busy ? "Opening..." : "Continue"}
-          </button>
+          </Button>
         </div>
     </DialogCore>
   );

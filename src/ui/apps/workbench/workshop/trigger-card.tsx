@@ -1,6 +1,7 @@
 /**
  * Structured When/If/Then trigger card (builder + English summary + macro chips).
  */
+import { Button, IconButton } from "../../../components/button";
 import type { JSX } from "react";
 import { classifyCondition, classifyEffect } from "../../../../entities/character/behavior";
 import type { TriggerScript } from "../../../../entities/character/schema";
@@ -87,7 +88,7 @@ export function WorkshopTriggerCard({
           {view.kind === "command" && (
             <input className={styles.val} value={view.value} placeholder="/command" onChange={(ev) => editEffect(ei, "value", ev.target.value)} />
           )}
-          <button type="button" className={styles.rm} onClick={() => editTrigger({ effects: removeAt(t.effects, ei) })}>&times;</button>
+          <IconButton label="Remove action" variant="danger" size="sm" icon="lucide:x" onClick={() => editTrigger({ effects: removeAt(t.effects, ei) })} />
         </div>
         {(view.kind === "setvar" || view.kind === "impersonate") && (
           <MacroAssist
@@ -108,7 +109,7 @@ export function WorkshopTriggerCard({
         <MiniSelect opts={WORKSHOP_EVENTS} value={t.event || "output"} onChange={(v) => editTrigger({ event: v })} />
         <span style={{ marginLeft: "auto" }} />
         {!structured(t) && <span className={styles.advtag}>advanced &middot; code</span>}
-        <button type="button" className={styles.rm} onClick={() => onWrite(removeAt(triggers, ti))}>&times;</button>
+        <IconButton label="Remove rule" variant="danger" size="sm" icon="lucide:x" onClick={() => onWrite(removeAt(triggers, ti))} />
       </div>
       <div className={styles.body}>
         <p className={styles.summary}>{summarizeTrigger(t)}</p>
@@ -124,16 +125,26 @@ export function WorkshopTriggerCard({
                     <input className={styles.var} value={v.variable} placeholder="variable" onChange={(e) => editCond(ci, "var", e.target.value)} />
                     <MiniSelect opts={OPS} value={v.operator || "="} onChange={(val) => editCond(ci, "operator", val)} />
                     <input className={styles.val} value={v.value} placeholder="value" onChange={(e) => editCond(ci, "value", e.target.value)} />
-                    <button type="button" className={styles.rm} onClick={() => editTrigger({ conditions: removeAt(t.conditions, ci) })}>&times;</button>
+                    <IconButton label="Remove condition" variant="danger" size="sm" icon="lucide:x" onClick={() => editTrigger({ conditions: removeAt(t.conditions, ci) })} />
                   </div>
                 );
               })}
-              <button type="button" className={styles.addmini} onClick={() => editTrigger({ conditions: appendTo(t.conditions, { type: "var", var: "", operator: "=", value: "" }) })}>+ add condition</button>
+              <Button
+                size="sm"
+                onClick={() => editTrigger({ conditions: appendTo(t.conditions, { type: "var", var: "", operator: "=", value: "" }) })}
+              >
+                + Add condition
+              </Button>
             </div>
             <div className={`${styles.block} ${styles.blockThen}`}>
               <span className={`${styles.kw} ${styles.kwThen}`}>THEN</span>
               {t.effects.map((e, ei) => effectRow(e, ei))}
-              <button type="button" className={styles.addmini} onClick={() => editTrigger({ effects: appendTo(t.effects, { type: "setvar", var: "", operator: "=", value: "" }) })}>+ add action</button>
+              <Button
+                size="sm"
+                onClick={() => editTrigger({ effects: appendTo(t.effects, { type: "setvar", var: "", operator: "=", value: "" }) })}
+              >
+                + Add action
+              </Button>
             </div>
           </>
         ) : (

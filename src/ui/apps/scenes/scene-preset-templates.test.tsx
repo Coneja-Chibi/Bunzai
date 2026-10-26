@@ -102,9 +102,9 @@ describe("the Preset tab's Templates section", () => {
     expect(header.getAttribute("aria-expanded")).toBe("false");
     expect(text()).not.toContain("Impersonation Prompt");
     await press(flushSync, header);
-    const rows = [...host.querySelectorAll(".tpl-row")];
-    expect(rows.map((r) => r.querySelector(".tpl-name")!.textContent)).toEqual(LABELS);
-    expect(rows.every((r) => r.querySelector(".tpl-meta")!.textContent === "empty")).toBe(true);
+    const rows = [...host.querySelectorAll(".tpl-item [data-control='disclosure']")];
+    expect(rows.map((r) => r.querySelector("[data-slot='label']")!.textContent)).toEqual(LABELS);
+    expect(rows.every((r) => r.querySelector("[data-slot='meta']")!.textContent === "empty")).toBe(true);
   });
 
   test("a filled field shows its token estimate and is counted; Behavior is not drawn", async () => {
@@ -113,7 +113,7 @@ describe("the Preset tab's Templates section", () => {
     const header = byText("Templates")!;
     expect(header.textContent).toContain("2/8");
     await press(flushSync, header);
-    const meta = (label: string) => [...host.querySelectorAll(".tpl-row")].find((r) => r.textContent!.includes(label))!.querySelector(".tpl-meta")!.textContent;
+    const meta = (label: string) => [...host.querySelectorAll(".tpl-item [data-control='disclosure']")].find((r) => r.textContent!.includes(label))!.querySelector("[data-slot='meta']")!.textContent;
     expect(meta("Impersonation Prompt")).toBe(`~${String(countText("Write as me."))}`);
     expect(meta("New Chat Prompt")).toBe("empty");
     expect(text()).not.toContain("Behavior");
@@ -138,7 +138,7 @@ describe("the Preset tab's Templates section", () => {
     await press(flushSync, byText("Templates"));
     const search = host.querySelector("input[aria-label='Search prompts']")!;
     typeInto(flushSync, search, "nudge");
-    expect([...host.querySelectorAll(".tpl-name")].map((n) => n.textContent)).toEqual(["Continue Nudge Prompt", "Group Nudge Prompt"]);
+    expect([...host.querySelectorAll(".tpl-item [data-slot='label']")].map((n) => n.textContent)).toEqual(["Continue Nudge Prompt", "Group Nudge Prompt"]);
     typeInto(flushSync, search, "zzz");
     expect(text()).toContain("No templates match search");
   });
@@ -156,7 +156,7 @@ describe("the Writing Tools tab", () => {
     await press(flushSync, tab());
     expect(text()).toContain("Your turn helpers");
     expect(text()).toContain("Every tool that rewrites a reply or drafts yours, with the prompt it uses. The \"+\" menu and message menu run these same tools.");
-    expect([...host.querySelectorAll(".wt-hd")].map((h) => h.textContent)).toEqual(["Change the reply4 tools", "Write in character1 tool", "Your draft1 tool"]);
+    expect([...host.querySelectorAll(".wt-group > [data-control='disclosure']")].map((h) => h.textContent)).toEqual(["Change the reply4 tools", "Write in character1 tool", "Your draft1 tool"]);
     expect([...host.querySelectorAll(".wt-tool .wt-name")].map((n) => n.textContent)).toEqual(["Regenerate", "Guided re-roll", "Continue", "Correct", "Expand as character"]);
     expect(text()).toContain("The prompts stay saved in the preset. This tab edits the same fields as Preset, so the two never disagree.");
   });
@@ -171,7 +171,7 @@ describe("the Writing Tools tab", () => {
     await press(flushSync, host.querySelector<HTMLButtonElement>(".tabs button")!);
     expect(saves.at(-1)!.body.systemPrompts).toEqual({ continueNudge: "[Go on.]" });
     await press(flushSync, byText("Templates"));
-    expect([...host.querySelectorAll(".tpl-row")].find((r) => r.textContent!.includes("Continue Nudge"))!.querySelector(".tpl-meta")!.textContent).toBe(`~${String(countText("[Go on.]"))}`);
+    expect([...host.querySelectorAll(".tpl-item [data-control='disclosure']")].find((r) => r.textContent!.includes("Continue Nudge"))!.querySelector("[data-slot='meta']")!.textContent).toBe(`~${String(countText("[Go on.]"))}`);
     await press(flushSync, byText("Continue Nudge Prompt"));
     typeInto(flushSync, area("Continue Nudge Prompt")!, "[Go on, softly.]");
     await press(flushSync, tab());
@@ -190,7 +190,7 @@ describe("the Writing Tools tab", () => {
   test("every tool's prompt is readable: a collapsed What this sends opens to the request's own words", async () => {
     const flushSync = await mount();
     await press(flushSync, tab());
-    const sends = [...host.querySelectorAll(".wt-tool")].map((t) => t.querySelector<HTMLButtonElement>(".wt-sends")!);
+    const sends = [...host.querySelectorAll(".wt-tool")].map((t) => t.querySelector<HTMLButtonElement>("[data-part='scene.prompting.tools.sends']")!);
     expect(sends).toHaveLength(5);
     expect(sends.map((b) => b.getAttribute("aria-expanded"))).toEqual(["false", "false", "false", "false", "false"]);
     expect(host.querySelectorAll(".wt-sends-text")).toHaveLength(0);
@@ -203,7 +203,7 @@ describe("the Writing Tools tab", () => {
   test("a group opens and closes", async () => {
     const flushSync = await mount();
     await press(flushSync, tab());
-    await press(flushSync, host.querySelector<HTMLButtonElement>(".wt-hd")!);
+    await press(flushSync, host.querySelector<HTMLButtonElement>(".wt-group > [data-control='disclosure']")!);
     expect(host.querySelectorAll(".wt-tool")).toHaveLength(1);
   });
 });

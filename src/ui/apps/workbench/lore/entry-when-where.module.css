@@ -179,39 +179,6 @@
   letter-spacing: 0.02em;
 }
 
-.wwSeg {
-  display: flex;
-  flex: 1;
-  min-width: 0;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  min-height: 2.35rem;
-  align-items: stretch;
-}
-
-.wwSegBtn {
-  flex: 1;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 0;
-  background: transparent;
-  color: var(--stage-mute);
-  padding: 0.35rem 0.2rem;
-  cursor: pointer;
-}
-
-.wwSegBtn + .wwSegBtn {
-  border-left: 1px solid var(--stage-seam);
-}
-
-.wwSegOn {
-  background: var(--selection);
-  color: var(--selection-fg);
-}
-
 /* a number field labelled by an EditorField (the dial markup that styled it is not there) */
 .wwNum {
   width: 100%;

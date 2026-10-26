@@ -89,25 +89,6 @@
   background: color-mix(in srgb, var(--a, var(--accent)) 10%, var(--stage-row));
 }
 
-.mfChev {
-  width: 0.9rem;
-  flex: none;
-  border: 0;
-  background: none;
-  padding: 0;
-  color: var(--stage-mute);
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-}
-
-.mfChevClosed {
-  color: var(--a, var(--accent));
-}
-
 .mfDragHandle {
   width: 0.95rem;
   flex: none;
@@ -202,25 +183,6 @@
   display: flex;
   gap: 0.35rem;
   margin-top: 0.45rem;
-}
-
-.mfAdd {
-  flex: 1;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px dashed var(--stage-seam);
-  background: none;
-  color: var(--stage-mute);
-  padding: 0.4rem;
-  cursor: pointer;
-}
-
-.mfAdd:hover {
-  border-color: var(--stage-line, var(--stage-seam));
-  color: var(--stage-card);
 }
 
 /* ---- folder inspector card (page column) ---- */
@@ -321,24 +283,6 @@
   margin-top: 0.55rem;
 }
 
-.mfAct {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-row);
-  color: var(--stage-soft);
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
-}
-
-.mfAct:hover {
-  border-color: var(--stage-line, var(--stage-seam));
-  color: var(--stage-card);
-}
-
 .mfDanger {
   margin-top: 0.55rem;
   border: 1px solid var(--stage-danger-edge);
@@ -348,19 +292,6 @@
   align-items: center;
   gap: 0.55rem;
   flex-wrap: wrap;
-}
-
-.mfDbtn {
-  font-family: var(--font-mono);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-danger-edge);
-  color: var(--stage-danger-text);
-  background: transparent;
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
 }
 
 .mfDangerHint {

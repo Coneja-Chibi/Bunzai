@@ -7,6 +7,7 @@
  * (macroGroupsForProfile), so RC/Bunraku show the whole engine while SillyTavern/Marinara show only
  * what they can run - the "different options per app" the fixed RC panel can't do.
  */
+import { Chip, Disclosure } from "../../../components/button";
 import { useState, type JSX } from "react";
 import { Ic, type IconName } from "../../../_shared/ic";
 import type { MacroGroup } from "../../../../core/preset";
@@ -63,14 +64,13 @@ export function MacroReference({ groups }: MacroReferenceProps): JSX.Element {
           const icon = GROUP_ICONS[g.name] ?? "lucide:hash";
           return (
             <div key={g.name} className={s.macroGroup}>
-              <button type="button" className={s.macroHead} aria-expanded={isOpen} onClick={() => toggle(g.name)}>
-                <span className={s.macroHeadLeft}>
-                  <Ic name={icon} size={14} className={s.macroIcon} />
-                  <span className={s.macroName}>{g.name}</span>
-                  <span className={s.macroCount}>({g.macros.length})</span>
-                </span>
-                <Ic name={isOpen ? "lucide:chevron-up" : "lucide:chevron-down"} size={14} className={s.macroChev} />
-              </button>
+              <Disclosure
+                open={isOpen}
+                onClick={() => toggle(g.name)}
+                leading={<Ic name={icon} size={14} className={s.macroIcon} />}
+                label={g.name}
+                summary={`(${String(g.macros.length)})`}
+              />
 
               {isOpen && (
                 <div className={s.macroBody}>
@@ -79,10 +79,9 @@ export function MacroReference({ groups }: MacroReferenceProps): JSX.Element {
                     {g.macros.map((m) => {
                       const isCopied = copied === m.macro;
                       return (
-                        <button
+                        <Chip
                           key={m.macro}
-                          type="button"
-                          className={`${s.macroPill} ${isCopied ? s.macroPillCopied : ""}`}
+                          tone={isCopied ? "var(--stage-ok)" : undefined}
                           title={m.example ? `${m.description}\nExample: ${m.example}` : m.description}
                           onClick={() => copy(m.macro)}
                         >
@@ -94,7 +93,7 @@ export function MacroReference({ groups }: MacroReferenceProps): JSX.Element {
                           ) : (
                             m.macro
                           )}
-                        </button>
+                        </Chip>
                       );
                     })}
                   </div>

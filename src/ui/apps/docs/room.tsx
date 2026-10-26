@@ -1,4 +1,5 @@
 /** Help / Docs room state: load the packaged corpus, remember a page, and compose its three panes. */
+import { Button } from "../../components/button";
 import { useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import type { DocFigure, DocRecord, DocsIndex } from "../../docs-types";
@@ -93,29 +94,27 @@ export function DocsRoom({ ctx }: { ctx: AppContext }): JSX.Element {
     <div className={styles.host}>
       <div className={styles.room}>
         <header className={styles.mobileHead}>
-          <button
-            type="button"
-            className={styles.mobileAction}
+          <Button
+            size="sm"
             aria-controls="docs-mobile-browse"
             aria-expanded={mobilePanel === "browse"}
             onClick={() => setMobilePanel("browse")}
           >
             Browse
-          </button>
+          </Button>
           <span className={styles.mobileTitle}>
             <b>{displayDocTitle(active)}</b>
             <small>{active.audience === "user" ? "User docs" : "Developer docs"}</small>
           </span>
-          <button
-            type="button"
-            className={styles.mobileAction}
+          <Button
+            size="sm"
             aria-controls="docs-mobile-sections"
             aria-expanded={mobilePanel === "sections"}
             disabled={active.anchors.length === 0}
             onClick={() => setMobilePanel("sections")}
           >
             Sections
-          </button>
+          </Button>
         </header>
 
         <div className={styles.desktopNav}>

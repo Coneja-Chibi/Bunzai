@@ -2,9 +2,9 @@
  * VoiceSetup - canonical Voice editor (approved vs-agnai-components look).
  * Binds body.persona.voice; format adapters map to Agnai service/voiceDisabled on export.
  */
+import { Button, IconButton, Toggle } from "../button";
 import type { JSX } from "react";
 import { Slider } from "../slider";
-import { ToggleSwitch } from "../toggle-switch";
 import { VOICE_SERVICES, normalizeVoice, voiceToCanonical, type VoiceValue } from "./core";
 import styles from "./styles.module.css";
 
@@ -21,7 +21,7 @@ export function VoiceSetup({ value, onChange }: VoiceSetupProps): JSX.Element {
 
   return (
     <div className={styles.wrap}>
-      <ToggleSwitch
+      <Toggle
         on={v.disabled}
         onChange={(disabled) => commit({ ...v, disabled })}
         label={v.disabled ? "Voice disabled (config kept)" : "Voice enabled"}
@@ -95,23 +95,23 @@ export function VoiceSetup({ value, onChange }: VoiceSetupProps): JSX.Element {
               value={val}
               onChange={(e) => commit({ ...v, extras: { ...v.extras, [k]: e.target.value } })}
             />
-            <button
-              type="button"
-              className={styles.rm}
+            <IconButton
+              variant="quiet"
+              size="sm"
+              icon="lucide:x"
+              label={`Remove ${k}`}
               onClick={() => {
                 const next = { ...v.extras };
                 delete next[k];
                 commit({ ...v, extras: next });
               }}
-            >
-              ×
-            </button>
+            />
           </div>
         ))}
-        <button
-          type="button"
-          className={styles.add}
-          onClick={() => {
+        <div className={styles.add}>
+          <Button
+            size="sm"
+            onClick={() => {
             let i = 1;
             let key = "extra";
             while (Object.hasOwn(v.extras, key)) {
@@ -120,9 +120,10 @@ export function VoiceSetup({ value, onChange }: VoiceSetupProps): JSX.Element {
             }
             commit({ ...v, extras: { ...v.extras, [key]: "" } });
           }}
-        >
-          + extra
-        </button>
+          >
+            + Extra
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -45,14 +45,14 @@ const tab = (label: string): HTMLElement => [...m!.host.querySelectorAll<HTMLEle
 const debug = async (): Promise<void> => {
   await m!.click(tab("Debug"));
   await m!.click(m!.button("Show Debug Data"));
-  await m!.click(m!.host.querySelector('[data-part="scene.director.debug.shadow"] .dr-fold-h'));
+  await m!.click(m!.host.querySelector('[data-part="scene.director.debug.shadow"] [data-control="disclosure"]'));
 };
 
 describe("edits", () => {
   test("Mark as Complete sends resolve-arc with the version shown, and the arc moves to Completed", async () => {
     const rig = await open();
     await m!.click(tab("Arcs"));
-    await m!.click(m!.host.querySelector(".dr-arc-h"));
+    await m!.click(m!.host.querySelector('.dr-arc [data-control="disclosure"]'));
     await m!.click(m!.button("Mark as Complete"));
     expect(rig.edits).toEqual([{ edit: { op: "resolve-arc", id: "arc-1" }, expectedVersion: 3 }]);
     expect(text()).toContain("Completed (2)");
@@ -81,7 +81,7 @@ describe("edits", () => {
     await debug();
     await m!.click(m!.button("Delete The harbormaster sold the salvage"));
     await m!.click(m!.button("Delete note"));
-    await m!.click(m!.host.querySelector('[data-part="scene.director.debug.seeds"] .dr-fold-h'));
+    await m!.click(m!.host.querySelector('[data-part="scene.director.debug.seeds"] [data-control="disclosure"]'));
     await m!.click(m!.button("Delete seed Salt in a dry room"));
     expect(rig.edits.map((e) => e.edit)).toEqual([{ op: "remove-hidden", id: "hid-1" }, { op: "remove-note", id: "note-1" }, { op: "remove-seed", id: "seed-1" }]);
     expect(text()).not.toContain("The harbormaster sold the salvage");
@@ -121,7 +121,7 @@ describe("edits", () => {
     expect(text()).toContain("Keep the lantern color a surprise.");
     rig.failNext = true;
     await m!.click(tab("Arcs"));
-    await m!.click(m!.host.querySelector(".dr-arc-h"));
+    await m!.click(m!.host.querySelector('.dr-arc [data-control="disclosure"]'));
     await m!.click(m!.button("Mark as Complete"));
     expect(text()).toContain("Couldn't save the resolved arc.");
     expect(text()).toContain("Active (1)");

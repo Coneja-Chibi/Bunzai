@@ -2,6 +2,7 @@
  * LoreEntryToc - list rows + focused EntryItem card (RoleCall port).
  * Match overrides also live on the page Keys card; Advanced holds memo/recursion/budget.
  */
+import { Button, Chip, Toggle } from "../../../components/button";
 import { useCallback, useEffect, useMemo, useRef, useState, type DragEvent, type JSX, type KeyboardEvent } from "react";
 import type { LorebookCategory, LorebookEntry } from "../../../../entities/lorebook/schema";
 import type { SearchApi } from "../../../app-contract-search";
@@ -13,7 +14,6 @@ import { LoreBulkBar } from "./bulk-bar";
 import { ModeSelect } from "./entry-toc-mode";
 import { EntryTocItem } from "./entry-toc-item";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, useFocusedRangeIndex, useOccurrenceKeys, useVirtualRows, type Range } from "../../../_shared/virtual-list";
-import { ToggleSwitch } from "../../../components/toggle-switch";
 
 type TocRow = { kind: "group"; key: string; label: string; count: number } | { kind: "entry"; key: string; entry: LorebookEntry };
 type TocSearchResult = { query: string; entries: readonly LorebookEntry[]; revision: string; draftChanged: boolean; indexes: Set<number>; truncated: boolean };
@@ -293,7 +293,7 @@ export function LoreEntryToc({
           }}
         >
           {!selectMode && (
-            <ToggleSwitch size="sm" on={e.enabled} aria-label={e.enabled ? "Entry on" : "Entry off"} title={e.enabled ? "On - click to disable" : "Off - click to enable"} isolate onChange={() => onPatch(e.id, { enabled: !e.enabled })} />
+            <Toggle size="sm" on={e.enabled} aria-label={e.enabled ? "Entry on" : "Entry off"} title={e.enabled ? "On - click to disable" : "Off - click to enable"} isolate onChange={() => onPatch(e.id, { enabled: !e.enabled })} />
           )}
           {selectMode ? (
             <span
@@ -331,14 +331,7 @@ export function LoreEntryToc({
       <p className={styles.tocTitle}>
         Table of contents
         {onSelectMode && (
-          <button
-            type="button"
-            className={selectMode ? `${styles.selMode} ${styles.selModeOn}` : styles.selMode}
-            aria-pressed={selectMode}
-            onClick={() => onSelectMode(!selectMode)}
-          >
-            Select
-          </button>
+          <Chip pressed={selectMode} onClick={() => onSelectMode(!selectMode)}>Select</Chip>
         )}
       </p>
       <label className={styles.tocSearch}>
@@ -377,9 +370,7 @@ export function LoreEntryToc({
         <p className={styles.tocEmpty}>Nothing matches &quot;{query.trim()}&quot;.</p>
       )}
 
-      <button type="button" className={styles.tocAdd} onClick={onAdd}>
-        + New entry
-      </button>
+      <Button size="sm" block onClick={onAdd}>+ New entry</Button>
 
       {selectMode && pickCount > 0 && onBulkEnable && onBulkDelete && onClearPick && (
         <LoreBulkBar

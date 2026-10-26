@@ -5,6 +5,7 @@
  * The shell owns the lens derivation (flowModules, moduleVerdict) + the render engine (controlFor,
  * proseBody) and injects them; the walk cursor, answer bodies, and dossier are flow-only and live here.
  */
+import { Button } from "../../../components/button";
 import type { CSSProperties, JSX, PointerEvent as ReactPointerEvent, RefObject } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
 import { readPath, type LensVerdict } from "../editor-core";
@@ -117,17 +118,11 @@ export function FlowView(props: FlowViewProps): JSX.Element {
           )}
           <div className={styles.qanswer}>{answerFor(active)}</div>
           <div className={styles.qcontrols}>
-            <button type="button" className={styles.qskip} disabled={flowAt === 0 && active.kind !== "rating"} onClick={() => goFlow(flowAt - 1)}>
-              &larr; Back
-            </button>
+            <Button variant="quiet" disabled={flowAt === 0 && active.kind !== "rating"} onClick={() => goFlow(flowAt - 1)}>&larr; Back</Button>
             {flowAt === flowModules.length - 1 ? (
-              <button type="button" className={`stamp ${styles.qnext}`} disabled={saving} onClick={() => void doSave()}>
-                {saving ? "Saving…" : "Complete"}
-              </button>
+              <Button variant="primary" disabled={saving} onClick={() => void doSave()}>{saving ? "Saving…" : "Complete"}</Button>
             ) : (
-              <button type="button" className={`stamp ${styles.qnext}`} onClick={() => goFlow(flowAt + 1)}>
-                Next &rarr;
-              </button>
+              <Button variant="primary" onClick={() => goFlow(flowAt + 1)}>Next &rarr;</Button>
             )}
           </div>
         </div>

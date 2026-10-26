@@ -46,23 +46,5 @@
   cursor: pointer;
 }
 .add {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px dashed var(--stage-seam, var(--seam));
-  background: none;
-  color: var(--stage-mute, var(--muted));
-  padding: 0.3rem 0.5rem;
-  cursor: pointer;
   align-self: flex-start;
-}
-.rm {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  border: none;
-  background: none;
-  color: var(--stage-mute, var(--muted));
-  cursor: pointer;
-  float: right;
 }
