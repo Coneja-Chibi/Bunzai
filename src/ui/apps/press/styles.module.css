@@ -1,20 +1,20 @@
 /**
- * The Press (vs-press-room-1, transcribed): left sticky offer rail (unstaged library pieces as
- * stamps), center bundle proof cards over the staged queue, bookkeeping foot. Stage tokens;
- * letterpress borders and offset shadows; mono kickers. Collapses by PANE width via @container.
+ * The Press (Premiere restyle of vs-press-room-1): shared room header on top, sticky offer rail, bundle panels over
+ * the staged queue, bookkeeping foot. Layout is the room's own; colors come from theme roles and deck tokens.
+ * Collapses by PANE width via @container.
  */
 /* the pane container: @container below resolves against THIS, so the room collapses by the
    pane it lives in (a half-width split), never the viewport */
 .roomHost {
   container-type: inline-size;
   min-height: 100%;
+  padding: 0.75rem 1rem 1rem;
 }
 
 .room2 {
   display: grid;
   grid-template-columns: 15rem minmax(0, 1fr);
-  gap: 1rem;
-  padding: 1rem;
+  gap: 1.25rem;
   align-items: start;
   min-height: 100%;
 }
@@ -30,21 +30,35 @@
   }
 }
 
+/* deck colors for anything marked data-deck (offers, cards); unknown kinds read as fog */
+.stamp, .kcard { --deck: var(--deck-fog); }
+:is(.stamp, .kcard)[data-deck="character"] { --deck: var(--deck-character); }
+:is(.stamp, .kcard)[data-deck="persona"] { --deck: var(--deck-persona); }
+:is(.stamp, .kcard)[data-deck="lorebook"] { --deck: var(--deck-lorebook); }
+:is(.stamp, .kcard)[data-deck="preset"] { --deck: var(--deck-preset); }
+:is(.stamp, .kcard)[data-deck="regex"] { --deck: var(--deck-regex); }
+:is(.stamp, .kcard)[data-deck="pack"] { --deck: var(--deck-pack); }
+
 .kick {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  font-size: var(--text-meta);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--premiere-gold);
+  line-height: 1.5;
+}
+
+.num {
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: var(--text-meta);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stage-soft);
+  letter-spacing: 0;
+  color: var(--premiere-gold);
 }
 
 /* ---- the offer rail: the library's quick face inside the room ---- */
 .rail {
-  border: 2px solid var(--stage-black);
-  background: var(--stage-row);
-  box-shadow: 4px 4px 0 0 var(--stage-black);
-  padding: 0.7rem;
+  padding: 1rem 0.85rem;
   position: sticky;
   top: 0.5rem;
   max-height: calc(100dvh - 6.5rem);
@@ -54,58 +68,96 @@
 .offerList {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  margin-top: 0.55rem;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
 }
 
-/* ---- bundles: a marquee'd group of proof cards ---- */
+/* one offer: a deck-edged stamp that lifts and glows in its deck color */
+.stamp {
+  border-left: 4px solid var(--deck);
+  background: color-mix(in srgb, var(--stage-black) 35%, transparent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.stamp:hover,
+.stamp:focus-within {
+  transform: translate(2px, -2px);
+  background: color-mix(in srgb, var(--deck) 14%, var(--stage-black));
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--deck) 28%, transparent);
+}
+
+.kindTag {
+  font: 600 var(--text-meta) var(--font-ui);
+  padding: 2px 6px;
+  color: var(--deck);
+  border: 1px solid color-mix(in srgb, var(--deck) 55%, transparent);
+  background: color-mix(in srgb, var(--deck) 10%, transparent);
+}
+
+/* ---- bundles: a marquee'd group of proof cards inside one panel ---- */
 .bundle {
-  border: 2px solid var(--stage-black);
-  background: var(--stage-row);
-  box-shadow: 4px 4px 0 0 var(--stage-black);
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.25rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.bundle:hover {
+  transform: translateY(-3px);
 }
 
 .bundleMarq {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  border-bottom: 2px solid var(--stage-seam);
-  padding: 0.45rem 0.7rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--stage-paper);
+  flex-wrap: wrap;
+  gap: 0.4rem 0.9rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--bk-line);
 }
 
-.bundleMarq i {
-  font-style: normal;
-  color: var(--stage-dim);
+.bundleName {
+  font: 700 1.125rem/1.2 var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.bundleCount {
   margin-right: auto;
+  font-size: var(--text-meta);
+  color: var(--text-dim);
 }
 
-/* ---- the proof card: one piece's row inside a bundle ---- */
+/* ---- the proof card: one piece's open row inside a bundle ---- */
 .kcard {
   display: grid;
-  grid-template-columns: 1.05rem minmax(0, 1fr) auto auto;
-  gap: 0.45rem 0.6rem;
+  grid-template-columns: 0.9rem minmax(0, 1fr) auto auto;
+  gap: 0.4rem 0.85rem;
   align-items: center;
-  border: 2px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  background: var(--stage-sunken);
-  padding: 0.5rem 0.65rem;
-  margin: 0.6rem 0.85rem 0.7rem 0.7rem;
+  margin-top: 0.85rem;
+  padding: 0.6rem 0.4rem 0.6rem 0.85rem;
+  border-left: 4px solid var(--deck);
   font-size: var(--text-body);
-  color: var(--stage-soft);
+  color: var(--text-soft);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kcard:hover {
+  transform: translate(2px, -2px);
+  background: color-mix(in srgb, var(--deck) 9%, transparent);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--deck) 22%, transparent);
 }
 
 .kcardDropped {
   opacity: 0.5;
 }
 
+.kcardDropped:hover {
+  transform: none;
+  background: none;
+  box-shadow: none;
+}
+
 .kname {
-  color: var(--stage-paper);
+  font-weight: 700;
+  color: var(--text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -115,11 +167,11 @@
 .sheetHead {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.85rem 1.25rem;
   flex-wrap: wrap;
-  border-bottom: 2px solid var(--stage-seam);
-  padding-bottom: 0.6rem;
-  margin-bottom: 0.8rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent);
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.1rem;
 }
 
 .sheetHead .kick {
@@ -128,7 +180,7 @@
 
 .targets {
   display: flex;
-  gap: 0.35rem;
+  gap: 0.5rem;
   flex-wrap: wrap;
 }
 
@@ -136,92 +188,170 @@
 .fileEdit {
   grid-column: 2 / -1;
   display: flex;
-  gap: 0.4rem;
+  gap: 0.6rem;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .fileIn {
   font-family: var(--font-mono);
-  font-size: var(--text-body);
-  color: var(--stage-paper);
-  background: var(--stage-row);
-  border: 2px solid var(--stage-black);
-  padding: 0.26rem 0.4rem;
-  min-width: 11rem;
+  font-size: var(--text-meta);
+  color: var(--text);
+  background: var(--bk-surface-field);
+  border: 2px solid var(--bk-line-control);
+  padding: 0.35rem 0.6rem;
+  min-width: 12rem;
+  min-height: 2.25rem;
+}
+
+.fileIn:focus {
+  outline: none;
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 25%, transparent);
 }
 
 .jkind {
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: var(--text-meta);
-  color: var(--stage-soft);
-  text-transform: uppercase;
+  font: 600 var(--text-meta) var(--font-ui);
+  letter-spacing: 0.04em;
+  color: var(--deck);
 }
 
 .jfile {
   grid-column: 2 / -1;
   font-family: var(--font-mono);
   font-size: var(--text-meta);
-  color: var(--stage-dim);
+  color: var(--text-soft);
 }
 
+.jfile::before {
+  content: "file";
+  font: 500 var(--text-meta) var(--font-ui);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--premiere-gold);
+  margin-right: 0.5rem;
+}
+
+/* readiness pips: glowing squares */
 .dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  border: 1px solid var(--stage-black);
-  background: var(--stage-faint);
+  width: 0.6rem;
+  height: 0.6rem;
+  background: var(--text-faint);
 }
 
 .dotOk {
-  background: var(--stage-ok);
+  background: var(--bk-role-ok);
+  box-shadow: 0 0 10px var(--bk-role-ok);
 }
 
 .dotWarn {
-  background: var(--stage-warn);
+  background: var(--premiere-gold);
+  box-shadow: 0 0 10px var(--premiere-gold);
 }
 
 .dotFail {
-  background: var(--stage-danger-edge);
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
 }
 
 .jnote {
   grid-column: 2 / -1;
-  font-size: var(--text-body);
-  font-family: var(--font-mono);
-  color: var(--stage-warn);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  font-size: var(--text-meta);
+  color: var(--premiere-gold);
 }
 
 .jnoteFail {
-  color: var(--stage-danger-text);
+  color: var(--accent);
 }
 
 .jinfo {
   grid-column: 2 / -1;
   font-size: var(--text-meta);
-  font-family: var(--font-mono);
-  color: var(--stage-dim);
+  color: var(--text-dim);
 }
 
+/* quiet fallback line (rail notices, none-left) */
 .empty {
-  color: var(--stage-mute);
+  color: var(--text-dim);
   font-size: var(--text-body);
-  padding: 1.2rem 0.4rem;
+  padding: 0.6rem 0.2rem;
+}
+
+/* centered notices in the rail: a kicker and one line */
+.notice {
+  text-align: center;
+  padding: 0.6rem 0.2rem;
+}
+
+.notice .kick {
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.noticeFail .kick {
+  color: var(--accent);
+}
+
+.notice p {
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--text-soft);
+}
+
+/* the empty queue moment */
+.moment {
+  text-align: center;
+  padding: 2.75rem 1.5rem 2.5rem;
+}
+
+.momentTitle {
+  margin: 0.85rem 0 0;
+  font: 700 1.625rem/1.2 var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.moment p {
+  max-width: 35rem;
+  margin: 0.8rem auto 0;
+  color: var(--text-soft);
+  font-size: var(--text-body);
 }
 
 .foot {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  margin-top: 0.8rem;
-  border-top: 1px dashed var(--stage-line);
-  padding-top: 0.8rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent);
+  padding-top: 1.1rem;
 }
 
 .sum {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  color: var(--stage-mute);
+  font-size: var(--text-body);
+  color: var(--text-soft);
   margin-right: auto;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp,
+  .bundle,
+  .kcard {
+    transition: none;
+  }
+
+  .stamp:hover,
+  .stamp:focus-within,
+  .bundle:hover,
+  .kcard:hover {
+    transform: none;
+  }
+}
+
+/* rail names wrap instead of clipping: the kind tag shares the 15rem row */
+.stamp [data-slot="label"] { white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }

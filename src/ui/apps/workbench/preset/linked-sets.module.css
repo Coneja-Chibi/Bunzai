@@ -1,21 +1,18 @@
-/** Linked regex and quick-reply set controls inside preset settings. */
+/** Linked regex and quick-reply set controls inside preset settings: open columns, no frames. */
 .groups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 0.75rem;
+  gap: 0.75rem 1.25rem;
 }
 
 .group {
-  border: 1px solid color-mix(in srgb, var(--stage-card) 18%, transparent);
-  padding: 0.6rem;
+  border-top: 2px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent);
+  padding: 0.6rem 0 0;
 }
 
 .title {
+  composes: goldLabel from "./preset.module.css";
   margin: 0 0 0.45rem;
-  color: var(--stage-soft);
-  font: 800 var(--text-control) var(--font-big);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .choices {
@@ -27,12 +24,12 @@
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  color: var(--stage-card);
-  font: 500 var(--text-control) var(--font-body);
+  color: var(--text);
+  font: 500 var(--text-control) var(--font-ui);
 }
 
 .empty {
   margin: 0;
-  color: var(--stage-text-dim);
-  font: 500 var(--text-control) var(--font-body);
+  color: var(--text-dim);
+  font: 500 var(--text-control) var(--font-ui);
 }

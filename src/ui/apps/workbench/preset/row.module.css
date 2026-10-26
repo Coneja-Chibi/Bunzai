@@ -1,29 +1,31 @@
 /**
- * Preset editor - the prompt ROW (a faithful transcription of RC's PromptItemV4, neobrutalist).
- * Split from preset.module.css for the 500-line cap. SUBTLE rows (low white-overlay fills via
- * color-mix, near-transparent borders) with the accent (--pa, set on .root) for active/selected/
- * expanded. Hard-neo action buttons with the translate press.
+ * Preset editor - the prompt ROW (Premiere restyle). Open rows with a hairline divider, a mono gold index, tags and
+ * a token count; hover lifts and glows in the preset deck color, the selected row wears one accent edge, off rows
+ * dim. The row is a ROW inside the workspace panel, never a box inside a box.
  */
 
 .rowWrapOpen {
   background: color-mix(in srgb, var(--stage-card) 3%, transparent);
-  border: 1px solid color-mix(in srgb, var(--pa) 28%, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--pa) 55%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
 }
 
 .prow {
   display: flex;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.6rem 0.75rem;
-  background: color-mix(in srgb, var(--stage-card) 2%, transparent);
-  border: 1px solid transparent;
+  gap: 0.75rem;
+  padding: 0.7rem 0.75rem;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   cursor: pointer;
-  transition: background 0.1s ease, border-color 0.1s ease;
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .prow:hover {
-  background: color-mix(in srgb, var(--stage-card) 5%, transparent);
-  border-color: color-mix(in srgb, var(--stage-card) 9%, transparent);
+  transform: translateY(-2px);
+  background: color-mix(in srgb, var(--deck-preset) 9%, transparent);
+  border-left-color: var(--deck-preset);
+  box-shadow: 0 10px 30px color-mix(in srgb, var(--deck-preset) 22%, transparent);
 }
 
 /* A block inside a category, in the virtualized flat list (block-list.tsx flattens the old nested
@@ -38,22 +40,31 @@
 
 .prowActive {
   background: color-mix(in srgb, var(--pa) 12%, transparent);
-  border-color: color-mix(in srgb, var(--pa) 35%, transparent);
+  border-left-color: var(--pa);
 }
 
 .prowSel {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--pa) 60%, transparent);
+  box-shadow: inset 3px 0 0 var(--pa);
 }
 
 .prowOff {
-  opacity: 0.4;
+  opacity: 0.5;
+}
+
+.prowOff:hover {
+  opacity: 0.8;
 }
 
 .rowWrapOpen .prow {
   background: none;
   border-color: transparent;
+  border-bottom-color: transparent;
 }
 
+.rowWrapOpen .prow:hover {
+  transform: none;
+  box-shadow: none;
+}
 
 .check {
   display: inline-flex;
@@ -71,7 +82,7 @@
 }
 
 .grip {
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   cursor: grab;
   flex: none;
   font-size: 0.9rem;
@@ -87,21 +98,21 @@
   cursor: grabbing;
 }
 
+/* the order index: mono numerals in gold, one hairline around the number only */
 .ord {
-  min-width: 2.1rem;
-  height: 1.75rem;
+  min-width: 2.4rem;
+  height: 1.9rem;
   display: grid;
   place-items: center;
   padding: 0 0.4rem;
-  font: 800 var(--text-control) var(--font-big);
-  letter-spacing: 0.03em;
-  background: color-mix(in srgb, var(--pa) 15%, transparent);
-  color: var(--pa);
+  font: 600 var(--text-control) var(--font-mono);
+  color: var(--premiere-gold);
+  border: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent);
   flex: none;
 }
 
 .ordAt {
-  background: color-mix(in srgb, var(--pa) 20%, transparent);
+  background: color-mix(in srgb, var(--premiere-gold) 12%, transparent);
 }
 
 .main {
@@ -117,60 +128,56 @@
 }
 
 .ptitle {
-  font: 600 0.88rem var(--font-big);
-  letter-spacing: 0.01em;
-  color: var(--stage-card);
+  font: 700 0.9375rem var(--font-ui);
+  color: var(--text);
 }
 
 .prowOff .ptitle {
-  color: var(--stage-mute);
+  color: var(--text-dim);
 }
 
+/* role and marker tags: sentence case in the UI face, one hairline */
 .role {
-  font: 800 var(--text-control) var(--font-mono);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.12rem 0.38rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  padding: 0.05rem 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--text) 28%, transparent);
   flex: none;
 }
 
 .rSys {
-  color: var(--stage-macro);
-  background: color-mix(in srgb, var(--stage-macro) 16%, transparent);
+  color: var(--text-soft);
 }
 
 .rUsr {
   color: var(--stage-ok);
-  background: color-mix(in srgb, var(--stage-ok) 16%, transparent);
+  border-color: color-mix(in srgb, var(--stage-ok) 50%, transparent);
 }
 
 .rAst {
   color: var(--stage-warn);
-  background: color-mix(in srgb, var(--stage-warn) 16%, transparent);
+  border-color: color-mix(in srgb, var(--stage-warn) 50%, transparent);
 }
 
 .mk {
-  font: 800 var(--text-control) var(--font-mono);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-warn);
-  background: color-mix(in srgb, var(--stage-warn) 16%, transparent);
-  padding: 0.12rem 0.38rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  color: var(--premiere-gold);
+  border: 1px solid color-mix(in srgb, var(--premiere-gold) 55%, transparent);
+  padding: 0.05rem 0.5rem;
   flex: none;
 }
 
 .depthBadge {
-  font: 600 var(--text-meta) var(--font-mono);
+  font: 600 var(--text-meta) var(--font-ui);
   color: var(--pa);
   background: color-mix(in srgb, var(--pa) 14%, transparent);
-  padding: 0.12rem 0.38rem;
+  padding: 0.05rem 0.5rem;
   flex: none;
 }
 
 .prev {
-  margin: 0.12rem 0 0;
-  font: 400 var(--text-control) var(--font-body);
-  color: var(--stage-mute);
+  margin: 0.15rem 0 0;
+  font: 400 var(--text-control) var(--font-ui);
+  color: var(--text-dim);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -178,7 +185,7 @@
 
 .tok {
   font: 600 var(--text-control) var(--font-mono);
-  color: var(--stage-text-dim);
+  color: var(--premiere-gold);
   flex: none;
 }
 
@@ -196,4 +203,13 @@
   align-items: center;
   justify-content: space-between;
   margin-top: 0.6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prow {
+    transition: none;
+  }
+  .prow:hover {
+    transform: none;
+  }
 }

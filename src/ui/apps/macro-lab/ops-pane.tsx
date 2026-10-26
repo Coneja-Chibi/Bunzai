@@ -17,6 +17,7 @@
  */
 import { Chip } from "../../components/button";
 import { type JSX } from "react";
+import { Panel } from "../../components/panel";
 import { MACRO_DIALECT_LABELS } from "../../../core/preset/macros";
 import { OPERATION_ABSENT, OPERATION_LENSES, operationRows } from "./lab-core";
 // Two sheets on purpose: the box chrome and the insert pill are shared with the bible, the grid is
@@ -32,7 +33,7 @@ export function OpsPane({ onInsert }: { onInsert: (token: string) => void }): JS
   const gaps = rows.filter((r) => r.carriedBy < OPERATION_LENSES.length).length;
 
   return (
-    <section className={styles.box} aria-label="What each platform calls the same operation">
+    <Panel data-part="macro-lab.operations" deck="regex" className={styles.box} aria-label="What each platform calls the same operation">
       <div className={styles.boxHead}>
         <h2 className={styles.boxTitle}>Operations</h2>
         <span className={styles.boxNote}>{`${rows.length} operations · ${gaps} with gaps`}</span>
@@ -118,6 +119,6 @@ export function OpsPane({ onInsert }: { onInsert: (token: string) => void }): JS
           {"which macros they carry and in how a few are spelled - see the bible for both."}
         </p>
       ) : null}
-    </section>
+    </Panel>
   );
 }

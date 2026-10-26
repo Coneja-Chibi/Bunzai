@@ -1,7 +1,7 @@
-/**
- * Settings styles - transcribed 1:1 from the deleted index.ts's inline STYLE block. Shared by
- * index.tsx (room/tabs/tab/body), section-contract.tsx (row/tx/label/hint/seg), and the studio
- * section (plates/plate) - one file, since it was one <style> block before.
+/*
+ * Settings styles (approved Premiere wireframe, the one room whose layout changed): a rail of four acts on the left, one
+ * open page on the right. Shared by index.tsx (room, rail, page head), section-contract.tsx (row/tx/label/hint, the lock
+ * line) and the studio section (plates). Sections are open blocks divided by a hairline; the rail is the one framed panel.
  */
 /* the pane container: @container below resolves against THIS, so the room collapses by the pane
    it lives in (a half-width split), never the viewport (the fluid-container law) */
@@ -15,36 +15,168 @@
 .room {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+  overflow-y: auto;
   padding: clamp(0.7rem, 1.8vw, 1.1rem);
 }
-.tabs {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  flex: none;
+.shell {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
 }
-.body {
-  flex: 1;
+.rail {
+  position: sticky;
+  top: 0;
+  padding: 14px 10px 16px;
+}
+.tabs {
+  min-width: 0;
+}
+
+/* the rail: one vertical tablist; the act line rides inside the first tab of each act, the highlight on the name beneath it */
+.tabs [data-control="tabs"] {
+  gap: 0;
+  border-left: 0;
+}
+.tabs [data-control="tabs"] [role="tab"] {
+  display: block;
+  width: 100%;
   min-height: 0;
-  overflow-y: auto;
-  background: var(--shell-panel);
-  border: 3px solid var(--edge);
-  box-shadow: 6px 6px 0 0 var(--edge);
-  padding: clamp(0.8rem, 2vw, 1.4rem);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  white-space: normal;
+  background: none;
+}
+.tabs [data-control="tabs"] [role="tab"][aria-selected="true"] {
+  background: none;
+}
+.act {
+  display: block;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 12px 8px;
+  font: 600 var(--text-meta)/1 var(--font-ui);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--premiere-gold);
+}
+.tabs [role="tab"]:first-child .act {
+  padding-top: 4px;
+}
+.lb {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  text-align: left;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid transparent;
+  font: 600 var(--text-control) var(--font-ui);
+  color: var(--text-soft, var(--text-dim));
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.lb svg {
+  margin-left: auto;
+  flex: none;
+  color: var(--premiere-gold);
+}
+.lbText {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.lbText small {
+  font: 400 var(--text-meta)/1.3 var(--font-ui);
+  color: var(--text-dim);
+}
+[role="tab"]:hover .lb,
+[role="tab"]:focus-visible .lb {
+  color: var(--text);
+  background: color-mix(in srgb, var(--bk-role-select) 12%, transparent);
+}
+[role="tab"]:hover .lb {
+  transform: translateX(3px);
+}
+[role="tab"][aria-selected="true"] .lb {
+  color: var(--text);
+  border-left-color: var(--accent);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 20%, transparent), transparent);
+}
+[role="tab"][aria-selected="true"] .lbText small {
+  color: var(--premiere-gold);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lb { transition: none; }
+  [role="tab"]:hover .lb { transform: none; }
+}
+:global(:root[data-reduce-motion]) .lb { transition: none; }
+:global(:root[data-reduce-motion]) [role="tab"]:hover .lb { transform: none; }
+
+/* the page: open blocks, no frame */
+.body {
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.1rem;
 }
+.pghead {
+  display: grid;
+  gap: 10px;
+  padding-bottom: 0.4rem;
+}
+.kicker {
+  font: 600 var(--text-meta)/1 var(--font-ui);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--premiere-gold);
+}
+.pgtitle {
+  margin: 0;
+  font: 700 clamp(26px, 3vw, 38px)/1.1 var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.lede {
+  margin: 0;
+  max-width: 70ch;
+  font-size: var(--text-body);
+  color: var(--text-soft, var(--text-dim));
+}
+/* "Protected": a lock line with a gold left edge, never a frame */
+.protectedLine {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0;
+  padding: 4px 0 4px 12px;
+  border-left: 3px solid var(--premiere-gold);
+  font-size: var(--text-meta);
+  line-height: 1.5;
+  color: var(--text-soft, var(--text-dim));
+  max-width: 72ch;
+}
+.protectedLine svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--premiere-gold);
+}
+.protectedLine b {
+  color: var(--premiere-gold);
+  font-weight: 700;
+}
+
 .row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
-  border-bottom: 2px solid var(--seam);
+  border-bottom: 1px solid var(--seam);
   padding-bottom: 1rem;
 }
 .row:last-child {
@@ -56,26 +188,24 @@
   flex: 1;
 }
 .label {
-  font-family: var(--font-big);
-  font-weight: 800;
+  font-family: var(--font-ui);
+  font-weight: 600;
   font-size: var(--text-control, 0.9rem);
   color: var(--text);
 }
-/* Functional copy is mono, not serif: Crimson at small-dim on dark failed the legibility bar. */
 .hint {
-  font-family: var(--font-mono);
-  font-size: var(--text-body, 1rem);
-  font-weight: 500;
-  line-height: 1.6;
-  color: var(--text-soft, var(--text-dim));
+  font-family: var(--font-ui);
+  font-size: var(--text-meta, 0.8125rem);
+  line-height: 1.55;
+  color: var(--text-dim);
   margin-top: 0.2rem;
-  max-width: 46rem;
+  max-width: 64ch;
 }
 
-/* Result/status lines beside controls (update check, lifecycle): same legible meta voice. */
+/* Result/status lines beside controls (update check, lifecycle) */
 .statusNote {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta, 0.75rem);
+  font-family: var(--font-ui);
+  font-size: var(--text-meta, 0.8125rem);
   font-weight: 600;
   color: var(--text);
   align-self: center;
@@ -97,13 +227,52 @@
   text-align: right;
 }
 
+/* a half-width pane: the rail lays its tabs out as wrapped chips above the page */
+@container (max-width: 56rem) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .rail {
+    position: static;
+    padding: 12px;
+  }
+  .tabs [data-control="tabs"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tabs [data-control="tabs"] [role="tab"] {
+    width: auto;
+  }
+  .act {
+    display: none;
+  }
+  .lb {
+    padding: 8px 12px;
+    font-size: var(--text-control);
+    border: 1px solid var(--seam);
+  }
+  [role="tab"][aria-selected="true"] .lb {
+    border-color: var(--accent);
+  }
+}
 @container (max-width: 40rem) {
   .room {
     padding: 0.5rem;
-    gap: 0.5rem;
   }
   .row {
     flex-direction: column;
     gap: 0.5rem;
   }
+  .pathNote {
+    text-align: left;
+  }
 }
+
+/* Inside Settings a stage direction is an open note (one frame per group): a gold left edge and the UI face, not the
+   gilt box and mono italic it wears on the stage door, which keeps its approved look. */
+.roomHost [data-control="stage-note"] { border: 0; border-left: 3px solid var(--premiere-gold); background: none; box-shadow: none; padding: 6px 0 6px 14px; text-align: left; }
+.roomHost [data-control="stage-note"][data-tone="flub"] { border-left-color: var(--accent); }
+.roomHost [data-control="stage-note"] [data-slot="label"] { font: 600 var(--text-meta)/1.3 var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--premiere-gold); }
+.roomHost [data-control="stage-note"] p { font: 400 var(--text-body)/1.55 var(--font-ui); font-style: normal; letter-spacing: 0; color: var(--text); margin: 4px 0 0; }

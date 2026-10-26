@@ -1,0 +1,97 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Apps</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Apps restyle only. Tokens only. Layout is today's: status strip, left header, auto-fit card grid (5 + 4 at 1600). */
+.room { max-width: none; padding: 0 clamp(16px, 2.2vw, 36px) 64px; }
+.strip { display: flex; align-items: center; gap: 10px; height: 34px; margin: 0 calc(-1 * clamp(16px, 2.2vw, 36px)); padding: 0 clamp(16px, 2.2vw, 36px);
+  font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); background: color-mix(in srgb, var(--premiere-hard) 78%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.strip .dot { width: 6px; height: 6px; background: var(--premiere-gold); transform: rotate(45deg); flex: none; }
+.strip .num { color: var(--premiere-gold); }
+.head { max-width: 52rem; padding: 34px 0 26px; }
+.head h1 { font: 700 clamp(32px, 3.6vw, 52px)/1.05 var(--font-fancy); letter-spacing: .02em; margin-top: 14px; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.head .lede { margin-top: 12px; padding-left: 14px; border-left: 2px solid var(--premiere-rose); font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 1rem; }
+.card { display: flex; flex-direction: column; gap: 14px; min-width: 0; position: relative; padding: 18px; --deck: var(--premiere-rose); border-top-color: var(--deck); }
+.card[data-group="inc"] { --deck: var(--premiere-violet); }
+.card.lift:hover { box-shadow: 5px 5px var(--deck), 0 18px 60px color-mix(in srgb, var(--deck) 38%, transparent); }
+.card .head2 { display: flex; align-items: center; gap: 12px; }
+.mark { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--deck) 75%, transparent); background: color-mix(in srgb, var(--deck) 16%, var(--premiere-hard)); color: var(--premiere-text); transition: background .25s ease; }
+.card:hover .mark { background: color-mix(in srgb, var(--deck) 32%, var(--premiere-hard)); }
+.mark svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.card h2 { font-size: 18px; min-width: 0; }
+.card .d { flex: 1; font-size: 14.5px; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.card .d code { font-size: 13px; color: var(--premiere-gold); }
+.foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.tag { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 8px; color: var(--premiere-gold); }
+.tag::before { content: ""; width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); flex: none; }
+.card[data-group="inc"] .tag { color: color-mix(in srgb, var(--premiere-violet) 70%, white); }
+.btn { min-height: 36px; padding: 6px 16px; transition: transform .2s ease; }
+.btn:hover { transform: translateY(-2px); }
+.co.at { position: absolute; top: 8px; right: 8px; z-index: 2; }
+@media (prefers-reduced-motion: reduce) { .mark, .btn { transition: none; } .btn:hover { transform: none; } }
+@media (max-width: 720px) { .foot { flex-direction: column; align-items: flex-start; } }
+.btn.open:hover { border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard), 0 0 24px color-mix(in srgb, var(--premiere-rose) 35%, transparent); }
+</style></head>
+<body><div class="wf-note">WIREFRAME. Apps restyled in the Premiere house style, same layout as today. Numbered callouts are explained below.</div>
+<div class="stage"><main class="room">
+
+<div class="strip"><span class="dot"></span><span>apps</span><span>&middot;</span><span><span class="num">9</span> included</span><span class="co" style="margin-left:auto">1</span></div>
+
+<header class="head">
+  <span class="kicker left">Apps in this build</span>
+  <h1>Official <em class="glow">Bunraku</em> apps <span class="co">2</span></h1>
+  <p class="lede">Everything here shipped with this copy of Bunraku. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock.</p>
+</header>
+
+<section class="grid" aria-label="Official packaged apps">
+  <article class="panel card lift" data-group="dock"><span class="co at">3</span>
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span><h2>The Workbench</h2></div>
+    <p class="d">The bench where pieces are edited. Open pieces are staged here from the tab strip above; one is being edited, and any of them may carry edits that are not on disk yet.</p>
+    <div class="foot"><span class="tag">On your Dock</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="dock">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z"/></svg></span><h2>The Library</h2></div>
+    <p class="d">Every piece in the studio, sorted into decks, plus anything on disk that would not open.</p>
+    <div class="foot"><span class="tag">On your Dock</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="dock">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><path d="M3 5h18v11H3z"/><path d="M8 21h8M12 16v5"/></svg></span><h2>Scenes</h2></div>
+    <p class="d">Scenes is included with this build of Bunraku.</p>
+    <div class="foot"><span class="tag">On your Dock</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="dock">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8"/><path d="M6 14h12v7H6z"/></svg></span><h2>The Press</h2></div>
+    <p class="d">The staged conversion queue. Pieces are staged here from the Library, one target platform is chosen for the whole run, and the run prints them into a single zip.</p>
+    <div class="foot"><span class="tag">On your Dock</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="inc"><span class="co at">4</span>
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 22a10 10 0 1 1 10-10c0 3-2 4-4.5 4H15a2 2 0 0 0-1.5 3.3c.5.7.1 2.7-1.5 2.7Z"/></svg></span><h2>CSS Workshop</h2></div>
+    <p class="d">Assisted CSS authoring room. Starters, property knobs, plain CSS source, sealed preview. Copy or download for any host.</p>
+    <div class="foot"><span class="tag">Included app</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="dock">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 14h.01M15 14h.01"/></svg></span><h2>The Agent</h2></div>
+    <p class="d">The agent's own window. Shows what it can see on the screen you were last standing on, and the brief it would be given.</p>
+    <div class="foot"><span class="tag">On your Dock</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="inc">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-11V3"/><path d="M7 15h10"/></svg></span><h2>Macro Lab</h2></div>
+    <p class="d">The Macro Lab: a scratch pad for macro text. The reading half explains each token against the catalog for the chosen platform and shows what it becomes on the other four. The resolved half runs the text through that platform's real macro engine, when a checkout of it is installed on this machine.</p>
+    <div class="foot"><span class="tag">Included app</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="inc">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg></span><h2>Help / Docs</h2></div>
+    <p class="d">Everything about Bunraku, readable here or on GitHub from the same source.</p>
+    <div class="foot"><span class="tag">Included app</span><button class="btn open">Open</button></div></article>
+  <article class="panel card lift" data-group="inc">
+    <div class="head2"><span class="mark"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span><h2>HTML View</h2></div>
+    <p class="d">HTML View draws a page as a full tab. Write it in an <code>```html</code> block, the person opens it, no tool does. Sealed and offline: all CSS works, images only as data: URIs. No JavaScript, no iframe/form/input/button, no http(s) image, font or fetch. Static wireframes and mockups only.</p>
+    <div class="foot"><span class="tag">Included app</span><button class="btn open">Open</button></div></article>
+</section>
+
+</main></div>
+<ol class="legend">
+<li><span class="co">1</span> Top status line ("apps . 9 included"), same strip at the top. Mono caps text becomes UI font on a dark translucent bar with a gold hairline and a gold diamond; the count is a gold numeral. Where the shell shows Reload Studio it takes the quiet button style at the strip's right end.</li>
+<li><span class="co">2</span> Header, same place and left alignment: the mono caps eyebrow becomes the gold kicker, the bold sans title becomes Cinzel with the violet glow ("Bunraku" tinted), the lede keeps its width with a rose rule on its left.</li>
+<li><span class="co">3</span> Card grid, same auto-fit columns (5 then 4 at 1600), same order, same card anatomy: mark and name, description, footer with status and Open. Cards become Premiere panels: 3px hard frame, offset shadow, group-colored top edge, lift and glow on hover, mark tile warms up. The rainbow per-app edges are gone; the only edge colors are rose (On your Dock) and violet (Included app), so color means group, not app. Names are Cinzel.</li>
+<li><span class="co">4</span> Footer status label: mono caps dim text becomes a gold (Dock) or violet (Included) tag with a diamond, in the UI font. Open becomes the rose primary button on every card (it was a white outline) and lifts on hover.</li>
+<li>No other regions exist in the room: no tabs, rails or empty state (the list is never empty). The Overlay widget ("Packaged app directory") is not part of this room and is not drawn.</li>
+</ol>
+<script src="kit.js"></script>
+</body></html>

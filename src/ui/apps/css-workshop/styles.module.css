@@ -1,112 +1,49 @@
 /**
- * CSS Workshop app room - full-canvas shell around the shared component.
- * Tokens only.
+ * CSS Workshop room (Premiere restyle): shared room header on top, then one Panel holding the shared editor.
+ * Simple/Advanced and Import .css live once, in the editor toolbar. Tokens only.
  */
 .room {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0;
   min-height: 100%;
-  padding: clamp(0.7rem, 1.8vw, 1.2rem);
+  padding: 0.75rem 1rem 1rem;
   box-sizing: border-box;
-}
-.head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-.titles {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-}
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--stage-mute, var(--muted));
-}
-.title {
-  font-family: var(--font-big, sans-serif); /* --font-display was never defined; --font-big already wins */
-  font-weight: 900;
-  font-size: clamp(1.2rem, 1rem + 1.2vw, 1.65rem);
-  letter-spacing: -0.02em;
-  color: var(--stage-soft, var(--text));
-  margin: 0;
-}
-.lede {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
-  font-size: var(--text-body);
-  color: var(--stage-mute, var(--muted));
-  margin: 0;
-  max-width: 40rem;
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .lede {
-  font-style: normal;
-  font-weight: 400;
-}
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
 }
 .stage {
   flex: 1;
   min-height: 0;
-  background: var(--stage-panel, var(--panel));
-  border: 3px solid var(--stage-black, var(--edge));
-  box-shadow: 4px 4px 0 0 var(--stage-black, var(--edge));
-  padding: 0.7rem 0.85rem;
   overflow: auto;
 }
-:global(html[data-surface-ui-panel="gilt-frame"]) .stage {
-  border: 1px solid var(--control-boundary);
-  box-shadow: none;
-}
 .flash {
-  font-family: var(--font-mono);
   font-size: var(--text-meta);
-  color: var(--stage-mute, var(--muted));
-}
-.fileInput {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  color: var(--premiere-gold);
 }
 
-/* Clear-draft confirm sheet (InkDialog child): the delsheet grammar, locally styled for this app. */
+/* Clear-draft confirm sheet (InkDialog child): a Panel with a display-face title. */
 .clearSheet {
   width: min(22rem, 88vw);
-  background: var(--stage-panel, var(--panel));
-  color: var(--stage-soft, var(--text));
-  padding: 0.9rem 1rem 1.1rem;
+  display: grid;
+  gap: 10px;
+  text-align: center;
+  justify-items: center;
+  padding: 26px 24px;
 }
 .clearTitle {
-  display: block;
-  font-family: var(--font-big, sans-serif); /* --font-display was never defined; --font-big already wins */
-  font-weight: 900;
-  font-size: var(--text-control);
-  color: var(--stage-soft, var(--text));
-  margin: 0 0 0.4rem;
+  font: 700 22px/1.2 var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-shadow: 0 2px 24px color-mix(in srgb, var(--bk-role-select) 35%, transparent);
 }
 .clearBody {
-  font-family: var(--font-body);
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
   font-size: var(--text-body);
-  color: var(--stage-mute, var(--muted));
-  margin: 0 0 0.8rem;
+  color: var(--text-dim);
+  margin: 0;
   line-height: 1.5;
 }
 .clearActs {
   display: flex;
-  gap: 0.5rem;
+  gap: 10px;
+  margin-top: 8px;
 }

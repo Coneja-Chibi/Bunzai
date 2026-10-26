@@ -17,6 +17,9 @@ export function CssStarters({ packId, packBlurb, onApply }: CssStartersProps): J
   const recipes = listCssRecipes(packId);
   return (
     <div className={styles.assist} data-tour="css-starters">
+      <div className={styles.paneHead}>
+        <h2 className={styles.paneTitle}>Starters</h2>
+      </div>
       <p className={styles.hint}>
         Drop a starter into your sheet, then tune it in Assist or Source. {packBlurb}
       </p>

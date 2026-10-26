@@ -1,4 +1,5 @@
 .head {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
   display: flex;
   align-items: center;
   justify-content: space-between;

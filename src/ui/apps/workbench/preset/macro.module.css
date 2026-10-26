@@ -1,12 +1,11 @@
 /**
- * The AVAILABLE MACROS section (capability-driven, per Write-for lens) - a faithful port of RC's
- * MacroReferenceDropdown, neobrutalist in vaud's language. Bordered group boxes, wrapping macro
- * pills (accent-tinted), green "Copied" state. Accent = --pa (inherited from the editor .root).
+ * The AVAILABLE MACROS section (capability-driven, per Write-for lens). A hairline-topped list of groups; macro
+ * pills stay mono and accent-tinted, with a green "Copied" state. Accent = --pa (inherited from the editor .root).
  */
 
 .macros {
-  border-top: 2px solid var(--stage-black);
-  padding-top: 0.65rem;
+  border-top: 1px solid var(--bk-line);
+  padding-top: 0.75rem;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -19,15 +18,12 @@
 }
 
 .macrosLabel {
-  font: 900 var(--text-control) var(--font-big);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  composes: goldLabel from "./preset.module.css";
 }
 
 .macrosHint {
-  font: 500 var(--text-meta) var(--font-body);
-  color: var(--stage-mute);
+  font: 500 var(--text-meta) var(--font-ui);
+  color: var(--text-dim);
 }
 
 .macroScroll {
@@ -40,7 +36,7 @@
 }
 
 .macroGroup {
-  border: 2px solid var(--stage-black);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
   overflow: hidden;
   /* the scroll parent is a capped flex column: without this, groups shrink to fit it and their
      bodies get sliced off instead of the container scrolling. */
@@ -53,15 +49,13 @@
 }
 
 .macroBody {
-  padding: 0.45rem 0.5rem 0.55rem;
-  background: color-mix(in srgb, var(--stage-black) 22%, transparent);
-  border-top: 2px solid var(--stage-black);
+  padding: 0.45rem 0.25rem 0.65rem;
 }
 
 .macroGroupDesc {
   margin: 0 0 0.4rem;
-  font: 500 var(--text-control) var(--font-body);
-  color: var(--stage-kicker);
+  font: 500 var(--text-control) var(--font-ui);
+  color: var(--text-dim);
   line-height: 1.4;
 }
 

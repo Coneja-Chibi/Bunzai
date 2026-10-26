@@ -1,0 +1,17 @@
+/**
+ * Panel styles. Surfaces come from the theme (panel fill, ink frame); the faint tint follows the select role so the
+ * panel picks up the user's accent family. Deck edges read the deck tokens.
+ */
+.panel { position: relative; padding: 20px; background: color-mix(in srgb, var(--bk-role-select) 5%, var(--bk-surface-panel));
+  border: 3px solid var(--stage-black); box-shadow: 5px 5px var(--stage-black); color: var(--text); }
+.panel[data-deck] { border-top-color: var(--deck-edge); }
+.panel[data-deck="character"] { --deck-edge: var(--deck-character); }
+.panel[data-deck="persona"] { --deck-edge: var(--deck-persona); }
+.panel[data-deck="lorebook"] { --deck-edge: var(--deck-lorebook); }
+.panel[data-deck="preset"] { --deck-edge: var(--deck-preset); }
+.panel[data-deck="regex"] { --deck-edge: var(--deck-regex); }
+.panel[data-deck="pack"] { --deck-edge: var(--deck-pack); }
+.panel[data-deck="fog"] { --deck-edge: var(--deck-fog); }
+/* One frame per group: a panel inside a panel is an open column with at most a colored top edge. */
+.panel .panel { padding: 14px 0 0; background: none; border: 0; box-shadow: none; }
+.panel .panel[data-deck] { border-top: 2px solid var(--deck-edge); }

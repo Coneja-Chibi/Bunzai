@@ -3,7 +3,7 @@
  * bad value; unknown keys (drop-in step keys) pass through untouched; garbage in = defaults out.
  */
 import { describe, expect, test } from "bun:test";
-import { DEFAULT_SETTINGS, DEFAULT_STUDIO_THEME, nextStudioTheme, parseSettings, STUDIO_THEMES } from "./settings-shape";
+import { DEFAULT_SETTINGS, DEFAULT_STUDIO_THEME, nextStudioTheme, parseSettings, SETTING_KEYS, STAGE_LIGHTS, STUDIO_THEMES, stageLightsOf } from "./settings-shape";
 
 describe("parseSettings", () => {
   test("garbage reads as fresh defaults", () => {
@@ -74,4 +74,26 @@ test("a fresh install has no saved theme and the default is never written into s
   expect(parseSettings(null).theme).toBeUndefined();
   expect(parseSettings({ setupComplete: false }).theme).toBeUndefined();
   for (const theme of ["theater", "paper", "stage", "bunraku.theme.encore"] as const) expect(parseSettings({ setupComplete: true, theme }).theme).toBe(theme);
+});
+
+describe("stage lights pref", () => {
+  test("each choice round-trips through parseSettings and a JSON save", () => {
+    for (const mode of STAGE_LIGHTS) {
+      const saved = parseSettings(JSON.parse(JSON.stringify({ setupComplete: true, [SETTING_KEYS.uiStageLights]: mode })));
+      expect(saved[SETTING_KEYS.uiStageLights]).toBe(mode);
+    }
+  });
+
+  test("an unknown value is dropped, the rest of the document is untouched", () => {
+    for (const bad of ["dim", "", 3, null, true, ["off"]]) {
+      const saved = parseSettings({ setupComplete: true, firstDeck: "lorebook", [SETTING_KEYS.uiStageLights]: bad });
+      expect(SETTING_KEYS.uiStageLights in saved).toBe(false);
+      expect(saved.firstDeck).toBe("lorebook");
+    }
+  });
+});
+
+test("stageLightsOf reads a saved choice and falls back to moving", () => {
+  for (const mode of STAGE_LIGHTS) expect(stageLightsOf(mode)).toBe(mode);
+  for (const bad of [undefined, null, "", "dim", 1, {}]) expect(stageLightsOf(bad)).toBe("moving");
 });

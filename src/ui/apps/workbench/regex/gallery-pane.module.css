@@ -16,26 +16,22 @@
   display: flex;
   align-items: baseline;
   gap: 0.5rem;
-  border-bottom: 2px solid var(--stage-seam);
+  border-bottom: 2px solid var(--bk-line-control);
   padding-bottom: 0.45rem;
   margin-bottom: 0.7rem;
 }
 
 .pheadB {
-  font-family: var(--font-big);
+  font-family: var(--font-ui);
   font-weight: 800;
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 .pheadKick {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .grid {
@@ -46,10 +42,8 @@
 
 .cat {
   display: block;
-  font: 800 var(--text-control) var(--font-mono);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  font: 600 var(--text-control) var(--font-ui);
+  color: var(--text-dim);
   margin-bottom: 0.4rem;
 }
 
@@ -62,29 +56,27 @@
 .ba {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border-top: 1px solid var(--stage-faint);
+  border-top: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
   margin-top: 0.45rem;
 }
 
 .baCell {
   padding: 0.4rem 0.55rem;
   font: 500 var(--text-control)/1.5 var(--font-mono);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   min-width: 0;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
 }
 
 .baCell + .baCell {
-  border-left: 1px solid var(--stage-faint);
+  border-left: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
 }
 
 .baKick {
   display: block;
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  font: 600 var(--text-control) var(--font-ui);
+  color: var(--text-dim);
   margin-bottom: 0.1rem;
 }
 
@@ -95,9 +87,7 @@
 .tplFoot {
   display: block;
   padding: 0.35rem 0.6rem 0.5rem;
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font: 600 var(--text-control) var(--font-ui);
   color: var(--a, var(--accent));
 }
 

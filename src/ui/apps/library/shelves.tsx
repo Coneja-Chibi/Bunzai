@@ -160,7 +160,7 @@ function Section(props: ShelvesProps & { section: CarouselSection; total: number
 
   const cut = Math.ceil(deck.plural.length / 2);
   return (
-    <section className={`lsec-wrap${props.solo ? " solo" : ""}`} data-kind={kind} data-part="library.section">
+    <section className={`lsec-wrap${props.solo ? " solo" : ""}`} data-kind={kind} data-part="library.section" style={{ "--a": deck.accent } as CSSProperties}>
       <div className="lsec" data-part="library.section.header">
         <div className="num" aria-hidden="true">{section.numeral}.</div>
         <div className="shead">
@@ -170,7 +170,7 @@ function Section(props: ShelvesProps & { section: CarouselSection; total: number
         </div>
         <div className="sside">
           <div className="scount" title={parsed.active ? `${String(pieces.length)} of ${String(total)} match` : undefined}>
-            {parsed.active ? `${String(pieces.length)} of ${String(total)}` : total}
+            <b>{parsed.active ? `${String(pieces.length)} of ${String(total)}` : total}</b>
             <em>{(total === 1 ? deck.singular : deck.plural).toLowerCase()}</em>
           </div>
           <div className="sviews">

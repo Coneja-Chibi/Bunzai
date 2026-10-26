@@ -1,6 +1,7 @@
 /**
- * Library app chrome CSS (injected <style> string). Kept out of index so the app
- * stays under the line cap; views/registry appends deck-view CSS at runtime.
+ * Library app chrome CSS (injected <style> string): the Premiere look for the toolbar, groups bar, send bar, notices
+ * and dialogs. Kept out of index so the app stays under the line cap; views/registry appends deck-view CSS at runtime.
+ * Surfaces and ink come from theme tokens; gold trim is --premiere-gold, the glass is the Panel's own tint.
  */
 import { icSvg } from "../../_shared/ic-svg";
 
@@ -11,175 +12,134 @@ export const PREF_SIZE = "library.size";
 export const PREF_FIRST_DECK = "firstDeck"; // written by the setup wizard; the shelves open on it
 
 export const LIBRARY_STYLE = `
-.lib{container-type:inline-size;display:flex;flex-direction:column;gap:.7rem;padding:clamp(.7rem,1.8vw,1.1rem);min-height:100%}
+/* the room's shared surfaces; the dialogs render outside .lib, so they carry them too */
+.lib,.impsheet,.delsheet,.wkspsheet{--glass:color-mix(in srgb,var(--bk-role-select) 5%,var(--bk-surface-panel));
+  --glass-deep:color-mix(in srgb,var(--bk-role-select) 3%,var(--bk-surface-sunken));--hair:color-mix(in srgb,var(--text) 14%,transparent);
+  --gold-line:color-mix(in srgb,var(--premiere-gold) 40%,transparent);--glow:0 18px 60px color-mix(in srgb,var(--bk-role-select) 35%,transparent)}
+.lib{container-type:inline-size;display:flex;flex-direction:column;gap:.7rem;padding:clamp(.7rem,1.8vw,1.1rem);min-height:100%;font-family:var(--font-ui)}
+/* gold UI-font kickers and field labels, shared */
+.mkick,.impkick,.nomatch .nmk,.sk{font:600 var(--text-meta)/1 var(--font-ui);letter-spacing:.2em;text-transform:uppercase;color:var(--premiere-gold)}
+/* a staged moment: the first landing, the unreachable studio and the no-match notice */
+.lib .moment{margin:6vh auto 0;max-width:35rem;display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:2rem;text-align:center}
+.lib .moment.wide{max-width:59rem}
 .lib .stagezone{flex:1;display:flex;flex-wrap:wrap;gap:var(--gap-l);align-items:center;justify-content:center;padding:var(--gap-l)}
 .lib .stagezone>[data-control="card"]{width:clamp(11rem,22vw,16rem);align-items:center;justify-content:center;text-align:center}
-.voice{font-style:italic;font-weight:600;color:var(--muted);text-align:center;font-size:1.05rem}
-.damage-note{position:relative;border:3px solid var(--stage-danger-edge);box-shadow:4px 4px 0 0 var(--edge);
-  background:var(--panel);color:var(--text);padding:.65rem .8rem}
-.damage-note strong{display:block;font-family:var(--font-big);font-weight:900;padding-right:5rem}
-.damage-note p{margin:.35rem 0 0;color:var(--text-dim);font-size:.85rem}
-.damage-note details{margin-top:.45rem}
-.damage-note summary{cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);
-  letter-spacing:.04em;text-transform:uppercase}
-.damage-note .dn-list{margin:.55rem 0 0 1.35rem}
-.damage-note .dn-row{display:list-item;list-style:disc;padding:.25rem 0;font-size:var(--text-body)}
-.damage-note code{overflow-wrap:anywhere}
-/* the import sheet (InkDialog owns overlay/sheet chrome; the delsheet/export-dialog grammar) */
-.impsheet{padding:1.1rem 1.3rem;width:min(94vw,44rem);max-width:min(94vw,44rem)}
-/* the split and merge workshops hold two entry lists side by side: InkDialog's 24rem reading width
-   cut them off mid-list, so they take a wide sheet of their own */
-.wkspsheet{width:min(94vw,50rem);max-width:min(94vw,50rem)}
-.impkick{font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);letter-spacing:.12em;
-  text-transform:uppercase;color:var(--text-dim);margin:0 0 .3rem}
-.imptitle{display:block;font-family:var(--font-big);font-weight:900;font-size:1.15rem;color:var(--text);
-  margin:0 0 .3rem}
-.impsub{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.04em;color:var(--text-soft);margin:0 0 .9rem}
-.improws{display:flex;flex-direction:column;gap:.55rem;max-height:50dvh;overflow:auto;margin:0 0 1rem}
-.improw{position:relative;display:flex;gap:.7rem;align-items:flex-start;background:var(--face);
-  border:2px solid var(--edge);padding:.65rem .8rem;cursor:pointer}
-.improw.on{border-color:var(--accent);box-shadow:2px 2px 0 0 var(--edge)}
-.improw.bad{border-style:dashed;cursor:default}
+.voice{margin:0;font:700 1.625rem/1.2 var(--font-fancy);color:var(--text);text-align:center;text-shadow:0 2px 30px color-mix(in srgb,var(--bk-role-select) 40%,transparent)}
+.lib .damage-note{display:grid;grid-template-columns:1fr auto;gap:.25rem 1rem;align-items:center;flex:none;padding:.875rem 1.125rem;
+  border-left:5px solid var(--stage-danger-edge);background:color-mix(in srgb,var(--stage-danger-edge) 10%,var(--glass-deep))}
+.damage-note strong{font:700 1rem var(--font-fancy);letter-spacing:.02em}
+.damage-note p,.damage-note details{grid-column:1/-1;margin:0;font-size:.8125rem;color:var(--text-dim)}
+.damage-note summary{cursor:pointer;color:var(--premiere-gold);margin-top:.25rem}
+.damage-note .dn-list{margin:.5rem 0 0 1.125rem}
+.damage-note .dn-row{display:list-item;list-style:disc;padding:.25rem 0;font-size:.8125rem}
+.damage-note code{overflow-wrap:anywhere;font-size:var(--text-meta);color:var(--text)}
+
+/* the dialogs (InkDialog owns overlay/sheet chrome): one sheet, gold top edge, hard shadow, gold hairline above the buttons */
+.impsheet,.delsheet,.wkspsheet{padding:1.5rem 1.75rem;background:color-mix(in srgb,var(--bk-role-select) 6%,var(--bk-surface-panel));
+  border:3px solid var(--stage-black);border-top-color:var(--premiere-gold);box-shadow:6px 6px 0 var(--stage-black),var(--glow)}
+.impsheet{width:min(94vw,44rem);max-width:min(94vw,44rem)}
+/* the split and merge workshops hold two entry lists side by side: InkDialog's reading width cut them off mid-list */
+.wkspsheet{width:min(94vw,56rem);max-width:min(94vw,56rem)}
+.delsheet{max-width:32rem}
+.impkick{margin:0 0 .4rem}
+.imptitle,.delsheet .deltitle{display:block;margin:0 0 .5rem;font:700 1.5rem/1.15 var(--font-fancy);color:var(--text);text-shadow:0 2px 30px color-mix(in srgb,var(--bk-role-select) 40%,transparent)}
+.impsub,.impprog,.delsheet .delbody{margin:0 0 .875rem;font:.875rem/1.55 var(--font-ui);color:var(--text-dim)}
+.improws{display:flex;flex-direction:column;gap:.25rem;max-height:50dvh;overflow:auto;margin:0 0 1rem;padding:.25rem .375rem .25rem 0}
+/* a row is open: one deck-colored edge and a hairline, a tint when picked */
+.improw{position:relative;display:flex;gap:.875rem;align-items:center;padding:.625rem .875rem;cursor:pointer;
+  border-left:4px solid var(--a,var(--accent));border-bottom:1px solid var(--hair);transition:background .2s ease,transform .2s ease}
+.improw:hover{transform:translateX(4px);background:color-mix(in srgb,var(--a,var(--accent)) 10%,transparent)}
+.improw.on{background:color-mix(in srgb,var(--a,var(--accent)) 14%,transparent)}
+.improw.bad{--a:var(--stage-danger-edge);cursor:default}
+.improw.dupe{cursor:default;opacity:.85}
+.improw.bad:hover,.improw.dupe:hover{transform:none;background:none}
 .improw input{position:absolute;opacity:0;width:1px;height:1px}
-.impcheck{flex:none;width:1.1rem;height:1.1rem;border:2px solid var(--edge);background:var(--face);
-  position:relative;margin-top:.15rem}
-.improw input:checked + .impcheck{background:var(--accent-deep);border-color:var(--accent)}
-.improw input:checked + .impcheck::after{content:"";position:absolute;left:.28rem;top:.08rem;
-  width:.3rem;height:.55rem;border:solid var(--stage-white);border-width:0 2px 2px 0;transform:rotate(45deg)}
-.improw input:focus-visible + .impcheck{outline:2px solid var(--accent);outline-offset:2px}
-.impbody{min-width:0}
-.impname{display:block;font-family:var(--font-big);font-weight:800;font-size:1rem;color:var(--text);
-  overflow-wrap:anywhere}
-.impkind{font-family:var(--font-body);font-size:var(--text-control);color:var(--text);margin:.15rem 0 0}
-.impmeta{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.04em;color:var(--text-soft);margin:.25rem 0 0}
-.impflag{display:inline-block;font-family:var(--font-mono);font-weight:700;font-size: var(--text-meta);letter-spacing:.08em;
-  text-transform:uppercase;background:var(--rose-deep);color:var(--stage-white);padding:.12rem .4rem;margin:0 0 .25rem}
-.imperr{font-family:var(--font-body);font-size:var(--text-body);color:var(--text-soft);margin:.1rem 0 0;overflow-wrap:anywhere}
-/* progress marker (house bar grammar: bordered track, accent fill; the fill is a mark, no text) */
-.impbar{display:block;height:.6rem;border:2px solid var(--edge);background:var(--face);
-  position:relative;margin:0 0 .5rem}
-.impbar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);transition:width .15s ease}
-.impprog{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.04em;color:var(--text-soft);margin:0 0 .9rem}
-.improw.dupe{border-style:dotted;cursor:default;opacity:.85}
-/* archive report card: informational, never checkable, so it reads on --panel (damage-note's own
-   convention for "read this", not --face's "check this") rather than borrowing improw's own look. */
-.impreport{background:var(--panel);border:2px solid var(--edge);padding:.65rem .8rem}
+.impcheck{flex:none;width:1.375rem;height:1.375rem;border:2px solid color-mix(in srgb,var(--text) 45%,transparent);background:var(--stage-black);position:relative}
+.improw input:checked + .impcheck{background:var(--premiere-gold);border-color:var(--premiere-gold)}
+.improw input:checked + .impcheck::after{content:"";position:absolute;left:.3rem;top:.05rem;width:.3rem;height:.6rem;border:solid var(--stage-ink);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.improw input:focus-visible + .impcheck{outline:2px solid var(--premiere-gold);outline-offset:2px}
+.impbody{min-width:0;flex:1}
+.impname{display:block;font:600 .9375rem/1.25 var(--font-ui);color:var(--text);overflow-wrap:anywhere}
+.impkind{font:.875rem var(--font-ui);color:var(--text);margin:.15rem 0 0}
+.impmeta{font:var(--text-meta) var(--font-ui);color:var(--text-faint);margin:.25rem 0 0}
+.impflag{display:inline-block;margin:0 0 .25rem;padding:.125rem .625rem;font:600 var(--text-meta) var(--font-ui);border:1px solid var(--premiere-gold);color:var(--premiere-gold)}
+.improw.bad .impflag{border-color:var(--stage-danger-edge);color:var(--stage-danger-text)}
+.imperr{font:.8125rem var(--font-ui);color:var(--stage-danger-text);margin:.1rem 0 0;overflow-wrap:anywhere}
+/* progress marker: bordered track, accent fill; the fill is a mark, no text */
+.impbar{display:block;height:.625rem;border:2px solid var(--stage-black);background:color-mix(in srgb,var(--text) 12%,transparent);position:relative;margin:0 0 .5rem}
+.impbar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--accent),var(--bk-role-select));transition:width .15s ease}
+/* archive report: informational, never checkable, one gold edge */
+.impreport{padding:.25rem 0 .25rem .875rem;border-left:4px solid var(--premiere-gold)}
 .impreport .impname{margin:0 0 .3rem}
 .impreport ul{margin:.35rem 0 0;padding-left:1.15rem}
-.impreport li{font-family:var(--font-body);font-size:var(--text-body);color:var(--text-soft);margin:.15rem 0;
-  overflow-wrap:anywhere}
-.impacts{display:flex;gap:.5rem;flex-wrap:wrap}
-.wbbar{display:flex;align-items:center;gap:.6rem;flex:none;flex-wrap:wrap}
-/* the staging action bar: appears only when pieces are picked (the distributed tray's commit) */
-.sendbar{display:flex;align-items:center;gap:.6rem;flex:none;flex-wrap:wrap;background:var(--stamp-bg);
-  border:3px solid var(--edge);box-shadow:4px 4px 0 0 var(--accent);padding:.4rem .55rem .4rem .7rem}
-.sendbar .cnt{font-family:var(--font-big);font-weight:900;font-size: var(--text-control);letter-spacing:.04em;color:var(--stamp-fg)}
-.delsheet{padding:1rem 1.1rem;max-width:24rem}
-.delsheet .deltitle{display:block;font-family:var(--font-big);font-weight:900;font-size:.95rem;
-  color:var(--text);margin:0 0 .45rem}
-.delsheet .delbody{font-family:var(--font-body);font-size:var(--text-body);color:var(--text-dim);margin:0 0 .8rem;
-  line-height:1.5}
-.delsheet .delacts{display:flex;gap:.5rem}
-.delsheet .renamein{width:100%;font-family:var(--font-body);font-size:16px;color:var(--text);
-  background:var(--face);border:2px solid var(--edge);padding:.45rem .55rem;margin:0 0 .8rem}
-.deckchips{display:flex;gap:.4rem;flex:1;min-width:0;overflow-x:auto;padding-bottom:2px}
-.dchip{display:flex;align-items:center;gap:.45rem;flex:none;cursor:pointer;font-family:var(--font-big);
-  font-weight:800;font-size: var(--text-control);letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);
-  background:var(--face);border:3px solid var(--edge);box-shadow:3px 3px 0 0 var(--edge);padding:.35rem .55rem;
-  transition:transform .1s ease-out,box-shadow .1s ease-out}
-.dchip .pip{width:10px;height:10px;flex:none;border:2px solid var(--edge);background:var(--a)}
-.dchip .dc{font-family:var(--font-mono);font-weight:600;font-size: var(--text-control);color:var(--text-dim)}
-.dchip:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 0 var(--edge)}
-.dchip.on{background:var(--stamp-bg);color:var(--stamp-fg);box-shadow:3px 3px 0 0 var(--a)}
-.dchip.on .dc{color:var(--stamp-fg);opacity:.7}
+.impreport li{font:.875rem var(--font-ui);color:var(--text-dim);margin:.15rem 0;overflow-wrap:anywhere}
+.impacts,.delsheet .delacts{display:flex;gap:.625rem;flex-wrap:wrap;justify-content:flex-end;margin-top:.375rem;padding-top:.75rem;border-top:1px solid var(--gold-line)}
+.delsheet .renamein{width:100%;min-height:2.75rem;margin:0 0 .875rem;padding:0 .875rem;font:1rem var(--font-ui);color:var(--text);
+  background:color-mix(in srgb,var(--stage-black) 70%,transparent);border:2px solid color-mix(in srgb,var(--text) 25%,transparent);outline:none;transition:border-color .2s ease,box-shadow .2s ease}
+.delsheet .renamein:focus{border-color:var(--premiere-gold);box-shadow:0 0 24px color-mix(in srgb,var(--premiere-gold) 22%,transparent)}
+
+/* the staging action bar: appears only when pieces are picked */
+.sendbar{display:flex;align-items:center;gap:.625rem;flex:none;flex-wrap:wrap;padding:.625rem .875rem;background:color-mix(in srgb,var(--accent) 12%,var(--glass-deep));
+  border:3px solid var(--stage-black);border-left:5px solid var(--accent);box-shadow:4px 4px 0 var(--stage-black)}
+.sendbar .cnt{font:600 .875rem var(--font-ui);color:var(--text);padding-right:.5rem}
+.sendbar .cnt b{font:700 1rem var(--font-mono);color:var(--premiere-gold);margin-right:.375rem}
 .viewseg{flex:none}
 .viewseg svg{display:block}
-.sizedial{display:flex;align-items:center;gap:.45rem;flex:none;border:3px solid var(--edge);
-  box-shadow:3px 3px 0 0 var(--edge);background:var(--face);padding:.3rem .6rem}
-.sizedial .sk{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)}
+.sizedial{display:flex;align-items:center;gap:.75rem;flex:none;padding:0 1rem;background:var(--glass);border:3px solid var(--stage-black);box-shadow:4px 4px 0 var(--stage-black)}
 .sizedial input{width:clamp(5rem,9vw,8rem)}
-/* the search box wears the size dial's chrome (bordered, stamped, mono kicker) so the deck bar
-   still reads as one object rather than a toolbar with a web form bolted on */
-/* NEVER GROWS. The deck chips are this room's navigation and they own the leftover width; a
-   search box with flex-grow took it and pushed three of the six decks behind a scroll nobody
-   could see. It still shrinks, so a narrow window squeezes the box rather than hiding a deck. */
+/* the search box: a glass field with a gold label and gold focus. NEVER GROWS past its basis: the toolbar's other
+   controls own the leftover width. It still shrinks, so a narrow window squeezes the box rather than hiding one. */
 .findwrap{position:relative;display:flex;flex-direction:column;flex:0 1 18rem;min-width:0}
-.findbox{display:flex;align-items:center;gap:.45rem;border:3px solid var(--edge);
-  box-shadow:3px 3px 0 0 var(--edge);background:var(--face);padding:.3rem .5rem}
+.findbox{display:flex;align-items:center;gap:.75rem;min-height:3rem;padding:0 .75rem 0 .875rem;background:var(--glass);border:3px solid var(--stage-black);
+  box-shadow:4px 4px 0 var(--stage-black);transition:border-color .2s ease,box-shadow .2s ease}
 /* a live search stamps in the house accent: the one glance that says the shelf is filtered */
-.findwrap.on .findbox{box-shadow:3px 3px 0 0 var(--accent)}
-.findbox:focus-within{outline:2px solid var(--accent);outline-offset:2px}
-.findbox .sk{flex:none;font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.12em;
-  text-transform:uppercase;color:var(--text-dim)}
-.findbox input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--text);
-  font-family:var(--font-mono);font-size: var(--text-control);padding:.15rem 0}
-.findbox input::placeholder{color:var(--text-dim);opacity:1}
+.findwrap.on .findbox{box-shadow:4px 4px 0 var(--accent)}
+.findbox:focus-within{border-color:var(--premiere-gold);box-shadow:4px 4px 0 var(--stage-black),0 0 28px color-mix(in srgb,var(--premiere-gold) 25%,transparent)}
+.findbox .sk{flex:none}
+.findbox input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--text);font:.9375rem var(--font-ui);padding:.15rem 0}
+.findbox input::placeholder{color:var(--text-faint);opacity:1}
 /* HANGS OFF THE FIELD rather than sitting in the toolbar's flow. In flow it grew the bar by three
-   lines the moment a typo appeared, shoving every deck chip down mid-keystroke. */
-.findnote{position:absolute;top:calc(100% + .25rem);left:0;right:0;z-index:2;background:var(--panel);
-  border:2px solid var(--edge);box-shadow:3px 3px 0 0 var(--edge);padding:.35rem .45rem;margin:0;
-  font-family:var(--font-mono);font-size: var(--text-meta);line-height:1.5;color:var(--text-soft);
-  overflow-wrap:anywhere}
-/* a deck holding no matches RECEDES rather than vanishing: the chip still says what it holds */
-.dchip.nil{opacity:.45}
+   lines the moment a typo appeared, shoving every control down mid-keystroke. */
+.findnote{position:absolute;top:calc(100% + .25rem);left:0;right:0;z-index:2;background:var(--glass-deep);border:1px solid var(--hair);padding:.4rem .6rem;margin:0;
+  font:.8125rem/1.5 var(--font-ui);color:var(--text-dim);overflow-wrap:anywhere}
 /* the filtered-to-nothing shelf, deliberately NOT the ghost card. The ghost invites a first
    import, which is the wrong answer (and a small lie) when the pieces are already here and merely
-   hidden by what somebody typed. */
-.nomatch{margin:auto;max-width:32rem;display:flex;flex-direction:column;align-items:flex-start;
-  gap:.55rem;border:2px dashed var(--stage-line);padding:1rem 1.1rem}
-.nomatch .nmhead{font-family:var(--font-big);font-weight:900;font-size:var(--text-control);letter-spacing:.04em;
-  text-transform:uppercase;color:var(--stage-card)}
-.nomatch .nmbody{font-family:var(--font-body);font-size:var(--text-body);line-height:1.5;color:var(--stage-soft);margin:0}
-.nomatch .nmq{font-family:var(--font-mono);font-size:.8rem;color:var(--stage-paper);
-  background:var(--stage-sunken);border:2px solid var(--stage-seam);padding:.05rem .3rem;overflow-wrap:anywhere}
-.nomatch .nmjumps{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
-.nomatch .nmk{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.12em;text-transform:uppercase;
-  color:var(--stage-kicker)}
-/* THE PERSON'S OWN GROUPINGS. Quieter than the deck chips on purpose: decks are the studio's own
-   shape and are always true, while a group is a private note about some of it. Same chip grammar so
-   the row still reads as one toolbar, one weight down. */
-.colbar{display:flex;align-items:center;gap:.4rem;flex-wrap:nowrap;flex:none;min-width:0}
+   hidden by what somebody typed. A staged moment in its own panel. */
+.lib .nomatch{margin:2rem auto 0;max-width:35rem;display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:2rem;text-align:center}
+.nomatch .nmhead{font:700 1.625rem/1.2 var(--font-fancy);color:var(--text)}
+.nomatch .nmbody{font:.9375rem/1.55 var(--font-ui);color:var(--text-dim);margin:0}
+.nomatch .nmq{font:.875rem var(--font-mono);color:var(--premiere-gold);overflow-wrap:anywhere}
+.nomatch .nmjumps{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap}
+/* THE PERSON'S OWN GROUPINGS: a glass strip with a gold edge, quieter than the deck rows. Browsing a group is a search. */
+.colbar{display:flex;align-items:center;gap:.75rem;flex-wrap:nowrap;flex:none;min-width:0;padding:.625rem .875rem;background:var(--glass-deep);
+  border:1px solid var(--hair);border-left:3px solid var(--premiere-gold)}
 .colbar-list{flex:1;min-width:0;height:2.4rem;overflow-x:auto;overflow-y:hidden}
 .colbar-space{position:relative;height:100%}
 .colbar-item{position:absolute;left:0;top:0;height:100%}
-.colbar>.sk{flex:none;font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.12em;
-  text-transform:uppercase;color:var(--text-dim)}
+.colbar>.sk{flex:none}
 .colchip{display:flex;align-items:center;gap:.25rem;flex:none}
-.colcount{font-family:var(--font-mono);font-weight:600;font-size: var(--text-meta);opacity:.75}
-.colnew{flex:none;width:9rem;border:2px solid var(--accent);background:var(--face);color:var(--text);
-  font-family:var(--font-mono);font-size: var(--text-meta);padding:.25rem .4rem;outline:none}
+.colcount{font:600 var(--text-meta) var(--font-mono);color:var(--premiere-gold);margin-left:.375rem}
+.colnew{flex:none;width:9rem;min-height:2rem;padding:0 .625rem;font:.875rem var(--font-ui);color:var(--text);outline:none;
+  background:color-mix(in srgb,var(--stage-black) 70%,transparent);border:2px solid var(--premiere-gold)}
 /* the bar says what happened, because the mono status bar cannot: see collections-ops.ts on say */
-.colnote{display:flex;align-items:center;gap:.4rem;flex:none;font-family:var(--font-mono);
-  font-size: var(--text-meta);color:var(--text-soft);border:2px solid var(--text-faint);padding:.25rem .45rem}
-.prosc{position:relative;flex:1;min-height:0;background:var(--shell-panel-2);border:3px solid var(--edge);
-  box-shadow:6px 6px 0 0 var(--edge);padding:.55rem;display:flex}
-.libstage{position:relative;flex:1;min-height:0;background:var(--stage-well);border:3px solid var(--stage-black);overflow:hidden;
-  box-shadow:inset 8px 8px 0 0 var(--shadow-ink-deep);display:flex;flex-direction:column}
-.stage-crumb{display:flex;align-items:center;gap:.5rem;border-bottom:3px solid var(--stage-black);background:var(--stage-sunken);padding:.5rem .75rem;flex:none}
-.stage-crumb .pip{width:11px;height:11px;border:2px solid var(--stage-black);background:var(--a)}
-.stage-crumb .cc{font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.1em;text-transform:uppercase;color:var(--stage-mute);margin-left:auto}
-.ghost-shelf{margin:auto;width:clamp(9rem,30vw,14rem);aspect-ratio:2/3;border:2px dashed var(--stage-faint);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:.8rem;
-  font-family:var(--font-mono);font-size: var(--text-meta);font-weight:600;letter-spacing:.06em;line-height:1.6;
-  text-transform:uppercase;color:var(--stage-soft)}
+.colnote{display:flex;align-items:center;gap:.5rem;flex:none;font:.8125rem var(--font-ui);color:var(--text-dim)}
+.libstage{position:relative;flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+/* an empty deck: a dashed deck-colored plate with its New button */
+.ghost-shelf{margin:.5rem auto;max-width:36rem;padding:1.625rem;display:flex;flex-direction:column;align-items:center;gap:.875rem;text-align:center;
+  border:3px dashed color-mix(in srgb,var(--a,var(--accent)) 45%,transparent);background:color-mix(in srgb,var(--a,var(--accent)) 4%,transparent);
+  font:.9375rem/1.5 var(--font-ui);color:var(--text-dim)}
 /* scrollbars wear the house ink, never the OS chrome */
-.lib *{scrollbar-width:thin;scrollbar-color:var(--stage-seam) transparent}
+.lib *{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--bk-role-select) 50%,transparent) transparent}
 .lib *::-webkit-scrollbar{width:8px;height:8px}
-.lib *::-webkit-scrollbar-thumb{background:var(--stage-seam)}
+.lib *::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--bk-role-select) 50%,transparent)}
 .lib *::-webkit-scrollbar-track{background:transparent}
-.deckchips{scrollbar-width:none}
-.deckchips::-webkit-scrollbar{display:none}
-/* phones: chips WRAP (everything visible, nothing hidden behind an invisible scroll), the view
-   seg gets its row, the dial gets a full row so the thumb never clips (fluid law) */
+/* phones: the find box takes its own row, the view seg gets its row, the dial a full row so the thumb never clips (fluid law) */
 @container (max-width: 40rem){
   .lib{padding:.5rem;gap:.5rem}
-  .wbbar{gap:.4rem}
   .findwrap{order:0;flex:1 1 100%}
-  .deckchips{flex:1 1 100%;order:1;flex-wrap:wrap;overflow:visible;padding-bottom:0}
   .viewseg{order:2}
   .sizedial{order:3;flex:1 1 100%;min-width:0}
   .sizedial input{flex:1;width:auto;min-width:0}
-  .prosc{padding:.3rem;box-shadow:4px 4px 0 0 var(--edge)}
   .lib .stagezone{gap:var(--gap-m);padding:var(--gap-m)}
   .lib .stagezone>[data-control="card"]{width:clamp(9rem,42vw,12rem)}
 }

@@ -1,13 +1,11 @@
 /**
- * The binder page skin (vs-lorebook-binder-2): masthead + dossier cards.
+ * The binder page skin (Premiere restyle): masthead + dossier sections. Sections are open (a hairline above and
+ * a gold sub-label), never boxes inside the workspace panel.
  * Dial/key/segment classes live in entry-panel.module.css / entry-panel-keys.module.css.
  *
- * Type ladder for THIS surface (house tokens, no random faces):
- *   --font-big  (Fraunces)    = entry title ONLY
- *   --font-mono               = all chrome: card titles, kickers, chips, dials, modes,
- *                               live timing status (foldNote)
- *   --font-mono               = passage content
- * No masthead "Fires on:" line - Keys card already owns that truth.
+ * Type ladder for THIS surface: --font-fancy = the pager title ("Entry 3 of 42"); --font-ui = everything else;
+ * --font-mono = passage content, keys and numbers only.
+ * No masthead "Fires on:" line - Keys section already owns that truth.
  */
 
 .page {
@@ -25,52 +23,52 @@
 }
 
 .pageNo {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--a, var(--accent));
+  font: 700 1.125rem/1.2 var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
 }
+
+/* the display face draws 1 like a capital I: the pager numbers use the UI face */
+.pageNum { font-family: var(--font-ui); letter-spacing: 0; }
 
 .pgFill {
   flex: 1;
 }
 
 .tokchip {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 
 .entryName {
   width: 100%;
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: clamp(1.35rem, 2.2cqw + 0.9rem, 1.9rem);
-  line-height: 1.1;
-  letter-spacing: 0.01em;
-  text-transform: uppercase;
-  color: var(--stage-card);
-  border: 0;
-  background: none;
-  padding: 0.1rem 0 0.15rem;
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: var(--text-body);
+  line-height: 1.2;
+  color: var(--text);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  padding: 0.5rem 0.65rem;
+}
+
+.entryName:hover {
+  border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent);
 }
 
 .entryName:focus {
   outline: 0;
-  border-bottom: 3px solid var(--a, var(--accent));
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 22%, transparent);
 }
 
 /* ---------- dossier cards ---------- */
 
 .bcard,
 .bfold {
-  border: 2px solid var(--stage-black);
-  background: var(--stage-panel);
+  border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   margin-bottom: 0.85rem;
 }
 
@@ -78,8 +76,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.55rem 0.75rem;
-  border-bottom: 2px solid var(--stage-seam);
+  padding: 0.7rem 0 0.45rem;
   list-style: none;
 }
 
@@ -89,7 +86,7 @@
 }
 
 .bfold[open] > .bchead {
-  border-bottom: 2px solid var(--stage-seam);
+  border-bottom: 0;
 }
 
 .bchead::-webkit-details-marker {
@@ -101,8 +98,8 @@
   content: "";
   width: 0.35rem;
   height: 0.35rem;
-  border-right: 1.5px solid var(--stage-text-dim);
-  border-bottom: 1.5px solid var(--stage-text-dim);
+  border-right: 1.5px solid var(--text-dim);
+  border-bottom: 1.5px solid var(--text-dim);
   transform: rotate(-45deg);
   flex: none;
   margin-top: -0.05rem;
@@ -119,21 +116,19 @@
 }
 
 .bchead b {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.1em;
+  font-size: var(--text-meta);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--premiere-gold);
 }
 
 .bchead i {
   font-style: normal;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   flex: 1;
   min-width: 0;
   overflow: hidden;
@@ -157,28 +152,28 @@
 }
 
 .bcbody {
-  padding: 0.7rem 0.8rem 0.85rem;
+  padding: 0.25rem 0 0.85rem;
 }
 
 /* Status / explanation lines: upright body (not voice italic). Readable contrast. */
 .cardHint {
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: var(--text-meta);
-  color: var(--stage-soft);
+  color: var(--text-dim);
   margin: 0 0 0.45rem;
 }
 
 /* Live Timing status: mono meta scale (same family as STICKY/COOL labels), not body shout. */
 .foldNote {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-style: normal;
   font-weight: 500;
   font-size: var(--text-meta);
   letter-spacing: 0.02em;
   line-height: 1.5;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   margin: 0 0 0.55rem;
 }
 
@@ -192,16 +187,14 @@
 .zone + .zone {
   margin-top: 0.75rem;
   padding-top: 0.7rem;
-  border-top: 1px solid var(--stage-seam);
+  border-top: 1px solid var(--bk-line-control);
 }
 
 .zoneLbl {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 /* ---------- the passage ---------- */
@@ -210,13 +203,23 @@
   width: 100%;
   min-height: 13rem;
   resize: vertical;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-mono);
   font-size: 0.92rem;
   line-height: 1.55;
   padding: 0.7rem;
+}
+
+.passageTa:hover {
+  border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent);
+}
+
+.passageTa:focus {
+  outline: none;
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 22%, transparent);
 }
 
 .countRight {
@@ -225,7 +228,7 @@
   font-family: var(--font-mono);
   font-size: var(--text-meta);
   letter-spacing: 0.06em;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   margin-top: 0.3rem;
 }
 
@@ -262,14 +265,12 @@
 
 .logicSel {
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   border: 2px solid var(--a, var(--accent));
   background: color-mix(in srgb, var(--a, var(--accent)) 16%, var(--stage-row));
-  color: var(--stage-card);
+  color: var(--text);
   padding: 0.28rem 0.3rem;
   margin-top: 0.3rem;
 }
@@ -297,7 +298,7 @@
   gap: 0.4rem 0.55rem;
   margin-top: 0.65rem;
   padding-top: 0.55rem;
-  border-top: 1px solid var(--stage-seam);
+  border-top: 1px solid var(--bk-line-control);
 }
 
 /* ---------- timing fold internals ---------- */
@@ -319,25 +320,22 @@
 .modeSet {
   margin-left: auto;
   display: inline-flex;
-  border: 2px solid var(--stage-black);
-  box-shadow: 2px 2px 0 0 var(--stage-black);
+  border: 2px solid var(--bk-line-control);
 }
 
 .md {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
   border: 0;
   background: var(--stage-row);
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   padding: 0.3rem 0.55rem;
   cursor: pointer;
 }
 
 .md + .md {
-  border-left: 2px solid var(--stage-black);
+  border-left: 2px solid var(--bk-line-control);
 }
 
 .mdKey.mdOn {
@@ -361,13 +359,13 @@
 }
 
 .sleepNote {
-  border: 2px dashed var(--stage-seam);
+  border-left: 3px solid color-mix(in srgb, var(--premiere-gold) 55%, transparent);
   padding: 0.55rem 0.65rem;
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   font-style: normal;
-  font-weight: 600;
+  font-weight: 500;
   font-size: var(--text-meta);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   margin: 0;
 }
 
@@ -396,7 +394,7 @@
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-control);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   min-width: 2.4rem;
   text-align: right;
 }

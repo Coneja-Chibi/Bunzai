@@ -11,6 +11,7 @@ import { HOUSE_PALETTE, SwatchRow } from "../../../components/swatch-row";
 import { SettingsRow, type SettingsSection } from "../section-contract";
 import { AccessibilityRows } from "./accessibility-rows";
 import { ChatLayoutRow } from "./chat-layout-row";
+import { StageLightsRow } from "./stage-lights-row";
 import { ThemeManager } from "./theme-manager";
 
 function AppearanceSection({ ctx }: { ctx: AppContext }): JSX.Element {
@@ -34,6 +35,7 @@ function AppearanceSection({ ctx }: { ctx: AppContext }): JSX.Element {
         />
       </SettingsRow>
       <ChatLayoutRow prefs={ctx.prefs} />
+      <StageLightsRow prefs={ctx.prefs} />
       <AccessibilityRows prefs={ctx.prefs} />
     </>
   );
@@ -41,6 +43,10 @@ function AppearanceSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "appearance",
+  act: "studio",
+  title: "How it looks",
+  lede: "Theme, your color, the chat layout, the stage lights and the accessibility knobs. Each one applies live.",
+  status: (ctx) => ctx.appearance.get().name ?? "Host default",
   label: "Appearance",
   order: 10,
   Component: AppearanceSection,

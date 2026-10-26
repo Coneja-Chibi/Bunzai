@@ -6,6 +6,7 @@
  * workbench mount point re-exports it unchanged.
  */
 import { Button, IconButton } from "../../../components/button";
+import { Panel } from "../../../components/panel";
 import {
   useCallback,
   useDeferredValue,
@@ -402,6 +403,8 @@ export function RegexSetEditor({ entity, revision, ctx, piece, topRight }: Regex
       {/* header: the shared EditorEhead + the write-for strip */}
       <EditorEhead
         mark={monogram}
+        kind="Regex set"
+        deck="regex"
         name={session.body.name}
         onNameChange={(v) => setSession((s) => updateSet(s, { name: v }), {
           key: "name", read: (body) => body.name, write: (body, value) => ({ ...body, name: value as string }),
@@ -445,7 +448,7 @@ export function RegexSetEditor({ entity, revision, ctx, piece, topRight }: Regex
         )}
 
         {/* toc | page | rail (or the wide test bench beside a slim editor) */}
-        <div className={benchOpen || healthOpen || galleryOpen ? `${styles.cols} ${styles.colsBench}` : styles.cols}>
+        <Panel as="div" deck="regex" data-part="regex.workspace" className={benchOpen || healthOpen || galleryOpen ? `${styles.cols} ${styles.colsBench}` : styles.cols}>
           <div className={styles.tocCol}>
             <RuleToc {...tocProps} />
           </div>
@@ -457,7 +460,7 @@ export function RegexSetEditor({ entity, revision, ctx, piece, topRight }: Regex
           <div className={styles.railCol}>
             {railNode}
           </div>
-        </div>
+        </Panel>
 
         {/* mobile contents sheet: same TOC, docked to the pane bottom */}
         {tocOpen && (

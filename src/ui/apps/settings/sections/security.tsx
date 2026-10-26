@@ -89,14 +89,6 @@ function Security(): JSX.Element {
 
   return (
     <div className={`${styles.wrap} host-protected`}>
-      <div className={styles.hero}>
-        <div className={styles.eyebrow}>{"Settings · Security"}</div>
-        <h2 className={styles.marquee}>
-          The stage <em>door</em>
-        </h2>
-        <p className={styles.voice}>Who gets in, and how.</p>
-      </div>
-
       <div className={styles.tiles}>
         <div className={styles.tile}>
           <div className={styles.tileLabel}>The lock on this computer</div>
@@ -260,5 +252,14 @@ function Security(): JSX.Element {
   );
 }
 
-const section: SettingsSection = { id: "security", label: "Security", order: 25, Component: Security };
+const section: SettingsSection = {
+  id: "security",
+  act: "vault",
+  title: "The stage door",
+  lede: "Who gets in, and how.",
+  protectedNote: "Every change goes through the library's host-only routes. A remote or LAN device sees none of this page. Passwords and your lines are asked for in a top-layer prompt, never typed into the page itself.",
+  label: "Security",
+  order: 25,
+  Component: Security,
+};
 export default section;

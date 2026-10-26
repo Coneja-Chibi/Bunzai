@@ -18,36 +18,35 @@ import { Button, Tile, Toggle } from "../../../components/button";
 import { VirtualShelf } from "../../../_shared/virtual-list";
 
 const CSS = `
-.rgx-scroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
-.rgx-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),1fr));gap:1.15rem;position:relative}
-.rgx-set{--spine:var(--a);position:relative;display:flex;flex-direction:column;min-height:11rem;padding:0 0 0 .75rem;text-align:left;font:inherit;color:inherit;cursor:pointer;
-  background:var(--stage-panel);border:3px solid var(--stage-black);box-shadow:5px 5px 0 0 var(--stage-black);transition:transform .12s ease-out,box-shadow .12s ease-out}
-.rgx-set::before{content:"";position:absolute;left:0;top:0;bottom:0;width:.75rem;background:var(--spine);border-right:3px solid var(--stage-black)}
-.rgx-set:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 0 var(--stage-black)}
-.rgx-set.cast{border-color:var(--a);box-shadow:inset 4px 4px 0 0 var(--shadow-ink);transform:translate(2px,2px);opacity:.8}
-.rgx-set.pick{outline:3px solid var(--a);outline-offset:-3px}
-.rgx-set.off{opacity:.55}
-.rgx-set.off .rgx-nm{text-decoration:line-through;color:var(--stage-mute)}
+.rgx-scroll{flex:1;min-height:0;overflow-y:auto;padding:.5rem .5rem 1.125rem}
+.rgx-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),1fr));gap:1.375rem;position:relative}
+/* a set: the chooser card with a deck-colored spine edge and a big mono rule count */
+.rgx-set{--spine:var(--a);position:relative;display:flex;flex-direction:column;min-height:11rem;padding:0 0 0 1.25rem;text-align:left;font:inherit;color:inherit;cursor:pointer;
+  background:var(--glass);border:3px solid var(--stage-black);box-shadow:5px 5px 0 var(--stage-black);transition:transform .25s ease,box-shadow .25s ease}
+.rgx-set::before{content:"";position:absolute;left:0;top:0;bottom:0;width:.5rem;background:var(--spine)}
+.rgx-set:hover{transform:translateY(-5px);box-shadow:5px 5px 0 var(--stage-black),var(--glow)}
+.rgx-set.cast{outline:1px solid var(--premiere-gold);outline-offset:3px}
+.rgx-set.pick{border-color:var(--a);box-shadow:5px 5px 0 var(--a)}
+.rgx-set.off{filter:saturate(.55)}
+.rgx-set.off .rgx-nm{text-decoration:line-through;color:var(--text-faint)}
 .rgx-set.drop{outline:3px dashed var(--a);outline-offset:2px}
-.rgx-head{display:flex;align-items:flex-start;gap:.6rem;padding:.75rem .7rem .45rem}
-.rgx-mark{width:2.3rem;height:2.3rem;flex:none;display:grid;place-items:center;font:900 .95rem var(--font-mono);
-  background:var(--spine);color:var(--stage-ink);border:3px solid var(--stage-black);box-shadow:2px 2px 0 0 var(--stage-black)}
+.rgx-head{display:flex;align-items:center;gap:.75rem;padding:.875rem .875rem .5rem 0}
+.rgx-mark{width:2.5rem;height:2.5rem;flex:none;display:grid;place-items:center;font:700 1.125rem var(--font-mono);border:2px solid var(--a);color:color-mix(in srgb,var(--a) 60%,var(--text))}
 .rgx-name{min-width:0}
 .rgx-nm{text-align:left;width:100%}
 .rgx-nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
-.rgx-nm{display:block;font:900 1rem/1.1 var(--font-big);letter-spacing:.02em;text-transform:uppercase;color:var(--stage-card);overflow-wrap:anywhere}
-.rgx-sub{font: 500 var(--text-meta) var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--stage-text-dim)}
-.rgx-does{flex:1;padding:0 .7rem;font:italic 600 var(--text-body)/1.4 var(--font-body);color:var(--stage-mute);overflow-wrap:anywhere}
-.rgx-foot{display:flex;align-items:flex-end;gap:.5rem;padding:.5rem .7rem .7rem;border-top:2px solid var(--stage-seam)}
-.rgx-count b{display:block;font:900 1.5rem/1 var(--font-big);color:var(--stage-card)}
-.rgx-count span{font: 500 var(--text-meta) var(--font-mono);letter-spacing:.09em;text-transform:uppercase;color:var(--stage-text-dim)}
-.rgx-slow{align-self:center;font: 700 var(--text-meta) var(--font-mono);letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--stage-warn);color:var(--stage-warn);padding:.1rem .3rem}
-.rgx-new{display:grid;place-items:center;min-height:11rem;cursor:pointer;font: 700 var(--text-meta) var(--font-mono);letter-spacing:.09em;text-transform:uppercase;
-  color:var(--stage-mute);background:none;border:2px dashed var(--stage-seam)}
-.rgx-empty{font-family:var(--font-body);font-style:italic;color:var(--stage-kicker)}
-.rgx-trash{position:sticky;bottom:.5rem;margin:.6rem auto 0;max-width:16rem;text-align:center;opacity:0;pointer-events:none;
-  font: 500 var(--text-meta) var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:.55rem;
-  color:var(--stage-danger-text);background:var(--stage-danger-bg);border:2px dashed var(--stage-danger-edge)}
+.rgx-nm{display:block;font:700 1.0625rem/1.2 var(--font-fancy);color:var(--text);overflow-wrap:anywhere}
+.rgx-sub{font:var(--text-meta) var(--font-ui);color:var(--text-faint)}
+.rgx-does{flex:1;padding:0 .875rem 0 0;font:.8125rem/1.4 var(--font-ui);color:var(--text-dim);overflow-wrap:anywhere}
+.rgx-foot{display:flex;align-items:flex-end;gap:.5rem;padding:.5rem .875rem .75rem 0}
+.rgx-count b{display:block;font:700 1.375rem/1 var(--font-mono);color:var(--premiere-gold)}
+.rgx-count span{font:var(--text-meta) var(--font-ui);color:var(--text-dim)}
+.rgx-slow{align-self:center;font:var(--text-meta) var(--font-ui);border:1px solid var(--premiere-gold);color:var(--premiere-gold);padding:.125rem .5rem}
+.rgx-new{display:grid;place-items:center;min-height:11rem;cursor:pointer;font:700 var(--text-control) var(--font-ui);letter-spacing:.04em;color:color-mix(in srgb,var(--a) 60%,var(--text));
+  background:color-mix(in srgb,var(--a) 5%,transparent);border:3px dashed color-mix(in srgb,var(--a) 55%,transparent)}
+.rgx-empty{font:italic .9375rem var(--font-ui);color:var(--text-dim)}
+.rgx-trash{position:sticky;bottom:.5rem;margin:.6rem auto 0;max-width:16rem;text-align:center;opacity:0;pointer-events:none;font:600 var(--text-meta) var(--font-ui);
+  padding:.55rem;color:var(--stage-danger-text);background:var(--stage-danger-bg);border:2px dashed var(--stage-danger-edge)}
 .rgx-trash.show{opacity:1;pointer-events:auto}
 `;
 

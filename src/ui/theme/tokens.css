@@ -80,7 +80,7 @@
   /* shape, type and motion defaults; a theme's shape, type and motion fields replace them */
   --bk-frame-w: 1px; --bk-frame-gap: 0px; --bk-frame-inner-w: 0px; --bk-frame-shadow-x: 0px; --bk-frame-shadow-y: 0px; --bk-bracket-rest: 0;
   --bk-density: 1; --bk-type-scale: 1;
-  --bk-font-display: "Cinzel", serif; --bk-font-name: "Fraunces", serif; --bk-font-ui: "Fraunces", serif;
+  --bk-font-display: "Cinzel", serif; --bk-font-name: "Fraunces", serif; --bk-font-ui: "Atkinson Hyperlegible", sans-serif;
   --bk-font-body: "Atkinson Hyperlegible", sans-serif; --bk-font-mono: "IBM Plex Mono", monospace;
   --bk-dur-instant: 80ms; --bk-dur-fast: 120ms; --bk-dur-base: 200ms; --bk-dur-slow: 320ms;
   --bk-ease-move: cubic-bezier(0.2, 0.8, 0.2, 1); --bk-lift-y: -2px;
@@ -302,7 +302,7 @@
     --bk-role-warn:var(--host-warn) !important; --bk-role-warn-text:var(--host-warn) !important; --bk-role-warn-deep:var(--host-warning) !important;
     --bk-role-danger:var(--host-danger-text) !important; --bk-role-danger-text:var(--host-danger-text) !important; --bk-role-danger-deep:var(--host-danger) !important;
     --bk-role-info:var(--host-link) !important; --bk-role-info-text:var(--host-link) !important; --bk-role-info-deep:var(--host-action) !important;
-    --bk-font-display:"Cinzel",serif !important; --bk-font-name:"Fraunces",serif !important; --bk-font-ui:"Fraunces",serif !important; --bk-font-body:"Atkinson Hyperlegible",sans-serif !important; --bk-font-mono:"IBM Plex Mono",monospace !important;
+    --bk-font-display:"Cinzel",serif !important; --bk-font-name:"Fraunces",serif !important; --bk-font-ui:"Atkinson Hyperlegible",sans-serif !important; --bk-font-body:"Atkinson Hyperlegible",sans-serif !important; --bk-font-mono:"IBM Plex Mono",monospace !important;
     --bk-type-scale:1 !important; --bk-density:1 !important; --bk-frame-w:1px !important; --bk-frame-gap:0px !important; --bk-frame-inner-w:0px !important; --bk-frame-shadow-x:0px !important; --bk-frame-shadow-y:0px !important; --bk-bracket-rest:0 !important;
     /* a piece's scoped accent (accent-role.ts) never reaches a protected surface, even one mounted inside a scene */
     --bk-character-accent:initial !important; --bk-character-accent-text:initial !important; --bk-character-accent-deep:initial !important;

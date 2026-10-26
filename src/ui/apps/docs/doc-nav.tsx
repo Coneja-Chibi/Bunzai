@@ -1,5 +1,7 @@
 /** Generated docs navigation and catalog search for the reader's left rail. */
 import { ListRow, Segmented } from "../../components/button";
+import { Ic } from "../../_shared/ic";
+import { Panel } from "../../components/panel";
 import { useEffect, useState, type JSX } from "react";
 import type { DocRecord } from "../../docs-types";
 import { displayDocTitle, groupDocs, searchDocs } from "./docs-core";
@@ -22,15 +24,19 @@ export function DocNav({ docs, activeId, query, onQuery, onPick }: DocNavProps):
   const visibleGroups = query.trim() ? groups : groups.filter((group) => group.id === shelf);
 
   return (
-    <nav className={styles.nav} aria-label="Documentation">
-      <input
-        className={styles.search}
-        placeholder="search the docs"
-        value={query}
-        onChange={(event) => onQuery(event.target.value)}
-        aria-label="Search the docs"
-        data-tour="search"
-      />
+    <Panel as="div" deck="lorebook" data-part="docs.nav" className={styles.nav}>
+    <nav aria-label="Documentation">
+      <label className={styles.searchField}>
+        <Ic name="lucide:search" size={18} />
+        <input
+          className={styles.search}
+          placeholder="search the docs"
+          value={query}
+          onChange={(event) => onQuery(event.target.value)}
+          aria-label="Search the docs"
+          data-tour="search"
+        />
+      </label>
       {!query.trim() && (
         <div className={styles.shelves}>
           <Segmented
@@ -50,21 +56,28 @@ export function DocNav({ docs, activeId, query, onQuery, onPick }: DocNavProps):
               key={`${group.id}-${section.id}-${shelf}`}
               open={Boolean(query.trim()) || index === 0 || section.docs.some((doc) => doc.id === activeId)}
             >
-              <summary className={styles.grp}>{section.label} <span>{section.docs.length}</span></summary>
+              <summary className={styles.grp}>{section.label} <span className={styles.count}>{section.docs.length}</span></summary>
               {section.docs.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (doc) => (
-                <ListRow
-                  key={doc.id}
-                  selected={doc.id === activeId}
-                  aria-current={doc.id === activeId ? "page" : undefined}
-                  onClick={() => onPick(doc.id)}
-                  label={displayDocTitle(doc)}
-                />
+                <div className={styles.docRow} key={doc.id} data-part={`docs.nav.row.${doc.id}`}>
+                  <ListRow
+                    selected={doc.id === activeId}
+                    aria-current={doc.id === activeId ? "page" : undefined}
+                    onClick={() => onPick(doc.id)}
+                    label={displayDocTitle(doc)}
+                  />
+                </div>
               ))}
             </details>
           ))}
         </section>
       ))}
-      {groups.length === 0 && <p className={styles.noResults}>No docs match that search.</p>}
+      {groups.length === 0 && (
+        <div className={styles.moment}>
+          <h2 className={styles.momentTitle}>Nothing on that page</h2>
+          <p>No docs match that search.</p>
+        </div>
+      )}
     </nav>
+    </Panel>
   );
 }

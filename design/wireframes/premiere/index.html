@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: every room</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+.rooms { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+.rooms a { text-decoration: none; display: block; }
+.rooms img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; object-position: top; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 30%, transparent); }
+.rooms .panel { padding: 0; }
+.rooms .cap { padding: 14px 16px 16px; }
+.rooms .alt { color: var(--premiere-gold); font-size: 12px; }
+.rooms .cap p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); margin-top: 4px; }
+</style></head>
+<body><div class="wf-note">WIREFRAMES. Every room that was not yet in the Premiere style. Each keeps the layout it has today and gets the Premiere style region by region; Settings alone gets a new layout. The earlier full-layout redesigns are linked under each card. Each page lists what changed at its foot.</div>
+<div class="stage"><main class="room">
+<header class="marquee"><span class="kicker">Bunraku &middot; house style</span><h1>Every room, <em class="glow">Premiere</em></h1><p class="lede">One header, one panel, one button family, all colored from your accent. Same rooms, same places. Pick an accent in the strip above to see every page follow it.</p></header>
+<div class="rooms">
+<div class="panel lift"><a href="settings.html"><img src="thumb-settings.png" alt=""></a><div class="cap"><h2><a href="settings.html">Settings</a></h2><p>New layout (the one room that needed it): twelve tabs in four acts, every row kept, Stage lights added.</p><p><a class="alt" href="settings-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="workbench.html"><img src="thumb-workbench.png" alt=""></a><div class="cap"><h2><a href="workbench.html">The Workbench</a></h2><p>Today's layout. Staged empty state, styled recents rail.</p><p><a class="alt" href="workbench-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="workbench-editors.html"><img src="thumb-workbench-editors.png" alt=""></a><div class="cap"><h2><a href="workbench-editors.html">Workbench editors</a></h2><p>Today's panes. Preset, regex and lorebook views restyled.</p><p><a class="alt" href="workbench-editors-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="library.html"><img src="thumb-library.png" alt=""></a><div class="cap"><h2><a href="library.html">The Library</a></h2><p>Today's layout. Deck rail, toolbar and every view restyled.</p><p><a class="alt" href="library-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="press.html"><img src="thumb-press.png" alt=""></a><div class="cap"><h2><a href="press.html">The Press</a></h2><p>Today's layout. Rail, platform strip and queue restyled.</p><p><a class="alt" href="press-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="apps.html"><img src="thumb-apps.png" alt=""></a><div class="cap"><h2><a href="apps.html">Apps</a></h2><p>Today's grid. Rainbow edges replaced by the palette.</p><p><a class="alt" href="apps-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="html-view.html"><img src="thumb-html-view.png" alt=""></a><div class="cap"><h2><a href="html-view.html">HTML View</a></h2><p>Today's layout. Lit screen frame, staged empty and error states.</p><p><a class="alt" href="html-view-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="agent.html"><img src="thumb-agent.png" alt=""></a><div class="cap"><h2><a href="agent.html">The Agent</a></h2><p>Today's single column. Bands, choice card, Gate and composer restyled.</p><p><a class="alt" href="agent-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="docs.html"><img src="thumb-docs.png" alt=""></a><div class="cap"><h2><a href="docs.html">Help / Docs</a></h2><p>Today's three columns. Calm reading panel, styled rails.</p><p><a class="alt" href="docs-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="css-workshop.html"><img src="thumb-css-workshop.png" alt=""></a><div class="cap"><h2><a href="css-workshop.html">CSS Workshop</a></h2><p>Today's panes. Duplicate import and mode controls merged.</p><p><a class="alt" href="css-workshop-redesign.html">Earlier full redesign</a></p></div></div>
+<div class="panel lift"><a href="macro-lab.html"><img src="thumb-macro-lab.png" alt=""></a><div class="cap"><h2><a href="macro-lab.html">Macro Lab</a></h2><p>Today's panes. Platform strip, text and resolved panes restyled.</p><p><a class="alt" href="macro-lab-redesign.html">Earlier full redesign</a></p></div></div>
+</div></main></div>
+<script src="kit.js"></script>
+</body></html>

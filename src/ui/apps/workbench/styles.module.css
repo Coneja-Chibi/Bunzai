@@ -1,13 +1,10 @@
 /**
- * The Workbench room styles - transcribed 1:1 from the deleted vanilla index.ts's injected CSS
- * block. Class names renamed to camelCase for CSS Modules; visual rules unchanged. The vanilla
- * `body.focus-editor` cross-cutting rules become a `.focused` modifier applied directly by the
- * room component (it already knows the live focus state via useFocusMode) instead of depending on
- * an ambient body-class selector inside a scoped module.
+ * The Workbench room styles (Premiere restyle): the empty card is a Panel with the room header inside, the recents rail
+ * is a low strip of cover cards. Editors keep their own modules; this file owns the stage, the panes and the home.
+ * Class names are camelCase for CSS Modules; `.focused` is a modifier the room applies from useFocusMode.
  */
 .room {
-  /* flush: the editor's own bars are the chrome; every gutter here was dead space (the prosc
-     wrapper is deleted outright - its frame framed nothing) */
+  /* flush: the editor's own bars are the chrome; every gutter here was dead space */
   flex: 1;
   min-height: 0;
   display: flex;
@@ -25,111 +22,6 @@
   display: flex;
   flex-direction: column;
 }
-.crumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  border-bottom: 3px solid var(--stage-black);
-  background: var(--stage-sunken);
-  padding: 0.5rem 0.75rem;
-  flex: none;
-}
-.crumb .pip {
-  width: 11px;
-  height: 11px;
-  border: 2px solid var(--stage-black);
-  background: var(--a, var(--accent));
-}
-.crumb .cn {
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: var(--text-control, 0.875rem);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-paper);
-}
-.crumb .cc {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-mute);
-  margin-left: auto;
-}
-.pane {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  gap: clamp(0.8rem, 2vw, 1.4rem);
-  padding: clamp(0.8rem, 2vw, 1.4rem);
-  overflow-y: auto;
-}
-.art {
-  flex: none;
-  width: clamp(9rem, 22vw, 16rem);
-  align-self: flex-start;
-  background: var(--a, var(--rose));
-  border: 3px solid var(--stage-black);
-  aspect-ratio: 2 / 3;
-  background-size: cover;
-  background-position: center top;
-  box-shadow: 0 24px 38px -14px var(--shadow-ink-deep);
-  display: flex;
-  align-items: flex-end;
-  padding: 0.5rem;
-}
-.art b {
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: 3rem;
-  line-height: 0.72;
-  color: var(--stage-ink);
-  opacity: 0.82;
-}
-.sheet {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-.nm {
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: clamp(1.3rem, 2.6vw, 2rem);
-  letter-spacing: -0.01em;
-  color: var(--stage-card);
-  line-height: 1;
-}
-.meta {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
-}
-.field {
-  background: var(--stage-row);
-  border: 3px solid var(--stage-black);
-  padding: 0.6rem 0.8rem;
-}
-.field .fk {
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--stage-mute);
-  margin-bottom: 0.3rem;
-}
-.field .fv {
-  font-size: var(--text-body);
-  line-height: 1.55;
-  color: var(--stage-soft);
-  white-space: pre-line;
-}
 .soon {
   font-family: var(--font-body);
   font-size: var(--text-body);
@@ -140,36 +32,67 @@
   margin: auto;
   max-width: 34rem;
 }
-.ghostRoom {
-  margin: auto;
-  width: min(100% - 2rem, 38rem);
-  max-width: 38rem;
-  border: 1px solid var(--control-boundary, var(--stage-line));
-  background: var(--face, var(--stage-panel));
-  box-shadow: 0 1rem 3rem var(--shadow-ink);
+
+/* the empty card: one Panel at the top centre, a gold top edge, the room header inside (centered marquee).
+   The doubled class beats the Panel's own padding whichever stylesheet loads first. */
+.ghostRoom.ghostRoom {
+  margin: 0.9rem auto auto;
+  width: min(100% - 2rem, 40rem);
+  max-width: 40rem;
   padding: clamp(1.25rem, 4cqi, 2rem);
+  border-top-color: var(--premiere-gold);
   text-align: center;
-  font-family: var(--font-body);
-  color: var(--text);
 }
-.ghostRoom h2 {
+.ghostRoom [data-control="room-header"] {
+  padding: 0;
   margin: 0;
-  font: 600 1.5rem/1.25 var(--font-fancy);
-  color: var(--text);
 }
-.ghostRoom p {
-  margin: 0.6rem auto 0;
+.ghostRoom [data-slot="title"] {
+  font-size: clamp(1.6rem, 3cqi, 2.1rem);
+}
+.ghostRoom [data-slot="lede"] {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+/* restore failed: today's reason, in a block with one rose edge */
+.ghostErr {
+  margin: 1rem auto 0;
   max-width: 34rem;
-  font: 400 var(--text-body)/1.6 var(--font-body);
-  color: var(--text-soft);
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  font: 400 var(--text-body)/1.6 var(--font-ui);
+  color: var(--text);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+/* restoring: soft pulsing placeholder lines */
+.skel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+.skel i {
+  display: block;
+  height: 0.6rem;
+  width: 16rem;
+  max-width: 100%;
+  background: color-mix(in srgb, var(--text) 12%, transparent);
+  animation: skelPulse 1.6s ease-in-out infinite;
+}
+.skel i:nth-child(2) { width: 12rem; }
+.skel i:nth-child(3) { width: 8rem; }
+@keyframes skelPulse {
+  50% { opacity: 0.35; }
 }
 .ghostActions {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-top: 1.25rem;
+  gap: 0.75rem;
+  margin-top: 1.35rem;
 }
 
 /* the recents rail: a low deck of recently imported/opened pieces, offered as "bring one up" */
@@ -177,54 +100,41 @@
   flex: none;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem 0.5rem;
 }
 .recents .pip {
   width: 8px;
   height: 8px;
   background: var(--accent);
-  border: 2px solid var(--edge);
+  box-shadow: 0 0 10px var(--accent);
 }
 .strip {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   overflow-x: auto;
-  padding: 0.1rem 0 0.35rem;
+  padding: 0.25rem 0.25rem 0.75rem;
 }
 .strip > [data-control="card"] {
   flex: none;
-  width: clamp(3rem, 7vw, 4.4rem);
+  width: clamp(5.5rem, 9vw, 7.5rem);
 }
 .rcov {
-  background: var(--a, var(--rose));
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--a, var(--accent)) 45%, var(--bk-surface-panel)), color-mix(in srgb, var(--a, var(--accent)) 12%, var(--stage-black)) 75%);
   background-size: cover;
   background-position: center top;
   display: flex;
-  align-items: flex-end;
-  padding: 0.2rem;
+  align-items: center;
+  justify-content: center;
 }
+/* the family face slot sets display:block on its child; the rail re-centres the initial */
+.strip .rcov { display: flex; }
 .rcov b {
-  font-family: var(--font-big);
-  font-weight: 900;
-  font-size: 1.05rem;
-  color: var(--stage-ink);
-  opacity: 0.82;
-  line-height: 0.7;
-}
-@container (max-width: 40rem) {
-  .prosc {
-    padding: 0.3rem;
-    box-shadow: 4px 4px 0 0 var(--edge);
-  }
-  .pane {
-    flex-wrap: wrap;
-  }
-  .art {
-    width: clamp(8rem, 52vw, 12rem);
-  }
-  .sheet {
-    flex: 1 1 100%;
-  }
+  font: 700 clamp(1.6rem, 3cqi, 2.6rem)/1 var(--font-fancy);
+  color: var(--text);
+  text-shadow: 0 2px 18px color-mix(in srgb, var(--a, var(--accent)) 50%, transparent);
 }
 
 /* keep-mounted piece panes: the wrapper fills the stage so the pane inside can actually scroll;
@@ -277,8 +187,8 @@
   }
 }
 
-/* flat room: no crumb, no prosc wrapper - the editor's own bars are the chrome. paneFlush scrolls
-   with zero padding so those bars run edge to edge; the inspector keeps the padded .pane. */
+/* flat room: the editor's own bars are the chrome. paneFlush scrolls with zero padding so those bars run
+   edge to edge; the inspector keeps the padded .pane. */
 .paneFlush {
   flex: 1;
   min-height: 0;
@@ -286,8 +196,8 @@
   display: flex;
   flex-direction: column;
 }
-.ghostFocus {
-  margin-top: 0.8rem;
-  display: flex;
-  justify-content: center;
+@media (prefers-reduced-motion: reduce) {
+  .skel i {
+    animation: none;
+  }
 }

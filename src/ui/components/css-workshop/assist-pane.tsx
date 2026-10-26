@@ -31,6 +31,9 @@ export function CssAssistPane({
 }: CssAssistPaneProps): JSX.Element {
   return (
     <div className={styles.assist} data-tour="css-assist">
+      <div className={styles.paneHead}>
+        <h2 className={styles.paneTitle}>Assist</h2>
+      </div>
       <p className={styles.hint}>
         Pick a target, tweak knobs, or write free CSS in Source. Knobs edit one rule at a time.
       </p>
@@ -61,7 +64,10 @@ export function CssAssistPane({
       </div>
 
       {doc.rules.length === 0 ? (
-        <p className={styles.hint}>No parsed rules yet. Use a Starter or open Source and write CSS.</p>
+        <div className={styles.empty}>
+          <b>No rules yet</b>
+          <p className={styles.hint}>No parsed rules yet. Use a Starter or open Source and write CSS.</p>
+        </div>
       ) : (
         <div className={styles.ruleList}>
           {doc.rules.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (r) => (

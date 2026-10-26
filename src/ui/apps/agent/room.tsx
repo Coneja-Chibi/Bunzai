@@ -21,7 +21,6 @@ import { useStudioChanges } from "../../agent/use-studio-changes";
 import { loadDraft, saveDraft } from "../../agent/transcript-store";
 import { GateCard } from "../../agent/gate-card";
 import { apiFetch, apiFetchJson } from "../../_shared/api-fetch";
-import { kitVars } from "../../agent/kit-vars";
 import { HTML_VIEW_APP, onHtmlHandoff } from "../../agent/html-handoff";
 import { KeyHints, Rehearsal, RehearsalTrace, Searchlight, Stagehand, WatchNote } from "../../agent/kit-widgets";
 import { StatusToast, useNotice } from "../../agent/kit-bands";
@@ -35,6 +34,8 @@ import { useSlash } from "../../agent/use-slash";
 import { useMentions } from "../../agent/use-mentions";
 import "./variant-styles";
 import { SlashMenu } from "../../agent/slash-menu";
+import { DockedHead, RoomFrame } from "./premiere-frame";
+import { AGENT_PREMIERE_STYLE } from "./premiere-style";
 import {
   AGENT_CHIP_STYLE, AGENT_GATE_STYLE, AGENT_KIT_STYLE, AGENT_STYLE, AGENT_TALK_STYLE, PREF_BAND_FOLDED,
 } from "./styles";
@@ -233,10 +234,10 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
   };
 
   return (
-    <section className="agent-room" data-room={onClose ? "floating" : "docked"} style={kitVars()}>
+    <RoomFrame floating={Boolean(onClose)}>
       <style>
         {AGENT_STYLE + AGENT_TALK_STYLE + AGENT_CHIP_STYLE + AGENT_GATE_STYLE + AGENT_KIT_STYLE
-          + KIT_TRANSCRIPT_STYLE + KIT_COMMAND_STYLE}
+          + KIT_TRANSCRIPT_STYLE + KIT_COMMAND_STYLE + AGENT_PREMIERE_STYLE}
       </style>
 
       {/*
@@ -245,16 +246,26 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
         you were reading the conversation through. Folded, the one live fact stays: the meter, which
         is the thing you would reopen it to check.
       */}
-      <IconButton
-        variant="quiet"
-        size="sm"
-        icon={bandFolded ? "lucide:chevron-right" : "lucide:chevron-down"}
-        label={bandFolded ? "Show the model and screen" : "Fold this band away"}
-        aria-expanded={!bandFolded}
-        onClick={() => { setBandFolded(!bandFolded); ctx.prefs.set(PREF_BAND_FOLDED, !bandFolded); }}
-      />
+      <div className="agent-room__fold" data-folded={bandFolded ? "" : undefined}>
+        <IconButton
+          variant="quiet"
+          size="sm"
+          icon={bandFolded ? "lucide:chevron-right" : "lucide:chevron-down"}
+          label={bandFolded ? "Show the model and screen" : "Fold this band away"}
+          aria-expanded={!bandFolded}
+          onClick={() => { setBandFolded(!bandFolded); ctx.prefs.set(PREF_BAND_FOLDED, !bandFolded); }}
+        />
+      </div>
 
-      {!bandFolded && (
+      {/* Docked: the shared room header. The floating Kit panel keeps its own compact head below. */}
+      {!bandFolded && !onClose && (
+        <DockedHead
+          model={model.connected ? `${model.provider ?? "model"} · ${model.model ?? ""}` : ""}
+          watching={changes.watching}
+          standingOn={reading?.title ?? null}
+        />
+      )}
+      {!bandFolded && onClose && (
       <header className="agent-room__head">
         <p className="agent-room__kick">
           <span className={`agent-room__dot${model.connected ? " agent-room__dot--live" : ""}`} />
@@ -476,6 +487,6 @@ export function AgentRoom({ ctx, onClose }: { ctx: AppContext; onClose?: () => v
           <pre className="agent-room__brief">{brief}</pre>
         </details>
       )}
-    </section>
+    </RoomFrame>
   );
 }

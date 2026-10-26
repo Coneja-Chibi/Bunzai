@@ -1,5 +1,6 @@
 /** Current-page heading rail, derived entirely from generated docs anchors. */
 import { ListRow } from "../../components/button";
+import { Panel } from "../../components/panel";
 import type { JSX } from "react";
 import type { DocAnchor } from "../../docs-types";
 import { flattenAnchors } from "../../../kit/docs/navigation";
@@ -14,8 +15,9 @@ interface DocTocProps {
 export function DocToc({ anchors, activeSlug, onJump }: DocTocProps): JSX.Element {
   const flat = flattenAnchors(anchors);
   return (
-    <aside className={styles.toc} aria-label="On this page" data-tour="toc">
+    <Panel as="aside" deck="lorebook" data-part="docs.toc" className={styles.toc} aria-label="On this page" data-tour="toc">
       {flat.length > 0 && <div className={styles.tocHead}>On this page</div>}
+      <div className={styles.tocList}>
       {flat.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (anchor) => (
         <ListRow
           key={`${anchor.slug}-${anchor.level}`}
@@ -26,6 +28,7 @@ export function DocToc({ anchors, activeSlug, onJump }: DocTocProps): JSX.Elemen
           label={anchor.text}
         />
       ))}
-    </aside>
+      </div>
+    </Panel>
   );
 }

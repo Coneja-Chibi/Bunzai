@@ -53,12 +53,13 @@ body.focus-editor #tabstrip{display:none}
 
 /* ───────── STATUS BAR ───────── */
 #status{background:var(--status-bg);color:var(--status-fg);
-  border-top:3px solid var(--edge);
-  display:flex;align-items:center;gap:clamp(.6rem,1.6vw,1.15rem);padding:.32rem clamp(.7rem,1.6vw,1rem);
-  font-family:var(--font-mono);font-size:.75rem;letter-spacing:.03em;white-space:normal;overflow-wrap:anywhere}
+  border-top:1px solid color-mix(in srgb,var(--premiere-gold) 30%,transparent);
+  display:flex;align-items:center;gap:clamp(.6rem,1.6vw,1.15rem);padding:.36rem clamp(.7rem,1.6vw,1rem);
+  font-family:var(--font-ui);font-size:.8125rem;white-space:normal;overflow-wrap:anywhere}
 #status .seg{display:flex;align-items:center;gap:.4rem;flex:none}
 #status .seg.trim{min-width:0;flex:0 1 auto}
 #status .k{color:var(--status-fg);font-weight:600}
+#status .note .k::before{content:"";display:inline-block;width:7px;height:7px;margin-right:.5rem;background:var(--premiere-gold);vertical-align:.1em}
 #status .b{color:var(--status-fg)}
 
 /* ───────── the follow dialog (shell-owned) ───────── */

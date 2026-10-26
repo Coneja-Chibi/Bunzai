@@ -95,7 +95,7 @@ export function LoreEntryPage({
     <div className={styles.page} aria-label={`Entry · ${entry.title || "(untitled)"}`}>
       <div className={styles.pager}>
         <span className={styles.pageNo}>
-          Entry {index + 1} of {count}
+          Entry <span className={styles.pageNum}>{index + 1}</span> of <span className={styles.pageNum}>{count}</span>
         </span>
         <IconButton label="Previous entry" size="sm" icon="lucide:chevron-left" disabled={index <= 0} onClick={onPrev} />
         <IconButton label="Next entry" size="sm" icon="lucide:chevron-right" disabled={index >= count - 1} onClick={onNext} />

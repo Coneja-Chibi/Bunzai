@@ -2,14 +2,14 @@
 
 .pcHint {
   margin: 0.25rem 0 0.45rem;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   font-family: var(--font-body);
   font-size: var(--text-meta);
 }
 
 .pcBiasCard {
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
+  border: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
   padding: 0.45rem;
   margin-bottom: 0.4rem;
 }
@@ -38,9 +38,9 @@
   width: 100%;
   min-height: 3.5rem;
   resize: vertical;
-  border: 1px solid var(--stage-seam);
+  border: 1px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-card);
+  color: var(--text);
   padding: 0.35rem 0.4rem;
   font-family: var(--font-mono);
   font-size: var(--text-control);

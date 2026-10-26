@@ -5,6 +5,7 @@ import type { AppContext } from "../../app-contract";
 import type { DocFigure, DocRecord, DocsIndex } from "../../docs-types";
 import { toErrorMessage } from "../../_shared/error-message";
 import { BottomSheet } from "../../components/bottom-sheet";
+import { RoomHeader } from "../../components/room-header";
 import { DocContent } from "./doc-content";
 import { DocNav } from "./doc-nav";
 import { DocToc } from "./doc-toc";
@@ -82,8 +83,8 @@ export function DocsRoom({ ctx }: { ctx: AppContext }): JSX.Element {
     }
   };
 
-  if (error) return <div className={styles.message}>{error}</div>;
-  if (!docs || !activeId) return <div className={styles.message}>Opening Help / Docs…</div>;
+  if (error) return <div className={`${styles.moment} ${styles.err}`}><h2 className={styles.momentTitle}>{error}</h2></div>;
+  if (!docs || !activeId) return <div className={styles.moment}><span className={styles.pulse} /><h2 className={styles.momentTitle}>Opening Help / Docs…</h2></div>;
   const active = docs.find((doc) => doc.id === activeId) ?? docs[0]!;
   const mobilePick = (id: string, nextAnchor = ""): void => {
     pick(id, nextAnchor);
@@ -92,6 +93,12 @@ export function DocsRoom({ ctx }: { ctx: AppContext }): JSX.Element {
 
   return (
     <div className={styles.host}>
+      <RoomHeader
+        data-part="docs.header"
+        kicker="The program notes"
+        title="Help / Docs"
+        lede="The same documentation committed to GitHub, packaged into Bunraku so it is always close by."
+      />
       <div className={styles.room}>
         <header className={styles.mobileHead}>
           <Button

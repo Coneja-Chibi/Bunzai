@@ -1,13 +1,12 @@
 /**
  * Guided mode styles (design/vs-regex-editor.html wire 1.7): the quiz STRUCTURE - progress squares,
- * one question card, a big rose Next - wearing THIS editor's binder grammar (stage panels, black
- * borders + offset shadows, teal accent). Neither a light paper card nor the imported forge palette
- * fits here; this must read as a mode of the same surface. Stage tokens only; one class per
- * name in this module. The card is width-capped, so it reflows in a narrow pane without a query.
+ * one question column, a big Next - wearing THIS editor's Premiere grammar (open column under a gold hairline,
+ * theme roles for color). One class per name in this module. The column is width-capped, so it reflows in a
+ * narrow pane without a query.
  */
 
 .prosc {
-  background: var(--stage-sunken);
+  background: none;
   padding: 2rem 1rem 2.4rem;
   display: flex;
   flex-direction: column;
@@ -23,8 +22,8 @@
 .qsq {
   width: 0.75rem;
   height: 0.75rem;
-  border: 2px solid var(--stage-black);
-  background: var(--stage-faint);
+  border: 0;
+  background: color-mix(in srgb, var(--text) 25%, transparent);
 }
 
 .qsqDone {
@@ -32,43 +31,40 @@
 }
 
 .qsqNow {
-  background: var(--wb-selection, var(--rose));
+  background: var(--wb-selection, var(--accent));
 }
 
 .qcard {
-  background: var(--stage-panel);
-  color: var(--stage-soft);
-  border: 3px solid var(--stage-black);
-  box-shadow: 7px 7px 0 0 var(--stage-black);
+  background: none;
+  color: var(--text-soft);
+  border-top: 2px solid var(--premiere-gold);
   width: min(38rem, 100%);
   padding: clamp(1.2rem, 2.5vw, 1.7rem);
 }
 
 .qk {
-  font-family: var(--font-mono);
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .qtitle {
-  font-family: var(--font-big);
-  font-weight: 900;
+  font-family: var(--font-fancy);
+  font-weight: 700;
   font-size: 1.35rem;
   line-height: 1.15;
-  letter-spacing: -0.01em;
-  color: var(--stage-card);
+  letter-spacing: 0.02em;
+  color: var(--text);
   margin: 0.15rem 0 0.2rem;
 }
 
 .qsub {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: 0.9rem;
-  color: var(--stage-mute);
+  color: var(--text-dim);
   margin: 0 0 0.7rem;
 }
 
@@ -77,9 +73,9 @@
   box-sizing: border-box;
   min-height: 4.5rem;
   resize: vertical;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: 0.9rem;
@@ -88,15 +84,14 @@
 }
 
 .qcatch {
-  border: 2px dashed var(--stage-seam);
-  background: var(--stage-row);
+  border-left: 3px solid color-mix(in srgb, var(--premiere-gold) 55%, transparent);
+  background: color-mix(in srgb, var(--stage-black) 45%, transparent);
   padding: 0.55rem 0.65rem;
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: 0.88rem;
   line-height: 1.5;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   margin-top: 0.6rem;
 }
 
@@ -112,8 +107,8 @@
   font-style: normal;
   font-weight: 500;
   font-size: var(--text-control);
-  border: 1px solid color-mix(in srgb, var(--a, var(--accent)) 55%, var(--stage-seam));
-  color: color-mix(in srgb, var(--a, var(--accent)) 70%, var(--stage-card));
+  border: 1px solid color-mix(in srgb, var(--a, var(--accent)) 55%, var(--bk-line-control));
+  color: color-mix(in srgb, var(--a, var(--accent)) 70%, var(--text));
   padding: 0.16rem 0.4rem;
 }
 
@@ -122,18 +117,18 @@
   font-style: normal;
   font-weight: 500;
   font-size: var(--text-control);
-  border: 1px solid var(--stage-faint);
-  color: var(--stage-kicker);
+  border: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
+  color: var(--text-dim);
   padding: 0.16rem 0.4rem;
   text-decoration: line-through;
 }
 
 .qnote {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: var(--text-meta);
-  color: var(--stage-mute);
+  color: var(--text-dim);
   margin: 0.4rem 0 0;
 }
 

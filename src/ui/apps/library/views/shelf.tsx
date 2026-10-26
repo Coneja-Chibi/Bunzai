@@ -14,29 +14,28 @@ import { Button, Toggle } from "../../../components/button";
 import { VirtualShelf } from "../../../_shared/virtual-list";
 
 const CSS = `
-.dv-shelfscroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
-.dv-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(12rem,100%),1fr));gap:.85rem;position:relative}
-.dv-book{display:flex;flex-direction:column;text-align:left;font:inherit;padding:0;cursor:pointer;position:relative;
-  background:var(--stage-panel);border:3px solid var(--stage-black);box-shadow:5px 5px 0 0 var(--a);transition:transform .12s ease-out,box-shadow .12s ease-out;
-  --spine:var(--a)}
-.dv-book:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 0 var(--a)}
-.dv-book .spine{position:absolute;left:0;top:0;bottom:0;width:.45rem;background:var(--spine);border-right:2px solid var(--stage-black)}
-.dv-book .body{padding:.7rem .7rem .55rem 1.05rem;display:flex;flex-direction:column;gap:.3rem;min-height:6.2rem}
+.dv-shelfscroll{flex:1;min-height:0;overflow-y:auto;padding:.375rem .5rem .75rem}
+.dv-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:1.375rem;position:relative}
+/* a book: hard frame, a striped deck-colored spine, lift on hover; staged takes the deck border and shadow */
+.dv-book{display:flex;flex-direction:column;text-align:left;font:inherit;padding:0;cursor:pointer;position:relative;min-height:12rem;
+  background:var(--glass);border:3px solid var(--stage-black);box-shadow:5px 5px 0 var(--stage-black);transition:transform .25s ease,box-shadow .25s ease;--spine:var(--a)}
+.dv-book:hover{transform:translateY(-5px);box-shadow:5px 5px 0 var(--stage-black),var(--glow)}
+.dv-book .spine{position:absolute;left:0;top:0;bottom:0;width:1.125rem;border-right:3px solid var(--stage-black);
+  background:repeating-linear-gradient(180deg,color-mix(in srgb,var(--spine) 70%,var(--stage-black)) 0 14px,color-mix(in srgb,var(--spine) 50%,var(--stage-black)) 14px 16px)}
+.dv-book .body{flex:1;padding:.875rem .875rem .5rem 1.875rem;display:flex;flex-direction:column;gap:.375rem}
 .dv-book .nm{display:block;width:100%;text-align:left}
 .dv-book .nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
-.dv-book .nm{font-family:var(--font-big);font-weight:800;font-size:.95rem;color:var(--stage-card);line-height:1.1;
-  overflow-wrap:anywhere}
-.dv-book .meta{font-family:var(--font-mono);font-size: var(--text-meta);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stage-soft)}
-.dv-book .foot{display:flex;align-items:center;gap:.4rem;padding:0 .55rem .55rem 1.05rem}
-.dv-book.cast{border-color:var(--a);box-shadow:inset 4px 4px 0 0 var(--shadow-ink);transform:translate(2px,2px);opacity:.78}
-.dv-book.pick{outline:3px solid var(--a);outline-offset:-3px}
-.dv-book.off .nm{text-decoration:line-through;color:var(--stage-mute)}
-.dv-book.off{opacity:.55}
+.dv-book .nm{font:700 1.0625rem/1.2 var(--font-fancy);color:var(--text);overflow-wrap:anywhere}
+.dv-book .meta{font:var(--text-meta) var(--font-ui);color:var(--text-faint)}
+.dv-book .foot{display:flex;align-items:center;gap:.5rem;padding:0 .875rem .75rem 1.875rem;font-size:.8125rem;color:var(--text-dim)}
+.dv-book.cast{outline:1px solid var(--premiere-gold);outline-offset:3px}
+.dv-book.pick{border-color:var(--a);box-shadow:5px 5px 0 var(--a)}
+.dv-book.off .nm{text-decoration:line-through;color:var(--text-faint)}
+.dv-book.off{filter:saturate(.55)}
 .dv-book.drop{outline:3px dashed var(--a);outline-offset:2px}
-.dv-book .tick{position:absolute;top:0;right:0;background:var(--a);color:var(--stage-ink);font-family:var(--font-mono);
-  font-size: var(--text-meta);font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;border-left:2px solid var(--stage-black);border-bottom:2px solid var(--stage-black)}
-.dv-book .dropTag{position:absolute;left:.5rem;right:.5rem;bottom:.4rem;font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.05em;text-transform:uppercase;color:var(--stage-ink);background:var(--a);border:2px solid var(--stage-black);padding:.2rem .3rem;text-align:center}
-.dv-trash{position:sticky;bottom:.5rem;margin:0 auto;max-width:14rem;border:2px dashed var(--stage-danger-edge);color:var(--stage-danger-text);font-family:var(--font-mono);font-size: var(--text-meta);letter-spacing:.08em;text-transform:uppercase;padding:.55rem;text-align:center;background:var(--stage-danger-bg);opacity:0;pointer-events:none}
+.dv-book .tick{position:absolute;top:.5rem;right:.5rem;padding:.125rem .5rem;background:var(--premiere-gold);color:var(--stage-ink);font:600 var(--text-meta) var(--font-ui);border:2px solid var(--stage-black)}
+.dv-book .dropTag{position:absolute;left:.5rem;right:.5rem;bottom:.4rem;font:600 var(--text-meta) var(--font-ui);color:var(--stage-ink);background:var(--a);border:2px solid var(--stage-black);padding:.2rem .3rem;text-align:center}
+.dv-trash{position:sticky;bottom:.5rem;margin:0 auto;max-width:14rem;border:2px dashed var(--stage-danger-edge);color:var(--stage-danger-text);font:600 var(--text-meta) var(--font-ui);padding:.55rem;text-align:center;background:var(--stage-danger-bg);opacity:0;pointer-events:none}
 .dv-trash.show{opacity:1;pointer-events:auto}
 `;
 

@@ -8,6 +8,8 @@
  * state IS the unsaved draft across tab switches - closing the tab unmounts it, which is the discard.
  */
 import { Button, Card, Disclosure } from "../../components/button";
+import { Panel } from "../../components/panel";
+import { RoomHeader } from "../../components/room-header";
 import { OverlayWidgets } from "./overlay";
 import { AppActivity } from "../../_shared/app-activity";
 import { EditorKeyOwner } from "./editor-key-owner";
@@ -173,6 +175,7 @@ function RecentCard({ ctx, entity }: { ctx: AppContext; entity: StudioEntitySumm
         </div>
       }
       heading={entity.name}
+      subtitle={deckMeta(entity.kind).singular}
     />
   );
 }
@@ -326,13 +329,20 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
       <div className={styles.stage} style={accentVars(active?.accent) as CSSProperties | undefined}>
         {nodesOn && <NodesView ctx={ctx} pieces={pieces} onView={setView} />}
         {!active && !nodesOn && (
-          <section className={styles.ghostRoom} aria-live="polite" data-empty="editor">
-            <h2>{restoreFailure ? "We couldn't restore the workbench" : restoring ? "Restoring your workbench…" : "Your workbench is empty"}</h2>
-            <p>{restoreFailure ?? (restoring ? "Your open pieces will appear here when they are ready." : "Open a piece from your Library to start editing. Each piece opens in a tab above.")}</p>
+          <Panel as="section" data-part="editor.empty" className={styles.ghostRoom} aria-live="polite" data-empty="editor">
+            <RoomHeader
+              align="center"
+              data-part="editor.empty.header"
+              kicker="The Workbench · Edit pieces"
+              title={restoreFailure ? "We couldn't restore the workbench" : restoring ? "Restoring your workbench…" : "Your workbench is empty"}
+              lede={restoreFailure ? undefined : restoring ? "Your open pieces will appear here when they are ready." : "Open a piece from your Library to start editing. Each piece opens in a tab above."}
+            />
+            {restoreFailure && <p className={styles.ghostErr}>{restoreFailure}</p>}
+            {restoring && !restoreFailure && <div className={styles.skel} aria-hidden="true"><i /><i /><i /></div>}
             <div className={styles.ghostActions}>
               {!restoring && (
                 <>
-                  <Button onClick={() => ctx.openApp("library")}>Open Library</Button>
+                  <Button variant="primary" onClick={() => ctx.openApp("library")}>Open Library</Button>
                   <Button onClick={() => void newPack()}>New pack folder</Button>
                   <Button onClick={() => void newLorebook()}>New lorebook</Button>
                 </>
@@ -340,7 +350,7 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
               <ViewSwitch view={view} onChange={setView} />
               {focusNode}
             </div>
-          </section>
+          </Panel>
         )}
         {/* in Nodes view the row takes no room, but every pane stays mounted so unsaved drafts survive */}
         <div className={splitOn ? `${styles.paneRow} ${styles.paneRowSplit}` : styles.paneRow} style={nodesOn ? { display: "none" } : undefined}>

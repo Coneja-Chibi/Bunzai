@@ -9,12 +9,33 @@
  * embed an inline control (the lorebook's "book rules" link).
  */
 import { Button } from "../button";
+import { Children, Fragment, isValidElement } from "react";
 import type { JSX, ReactNode } from "react";
 import s from "./styles.module.css";
+
+/** the piece kinds that own a deck color (a subset of the Panel deck edge). */
+export type EditorEheadDeck = "persona" | "lorebook" | "preset" | "regex";
+
+/** Set digit runs in the mono face (numbers are mono, words are not); elements pass through untouched. */
+function monoNumbers(node: ReactNode): ReactNode {
+  if (typeof node === "string") {
+    return node.split(/(\d+)/).map((part, i) =>
+      i % 2 === 1 ? <span key={i} className={s.num}>{part}</span> : part,
+    );
+  }
+  if (isValidElement<{ children?: ReactNode }>(node) && node.type === Fragment) {
+    return <>{Children.map(node.props.children, monoNumbers)}</>;
+  }
+  return node;
+}
 
 export interface EditorEheadProps {
   /** the spine monogram (first letter / kind glyph) */
   mark: string;
+  /** the gold kind kicker above the name ("Preset"); absent => no kicker */
+  kind?: string;
+  /** the piece kind's deck color for the monogram tile; absent => the accent */
+  deck?: EditorEheadDeck;
   name: string;
   /** present => editable input; absent => read-only display */
   onNameChange?: (next: string) => void;
@@ -34,6 +55,8 @@ export interface EditorEheadProps {
 
 export function EditorEhead({
   mark,
+  kind,
+  deck,
   name,
   onNameChange,
   namePlaceholder,
@@ -47,10 +70,11 @@ export function EditorEhead({
   topRight,
 }: EditorEheadProps): JSX.Element {
   return (
-    <header className={s.ehead} data-editor="head">
+    <header className={s.ehead} data-editor="head" data-deck={deck}>
       <div className={s.spine}>
         <span className={s.spineMark}>{mark}</span>
         <div className={s.spineText}>
+          {kind ? <span className={s.kind}>{kind}</span> : null}
           {onNameChange ? (
             <input
               className={s.spineName}
@@ -62,7 +86,7 @@ export function EditorEhead({
           ) : (
             <b className={s.spineName}>{name}</b>
           )}
-          <span className={s.spineMeta}>{meta}</span>
+          <span className={s.spineMeta}>{monoNumbers(meta)}</span>
         </div>
       </div>
       <span className={s.acts}>

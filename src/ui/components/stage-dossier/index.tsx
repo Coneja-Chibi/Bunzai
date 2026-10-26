@@ -66,8 +66,8 @@ export function Voice({ children }: { children: ReactNode }): JSX.Element {
 /** STAGE DIRECTION (a warning, gilt) or LINE FLUB (an error). */
 export function StageNote({ label, tone, children }: { label: string; tone: "warn" | "flub"; children: ReactNode }): JSX.Element {
   return (
-    <div className={tone === "warn" ? `${styles.note} ${styles.gilt}` : styles.note} role={tone === "flub" ? "alert" : undefined}>
-      <div className={styles.noteLabel}>{label}</div>
+    <div className={tone === "warn" ? `${styles.note} ${styles.gilt}` : styles.note} role={tone === "flub" ? "alert" : undefined} data-control="stage-note" data-tone={tone}>
+      <div className={styles.noteLabel} data-slot="label">{label}</div>
       <p>{children}</p>
     </div>
   );

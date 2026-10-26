@@ -7,7 +7,7 @@ import { useState } from "react";
 import type { JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import { autoPatch, hidePatch, intervalPatch, methodPatch, optionOf } from "../../../../core/summary/couplings";
-import { DEFAULT_SUMMARY_PREF, SUMMARY_DEFAULTS, contextWindow, resolveSummary } from "../../../../core/summary/settings";
+import { DEFAULT_SUMMARY_PREF, SUMMARY_DEFAULTS, automationActive, contextWindow, resolveSummary } from "../../../../core/summary/settings";
 import type { BackfillMode } from "../../../../core/summary/prompts";
 import type { SummarySettings, SummarySettingsPatch } from "../../../../stage/contracts/chat-store";
 import { checkSummarySettings, mergeSummarySettings, summaryDefaultsOf } from "../../../../stage/store/summary-rules";
@@ -93,5 +93,14 @@ function MemorySection({ ctx }: { ctx: AppContext }): JSX.Element {
   );
 }
 
-const section: SettingsSection = { id: "memory", label: "Memory & Summaries", order: 31, Component: MemorySection };
+const section: SettingsSection = {
+  id: "memory",
+  act: "studio",
+  title: "Memory & summaries",
+  lede: "The chat-summary settings a scene starts with.",
+  status: (ctx) => (automationActive(resolveSummary((summaryDefaultsOf(ctx.prefs.get(DEFAULT_SUMMARY_PREF)) ?? undefined) as SummarySettings | undefined)) ? "Summaries on" : "Summaries off"),
+  label: "Memory & Summaries",
+  order: 31,
+  Component: MemorySection,
+};
 export default section;

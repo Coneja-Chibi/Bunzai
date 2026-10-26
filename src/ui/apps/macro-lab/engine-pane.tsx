@@ -13,6 +13,7 @@
  */
 import { Button } from "../../components/button";
 import type { JSX } from "react";
+import { Panel } from "../../components/panel";
 import type { MacroEngineInfo, MacroResolveResult } from "../../app-contract";
 import styles from "./styles.module.css";
 
@@ -41,7 +42,7 @@ export function EnginePane({
   const result = state.result;
 
   return (
-    <section className={styles.box} aria-label="What the engine did">
+    <Panel data-part="macro-lab.engine" deck="regex" className={styles.box} aria-label="What the engine did">
       <div className={styles.boxHead}>
         <h2 className={styles.boxTitle}>Resolved</h2>
         <span className={styles.boxNote}>
@@ -49,7 +50,7 @@ export function EnginePane({
         </span>
       </div>
 
-      <div className={styles.actions}>
+      <div className={styles.actions} data-part="macro-lab.resolve">
         <Button variant="primary" onClick={onResolve} disabled={!engine || state.busy}>
           {state.busy ? "Resolving…" : "Resolve for real"}
         </Button>
@@ -100,7 +101,7 @@ export function EnginePane({
               </div>
             </div>
           ) : (
-            <p className={styles.quiet}>Every macro resolved. Nothing was left unexpanded.</p>
+            <p className={styles.ok}>Every macro resolved. Nothing was left unexpanded.</p>
           )}
 
           {result.warnings.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (w) => (
@@ -110,12 +111,15 @@ export function EnginePane({
       ) : null}
 
       {!result && !state.problem ? (
-        <p className={styles.quiet}>
-          {engine
-            ? "Press Resolve to run this text through the engine itself. Nothing is sent anywhere: it runs on this machine, against the checkout you installed."
-            : "This box needs a real engine to answer. Point Bunraku at a checkout and it will run your text through it."}
-        </p>
+        <div className={styles.moment}>
+          <b>{engine ? "Ready when you are" : "No engine to answer"}</b>
+          <span className={styles.quiet}>
+            {engine
+              ? "Press Resolve to run this text through the engine itself. Nothing is sent anywhere: it runs on this machine, against the checkout you installed."
+              : "This box needs a real engine to answer. Point Bunraku at a checkout and it will run your text through it."}
+          </span>
+        </div>
       ) : null}
-    </section>
+    </Panel>
   );
 }

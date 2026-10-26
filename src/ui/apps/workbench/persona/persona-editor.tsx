@@ -241,6 +241,8 @@ export function PersonaEditorView({ entity, revision, ctx, piece, topRight }: Pe
 
       <EditorEhead
         mark={monogram}
+        kind="Persona"
+        deck="persona"
         name={body.name}
           onNameChange={(v) => onBody((b) => ({ ...b, name: v }), "name")}
         namePlaceholder="Untitled persona"

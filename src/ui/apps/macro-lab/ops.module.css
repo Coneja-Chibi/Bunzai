@@ -2,69 +2,44 @@
  * The operations table, in its own sheet because it is the one thing here shaped like a grid.
  *
  * Wide by nature - one column per platform - so it scrolls INSIDE its own container and the room
- * never scrolls sideways. OpsPane also imports styles.module.css for the shared box chrome and the
- * insert pill, which it has in common with the bible rather than with a table.
+ * never scrolls sideways. OpsPane also imports styles.module.css for the shared Panel chrome and the
+ * insert chips, which it has in common with the bible rather than with a table. Inside the Panel the
+ * table is open: no frame, a violet header over a gold rule, hairline rows.
  */
 
-.tableWrap {
-  max-width: 100%;
-  overflow-x: auto;
-  border: 2px solid var(--edge);
-}
+.tableWrap { max-width: 100%; overflow-x: auto; }
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--text-control);
-}
+.table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 13px; }
 
 .table th,
 .table td {
-  padding: 0.4rem 0.5rem;
+  padding: 10px 12px;
   text-align: left;
   vertical-align: top;
-  border-bottom: 2px solid var(--edge);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
 }
 
 .table thead th {
   position: sticky;
   top: 0;
-  font-family: var(--font-big);
-  font-size: var(--text-meta);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-  background: var(--face);
-  white-space: nowrap;
-}
-
-.opCell {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  white-space: nowrap;
-}
-
-.opAction {
-  font-family: var(--font-big);
-  font-size: var(--text-control);
+  font: 700 13px var(--font-ui);
   color: var(--text);
+  background: color-mix(in srgb, var(--bk-role-select) 16%, var(--stage-black));
+  border-bottom: 2px solid var(--premiere-gold);
+  white-space: nowrap;
 }
 
-.opFamily {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
+.table tbody tr { transition: background 0.2s ease; }
+.table tbody tr:hover { background: color-mix(in srgb, var(--bk-role-select) 10%, transparent); }
+.table td [data-control="chip"] { margin: 0 6px 6px 0; }
 
-.gap { background: var(--stage-row, transparent); }
+.opCell { display: flex; flex-direction: column; gap: 2px; white-space: nowrap; font-weight: 600; }
+.opAction { font: 600 13px var(--font-ui); color: var(--text); }
+.opFamily { font: 400 12px var(--font-ui); color: var(--text-dim); }
 
-.gapWord {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+.gap { background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.gapWord { font-size: 12px; font-style: italic; color: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  .table tbody tr { transition: none; }
 }

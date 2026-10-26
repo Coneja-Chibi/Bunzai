@@ -57,13 +57,11 @@
 }
 
 .etitle {
-  font-family: var(--font-big);
+  font-family: var(--font-ui);
   font-weight: 900;
   font-size: var(--text-control);
   line-height: 1.15;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
   flex: 1;
   min-width: 0;
 }
@@ -73,7 +71,7 @@
   font-weight: 400;
   font-size: var(--text-control);
   line-height: 1.5;
-  color: var(--stage-mute);
+  color: var(--text-dim);
   padding: 0 0.65rem;
   margin: 0;
   flex: 1;
@@ -107,8 +105,8 @@
 }
 
 .ekeyMore {
-  border-color: var(--stage-faint, var(--stage-seam));
-  color: var(--stage-text-dim, var(--stage-mute));
+  border-color: var(--stage-faint, var(--bk-line-control));
+  color: var(--stage-text-dim, var(--text-dim));
 }
 
 .ecfoot {
@@ -116,7 +114,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.4rem 0.65rem 0.55rem;
-  border-top: 1px solid var(--stage-faint, var(--stage-seam));
+  border-top: 1px solid var(--stage-faint, var(--bk-line-control));
   margin-top: auto;
 }
 
@@ -124,16 +122,14 @@
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
-  color: var(--stage-text-dim, var(--stage-mute));
+  color: var(--stage-text-dim, var(--text-dim));
 }
 
 .onoff {
   margin-left: auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
   border: 2px solid var(--stage-ok);
   color: var(--stage-ok);
   padding: 0.1rem 0.3rem;
@@ -141,6 +137,6 @@
 }
 
 .onoffOff {
-  border-color: var(--stage-faint, var(--stage-seam));
-  color: var(--stage-text-dim, var(--stage-mute));
+  border-color: var(--stage-faint, var(--bk-line-control));
+  color: var(--stage-text-dim, var(--text-dim));
 }

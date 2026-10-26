@@ -1,5 +1,6 @@
 /** LorebookEditor owns lorebook editing, history, TOC search, and revision-checked saves. */
 import { Button, IconButton, Segmented } from "../../components/button";
+import { Panel } from "../../components/panel";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type JSX, type ReactNode, type SetStateAction } from "react";
 import { useEditorKeys } from "./editor-key-owner";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
@@ -325,6 +326,8 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
     >
       <EditorEhead
         mark={monogram}
+        kind="Lorebook"
+        deck="lorebook"
         name={session.body.name || "Untitled lorebook"}
         meta={
           <>
@@ -383,7 +386,7 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
           <IconButton label="Next entry" size="sm" icon="lucide:chevron-right" disabled={!entry || entryIndex >= session.body.entries.length - 1} onClick={() => flip(1)} />
         </div>
 
-        <div className={styles.cols}>
+        <Panel as="div" deck="lorebook" data-part="lore.workspace" className={styles.cols}>
           <div className={styles.tocCol}>
             {tocNode}
           </div>
@@ -392,7 +395,7 @@ export function LorebookEditor({ entity, revision, ctx, piece, topRight }: Loreb
             {pageNode}
           </main>
           {binderSide}
-        </div>
+        </Panel>
         </>
       )}
 

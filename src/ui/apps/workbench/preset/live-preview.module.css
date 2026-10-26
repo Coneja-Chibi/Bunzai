@@ -1,7 +1,7 @@
 /**
- * The LivePreview (resolved, editable) rail pane. Sibling of live-build.module.css and speaks the
- * same visual dialect - mono, dense, stage tokens - but unlike LiveBuild it IS an editor: literal
- * spans and macro chips are buttons, and hover states say so.
+ * The LivePreview (resolved, editable) rail pane. Sibling of live-build.module.css and speaks the same dialect:
+ * open lines, mono only for prompt text. Unlike LiveBuild it IS an editor: literal spans and macro chips are buttons,
+ * and hover states say so.
  */
 
 .wrap {
@@ -10,7 +10,7 @@
   flex: 1;
   height: 0;
   gap: 0.5rem;
-  padding: 0.85rem;
+  padding: 0.85rem 1.1rem;
   min-height: 0;
   overflow: hidden;
 }
@@ -22,26 +22,21 @@
 }
 
 .headline {
+  composes: goldLabel from "./preset.module.css";
   flex: 1;
-  font: 800 var(--text-control) var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
 }
 
 .volatile {
-  font: 700 var(--text-control) var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font: 600 var(--text-meta) var(--font-ui);
   color: var(--stage-warn);
   border: 1px solid color-mix(in srgb, var(--stage-warn) 40%, transparent);
-  padding: 0.02rem 0.25rem;
+  padding: 0.02rem 0.4rem;
 }
 
 .empty {
-  border: 2px dashed color-mix(in srgb, var(--stage-card) 15%, transparent);
-  color: var(--stage-mute);
-  font: 500 var(--text-control) var(--font-body);
+  border-left: 3px solid color-mix(in srgb, var(--pa) 55%, transparent);
+  color: var(--text-dim);
+  font: 500 var(--text-control) var(--font-ui);
   padding: 1rem;
   text-align: center;
   margin: 0;
@@ -63,22 +58,22 @@
 }
 
 .line {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  border: 2px solid var(--stage-black);
-  background: color-mix(in srgb, var(--stage-card) 2%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
 }
 
 /* the rendered flow: literal spans and macro chips laid inline, reading as one prompt */
 .flow {
-  padding: 0.4rem 0.5rem;
+  padding: 0.5rem 0.25rem;
   max-height: 12rem;
   overflow: auto;
   font: 500 var(--text-control) var(--font-mono);
   line-height: 1.7;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   word-break: break-word;
 }
 
@@ -89,9 +84,9 @@
 .detail {
   display: block;
   margin: 0.25rem 0;
-  padding: 0.35rem 0.45rem;
-  border: 1px solid color-mix(in srgb, var(--pa) 35%, transparent);
-  background: color-mix(in srgb, var(--pa) 5%, transparent);
+  padding: 0.35rem 0.55rem;
+  border-left: 3px solid color-mix(in srgb, var(--pa) 55%, transparent);
+  background: color-mix(in srgb, var(--pa) 6%, transparent);
 }
 
 .detailRaw {
@@ -101,10 +96,8 @@
 }
 
 .detailLabel {
-  font: 800 var(--text-control) var(--font-mono);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--stage-kicker);
+  font: 700 var(--text-meta) var(--font-ui);
+  color: var(--premiere-gold);
   flex: none;
 }
 
@@ -123,9 +116,9 @@
 .branchNote {
   display: block;
   margin-top: 0.25rem;
-  font: 500 var(--text-meta) var(--font-mono);
+  font: 500 var(--text-meta) var(--font-ui);
   font-style: italic;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .editWrap {
@@ -137,9 +130,9 @@
   width: 100%;
   font: 500 var(--text-control) var(--font-mono);
   line-height: 1.5;
-  color: var(--stage-soft);
-  background: color-mix(in srgb, var(--stage-card) 4%, transparent);
-  border: 2px solid var(--pa);
+  color: var(--text-soft);
+  background: var(--bk-surface-field);
+  border: 2px solid var(--premiere-gold);
   padding: 0.3rem 0.4rem;
   resize: vertical;
 }
@@ -152,14 +145,14 @@
 }
 
 .staleNote {
-  font: 600 var(--text-meta) var(--font-body);
+  font: 600 var(--text-meta) var(--font-ui);
   color: var(--stage-warn);
 }
 
 .markerText {
   margin: 0;
   padding: 0.4rem 0.5rem;
-  font: 500 var(--text-meta) var(--font-mono);
+  font: 500 var(--text-meta) var(--font-ui);
   line-height: 1.5;
   font-style: italic;
   color: var(--stage-warn);
@@ -171,13 +164,13 @@
   margin: 0;
   padding: 0.25rem 0.5rem;
   border-top: 1px solid color-mix(in srgb, var(--stage-warn) 30%, transparent);
-  font: 500 var(--text-control) var(--font-mono);
+  font: 500 var(--text-control) var(--font-ui);
   color: var(--stage-warn);
 }
 
 .note {
   margin: 0.2rem 0 0;
-  font: 500 var(--text-meta) var(--font-body);
-  color: var(--stage-kicker);
+  font: 500 var(--text-meta) var(--font-ui);
+  color: var(--text-dim);
   line-height: 1.45;
 }

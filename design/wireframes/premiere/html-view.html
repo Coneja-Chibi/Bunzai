@@ -1,0 +1,84 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: HTML View</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* HTML View restyle only. Tokens only. Layout is today's: status strip, left header, then the quiet note OR the frame that fills the tab. */
+.room { max-width: none; padding: 0 clamp(16px, 2.2vw, 36px) 48px; }
+.strip { display: flex; align-items: center; gap: 10px; height: 34px; margin: 0 calc(-1 * clamp(16px, 2.2vw, 36px)); padding: 0 clamp(16px, 2.2vw, 36px);
+  font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); background: color-mix(in srgb, var(--premiere-hard) 78%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.strip .dot { width: 6px; height: 6px; background: var(--premiere-gold); transform: rotate(45deg); flex: none; }
+.strip .num { color: var(--premiere-gold); }
+.head { max-width: 54rem; padding: 30px 0 18px; }
+.head h1 { font: 700 clamp(30px, 3.4vw, 48px)/1.05 var(--font-fancy); letter-spacing: .02em; margin-top: 14px; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.head .lede { margin-top: 12px; padding-left: 14px; border-left: 2px solid var(--premiere-rose); font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.quiet { max-width: 62rem; padding: 14px 18px; font-size: 14.5px; line-height: 1.55; color: color-mix(in srgb, var(--premiere-text) 74%, transparent);
+  border-left: 3px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-hard) 62%, transparent); box-shadow: 4px 4px var(--premiere-hard); }
+.quiet.problem { border-left-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 12%, var(--premiere-hard)); color: var(--premiere-text); }
+.quiet code { color: var(--premiere-gold); font-size: 13px; }
+.frame { position: relative; height: 520px; display: flex; padding: 10px; background: color-mix(in srgb, var(--premiere-gold) 14%, var(--premiere-hard));
+  border: 3px solid var(--premiere-hard); border-top-color: var(--premiere-gold); box-shadow: 5px 5px var(--premiere-hard), 0 0 80px color-mix(in srgb, var(--premiere-violet) 30%, transparent); }
+.frame .expand { position: absolute; top: 18px; right: 18px; z-index: 1; display: flex; gap: 8px; align-items: center; }
+.btn { min-height: 36px; padding: 6px 16px; transition: transform .2s ease; }
+.btn:hover { transform: translateY(-2px); }
+.frame .btn { border-color: var(--premiere-gold); box-shadow: 3px 3px var(--premiere-hard); }
+.page { flex: 1; background: #fff; color: #222; padding: 28px; display: grid; gap: 18px; grid-template-columns: 200px 1fr; align-content: start; font: 14px var(--font-ui); } /* sealed page: the agent's own colors, not app chrome */
+.page .nav, .page .card { background: #f0eef5; border: 1px solid #d8d4e3; padding: 14px; }
+.page h4 { font: 700 18px var(--font-ui); margin-bottom: 8px; }
+.page .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.page .blk { height: 70px; background: #e4dff0; }
+.page .cta { display: inline-block; background: #3b2f63; color: #fff; padding: 8px 14px; margin-top: 12px; }
+.state { margin-top: 36px; }
+.state > .wf { display: inline-block; margin-bottom: 14px; padding: 3px 10px; font: 600 12px var(--font-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--premiere-hard); background: var(--premiere-gold); }
+.esc { display: inline-block; padding: 1px 8px; border: 1px solid color-mix(in srgb, var(--premiere-text) 45%, transparent); font: 600 12px var(--font-ui); }
+@media (prefers-reduced-motion: reduce) { .btn { transition: none; } .btn:hover { transform: none; } }
+@media (max-width: 720px) { .page { grid-template-columns: 1fr; padding: 16px; } .frame { height: 420px; } }
+</style></head>
+<body><div class="wf-note">WIREFRAME. HTML View restyled in the Premiere house style, same layout as today. Three states of the one room are stacked; numbered callouts are explained below.</div>
+<div class="stage"><main class="room">
+
+<div class="state" style="margin-top:0"><span class="wf">State 1: nothing to draw (today's shot)</span></div>
+<div class="strip"><span class="dot"></span><span>html view</span><span>&middot;</span><span>nothing to draw</span><span class="co" style="margin-left:auto">1</span></div>
+<header class="head">
+  <span class="kicker left">HTML view</span>
+  <h1>Nothing to draw <em class="glow">yet</em> <span class="co">2</span></h1>
+  <p class="lede">Ask the agent for a wireframe or a mockup, then open it from the reply. This tab draws whatever it hands over.</p>
+</header>
+<p class="quiet">A drawing saved as a piece reopens from the Library after a reload. One written straight into a reply is kept for this session only, so open it again from the reply it came from. <span class="co">3</span></p>
+
+<div class="state"><span class="wf">State 2: a drawing, frame fills the tab</span></div>
+<div class="strip"><span class="dot"></span><span>html view</span><span>&middot;</span><span>Checkout flow, v2 wireframe</span><span>&middot;</span><span><span class="num">4218</span> characters</span></div>
+<header class="head">
+  <span class="kicker left">HTML view</span>
+  <h1>Checkout flow, <em class="glow">v2 wireframe</em></h1>
+  <p class="lede">Rendered with scripts and network access off, so this is layout and styling only: what a browser would paint, minus anything that would run or phone out.</p>
+</header>
+<section class="frame" aria-label="The page the agent wrote">
+  <div class="expand"><span class="co">4</span><button class="btn">Fullscreen</button></div>
+  <div class="page">
+    <div class="nav"><h4>Cart</h4><div class="blk"></div><div class="blk" style="margin-top:8px"></div></div>
+    <div class="card"><h4>Shipping details</h4><p>Name, address and a delivery window.</p><div class="grid3"><div class="blk"></div><div class="blk"></div><div class="blk"></div></div><span class="cta">Continue to payment</span></div>
+  </div>
+</section>
+
+<div class="state"><span class="wf">State 3: piece could not be read, and the fullscreen label</span></div>
+<header class="head" style="padding-top:0">
+  <span class="kicker left">HTML view</span>
+  <h1>Nothing to draw <em class="glow">yet</em></h1>
+  <p class="lede">Ask the agent for a wireframe or a mockup, then open it from the reply. This tab draws whatever it hands over.</p>
+</header>
+<p class="quiet problem">Could not read <code>htm_4f21</code> from the studio. It may have been deleted. <span class="co">5</span></p>
+<p style="margin-top:18px;font-size:13px">While fullscreen the same button reads <button class="btn">Close (Esc)</button> and <span class="esc">Esc</span> leaves it.</p>
+
+</main></div>
+<ol class="legend">
+<li><span class="co">1</span> Top status line, same strip: mono caps text becomes UI font on a dark translucent bar with a gold hairline and diamond; the character count is a gold numeral.</li>
+<li><span class="co">2</span> Header, same top-left place: mono caps eyebrow becomes the gold kicker, the bold sans title becomes Cinzel with the violet glow, the lede keeps its width with a rose rule at its left. Title and lede still swap with the drawing's name and the "scripts and network off" line, as today.</li>
+<li><span class="co">3</span> The quiet note, same slot under the header: a grey sentence becomes a readable UI-font note on a dark panel with a gold left edge and hard offset shadow.</li>
+<li><span class="co">4</span> The frame, same size (fills the rest of the tab) and same Fullscreen button top-right inside it: flat frame with a colored offset shadow becomes a lit screen, gold bezel and top edge, hard shadow with a violet glow so it reads as a screen in the room. The sealed page inside stays the agent's own, styled by nothing here. The button lifts on hover.</li>
+<li><span class="co">5</span> The read-failure message takes the same note slot with a rose edge and tint instead of grey text, so a problem reads as a problem.</li>
+<li>No other regions exist in this room.</li>
+</ol>
+<script src="kit.js"></script>
+</body></html>

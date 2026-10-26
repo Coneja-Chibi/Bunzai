@@ -10,6 +10,7 @@
  */
 import { Button } from "../../components/button";
 import { useState, type JSX } from "react";
+import { Panel } from "../../components/panel";
 import { MACRO_DIALECT_LABELS, type MacroDialect } from "../../../core/preset/macros";
 import {
   dialectTranslates,
@@ -33,7 +34,7 @@ function TokenRow({
   const travel = open && row.name ? travelFor(row.token, lens) : [];
 
   return (
-    <li className={`${styles.row}${row.depth > 0 ? ` ${styles.rowNested}` : ""}`}>
+    <li className={`${styles.row}${row.depth > 0 ? ` ${styles.rowNested}` : ""}${open ? ` ${styles.rowOpen}` : ""}`}>
       <div className={styles.rowHead}>
         <code className={styles.token}>{row.token}</code>
         <span
@@ -107,17 +108,19 @@ export function ReadingPane({
   const label = MACRO_DIALECT_LABELS[lens];
 
   return (
-    <section className={styles.box} aria-label="What the catalog says">
+    <Panel data-part="macro-lab.reading" deck="preset" className={styles.box} aria-label="What the catalog says">
       <div className={styles.boxHead}>
         <h2 className={styles.boxTitle}>Reading</h2>
         <span className={styles.boxNote}>{`${label} catalog`}</span>
       </div>
 
       {reading.empty ? (
-        <p className={styles.quiet}>
-          No macros in this text yet. Type something with double braces in it, like{" "}
-          <code>{"{{char}}"}</code>.
-        </p>
+        <div className={styles.moment}>
+          <b>No macros in this text yet</b>
+          <span className={styles.quiet}>
+            Type something with double braces in it, like <code>{"{{char}}"}</code>.
+          </span>
+        </div>
       ) : (
         <>
           {reading.unknownNames.length > 0 ? (
@@ -152,6 +155,6 @@ export function ReadingPane({
           )}
         </>
       )}
-    </section>
+    </Panel>
   );
 }

@@ -270,6 +270,10 @@ function ConnectionsSection(): JSX.Element {
 
 const section: SettingsSection = {
   id: "connections",
+  act: "agent",
+  title: "Connections",
+  lede: "MCP in both directions: servers this machine runs so their tools join Kit's belt, and Bunraku's own belt for any MCP client.",
+  protectedNote: "An entry is a command this machine executes. Host only; environment values go in and never come back, only key names do. Every external tool asks at the Gate before it runs.",
   label: "Connections",
   // Beside Models: both answer "what can the agent reach", and somebody wiring one wires the other.
   order: 16,

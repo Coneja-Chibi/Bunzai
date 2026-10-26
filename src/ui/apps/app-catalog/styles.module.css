@@ -1,40 +1,16 @@
-/** The official app catalog: a quiet directory of what this exact Bunraku build already contains. */
+/**
+ * The official app catalog (Premiere restyle): shared room header, then a grid of panels. Color means group, not app:
+ * the brand role edges Dock apps and the select role edges included apps. Open stays a secondary outline button.
+ */
 .room {
+  /* clone-ok: flex-fill-parent room shell idiom; each room owns its own padding and scroll, sharing would couple unrelated rooms */
   container-type: inline-size;
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 2vw, 1.6rem);
-  padding: clamp(1rem, 3vw, 2.2rem);
-}
-
-.head { max-width: 52rem; }
-
-.eyebrow,
-.status {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-
-.title {
-  margin: 0.25rem 0 0.45rem;
-  font-family: var(--font-big);
-  font-size: var(--text-title);
-  line-height: 1;
-  color: var(--text);
-}
-
-.lede,
-.description {
-  margin: 0;
-  color: var(--text-soft);
-  line-height: 1.45;
+  padding: 0.75rem clamp(1rem, 2.2vw, 2.25rem) 4rem;
 }
 
 .grid {
@@ -44,15 +20,23 @@
 }
 
 .card {
-  position: relative;
+  --group: var(--accent);
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  padding: 1rem;
-  background: var(--face);
-  border: 3px solid var(--edge);
-  box-shadow: 5px 5px 0 0 var(--a);
+  gap: 0.9rem;
+  padding: 1.1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* the group edge: the panel's top border, set through the group so it beats the panel's own ink */
+.card[data-group] { border-top-color: var(--group); }
+.card[data-group="included"] { --group: var(--bk-role-select); }
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 5px 5px var(--stage-black), 0 18px 60px color-mix(in srgb, var(--group) 35%, transparent);
 }
 
 .cardHead {
@@ -67,38 +51,31 @@
   flex: none;
   display: grid;
   place-items: center;
-  color: var(--stage-ink);
-  background: var(--a);
-  border: 3px solid var(--edge);
+  color: var(--text);
+  background: color-mix(in srgb, var(--group) 16%, var(--stage-black));
+  border: 2px solid color-mix(in srgb, var(--group) 75%, transparent);
+  transition: background 0.25s ease;
 }
 
-.mark svg { width: 1.2rem; height: 1.2rem; }
+.card:hover .mark { background: color-mix(in srgb, var(--group) 32%, var(--stage-black)); }
+
+.mark svg { width: 1.25rem; height: 1.25rem; }
 
 .name {
   margin: 0;
   min-width: 0;
-  font-family: var(--font-big);
-  font-size: 1rem;
-  line-height: 1.1;
+  font: 700 1.125rem/1.15 var(--font-fancy);
+  letter-spacing: 0.02em;
   color: var(--text);
+  overflow-wrap: anywhere;
 }
 
-.description { flex: 1; font-size: var(--text-body); line-height: 1.5; }
-
-:global(html[data-surface-ui-panel="gilt-frame"]) .card {
-  border: 1px solid var(--control-boundary);
-  box-shadow: none;
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .mark {
-  border: 1px solid var(--control-boundary);
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .title,
-:global(html[data-surface-ui-panel="gilt-frame"]) .name {
-  font-weight: 600;
-}
-:global(html[data-surface-ui-panel="gilt-frame"]) .eyebrow,
-:global(html[data-surface-ui-panel="gilt-frame"]) .status {
-  font-weight: 500;
+.description {
+  flex: 1;
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--text-dim);
 }
 
 .cardFoot {
@@ -106,8 +83,34 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--bk-line);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--group);
+}
+
+.status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  flex: none;
+  background: currentColor;
+  transform: rotate(45deg);
 }
 
 @container (max-width: 38rem) {
   .cardFoot { align-items: flex-start; flex-direction: column; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .mark { transition: none; }
+  .card:hover, .card:focus-within { transform: none; }
 }

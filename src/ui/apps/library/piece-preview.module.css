@@ -1,7 +1,7 @@
 /** Preview text wraps within each view without dropping authored detail at smaller art sizes. */
 .preview { display: flex; flex-direction: column; gap: .3rem; margin-top: .35rem; min-width: 0; text-align: left; }
-.tagline, .description { font: 400 var(--text-body) var(--font-body); color: var(--stage-soft); overflow-wrap: anywhere; }
+.tagline, .description { font: 400 var(--text-body) var(--font-body); color: var(--text-dim); overflow-wrap: anywhere; }
 .tagline { font-style: italic; }
 .description { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; white-space: pre-line; }
 .expanded .description { display: block; overflow: visible; }
-.facts, .tags { font: 400 var(--text-meta) var(--font-mono); color: var(--stage-text-dim); overflow-wrap: anywhere; }
+.facts, .tags { font: 400 var(--text-meta) var(--font-ui); color: var(--text-faint); overflow-wrap: anywhere; }

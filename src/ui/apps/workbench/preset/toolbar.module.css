@@ -1,14 +1,13 @@
 /**
- * The prompt list toolbar + bulk bar (RC-neo, in vaud's language). Ports RC's PromptListV4 header:
- * search field, stats line, expand/collapse, and the selected filter tab as a filled-accent pill
- * (RC's rc-neo-selected-button). Accent = --pa, inherited from the editor .root.
+ * The prompt list toolbar + bulk bar (Premiere restyle). Search field, stats line, expand/collapse, and the filter
+ * tabs with their counts. Accent = --pa, inherited from the editor .root.
  */
 
 .toolbar {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 0.7rem;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
 .topRow {
@@ -30,35 +29,42 @@
 
 .searchIcon {
   position: absolute;
-  left: 0.5rem;
-  color: var(--stage-text-dim);
+  left: 0.6rem;
+  color: var(--text-dim);
   pointer-events: none;
 }
 
 .search {
+  /* clone-ok: small segmented-button face owned by its own control; tuned padding differs per control */
   width: 100%;
-  background: var(--stage-sunken, var(--stage-row));
-  border: 2px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  color: var(--stage-card);
+  min-height: 2.25rem;
+  background: var(--bk-surface-field);
+  border: 2px solid var(--bk-line-control);
+  color: var(--text);
   font: 500 var(--text-control) var(--font-body);
-  padding: 0.4rem 0.55rem 0.4rem 1.7rem;
+  padding: 0.4rem 0.65rem 0.4rem 2rem;
+}
+
+.search:hover {
+  border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent);
 }
 
 .search:focus {
   outline: none;
-  border-color: var(--pa);
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 22%, transparent);
 }
 
 .stats {
-  font: 500 var(--text-meta) var(--font-mono);
-  color: var(--stage-text-dim);
+  font: 500 var(--text-meta) var(--font-ui);
+  color: var(--text-dim);
   white-space: nowrap;
 }
 
 .statNum {
-  color: var(--pa);
-  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--premiere-gold);
+  font-weight: 700;
 }
 
 /* ---------- actions ---------- */
@@ -71,37 +77,33 @@
 
 /* ---------- filter tabs ---------- */
 
-
-
 .tabCount {
-  font: 800 var(--text-meta) var(--font-mono);
-  background: color-mix(in srgb, var(--stage-card) 8%, transparent);
+  font: 700 var(--text-meta) var(--font-mono);
+  margin-left: 0.4rem;
   padding: 0.05rem 0.3rem;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
 }
 
-/* ---------- bulk bar ---------- */
+/* ---------- bulk bar: one accent edge, no box ---------- */
 
 .bulk {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   flex-wrap: wrap;
-  border: 2px solid var(--pa);
+  border-left: 3px solid var(--pa);
   background: color-mix(in srgb, var(--pa) 10%, transparent);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  padding: 0.4rem 0.55rem;
+  padding: 0.45rem 0.65rem;
   margin-bottom: 0.5rem;
 }
 
 .bulkCount {
-  font: 800 var(--text-meta) var(--font-mono);
+  font: 700 var(--text-meta) var(--font-mono);
   color: var(--pa);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .bulkSep {
-  width: 2px;
+  width: 1px;
   align-self: stretch;
   background: color-mix(in srgb, var(--pa) 30%, transparent);
 }

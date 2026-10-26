@@ -7,6 +7,7 @@ import { damageHidden, damageSeenList, PREF_DAMAGE_SEEN } from "./damage-dismiss
 import { plural } from "../../../core/text";
 import { Button } from "../../components/button";
 import { VirtualRows } from "../../_shared/virtual-list";
+import { Panel } from "../../components/panel";
 
 const ENTRY_ROW_PX = 24;
 
@@ -55,7 +56,7 @@ export function DamageNotice(props: {
   if (prefs && damageHidden(props.entries, prefs.get(PREF_DAMAGE_SEEN))) return null;
   const count = props.entries.length;
   return (
-    <section className="damage-note" role="region" aria-labelledby="damage-note-title">
+    <Panel className="damage-note" data-part="library.damage" role="region" aria-labelledby="damage-note-title">
       <strong id="damage-note-title">
         {`${plural(count, "file")} in your studio folder could not be read`}
       </strong>
@@ -78,6 +79,6 @@ export function DamageNotice(props: {
         {props.studioDir && <p><code>{props.studioDir}</code></p>}
         <p>Restore a file from backup, or remove it yourself to clear this notice.</p>
       </details>
-    </section>
+    </Panel>
   );
 }

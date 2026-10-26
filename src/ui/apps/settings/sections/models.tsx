@@ -342,6 +342,10 @@ function ModelsSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "models",
+  act: "agent",
+  title: "The cast of models",
+  lede: "Which models this studio can reach, and which one it uses. Shared with Kit in the terminal: adding one here adds it there.",
+  protectedNote: "A key goes in and never comes back: the field is always empty, and blank means \"keep the one you have\". Host only.",
   label: "Models",
   // Straight after appearance: it is the thing somebody comes to Settings to do once the studio
   // itself is set up, and burying it under Updates would be hiding the point of the agent window.

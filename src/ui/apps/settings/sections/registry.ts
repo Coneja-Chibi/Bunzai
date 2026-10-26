@@ -1,9 +1,9 @@
 /**
  * Settings-section registry - the ONE seam for drop-in sections (a browser bundle cannot glob).
- * Adding a section = one file in this folder + one import line here; ordering comes from the
+ * Adding a section = one file in this folder + one import line here; its act and ordering come from the
  * section itself; nothing else is edited anywhere.
  */
-import type { SettingsSection } from "../section-contract";
+import { SETTINGS_ACTS, type SettingsSection } from "../section-contract";
 import about from "./about";
 import appearance from "./appearance";
 import backups from "./backups";
@@ -19,4 +19,7 @@ import workbench from "./workbench";
 
 const SECTIONS: SettingsSection[] = [appearance, models, connections, spotify, studio, security, backups, workbench, memory, remoteAccess, updates, about];
 
-export const settingsSections = (): SettingsSection[] => [...SECTIONS].sort((a, b) => a.order - b.order);
+const actIndex = (section: SettingsSection): number => SETTINGS_ACTS.findIndex((act) => act.id === section.act);
+
+/** The rail's order: act by act, and by the section's own order inside an act. */
+export const settingsSections = (): SettingsSection[] => [...SECTIONS].sort((a, b) => actIndex(a) - actIndex(b) || a.order - b.order);

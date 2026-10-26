@@ -2,18 +2,16 @@
  * CSS Workshop room: head, actions, stage with shared CssWorkshop leaf, optional tour.
  * Mode (simple | advanced) is owned here and mirrored in the leaf toggle.
  */
-import { Button, Segmented } from "../../components/button";
-import { useCallback, useEffect, useRef, useState, type ChangeEvent, type JSX } from "react";
+import { Button } from "../../components/button";
+import { useCallback, useEffect, useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import {
   CssWorkshop,
   type CssSimpleTab,
   type CssWorkshopMode,
-  CSS_FILE_ACCEPT,
-  looksLikeCssFile,
-  readCssFile,
-  summarizeImport,
 } from "../../components/css-workshop";
+import { Panel } from "../../components/panel";
+import { RoomHeader } from "../../components/room-header";
 import { InkDialog } from "../../components/ink-dialog";
 import { TourGuide } from "../../components/tour-guide";
 import { hasSeenTour, tourSeenKey } from "../../tours/tour-core";
@@ -54,7 +52,6 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
   const [flash, setFlash] = useState("");
   const [tourOpen, setTourOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     ctx.setStatus(mode === "advanced" ? "css workshop · advanced" : "css workshop · simple");
@@ -112,89 +109,33 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
     ctx.setStatus("css workshop · cleared");
   };
 
-  const onImportFile = async (file: File): Promise<void> => {
-    if (!looksLikeCssFile(file.name) && file.type && !file.type.includes("css") && !file.type.includes("text")) {
-      setFlash("pick a .css file");
-      return;
-    }
-    try {
-      const text = await readCssFile(file);
-      const sum = summarizeImport(text);
-      persist(text);
-      persistMode("advanced");
-      const free = sum.freeform ? " · freeform kept" : "";
-      setFlash(`imported ${file.name} · ${sum.rules} rule${sum.rules === 1 ? "" : "s"}${free}`);
-      ctx.setStatus(`css workshop · imported ${sum.rules} rules`);
-    } catch {
-      setFlash("could not read that file");
-      ctx.setStatus("css workshop · import failed");
-    }
-  };
-
-  const onFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const f = e.target.files?.[0];
-    e.target.value = "";
-    if (f) void onImportFile(f);
-  };
-
   return (
     <div className={styles.room} data-part="css-workshop.room">
-      <header className={styles.head} data-part="css-workshop.head">
-        <div className={styles.titles}>
-          <span className={styles.eyebrow}>App · style</span>
-          <h1 className={styles.title}>CSS Workshop</h1>
-          <p className={styles.lede}>
-            Simple mode is the guided ladder. Advanced is code plus rule breakdown. Flip anytime.
-            Import a .css file to load it into Advanced.
-          </p>
-        </div>
-        <div className={styles.actions}>
-          <Segmented
-            label="Editor mode"
-            value={mode}
-            onChange={persistMode}
-            items={[{ value: "simple", label: "Simple" }, { value: "advanced", label: "Advanced" }]}
-          />
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={() => void onCopy()}
-          >
-            Copy CSS
-          </Button>
-          <Button size="sm" onClick={onDownload}>
-            Download .css
-          </Button>
-          <Button size="sm" onClick={() => fileRef.current?.click()}>
-            Import .css
-          </Button>
-          <input
-            ref={fileRef}
-            type="file"
-            className={styles.fileInput}
-            accept={CSS_FILE_ACCEPT}
-            aria-label="Import CSS file"
-            onChange={onFileChange}
-          />
-          <Button
-            size="sm"
-            variant="quiet"
-            onClick={() => setClearOpen(true)}
-          >
-            Clear draft
-          </Button>
-          <Button
-            size="sm"
-            variant="quiet"
-            onClick={() => setTourOpen(true)}
-          >
-            Tour
-          </Button>
-          {flash ? <span className={styles.flash}>{flash}</span> : null}
-        </div>
-      </header>
+      <RoomHeader
+        data-part="css-workshop.head"
+        kicker="App · style"
+        title="CSS Workshop"
+        lede="Simple mode is the guided ladder. Advanced is code plus rule breakdown. Flip anytime. Import a .css file to load it into Advanced."
+        actions={
+          <>
+            <Button size="sm" variant="primary" onClick={() => void onCopy()}>
+              Copy CSS
+            </Button>
+            <Button size="sm" onClick={onDownload}>
+              Download .css
+            </Button>
+            <Button size="sm" variant="quiet" onClick={() => setClearOpen(true)}>
+              Clear draft
+            </Button>
+            <Button size="sm" variant="quiet" onClick={() => setTourOpen(true)}>
+              Tour
+            </Button>
+            {flash ? <span className={styles.flash}>{flash}</span> : null}
+          </>
+        }
+      />
 
-      <div className={styles.stage} data-part="css-workshop.stage">
+      <Panel data-part="css-workshop.stage" deck="regex" className={styles.stage}>
         <CssWorkshop
           value={css}
           onChange={persist}
@@ -206,15 +147,14 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
           simpleTab={simpleTab}
           onSimpleTabChange={setSimpleTab}
         />
-      </div>
-
+      </Panel>
       {tourOpen && (
         <TourGuide tour={cssWorkshopTour} ctx={ctx} onClose={() => setTourOpen(false)} />
       )}
 
       {clearOpen && (
         <InkDialog onDismiss={() => setClearOpen(false)} ariaLabel="Clear the draft">
-          <div className={styles.clearSheet}>
+          <Panel as="div" data-part="css-workshop.clear" className={styles.clearSheet}>
             <b className={styles.clearTitle}>Clear the draft?</b>
             <p className={styles.clearBody}>Your unsaved CSS goes away.</p>
             <div className={styles.clearActs}>
@@ -225,7 +165,7 @@ export function CssWorkshopRoom({ ctx }: CssWorkshopRoomProps): JSX.Element {
                 Keep
               </Button>
             </div>
-          </div>
+          </Panel>
         </InkDialog>
       )}
     </div>

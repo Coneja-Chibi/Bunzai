@@ -4,7 +4,11 @@ import { parseHex } from "../../../color";
 import { FRAGMENT, VERTEX } from "./shaders";
 import { FOG_FRAGMENT } from "./fog-shader";
 
-export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, mouseInfluence: number, withFog = true): (() => void) | null {
+/** The fixed moment a still frame shows, so every visit draws the same rays. */
+const STILL_SECONDS = 4;
+
+/** `animate` false draws ONE frame (and one more after each resize), with no loop and no pointer follow. */
+export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, mouseInfluence: number, withFog = true, animate = true): (() => void) | null {
   let renderer: Renderer;
   try { renderer = new Renderer({ canvas, alpha: true, premultipliedAlpha: true, depth: false, antialias: false, dpr: 1, powerPreference: "low-power", autoClear: false }); }
   catch { return null; }
@@ -58,6 +62,13 @@ export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, 
       mouse.x = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
       mouse.y = Math.max(0, Math.min(1, (event.clientY - bounds.top) / bounds.height));
     };
+    const paint = (seconds: number): void => {
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      meshes.forEach(mesh => {
+        mesh.program.uniforms.iTime.value = seconds;
+        renderer.render({ scene: mesh, clear: false });
+      });
+    };
     const resize = (): void => {
       bounds = canvas.getBoundingClientRect();
       const { width, height } = bounds;
@@ -70,6 +81,7 @@ export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, 
       const anchors = ratio >= 2 ? [.28, .71] : ratio <= .8 ? [.26, .72] : [.35, .68];
       meshes.forEach(mesh => { mesh.program.uniforms.iResolution.value = [canvas.width, canvas.height]; });
       rays.forEach((mesh, index) => { mesh.program.uniforms.rayPos.value = [anchors[index]! * canvas.width, -.2 * canvas.height]; });
+      if (!animate && !gl.isContextLost()) paint(STILL_SECONDS);
     };
     let previous = 0;
     const draw = (now: number): void => {
@@ -84,27 +96,23 @@ export function startLightRays(canvas: HTMLCanvasElement, followMouse: boolean, 
             mesh.program.uniforms.mouseInfluence.value = mouseInfluence;
           });
         }
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        meshes.forEach(mesh => {
-          mesh.program.uniforms.iTime.value = now / 1000;
-          renderer.render({ scene: mesh, clear: false });
-        });
+        paint(now / 1000);
       }
       frame = requestAnimationFrame(draw);
     };
     const visibility = (): void => {
       cancelAnimationFrame(frame);
-      if (!document.hidden) frame = requestAnimationFrame(draw);
+      if (animate && !document.hidden) frame = requestAnimationFrame(draw);
     };
     const observer = new ResizeObserver(resize);
     const lost = (): void => { release(); };
     observer.observe(canvas);
     document.addEventListener("visibilitychange", visibility);
     canvas.addEventListener("webglcontextlost", lost);
-    if (followMouse) window.addEventListener("pointermove", pointer);
+    if (followMouse && animate) window.addEventListener("pointermove", pointer);
     detach = () => { observer.disconnect(); document.removeEventListener("visibilitychange", visibility); canvas.removeEventListener("webglcontextlost", lost); window.removeEventListener("pointermove", pointer); };
     resize();
-    frame = requestAnimationFrame(draw);
+    if (animate) frame = requestAnimationFrame(draw);
     canvas.dataset.raysReady = "true";
     return release;
   } catch { release(); return null; }

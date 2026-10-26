@@ -125,6 +125,7 @@ export function QuickReplyEditor({ entity, revision, ctx, piece, topRight }: Qui
   return (
     <div className={s.root} style={accentVars(piece.accent) as CSSProperties | undefined}>
       <EditorEhead
+        kind="Quick replies"
         mark={(body.name.trim()[0] || "Q").toUpperCase()}
         name={body.name}
         onNameChange={(name) => editReplies((current) => ({ ...current, name }), {

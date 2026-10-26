@@ -19,8 +19,8 @@
 }
 .alert {
   margin: 0 0 1rem;
-  padding: 0.5rem 0.75rem;
-  border: 2px solid var(--edge);
+  padding: 0.3rem 0 0.3rem 0.9rem;
+  border-left: 3px solid var(--stage-danger-edge);
   font-size: var(--text-control);
   color: var(--text);
 }

@@ -180,9 +180,6 @@
 
 /* Collapse blocks at FILE END (fluid law; the bento grid collapses via its own module). */
 @container (max-width: 34rem) {
-  .ehead {
-    display: none;
-  }
   .mHeadGate {
     display: block;
   }

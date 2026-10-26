@@ -1,113 +1,111 @@
 /**
- * The try-it rail (design/vs-regex-editor.html .rail, 1:1): a Quick try card that runs the budgeted
- * engine on a sample line and highlights the matches, an "Open the full test bench" stub, and a
- * Health card stub. One class name lives in exactly this module.
+ * The try-it rail (Premiere restyle): a Quick try column that runs the budgeted engine on a sample line and
+ * highlights the matches, the test bench link, and the health line. Open columns, hairline-separated, no cards.
+ * One class name lives in exactly this module.
  */
 
 .rail {
-  border-left: 2px solid var(--stage-seam);
-  padding: 0.75rem 0.7rem;
+  border-left: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bk-role-select) 10%, transparent), color-mix(in srgb, var(--stage-black) 40%, transparent) 60%);
+  padding: 0.75rem 1rem;
   min-width: 0;
 }
 
 .railTitle {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
-  margin: 0 0 0.5rem;
+  font: 700 1.0625rem/1.2 var(--font-fancy);
+  letter-spacing: 0.03em;
+  color: var(--text);
+  margin: 0.25rem 0 0.6rem;
 }
 
 .rcard {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-panel);
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.9rem;
 }
 
 .rhead {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.6rem;
-  border-bottom: 2px solid var(--stage-seam);
+  padding: 0.45rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
 }
 
 .rheadB {
-  font-family: var(--font-big);
-  font-weight: 800;
-  font-size: var(--text-control);
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  composes: cheadB from "./rule-page.module.css";
 }
 
 .rbody {
-  padding: 0.5rem 0.6rem 0.6rem;
+  padding: 0.25rem 0 0.4rem;
 }
 
 .tryTa {
   width: 100%;
-  min-height: 3.4rem;
+  min-height: 4.5rem;
   resize: vertical;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
-  font-family: var(--font-mono);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: var(--text-control);
   line-height: 1.5;
-  padding: 0.45rem;
+  padding: 0.5rem 0.65rem;
   box-sizing: border-box;
 }
 
+.tryTa:hover {
+  border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent);
+}
+
+.tryTa:focus {
+  outline: none;
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 22%, transparent);
+}
+
 .tryOut {
-  border: 2px solid var(--stage-ok);
-  background: color-mix(in srgb, var(--stage-ok) 7%, transparent);
-  padding: 0.45rem;
-  font-family: var(--font-mono);
+  border-left: 3px solid var(--stage-ok);
+  background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  padding: 0.6rem 0.75rem;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: var(--text-control);
   line-height: 1.6;
-  color: var(--stage-soft);
-  margin-top: 0.4rem;
+  color: var(--text-soft);
+  margin-top: 0.5rem;
   word-break: break-word;
 }
 
 .tryOutErr {
-  border-color: var(--stage-warn);
+  border-left-color: var(--stage-warn);
   background: color-mix(in srgb, var(--stage-warn) 7%, transparent);
   color: var(--stage-warn);
 }
 
 .tryMark {
-  background: color-mix(in srgb, var(--a, var(--accent)) 30%, transparent);
-  color: var(--stage-card);
+  background: color-mix(in srgb, var(--premiere-gold) 35%, transparent);
+  color: var(--text);
   padding: 0 0.1rem;
 }
 
 .tryResult {
   display: block;
   margin-top: 0.4rem;
-  padding-top: 0.35rem;
-  border-top: 1px solid var(--stage-faint);
-  color: var(--stage-text-dim);
+  color: color-mix(in srgb, var(--premiere-gold) 70%, white);
 }
 
 .tryMeta {
   display: block;
   margin-top: 0.35rem;
   font-size: var(--text-meta);
-  letter-spacing: 0.04em;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .healthLine {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-control);
-  color: var(--stage-ok);
+  color: color-mix(in srgb, var(--premiere-gold) 80%, white);
   margin: 0;
   display: flex;
   align-items: center;

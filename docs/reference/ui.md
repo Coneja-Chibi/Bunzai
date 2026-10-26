@@ -50,6 +50,8 @@ art composition. The vertex and fragment shaders are copied unchanged from Vaude
 both sources and the fog on one canvas (`fog={false}` leaves the fog out; the chat layout chooser uses that),
 capped at 640 pixels per dimension and 24 frames per second, with hidden-tab suspension and GPU
 resource cleanup. Reduced motion or unavailable WebGL uses still CSS beams. OGL is bundled locally.
+The rays appear only on this title screen and the scene chooser (`scenes/layout-chooser/`, without fog); no other room draws them.
+Settings > Appearance > Stage lights (`ui.stageLights`) sets them: Moving (the default, and what an unsaved or unknown value reads as), Still (one frame at a fixed moment, no animation loop, no pointer follow) or Off (the component renders nothing). The studio's Reduce motion setting makes Moving act as Still; it never turns Off back on.
 The `followMouse` flag is enabled: both spotlights ease toward the mouse using LightRays' existing
 mouse uniforms, with 35% influence. Touch movement leaves the beams alone.
 Light pulsation is disabled. Ray shimmer runs at quarter speed with gentle distortion and low noise.
@@ -417,6 +419,7 @@ One context menu for the whole app (`src/ui/shell/menus.ts`), extended by REGIST
   register() call; nothing central is edited.
 
 ## Apps catalog and documentation
+The catalog room ("Official Bunraku apps") is a `RoomHeader` over one Panel card per app, each marked "On your Dock" or "Included app" with an Open button.
 The overlay lists the Apps catalog from discovered manifests (`appCatalog: true`) and
 opens that surface without hardcoding an app id. The catalog derives its cards from `ctx.apps()`, so
 it shows the official applications in the running build and cannot drift from the packaged manifest
@@ -1101,7 +1104,7 @@ canonical kind: character, lorebook, persona, preset, regex set, sprite pack, qu
 HTML document. The shell owns tabs,
 split view, recents, and focus; each editor owns its unsaved local draft and explicit save flow.
 With no open pieces, the room distinguishes a restoring bench, a settled empty bench, and a failed
-restore. A settled empty bench offers Open Library, New pack folder, and New lorebook. When the studio
+restore, each a centered `RoomHeader` inside a Panel (kicker "The Workbench · Edit pieces"). A settled empty bench offers Open Library, New pack folder, and New lorebook. When the studio
 list cannot be loaded after its retries, the room shows the failure reason and keeps the restore gate
 closed; the shell status asks for a reload, and the empty in-memory list is not treated as a restored
 workspace.
@@ -1308,6 +1311,7 @@ something changed; board items that fail to parse are kept and written back unto
 graph out again; Fit frames everything. Below 768px the canvas is look-only.
 
 ## The Press room (batch export - the staged set prints)
+The header reads "The Press" (kicker "Convert files"). Each staged bundle or solo is a Panel with its piece kind's deck edge; an empty queue is a Panel reading "Nothing staged".
 The staging grammar applied to export: the Library browses, pieces get STAGED for the Press
 (right-click "Stage for the Press", or the room's own left rail of unstaged-piece stamps), and the
 room works only its staged queue - no studio browser inside. The queue is shell-store state
@@ -1342,6 +1346,7 @@ room works only its staged queue - no studio browser inside. The queue is shell-
   readiness dots.
 
 ## The Agent window (the model, standing on the screen you came from)
+The docked room is one Panel under a `RoomHeader` ("The Agent"): the kicker shows the connected model with a live dot (or "no model connected", plus a note when the studio folder is not watched), and the lede names the screen it stands on. The header folds away with the band. The floating Kit panel keeps its own head and Kit's terminal palette.
 A conversation with whatever model the vault has, holding the real tool belt. The window has **no
 provider and no tools of its own**: it asks the loopback server, which asks Kit - one vault, one
 egress ledger, one Gate. See [kit/README.md](kit/README.md) for the belt itself.
@@ -1375,9 +1380,11 @@ egress ledger, one Gate. See [kit/README.md](kit/README.md) for the belt itself.
 ## CSS Workshop (catalog-only - assisted CSS authoring)
 Starters, property knobs, plain CSS source and a sealed preview, for authoring the CSS a card or a
 host will carry. Copy or download the result for any host; the room writes no studio state of its own.
+The room header ("CSS Workshop") carries only Copy CSS, Download .css, Clear draft and Tour. The Simple / Advanced switch, Import .css and Undo (once there is something to undo) live in the editor's own toolbar (`components/css-workshop/`), under the Targets pack picker; importing a file switches to Advanced. The editor sits in one Panel with the regex deck edge, and each pane (Starters, Assist, Source, Advanced) has its own title.
 The preview is the same seal every untrusted-markup surface here uses.
 
 ## Help / Docs (catalog-only - the corpus, in the app)
+The room opens under a header ("Help / Docs", kicker "The program notes").
 The committed documentation corpus as a first-class room, read from the same source GitHub serves, so
 the app and the repository can never disagree about what a page says. It reads the generated index
 (`docs/generated/docs-index.json`) rather than crawling the tree. Every discovered Markdown page is
@@ -1398,6 +1405,7 @@ presses stay with their original owner. The protected library lock/recovery gate
 full-screen boundary.
 
 ## The Macro Lab (catalog-only - what a macro actually does)
+The header asks "What does this macro actually do?"; the text box is a Panel with the preset deck edge. A dot on a platform in the platform switch marks an engine installed here.
 A scratch pad for macro text, and the only surface here that needs no piece open to be useful. Two
 halves, kept apart on purpose because one of them is our model and the other is an engine.
 - **Reading** (`lab-core.ts`, pure): each `{{token}}` broken out against the chosen platform's catalog,
@@ -1423,6 +1431,7 @@ halves, kept apart on purpose because one of them is our model and the other is 
   RoleCall's, so it was a duplicate column under a name with no engine behind it.
 
 ## HTML View (catalog-only - a drawing at full size)
+The header's title is the piece's name ("What the agent drew" for an unsaved reply, "Nothing to draw yet" when empty) and its lede says what the seal allows or what to do next.
 Draws one `htmldoc` piece as a whole tab. Reached three ways: opened by id from the Library, handed a
 piece by another surface, or handed the raw text of an ```html block from an agent reply. A piece is
 carried BY ID and re-read from the studio, so the tab shows what the drawing says now and a reload
@@ -1450,7 +1459,7 @@ See [entities/htmldoc.md](entities/htmldoc.md).
 ## Settings (drop-in sections)
 Settings is built from section modules: one file in `src/ui/apps/settings/sections/` exporting a
 `SettingsSection` (id, label, order, `Component: (props: { ctx }) => JSX.Element`);
-`sections/registry.ts` is the one stated seam. Tabs derive from the registry (`src/ui/apps/settings/
+`sections/registry.ts` is the one stated seam. The rail derives from the registry (`src/ui/apps/settings/
 index.tsx`); every control is call-and-response against live settings (theme/accent repaint
 instantly). Appearance's house-accent palette labels its theme-aware first color **default**; its Chat layout row (`settings/sections/chat-layout-row.tsx`: Full Chat or Messenger; unset shows Full Chat without saving it) is the studio-wide chat layout, the same key the first-open chooser saves. Shipped
 sections: Appearance (theme and house accent), Models (the provider vault),
@@ -1460,8 +1469,12 @@ the engine checkouts on this machine), Security (the library's lock, and its hea
 Remote access (tunnel and LAN setup, devices, host controls, and the optional mesh-helper download),
 Updates (release checks and version switching), and About.
 
+The room is a `RoomHeader` over a rail and a page. The rail (a `Panel`) groups the tabs into four acts, in this order: Your studio (Appearance, Studio, Workbench, Memory & Summaries), The agent (Models, Connections, Spotify), The vault (Security, Backups) and The house (Remote access, Updates, About); a section declares its `act`, and its `order` sorts it inside the act. Each rail entry shows the tab name, a lock on a protected tab, and a one-line status where the section supplies one from non-secret prefs (Appearance: the active theme; Studio: the home app; Workbench: autosave; Memory & Summaries: summaries on or off; Remote access: on or off). The page beside it opens with the act's name, the tab's own title (Appearance is "How it looks", Security "The stage door", Backups "Spare copies") and a lede line. A tab whose form is host-protected then shows the protected lock line, "Protected." and what is protected, with a gold left edge and no frame. Sections are open blocks, separated by rules rather than boxes. In a pane under 56rem (a container query on the room) the rail becomes wrapped chips above the page and the act names are hidden.
+
+Appearance also holds the Stage lights row (`sections/stage-lights-row.tsx`: Moving, Still or Off, pref `ui.stageLights`; see the title screen above), and Theme packages (`sections/theme-manager.tsx`): the lock line, then the requested appearance, the Inspect a theme package button (opens a file picker for a package JSON), and one card per bundled or installed package with a color strip of its palette, its grants, and a Request button (marked Requested on the chosen one). A request applies only when the host confirms the package's current permission.
+
 Security (`sections/security.tsx`, dialogs in `security-flows.tsx`) is the approved in-between
-wireframe 04: the design system's hero and stat tiles, a mono proof block of what the encryption does
+wireframe 04: the design system's stat tiles under the page head, a mono proof block of what the encryption does
 and the one thing it does not, then the password, the recovery words (written, rehearsed, written
 anew), the other computers (listed only when there are any, each forgotten after a confirmation),
 Lock now (only with a password), the weak-lock notice, and the cleanup-owed card. Its dialogs are the
@@ -1481,7 +1494,7 @@ now checks clean ("Done") or is still reported ("Not finished"); a check that st
 Findings reach the page by words and an opaque id of that scan, never a row key.
 
 Backups (`sections/backups.tsx`, the restore dialog in `backups-dialogs.tsx`, words in `backups-core.ts`) is the approved
-wireframe in Security's grammar and inside the same protected dialog layer: the hero ("Spare copies"), tiles (last copy, copies kept,
+wireframe in Security's grammar and inside the same protected dialog layer: the page head ("Spare copies"), tiles (last copy, copies kept,
 next copy), a mono proof block (copies are made hourly, encrypted like the library, and sit beside it on the same disk, so they protect
 the file and not the machine), a note until recovery words are written ("a copy only opens on this computer"), Back up now, Export library (writes the whole library as a plain, unencrypted folder under `Bunraku exports` beside the studio folder, the same export the `bunraku export` command runs; the Messenger's Data and backups page has the same row), what is
 kept (24 hourly, 7 daily, 4 weekly), and the list of copies, newest first, five shown and the rest on request, each named by when it
@@ -1544,13 +1557,19 @@ content access.
 
 ### Settings theme variants
 
-`settings.shape` (program-sections, options-menu, big-toggles, contents-page) arranges the room: the tab strip, the
-body, each row with its label and hint, and the segmented control, all reached through `data-sx` hooks. The tabs
-become a printed program, a menu list, big sticker tabs, or a numbered table of contents. Stylesheets live in
+`settings.shape` (program-sections, options-menu, big-toggles, contents-page) arranges the page body, each row with its label and hint, and the segmented control, all reached through `data-sx` hooks. The rail of acts is the room's own and no variant restyles its tabs. The body becomes an open ruled page, a bracketed panel with slot-numbered rows, slab cards with large switches, or the ruled lines of a form. Stylesheets live in
 `src/ui/apps/settings/variants/settings.shape/`.
 
 ## Shared components (`src/ui/_shared/` and `src/ui/components/`)
-Extracted-once UI, layered so a single implementation serves every consumer:
+Extracted-once UI, layered so a single implementation serves every consumer. The house style below frames every room.
+
+### House style (Premiere)
+
+Every room wears `components/room-header/` (`RoomHeader`): a gold kicker line, the title in the display face, one line of lede, and the room's own actions at the right. Digit runs in a string title are set in the UI face, because the display face draws 1 like a capital I. Press, Settings, the Workbench (its empty bench), Library (the rail head), the Apps catalog, HTML View, the Agent (docked), Help / Docs, CSS Workshop and the Macro Lab each mount one. The floating Kit panel keeps its own compact head.
+
+Groups sit in `components/panel/` (`Panel`): one hard frame with an offset shadow and an optional piece-kind deck color on the top edge. One frame per group: a Panel inside a Panel drops its frame, fill and shadow and keeps only the colored top edge, so boxes never nest. The Workbench editors' head (`components/editor-ehead/`) takes a gold kind kicker and the kind's deck color for its monogram, and sets digits in the mono face.
+
+Colors come from the theme's brand, action and select roles, so rooms follow the user's accent. Monospace is for code, ids and numbers only; everything else is the UI face, and the core `--bk-font-ui` fallback is Atkinson Hyperlegible (a theme's type fields still replace it).
 - `components/button/` - the one button family (wireframe `design/wireframes/features/button-family/`), every clickable
   thing in the studio. Actions: `Button` (primary at most once per view, secondary, quiet, danger, link; md or sm; an
   optional leading icon; `block`; `menu` adds a chevron and `aria-haspopup`), `IconButton` (a required `label` that is

@@ -6,28 +6,27 @@
  */
 
 .sm {
-  font-family: var(--font-mono);
+  /* clone-ok: small segmented-button face owned by its own control; tuned padding differs per control */
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   border: 0;
   background: var(--stage-row);
-  color: var(--stage-mute);
+  color: var(--text-dim);
   padding: 0.3rem 0.6rem;
   cursor: pointer;
 }
 
 .sm + .sm {
-  border-left: 2px solid var(--stage-seam);
+  border-left: 2px solid var(--bk-line-control);
 }
 
 .bigIn {
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
@@ -43,19 +42,18 @@
 }
 
 .optLabel {
-  font-family: var(--font-mono);
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-meta);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .famWarn {
-  border: 1px solid var(--stage-warn);
+  border-left: 3px solid var(--stage-warn);
   background: color-mix(in srgb, var(--stage-warn) 7%, transparent);
   color: var(--stage-warn);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-control);
   line-height: 1.5;
@@ -77,18 +75,16 @@
 }
 
 .tuneLabel {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-mute);
+  color: var(--text-dim);
 }
 
 .tuneIn {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
@@ -96,22 +92,21 @@
 }
 
 .wordNote {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: var(--text-meta);
-  color: var(--stage-mute);
+  color: var(--text-dim);
   margin: 0.5rem 0 0;
 }
 
 .readout {
-  border: 2px solid color-mix(in srgb, var(--a, var(--accent)) 45%, var(--stage-seam));
-  background: var(--stage-sunken);
+  border: 2px solid color-mix(in srgb, var(--a, var(--accent)) 45%, var(--bk-line-control));
+  background: var(--bk-surface-field);
   padding: 0.5rem 0.6rem;
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
-  color: color-mix(in srgb, var(--a, var(--accent)) 55%, var(--stage-card));
+  color: color-mix(in srgb, var(--a, var(--accent)) 55%, var(--text));
   margin-top: 0.6rem;
   overflow-x: auto;
   white-space: nowrap;
@@ -119,21 +114,18 @@
 
 .readoutLabel {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
   margin-bottom: 0.2rem;
 }
 
 .describe {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: var(--text-control);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   margin: 0.45rem 0 0;
 }
 
@@ -148,8 +140,8 @@
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
-  border: 1px solid var(--stage-faint);
-  color: var(--stage-soft);
+  border: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
+  color: var(--text-soft);
   padding: 0.16rem 0.4rem;
 }
 
@@ -159,7 +151,7 @@
 }
 
 .exMiss {
-  color: var(--stage-kicker);
+  color: var(--text-dim);
   text-decoration: line-through;
 }
 
@@ -168,9 +160,9 @@
   box-sizing: border-box;
   min-height: 4.2rem;
   resize: vertical;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
@@ -179,8 +171,8 @@
 }
 
 .rcOut {
-  border: 2px solid color-mix(in srgb, var(--a, var(--accent)) 45%, var(--stage-seam));
-  background: var(--stage-sunken);
+  border: 2px solid color-mix(in srgb, var(--a, var(--accent)) 45%, var(--bk-line-control));
+  background: var(--bk-surface-field);
   padding: 0.6rem 0.7rem;
   margin-top: 0.6rem;
 }
@@ -192,16 +184,16 @@
   overflow-x: auto;
   white-space: nowrap;
   padding-bottom: 0.35rem;
-  border-bottom: 1px solid var(--stage-faint);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
   margin-bottom: 0.4rem;
 }
 
 .pDelim {
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .pAnchor {
-  color: color-mix(in srgb, var(--a, var(--accent)) 70%, var(--stage-card));
+  color: color-mix(in srgb, var(--a, var(--accent)) 70%, var(--text));
 }
 
 .pGroup {
@@ -209,7 +201,7 @@
 }
 
 .pLiteral {
-  color: var(--stage-soft);
+  color: var(--text-soft);
 }
 
 .pSpecial,
@@ -218,16 +210,16 @@
 }
 
 .rcMeta {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-meta);
   line-height: 1.7;
-  color: var(--stage-mute);
+  color: var(--text-dim);
   margin: 0;
 }
 
 .rcMetaB {
-  color: var(--stage-soft);
+  color: var(--text-soft);
   font-weight: 700;
 }
 
@@ -242,9 +234,9 @@
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: var(--text-control);
-  border: 1px solid var(--stage-line);
+  border: 1px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-card);
+  color: var(--text);
   padding: 0.12rem 0.4rem;
 }
 
@@ -254,19 +246,17 @@
 
 .testLabel {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-mute);
+  color: var(--text-dim);
   margin-bottom: 0.25rem;
 }
 
 .testOut {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
@@ -279,6 +269,6 @@
 
 .testMark {
   background: color-mix(in srgb, var(--a, var(--accent)) 30%, transparent);
-  color: color-mix(in srgb, var(--a, var(--accent)) 70%, var(--stage-card));
+  color: color-mix(in srgb, var(--a, var(--accent)) 70%, var(--text));
   padding: 0 0.1rem;
 }

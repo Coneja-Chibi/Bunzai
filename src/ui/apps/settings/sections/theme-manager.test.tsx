@@ -44,9 +44,10 @@ beforeAll(() => {
   proto["detachEvent"] ??= () => undefined;
 });
 afterAll(() => installed.teardown());
-beforeEach(() => { installed.reinstall(); calls = []; });
+beforeEach(() => { installed.reinstall(); calls = []; prefSets.length = 0; });
 
-const ctx = { prefs: { get: () => "theater", set: () => undefined }, appearance: { get: () => ({ themeId: "theater" }), onChange: () => () => undefined, invalidate: () => undefined, refresh: async () => undefined } } as never;
+const prefSets: unknown[][] = [];
+const ctx = { prefs: { get: () => "theater", set: (...args: unknown[]) => { prefSets.push(args); } }, appearance: { get: () => ({ themeId: "theater" }), onChange: () => () => undefined, invalidate: () => undefined, refresh: async () => undefined } } as never;
 const text = (): string => host.textContent ?? "";
 const byText = (t: string): HTMLButtonElement | undefined => [...host.querySelectorAll("button")].find((b) => (b.textContent ?? "") === t);
 
@@ -88,6 +89,37 @@ describe("theme manager with a package that fails checks", () => {
     const flushSync = await mount();
     expect(text().split("The saved theme state could not be read.").length - 1).toBe(1);
     expect(text()).toContain("Theater");
+    flushSync(() => root.unmount());
+    host.remove();
+  });
+});
+
+describe("theme package cards", () => {
+  test("the requested card is marked and Request sends that package id to the same preference", async () => {
+    catalog = [entry({ swatch: ["#112233", "#445566"] }), entry({ id: "paper", name: "Paper", swatch: [] })];
+    const flushSync = await mount();
+    const cards = [...host.querySelectorAll("ul li")];
+    expect(cards[0]?.hasAttribute("data-requested")).toBe(true);
+    expect(cards[1]?.hasAttribute("data-requested")).toBe(false);
+    expect(cards[0]?.querySelectorAll("i").length).toBe(2);
+    expect(byText("Requested")?.getAttribute("aria-pressed")).toBe("true");
+    // the requested card cannot re-save the same value (no no-op save)
+    expect((byText("Requested") as HTMLButtonElement | null)?.disabled).toBe(true);
+    await settle(flushSync, byText("Request")!);
+    expect(prefSets).toEqual([["theme", "paper"]]);
+    expect(text()).toContain("Theme selection saved.");
+    flushSync(() => root.unmount());
+    host.remove();
+  });
+
+  test("Inspect a theme package opens the hidden file input", async () => {
+    catalog = [entry({})];
+    const flushSync = await mount();
+    const input = host.querySelector("input[type=file]") as HTMLInputElement;
+    let opened = 0;
+    input.click = () => { opened += 1; };
+    await settle(flushSync, byText("Inspect a theme package")!);
+    expect(opened).toBe(1);
     flushSync(() => root.unmount());
     host.remove();
   });

@@ -1,0 +1,263 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Macro Lab</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Macro Lab restyle. Layout is today's: status strip, header, platform strip, then two columns
+   (left: Your text + Pretend context; right: Resolved, reference tabs, active reference pane). Tokens only. */
+:root { --soft: color-mix(in srgb, var(--premiere-text) 66%, transparent); --line: color-mix(in srgb, var(--premiere-text) 14%, transparent); --ink: color-mix(in srgb, var(--premiere-hard) 55%, transparent); --glow: color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+button, input, textarea { font-family: var(--font-ui); color: var(--premiere-text); }
+.hint { font-size: 13px; color: var(--soft); line-height: 1.55; }
+.label { font: 600 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 78%, transparent); }
+.num { font-variant-numeric: tabular-nums; }
+
+.strip { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 0 18px; font-size: 13px; color: var(--soft); }
+.strip .live { display: inline-flex; align-items: center; gap: 10px; }
+.strip .live::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); box-shadow: 0 0 10px var(--premiere-gold); }
+
+.btn { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+.btn:hover { transform: translateY(-2px); border-color: var(--premiere-gold); box-shadow: 0 8px 24px var(--glow); }
+.btn.primary:hover { border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard), 0 8px 26px color-mix(in srgb, var(--premiere-rose) 40%, transparent); }
+.btn.quiet:hover { box-shadow: none; transform: none; color: var(--premiere-text); border-color: color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.btn:focus-visible, .chip:focus-visible, .seg span:focus-visible, .tabs2 > span:not(.co):focus-visible { outline: 2px solid var(--premiere-gold); outline-offset: 2px; }
+.btn.sm { min-height: 34px; padding: 6px 14px; font-size: 13px; }
+.btn.big { min-height: 52px; padding: 12px 28px; font-size: 15px; box-shadow: 4px 4px var(--premiere-hard), 0 0 30px color-mix(in srgb, var(--premiere-rose) 30%, transparent); border-color: var(--premiere-rose); }
+.btn[disabled] { opacity: .45; cursor: default; transform: none; box-shadow: none; }
+.chip { cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+.chip:hover { transform: translateY(-2px); border-color: var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 14%, transparent); }
+.chip code { font-size: 12px; color: var(--premiere-gold); }
+
+.field { display: block; width: 100%; min-height: 36px; padding: 6px 12px; font-size: 13px; transition: border-color .2s ease, box-shadow .2s ease; }
+.field:hover { border-color: var(--premiere-gold); }
+.field:focus { outline: none; border-color: var(--premiere-gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 28%, transparent); }
+.field::placeholder, textarea::placeholder { color: color-mix(in srgb, var(--premiere-text) 42%, transparent); }
+.seg span { cursor: pointer; transition: background .2s ease, color .2s ease; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.seg span:hover { background: color-mix(in srgb, var(--premiere-gold) 12%, transparent); color: var(--premiere-text); }
+.seg span + span { border-left: 1px solid var(--line); }
+.seg span[aria-pressed="true"] { color: var(--premiere-text); }
+
+/* Platform strip: the kit segmented control, same row under the header. A gold dot marks an installed engine. */
+.lenses { margin-bottom: 22px; }
+.lenses .seg { flex-wrap: wrap; box-shadow: 4px 4px var(--premiere-hard); background: var(--ink); }
+.lenses .seg span { padding: 11px 20px; font-size: 14px; }
+.inst { display: inline-block; width: 7px; height: 7px; background: var(--premiere-gold); margin-left: 8px; vertical-align: middle; box-shadow: 0 0 8px var(--premiere-gold); }
+
+/* Two columns, today's equal split. */
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+.stack { display: grid; gap: 22px; }
+.pane-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 30%, transparent); margin-bottom: 12px; }
+.pane-head h2 { font: 700 20px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.pane-head .note { font-size: 13px; color: var(--soft); }
+.gap-top { margin-top: 26px; }
+.panel { transition: transform .25s ease, box-shadow .25s ease; }
+.panel.fixed:hover { transform: none; }
+
+/* Code surfaces stay mono: your text and the engine output. */
+.source { display: block; width: 100%; min-height: 170px; resize: vertical; background: var(--premiere-hard); border: 2px solid color-mix(in srgb, var(--premiere-text) 24%, transparent); padding: 14px 16px; font: 14px/1.75 var(--font-mono); white-space: pre-wrap; transition: border-color .2s ease, box-shadow .2s ease; }
+.source:hover, .source:focus-within { border-color: var(--premiere-gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 18%, transparent); outline: none; }
+.resolved { background: var(--premiere-hard); border: 2px solid color-mix(in srgb, var(--premiere-text) 24%, transparent); border-left: 4px solid var(--premiere-violet); padding: 14px 16px; font: 14px/1.7 var(--font-mono); white-space: pre-wrap; min-height: 110px; margin: 14px 0 12px; box-shadow: inset 0 0 40px color-mix(in srgb, var(--premiere-violet) 12%, transparent); }
+.m { color: var(--premiere-gold); } .m.bad { color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+
+.who { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center; margin: 12px 0; }
+.who .label code, .token { font-family: var(--font-mono); color: var(--premiere-gold); }
+.varrow { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; margin-bottom: 10px; align-items: center; }
+.xbtn { width: 36px; height: 36px; display: grid; place-items: center; cursor: pointer; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); color: color-mix(in srgb, var(--premiere-text) 75%, transparent); font: 700 16px var(--font-ui); background: none; transition: border-color .2s ease, color .2s ease; }
+.xbtn:hover { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+
+/* Resolved: action row, reason, notices, dead tokens. */
+.act { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+.why { font-size: 13px; color: var(--soft); max-width: 46ch; }
+.problem { font-size: 13px; padding: 10px 14px; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 10%, transparent); }
+.dead { display: inline-block; font: 13px var(--font-mono); padding: 3px 10px; margin: 6px 8px 0 0; border: 1px solid var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.moment { text-align: center; display: grid; gap: 6px; padding: 18px 14px; border: 1px dashed color-mix(in srgb, var(--premiere-gold) 40%, transparent); background: var(--ink); }
+.moment b { font: 700 16px var(--font-fancy); letter-spacing: .02em; }
+.ok { border-left: 3px solid var(--premiere-gold); padding: 8px 14px; font-size: 13px; background: color-mix(in srgb, var(--premiere-gold) 8%, transparent); }
+
+/* Reference tabs: spaced segmented tabs with act numbers, like the chooser, not IDE tabs. */
+.tabs2 { display: flex; flex-wrap: wrap; gap: 10px; }
+.tabs2 > span:not(.co) { display: inline-flex; gap: 10px; align-items: baseline; padding: 9px 20px; font: 600 14px var(--font-ui); cursor: pointer; color: var(--soft); border: 2px solid var(--line); background: var(--ink); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.tabs2 > span:not(.co) i { font: 600 12px var(--font-ui); font-style: normal; color: var(--premiere-gold); }
+.tabs2 > span:not(.co):hover { transform: translateY(-2px); border-color: var(--premiere-gold); color: var(--premiere-text); }
+.tabs2 > span:not(.co)[aria-selected="true"] { color: var(--premiere-text); border-color: var(--premiere-violet); background: color-mix(in srgb, var(--premiere-violet) 18%, transparent); box-shadow: 4px 4px var(--premiere-hard), inset 0 -2px 0 var(--premiere-violet); }
+
+/* Reading rows: each token is a card-like row with hover and open states. */
+.rows { list-style: none; padding: 0; display: grid; gap: 10px; margin: 14px 0; }
+.rows > li { padding: 12px 14px; display: grid; gap: 6px; background: var(--ink); border: 1px solid var(--line); border-left: 3px solid color-mix(in srgb, var(--premiere-violet) 55%, transparent); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.rows > li:hover { transform: translateX(4px); border-color: var(--premiere-gold); box-shadow: -4px 0 18px var(--glow); }
+.rows > li.open { border-left-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard); }
+.rows > li.nested { margin-left: 22px; }
+.rowhead { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: baseline; }
+.token { font: 600 14px var(--font-mono); }
+.verdict { font-size: 12px; color: var(--soft); padding: 2px 10px; border: 1px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); }
+.verdict.known { color: var(--premiere-gold); border-color: color-mix(in srgb, var(--premiere-gold) 60%, transparent); background: color-mix(in srgb, var(--premiere-gold) 8%, transparent); }
+.verdict.none { color: color-mix(in srgb, var(--premiere-rose) 55%, white); border-color: var(--premiere-rose); }
+.ex { font-size: 13px; color: var(--soft); } .ex code { font-size: 12px; }
+.travel { list-style: none; padding: 6px 0 0; display: grid; gap: 6px; }
+.travel li { display: grid; grid-template-columns: 170px 1fr; gap: 12px; font-size: 13px; padding: 7px 10px; background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); }
+.travel li b { font-weight: 600; } .same { color: var(--soft); } .flag { color: color-mix(in srgb, var(--premiere-gold) 85%, white); }
+
+/* Bible and operations. */
+.group { border: 1px solid var(--line); background: var(--ink); margin-bottom: 8px; transition: border-color .2s ease; }
+.group:hover { border-color: var(--premiere-gold); }
+.group.open { border-left: 3px solid var(--premiere-rose); }
+.ghead { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; cursor: pointer; }
+.ghead .token::before { content: "\25B8  "; color: var(--premiere-gold); font-family: var(--font-ui); }
+.group.open .ghead .token::before { content: "\25BE  "; }
+.gbody { padding: 0 14px 12px; }
+.entry { display: grid; grid-template-columns: 200px 1fr; gap: 4px 14px; padding: 8px 0; font-size: 13px; align-items: baseline; border-top: 1px solid var(--line); }
+.entry .ex { grid-column: 2; }
+.tablewrap { overflow-x: auto; margin: 12px 0; border: 2px solid var(--premiere-hard); box-shadow: 4px 4px var(--premiere-hard); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 760px; }
+th, td { text-align: left; padding: 10px 12px; vertical-align: top; border-bottom: 1px solid var(--line); }
+thead th { font: 700 13px var(--font-ui); background: color-mix(in srgb, var(--premiere-violet) 16%, var(--premiere-hard)); border-bottom: 2px solid var(--premiere-gold); }
+tbody tr { transition: background .2s ease; } tbody tr:hover { background: color-mix(in srgb, var(--premiere-violet) 10%, transparent); }
+tbody th { font-weight: 600; } tbody th small { display: block; font-weight: 400; color: var(--soft); }
+td.gap { background: color-mix(in srgb, var(--premiere-rose) 8%, transparent); } td.gap span { color: color-mix(in srgb, var(--premiere-rose) 55%, white); font-style: italic; }
+td .chip { margin: 0 6px 6px 0; }
+.full-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 22px; align-items: start; }
+
+.state { margin: 44px 0 14px; display: flex; align-items: center; gap: 14px; }
+.state h2 { font: 700 20px var(--font-fancy); letter-spacing: .02em; } .state small { font-size: 13px; color: var(--soft); }
+.state::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+@media (max-width: 960px) { .cols, .full-two { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .who { grid-template-columns: auto 1fr; } .panel { padding: 16px; } .entry { grid-template-columns: 1fr; } .entry .ex { grid-column: 1; } .travel li { grid-template-columns: 1fr; } .lenses .seg span { padding: 10px 14px; } }
+@media (prefers-reduced-motion: reduce) { .btn, .chip, .rows > li, .tabs2 > span:not(.co), .seg span, .group { transition: none; } .btn:hover, .chip:hover, .rows > li:hover, .tabs2 > span:not(.co):hover { transform: none; } }
+
+/* one frame per group */
+.panel .group { border: 0 !important; box-shadow: none !important; background: none; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.panel li { border: 0 !important; box-shadow: none !important; background: none; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.panel .moment, .panel .resolved, .panel .open, .panel .nested { border: 0 !important; box-shadow: none !important; background: none !important; }
+.panel .tablewrap, .panel figure { border: 0 !important; box-shadow: none !important; }
+/* end one frame */
+</style></head>
+<body><div class="wf-note">WIREFRAME. Macro Lab, today's layout in the Premiere house style. Numbered callouts are explained below. The Bible and Operations panes are stacked below only so every state is visible; in the app one of the three replaces the others under the tabs.</div>
+<div class="stage"><main class="room">
+
+<div class="strip"><span class="live">macro lab &middot; SillyTavern &middot; Marinara ready <span class="co">1</span></span><button class="btn quiet sm">Reload Studio</button></div>
+
+<header class="playbill" style="grid-template-columns:1fr">
+  <div>
+    <div class="kicker left">Macro Lab</div>
+    <h1 style="font-size:clamp(28px,3.4vw,50px)">What does this macro actually do? <span class="co">2</span></h1>
+  </div>
+  <p class="lede">Write macro text on the left. The right tells you what each token means on the platform you picked, and, when you have that platform installed, what its own engine turns your text into.</p>
+</header>
+
+<div class="lenses"><span class="seg" role="group" aria-label="Platform"><span aria-pressed="false">RoleCall</span><span aria-pressed="true">SillyTavern<i class="inst" title="Engine installed here"></i></span><span aria-pressed="false">SillyTavern (new engine)</span><span aria-pressed="false">Marinara<i class="inst" title="Engine installed here"></i></span><span aria-pressed="false">Lumiverse</span><span aria-pressed="false">RisuAI</span></span> <span class="co">3</span></div>
+
+<div class="cols">
+  <section class="panel fixed" data-deck="preset" aria-label="Your macro text">
+    <div class="pane-head"><h2>Your text</h2><span class="note num">132 characters</span></div>
+    <textarea class="source" spellcheck="false" aria-label="Macro text">Hello {{char}}, I am {{user}}.
+It is {{time}} and {{random::warm::wary}} weather.
+{{setvar::mood::wary}}Last line was: {{lastLine}}</textarea>
+    <div class="pane-head gap-top"><h2>Pretend context</h2><span class="note">used when resolving</span></div>
+    <p class="hint">A macro that names somebody needs somebody to name. Leave these empty and each engine falls back to its own placeholder.</p>
+    <div class="who">
+      <label class="label" for="u"><code>{{user}}</code> is</label><input id="u" class="field" value="Mara">
+      <label class="label" for="c"><code>{{char}}</code> is</label><input id="c" class="field" placeholder="Character">
+    </div>
+    <div>
+      <div class="varrow"><input class="field" value="mood" aria-label="Variable 1 name"><input class="field" value="wary" aria-label="Variable 1 value"><button class="xbtn" aria-label="Remove variable 1">&times;</button></div>
+      <div class="varrow"><input class="field" placeholder="variable" aria-label="Variable 2 name"><input class="field" placeholder="value" aria-label="Variable 2 value"><button class="xbtn" aria-label="Remove variable 2">&times;</button></div>
+      <button class="btn sm">Add a variable</button> <span class="co">4</span>
+    </div>
+  </section>
+
+  <div class="stack">
+    <section class="panel fixed" data-deck="regex" aria-label="What the engine did">
+      <div class="pane-head"><h2>Resolved</h2><span class="note">SillyTavern 1.13.2</span></div>
+      <div class="act"><button class="btn primary big">Resolve for real</button><span class="co">5</span></div>
+      <div class="resolved">Hello Character, I am Mara.
+It is 4:12 PM and warm weather.
+Last line was: {{lastLine}}</div>
+      <p class="hint">Still wearing braces after the engine finished, so this is what the model would actually see:</p>
+      <div><span class="dead">{{lastLine}}</span></div>
+      <div class="ok" style="margin-top:12px">Every macro resolved. Nothing was left unexpanded.</div>
+      <p class="problem" style="margin-top:12px">Refusal state: The engine did not finish (reason): detail. Nothing was resolved, so do not read this as a pass. Busy reads Resolving.</p>
+      <div class="act" style="margin-top:16px"><button class="btn primary" disabled>Resolve for real</button><span class="why">No RisuAI engine on this machine, so nothing can run this text. The reading beside it still works.</span></div>
+      <div class="moment" style="margin-top:16px"><b>Ready when you are</b><span class="hint">Press Resolve to run this text through the engine itself. Nothing is sent anywhere: it runs on this machine, against the checkout you installed.</span></div>
+    </section>
+
+    <div>
+      <div class="tabs2" role="tablist" aria-label="Reference"><span aria-selected="true"><i>1</i>Reading</span><span><i>2</i>Macro bible</span><span><i>3</i>Operations</span><span class="co" style="align-self:center">6</span></div>
+      <section class="panel fixed" data-deck="preset" aria-label="What the catalog says" style="margin-top:16px">
+        <div class="pane-head"><h2>Reading</h2><span class="note">SillyTavern catalog</span></div>
+        <p class="hint">SillyTavern has no macro by this name. It will reach the model as literal text.</p>
+        <div><span class="dead">lastLine</span></div>
+        <ul class="rows">
+          <li class="open"><div class="rowhead"><code class="token">{{char}}</code><span class="verdict known">in this engine's catalog</span></div>
+            <p>The character's name</p><p class="ex">e.g. <code>Hello {{char}}</code></p>
+            <div><button class="btn quiet sm">Hide other platforms</button></div>
+            <ul class="travel">
+              <li><b>RoleCall</b><span class="same">the same token works there</span></li>
+              <li><b>Marinara</b><span class="same">the same token works there</span></li>
+              <li><b>Lumiverse</b><span class="flag"><code>{{char}}</code> - spelled the same, reads the card name field</span></li>
+            </ul></li>
+          <li><div class="rowhead"><code class="token">{{random::warm::wary}}</code><span class="verdict known">in this engine's catalog</span></div>
+            <p>Picks one entry from the list.</p><p class="ex">written here as <code>{{random::a::b}}</code></p>
+            <div><button class="btn quiet sm">Where else does it work</button></div></li>
+          <li class="nested"><div class="rowhead"><code class="token">{{setvar::mood::wary}}</code><span class="verdict known">in this engine's catalog</span></div>
+            <p>Stores a value in a chat variable.</p></li>
+          <li><div class="rowhead"><code class="token">{{lastLine}}</code><span class="verdict none">no macro of this name here</span></div></li>
+          <li><div class="rowhead"><code class="token">{{// a comment}}</code><span class="verdict">invokes no macro</span></div>
+            <p>Nothing here names a macro, so no engine will expand it. Comments and escapes look like this.</p></li>
+        </ul>
+        <p class="hint">Read from our catalog of SillyTavern, which is transcribed from that engine's own capability source and matches on macro NAME. A name being present is not a promise about its arguments. For that, resolve it.</p>
+        <div class="moment" style="margin-top:14px"><b>No macros in this text yet</b><span class="hint">Type something with double braces in it, like <code>{{char}}</code>. Reference-only platforms add a note that cross-platform answers are not modelled.</span></div>
+        <span class="co" style="margin-top:10px">7</span>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="state"><h2>Macro bible and Operations</h2><small>each replaces Reading under the tabs</small></div>
+<div class="full-two">
+  <section class="panel fixed" data-deck="preset" aria-label="Every macro this platform has">
+    <div class="pane-head"><h2>Macro bible</h2><span class="note num">238 macros</span></div>
+    <input class="field" placeholder="Search by name, meaning or alias" aria-label="Search macros">
+    <p class="hint" style="margin:10px 0 14px">Click any macro to drop it into your text. Words and meanings are SillyTavern's own.</p>
+    <div class="group open"><div class="ghead"><span class="token">Characters</span><span class="verdict num">14</span></div>
+      <div class="gbody"><p class="hint" style="margin-bottom:6px">Names and card fields for the people in the chat.</p>
+      <div class="entry"><span><button class="chip"><code>{{char}}</code></button></span><span>The character's name.</span><span class="ex">e.g. Hello {{char}}</span></div>
+      <div class="entry"><span><button class="chip"><code>{{user}}</code></button></span><span>The active persona's name.</span><span class="ex">also written <code>{{persona}}</code></span></div></div></div>
+    <div class="group"><div class="ghead"><span class="token">Randomness</span><span class="verdict num">9</span></div></div>
+    <div class="group"><div class="ghead"><span class="token">Variables</span><span class="verdict num">12</span></div></div>
+    <div class="group"><div class="ghead"><span class="token">Time</span><span class="verdict num">7</span></div></div>
+    <div class="moment" style="margin-top:14px"><b>Nothing matches that</b><span class="hint">Nothing in SillyTavern's catalog matches that. It may exist on another platform, try one of the others above.</span></div>
+    <span class="co" style="margin-top:10px">8</span>
+  </section>
+
+  <section class="panel fixed" data-deck="regex" aria-label="What each platform calls the same operation">
+    <div class="pane-head"><h2>Operations</h2><span class="note num">21 operations &middot; 9 with gaps</span></div>
+    <p class="hint">Every row is one thing a macro can do, and every column is what that platform calls it. A blank cell means that platform has no macro for it at all, so text relying on it will not survive the move. Click a spelling to drop it into your text.</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th scope="col">Operation</th><th scope="col">RoleCall</th><th scope="col">SillyTavern</th><th scope="col">Marinara</th><th scope="col">Lumiverse</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">pick<small>random</small></th><td class="gap"><span>none</span></td><td><button class="chip"><code>{{random::a::b}}</code></button></td><td class="gap"><span>none</span></td><td><button class="chip"><code>{{pick::a::b}}</code></button></td></tr>
+        <tr><th scope="row">range<small>random</small></th><td><button class="chip"><code>{{random::1::6}}</code></button></td><td class="gap"><span>none</span></td><td class="gap"><span>none</span></td><td><button class="chip"><code>{{rand::1::6}}</code></button></td></tr>
+        <tr><th scope="row">roll dice<small>random</small></th><td><button class="chip"><code>{{roll 1d6}}</code></button></td><td><button class="chip"><code>{{roll:1d6}}</code></button></td><td><button class="chip"><code>{{roll::1d6}}</code></button></td><td><button class="chip"><code>{{dice::1d6}}</code></button></td></tr>
+        <tr><th scope="row">set<small>variable</small></th><td><button class="chip"><code>{{setvar::k::v}}</code></button></td><td><button class="chip"><code>{{setvar::k::v}}</code></button></td><td><button class="chip"><code>{{setvar::k::v}}</code></button></td><td><button class="chip"><code>{{setvar::k::v}}</code></button></td></tr>
+      </tbody></table></div>
+    <p class="hint">Only operations where the engines DISAGREE appear here. A macro name that already means the same thing everywhere carries no operation annotation and lives in the bible instead.</p>
+    <p class="hint" style="margin-top:8px">RisuAI has no column here yet. Its macro list is complete in the bible, but Bunraku has not yet mapped which of these operations each of its macros performs, so a column would show our gap as its gap. That mapping is read from the engine, one macro at a time.</p>
+    <p class="hint" style="margin-top:8px">SillyTavern (new engine) performs the same operations as the engine above it, so it has no column of its own. The two differ in which macros they carry and in how a few are spelled, see the bible for both.</p>
+    <span class="co" style="margin-top:10px">9</span>
+  </section>
+</div>
+
+</main></div>
+<ol class="legend">
+  <li><span class="co">1</span> Status strip, same top spot: mono bar becomes a quiet UI-font line with a gold pulse mark (which engines are ready, or catalog only). Reload Studio is the quiet button at its right end.</li>
+  <li><span class="co">2</span> Room header, same place: gold kicker "Macro Lab" (was mono caps), Cinzel title with violet glow (was heavy sans), lede with a rose rule and a gold rule beneath. No header actions today, none added.</li>
+  <li><span class="co">3</span> Platform strip, same row under the header, same six lenses: the kit segmented control with hard offset shadow, gold hover, rose underline on the chosen one, and a gold glowing mark where an engine is installed. Uppercase mono labels become UI font.</li>
+  <li><span class="co">4</span> Left column, same order: Your text (mono textarea, gold focus frame, character count in tabular numerals), Pretend context (labels in UI font, macro names mono gold), variable rows with a rose-on-hover remove, Add a variable. The violet-framed box becomes a Premiere panel with a preset deck edge and Cinzel section titles with gold rules.</li>
+  <li><span class="co">5</span> Right column keeps Resolved on top. Resolve for real is the big rose primary with a glow; the reason a lens cannot resolve sits beside it; output is a mono well with a violet edge; unresolved tokens are rose chips; refusals are a rose-edged notice; a clean pass is a gold-edged line. The idle message is a staged moment with a Cinzel line, not a grey sentence.</li>
+  <li><span class="co">6</span> Reference tabs, same spot between Resolved and the pane: IDE-style mono tabs become the chooser's spaced segmented tabs with gold act numbers; the active tab takes a violet edge and offset shadow, hover lifts.</li>
+  <li><span class="co">7</span> Reading rows: flat lines become card rows with a violet edge, slide and gold edge on hover, rose edge and offset shadow when a row is expanded; verdicts are gold or rose badges; the Where else list is a tinted inset. Empty text is a staged moment.</li>
+  <li><span class="co">8</span> Macro bible: kit search field, groups as bordered rows with gold chevrons, counts in tabular numerals, rose edge when open, insert chips with gold code, and a staged no-results moment.</li>
+  <li><span class="co">9</span> Operations: framed table with offset shadow, violet header with a gold rule, row hover, named gaps in rose, chips as in the bible; the wide table still scrolls inside its own frame on phones.</li>
+  <li>Bible and Operations are stacked below the main stage only so every pane is visible; in the app each replaces Reading under the tabs, as today.</li>
+</ol>
+<script src="kit.js"></script>
+</body></html>

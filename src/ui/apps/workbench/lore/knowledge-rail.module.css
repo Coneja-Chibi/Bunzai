@@ -9,15 +9,13 @@
 }
 
 .head {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .empty {
-  color: var(--stage-soft);
+  color: var(--text-soft);
   font-size: var(--text-control);
 }
 
@@ -39,14 +37,13 @@
 }
 
 .attach {
+  /* clone-ok: small segmented-button face owned by its own control; tuned padding differs per control */
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.35rem 0.5rem;
   cursor: pointer;
 }
@@ -62,9 +59,9 @@
 .pickBook {
   text-align: left;
   font: inherit;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   padding: 0.3rem 0.4rem;
   cursor: pointer;
 }

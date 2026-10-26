@@ -15,6 +15,7 @@ import type { JSX } from "react";
 import { deckMeta } from "../../_shared/decks";
 import { isEscapeClose } from "../../_shared/use-escape-key";
 import { Button, Chip } from "../../components/button";
+import { Panel } from "../../components/panel";
 
 export interface SearchBoxProps {
   value: string;
@@ -85,7 +86,7 @@ export function NoMatchNotice({
 }: NoMatchNoticeProps): JSX.Element {
   const plural = deckPlural.toLowerCase();
   return (
-    <div className="nomatch">
+    <Panel as="div" className="nomatch" data-part="library.nomatch">
       <strong className="nmhead">{`No ${plural} match`}</strong>
       <p className="nmbody">
         {"Nothing on this shelf matches "}
@@ -106,6 +107,6 @@ export function NoMatchNotice({
       <Button size="sm" variant="quiet" onClick={onClear}>
         Clear search
       </Button>
-    </div>
+    </Panel>
   );
 }

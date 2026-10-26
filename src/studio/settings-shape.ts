@@ -30,7 +30,16 @@ export const SETTING_KEYS = {
   uiTextSize: "ui.textSize",
   uiReduceMotion: "ui.reduceMotion",
   uiHighContrast: "ui.highContrast",
+  /** the title screen and scene chooser rays: "moving" (default), "still" or "off" (see STAGE_LIGHTS) */
+  uiStageLights: "ui.stageLights",
 } as const;
+
+/** The stage-lights choices, in the order Settings shows them; the first is the default when nothing is saved. */
+export const STAGE_LIGHTS = ["moving", "still", "off"] as const;
+export type StageLights = (typeof STAGE_LIGHTS)[number];
+export const isStageLights = (value: unknown): value is StageLights => (STAGE_LIGHTS as readonly unknown[]).includes(value);
+/** The stored choice; nothing saved, or anything unknown, reads as the default (moving). */
+export const stageLightsOf = (value: unknown): StageLights => (isStageLights(value) ? value : STAGE_LIGHTS[0]);
 
 /** The theme a studio paints when no theme is saved (a first run). A saved choice always wins; this never rewrites one. */
 export const DEFAULT_STUDIO_THEME = "greenroom";
@@ -84,5 +93,6 @@ export function parseSettings(raw: unknown): StudioSettings {
   else delete out.houseAccent;
   if (rec.remoteAccessEnabled === true) out.remoteAccessEnabled = true;
   else delete out.remoteAccessEnabled;
+  if (!isStageLights(rec[SETTING_KEYS.uiStageLights])) delete out[SETTING_KEYS.uiStageLights];
   return out;
 }

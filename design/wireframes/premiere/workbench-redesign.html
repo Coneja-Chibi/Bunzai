@@ -1,0 +1,187 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: The Workbench</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules. Tokens only. Additions to the kit: .tabstrip (the shell's open-piece tabs), .hero, .cta, .kind, .shelf, .pcard. */
+.wf-note { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.wf-note .seg span { cursor: pointer; }
+
+/* shell tab strip, restyled (it is the shell's, shown so the room reads in context) */
+.tabstrip { display: flex; align-items: center; gap: 4px; margin: 0 0 18px; padding-bottom: 10px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.tabstrip .plus { width: 36px; height: 36px; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); color: var(--premiere-gold); font-weight: 700; }
+.tabstrip .grow { flex: 1; }
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.status::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); }
+[data-state="restoring"] .status::before { background: var(--premiere-violet); }
+[data-state="failed"] .status::before { background: var(--premiere-rose); }
+
+.playbill .actions { flex-wrap: wrap; justify-content: flex-end; }
+.btn svg, .cta svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.btn.icon { padding: 9px 11px; }
+
+/* hero: the staged moment */
+.hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 28px; padding: 0; overflow: hidden; position: relative; }
+.hero::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 70% 90% at 12% 0%, color-mix(in srgb, var(--premiere-violet) 22%, transparent), transparent 70%); }
+.hero > * { position: relative; }
+.hero .lead { padding: 36px 36px 32px; }
+.hero h2 { font-size: clamp(28px, 3vw, 40px); line-height: 1.1; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.hero .lead > p { margin-top: 14px; font-size: 16px; max-width: 46ch; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.hero .err { margin-top: 14px; padding: 10px 14px; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 12%, transparent); font-size: 14px; display: none; }
+[data-state="failed"] .err { display: block; }
+.ctas { margin-top: 28px; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 14px; }
+.cta { display: flex; flex-direction: column; gap: 10px; text-align: left; padding: 16px; min-height: 124px; cursor: pointer; font: inherit; color: var(--premiere-text);
+  background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); border-top: 4px solid var(--deck, var(--premiere-gold));
+  transition: transform .2s ease, box-shadow .2s ease; }
+.cta:hover, .cta:focus-visible { transform: translateY(-3px); box-shadow: 0 14px 40px color-mix(in srgb, var(--premiere-violet) 30%, transparent); outline: none; }
+.cta .ico { width: 36px; height: 36px; display: grid; place-items: center; color: var(--deck, var(--premiere-gold)); background: color-mix(in srgb, var(--deck, var(--premiere-gold)) 14%, transparent); }
+.cta b { font-size: 16px; font-weight: 700; }
+.cta span { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); line-height: 1.4; }
+.cta.main { background: color-mix(in srgb, var(--premiere-rose) 22%, var(--premiere-hard)); border-color: var(--premiere-rose); border-top-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard); }
+.cta.main .ico { color: var(--premiere-text); background: var(--premiere-rose); }
+[data-state="restoring"] .ctas { display: none; }
+.skel { display: none; margin-top: 28px; gap: 10px; flex-direction: column; max-width: 420px; }
+.skel i { display: block; height: 12px; background: color-mix(in srgb, var(--premiere-text) 12%, transparent); animation: pulse 1.6s ease-in-out infinite; }
+.skel i:nth-child(2) { width: 80%; } .skel i:nth-child(3) { width: 55%; }
+[data-state="restoring"] .skel { display: flex; }
+@keyframes pulse { 50% { opacity: .35; } }
+
+/* what opens here */
+.kinds { padding: 36px 36px 32px 8px; display: flex; flex-direction: column; }
+.kinds h3 { font-size: 16px; }
+.kinds > p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); margin: 4px 0 16px; }
+.kindgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.kind { display: grid; grid-template-columns: 6px 1fr; gap: 12px; padding: 10px 12px 10px 0; background: color-mix(in srgb, var(--premiere-hard) 40%, transparent); }
+.kind::before { content: ""; background: var(--deck); }
+.kind b { font-size: 14px; display: block; }
+.kind span { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); line-height: 1.35; display: block; }
+
+/* recents shelf */
+.shelfhead { display: flex; align-items: baseline; gap: 14px; margin: 40px 0 14px; flex-wrap: wrap; }
+.shelfhead .section-title { margin: 0; }
+.shelfhead .grow { flex: 1; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 18px; }
+[data-rail="hidden"] .shelf { display: none; }
+.hid { display: none; padding: 18px 20px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); }
+[data-rail="hidden"] .hid { display: block; }
+.pcard { display: flex; flex-direction: column; text-align: left; padding: 0; cursor: pointer; font: inherit; color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-hard) 70%, transparent);
+  border: 3px solid var(--premiere-hard); border-top: 4px solid var(--deck); box-shadow: 5px 5px var(--premiere-hard); transition: transform .25s ease, box-shadow .25s ease; }
+.pcard:hover, .pcard:focus-visible { transform: translateY(-5px); box-shadow: 5px 5px var(--premiere-hard), 0 18px 50px color-mix(in srgb, var(--deck) 28%, transparent); outline: none; }
+.pcard .art { aspect-ratio: 2 / 3; display: grid; place-items: center; position: relative; overflow: hidden;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--deck) 55%, var(--premiere-hard)), color-mix(in srgb, var(--deck) 12%, var(--premiere-hard))); }
+.pcard .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in srgb, var(--premiere-hard) 75%, transparent), transparent 55%); }
+.pcard .art b { font: 700 54px/1 var(--font-fancy); color: color-mix(in srgb, var(--deck) 40%, white); text-shadow: 0 2px 24px color-mix(in srgb, var(--premiere-hard) 60%, transparent); position: relative; z-index: 1; }
+.pcard .meta { padding: 10px 12px 12px; }
+.pcard .meta b { display: block; font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pcard .meta span { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.pcard .meta .num { font-size: 12px; }
+.shelfnote { margin-top: 18px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+
+.nodesnote { margin-top: 22px; display: flex; gap: 14px; align-items: center; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+
+@media (max-width: 1100px) { .hero { grid-template-columns: 1fr; } .kinds { padding: 0 24px 28px; } .hero .lead { padding: 28px 24px 8px; } }
+@media (max-width: 720px) {
+  .ctas { grid-template-columns: 1fr; } .cta { min-height: 0; }
+  .playbill { grid-template-columns: 1fr; } .playbill .actions { grid-column: 1; grid-row: auto; justify-content: flex-start; }
+  .shelf { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .kindgrid { grid-template-columns: 1fr; } .tabstrip .status { display: none; }
+  .wf-note { padding: 12px 16px; } .legend { padding: 24px 16px 48px; }
+}
+</style></head>
+<body><div class="wf-note"><span>WIREFRAME. The Workbench in the Premiere house style. Numbered callouts are explained below.</span>
+<span class="seg" role="group" aria-label="Wireframe state"><span aria-pressed="true" data-set="empty">Empty</span><span data-set="restoring">Restoring</span><span data-set="failed">Restore failed</span></span>
+<span class="seg" role="group" aria-label="Recents rail"><span aria-pressed="true" data-rail-set="open">Recents shown</span><span data-rail-set="hidden">Recents hidden</span></span></div>
+<div class="stage"><div class="rays"><canvas id="rays"></canvas></div>
+<main class="room" id="room" data-state="empty" data-rail="open">
+
+  <div class="tabstrip" aria-label="Open pieces"><span class="plus" title="Open a piece">+</span><span class="status" role="status" id="status" style="margin-left:10px">The workbench is clear</span><span class="grow"></span></div>
+
+  <header class="playbill">
+    <div class="kicker left">Edit pieces</div>
+    <div class="actions">
+      <span class="seg" role="group" aria-label="Workbench view"><span aria-pressed="true">Desk</span><span>Nodes</span></span>
+      <button class="btn icon" aria-label="Focus mode" title="Focus mode"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <button class="btn">Reload studio</button>
+      <span class="co" style="margin-left:2px">1</span>
+    </div>
+    <h1>The Workbench</h1>
+    <p class="lede">Each piece opens in its own tab and keeps its draft while you switch between them.</p>
+  </header>
+
+  <section class="panel hero" data-deck="lorebook" aria-live="polite" data-empty="editor">
+    <div class="lead">
+      <h2 id="h">Your workbench is empty <span class="co">2</span></h2>
+      <p id="msg">Open a piece from your Library to start editing. Each piece opens in a tab above.</p>
+      <div class="err" id="err">The saved bench could not be read. Your pieces are untouched, and you can open them again from the Library.</div>
+      <div class="skel" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="ctas">
+        <button class="cta main" data-deck="character"><span class="ico"><svg viewBox="0 0 24 24"><path d="M4 5.5C4 5 4.5 4.5 5 4.5H10a2 2 0 0 1 2 2V20a2 2 0 0 0-2-2H4zM20 5.5c0-.5-.5-1-1-1h-5a2 2 0 0 0-2 2V20a2 2 0 0 1 2-2h6z"/></svg></span><b>Open Library</b><span>Pick any piece you own and it opens here.</span></button>
+        <button class="cta" data-deck="pack"><span class="ico"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM12 10v5M9.5 12.5h5"/></svg></span><b>New pack folder</b><span>A folder that keeps related pieces together.</span></button>
+        <button class="cta" data-deck="lorebook"><span class="ico"><svg viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 8h8M8 12h8M8 16h5"/></svg></span><b>New lorebook</b><span>Start a book of entries the story can recall.</span></button>
+      </div>
+      <span class="co" style="margin-top:14px">3</span>
+    </div>
+    <aside class="kinds" aria-label="What opens here">
+      <h3>What opens here <span class="co">4</span></h3>
+      <p>Every kind has its own editor, and it opens in this room.</p>
+      <div class="kindgrid">
+        <div class="kind" data-deck="character"><div><b>Character</b><span>Card, portrait, greetings</span></div></div>
+        <div class="kind" data-deck="persona"><div><b>Persona</b><span>Who you play as</span></div></div>
+        <div class="kind" data-deck="pack"><div><b>Pack folder</b><span>Pieces kept together</span></div></div>
+        <div class="kind" data-deck="lorebook"><div><b>Lorebook</b><span>Entries and keys</span></div></div>
+        <div class="kind" data-deck="regex"><div><b>Regex set</b><span>Rules that rewrite text</span></div></div>
+        <div class="kind" data-deck="preset"><div><b>Preset</b><span>Prompt blocks and samplers</span></div></div>
+        <div class="kind" data-deck="fog"><div><b>Quick replies</b><span>One-tap lines</span></div></div>
+        <div class="kind" data-deck="fog"><div><b>HTML document</b><span>Pages and panels</span></div></div>
+      </div>
+    </aside>
+  </section>
+
+  <div class="shelfhead">
+    <h2 class="section-title">Recent <small>bring one up</small></h2><span class="co">5</span>
+    <span class="grow"></span>
+    <span class="chip num" style="font-family:var(--font-mono)">7 pieces</span>
+    <button class="btn quiet" id="railBtn" aria-expanded="true">Hide</button>
+  </div>
+  <div class="shelf" id="shelf">
+    <button class="pcard" data-deck="preset" title="Bring Test preset up"><div class="art"><b>T</b></div><div class="meta"><b>Test preset</b><span>Preset, <span class="num">8</span> blocks</span></div></button>
+    <button class="pcard" data-deck="character" title="Bring Vera Lindqvist up"><div class="art"><b>V</b></div><div class="meta"><b>Vera Lindqvist</b><span>Character, opened today</span></div></button>
+    <button class="pcard" data-deck="lorebook" title="Bring Ashfall Atlas up"><div class="art"><b>A</b></div><div class="meta"><b>Ashfall Atlas</b><span>Lorebook, <span class="num">42</span> entries</span></div></button>
+    <button class="pcard" data-deck="regex" title="Bring Voice cleanup up"><div class="art"><b>V</b></div><div class="meta"><b>Voice cleanup</b><span>Regex set, <span class="num">5</span> rules</span></div></button>
+    <button class="pcard" data-deck="persona" title="Bring Marlowe up"><div class="art"><b>M</b></div><div class="meta"><b>Marlowe</b><span>Persona, opened Monday</span></div></button>
+    <button class="pcard" data-deck="pack" title="Bring Velvet Quill up"><div class="art"><b>V</b></div><div class="meta"><b>Velvet Quill</b><span>Pack folder, <span class="num">6</span> pieces</span></div></button>
+    <button class="pcard" data-deck="character" title="Bring Untitled character up"><div class="art"><b>U</b></div><div class="meta"><b>Untitled character</b><span>Character, new</span></div></button>
+  </div>
+  <div class="panel hid" id="hid">The recents shelf is hidden. Choose Show to bring it back.</div>
+  <p class="shelfnote">The shelf shows up to <span class="num">14</span> pieces, newest first, and leaves out anything already open in a tab. It folds away on its own while you edit and returns when the bench clears. Right-click a card for its menu.</p>
+
+  <div class="nodesnote"><span class="co">6</span><span>Nodes keeps its canvas and keeps this shelf, since that is how more pieces come onto it. Only the header above changes.</span></div>
+</main></div>
+
+<ol class="legend">
+  <li><b>Header.</b> Today the room opens on a floating box with a monospace status line and a loose Reload Studio button. Now a Playbill header carries the room name, a one-line lede, the Desk and Nodes switch, focus mode and Reload studio together. The status line becomes a quiet pill beside the tab strip.</li>
+  <li><b>The hero.</b> The empty state is a staged panel with light reading through it instead of a small card on black. It keeps every real state: "Your workbench is empty", "Restoring your workbench..." (call to action hidden, as today) and "We couldn't restore the workbench" (shown with the failure text). Use the wireframe switches at the top to see each.</li>
+  <li><b>Entry points.</b> Open Library, New pack folder and New lorebook become three cards with a deck-colored edge and a one-line promise each. Open Library is the rose primary. Same three actions, same behavior, including the saved-failure message on create.</li>
+  <li><b>What opens here.</b> New and purely informational: the eight kinds the bench can edit, in their deck colors, so a new user learns what the room is for. Nothing in it is interactive.</li>
+  <li><b>Recents.</b> The "Recent, bring one up" rail moves from a cramped strip under the dock to a shelf of portrait cards with presence (portrait or initial, name, kind, count). The hide and show control and its remembered state are kept. Rank, the 14 card cap and the context menu are unchanged.</li>
+  <li><b>Nodes.</b> Nodes view is a canvas, so it keeps its own layout. It inherits the new header and keeps the recents shelf.</li>
+</ol>
+<script type="module">import { startLightRays } from "./rays.bundle.js"; startLightRays(document.getElementById("rays"), true, .35);</script>
+<script>
+const room = document.getElementById("room");
+const text = { empty: ["Your workbench is empty", "Open a piece from your Library to start editing. Each piece opens in a tab above.", "The workbench is clear"],
+  restoring: ["Restoring your workbench…", "Your open pieces will appear here when they are ready.", "Restoring"],
+  failed: ["We couldn’t restore the workbench", "The saved bench could not be read.", "Could not restore the workbench"] };
+document.querySelectorAll("[data-set]").forEach(b => b.addEventListener("click", () => {
+  const k = b.dataset.set; room.dataset.state = k; const t = text[k];
+  document.getElementById("h").firstChild.textContent = t[0] + " "; document.getElementById("msg").textContent = t[1]; document.getElementById("status").textContent = t[2];
+  document.getElementById("msg").style.display = k === "failed" ? "none" : "";
+  b.parentElement.querySelectorAll("span").forEach(s => s.setAttribute("aria-pressed", String(s === b)));
+}));
+function setRail(v) { room.dataset.rail = v; const btn = document.getElementById("railBtn"); btn.textContent = v === "open" ? "Hide" : "Show"; btn.setAttribute("aria-expanded", String(v === "open"));
+  document.querySelectorAll("[data-rail-set]").forEach(s => s.setAttribute("aria-pressed", String(s.dataset.railSet === v))); }
+document.querySelectorAll("[data-rail-set]").forEach(b => b.addEventListener("click", () => setRail(b.dataset.railSet)));
+document.getElementById("railBtn").addEventListener("click", () => setRail(room.dataset.rail === "open" ? "hidden" : "open"));
+</script>
+</body></html>

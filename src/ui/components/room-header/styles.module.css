@@ -1,0 +1,19 @@
+/**
+ * RoomHeader styles. Gold trim is the house metal (--premiere-gold); the title glow uses the select role so it
+ * follows the user's accent. Left is the playbill arrangement, center the marquee. The row wraps, so the actions drop
+ * under the title when the room is narrow, with no viewport query (AGENTS.md rule 11).
+ */
+.header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 12px 24px; padding: 8px 0 22px; margin-bottom: 24px;
+  border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.header[data-align="center"] { flex-direction: column; align-items: center; text-align: center; border-bottom: 0; }
+.text { display: grid; gap: 10px; min-width: 0; flex: 1 1 28rem; }
+.header[data-align="center"] .text { flex: none; }
+.kicker { display: flex; align-items: center; gap: 14px; color: var(--premiere-gold); font: 500 .6875rem/1 var(--font-ui); letter-spacing: .22em; text-transform: uppercase; }
+.kicker::after, .header[data-align="center"] .kicker::before { content: ""; width: 48px; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 60%, transparent); /* clone-ok: the two-line gold hairline the chooser's marquee also draws; the chooser is its own surface, not a room */ }
+.header[data-align="center"] .kicker { justify-content: center; }
+.title { margin: 0; font: 700 clamp(30px, 3.6vw, 52px)/1.05 var(--font-fancy); letter-spacing: .02em; color: var(--text);
+  text-shadow: 0 2px 30px color-mix(in srgb, var(--bk-role-select) 40%, transparent); overflow-wrap: anywhere; }
+.num { font-family: var(--font-ui); letter-spacing: 0; }
+.lede { margin: 0; padding-left: 14px; border-left: 2px solid var(--accent); font-size: var(--text-body); color: var(--text-dim); max-width: 72ch; }
+.header[data-align="center"] .lede { padding-left: 0; border-left: 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }

@@ -124,6 +124,10 @@ function WorkbenchSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "workbench",
+  act: "studio",
+  title: "The workbench",
+  lede: "How the editors save, reopen and lay themselves out. Layout and fill-in changes land the next time a character is opened.",
+  status: (ctx) => (ctx.prefs.get(PREF_AUTOSAVE) === true ? "Autosave on" : "Autosave off"),
   label: "Workbench",
   order: 30,
   Component: WorkbenchSection,

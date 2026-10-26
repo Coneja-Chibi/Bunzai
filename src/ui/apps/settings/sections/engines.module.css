@@ -38,7 +38,7 @@
 .note,
 .good,
 .said {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
   font-weight: 600;
   margin: 0;

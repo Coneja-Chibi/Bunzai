@@ -276,6 +276,7 @@ export function CssWorkshop({
       )}
 
       <div className={styles.previewBlock} data-tour="css-preview">
+        <span className={styles.cap}>Sealed preview</span>
         <iframe
           className={styles.frame}
           title="Sealed CSS preview"

@@ -14,6 +14,8 @@
  */
 import { Button, IconButton, Segmented, Tabs } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
+import { Panel } from "../../components/panel";
+import { RoomHeader } from "../../components/room-header";
 import {
   useCallback,
   useEffect,
@@ -169,27 +171,24 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
 
   return (
     <div className={styles.room} style={{ "--a": ACCENT } as CSSProperties}>
-      <header className={styles.head}>
-        <span className={styles.eyebrow}>Macro Lab</span>
-        <h1 className={styles.title}>What does this macro actually do?</h1>
-        <p className={styles.lede}>
-          Write macro text on the left. The right tells you what each token means on the platform you
-          picked, and - when you have that platform installed - what its own engine turns your text
-          into.
-        </p>
-      </header>
+      <RoomHeader
+        data-part="macro-lab.header"
+        kicker="Macro Lab"
+        title="What does this macro actually do?"
+        lede="Write macro text on the left. The right tells you what each token means on the platform you picked, and, when you have that platform installed, what its own engine turns your text into."
+      />
 
       <div className={styles.lenses}>
         <Segmented
           label="Platform"
           value={lens}
           onChange={setLens}
-          items={LAB_LENSES.map((id) => ({ value: id, label: `${MACRO_DIALECT_LABELS[id]}${engines.some((e) => e.id === id) ? " ·" : ""}` }))}
+          items={LAB_LENSES.map((id) => ({ value: id, label: <>{MACRO_DIALECT_LABELS[id]}{engines.some((e) => e.id === id) ? <span className={styles.inst} role="img" aria-label="engine installed here" title="Engine installed here" /> : null}</> }))}
         />
       </div>
 
       <div className={styles.boxes}>
-        <section className={styles.box} aria-label="Your macro text">
+        <Panel data-part="macro-lab.text" deck="preset" className={styles.box} aria-label="Your macro text">
           <div className={styles.boxHead}>
             <h2 className={styles.boxTitle}>Your text</h2>
             <span className={styles.boxNote}>{`${text.length} characters`}</span>
@@ -214,7 +213,7 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
           </p>
 
           <div className={styles.who}>
-            <label className={styles.whoLabel} htmlFor="macro-lab-user">{"{{user}} is"}</label>
+            <label className={styles.whoLabel} htmlFor="macro-lab-user"><code>{"{{user}}"}</code>{" is"}</label>
             <input
               id="macro-lab-user"
               className={styles.field}
@@ -222,7 +221,7 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
               placeholder="User"
               onChange={(e) => setUser(e.target.value)}
             />
-            <label className={styles.whoLabel} htmlFor="macro-lab-char">{"{{char}} is"}</label>
+            <label className={styles.whoLabel} htmlFor="macro-lab-char"><code>{"{{char}}"}</code>{" is"}</label>
             <input
               id="macro-lab-char"
               className={styles.field}
@@ -267,7 +266,7 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
               </Button>
             </div>
           </div>
-        </section>
+        </Panel>
 
         <div className={styles.stack}>
           <EnginePane
@@ -277,7 +276,7 @@ export function MacroLab({ ctx }: { ctx: AppContext }): JSX.Element {
             onResolve={() => void resolve()}
           />
 
-          <div className={styles.tabs}>
+          <div className={styles.tabs} data-part="macro-lab.tabs">
             <Tabs
               label="Reference"
               value={view}

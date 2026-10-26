@@ -1,0 +1,889 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Settings</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Settings page-only rules. Tokens only; anything the kit lacks is added here. */
+:root { --dim: color-mix(in srgb, var(--premiere-text) 62%, transparent); --soft: color-mix(in srgb, var(--premiere-text) 80%, transparent);
+  --hair: color-mix(in srgb, var(--premiere-text) 14%, transparent); --rose-lt: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+[hidden] { display: none !important; }
+.num, .id { font-family: var(--font-mono); font-size: 13px; }
+.dim { color: var(--dim); }
+.small { font-size: 13px; }
+
+/* Shell: a rail of acts on the left, one page on the right. */
+.shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 32px; align-items: start; }
+.rail { position: sticky; top: 16px; padding: 14px 10px 16px; }
+.rail .act { font: 600 12px/1 var(--font-ui); letter-spacing: .18em; text-transform: uppercase; color: var(--premiere-gold); padding: 16px 12px 8px; }
+.rail .act:first-child { padding-top: 4px; }
+.rail button { all: unset; box-sizing: border-box; display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; cursor: pointer; font: 600 15px var(--font-ui); color: var(--soft); border-left: 3px solid transparent; }
+.rail button:hover, .rail button:focus-visible { background: color-mix(in srgb, var(--premiere-violet) 12%, transparent); color: var(--premiere-text); }
+.rail button[aria-current="page"] { color: var(--premiere-text); border-left-color: var(--premiere-rose); background: linear-gradient(90deg, color-mix(in srgb, var(--premiere-rose) 20%, transparent), transparent); }
+.rail svg { width: 14px; height: 14px; margin-left: auto; color: var(--premiere-gold); flex: none; }
+.status-chip { display: inline-flex; align-items: center; gap: 8px; font: 600 13px var(--font-ui); color: var(--soft); }
+.status-chip::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); }
+
+/* Page head per tab */
+.pghead { padding: 4px 0 22px; }
+.pghead h2 { font: 700 clamp(30px, 3.4vw, 46px)/1.05 var(--font-fancy); letter-spacing: .02em; margin-top: 12px; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.pghead h2 em { font-style: normal; color: color-mix(in srgb, var(--deck-character) 60%, white); }
+.pghead p { margin-top: 10px; max-width: 70ch; color: var(--soft); font-size: 15px; }
+.stack > * + * { margin-top: 22px; }
+.sec { font: 700 20px/1.2 var(--font-fancy); letter-spacing: .02em; margin: 0 0 4px; }
+.sec-note { font-size: 13px; color: var(--dim); margin-bottom: 10px; max-width: 80ch; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.panel.tight { padding: 16px; }
+.panel .row:last-child { border-bottom: 0; }
+.row .hint { grid-column: 1; font-size: 13px; color: var(--dim); max-width: 64ch; }
+.row .ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+
+/* Protected surfaces */
+.panel.protected { border-color: color-mix(in srgb, var(--premiere-gold) 75%, var(--premiere-hard)); border-top-color: var(--premiere-gold); box-shadow: 5px 5px var(--premiere-hard), inset 0 0 0 1px color-mix(in srgb, var(--premiere-gold) 25%, transparent); }
+.vault { display: flex; gap: 12px; align-items: center; padding: 10px 14px; margin: -8px -8px 16px; font-size: 13px; color: var(--soft); background: color-mix(in srgb, var(--premiere-gold) 12%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 50%, transparent); }
+.vault svg { width: 16px; height: 16px; color: var(--premiere-gold); flex: none; }
+.vault b { color: var(--premiere-gold); font-weight: 700; letter-spacing: .04em; }
+
+/* Small kit additions: sm buttons, danger, states, chips, dots, lists */
+.btn.sm { min-height: 34px; padding: 6px 14px; font-size: 13px; }
+.btn.danger { border-color: var(--premiere-rose); color: var(--rose-lt); }
+.btn.gold { border-color: var(--premiere-gold); color: var(--premiere-gold); }
+.btn[disabled], .btn.off { opacity: .45; pointer-events: none; }
+.btn:focus-visible, .rail button:focus-visible, .seg span:focus-visible, .chip:focus-visible, .switch:focus-visible, .pick:focus-visible { outline: 2px solid var(--premiere-gold); outline-offset: 2px; }
+.chip.ok { border-color: var(--premiere-gold); color: var(--premiere-gold); }
+.chip.warn { border-color: var(--premiere-rose); color: var(--rose-lt); }
+.chip { cursor: default; }
+.chip[aria-pressed] { cursor: pointer; }
+.seg span { cursor: pointer; }
+.switch { cursor: pointer; }
+.seg.wrap { flex-wrap: wrap; }
+.dot { display: inline-block; width: 9px; height: 9px; background: var(--dim); margin-right: 8px; }
+.dot.on { background: var(--premiere-gold); box-shadow: 0 0 10px var(--premiere-gold); }
+.dot.bad { background: var(--premiere-rose); }
+.dot.busy { background: var(--premiere-violet); }
+.state-line { font-size: 14px; color: var(--soft); display: flex; align-items: center; }
+.problem { margin-top: 12px; padding: 10px 14px; font-size: 14px; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 10%, transparent); }
+.note { margin-top: 12px; padding: 10px 14px; font-size: 14px; border-left: 3px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 9%, transparent); }
+.empty { padding: 24px; text-align: center; color: var(--dim); border: 2px dashed color-mix(in srgb, var(--premiere-text) 20%, transparent); }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+label.f { display: grid; gap: 6px; font: 600 13px var(--font-ui); color: var(--soft); }
+input.field, textarea.field { width: 100%; font: 14px var(--font-ui); }
+input.field.mono, textarea.field.mono { font: 13px var(--font-mono); }
+input.field.sm { width: 110px; text-align: right; }
+.field::placeholder { color: var(--dim); }
+.select { min-width: 220px; justify-content: space-between; display: inline-flex; gap: 12px; cursor: pointer; }
+.formgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; }
+.formgrid .full { grid-column: 1 / -1; }
+.slider { display: flex; align-items: center; gap: 14px; min-width: 260px; }
+.slider i { position: relative; flex: 1; height: 4px; background: color-mix(in srgb, var(--premiere-text) 22%, transparent); }
+.slider i::before { content: ""; position: absolute; inset: 0 40% 0 0; background: var(--premiere-rose); }
+.slider i::after { content: ""; position: absolute; left: 60%; top: -7px; width: 18px; height: 18px; background: var(--premiere-text); border: 2px solid var(--premiere-rose); }
+.dropzone { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 14px 16px; border: 2px dashed color-mix(in srgb, var(--premiere-violet) 55%, transparent); background: color-mix(in srgb, var(--premiere-violet) 6%, transparent); }
+.swatches { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.sw { width: 34px; height: 34px; border: 2px solid var(--premiere-hard); box-shadow: 0 0 0 2px transparent; cursor: pointer; background: var(--c); }
+.sw[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--premiere-text); }
+.sw.custom { background: conic-gradient(var(--premiere-rose), var(--premiere-gold), var(--premiere-violet), var(--premiere-rose)); }
+code.block, .code { display: block; font: 13px/1.5 var(--font-mono); padding: 10px 14px; background: color-mix(in srgb, var(--premiere-hard) 80%, transparent); border: 1px solid var(--hair); overflow-wrap: anywhere; }
+.code.big { font-size: 26px; letter-spacing: .3em; text-align: center; padding: 16px; color: var(--premiere-gold); }
+.urlbar { display: flex; gap: 10px; align-items: center; font: 13px var(--font-mono); padding: 10px 14px; background: color-mix(in srgb, var(--premiere-hard) 80%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent); overflow-wrap: anywhere; }
+.urlbar svg { width: 14px; height: 14px; color: var(--premiere-gold); flex: none; }
+
+/* Theme cards */
+.theme { display: grid; gap: 10px; padding: 0; cursor: default; align-content: start; }
+.theme .pv { height: 74px; border-bottom: 1px solid var(--hair); background: linear-gradient(110deg, var(--a) 0 34%, var(--b) 34% 62%, var(--c) 62%); position: relative; }
+.theme .pv::after { content: ""; position: absolute; left: 12px; bottom: 10px; width: 46px; height: 8px; background: var(--c2, var(--premiere-text)); opacity: .85; }
+.theme .bd { padding: 0 0 16px; display: grid; gap: 8px; align-content: start; }
+.theme h3 { display: flex; align-items: center; gap: 10px; }
+.theme .meta { font-size: 13px; color: var(--dim); }
+.theme .grants { font: 12px/1.6 var(--font-mono); color: var(--dim); overflow-wrap: anywhere; }
+.theme[aria-checked="true"] .pv { box-shadow: inset 0 -4px 0 var(--premiere-rose); }
+.panel .theme[aria-checked="true"] { border-top: 0; }
+.theme .pick { all: unset; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; font: 600 13px var(--font-ui); }
+.theme .pick::before { content: ""; width: 16px; height: 16px; border: 2px solid var(--premiere-text); border-radius: 50%; }
+.theme[aria-checked="true"] .pick::before { background: var(--premiere-rose); border-color: var(--premiere-rose); box-shadow: inset 0 0 0 3px var(--premiere-hard); }
+.review { border-left: 3px solid var(--premiere-gold); padding: 6px 0 6px 18px; display: grid; gap: 10px; }
+.review ul { padding-left: 18px; font-size: 14px; color: var(--soft); }
+
+/* Layout picker cards */
+.lay { padding: 0; overflow: hidden; cursor: pointer; }
+.lay img { width: 100%; display: block; aspect-ratio: 16 / 8; object-fit: cover; border-bottom: 1px solid var(--hair); }
+.lay .bd { padding: 14px 16px; display: flex; gap: 10px; align-items: center; }
+.lay[aria-checked="true"] { border-color: var(--premiere-rose); box-shadow: 5px 5px var(--premiere-rose); }
+.lay .ck { margin-left: auto; width: 22px; height: 22px; border: 2px solid var(--dim); display: grid; place-items: center; font-size: 13px; }
+.lay[aria-checked="true"] .ck { border-color: var(--premiere-text); background: var(--premiere-rose); }
+
+/* Stage lights hero */
+.lights { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; background: linear-gradient(90deg, color-mix(in srgb, var(--premiere-violet) 16%, transparent), color-mix(in srgb, var(--premiere-rose) 8%, transparent)), color-mix(in srgb, var(--premiere-hard) 70%, transparent); }
+.lights h3 { font: 700 20px var(--font-fancy); margin-bottom: 4px; }
+.lights .new { font: 700 12px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--premiere-hard); background: var(--premiere-gold); padding: 2px 8px; margin-left: 10px; vertical-align: middle; }
+.lights .seg span { padding: 10px 20px; font-size: 14px; }
+.lights ul { margin: 10px 0 0 18px; font-size: 13px; color: var(--dim); }
+
+/* Tiles and proof (Security, Backups) */
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.tile { padding: 16px 18px; }
+.tile .k { font: 600 12px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); }
+.tile .v { font: 600 20px/1.3 var(--font-ui); margin-top: 8px; }
+.proof { list-style: none; padding: 0; display: grid; gap: 8px; }
+.proof li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: baseline; font-size: 15px; }
+.proof .pm { display: inline-grid; place-items: center; width: 22px; height: 22px; font: 700 14px var(--font-ui); color: var(--premiere-gold); }
+.proof .not .pm { color: var(--rose-lt); }
+.proof .not { color: var(--soft); }
+.item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--hair); }
+.item:last-child { border-bottom: 0; }
+.item .t { font-weight: 600; }
+.item .m { font-size: 13px; color: var(--dim); }
+.item .m .num { font-size: 13px; }
+.notice { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; padding: 14px 16px; border: 0; border-left: 3px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-hard) 40%, transparent); }
+.notice.danger { border-left-color: var(--premiere-rose); }
+.notice + .notice { margin-top: 10px; }
+.meter { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; max-width: 320px; margin: 12px 0 6px; }
+.meter span { height: 8px; background: color-mix(in srgb, var(--premiere-text) 15%, transparent); }
+.meter span.lit { background: var(--premiere-gold); }
+.prompt { max-width: 560px; border-color: var(--premiere-gold); }
+.prompt .act { font: 600 12px var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); }
+.prompt h3 { font: 700 24px/1.15 var(--font-fancy); margin: 8px 0 10px; }
+.prompt h3 em { font-style: normal; color: color-mix(in srgb, var(--deck-character) 60%, white); }
+.prompt p { font-size: 14px; color: var(--soft); margin-bottom: 14px; }
+
+/* Provider and server cards */
+.prov { display: grid; gap: 10px; align-content: start; }
+.prov.active { border-color: var(--premiere-rose); box-shadow: 5px 5px var(--premiere-rose); }
+.prov .top { display: flex; gap: 10px; align-items: center; }
+.prov .top .pick { all: unset; cursor: pointer; display: inline-flex; gap: 10px; align-items: center; font: 700 17px var(--font-ui); }
+.prov .top .pick::before { content: ""; width: 18px; height: 18px; border: 2px solid var(--premiere-text); border-radius: 50%; flex: none; }
+.prov.active .pick::before { background: var(--premiere-rose); border-color: var(--premiere-rose); box-shadow: inset 0 0 0 4px var(--premiere-hard); }
+.prov .tested { font-size: 13px; color: var(--premiere-gold); min-height: 1.3em; }
+.addcard { display: grid; place-items: center; min-height: 160px; border: 2px dashed color-mix(in srgb, var(--premiere-rose) 60%, transparent); background: color-mix(in srgb, var(--premiere-rose) 5%, transparent); }
+
+/* Spotify steps */
+.step { display: grid; gap: 12px; align-content: start; }
+.step .n { font: 700 34px/1 var(--font-fancy); color: var(--premiere-gold); }
+
+/* Updates */
+.behind { display: flex; gap: 28px; align-items: center; }
+.behind .big { font: 700 96px/1 var(--font-fancy); color: var(--rose-lt); text-shadow: 0 2px 40px color-mix(in srgb, var(--premiere-rose) 50%, transparent); }
+.ver { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 8px 20px; padding: 16px 0; border-bottom: 1px solid var(--hair); align-items: start; }
+.ver:last-child { border-bottom: 0; }
+.ver.here { background: linear-gradient(90deg, color-mix(in srgb, var(--premiere-gold) 14%, transparent), transparent); margin: 0 -20px; padding-inline: 20px; }
+.ver .vtag { font: 700 18px var(--font-mono); color: var(--premiere-gold); }
+.ver .vname { font-weight: 600; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.ver .vmeta { font-size: 13px; color: var(--dim); margin-top: 2px; }
+.log { margin-top: 8px; display: grid; gap: 4px; font-size: 13px; }
+.log div { display: grid; grid-template-columns: 76px 1fr; gap: 10px; }
+.log .num { color: var(--premiere-gold); }
+.jump { font: 700 22px var(--font-mono); margin: 8px 0 12px; }
+
+/* Remote access */
+.devs { margin-top: 16px; border-top: 1px solid var(--hair); }
+.devs .dt { font: 600 12px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); padding: 12px 0 2px; }
+.masked [data-mask] { filter: blur(6px); user-select: none; }
+.eye[aria-pressed="true"] { border-color: var(--premiere-gold); }
+
+/* Copies list */
+.copy { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 16px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--hair); }
+.copy:last-of-type { border-bottom: 0; }
+
+/* Wireframe-only chrome: state previews */
+.wf-states { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; padding: 8px 12px; border: 1px dashed color-mix(in srgb, var(--premiere-gold) 55%, transparent); font-size: 13px; color: var(--dim); }
+.wf-states b { color: var(--premiere-gold); font-weight: 600; margin-right: 4px; }
+.wf-states button { all: unset; cursor: pointer; padding: 4px 10px; font: 600 12px var(--font-ui); border: 1px solid var(--hair); color: var(--soft); }
+.wf-states button[aria-pressed="true"] { border-color: var(--premiere-gold); color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-gold) 18%, transparent); }
+.wf-states button:focus-visible { outline: 2px solid var(--premiere-gold); }
+
+@media (max-width: 1100px) { .grid3, .grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .tiles { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; gap: 20px; }
+  .rail { position: static; display: flex; flex-wrap: wrap; gap: 6px; padding: 12px; }
+  .rail .act { width: 100%; padding: 8px 4px 2px; }
+  .rail button { width: auto; border: 1px solid var(--hair); border-left-width: 1px; padding: 8px 12px; font-size: 14px; }
+  .rail button[aria-current="page"] { border-color: var(--premiere-rose); }
+  .rail svg { margin-left: 4px; }
+}
+@media (max-width: 720px) {
+  .grid2, .grid3, .grid4, .formgrid { grid-template-columns: 1fr; }
+  .playbill { grid-template-columns: 1fr; }
+  .playbill .actions { grid-column: 1; grid-row: auto; flex-wrap: wrap; }
+  .row { grid-template-columns: 1fr; }
+  .row > .ctl, .row .hint { grid-column: 1; grid-row: auto; justify-content: flex-start; }
+  .item, .notice, .copy { grid-template-columns: 1fr; }
+  .lights { grid-template-columns: 1fr; }
+  .ver { grid-template-columns: 1fr; }
+  .behind { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .behind .big { font-size: 72px; }
+  .select { min-width: 0; width: 100%; }
+  .slider { min-width: 0; width: 100%; }
+  .legend { padding: 24px 16px 48px; }
+  .wf-note { padding: 12px 16px; }
+  .code.big { font-size: 20px; letter-spacing: .2em; }
+}
+
+/* Restyle pass: compact room header, rail with live status lines, working Stage lights */
+.playbill h1 { font-size: clamp(28px, 3vw, 40px); }
+.playbill { padding-bottom: 18px; margin-bottom: 22px; }
+.rail .lb { display: grid; gap: 2px; min-width: 0; }
+.rail .lb small { font: 400 12px/1.3 var(--font-ui); color: var(--dim); letter-spacing: 0; }
+.rail button[aria-current="page"] .lb small { color: var(--premiere-gold); }
+.rail button { transition: background .2s ease, transform .2s ease, border-color .2s ease; }
+.rail button:hover { transform: translateX(3px); }
+.rail svg { align-self: center; }
+@media (prefers-reduced-motion: reduce) { .rail button { transition: none; } .rail button:hover { transform: none; } }
+/* one frame per group */
+.tab .panel:not(.prompt):not(.panel .panel) { background: none !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none !important; padding: 28px 0 8px !important; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.tab .panel:not(.prompt):not(.panel .panel):first-of-type { border-top: 0 !important; padding-top: 8px !important; }
+.vault { background: none !important; border: 0 !important; border-left: 3px solid var(--premiere-gold) !important; margin: 0 0 18px !important; padding: 4px 0 4px 12px !important; }
+/* end one frame */
+</style></head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="lock" viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z" fill="none" stroke="currentColor" stroke-width="2"/></symbol></svg>
+<div class="wf-note">WIREFRAME. Settings in the Premiere house style. Numbered callouts are explained below. Gold dashed bars labelled "Preview state" are wireframe-only switches for states the real room reaches on its own.</div>
+<div class="stage"><main class="room" id="room">
+
+<header class="playbill">
+  <div class="kicker left">Bunraku &middot; Preferences <span class="co">1</span></div>
+  <h1>Settings</h1>
+  <p class="lede">Every knob for the whole studio. Changes apply the moment you make them: no apply button, no restart.</p>
+  <div class="actions"><span class="status-chip" id="statusline" role="status">appearance</span><button class="btn" type="button">Reload Studio</button></div>
+</header>
+
+<div class="shell">
+<nav class="rail panel" aria-label="Settings sections" data-deck="preset" id="rail">
+  <span class="co" style="margin:0 0 6px 12px">2</span>
+  <div class="act">Your studio</div>
+  <button type="button" data-tab="appearance" aria-current="page"><span class="lb"><span>Appearance</span><small>RoleCall, 5 themes</small></span></button>
+  <button type="button" data-tab="studio"><span class="lb"><span>Studio</span><small>Opens in Library</small></span></button>
+  <button type="button" data-tab="workbench"><span class="lb"><span>Workbench</span><small>Autosave off</small></span></button>
+  <button type="button" data-tab="memory"><span class="lb"><span>Memory &amp; Summaries</span><small>Summaries off</small></span></button>
+  <div class="act">The agent</div>
+  <button type="button" data-tab="models"><span class="lb"><span>Models</span><small>3 models, 1 in use</small></span><svg aria-label="Protected"><use href="#lock"/></svg></button>
+  <button type="button" data-tab="connections"><span class="lb"><span>Connections</span><small>2 servers</small></span><svg aria-label="Protected"><use href="#lock"/></svg></button>
+  <button type="button" data-tab="spotify"><span class="lb"><span>Spotify</span><small>Not connected</small></span><svg aria-label="Protected"><use href="#lock"/></svg></button>
+  <div class="act">The vault</div>
+  <button type="button" data-tab="security"><span class="lb"><span>Security</span><small>Password on</small></span><svg aria-label="Protected"><use href="#lock"/></svg></button>
+  <button type="button" data-tab="backups"><span class="lb"><span>Backups</span><small>Last copy 11 min ago</small></span><svg aria-label="Protected"><use href="#lock"/></svg></button>
+  <div class="act">The house</div>
+  <button type="button" data-tab="remote"><span class="lb"><span>Remote access</span><small>Off</small></span><svg aria-label="Protected"><use href="#lock"/></svg></button>
+  <button type="button" data-tab="updates"><span class="lb"><span>Updates</span><small>2 behind</small></span></button>
+  <button type="button" data-tab="about"><span class="lb"><span>About</span><small>v0.14.0</small></span></button>
+</nav>
+
+<div class="page">
+
+<!-- ============ APPEARANCE ============ -->
+<section class="tab stack" id="t-appearance" data-label="appearance">
+  <div class="pghead"><div class="kicker left">Your studio</div><h2>How it <em>looks</em></h2><p>Theme, your color, the chat layout, the stage lights and the accessibility knobs. Each one applies live.</p></div>
+
+  <div class="panel protected" data-deck="preset" aria-labelledby="th-h">
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Theme packages are inert descriptors, never styles or code. Every power one uses is listed for you to approve, and this panel cannot be restyled.</span> <span class="co">4</span></div>
+    <h2 class="sec" id="th-h">Theme packages <span class="co">5</span></h2>
+    <p class="sec-note">Requested appearance. Pick one to request it; it applies only when the host confirms its current permission.</p>
+    <div class="state-line" role="status" style="margin-bottom:14px"><span class="dot on"></span>Effective: RoleCall.</div>
+    <div class="grid3" role="radiogroup" aria-label="Requested appearance">
+      <article class="panel theme" role="radio" aria-checked="false" tabindex="0">
+        <div class="pv" style="--a:var(--deck-pack);--b:var(--deck-regex);--c:var(--deck-lorebook);--c2:var(--premiere-hard)"></div>
+        <div class="bd"><h3>GirliePop <span class="chip ok">Bundled</span></h3><div class="meta">Bundled &middot; enabled</div>
+          <div class="grants">appearance.accent &middot; appearance.assets &middot; appearance.palette &middot; appearance.shape &middot; appearance.surfaces &middot; appearance.type</div>
+          <div class="acts"><button class="pick" type="button">Request</button><button class="btn sm" type="button">Disable</button><button class="btn sm danger" type="button">Revoke grants</button></div></div>
+      </article>
+      <article class="panel theme" role="radio" aria-checked="false" tabindex="0">
+        <div class="pv" style="--a:var(--premiere-text);--b:color-mix(in srgb,var(--premiere-text) 82%,var(--premiere-gold));--c:color-mix(in srgb,var(--premiere-text) 65%,var(--premiere-violet));--c2:var(--premiere-hard)"></div>
+        <div class="bd"><h3>Paper <span class="chip ok">Bundled</span></h3><div class="meta">Bundled &middot; enabled</div>
+          <div class="grants">appearance.accent &middot; appearance.palette &middot; appearance.shape &middot; appearance.surfaces &middot; appearance.type</div>
+          <div class="acts"><button class="pick" type="button">Request</button><button class="btn sm" type="button">Disable</button><button class="btn sm danger" type="button">Revoke grants</button></div></div>
+      </article>
+      <article class="panel theme" role="radio" aria-checked="true" tabindex="0">
+        <div class="pv" style="--a:var(--premiere-canvas);--b:color-mix(in srgb,var(--premiere-violet) 40%,var(--premiere-canvas));--c:var(--premiere-rose)"></div>
+        <div class="bd"><h3>RoleCall <span class="chip ok">Bundled</span> <span class="chip warn">Requested</span></h3><div class="meta">Bundled &middot; enabled</div>
+          <div class="grants">appearance.accent &middot; appearance.palette &middot; appearance.shape &middot; appearance.surfaces &middot; appearance.type</div>
+          <div class="acts"><button class="pick" type="button">Requested</button><button class="btn sm" type="button">Disable</button><button class="btn sm danger" type="button">Revoke grants</button></div></div>
+      </article>
+      <article class="panel theme" role="radio" aria-checked="false" tabindex="0">
+        <div class="pv" style="--a:color-mix(in srgb,var(--premiere-violet) 55%,var(--premiere-hard));--b:var(--premiere-gold);--c:var(--premiere-hard)"></div>
+        <div class="bd"><h3>Moonlit Quartet <span class="chip">Imported</span></h3><div class="meta">Imported &middot; enabled</div>
+          <div class="grants">appearance.palette &middot; appearance.fonts &middot; appearance.styles &middot; ui.slots</div>
+          <div class="acts"><button class="pick" type="button">Request</button><button class="btn sm" type="button">Disable</button><button class="btn sm danger" type="button">Revoke grants</button><button class="btn sm danger" type="button">Remove</button></div></div>
+      </article>
+      <article class="panel theme" role="radio" aria-checked="false" aria-disabled="true">
+        <div class="pv" style="--a:var(--premiere-gold);--b:color-mix(in srgb,var(--premiere-gold) 50%,var(--premiere-hard));--c:var(--premiere-hard);filter:grayscale(.7)"></div>
+        <div class="bd"><h3>Old Gold <span class="chip ok">Bundled</span></h3><div class="meta">Bundled &middot; disabled or revoked</div>
+          <div class="grants">No active grants</div>
+          <div class="acts"><button class="btn sm" type="button">Review and restore</button><button class="btn sm danger" type="button">Revoke grants</button></div></div>
+      </article>
+      <article class="panel theme" role="radio" aria-checked="false" aria-disabled="true">
+        <div class="pv" style="--a:var(--premiere-hard);--b:var(--premiere-hard);--c:color-mix(in srgb,var(--premiere-rose) 40%,var(--premiere-hard));filter:grayscale(.7)"></div>
+        <div class="bd"><h3>Burnt Velvet <span class="chip">Imported</span></h3><div class="meta">Imported &middot; disabled or revoked</div>
+          <div class="grants">This theme no longer passes checks: text contrast is too low. Remove it or install it again.</div>
+          <div class="acts"><button class="btn sm" type="button">Reinstall</button><button class="btn sm danger" type="button">Remove</button></div></div>
+      </article>
+    </div>
+
+    <h3 style="margin-top:26px">Shipped example, not active</h3>
+    <div class="item"><div><div class="t">Encore</div><div class="m">Shipped example &middot; not active</div></div>
+      <div class="acts"><button class="btn sm" type="button">Review example</button><button class="btn sm" type="button">Download package</button></div></div>
+
+    <h3 style="margin-top:22px">Inspect a theme package JSON</h3>
+    <div class="dropzone" style="margin-top:8px"><button class="btn" type="button">Choose a file</button><span class="dim">No file chosen. JSON only, up to 500 KB.</span></div>
+    <p class="sec-note" style="margin-top:10px">A package sets checked colors, fonts, shapes and screen layouts, and may add its own checked styles, fonts, images and slot content. It cannot run scripts, reach the network, or restyle this panel. Every power it uses is listed here for you to approve.</p>
+
+    <div class="review" aria-label="Theme approval review" style="margin-top:16px">
+      <h3>Review Moonlit Quartet 1.2.0</h3>
+      <div class="id dim">moonlit-quartet</div><div class="id dim">SHA-256 &middot; 9f3a61c0d7e84b25a1c9e0f3b7d24a68c5e1f09b3a7d6c4e8f2a0b1d3c5e7f90</div>
+      <ul><li>Set the app colors (contrast is checked)</li><li>Load its own typefaces</li><li>Restyle, hide, move or animate anything outside the lock and permission prompts</li><li>Place its own images and text in named spots across the app</li></ul>
+      <p class="small dim">Approval applies to this exact digest. A changed package needs a new review and approval.</p>
+      <div class="acts"><button class="btn sm primary" type="button">Approve and install</button><button class="btn sm quiet" type="button">Deny</button></div>
+    </div>
+    <div class="review" aria-label="Built-in theme restore review" style="margin-top:16px">
+      <h3>Restore Old Gold 1.0.3</h3><div class="id dim">old-gold</div>
+      <p class="small dim">This bundled appearance was revoked. Review the host-verified package digest and grants before restoring it. When the host package changed, this reads "Review update for", with "The host-verified package changed. Review its digest and grants before applying the update."</p>
+      <div class="id dim">SHA-256 &middot; 41be07a9c3d58f2e6b1a0c9d7e4f3a285b6c1d0e9f8a7b6c5d4e3f2a1b0c9d8e</div>
+      <ul><li>Set the app colors (contrast is checked)</li><li>Choose host fonts and a text size step</li></ul>
+      <div class="acts"><button class="btn sm primary" type="button">Approve restore</button><button class="btn sm quiet" type="button">Cancel</button></div>
+    </div>
+    <p class="note" role="status">Moonlit Quartet installed with explicit approval. Select it above to apply.</p>
+    <p class="problem" role="status">Installed themes are hidden until the theme state is repaired. (Shown only when the catalog reports a state error.)</p>
+  </div>
+
+  <div class="panel" data-deck="character">
+    <h2 class="sec">Your color</h2>
+    <div class="row"><div><b>Your color</b></div><p>The workspace accent. Bunraku builds the whole palette from it: this color for primary actions and highlights, and its two neighbours on the color wheel for selection and links. Entity colors stay independent.</p>
+      <div class="ctl"><div class="swatches" data-single>
+        <span class="sw" role="button" tabindex="0" data-accent="#e11d48" aria-label="Rose" style="--c:#e11d48"></span>
+        <span class="sw" role="button" tabindex="0" data-accent="#8b5cf6" aria-label="Violet" style="--c:#8b5cf6"></span>
+        <span class="sw" role="button" tabindex="0" data-accent="#c59a46" aria-label="Gold" style="--c:#c59a46"></span>
+        <span class="sw" role="button" tabindex="0" data-accent="#14b8a6" aria-label="Teal" style="--c:#14b8a6"></span>
+        <span class="sw" role="button" tabindex="0" data-accent="#38bdf8" aria-label="Sky" style="--c:#38bdf8"></span>
+        <span class="sw" role="button" tabindex="0" data-accent="#f08a64" aria-label="Peach" style="--c:#f08a64"></span>
+        <span class="sw custom" role="button" tabindex="0" aria-pressed="false" aria-label="Custom color"></span>
+      </div></div></div>
+  </div>
+
+  <div>
+    <h2 class="sec">Chat layout</h2><p class="sec-note">How every chat is laid out.</p>
+    <div class="grid2" role="radiogroup" aria-label="Chat layout" data-single-card>
+      <article class="panel lay" role="radio" aria-checked="true" tabindex="0"><img src="../../../docs/media/chat-layouts/full-chat.jpg" alt="Full Chat layout"><div class="bd"><b>Full Chat</b><span class="dim small">Conversation, character details and trackers together.</span><span class="ck">&#10003;</span></div></article>
+      <article class="panel lay" role="radio" aria-checked="false" tabindex="0"><img src="../../../docs/media/chat-layouts/messenger.jpg" alt="Messenger layout"><div class="bd"><b>Messenger</b><span class="dim small">Recent characters, your profile and one settings workspace.</span><span class="ck"></span></div></article>
+    </div>
+  </div>
+
+  <div class="panel lights" data-deck="persona">
+    <div>
+      <h3>Stage lights <span class="new">New</span> <span class="co">6</span></h3>
+      <p class="small dim" style="max-width:62ch">The light rays on the title screen and the scene chooser. Moving follows your pointer a little; Still paints one frame; Off leaves the plain dark stage.</p>
+      <ul><li>Rays freeze on their own when the window is unfocused, you have been idle, or a reply is streaming.</li><li>Applies live, in every app.</li></ul>
+    </div>
+    <div class="seg" role="radiogroup" aria-label="Stage lights" data-lights><span role="radio" tabindex="0" aria-pressed="true">Moving</span><span role="radio" tabindex="0" aria-pressed="false">Still</span><span role="radio" tabindex="0" aria-pressed="false">Off</span></div>
+  </div>
+
+  <div class="panel" data-deck="regex">
+    <h2 class="sec">Accessibility</h2>
+    <div class="row"><div><b>Interface text size</b></div><p>Never below 12 px.</p><div class="ctl"><div class="slider"><i></i><span class="num">16 px</span></div></div></div>
+    <div class="row"><div><b>Reduce motion</b></div><p>Turns off slides and the lift on buttons.</p><div class="ctl"><span class="switch" role="switch" tabindex="0" aria-checked="false" aria-label="Reduce motion"></span></div></div>
+    <div class="row"><div><b>High contrast edges</b></div><p>Stronger borders on rows and controls.</p><div class="ctl"><span class="switch on" role="switch" tabindex="0" aria-checked="true" aria-label="High contrast edges"></span></div></div>
+  </div>
+</section>
+
+<!-- ============ STUDIO ============ -->
+<section class="tab stack" id="t-studio" data-label="studio" hidden>
+  <div class="pghead"><div class="kicker left">Your studio</div><h2>The <em>studio</em></h2><p>Where Bunraku opens, what the Library shows first, where you publish, and the engines this machine has.</p></div>
+  <div class="panel" data-deck="character">
+    <h2 class="sec">Home</h2><p class="sec-note">The room Bunraku opens in when you start it.</p>
+    <div class="seg wrap" role="radiogroup" aria-label="Home"><span role="radio" tabindex="0" aria-pressed="false">Workbench</span><span role="radio" tabindex="0" aria-pressed="true">Library</span><span role="radio" tabindex="0" aria-pressed="false">Scenes</span><span role="radio" tabindex="0" aria-pressed="false">Press</span><span role="radio" tabindex="0" aria-pressed="false">CSS Workshop</span><span role="radio" tabindex="0" aria-pressed="false">Agent</span><span role="radio" tabindex="0" aria-pressed="false">Macro Lab</span></div>
+  </div>
+  <div class="panel" data-deck="lorebook">
+    <h2 class="sec">Library opens on</h2><p class="sec-note">The deck you see first when you visit the shelves.</p>
+    <div class="seg wrap" role="radiogroup" aria-label="Library opens on"><span role="radio" tabindex="0" aria-pressed="true">Characters</span><span role="radio" tabindex="0" aria-pressed="false">Lorebooks</span><span role="radio" tabindex="0" aria-pressed="false">Personas</span><span role="radio" tabindex="0" aria-pressed="false">Packs</span><span role="radio" tabindex="0" aria-pressed="false">Presets</span><span role="radio" tabindex="0" aria-pressed="false">Regex sets</span><span role="radio" tabindex="0" aria-pressed="false">Quick replies</span><span role="radio" tabindex="0" aria-pressed="false">Prompt formats</span></div>
+  </div>
+  <div class="panel" data-deck="pack">
+    <h2 class="sec">You publish to</h2><p class="sec-note">Pick any that fit. Every format stays ready either way.</p>
+    <div class="acts" role="group" aria-label="You publish to"><span class="chip" role="button" tabindex="0" aria-pressed="true">Agnai</span><span class="chip" role="button" tabindex="0" aria-pressed="false">Chub</span><span class="chip" role="button" tabindex="0" aria-pressed="true">JanitorAI</span><span class="chip" role="button" tabindex="0" aria-pressed="false">Marinara</span><span class="chip" role="button" tabindex="0" aria-pressed="true">RoleCall</span><span class="chip" role="button" tabindex="0" aria-pressed="false">SillyTavern</span></div>
+  </div>
+  <div class="panel" data-deck="preset">
+    <h2 class="sec">Engines on this machine</h2><p class="sec-note">Rendering a macro through another tool's own engine needs a copy of it on disk. Paste the folder's path and press Save; the answer comes from looking for the engine's own file inside it. Kit uses the same folders.</p>
+    <div class="row"><div><b>SillyTavern</b></div><p>The folder holding SillyTavern's install. Kit uses it too.</p>
+      <div class="ctl" style="display:grid;min-width:min(480px,100%)"><input class="field mono" value="C:\Users\chiev\Documents\SillyTavern" aria-label="SillyTavern folder" spellcheck="false"><div class="acts"><button class="btn sm" type="button">Save</button><button class="btn sm quiet" type="button">Clear</button><span class="state-line"><span class="dot on"></span>in use</span></div></div></div>
+    <div class="row"><div><b>Marinara</b></div><p>Set by MARINARA_ROOT for this run, so the folder below is not being used. Unset the variable to go back to the saved one.</p>
+      <div class="ctl" style="display:grid;min-width:min(480px,100%)"><input class="field mono off" value="D:\engines\marinara" aria-label="Marinara folder" disabled><div class="acts"><button class="btn sm off" type="button">Save</button><button class="btn sm quiet off" type="button">Clear</button><span class="state-line"><span class="dot on"></span>in use, from MARINARA_ROOT</span></div><div class="id dim">D:\engines\marinara-dev</div></div></div>
+    <div class="row"><div><b>Other engine, never set</b></div><p>The folder holding that engine. Kit uses it too. (Two more states: "saved, but nothing is there now", and "MARINARA_ROOT is set but no engine is there".)</p>
+      <div class="ctl" style="display:grid;min-width:min(480px,100%)"><input class="field mono" placeholder="paste the folder's path" aria-label="Engine folder"><div class="acts"><button class="btn sm" type="button">Save</button><span class="state-line"><span class="dot"></span>not set</span></div><span class="small dim">saved</span></div></div>
+  </div>
+</section>
+
+<!-- ============ WORKBENCH ============ -->
+<section class="tab stack" id="t-workbench" data-label="workbench" hidden>
+  <div class="pghead"><div class="kicker left">Your studio</div><h2>The <em>workbench</em></h2><p>How the editors save, reopen and lay themselves out. Layout and fill-in changes land the next time a character is opened.</p></div>
+  <div class="grid2">
+    <div class="panel" data-deck="preset"><h3>Autosave</h3><p class="small dim" style="margin:6px 0 14px">Save half a second after you stop typing. Ctrl+S still works, and still saves at once.</p><div class="seg" role="radiogroup" aria-label="Autosave"><span role="radio" tabindex="0" aria-pressed="true">Off</span><span role="radio" tabindex="0" aria-pressed="false">On</span></div></div>
+    <div class="panel" data-deck="preset"><h3>Reopen where you left off</h3><p class="small dim" style="margin:6px 0 14px">Restore the pieces you had open, and which one you were editing, after a restart or a crash.</p><div class="seg" role="radiogroup" aria-label="Reopen where you left off"><span role="radio" tabindex="0" aria-pressed="true">Off</span><span role="radio" tabindex="0" aria-pressed="false">On</span></div></div>
+    <div class="panel" data-deck="character"><h3>Editor layout</h3><p class="small dim" style="margin:6px 0 14px">Bento shows every field at once; Playbill turns them into acts you page through.</p><div class="seg" role="radiogroup" aria-label="Editor layout"><span role="radio" tabindex="0" aria-pressed="true">Bento</span><span role="radio" tabindex="0" aria-pressed="false">Playbill</span></div></div>
+    <div class="panel" data-deck="character"><h3>How you fill it in</h3><p class="small dim" style="margin:6px 0 14px">Grid shows every field to edit directly; Steps walks you through like a quiz.</p><div class="seg" role="radiogroup" aria-label="How you fill it in"><span role="radio" tabindex="0" aria-pressed="true">Grid</span><span role="radio" tabindex="0" aria-pressed="false">Steps</span></div></div>
+  </div>
+  <div class="panel" data-deck="pack"><h3>After sending a piece</h3><p class="small dim" style="margin:6px 0 14px">Follow it to the Workbench, stay where you are, or ask every time.</p><div class="seg" role="radiogroup" aria-label="After sending a piece"><span role="radio" tabindex="0" aria-pressed="true">Ask me</span><span role="radio" tabindex="0" aria-pressed="false">Always follow</span><span role="radio" tabindex="0" aria-pressed="false">Stay</span></div></div>
+</section>
+
+<!-- ============ MEMORY ============ -->
+<section class="tab stack" id="t-memory" data-label="memory &amp; summaries" hidden>
+  <div class="pghead"><div class="kicker left">Your studio</div><h2>Memory &amp; <em>summaries</em></h2><p>The chat-summary settings a scene starts with. These apply to scenes you start from now on. A scene already started keeps its own settings (Context wing, Memory).</p></div>
+  <div class="problem" role="alert" id="mem-unreadable" hidden>The saved defaults could not be read, so the built-in ones are shown. Changing a setting here replaces them.</div>
+  <div class="problem" role="alert" id="mem-problem" hidden>That value could not be saved. (Shown when a number is past its limit; nothing is saved.)</div>
+  <div class="panel" data-deck="lorebook">
+    <div class="row"><div><b>Automatic summaries</b></div><p>Create a summary on its own. Turning it on summarizes every 20 messages.</p><div class="ctl"><div class="seg"><span role="radio" tabindex="0" aria-pressed="false">Off</span><span role="radio" tabindex="0" aria-pressed="true">On</span></div></div></div>
+    <div class="row"><div><b>Summarize every</b></div><p>The number of messages between automatic recaps. Zero turns automatic summaries off. (Hidden for the Every exchange method.)</p><div class="ctl"><input class="field sm num" value="20" aria-label="Summarize every"></div></div>
+    <div class="row"><div><b>Include saved summary in AI context</b></div><p>Send the saved summary to the model with each reply.</p><div class="ctl"><div class="seg"><span role="radio" tabindex="0" aria-pressed="false">Off</span><span role="radio" tabindex="0" aria-pressed="true">On</span></div></div></div>
+    <div class="row"><div><b>Hide messages already covered</b></div><p>Older messages the summary covers leave future prompts but stay in the scene. Needs the summary to be sent.</p><div class="ctl"><div class="seg"><span role="radio" tabindex="0" aria-pressed="false">Off</span><span role="radio" tabindex="0" aria-pressed="true">On</span></div></div></div>
+    <div class="row"><div><b>Keep recent messages visible to AI</b></div><p>The newest messages kept word for word beside the summary. (Shown only while hiding is on.)</p><div class="ctl"><input class="field sm num" value="12" aria-label="Keep recent messages visible to AI"></div></div>
+    <div class="row"><div><b>Summary method</b></div><p>Rolling recap rewrites one block, Growing timeline extends it, Every exchange adds a line after each reply.</p><div class="ctl"><div class="seg wrap"><span role="radio" tabindex="0" aria-pressed="true">Rolling recap</span><span role="radio" tabindex="0" aria-pressed="false">Growing timeline</span><span role="radio" tabindex="0" aria-pressed="false">Every exchange</span></div></div></div>
+    <div class="row"><div><b>Temperature</b></div><p>Lower values make recaps steadier; higher values allow looser wording.</p><div class="ctl"><input class="field sm num" value="0.3" aria-label="Temperature"></div></div>
+    <div class="row"><div><b>Max output tokens</b></div><p>The most a summary may use.</p><div class="ctl"><input class="field sm num" value="1200" aria-label="Max output tokens"></div></div>
+    <div style="padding-top:16px"><button class="btn sm" type="button" id="mem-reset">Back to built-in defaults</button></div>
+  </div>
+  <div class="wf-states" data-for-mem><b>Preview state</b><button type="button" data-memst="unreadable">Unreadable defaults</button><button type="button" data-memst="problem">Refused value</button><button type="button" data-memst="none" aria-pressed="true">None</button></div>
+</section>
+
+<!-- ============ MODELS ============ -->
+<section class="tab stack stateful" id="t-models" data-label="models" data-state="normal" hidden>
+  <div class="pghead"><div class="kicker left">The agent</div><h2>The <em>cast</em> of models</h2><p>Which models this studio can reach, and which one it uses. Shared with Kit in the terminal: adding one here adds it there.</p></div>
+  <div class="wf-states"><b>Preview state</b><button data-s="normal" aria-pressed="true">Providers saved</button><button data-s="empty">No models yet</button><button data-s="notice">Vault could not be recovered</button> <span class="co">8</span></div>
+  <div class="panel protected" data-deck="preset">
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> A key goes in and never comes back: the field is always empty, and blank means "keep the one you have". Host only.</span></div>
+    <p class="note" data-st="notice">The saved model vault could not be recovered, so the list below is empty. Nothing was deleted from disk. (The server words this notice; it is never swallowed.)</p>
+    <div class="grid3" data-st="normal" style="margin-top:6px">
+      <article class="panel prov active"><div class="top"><button class="pick" type="button" aria-pressed="true">Claude subscription</button><span class="chip ok">In use</span></div><div class="id">claude-sonnet-5-5</div><div class="acts"><span class="chip">no key</span><span class="chip ok">Let Kit make changes: on</span></div><div class="tested">Works, answered in 1.2 s</div><div class="acts"><button class="btn sm" type="button">Test</button><button class="btn sm" type="button">Edit</button><button class="btn sm danger" type="button">Remove</button></div></article>
+      <article class="panel prov"><div class="top"><button class="pick" type="button">OpenRouter &middot; Work</button></div><div class="id">openai/gpt-5.1</div><div class="acts"><span class="chip ok">key saved</span></div><div class="tested">&nbsp;</div><div class="acts"><button class="btn sm" type="button">Test</button><button class="btn sm" type="button">Edit</button><button class="btn sm danger" type="button">Remove</button></div></article>
+      <article class="panel prov"><div class="top"><button class="pick" type="button">Local &middot; LM Studio</button></div><div class="id">qwen3-30b-a3b</div><div class="acts"><span class="chip">no key</span></div><div class="tested" style="color:var(--rose-lt)">No answer: connection refused</div><div class="acts"><button class="btn sm" type="button">Test</button><button class="btn sm" type="button">Edit</button><button class="btn sm danger" type="button">Remove</button></div></article>
+    </div>
+    <div class="empty" data-st="empty notice" hidden>No models connected yet.</div>
+    <div style="margin-top:18px"><button class="btn primary" type="button" data-open="#model-form">Add a model</button></div>
+    <div id="model-form" class="panel tight" hidden style="margin-top:18px">
+      <h3 style="margin-bottom:14px">Add a model</h3>
+      <div class="formgrid">
+        <label class="f">Provider<span class="field select">OpenRouter</span></label>
+        <label class="f">Model<span class="field select">openai/gpt-5.1 <span class="dim small">list from the provider; ends with "Type an id..."</span></span></label>
+        <label class="f">Let Kit make changes this session<span class="field select">Ask each time</span></label>
+        <label class="f">Name (optional)<input class="field" placeholder="Personal, Work"></label>
+        <label class="f">Base URL (providers that need one)<input class="field mono" placeholder="http://localhost:1234/v1"></label>
+        <label class="f">API key<input class="field" type="password" autocomplete="off" placeholder="paste your key (editing: leave blank to keep the saved key)"></label>
+      </div>
+      <div class="acts" style="margin-top:16px"><button class="btn primary" type="button">Save</button><button class="btn quiet" type="button" data-close="#model-form">Cancel</button></div>
+      <p class="problem">Pick a model before saving. (Shown when a draft is refused or a request fails.)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONNECTIONS ============ -->
+<section class="tab stack stateful" id="t-connections" data-label="connections" data-state="normal" hidden>
+  <div class="pghead"><div class="kicker left">The agent</div><h2><em>Connections</em></h2><p>MCP in both directions: servers this machine runs so their tools join Kit's belt, and Bunraku's own belt for any MCP client.</p></div>
+  <div class="wf-states"><b>Preview state</b><button data-s="normal" aria-pressed="true">Servers saved</button><button data-s="empty">No servers yet</button><button data-s="rejected">Rejected config lines</button></div>
+  <div class="panel protected" data-deck="regex">
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> An entry is a command this machine executes. Host only; environment values go in and never come back, only key names do. Every external tool asks at the Gate before it runs.</span></div>
+    <h2 class="sec">MCP servers</h2><p class="sec-note">Programs this machine runs so their tools join Kit's belt. Every external tool asks at the Gate before it runs.</p>
+    <p class="problem" data-st="rejected">servers.json line 7: command is missing, so "scratch-pad" was skipped.</p>
+    <div class="grid2" data-st="normal rejected">
+      <article class="panel prov"><div class="top"><b style="font-size:17px">fetch-tools</b><span class="chip ok">9 tool(s)</span></div><code class="block">uvx mcp-server-fetch --ignore-robots-txt</code><div class="acts"><span class="chip">env: PROXY_URL</span></div><div class="tested">Connected, 9 tool(s)</div><div class="acts"><button class="btn sm" type="button">Test</button><button class="btn sm" type="button">Disable</button><button class="btn sm" type="button">Edit</button><button class="btn sm danger" type="button">Remove</button></div></article>
+      <article class="panel prov"><div class="top"><b style="font-size:17px">notes</b><span class="chip">off</span></div><code class="block">C:\tools\notes-mcp.exe --vault D:\notes</code><div class="tested">&nbsp;</div><div class="acts"><button class="btn sm" type="button">Test</button><button class="btn sm" type="button">Enable</button><button class="btn sm" type="button">Edit</button><button class="btn sm danger" type="button">Remove</button></div></article>
+      <article class="panel prov"><div class="top"><b style="font-size:17px">image-lab</b><span class="chip warn">spawn ENOENT</span></div><code class="block">python -m image_lab.server</code><div class="acts"><span class="chip">env: API_KEY, MODEL_DIR</span></div><div class="tested" style="color:var(--rose-lt)">3 tool(s), 1 malformed</div><div class="acts"><button class="btn sm" type="button">Test</button><button class="btn sm" type="button">Disable</button><button class="btn sm" type="button">Edit</button><button class="btn sm danger" type="button">Remove</button></div></article>
+    </div>
+    <div class="empty" data-st="empty" hidden>No servers connected yet.</div>
+    <div style="margin-top:18px"><button class="btn primary" type="button" data-open="#mcp-form">Add a server</button></div>
+    <div id="mcp-form" class="panel tight" hidden style="margin-top:18px">
+      <h3 style="margin-bottom:14px">Add a server</h3>
+      <div class="formgrid">
+        <label class="f">Name<input class="field" placeholder="my-tools"></label>
+        <label class="f">Command<input class="field mono" placeholder="C:\path\to\server.exe or uvx"></label>
+        <label class="f full">Arguments<input class="field mono" placeholder="--from git+https://... server-cmd"></label>
+        <label class="f full">Environment (KEY=VALUE per line)<textarea class="field mono" rows="3" spellcheck="false" placeholder="API_KEY=... (editing: leave blank to keep the saved values)"></textarea></label>
+      </div>
+      <div class="acts" style="margin-top:16px"><button class="btn primary" type="button">Save</button><button class="btn quiet" type="button" data-close="#mcp-form">Cancel</button></div>
+      <p class="problem">env lines are KEY=VALUE; "API_KEY" is not. (Shown when a line is refused; the Name is locked while editing.)</p>
+    </div>
+  </div>
+  <div class="panel protected" data-deck="persona">
+    <h2 class="sec">Bunraku as a server</h2><p class="sec-note">Point any MCP client at Bunraku's own belt: the library, catalogs and renderers. Your client asks before each tool runs.</p>
+    <code class="block">claude mcp add bunraku -- bunraku mcp "C:\Users\chiev\Documents\Studio"</code>
+  </div>
+</section>
+
+<!-- ============ SPOTIFY ============ -->
+<section class="tab stack stateful" id="t-spotify" data-label="spotify" data-state="no" hidden>
+  <div class="pghead"><div class="kicker left">The agent</div><h2>Spo<em>tify</em></h2><p>Control the Spotify app you already have open from the Stage wing: play, pause, skip, volume, and which device it plays on. Playback control needs Spotify Premium. Turn it on for a scene in the Props wing.</p></div>
+  <div class="wf-states"><b>Preview state</b><button data-s="no" aria-pressed="true">Not connected</button><button data-s="wait">Waiting for sign-in</button><button data-s="yes">Connected</button><button data-s="nopremium">Connected, no Premium</button><button data-s="err">Link error</button></div>
+  <div class="panel protected" data-deck="pack">
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> There is no shared key and no client secret. The sign-in is kept only in this computer's key vault, never in a preference, a log, an export or what a model sees.</span></div>
+    <div class="state-line" role="status" style="margin-bottom:16px"><span class="dot" data-st="no err"></span><span class="dot busy" data-st="wait" hidden></span><span class="dot on" data-st="yes nopremium" hidden></span>
+      <b data-st="no err">Not connected</b><b data-st="wait" hidden>Waiting for Spotify...</b><b data-st="yes" hidden>Connected as chibi_rabbit</b><b data-st="nopremium" hidden>Connected as chibi_rabbit, without Premium</b></div>
+    <div class="grid3">
+      <div class="panel tight step" data-deck="pack"><div class="n">1</div><h3>Client ID</h3><p class="small dim">Make an app at developer.spotify.com/dashboard and paste its Client ID (32 letters and digits). It is yours alone; Bunraku has no shared key. The sign-in is kept in this computer's key vault.</p><input class="field mono" value="0a1b2c3d4e5f60718293a4b5c6d7e8f9" spellcheck="false" aria-label="Spotify Client ID"></div>
+      <div class="panel tight step" data-deck="pack"><div class="n">2</div><h3>Redirect address</h3><p class="small dim">Add this to your Spotify app's Redirect URIs, exactly. Spotify allows a plain http address only for 127.0.0.1, and lets that address use any port, so it still works when Bunraku starts on another one.</p><code class="block">http://127.0.0.1/spotify/callback</code></div>
+      <div class="panel tight step" data-deck="pack"><div class="n">3</div><h3>Account</h3>
+        <p class="small dim" data-st="no wait err">Connect opens Spotify's sign-in in your browser. Bunraku sees only the playback state and the controls, never your password.</p>
+        <p class="small dim" data-st="yes nopremium" hidden>Disconnect forgets the sign-in on this computer. To take the app's access away at Spotify too, remove it at spotify.com/account/apps.</p>
+        <div class="acts" data-st="no err"><button class="btn primary" type="button">Connect</button></div>
+        <div class="acts" data-st="wait" hidden><button class="btn primary off" type="button">Connect</button></div>
+        <div class="acts" data-st="yes nopremium" hidden><button class="btn danger" type="button">Disconnect</button></div></div>
+    </div>
+    <p class="note" data-st="wait" hidden>A browser window opened to sign in to Spotify. Come back here when you are done.</p>
+    <p class="problem" data-st="err" hidden>could not read the Spotify link. (Shown when the status call or a connect fails.)</p>
+  </div>
+</section>
+
+<!-- ============ SECURITY ============ -->
+<section class="tab stack stateful" id="t-security" data-label="security" data-state="password" hidden>
+  <div class="wf-states"><b>Preview state</b><button data-s="password" aria-pressed="true">Password on</button><button data-s="nopassword">No password</button><button data-s="weak">Weak lock</button><button data-s="closed">Library not open</button></div>
+
+  <div class="panel protected" data-deck="persona" data-st="closed" hidden>
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Host only.</span></div>
+    <h3>Security</h3><p class="small dim" style="margin-top:6px">The library is not open. Security settings appear once it is. (When it could not open: "The library could not open, so there is nothing to lock yet." While reading: "Reading the library...")</p>
+  </div>
+
+  <div class="stack" data-st="password nopassword weak">
+    <div class="pghead" style="padding-bottom:6px"><div class="kicker left">Settings &middot; Security</div><h2>The stage <em>door</em> <span class="co">7</span></h2><p>Who gets in, and how.</p></div>
+    <div class="panel protected" data-deck="persona">
+      <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Every change goes through the library's host-only routes. A remote or LAN device sees none of this page. Passwords and your lines are asked for in a top-layer prompt, never typed into the page itself.</span></div>
+      <div class="tiles">
+        <div class="panel tile" data-deck="persona"><div class="k">The lock on this computer</div><div class="v"><span data-st="password">Your password</span><span data-st="nopassword" hidden>The system keychain</span><span data-st="weak" hidden>A key file</span></div></div>
+        <div class="panel tile" data-deck="persona"><div class="k">Password</div><div class="v"><span data-st="password">On</span><span data-st="nopassword weak" hidden>Off</span></div></div>
+        <div class="panel tile" data-deck="persona"><div class="k">Your lines</div><div class="v"><span data-st="password weak">Written Sep 24</span><span data-st="nopassword" hidden>Not written yet</span></div></div>
+      </div>
+      <ul class="proof" style="margin-top:20px">
+        <li><span class="pm">+</span><span>Everything you make is stored encrypted.</span></li>
+        <li data-st="password"><span class="pm">+</span><span>The library asks for your password before it opens.</span></li>
+        <li data-st="password"><span class="pm">+</span><span>A stolen disk shows nothing without the password or your lines.</span></li>
+        <li data-st="nopassword weak" hidden><span class="pm">+</span><span data-st="nopassword">This computer opens it by itself, through the system keychain.</span><span data-st="weak" hidden>This computer opens it by itself, through a key file in your home folder.</span></li>
+        <li data-st="nopassword weak" hidden><span class="pm">+</span><span>A stolen disk shows nothing without this computer or your lines.</span></li>
+        <li class="not" data-st="nopassword weak" hidden><span class="pm">-</span><span>Anyone using this computer as you can open it. Add a password to stop that.</span></li>
+        <li class="not" data-st="weak" hidden><span class="pm">-</span><span>The key file protects a copied library, not a whole stolen disk.</span></li>
+      </ul>
+    </div>
+
+    <div class="panel protected" data-deck="persona" data-st="weak" hidden>
+      <div class="note" style="margin-top:0"><b>Stage direction: a weak lock.</b> No system keychain was available, so this computer's key sits in a file beside your library. Someone who copies both can open it. A stronger lock is available now.</div>
+      <div class="acts" style="margin-top:14px"><button class="btn sm primary" type="button">Move to the stronger lock</button><button class="btn sm" type="button">Set a password instead</button></div>
+    </div>
+
+    <div class="panel protected" data-deck="persona" data-st="password" hidden>
+      <h3>Striking the set</h3><p class="small dim" style="margin:6px 0 12px">After the change. The old key is still being cleared from the library file (2 rows). Bunraku will try again in the background.</p><button class="btn sm" type="button">Try again now</button>
+      <p class="problem">could not try again. (Shown after a failed retry or lock move.)</p>
+    </div>
+    <div class="panel protected" data-deck="persona" data-st="password" hidden>
+      <h3>Still know your lines?</h3><p class="small dim" style="margin:6px 0 12px">Three months since the last run-through. Bunraku stores no single word, so the whole script is asked for.</p>
+      <div class="acts"><button class="btn sm" type="button">Run my lines</button><button class="btn sm" type="button">Write new lines</button></div>
+    </div>
+
+    <div class="panel protected" data-deck="persona">
+      <h2 class="sec">The door</h2>
+      <div class="row"><div><b>Password</b></div><p><span data-st="password">On. Each open, and after 15 min idle.</span><span data-st="nopassword weak" hidden>Off. This computer opens your library by itself.</span></p>
+        <div class="ctl"><button class="btn sm" type="button"><span data-st="password">Change it</span><span data-st="nopassword weak" hidden>Set a password</span></button><button class="btn sm danger" type="button" data-st="password">Remove</button></div></div>
+      <div class="row"><div><b>Your lines (recovery words)</b></div><p><span data-st="password weak">Written September 24, 2026. Last rehearsed June 11, 2026.</span><span data-st="nopassword" hidden>Not written yet. Twelve words that open your library on any computer.</span></p>
+        <div class="ctl"><span data-st="password weak" class="acts"><button class="btn sm" type="button">Rehearse</button><button class="btn sm" type="button">Write new lines</button></span><button class="btn sm" type="button" data-st="nopassword" hidden>Write my opening lines</button></div></div>
+      <div class="row" data-st="password"><div><b>Lock now</b></div><p>Closes the stage door until the password or your lines are given.</p><div class="ctl"><button class="btn sm gold" type="button">Lock now</button></div></div>
+    </div>
+
+    <div class="panel protected stateful" data-deck="persona" data-state="idle" id="health">
+      <h2 class="sec">Check my library</h2>
+      <div class="wf-states"><b>Preview state</b><button data-s="idle" aria-pressed="true">Ready</button><button data-s="running">Checking</button><button data-s="allwell">All well</button><button data-s="found">Items need a look</button><button data-s="unfinished">Did not finish</button><button data-s="failed">Check failed</button></div>
+      <div data-st="idle failed"><p class="small dim" style="margin-bottom:12px"><span data-st="idle">Opens every saved piece and chat and compares it with what was saved. Nothing changes until you confirm a repair, and a repair sets things aside, never deletes. No backup is needed first.</span><span data-st="failed" hidden>The check could not start: the library is busy. Try again in a moment.</span></p><button class="btn sm primary" type="button">Check my library</button></div>
+      <div data-st="running" hidden><h3>Checking your library</h3><p class="small dim">Looking at your chats, then your characters and lorebooks. You can keep working.</p><div class="meter" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="4"><span class="lit"></span><span class="lit"></span><span></span><span></span></div><p class="small">47 of 96 parts looked at</p><button class="btn sm" type="button">Stop</button></div>
+      <div data-st="allwell" hidden><h3><span class="chip ok">All well</span> Nothing is damaged</h3><p class="small dim" style="margin:8px 0 12px">Looked at 96 parts: 88 chats, 61 characters and 14 lorebooks all match what was saved.</p><button class="btn sm" type="button">Check again</button></div>
+      <div data-st="found" hidden><h3>2 items need a look</h3>
+        <div class="notice" style="margin-top:12px"><div><div class="t"><span class="chip warn">Changed</span> Chat "Velvet Quill, night shift"</div><p class="small dim">The saved copy differs from what was last written, so part of it may have been lost.</p></div><div class="acts"><button class="btn sm primary" type="button">Restore from a copy</button><button class="btn sm" type="button">Set aside</button></div></div>
+        <div class="notice danger"><div><div class="t"><span class="chip warn">Unreadable</span> Lorebook "Harbor Quarter"</div><p class="small dim">It could not be opened with the library's key.</p></div><div class="acts"><button class="btn sm primary" type="button">Restore from a copy</button><button class="btn sm" type="button">Set aside</button></div></div>
+        <div style="margin-top:14px"><button class="btn sm" type="button">Check again</button></div></div>
+      <div data-st="unfinished" hidden><div class="notice danger"><div><div class="t">The check stopped while looking at chats.</div><p class="small dim">The check did not finish, so this is not a clean result. If the library locked, unlock it and check again.</p></div><button class="btn sm primary" type="button">Check again</button></div></div>
+      <div data-st="found" hidden style="margin-top:14px"><div class="note"><b>Done. Repaired.</b> Chat "Velvet Quill, night shift" was set aside and rebuilt from the copy of 2:00 PM. <button class="btn sm primary" type="button" style="margin-left:8px">Reload to show it</button></div></div>
+    </div>
+
+    <div class="panel protected" data-deck="persona" data-st="password nopassword weak">
+      <h2 class="sec">Other computers</h2><p class="sec-note">Shown only when there are any. This library has also been opened on another computer, from a copied folder or a restored backup. Each one below can still open it by itself.</p>
+      <div class="item"><div><div class="t">Studio laptop</div><div class="m">Since June 3, 2026 / a key file</div></div><button class="btn sm danger" type="button">Forget</button></div>
+      <div class="item"><div><div class="t">Levi's desktop</div><div class="m">Since August 12, 2026 / the system keychain</div></div><button class="btn sm danger" type="button">Forget</button></div>
+    </div>
+
+    <div>
+      <h2 class="sec">Protected prompts</h2><p class="sec-note">These open on the top layer, above every page and beyond any theme. Unchanged in behavior; shown here in the new frame.</p>
+      <div class="grid2">
+        <div class="panel prompt protected"><div class="act">Stage manager</div><h3>Is it <em>you?</em></h3><p>Changing the password, the lines, or the remembered computers needs the password or your lines. You will not be asked again for five minutes.</p><label class="f">Current password<input class="field" type="password" value="password" aria-label="Current password"></label><div class="acts" style="margin-top:14px"><button class="btn primary" type="button">It is me</button><button class="btn quiet" type="button">Cancel</button></div></div>
+        <div class="panel prompt protected"><div class="act">Act II, The Key</div><h3>A key for the <em>door</em></h3><p>Once set, every computer forgets its own key and the door asks for this one.</p><div class="formgrid"><label class="f">New password<input class="field" type="password" value="password" aria-label="New password"></label><label class="f">Say it again<input class="field" type="password" value="password" aria-label="Say it again"></label></div><div class="acts" style="margin-top:14px"><button class="btn primary" type="button">Lock the door</button><button class="btn quiet" type="button">Cancel</button></div></div>
+        <div class="panel prompt protected"><div class="act">Act 0, Prologue</div><h3>Your opening <em>lines</em></h3><p>Twelve words that open your library on any computer. Write them down; Bunraku stores no single word. Then you recite them back (Act 1, The Audition: "Take the stage") before your old lines stop working. Rehearsal asks for the whole script ("Run my lines").</p><div class="acts"><button class="btn primary" type="button">On to the audition</button><button class="btn quiet" type="button">Cancel</button></div></div>
+        <div class="panel prompt protected"><div class="act">Recast</div><h3>Forget <em>Studio laptop?</em></h3><p>It will no longer open the library by itself. To open it there again, you will need your lines.</p><div class="acts"><button class="btn primary" type="button">Forget it</button><button class="btn quiet" type="button">Cancel</button></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BACKUPS ============ -->
+<section class="tab stack stateful" id="t-backups" data-label="backups" data-state="normal" hidden>
+  <div class="pghead"><div class="kicker left">Settings &middot; Backups</div><h2>Spare <em>copies</em></h2><p>Your library, copied while you work.</p></div>
+  <div class="wf-states"><b>Preview state</b><button data-s="normal" aria-pressed="true">Copies kept</button><button data-s="empty">No copies yet</button><button data-s="warn">Notes and an error</button></div>
+  <div class="panel protected" data-deck="pack">
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Host only. Copies are encrypted exactly like your library; restoring one is a protected prompt.</span></div>
+    <div class="tiles">
+      <div class="panel tile" data-deck="pack"><div class="k">Last copy</div><div class="v"><span data-st="normal warn">38 minutes ago</span><span data-st="empty" hidden>None yet</span></div></div>
+      <div class="panel tile" data-deck="pack"><div class="k">Copies kept</div><div class="v"><span data-st="normal warn">31 copies, 412 MB</span><span data-st="empty" hidden>None yet</span></div></div>
+      <div class="panel tile" data-deck="pack"><div class="k">Next copy</div><div class="v" style="font-size:18px">Within the hour, if anything changed</div></div>
+    </div>
+    <ul class="proof" style="margin-top:20px">
+      <li><span class="pm">+</span><span>A copy is made every hour while Bunraku is open, with no pause in your work.</span></li>
+      <li><span class="pm">+</span><span>Copies are encrypted exactly like your library, so a stolen copy shows nothing.</span></li>
+      <li data-st="normal empty"><span class="pm">+</span><span>A copy opens on a new computer with your lines (recovery words).</span></li>
+      <li class="not" data-st="warn" hidden><span class="pm">-</span><span>Until you write your lines (recovery words), a copy only opens on this computer.</span></li>
+      <li class="not"><span class="pm">-</span><span>Copies sit beside your library on this disk. They protect the file, not the machine.</span></li>
+      <li class="not"><span class="pm">-</span><span>A copy made before you changed your password or lines still opens with the old ones.</span></li>
+    </ul>
+    <div data-st="warn" hidden>
+      <div class="note"><b>Stage direction: your lines.</b> Copies already run. Until you write your lines, a copy can only be restored here, on this computer. Write them in Security.</div>
+      <div class="note"><b>Stage direction: locked.</b> Copies carry on while the library is locked. To restore one, unlock the library first.</div>
+      <div class="problem"><b>No room in the wings.</b> The copy could not be made: the disk is full. <button class="btn sm" type="button" style="margin-left:8px">Try again now</button></div>
+    </div>
+  </div>
+  <div class="panel protected" data-deck="pack">
+    <div class="row"><div><b>Back up now</b></div><p>Makes a copy right away. Hourly copies carry on as usual.</p><div class="ctl"><button class="btn sm primary" type="button">Back up now</button></div></div>
+    <div class="row"><div><b>Export library</b></div><p>Writes everything to a plain folder beside your studio folder, ready to import elsewhere. The folder is not encrypted.</p><div class="ctl"><button class="btn sm" type="button">Export library</button></div></div>
+    <div class="row"><div><b>What is kept</b></div><p>The last 24 hourly copies, 7 daily, and 4 weekly; older ones are cleared automatically. Copies made by you stay until you remove them (3 of 10). The 2 copies saved before a restore stay as long as they hold newer work than the rest; each can be moved to the trash. Copies use 412 MB of this disk.</p><div class="ctl"></div></div>
+  </div>
+  <div class="panel protected" data-deck="pack">
+    <h2 class="sec">Copies</h2>
+    <div class="empty" data-st="empty" hidden>No copies yet. The first one is made shortly after Bunraku opens, or press Back up now.</div>
+    <div data-st="normal warn">
+      <div class="copy"><div><b>Today, 2:00 PM</b> <span class="chip">Hourly</span><div class="m small dim">Monday, October 26 &middot; <span class="num">14.2 MB</span></div></div><div class="acts"><button class="btn sm" type="button">Restore</button></div></div>
+      <div class="copy"><div><b>Today, 11:42 AM</b> <span class="chip ok">Made by you</span><div class="m small dim">Monday, October 26 &middot; <span class="num">14.1 MB</span></div></div><div class="acts"><button class="btn sm danger" type="button" title="Moves the copy to the trash folder beside the copies; nothing is deleted">Remove</button><button class="btn sm" type="button">Restore</button></div></div>
+      <div class="copy"><div><b>Today, 9:15 AM</b> <span class="chip warn">Before a restore</span><div class="m small dim">Monday, October 26 &middot; <span class="num">13.8 MB</span></div></div><div class="acts"><button class="btn sm danger" type="button">Remove</button><button class="btn sm" type="button">Restore</button></div></div>
+      <div class="copy"><div><b>Yesterday, 10:00 PM</b> <span class="chip">Hourly</span><div class="m small dim">Sunday, October 25 &middot; <span class="num">13.6 MB</span></div></div><div class="acts"><button class="btn sm" type="button">Restore</button></div></div>
+      <div class="copy"><div><b>Yesterday, 9:00 PM</b> <span class="chip">Hourly</span><div class="m small dim">Sunday, October 25 &middot; <span class="num">13.6 MB</span></div></div><div class="acts"><button class="btn sm" type="button">Restore</button></div></div>
+      <p class="small dim" style="margin-top:12px">Showing the newest 5 of 31. Newest first; a copy is named by when it was made.</p>
+      <button class="btn sm quiet" type="button">Show all copies</button>
+    </div>
+    <div class="panel prompt protected" style="margin-top:22px"><div class="act">Restore</div><h3>Back to <em>Today, 11:42 AM?</em></h3><p>Shows what would change before anything does. A copy of how things are now is kept first, so this can be undone. Afterward: "Restored. Back to ...", with Undo this restore and Keep it. (Protected prompt, unchanged.)</p><div class="acts"><button class="btn primary" type="button">Restore this copy</button><button class="btn quiet" type="button">Cancel</button></div></div>
+  </div>
+</section>
+
+<!-- ============ REMOTE ACCESS ============ -->
+<section class="tab stack stateful" id="t-remote" data-label="remote access" data-state="off" hidden>
+  <div class="pghead"><div class="kicker left">The house</div><h2>Remote <em>access</em></h2><p>Reach this studio from your phone or another computer, over a private, encrypted link. Off by default. Turning it on needs a one-time free Tailscale sign-in; Bunraku opens that page for you. <span class="dim">(Without the helper the line reads: "Reach this studio from your phone or another computer on the same network. Off by default, and no account needed.")</span></p></div>
+  <div class="wf-states"><b>Preview state</b>
+    <button data-s="off" aria-pressed="true">Off</button><button data-s="unavailable">Helper missing</button><button data-s="starting">Starting</button><button data-s="login">Needs sign-in</button><button data-s="https">Needs HTTPS</button><button data-s="on">Connected</button><button data-s="error">Error</button><button data-s="elsewhere">Remote session</button>
+    <button type="button" class="eye" id="eye" aria-pressed="false" style="margin-left:auto">Hide details for a screenshot</button></div>
+  <div class="panel protected" data-deck="fog">
+    <div class="vault"><svg aria-hidden="true"><use href="#lock"/></svg><span><b>Protected.</b> Managed only on the computer actually running Bunraku, never from a device that connected in.</span></div>
+
+    <div data-st="off">
+      <h2 class="sec">Turn on remote access</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Bunraku stays on your machine. A private, encrypted link lets your own devices reach it, with no router changes and no ports opened. You sign in to Tailscale once (free); we open that page for you.</p>
+      <button class="btn primary big" type="button">Enable remote access</button>
+      <p class="small dim" style="margin-top:14px">Mesh helper downloaded with v1.74.1. <button class="btn sm quiet" type="button">Get it again</button></p>
+      <p class="problem">The download did not finish. Nothing was installed. (Shown after a failed fetch.)</p>
+    </div>
+    <div data-st="unavailable" hidden>
+      <h2 class="sec">Add the private-mesh link</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">The private-mesh link needs one extra piece that is not bundled with the app, to keep the download small. Bunraku can fetch it for you now, once.</p>
+      <div class="acts"><button class="btn primary" type="button">Download the extra piece</button><span class="state-line"><span class="dot busy"></span>While downloading: About 31 MB. This takes a moment.</span></div>
+      <p class="small dim" style="margin-top:14px">It is downloaded from Bunraku's own releases and checked against a fingerprint built into this copy; a file that does not match is thrown away rather than used. You can skip this entirely and use <b>LAN mode</b> below, which needs no download.</p>
+      <p class="small dim" style="margin-top:10px">Not offered for this platform: "Private-mesh link not available in this copy". Nothing is wrong with your studio, and nothing else is affected. Use <b>LAN mode</b> below to reach this studio from another device on the same network.</p>
+    </div>
+    <div data-st="starting" hidden><h2 class="sec">Bringing up the private link</h2><div class="state-line" style="margin-top:12px"><span class="dot busy"></span>Starting. This is quick.</div></div>
+    <div data-st="login" hidden><h2 class="sec">Sign in to Tailscale</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">A Tailscale sign-in page just opened in your browser. Sign in once (free), then come back here. This reconnects on its own.</p><div class="acts"><span class="state-line"><span class="dot busy"></span>Waiting for sign-in</span><button class="btn sm quiet" type="button">Open sign-in again</button></div></div>
+    <div data-st="https" hidden><h2 class="sec">One more setup step: turn on HTTPS</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Tailscale needs HTTPS certificates enabled for your account, a one-time switch. Open your Tailscale settings, turn on <b>HTTPS Certificates</b>, and this connects on its own, you do not need to come back here and click anything.</p><div class="acts"><button class="btn sm primary" type="button">Open Tailscale HTTPS settings</button><span class="state-line"><span class="dot busy"></span>Waiting for HTTPS to be turned on</span></div></div>
+    <div data-st="on" hidden>
+      <h2 class="sec"><span class="dot on"></span>On, reachable</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">Open this link on any device signed into the same Tailscale account, your phone, another computer. It is a real, trusted https link with no certificate warnings.</p>
+      <div class="urlbar"><svg aria-hidden="true"><use href="#lock"/></svg><span data-mask>https://bunraku-desk.tail4f2a1.ts.net</span></div>
+      <div class="acts" style="margin-top:14px"><button class="btn sm" type="button" data-copy>Copy link</button><button class="btn sm danger" type="button">Turn off</button></div>
+      <p class="small dim" style="margin-top:12px">To add a device: install the free Tailscale app on it, sign in with the same account, then open the link above.</p>
+      <div class="devs"><div class="dt">Connected devices</div>
+        <div class="item"><span data-mask>Chi's phone</span><button class="btn sm danger" type="button">Remove</button></div>
+        <div class="item"><span data-mask>studio-laptop</span><button class="btn sm danger" type="button">Remove</button></div></div>
+    </div>
+    <div data-st="error" hidden><h2 class="sec">Remote access could not start</h2><p class="state-line" style="margin-top:10px"><span class="dot bad"></span>The Tailscale helper exited before it answered.</p><p class="small dim" style="margin:8px 0 14px">Nothing else in Bunraku is affected.</p><button class="btn sm primary" type="button">Try again</button></div>
+    <div data-st="elsewhere" hidden><h2 class="sec">Managed on the host device</h2><p class="small dim" style="margin-top:8px;max-width:70ch">You are connected to this studio remotely. Remote access is turned on or off, and devices are managed, only on the computer actually running Bunraku, never from a device that connected in. Open Bunraku on that computer to change these settings.</p></div>
+  </div>
+
+  <div class="panel protected stateful" data-deck="fog" data-state="lanoff" data-st="off unavailable starting login https on error" id="lan">
+    <div class="wf-states"><b>Preview state</b><button data-s="lanoff" aria-pressed="true">Local access off</button><button data-s="lanon">Local access on</button></div>
+    <div data-st="lanoff">
+      <h2 class="sec">Local network access</h2><p class="small dim" style="margin:6px 0 14px;max-width:70ch">A no-account option: reach this studio from devices on the <b>same network</b> (home or office Wi-Fi), with no Tailscale sign-in. Each device enters a connect code, and you approve it here before it gets in.</p>
+      <button class="btn sm primary" type="button">Enable local access</button>
+    </div>
+    <div data-st="lanon" hidden>
+      <h2 class="sec"><span class="dot on"></span>Local access on</h2><p class="small dim" style="margin:6px 0 14px">On a device on this network, open the link and enter this code. Only enable on a network you trust.</p>
+      <div class="code big" data-mask>482 915</div>
+      <div class="urlbar" style="margin-top:12px"><span data-mask>https://192.168.1.42:7421</span></div>
+      <p class="small dim" style="margin-top:10px">Certificate fingerprint (verify on first connect): <span class="num" data-mask>A4:1F:9C:07:5E:B2:D8:63</span></p>
+      <div class="devs"><div class="dt">Wants to connect</div>
+        <div class="item"><span data-mask>Pixel 9, Chrome</span><div class="acts"><button class="btn sm" type="button">Approve</button><button class="btn sm danger" type="button">Deny</button></div></div>
+        <div class="dt">Connected devices</div>
+        <div class="item"><span data-mask>iPad, Safari</span><button class="btn sm danger" type="button">Remove</button></div></div>
+      <div style="margin-top:14px"><button class="btn sm danger" type="button">Turn off local access</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UPDATES ============ -->
+<section class="tab stack stateful" id="t-updates" data-label="updates" data-state="behind" hidden>
+  <div class="pghead"><div class="kicker left">The house</div><h2><em>Updates</em></h2><p>Every release, newest first, with what changed in each. See how far behind you are and read the full commit log for any version. Checks GitHub only when you open this page.</p></div>
+  <div class="wf-states"><b>Preview state</b><button data-s="behind" aria-pressed="true">Behind</button><button data-s="current">Up to date</button><button data-s="unreleased">Unreleased build</button><button data-s="loading">Loading</button><button data-s="limited">Rate limited</button><button data-s="error">Could not load</button></div>
+
+  <div class="panel" data-deck="preset" data-st="loading" hidden><div class="state-line"><span class="dot busy"></span>Asking GitHub for the release history...</div></div>
+  <div class="panel" data-deck="preset" data-st="limited" hidden><h3>Checked too often</h3><p class="small dim" style="margin-top:6px">GitHub limits how often the release history can be fetched. Try again in about 12 minute(s).</p></div>
+  <div class="panel" data-deck="preset" data-st="error" hidden><h3>Could not load the release history</h3><p class="small dim" style="margin:6px 0 12px">GitHub could not be reached. Nothing else is affected.</p><button class="btn sm" type="button">Open releases on GitHub</button></div>
+
+  <div class="panel" data-deck="preset" data-st="behind">
+    <div class="kicker left" style="margin-bottom:14px">Your version</div>
+    <div class="behind"><div class="big num" style="font-family:var(--font-fancy)">2</div><div><div style="font:700 20px var(--font-fancy)">releases behind the newest</div><div class="dim" style="margin-top:6px">you are on <span class="num" style="color:var(--premiere-gold)">v0.14.0</span> &middot; newest is <span class="num" style="color:var(--rose-lt)">v0.14.2</span></div></div></div>
+  </div>
+  <div class="panel" data-deck="preset" data-st="current" hidden><h2 class="sec"><span class="dot on"></span>Up to date</h2><p class="small dim" style="margin-top:8px">You are on v0.14.2, the newest release. The timeline below still lets you look back.</p></div>
+  <div class="panel" data-deck="preset" data-st="unreleased" hidden><h2 class="sec">You are on an unreleased build</h2><p class="small dim" style="margin-top:8px;max-width:70ch">Your version (0.14.1-dev.7) is not one of the published releases, it sits between them (a source build). The timeline below still shows every release you can move to.</p></div>
+
+  <div class="panel" data-deck="preset" data-st="behind current unreleased">
+    <h2 class="sec">All releases</h2>
+    <div class="ver"><span class="vtag">v0.14.2</span><div><div class="vname">Faster scene summaries</div><div class="vmeta">2 releases ahead of you &middot; 10/20/2026 &middot; 4 commits</div><button class="btn sm quiet" type="button" data-toggle="#log1" style="margin-top:6px">Show the 4 commits</button>
+      <div class="log" id="log1" hidden><div><span class="num">a41c9e2</span><span>Summaries reuse the cached prefix</span></div><div><span class="num">7be03d1</span><span>Hide covered messages without a rewrite</span></div><div><span class="num">c92f6a8</span><span>Settings: stage lights</span></div><div><span class="num">0d58b47</span><span>Fix the Press preview scroll</span></div></div></div>
+      <button class="btn sm" type="button" data-st-btn>Update to this</button></div>
+    <div class="ver"><span class="vtag">v0.14.1</span><div><div class="vname">Backups and the health check</div><div class="vmeta">1 release ahead of you &middot; 10/12/2026 &middot; 2 commits</div><button class="btn sm quiet" type="button" data-toggle="#log2" style="margin-top:6px">Show the 2 commits</button>
+      <div class="log" id="log2" hidden><div><span class="num">3fd81b0</span><span>Hourly copies with a restore preview</span></div><div><span class="num">e6a2c47</span><span>Check my library repairs</span></div></div></div>
+      <button class="btn sm" type="button" data-st-btn>Update to this</button></div>
+    <div class="ver here"><span class="vtag">v0.14.0</span><div><div class="vname"><span class="chip ok">you are here</span>Soft app restyle</div><div class="vmeta">your current version &middot; 10/03/2026 &middot; 1 commit</div><div class="vmeta">commit log unavailable for this release</div></div><span class="chip ok">current</span></div>
+    <div class="ver"><span class="vtag">v0.13.4</span><div><div class="vname">Native Claude caching</div><div class="vmeta">1 release behind you &middot; 09/26/2026 &middot; 3 commits</div><button class="btn sm quiet" type="button" data-toggle="#log3" style="margin-top:6px">Show the 3 commits</button>
+      <div class="log" id="log3" hidden><div><span class="num">b7710ac</span><span>Cache the system prefix per provider</span></div><div><span class="num">2c4e9f5</span><span>Token counts in the trace view</span></div><div><span class="num">91a0d36</span><span>Lorebook timers survive a restart</span></div></div></div>
+      <button class="btn sm" type="button">Roll back to this</button></div>
+    <div class="ver"><span class="vtag">v0.13.3</span><div><div class="vname">Macro engine fixes</div><div class="vmeta">2 releases behind you &middot; 09/19/2026 &middot; 1 commit</div></div><button class="btn sm" type="button">Roll back to this</button></div>
+    <div class="acts" style="margin-top:14px"><button class="btn sm" type="button">Open releases on GitHub</button></div>
+    <p class="small dim" style="margin-top:10px">With no releases published: "No published releases yet."</p>
+  </div>
+
+  <div>
+    <h2 class="sec">Switch prompts</h2><p class="sec-note">Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</p>
+    <div class="grid3">
+      <div class="panel prompt"><h3>Update to <em>v0.14.2?</em></h3><div class="jump">v0.14.0 &rarr; v0.14.2</div><p>Your studio folder (pieces, settings, keys) is never touched, only the program changes. Bunraku restarts itself when it is ready.</p><div class="acts"><button class="btn primary" type="button">Update</button><button class="btn sm quiet" type="button">Cancel</button></div></div>
+      <div class="panel prompt"><h3>Roll back to <em>v0.12.9?</em></h3><div class="jump">v0.14.0 &rarr; v0.12.9</div><div class="note" style="margin:0 0 12px">v0.12.9 is older than this Updates screen. After the restart it will not show a confirmation or an Undo button, so <b>this screen is your receipt</b>.</div><p>Your studio folder is never touched, only the program changes.</p><div class="acts"><button class="btn danger" type="button">Roll back</button><button class="btn sm quiet" type="button">Cancel</button></div></div>
+      <div class="panel prompt"><h3>Switching <em>version</em></h3><div class="state-line"><span class="dot busy"></span>Downloading and checking the build...</div><p style="margin-top:12px">Do not close Bunraku. It restarts itself when the switch is ready.</p></div>
+      <div class="panel prompt"><h3>You are now on <em>v0.14.2</em></h3><p>Done. Everything is ready.</p><div class="acts"><button class="btn primary" type="button">Done</button><button class="btn sm" type="button">Undo, back to v0.14.0</button></div></div>
+      <div class="panel prompt"><h3>Still on <em>v0.14.0</em></h3><p>The switch to v0.14.2 did not complete, so nothing changed. Your app is exactly as it was.</p><div class="acts"><button class="btn primary" type="button">OK</button></div></div>
+      <div class="panel prompt"><h3>Could not switch / <em>Download ready</em></h3><p>Either the failure message, or (packaged build) the verified download's message, with a single OK.</p><div class="acts"><button class="btn primary" type="button">OK</button></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="tab stack stateful" id="t-about" data-label="about" data-state="packaged" hidden>
+  <div class="pghead"><div class="kicker left">The house</div><h2>About <em>Bunraku</em></h2><p>The running build, where your studio lives on disk, the project links, and the app's own controls.</p></div>
+  <div class="wf-states"><b>Preview state</b><button data-s="packaged" aria-pressed="true">Installed app</button><button data-s="source">Running from source</button><button data-s="browser">Browser studio</button></div>
+
+  <div class="panel" data-deck="preset">
+    <h2 class="sec">Updates</h2>
+    <p class="small dim" style="margin:6px 0 14px" data-st="packaged">Version 0.14.0, installed app. Checks GitHub only when you press the button; nothing runs on its own.</p>
+    <p class="small dim" style="margin:6px 0 14px" data-st="source" hidden>Version 0.14.0, running from source. Checks GitHub only when you press the button; nothing runs on its own.</p>
+    <p class="small dim" style="margin:6px 0 14px" data-st="browser" hidden>Version 0.14.0, temporary browser studio. The hosted build updates when Bunraku deploys it.</p>
+    <div class="acts" data-st="packaged source"><button class="btn sm" type="button">Check for updates</button><button class="btn sm primary" type="button" data-st="packaged">View release</button><button class="btn sm" type="button" data-st="source" hidden>View release</button>
+      <span class="small" role="status" data-st="packaged">v0.14.2 is out.</span><span class="small" role="status" data-st="source" hidden>v0.14.2 is out. Your checkout updates with: git pull (then bun install).</span></div>
+    <div class="acts" data-st="browser" hidden><span class="small dim">Reload after a new hosted version is deployed.</span></div>
+    <p class="small dim" style="margin-top:10px">Other results: "Asking GitHub...", "You are on the newest release.", "No published releases yet.", "Could not reach GitHub."</p>
+  </div>
+  <div class="panel" data-deck="lorebook">
+    <h2 class="sec">Your studio folder</h2>
+    <p class="small dim" style="margin:6px 0 12px;max-width:72ch" data-st="packaged source">Your pieces are stored here, encrypted in library.db. A copy of this folder opens on another computer only with your recovery words; to share pieces, export them.</p>
+    <p class="small dim" style="margin:6px 0 12px" data-st="browser" hidden>This studio exists only in this page. Export work before reloading or closing it.</p>
+    <code class="block" data-st="packaged source">C:\Users\chiev\Documents\Studio</code><code class="block" data-st="browser" hidden>Tab memory only</code>
+  </div>
+  <div class="panel" data-deck="character">
+    <h2 class="sec">Project</h2><p class="sec-note">Open source under AGPL-3.0. Bugs and wishes welcome.</p>
+    <div class="acts"><button class="btn sm" type="button">GitHub</button><button class="btn sm" type="button">Releases</button></div>
+  </div>
+  <div class="panel" data-deck="pack" data-st="packaged source">
+    <h2 class="sec">The app</h2>
+    <p class="sec-note" style="max-width:80ch">Restart relaunches the studio in place; Quit stops it fully (browser tabs stop working until you start it again). Unsaved edits on the Workbench are lost either way. Reset this window forgets only what this page remembers - the app you were on, the agent conversation, the overlay's position - and never touches your studio, your tabs or your settings.</p>
+    <div class="acts"><button class="btn sm" type="button" data-arm="restart" data-label="Restart Bunraku" data-armed="Really restart?">Restart Bunraku</button><button class="btn sm" type="button" data-arm="quit" data-label="Quit Bunraku" data-armed="Really quit?">Quit Bunraku</button><button class="btn sm" type="button" title="Forget the app you were on, the agent conversation, and where you put the overlay. Your tabs, settings and studio are untouched.">Reset this window</button></div>
+    <p class="small dim" style="margin-top:12px">Press Restart or Quit once to arm it (it turns "Really ...?" for four seconds), again to fire. While restarting: "Waiting for the studio to come back..." After quit: "You can close this tab. Start it again from your shortcut."</p>
+  </div>
+</section>
+
+</div><!-- /page -->
+</div><!-- /shell -->
+</main></div>
+
+<ol class="legend">
+  <li><span class="co">1</span> Header: the Playbill arrangement. The status line (today a mono strip at the top-left) becomes the "now showing" chip beside Reload Studio, so the room has one header and no loose chrome above it.</li>
+  <li><span class="co">2</span> Navigation: twelve all-caps tabs in a row become a rail of four acts (Your studio, The agent, The vault, The house) beside the page. Same twelve tabs, same switching, now grouped by what they are for. Gold lock marks the tabs that are protected host-only surfaces. Tab order differs from the registry order only by grouping; on a phone the rail wraps into chips.</li>
+  <li><span class="co">3</span> Every tab opens with a Cinzel title, a gold kicker naming its act and one line of what it does, so no tab is a bare list of rows. Rows that were one long column are regrouped into panels with deck edges.</li>
+  <li><span class="co">4</span> Protected surfaces (theme packages, models and keys, MCP connections, Spotify link, Security, Backups, Remote access): a gold-edged panel with a lock strip saying what is protected and why. Passwords, recovery words and restore stay top-layer prompts; they are drawn here (Security, Backups, Updates) in the new frame but behave as today.</li>
+  <li><span class="co">5</span> Theme packages: the native select and file input are gone. Each package is a card with a color strip, grants, and its own actions (Disable, Revoke grants, Remove, Review and restore, Reinstall). The card marked Requested replaces the "Requested appearance" select. The approval and restore reviews, notes and the state-error line sit below, unchanged in wording.</li>
+  <li><span class="co">6</span> New row, Stage lights: Moving / Still / Off, with the note that rays freeze when the window is unfocused, idle or a reply is streaming. The rays live only on the title screen and the scene chooser; room pages have none. Open question for the build: whether Reduce motion should force Still.</li>
+  <li><span class="co">7</span> Security keeps its approved content (stat tiles, the plus/minus proof list, rows, health check, other computers). The proof block loses its monospace and becomes plain sentences with a +/- badge. Switch the preview state to see no password, weak lock and library not open.</li>
+  <li><span class="co">8</span> Gold dashed "Preview state" bars are wireframe-only. They stand in for states the app reaches by itself (empty lists, errors, notices, each remote access phase, update outcomes).</li>
+  <li><b>Layout rule for this page.</b> Settings is the one room allowed a layout change: the row of twelve tabs became a rail of four acts, each tab became a titled page of panels, and the rail now carries a live one-line status per tab. Every tab, row, control and state of today's room is present.</li>
+  <li><b>Regions and treatments.</b>
+  Header strip and status line: Playbill room header, smaller Cinzel title, gold kicker, one-line lede; status line becomes the "now showing" chip beside Reload Studio. |
+  Tab bar: sticky rail panel with gold act labels, rose edge and glow on the open tab, slide on hover, gold lock on protected tabs, a status line under each name. |
+  Tab page head: gold kicker, Cinzel title with a violet glow, one-line lede. |
+  Section titles: Cinzel with deck-colored top edge on each panel. |
+  Rows and lists (Workbench, Memory, Studio, Accessibility): translucent panel, hairline rows, UI font, no mono labels. |
+  Segmented controls and switches: the kit segmented control with rose underline and square switches. |
+  Cards (themes, models, servers, layout choices, update steps): 3px hard frame, offset shadow, lift on hover, rose offset shadow when selected. |
+  Fields, selects, file picker, swatches, slider: kit controls with gold focus, mono only for ids, paths, keys and numbers. |
+  Protected panels: gold frame plus a lock strip that says what is protected. |
+  Notices, problems, empty states: edged notices (gold note, rose problem), dashed staged empty states with a lede. |
+  Counts, versions and hashes: mono numerals in gold. |
+  Prompts and dialogs (password, lines, switch version): gold-framed staged cards with act number and Cinzel question. |
+  Stage lights: hero panel in Appearance, live in this page (Moving, Still, Off).</li>
+  <li>Native selects (Provider, Model, Let Kit make changes) are drawn with the kit's select; the real ones are the app's own listbox components. The Model picker keeps its "Type an id..." exit. Number fields keep type=number in the app; shown here as drawn fields.</li>
+  <li>Not drawn: the first-run Settings tour popup (an overlay shared by every room) and the window's dock. Neither is a Settings control.</li>
+</ol>
+
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  /* tabs */
+  function show(id) {
+    var sec = $("#t-" + id); if (!sec) return;
+    $$(".tab").forEach(function (t) { t.hidden = t !== sec; });
+    $$("#rail button").forEach(function (b) { if (b.dataset.tab === id) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    $("#statusline").textContent = sec.dataset.label.replace("&amp;", "&");
+    try { history.replaceState(null, "", "#" + id); } catch (e) {}
+  }
+  $$("#rail button").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.tab); }); });
+  show((location.hash || "#appearance").slice(1));
+  window.addEventListener("hashchange", function () { show(location.hash.slice(1)); });
+  /* state bars */
+  function applyState(box, s) {
+    box.dataset.state = s;
+    $$("[data-st]", box).forEach(function (el) {
+      if (el.parentNode.closest(".stateful") !== box) return;
+      el.hidden = el.dataset.st.split(/\s+/).indexOf(s) < 0;
+    });
+  }
+  $$(".stateful").forEach(function (box) {
+    var own = $$(".wf-states", box).filter(function (w) { return w.closest(".stateful") === box && w.querySelector("[data-s]"); })[0];
+    if (!own) return;
+    $$("[data-s]", own).forEach(function (b) { b.addEventListener("click", function () {
+      $$("[data-s]", own).forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      applyState(box, b.dataset.s);
+    }); });
+    applyState(box, box.dataset.state);
+  });
+  /* generic toggles */
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("*"); if (!t) return;
+    var seg = t.closest(".seg span"); if (seg) { $$("span", seg.parentNode).forEach(function (s) { s.setAttribute("aria-pressed", String(s === seg)); });
+      if (seg.parentNode.hasAttribute("data-lights")) { window.setLights && window.setLights(seg.textContent); } return; }
+    var sw = t.closest(".switch"); if (sw) { sw.classList.toggle("on"); sw.setAttribute("aria-checked", String(sw.classList.contains("on"))); return; }
+    var chip = t.closest(".chip[aria-pressed]"); if (chip) { chip.setAttribute("aria-pressed", String(chip.getAttribute("aria-pressed") !== "true")); return; }
+    var sws = t.closest(".sw"); if (sws) { $$(".sw", sws.parentNode).forEach(function (s) { s.setAttribute("aria-pressed", String(s === sws)); }); return; }
+    var lay = t.closest(".lay"); if (lay) { $$(".lay", lay.parentNode).forEach(function (s) { s.setAttribute("aria-checked", String(s === lay)); $(".ck", s).textContent = s === lay ? "\u2713" : ""; }); return; }
+    var th = t.closest(".theme .pick"); if (th) { var card = th.closest(".theme"); $$(".theme").forEach(function (c) { c.setAttribute("aria-checked", String(c === card)); }); return; }
+    var pv = t.closest(".prov .pick"); if (pv) { var pc = pv.closest(".prov"); $$(".prov", pc.parentNode).forEach(function (c) { c.classList.toggle("active", c === pc); }); return; }
+    var op = t.closest("[data-open]"); if (op) { var f = $(op.dataset.open); f.hidden = !f.hidden; return; }
+    var cl = t.closest("[data-close]"); if (cl) { $(cl.dataset.close).hidden = true; return; }
+    var tg = t.closest("[data-toggle]"); if (tg) { var l = $(tg.dataset.toggle); l.hidden = !l.hidden; return; }
+    var cp = t.closest("[data-copy]"); if (cp) { var old = cp.textContent; cp.textContent = "Copied"; setTimeout(function () { cp.textContent = old; }, 1400); return; }
+    var ar = t.closest("[data-arm]"); if (ar) {
+      if (ar.dataset.on) { ar.dataset.on = ""; ar.textContent = ar.dataset.label; ar.classList.remove("primary", "danger"); return; }
+      $$("[data-arm]").forEach(function (b) { b.dataset.on = ""; b.textContent = b.dataset.label; b.classList.remove("primary", "danger"); });
+      ar.dataset.on = "1"; ar.textContent = ar.dataset.armed; ar.classList.add(ar.dataset.arm === "quit" ? "danger" : "primary");
+      setTimeout(function () { ar.dataset.on = ""; ar.textContent = ar.dataset.label; ar.classList.remove("primary", "danger"); }, 4000); return;
+    }
+    var eye = t.closest("#eye"); if (eye) { var on = eye.getAttribute("aria-pressed") !== "true"; eye.setAttribute("aria-pressed", String(on)); eye.textContent = on ? "Show details" : "Hide details for a screenshot"; $("#t-remote").classList.toggle("masked", on); return; }
+    var ms = t.closest("[data-memst]"); if (ms) { var k = ms.dataset.memst; $$("[data-memst]").forEach(function (b) { b.setAttribute("aria-pressed", String(b === ms)); }); $("#mem-unreadable").hidden = k !== "unreadable"; $("#mem-problem").hidden = k !== "problem"; return; }
+  });
+  /* keyboard: Space/Enter on role=radio / switch / button spans */
+  document.addEventListener("keydown", function (e) {
+    if ((e.key === "Enter" || e.key === " ") && e.target.matches("[role=radio],[role=switch],[role=button]") && !e.target.matches("button")) { e.preventDefault(); e.target.click(); }
+  });
+})();
+</script>
+<script src="kit.js"></script>
+</body></html>

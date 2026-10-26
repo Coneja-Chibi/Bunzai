@@ -1,0 +1,259 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: CSS Workshop</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* CSS Workshop page-only rules. Tokens only. Layout is today's: banner, target row, preview, then a code | breakdown split. */
+.dim { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.label { font: 600 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.hint { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.flash { font-size: 13px; color: var(--premiere-gold); }
+.playbill .actions { flex-wrap: wrap; justify-content: flex-end; max-width: 760px; }
+.btn.sm { min-height: 34px; padding: 6px 12px; font-size: 13px; }
+.btn.danger { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 60%, white); }
+.btn[disabled] { opacity: .45; cursor: default; }
+
+.banner { display: flex; gap: 12px; align-items: baseline; padding: 14px 18px; margin-bottom: 18px; font-size: 14px; line-height: 1.5;
+  border-left: 3px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); }
+.banner strong { font: 700 15px var(--font-fancy); letter-spacing: .02em; white-space: nowrap; }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; padding: 14px 20px; margin-bottom: 18px; }
+.tabs { display: flex; gap: 0; margin-bottom: 18px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 15%, transparent); }
+.tabs span { padding: 11px 22px; font: 600 14px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.tabs span[aria-selected="true"] { color: var(--premiere-text); box-shadow: inset 0 -3px 0 var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 10%, transparent); }
+
+/* Sealed preview: the mock stays a sealed iframe in the build; here it is a stand-in well. */
+.preview { padding: 0; margin-bottom: 18px; overflow: hidden; }
+.preview-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.well { min-height: 190px; display: grid; place-items: center; padding: 28px 16px; background: var(--premiere-canvas);
+  background-image: radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--premiere-violet) 22%, transparent), transparent 60%); }
+.mock-card { width: min(100%, 460px); background: var(--premiere-panel); color: var(--premiere-text); border: 1px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); border-radius: 12px; padding: 12px 14px; }
+.mock-head { display: flex; gap: 12px; align-items: center; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--premiere-rose), var(--premiere-violet)); }
+.mock-card .name { font: 700 17px var(--font-ui); }
+.mock-card .sub { font-size: 13px; opacity: .7; }
+.mock-card .body { margin: 10px 0; font-size: 14px; }
+.tag { display: inline-block; font-size: 12px; padding: 2px 10px; margin-right: 6px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 60%, transparent); color: var(--premiere-gold); }
+
+/* Advanced split: code left, rule breakdown right (today's 1.15fr / .95fr). */
+.adv { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .95fr); gap: 20px; align-items: start; }
+@media (max-width: 960px) { .adv, .three, .two { grid-template-columns: 1fr !important; } }
+.pane-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip code { font-size: 12px; }
+.editor { display: grid; grid-template-columns: 38px 1fr; background: var(--premiere-hard); border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); font: 13px/1.65 var(--font-mono); overflow: hidden; }
+.editor .gut { padding: 12px 8px; text-align: right; color: color-mix(in srgb, var(--premiere-text) 35%, transparent); border-right: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); white-space: pre; }
+.editor pre { padding: 12px 14px; font: inherit; white-space: pre; overflow-x: auto; margin: 0; }
+.k-sel { color: var(--premiere-gold); } .k-prop { color: color-mix(in srgb, var(--premiere-violet) 70%, white); } .k-val { color: color-mix(in srgb, var(--premiere-rose) 55%, white); } .k-com { color: color-mix(in srgb, var(--premiere-text) 45%, transparent); }
+.rules { display: grid; gap: 6px; margin: 10px 0 14px; }
+.rule { display: grid; grid-template-columns: 1fr; padding: 9px 12px; font-size: 13px; border: 1px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); background: color-mix(in srgb, var(--premiere-hard) 45%, transparent); }
+.rule b { font: 600 13px var(--font-mono); color: var(--premiere-gold); }
+.rule[aria-selected="true"] { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 14%, transparent); }
+.freeform { margin: 0 0 14px; padding: 10px 12px; font: 12px/1.5 var(--font-mono); background: var(--premiere-hard); border-left: 3px solid var(--premiere-violet); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); white-space: pre-wrap; }
+.english { padding: 10px 12px; margin-bottom: 12px; font-size: 14px; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 8%, transparent); }
+
+/* Knobs */
+.knobs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+.knobs .wide { grid-column: 1 / -1; }
+.knob { display: grid; gap: 8px; align-content: start; }
+.knob .field, .knob .select { display: block; width: 100%; min-height: 36px; padding: 6px 10px; font-size: 13px; }
+.field.code { font-family: var(--font-mono); }
+.field.ph { color: color-mix(in srgb, var(--premiere-text) 45%, transparent); }
+.two-in { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.paint { display: flex; gap: 8px; align-items: center; }
+.sw { width: 36px; height: 36px; border: 2px solid color-mix(in srgb, var(--premiere-text) 40%, transparent); flex: none; }
+.slider { position: relative; height: 6px; background: color-mix(in srgb, var(--premiere-text) 18%, transparent); margin: 14px 0 6px; }
+.slider i { position: absolute; left: 0; top: 0; bottom: 0; width: 80%; background: var(--premiere-rose); }
+.slider b { position: absolute; left: 80%; top: -7px; width: 12px; height: 20px; background: var(--premiere-text); transform: translateX(-50%); }
+.srow { display: flex; justify-content: space-between; align-items: center; }
+.srow .num { font-size: 13px; }
+.actions-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+/* Simple mode strip */
+.three { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 20px; align-items: start; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.recipe { padding: 14px 0; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); display: grid; gap: 4px; }
+.recipe:last-child { border-bottom: 0; }
+.recipe-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.recipe-head b { font: 700 16px var(--font-fancy); letter-spacing: .02em; }
+.recipe p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.stack { display: grid; gap: 14px; }
+.co.at { margin-left: 8px; }
+@media (max-width: 720px) {
+  .playbill { grid-template-columns: 1fr; }
+  .playbill .actions { grid-column: 1; grid-row: auto; justify-content: flex-start; max-width: none; }
+  .knobs, .two-in { grid-template-columns: 1fr; }
+  .banner { flex-direction: column; gap: 4px; }
+  .panel { padding: 16px; }
+}
+</style></head>
+<body><div class="wf-note">WIREFRAME. CSS Workshop in the Premiere house style. Numbered callouts are explained below.</div>
+<div class="stage"><div class="rays"><canvas id="rays"></canvas></div><main class="room">
+
+<header class="playbill">
+  <div>
+    <div class="kicker left">App &middot; style</div>
+    <h1>CSS Workshop <span class="co">1</span></h1>
+  </div>
+  <div class="actions">
+    <button class="btn primary sm">Copy CSS</button>
+    <button class="btn sm">Download .css</button>
+    <button class="btn quiet sm">Clear draft</button>
+    <button class="btn quiet sm">Tour</button>
+    <span class="co">2</span>
+  </div>
+  <p class="lede">Simple mode is the guided ladder. Advanced is code plus rule breakdown. Flip anytime. Import a .css file to load it into Advanced.</p>
+</header>
+
+<div class="banner"><strong>CSS workshop.</strong><span>Standalone draft. Bunraku never applies this to the app chrome. Copy or download to paste on Chub, Janitor, Risu, or anywhere that takes CSS. Card-bound CSS still lives on the piece in the Workbench. Source is always real CSS you can edit.</span></div>
+
+<section class="panel bar">
+  <span class="label">Targets</span>
+  <span class="select" style="min-width:200px">Universal</span>
+  <span class="label">Mode</span>
+  <span class="seg"><span aria-pressed="false">Simple</span><span aria-pressed="true">Advanced</span></span>
+  <button class="btn sm">Import .css</button>
+  <button class="btn sm">Undo</button>
+  <span class="flash">imported vaude-style.css &middot; 6 rules &middot; freeform kept</span>
+  <span class="co">3</span>
+</section>
+
+<section class="panel preview" data-deck="regex">
+  <div class="preview-head"><h3>Sealed CSS preview <span class="co">4</span></h3><span class="dim" style="font-size:13px">Sandboxed mock of the Universal pack. Never touches the app.</span></div>
+  <div class="well">
+    <article class="mock-card">
+      <div class="mock-head"><div class="avatar"></div><div><div class="name">Vera Lindqvist</div><div class="sub">subtitle / creator</div></div></div>
+      <p class="body">Body text. Style me with the knobs or write CSS below.</p>
+      <div><span class="tag">noir</span><span class="tag">slow burn</span></div>
+    </article>
+  </div>
+</section>
+
+<h2 class="section-title">Advanced <small>code on the left, parsed rules on the right</small></h2>
+<p class="hint" style="margin:-6px 0 14px">Code is primary. Rules on the right are parsed from your sheet. Click one to tweak knobs; freeform (@media / nested) stays in the source.</p>
+<div class="adv">
+  <section class="panel">
+    <div class="pane-head"><h2>CSS source</h2><span class="dim num" style="font-size:12px">14 lines</span></div>
+    <div class="chips">
+      <button class="chip"><code>color</code></button><button class="chip"><code>bg</code></button><button class="chip"><code>radius</code></button><button class="chip"><code>pad</code></button><button class="chip"><code>border</code></button><button class="chip"><code>shadow</code></button><button class="chip"><code>!imp</code></button>
+    </div>
+    <div class="editor"><div class="gut">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</div><pre><span class="k-com">/* CSS Workshop draft */</span>
+<span class="k-sel">.card</span> {
+  <span class="k-prop">background</span>: <span class="k-val">#1a1820</span>;
+  <span class="k-prop">color</span>: <span class="k-val">#e8e4ef</span>;
+  <span class="k-prop">border-radius</span>: <span class="k-val">12px</span>;
+  <span class="k-prop">padding</span>: <span class="k-val">12px 14px</span>;
+}
+<span class="k-sel">.name</span> {
+  <span class="k-prop">font-weight</span>: <span class="k-val">700</span>;
+  <span class="k-prop">letter-spacing</span>: <span class="k-val">.02em</span>;
+}
+<span class="k-sel">.tag</span> { <span class="k-prop">color</span>: <span class="k-val">#c59a46</span>; }
+<span class="k-sel">@media</span> (max-width: 600px) { <span class="k-sel">.card</span> { <span class="k-prop">padding</span>: <span class="k-val">8px</span>; } }</pre></div>
+    <span class="co at">5</span>
+  </section>
+
+  <section class="panel">
+    <div class="pane-head"><h2>Rule breakdown</h2><span class="dim" style="font-size:13px">6 rules &middot; freeform kept</span></div>
+    <div class="rules">
+      <div class="rule" aria-selected="true"><b>.card</b>background #1a1820, text #e8e4ef, radius 12px, padding 12px 14px</div>
+      <div class="rule"><b>.name</b>weight 700, letter spacing .02em</div>
+      <div class="rule"><b>.tag</b>text #c59a46</div>
+    </div>
+    <pre class="freeform" title="Unparsed / @media kept verbatim">@media (max-width: 600px) { .card { padding: 8px; } }</pre>
+    <span class="label" style="display:block;margin-bottom:10px">Assist this rule <span class="co">6</span></span>
+    <div class="knobs">
+      <div class="knob wide"><span class="label">Selector</span><span class="field code">.card</span></div>
+      <div class="knob wide"><span class="label">Background</span>
+        <div class="paint"><span class="sw" style="background:var(--premiere-panel)"></span><span class="field code">#1a1820</span></div>
+        <span class="field ph">or type any CSS background</span></div>
+      <div class="knob"><span class="label">Text color</span><div class="paint"><span class="sw" style="background:var(--premiere-text)"></span><span class="field code">#e8e4ef</span></div></div>
+      <div class="knob"><span class="label">Opacity</span><div class="slider"><i></i><b></b></div><div class="srow"><span class="dim" style="font-size:12px">0</span><span class="num">0.80</span><span class="dim" style="font-size:12px">1</span></div></div>
+      <div class="knob"><span class="label">Type</span>
+        <div class="two-in"><span class="field ph code">font-size e.g. 0.95rem</span><span class="select">weight</span></div>
+        <span class="select">font family</span><span class="select">align</span></div>
+      <div class="knob"><span class="label">Box</span>
+        <div class="two-in"><span class="field code">12px 14px</span><span class="field code">12px</span></div>
+        <span class="field code">1px solid #2e2a38</span><span class="field ph code">box-shadow</span></div>
+      <div class="knob wide"><span class="label">Visibility</span>
+        <div class="actions-row"><button class="btn sm">Hide</button><button class="btn sm">Show</button><span class="hint">visible</span></div></div>
+      <div class="knob wide"><div class="row" style="padding:0;border:0"><b style="font-size:14px">Force with !important</b><p>often needed on host sites</p><span class="ctl"><span class="switch"></span></span></div></div>
+    </div>
+    <p class="hint" style="margin-top:12px">With no rule selected: select a rule to open knobs without leaving Advanced. With an empty sheet: no rules parsed yet, type CSS on the left or import a file.</p>
+  </section>
+</div>
+
+<h2 class="section-title">Simple mode <small>Starters, Assist, Source: one pane at a time under the preview <span class="co">7</span></small></h2>
+<div class="tabs" role="tablist" aria-label="Simple ladder"><span>Starters</span><span aria-selected="true">Assist</span><span>Source</span></div>
+<div class="three">
+  <section class="panel" data-deck="regex">
+    <div class="pane-head"><h2>Starters</h2><span class="dim" style="font-size:13px">Universal pack</span></div>
+    <p class="hint">Drop a starter into your sheet, then tune it in Assist or Source. Generic card pieces. Plain CSS, any host.</p>
+    <div class="recipe"><div class="recipe-head"><b>Dark glass</b><button class="btn sm">Use this</button></div><p>Frosted dark panel. Hosts may ignore backdrop-filter.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Neon outline</b><button class="btn sm">Use this</button></div><p>Hot border glow on cards and tags.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Flat solids</b><button class="btn sm">Use this</button></div><p>Kill fancy fills. Solid backgrounds only.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Readable type</b><button class="btn sm">Use this</button></div><p>Clear sizes, contrast, and line height. Aesthetic second.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Soft card</b><button class="btn sm">Use this</button></div><p>Rounded panel, soft shadow, readable body type.</p></div>
+  </section>
+
+  <section class="panel">
+    <div class="pane-head"><h2>Assist</h2><span class="dim" style="font-size:13px">one rule at a time</span></div>
+    <p class="hint">Pick a target, tweak knobs, or write free CSS in Source. Knobs edit one rule at a time.</p>
+    <div class="actions-row" style="margin:12px 0"><span class="label">Add rule for</span><span class="select">choose target</span><button class="btn sm">+ Blank rule</button></div>
+    <div class="rules"><div class="rule" aria-selected="true"><b>.card</b>background #1a1820, radius 12px</div><div class="rule"><b>.tag</b>text #c59a46</div></div>
+    <div class="english">Card: dark background, light text, 12px rounded corners.</div>
+    <p class="hint">The same knobs as above: Selector, Background, Text color, Type, Box, Opacity, Visibility, !important.</p>
+    <div class="actions-row" style="margin-top:14px"><button class="btn sm danger">Delete rule</button></div>
+    <p class="hint" style="margin-top:12px">Extra CSS kept as freeform (@media / nested): edit in Source. Not dropped on save.</p>
+    <p class="hint" style="margin-top:8px">Empty state: no parsed rules yet. Use a Starter or open Source and write CSS.</p>
+  </section>
+
+  <section class="panel">
+    <div class="pane-head"><h2>Source</h2><span class="dim" style="font-size:13px">plain CSS is the truth</span></div>
+    <div class="chips"><button class="chip"><code>color</code></button><button class="chip"><code>bg</code></button><button class="chip"><code>radius</code></button><button class="chip"><code>pad</code></button><button class="chip"><code>border</code></button><button class="chip"><code>shadow</code></button><button class="chip"><code>!imp</code></button></div>
+    <div class="editor"><div class="gut">1
+2
+3
+4
+5
+6</div><pre><span class="k-sel">.card</span> {
+  <span class="k-prop">background</span>: <span class="k-val">#1a1820</span>;
+  <span class="k-prop">color</span>: <span class="k-val">#e8e4ef</span>;
+  <span class="k-prop">border-radius</span>: <span class="k-val">12px</span>;
+}</pre></div>
+  </section>
+</div>
+
+<h2 class="section-title">Clear draft <small>confirm dialog</small></h2>
+<section class="panel" style="max-width:420px" data-deck="fog">
+  <h3 style="font:700 20px var(--font-fancy)">Clear the draft? <span class="co">8</span></h3>
+  <p class="hint" style="margin:8px 0 16px">Your unsaved CSS goes away.</p>
+  <div class="actions-row"><button class="btn danger">Clear</button><button class="btn quiet">Keep</button></div>
+</section>
+
+</main></div>
+<ol class="legend">
+  <li><span class="co">1</span> Room header: the shared Playbill (gold kicker, Cinzel title, rose-ruled lede). Replaces the small mono eyebrow and heavy sans title; the app status line folds into the lede flash.</li>
+  <li><span class="co">2</span> Header actions: Copy CSS (primary rose), Download .css, Clear draft, Tour. Today Simple / Advanced and Import .css appear twice, once in the room header (room.tsx) and again in the editor toolbar; they now live once, in the toolbar below, with the import note beside them.</li>
+  <li><span class="co">3</span> Target row unchanged in order: Targets select, Mode, Import .css, Undo (only when there is history), import message. Select drawn with the kit, no native control.</li>
+  <li><span class="co">4</span> Sealed preview keeps its place right under the row. Same sandboxed iframe in the build; it gets a panel with a deck edge and a title bar.</li>
+  <li><span class="co">5</span> Advanced working layout kept: code editor with snippet chips left, rule breakdown right. Code stays mono; labels and prose are the UI font.</li>
+  <li><span class="co">6</span> Knobs keep every control (selector, background paint plus free text, text color, type, box, opacity, hide and show, !important). Gold selectors in rule rows mark the code-ish part only.</li>
+  <li><span class="co">7</span> Simple mode (Starters, Assist, Source) is shown side by side here only so every pane is visible; in the app it remains one pane at a time under the tabs, exactly as today.</li>
+  <li><span class="co">8</span> The Clear draft confirm dialog, restyled with the kit; Clear is the only danger action.</li>
+</ol>
+<script type="module">import { startLightRays } from "./rays.bundle.js"; startLightRays(document.getElementById("rays"), true, .35);</script>
+</body></html>

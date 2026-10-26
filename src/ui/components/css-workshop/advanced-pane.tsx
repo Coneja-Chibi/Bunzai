@@ -34,6 +34,9 @@ export function CssAdvancedPane({
   const freeform = doc.freeform.trim();
   return (
     <div className={styles.advanced} data-tour="css-advanced">
+      <div className={styles.paneHead}>
+        <h2 className={styles.paneTitle}>Advanced</h2>
+      </div>
       <p className={styles.hint}>
         Code is primary. Rules on the right are parsed from your sheet. Click one to tweak knobs;
         freeform (@media / nested) stays in the source.
@@ -65,11 +68,14 @@ export function CssAdvancedPane({
         </div>
         <div className={styles.advBreak}>
           <span className={styles.sourceLabel}>
-            Rule breakdown · {doc.rules.length}
+            Rule breakdown · <span className={styles.count}>{doc.rules.length}</span>
             {freeform ? " · freeform kept" : ""}
           </span>
           {doc.rules.length === 0 && !freeform ? (
-            <p className={styles.hint}>No rules parsed yet. Type CSS on the left or import a file.</p>
+            <div className={styles.empty}>
+              <b>No rules yet</b>
+              <p className={styles.hint}>No rules parsed yet. Type CSS on the left or import a file.</p>
+            </div>
           ) : null}
           <div className={styles.ruleList}>
             {doc.rules.map(/* bounded-ok: tabs, menus, wizard steps, options and chips: fixed small sets */ (r) => (
@@ -92,7 +98,10 @@ export function CssAdvancedPane({
               <RuleKnobs rule={selected} onChange={onRuleChange} />
             </div>
           ) : (
-            <p className={styles.hint}>Select a rule to open knobs without leaving Advanced.</p>
+            <div className={styles.empty}>
+              <b>Pick a rule</b>
+              <p className={styles.hint}>Select a rule to open knobs without leaving Advanced.</p>
+            </div>
           )}
         </div>
       </div>

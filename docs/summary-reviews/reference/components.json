@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:9968dd5df830f97ffaee3929c280bee9b202c61be5719f23d70f49b4e9c0d7a8",
-  "semanticSummaryHash": "sha256:041c6efae5a4b3364fc27d9953065594b66e40ab31e102b8d6a0db1fc4c702fc",
+  "sourceHash": "sha256:4b750f2b5cc2957ba01fd6fa522629f752b4ef6ef2c1bd27615164fe15d4cd7c",
+  "semanticSummaryHash": "sha256:5d453631905c4593749be2b532ae10f4f0b0ef75a24acd2f498aeffbd4b9948a",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer-2",
-  "notes": "Helpers list and Messenger/Context claims match page and src",
-  "reviewedAt": "2026-10-26T16:11:56.239Z"
+  "reviewer": "sonnet-docs-reviewer-4",
+  "notes": "Section summary matches catalog rows; RoomHeader/Panel claims verified in source; no change-history wording",
+  "reviewedAt": "2026-10-26T20:41:24.835Z"
 }

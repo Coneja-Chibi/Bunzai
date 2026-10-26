@@ -1,0 +1,230 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Help / Docs</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Same layout as today: top strip, then nav rail (16rem) | article | on-this-page rail (13rem), each scrolling alone. */
+.room { max-width: none; padding: 20px 28px 56px; }
+.strip { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 10px 24px; padding: 0 0 14px; margin-bottom: 18px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.strip h1 { font: 700 clamp(26px, 2.4vw, 36px)/1.05 var(--font-fancy); letter-spacing: .02em; margin-top: 10px; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.strip .lede { grid-column: 1; margin: 0; padding-left: 12px; border-left: 2px solid var(--premiere-rose); font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.strip .actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 14px; align-items: center; }
+.status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); }
+.status::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); box-shadow: 0 0 10px var(--premiere-gold); }
+
+.reader { display: grid; grid-template-columns: 256px minmax(0, 1fr) 208px; gap: 22px; height: calc(100vh - 150px); min-height: 560px; padding-right: 5px; padding-bottom: 5px; }
+.reader > * { min-height: 0; overflow: auto; }
+.reader::-webkit-scrollbar, .reader > *::-webkit-scrollbar { width: 8px; }
+.reader > *::-webkit-scrollbar-thumb { background: color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.mobilebar { display: none; }
+
+/* Nav rail: search, audience shelf, sections, doc rows */
+.nav { padding: 16px 14px 20px; position: relative; }
+.search { display: flex; align-items: center; gap: 10px; min-height: 42px; padding: 0 12px; margin-bottom: 14px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); border-bottom-color: var(--premiere-gold);
+  background: color-mix(in srgb, var(--premiere-hard) 75%, transparent); box-shadow: 3px 3px var(--premiere-hard); transition: box-shadow .2s, border-color .2s; }
+.search:hover, .search:focus-within { border-color: var(--premiere-gold); box-shadow: 3px 3px var(--premiere-hard), 0 0 22px color-mix(in srgb, var(--premiere-gold) 28%, transparent); }
+.search svg { flex: none; stroke: var(--premiere-gold); }
+.search input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--premiere-text); font: 14px var(--font-ui); }
+.search input::placeholder { color: color-mix(in srgb, var(--premiere-text) 55%, transparent); opacity: 1; }
+.shelf, .prose pre, .tablewrap, .prose figure { position: relative; } .co.a { position: absolute; z-index: 2; }
+.shelf { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: 14px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.shelf button { padding: 10px 6px; font: 700 13px/1.2 var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 78%, transparent); background: none; border: 0; cursor: pointer; transition: background .2s; }
+.shelf button + button { border-left: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.shelf button:hover { background: color-mix(in srgb, var(--premiere-violet) 18%, transparent); }
+.shelf button[aria-pressed="true"] { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-rose) 28%, transparent); box-shadow: inset 0 -3px 0 var(--premiere-rose); }
+details.sec { border-top: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); padding: 4px 0 6px; }
+details.sec summary { list-style: none; display: flex; align-items: center; gap: 10px; min-height: 38px; cursor: pointer; font: 700 14px var(--font-fancy); letter-spacing: .03em; transition: color .2s; }
+details.sec summary:hover { color: var(--premiere-gold); }
+details.sec summary::-webkit-details-marker { display: none; }
+details.sec summary::before { content: ""; width: 0; height: 0; border: 5px solid transparent; border-left: 7px solid var(--premiere-gold); transition: transform .15s; }
+details.sec[open] summary::before { transform: rotate(90deg) translateX(2px); }
+.n { margin-left: auto; min-width: 24px; padding: 2px 7px; text-align: center; font: 12px var(--font-mono); color: var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 12%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.doc { display: block; padding: 8px 10px 8px 14px; margin: 2px 0; font-size: 14px; line-height: 1.35; text-decoration: none; border-left: 3px solid transparent; color: color-mix(in srgb, var(--premiere-text) 84%, transparent); transition: transform .2s, background .2s, border-color .2s, box-shadow .2s; }
+.doc:hover { transform: translateX(3px); border-left-color: var(--premiere-violet); background: color-mix(in srgb, var(--premiere-violet) 16%, transparent); }
+.doc[aria-current="page"] { border-left-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 18%, transparent); color: var(--premiere-text); font-weight: 600; box-shadow: 3px 3px var(--premiere-hard), -8px 0 24px -6px color-mix(in srgb, var(--premiere-rose) 45%, transparent); }
+
+/* Article: calmer and more opaque than other panels so nothing fights the reading */
+.page { background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-hard)) 91%, transparent); padding: 0; border-top-color: var(--deck-character); }
+.page .head { padding: 26px clamp(24px, 4vw, 56px) 0; }
+.crumb { display: flex; align-items: center; gap: 10px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); }
+.crumb .sep { color: var(--premiere-gold); }
+.crumb .btn { margin-left: auto; min-height: 34px; padding: 5px 14px; font-size: 13px; }
+.tag { display: inline-block; margin-top: 18px; padding: 3px 10px; font: 700 12px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; background: var(--premiere-rose); box-shadow: 3px 3px var(--premiere-hard); }
+.tag.dev { background: var(--premiere-violet); }
+.page h1 { font: 700 clamp(32px, 3.4vw, 48px)/1.08 var(--font-fancy); letter-spacing: .02em; margin: 14px 0 0; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.prose { padding: 18px clamp(24px, 4vw, 56px) 56px; max-width: 58rem; margin: 0 auto 0 0; font-size: 16.5px; line-height: 1.7; color: color-mix(in srgb, var(--premiere-text) 90%, transparent); overflow-wrap: anywhere; }
+.prose > * + * { margin-top: 16px; }
+.prose h2 { font: 700 24px/1.2 var(--font-fancy); letter-spacing: .02em; margin-top: 40px; padding-bottom: 8px; display: flex; align-items: center; gap: 14px; color: var(--premiere-text); border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.prose h2::before { content: ""; flex: none; width: 10px; height: 24px; background: var(--premiere-rose); box-shadow: 3px 3px var(--premiere-violet); }
+.prose h3 { font: 700 17px/1.3 var(--font-ui); margin-top: 28px; color: var(--premiere-gold); }
+.prose a { color: color-mix(in srgb, var(--premiere-rose) 55%, white); text-underline-offset: 3px; }
+.prose ol, .prose ul { padding-left: 1.4em; } .prose li + li { margin-top: 8px; } .prose li::marker { color: var(--premiere-gold); font-weight: 700; }
+.prose :not(pre) > code { font-size: .88em; padding: 2px 7px; background: color-mix(in srgb, var(--premiere-violet) 22%, var(--premiere-hard)); border: 1px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); }
+.prose pre { font: 14px/1.65 var(--font-mono); padding: 16px 20px; overflow-x: auto; background: var(--premiere-hard); border: 2px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); border-left: 4px solid var(--premiere-gold); box-shadow: 4px 4px color-mix(in srgb, var(--premiere-violet) 40%, var(--premiere-hard)); color: var(--premiere-text); }
+.prose pre .c { color: color-mix(in srgb, var(--premiere-text) 50%, transparent); }
+.prose blockquote { padding: 12px 18px; font-size: 15.5px; border-left: 4px solid var(--premiere-violet); background: color-mix(in srgb, var(--premiere-violet) 12%, transparent); font-style: normal; }
+.tablewrap { overflow-x: auto; border: 2px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); }
+.prose table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.5; min-width: 480px; }
+.prose th { text-align: left; font: 700 13px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--premiere-gold); padding: 10px 14px; background: color-mix(in srgb, var(--premiere-violet) 14%, var(--premiere-hard)); border-bottom: 2px solid var(--premiere-gold); }
+.prose td { padding: 10px 14px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); vertical-align: top; }
+.prose tr:last-child td { border-bottom: 0; } .prose tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--premiere-text) 3%, transparent); }
+.prose figure { padding: 12px; border: 3px solid var(--premiere-hard); border-top-color: var(--deck-character); box-shadow: 5px 5px var(--premiere-hard); background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); transition: transform .25s, box-shadow .25s; }
+.prose figure:hover { transform: translateY(-3px); box-shadow: 5px 5px var(--premiere-hard), 0 16px 48px color-mix(in srgb, var(--premiere-violet) 32%, transparent); }
+.shot { aspect-ratio: 16 / 6; display: grid; place-items: center; text-align: center; padding: 16px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--premiere-text) 4%, transparent) 0 10px, transparent 10px 20px); }
+figcaption { padding: 10px 4px 0; font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); }
+
+/* On this page rail */
+.toc { padding: 18px 16px 18px 18px; }
+.toc .head { font: 700 12px var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.toc .head::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 45%, transparent); }
+.toc ol { list-style: none; padding: 0 0 0 12px; border-left: 2px solid color-mix(in srgb, var(--premiere-gold) 40%, transparent); }
+.toc li a { display: block; position: relative; padding: 7px 8px; margin: 1px 0; font-size: 14px; line-height: 1.35; text-decoration: none; color: color-mix(in srgb, var(--premiere-text) 74%, transparent); transition: transform .2s, background .2s, color .2s; }
+.toc li a:hover { transform: translateX(3px); background: color-mix(in srgb, var(--premiere-violet) 16%, transparent); color: var(--premiere-text); }
+.toc li.l3 a { margin-left: 12px; font-size: 13px; }
+.toc li a[aria-current="location"] { color: var(--premiere-text); font-weight: 700; background: color-mix(in srgb, var(--premiere-rose) 14%, transparent); }
+.toc li a[aria-current="location"]::before { content: ""; position: absolute; left: -21px; top: 50%; width: 10px; height: 10px; margin-top: -5px; background: var(--premiere-rose); box-shadow: 2px 2px var(--premiere-violet), 0 0 12px var(--premiere-rose); }
+
+/* Other states, below the room (not part of today's layout; shown so every state is styled) */
+.section-title { margin-top: 44px; }
+.states { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.states h3 { margin-bottom: 4px; } .states .cap { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); margin-bottom: 14px; }
+.hit { display: block; padding: 10px 12px; margin-top: 8px; text-decoration: none; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-violet) 10%, transparent); transition: transform .2s, background .2s; }
+.hit:hover { transform: translateX(3px); background: color-mix(in srgb, var(--premiere-violet) 20%, transparent); }
+.hit b { display: block; font-size: 14px; } .hit small { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.hit mark { background: color-mix(in srgb, var(--premiere-gold) 40%, transparent); color: var(--premiere-text); }
+.grp { font: 700 15px var(--font-fancy); letter-spacing: .03em; margin-top: 14px; padding-bottom: 6px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.moment { text-align: center; padding: 22px 10px; }
+.moment h4 { font: 700 20px/1.2 var(--font-fancy); letter-spacing: .02em; text-shadow: 0 2px 24px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.moment p { margin: 8px auto 0; max-width: 30ch; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.moment .btn { margin-top: 14px; }
+.moment.err h4 { color: color-mix(in srgb, var(--premiere-rose) 60%, white); }
+.pulse { display: inline-block; width: 10px; height: 10px; margin-bottom: 10px; background: var(--premiere-gold); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; box-shadow: 0 0 18px var(--premiere-gold); } }
+.sheet { border-top: 3px solid var(--premiere-gold); background: var(--premiere-hard); padding: 14px 16px; }
+.sheet .grab { width: 44px; height: 4px; background: color-mix(in srgb, var(--premiere-text) 40%, transparent); margin: 0 auto 12px; }
+.sheet h3 { font: 700 16px var(--font-fancy); margin-bottom: 8px; }
+@media (prefers-reduced-motion: reduce) { .doc, .toc li a, .hit, .prose figure, .search, .pulse { transition: none; animation: none; } .doc:hover, .toc li a:hover, .hit:hover, .prose figure:hover { transform: none; } }
+
+/* Today's breakpoints: three columns wide, two columns mid, phone reader with sheets */
+@media (max-width: 1000px) { .reader { grid-template-columns: 240px minmax(0, 1fr); } .reader .toc-col { display: none; } }
+@media (max-width: 640px) {
+  .room { padding: 20px 16px 48px; }
+  .strip { grid-template-columns: 1fr; } .strip .actions { grid-column: 1; grid-row: auto; flex-wrap: wrap; justify-content: space-between; }
+  .reader { grid-template-columns: minmax(0, 1fr); height: auto; padding-right: 0; } .reader > * { overflow: visible; } .reader .nav-col { display: none; }
+  .mobilebar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin-bottom: 16px; padding: 10px; position: sticky; top: 0; z-index: 3;
+    background: color-mix(in srgb, var(--premiere-hard) 92%, transparent); border: 3px solid var(--premiere-hard); border-bottom-color: var(--premiere-gold); box-shadow: 4px 4px var(--premiere-hard); backdrop-filter: blur(6px); }
+  .mobilebar .btn { min-height: 40px; padding: 8px 12px; font-size: 13px; }
+  .mobilebar .t { text-align: center; min-width: 0; } .mobilebar .t b { display: block; font: 700 14px var(--font-fancy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .mobilebar .t small { font-size: 12px; color: var(--premiere-gold); letter-spacing: .1em; text-transform: uppercase; }
+  .page .head, .prose { padding-left: 20px; padding-right: 20px; } .prose { font-size: 16px; } .prose h2 { font-size: 21px; }
+  .crumb { flex-wrap: wrap; }
+  .states { grid-template-columns: minmax(0, 1fr); }
+  .wf-note { padding: 12px 16px; }
+}
+
+/* one frame per group */
+.nav .shelf, .nav .doc { border: 0 !important; box-shadow: none !important; }
+.gallery > .panel, .states > .panel { border: 0 !important; box-shadow: none !important; background: none !important; border-top: 2px solid var(--deck, color-mix(in srgb, var(--premiere-text) 10%, transparent)) !important; }
+.panel .tablewrap, .panel figure { border: 0 !important; box-shadow: none !important; }
+/* end one frame */
+</style></head>
+<body><div class="wf-note">WIREFRAME. Help / Docs in the Premiere house style, today's layout kept. Numbered callouts are explained below.</div>
+<div class="stage"><main class="room">
+
+<header class="strip">
+  <div><div class="kicker left">The program notes <span class="co">1</span></div><h1>Help / Docs</h1></div>
+  <div class="actions"><span class="status">docs &middot; Get started</span><button class="btn">Reload Studio</button></div>
+  <p class="lede">The same documentation committed to GitHub, packaged into Bunraku so it is always close by.</p>
+</header>
+
+<div class="mobilebar"><button class="btn">Browse</button><span class="t"><b>Get started</b><small>User docs</small></span><button class="btn">Sections</button></div>
+
+<div class="reader">
+  <aside class="nav-col panel nav" data-deck="lorebook" aria-label="Documentation"><span class="co" style="position:absolute;right:6px;top:6px">2</span>
+    <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2.4"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg><input placeholder="search the docs" aria-label="Search the docs"></label>
+    <div class="shelf"><button aria-pressed="true">User Docs</button><button aria-pressed="false">Developer Docs</button><span class="co a" style="top:-10px;right:-10px">3</span></div>
+    <details class="sec" open style="position:relative"><summary>Start here <span class="n">4</span></summary>
+      <a class="doc" href="#">User docs overview</a><a class="doc" href="#" aria-current="page">Get started</a><a class="doc" href="#">Frequently asked questions</a><a class="doc" href="#">Troubleshoot common problems</a><span class="co a" style="top:6px;right:34px">4</span></details>
+    <details class="sec"><summary>Workflows <span class="n">5</span></summary></details>
+    <details class="sec"><summary>Content guides <span class="n">3</span></summary></details>
+    <details class="sec"><summary>Platform guides <span class="n">11</span></summary></details>
+    <details class="sec"><summary>Safety &amp; privacy <span class="n">1</span></summary></details>
+  </aside>
+
+  <article class="panel page" data-deck="character">
+    <div class="head">
+      <div class="crumb"><span>User Docs</span><span class="sep">/</span><span>Get started</span><button class="btn quiet">View on GitHub</button> <span class="co">5</span></div>
+      <span class="tag">User</span> <span class="co">6</span>
+      <h1>Get started</h1>
+    </div>
+    <div class="prose">
+      <p>Getting started is four things: install Bunraku, run the first-run wizard once, learn the rooms the Dock shows you, and bring your first file into the Library. The wizard does not restrict what you can make or publish. Settings keeps the choices that matter after setup: theme, first Library deck, publish targets, and accent.</p>
+      <h2 id="short">The short version</h2>
+      <ol>
+        <li><b>Install Bunraku.</b> Download the build for your platform from <a href="#">Releases</a>. To run from source instead, install Bun 1.3+ and use:</li>
+      </ol>
+      <pre><span class="c"># clone, enter, install</span>
+git clone https://github.com/Coneja-Chibi/Bunraku.git
+cd Bunraku
+bun install<span class="co a" style="top:8px;right:8px">7</span></pre>
+      <ol start="2"><li><b>Open the studio.</b> Run the downloaded app, or from a source checkout:</li></ol>
+      <pre>bun run dev</pre>
+      <p>This starts the primary loopback server and prints its address, <code>127.0.0.1:8321</code> by default. Open that in your browser.</p>
+      <blockquote>Optional remote listeners stay off until you enable Remote access in Settings.</blockquote>
+      <h2 id="wizard">The first-run wizard</h2>
+      <p>It asks four questions, once. Skip it and the defaults apply.</p>
+      <div class="tablewrap"><table><thead><tr><th>Question</th><th>Where it lives later</th><th>Default</th></tr></thead><tbody>
+        <tr><td>Theme</td><td>Settings, Appearance</td><td>Dusk</td></tr>
+        <tr><td>First Library deck</td><td>The Library</td><td>Characters</td></tr>
+        <tr><td>Publish targets</td><td>Settings, Publishing</td><td>None</td></tr>
+        <tr><td>Accent</td><td>Settings, Appearance</td><td>Rose</td></tr></tbody></table><span class="co a" style="top:6px;right:6px">8</span></div>
+      <h2 id="dock">The Dock</h2>
+      <h3 id="dock-rooms">Rooms and decks</h3>
+      <p>The Dock along the bottom lists every room. Each deck kind keeps its own colour edge, so a lorebook never looks like a preset.</p>
+      <figure><div class="shot">Screenshot: the Dock with The Library selected</div><figcaption>The Dock with the Library selected. Hover a room for its name.</figcaption><span class="co a" style="top:8px;right:8px">9</span></figure>
+      <h2 id="file">Bringing in your first file</h2>
+      <p>Drop a card, a lorebook or a preset onto the Library, or use Import. Bunraku detects the format and keeps the original untouched.</p>
+    </div>
+  </article>
+
+  <aside class="toc-col panel toc" data-deck="lorebook" data-tour="toc" aria-label="On this page">
+    <div class="head">On this page <span class="co">10</span></div>
+    <ol><li><a href="#" aria-current="location">The short version</a></li><li><a href="#">The first-run wizard</a></li><li><a href="#">The Dock</a></li><li class="l3"><a href="#">Rooms and decks</a></li><li><a href="#">Bringing in your first file</a></li><li><a href="#">Tips</a></li></ol>
+  </aside>
+</div>
+
+<h2 class="section-title">Other states <small>Search results, empty, loading, error, and the phone sheet</small></h2>
+<div class="states">
+  <section class="panel" data-deck="preset"><h3>Searching &ldquo;import&rdquo;</h3><p class="cap">The shelf switch steps aside; results from both shelves, grouped.</p>
+    <div class="grp">User Docs</div>
+    <a class="hit" href="#"><b>Bringing in your first <mark>import</mark></b><small>Get started</small></a>
+    <a class="hit" href="#"><b><mark>Importing</mark> a file</b><small>Workflows</small></a>
+    <div class="grp">Developer Docs</div>
+    <a class="hit" href="#"><b>Format overview</b><small>Formats &amp; Compatibility</small></a> <span class="co">11</span></section>
+  <section class="panel" data-deck="regex"><h3>No results</h3><p class="cap">Search rail, no match.</p>
+    <div class="moment"><h4>Nothing on that page</h4><p>No docs match that search.</p></div> <span class="co">12</span></section>
+  <section class="panel" data-deck="fog"><h3>Opening a page, and errors</h3><p class="cap">Shown in the article while it loads, or as the room message if the corpus fails.</p>
+    <div class="moment"><span class="pulse"></span><h4>Opening the page&hellip;</h4></div>
+    <div class="moment err"><h4>That docs page could not be opened.</h4><p>The packaged docs could not be read.</p></div> <span class="co">13</span></section>
+  <section class="panel" data-deck="pack"><h3>Phone: Browse sheet</h3><p class="cap">Browse and Sections open as bottom sheets with the same contents as the rails.</p>
+    <div class="sheet"><div class="grab"></div><h3>Browse docs</h3><div class="shelf"><button aria-pressed="true">User Docs</button><button aria-pressed="false">Developer Docs</button></div>
+      <details class="sec" open><summary>Start here <span class="n">4</span></summary><a class="doc" href="#" aria-current="page">Get started</a><a class="doc" href="#">Frequently asked questions</a></details></div> <span class="co">14</span></section>
+</div>
+</main></div>
+<ol class="legend">
+<li><span class="co">1</span> Top strip (status line left, Reload Studio right) becomes the room header in the same slot: gold kicker, Cinzel title with violet glow, one-line lede. The status line keeps its text with a gold marker; Reload Studio becomes the kit button.</li>
+<li><span class="co">2</span> Left rail keeps its 16rem column and order (search, audience shelf, sections). It becomes a see-through panel with the hard frame, offset shadow and a lorebook deck edge; it still scrolls on its own.</li>
+<li><span class="co">3</span> Search is the raw input made a kit field (gold underline, glow on focus); the two shelf buttons become the chooser segmented control with a rose underline on the pressed one. Same spot, same behaviour.</li>
+<li><span class="co">4</span> Section summaries: mono caps labels become Cinzel with a gold triangle; counts become gold mono numeral chips. Doc rows are same places with real hover (violet edge, nudge) and selected (rose edge, glow) states.</li>
+<li><span class="co">5</span> Breadcrumb keeps its row with View on GitHub pushed right. Mono caps become the UI font with a gold slash; the button is the quiet kit button.</li>
+<li><span class="co">6</span> Audience tag stays above the title: rose for user docs, violet for developer docs, with a hard shadow. Title is Cinzel with the violet glow.</li>
+<li><span class="co">7</span> Code blocks: near-black with a gold left edge and a violet offset shadow, mono only here. Inline code, the &ldquo;127.0.0.1:8321&rdquo; chip, gets a violet tint. Body text is the UI font, 16.5px at 1.7 and a 52rem measure, on a more opaque panel so rays never fight the reading.</li>
+<li><span class="co">8</span> Tables: gold header rule and zebra rows inside their own frame, scrolling sideways in the frame on narrow widths. Headings get Cinzel with a rose and violet marker; block quotes get a violet bar.</li>
+<li><span class="co">9</span> Figures: deck-edged frame, offset shadow, lift and glow on hover; caption in the UI font, no italics.</li>
+<li><span class="co">10</span> On this page keeps its right 13rem column: gold kicker head with a rule, a gold spine, hover nudge, and a rose marker with glow on the current heading. Level 3 stays indented.</li>
+<li><span class="co">11</span> Search results (the shelf switch steps aside): group titles become Cinzel with a gold rule; rows are hit cards with a rose edge and a gold highlight.</li>
+<li><span class="co">12</span> Empty state: a staged Cinzel moment with its line, instead of a grey italic sentence. Wording unchanged.</li>
+<li><span class="co">13</span> Loading gets a gold pulse (still under reduced motion); error is a rose-tinted Cinzel moment. Wording unchanged.</li>
+<li><span class="co">14</span> Phone: the Browse / title / Sections bar stays at the top, as a sticky kit bar with a gold rule; the sheets reuse the rail styles. Breakpoints match today (two columns from 40rem, three from 62rem). Not drawn: the first-run tour card and the Dock, which are shell, not this room.</li>
+</ol>
+<script src="kit.js"></script>
+</body></html>

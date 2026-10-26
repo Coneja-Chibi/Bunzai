@@ -271,12 +271,8 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
   return (
     <div className={styles.wrap}>
-      <div>
-        <div className={styles.title}>Updates</div>
-        <div className={styles.blurb}>
-          Every release, newest first, with what changed in each. See how far behind you are and read the
-          full commit log for any version. Checks GitHub only when you open this page.
-        </div>
+      <div className={styles.blurb}>
+        See how far behind you are and read the full commit log for any version. Checks GitHub only when you open this page.
       </div>
 
       {phase.state === "loading" && (
@@ -386,6 +382,9 @@ function UpdatesSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "updates",
+  act: "house",
+  title: "Updates",
+  lede: "Every release, newest first, with what changed in each.",
   label: "Updates",
   order: 88,
   Component: UpdatesSection,

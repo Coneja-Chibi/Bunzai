@@ -1,0 +1,130 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Apps</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Apps room only. Tokens only. One edge color per GROUP (Dock = rose, included = violet), never one per app. */
+.status { display: inline-flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin-top: 18px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.status .num { color: var(--premiere-gold); font-size: 14px; }
+.status .dot { width: 6px; height: 6px; background: var(--premiere-gold); transform: rotate(45deg); }
+.dockgrid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
+.dockgrid .hero { grid-column: span 3; }
+.dockgrid .std { grid-column: span 2; }
+.app { display: flex; flex-direction: column; gap: 14px; position: relative; }
+.app[data-group="dock"] { --deck: var(--premiere-rose); }
+.app[data-group="inc"] { --deck: var(--premiere-violet); }
+.app .head { display: flex; align-items: center; gap: 14px; }
+.mark { width: 48px; height: 48px; flex: none; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--deck) 70%, transparent); background: color-mix(in srgb, var(--deck) 14%, var(--premiere-hard)); color: var(--premiere-text); }
+.mark svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.app h2 { font-size: 22px; }
+.hero h2 { font-size: 28px; }
+.app p.d { font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); flex: 1; }
+.hero p.d { font-size: 16px; }
+.app .foot { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.tag { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--premiere-gold); display: inline-flex; align-items: center; gap: 8px; }
+.tag::before { content: ""; width: 7px; height: 7px; background: currentColor; transform: rotate(45deg); }
+.tag.inc { color: color-mix(in srgb, var(--premiere-violet) 80%, white); }
+.hero .rule { height: 3px; background: linear-gradient(90deg, var(--premiere-rose), transparent); }
+.incgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.incgrid .app { flex-direction: row; gap: 20px; align-items: flex-start; }
+.incgrid .body { display: flex; flex-direction: column; gap: 12px; flex: 1; min-width: 0; align-self: stretch; }
+.incgrid .app .foot { border-top: 0; padding-top: 0; justify-content: flex-end; }
+.dirstrip { display: flex; flex-wrap: wrap; gap: 10px; }
+.dirstrip .chip { min-height: 40px; }
+.dirstrip svg { width: 16px; height: 16px; fill: none; stroke: var(--premiere-gold); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.co.pos { position: absolute; top: 12px; right: 12px; z-index: 2; }
+.app.hero { padding: 26px; }
+.app.hero .head { gap: 18px; }
+.app.hero .mark { width: 60px; height: 60px; }
+.app.hero .mark svg { width: 30px; height: 30px; }
+@media (max-width: 1100px) { .dockgrid { grid-template-columns: repeat(2, 1fr); } .dockgrid .hero, .dockgrid .std { grid-column: span 1; } .incgrid { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .section-title { flex-direction: column; gap: 4px; align-items: flex-start; } .dockgrid { grid-template-columns: 1fr; } .incgrid .app { flex-direction: column; } .hero h2 { font-size: 24px; } }
+</style></head>
+<body><div class="wf-note">WIREFRAME. Apps in the Premiere house style. Numbered callouts are explained below.</div>
+<div class="stage"><div class="rays"><canvas id="rays"></canvas></div><main class="room">
+
+<header class="marquee">
+  <span class="kicker">Apps in this build</span>
+  <h1>Official <em class="glow">Bunraku</em> apps</h1>
+  <p class="lede">Everything here shipped with this copy of Bunraku. Open a room when you need it; compact specialist tools stay here instead of crowding your everyday Dock.</p>
+  <div class="status"><span class="num">9</span> included <span class="dot"></span> <span class="num">5</span> on your Dock <span class="co">1</span></div>
+</header>
+
+<h2 class="section-title">On your Dock <small>Your everyday rooms, one click away <span class="co">2</span></small></h2>
+<section class="dockgrid" aria-label="Official packaged apps on the Dock">
+  <article class="panel app hero lift" data-group="dock" data-deck="pack">
+    <span class="co pos">3</span>
+    <div class="head"><span class="mark"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span><h2>The Workbench</h2></div>
+    <div class="rule"></div>
+    <p class="d">The bench where pieces are edited. Open pieces are staged here from the tab strip above; one is being edited, and any of them may carry edits that are not on disk yet.</p>
+    <div class="foot"><button class="btn primary">Open</button></div>
+  </article>
+  <article class="panel app hero lift" data-group="dock" data-deck="pack">
+    <div class="head"><span class="mark"><svg viewBox="0 0 24 24"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2Z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7Z"/></svg></span><h2>The Library</h2></div>
+    <div class="rule"></div>
+    <p class="d">Every piece in the studio, sorted into decks, plus anything on disk that would not open.</p>
+    <div class="foot"><button class="btn primary">Open</button></div>
+  </article>
+  <article class="panel app std lift" data-group="dock" data-deck="pack">
+    <div class="head"><span class="mark"><svg viewBox="0 0 24 24"><path d="M3 5h18v11H3z"/><path d="M8 21h8M12 16v5"/></svg></span><h2>Scenes</h2></div>
+    <p class="d">Every story you have going: pick up where you left off, start a new scene, and choose how it looks. <span class="co">6</span></p>
+    <div class="foot"><button class="btn primary">Open</button></div>
+  </article>
+  <article class="panel app std lift" data-group="dock" data-deck="pack">
+    <div class="head"><span class="mark"><svg viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="8"/><path d="M6 14h12v7H6z"/></svg></span><h2>The Press</h2></div>
+    <p class="d">The staged conversion queue. Pieces are staged here from the Library, one target platform is chosen for the whole run, and the run prints them into a single zip.</p>
+    <div class="foot"><button class="btn primary">Open</button></div>
+  </article>
+  <article class="panel app std lift" data-group="dock" data-deck="pack">
+    <div class="head"><span class="mark"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 14h.01M15 14h.01"/></svg></span><h2>The Agent</h2></div>
+    <p class="d">The agent's own window. Shows what it can see on the screen you were last standing on, and the brief it would be given.</p>
+    <div class="foot"><button class="btn primary">Open</button></div>
+  </article>
+</section>
+
+<h2 class="section-title">Included apps <small>Specialist tools, bundled and ready, kept off the Dock <span class="co">4</span></small></h2>
+<section class="incgrid" aria-label="Included tools">
+  <article class="panel app lift" data-group="inc" data-deck="lorebook">
+    <span class="mark"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 22a10 10 0 1 1 10-10c0 3-2 4-4.5 4H15a2 2 0 0 0-1.5 3.3c.5.7.1 2.7-1.5 2.7Z"/></svg></span>
+    <div class="body"><h2>CSS Workshop</h2>
+    <p class="d">Assisted CSS authoring room. Starters, property knobs, plain CSS source, sealed preview. Copy or download for any host.</p>
+    <div class="foot"><button class="btn">Open</button></div></div>
+  </article>
+  <article class="panel app lift" data-group="inc" data-deck="lorebook">
+    <span class="mark"><svg viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4 20a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1l-6-11V3"/><path d="M7 15h10"/></svg></span>
+    <div class="body"><h2>Macro Lab</h2>
+    <p class="d">A scratch pad for macro text. The reading half explains each token against the catalog for the chosen platform and shows what it becomes on the other four. The resolved half runs the text through that platform's real macro engine, when a checkout of it is installed on this machine.</p>
+    <div class="foot"><button class="btn">Open</button></div></div>
+  </article>
+  <article class="panel app lift" data-group="inc" data-deck="lorebook">
+    <span class="mark"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M9 13h6M9 17h6"/></svg></span>
+    <div class="body"><h2>Help / Docs</h2>
+    <p class="d">Everything about Bunraku, readable here or on GitHub from the same source.</p>
+    <div class="foot"><button class="btn">Open</button></div></div>
+  </article>
+  <article class="panel app lift" data-group="inc" data-deck="lorebook">
+    <span class="mark"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span>
+    <div class="body"><h2>HTML View</h2>
+    <p class="d">Draws a page as a full tab. Write it in an html block; the person opens it, no tool does. Sealed and offline: all CSS works, images only as data: URIs. No JavaScript, no iframe, form, input or button, no http(s) image, font or fetch. Static wireframes and mockups only.</p>
+    <div class="foot"><button class="btn">Open</button></div></div>
+  </article>
+</section>
+
+<h2 class="section-title">Packaged app directory <small>The same nine, as quick tiles in the Overlay <span class="co">5</span></small></h2>
+<div class="panel dirstrip" data-deck="regex">
+  <span class="chip">The Workbench</span>
+  <span class="chip">The Library</span><span class="chip">Scenes</span><span class="chip">The Press</span><span class="chip">CSS Workshop</span>
+  <span class="chip">The Agent</span><span class="chip">Macro Lab</span><span class="chip">Help / Docs</span><span class="chip">HTML View</span>
+</div>
+
+</main></div>
+<ol class="legend">
+<li><span class="co">1</span> Marquee header replaces the left eyebrow and plain title. The top status line ("apps . 9 included") folds into a counted strip under the lede; counts use the mono font.</li>
+<li><span class="co">2</span> Today all nine cards sit in one flat grid and the "On your Dock" or "Included app" label is a faint footer. It is now the section itself: apps are grouped by whether they live on the Dock, so the label becomes the hierarchy.</li>
+<li><span class="co">3</span> The two rooms people live in (Workbench, Library) get hero cards with a rose rule and a larger name; the other Dock apps follow at standard size. Same Open action, rose primary button.</li>
+<li><span class="co">4</span> The rainbow per-app edge is gone. Edge color now means group only: rose for Dock, violet for included. App identity stays in the icon tile. Included tools use a side-by-side card so the long Macro Lab and HTML View copy reads without a tall empty card. Nothing clips under the Dock.</li>
+<li><span class="co">5</span> The Overlay widget "Packaged app directory" (tiles that open each app) is kept and shown as a chip strip. It is the same manifest list, not a second roster.</li>
+<li><span class="co">6</span> Scenes has no describe line today, so the card falls back to "Scenes is included with this build of Bunraku." The build adds one; this copy is a proposal.</li>
+</ol>
+<script type="module">import { startLightRays } from "./rays.bundle.js"; startLightRays(document.getElementById("rays"), true, .35);</script>
+</body></html>

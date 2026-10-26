@@ -20,17 +20,17 @@
   flex: 1;
   min-height: 16rem;
   width: 100%;
-  background: var(--stage-sunken);
-  border: 2px solid var(--stage-seam);
+  background: var(--bk-surface-field);
+  border: 2px solid var(--bk-line-control);
 }
 
 .edge {
-  stroke: var(--stage-line);
+  stroke: var(--bk-line-control);
   stroke-width: 1.5;
 }
 
 .edgeDim {
-  stroke: var(--stage-faint);
+  stroke: color-mix(in srgb, var(--text) 25%, transparent);
   stroke-width: 1;
   opacity: 0.35;
 }
@@ -44,7 +44,7 @@
 }
 
 .label {
-  fill: var(--stage-soft);
+  fill: var(--text-soft);
   font-family: var(--font-mono);
   font-size: 10.5px; /* SVG user units map 1:1 here; 9px sat under the 10px legibility floor */
   pointer-events: none;
@@ -52,18 +52,16 @@
 
 .hint {
   margin: 0.4rem 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .notice {
   padding: 1.2rem;
   font-family: var(--font-body);
   font-weight: 600;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   display: flex;
   flex-direction: column;
   gap: 0.6rem;

@@ -1,5 +1,5 @@
 /** Permissioned theme-package manager; packages are inert descriptors, never styles or code. */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { JSX } from "react";
 import type { AppContext } from "../../../app-contract";
 import { toErrorMessage } from "../../../../error-message";
@@ -8,6 +8,7 @@ import { DEFAULT_STUDIO_THEME, SETTING_KEYS } from "../../../../studio/settings-
 import type { ThemePackagePreview } from "../../../../extensions/theme-contract";
 import type { ThemeCatalogEntry } from "../../../../extensions/theme-lifecycle";
 import { Button } from "../../../components/button";
+import { ProtectedLine } from "../section-contract";
 import styles from "./theme-manager.module.css";
 
 interface Inspection { preview: ThemePackagePreview; challenge: string }
@@ -19,6 +20,8 @@ interface RestoreReview { item: ThemeCatalogEntry; challenge: string }
 const post = <T,>(path: string, body: Record<string, unknown>): Promise<T> =>
   apiFetchJson<T>(path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
 const errorText = (error: unknown): string => toErrorMessage(error, "Theme request failed.");
+/** Package swatches come from validated palettes; anything that is not a plain hex color is left out of the strip. */
+const swatchColors = (swatch: string[]): string[] => swatch.filter((color) => /^#[0-9a-f]{3,8}$/i.test(color));
 const scopeLabels: Record<string, string> = {
   "appearance.palette": "Set the app colors (contrast is checked)", "appearance.type": "Choose host fonts and a text size step",
   "appearance.shape": "Set frame style, density and motion", "appearance.surfaces": "Choose host-built layouts for each screen",
@@ -36,6 +39,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
   const [active, setActive] = useState(() => ctx.appearance.get());
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
+  const fileInput = useRef<HTMLInputElement>(null);
   const refresh = useCallback(async () => {
     try {
       setCatalog(await loadThemeCatalog());
@@ -132,20 +136,17 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
   const selectedIsAvailable = options.some((item) => item.id === selected);
 
   return <section className={`${styles.manager} host-protected`} aria-labelledby="theme-manager-heading">
+    <ProtectedLine>Theme packages are inert descriptors, never styles or code. Every power one uses is listed for you to approve, and this panel cannot be restyled.</ProtectedLine>
     <h3 id="theme-manager-heading">Theme packages</h3>
-    <label className={styles.choice}>Requested appearance
-      <select value={selectedIsAvailable ? selected : ""} onChange={(event) => choose(event.currentTarget.value)}>
-        {!selectedIsAvailable && <option value="">Unavailable selection</option>}
-        {options.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (item) => <option key={item.id} value={item.id}>{item.name}{item.builtIn ? " · bundled" : " · installed"}</option>)}
-      </select>
-    </label>
+    <p className={styles.hint}>Requested appearance. Pick one to request it; it applies only when the host confirms its current permission.</p>
     <p className={styles.state} role="status">
       {active.themeId === selected ? `Effective: ${options.find((item) => item.id === active.themeId)?.name ?? active.themeId}.` : `Core appearance is active; requested theme is ${selected}.`}
       {active.fallbackReason ? ` ${active.fallbackReason.replaceAll("-", " ")}.` : ""}
     </p>
-    <label className={styles.file}>Inspect a theme package JSON
-      <input type="file" accept="application/json,.json" disabled={busy} onChange={(event) => void inspectFile(event.currentTarget.files?.[0])} />
-    </label>
+    <div className={styles.file}>
+      <Button size="sm" disabled={busy} onClick={() => fileInput.current?.click()}>Inspect a theme package</Button>
+      <input ref={fileInput} hidden type="file" aria-label="Inspect a theme package JSON" accept="application/json,.json" disabled={busy} onChange={(event) => void inspectFile(event.currentTarget.files?.[0])} />
+    </div>
     {examples.filter((example) => !catalog.some((item) => item.id === example.id && item.enabled)).map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (example) =>
       <div className={styles.example} key={example.id}>
         <div><strong>{example.name}</strong><span>Shipped example · not active</span></div>
@@ -168,10 +169,17 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
     </div>}
     {catalog[0]?.stateError && <p className={styles.state} role="status">{catalog[0].stateError} Installed themes are hidden until it is repaired.</p>}
     <ul className={styles.catalog} aria-label="Installed and bundled theme packages">
-      {catalog.map((item) => <li key={item.id}>
+      {catalog.map((item) => {
+        const colors = swatchColors(item.swatch);
+        const isRequested = item.id === selected;
+        return <li key={item.id} data-requested={isRequested ? "" : undefined}>
+        <div className={styles.strip} aria-hidden="true">{colors.length
+          ? colors.map(/* bounded-ok: fixed category set, per-item detail, capped or short by construction */ (color, index) => <i key={`${color}-${index}`} style={{ background: color }} />)
+          : <i className={styles.neutral} />}</div>
         <div><strong>{item.name}</strong><span>{item.builtIn ? "Bundled" : "Imported"} · {item.enabled ? "enabled" : "disabled or revoked"}</span>
           <code>{item.invalid ? `This theme no longer passes checks: ${item.invalid.replace(/\.$/, "")}. Remove it or install it again.` : item.grantedScopes.length ? item.grantedScopes.join(" · ") : "No active grants"}</code></div>
         <div className={styles.actions}>
+          {!item.invalid && <Button size="sm" variant="quiet" aria-pressed={isRequested} disabled={busy || isRequested} onClick={() => choose(item.id)}>{isRequested ? "Requested" : "Request"}</Button>}
           {item.invalid ? examples.some((example) => example.id === item.id) && <Button size="sm" disabled={busy} onClick={() => void inspectExample(item.id)}>Reinstall</Button>
             : item.builtIn && (item.grantedScopes.length === 0 || item.updateAvailable)
             ? <Button size="sm" disabled={busy} onClick={() => void inspectRestore(item)}>{item.updateAvailable ? "Review host update" : "Review and restore"}</Button>
@@ -181,7 +189,7 @@ export function ThemeManager({ ctx }: { ctx: AppContext }): JSX.Element {
           {!item.invalid && <Button size="sm" variant="danger" disabled={busy} onClick={() => void mutate("revoke", item)}>Revoke grants</Button>}
           {!item.builtIn && <Button size="sm" variant="danger" disabled={busy} onClick={() => void mutate("remove", item)}>Remove</Button>}
         </div>
-      </li>)}
+      </li>;})}
     </ul>
     {restoreReview && <div className={styles.review} aria-label="Built-in theme restore review">
       <h4>{restoreReview.item.updateAvailable ? "Review update for" : "Restore"} {restoreReview.item.name} {restoreReview.item.version}</h4>

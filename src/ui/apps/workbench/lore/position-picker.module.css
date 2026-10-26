@@ -22,23 +22,20 @@
 }
 
 .placeTitles b {
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 .placeTitles span {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   margin-top: 0.08rem;
 }
 
@@ -53,15 +50,15 @@
   align-items: center;
   gap: 0.22rem;
   border: 1px solid var(--a, var(--accent));
-  background: color-mix(in srgb, var(--a, var(--accent)) 12%, var(--stage-sunken));
+  background: color-mix(in srgb, var(--a, var(--accent)) 12%, var(--bk-surface-field));
   padding: 0.14rem 0.36rem;
   flex: none;
 }
 
 .placeDepthSleep {
   opacity: 0.4;
-  border-color: var(--stage-seam);
-  background: var(--stage-sunken);
+  border-color: var(--bk-line-control);
+  background: var(--bk-surface-field);
 }
 
 .placeAt {
@@ -73,14 +70,14 @@
 }
 
 .placeDepthSleep .placeAt {
-  color: var(--stage-text-dim, var(--stage-mute));
+  color: var(--stage-text-dim, var(--text-dim));
 }
 
 .placeDepthNum {
   width: 2rem;
   border: 0;
   background: none;
-  color: var(--stage-card);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-control);
@@ -97,17 +94,16 @@
 }
 
 .placeDepthNum:disabled {
-  color: var(--stage-mute);
+  color: var(--text-dim);
   cursor: not-allowed;
 }
 
 .placeRole {
   border: 0;
   background: none;
-  color: var(--stage-soft);
-  font-family: var(--font-mono);
+  color: var(--text-soft);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  text-transform: uppercase;
   padding: 0;
 }
 
@@ -123,14 +119,12 @@
   font-weight: 700;
   font-size: var(--text-control);
   letter-spacing: 0.04em;
-  color: var(--stage-soft);
+  color: var(--text-soft);
 }
 
 .placeForeign {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--stage-warn);
   border: 1px solid var(--stage-warn);
   padding: 0.08rem 0.28rem;

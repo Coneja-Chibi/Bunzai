@@ -1,25 +1,46 @@
 /**
- * Preset editor - shell + list + shared fields (RC-neo, in vaud's language). The prompt ROW lives in
- * row.module.css and the EDIT PROMPT sidebar in sidebar.module.css (split for the 500-line cap).
- * NEOBRUTALIST per RC's rc-preset-editor-neo: the darkest canvas = vaud stage; accent = the house accent
- * (--pa = --accent); hard-neo fields (2px black border + offset shadow). This
- * editor deliberately reads like RC, unlike vaud's other editors: the resemblance is scoped to here.
+ * Preset editor - shell + list + shared fields (Premiere restyle). The prompt ROW lives in row.module.css and the
+ * EDIT PROMPT sidebar in sidebar.module.css (split for the 500-line cap). Layout is the editor's own: header, the
+ * Identity and settings bar, then the prompt list beside the rail. Colors come from theme roles (--pa is the house
+ * accent), deck colors from --deck-*; the list and rail share ONE framed workspace panel.
  */
 
 .root {
-  --wb-selection: var(--rose);
-  --wb-primary: var(--rose-deep);
+  --wb-selection: var(--accent);
+  --wb-primary: var(--accent-deep);
   --pa: var(--accent);
-  /* RC's prompt toggle reads green for on; the house default is rose. Scoped here only, per the
-     "reproduce RC's look in this editor" ruling - the shared control keeps its default elsewhere. */
-  --toggle-on: var(--stage-ok);
+  /* the prompt switch reads as the accent when on, like every other switch in the room */
+  --toggle-on: var(--accent);
   container-type: inline-size;
   display: flex;
   flex-direction: column;
+  gap: 0.9rem;
   height: 100%;
   min-height: 0;
+  padding: 0.75rem 1rem 1rem;
   background: var(--stage);
-  color: var(--stage-card);
+  color: var(--text);
+}
+
+/* the editor header is the shared EditorEhead: it wears the deck-edged panel through its data-editor hook */
+.root :global([data-editor="head"]) {
+  flex: none;
+  padding: 0.9rem 1.1rem;
+  background: color-mix(in srgb, var(--deck-preset) 10%, var(--bk-surface-panel));
+  border: 3px solid var(--stage-black);
+  border-top-color: var(--deck-preset);
+  box-shadow: 5px 5px var(--stage-black);
+}
+
+/* the workspace panel: list column | rail, one frame; it hands its height to the split pane inside */
+.workspace.workspace {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
 }
 
 .listCol {
@@ -33,7 +54,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  padding: 1rem;
+  padding: 0.75rem 1rem 1rem;
 }
 
 /* VIRTUALIZED: `.list` is now the scroll element itself (ListToolbar and
@@ -63,15 +84,15 @@
 .autosaveStalled {
   padding: 0.5rem 1rem;
   background: color-mix(in srgb, var(--stage-warn) 10%, transparent);
-  border-bottom: 2px solid color-mix(in srgb, var(--stage-warn) 45%, transparent);
+  border-left: 3px solid var(--stage-warn);
   color: var(--stage-warn);
-  font: 600 var(--text-control) var(--font-body);
+  font: 600 var(--text-control) var(--font-ui);
 }
 
 .empty {
-  border: 2px dashed color-mix(in srgb, var(--stage-card) 15%, transparent);
-  color: var(--stage-mute);
-  font: 500 var(--text-control) var(--font-body);
+  border-left: 3px solid color-mix(in srgb, var(--pa) 55%, transparent);
+  color: var(--text-dim);
+  font: 500 var(--text-control) var(--font-ui);
   padding: 1.4rem;
   text-align: center;
   display: flex;
@@ -81,16 +102,15 @@
 }
 
 .emptyTitle {
-  font: 900 var(--text-control) var(--font-big);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--stage-soft);
+  font: 700 1.25rem/1.2 var(--font-fancy);
+  letter-spacing: 0.03em;
+  color: var(--text);
   margin: 0;
 }
 
 .emptyHint {
-  font: 500 var(--text-meta) var(--font-body);
-  color: var(--stage-text-dim);
+  font: 500 var(--text-meta) var(--font-ui);
+  color: var(--text-dim);
   margin: 0;
   max-width: 26rem;
   line-height: 1.5;
@@ -101,7 +121,7 @@
 /* No border-left: the SplitPane grip between the columns IS the divider now, and a painted one
    beside a draggable one reads as two edges and hides which of them can be grabbed. */
 .sidebar {
-  background: var(--stage-panel);
+  background: color-mix(in srgb, var(--stage-black) 35%, var(--bk-surface-panel));
   height: 100%;
   min-height: 0;
   overflow: hidden;
@@ -111,12 +131,11 @@
 
 .railTabs {
   display: flex;
-  border-bottom: 3px solid var(--stage-black);
   flex: none;
   position: sticky;
   top: 0;
   z-index: 1;
-  background: var(--stage-panel);
+  padding: 0.75rem 0.9rem 0;
 }
 
 @container (max-width: 48rem) {
@@ -124,7 +143,7 @@
     height: 100%;
     min-height: 0;
     border-left: 0;
-    border-top: 3px solid var(--stage-black);
+    border-top: 1px solid var(--bk-line);
     overflow: hidden;
   }
 }
@@ -139,8 +158,8 @@
 }
 
 .sectionEmpty {
-  font: 500 var(--text-control) var(--font-body);
-  color: var(--stage-text-dim);
+  font: 500 var(--text-control) var(--font-ui);
+  color: var(--text-dim);
   margin: 0;
   margin-inline-start: min(calc(var(--preset-group-depth, 0) * 0.85rem), 2.55rem);
   padding: 0.4rem 0.7rem;
@@ -161,24 +180,29 @@
 .contentFoot {
   margin-top: 0.45rem;
   font: 600 var(--text-control) var(--font-mono);
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
-/* ---------- preset fields (hard-neo; the shared es.in is vaud's, not RC's) ---------- */
+/* ---------- preset fields: open, gold on focus ---------- */
 
 .field {
   width: 100%;
-  background: var(--stage-sunken, var(--stage-row));
-  border: 2px solid var(--stage-black);
-  box-shadow: 3px 3px 0 0 var(--stage-black);
-  color: var(--stage-card);
+  background: var(--bk-surface-field);
+  border: 2px solid var(--bk-line-control);
+  color: var(--text);
   font: 500 var(--text-control) var(--font-body);
-  padding: 0.4rem 0.55rem;
+  padding: 0.45rem 0.65rem;
+  min-height: 2.25rem;
+}
+
+.field:hover {
+  border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent);
 }
 
 .field:focus {
   outline: none;
-  border-color: var(--pa);
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 22%, transparent);
 }
 
 .ta {
@@ -193,11 +217,9 @@
 
 .flabel {
   display: block;
-  font: 700 var(--text-control) var(--font-big);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
-  margin-bottom: 0.3rem;
+  font: 600 var(--text-control) var(--font-ui);
+  color: var(--text-soft);
+  margin-bottom: 0.35rem;
 }
 
 /* ---------- collapse the sidebar by PANE width (fluid-container law) ---------- */
@@ -221,6 +243,12 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .field {
+    transition: none;
+  }
+}
+
 :global(html[data-surface-editor-frame="two-pane"]) .root {
   --wb-selection: var(--selection);
   --wb-primary: var(--action-primary);
@@ -229,4 +257,12 @@
 :global(html[data-surface-editor-frame="two-pane"]) .root :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+/* The gold small-caps label every preset sub-pane opens with; panes compose it. */
+.goldLabel {
+  font: 700 var(--text-meta) var(--font-ui);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--premiere-gold);
 }

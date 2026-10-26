@@ -1,75 +1,116 @@
 /**
- * CssWorkshop - assisted CSS editor. Tokens only.
+ * CssWorkshop (Premiere restyle): staged banner, kit-style target row, ladder tabs, sealed preview, pane heads,
+ * knobs, rule rows, starter cards and the advanced split. Lives inside one room Panel, so groups are open rows,
+ * hairlines and single colored edges. Tokens only; CSS values stay mono.
  */
 .root{
   container-type: inline-size;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
+  gap: 1.1rem;
   min-width: 0;
+  font-family: var(--font-ui);
 }
+
+/* banner: a staged notice, gold left edge, display-face lead */
 .banner{
-  font-family: var(--font-body);
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+  padding: 0.85rem 1.1rem;
   font-size: var(--text-body);
-  color: var(--stage-mute, var(--muted));
-  border: 2px dashed var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
-  padding: 0.4rem 0.55rem;
-  line-height: 1.35;
+  line-height: 1.55;
+  color: var(--text-soft);
+  border-left: 3px solid var(--premiere-gold);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--premiere-gold) 10%, transparent), transparent 70%);
 }
 .banner strong{
-  color: var(--stage-soft, var(--text-soft));
-  font-weight: 700;
+  font: 700 1rem var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  white-space: nowrap;
 }
+
+/* target row */
+.packRow,
+.row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 0.9rem;
+  align-items: center;
+}
+.packLabel,
+.knobLabel,
+.sourceLabel{
+  font: 600 var(--text-meta) var(--font-ui);
+  color: var(--text-soft);
+}
+.importFlash{
+  font-size: var(--text-meta);
+  color: var(--premiere-gold);
+}
+
+/* ladder tabs: spaced segmented tabs with a gold act number */
 .tabs{
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
+  gap: 0.6rem;
 }
-.packRow{
+.tabs [role="tablist"]{
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
+  gap: 0.6rem;
+  counter-reset: act;
 }
-.packLabel{
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-mute, var(--muted));
+.tabs [role="tab"]{
+  counter-increment: act;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.55rem 1.2rem;
+  font: 600 var(--text-body) var(--font-ui);
+  color: var(--text-dim);
+  border: 2px solid var(--bk-line);
+  background: color-mix(in srgb, var(--premiere-hard) 55%, transparent);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.recipe{
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-panel, var(--panel));
-  padding: 0.45rem 0.55rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+.tabs [role="tab"]::before{
+  content: counter(act);
+  font: 600 var(--text-meta) var(--font-ui);
+  color: var(--premiere-gold);
 }
-.recipeHead{
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+.tabs [role="tab"]:hover{
+  transform: translateY(-2px);
+  border-color: var(--premiere-gold);
+  color: var(--text);
 }
-.recipeTitle{
-  font-family: var(--font-body);
-  font-weight: 700;
-  font-size: var(--text-control);
-  color: var(--stage-soft, var(--text));
+.tabs [role="tab"][aria-selected="true"]{
+  color: var(--text);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 4px 4px var(--premiere-hard), inset 0 -2px 0 var(--accent);
 }
-.useBtn{
-  margin-left: auto;
+.tabs [role="tab"]:focus-visible{
+  outline: 2px solid var(--premiere-gold);
+  outline-offset: 2px;
 }
-.blurb{
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  color: var(--stage-mute, var(--muted));
-  margin: 0;
-}
+
+/* sealed preview: a framed well with a gold caption tab; the iframe is the user's CSS, untouched */
 .previewBlock{
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
+  position: relative;
+  border: 2px solid color-mix(in srgb, var(--text) 22%, transparent);
+  background: var(--premiere-canvas);
+  padding-top: 1.9rem;
+}
+.cap{
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0.3rem 0.9rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  letter-spacing: 0.04em;
+  color: var(--premiere-hard);
+  background: var(--premiere-gold);
 }
 .frame{
   display: block;
@@ -77,111 +118,208 @@
   min-height: 10rem;
   max-height: 16rem;
   border: 0;
-  background: #0c0b10;
+  background: var(--premiere-canvas);
   box-sizing: border-box;
 }
-.assist{
+
+/* panes */
+.assist,
+.advanced{
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.9rem;
 }
+.paneHead{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 30%, transparent);
+}
+.paneTitle{
+  margin: 0;
+  font: 700 1.125rem/1.2 var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.hint{
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--text-soft);
+  margin: 0;
+}
+.empty{
+  display: grid;
+  gap: 0.4rem;
+  justify-items: center;
+  text-align: center;
+  padding: 1.1rem 0.8rem;
+  border-top: 1px dashed color-mix(in srgb, var(--premiere-gold) 40%, transparent);
+  border-bottom: 1px dashed color-mix(in srgb, var(--premiere-gold) 40%, transparent);
+}
+.empty b{
+  font: 700 1rem var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+/* rule rows: slide and violet glow on hover, thick accent edge when selected. Rule text is CSS, so mono. */
 .ruleList{
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  max-height: 8rem;
+  gap: 0.5rem;
+  max-height: 10rem;
   overflow: auto;
+  padding: 0.25rem 0.5rem 0.5rem 0.25rem;
 }
-.knobGrid{
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 0.45rem;
+.ruleList [data-control="row"]{
+  font: var(--text-control)/1.5 var(--font-mono);
+  color: var(--text-soft);
+  background: color-mix(in srgb, var(--premiere-hard) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--bk-role-select) 55%, transparent);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.knob{
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
+.ruleList [data-control="row"] [data-slot="label"]{
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
-.knobLabel{
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-mute, var(--muted));
+.ruleList [data-control="row"]:hover{
+  transform: translateX(4px);
+  border-color: var(--premiere-gold);
+  box-shadow: -4px 0 18px color-mix(in srgb, var(--bk-role-select) 35%, transparent);
 }
-.row{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
-}
-.input{
-  flex: 1;
-  min-width: 6rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  background: var(--stage-well, var(--field, var(--paper)));
-  border: 2px solid var(--stage-seam, var(--seam));
-  color: var(--stage-soft, var(--text-soft));
-  padding: 0.3rem 0.4rem;
-}
-.check{
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  color: var(--stage-mute, var(--muted));
-}
-.hint{
-  font-family: var(--font-body);
-  font-size: var(--text-body);
-  color: var(--stage-mute, var(--muted));
-  margin: 0;
+.ruleList [data-control="row"][data-selected]{
+  border-color: var(--accent);
+  border-left-width: 5px;
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  box-shadow: 4px 4px var(--premiere-hard), 0 0 24px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 .english{
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  color: var(--stage-soft, var(--text-soft));
-  background: var(--stage-well, var(--paper));
-  border: 2px solid var(--stage-seam, var(--seam));
-  padding: 0.35rem 0.45rem;
+  font: var(--text-control)/1.55 var(--font-mono);
+  color: var(--text-soft);
+  background: color-mix(in srgb, var(--premiere-hard) 55%, transparent);
+  border-left: 3px solid var(--accent);
+  padding: 0.6rem 0.9rem;
   word-break: break-word;
 }
 .actions{
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3rem;
+  gap: 0.5rem;
 }
+
+/* knobs: one column, kit fields */
+.knobGrid{
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+.knob{
+  display: grid;
+  gap: 0.5rem;
+  align-content: start;
+}
+.input,
+.sel{
+  min-height: 2.25rem;
+  padding: 0.4rem 0.75rem;
+  font-size: var(--text-control);
+  color: var(--text);
+  background: color-mix(in srgb, var(--premiere-hard) 45%, transparent);
+  border: 2px solid color-mix(in srgb, var(--text) 24%, transparent);
+  border-radius: 0;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.input{
+  flex: 1;
+  min-width: 6rem;
+  font-family: var(--font-mono);
+}
+.sel{
+  font-family: var(--font-ui);
+  max-width: 100%;
+  min-width: 13rem;
+  cursor: pointer;
+}
+.input:hover,
+.sel:hover{
+  border-color: var(--premiere-gold);
+}
+.input:focus-visible,
+.sel:focus-visible{
+  outline: none;
+  border-color: var(--premiere-gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 28%, transparent);
+}
+.input::placeholder{
+  color: color-mix(in srgb, var(--text) 42%, transparent);
+}
+
+/* starters: chooser-style cards, deck edge on top */
+.recipe{
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.9rem 1rem;
+  background: color-mix(in srgb, var(--bk-role-select) 6%, color-mix(in srgb, var(--premiere-hard) 70%, transparent));
+  border: 2px solid var(--premiere-hard);
+  border-top: 3px solid var(--deck-regex);
+  box-shadow: 4px 4px var(--premiere-hard);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.recipe:hover{
+  transform: translateY(-3px);
+  box-shadow: 4px 4px var(--premiere-hard), 0 14px 40px color-mix(in srgb, var(--bk-role-select) 35%, transparent);
+}
+.recipeHead{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.recipeTitle{
+  font: 700 1rem var(--font-fancy);
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.useBtn{
+  margin-left: auto;
+}
+.blurb{
+  font-size: var(--text-body);
+  color: var(--text-soft);
+  margin: 0;
+}
+
+/* code: chips, editor stays mono (the editor owns its frame and syntax tints) */
 .sourceHead{
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.4rem;
 }
-.sourceLabel{
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-mute, var(--muted));
-}
 .chips{
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
-}
-
-/* advanced: code + breakdown */
-.advanced{
-  display: flex;
-  flex-direction: column;
   gap: 0.5rem;
 }
+.chips [data-control="chip"]{
+  font-family: var(--font-mono);
+  color: var(--premiere-gold);
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.chips [data-control="chip"]:hover{
+  transform: translateY(-2px);
+  border-color: var(--premiere-gold);
+  background: color-mix(in srgb, var(--premiere-gold) 14%, transparent);
+}
+
+/* advanced: code left, breakdown right */
 .advGrid{
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(12rem, 0.95fr);
-  gap: 0.65rem;
+  gap: 1.25rem;
   align-items: start;
 }
 @container (max-width: 48rem) {
@@ -191,39 +329,42 @@
 .advCode{
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.7rem;
   min-width: 0;
 }
 .advBreak{
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.7rem;
   min-width: 0;
   max-height: 28rem;
   overflow: auto;
-  border: 2px solid var(--stage-seam, var(--seam));
-  background: var(--stage-well, var(--paper));
-  padding: 0.45rem 0.5rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid color-mix(in srgb, var(--premiere-gold) 30%, transparent);
+}
+.count{
+  font-variant-numeric: tabular-nums;
+  color: var(--premiere-gold);
 }
 .advKnobs{
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-  border-top: 2px solid var(--stage-seam, var(--seam));
-  padding-top: 0.45rem;
+  gap: 0.7rem;
+  border-top: 1px solid color-mix(in srgb, var(--premiere-gold) 30%, transparent);
+  padding-top: 0.9rem;
   margin-top: 0.2rem;
 }
 .freeformBlock{
   margin: 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  color: var(--stage-mute, var(--muted));
+  padding: 0.6rem 0.9rem;
+  font: var(--text-meta)/1.55 var(--font-mono);
+  color: var(--text-dim);
   white-space: pre-wrap;
   word-break: break-word;
   max-height: 6rem;
   overflow: auto;
-  border: 2px dashed var(--stage-seam, var(--seam));
-  padding: 0.35rem 0.4rem;
+  background: var(--premiere-hard);
+  border-left: 3px solid var(--bk-role-select);
 }
 .fileInput{
   position: absolute;
@@ -233,26 +374,25 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
 }
-.importFlash{
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  color: var(--stage-mute, var(--muted));
-}
 
-:global(html[data-surface-ui-controls="quiet"]) .recipe,
-:global(html[data-surface-ui-controls="quiet"]) .input{
-  border-color: var(--control-boundary);
-}
-
-.sel{
-  font-family: var(--font-mono);
-  font-size: var(--text-control);
-  background: var(--stage-well, var(--field, var(--paper)));
-  border: 2px solid var(--stage-seam, var(--seam));
-  color: var(--stage-soft, var(--text-soft));
-  padding: 0.3rem 0.4rem;
-  max-width: 100%;
-}
+:global(html[data-surface-ui-controls="quiet"]) .input,
 :global(html[data-surface-ui-controls="quiet"]) .sel{
   border-color: var(--control-boundary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabs [role="tab"],
+  .ruleList [data-control="row"],
+  .recipe,
+  .chips [data-control="chip"],
+  .input,
+  .sel{
+    transition: none;
+  }
+  .tabs [role="tab"]:hover,
+  .ruleList [data-control="row"]:hover,
+  .recipe:hover,
+  .chips [data-control="chip"]:hover{
+    transform: none;
+  }
 }

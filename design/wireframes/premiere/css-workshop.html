@@ -1,0 +1,365 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: CSS Workshop</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* CSS Workshop restyle. Layout is today's: status strip, header (title left, actions right), then ONE stage holding
+   banner, target row, simple tabs, sealed preview and the active pane in a single column. Tokens only. */
+:root { --soft: color-mix(in srgb, var(--premiere-text) 66%, transparent); --line: color-mix(in srgb, var(--premiere-text) 14%, transparent); --ink: color-mix(in srgb, var(--premiere-hard) 55%, transparent); --glow: color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+button, input { font-family: var(--font-ui); color: var(--premiere-text); }
+.hint { font-size: 13px; color: var(--soft); line-height: 1.5; }
+.label { font: 600 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 78%, transparent); }
+.num { font-variant-numeric: tabular-nums; }
+.stack-gap > * + * { margin-top: 16px; }
+
+/* Status strip: same place as today's top strip, quiet, with Reload Studio at its right end. */
+.strip { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 4px 0 18px; font-size: 13px; color: var(--soft); }
+.strip .live { display: inline-flex; align-items: center; gap: 10px; }
+.strip .live::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); box-shadow: 0 0 10px var(--premiere-gold); }
+
+/* Buttons: kit family plus hover lift and glow, gold focus ring. */
+.btn { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+.btn:hover { transform: translateY(-2px); border-color: var(--premiere-gold); box-shadow: 0 8px 24px var(--glow); }
+.btn.primary:hover { box-shadow: 4px 4px var(--premiere-hard), 0 8px 26px color-mix(in srgb, var(--premiere-rose) 40%, transparent); border-color: var(--premiere-rose); }
+.btn.quiet:hover { box-shadow: none; transform: none; color: var(--premiere-text); border-color: color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.btn:focus-visible, .chip:focus-visible, .select:focus-visible, .seg span:focus-visible, .rule:focus-visible { outline: 2px solid var(--premiere-gold); outline-offset: 2px; }
+.btn.sm { min-height: 34px; padding: 6px 14px; font-size: 13px; }
+.btn.danger { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.btn[disabled] { opacity: .45; cursor: default; }
+.chip { cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+.chip:hover { transform: translateY(-2px); border-color: var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 14%, transparent); }
+.chip code { font-size: 12px; color: var(--premiere-gold); }
+
+/* Header actions sit right, like today. */
+.playbill .actions { flex-wrap: wrap; justify-content: flex-end; max-width: 640px; }
+.flash { font-size: 13px; color: var(--premiere-gold); }
+
+/* The stage: today's single framed container, now one see-through panel with a deck edge. */
+.stage-panel { padding: 0; }
+.stage-panel > .in { padding: 22px; display: grid; gap: 18px; }
+.inset { background: var(--ink); border: 1px solid var(--line); }
+
+/* Banner: today's dashed notice becomes a staged notice, gold edge, Cinzel lead. */
+.banner { display: flex; gap: 14px; align-items: baseline; padding: 14px 18px; font-size: 14px; line-height: 1.55; color: color-mix(in srgb, var(--premiere-text) 85%, transparent); border-left: 3px solid var(--premiere-gold); background: linear-gradient(90deg, color-mix(in srgb, var(--premiere-gold) 10%, transparent), transparent 70%), var(--ink); }
+.banner strong { font: 700 16px var(--font-fancy); letter-spacing: .02em; color: var(--premiere-text); white-space: nowrap; }
+
+/* Target row: today's order, kit controls. */
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px; }
+.select { cursor: pointer; text-align: left; min-width: 220px; transition: border-color .2s ease, box-shadow .2s ease; }
+.select:hover, .field:hover { border-color: var(--premiere-gold); }
+.select.sm, .field.sm { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+.seg span { cursor: pointer; transition: background .2s ease, color .2s ease; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.seg span:hover { background: color-mix(in srgb, var(--premiere-gold) 12%, transparent); color: var(--premiere-text); }
+.seg span + span { border-left: 1px solid var(--line); }
+.seg span[aria-pressed="true"] { color: var(--premiere-text); }
+.field { width: 100%; transition: border-color .2s ease, box-shadow .2s ease; }
+.field:focus, .field:focus-visible { outline: none; border-color: var(--premiere-gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 28%, transparent); }
+.field::placeholder { color: color-mix(in srgb, var(--premiere-text) 42%, transparent); }
+.field.code { font-family: var(--font-mono); font-size: 13px; }
+
+/* Ladder tabs (Starters / Assist / Source): the chooser's segmented grammar, spaced, with an act number. */
+.ladder { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.ladder > span:not(.co) { display: inline-flex; align-items: baseline; gap: 10px; padding: 9px 20px; font: 600 14px var(--font-ui); cursor: pointer; color: var(--soft); border: 2px solid var(--line); background: var(--ink); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+.ladder > span:not(.co) i { font: 600 12px var(--font-ui); font-style: normal; color: var(--premiere-gold); }
+.ladder > span:not(.co):hover { transform: translateY(-2px); border-color: var(--premiere-gold); color: var(--premiere-text); }
+.ladder > span:not(.co)[aria-selected="true"] { color: var(--premiere-text); border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 16%, transparent); box-shadow: 4px 4px var(--premiere-hard), inset 0 -2px 0 var(--premiere-rose); }
+
+/* Sealed preview: a framed well at the same place, caption tab at its corner. */
+.preview { position: relative; border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); background: var(--premiere-canvas); background-image: radial-gradient(circle at 20% 130%, color-mix(in srgb, var(--premiere-violet) 24%, transparent), transparent 60%); min-height: 190px; padding: 34px 20px 22px; }
+.preview .cap { position: absolute; top: 0; left: 0; padding: 5px 14px; font: 600 12px var(--font-ui); letter-spacing: .04em; color: var(--premiere-hard); background: var(--premiere-gold); }
+.preview .cap-r { position: absolute; top: 5px; right: 14px; font-size: 12px; color: var(--soft); }
+.mock { width: min(100%, 520px); background: var(--premiere-panel); border: 1px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); border-radius: 12px; padding: 12px 14px; }
+.mock .head { display: flex; gap: 12px; align-items: center; }
+.avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--premiere-rose), var(--premiere-violet)); flex: none; }
+.mock .name { font: 700 17px var(--font-ui); } .mock .sub { font-size: 13px; opacity: .7; } .mock .body { margin: 12px 0 8px; font-size: 14px; }
+.tag { display: inline-block; font-size: 12px; padding: 2px 10px; margin-right: 6px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 60%, transparent); color: var(--premiere-gold); border-radius: 99px; }
+
+/* Pane scaffolding shared by Starters, Assist, Source, Advanced. */
+.pane { display: grid; gap: 14px; }
+.pane-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-bottom: 8px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 30%, transparent); }
+.pane-head h2 { font: 700 18px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.pane-head .meta { font-size: 13px; color: var(--soft); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Rules list: rows with real hover and selected states (rose edge, lift, glow). Rule text is CSS, so it stays mono. */
+.rules { display: grid; gap: 8px; }
+.rule { display: block; width: 100%; text-align: left; padding: 10px 14px; font: 13px/1.5 var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 82%, transparent); cursor: pointer; background: var(--ink); border: 1px solid var(--line); border-left: 3px solid color-mix(in srgb, var(--premiere-violet) 55%, transparent); transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease; }
+.rule b { color: var(--premiere-gold); font-weight: 600; margin-right: 8px; }
+.rule:hover { transform: translateX(4px); border-color: var(--premiere-gold); box-shadow: -4px 0 18px var(--glow); }
+.rule[aria-selected="true"] { border-color: var(--premiere-rose); border-left-width: 5px; background: color-mix(in srgb, var(--premiere-rose) 13%, transparent); box-shadow: 4px 4px var(--premiere-hard), 0 0 24px color-mix(in srgb, var(--premiere-rose) 22%, transparent); }
+.english { padding: 10px 14px; font: 13px/1.55 var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 82%, transparent); background: var(--ink); border-left: 3px solid var(--premiere-rose); }
+.freeform { margin: 0; padding: 10px 14px; font: 12px/1.55 var(--font-mono); background: var(--premiere-hard); border-left: 3px solid var(--premiere-violet); color: var(--soft); white-space: pre-wrap; }
+.empty { text-align: center; padding: 18px 12px; display: grid; gap: 6px; border: 1px dashed color-mix(in srgb, var(--premiere-gold) 40%, transparent); background: var(--ink); }
+.empty b { font: 700 16px var(--font-fancy); letter-spacing: .02em; }
+
+/* Knobs: single column in today's order, restyled. */
+.knobs { display: grid; gap: 16px; }
+.knob { display: grid; gap: 8px; align-content: start; }
+.knob .label::after { content: ""; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.paint { display: grid; gap: 10px; justify-items: start; }
+.paint .seg { width: 280px; } .paint .seg span { flex: 1; text-align: center; }
+.picker { width: 280px; height: 150px; border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); position: relative; background: linear-gradient(to top, var(--premiere-hard), transparent), linear-gradient(to right, var(--premiere-text), var(--premiere-violet)); }
+.picker i { position: absolute; left: 62%; top: 28%; width: 14px; height: 14px; border: 2px solid var(--premiere-text); border-radius: 50%; box-shadow: 0 0 0 2px var(--premiere-hard); }
+.hue { width: 280px; height: 12px; background: linear-gradient(to right, var(--premiere-rose), var(--premiere-gold), var(--deck-persona), var(--deck-preset), var(--premiere-violet), var(--premiere-rose)); border: 1px solid var(--line); }
+.color-row { display: flex; gap: 10px; align-items: center; } .color-row .field { flex: 1; } .sw { width: 36px; height: 36px; border: 2px solid color-mix(in srgb, var(--premiere-text) 40%, transparent); flex: none; }
+.slider { position: relative; height: 6px; background: color-mix(in srgb, var(--premiere-text) 18%, transparent); margin: 12px 0 4px; }
+.slider i { position: absolute; inset: 0 20% 0 0; background: var(--premiere-rose); } .slider b { position: absolute; left: 80%; top: -7px; width: 12px; height: 20px; background: var(--premiere-text); box-shadow: 0 0 14px var(--premiere-rose); transform: translateX(-50%); }
+.srow { display: flex; justify-content: space-between; font-size: 12px; color: var(--soft); }
+.srow .now { color: var(--premiere-gold); font: 600 13px var(--font-mono); }
+.vis { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.toggle { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--ink); border: 1px solid var(--line); }
+.toggle .switch { flex: none; }
+
+/* Starters: recipe cards in the chooser's card grammar, same stacked list. */
+.recipe { display: grid; gap: 4px; padding: 14px 16px; background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 70%, transparent); border: 2px solid var(--premiere-hard); border-top: 3px solid var(--deck-regex); box-shadow: 4px 4px var(--premiere-hard); transition: transform .25s ease, box-shadow .25s ease; }
+.recipe:hover { transform: translateY(-3px); box-shadow: 4px 4px var(--premiere-hard), 0 14px 40px var(--glow); }
+.recipe-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.recipe-head b { font: 700 16px var(--font-fancy); letter-spacing: .02em; }
+.recipe p { font-size: 13px; color: var(--soft); }
+
+/* Code editor: mono, gutter, syntax in gold, violet and rose; framed like a card. */
+.editor { display: grid; grid-template-columns: 40px 1fr; background: var(--premiere-hard); border: 2px solid color-mix(in srgb, var(--premiere-text) 24%, transparent); font: 13px/1.7 var(--font-mono); overflow: hidden; transition: border-color .2s ease, box-shadow .2s ease; }
+.editor:hover, .editor:focus-within { border-color: var(--premiere-gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 18%, transparent); }
+.editor .gut { padding: 12px 8px; text-align: right; color: color-mix(in srgb, var(--premiere-text) 35%, transparent); border-right: 1px solid var(--line); white-space: pre; background: color-mix(in srgb, var(--premiere-violet) 6%, transparent); }
+.editor pre { padding: 12px 14px; font: inherit; white-space: pre; overflow-x: auto; margin: 0; }
+.k-sel { color: var(--premiere-gold); } .k-prop { color: color-mix(in srgb, var(--premiere-violet) 70%, white); } .k-val { color: color-mix(in srgb, var(--premiere-rose) 55%, white); } .k-com { color: color-mix(in srgb, var(--premiere-text) 45%, transparent); }
+
+/* Advanced: today's 1.15 / .95 split. */
+.adv { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .95fr); gap: 20px; align-items: start; }
+.adv > section { display: grid; gap: 14px; }
+
+/* Between-state labels (wireframe chrome) and dialogs. */
+.state { margin: 44px 0 14px; display: flex; align-items: center; gap: 14px; }
+.state h2 { font: 700 20px var(--font-fancy); letter-spacing: .02em; } .state small { font-size: 13px; color: var(--soft); }
+.state::after { content: ""; flex: 1; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.dialogs { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 340px); gap: 24px; align-items: start; }
+.dlg { display: grid; gap: 10px; text-align: center; justify-items: center; padding: 26px 24px; }
+.dlg h3 { font: 700 22px var(--font-fancy); letter-spacing: .02em; text-shadow: 0 2px 24px var(--glow); }
+.dlg .acts { display: flex; gap: 10px; margin-top: 8px; }
+.tour .top { display: flex; justify-content: space-between; font-size: 13px; color: var(--soft); }
+.tour .dots { display: flex; gap: 5px; margin: 10px 0 6px; } .tour .dots i { width: 14px; height: 4px; background: color-mix(in srgb, var(--premiere-text) 22%, transparent); } .tour .dots i:first-child { background: var(--premiere-rose); }
+.tour h3 { font: 700 18px var(--font-fancy); margin: 6px 0; } .tour p { font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 82%, transparent); }
+.tour .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+
+@media (max-width: 960px) { .adv, .dialogs { grid-template-columns: 1fr; } }
+@media (max-width: 720px) {
+  .playbill { grid-template-columns: 1fr; }
+  .playbill .actions { grid-column: 1; grid-row: auto; justify-content: flex-start; max-width: none; }
+  .stage-panel > .in { padding: 14px; } .banner { flex-direction: column; gap: 4px; }
+  .row2 { grid-template-columns: 1fr; } .picker, .hue, .paint .seg { width: 100%; } .select { min-width: 0; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .btn, .chip, .rule, .recipe, .ladder > span:not(.co), .seg span { transition: none; } .btn:hover, .chip:hover, .rule:hover, .recipe:hover, .ladder > span:not(.co):hover { transform: none; } }
+
+/* one frame per group */
+.panel .recipe { border: 0 !important; box-shadow: none !important; background: none; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.panel .empty { border: 0 !important; box-shadow: none !important; background: none !important; }
+.stage-panel span:not(.btn):not(.chip):not(.co):not(.num) { border: 0 !important; box-shadow: none !important; }
+.stage-panel .rule { border: 0 !important; box-shadow: none !important; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.stage-panel .rule[aria-pressed="true"], .stage-panel .rule.on { box-shadow: inset 3px 0 0 var(--premiere-rose) !important; }
+/* end one frame */
+</style></head>
+<body><div class="wf-note">WIREFRAME. CSS Workshop, today's layout in the Premiere house style. Numbered callouts are explained below. The app shows one mode and one ladder tab at a time; they are stacked here only so every state is visible.</div>
+<div class="stage"><main class="room">
+
+<div class="strip"><span class="live">css workshop &middot; simple <span class="co">1</span></span><button class="btn quiet sm">Reload Studio</button></div>
+
+<header class="playbill">
+  <div>
+    <div class="kicker left">App &middot; style</div>
+    <h1>CSS Workshop <span class="co">2</span></h1>
+  </div>
+  <div class="actions">
+    <button class="btn primary sm">Copy CSS</button>
+    <button class="btn sm">Download .css</button>
+    <button class="btn quiet sm">Clear draft</button>
+    <button class="btn quiet sm">Tour</button>
+    <span class="flash">copied plain CSS</span>
+    <span class="co">3</span>
+  </div>
+  <p class="lede">Simple mode is the guided ladder. Advanced is code plus rule breakdown. Flip anytime. Import a .css file to load it into Advanced.</p>
+</header>
+
+<!-- STATE A: Simple, Assist tab (today's default screenshot) -->
+<section class="panel stage-panel" data-deck="regex" aria-label="CSS Workshop, Simple mode, Assist">
+ <div class="in">
+  <div class="banner"><strong>CSS workshop.</strong><span>Standalone draft. Bunraku never applies this to the app chrome. Copy or download to paste on Chub, Janitor, Risu, or anywhere that takes CSS. Card-bound CSS still lives on the piece in the Workbench. Source is always real CSS you can edit. <span class="co">4</span></span></div>
+
+  <div class="bar">
+    <span class="label">Targets</span>
+    <button class="select sm">Universal</button>
+    <span class="label">Mode</span>
+    <span class="seg" role="group" aria-label="Editor mode"><span aria-pressed="true">Simple</span><span aria-pressed="false">Advanced</span></span>
+    <button class="btn sm">Import .css</button>
+    <button class="btn sm">Undo</button>
+    <span class="flash">imported vaude-style.css &middot; 6 rules &middot; freeform kept</span>
+    <span class="co">5</span>
+  </div>
+
+  <div class="ladder" role="tablist" aria-label="Simple ladder"><span><i>1</i>Starters</span><span aria-selected="true"><i>2</i>Assist</span><span><i>3</i>Source</span><span class="co">6</span></div>
+
+  <div class="preview" data-tour="css-preview">
+    <span class="cap">Sealed CSS preview</span><span class="cap-r">sandboxed, never touches the app</span>
+    <article class="mock"><div class="head"><div class="avatar"></div><div><div class="name">Sample Name</div><div class="sub">subtitle / creator</div></div></div>
+      <p class="body">Body text. Style me with the knobs or write CSS below.</p><div><span class="tag">tag</span><span class="tag">tag</span></div></article>
+    <span class="co" style="position:absolute;right:12px;bottom:10px">7</span>
+  </div>
+
+  <div class="pane">
+    <div class="pane-head"><h2>Assist</h2><span class="meta">one rule at a time <span class="co">8</span></span></div>
+    <p class="hint">Pick a target, tweak knobs, or write free CSS in Source. Knobs edit one rule at a time.</p>
+    <div class="bar"><span class="label">Add rule for</span><button class="select sm">choose target&hellip;</button><button class="btn sm">+ Blank rule</button></div>
+    <div class="rules">
+      <button class="rule" aria-selected="true"><b>.card</b>{ background: #1a1820; color: #e8e4ef; border-radius: 12px; padding: 12px 14px +1 more }</button>
+      <button class="rule"><b>.name</b>{ font-weight: 700; letter-spacing: .02em }</button>
+      <button class="rule"><b>.tag</b>{ color: #c59a46 }</button>
+    </div>
+    <div class="english">.card { background: #1a1820; color: #e8e4ef; border-radius: 12px; padding: 12px 14px +1 more }</div>
+    <div class="knobs">
+      <div class="knob"><span class="label">Selector</span><input class="field code" value=".card" aria-label="CSS selector"></div>
+      <div class="knob"><span class="label">Background <span class="co">9</span></span>
+        <div class="paint"><span class="seg"><span aria-pressed="false">Solid</span><span aria-pressed="true">Gradient</span></span><div class="picker"><i></i></div><div class="hue"></div></div>
+        <input class="field" placeholder="or type any CSS background" aria-label="Background CSS"></div>
+      <div class="knob"><span class="label">Text color</span><div class="color-row"><span class="sw" style="background:var(--premiere-text)"></span><input class="field code" value="#e8e4ef" aria-label="Text color"></div></div>
+      <div class="knob"><span class="label">Type</span>
+        <div class="row2"><input class="field" placeholder="font-size e.g. 0.95rem"><button class="select sm">weight</button></div>
+        <div class="row2"><button class="select sm">font family</button><button class="select sm">text align</button></div></div>
+      <div class="knob"><span class="label">Box</span>
+        <div class="row2"><input class="field code" value="12px 14px" aria-label="padding"><input class="field code" value="12px" aria-label="radius"></div>
+        <input class="field code" placeholder="border e.g. 1px solid #333"><input class="field code" placeholder="box-shadow"></div>
+      <div class="knob"><span class="label">Opacity</span><div class="slider"><i></i><b></b></div><div class="srow"><span class="num">0</span><span class="now">0.80</span><span class="num">1</span></div></div>
+      <div class="knob"><span class="label">Visibility</span><div class="vis"><button class="btn sm">Hide</button><button class="btn sm">Show</button><span class="hint">visible</span></div></div>
+      <div class="toggle"><span class="switch"></span><span style="font-size:14px">force with !important <span class="hint">(often needed on host sites)</span></span></div>
+    </div>
+    <div class="bar"><button class="btn sm danger">Delete rule</button><span class="co">10</span></div>
+    <p class="hint">Extra CSS kept as freeform (@media / nested): edit in Source. Not dropped on save.</p>
+  </div>
+ </div>
+</section>
+
+<div class="state"><h2>Simple &middot; Starters</h2><small>same stage, ladder tab switched</small></div>
+<section class="panel stage-panel" data-deck="regex"><div class="in">
+  <div class="ladder"><span aria-selected="true"><i>1</i>Starters</span><span><i>2</i>Assist</span><span><i>3</i>Source</span></div>
+  <div class="hint" style="padding:0 2px">Toolbar, sealed preview and banner sit above as in the Assist state.</div>
+  <div class="pane">
+    <div class="pane-head"><h2>Starters</h2><span class="meta">Universal pack</span></div>
+    <p class="hint">Drop a starter into your sheet, then tune it in Assist or Source. Generic card pieces. Plain CSS, any host.</p>
+    <div class="recipe"><div class="recipe-head"><b>Dark glass</b><button class="btn sm">Use this</button></div><p>Frosted dark panel. Hosts may ignore backdrop-filter.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Neon outline</b><button class="btn sm">Use this</button></div><p>Hot border glow on cards and tags.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Flat solids</b><button class="btn sm">Use this</button></div><p>Kill fancy fills. Solid backgrounds only.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Readable type</b><button class="btn sm">Use this</button></div><p>Clear sizes, contrast, and line height. Aesthetic second.</p></div>
+    <div class="recipe"><div class="recipe-head"><b>Soft card</b><button class="btn sm">Use this</button></div><p>Rounded panel, soft shadow, readable body type.</p></div>
+    <span class="co">11</span>
+  </div>
+</div></section>
+
+<div class="state"><h2>Simple &middot; Source</h2><small>plain CSS is the truth</small></div>
+<section class="panel stage-panel" data-deck="regex"><div class="in">
+  <div class="ladder"><span><i>1</i>Starters</span><span><i>2</i>Assist</span><span aria-selected="true"><i>3</i>Source</span></div>
+  <div class="pane">
+    <div class="pane-head"><h2>Plain CSS source</h2><span class="meta">truth</span></div>
+    <div class="chips"><button class="chip"><code>color</code></button><button class="chip"><code>bg</code></button><button class="chip"><code>radius</code></button><button class="chip"><code>pad</code></button><button class="chip"><code>border</code></button><button class="chip"><code>shadow</code></button><button class="chip"><code>!imp</code></button><span class="co">12</span></div>
+    <div class="editor"><div class="gut">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</div><pre><span class="k-com">/* CSS Workshop draft */</span>
+<span class="k-sel">.card</span> {
+  <span class="k-prop">background</span>: <span class="k-val">#1a1820</span>;
+  <span class="k-prop">color</span>: <span class="k-val">#e8e4ef</span>;
+  <span class="k-prop">border-radius</span>: <span class="k-val">12px</span>;
+  <span class="k-prop">padding</span>: <span class="k-val">12px 14px</span>;
+}
+<span class="k-sel">.tag</span> { <span class="k-prop">color</span>: <span class="k-val">#c59a46</span>; }
+</pre></div>
+  </div>
+</div></section>
+
+<div class="state"><h2>Advanced mode</h2><small>Mode toggled; the ladder tabs go away, the pane becomes code plus breakdown</small></div>
+<section class="panel stage-panel" data-deck="regex"><div class="in">
+  <div class="bar"><span class="label">Targets</span><button class="select sm">Universal</button><span class="label">Mode</span><span class="seg"><span aria-pressed="false">Simple</span><span aria-pressed="true">Advanced</span></span><button class="btn sm">Import .css</button><button class="btn sm">Undo</button></div>
+  <div class="hint" style="padding:0 2px">Sealed preview sits here as above.</div>
+  <p class="hint">Code is primary. Rules on the right are parsed from your sheet. Click one to tweak knobs; freeform (@media / nested) stays in the source.</p>
+  <div class="adv">
+    <section>
+      <div class="pane-head"><h2>CSS source</h2><span class="meta num">14 lines</span></div>
+      <div class="chips"><button class="chip"><code>color</code></button><button class="chip"><code>bg</code></button><button class="chip"><code>radius</code></button><button class="chip"><code>pad</code></button><button class="chip"><code>border</code></button><button class="chip"><code>shadow</code></button><button class="chip"><code>!imp</code></button></div>
+      <div class="editor"><div class="gut">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14</div><pre><span class="k-com">/* CSS Workshop draft */</span>
+<span class="k-sel">.card</span> {
+  <span class="k-prop">background</span>: <span class="k-val">#1a1820</span>;
+  <span class="k-prop">color</span>: <span class="k-val">#e8e4ef</span>;
+  <span class="k-prop">border-radius</span>: <span class="k-val">12px</span>;
+  <span class="k-prop">padding</span>: <span class="k-val">12px 14px</span>;
+}
+<span class="k-sel">.name</span> {
+  <span class="k-prop">font-weight</span>: <span class="k-val">700</span>;
+  <span class="k-prop">letter-spacing</span>: <span class="k-val">.02em</span>;
+}
+<span class="k-sel">.tag</span> { <span class="k-prop">color</span>: <span class="k-val">#c59a46</span>; }
+<span class="k-sel">@media</span> (max-width: 600px) { <span class="k-sel">.card</span> { <span class="k-prop">padding</span>: <span class="k-val">8px</span>; } }</pre></div>
+    </section>
+    <section>
+      <div class="pane-head"><h2>Rule breakdown</h2><span class="meta"><span class="num">3</span> &middot; freeform kept <span class="co">13</span></span></div>
+      <div class="rules">
+        <button class="rule" aria-selected="true"><b>.card</b>{ background: #1a1820; color: #e8e4ef; border-radius: 12px; padding: 12px 14px }</button>
+        <button class="rule"><b>.name</b>{ font-weight: 700; letter-spacing: .02em }</button>
+        <button class="rule"><b>.tag</b>{ color: #c59a46 }</button>
+      </div>
+      <pre class="freeform" title="Unparsed / @media kept verbatim">@media (max-width: 600px) { .card { padding: 8px; } }</pre>
+      <span class="label">Assist this rule</span>
+      <div class="knobs">
+        <div class="knob"><span class="label">Selector</span><input class="field code" value=".card"></div>
+        <div class="knob"><span class="label">Text color</span><div class="color-row"><span class="sw" style="background:var(--premiere-text)"></span><input class="field code" value="#e8e4ef"></div></div>
+        <div class="knob"><span class="label">Opacity</span><div class="slider"><i></i><b></b></div><div class="srow"><span class="num">0</span><span class="now">0.80</span><span class="num">1</span></div></div>
+        <p class="hint">Same knobs as Assist: Background, Type, Box, Visibility, !important.</p>
+      </div>
+      <div class="empty"><b>Pick a rule to tune it</b><span class="hint">Select a rule to open knobs without leaving Advanced. With an empty sheet: No rules parsed yet. Type CSS on the left or import a file.</span></div>
+    </section>
+  </div>
+</div></section>
+
+<div class="state"><h2>Dialogs</h2><small>centered over the room</small></div>
+<div class="dialogs">
+  <section class="panel dlg" data-deck="fog"><h3>Clear the draft? <span class="co">14</span></h3><p class="hint">Your unsaved CSS goes away.</p><div class="acts"><button class="btn danger">Clear</button><button class="btn quiet">Keep</button></div></section>
+  <section class="panel tour" data-deck="pack"><div class="top"><span>CSS Workshop</span><span>Skip</span></div><div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="hint num">1 of 6</span><h3>This is the CSS Workshop <span class="co">15</span></h3><p>Two modes: Simple (guided ladder) and Advanced (code plus rule breakdown). Flip the Simple / Advanced toggle anytime.</p><div class="foot"><button class="btn quiet sm" disabled>Back</button><button class="btn primary sm">Next</button></div></section>
+</div>
+
+</main></div>
+<ol class="legend">
+  <li><span class="co">1</span> Status strip: same top spot. Mono bar becomes a quiet UI-font line with a gold pulse mark; Reload Studio restyled as the quiet button at its right end.</li>
+  <li><span class="co">2</span> Room header, same place and order (title block left, actions right): gold kicker "App · style" (was a mono caps eyebrow), Cinzel title with the violet glow (was heavy sans), lede in the UI font with a rose rule (was italic). Rule under it in gold.</li>
+  <li><span class="co">3</span> Header actions, same row: Copy CSS (primary rose), Download .css, Clear draft, Tour, then the flash note. Import .css and the Simple / Advanced toggle are removed from the header; only the toolbar copies in the editor remain (callout 5).</li>
+  <li><span class="co">4</span> The framed stage becomes one see-through Premiere panel (hard offset shadow, butter regex edge on top). Its dashed banner becomes a staged notice: gold left edge, Cinzel lead "CSS workshop.", UI-font prose.</li>
+  <li><span class="co">5</span> Target row, same order: Targets, kit select, Mode (kit segmented: rose underline, gold hover), Import .css, Undo (only with history), flash note. Labels are 13px UI font, not mono caps. The native select is a kit select.</li>
+  <li><span class="co">6</span> Ladder tabs (Simple only), same spot above the preview: IDE-style mono tabs become the chooser's spaced segmented tabs with a gold act number; the active one gets the rose edge and offset shadow; hover lifts.</li>
+  <li><span class="co">7</span> Sealed preview, same place and size: framed well with a gold caption tab and a violet glow behind the mock card. Still a sandboxed iframe in the build.</li>
+  <li><span class="co">8</span> Pane head: today's pane has none; a Cinzel pane title with a gold rule is added in the spot above its hint (spacing only). Hint text is UI font. Add-rule row keeps its order (label, select, + Blank rule).</li>
+  <li><span class="co">9</span> Knobs stay a single column in today's order (Selector, Background, Text color, Type, Box, Opacity, Visibility, !important). Fields are kit inputs with gold focus ring; values stay mono since they are CSS; Solid / Gradient is the kit segmented control; opacity slider glows rose; !important is the kit switch.</li>
+  <li><span class="co">10</span> Rule rows and the plain-English line: real hover (slide, gold edge, violet glow) and selected (thick rose edge, offset shadow, rose glow) states instead of flat lines. Delete rule stays the only danger button in the pane.</li>
+  <li><span class="co">11</span> Starters: recipe rows become chooser-style cards (3px frame, butter top edge, offset shadow, lift and glow on hover); title is Cinzel, Use this is the button family.</li>
+  <li><span class="co">12</span> Source and Advanced code: snippet chips are kit chips (gold code text, lift on hover); the editor stays mono with a line gutter, gold focus frame, and gold, violet and rose syntax tints.</li>
+  <li><span class="co">13</span> Advanced keeps today's code-left, breakdown-right split (about 1.15 to .95) with its hint above. Counts are tabular numerals. Freeform stays a verbatim mono block with a violet edge. The empty and no-selection messages become a staged, centered Cinzel moment with a lede instead of a grey sentence.</li>
+  <li><span class="co">14</span> Clear the draft dialog: a Premiere panel with a Cinzel title; Clear is the danger button, Keep is quiet.</li>
+  <li><span class="co">15</span> Tour card: the same panel grammar (pink pack edge, Cinzel step title, segmented progress dots, Next as primary rose). Back disabled on step one.</li>
+  <li>Simple Starters and Source, Advanced and the dialogs are stacked below the Assist stage only so every state shows; in the app they are the same stage switched by the Mode toggle and the ladder tabs, as today.</li>
+</ol>
+<script src="kit.js"></script>
+</body></html>

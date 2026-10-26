@@ -13,6 +13,7 @@ import { copyText } from "../../../_shared/clipboard";
 import { FLASH_MS, useFlash } from "../../../_shared/use-flash";
 import { requestExternal } from "../../../_shared/link-gate";
 import { useVisibleInterval } from "../../../_shared/use-visible-interval";
+import { SETTING_KEYS } from "../../../../studio/settings-shape";
 import type { SettingsSection } from "../section-contract";
 import { LanCard } from "./lan-card";
 import { HelperInstalledLine, HelperMissingCard, useHelper, type HelperControls } from "./helper-card";
@@ -282,7 +283,6 @@ function RemoteAccessSection({ ctx }: { ctx: AppContext }): JSX.Element {
     <div className={styles.wrap}>
       <div>
         <div className={styles.titleRow}>
-          <div className={styles.title}>Remote access</div>
           <IconButton
             size="sm"
             aria-pressed={redacted}
@@ -342,6 +342,11 @@ function RemoteAccessSection({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "remote-access",
+  act: "house",
+  title: "Remote access",
+  lede: "",
+  protectedNote: "Managed only on the computer actually running Bunraku, never from a device that connected in.",
+  status: (ctx) => (ctx.prefs.get(SETTING_KEYS.remoteAccessEnabled) === true ? "On" : "Off"),
   label: "Remote access",
   order: 85,
   Component: RemoteAccessSection,

@@ -1,0 +1,315 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: The Press</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules. Tokens only. */
+.btn.sm { min-height: 32px; padding: 4px 12px; font-size: 13px; }
+.btn.danger { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.btn[disabled], .btn.off { opacity: .45; }
+.status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.status::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); }
+.dim { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.sub { font-size: 13px; }
+
+/* Act labels: the three beats of a run */
+.acts { display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; }
+.act { display: flex; align-items: baseline; gap: 12px; margin: 0 0 14px; }
+.act .n { font: 700 13px var(--font-mono); color: var(--premiere-gold); }
+.act h2 { font: 700 22px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.act small { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+
+/* Act 2: the target wall */
+.targets { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-bottom: 36px; }
+.plat { text-align: left; padding: 14px 16px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 2px solid color-mix(in srgb, var(--premiere-text) 18%, transparent);
+  color: var(--premiere-text); font: 14px var(--font-ui); cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: transform .2s ease, border-color .2s ease; }
+.plat:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--premiere-gold) 70%, transparent); }
+.plat b { font-size: 15px; }
+.plat span { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.plat[aria-pressed="true"] { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 16%, var(--premiere-hard)); box-shadow: 4px 4px var(--premiere-hard), 0 10px 40px color-mix(in srgb, var(--premiere-rose) 28%, transparent); }
+.plat[aria-pressed="true"] b::after { content: "  \2713"; color: var(--premiere-gold); }
+
+/* Act 1: library rail */
+.rail { position: sticky; top: 16px; }
+.offers { display: grid; gap: 8px; margin-top: 12px; max-height: 560px; overflow: auto; padding-right: 4px; }
+.offer { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; padding: 10px 12px; text-align: left; cursor: pointer;
+  background: color-mix(in srgb, var(--premiere-hard) 50%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); border-left: 4px solid var(--deck, var(--deck-fog)); color: var(--premiere-text); font: 14px var(--font-ui); }
+.offer:hover { background: color-mix(in srgb, var(--deck, var(--deck-fog)) 14%, var(--premiere-hard)); }
+.offer i { font-style: normal; font-size: 12px; color: var(--deck, var(--deck-fog)); }
+.empty { font-size: 14px; padding: 14px 0; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+
+/* Act 3: bundles on the press bed */
+.qhead { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.bundle { margin-bottom: 18px; padding: 0; border-top: 3px solid var(--deck, var(--deck-fog)); }
+.bhead { display: flex; align-items: center; gap: 12px; padding: 12px 18px; flex-wrap: wrap; background: color-mix(in srgb, var(--deck, var(--deck-fog)) 12%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.bhead h3 { font: 700 17px var(--font-fancy); letter-spacing: .02em; }
+.bhead .tag { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.bhead .btn { margin-left: auto; }
+.piece { display: grid; grid-template-columns: 4px 1fr auto; gap: 6px 14px; padding: 14px 18px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 8%, transparent); }
+.piece:last-child { border-bottom: 0; }
+.piece .bar { grid-row: 1 / span 3; background: var(--deck, var(--deck-fog)); }
+.piece.rider { margin-left: 22px; padding-left: 14px; border-left: 1px dashed color-mix(in srgb, var(--premiere-gold) 50%, transparent); }
+.piece.rider .bar { opacity: .55; }
+.piece.dropped { opacity: .5; }
+.piece.dropped .nm { text-decoration: line-through; }
+.nm { font-weight: 700; font-size: 16px; }
+.kindline { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.kindline em { font-style: normal; color: var(--deck, var(--deck-fog)); font-weight: 600; }
+.ready { grid-column: 2 / span 2; font-size: 13px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge { display: inline-block; padding: 2px 9px; font: 700 12px var(--font-ui); border: 1px solid currentColor; }
+.badge.ok { color: color-mix(in srgb, var(--premiere-gold) 70%, white); }
+.badge.warn { color: var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 14%, transparent); }
+.badge.bad { color: color-mix(in srgb, var(--premiere-rose) 55%, white); background: color-mix(in srgb, var(--premiere-rose) 16%, transparent); }
+.badge.dim { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.fileedit { grid-column: 2 / span 2; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 4px; }
+.fileedit .field { min-height: 34px; padding: 5px 10px; font: 13px var(--font-mono); min-width: 220px; }
+.fileedit .seg span { padding: 5px 12px; font-family: var(--font-mono); font-weight: 500; }
+.piece .act-side { grid-column: 3; grid-row: 1; align-self: start; }
+.result { grid-column: 2 / span 2; font-size: 13px; display: grid; gap: 4px; }
+.fname { font: 13px var(--font-mono); color: color-mix(in srgb, var(--deck-character) 55%, white); }
+
+/* The press bed: run bar */
+.runbar { display: grid; grid-template-columns: 1fr auto; gap: 18px 28px; align-items: center; padding: 22px 24px; border-top: 3px solid var(--premiere-rose); }
+.manifest { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.manifest .big { font: 700 34px/1 var(--font-fancy); }
+.manifest .arrow { color: var(--premiere-gold); font-size: 22px; }
+.manifest .sum { font-size: 15px; }
+.manifest .out { font: 13px var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.runbtns { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.btn.run { min-height: 56px; padding: 14px 34px; font: 700 18px var(--font-fancy); letter-spacing: .04em; box-shadow: 5px 5px var(--premiere-hard), 0 10px 40px color-mix(in srgb, var(--premiere-rose) 40%, transparent); }
+.hint { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+
+/* State gallery */
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.gallery .wide { grid-column: 1 / -1; }
+.gal-note { font-size: 13px; color: var(--premiere-gold); margin-bottom: 10px; display: flex; gap: 8px; align-items: center; }
+.ov li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); list-style: none; }
+.ov ol { padding: 0; margin: 12px 0; }
+.ov .tile { font-size: 14px; display: flex; align-items: baseline; gap: 10px; }
+.ov .tile strong { font: 700 40px/1 var(--font-fancy); }
+.empty-hero { text-align: center; padding: 36px 20px; }
+.empty-hero h3 { font: 700 20px var(--font-fancy); margin-bottom: 8px; }
+.empty-hero p { max-width: 480px; margin: 0 auto; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); }
+
+@media (max-width: 1000px) {
+  .acts { grid-template-columns: 1fr; }
+  .rail { position: static; }
+  .offers { max-height: 260px; }
+  .gallery { grid-template-columns: 1fr; }
+}
+@media (max-width: 720px) {
+  .playbill { grid-template-columns: 1fr; }
+  .playbill .actions { grid-column: 1; grid-row: auto; flex-wrap: wrap; }
+  .runbar { grid-template-columns: 1fr; padding: 18px 16px; }
+  .runbtns { justify-content: flex-start; }
+  .btn.run { width: 100%; justify-content: center; }
+  .piece { padding: 12px; grid-template-columns: 4px 1fr; }
+  .piece .act-side { grid-column: 2; grid-row: auto; }
+  .ready, .fileedit, .result { grid-column: 2; }
+  .piece.rider { margin-left: 8px; }
+  .fileedit .field { min-width: 0; width: 100%; }
+  .targets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bhead { padding: 12px; }
+  .wf-note, .legend { padding-left: 16px; padding-right: 16px; }
+}
+
+/* polish: platform cards get a Cinzel monogram and deck-colored kind pips */
+.plat { display: grid; grid-template-columns: 44px 1fr; grid-template-rows: auto 1fr; gap: 4px 12px; align-items: start; min-height: 86px; }
+.plat-mark { grid-row: 1 / span 2; width: 44px; height: 44px; display: grid; place-items: center; font: 700 18px var(--font-fancy); font-style: normal; color: var(--premiere-gold); border: 1px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent); background: color-mix(in srgb, var(--premiere-hard) 60%, transparent); }
+.plat[aria-pressed="true"] .plat-mark { color: var(--premiere-text); border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 30%, var(--premiere-hard)); }
+.plat .pips { display: flex; flex-wrap: wrap; gap: 4px; }
+.plat .pips em { font-style: normal; font-size: 12px; padding: 1px 7px; border-left: 3px solid var(--deck); background: color-mix(in srgb, var(--deck) 12%, transparent); color: color-mix(in srgb, var(--deck) 70%, var(--premiere-text)); }
+</style></head>
+<body><div class="wf-note">WIREFRAME. The Press in the Premiere house style. Numbered callouts are explained below.</div>
+<div class="stage"><div class="rays"><canvas id="rays"></canvas></div><main class="room">
+
+<header class="playbill">
+  <div>
+    <div class="kicker left">Bunraku · Convert files <span class="co">1</span></div>
+    <h1>The <em class="glow">Press</em></h1>
+  </div>
+  <div class="actions">
+    <span class="status">press run · 4 waiting · 3 skipped</span>
+    <button class="btn">Reload Studio</button>
+    <button class="btn danger">Clear the queue</button>
+  </div>
+  <p class="lede">Stage pieces, pick one platform, print the whole set into one file or one zip. A staged character brings its linked lorebooks as a bundle.</p>
+</header>
+
+<h2 class="act"><span class="n">01</span><span class="h2" style="font:700 22px/1.2 var(--font-fancy)">Where does it print?</span><small>one target per run <span class="co">2</span></small></h2>
+<div class="targets" role="group" aria-label="Target platform">
+  <button class="plat"><i class="plat-mark" aria-hidden="true">A</i><b>Agnai</b><span class="pips"><em data-deck="character">character</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">B</i><b>Backyard</b><span class="pips"><em data-deck="character">character</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">B</i><b>Backyard (legacy)</b><span class="pips"><em data-deck="character">character</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">L</i><b>Lumiverse</b><span class="pips"><em data-deck="character">character</em><em data-deck="lorebook">lorebook</em><em data-deck="preset">preset</em></span></button>
+  <button class="plat" aria-pressed="true"><i class="plat-mark" aria-hidden="true">M</i><b>Marinara</b><span class="pips"><em data-deck="character">character as a CCv3 card</em><em data-deck="lorebook">lorebook</em><em data-deck="preset">preset</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">N</i><b>NovelAI</b><span class="pips"><em data-deck="character">character</em><em data-deck="lorebook">lorebook</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">Pz</i><b>Picture zip</b><span class="pips"><em data-deck="pack">pack</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">P</i><b>Pygmalion</b><span class="pips"><em data-deck="character">character</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">R</i><b>Risuai</b><span class="pips"><em data-deck="character">character</em><em data-deck="lorebook">lorebook</em><em data-deck="preset">preset</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">R</i><b>RoleCall</b><span class="pips"><em data-deck="character">character</em><em data-deck="lorebook">lorebook</em><em data-deck="preset">preset</em><em data-deck="regex">regex</em></span></button>
+  <button class="plat"><i class="plat-mark" aria-hidden="true">S</i><b>SillyTavern</b><span class="pips"><em data-deck="character">character</em><em data-deck="lorebook">lorebook</em><em data-deck="preset">preset</em><em data-deck="regex">regex</em></span></button>
+</div>
+
+<div class="acts">
+  <aside class="rail" data-part="press.rail">
+    <h2 class="act"><span class="n">02</span><span style="font:700 22px/1.2 var(--font-fancy)">Stage</span></h2>
+    <div class="panel" data-deck="fog">
+      <h3>From the library</h3>
+      <p class="sub dim">Click a piece to stage it. <span class="co">3</span></p>
+      <div class="offers">
+        <button class="offer" data-deck="character"><span>Marisol Reyes</span><i>character</i></button>
+        <button class="offer" data-deck="character"><span>Captain Thorne</span><i>character</i></button>
+        <button class="offer" data-deck="lorebook"><span>The Salt Coast</span><i>lorebook</i></button>
+        <button class="offer" data-deck="lorebook"><span>Guild politics</span><i>lorebook</i></button>
+        <button class="offer" data-deck="preset"><span>Plain narrator</span><i>preset</i></button>
+        <button class="offer" data-deck="preset"><span>Test preset</span><i>preset</i></button>
+        <button class="offer" data-deck="persona"><span>Chi, the lighthouse keeper</span><i>persona</i></button>
+        <button class="offer" data-deck="pack"><span>Marisol expressions</span><i>pack</i></button>
+      </div>
+    </div>
+  </aside>
+
+  <section data-part="press.queue">
+    <h2 class="act"><span class="n">03</span><span style="font:700 22px/1.2 var(--font-fancy)">The queue</span><small><span class="num">4</span> staged · <span class="num">1</span> dropped <span class="co">4</span></small></h2>
+
+    <div class="panel bundle" data-deck="character" data-part="press.bundle">
+      <div class="bhead"><h3>Bundle · Adrian Vale</h3><span class="tag">character + 2 linked</span><button class="btn quiet sm">Unstage ×</button></div>
+      <div class="piece" data-deck="character"><span class="bar"></span>
+        <div><span class="nm">Adrian Vale</span><div class="kindline"><em>character</em> · prints as a CCv3 card <span class="co">5</span></div></div>
+        <div class="act-side"></div>
+        <div class="ready"><span class="badge warn">Notes</span>11 of 16 filled - empty: appearance, system prompt, first message, +2 more · <button class="btn quiet sm">Open in the editor</button></div>
+        <div class="fileedit"><span class="field">adrian-vale</span>
+          <span class="seg" role="group" aria-label="file type for Adrian Vale"><span aria-pressed="true">.json</span><span>.txt</span><span>.md</span></span></div>
+      </div>
+      <div class="piece rider" data-deck="lorebook"><span class="bar"></span>
+        <div><span class="nm">Harbor Town</span><div class="kindline"><em>lorebook</em> · rides with Adrian Vale</div></div>
+        <div class="act-side"><button class="btn quiet sm">drop from this run</button></div>
+        <div class="ready"><span class="badge ok">Ready</span><span class="num">42</span> entries · keys fine</div>
+        <div class="fileedit"><span class="field">harbor-town</span>
+          <span class="seg"><span aria-pressed="true">.json</span><span>.txt</span><span>.md</span></span></div>
+      </div>
+      <div class="piece rider dropped" data-deck="lorebook"><span class="bar"></span>
+        <div><span class="nm">Vale family tree</span><div class="kindline"><em>lorebook</em> · rides with Adrian Vale</div></div>
+        <div class="act-side"><button class="btn quiet sm">ride again</button></div>
+      </div>
+    </div>
+
+    <div class="panel bundle" data-deck="preset" data-part="press.bundle">
+      <div class="bhead"><h3>Bundle · Slow burn</h3><span class="tag">preset + 2 linked</span><button class="btn quiet sm">Unstage ×</button></div>
+      <div class="piece" data-deck="preset"><span class="bar"></span>
+        <div><span class="nm">Slow burn</span><div class="kindline"><em>preset</em></div></div><div class="act-side"></div>
+        <div class="fileedit"><span class="field">slow-burn</span>
+          <span class="seg"><span aria-pressed="true">.json</span><span>.txt</span><span>.md</span></span></div>
+      </div>
+      <div class="piece rider" data-deck="regex"><span class="bar"></span>
+        <div><span class="nm">Trim asterisks</span><div class="kindline"><em>regex</em> · rides with Slow burn</div></div>
+        <div class="act-side"><button class="btn quiet sm">drop from this run</button></div>
+      </div>
+      <div class="piece rider" data-deck="fog"><span class="bar"></span>
+        <div><span class="nm">Scene shortcuts</span><div class="kindline"><em>quickreply</em> · rides with Slow burn</div></div>
+        <div class="act-side"><button class="btn quiet sm">drop from this run</button></div>
+      </div>
+    </div>
+
+    <div class="panel bundle" data-deck="lorebook" data-part="press.bundle">
+      <div class="bhead"><h3>Solo · Tidewater notes</h3><span class="tag">lorebook</span><button class="btn quiet sm">Unstage ×</button></div>
+      <div class="piece" data-deck="lorebook"><span class="bar"></span>
+        <div><span class="nm">Tidewater notes</span><div class="kindline"><em>lorebook</em></div></div><div class="act-side"></div>
+        <div class="ready"><span class="badge bad">Won't fire</span>no entry has keywords - it will never fire · <button class="btn quiet sm">Open in the editor</button></div>
+        <div class="fileedit"><span class="field">tidewater-notes</span>
+          <span class="seg"><span aria-pressed="true">.json</span><span>.txt</span><span>.md</span></span></div>
+      </div>
+    </div>
+
+    <div class="panel bundle" data-deck="pack" data-part="press.bundle">
+      <div class="bhead"><h3>Solo · Adrian expressions</h3><span class="tag">pack</span><button class="btn quiet sm">Unstage ×</button></div>
+      <div class="piece" data-deck="pack"><span class="bar"></span>
+        <div><span class="nm">Adrian expressions</span><div class="kindline"><em>pack</em></div></div><div class="act-side"></div>
+      </div>
+    </div>
+
+    <div class="panel runbar" data-part="press.foot">
+      <div class="manifest">
+        <span class="big num">7</span>
+        <span class="sum">in the run<br><span class="dim">4 waiting · 3 skipped</span></span>
+        <span class="arrow">&rarr;</span>
+        <span class="sum">Marinara<br><span class="out">vaude-press-marinara.zip</span></span>
+      </div>
+      <div class="runbtns">
+        <button class="btn quiet">Clear the results</button>
+        <button class="btn primary run">Run the press</button>
+      </div>
+      <p class="hint">Run the press stays dim until a platform is picked and the run has at least one piece. A single printed file downloads bare, several come in one zip. <span class="co">6</span></p>
+    </div>
+  </section>
+</div>
+
+<h2 class="section-title">The other states <small>every state the room has today</small></h2>
+<div class="gallery">
+  <div class="wide panel" data-deck="character">
+    <div class="gal-note"><span class="co">7</span> During and after a run: each piece reports under its own name</div>
+    <div class="bundle" style="border:0;margin:0">
+      <div class="piece" data-deck="character"><span class="bar"></span>
+        <div><span class="nm">Adrian Vale</span><div class="kindline"><em>character</em> · prints as a CCv3 card</div></div><div class="act-side"><span class="badge warn">printed with notes</span></div>
+        <div class="result"><span class="dim">prints as a CCv3 card, its native character file · carries: portrait · 6 expressions · 3 fields not carried</span><span class="fname">adrian-vale.json</span></div></div>
+      <div class="piece rider" data-deck="lorebook"><span class="bar"></span>
+        <div><span class="nm">Harbor Town</span><div class="kindline"><em>lorebook</em></div></div><div class="act-side"><span class="badge ok">printed</span></div>
+        <div class="result"><span class="fname">harbor-town.json</span></div></div>
+      <div class="piece" data-deck="preset"><span class="bar"></span>
+        <div><span class="nm">Slow burn</span><div class="kindline"><em>preset</em></div></div><div class="act-side"><span class="badge dim">printing…</span></div></div>
+      <div class="piece rider" data-deck="regex"><span class="bar"></span>
+        <div><span class="nm">Trim asterisks</span><div class="kindline"><em>regex</em></div></div><div class="act-side"><span class="badge dim">skipped</span></div>
+        <div class="result"><span>Marinara has no regex format</span></div></div>
+      <div class="piece" data-deck="lorebook"><span class="bar"></span>
+        <div><span class="nm">Tidewater notes</span><div class="kindline"><em>lorebook</em></div></div><div class="act-side"><span class="badge bad">failed</span></div>
+        <div class="result"><span style="color:color-mix(in srgb, var(--premiere-rose) 55%, white)">empty export payload</span></div></div>
+    </div>
+    <div class="runbar" style="padding:18px 0 0">
+      <div class="manifest"><span class="big num">2</span><span class="sum">printed · 1 with notes · 1 failed · 1 skipped · 1 waiting<br><span class="out">vaude-press-marinara.zip ready</span></span></div>
+      <div class="runbtns"><button class="btn quiet">Clear the results</button><button class="btn">Download the bundle</button><button class="btn primary run off">printing…</button></div>
+    </div>
+  </div>
+
+  <div class="panel" data-deck="fog">
+    <div class="gal-note"><span class="co">8</span> Empty queue</div>
+    <div class="empty-hero" data-empty>
+      <h3>Nothing staged</h3>
+      <p>Stage pieces from the Library: right-click any piece, or use the rail on the left. A staged character brings its linked lorebooks as a bundle.</p>
+    </div>
+    <p class="sub dim" style="text-align:center">0 in the run · pick a platform</p>
+    <hr style="border:0;border-top:1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent);margin:16px 0">
+    <div class="gal-note">Library empty or failed to load</div>
+    <p class="empty">everything is staged</p>
+    <p class="empty" style="color:color-mix(in srgb, var(--premiere-rose) 55%, white)">could not load the studio · the server may be unreachable</p>
+  </div>
+
+  <div class="panel ov" data-deck="fog">
+    <div class="gal-note"><span class="co">9</span> The overlay widget, "On the press"</div>
+    <h2>On the press</h2>
+    <div class="tile" style="margin-top:12px"><strong class="num">4</strong>Staged pieces</div>
+    <ol>
+      <li><span>1. Adrian Vale</span><small class="dim">Character</small></li>
+      <li><span>2. Slow burn</span><small class="dim">Preset</small></li>
+      <li><span>3. Tidewater notes</span><small class="dim">Lorebook</small></li>
+      <li><span>4. Adrian expressions</span><small class="dim">Pack</small></li>
+    </ol>
+    <button class="btn">Return to export setup</button>
+    <p class="sub dim" style="margin-top:8px">Choose formats and review export reports in the Press.</p>
+  </div>
+</div>
+
+</main></div>
+<ol class="legend">
+  <li><span class="co">1</span> Playbill header. Today the room has no header, only a row of platform chips. The title, a one-line lede, the status line, Reload Studio and Clear the queue now live in one header. Clear the queue moves here from the footer, still hidden while printing.</li>
+  <li><span class="co">2</span> Target platforms become a wall of cards, ahead of the queue, because the target decides every readiness line below. One pick per run, rose edge on the chosen one. Each card also names the piece kinds the adapter prints (read from the existing per-kind adapter list, and the CCv3 borrowed note for extension-map hosts).</li>
+  <li><span class="co">3</span> The library rail keeps its click-to-stage list, now with deck-colored kind edges. Offers hide anything already staged; when all are staged it says "everything is staged".</li>
+  <li><span class="co">4</span> The room is numbered as three beats (target, stage, print). Bundles are panels with a deck edge and a Cinzel title; the counts of staged and dropped pieces sit beside the section title. Unstage stays on each bundle.</li>
+  <li><span class="co">5</span> Each piece keeps its readiness line, an Open in the editor link for warnings, the filename field and the file type segment (shown only for text formats, only before a run). The tone dot becomes a text badge (Ready, Notes, Won't fire) so color is never the only signal. Riders are indented with a gold dashed rail and keep drop from this run and ride again.</li>
+  <li><span class="co">6</span> The footer becomes the run bar: piece count, the fold summary, the target and the zip name it will produce, then a large Run the press. Disabled without a platform or any pieces (tooltip: Pick a target platform first).</li>
+  <li><span class="co">7</span> Run states: printing, printed, printed with notes, failed with its message, skipped with its reason, plus filename, carries line and Download the bundle / Clear the results. These replace the filename editor on each row once a run exists.</li>
+  <li><span class="co">8</span> Empty queue and the two library notes (everything staged, studio unreachable) get real panels instead of loose gray text.</li>
+  <li><span class="co">9</span> The overlay widget "On the press" is restyled in the same panel and type, nothing added or removed.</li>
+</ol>
+<script type="module">import { startLightRays } from "./rays.bundle.js"; startLightRays(document.getElementById("rays"), true, .35);</script>
+</body></html>

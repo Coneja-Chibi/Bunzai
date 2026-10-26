@@ -9,6 +9,7 @@
  * blur the difference between "cleared" and "zero".
  */
 import { Disclosure } from "../../../components/button";
+import { Panel } from "../../../components/panel";
 import { useState, type JSX } from "react";
 import { Ic } from "../../../_shared/ic";
 import type { PresetBody, PresetSamplers } from "../../../../entities/preset";
@@ -75,7 +76,7 @@ export function SettingsBar({
   const setCount = SAMPLERS.filter((x) => samplers[x.key] !== undefined).length;
 
   return (
-    <div className={s.bar}>
+    <Panel deck="preset" data-part="preset.settings" className={s.bar}>
       <Disclosure
         open={open}
         onClick={() => setOpen(!open)}
@@ -155,6 +156,6 @@ export function SettingsBar({
           )}
         </div>
       )}
-    </div>
+    </Panel>
   );
 }

@@ -16,25 +16,24 @@ import { icSvg } from "../../../_shared/ic-svg";
 import { Tile } from "../../../components/button";
 
 const CSS = `
-.psh-scroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
+.psh-scroll{flex:1;min-height:0;overflow-y:auto;padding:.5rem .5rem 1.125rem}
 .psh-space{position:relative;width:100%}
-.psh-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:1.1rem;position:absolute;top:0;left:0;right:0}
+.psh-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),1fr));gap:1.375rem;position:absolute;top:0;left:0;right:0}
+/* a profile: the chooser card, deck-colored top edge, lift on hover */
 .psh-card{position:relative;display:flex;flex-direction:column;text-align:left;font:inherit;color:inherit;cursor:pointer;padding:0;
-  background:var(--stage-panel);border:2px solid var(--stage-black);box-shadow:5px 5px 0 0 var(--stage-black);transition:transform .12s ease-out,box-shadow .12s ease-out}
-.psh-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 0 var(--stage-black)}
-.psh-card.cast{border-color:var(--a);box-shadow:inset 4px 4px 0 0 var(--shadow-ink);transform:translate(2px,2px);opacity:.85}
-.psh-card.pick{outline:3px solid var(--a);outline-offset:-3px}
-.psh-cov{height:7.5rem;background:var(--stage-sunken);display:grid;place-items:center;
-  color:var(--stage-kicker);font:900 1.6rem var(--font-big);border-bottom:2px solid var(--stage-black);position:relative}
+  background:var(--glass);border:3px solid var(--stage-black);border-top-color:var(--a);box-shadow:5px 5px 0 var(--stage-black);transition:transform .25s ease,box-shadow .25s ease}
+.psh-card:hover{transform:translateY(-5px);box-shadow:5px 5px 0 var(--stage-black),var(--glow)}
+.psh-card.cast{outline:1px solid var(--premiere-gold);outline-offset:3px}
+.psh-card.pick{border-color:var(--a);box-shadow:5px 5px 0 var(--a)}
+.psh-cov{height:7.5rem;background:color-mix(in srgb,var(--a) 22%,var(--stage-black));display:grid;place-items:center;color:color-mix(in srgb,var(--a) 40%,var(--text));font:700 1.75rem var(--font-fancy);position:relative}
 .psh-cov img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none}
-.psh-def{position:absolute;top:.4rem;right:.4rem;font: 700 var(--text-meta) var(--font-mono);letter-spacing:.06em;text-transform:uppercase;
-  background:var(--stage-warn-ink);color:var(--stage-warn);border:1px solid var(--stage-black);padding:.08rem .3rem}
-.psh-body{padding:.5rem .6rem}
-.psh-nm{display:block;font:800 var(--text-control) var(--font-big);letter-spacing:.03em;text-transform:uppercase;color:var(--stage-card);overflow-wrap:anywhere}
-.psh-brief{font-style:italic;font-family:var(--font-body);color:var(--stage-mute);font-size:.78rem;overflow-wrap:anywhere}
-.psh-line{font: 500 var(--text-meta) var(--font-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--stage-text-dim);margin-top:.3rem}
-.psh-new{display:grid;place-items:center;min-height:12rem;cursor:pointer;font: 700 var(--text-meta) var(--font-mono);letter-spacing:.09em;text-transform:uppercase;
-  color:var(--stage-mute);background:none;border:2px dashed var(--stage-seam)}
+.psh-def{position:absolute;top:.5rem;right:.5rem;font:600 var(--text-meta) var(--font-ui);background:var(--premiere-gold);color:var(--stage-ink);border:2px solid var(--stage-black);padding:.125rem .5rem}
+.psh-body{padding:.625rem .875rem .75rem}
+.psh-nm{display:block;font:700 1.0625rem/1.2 var(--font-fancy);color:var(--text);overflow-wrap:anywhere}
+.psh-brief{font:italic .8125rem/1.45 var(--font-ui);color:var(--text-dim);overflow-wrap:anywhere}
+.psh-line{font:var(--text-meta) var(--font-ui);color:var(--text-faint);margin-top:.375rem}
+.psh-new{display:grid;place-items:center;min-height:12rem;cursor:pointer;font:700 var(--text-control) var(--font-ui);letter-spacing:.04em;color:color-mix(in srgb,var(--a) 60%,var(--text));
+  background:color-mix(in srgb,var(--a) 5%,transparent);border:3px dashed color-mix(in srgb,var(--a) 55%,transparent)}
 `;
 
 const ICON = icSvg("lucide:user", 14);

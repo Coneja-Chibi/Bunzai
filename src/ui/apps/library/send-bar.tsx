@@ -45,7 +45,7 @@ export function SendBar({
   const many = staged.size === 1 ? "it" : `all ${String(staged.size)}`;
   return (
     <div className="sendbar">
-      <span className="cnt">{`${String(staged.size)} ${staged.size === 1 ? "piece" : "pieces"} staged`}</span>
+      <span className="cnt"><b>{staged.size}</b>{` ${staged.size === 1 ? "piece" : "pieces"} staged`}</span>
       <Button size="sm" variant="primary" onClick={() => onSend(batch())}>
         {`Send ${many} to the Workbench`}
       </Button>

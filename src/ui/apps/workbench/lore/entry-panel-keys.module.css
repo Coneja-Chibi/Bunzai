@@ -44,8 +44,8 @@
 }
 
 .keybox {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
   padding: 0.28rem;
   display: flex;
   flex-wrap: wrap;
@@ -58,8 +58,8 @@
 
 .key {
   border: 2px solid var(--a, var(--accent));
-  background: color-mix(in srgb, var(--a, var(--accent)) 14%, var(--stage-sunken));
-  color: var(--stage-soft);
+  background: color-mix(in srgb, var(--a, var(--accent)) 14%, var(--bk-surface-field));
+  color: var(--text-soft);
   padding: 0.12rem 0.28rem;
   font-family: var(--font-mono);
   font-size: var(--text-control);
@@ -75,7 +75,7 @@
   font-weight: 800;
   width: 2.2rem;
   text-align: center;
-  border: 1px solid var(--stage-seam);
+  border: 1px solid var(--bk-line-control);
   background: var(--stage-row);
   color: var(--stage-ok);
   padding: 0.05rem;
@@ -89,7 +89,7 @@
   min-width: 5rem;
   border: 0;
   background: transparent;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.12rem;
 }
 
@@ -133,7 +133,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.3rem;
-  border: 2px dashed var(--stage-seam);
+  border: 2px dashed var(--bk-line-control);
   background: var(--stage-row);
   padding: 0.3rem 0.4rem;
 }
@@ -156,46 +156,42 @@
 
 .pos {
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.28rem 0.42rem;
   cursor: pointer;
 }
 
 .posOn {
   border-color: var(--a, var(--accent));
-  background: color-mix(in srgb, var(--a, var(--accent)) 16%, var(--stage-sunken));
-  color: var(--stage-card);
+  background: color-mix(in srgb, var(--a, var(--accent)) 16%, var(--bk-surface-field));
+  color: var(--text);
 }
 
 .posDepthWrap {
   display: inline-flex;
   align-items: center;
   gap: 0.1rem;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
   padding: 0 0.2rem 0 0;
 }
 
 .posDepthWrap.posOn {
   border-color: var(--a, var(--accent));
-  background: color-mix(in srgb, var(--a, var(--accent)) 16%, var(--stage-sunken));
+  background: color-mix(in srgb, var(--a, var(--accent)) 16%, var(--bk-surface-field));
 }
 
 .posInner {
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   border: 0;
   background: transparent;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.28rem 0.35rem;
   cursor: pointer;
 }
@@ -208,7 +204,7 @@
   text-align: center;
   border: 0;
   background: transparent;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.15rem 0;
 }
 
@@ -218,7 +214,7 @@
   font-size: var(--text-control);
   border: 0;
   background: transparent;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.15rem 0.1rem;
 }
 
@@ -228,8 +224,8 @@
   align-items: center;
   gap: 0.55rem 0.85rem;
   padding: 0.2rem 0;
-  border-top: 1px solid var(--stage-seam);
-  border-bottom: 1px solid var(--stage-seam);
+  border-top: 1px solid var(--bk-line-control);
+  border-bottom: 1px solid var(--bk-line-control);
 }
 
 .instCluster {
@@ -241,20 +237,18 @@
 
 .seg {
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.22rem 0.4rem;
   cursor: pointer;
 }
 
 .segOn {
   border-color: var(--stage-ok);
-  background: color-mix(in srgb, var(--stage-ok) 16%, var(--stage-sunken));
+  background: color-mix(in srgb, var(--stage-ok) 16%, var(--bk-surface-field));
   color: var(--stage-ok);
 }
 
@@ -289,9 +283,9 @@
   min-height: 10rem;
   width: 100%;
   resize: vertical;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   padding: 0.55rem 0.65rem;
 }
 
@@ -305,17 +299,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
   padding: 0.18rem 0.35rem;
 }
 
 .fld > span {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .fldHot {
@@ -329,9 +321,9 @@
   font-size: var(--text-control);
   width: 3.4rem;
   text-align: center;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   padding: 0.22rem 0.15rem;
 }
 
@@ -340,9 +332,9 @@
   font-family: var(--font-mono);
   font-size: var(--text-control);
   width: 6.5rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   padding: 0.22rem 0.3rem;
 }
 
@@ -350,9 +342,9 @@
   font: inherit;
   font-family: var(--font-mono);
   font-size: var(--text-control);
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.24rem 0.3rem;
 }
 

@@ -26,6 +26,9 @@ export interface CssSourcePaneProps {
 export function CssSourcePane({ value, onChange, onChip }: CssSourcePaneProps): JSX.Element {
   return (
     <div className={styles.assist} data-tour="css-source">
+      <div className={styles.paneHead}>
+        <h2 className={styles.paneTitle}>Source</h2>
+      </div>
       <div className={styles.sourceHead}>
         <span className={styles.sourceLabel}>Plain CSS source (truth)</span>
       </div>

@@ -4,8 +4,9 @@
  */
 
 .rail {
-  border-left: 2px solid var(--stage-seam);
-  padding: 0.75rem 0.7rem;
+  border-left: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bk-role-select) 10%, transparent), color-mix(in srgb, var(--stage-black) 40%, transparent) 60%);
+  padding: 0.75rem 1rem;
   min-width: 0;
   min-height: 0;
   height: 100%;
@@ -15,59 +16,50 @@
 @container (max-width: 74rem) {
   .rail {
     border-left: 0;
-    border-top: 2px solid var(--stage-seam);
+    border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
     height: auto;
   }
 }
 
 .railTitle {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
-  margin: 0 0 0.5rem;
+  font: 700 1.0625rem/1.2 var(--font-fancy);
+  letter-spacing: 0.03em;
+  color: var(--text);
+  margin: 0.25rem 0 0.6rem;
 }
 
 .rcard {
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-panel);
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.9rem;
 }
 
 .rhead {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.6rem;
-  border-bottom: 2px solid var(--stage-seam);
+  padding: 0.45rem 0;
+  border-top: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
 }
 
 .rhead b {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 .rhead i {
   font-style: normal;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .rbody {
-  padding: 0.5rem 0.6rem 0.6rem;
+  padding: 0.25rem 0 0.5rem;
 }
 
 .healthTip {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
   line-height: 1.55;
   color: var(--stage-warn);
@@ -75,7 +67,7 @@
 }
 
 .healthOk {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
   line-height: 1.55;
   color: var(--stage-ok);
@@ -85,9 +77,9 @@
 .textarea {
   width: 100%;
   box-sizing: border-box;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-body);
   font-size: var(--text-control);
   line-height: 1.4;
@@ -98,21 +90,19 @@
 
 .hint {
   margin: 0.35rem 0 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
   line-height: 1.45;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .chip {
   display: inline-block;
   margin-top: 0.35rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
-  border: 1px solid var(--stage-seam);
+  color: var(--text-dim);
+  border: 1px solid var(--bk-line-control);
   padding: 0.12rem 0.3rem;
 }
 
@@ -137,13 +127,13 @@
   font-family: var(--font-mono);
   font-size: var(--text-control);
   line-height: 1.45;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.12rem 0;
-  border-bottom: 1px solid var(--stage-seam);
+  border-bottom: 1px solid var(--bk-line-control);
 }
 
 .matchHit span {
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .focusHit,
@@ -154,10 +144,10 @@
   margin-top: 0.4rem;
   padding: 0.35rem 0.4rem;
   border-left: 3px solid var(--stage-ok);
-  background: var(--stage-row);
-  font-family: var(--font-mono);
+  background: color-mix(in srgb, var(--stage-black) 55%, transparent);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  color: var(--stage-soft);
+  color: var(--text-soft);
 }
 
 .focusMiss {
@@ -166,9 +156,8 @@
 
 .focusLbl {
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  font-weight: 700;
+  color: var(--text-dim);
 }
 
 .wakeBlock {
@@ -177,10 +166,8 @@
 
 .wakeLbl {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   margin-bottom: 0.15rem;
 }

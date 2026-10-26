@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:34213f3811c958b9fd99de5e5edfa0b1b1c2a357b2e19a7c61e8f3df88f68210",
-  "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Other page proposals await approval. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries.",
+  "sourceHash": "sha256:708ea7017bca507bf072df2ccb17a03df3375f811e9cd884b6b99b2b1a3d2e22",
+  "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
   "topics": [
     "Kit conversational terminal",
     "temporary browser Studio",
@@ -14,7 +14,7 @@
     "Library browse staging",
     "Workbench content editors",
     "Press batch export",
-    "shared color paint controls",
+    "shared controls and house style",
     "loopback UI security",
     "Context wing prompt inspector and memory"
   ],
@@ -23,8 +23,8 @@
       "slug": "velvet-premiere-landing",
       "title": "Velvet premiere landing",
       "level": 2,
-      "sourceHash": "sha256:f399271285ba9ea13b9d2e3d9e9e7762d995b40428fb082092945fa6df0610ad",
-      "summary": "Fresh launches show the approved velvet theater landing with locally shipped panoramic, standard and portrait artwork, selected by pane container queries. A 90% overlay dims the artwork beneath live HTML branding, navigation and actions. Continue resumes the most recently updated scene through the existing handoff; Now Playing reads the real scene API and handles empty or failed reads. A reusable transparent black-and-ruby proscenium surrounds frozen scene artwork and HTML controls. Quick Start routes to Library, its existing import signal and Scenes. The actual Dock and app shortcuts remain usable and leave the landing. Existing boot rules still skip the title for restored workspaces, reloads, direct links and setup. Two Vaudeville OGL beams and softly roiling fog share a canvas capped at 640 pixels per dimension and 24 frames per second, suspend while hidden and clean up GPU resources. Mouse following uses 35% influence; touch leaves beams alone, pulsation is disabled and shimmer is slowed. Unavailable WebGL and reduced motion use CSS fallbacks, with still effects for reduced motion.",
+      "sourceHash": "sha256:33373276d6caa549bc312a2bc15921ef4d05bc69956ca89e9d2c8d383daebba7",
+      "summary": "Fresh launches show the approved velvet theater landing with locally shipped panoramic, standard and portrait artwork, selected by pane container queries. A 90% overlay dims the artwork beneath live HTML branding, navigation and actions. Continue resumes the most recently updated scene; Now Playing reads the real scene API and handles empty or failed reads. A reusable black-and-ruby proscenium surrounds frozen scene artwork and HTML controls. Quick Start routes to Library, its import signal and Scenes. The Dock and app shortcuts remain usable and leave the landing. Existing boot rules still skip the title for restored workspaces, reloads, direct links and setup. Two OGL beams and roiling fog share a capped canvas that suspends while hidden. Mouse following uses 35% influence, touch is ignored. The rays appear only here and on the scene chooser. Settings Stage lights chooses Moving, Still (one fixed frame) or Off (nothing drawn); Reduce motion makes Moving act as Still. WebGL failure uses CSS fallbacks.",
       "topics": [
         "theater landing",
         "real scene navigation",
@@ -139,8 +139,8 @@
       "slug": "apps-catalog-and-documentation",
       "title": "Apps catalog and documentation",
       "level": 2,
-      "sourceHash": "sha256:54b21f825a8bb8b91dbcfebc2d7f1dd04aebcecad0656a69bd51e14d7fef5c99",
-      "summary": "The Dock's Add app control discovers the manifest-marked catalog instead of naming an id, and the catalog derives cards from the running app roster. catalogOnly tools such as CSS Workshop and Help/Docs remain bundled without occupying everyday Dock space. Help/Docs reads the committed corpus through the generated docs index, which can merge frontmatter, semantic page summaries, retrieval topics, and nested section anchors. Navigation separates user workflows and platforms from developer API, architecture, data, format, security, extension, and decision material; ADR filenames remain canonical while titles are reader-friendly. Markdown uses the shared sanitizer, figures and images are restricted to generated or committed docs assets, the right rail follows current headings, and packaged content matches GitHub. External GitHub viewing passes through the leaving gate and URL allowlist.",
+      "sourceHash": "sha256:5c169bce6dc1ce29b9c3ea07798dc1808a9de86845757351f20fc8948bd6dea9",
+      "summary": "The Dock's Add app control discovers the manifest-marked catalog instead of naming an id, and the catalog derives cards from the running app roster. catalogOnly tools such as CSS Workshop and Help/Docs remain bundled without occupying everyday Dock space. Help/Docs reads the committed corpus through the generated docs index, which can merge frontmatter, semantic page summaries, retrieval topics, and nested section anchors. Navigation separates user workflows and platforms from developer API, architecture, data, format, security, extension, and decision material; ADR filenames remain canonical while titles are reader-friendly. Markdown uses the shared sanitizer, figures and images are restricted to generated or committed docs assets, the right rail follows current headings, and packaged content matches GitHub. External GitHub viewing passes through the leaving gate and URL allowlist. The catalog room is a room header over one framed card per app, marked On your Dock or Included app.",
       "topics": [
         "manifest-discovered app catalog",
         "catalogOnly applications",
@@ -317,8 +317,8 @@
       "slug": "the-workbench-room-home-by-default---the-ide",
       "title": "The Workbench room (home by default - the IDE)",
       "level": 2,
-      "sourceHash": "sha256:503be75e97f882a8f20159fcd13b0db932e06554cede8b3f97258a0ed1a08c41",
-      "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light coherent baselines and serialized revision-checked patches with captured occurrence/native/variant changes, conflict choices and bounded history. Lore native folders share undo/save ownership; character native escrow is deferred and named asset changes are captured with accepted submissions. Complete export explicitly reads the full entity. Local inert asset uploads use bounded session grants revoked on lock or close, with a picture limited to 10 MB. Large lists use measured windows preserving focused controls and selection. Timer autosaves retain explicit intent and five-minute grouping; manual saves keep version boundaries. Shared recents consume accepted PieceStore summaries. All new save, media and projection paths are source-reviewed; focused fixture results are recorded in delivery evidence and live proof remains pending.",
+      "sourceHash": "sha256:c253835619e6c08c70d308f4da1c6b58405f1779d590c9ef2e6ea62866d58575",
+      "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light coherent baselines and serialized revision-checked patches with captured occurrence/native/variant changes, conflict choices and bounded history. Lore native folders share undo/save ownership; character native escrow is deferred and named asset changes are captured with accepted submissions. Complete export explicitly reads the full entity. Local inert asset uploads use bounded session grants revoked on lock or close, with a picture limited to 10 MB. Large lists use measured windows preserving focused controls and selection. Timer autosaves retain explicit intent and five-minute grouping; manual saves keep version boundaries. Shared recents consume accepted PieceStore summaries. All new save, media and projection paths are source-reviewed; focused fixture results are recorded in delivery evidence and live proof remains pending. An empty, restoring or failed bench shows a centered room header inside a framed panel.",
       "topics": [
         "shell-owned editor tabs",
         "recents ranking rail",
@@ -364,8 +364,8 @@
       "slug": "the-press-room-batch-export---the-staged-set-prints",
       "title": "The Press room (batch export - the staged set prints)",
       "level": 2,
-      "sourceHash": "sha256:3e495f7b4571d6ca8c2601ae2c35ad4e2deb17bbef13790a238531cb49223e6e",
-      "summary": "Press exports only a shell-owned staged queue assembled from Library or its unstaged-piece rail, so queue state survives app switches and the room does not duplicate a studio browser. Linked pieces ride as bundles: characters gather referenced lorebooks, while presets gather behaviorRefs regex sets and quickReplyRefs quick-reply sets. Riders may be dropped for one run, and already staged riders are not duplicated. Readiness compares characters with the target's live coverage claims and identifies lorebook entries that cannot fire, offering repair links without manufacturing green status when claims are absent. Each run chooses one platform target, declares names and skips before work, and reports each row honestly. A Sprite pack prints by reference: the server writes its zip one picture at a time and never opens the pack whole, and an unreadable picture fails the row by name; the tab drains the archive into a Blob with no size cap and saves it to a picked file where possible. One printed file is delivered bare under its own name; several are delivered as one zip.",
+      "sourceHash": "sha256:e505b4c0797711e6e7cc7202fc0021075be941a4726d8122731b9df33a7e4411",
+      "summary": "Press exports only a shell-owned staged queue assembled from Library or its unstaged-piece rail, so queue state survives app switches and the room does not duplicate a studio browser. Linked pieces ride as bundles: characters gather referenced lorebooks, while presets gather behaviorRefs regex sets and quickReplyRefs quick-reply sets. Riders may be dropped for one run. Readiness compares characters with the target's live coverage claims and identifies lorebook entries that cannot fire, with repair links and no invented green status. Each run chooses one platform target, declares names and skips before work, and reports each row honestly. A Sprite pack prints by reference: the server writes its zip one picture at a time and never opens the pack whole, and an unreadable picture fails the row by name. One printed file is delivered bare under its own name; several are delivered as one zip. The room opens under The Press header; each staged bundle or solo is a framed panel edged in its piece kind's deck color.",
       "topics": [
         "shell-owned press queue",
         "character lorebook bundles",
@@ -382,8 +382,8 @@
       "slug": "the-agent-window-the-model-standing-on-the-screen-you-came-from",
       "title": "The Agent window (the model, standing on the screen you came from)",
       "level": 2,
-      "sourceHash": "sha256:8b23c51a2faf03cacffe312f8aa3c1d1dd6ce4484b0795d02b5cc72cfd291642",
-      "summary": "A conversation with whatever model the vault holds, carrying the real tool belt. The window owns no provider and no tools: it asks the loopback server, which asks Kit, so there is one vault, one egress ledger and one Gate. The Gate is the layout, not a dialog: a card takes the bottom of the window and the server dispatch loop parks until it is answered. It sees the screen because each app publishes an agentSurface and the mounted app adds what is on it now, joined into a brief that truncates a describe at 300 characters. That snapshot travels through the context both ways, never by importing live-state: every app is bundled separately, so its own import is a second empty copy. The shell publishes a bare snapshot as any app mounts, so apps that never publish still give the window a reading. The studio-change stream reports the folder rather than an actor, so an agent write and a drag from Explorer arrive alike. Replies are drawn from React elements, never from an HTML string.",
+      "sourceHash": "sha256:28e8904466f089f1da97e3b3a87259dd4037c2f6518c597e061b126822287147",
+      "summary": "A conversation with whatever model the vault holds, carrying the real tool belt. The window owns no provider and no tools: it asks the loopback server, which asks Kit, so there is one vault, one egress ledger and one Gate. The Gate is the layout, not a dialog: a card takes the bottom of the window and the server dispatch loop parks until it is answered. It sees the screen because each app publishes an agentSurface and the mounted app adds what is on it now, joined into a brief that truncates a describe at 300 characters. That snapshot travels through the context both ways, never by importing live-state: every app is bundled separately, so its own import is a second empty copy. The shell publishes a bare snapshot as any app mounts. Replies are drawn from React elements, never from an HTML string. The docked room is one framed panel under a room header showing the model and the screen it stands on; the floating panel keeps its own head.",
       "topics": [
         "no provider of its own",
         "Gate parks the dispatch loop",
@@ -398,8 +398,8 @@
       "slug": "css-workshop-catalog-only---assisted-css-authoring",
       "title": "CSS Workshop (catalog-only - assisted CSS authoring)",
       "level": 2,
-      "sourceHash": "sha256:1502541cc554becade8eb6bd7ef59b37bfd7e16265ae5da0b311c1c61fa034b4",
-      "summary": "A catalog-only room for authoring the CSS a card or a host will carry, rather than the CSS this app is built from. It offers starters to begin from, property knobs for the common adjustments, the plain CSS source for anything the knobs do not reach, and a sealed preview showing the result. The output leaves by copy or download for any host, and the room writes no studio state of its own, so nothing here is a piece and nothing needs saving. The preview uses the same seal every untrusted-markup surface in this app uses, which is what lets it show authored CSS without that CSS reaching the application around it.",
+      "sourceHash": "sha256:aa23088640c5dc214dc29e4bc500ba9dbac6e75f5397334c3f675104ab098057",
+      "summary": "A catalog-only room for authoring the CSS a card or a host will carry, rather than the CSS this app is built from. It offers starters to begin from, property knobs for the common adjustments, the plain CSS source for anything the knobs do not reach, and a sealed preview showing the result. The output leaves by copy or download for any host, and the room writes no studio state of its own, so nothing here is a piece and nothing needs saving. The preview uses the same seal every untrusted-markup surface in this app uses, which is what lets it show authored CSS without that CSS reaching the application around it. The room header holds only copy, download, clear and tour; the Simple and Advanced switch, Import .css and Undo live in the editor toolbar.",
       "topics": [
         "catalog-only room",
         "starters and property knobs",
@@ -414,8 +414,8 @@
       "slug": "help-docs-catalog-only---the-corpus-in-the-app",
       "title": "Help / Docs (catalog-only - the corpus, in the app)",
       "level": 2,
-      "sourceHash": "sha256:dbcbd61879a102184a9dde6706f5703ad0763f6155c8f31fc4f86ed471e83485",
-      "summary": "The committed documentation corpus is a first-class room, read from the same source GitHub serves so the app and repository cannot disagree about a page. It reads docs/generated/docs-index.json rather than crawling the tree; every discovered Markdown page keeps its structural title, summary, and headings in the app. A semantic sidecar enriches that record only when its current receipt independently approves it. Until then, the page remains listed with semantic summary and topics absent, while docs-index:check reports incomplete review status. The reader starts as one mobile article column: Browse and Sections open the shared bottom sheet, which contains keyboard focus, closes on Escape, and restores the trigger. Container breakpoints add the catalog rail at 40rem and the current-page heading rail at 62rem, making the same room adapt correctly inside a phone or split pane without viewport assumptions.",
+      "sourceHash": "sha256:8f91c00e5249beeac0bc5aad0f96624ca2c76dada0d04f640fe658108ebe013f",
+      "summary": "The committed documentation corpus is a first-class room, read from the same source GitHub serves so the app and repository cannot disagree about a page. It reads docs/generated/docs-index.json rather than crawling the tree; every discovered Markdown page keeps its structural title, summary, and headings in the app. A semantic sidecar enriches that record only when its current receipt independently approves it. Until then, the page remains listed with semantic summary and topics absent, while docs-index:check reports incomplete review status. The reader starts as one mobile article column: Browse and Sections open the shared bottom sheet, which contains keyboard focus, closes on Escape, and restores the trigger. Container breakpoints add the catalog rail at 40rem and the current-page heading rail at 62rem, making the same room adapt correctly inside a phone or split pane without viewport assumptions. The room opens under a Help / Docs header.",
       "topics": [
         "committed corpus as a room",
         "same source as GitHub",
@@ -432,8 +432,8 @@
       "slug": "the-macro-lab-catalog-only---what-a-macro-actually-does",
       "title": "The Macro Lab (catalog-only - what a macro actually does)",
       "level": 2,
-      "sourceHash": "sha256:cfaa84ce64bf6af7e727f5876d0bed2ab2e2d2bec48f9f056807b915583c22d9",
-      "summary": "A scratch pad for macro text and the only surface that needs no piece open to be useful. It keeps two answers apart on purpose. Reading is pure and local: each token is broken out against the chosen platform catalog, nested tokens report under their container, and where else does it work asks the translator rather than two catalogs, so a shared name meaning different things is a flagged collision instead of a clean trip. A token invoking no name is called that rather than supported, because isMacroSupported fails lenient by design. Resolving runs the text through the platform real engine as a one-block preset behind a host-only route, needs a local checkout pointed at in Settings or named by an environment variable, and refuses by name when absent. The bible lists every macro with click-to-insert, and the operations table derives from the catalogs with gaps sorted first.",
+      "sourceHash": "sha256:dbfd593fc4c5493417406a65577066d52c04a3ec1279b8de55c27ffd7cb40a98",
+      "summary": "A scratch pad for macro text and the only surface that needs no piece open to be useful. It keeps two answers apart on purpose. Reading is pure and local: each token is broken out against the chosen platform catalog, nested tokens report under their container, and where else does it work asks the translator rather than two catalogs, so a shared name meaning different things is a flagged collision instead of a clean trip. A token invoking no name is called that rather than supported, because isMacroSupported fails lenient by design. Resolving runs the text through the platform real engine as a one-block preset behind a host-only route, needs a local checkout pointed at in Settings or named by an environment variable, and refuses by name when absent. The bible lists every macro with click-to-insert, and the operations table derives from the catalogs with gaps sorted first. The room has its own header and a framed text panel; a dot marks platforms whose engine is installed.",
       "topics": [
         "two answers kept apart",
         "catalog reading is pure",
@@ -448,8 +448,8 @@
       "slug": "html-view-catalog-only---a-drawing-at-full-size",
       "title": "HTML View (catalog-only - a drawing at full size)",
       "level": 2,
-      "sourceHash": "sha256:72962266876e0f7cadb67f6a4a6ff4e8767591eb9a09bc121c98eeb57bdcd9c7",
-      "summary": "A catalog-only app that draws one htmldoc piece as a whole tab. It is reached three ways: opened by id from the Library, handed a piece by another surface, or handed the raw text of a fenced html block from an agent reply. A piece travels by ID and is re-read from the studio, so the tab shows what the drawing says now; only an unsaved reply is carried whole, and the room says so rather than showing an empty frame. Everything drawn passes through SealedHtmlPreview, the component behind the transcript preview and the Workbench editor pane too, so one boundary serves three sizes with nothing to drift. The tab and the editor pane fill their room while the transcript keeps the inline ceiling, and either goes fullscreen, natively where allowed and as an overlay where not. All CSS renders, head styles included: a document's style blocks are lifted out and re-injected, because sanitizing returns the body alone. JavaScript never runs, no remote image or webfont loads, and form controls are stripped, since the same component draws untrusted card backdrops.",
+      "sourceHash": "sha256:4a7aa6f4526e47deeb76de053d1837ca18b4e8a7a98d057ec33471d9cb3bcc81",
+      "summary": "A catalog-only app that draws one htmldoc piece as a whole tab. It is reached three ways: opened by id from the Library, handed a piece by another surface, or handed the raw text of a fenced html block from an agent reply. A piece travels by ID and is re-read from the studio, so the tab shows what the drawing says now; only an unsaved reply is carried whole, and the room says so rather than showing an empty frame. Everything drawn passes through SealedHtmlPreview, the component behind the transcript preview and the Workbench editor pane too, so one boundary serves three sizes with nothing to drift. The tab and the editor pane fill their room while the transcript keeps the inline ceiling, and either goes fullscreen, natively where allowed and as an overlay where not. All CSS renders, head styles included. JavaScript never runs, no remote image or webfont loads, and form controls are stripped, since the same component draws untrusted card backdrops. The header title is the drawing's name.",
       "topics": [
         "catalog-only app",
         "opened by id or handoff",
@@ -463,8 +463,8 @@
       "slug": "settings-drop-in-sections",
       "title": "Settings (drop-in sections)",
       "level": 2,
-      "sourceHash": "sha256:004fed4cdbc89e74ba36e76cff133939e74391b3e88814277a0262fe2395dee6",
-      "summary": "Settings tabs derive from section modules exporting id, label, order and a component that receives AppContext; the registry is the sole browser seam. Controls act on persisted settings and repaint at once. Sections: Appearance (theme, house accent, studio-wide Chat layout), Models, Connections, Spotify (own Client ID, sign-in), Studio (home app, first deck, publish targets, engine checkouts), Security (lock, words, password, health check), Backups (Back up now, Export library as a plain unencrypted folder like the bunraku export command, kept copies, restore), Workbench, Memory & Summaries, Remote access, Updates and About. A library gate shows the stage door while locked. Connections manages MCP both ways, egress-gated. Engine checkout roots are machine facts in engines.json, marker-checked, and read by Kit.",
+      "sourceHash": "sha256:122e5f47b829b3d077c583d9bf9d1574b8617a655d007163e4e87723354f3cf8",
+      "summary": "Settings tabs derive from section modules exporting id, label, order and a component that receives AppContext; the registry is the sole browser seam. Controls act on persisted settings and repaint at once. Sections: Appearance (theme, house accent, studio-wide Chat layout), Models, Connections, Spotify (own Client ID, sign-in), Studio (home app, first deck, publish targets, engine checkouts), Security (lock, words, password, health check), Backups (Back up now, Export library as a plain unencrypted folder like the bunraku export command, kept copies, restore), Workbench, Memory & Summaries, Remote access, Updates and About. A library gate shows the stage door while locked. Connections manages MCP both ways, egress-gated. Engine checkout roots are machine facts in engines.json, marker-checked, and read by Kit. Rooms are a header over a rail of four acts (Your studio, The agent, The vault, The house) with per-tab status lines, collapsing to chips in narrow panes; each tab has a titled page and, when protected, a lock line. Appearance adds the Stage lights row and Theme packages as cards with Request and an Inspect button.",
       "topics": [
         "drop-in SettingsSection",
         "registry-derived tabs",
@@ -480,8 +480,8 @@
           "slug": "settings-theme-variants",
           "title": "Settings theme variants",
           "level": 3,
-          "sourceHash": "sha256:8de8120eb8e415366689dff752d04fdcaa2f5acfa5d6ef234142f9f70fc3e18b",
-          "summary": "settings.shape arranges the Settings room as a program, a menu list, big sticker tabs or a numbered contents page, through data-sx hooks on the tabs, body, rows and segmented control.",
+          "sourceHash": "sha256:daa2ec3df5cdff858a07709c33d19c70d2c853bb60eaaddec04dbd0a76738d44",
+          "summary": "Settings theme variants restyle the page body, rows and segmented control through data-sx hooks. They no longer touch the rail of acts, which belongs to the room. Stylesheets live under the settings variants folder.",
           "topics": [
             "settings shape",
             "data-sx hooks"
@@ -494,7 +494,7 @@
       "slug": "shared-components-srcui_shared-and-srcuicomponents",
       "title": "Shared components (`src/ui/_shared/` and `src/ui/components/`)",
       "level": 2,
-      "sourceHash": "sha256:9aa5705e4d0619422a5feeb8d732d55613a568615d265cb3c850999b34253f89",
+      "sourceHash": "sha256:6e9ae0b8b2f72f1394917f2c25795c33a34a8365bc805cad31f82288756b5869",
       "summary": "Every clickable control is a named part of the button family in src/ui/components/button (Button, IconButton, Segmented, Tabs, DocTab, Chip, ListRow, MenuItem, Disclosure, Tile, Card, Dot, Toggle, InlineValue, Scrim), each tagged with data-control (and data-kind where it has kinds) as theme hooks; lint blocks raw buttons and the style guard blocks button CSS elsewhere. Shared visual controls are extracted once for setup, settings, and future editors. SwatchRow exposes the house palette as quick choices and optionally opens PaintPicker for a custom solid color. ColorPicker provides a branded saturation/value square, hue strip, and hex input while retaining HSV internally to avoid grayscale-state loss. Pure color math normalizes and converts values fail-closed and shares pointer fractions across color and gradient controls. The Paint model is a validated discriminated union for solid, linear, and radial output; gradients require at least two valid stops. PaintPicker composes color editing, stop add/drag/remove, angle adjustment, and curved previews behind allowed-mode gates. Solid accent use is live; tested gradient editing awaits its first entity or pack background consumer.",
       "topics": [
         "button family parts",
@@ -507,6 +507,19 @@
         "gradient consumer pending"
       ],
       "children": [
+        {
+          "slug": "house-style-premiere",
+          "title": "House style (Premiere)",
+          "level": 3,
+          "sourceHash": "sha256:54ffd55678620c727a43719cf43cd7a941d8069f2172449ace83a960f0e1ce2c",
+          "summary": "Every room wears a room header with a gold kicker, a display-face title, one lede line and right-aligned actions. Groups sit in a single framed panel with an offset shadow and an optional piece-kind deck edge; a panel nested inside another flattens to its colored top edge, so frames never nest. The Workbench editor head adds a kind kicker and deck color. Colors come from the theme's brand, action and select roles, so rooms follow the user's accent. Monospace is reserved for code, ids and numbers, and the core UI font fallback is Atkinson Hyperlegible.",
+          "topics": [
+            "room header",
+            "single frame panels",
+            "theme role colors"
+          ],
+          "children": []
+        },
         {
           "slug": "control-variants-uicontrols",
           "title": "Control variants (`ui.controls`)",

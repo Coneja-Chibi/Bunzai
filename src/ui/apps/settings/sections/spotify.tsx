@@ -112,6 +112,10 @@ function SpotifySection({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "spotify",
+  act: "agent",
+  title: "Spotify",
+  lede: "Control the Spotify app you already have open from the Stage wing: play, pause, skip, volume, and which device it plays on. Playback control needs Spotify Premium. Turn it on for a scene in the Props wing.",
+  protectedNote: "There is no shared key and no client secret. The sign-in is kept only in this computer's key vault, never in a preference, a log, an export or what a model sees.",
   label: "Spotify",
   // Beside Connections: both are accounts and tools this machine reaches.
   order: 17,

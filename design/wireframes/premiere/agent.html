@@ -1,0 +1,459 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: The Agent</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules. Tokens only. Layout is today's: one full-width column, top to bottom:
+   header strip, meter strip, notice, transcript, toast, gate, chips, queue, composer, hints, brief. */
+.room { --read: var(--premiere-violet); --write: var(--premiere-gold); --destroy: var(--premiere-rose);
+  --dim: color-mix(in srgb, var(--premiere-text) 64%, transparent); --line: color-mix(in srgb, var(--premiere-text) 14%, transparent);
+  --glow: color-mix(in srgb, var(--premiere-violet) 38%, transparent); }
+.dim { color: var(--dim); }
+.live { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--premiere-rose); box-shadow: 0 0 10px var(--premiere-rose); flex: none; }
+.live.off { background: none; border: 2px solid var(--dim); box-shadow: none; }
+.wf-note { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.wf-note .seg { margin-left: auto; }
+.wf-note .seg button { all: unset; cursor: pointer; padding: 6px 14px; font: 600 13px var(--font-ui); color: var(--premiere-text); }
+.wf-note .seg button[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 25%, transparent); box-shadow: inset 0 -2px 0 var(--premiere-rose); }
+[data-state="a"] [data-only="b"], [data-state="b"] [data-only="a"] { display: none !important; }
+
+/* The window: one panel, today's single column. */
+.agent { position: relative; padding: 0; border-top-color: var(--premiere-rose); display: flex; flex-direction: column; }
+
+/* 1 header strip: where today's kicker, title and subtitle sit; the fold key stays top right */
+.head { position: relative; padding: 22px 28px 20px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.head .kicker { gap: 10px; }
+.head .kicker::before, .head .kicker::after { display: none; }
+.head .kicker .rule { width: 48px; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 60%, transparent); }
+.head h1 { margin-top: 12px; font: 700 clamp(30px, 3.6vw, 48px)/1.05 var(--font-fancy); letter-spacing: .02em; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.head .lede { margin: 10px 0 0; padding-left: 14px; border-left: 2px solid var(--premiere-rose); font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.head .lede b { color: var(--premiere-text); font-weight: 600; }
+.fold { position: absolute; top: 12px; right: 14px; display: inline-grid; place-items: center; width: 34px; height: 34px; cursor: pointer;
+  border: 2px solid transparent; background: none; color: var(--premiere-gold); font: 700 15px var(--font-ui); transition: border-color .2s, box-shadow .2s, background .2s; }
+.fold:hover { border-color: color-mix(in srgb, var(--premiere-gold) 70%, transparent); background: color-mix(in srgb, var(--premiere-gold) 10%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--premiere-gold) 30%, transparent); }
+
+/* 2 meter strip */
+.meter { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; padding: 10px 28px; border-bottom: 1px solid var(--line); font-size: 13px;
+  background: color-mix(in srgb, var(--premiere-violet) 7%, transparent); }
+.meter .name { font-weight: 600; color: var(--premiere-gold); }
+.bar { flex: 0 1 280px; min-width: 120px; height: 10px; border: 2px solid color-mix(in srgb, var(--premiere-text) 35%, transparent); background: var(--premiere-hard); position: relative; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--premiere-violet), var(--premiere-rose)); box-shadow: 0 0 12px var(--glow); }
+.bar.warn i { background: var(--premiere-gold); } .bar.crit i { background: var(--premiere-rose); }
+.meter .gap { flex: 1; }
+.crit-note { color: var(--premiere-rose); font-weight: 700; }
+
+/* 3 notice */
+.notice { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 16px; margin: 0; padding: 14px 28px; font-size: 14px;
+  border-left: 4px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 9%, transparent); border-bottom: 1px solid var(--line); }
+.notice b { font-weight: 700; }
+.btn.sm { min-height: 32px; padding: 4px 12px; font-size: 13px; }
+.btn.danger { border-color: var(--premiere-rose); color: var(--premiere-rose); }
+.btn { transition: transform .2s ease, box-shadow .2s ease, border-color .2s; }
+.btn:hover { transform: translateY(-2px); border-color: var(--premiere-gold); box-shadow: 0 8px 26px var(--glow); }
+.btn.primary:hover { border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard), 0 8px 30px color-mix(in srgb, var(--premiere-rose) 40%, transparent); }
+.btn:disabled { opacity: .45; transform: none; box-shadow: none; cursor: not-allowed; }
+
+/* 4 transcript: full-width bands, today's order and widths */
+.talk { display: grid; gap: 8px; padding: 18px 0 12px; align-content: start; }
+.band { position: relative; padding: 12px 28px 12px 24px; border-left: 4px solid var(--spine, var(--premiere-violet)); background: color-mix(in srgb, var(--premiere-hard) 42%, transparent);
+  transition: background .2s, box-shadow .2s; }
+.band:hover { background: color-mix(in srgb, var(--spine, var(--premiere-violet)) 9%, color-mix(in srgb, var(--premiere-hard) 42%, transparent)); box-shadow: -6px 0 22px -8px var(--spine, var(--premiere-violet)); }
+.band.you { --spine: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 11%, transparent); }
+.band.agent { --spine: var(--premiere-violet); }
+.band.did { --spine: var(--read); padding-top: 9px; padding-bottom: 9px; }
+.band.did.write { --spine: var(--write); } .band.did.destroy { --spine: var(--destroy); }
+.band .who { display: block; font: 700 12px/1 var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--spine); margin-bottom: 8px; }
+.band p + p, .band p + ul, .band ul + p { margin-top: 8px; }
+.band h4 { font: 700 15px/1.3 var(--font-fancy); letter-spacing: .02em; margin: 2px 0 6px; }
+.band ul { padding-left: 20px; } .band li { margin: 2px 0; }
+.band li::marker { color: var(--premiere-gold); }
+.band code { font-size: 13px; padding: 1px 5px; background: var(--premiere-hard); color: var(--premiere-gold); }
+.copy { position: absolute; top: 6px; right: 14px; opacity: 0; transition: opacity .2s; }
+.band:hover .copy, .band.show .copy { opacity: 1; }
+.copy .btn { min-height: 28px; padding: 2px 10px; font-size: 12px; background: var(--premiere-hard); }
+.tool-line { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; font-size: 14px; }
+.tool-line .who { margin: 0; }
+.verb { font-weight: 700; color: var(--spine); padding: 0 8px; border: 1px solid color-mix(in srgb, var(--spine) 60%, transparent); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; }
+.tool-line .num { color: var(--dim); font-size: 13px; }
+.foldrow { padding: 2px 28px 2px 34px; font-size: 13px; color: var(--dim); cursor: pointer; transition: color .2s; }
+.foldrow:hover { color: var(--premiere-text); }
+.foldrow u { text-decoration: none; color: var(--premiere-gold); margin-right: 8px; }
+.err { padding: 12px 28px 12px 24px; font-size: 14px; border-left: 4px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 14%, transparent); position: relative; }
+.err b { color: var(--premiere-rose); margin-right: 8px; }
+
+/* choice card: the chooser card grammar */
+.ask { margin: 12px 0 2px; padding: 16px 18px; background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); border: 3px solid var(--premiere-hard);
+  border-top-color: var(--premiere-violet); box-shadow: 5px 5px var(--premiere-hard); transition: transform .25s ease, box-shadow .25s ease; max-width: 880px; }
+.ask:hover { transform: translateY(-3px); box-shadow: 5px 5px var(--premiere-hard), 0 18px 60px var(--glow); }
+.ask .head2 { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--premiere-gold); }
+.ask .head2 .num { letter-spacing: 0; text-transform: none; font-weight: 500; color: var(--dim); }
+.ask .q { font: 700 19px/1.3 var(--font-fancy); letter-spacing: .01em; margin: 10px 0 12px; }
+.opt { display: grid; grid-template-columns: 22px 30px 1fr; gap: 0 4px; padding: 9px 12px; border: 2px solid transparent; border-left: 4px solid transparent; cursor: pointer;
+  transition: background .2s, border-color .2s, box-shadow .2s, transform .2s; }
+.opt:hover { background: color-mix(in srgb, var(--premiere-violet) 12%, transparent); border-left-color: color-mix(in srgb, var(--premiere-violet) 80%, transparent); transform: translateX(3px); }
+.opt .caret { color: var(--premiere-rose); font-weight: 700; } .opt .n { color: var(--dim); font-family: var(--font-mono); font-size: 13px; padding-top: 2px; }
+.opt .val { font-weight: 600; } .opt .note { grid-column: 3; font-size: 13px; color: var(--dim); }
+.opt.on { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 15%, transparent); box-shadow: 0 0 26px color-mix(in srgb, var(--premiere-rose) 25%, transparent); }
+.opt.esc .val { font-weight: 400; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.rule { height: 1px; background: color-mix(in srgb, var(--premiere-gold) 35%, transparent); margin: 8px 0; }
+.ask .field { display: block; width: 100%; margin-top: 10px; font-size: 13px; color: var(--dim); }
+.arm { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed color-mix(in srgb, var(--premiere-gold) 45%, transparent); font-size: 13px; }
+.arm .t { color: var(--dim); } .arm.ready .t { color: var(--premiere-text); }
+.arm.ready .t b { color: var(--premiere-gold); }
+.ask.done { padding: 10px 16px; box-shadow: none; border-color: var(--line); background: none; transform: none; }
+.ask.done .q { font: 500 14px var(--font-ui); margin: 0; color: var(--dim); } .ask.done .said { color: var(--premiere-gold); font-weight: 600; margin-top: 2px; }
+
+/* live widgets */
+.stage-line { display: flex; align-items: center; gap: 12px; padding: 4px 28px 4px 34px; font-size: 14px; color: var(--dim); }
+.stage-line .dot { color: var(--premiere-rose); font-size: 24px; line-height: 0; text-shadow: 0 0 12px var(--premiere-rose); }
+.stamp { font: 600 12px var(--font-mono); background: var(--premiere-rose); padding: 2px 8px; color: var(--premiere-text); }
+.rehearsal { margin: 0 28px; border: 1px dashed color-mix(in srgb, var(--premiere-violet) 60%, transparent); border-left: 4px solid var(--premiere-violet); padding: 12px 16px; background: color-mix(in srgb, var(--premiere-violet) 7%, transparent); }
+.rehearsal .h { display: flex; justify-content: space-between; align-items: center; font: 700 12px var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-violet); margin-bottom: 6px; }
+.rehearsal p { font-size: 14px; font-style: italic; color: color-mix(in srgb, var(--premiere-text) 82%, transparent); }
+.watch { margin: 0 28px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 55%, transparent); border-left: 4px solid var(--premiere-gold); padding: 10px 16px; background: color-mix(in srgb, var(--premiere-gold) 8%, transparent); }
+.watch .h { font: 700 12px var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); } .watch p { font-size: 14px; margin-top: 2px; }
+.empty { text-align: center; padding: 34px 20px; }
+.empty h3 { font: 700 22px var(--font-fancy); text-shadow: 0 2px 24px var(--glow); } .empty p { color: var(--dim); font-size: 14px; margin-top: 6px; }
+
+/* 5 toast */
+.toast { align-self: flex-start; margin: 4px 28px 8px; padding: 5px 14px; font-size: 13px; background: var(--premiere-hard); border: 1px solid color-mix(in srgb, var(--premiere-gold) 40%, transparent); box-shadow: 3px 3px var(--premiere-hard); }
+.toast b { color: var(--premiere-rose); }
+
+/* 6 gate: the modal card over the window */
+.scrim { position: absolute; inset: 0; z-index: 5; display: flex; justify-content: center; align-items: flex-start; padding: 0 20px;
+  background: color-mix(in srgb, var(--premiere-hard) 48%, transparent); }
+.gate { position: sticky; top: 9vh; margin: 9vh 0 40px; width: min(840px, 100%); max-height: 84vh; overflow: auto; border: 3px solid var(--premiere-hard); border-top: 3px solid var(--premiere-gold);
+  background: color-mix(in srgb, var(--premiere-hard) 90%, var(--premiere-violet)); box-shadow: 6px 6px var(--premiere-hard), 0 0 80px color-mix(in srgb, var(--premiere-gold) 28%, transparent), 0 0 0 1px color-mix(in srgb, var(--premiere-gold) 40%, transparent); }
+.gate .top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 10px 22px; background: color-mix(in srgb, var(--premiere-gold) 16%, transparent); font-size: 13px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); }
+.gate .top b { color: var(--premiere-gold); letter-spacing: .14em; text-transform: uppercase; font-size: 12px; }
+.gate .top code { font-weight: 700; letter-spacing: 0; text-transform: none; }
+.gate .body { padding: 20px 22px 6px; }
+.gate .title { font: 700 24px/1.2 var(--font-fancy); text-shadow: 0 2px 24px color-mix(in srgb, var(--premiere-gold) 30%, transparent); }
+.gate .why { margin-top: 8px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 82%, transparent); }
+.gate .warn { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 6px; }
+.gate .warn li { padding: 8px 12px; border-left: 4px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 11%, transparent); font-size: 14px; }
+.gate pre { margin-top: 14px; padding: 12px 14px; background: var(--premiere-hard); border: 1px solid var(--line); font: 13px/1.5 var(--font-mono); overflow-x: auto; }
+.gate .add { color: var(--premiere-text); } .gate .del { color: var(--premiere-rose); }
+.gate .acts { display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 22px 22px; }
+.gate .acts > :last-child { margin-left: auto; }
+.gate .hold { font-size: 12px; color: var(--premiere-gold); padding: 0 22px 0; letter-spacing: .04em; }
+
+/* 7 chips, 8 queue */
+.chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 4px 28px 12px; }
+.chips .lbl { font-size: 13px; color: var(--dim); margin-right: 4px; }
+.chip { cursor: pointer; transition: transform .2s ease, border-color .2s, box-shadow .2s, background .2s; }
+.chip:hover { transform: translateY(-2px); border-color: var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 12%, transparent); box-shadow: 0 6px 22px var(--glow); }
+.queue { list-style: none; padding: 0 28px 10px; display: grid; gap: 6px; }
+.queue li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 12px; border: 1px dashed color-mix(in srgb, var(--premiere-gold) 50%, transparent); border-left: 4px solid var(--premiere-gold); font-size: 14px; background: color-mix(in srgb, var(--premiere-gold) 5%, transparent); }
+.queue .k { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); }
+.queue .t { flex: 1 1 200px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 9 composer: stamp, field, key */
+.compose { position: relative; padding: 4px 28px 6px; }
+.shots { display: flex; gap: 12px; padding-bottom: 12px; }
+.shot { width: 64px; height: 64px; border: 3px solid var(--premiere-hard); border-top-color: var(--deck-pack); box-shadow: 3px 3px var(--premiere-hard); position: relative; cursor: pointer;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--deck-pack) 40%, var(--premiere-hard)), color-mix(in srgb, var(--premiere-violet) 40%, var(--premiere-hard))); transition: transform .2s; }
+.shot:hover { transform: translateY(-3px) rotate(0); }
+.shot::after { content: "x"; position: absolute; top: -9px; right: -9px; width: 20px; height: 20px; border-radius: 50%; background: var(--premiere-rose); display: grid; place-items: center; font: 700 12px var(--font-ui); }
+.composer { position: relative; display: grid; grid-template-columns: auto 1fr auto; align-items: stretch; gap: 0; border: 3px solid var(--premiere-hard); box-shadow: 5px 5px var(--premiere-hard);
+  background: color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-hard)); transition: box-shadow .25s ease, border-color .25s ease; }
+.composer.focus, .composer:focus-within { border-color: var(--premiere-gold); box-shadow: 5px 5px var(--premiere-hard), 0 0 40px color-mix(in srgb, var(--premiere-gold) 25%, transparent); }
+.composer .prompt { display: grid; place-items: center; padding: 0 16px; background: var(--premiere-rose); font: 700 17px var(--font-mono); }
+.composer .ta { min-height: 66px; padding: 12px 16px; font-size: 15px; color: var(--dim); }
+.composer .ta.typed { color: var(--premiere-text); }
+.composer .caret { color: var(--premiere-gold); }
+.composer .go { display: flex; gap: 10px; align-items: center; padding: 10px 14px; border-left: 1px solid var(--line); }
+.composer.busy::before { content: ""; position: absolute; left: -3px; right: -3px; top: -3px; height: 3px; overflow: hidden;
+  background: linear-gradient(90deg, transparent 0%, var(--premiere-violet) 30%, var(--premiere-rose) 50%, var(--premiere-violet) 70%, transparent 100%); background-size: 34% 100%; background-repeat: no-repeat; animation: sweep 6s linear infinite; }
+@keyframes sweep { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+.slash { position: absolute; left: 28px; right: 28px; bottom: calc(100% - 2px); max-height: 15rem; overflow: auto; z-index: 3; border: 3px solid var(--premiere-hard); border-top-color: var(--premiere-violet);
+  background: color-mix(in srgb, var(--premiere-hard) 93%, var(--premiere-violet)); box-shadow: 5px 5px var(--premiere-hard), 0 -10px 50px var(--glow); }
+.slash .h { padding: 8px 14px; font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); border-bottom: 1px solid var(--line); }
+.slash .r { display: flex; gap: 14px; align-items: baseline; padding: 8px 14px; font-size: 14px; border-left: 4px solid transparent; transition: background .15s, border-color .15s; cursor: pointer; }
+.slash .r:hover { background: color-mix(in srgb, var(--premiere-violet) 14%, transparent); border-left-color: var(--premiere-violet); }
+.slash .r b { font-family: var(--font-mono); font-size: 13px; min-width: 84px; color: var(--premiere-gold); }
+.slash .r span { color: var(--dim); }
+.slash .r[aria-selected="true"] { background: color-mix(in srgb, var(--premiere-rose) 20%, transparent); border-left-color: var(--premiere-rose); }
+.slash .r[aria-selected="true"] span { color: var(--premiere-text); }
+.slash.inline { position: static; margin-top: 12px; }
+.mention .r b { font-family: var(--font-ui); color: var(--premiere-text); }
+.hints { display: flex; flex-wrap: wrap; gap: 6px 22px; padding: 12px 28px 8px; font-size: 13px; color: var(--dim); }
+.hints kbd { font: 600 12px var(--font-mono); color: var(--premiere-gold); border: 1px solid color-mix(in srgb, var(--premiere-gold) 50%, transparent); padding: 1px 7px; margin-right: 6px; background: var(--premiere-hard); }
+details.brief { padding: 4px 28px 22px; }
+details.brief summary { cursor: pointer; display: inline-flex; align-items: center; gap: 8px; list-style: none; font-weight: 600; font-size: 14px; padding: 6px 0; color: var(--premiere-text); transition: color .2s; }
+details.brief summary::-webkit-details-marker { display: none; }
+details.brief summary::before { content: "\25B8"; color: var(--premiere-gold); transition: transform .2s; }
+details.brief[open] summary::before { transform: rotate(90deg); }
+details.brief summary:hover { color: var(--premiere-gold); }
+details.brief pre { margin-top: 8px; padding: 12px 14px; background: var(--premiere-hard); border: 1px solid var(--line); font: 13px/1.5 var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 82%, transparent); overflow-x: auto; }
+
+/* other states */
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 24px; }
+.gallery .panel { padding: 18px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.gallery .panel > h3 { font: 700 17px var(--font-fancy); }
+.gallery .panel > .cap { font-size: 13px; color: var(--dim); margin-top: -6px; }
+.gallery .band, .gallery .watch, .gallery .rehearsal, .gallery .notice, .gallery .err, .gallery .queue, .gallery .stage-line, .gallery .foldrow { margin: 0; padding-left: 16px; padding-right: 16px; }
+.gallery .queue, .gallery .chips { padding-left: 0; padding-right: 0; }
+.gallery .composer { margin: 0; }
+.gallery .meter { padding-left: 0; padding-right: 0; border: 0; background: none; }
+.strip { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; border: 1px solid var(--line); border-left: 4px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); font-size: 13px; }
+.doc { display: grid; gap: 4px; }
+.doc .d { display: grid; grid-template-columns: 52px 150px 1fr; gap: 10px; padding: 8px 12px; border-left: 4px solid var(--c); font-size: 13px; background: color-mix(in srgb, var(--premiere-hard) 40%, transparent); }
+.doc .d b { color: var(--c); } .doc .d.ok { --c: var(--deck-persona); } .doc .d.warn { --c: var(--premiere-gold); } .doc .d.fail { --c: var(--premiere-rose); }
+.list .h { font-size: 12px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); padding: 0 0 8px; }
+.list .li { display: flex; gap: 12px; padding: 8px 10px; font-size: 14px; border-bottom: 1px solid var(--line); border-left: 3px solid transparent; }
+.list .li b { min-width: 110px; font-weight: 600; } .list .li span { color: var(--dim); }
+.list .li.act { cursor: pointer; transition: background .15s, border-color .15s; }
+.list .li.act:hover, .list .li.act.sel { border-left-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 10%, transparent); }
+.shelf { display: flex; gap: 14px; overflow-x: auto; padding: 4px 4px 8px 0; }
+.shelf figure { flex: none; width: 110px; } .shelf .img { height: 140px; border: 3px solid var(--premiere-hard); border-top-color: var(--c); box-shadow: 4px 4px var(--premiere-hard); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 50%, var(--premiere-hard)), var(--premiere-hard)); }
+.shelf figcaption { font-size: 13px; margin-top: 8px; color: var(--dim); }
+
+@media (prefers-reduced-motion: reduce) { .btn, .chip, .band, .ask, .opt, .foldrow, .shot, .fold, .slash .r, .list .li, details.brief summary::before { transition: none; } .composer.busy::before { animation: none; background-position: 50% 0; } .btn:hover, .chip:hover, .ask:hover, .opt:hover, .shot:hover { transform: none; } }
+@media (max-width: 720px) {
+  .head, .meter, .notice, .compose { padding-left: 16px; padding-right: 16px; }
+  .head { padding-right: 56px; }
+  .head .kicker { flex-wrap: wrap; } .head .kicker .rule { display: none; }
+  .band, .err { padding-left: 14px; padding-right: 14px; }
+  .foldrow, .stage-line { padding-left: 20px; padding-right: 14px; }
+  .toast, .rehearsal, .watch { margin-left: 16px; margin-right: 16px; }
+  .chips, .queue, .hints, details.brief { padding-left: 16px; padding-right: 16px; }
+  .notice { grid-template-columns: 1fr; }
+  .composer { grid-template-columns: auto 1fr; } .composer .go { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--line); justify-content: flex-end; }
+  .slash { left: 16px; right: 16px; }
+  .gate .title { font-size: 19px; } .gate .acts { padding-left: 16px; padding-right: 16px; } .gate .acts .btn { flex: 1 1 100%; justify-content: center; } .gate .acts > :last-child { margin-left: 0; }
+  .gate .top, .gate .body { padding-left: 16px; padding-right: 16px; }
+  .gallery { grid-template-columns: minmax(0, 1fr); }
+  .doc .d { grid-template-columns: 44px 1fr; } .doc .d span { grid-column: 1 / -1; }
+  .arm { flex-wrap: wrap; } .ask { padding: 14px; } .wf-note { padding-left: 16px; padding-right: 16px; } .wf-note .seg { margin-left: 0; }
+}
+
+/* one frame per group */
+.gallery > .panel { border: 0 !important; box-shadow: none !important; background: none !important; backdrop-filter: none !important; border-top: 2px solid var(--deck, color-mix(in srgb, var(--premiere-text) 10%, transparent)) !important; padding: 14px 0 0 !important; }
+.panel .ask { border: 0 !important; box-shadow: none !important; background: none !important; border-left: 3px solid var(--premiere-violet) !important; padding-left: 14px; }
+.panel .ask:hover { transform: none; }
+.opt { border: 0 !important; border-left: 4px solid transparent !important; } .opt.on { border-left-color: var(--premiere-rose) !important; box-shadow: none !important; }
+.panel .strip, .panel .watch { border: 0 !important; box-shadow: none !important; }
+/* end one frame */
+</style></head>
+<body><div class="wf-note"><span>WIREFRAME. The Agent in the Premiere house style, today's layout. Numbered callouts are explained below.</span>
+  <span class="seg" role="group" aria-label="Show a state"><button id="sa" aria-pressed="true">Choice waiting</button><button id="sb" aria-pressed="false">Gate waiting</button></span></div>
+<div class="stage"><main class="room" id="room" data-state="a">
+
+<section class="panel agent" data-deck="pack" aria-label="The Agent">
+
+  <header class="head">
+    <button class="fold" aria-expanded="true" title="Fold this band away">&#9662;</button><span class="co" style="position:absolute;top:18px;right:56px">2</span>
+    <div class="kicker left"><span class="live"></span> anthropic &middot; claude-sonnet-5-5 <span class="rule"></span><span class="co">1</span></div>
+    <h1>The Agent</h1>
+    <p class="lede">Standing on <b>CSS Workshop</b>.</p>
+  </header>
+
+  <div class="meter">
+    <span class="name">Context <span class="co">3</span></span>
+    <span class="bar"><i style="width:38%"></i></span>
+    <span class="num">38%</span><span class="num dim">76k / 200k</span>
+    <span class="gap"></span>
+    <span class="dim">Turn <span class="num">4.2k (3.9k in, 0.3k out)</span></span>
+    <span class="dim">Session <span class="num">81k</span></span>
+  </div>
+
+  <div class="talk" aria-label="Conversation">
+    <div class="band you"><span class="who">You</span>
+      <p>The preset chips on the Workbench header look cramped on narrow windows. Can you see why?</p>
+      <span class="copy"><button class="btn quiet">Copy</button></span></div>
+
+    <div class="band agent"><span class="who">Agent <span class="co">4</span></span>
+      <h4>What I found</h4>
+      <p>Yes. In your CSS Workshop sheet the rule <code>.wb-head .chip</code> sets <code>white-space: nowrap</code> with no gap, so the chips cannot wrap. Two things I can do:</p>
+      <ul><li>let the row wrap and add a <code>gap</code> of 8px</li><li>cap the chip label at 18 characters with an ellipsis</li></ul>
+      <span class="copy"><button class="btn quiet">Copy</button></span></div>
+
+    <div class="band did"><div class="tool-line"><span class="who">Did</span><span class="verb">read</span><span>css_read: Workbench header sheet</span><span class="num">64 lines</span></div></div>
+
+    <div class="foldrow"><u>&middot;</u>said &middot; <span class="num">1,840</span> chars &middot; click reopens</div>
+
+    <div class="band agent"><span class="who">Agent</span>
+      <p>Which fix do you want me to propose?</p>
+
+      <div class="ask" data-only="a">
+        <div class="head2"><span>Pick one <span class="co">5</span></span><span class="num">3 options</span></div>
+        <p class="q">Which fix should I propose for the Workbench header chips?</p>
+        <div class="opt on"><span class="caret">&#10095;</span><span class="n">1.</span><span class="val">Wrap the row</span><span class="note">Chips flow onto a second line with an 8px gap. Smallest change.</span></div>
+        <div class="opt"><span class="caret"></span><span class="n">2.</span><span class="val">Ellipsis at 18 characters</span><span class="note">Keeps one line, but long preset names get clipped.</span></div>
+        <div class="opt"><span class="caret"></span><span class="n">3.</span><span class="val">Both</span><span class="note">Wrap first, then clip only names over 18 characters.</span></div>
+        <div class="rule"></div>
+        <div class="opt esc"><span class="caret"></span><span class="n">4.</span><span class="val">Write your own answer</span></div>
+        <div class="opt esc"><span class="caret"></span><span class="n">5.</span><span class="val">Chat about this instead</span></div>
+        <span class="field">note: a caveat, a condition, a thought</span>
+        <div class="arm ready"><span class="t">sends <b>1. Wrap the row</b></span><button class="btn primary sm">Send</button></div>
+      </div>
+
+      <div class="ask done" data-only="b"><p class="q">Which fix should I propose for the Workbench header chips?</p><p class="said">&#10003; 1. Wrap the row &middot; with your note</p></div>
+    </div>
+
+    <div class="band you" data-only="b"><span class="who">You</span><p>1, and keep the 8px gap. Go ahead and apply it.</p></div>
+    <div class="band did write" data-only="b"><div class="tool-line"><span class="who">Did</span><span class="verb">write</span><span>css_write: proposed, waiting at the Gate</span></div></div>
+    <div class="watch" data-only="b"><div class="h">Noticed <span class="co">6</span></div><p>preset changed on disk, outside this window.</p></div>
+  </div>
+
+  <div class="toast" role="status" data-only="b"><b>&middot;</b> copied <span class="co">7</span></div>
+
+  <div class="chips" data-only="a"><span class="lbl">Ask about this screen <span class="co">8</span></span>
+    <button class="chip">Explain this sheet</button><button class="chip">Find unused rules</button><button class="chip">Check contrast</button></div>
+
+  <ul class="queue" data-only="b">
+    <li><span class="k">Waiting <span class="co">9</span></span><span class="t">Then do the same for the Library header.</span><button class="btn sm" title="Stop the turn and send this now">Send now</button><button class="btn sm danger" title="Forget this one">Drop</button></li>
+  </ul>
+
+  <div class="compose">
+    <form class="composer focus" data-only="a">
+      <span class="prompt">&gt;</span>
+      <div class="ta">Ask about this screen, or type / for a command</div>
+      <div class="go"><button type="button" class="btn primary" style="opacity:.6">Ask</button></div>
+    </form>
+    <form class="composer busy" data-only="b">
+      <span class="prompt">&gt;</span>
+      <div class="ta typed">Also, one more thing<span class="caret">|</span></div>
+      <div class="go"><button type="button" class="btn" title="Send this when the turn finishes">Queue</button><button type="button" class="btn danger">Stop</button></div>
+    </form>
+  </div>
+  <div class="hints"><span class="co">10</span><span><kbd>enter</kbd>send</span><span><kbd>shift+enter</kbd>newline</span><span><kbd>/</kbd>commands</span><span><kbd>ctrl+/</kbd>hide</span></div>
+
+  <details class="brief"><summary>What it can see <span class="co">11</span></summary>
+<pre>screen: CSS Workshop
+sheet: Workbench header (64 lines)
+selection: .wb-head .chip
+actions: explain, unused, contrast</pre></details>
+
+  <!-- the Gate: a modal over the window while a server loop is parked on it -->
+  <div class="scrim" data-only="b">
+    <div class="gate" role="alertdialog" aria-labelledby="gt">
+      <div class="top"><span><b><code>css_write</code> &middot; review</b></span><span class="dim">Waiting on you <span class="co">12</span></span></div>
+      <div class="body">
+        <div class="title" id="gt">Replace <span class="tnum">1</span> rule in Workbench header sheet</div>
+        <p class="why">A write to a sheet you made. The old rule is kept in the undo history.</p>
+        <ul class="warn"><li>Replaces the whole rule for <code>.wb-head .chip</code>, not just one line.</li><li>This sheet is also loaded by the Library header.</li></ul>
+        <pre><span class="del">- .wb-head .chip { white-space: nowrap; }</span>
+<span class="add">+ .wb-head { display: flex; flex-wrap: wrap; gap: 8px; }</span>
+<span class="add">+ .wb-head .chip { white-space: nowrap; }</span></pre>
+      </div>
+      <div class="acts">
+        <button class="btn sm primary">Allow once</button>
+        <button class="btn sm">Allow for this session</button>
+        <button class="btn sm">No</button>
+        <button class="btn sm quiet" title="Stops the call and leaves the subject open">Wait, tell me more</button>
+        <button class="btn sm danger">Stop the whole turn</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<h2 class="section-title">Other states of the same regions <small>everything the window can show today, with its real wording <span class="co">13</span></small></h2>
+
+<div class="gallery">
+
+<section class="panel" data-deck="fog"><h3>No model connected</h3><p class="cap">The kicker dot goes hollow; the composer still takes slash commands.</p>
+  <div class="notice"><span class="live off"></span><span><b>No model is connected.</b> Add one in Settings; this window uses the same vault and the same providers as Kit, so anything set up there works here.</span></div>
+  <div class="empty" style="padding:14px"><h3>Nothing said yet</h3><p>Ask about what is on the screen behind this window.</p></div>
+  <div class="composer"><span class="prompt">&gt;</span><div class="ta">Type / for a command, or connect a model in Settings</div><div class="go"><button class="btn primary" disabled>Ask</button></div></div></section>
+
+<section class="panel" data-deck="fog"><h3>Not watching, and no screen yet</h3><p class="cap">Said out loud in the kicker and subtitle so nobody trusts a stale screen.</p>
+  <div class="strip"><span><span class="live off"></span>&nbsp; no model connected &middot; not watching the studio folder</span></div>
+  <div class="strip"><span>No screen has described itself yet. Open another app and come back.</span></div></section>
+
+<section class="panel" data-deck="pack"><h3>Slash menu, over the composer</h3><p class="cap">Two stages: the command word, then its argument. Up, down, tab, enter and escape belong to it.</p>
+  <div class="compose" style="padding:0"><div class="slash inline" role="listbox" aria-label="Commands" style="margin:0 0 12px">
+    <div class="h">Commands</div>
+    <div class="r" aria-selected="true" role="option"><b>/gates</b><span>how often Kit asks before writing</span></div>
+    <div class="r" role="option"><b>/doctor</b><span>check the vault, provider, studio, and runtime</span></div>
+    <div class="r" role="option"><b>/decks</b><span>show the studio deck counts</span></div>
+    <div class="r" role="option"><b>/context</b><span>preview what the next request will send</span></div></div>
+  <div class="composer focus"><span class="prompt">&gt;</span><div class="ta typed">/g<span class="caret">|</span></div><div class="go"><button class="btn primary">Run</button></div></div></div></section>
+
+<section class="panel" data-deck="pack"><h3>Mention menu and pictures</h3><p class="cap">Typing @ offers studio pieces. Attached pictures are receipts; clicking one removes it.</p>
+  <div class="shots"><div class="shot" title="Remove this picture"></div><div class="shot" title="Remove this picture"></div></div>
+  <div class="slash inline mention" role="listbox" style="margin:0"><div class="h">Studio pieces</div>
+    <div class="r" aria-selected="true" role="option"><b>Base Persona</b><span>persona</span></div>
+    <div class="r" role="option"><b>Basil Verrane</b><span>character</span></div>
+    <div class="r" role="option"><b>Baseline Preset</b><span>preset</span></div></div>
+  <div class="composer"><span class="prompt">&gt;</span><div class="ta typed">Compare this with @bas</div><div class="go"><button class="btn primary">Ask</button></div></div></section>
+
+<section class="panel" data-deck="preset"><h3>Choice, mid-answer</h3><p class="cap">Picking "Write your own answer" opens a field; the arm line says what will be sent.</p>
+  <div class="ask" style="margin:0"><div class="head2"><span>Pick one</span><span class="num">2 options</span></div><p class="q">Which lorebook should I open?</p>
+    <div class="opt esc on"><span class="caret">&#10095;</span><span class="n">3.</span><span class="val">Write your own answer</span></div>
+    <span class="field" style="color:var(--premiere-text)">velvet-quill-notes</span>
+    <div class="arm"><span class="t">pick one, then send it</span><button class="btn primary sm" disabled>Send</button></div></div></section>
+
+<section class="panel" data-deck="regex"><h3>Tool rows by verb</h3><p class="cap">The spine says what kind of act it was before you read a word.</p>
+  <div class="band did"><div class="tool-line"><span class="who">Did</span><span class="verb">read</span><span>studio_read: Velvet Quill</span><span class="num">212 lines</span></div></div>
+  <div class="band did write"><div class="tool-line"><span class="who">Did</span><span class="verb">write</span><span>studio_write: preset Baseline</span><span class="num">3 blocks</span></div></div>
+  <div class="band did destroy"><div class="tool-line"><span class="who">Did</span><span class="verb">delete</span><span>studio_delete: regex Old brackets</span></div></div></section>
+
+<section class="panel" data-deck="pack"><h3>Working: stagehand, rehearsal, trace</h3><p class="cap">The stagehand never shares the stage with the rehearsal.</p>
+  <div class="stage-line"><span class="dot">&middot;</span> cueing&hellip; <span class="stamp">0:02</span></div>
+  <div class="rehearsal"><div class="h"><span>Rehearsal</span><span class="stamp">0:09</span></div><p>&hellip;the sheet loads in both headers, so a change to the shared rule needs the Library header checked as well, then</p></div>
+  <div class="foldrow"><u>&middot;</u>thought for <span class="num">14s</span> &middot; <span class="num">1,120</span> chars &middot; click reopens</div></section>
+
+<section class="panel" data-deck="lorebook"><h3>Noticed on disk</h3><p class="cap">The one line nobody said: the building changed.</p>
+  <div class="watch" style="margin:0"><div class="h">Noticed</div><p>character, preset changed on disk, outside this window.</p></div>
+  <div class="watch" style="margin:0"><div class="h">Noticed</div><p>the studio folder changed on disk, outside this window.</p></div></section>
+
+<section class="panel" data-deck="fog"><h3>Failure and folded reply</h3><p class="cap">Rose spine and a bang, so it never reads as something the agent said.</p>
+  <div class="err"><span class="copy"><button class="btn quiet">Copy</button></span><b>!</b> The provider refused the turn: 429, rate limited. Try again in a minute, or switch model with /model.</div>
+  <div class="foldrow"><u>&middot;</u>said &middot; <span class="num">3,402</span> chars &middot; click reopens</div></section>
+
+<section class="panel" data-deck="persona"><h3>Context pressure</h3><p class="cap">The bar turns gold, then rose, and says what to do.</p>
+  <div class="meter"><span class="name">Context</span><span class="bar warn"><i style="width:78%"></i></span><span class="num">78%</span><span class="num dim">156k / 200k</span></div>
+  <div class="meter"><span class="name">Context</span><span class="bar crit"><i style="width:96%"></i></span><span class="num">96%</span><span class="num dim">192k / 200k</span><span class="crit-note">compact due</span></div>
+  <div class="meter"><span class="name">Context</span><span class="num">18k</span><span class="dim">no window reported, so no bar</span></div></section>
+
+<section class="panel" data-deck="character"><h3>Queue and busy composer</h3><p class="cap">Typing during a turn queues instead of dying. The searchlight sweeps the top edge.</p>
+  <ul class="queue"><li><span class="k">Waiting</span><span class="t">Then summarise what changed.</span><button class="btn sm">Send now</button><button class="btn sm danger">Drop</button></li>
+  <li><span class="k">Waiting</span><span class="t">And check the Library header too.</span><button class="btn sm">Send now</button><button class="btn sm danger">Drop</button></li></ul>
+  <div class="composer busy"><span class="prompt">&gt;</span><div class="ta typed">Also, one more thing</div><div class="go"><button class="btn">Queue</button><button class="btn danger">Stop</button></div></div></section>
+
+<section class="panel" data-deck="preset"><h3>Command output: help and sessions</h3><p class="cap">Rows that do something look pressable; rows that only say something do not.</p>
+  <div class="band list" style="--spine:var(--premiere-gold)"><div class="h">Sessions</div>
+    <div class="li act sel"><b>Today 14:02</b><span>12 lines, CSS Workshop. Resume this session</span></div>
+    <div class="li act"><b>Today 09:40</b><span>31 lines, Workbench. Resume this session</span></div>
+    <div class="li"><b>/tools</b><span>Reads only; nothing here runs from this window</span></div></div></section>
+
+<section class="panel" data-deck="persona"><h3>Command output: doctor</h3><p class="cap">Status is ink first, a word second.</p>
+  <div class="doc">
+    <div class="d ok"><b>ok</b><span>Vault</span><span class="dim">unlocked, 2 keys</span></div>
+    <div class="d ok"><b>ok</b><span>Provider</span><span class="dim">anthropic answered in <span class="num">640</span> ms</span></div>
+    <div class="d warn"><b>warn</b><span>Studio folder</span><span class="dim">watching, 1 file locked</span></div>
+    <div class="d fail"><b>fail</b><span>Shared folder</span><span class="dim">D:/notes is not readable</span></div></div></section>
+
+<section class="panel" data-deck="character"><h3>Command output: pictures</h3><p class="cap">/image, /art and /gallery draw a picture or a shelf of faces.</p>
+  <div class="band list" style="--spine:var(--premiere-violet)"><div class="h">Card art</div><div class="shelf">
+    <figure style="--c:var(--deck-character)"><div class="img"></div><figcaption>Vera Quill</figcaption></figure>
+    <figure style="--c:var(--deck-persona)"><div class="img"></div><figcaption>Velvet</figcaption></figure>
+    <figure style="--c:var(--deck-lorebook)"><div class="img"></div><figcaption>Basil Verrane</figcaption></figure></div></div></section>
+
+<section class="panel" data-deck="fog"><h3>Band folded, floating window</h3><p class="cap">Folded, the one live fact stays: the meter. Folding is remembered.</p>
+  <div class="strip"><button class="btn quiet sm" aria-expanded="false">&#9656; Show the model and screen</button><span class="bar" style="flex:0 1 120px"><i style="width:38%"></i></span><span class="num">38%</span></div></section>
+
+</div>
+</main></div>
+
+<ol class="legend">
+  <li><span class="co">1</span> <b>Header strip</b> (top of the window, where the kicker, title and subtitle sit): the mono caps kicker becomes a gold UI-font kicker with a rule and the live rose dot; "The Agent" becomes Cinzel with the violet glow; the italic subtitle becomes a one-line lede with a rose edge; a gold seam closes the strip. Same three lines in the same order.</li>
+  <li><span class="co">2</span> <b>Fold key</b> (top right corner, as today): a plain chevron becomes a gold-outline key with a gold glow on hover; same job, same place.</li>
+  <li><span class="co">3</span> <b>Meter strip</b> (directly under the header): the character meter becomes a hard-edged bar with a violet to rose fill (gold at 78%, rose at 96% with "compact due"). Labels are UI font, numerals mono; turn and session stay right. A faint violet wash separates it from the transcript.</li>
+  <li><span class="co">4</span> <b>Transcript bands</b> (full width, same order and widths): your line keeps its raised rose spine, the reply its violet spine, tool rows take verb spines (reads violet, writes gold, deletes rose) with a small verb tag. Hover lights the spine and tints the band; the Copy corner still appears only on hover. Agent headings are Cinzel, list markers gold, inline code gold on black, the folded-reply line is a gold-dot link that brightens on hover. Failures keep a rose spine and bang.</li>
+  <li><span class="co">5</span> <b>Choice card</b> (inside the agent band that asked): becomes the chooser card, 3px hard frame, offset shadow, violet top edge, lift and glow on hover. Cinzel question, gold "Pick one" kicker, options with a rose caret, hover nudge and violet edge, the selected option rose-framed and glowing, escapes below a gold rule, a kit field for the note, and the armed line states what Send will send. Answered: collapses to one gold check line (state "Gate waiting").</li>
+  <li><span class="co">6</span> <b>Notice and watch note</b> (the no-model notice under the meter; the "noticed on disk" frame after the transcript): both are gold-spined staged strips with a UI-font gold kicker instead of grey mono; no-model is shown in other states.</li>
+  <li><span class="co">7</span> <b>Toast</b> (above the gate and chips, left aligned): a small black chip with a gold hairline and offset shadow, rose dot.</li>
+  <li><span class="co">8</span> <b>Screen action chips</b> (shown when the window is not waiting on the Gate): kit chips with lift, gold border and glow on hover, shown in "Choice waiting".</li>
+  <li><span class="co">9</span> <b>Queue rows</b> (above the composer): dashed gold frame with a solid gold spine, gold UI-font "Waiting", the real Send now and Drop keys from the button family.</li>
+  <li><span class="co">10</span> <b>Composer</b> (bottom): a heavy hard frame with offset shadow replaces the stamped box; the rose "&gt;" block stays fused to the left, the field is a kit field with gold focus glow, Ask, Run, Queue and Stop come from the button family at the right edge. While busy a violet-rose searchlight sweeps the top edge. Slash and mention popups sit above it as chooser cards with a gold kicker, mono command words, and a rose-edged highlighted row; attached pictures are small framed deck-pink tiles with a rose remove dot. Key hints become gold keycaps with UI-font labels.</li>
+  <li><span class="co">11</span> <b>What it can see</b> (last line of the window): the caps summary becomes a UI-font disclosure with a gold turning chevron; the brief stays a mono block on black.</li>
+  <li><span class="co">12</span> <b>Gate card</b> (modal over the window, as today): 3px frame with a gold top edge, offset shadow and gold halo, a gold review bar with the tool's real name in mono, Cinzel title, warnings as gold-spined rows, diff in mono, the five real answers in a button row with "Stop the whole turn" still pushed right.</li>
+  <li><span class="co">13</span> <b>Other states</b> (below, outside the room): each is one panel with a deck edge, a Cinzel title and a caption, using the same classes as the room above. Use the switch in the note strip to see the room with a live choice or with the Gate up.</li>
+  <li><b>Not drawn</b>: the dock along the bottom and the status line are shell chrome, restyled by the shell page, and sit over the window's bottom edge as today. Motion: lift and glow on hover, the sweep on the composer; all stopped under reduced motion.</li>
+</ol>
+
+<script src="kit.js"></script>
+</body></html>

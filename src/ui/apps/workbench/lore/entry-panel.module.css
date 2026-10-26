@@ -26,9 +26,8 @@
 }
 
 .panel {
-  border: 2px solid var(--stage-black);
-  box-shadow: 4px 4px 0 0 var(--stage-black);
-  background: var(--stage-panel);
+  border-left: 3px solid var(--bk-line);
+  background: none;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -36,7 +35,7 @@
 }
 
 .panelFocused {
-  border-color: var(--a, var(--accent));
+  border-left-color: var(--accent);
 }
 
 /* ---------- header: identity + dials ---------- */
@@ -46,24 +45,22 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.45rem;
-  border-bottom: 2px solid var(--stage-black);
-  background: var(--stage-row);
+  border-bottom: 1px solid var(--bk-line);
+  background: color-mix(in srgb, var(--stage-black) 35%, transparent);
   flex: none;
 }
 
 /* Panel title field: mono chrome (--font-big/Fraunces is reserved for the page entry title). */
 .ptitle {
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   flex: 1;
   min-width: 6rem;
   border: 0;
   background: transparent;
-  color: var(--stage-card);
+  color: var(--text);
   padding: 0.2rem 0.25rem;
 }
 
@@ -86,19 +83,17 @@
   font-size: var(--text-control);
   border: 2px solid var(--a, var(--accent));
   background: color-mix(in srgb, var(--a, var(--accent)) 18%, var(--stage-row));
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.2rem 0.3rem;
 }
 
 .headBtn {
   font: inherit;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   padding: 0.22rem 0.38rem;
   cursor: pointer;
 }
@@ -107,17 +102,15 @@
   display: inline-flex;
   align-items: center;
   gap: 0.22rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
   padding: 0.12rem 0.28rem;
 }
 
 .headFld > span {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .headNum {
@@ -128,7 +121,7 @@
   text-align: center;
   border: 0;
   background: transparent;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.1rem 0;
 }
 
@@ -137,9 +130,9 @@
   font-family: var(--font-mono);
   width: 1.4rem;
   height: 1.4rem;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: transparent;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -149,7 +142,7 @@
 .tokest {
   font-family: var(--font-mono);
   font-size: var(--text-control);
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 /* ---------- body ---------- */
@@ -170,20 +163,16 @@
 }
 
 .stripLabel {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 /* plabel kept for drawer / legacy */
 .plabel {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   display: block;
   margin: 0.45rem 0 0.2rem;
 }
@@ -198,10 +187,10 @@
 }
 
 .modeHint {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
   letter-spacing: 0.06em;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .chanceBadge {
@@ -209,7 +198,7 @@
   align-items: center;
   gap: 0.15rem;
   border: 2px solid var(--stage-ok);
-  background: color-mix(in srgb, var(--stage-ok) 18%, var(--stage-sunken));
+  background: color-mix(in srgb, var(--stage-ok) 18%, var(--bk-surface-field));
   color: var(--stage-ok);
   padding: 0.1rem 0.28rem;
   font-family: var(--font-mono);

@@ -14,6 +14,7 @@
  */
 import { Chip, Disclosure } from "../../components/button";
 import { useMemo, useState, type JSX } from "react";
+import { Panel } from "../../components/panel";
 import { MACRO_DIALECT_LABELS, type MacroDialect } from "../../../core/preset/macros";
 import { bibleFor, bibleSize, filterBible } from "./lab-core";
 import styles from "./styles.module.css";
@@ -45,7 +46,7 @@ export function BiblePane({
   const shownCount = shown.reduce((n, g) => n + g.macros.length, 0);
 
   return (
-    <section className={styles.box} aria-label="Every macro this platform has">
+    <Panel data-part="macro-lab.bible" deck="preset" className={styles.box} aria-label="Every macro this platform has">
       <div className={styles.boxHead}>
         <h2 className={styles.boxTitle}>Macro bible</h2>
         <span className={styles.boxNote}>
@@ -66,10 +67,13 @@ export function BiblePane({
       </p>
 
       {shown.length === 0 ? (
-        <p className={styles.quiet}>
-          {`Nothing in ${MACRO_DIALECT_LABELS[lens]}'s catalog matches that. It may exist on `}
-          {"another platform - try one of the others above."}
-        </p>
+        <div className={styles.moment}>
+          <b>Nothing matches that</b>
+          <span className={styles.quiet}>
+            {`Nothing in ${MACRO_DIALECT_LABELS[lens]}'s catalog matches that. It may exist on `}
+            {"another platform - try one of the others above."}
+          </span>
+        </div>
       ) : (
         <div className={styles.rows}>
           {shown.map(/* bounded-ok: macro bible / engine reports / ops matrix: fixed engine data or per-run summaries */ (group) => {
@@ -77,7 +81,7 @@ export function BiblePane({
             // straight back to headings after typing would hide the thing that was asked for.
             const isOpen = searching || open.has(group.name);
             return (
-              <div key={group.name} className={styles.row}>
+              <div key={group.name} className={`${styles.row}${isOpen ? ` ${styles.rowOpen}` : ""}`}>
                 <Disclosure
                   open={isOpen}
                   onClick={() => toggle(group.name)}
@@ -121,6 +125,6 @@ export function BiblePane({
           })}
         </div>
       )}
-    </section>
+    </Panel>
   );
 }

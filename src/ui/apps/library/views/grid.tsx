@@ -21,51 +21,38 @@ import { icSvg } from "../../../_shared/ic-svg";
 import { Card } from "../../../components/button";
 
 const CSS = `
-.dv-gridscroll{flex:1;min-height:0;overflow-y:auto;padding:clamp(.5rem,1.8vw,1.1rem)}
+.dv-gridscroll{flex:1;min-height:0;overflow-y:auto;padding:.75rem .75rem 1.25rem .375rem}
 /* the dragged box: fixed, because it is measured in viewport coordinates like the cards it tests */
-.dv-lasso{position:fixed;z-index:60;pointer-events:none;border:2px dashed var(--a,var(--stage-line));
-  background:var(--stage-sunken);opacity:.35}
+.dv-lasso{position:fixed;z-index:60;pointer-events:none;border:2px dashed var(--a,var(--stage-line));background:var(--stage-sunken);opacity:.35}
 /* names are TEXT: an imported preset's id is often the only place its real name is written down */
 .dv-gcard .nm{user-select:text;cursor:text}
 /* the virtualizer's own positioning box: real height (getTotalSize), rows placed absolutely inside */
 .dv-gridspace{position:relative;width:100%}
 /* the 42vw guard keeps at least two columns on a phone even when the desktop size dial is huge */
-.dv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(var(--card-w),42vw,100%),1fr));gap:clamp(.5rem,1.4vw,1rem);
-  position:absolute;top:0;left:0;right:0}
-/* overflow:hidden is the backstop: whatever a name does, it stays inside its own card */
+.dv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(var(--card-w),42vw,100%),1fr));gap:1.25rem;position:absolute;top:0;left:0;right:0}
+/* a small chooser card: hard frame, deck-colored top edge, lift on hover; overflow:hidden is the backstop for long names */
 .dv-gcard{display:flex;flex-direction:column;text-align:left;font:inherit;padding:0;cursor:pointer;position:relative;overflow:hidden;min-width:0;
-  background:var(--stage-panel);border:3px solid var(--stage-black);box-shadow:5px 5px 0 0 var(--a);transition:transform .12s ease-out,box-shadow .12s ease-out}
-.dv-gcard:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 0 var(--a)}
-.dv-gcard .cov{aspect-ratio:2/3;background:var(--a);border-bottom:3px solid var(--stage-black);position:relative;
-  display:flex;align-items:flex-end;padding:.4rem}
+  background:var(--glass);border:3px solid var(--stage-black);border-top-color:var(--a);box-shadow:4px 4px 0 var(--stage-black);transition:transform .25s ease,box-shadow .25s ease}
+.dv-gcard:hover{transform:translateY(-5px);box-shadow:4px 4px 0 var(--stage-black),var(--glow)}
+.dv-gcard .cov{aspect-ratio:3/4;background:color-mix(in srgb,var(--a) 22%,var(--stage-black));position:relative;display:grid;place-items:center}
 .dv-gcard .cov img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
-.dv-gcard .cov b{font-family:var(--font-big);font-weight:900;font-size:clamp(1.6rem,26cqi,2.6rem);line-height:.72;color:var(--stage-ink);opacity:.82}
-.dv-gcard .kd{position:absolute;top:0;left:0;background:var(--stage-ink);color:var(--a);font-family:var(--font-mono);
-  font-size: var(--text-meta);font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;border-right:3px solid var(--stage-black);border-bottom:3px solid var(--stage-black)}
+.dv-gcard .cov b{font:700 clamp(1.6rem,26cqi,3.4rem)/1 var(--font-fancy);color:color-mix(in srgb,var(--a) 40%,var(--text))}
+.dv-gcard .kd{position:absolute;left:.5rem;bottom:.5rem;padding:.125rem .5rem;font:var(--text-meta) var(--font-ui);background:var(--stage-black);
+  color:color-mix(in srgb,var(--a) 65%,var(--text));border:1px solid color-mix(in srgb,var(--a) 55%,transparent)}
 /* min-width:0 lets the name shrink inside the grid track; without it a long word sets the width */
-.dv-gcard .bd{padding:.4rem .5rem .5rem;min-width:0}
-/* name + meta tag scale with the size dial (--card-w); name stays the larger of the two at every size */
-.dv-gcard .nm{font-family:var(--font-big);font-weight:800;font-size:clamp(var(--text-control),calc(var(--card-w) * .094),1.6rem);color:var(--stage-card);line-height:1.1;
-  /*
-   * A NAME IS SOMEBODY ELSE'S STRING. Presets arrive called "3035a5467e03eaa245de3ac318018404" and
-   * "HawThorne(2)" - one unbroken word far wider than any card. With nothing here it drew straight
-   * out of the card and over the neighbours, so a shelf of imports was a wall of overlapping text.
-   * Breaking anywhere is right for an id; three lines then hand the rest to the tooltip, which
-   * already carries the whole name, so cards in a row stay the same height.
-   */
+.dv-gcard .bd{padding:.625rem .75rem .125rem;min-width:0}
+/* the name scales with the size dial (--card-w) and breaks anywhere: a name is somebody else's string (a preset id is one
+   unbroken word); three lines hand the rest to the tooltip, so cards in a row stay the same height */
+.dv-gcard .nm{font:700 clamp(var(--text-control),calc(var(--card-w) * .094),1.6rem)/1.2 var(--font-fancy);color:var(--text);
   overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
-.dv-gcard .fmt{display:inline-block;font-family:var(--font-mono);font-size:var(--text-meta);letter-spacing:.06em;
-  text-transform:uppercase;color:var(--stage-soft);border:2px solid var(--stage-line);font-weight:700;padding:.24em .5em;margin-top:.4em}
-.dv-gcard.cast{border-color:var(--a);box-shadow:inset 5px 5px 0 0 var(--shadow-ink);transform:translate(2px,2px);opacity:.72}
-.dv-gcard.cast:hover{transform:translate(2px,2px);box-shadow:inset 5px 5px 0 0 var(--shadow-ink)}
-.dv-gcard .tick{position:absolute;top:0;right:0;z-index:1;background:var(--a);color:var(--stage-ink);font-family:var(--font-mono);
-  font-size: var(--text-meta);font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-left:3px solid var(--stage-black);border-bottom:3px solid var(--stage-black)}
-/* STAGED: outlined in accent, a filled corner check - distinct from the pressed-open "cast" state */
-.dv-gcard.pick{outline:3px solid var(--a);outline-offset:-3px;box-shadow:9px 9px 0 0 var(--a);transform:translate(-3px,-3px)}
-.dv-gcard .check{position:absolute;top:0;right:0;z-index:2;width:1.15rem;height:1.15rem;background:var(--a);
-  border-left:3px solid var(--stage-black);border-bottom:3px solid var(--stage-black);display:flex;align-items:center;justify-content:center}
-.dv-gcard .check::after{content:"";width:.42rem;height:.72rem;border:solid var(--stage-ink);border-width:0 3px 3px 0;
-  transform:translateY(-2px) rotate(45deg)}
+.dv-gcard .fmt{display:block;padding:0 .75rem .625rem;font:var(--text-meta) var(--font-ui);color:var(--text-faint)}
+.dv-gcard.cast{outline:1px solid var(--premiere-gold);outline-offset:3px}
+.dv-gcard .tick{position:absolute;top:.5rem;left:.5rem;z-index:1;padding:.125rem .5rem;background:var(--premiere-gold);color:var(--stage-ink);font:600 var(--text-meta) var(--font-ui);border:2px solid var(--stage-black)}
+/* STAGED: deck border and shadow plus a corner check - distinct from the open (gold) state */
+.dv-gcard.pick{border-color:var(--a);box-shadow:4px 4px 0 var(--a)}
+.dv-gcard.pick:hover{box-shadow:4px 4px 0 var(--a),var(--glow)}
+.dv-gcard .check{position:absolute;top:.5rem;right:.5rem;z-index:2;width:1.5rem;height:1.5rem;background:var(--a);border:2px solid var(--stage-black);display:flex;align-items:center;justify-content:center}
+.dv-gcard .check::after{content:"";width:.4rem;height:.7rem;border:solid var(--stage-ink);border-width:0 3px 3px 0;transform:translateY(-2px) rotate(45deg)}
 `;
 
 function GridCard({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: StudioEntitySummary; posinset: number; setsize: number }): JSX.Element {

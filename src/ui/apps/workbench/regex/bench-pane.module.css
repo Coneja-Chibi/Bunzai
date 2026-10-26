@@ -7,7 +7,7 @@
  */
 
 .pane {
-  border-left: 2px solid var(--stage-seam);
+  border-left: 2px solid var(--bk-line-control);
   background: var(--stage-panel);
   min-width: 0;
   min-height: 0;
@@ -21,17 +21,15 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.55rem 0.8rem;
-  border-bottom: 2px solid var(--stage-seam);
+  border-bottom: 2px solid var(--bk-line-control);
   flex: none;
 }
 
 .pheadB {
-  font-family: var(--font-big);
+  font-family: var(--font-ui);
   font-weight: 900;
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 
@@ -58,26 +56,23 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.7rem;
-  border-bottom: 2px solid var(--stage-seam);
+  border-bottom: 2px solid var(--bk-line-control);
 }
 
 .scheadB {
-  font-family: var(--font-big);
+  font-family: var(--font-ui);
   font-weight: 800;
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 .scheadI {
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
   font-style: normal;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .scbody {
@@ -88,9 +83,9 @@
   width: 100%;
   min-height: 4rem;
   resize: vertical;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
@@ -100,26 +95,25 @@
 }
 
 .phaseRow {
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
   display: flex;
   gap: 0.4rem;
   align-items: center;
   flex-wrap: wrap;
   margin-top: 0.5rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
 }
 
 .phaseSel {
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-control);
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
-  color: var(--stage-card);
+  color: var(--text);
   padding: 0.22rem 0.4rem;
 }
 
@@ -140,7 +134,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.45rem 0.7rem;
-  border-bottom: 1px solid var(--stage-faint);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
 }
 
 .stepNo {
@@ -155,12 +149,11 @@
 }
 
 .stepHeadB {
-  font-family: var(--font-big);
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
+  font-family: var(--font-ui);
   font-weight: 800;
   font-size: var(--text-meta);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -169,12 +162,10 @@
 
 .stepStat {
   margin-left: auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-meta);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  color: var(--text-dim);
   flex: none;
 }
 
@@ -193,7 +184,7 @@
   font-weight: 500;
   font-size: var(--text-control);
   line-height: 1.7;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   overflow-x: auto;
   white-space: pre-wrap;
   word-break: break-word;
@@ -202,13 +193,13 @@
 .del {
   background: color-mix(in srgb, var(--stage-danger-text) 20%, transparent);
   text-decoration: line-through;
-  color: color-mix(in srgb, var(--stage-danger-text) 75%, var(--stage-soft));
+  color: color-mix(in srgb, var(--stage-danger-text) 75%, var(--text-soft));
   padding: 0 0.1rem;
 }
 
 .ins {
   background: color-mix(in srgb, var(--stage-ok) 22%, transparent);
-  color: color-mix(in srgb, var(--stage-ok) 65%, var(--stage-paper));
+  color: color-mix(in srgb, var(--stage-ok) 65%, var(--text));
   padding: 0 0.1rem;
 }
 
@@ -223,9 +214,9 @@
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
-  border: 1px solid var(--stage-faint);
+  border: 1px solid color-mix(in srgb, var(--text) 25%, transparent);
   padding: 0.14rem 0.4rem;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   max-width: 14rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -256,24 +247,22 @@
 /* overlay-rule chips: text untouched, spans drawn over */
 .overlayNote {
   padding: 0.45rem 0.7rem 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-meta);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--stage-var);
 }
 
 /* ---------- skipped steps ---------- */
 
 .stepSkip {
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   background: var(--stage-row);
   padding: 0.45rem 0.7rem;
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-meta);
-  color: var(--stage-kicker);
+  color: var(--text-dim);
   display: flex;
   gap: 0.5rem;
   align-items: baseline;
@@ -282,12 +271,10 @@
 }
 
 .stepSkip b {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-meta);
-  color: var(--stage-mute);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  color: var(--text-dim);
 }
 
 .stepSkipWarn {
@@ -308,7 +295,7 @@
   font-weight: 500;
   font-size: var(--text-control);
   line-height: 1.6;
-  color: var(--stage-paper);
+  color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
   flex: none;
@@ -316,22 +303,19 @@
 
 .finalOutB {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
   color: var(--stage-ok);
   margin-bottom: 0.25rem;
 }
 
 .emptyChain {
   margin: 0;
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: var(--text-control);
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 /* ---------- escape-a-literal dialog ---------- */
@@ -339,33 +323,30 @@
 .escSheet {
   width: min(30rem, 88vw);
   background: var(--stage-panel);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   padding: 0.9rem 1rem 1.1rem;
 }
 
 .escHead {
-  font-family: var(--font-big);
+  font-family: var(--font-ui);
   font-weight: 900;
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
   margin: 0 0 0.2rem;
 }
 
 .escHint {
-  font-family: var(--font-body);
-  font-style: italic;
-  font-weight: 600;
+  font-family: var(--font-ui);
+  font-weight: 500;
   font-size: var(--text-meta);
-  color: var(--stage-mute);
+  color: var(--text-dim);
   margin: 0 0 0.6rem;
 }
 
 .escOut {
-  border: 2px dashed var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-paper);
+  border: 2px dashed var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 500;
   font-size: var(--text-control);
@@ -388,7 +369,7 @@
 @container (max-width: 34rem) {
   .pane {
     border-left: 0;
-    border-top: 2px solid var(--stage-seam);
+    border-top: 2px solid var(--bk-line-control);
   }
 }
 

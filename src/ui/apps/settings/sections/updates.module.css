@@ -6,9 +6,6 @@
 .wrap {
   composes: wrap from "./section-card.module.css";
 }
-.title {
-  composes: title from "./section-card.module.css";
-}
 .blurb {
   composes: blurb from "./section-card.module.css";
 }
@@ -52,17 +49,14 @@
   flex-wrap: wrap;
 }
 .behindNum {
-  font-family: var(--font-mono);
-  font-size: 2.6rem;
+  font-family: var(--font-ui);
+  font-size: 3.4rem;
   font-weight: 700;
   line-height: 1;
   color: var(--stage-warn);
-  border: 3px solid var(--edge);
-  background: var(--shell-panel);
-  padding: 0.35rem 0.7rem;
 }
 .behindText {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-body);
   color: var(--text-soft, var(--text-dim));
 }
@@ -91,11 +85,9 @@
   display: flex;
   gap: 0.8rem;
   align-items: flex-start;
-  border: 2px solid var(--seam);
-  border-left: none;
-  padding: 0.7rem 0.85rem;
+  border-bottom: 1px solid var(--seam);
+  padding: 0.9rem 0.85rem;
   margin-left: 1.1rem;
-  background: var(--shell-panel);
 }
 .ver::before {
   content: "";
@@ -109,8 +101,7 @@
   border: 2px solid var(--edge);
 }
 .ver.here {
-  border-color: var(--accent);
-  box-shadow: 3px 3px 0 0 var(--accent-deep);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--premiere-gold) 14%, transparent), transparent);
 }
 .ver.here::before {
   background: var(--accent);
@@ -118,18 +109,13 @@
 .vtag {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.15rem 0.5rem;
-  border: 2px solid var(--edge);
-  background: var(--face);
+  font-size: 1rem;
   flex: none;
   min-width: 5.4rem;
-  text-align: center;
-  color: var(--text);
+  color: var(--premiere-gold);
 }
 .ver.here .vtag {
-  background: var(--accent);
-  color: var(--stage-white);
+  color: var(--premiere-gold);
 }
 .vbody {
   flex: 1;
@@ -141,12 +127,7 @@
   align-items: flex-start;
 }
 .hereMark {
-  font-family: var(--font-mono);
-  font-size: var(--text-meta);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-  font-weight: 700;
+  composes: accentNote from "./section-card.module.css";
   padding-top: 0.3rem;
 }
 .vname {
@@ -156,7 +137,7 @@
   flex-wrap: wrap;
 }
 .cm {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
   color: var(--text);
   font-weight: 600;
@@ -165,7 +146,7 @@
 .vmeta {
   color: var(--text-dim);
   font-size: var(--text-meta);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   margin-top: 0.25rem;
   display: flex;
   gap: 0.4rem;
@@ -191,13 +172,13 @@
 }
 .noLog {
   color: var(--text-faint);
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
   margin-top: 0.4rem;
 }
 .log {
   margin-top: 0.6rem;
-  border-top: 2px solid var(--seam);
+  border-top: 1px solid var(--seam);
   padding-top: 0.55rem;
   display: flex;
   flex-direction: column;
@@ -206,11 +187,12 @@
 .c {
   display: flex;
   gap: 0.6rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-meta);
   color: var(--text-soft, var(--text-dim));
 }
 .c .h {
+  font-family: var(--font-mono);
   color: var(--accent);
   flex: none;
 }
@@ -252,11 +234,10 @@
   color: var(--accent);
 }
 .warnNote {
-  border: 2px solid var(--stage-warn);
-  background: var(--stage-warn-ink, var(--shell-panel));
+  border-left: 3px solid var(--stage-warn);
   color: var(--text);
-  padding: 0.6rem 0.75rem;
-  font-family: var(--font-mono);
+  padding: 0.4rem 0 0.4rem 0.75rem;
+  font-family: var(--font-ui);
   font-size: var(--text-body);
   line-height: 1.5;
   text-align: left;
@@ -279,13 +260,13 @@
   color: var(--stage-white);
 }
 .big {
-  font-family: var(--font-big);
-  font-weight: 800;
+  font-family: var(--font-ui);
+  font-weight: 700;
   font-size: 1.15rem;
   color: var(--text);
 }
 .sub {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-body);
   color: var(--text-soft, var(--text-dim));
   line-height: 1.5;

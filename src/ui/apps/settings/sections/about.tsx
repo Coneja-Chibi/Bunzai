@@ -231,6 +231,9 @@ function LifecycleRow({ ctx }: { ctx: AppContext }): JSX.Element {
 
 const section: SettingsSection = {
   id: "about",
+  act: "house",
+  title: "About Bunraku",
+  lede: "The running build, where your studio lives on disk, the project links, and the app's own controls.",
   label: "About",
   order: 90,
   Component: AboutSection,

@@ -21,6 +21,8 @@ import { Icon } from "./icon";
 import { TRASH_GLYPH } from "./trash-panel";
 import { icSvg } from "../../_shared/ic-svg";
 import { Button, Segmented, ListRow } from "../../components/button";
+import { Panel } from "../../components/panel";
+import { RoomHeader } from "../../components/room-header";
 
 export interface LibraryRailProps {
   layout: ShelfLayout;
@@ -43,12 +45,14 @@ export interface LibraryRailProps {
 export function LibraryRail(props: LibraryRailProps): JSX.Element {
   const { layout, decks, matched, selected, collections, query } = props;
   return (
-    <aside className="lrail" data-part="library.decks" aria-label="Library decks">
+    <Panel as="aside" className="lrail" data-part="library.decks" aria-label="Library decks">
       <div className="lrail-head">
-        <div className="ey">Your collection</div>
-        <div className="ttl">
-          THE <em>LIBRARY</em>
-        </div>
+        <RoomHeader
+          data-part="library.rail.head"
+          kicker={<span className="ey">Your collection</span>}
+          title={<span className="ttl">THE <em>LIBRARY</em></span>}
+          lede="Cast, worlds and every piece you keep."
+        />
         <div className="lrail-toggle" data-tour="layout">
           <Segmented
             label="Layout"
@@ -128,7 +132,7 @@ export function LibraryRail(props: LibraryRailProps): JSX.Element {
           + Add to the library
         </Button>
       </div>
-    </aside>
+    </Panel>
   );
 }
 

@@ -16,8 +16,9 @@
  * wireframes and mockups are what this is for.
  */
 import { Button } from "../../components/button";
+import { RoomHeader } from "../../components/room-header";
 import { OverlayWidgets } from "./overlay";
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
+import { useCallback, useEffect, useRef, useState, type JSX } from "react";
 import type { AppContext, BunrakuApp } from "../../app-contract";
 import { useEscapeKey } from "../../_shared/use-escape-key";
 import { SealedHtmlPreview } from "../../components/sealed-html-preview";
@@ -114,24 +115,23 @@ export function HtmlView({ ctx }: { ctx: AppContext }): JSX.Element {
   }, [ctx, drawing]);
 
   return (
-    <div className={styles.room} data-empty={html ? undefined : "room"} style={{ "--a": ACCENT } as CSSProperties}>
+    <div className={styles.room} data-empty={html ? undefined : "room"}>
       <div className={styles.body} data-empty={html ? undefined : ""}>
-      <header className={styles.head}>
-        <span className={styles.eyebrow}>HTML view</span>
-        <h1 className={styles.title}>{drawing?.name ?? (html ? "What the agent drew" : "Nothing to draw yet")}</h1>
-        <p className={styles.lede}>
-          {html
-            ? "Rendered with scripts and network access off, so this is layout and styling only - "
-              + "what a browser would paint, minus anything that would run or phone out."
-            : "Ask the agent for a wireframe or a mockup, then open it from the reply. This tab draws "
-              + "whatever it hands over."}
-        </p>
-      </header>
+      <RoomHeader
+        data-part="html-view.header"
+        kicker="HTML view"
+        title={drawing?.name ?? (html ? "What the agent drew" : "Nothing to draw yet")}
+        lede={html
+          ? "Rendered with scripts and network access off, so this is layout and styling only - "
+            + "what a browser would paint, minus anything that would run or phone out."
+          : "Ask the agent for a wireframe or a mockup, then open it from the reply. This tab draws "
+            + "whatever it hands over."}
+      />
 
       {html ? (
         // Fullscreen is asked of this container, never of the sealed iframe: the seal is unchanged
         // by being large, and the sandboxed frame is deliberately not given that permission.
-        <div className={big ? `${styles.frame} ${styles.big}` : styles.frame} ref={frameRef}>
+        <div className={big ? `${styles.frame} ${styles.big}` : styles.frame} ref={frameRef} data-part="html-view.frame">
           <div className={styles.expand}>
             <Button
               size="sm"
@@ -147,7 +147,7 @@ export function HtmlView({ ctx }: { ctx: AppContext }): JSX.Element {
           Said rather than shown as an empty frame. The handoff is session-scoped, so a reload is a
           real way to arrive here with nothing, and "it vanished" is worse than knowing why.
         */
-        <p className={styles.quiet}>
+        <p className={styles.quiet} data-part="html-view.note" data-problem={problem ? "" : undefined}>
           {problem
             ?? "A drawing saved as a piece reopens from the Library after a reload. One written "
               + "straight into a reply is kept for this session only, so open it again from the "

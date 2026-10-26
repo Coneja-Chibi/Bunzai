@@ -4,6 +4,7 @@ import { useEffect, useMemo, type JSX } from "react";
 import type { DocFigure, DocRecord } from "../../docs-types";
 import { requestExternal } from "../../_shared/link-gate";
 import { docAssetUrl } from "../../_shared/asset-url";
+import { Panel } from "../../components/panel";
 import { RenderBox } from "../../components/render-box";
 import { displayDocTitle, prepareDocSegments, targetFromAppHref } from "./docs-core";
 import styles from "./styles.module.css";
@@ -40,14 +41,14 @@ export function DocContent({ doc, docs, figures, body, anchor, loading, onPick }
   };
 
   return (
-    <main className={styles.main} data-tour="content">
+    <Panel as="div" role="main" deck="character" data-part="docs.article" className={styles.main} data-tour="content">
       <div className={styles.inner}>
         <div className={styles.crumb}>
           <span>{doc.audience === "user" ? "User Docs" : "Developer Docs"} / {displayDocTitle(doc)}</span>
           <span className={styles.github}><Button size="sm" variant="quiet" onClick={openGitHub}>View on GitHub</Button></span>
         </div>
-        <span className={styles.audience}>{doc.audience}</span>
-        {loading ? <p className={styles.empty}>Opening the page…</p> : (
+        <span className={styles.audience} data-audience={doc.audience}>{doc.audience}</span>
+        {loading ? <div className={styles.moment}><span className={styles.pulse} /><h2 className={styles.momentTitle}>Opening the page…</h2></div> : (
           <article className={styles.prose}>
             {segments.map((segment, index) => segment.kind === "markdown" ? (
               <RenderBox
@@ -72,6 +73,6 @@ export function DocContent({ doc, docs, figures, body, anchor, loading, onPick }
           </article>
         )}
       </div>
-    </main>
+    </Panel>
   );
 }

@@ -1,0 +1,102 @@
+/*
+ * Premiere house style kit, WIREFRAMES ONLY. Every page in this folder links tokens.css, then this file, so all
+ * the redesigned rooms share one construction: the title screen light rays behind a see-through room, Cinzel
+ * (--font-fancy) for titles and big moments only, one UI font for everything else, monospace only for code,
+ * macros and numbers. Colors are app tokens (premiere, deck). Nothing here ships; the build reuses the real
+ * components (light-rays, the button family) plus a shared room header and panel.
+ */
+/* The one UI font. Today --font-ui resolves to Fraunces (left over from the soft plan); the Premiere screens use the
+   body face, so the house style points --font-ui at it. Proposed as the real token change. */
+:root { --font-ui: var(--font-body); }
+* { box-sizing: border-box; margin: 0; }
+html, body { background: var(--premiere-canvas); color: var(--premiere-text); font: 15px/1.55 var(--font-ui); }
+a { color: inherit; }
+
+/* The room: the title-screen light falls only on the room's header, softly, and fades out before the work begins;
+   everything below sits on the plain dark canvas. It scrolls away with the header instead of following the page. */
+.stage { position: relative; isolation: isolate; min-height: 100vh; overflow-x: hidden; }
+.stage > .rays { position: absolute; top: 0; left: 0; right: 0; height: 380px; z-index: -2; pointer-events: none; mix-blend-mode: screen; opacity: .55;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 100%); mask-image: linear-gradient(to bottom, #000 0%, #000 35%, transparent 100%); }
+.stage > .rays canvas { width: 100%; height: 100%; display: block; }
+.stage::before { content: none; }
+.room { max-width: 1440px; margin: 0 auto; padding: 32px 40px 64px; }
+@media (max-width: 720px) { .room { padding: 20px 16px 48px; } }
+
+/* Shared room header: gold kicker line, Cinzel title, one line of lede. Two arrangements, same parts. */
+.kicker { color: var(--premiere-gold); font: 500 .6875rem/1 var(--font-ui); letter-spacing: .22em; text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+.kicker::before, .kicker::after { content: ""; width: 48px; height: 1px; background: color-mix(in srgb, var(--premiere-gold) 60%, transparent); }
+.kicker.left::before { display: none; }
+.marquee { text-align: center; padding: 28px 0 32px; display: flex; flex-direction: column; align-items: center; }
+.marquee h1, .playbill h1 { font: 700 clamp(34px, 4.2vw, 60px)/1.05 var(--font-fancy); letter-spacing: .02em; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 45%, transparent); }
+.marquee h1 { margin-top: 16px; }
+.marquee .lede { margin-top: 12px; font-size: 16px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); max-width: 640px; }
+.playbill { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 16px 24px; padding: 8px 0 24px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); margin-bottom: 28px; }
+.playbill h1 { margin-top: 12px; }
+.playbill .lede { grid-column: 1; margin: 0; padding-left: 14px; border-left: 2px solid var(--premiere-rose); font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.playbill .actions { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 10px; align-items: center; }
+em.glow { font-style: normal; color: color-mix(in srgb, var(--deck-character) 60%, white); }
+
+/* One panel: translucent dark, hard offset shadow, optional deck edge (data-deck sets --deck). */
+.panel { background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 82%, transparent);
+  border: 3px solid var(--premiere-hard); box-shadow: 5px 5px var(--premiere-hard); backdrop-filter: blur(6px); padding: 20px; }
+.panel[data-deck] { border-top-color: var(--deck); }
+.panel.lift { transition: transform .25s ease, box-shadow .25s ease; }
+.panel.lift:hover { transform: translateY(-4px); box-shadow: 5px 5px var(--premiere-hard), 0 18px 60px color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+.panel h2 { font: 700 20px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.panel h3 { font: 600 15px/1.3 var(--font-ui); }
+[data-deck="character"] { --deck: var(--deck-character); } [data-deck="persona"] { --deck: var(--deck-persona); }
+[data-deck="lorebook"] { --deck: var(--deck-lorebook); } [data-deck="preset"] { --deck: var(--deck-preset); }
+[data-deck="regex"] { --deck: var(--deck-regex); } [data-deck="pack"] { --deck: var(--deck-pack); } [data-deck="fog"] { --deck: var(--deck-fog); }
+.section-title { font: 700 22px/1.2 var(--font-fancy); letter-spacing: .02em; margin: 36px 0 14px; display: flex; align-items: baseline; gap: 14px; }
+.section-title small { font: 400 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 60%, transparent); letter-spacing: 0; }
+
+/* Buttons: the family (primary rose, secondary outline, quiet text). */
+.btn { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 9px 18px; font: 700 14px var(--font-ui); color: var(--premiere-text);
+  background: color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)); border: 2px solid color-mix(in srgb, var(--premiere-text) 40%, transparent); cursor: pointer; }
+.btn.primary { background: var(--premiere-rose); border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard); }
+.btn.quiet { background: none; border-color: transparent; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.btn.big { min-height: 48px; padding: 12px 24px; box-shadow: 4px 4px var(--deck, var(--deck-character)); border-color: var(--premiere-rose); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; font: 600 13px var(--font-ui); border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: color-mix(in srgb, var(--premiere-hard) 50%, transparent); color: var(--premiere-text); }
+.chip[aria-pressed="true"] { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 18%, transparent); }
+
+/* Settings-style rows, switch, field, select, segmented. */
+.row { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; align-items: center; padding: 14px 0; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.row b { font-weight: 600; }
+.row p { grid-column: 1; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.row > .ctl { grid-column: 2; grid-row: 1 / span 2; }
+.switch { display: inline-block; width: 42px; height: 24px; border: 2px solid color-mix(in srgb, var(--premiere-text) 45%, transparent); position: relative; background: var(--premiere-hard); }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; background: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.switch.on { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 30%, var(--premiere-hard)); }
+.switch.on::after { left: auto; right: 3px; background: var(--premiere-text); }
+.field, .select { display: inline-block; min-height: 40px; padding: 9px 12px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: color-mix(in srgb, var(--premiere-hard) 70%, transparent); color: var(--premiere-text); font: 14px var(--font-ui); }
+.select::after { content: " \25BE"; color: var(--premiere-gold); }
+.seg { display: inline-flex; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.seg span { padding: 8px 14px; font: 600 13px var(--font-ui); }
+.seg span[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 25%, transparent); box-shadow: inset 0 -2px 0 var(--premiere-rose); }
+.num, code, .mono { font-family: var(--font-mono); }
+
+/* Wireframe chrome (not proposed UI): the note strip, numbered callouts and the legend. */
+.wf-note { max-width: 1440px; margin: 0 auto; padding: 14px 40px; font: 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); border-bottom: 1px dashed color-mix(in srgb, var(--premiere-gold) 40%, transparent); }
+.co { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--premiere-gold); color: var(--premiere-hard); font: 700 11px var(--font-ui); vertical-align: middle; }
+.legend { max-width: 1440px; margin: 0 auto; padding: 24px 40px 64px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.legend li { margin: 6px 0; }
+@media (prefers-reduced-motion: reduce) { .panel.lift { transition: none; } }
+
+/* Cinzel draws 1 like a capital I: numbers inside Cinzel titles switch to the UI font. Link-built buttons drop the underline. */
+.tnum { font-family: var(--font-ui); font-weight: 700; letter-spacing: 0; }
+a.btn, a.chip { text-decoration: none; }
+
+/* One frame per group (Chi: "we don't need boxes in boxes"). A panel inside a panel drops its frame, fill and shadow and
+   becomes an open column; a deck or selected state shows as a top hairline, never another box. */
+.panel .panel { background: none; border: 0; box-shadow: none; backdrop-filter: none; padding: 14px 0 0; }
+.panel .panel[data-deck] { border-top: 2px solid var(--deck); }
+.panel .panel.active, .panel .panel[aria-selected="true"], .panel .panel[aria-pressed="true"] { border-top: 2px solid var(--premiere-rose); box-shadow: none; }
+.panel .panel.lift:hover { transform: none; box-shadow: none; }
+
+/* Room pages carry no light rays (Chi: not every page gets a spotlight); the rays stay on the title screen and chooser. */
+.stage > .rays { display: none; }
+/* Wireframe chrome: the accent picker in the note strip (kit.js paints the palette from it). */
+.wf-accent { display: inline-flex; align-items: center; gap: 6px; margin-left: 16px; vertical-align: middle; }
+.wf-accent button { width: 18px; height: 18px; padding: 0; border: 2px solid transparent; background: var(--c); cursor: pointer; }
+.wf-accent button[aria-pressed="true"] { border-color: var(--premiere-text); }
+.wf-accent input { width: 26px; height: 20px; padding: 0; border: 0; background: none; cursor: pointer; }

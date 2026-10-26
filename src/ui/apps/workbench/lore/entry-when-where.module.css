@@ -1,18 +1,16 @@
 /**
- * When & where: one related panel (shared chrome, hairline seams), compact height.
+ * When & where: open bands inside the entry panel (one frame per group: hairline seams, no inner boxes), compact height.
  */
 
 .wwGrid {
   display: flex;
   flex-direction: column;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-row);
   min-width: 0;
 }
 
 /* One collapsible instrument band */
 .wwFold {
-  border-top: 1px solid var(--stage-seam);
+  border-top: 1px solid var(--bk-line-control);
   background: transparent;
   min-width: 0;
 }
@@ -39,8 +37,8 @@
   content: "";
   width: 0.35rem;
   height: 0.35rem;
-  border-right: 1.5px solid var(--stage-text-dim);
-  border-bottom: 1.5px solid var(--stage-text-dim);
+  border-right: 1.5px solid var(--text-dim);
+  border-bottom: 1.5px solid var(--text-dim);
   transform: rotate(-45deg);
   flex: none;
   margin-top: -0.05rem;
@@ -53,12 +51,11 @@
 }
 
 .wwFoldH b {
-  font-family: var(--font-mono);
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--stage-card);
+  color: var(--text);
   flex: none;
 }
 
@@ -67,7 +64,7 @@
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: var(--text-control);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -75,13 +72,12 @@
 }
 
 .wwFoldH span {
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
   margin-left: auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 500;
   font-size: var(--text-control);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   flex: none;
 }
 
@@ -98,8 +94,6 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
   min-height: 2.35rem;
 }
 
@@ -111,7 +105,7 @@
   gap: 0.12rem;
   padding: 0.28rem 0.35rem 0.32rem;
   min-width: 0;
-  border-right: 1px solid var(--stage-seam);
+  border-right: 1px solid var(--bk-line-control);
 }
 
 .wwDial:last-child {
@@ -119,12 +113,10 @@
 }
 
 .wwDial span {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .wwDial input {
@@ -132,7 +124,7 @@
   max-width: 4.5rem;
   border: 0;
   background: none;
-  color: var(--stage-card);
+  color: var(--text);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 0.95rem;
@@ -151,7 +143,7 @@
 
 .wwDial input:focus {
   outline: none;
-  color: var(--stage-card);
+  color: var(--text);
   box-shadow: 0 1px 0 0 var(--a, var(--accent));
 }
 
@@ -174,7 +166,7 @@
   font-weight: 700;
   font-size: 0.95rem;
   line-height: 1;
-  color: var(--stage-card);
+  color: var(--text);
   min-width: 2.8rem;
   letter-spacing: 0.02em;
 }
@@ -183,9 +175,9 @@
 .wwNum {
   width: 100%;
   min-height: 2.35rem;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-control);
@@ -195,9 +187,9 @@
 .wwRecLevel {
   width: 2.6rem;
   flex: none;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-mono);
   font-size: var(--text-control);
   font-weight: 700;
@@ -220,21 +212,19 @@
   flex: 1;
   min-width: 0;
   min-height: 2.35rem;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-mono);
   font-size: var(--text-control);
   padding: 0.35rem 0.4rem;
 }
 
 .wwW {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim, var(--stage-mute));
+  color: var(--stage-text-dim, var(--text-dim));
   flex: none;
 }
 
@@ -242,9 +232,9 @@
   width: 2.6rem;
   flex: none;
   min-height: 2.35rem;
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-control);

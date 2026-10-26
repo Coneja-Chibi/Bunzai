@@ -19,30 +19,20 @@ import { Button, IconButton, Tile } from "../../../components/button";
 
 const CSS = `
 .dv-show{flex:1;min-height:0;display:flex;flex-direction:column}
-.dv-show .sc-empty{margin:auto;font-family:var(--font-body);font-style:italic;color:var(--stage-kicker)}
-.dv-show .main{flex:1;min-height:0;display:flex;align-items:center;gap:clamp(.7rem,2vw,1.4rem);
-  padding:clamp(.8rem,2vw,1.4rem)}
-.dv-show .hero{flex:none;width:clamp(8rem,calc(var(--card-w) * 1.6),24rem);background:var(--stage-panel);border:3px solid var(--stage-black);
-  box-shadow:0 24px 38px -14px var(--shadow-ink-deep)}
-.dv-show .hero .cov{aspect-ratio:2/3;background:var(--a);border-bottom:3px solid var(--stage-black);position:relative;
-  display:flex;align-items:flex-end;padding:.5rem}
+.dv-show .sc-empty{margin:auto;font:italic .9375rem var(--font-ui);color:var(--text-dim)}
+.dv-show .main{flex:1;min-height:0;display:flex;align-items:center;gap:clamp(.7rem,2vw,1.25rem);padding:.375rem .5rem .875rem}
+.dv-show .hero{flex:none;width:clamp(8rem,calc(var(--card-w) * 1.6),24rem);background:var(--glass);border:3px solid var(--stage-black);border-top-color:var(--a);box-shadow:6px 6px 0 var(--stage-black)}
+.dv-show .hero .cov{aspect-ratio:3/4;background:color-mix(in srgb,var(--a) 22%,var(--stage-black));position:relative;display:grid;place-items:center}
 .dv-show .hero .cov img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;pointer-events:none}
-.dv-show .hero .cov b{font-family:var(--font-big);font-weight:900;font-size:3rem;line-height:.72;color:var(--stage-ink);opacity:.82}
-.dv-show .hero .kd{position:absolute;top:0;left:0;background:var(--stage-ink);color:var(--a);font-family:var(--font-mono);
-  font-size: var(--text-meta);font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 5px;border-right:3px solid var(--stage-black);border-bottom:3px solid var(--stage-black)}
-.dv-show .plate{flex:1;min-width:0;min-height:0;max-height:100%;overflow-y:auto;background:var(--stage-row);border:3px solid var(--stage-black);
-  box-shadow:5px 6px 0 0 var(--shadow-ink);padding:clamp(.8rem,1.8vw,1.3rem);display:flex;flex-direction:column;gap:.6rem}
-.dv-show .plate .nm{font-family:var(--font-big);font-weight:900;font-size:clamp(1.2rem,2.4vw,1.9rem);
-  letter-spacing:-.01em;color:var(--stage-card);line-height:1;overflow-wrap:anywhere}
-.dv-show .plate .meta{font-family:var(--font-mono);font-size: var(--text-meta);font-weight:600;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--stage-soft)}
+.dv-show .hero .cov b{font:700 clamp(3rem,10cqi,6.875rem)/1 var(--font-fancy);color:color-mix(in srgb,var(--a) 40%,var(--text))}
+.dv-show .hero .kd{position:absolute;left:.625rem;bottom:.625rem;padding:.1875rem .625rem;font:var(--text-meta) var(--font-ui);background:var(--stage-black);
+  border:1px solid var(--a);color:color-mix(in srgb,var(--a) 65%,var(--text))}
+.dv-show .plate{flex:1;min-width:0;min-height:0;max-height:100%;overflow-y:auto;background:var(--glass);border:3px solid var(--stage-black);border-left:5px solid var(--a);
+  box-shadow:5px 5px 0 var(--stage-black);padding:clamp(.8rem,1.8vw,1.375rem);display:flex;flex-direction:column;gap:.625rem}
+.dv-show .plate .nm{font:700 clamp(1.2rem,2.4vw,1.75rem)/1.15 var(--font-fancy);color:var(--text);overflow-wrap:anywhere}
+.dv-show .plate .meta{font:.8125rem var(--font-ui);color:var(--text-dim)}
 .dv-show .plate .stage-btn{align-self:flex-start}
 .dv-show .rail{flex:none;display:flex;gap:.4rem;padding:.5rem .8rem .8rem;overflow-x:auto}
-
-  position:relative;opacity:.55;transition:opacity .1s ease-out,transform .1s ease-out}
-
-
-
 /* phones: hero row on top (nav flanking), the words plate drops below full-width (fluid law) */
 @container (max-width: 40rem){
   .dv-show .main{flex-wrap:wrap;overflow-y:auto;align-content:flex-start;gap:.6rem;padding:.6rem}

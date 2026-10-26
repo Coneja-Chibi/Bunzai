@@ -1,0 +1,145 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Workbench</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules, tokens only. Kit additions: .strip, .status, .ghost, .recents, .rcard, focus and hover states. */
+.wf-note { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.wf-note .seg span { cursor: pointer; }
+.room { max-width: none; min-height: calc(100vh - 48px); display: flex; flex-direction: column; padding: 14px 20px 22px; }
+.muted { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.ico { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.btn.sm { min-height: 32px; padding: 5px 14px; font-size: 13px; }
+.btn.icon { padding: 5px 9px; min-height: 32px; }
+.btn, .seg span, .rcard, .field, .select { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease; }
+.btn:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--premiere-gold) 70%, transparent); box-shadow: 0 10px 30px color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+.btn.primary:hover { border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard), 0 12px 36px color-mix(in srgb, var(--premiere-rose) 40%, transparent); }
+.btn:focus-visible, .seg span:focus-visible, .rcard:focus-visible, .disc:focus-visible { outline: 2px solid var(--premiere-gold); outline-offset: 2px; }
+.seg span { cursor: pointer; } .seg span:hover { background: color-mix(in srgb, var(--premiere-violet) 22%, transparent); }
+
+/* The shell's strip (open-piece tabs live here; empty bench shows only the plus) and the status line under it */
+.strip { display: flex; align-items: center; gap: 6px; padding-bottom: 10px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.strip .plus { width: 36px; height: 36px; display: grid; place-items: center; color: var(--premiere-gold); font-weight: 700; font-size: 18px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); cursor: pointer; background: none; }
+.strip .plus:hover { border-color: var(--premiere-gold); }
+.strip .grow { flex: 1; }
+.status { display: flex; align-items: center; gap: 10px; padding: 12px 2px 0; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); }
+.status::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); box-shadow: 0 0 10px var(--premiere-gold); }
+[data-state="restoring"] .status::before { background: var(--premiere-violet); box-shadow: 0 0 10px var(--premiere-violet); }
+[data-state="failed"] .status::before { background: var(--premiere-rose); box-shadow: 0 0 10px var(--premiere-rose); }
+
+/* The empty room: same card, same spot (top centre, today's 607px), now the staged moment */
+.ghost { width: min(640px, 100%); margin: 14px auto 0; padding: 30px 36px 28px; text-align: center; position: relative; overflow: hidden; border-top: 3px solid var(--premiere-gold); }
+.ghost::before { content: none; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 80% 90% at 50% 0%, color-mix(in srgb, var(--premiere-violet) 26%, transparent), transparent 72%); }
+.ghost > * { position: relative; }
+.ghost .kicker { justify-content: center; }
+.ghost h2 { margin-top: 14px; font-size: clamp(26px, 3vw, 34px); line-height: 1.1; text-shadow: 0 2px 30px color-mix(in srgb, var(--premiere-violet) 55%, transparent); }
+.ghost .lede { margin: 12px auto 0; max-width: 46ch; font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.ghost .err { display: none; margin: 14px auto 0; max-width: 46ch; text-align: left; padding: 10px 14px; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 12%, transparent); font-size: 14px; }
+[data-state="failed"] .err { display: block; }
+.acts { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.acts2 { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+[data-state="restoring"] .acts, [data-state="restoring"] .ghost .lede.ready { display: none; }
+.ghost .lede.wait, .ghost .lede.bad { display: none; }
+[data-state="restoring"] .ghost .lede.wait { display: block; }
+[data-state="failed"] .ghost .lede.bad { display: block; } [data-state="failed"] .ghost .lede.ready { display: none; }
+.skel { display: none; margin: 22px auto 0; gap: 10px; flex-direction: column; align-items: center; }
+.skel i { display: block; height: 10px; width: 260px; background: color-mix(in srgb, var(--premiere-text) 12%, transparent); animation: pulse 1.6s ease-in-out infinite; }
+.skel i:nth-child(2) { width: 200px; } .skel i:nth-child(3) { width: 140px; }
+[data-state="restoring"] .skel { display: flex; }
+@keyframes pulse { 50% { opacity: .35; } }
+
+/* The recents rail: low deck at the bottom, same spot, same parts (label row, strip of covers, hide) */
+.recents { margin-top: auto; padding-top: 28px; }
+.recents .disc { display: flex; align-items: center; gap: 12px; padding: 0 2px 12px; cursor: pointer; background: none; border: 0; width: 100%; color: inherit; font: inherit; text-align: left; }
+.recents .disc .kicker { flex: 0 0 auto; }
+.recents .disc .kicker::after { display: none; }
+.recents .disc .kicker::before { width: 8px; height: 8px; background: var(--premiere-rose); box-shadow: 0 0 10px var(--premiere-rose); }
+.recents .disc .line { flex: 1; height: 1px; background: linear-gradient(to right, color-mix(in srgb, var(--premiere-gold) 45%, transparent), transparent 70%); }
+.recents .disc .hide { font-size: 13px; font-weight: 600; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.recents .disc:hover .hide { color: var(--premiere-gold); }
+.strip2 { display: flex; gap: 18px; padding: 4px 4px 12px 2px; overflow-x: auto; scrollbar-width: thin; }
+[data-rail="hidden"] .strip2 { display: none; }
+.rcard { flex: none; width: 120px; display: flex; flex-direction: column; text-align: left; padding: 0; cursor: pointer; font: inherit; color: var(--premiere-text);
+  background: color-mix(in srgb, var(--premiere-hard) 70%, transparent); border: 3px solid var(--premiere-hard); border-top: 4px solid var(--deck); box-shadow: 5px 5px var(--premiere-hard); }
+.rcard:hover, .rcard:focus-visible { transform: translateY(-5px); box-shadow: 5px 5px var(--premiere-hard), 0 16px 44px color-mix(in srgb, var(--deck) 34%, transparent); }
+.rcard .art { aspect-ratio: 2 / 3; display: grid; place-items: center; position: relative; overflow: hidden;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--deck) 55%, var(--premiere-hard)), color-mix(in srgb, var(--deck) 12%, var(--premiere-hard))); }
+.rcard .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, color-mix(in srgb, var(--premiere-hard) 70%, transparent), transparent 55%); }
+.rcard .art b { font: 700 40px/1 var(--font-fancy); color: color-mix(in srgb, var(--deck) 40%, white); position: relative; z-index: 1; text-shadow: 0 2px 20px color-mix(in srgb, var(--premiere-hard) 60%, transparent); }
+.rcard .cap { padding: 8px 10px 10px; }
+.rcard .cap b { display: block; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rcard .cap span { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+
+.co.abs { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.rel { position: relative; }
+
+@media (max-width: 720px) {
+  .room { padding: 12px 16px 24px; } .ghost { padding: 24px 18px; }
+  .acts .btn { width: 100%; justify-content: center; }
+  .wf-note { padding: 12px 16px; } .legend { padding: 24px 16px 48px; }
+  .strip .reload span { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .btn, .seg span, .rcard, .field, .select, .skel i { transition: none; animation: none; } .btn:hover, .rcard:hover { transform: none; } }
+</style></head>
+<body><div class="wf-note">WIREFRAME. The Workbench, empty state with the recents rail, in the Premiere house style. Layout is today's. Numbered callouts are explained below.
+  <span class="seg" id="state" aria-label="Room state"><span aria-pressed="true" data-s="ready">Empty</span><span data-s="restoring">Restoring</span><span data-s="failed">Restore failed</span></span></div>
+<div class="stage"><main class="room" id="room" data-state="ready" data-rail="open">
+
+  <div class="strip rel">
+    <button class="plus" aria-label="Open a piece">+</button><span class="grow"></span>
+    <button class="btn sm reload">Reload Studio</button><span class="co" style="margin-left:8px">1</span>
+  </div>
+  <div class="status" role="status"><span id="statusText">the workbench is clear</span><span class="co">2</span></div>
+
+  <section class="panel ghost" aria-live="polite">
+    <span class="co abs">3</span>
+    <div class="kicker">The Workbench &middot; Edit pieces</div>
+    <h2 id="h2">Your workbench is empty</h2>
+    <p class="lede ready">Open a piece from your Library to start editing. Each piece opens in a tab above.</p>
+    <p class="lede wait">Your open pieces will appear here when they are ready.</p>
+    <p class="lede bad">We could not read the saved bench, so nothing was opened. Your pieces are safe in the Library.</p>
+    <div class="err">The saved workbench could not be read. Reload Studio to try again, or open a piece from the Library.</div>
+    <div class="skel"><i></i><i></i><i></i></div>
+    <div class="acts">
+      <button class="btn primary big">Open Library</button>
+      <button class="btn big" style="--deck: var(--deck-pack)">New pack folder</button>
+      <button class="btn big" style="--deck: var(--deck-lorebook)">New lorebook</button>
+    </div>
+    <div class="acts2"><span class="seg" aria-label="View"><span aria-pressed="true">Desk</span><span>Nodes</span></span>
+      <button class="btn icon" aria-label="Focus mode"><svg class="ico" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><span class="co">4</span></div>
+  </section>
+
+  <div class="recents rel" id="recents">
+    <button class="disc" id="disc" aria-expanded="true"><span class="kicker left">Recent &middot; bring one up</span><span class="line"></span><span class="hide" id="hideTxt">Hide</span><span class="co">5</span></button>
+    <div class="strip2">
+      <button class="rcard" data-deck="preset"><span class="art"><b>T</b></span><span class="cap"><b>Test preset</b><span>Preset</span></span></button>
+      <button class="rcard" data-deck="lorebook"><span class="art"><b>U</b></span><span class="cap"><b>Untitled lorebook</b><span>Lorebook</span></span></button>
+      <button class="rcard" data-deck="character"><span class="art"><b>U</b></span><span class="cap"><b>Untitled character</b><span>Character</span></span></button>
+      <button class="rcard" data-deck="pack"><span class="art"><b>U</b></span><span class="cap"><b>Untitled pack</b><span>Pack</span></span></button>
+    </div>
+  </div>
+
+</main></div>
+<ol class="legend">
+  <li style="list-style:none;margin-left:-1.6em"><b>Regions of today's room, each restyled, none moved.</b> Shell strip, status line, empty card, view switch, recents rail. The bottom dock and the help button belong to the shell and are not redrawn.</li>
+  <li><b>Shell strip (plus, Reload Studio).</b> Same top row, plus left and Reload Studio right. The raw white-bordered mono caps button becomes the kit secondary button in sentence case; the plus is a gold-marked square that lights its border on hover.</li>
+  <li><b>Status line.</b> Same spot under the strip. The mono lowercase sentence becomes the UI font with a small glowing square: gold when clear, violet while restoring, rose on failure.</li>
+  <li><b>Empty card.</b> Same top-centre card, same width. It becomes a Premiere panel with the hard offset shadow, a gold top edge and a violet glow from above. It gains the room header in place: gold kicker "The Workbench", then the Cinzel title with violet glow and a one-line lede. Restoring (soft pulsing placeholder lines) and restore-failed (rose-edged notice) are staged the same way.</li>
+  <li><b>Actions, view switch, focus.</b> Same order in the same two rows. Open Library is the rose primary; New pack folder and New lorebook are the secondary buttons with a deck-colored shadow edge; Desk and Nodes use the chooser's segmented control; focus is a kit icon button. Hover lifts with glow; focus rings are gold.</li>
+  <li><b>Recents rail.</b> Stays the low strip at the bottom, label row then covers then Hide. The label is a gold kicker with a rose pip and a fading rule; Hide turns gold on hover. Covers are the chooser card grammar: 3px hard frame, offset shadow, deck-colored top edge and cover gradient, Cinzel initial, name and kind below, lift and glow on hover. Four pieces shown, the same count as today. Hide folds the strip away and keeps the label row.</li>
+</ol>
+<script>
+const room = document.getElementById("room");
+const copy = { ready: ["Your workbench is empty", "the workbench is clear"], restoring: ["Restoring your workbench…", "restoring the workbench"], failed: ["We couldn't restore the workbench", "could not restore the workbench"] };
+document.querySelectorAll("#state span").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#state span").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  const s = b.dataset.s; room.dataset.state = s;
+  document.getElementById("h2").textContent = copy[s][0]; document.getElementById("statusText").textContent = copy[s][1];
+}));
+document.getElementById("disc").addEventListener("click", e => {
+  const hidden = room.dataset.rail !== "hidden"; room.dataset.rail = hidden ? "hidden" : "open";
+  e.currentTarget.setAttribute("aria-expanded", String(!hidden)); document.getElementById("hideTxt").textContent = hidden ? "Show" : "Hide";
+});
+document.querySelectorAll(".seg:not(#state) span").forEach(s => { s.tabIndex = 0; s.addEventListener("click", () => { s.parentElement.querySelectorAll("span").forEach(x => x.setAttribute("aria-pressed", String(x === s))); }); });
+</script><script src="kit.js"></script>
+</body></html>

@@ -1,6 +1,6 @@
 /**
- * The LiveBuild (engine-truth) rail pane, RC-neo. Reads as a manuscript proof rather than an editor:
- * mono, dense, no affordances that imply you can change anything here. Accent = --pa from .root.
+ * The LiveBuild (engine-truth) rail pane. Reads as a proof of the whole preset, top to bottom: open lines with a
+ * hairline between them, mono only for the prompt text and numbers. Accent = --pa from .root.
  */
 
 .wrap {
@@ -9,7 +9,7 @@
   flex: 1;
   height: 0;
   gap: 0.5rem;
-  padding: 0.85rem;
+  padding: 0.85rem 1.1rem;
   min-height: 0;
   overflow: hidden;
 }
@@ -22,21 +22,18 @@
 }
 
 .headline {
-  font: 800 var(--text-control) var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-kicker);
+  composes: goldLabel from "./preset.module.css";
 }
 
 .weight {
-  font: 800 var(--text-control) var(--font-mono);
-  color: var(--pa);
+  font: 700 var(--text-control) var(--font-mono);
+  color: var(--text);
 }
 
 .empty {
-  border: 2px dashed color-mix(in srgb, var(--stage-card) 15%, transparent);
-  color: var(--stage-mute);
-  font: 500 var(--text-control) var(--font-body);
+  border-left: 3px solid color-mix(in srgb, var(--pa) 55%, transparent);
+  color: var(--text-dim);
+  font: 500 var(--text-control) var(--font-ui);
   padding: 1rem;
   text-align: center;
   margin: 0;
@@ -58,22 +55,22 @@
 }
 
 .line {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  border: 2px solid var(--stage-black);
-  background: color-mix(in srgb, var(--stage-card) 2%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
 }
 
 .text {
   margin: 0;
-  padding: 0.4rem 0.5rem;
+  padding: 0.5rem 0.25rem;
   max-height: 7rem;
   overflow: auto;
   font: 500 var(--text-control) var(--font-mono);
   line-height: 1.5;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -87,7 +84,7 @@
 
 .note {
   margin: 0.2rem 0 0;
-  font: 500 var(--text-meta) var(--font-body);
-  color: var(--stage-kicker);
+  font: 500 var(--text-meta) var(--font-ui);
+  color: var(--text-dim);
   line-height: 1.45;
 }

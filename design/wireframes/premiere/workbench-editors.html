@@ -1,0 +1,347 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: Workbench editors</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules, tokens only. Kit additions: .tabstrip, .ehead, .cols, .item, .tabs, .toolbar. */
+.room { max-width: none; padding: 14px 20px 40px; }
+.muted { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.tabstrip { display: flex; align-items: flex-end; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.tab { display: inline-flex; align-items: center; gap: 10px; min-height: 40px; padding: 8px 16px; font: 600 14px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 75%, transparent); background: none; border: 2px solid transparent; border-bottom: 0; border-top: 3px solid var(--deck); cursor: pointer; }
+.tab[aria-selected="true"] { color: var(--premiere-text); background: color-mix(in srgb, var(--premiere-violet) 10%, var(--premiere-hard)); border-color: color-mix(in srgb, var(--premiere-text) 22%, transparent); border-top-color: var(--deck); }
+.tab i { font-style: normal; font-weight: 400; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.tabstrip .plus { width: 36px; min-height: 36px; display: grid; place-items: center; color: var(--premiere-gold); font-weight: 700; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); margin-bottom: 2px; }
+.tabstrip .grow { flex: 1; }
+.status { display: flex; align-items: center; gap: 10px; padding: 0 2px 12px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); }
+.status::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); box-shadow: 0 0 10px var(--premiere-gold); }
+
+.editor { display: none; flex-direction: column; gap: 14px; }
+.editor.on { display: flex; }
+.ehead { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px 18px; align-items: center; padding: 14px 18px; }
+.mark { width: 48px; height: 48px; display: grid; place-items: center; font: 700 24px var(--font-fancy); color: var(--premiere-hard); background: var(--deck); }
+.nameField { font: 700 24px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.ehead .meta { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; }
+.ehead .ctl { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: flex-end; }
+.saved { display: inline-flex; align-items: center; gap: 8px; font: 600 13px var(--font-ui); padding: 7px 12px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 50%, transparent); }
+.saved::before { content: ""; width: 8px; height: 8px; background: var(--premiere-gold); }
+.btn.sm { min-height: 32px; padding: 5px 12px; font-size: 13px; }
+.btn.icon { padding: 5px 9px; min-height: 32px; }
+.ico { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.fl { font: 600 13px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 80%, transparent); display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.field.block, .select.block { display: block; width: 100%; }
+.field.tall { min-height: 96px; line-height: 1.5; }
+.help { display: inline-grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--premiere-gold) 70%, transparent); color: var(--premiere-gold); font: 700 11px var(--font-ui); }
+
+.disc { display: flex; align-items: center; gap: 12px; padding: 12px 18px; cursor: pointer; }
+.disc b { font: 700 18px var(--font-fancy); letter-spacing: .02em; }
+.disc .grow { flex: 1; }
+.disc .caret { color: var(--premiere-gold); }
+.settings { display: none; padding: 4px 18px 18px; }
+.settings.on { display: block; }
+.samplers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.samplers .field { width: 100%; }
+
+.cols { display: grid; align-items: stretch; height: clamp(520px, calc(100vh - 360px), 900px); padding: 0; }
+.cols > * { min-width: 0; min-height: 0; overflow: auto; }
+.cols > .rail { border-left: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: color-mix(in srgb, var(--premiere-hard) 35%, transparent); }
+.cols > .toc { border-right: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: color-mix(in srgb, var(--premiere-hard) 35%, transparent); }
+.cols.preset { grid-template-columns: minmax(0, 1fr) 380px; }
+.cols.regex { grid-template-columns: 280px minmax(0, 1fr) 340px; }
+.cols.lore { grid-template-columns: 300px minmax(0, 1fr) 340px; }
+.pad { padding: 16px 18px; }
+.tabs { display: flex; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.tabs button { flex: 1; min-height: 44px; font: 700 14px var(--font-ui); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); background: none; border: 0; border-bottom: 3px solid transparent; cursor: pointer; padding: 8px; }
+.tabs button[aria-selected="true"] { color: var(--premiere-text); border-bottom-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 12%, transparent); }
+.rtitle { font: 700 16px var(--font-ui); padding: 14px 18px 4px; }
+
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 12px 16px; }
+.toolbar .field { flex: 1; min-width: 140px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.toolbar .count { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.filters { display: grid; grid-template-columns: repeat(3, 1fr); margin: 0 16px; border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); }
+.filters span { text-align: center; padding: 9px; font: 600 14px var(--font-ui); }
+.filters span[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 22%, transparent); box-shadow: inset 0 -3px 0 var(--premiere-rose); font-weight: 700; }
+.item { display: grid; grid-template-columns: 20px 44px minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 12px 16px; margin: 8px 16px 0; background: color-mix(in srgb, var(--premiere-hard) 45%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); border-left: 3px solid transparent; cursor: pointer; }
+.item[aria-pressed="true"] { border-left-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 10%, var(--premiere-hard)); }
+.item.off { opacity: .5; }
+.item .n { font: 600 13px var(--font-mono); color: var(--premiere-gold); text-align: center; border: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); padding: 6px 0; }
+.item .t b { font-weight: 700; margin-right: 8px; }
+.item .t p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.item .tok { font: 13px var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.item .caret { color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.tag { display: inline-block; font: 600 12px var(--font-ui); padding: 1px 8px; border: 1px solid color-mix(in srgb, var(--premiere-text) 28%, transparent); vertical-align: middle; }
+.tag.gold { color: var(--premiere-gold); border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent); }
+.tag.rose { color: color-mix(in srgb, var(--premiere-rose) 55%, white); border-color: color-mix(in srgb, var(--premiere-rose) 55%, transparent); }
+.addblock { margin: 14px 16px 18px; padding: 14px; text-align: center; font: 700 14px var(--font-ui); color: color-mix(in srgb, var(--premiere-rose) 55%, white); border: 2px dashed color-mix(in srgb, var(--premiere-rose) 55%, transparent); }
+.sw { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.stack { display: grid; gap: 14px; align-content: start; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tokcard { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 40%, transparent); background: color-mix(in srgb, var(--premiere-gold) 8%, transparent); }
+.tokcard b { font: 700 20px var(--font-mono); }
+.hint { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); margin-top: 4px; }
+.sub { font: 700 15px var(--font-ui); padding-top: 8px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.macro { font-family: var(--font-mono); color: var(--premiere-gold); }
+.railview { display: none; } .railview.on { display: block; }
+.build { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 10px; padding: 10px 0; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); font-size: 14px; align-items: center; }
+.num { font-size: 13px; }
+.prose { white-space: pre-wrap; line-height: 1.6; font-size: 14px; padding: 14px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.hl { background: color-mix(in srgb, var(--premiere-gold) 35%, transparent); padding: 0 2px; }
+.pip { width: 10px; height: 10px; background: var(--premiere-gold); } .pip.off { background: color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip.code { font-family: var(--font-mono); }
+.pager { display: flex; gap: 8px; align-items: center; }
+.pager .grow { flex: 1; }
+.toc .item { grid-template-columns: 14px minmax(0, 1fr) auto; padding: 10px 12px; margin: 6px 12px 0; }
+.group { padding: 14px 18px 2px; font: 700 13px var(--font-ui); color: var(--premiere-gold); }
+.result { padding: 12px 14px; font-size: 14px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.result .after { display: block; margin-top: 6px; color: color-mix(in srgb, var(--premiere-gold) 70%, white); }
+.ok { color: color-mix(in srgb, var(--premiere-gold) 80%, white); font-size: 13px; }
+
+@media (max-width: 1100px) { .cols { height: auto; } .cols.preset, .cols.regex, .cols.lore { grid-template-columns: 1fr; } .cols > .rail, .cols > .toc { border: 0; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); } .cols > .toc { order: -1; max-height: 320px; } .samplers { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 720px) { .ehead { grid-template-columns: auto 1fr; } .ehead .ctl { grid-column: 1 / -1; justify-content: flex-start; } .item { grid-template-columns: 38px minmax(0, 1fr) auto; } .item .caret, .item .sw .lbl { display: none; } .two { grid-template-columns: 1fr; } .wf-note { padding: 12px 16px; } .legend { padding: 24px 16px 48px; } .nameField { font-size: 20px; } .tab { padding: 8px 10px; } .seg { flex-wrap: wrap; } }
+
+[hidden] { display: none !important; }
+/* Premiere restyle layer: hover, selected, focus, section titles, staged empty states */
+.btn, .tab, .item, .tabs button, .filters span, .addblock, .chip, .disc, .seg span, .field, .select { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease, color .2s ease; }
+.btn:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--premiere-gold) 70%, transparent); box-shadow: 0 8px 26px color-mix(in srgb, var(--premiere-violet) 35%, transparent); }
+.btn.primary:hover { border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard), 0 10px 30px color-mix(in srgb, var(--premiere-rose) 40%, transparent); }
+.btn.quiet:hover { box-shadow: none; transform: none; color: var(--premiere-gold); }
+.btn:focus-visible, .tab:focus-visible, .item:focus-visible, .tabs button:focus-visible, .field:focus-visible, .select:focus-visible, .chip:focus-visible, .seg span:focus-visible, .disc:focus-visible, .addblock:focus-visible, .filters span:focus-visible { outline: 2px solid var(--premiere-gold); outline-offset: 2px; }
+.field:hover, .select:hover { border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent); }
+.field:focus, .select:focus { border-color: var(--premiere-gold); box-shadow: 0 0 0 3px color-mix(in srgb, var(--premiere-gold) 22%, transparent); outline: none; }
+.seg span, .chip { cursor: pointer; } .seg span:hover, .chip:hover { background: color-mix(in srgb, var(--premiere-violet) 22%, transparent); }
+.tab:hover { transform: translateY(-2px); color: var(--premiere-text); background: color-mix(in srgb, var(--deck) 12%, transparent); }
+.tab[aria-selected="true"] { box-shadow: 0 -8px 26px color-mix(in srgb, var(--deck) 20%, transparent); }
+.status .co { margin-left: 4px; }
+
+.ehead { background: linear-gradient(100deg, color-mix(in srgb, var(--deck) 14%, transparent), transparent 45%), color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 82%, transparent); }
+.ehead .kicker { margin-bottom: 4px; }
+.ehead .nameField { text-shadow: 0 2px 26px color-mix(in srgb, var(--premiere-violet) 50%, transparent); }
+.mark { box-shadow: 4px 4px var(--premiere-hard), 0 0 22px color-mix(in srgb, var(--deck) 45%, transparent); }
+.ehead .meta { margin-top: 2px; }
+
+.rtitle { font: 700 17px/1.2 var(--font-fancy); letter-spacing: .03em; padding: 16px 18px 6px; text-shadow: 0 2px 24px color-mix(in srgb, var(--premiere-violet) 50%, transparent); }
+.disc:hover { background: color-mix(in srgb, var(--premiere-violet) 14%, transparent); }
+.disc b { text-shadow: 0 2px 24px color-mix(in srgb, var(--premiere-violet) 50%, transparent); }
+.sub { font: 700 12px var(--font-ui); letter-spacing: .18em; text-transform: uppercase; color: var(--premiere-gold); }
+.group { font: 700 12px var(--font-ui); letter-spacing: .18em; text-transform: uppercase; display: flex; gap: 8px; align-items: baseline; padding-top: 16px; }
+
+.tabs { margin: 12px 14px 0; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: color-mix(in srgb, var(--premiere-hard) 50%, transparent); }
+.tabs button { min-height: 40px; border-bottom: 0; font: 700 13px var(--font-ui); }
+.tabs button:hover { background: color-mix(in srgb, var(--premiere-violet) 22%, transparent); color: var(--premiere-text); }
+.tabs button[aria-selected="true"] { background: color-mix(in srgb, var(--premiere-rose) 25%, transparent); box-shadow: inset 0 -3px 0 var(--premiere-rose); border-bottom: 0; }
+.filters span { cursor: pointer; } .filters span:hover { background: color-mix(in srgb, var(--premiere-violet) 22%, transparent); }
+
+.item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--deck, var(--premiere-gold)) 70%, transparent); border-left-color: var(--deck, var(--premiere-gold)); box-shadow: 0 10px 30px color-mix(in srgb, var(--deck, var(--premiere-violet)) 25%, transparent); }
+.item[aria-pressed="true"] { border-color: color-mix(in srgb, var(--premiere-rose) 55%, transparent); border-left-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-hard), 0 10px 34px color-mix(in srgb, var(--premiere-rose) 22%, transparent); }
+.item.off:hover { opacity: .8; }
+.item .t b { font-size: 15px; }
+.item .tok { color: var(--premiere-gold); }
+.addblock { cursor: pointer; } .addblock:hover { background: color-mix(in srgb, var(--premiere-rose) 14%, transparent); box-shadow: 0 10px 30px color-mix(in srgb, var(--premiere-rose) 25%, transparent); transform: translateY(-2px); }
+.cols > .rail { background: linear-gradient(to bottom, color-mix(in srgb, var(--premiere-violet) 12%, transparent), color-mix(in srgb, var(--premiere-hard) 40%, transparent) 60%); }
+
+.noprompt { position: relative; text-align: center; padding: 48px 28px; }
+.noprompt::before { content: none; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 80% 70% at 50% 30%, color-mix(in srgb, var(--premiere-violet) 24%, transparent), transparent 72%); }
+.noprompt > * { position: relative; }
+.noprompt h3 { font: 700 22px/1.2 var(--font-fancy); letter-spacing: .03em; text-shadow: 0 2px 28px color-mix(in srgb, var(--premiere-violet) 55%, transparent); }
+.noprompt p { margin-top: 10px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); max-width: 30ch; margin-inline: auto; }
+.noprompt .co { position: absolute; top: 0; right: 4px; }
+.help { cursor: help; } .help:hover { background: color-mix(in srgb, var(--premiere-gold) 25%, transparent); }
+@media (prefers-reduced-motion: reduce) { .btn, .tab, .item, .addblock { transition: none; } .btn:hover, .tab:hover, .item:hover, .addblock:hover { transform: none; } }
+.sub .seg span { text-transform: none; letter-spacing: 0; color: var(--premiere-text); font-size: 13px; }
+.sub.pager { align-items: center; }
+
+/* one frame per group */
+.panel .item { border: 0 !important; box-shadow: none !important; background: none; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.panel .addblock { border: 0 !important; box-shadow: none !important; background: none; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.panel .tabs { border: 0 !important; box-shadow: none !important; background: none; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent) !important; }
+.panel .item[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 12%, transparent); box-shadow: inset 3px 0 0 var(--premiere-rose) !important; }
+/* end one frame */
+</style></head>
+<body><div class="wf-note">WIREFRAME. The Workbench editors in the Premiere house style. Layouts are today's. Switch pieces with the tabs. Numbered callouts are explained below.</div>
+<div class="stage"><main class="room">
+
+<div class="tabstrip" role="tablist" aria-label="Open pieces">
+  <button class="tab" role="tab" data-deck="preset" data-view="preset" aria-selected="true">Test preset <i>Preset</i></button>
+  <button class="tab" role="tab" data-deck="regex" data-view="regex" aria-selected="false">Voice cleanup <i>Regex</i></button>
+  <button class="tab" role="tab" data-deck="lorebook" data-view="lore" aria-selected="false">Ashfall Atlas <i>Lorebook</i></button>
+  <span class="plus">+</span><span class="grow"></span>
+  <button class="btn sm reload" style="margin-bottom:4px">Reload Studio</button><span class="co" style="margin:0 0 8px 8px">1</span>
+</div>
+<div class="status" role="status"><span id="statusText">Editing Test preset</span><span class="co">2</span></div>
+
+<!-- ===================== PRESET ===================== -->
+<section class="editor on" id="v-preset">
+  <header class="panel ehead" data-deck="preset">
+    <div class="mark">T</div>
+    <div><div class="kicker left">Preset</div><div class="nameField">Test preset</div><div class="meta"><span><span class="num">8</span> blocks</span><span><span class="num">7</span> on</span><span>~<span class="num">31</span> tokens</span></div></div>
+    <div class="ctl">
+      <span class="seg" aria-label="Write for"><span aria-pressed="true">Bunraku</span><span>RoleCall</span><span>SillyTavern</span><span>Marinara</span><span>Lumiverse</span></span>
+      <span class="saved">Saved</span>
+      <span class="seg"><span aria-pressed="true">Desk</span><span>Nodes</span></span>
+      <button class="btn icon" aria-label="Focus mode"><svg class="ico" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      <span class="co">3</span>
+    </div>
+  </header>
+  <div class="panel" data-deck="preset" style="padding:0">
+    <div class="disc" id="discBtn"><span class="caret">&#9656;</span><b>Identity &amp; settings</b><span class="grow"></span><span class="muted" style="font-size:13px">no samplers set</span><span class="co">4</span></div>
+    <div class="settings" id="settings">
+      <div class="fl">Description</div><div class="field block tall">A narrator-first preset for slow, grounded interactive fiction.</div>
+      <p class="hint" style="margin-top:12px">Blank means the preset does not set it, which is not the same as zero.</p>
+      <div class="samplers">
+        <div><div class="fl">Temperature</div><div class="field num">0.85</div></div><div><div class="fl">Top P</div><div class="field"></div></div><div><div class="fl">Top K</div><div class="field"></div></div><div><div class="fl">Top A</div><div class="field"></div></div><div><div class="fl">Min P</div><div class="field num">0.05</div></div>
+        <div><div class="fl">Frequency penalty</div><div class="field"></div></div><div><div class="fl">Presence penalty</div><div class="field"></div></div><div><div class="fl">Repetition penalty</div><div class="field"></div></div><div><div class="fl">Max context</div><div class="field num">32000</div></div><div><div class="fl">Max tokens</div><div class="field num">1200</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="panel cols preset" data-deck="preset">
+    <div>
+      <div class="toolbar"><div class="field">Search prompts...</div><span class="count"><span class="num">7</span> enabled &middot; <span class="num">0</span> in-chat</span>
+        <button class="btn icon" aria-label="Expand all"><svg class="ico" viewBox="0 0 24 24"><path d="m7 15 5 5 5-5M7 9l5-5 5 5"/></svg></button>
+        <button class="btn icon" aria-label="Collapse all"><svg class="ico" viewBox="0 0 24 24"><path d="m7 20 5-5 5 5M7 4l5 5 5-5"/></svg></button>
+        <button class="btn icon" aria-label="New category"><svg class="ico" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM12 10v5M9.5 12.5h5"/></svg></button>
+        <button class="btn primary sm">+ Add</button><span class="co">5</span></div>
+      <div class="filters"><span aria-pressed="true">All prompts <span class="num">8</span></span><span>Relative <span class="num">8</span></span><span>In-chat <span class="num">0</span></span></div>
+      <div class="item" data-pick="1"><span class="caret">&#9656;</span><span class="n">01</span><div class="t"><b>Main prompt</b><span class="tag">System</span><p>You are the narrator of an interactive story. Write vivid, grounded prose and never speak for the us...</p></div><span class="tok"><span class="num">26</span> tok</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="item"><span class="caret">&#9656;</span><span class="n">02</span><div class="t"><b>World info (before)</b><span class="tag">System</span> <span class="tag gold">Marker</span><p>empty block</p></div><span class="tok">slot</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="item"><span class="caret">&#9656;</span><span class="n">03</span><div class="t"><b>Character description</b><span class="tag">System</span> <span class="tag gold">Marker</span><p>empty block</p></div><span class="tok">slot</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="item"><span class="caret">&#9656;</span><span class="n">04</span><div class="t"><b>Persona description</b><span class="tag">System</span> <span class="tag gold">Marker</span><p>empty block</p></div><span class="tok">slot</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="item off"><span class="caret">&#9656;</span><span class="n">05</span><div class="t"><b>Extra rules</b><span class="tag">System</span><p>Keep replies under four paragraphs.</p></div><span class="tok"><span class="num">9</span> tok</span><span class="sw"><span class="switch"></span><span class="lbl">off</span></span></div>
+      <div class="item"><span class="caret">&#9656;</span><span class="n">06</span><div class="t"><b>Chat history</b><span class="tag">System</span> <span class="tag gold">Marker</span><p>empty block</p></div><span class="tok">slot</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="item"><span class="caret">&#9656;</span><span class="n">07</span><div class="t"><b>World info (after)</b><span class="tag">System</span> <span class="tag gold">Marker</span><p>empty block</p></div><span class="tok">slot</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="item"><span class="caret">&#9656;</span><span class="n">08</span><div class="t"><b>Post-history instructions</b><span class="tag">System</span><p>Stay in character.</p></div><span class="tok"><span class="num">5</span> tok</span><span class="sw"><span class="switch on"></span><span class="lbl">on</span></span></div>
+      <div class="addblock">+ Add block</div>
+    </div>
+    <aside class="rail" aria-label="Preset rail">
+      <div class="tabs" id="rtabs"><button aria-selected="true" data-r="edit">Edit prompt</button><button aria-selected="false" data-r="build">Live build</button><button aria-selected="false" data-r="preview">Preview</button></div>
+      <div class="railview on" id="r-edit"><div class="rtitle" id="rtitleEdit">Edit prompt</div>
+        <div class="noprompt" id="noprompt"><span class="co">6</span><h3>No prompt selected</h3><p>Select a block from the list to view and edit its settings.</p></div>
+        <div class="pad stack" id="promptForm" hidden>
+          <div class="two"><div><div class="fl">Name</div><div class="field block">Main prompt</div></div><div><div class="fl">Role <span class="help">?</span></div><div class="select block">system</div></div></div>
+          <div class="tokcard"><span>Token count</span><b>26</b></div>
+          <div><div class="fl">Injection order <span class="help">?</span></div><div class="field block num">100</div><p class="hint">Lower values appear first in context.</p></div>
+          <div><div class="fl">Placement <span class="help">?</span></div><div class="select block">Relative</div></div>
+          <p class="hint">Edit this block's content inline. Click its expand arrow in the list. <span class="num">104</span> characters &middot; ~<span class="num">26</span> tokens</p>
+          <div class="sub">Advanced</div>
+          <div class="row" style="padding:6px 0"><span>System prompt <span class="help">?</span></span><span class="ctl switch"></span></div>
+        </div></div>
+      <div class="railview" id="r-build"><div class="pad">
+        <p class="hint" style="margin:0 0 6px">The whole preset as the engine builds it, top to bottom. Pick a line to jump to its block.</p>
+        <div class="build"><span class="num muted">01</span><span>Main prompt</span><span class="num">26 tok</span></div>
+        <div class="build"><span class="num muted">02</span><span>World info (before)</span><span class="muted">slot</span></div>
+        <div class="build"><span class="num muted">03</span><span>Character description</span><span class="muted">slot</span></div>
+        <div class="build"><span class="num muted">04</span><span>Persona description</span><span class="muted">slot</span></div>
+        <div class="build"><span class="num muted">06</span><span>Chat history</span><span class="muted">slot</span></div>
+        <div class="build"><span class="num muted">08</span><span>Post-history instructions</span><span class="num">5 tok</span></div>
+        <div class="tokcard" style="margin-top:14px"><span>Total</span><b>31</b></div></div></div>
+      <div class="railview" id="r-preview"><div class="pad stack">
+        <div class="pager"><span class="muted" style="font-size:13px">Click text to edit it where it came from</span><span class="grow"></span><button class="btn quiet sm">Reroll</button></div>
+        <div class="prose">You are the narrator of an interactive story. Write vivid, grounded prose and never speak for the user.
+
+<span class="macro">{{description}}</span>
+
+Stay in character.</div></div></div>
+    </aside>
+  </div>
+</section>
+
+<!-- ===================== REGEX ===================== -->
+<section class="editor" id="v-regex">
+  <header class="panel ehead" data-deck="regex">
+    <div class="mark">V</div>
+    <div><div class="kicker left">Regex set</div><div class="nameField">Voice cleanup</div><div class="meta"><span><span class="num">5</span> rules</span><span><span class="num">4</span> on</span></div></div>
+    <div class="ctl"><span class="seg"><span aria-pressed="true">Bunraku</span><span>RoleCall</span><span>SillyTavern</span><span>Marinara</span><span>Lumiverse</span></span><span class="saved">Saved</span><span class="seg"><span aria-pressed="true">Desk</span><span>Nodes</span></span><button class="btn icon" aria-label="Focus mode"><svg class="ico" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+  </header>
+  <div class="panel cols regex" data-deck="regex">
+    <aside class="toc" aria-label="Rules"><div class="rtitle">Rules</div>
+      <div class="item" aria-pressed="true"><span class="pip"></span><div class="t"><b>Strip stage directions</b><p>Removes (...) from model output</p></div><span></span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>Curly quotes</b><p>Straight to curly in display</p></div><span></span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>Trim doubled spaces</b><p>Two spaces to one in input</p></div><span class="tag rose">slow</span></div>
+      <div class="item off"><span class="pip off"></span><div class="t"><b>Hide thinking tags</b><p>Removes think blocks in reasoning</p></div><span></span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>Em dash to comma</b><p>Rewrites in model output</p></div><span></span></div>
+      <div style="padding:14px 12px"><button class="btn sm" style="width:100%;justify-content:center">+ New rule</button></div></aside>
+    <div class="pad stack">
+      <div class="pager"><b style="font:700 18px var(--font-fancy)">Rule <span class="tnum">1</span> of <span class="tnum">5</span></b><span class="grow"></span><button class="btn icon" aria-label="Previous rule"><svg class="ico" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button><button class="btn icon" aria-label="Next rule"><svg class="ico" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button><span class="sw"><span class="switch on"></span>on</span></div>
+      <div><div class="fl">Rule name</div><div class="field block">Strip stage directions</div></div>
+      <div><div class="fl">Authoring mode</div><span class="seg"><span>Guided</span><span>Plain words</span><span aria-pressed="true">Pattern</span></span></div>
+      <div class="two" style="grid-template-columns:1fr 140px"><div><div class="fl">Find pattern</div><div class="field block macro" style="color:var(--premiere-text)">\s*\([^)]*\)</div></div><div><div class="fl">Flags</div><div class="field block num">g</div></div></div>
+      <div><div class="fl">Replace with</div><div class="field block muted">(removes the match)</div></div>
+      <div><div class="fl">Phases</div><div class="chips" aria-label="Where it runs"><span class="chip">User input</span><span class="chip" aria-pressed="true">Model output</span><span class="chip">Request</span><span class="chip">Display</span><span class="chip">Prompt</span><span class="chip">Lorebook</span><span class="chip">Reasoning</span><span class="chip">Slash</span><span class="chip">Memory</span></div></div>
+      <div class="chips"><button class="btn sm" style="opacity:.5">Escape a literal...</button></div>
+    </div>
+    <aside class="rail"><div class="rtitle">Quick try <span class="co">7</span></div>
+      <div class="pad stack"><div class="fl">Try a line</div><div class="field block tall">She smiles (softly) and waves (a little) at the door.</div>
+        <div class="result">She smiles<span class="hl"> (softly)</span> and waves<span class="hl"> (a little)</span> at the door.<span class="after">She smiles and waves at the door.</span><p class="hint"><span class="num">2</span> matches &middot; <span class="num">0.4</span>ms</p></div>
+        <div class="ok">No problems found in this rule.</div>
+        <button class="btn sm">Open test bench</button></div></aside>
+  </div>
+</section>
+
+<!-- ===================== LORE ===================== -->
+<section class="editor" id="v-lore">
+  <header class="panel ehead" data-deck="lorebook">
+    <div class="mark">A</div>
+    <div><div class="kicker left">Lorebook</div><div class="nameField">Ashfall Atlas</div><div class="meta"><span><span class="num">42</span> entries</span><span>~<span class="num">3180</span> / <span class="num">4000</span> tok</span><button class="btn quiet sm" style="min-height:24px;padding:0 6px">Book rules</button></div></div>
+    <div class="ctl"><span class="seg"><span aria-pressed="true">Pages</span><span>Cards</span><span>Web</span></span><span class="select">Writing for: Bunraku</span><span class="saved">Saved</span><span class="seg"><span aria-pressed="true">Desk</span><span>Nodes</span></span><button class="btn icon" aria-label="Focus mode"><svg class="ico" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+  </header>
+  <div class="panel cols lore" data-deck="lorebook">
+    <aside class="toc" aria-label="Table of contents"><div class="toolbar"><div class="field">Search entries</div></div>
+      <div class="group">Always on <span class="num">2</span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>World rules</b></div><span class="num muted">210</span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>Tone of the city</b></div><span class="num muted">140</span></div>
+      <div class="group">Entries <span class="num">40</span></div>
+      <div class="item" aria-pressed="true"><span class="pip"></span><div class="t"><b>The Cinder Gate</b></div><span class="num muted">96</span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>Marrow the cartographer</b></div><span class="num muted">118</span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>The ash tithe</b></div><span class="num muted">74</span></div>
+      <div class="item"><span class="pip"></span><div class="t"><b>Lantern guild</b></div><span class="num muted">132</span></div>
+      <div class="item"><span class="pip off"></span><div class="t"><b>Old harbour</b></div><span class="num muted">88</span></div></aside>
+    <div class="pad stack">
+      <div class="pager"><b style="font:700 18px var(--font-fancy)">Entry <span class="tnum">3</span> of <span class="tnum">42</span></b><span class="grow"></span><button class="btn icon" aria-label="Previous entry"><svg class="ico" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></svg></button><button class="btn icon" aria-label="Next entry"><svg class="ico" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></svg></button></div>
+      <div><div class="fl">Title</div><div class="field block">The Cinder Gate</div></div>
+      <div class="sub pager">Keys <span class="grow"></span><span class="seg" aria-label="Trigger editor mode"><span aria-pressed="true">Simple</span><span>Advanced</span></span></div>
+      <div><div class="fl">Primary keys</div><div class="chips"><span class="chip">cinder gate</span><span class="chip">the gate</span><span class="chip">east wall</span><span class="chip">+ Add key</span></div></div>
+      <div class="two"><div><div class="fl">Secondary keys combine</div><div class="select block">Any of them</div></div><div><div class="fl">Only together with <span class="muted" style="font-weight:400">optional</span></div><div class="field block muted">a second word that must also appear...</div></div></div>
+      <div><div class="fl">Matching</div><div class="chips"><span class="chip" aria-pressed="true">Whole words</span><span class="chip">Case sensitive</span></div></div>
+      <div><div class="fl">Passage <span style="flex:1"></span><span class="chip code">{{user}}</span><span class="chip code">{{char}}</span></div><div class="field block tall">The Cinder Gate is the only way through the east wall. Its keepers burn a lantern for every traveler they turn away, and {{char}} knows each by name.</div></div>
+      <div><div class="fl">Creator note</div><div class="field block">Keep the gate closed until chapter two.</div></div>
+    </div>
+    <aside class="rail" aria-label="Live tools"><div class="tabs"><button aria-selected="true">Live</button><button aria-selected="false">Health</button><button aria-selected="false">Changes</button></div>
+      <div class="pad stack"><div class="fl">Sample chat line</div><div class="field block tall">We reach the cinder gate at dusk.</div>
+        <div class="result"><b>Would fire:</b> The Cinder Gate<p class="hint">Matched the key <span class="hl">cinder gate</span>. <span class="num">96</span> tokens.</p></div>
+        <div class="sub">Linked lorebooks</div>
+        <div class="row" style="padding:8px 0"><span>Harbour Lore</span><span class="ctl"><button class="btn quiet icon" aria-label="Move up"><svg class="ico" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></svg></button></span></div></div></aside>
+  </div>
+</section>
+
+</main></div>
+<ol class="legend">
+  <li style="list-style:none;margin-left:-1.6em"><b>Regions of today's editors, each restyled, none moved.</b> Shell strip and Reload Studio, status line, editor header, Identity and settings bar, prompt list (toolbar, filter row, rows, Add block), preset rail (three tabs, section title, empty state, form, Live build, Preview), regex rules list, rule page and Quick try rail, lorebook contents, entry page and live tools rail. The bottom dock is the shell's and is not redrawn.</li>
+  <li><b>Shell strip and Reload Studio.</b> Same row: open pieces on the left, Reload Studio at the right end. Tabs keep their deck-colored top edge (preset, regex, lorebook colors), lift on hover, and the active one sits on the panel color. The raw white mono caps button is the kit secondary button.</li>
+  <li><b>Status line.</b> Back where today has it, on its own line under the strip. Mono lowercase becomes the UI font with a glowing gold square.</li>
+  <li><b>Editor header.</b> Same strip across the top, same order: monogram, name and meta on the left; write-for strip, saved state, Desk and Nodes, focus on the right. It is now the room header: gold kind kicker, Cinzel name with violet glow, one meta line with mono numerals, on a deck-edged panel. Write-for and Desk and Nodes are the chooser's segmented control.</li>
+  <li><b>Identity and settings bar.</b> Same collapsible bar under the header, with "no samplers set" at its right. Cinzel section title, gold caret, hover wash. Opened: kit fields with gold focus; blank means unset.</li>
+  <li><b>Prompt list, left column.</b> Search, counts, expand, collapse, new category and Add on the toolbar; All prompts, Relative and In-chat as a segmented row; one row per block; Add block under the list. Rows are cards with a mono gold index, tags, token count and a kit switch, a deck-colored hover lift and glow, and a rose edge when selected. Off rows dim. Add block is a dashed rose frame that lights on hover. Click a row to select it.</li>
+  <li><b>Preset rail, right column.</b> Same three tabs (Edit prompt, Live build, Preview) as a segmented control, then the Cinzel section title. With nothing selected it is a staged Cinzel moment ("No prompt selected" and its lede), as today, never a grey sentence; click a prompt to see the form. Live build lines and the Preview page keep their places; macros are gold mono.</li>
+  <li><b>Regex and lorebook.</b> Regex: rules list left (pips, rows with hover and selected edge, slow tag), rule page center (Rule 1 of 5, phases as chips, pattern in mono), Quick try rail right. Lorebook: contents left (group titles in gold, mono token counts), entry page center (keys as chips, matching, passage), Live, Health and Changes rail right. The regex test bench, lorebook Cards and Web views and Book rules keep their buttons and are not redrawn here.</li>
+</ol>
+<script>
+const names = { preset: "Test preset", regex: "Voice cleanup", lore: "Ashfall Atlas" };
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".tab").forEach(x => x.setAttribute("aria-selected", String(x === t)));
+  document.querySelectorAll(".editor").forEach(e => e.classList.toggle("on", e.id === "v-" + t.dataset.view));
+  document.getElementById("statusText").textContent = "Editing " + names[t.dataset.view];
+}));
+document.getElementById("discBtn").addEventListener("click", () => { const s = document.getElementById("settings"); s.classList.toggle("on"); document.querySelector("#discBtn .caret").innerHTML = s.classList.contains("on") ? "&#9662;" : "&#9656;"; });
+document.querySelectorAll("#rtabs button").forEach(b => b.addEventListener("click", () => {
+  document.querySelectorAll("#rtabs button").forEach(x => x.setAttribute("aria-selected", String(x === b)));
+  document.querySelectorAll(".railview").forEach(v => v.classList.toggle("on", v.id === "r-" + b.dataset.r));
+}));
+document.querySelectorAll(".field,.select,.item,.addblock,.seg span,.filters span,.chip,.disc").forEach(e => { if (!e.hasAttribute("tabindex")) e.tabIndex = 0; });
+document.querySelectorAll(".seg span,.filters span").forEach(sp => sp.addEventListener("click", () => { sp.parentElement.querySelectorAll(":scope > span").forEach(x => x.setAttribute("aria-pressed", String(x === sp))); }));
+document.querySelectorAll("#v-preset .item").forEach(it => it.addEventListener("click", () => {
+  document.querySelectorAll("#v-preset .item").forEach(x => x.removeAttribute("aria-pressed")); it.setAttribute("aria-pressed", "true");
+  document.getElementById("noprompt").hidden = true; document.getElementById("promptForm").hidden = false;
+  document.getElementById("rtitleEdit").textContent = it.querySelector("b").textContent;
+}));
+document.querySelectorAll("#v-regex .item,#v-lore .item").forEach(it => it.addEventListener("click", () => { it.parentElement.querySelectorAll(".item").forEach(x => x.removeAttribute("aria-pressed")); it.setAttribute("aria-pressed", "true"); }));
+</script><script src="kit.js"></script>
+</body></html>

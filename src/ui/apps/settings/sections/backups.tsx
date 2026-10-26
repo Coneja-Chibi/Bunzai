@@ -87,14 +87,6 @@ function Backups(): JSX.Element {
   const total = state.snapshots.length;
   return (
     <div className={`${styles.wrap} host-protected`}>
-      <div className={styles.hero}>
-        <div className={styles.eyebrow}>{"Settings · Backups"}</div>
-        <h2 className={styles.marquee}>
-          Spare <em>copies</em>
-        </h2>
-        <p className={styles.voice}>Your library, copied while you work.</p>
-      </div>
-
       <div className={styles.tiles}>
         <div className={styles.tile}>
           <div className={styles.tileLabel}>Last copy</div>
@@ -209,5 +201,14 @@ function Backups(): JSX.Element {
   );
 }
 
-const section: SettingsSection = { id: "backups", label: "Backups", order: 26, Component: Backups };
+const section: SettingsSection = {
+  id: "backups",
+  act: "vault",
+  title: "Spare copies",
+  lede: "Your library, copied while you work.",
+  protectedNote: "Host only. Copies are encrypted exactly like your library; restoring one is a protected prompt.",
+  label: "Backups",
+  order: 26,
+  Component: Backups,
+};
 export default section;

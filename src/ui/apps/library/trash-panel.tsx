@@ -5,7 +5,7 @@
  * Deleted pieces, scenes, and takes stay 3 days (TRASH_DAYS in src/core/trash-window.ts); Restore brings one back under
  * its own id with its history, because a deleted id is never given to anything else.
  */
-import { useCallback, useEffect, useRef, useState, type JSX } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type JSX } from "react";
 import type { GraveSummary } from "../../../stage/contracts/content-store";
 import type { SceneGrave } from "../../../studio/scenes";
 import { daysLeft } from "../../../core/trash-window";
@@ -15,6 +15,8 @@ import { FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, remToPx, useFocusedRan
 import { plural } from "../../../core/text";
 import { icSvg } from "../../_shared/ic-svg";
 import { Button, Segmented } from "../../components/button";
+import { Panel } from "../../components/panel";
+import { deckMeta } from "../../_shared/decks";
 
 /** One Trash row: a piece from the content store, or a scene or take from the chat store. */
 type Row = { key: string; name: string; type: string; scene: boolean; deletedAt: number; /** A removed version never expires (ChatStore rule 32), so it shows no countdown. */ kept?: boolean; restore(): Promise<unknown> };
@@ -89,7 +91,7 @@ function TrashRows({ shown, restore }: { shown: readonly Row[]; restore(g: Row):
               data-index={row.index}
               style={{ position: "absolute", top: 0, left: 0, right: 0, transform: `translateY(${String(row.start)}px)` }}
             >
-              <div className="trow" data-pick={g.key} aria-setsize={shown.length} aria-posinset={row.index + 1}>
+              <div className="trow" data-pick={g.key} style={{ "--a": g.scene ? "var(--deck-character)" : deckMeta(g.type).accent } as CSSProperties} aria-setsize={shown.length} aria-posinset={row.index + 1}>
                 <div className="who">
                   <div className="nm">{g.name}</div>
                   <div className={`ty${g.scene ? " scene" : ""}`}>{g.type} <span className="ago">{g.kept ? "kept until restored" : daysLeft(g.deletedAt, Date.now())}</span></div>
@@ -143,16 +145,16 @@ export function TrashPanel({ ctx, onBack, onRestored }: { ctx: AppContext; onBac
   if (graves === null) return <div className="ltrash-empty" />;
   if (graves.length === 0) {
     return (
-      <div className="ltrash-empty">
+      <Panel as="div" className="ltrash-empty" data-part="library.trash.empty">
         <Icon svg={TRASH_GLYPH} />
         <h2>Trash is empty</h2>
         <p>Deleted pieces and scenes remain here for 3 days, ready to restore.</p>
         <Button onClick={onBack}>Back to library</Button>
-      </div>
+      </Panel>
     );
   }
   return (
-    <section className="ltrash">
+    <Panel className="ltrash" data-part="library.trash.panel">
       <div className="head">
         <Icon svg={TRASH_GLYPH} />
         <div>
@@ -178,32 +180,33 @@ export function TrashPanel({ ctx, onBack, onRestored }: { ctx: AppContext; onBac
         />
       </div>
       <TrashRows shown={shown} restore={restore} />
-    </section>
+    </Panel>
   );
 }
 
 export const TRASH_STYLE = `
-.lrail [data-part="library.trash"] .tile{color:var(--stage-danger-text)}
-.lrail [data-part="library.trash"][data-selected] .tile{background:color-mix(in srgb,var(--stage-danger-edge) 22%,var(--stage-sunken));border-color:var(--stage-danger-edge)}
-.ltrash{max-width:48rem;margin:0 auto;padding:1.75rem;border:1px solid color-mix(in srgb,var(--stage-danger-edge) 45%,transparent);background:color-mix(in srgb,var(--stage-danger-bg) 18%,transparent)}
-.ltrash .head{display:flex;gap:.75rem;align-items:flex-start;margin-bottom:1.5rem;color:var(--stage-danger-text)}
-.ltrash h2{margin:0;font-family:var(--font-fancy);font-size:1.125rem;font-weight:600;color:var(--text)}
-.ltrash p{margin:.25rem 0 0;font-size: var(--text-body);line-height:1.6;color:var(--text-soft)}
+/* the Trash panel: a danger top edge, a Show filter, then open rows with a deck edge (one frame: the panel) */
+.lib .ltrash{max-width:51rem;width:100%;margin:.25rem auto 0;border-top-color:var(--stage-danger-edge);display:flex;flex-direction:column;gap:.875rem}
+.ltrash .head{display:flex;gap:1rem;align-items:flex-start}
+.ltrash .head .ico,.ltrash .head svg{color:var(--stage-danger-text);font-size:1.75rem;margin-top:.25rem}
+.ltrash h2{margin:0;font:700 1.75rem/1.15 var(--font-fancy);color:var(--text)}
+.ltrash p{margin:.375rem 0 0;font-size:.875rem;line-height:1.6;color:var(--text-dim)}
 /* the panel had no scroll box of its own before virtualizing (F1): its rows just grew the page.
    Bounded the same way the drop-in views are (.lview.libstage), so hundreds of graves scroll here
    instead of past the screen with nothing to stop them. */
-.ltrash-rows{max-height:min(38rem,70vh);overflow-y:auto;margin-top:.5rem}
-.ltrash .trow{display:flex;align-items:center;gap:.75rem;padding:.75rem;border:1px solid color-mix(in srgb,var(--text) 8%,transparent);background:color-mix(in srgb,var(--stage-black) 20%,transparent)}
+.ltrash-rows{max-height:min(38rem,70vh);overflow-y:auto}
+.ltrash .trow{display:flex;align-items:center;gap:.875rem;padding:.75rem .875rem;border-left:4px solid var(--a,var(--accent));border-bottom:1px solid var(--hair);transition:transform .2s ease,background .2s ease}
+.ltrash .trow:hover{transform:translateX(4px);background:color-mix(in srgb,var(--a,var(--accent)) 10%,transparent)}
 .ltrash .who{flex:1;min-width:0}
-.ltrash .nm{font-size:.875rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ltrash .ty{margin-top:.125rem;font-size:.75rem;color:var(--text-dim);text-transform:capitalize}
+.ltrash .nm{font:600 1rem var(--font-ui);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ltrash .ty{margin-top:.125rem;font-size:var(--text-meta);color:var(--text-faint);text-transform:capitalize}
 .ltrash .ty.scene{color:var(--deck-character);text-transform:none}
 .ltrash .ty .ago{color:var(--text-faint);text-transform:none}
-.ltrash .tfilter{margin:0 0 .75rem}
+.ltrash .tfilter{margin:0;align-self:flex-start}
 .ltrash .trow > :last-child{flex:none}
-.ltrash-empty{max-width:28rem;margin:12vh auto 0;text-align:center;color:var(--text-dim)}
-.ltrash-empty h2{margin:.75rem 0 0;font-family:var(--font-fancy);font-size:1.25rem;color:var(--text)}
-.ltrash-empty p{margin:.375rem 0 0;font-size: var(--text-body);color:var(--text-soft)}
-.ltrash-empty > :last-child{margin-top:1.125rem}
-@container (max-width:40rem){.ltrash{padding:1.125rem}}
+.lib .ltrash-empty{max-width:35rem;margin:6vh auto 0;padding:2rem;display:flex;flex-direction:column;align-items:center;gap:.5rem;text-align:center;color:var(--stage-danger-text)}
+.ltrash-empty h2{margin:.5rem 0 0;font:700 1.625rem/1.2 var(--font-fancy);color:var(--text)}
+.ltrash-empty p{margin:0;font:.9375rem/1.55 var(--font-ui);color:var(--text-dim)}
+.ltrash-empty > :last-child{margin-top:.75rem}
+@container (max-width:40rem){.lib .ltrash{padding:1.125rem}}
 `;

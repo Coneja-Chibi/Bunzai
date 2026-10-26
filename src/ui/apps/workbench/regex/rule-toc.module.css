@@ -1,15 +1,17 @@
 /**
- * The rule table of contents (design/vs-regex-editor.html .toc, 1:1): quiet rows of rule name +
- * a COMPUTED "does what" line + an on/off pip + a slow-chip placeholder, with a Select toggle and a
- * "+ New rule" foot. One class name lives in exactly this module (merged into regex-styles).
+ * The rule table of contents (Premiere restyle): open rows of rule name + a COMPUTED "does what" line + an on/off
+ * pip + a slow tag, with a Select toggle and a "+ New rule" foot. The column is tinted and divided from the page by
+ * one hairline; it is not a box. One class name lives in exactly this module (merged into regex-styles).
  */
 
 .toc {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
   display: flex;
   flex-direction: column;
   height: 100%;
   min-height: 0;
-  border-right: 2px solid var(--stage-seam);
+  border-right: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: color-mix(in srgb, var(--stage-black) 35%, transparent);
   padding: 0.75rem 0.65rem;
   min-width: 0;
 }
@@ -29,53 +31,44 @@
 }
 
 .tocTitle {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
-  margin: 0 0 0.5rem;
+  font: 700 1rem/1.2 var(--font-ui);
+  color: var(--text);
+  margin: 0 0 0.6rem;
+  padding: 0 0.35rem;
   display: flex;
   align-items: center;
 }
 
 .pip {
-  width: 0.34rem;
-  height: 0.34rem;
+  width: 0.5rem;
+  height: 0.5rem;
   flex: none;
 }
 
 .pipOn {
-  background: var(--a, var(--accent));
+  background: var(--premiere-gold);
 }
 
 .pipOff {
-  background: var(--stage-faint);
+  background: color-mix(in srgb, var(--text) 25%, transparent);
 }
 
 .slowChip {
   margin-left: auto;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-warn);
-  color: var(--stage-warn);
-  padding: 0.04rem 0.26rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  color: color-mix(in srgb, var(--accent) 55%, var(--text));
+  padding: 0.04rem 0.5rem;
   flex: none;
 }
 
-/* the quiet slow chip (R4 health): a heavy pattern flagged at author time, never a blocker */
+/* the quiet slow tag (R4 health): a heavy pattern flagged at author time, never a blocker */
 .trowSlow {
   flex: none;
-  font: 700 var(--text-control) var(--font-mono);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  border: 1px solid var(--stage-warn);
-  color: var(--stage-warn);
-  padding: 0.08rem 0.28rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  color: color-mix(in srgb, var(--accent) 55%, var(--text));
+  padding: 0.04rem 0.5rem;
   margin-left: auto;
 }
 

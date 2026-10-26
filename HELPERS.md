@@ -13,4 +13,4 @@ Before adding a helper, find its existing home here and extend that module when 
 - shared: 6 exports in [the helper index](docs/generated/helpers/shared.md)
 - stage: 76 exports in [the helper index](docs/generated/helpers/stage.md)
 - studio: 16 exports in [the helper index](docs/generated/helpers/studio.md)
-- ui: 332 exports in [the helper index](docs/generated/helpers/ui.md)
+- ui: 333 exports in [the helper index](docs/generated/helpers/ui.md)

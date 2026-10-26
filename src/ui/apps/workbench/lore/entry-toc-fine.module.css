@@ -8,7 +8,7 @@
 }
 
 .texpPanel {
-  border: 1px solid var(--stage-seam);
+  border: 1px solid var(--bk-line-control);
   background: var(--stage-row);
   overflow: hidden;
 }
@@ -25,8 +25,8 @@
   align-items: flex-start;
   gap: 0.22rem;
   padding: 0.4rem 0.45rem 0.42rem;
-  border-right: 1px solid var(--stage-seam);
-  border-bottom: 1px solid var(--stage-seam);
+  border-right: 1px solid var(--bk-line-control);
+  border-bottom: 1px solid var(--bk-line-control);
   min-width: 0;
   background: transparent;
 }
@@ -40,12 +40,10 @@
 }
 
 .chromLab {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
 }
 
 .chromIn {
@@ -54,9 +52,9 @@
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: var(--text-control);
-  border: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-card);
+  border: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text);
   text-align: center;
   padding: 0.18rem 0.2rem;
 }
@@ -67,38 +65,34 @@
   align-items: center;
   gap: 0.55rem 0.75rem;
   padding: 0.35rem 0.45rem;
-  border-top: 1px solid var(--stage-seam);
-  background: var(--stage-sunken);
+  border-top: 1px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
 }
 
 .texpAct {
   border: 0;
   background: none;
   padding: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 0.14em;
 }
 
 .texpAct:hover {
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 .texpActDanger {
   border: 0;
   background: none;
   padding: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-control);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
   color: var(--stage-danger-text);
   cursor: pointer;
   text-decoration: underline;
@@ -118,11 +112,9 @@
 }
 
 .texpK {
-  font-family: var(--font-mono);
+  font-family: var(--font-ui);
   font-size: var(--text-control);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--stage-soft);
+  color: var(--text-soft);
   flex: none;
 }
 
@@ -131,9 +123,9 @@
   font-family: var(--font-mono);
   font-size: var(--text-control);
   width: 3.2rem;
-  border: 2px solid var(--stage-seam);
-  background: var(--stage-sunken);
-  color: var(--stage-soft);
+  border: 2px solid var(--bk-line-control);
+  background: var(--bk-surface-field);
+  color: var(--text-soft);
   text-align: center;
   padding: 0.12rem;
 }
@@ -160,7 +152,7 @@
 }
 
 .texpSwitchOff {
-  background: var(--stage-faint);
+  background: color-mix(in srgb, var(--text) 25%, transparent);
 }
 
 .texpSwitchOff::after {
@@ -169,12 +161,11 @@
 }
 
 .texpLabel {
-  font-family: var(--font-mono);
+  /* clone-ok: pane-local label typography owned by this pane so each pane restyles on its own; shared would couple unrelated panes */
+  font-family: var(--font-ui);
   font-weight: 700;
   font-size: var(--text-meta);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--stage-text-dim);
+  color: var(--text-dim);
   margin: 0.35rem 0 0.15rem;
 }
 
@@ -192,18 +183,18 @@
   width: 1.55rem;
   height: 1.55rem;
   padding: 0;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   border-radius: 0;
   background: var(--stage-row);
-  color: var(--stage-mute);
+  color: var(--text-dim);
   cursor: pointer;
   flex: none;
   line-height: 0;
 }
 
 .modeBtn:hover:not(:disabled) {
-  color: var(--stage-card);
-  border-color: var(--stage-line, var(--stage-seam));
+  color: var(--text);
+  border-color: var(--stage-line, var(--bk-line-control));
 }
 
 .modeBtnGated {
@@ -244,10 +235,10 @@
   width: 1.55rem;
   height: 1.55rem;
   padding: 0;
-  border: 2px solid var(--stage-seam);
+  border: 2px solid var(--bk-line-control);
   border-radius: 0;
   background: var(--stage-row);
-  color: var(--stage-soft);
+  color: var(--text-soft);
   cursor: pointer;
   flex: none;
   line-height: 0;
@@ -255,25 +246,25 @@
 
 .iconBtn:hover {
   border-color: var(--a, var(--accent));
-  color: var(--stage-card);
+  color: var(--text);
 }
 
 .iconInh {
-  border-color: var(--stage-seam);
-  color: var(--stage-mute, var(--stage-text-dim));
-  background: var(--stage-sunken);
+  border-color: var(--bk-line-control);
+  color: var(--stage-mute, var(--text-dim));
+  background: var(--bk-surface-field);
 }
 
 .iconOn {
   border-color: var(--stage-ok);
   color: var(--stage-ok);
-  background: color-mix(in srgb, var(--stage-ok) 14%, var(--stage-sunken));
+  background: color-mix(in srgb, var(--stage-ok) 14%, var(--bk-surface-field));
 }
 
 .iconOff {
   border-color: var(--stage-warn);
   color: var(--stage-warn);
-  background: color-mix(in srgb, var(--stage-warn) 12%, var(--stage-sunken));
+  background: color-mix(in srgb, var(--stage-warn) 12%, var(--bk-surface-field));
 }
 
 .iconDanger {

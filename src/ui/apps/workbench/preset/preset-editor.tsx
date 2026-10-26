@@ -36,6 +36,7 @@ import { PromptEditPanel } from "./prompt-edit-panel";
 import { LiveBuild } from "./live-build";
 import { LivePreview } from "./live-preview";
 import { SplitPane } from "../../../components/split-pane";
+import { Panel } from "../../../components/panel";
 import { useReseedOnReread } from "../use-reseed";
 import { EditorConflict } from "../editor-conflict";
 import { apiStatusIs } from "../../../_shared/api-fetch";
@@ -396,6 +397,8 @@ export function PresetEditorView({ entity, revision, ctx, piece, topRight }: Pre
     <div className={s.root} style={accentVars(piece.accent) as CSSProperties | undefined}>
       <EditorEhead
         mark={monogram}
+        kind="Preset"
+        deck="preset"
         name={body.name}
         onNameChange={(v) => editPreset((b) => ({ ...b, name: v }), bodyFieldTouch("name"))}
         namePlaceholder="Untitled preset"
@@ -433,14 +436,16 @@ export function PresetEditorView({ entity, revision, ctx, piece, topRight }: Pre
           ]} />
         </div>
       ) : (
-        <SplitPane
-          className={s.splitPaneHost}
-          stored={ctx.prefs.get(PREF_SPLIT)}
-          onSplit={(next) => { ctx.prefs.set(PREF_SPLIT, next); }}
-          label="Resize the prompt list and the rail"
-          left={listPane}
-          right={railPane}
-        />
+        <Panel deck="preset" data-part="preset.workspace" className={s.workspace}>
+          <SplitPane
+            className={s.splitPaneHost}
+            stored={ctx.prefs.get(PREF_SPLIT)}
+            onSplit={(next) => { ctx.prefs.set(PREF_SPLIT, next); }}
+            label="Resize the prompt list and the rail"
+            left={listPane}
+            right={railPane}
+          />
+        </Panel>
       )}
     </div>
   );

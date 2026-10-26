@@ -348,7 +348,9 @@ async function shapeFiles(): Promise<string[]> {
 // 2026-10-26, Messenger settings and accessibility: settings-shape.ts adds four key names, "scenes.characterDefaults" (a new scene's
 // starting setup per character) and "ui.textSize", "ui.reduceMotion", "ui.highContrast". ADDITIVE and COMPATIBLE: unset keys read as
 // their defaults and an older build keeps them as unknown keys. No migration, no SCHEMA_BUMPS entry. The pin was recomputed.
-const PINNED_SHAPE_HASH = "92c5461709ab9a9ac9024b2ace2656e1483790ea3cb71074a03570b0a8c79aba";
+// 2026-10-26, Stage lights (Settings > Appearance): settings-shape.ts adds the key name "ui.stageLights" and the value set moving | still | off; parseSettings drops any other value. ADDITIVE and
+// COMPATIBLE: an unset key reads as moving and an older build keeps it as an unknown key. No migration, no SCHEMA_BUMPS entry. The pin was recomputed.
+const PINNED_SHAPE_HASH = "5d29687118ddf57c8ef897fbf356d75773120bf25d1a3283a4524f6a6e001e4f";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

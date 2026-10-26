@@ -1,0 +1,636 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premiere: The Library</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules. Tokens only; the kit has no card, ticket, sheet or toolbar, so they live here. */
+button { font: inherit; color: inherit; }
+.dim { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.soft { color: color-mix(in srgb, var(--premiere-text) 80%, transparent); }
+.ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+[tabindex], .btn { outline-offset: 2px; }
+[tabindex]:focus-visible, .btn:focus-visible { outline: 2px solid var(--premiere-gold); }
+.btn { cursor: pointer; }
+.btn.sm { min-height: 32px; padding: 5px 12px; font-size: 13px; }
+.btn.danger { border-color: var(--premiere-rose); color: color-mix(in srgb, var(--premiere-rose) 45%, white); }
+.btn[disabled] { opacity: .45; cursor: default; }
+.seg span { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.seg .ico { width: 15px; height: 15px; }
+
+/* wireframe-only state switcher, not proposed UI */
+.wfbar { max-width: 1440px; margin: 0 auto; padding: 10px 40px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font: 13px var(--font-ui); border-bottom: 1px dashed color-mix(in srgb, var(--premiere-gold) 40%, transparent); }
+@media (max-width: 720px) { .wfbar, .wf-note { padding-left: 16px; padding-right: 16px; } }
+
+/* Room header: the marquee, plus the actions and the status line folded in (replaces the top bar and Reload Studio). */
+.hero-actions { margin-top: 14px; display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; align-items: center; }
+.status { margin-top: 18px; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; padding: 6px 16px; font-size: 13px; border: 1px solid color-mix(in srgb, var(--premiere-gold) 35%, transparent); background: color-mix(in srgb, var(--premiere-hard) 45%, transparent); }
+.status b { font-weight: 600; }
+.status .num { color: var(--premiere-gold); }
+
+/* Deck tickets: the rail turned into a row of admit-one stubs. */
+.tickets { display: grid; grid-template-columns: repeat(auto-fit, minmax(134px, 1fr)); gap: 12px; margin-top: 8px; position: relative; }
+#marquee { padding: 8px 0 20px; } #marquee h1 { margin-top: 10px; } #marquee .lede { margin-top: 8px; font-size: 15px; max-width: 720px; }
+.ticket { position: relative; text-align: left; cursor: pointer; padding: 14px 16px 14px; min-height: 112px; display: flex; flex-direction: column; gap: 2px;
+  background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 80%, transparent);
+  border: 0; border-top: 3px solid var(--deck, var(--deck-fog)); backdrop-filter: blur(6px);
+  -webkit-mask: radial-gradient(circle 8px at 0 56%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 56%, #0000 97%, #000) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle 8px at 0 56%, #0000 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle 8px at 100% 56%, #0000 97%, #000) right / 51% 100% no-repeat;
+  transition: transform .2s ease, background .2s ease; }
+.ticket:hover { transform: translateY(-3px); }
+.ticket .top { display: flex; align-items: center; justify-content: space-between; color: var(--deck, var(--deck-fog)); }
+.ticket .count { font: 700 30px/1 var(--font-fancy); color: var(--premiere-text); }
+.ticket .count.zero { color: color-mix(in srgb, var(--premiere-text) 35%, transparent); }
+.ticket .nm { margin-top: 10px; font-weight: 700; font-size: 15px; }
+.ticket .bl { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); line-height: 1.35; }
+.ticket::after { content: ""; position: absolute; left: 16px; right: 16px; top: 62px; border-top: 1px dashed color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.ticket[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 16%, var(--premiere-hard)); box-shadow: inset 0 0 0 2px var(--premiere-rose); }
+.ticket[aria-pressed="true"] .bl::before { content: "On stage. "; color: var(--premiere-gold); font-weight: 600; }
+.ticket.trash { --deck: color-mix(in srgb, var(--premiere-rose) 70%, var(--premiere-text)); border-top-style: dashed; }
+
+/* Groups (collections): a labelled shelf of chips, not a hidden bar. */
+.groups { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 24px; }
+.groups .lbl { font: 600 13px var(--font-ui); color: var(--premiere-gold); margin-right: 4px; }
+.gchip { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: color-mix(in srgb, var(--premiere-hard) 50%, transparent); }
+.gchip[aria-pressed="true"] { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 18%, transparent); }
+.gchip > span { padding: 5px 12px; font: 600 13px var(--font-ui); display: inline-flex; gap: 8px; align-items: center; cursor: pointer; }
+.gchip > span.gact { align-self: stretch; border-left: 1px solid color-mix(in srgb, var(--premiere-text) 15%, transparent); font-weight: 500; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.gchip > span.gact.rm:hover { color: color-mix(in srgb, var(--premiere-rose) 50%, white); }
+.gchip .num { font-size: 12px; color: var(--premiere-gold); }
+.gnew { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; font: 13px var(--font-ui); border: 1px dashed color-mix(in srgb, var(--premiere-gold) 55%, transparent); background: none; color: var(--premiere-text); cursor: pointer; }
+.gnote { font-size: 13px; color: var(--premiere-gold); }
+
+/* Damage notice: a plain, calm panel; not a red alarm. */
+.damage { margin-top: 22px; padding: 16px 20px; border-left: 4px solid var(--premiere-rose); }
+.damage .hd { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.damage .hd b { font-size: 15px; }
+.damage .hd .btn { margin-left: auto; }
+.damage p { margin-top: 4px; font-size: 14px; }
+.damage details { margin-top: 10px; font-size: 13px; }
+.damage summary { cursor: pointer; color: var(--premiere-gold); font-weight: 600; }
+.damage li { margin: 6px 0 0 18px; }
+.damage code { font-size: 12px; }
+
+/* Toolbar: one translucent bar under the tickets. */
+.bar { margin-top: 24px; padding: 14px 16px; display: grid; gap: 12px; }
+.bar .l1 { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
+.find { flex: 1 1 340px; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 14px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: color-mix(in srgb, var(--premiere-hard) 70%, transparent); }
+.find:focus-within { border-color: var(--premiere-rose); }
+.find input { flex: 1; min-width: 0; border: 0; background: none; color: var(--premiere-text); font: 15px var(--font-ui); outline: none; }
+.find input::placeholder { color: color-mix(in srgb, var(--premiere-text) 45%, transparent); }
+.find .ico { color: var(--premiere-gold); }
+.clr { cursor: pointer; font-size: 13px; color: var(--premiere-gold); font-weight: 600; }
+.ctl-group { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.ctl-group > .k { color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.dial { display: inline-flex; gap: 3px; align-items: flex-end; height: 28px; cursor: pointer; }
+.dial i { display: block; width: 14px; background: color-mix(in srgb, var(--premiere-text) 22%, transparent); }
+.dial i.on { background: var(--premiere-rose); }
+.dial i:nth-child(1) { height: 8px; } .dial i:nth-child(2) { height: 12px; } .dial i:nth-child(3) { height: 17px; } .dial i:nth-child(4) { height: 22px; } .dial i:nth-child(5) { height: 28px; }
+.bar .l2 { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); align-items: center; }
+.bar .l2 .res { color: var(--premiere-text); font-weight: 600; }
+.bar .l2 .hintwarn { color: var(--premiere-gold); }
+
+/* Sections: a numbered act per deck. */
+.act { margin-top: 44px; }
+.act-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-bottom: 12px; border-bottom: 1px solid color-mix(in srgb, var(--deck) 45%, transparent); margin-bottom: 18px; }
+.act-head .num-r { font: 700 22px var(--font-fancy); color: var(--premiere-gold); min-width: 34px; }
+.act-head h2 { font: 700 clamp(22px, 2.4vw, 30px)/1.1 var(--font-fancy); letter-spacing: .02em; }
+.act-head h2 em { font-style: normal; color: var(--deck); }
+.act-head .tag { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.act-head .sp { flex: 1; }
+.act-head .seg { flex: none; }
+.solo-note { font-size: 13px; color: var(--premiere-gold); margin-top: -8px; margin-bottom: 14px; }
+
+.flow { display: flex; gap: 20px; padding: 4px 6px 20px 2px; }
+.flow.carousel { overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.flow.carousel > * { scroll-snap-align: start; }
+.flow.grid { flex-wrap: wrap; }
+
+/* Piece card: a portrait program cover. */
+.pc { position: relative; flex: none; width: var(--cw, 210px); display: flex; flex-direction: column; text-align: left; cursor: pointer;
+  background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 86%, transparent);
+  border: 3px solid var(--premiere-hard); border-top-color: var(--deck); box-shadow: 5px 5px var(--premiere-hard);
+  transition: transform .25s ease, box-shadow .25s ease; }
+.pc:hover { transform: translateY(-5px); box-shadow: 5px 5px var(--premiere-hard), 0 18px 50px color-mix(in srgb, var(--deck) 28%, transparent); }
+.pc[aria-pressed="true"] { border-color: var(--premiere-rose); box-shadow: 5px 5px var(--premiere-rose); }
+.pc.open { border-color: var(--premiere-gold); }
+.art { position: relative; aspect-ratio: 3 / 4; overflow: hidden; display: grid; place-items: center;
+  background: radial-gradient(ellipse 70% 55% at 50% 30%, color-mix(in srgb, var(--deck) 38%, transparent), transparent 70%), linear-gradient(170deg, color-mix(in srgb, var(--deck) 22%, var(--premiere-hard)), var(--premiere-hard) 92%); }
+.art.has { background: radial-gradient(circle at 30% 24%, color-mix(in srgb, var(--premiere-violet) 55%, transparent), transparent 46%), radial-gradient(circle at 74% 70%, color-mix(in srgb, var(--premiere-rose) 40%, transparent), transparent 50%), linear-gradient(170deg, color-mix(in srgb, var(--deck) 40%, var(--premiere-hard)), var(--premiere-hard) 95%); }
+.art .ini { font: 700 clamp(40px, 5vw, 64px)/1 var(--font-fancy); color: color-mix(in srgb, var(--premiere-text) 82%, transparent); text-shadow: 0 2px 24px color-mix(in srgb, var(--deck) 60%, transparent); }
+.art::after { content: ""; position: absolute; inset: auto 0 0 0; height: 40%; background: linear-gradient(transparent, color-mix(in srgb, var(--premiere-hard) 80%, transparent)); }
+.kind { position: absolute; left: 10px; top: 10px; z-index: 2; padding: 3px 9px; font: 700 12px var(--font-ui); background: var(--deck); color: var(--premiere-hard); }
+.tick-mark { position: absolute; right: 10px; top: 10px; z-index: 2; width: 24px; height: 24px; display: grid; place-items: center; border: 2px solid color-mix(in srgb, var(--premiere-text) 55%, transparent); background: color-mix(in srgb, var(--premiere-hard) 60%, transparent); }
+.pc[aria-pressed="true"] .tick-mark { background: var(--premiere-rose); border-color: var(--premiere-rose); }
+.tick-mark svg { width: 14px; height: 14px; stroke: var(--premiere-text); fill: none; stroke-width: 3; opacity: 0; }
+.pc[aria-pressed="true"] .tick-mark svg { opacity: 1; }
+.onbench { position: absolute; left: 10px; bottom: 10px; z-index: 2; padding: 3px 9px; font: 700 12px var(--font-ui); border: 1px solid var(--premiere-gold); color: var(--premiere-gold); background: color-mix(in srgb, var(--premiere-hard) 75%, transparent); }
+.pc .body { padding: 12px 14px 14px; display: grid; gap: 3px; }
+.pc .body b { font-size: 15px; line-height: 1.25; }
+.pc .meta { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.pc .foot { padding: 0 14px 14px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.ghost { flex: none; width: var(--cw, 210px); min-height: 200px; display: grid; place-items: center; text-align: center; padding: 18px; gap: 6px; align-content: center; cursor: pointer;
+  border: 2px dashed color-mix(in srgb, var(--deck) 70%, transparent); background: color-mix(in srgb, var(--premiere-hard) 35%, transparent); font-weight: 700; font-size: 14px; color: var(--premiere-text); }
+.ghost small { font-weight: 400; font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.empty-deck { border: 2px dashed color-mix(in srgb, var(--deck) 55%, transparent); padding: 28px; text-align: center; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); font-size: 14px; background: color-mix(in srgb, var(--premiere-hard) 35%, transparent); }
+
+/* Tiles: art-first small squares. */
+.tile { position: relative; flex: none; width: calc(var(--cw, 210px) * .62); aspect-ratio: 1; cursor: pointer; text-align: left; border: 3px solid var(--premiere-hard); border-top-color: var(--deck); box-shadow: 4px 4px var(--premiere-hard); overflow: hidden; display: grid; place-items: center; transition: transform .2s ease; }
+.tile:hover { transform: translateY(-4px); }
+.tile[aria-pressed="true"] { border-color: var(--premiere-rose); box-shadow: 4px 4px var(--premiere-rose); }
+.tile .art { position: absolute; inset: 0; aspect-ratio: auto; }
+.tile .art .ini { font-size: 36px; }
+.tile .cap { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 8px 10px; font: 600 13px/1.25 var(--font-ui); background: color-mix(in srgb, var(--premiere-hard) 78%, transparent); }
+.tile .tick-mark { width: 20px; height: 20px; }
+
+/* List: a programme listing. */
+.listing { display: grid; gap: 6px; }
+.lrow { display: grid; grid-template-columns: 44px 1fr auto; gap: 14px; align-items: center; padding: 8px 14px 8px 8px; cursor: pointer; text-align: left;
+  background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 78%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); border-left: 4px solid var(--deck); }
+.lrow:hover { background: color-mix(in srgb, var(--premiere-violet) 14%, var(--premiere-hard)); }
+.lrow[aria-pressed="true"] { border-color: var(--premiere-rose); border-left-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 12%, var(--premiere-hard)); }
+.lrow .th { width: 44px; height: 44px; display: grid; place-items: center; font: 700 18px var(--font-fancy); background: linear-gradient(160deg, color-mix(in srgb, var(--deck) 40%, var(--premiere-hard)), var(--premiere-hard)); }
+.lrow .nm { font-weight: 600; font-size: 15px; }
+.lrow .sub { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.pill { display: inline-block; padding: 3px 9px; font: 700 12px var(--font-ui); border: 1px solid var(--premiere-gold); color: var(--premiere-gold); }
+.pill.rose { background: var(--premiere-rose); border-color: var(--premiere-rose); color: var(--premiere-text); }
+
+/* Show: one piece in the spotlight, the rest as a strip. */
+.spot { display: grid; grid-template-columns: minmax(220px, 340px) 1fr; gap: 32px; align-items: start; }
+.spot .pc { width: 100%; cursor: default; }
+.spot .info { display: grid; gap: 14px; align-content: start; }
+.spot .info h3 { font: 700 clamp(26px, 3vw, 38px)/1.1 var(--font-fancy); }
+.spot .info p { font-size: 15px; max-width: 56ch; }
+.spot .nav { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.thumbs { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.thumbs .t { width: 54px; height: 54px; display: grid; place-items: center; font: 700 18px var(--font-fancy); cursor: pointer; border: 2px solid color-mix(in srgb, var(--premiere-text) 20%, transparent); background: linear-gradient(160deg, color-mix(in srgb, var(--deck) 40%, var(--premiere-hard)), var(--premiere-hard)); }
+.thumbs .t[aria-current="true"] { border-color: var(--premiere-gold); box-shadow: 0 0 0 2px var(--premiere-gold); }
+@media (max-width: 720px) { .spot { grid-template-columns: 1fr; } .spot .pc { max-width: 280px; } }
+
+/* Shelf: books, sets and profiles. */
+.shelf-find { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 0 12px; margin-bottom: 16px; max-width: 420px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: color-mix(in srgb, var(--premiere-hard) 70%, transparent); font-size: 14px; }
+.shelf-find .ico { color: var(--premiere-gold); width: 16px; height: 16px; }
+.books { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 16px; }
+.book { position: relative; display: grid; grid-template-columns: 14px 1fr; cursor: pointer; text-align: left; min-height: 120px;
+  background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 86%, transparent); border: 3px solid var(--premiere-hard); box-shadow: 5px 5px var(--premiere-hard); }
+.book:hover { transform: translateY(-3px); }
+.book[aria-pressed="true"] { border-color: var(--premiere-rose); box-shadow: 5px 5px var(--premiere-rose); }
+.book.off { opacity: .72; }
+.book .spine { background: linear-gradient(var(--deck), color-mix(in srgb, var(--deck) 45%, var(--premiere-hard))); }
+.book .bd { padding: 14px 16px; display: grid; gap: 8px; align-content: start; }
+.book .bd b { font: 700 17px/1.25 var(--font-fancy); }
+.book .row2 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; }
+.book .row2 .sp { flex: 1; }
+.book .pill { position: absolute; right: 10px; top: 10px; }
+.mergehint { margin-top: 16px; padding: 10px 14px; border: 1px dashed color-mix(in srgb, var(--premiere-gold) 50%, transparent); font-size: 13px; color: var(--premiere-gold); }
+.sw { cursor: pointer; }
+
+/* Notices on the stage. */
+.nomatch { padding: 28px; display: grid; gap: 10px; max-width: 720px; margin: 32px auto 0; }
+.nomatch h2 { font-size: 22px; }
+.nomatch .row3 { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 13px; }
+.nomatch .chip { cursor: pointer; }
+.trash:not(.ticket) { max-width: 860px; margin: 40px auto 0; }
+.trash .head { display: flex; gap: 16px; align-items: flex-start; }
+.trash .head .ico { width: 30px; height: 30px; color: color-mix(in srgb, var(--premiere-rose) 60%, white); margin-top: 4px; }
+.trash h2 { font-size: 28px; }
+.trash .hp { margin-top: 6px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); max-width: 64ch; }
+.trash .tools { margin: 20px 0 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.grave { display: flex; align-items: center; gap: 14px; padding: 12px 14px; margin-top: 8px; border: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); border-left: 4px solid var(--deck, var(--deck-fog)); background: color-mix(in srgb, var(--premiere-hard) 40%, transparent); }
+.grave .who { flex: 1; min-width: 0; }
+.grave .nm { font-weight: 600; }
+.grave .sub { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.trash-empty { text-align: center; max-width: 440px; margin: 64px auto 0; display: grid; gap: 10px; justify-items: center; }
+.trash-empty h2 { font-size: 26px; }
+
+/* Full-room states: first landing doors and the unreachable studio. */
+.doors { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 28px; max-width: 920px; margin: 8px auto 0; }
+.door { min-height: 300px; display: grid; place-items: center; text-align: center; padding: 32px; gap: 12px; align-content: center; cursor: pointer;
+  background: color-mix(in srgb, color-mix(in srgb, var(--premiere-violet) 8%, var(--premiere-hard)) 82%, transparent); border: 3px solid var(--premiere-hard); box-shadow: 5px 5px var(--premiere-hard); transition: transform .25s ease; }
+.door:hover { transform: translateY(-5px); }
+.door.primary { border-color: var(--premiere-rose); box-shadow: 5px 5px var(--premiere-rose); }
+.door h2 { font: 700 26px/1.2 var(--font-fancy); }
+.door .ico { width: 44px; height: 44px; color: var(--premiere-gold); }
+.voice { text-align: center; margin-top: 24px; font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.unreach { max-width: 560px; margin: 24px auto 0; text-align: center; display: grid; gap: 14px; justify-items: center; }
+
+/* Staging bar and sheets. */
+.sendbar { position: fixed; z-index: 30; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; justify-content: center; max-width: calc(100vw - 32px); padding: 12px 18px;
+  background: color-mix(in srgb, var(--premiere-hard) 88%, transparent); border: 3px solid var(--premiere-rose); box-shadow: 5px 5px var(--premiere-hard), 0 0 60px color-mix(in srgb, var(--premiere-rose) 30%, transparent); backdrop-filter: blur(8px); }
+.sendbar .cnt { font: 700 20px var(--font-fancy); margin-right: 6px; }
+.scrim { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--premiere-hard) 72%, transparent); backdrop-filter: blur(4px); }
+.sheet { width: min(680px, 100%); max-height: calc(100vh - 32px); display: flex; flex-direction: column; padding: 28px; gap: 6px; }
+.sheet .imptitle { font: 700 28px/1.15 var(--font-fancy); margin-top: 8px; }
+.sheet .impsub { font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); margin: 6px 0 14px; }
+.improws { overflow-y: auto; display: grid; gap: 8px; padding: 2px 4px 6px 2px; }
+.improw { display: grid; grid-template-columns: 24px 1fr; gap: 12px; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); border-left: 4px solid var(--deck, var(--deck-fog)); background: color-mix(in srgb, var(--premiere-hard) 40%, transparent); cursor: pointer; }
+.improw.on { border-color: var(--premiere-rose); border-left-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 10%, var(--premiere-hard)); }
+.improw.bad, .improw.dupe { cursor: default; grid-template-columns: 1fr; }
+.improw.bad { border-left-color: var(--premiere-rose); }
+.improw b { font-size: 15px; }
+.improw p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); margin-top: 2px; }
+.improw .flag { font: 700 12px var(--font-ui); color: color-mix(in srgb, var(--premiere-rose) 55%, white); display: block; margin-bottom: 2px; }
+.cb { width: 22px; height: 22px; border: 2px solid color-mix(in srgb, var(--premiere-text) 55%, transparent); display: grid; place-items: center; background: var(--premiere-hard); margin-top: 2px; }
+.improw.on .cb { background: var(--premiere-rose); border-color: var(--premiere-rose); }
+.cb svg { width: 13px; height: 13px; stroke: var(--premiere-text); fill: none; stroke-width: 3; opacity: 0; }
+.improw.on .cb svg { opacity: 1; }
+.impacts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+.impacts .sp { flex: 1; }
+@media (max-width: 720px) { .act-head .seg { flex: 1 1 100%; } .act-head .seg span { padding: 8px 9px; flex: 1; justify-content: center; } .act-head .seg .ico { display: none; } .tickets { grid-template-columns: repeat(2, 1fr); } .sendbar { bottom: 8px; left: 12px; right: 12px; transform: none; max-width: none; } .sheet { padding: 20px; } }
+@media (prefers-reduced-motion: reduce) { .ticket, .pc, .tile, .door { transition: none; } }
+</style></head>
+<body><div class="wf-note">WIREFRAME. The Library in the Premiere house style. Numbered callouts are explained below. The row of buttons under this note is wireframe-only: it flips the room between its full-room states. Everything inside the room is clickable (decks, views, search, staging, import, delete, Trash).</div>
+<div class="wfbar" id="wfbar"><span class="dim">States:</span>
+  <button class="chip" data-wf="collection" aria-pressed="true">Collection</button>
+  <button class="chip" data-wf="landing" aria-pressed="false">First landing (empty studio)</button>
+  <button class="chip" data-wf="unreachable" aria-pressed="false">Studio unreachable</button>
+  <button class="chip" data-wf="damage" aria-pressed="true">Damage notice</button></div>
+<div class="stage"><div class="rays"><canvas id="rays"></canvas></div><main class="room" id="room">
+  <header class="marquee" id="marquee">
+    <div class="kicker">Bunraku <span aria-hidden="true">&middot;</span> your collection <span class="co">1</span></div>
+    <h1>The Library</h1>
+    <p class="lede">Every character, world, persona and preset in your studio, shelved by deck. Stage what you need, then send it to the Workbench.</p>
+    <div class="hero-actions">
+      <button class="btn primary big" data-act="open-import" title="Import files into the studio">+ Add to the library</button>
+      <button class="btn quiet" data-act="reload" title="Read the studio folder again">Reload studio</button>
+      <div class="status" id="status" role="status" style="margin-top:0"></div>
+    </div>
+  </header>
+  <div id="body"></div>
+</main></div>
+<div id="sheets"></div>
+<ol class="legend">
+  <li><span class="co">1</span> Room header. The IDE-era rail title, the top status line and the Reload Studio button all fold into one Marquee: Cinzel title, a plain-language lede, the primary Add to the library action and the status line (what is shown, studio total). Today these live in three separate strips.</li>
+  <li><span class="co">2</span> Deck tickets replace the left rail. Same eight decks plus Trash, same counts, same click rule (a ticket shows that deck alone, click it again to show every deck), now as admit-one stubs in deck colors across the top. The count is the big number, so the collection reads at a glance. While a search runs the counts become match counts. Phones stack them two across.</li>
+  <li><span class="co">3</span> Groups (collections) get a labelled shelf instead of a bar that hides until something is staged. Click a chip to filter (it writes <code>collection:id</code> into the search, as today), Add puts staged pieces in, Remove deletes the group only, New group opens inline naming.</li>
+  <li><span class="co">4</span> One toolbar panel: search with the full field syntax, All / Recent order, Carousel / Grid layout, art size dial and Select all. The result line sits under it and says whether a shelf is filtered or empty. The dial is a drawn five-step control, not a native slider.</li>
+  <li><span class="co">5</span> Per-deck view switch: Cards, Tiles, Shelf (Sets for regex, Profiles for personas), Show and List. Each deck remembers its own view, as today. The small script here switches them for real, including the spotlight and the book shelf with Split, Copy and merge.</li>
+  <li><span class="co">6</span> Each deck is a numbered act: gold numeral, Cinzel name in the deck color, count, its own view switch and its own New button. Empty decks keep their ghost card. A deck with a search match elsewhere says so.</li>
+  <li><span class="co">7</span> Piece card: portrait cover with the kind flag in the deck color, a drawn check for staging, and an on the workbench stamp in gold. Characters get Start scene on the card. Lorebooks and regex sets carry their on/off switch, Split and Copy. Staged cards take the rose edge.</li>
+  <li><span class="co">8</span> The staging bar floats at the bottom while pieces are staged: count, Send to the Workbench, Delete, Select all, Clear. Delete opens the Trash confirm (3 days to restore). Drag across empty space sweep-selects, as today.</li>
+  <li><span class="co">9</span> Damage notice stays a calm panel with a rose edge, not an alarm: count, Dismiss (only in the main room), the reassurance that files were not changed, and the file list with reasons behind a details control.</li>
+  <li><span class="co">10</span> Trash is a stage of its own: Cinzel title, the 3 day rule, All / Pieces / Scenes filter, Restore per row with days left. The empty Trash has its own state with a way back.</li>
+  <li><span class="co">11</span> Import sheet: dropped or picked files are read first, then shown as receipts you check off. Shows readable pieces, already-on-shelf and healed notes, identical copies, and grouped refusals. Select all, Add more files, Import N, Not now. Global file drops still work anywhere in the room.</li>
+  <li><span class="co">12</span> Full-room states keep their own rules: First landing shows two big doors and nothing else; an unreachable studio never offers start fresh, because the pieces are still on disk. Use the wireframe state buttons to see them.</li>
+</ol>
+<script>
+(function () {
+  var ic = {
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+    book: '<path d="M12 7c-2-2-5-3-9-3v14c4 0 7 1 9 3 2-2 5-3 9-3V4c-4 0-7 1-9 3z"/><path d="M12 7v14"/>',
+    circle: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.5 19c1-3 3.2-4 5.5-4s4.5 1 5.5 4"/>',
+    pack: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/>',
+    sliders: '<path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2"/><circle cx="9" cy="16" r="2"/>',
+    regex: '<path d="M12 4v10M7.5 6.5l9 5M16.5 6.5l-9 5"/><circle cx="6" cy="19" r="1.5"/>',
+    zap: '<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
+    code: '<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M10 13l-2 2 2 2M14 13l2 2-2 2"/>',
+    trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+    search: '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
+    cards: '<rect x="5" y="3" width="14" height="18" rx="1"/>',
+    tiles: '<rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/>',
+    shelf: '<path d="M5 4v16M10 6v14M15 4v16M19 8l2 12"/>',
+    show: '<rect x="3" y="5" width="18" height="14" rx="1"/>',
+    list: '<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    drop: '<path d="M12 15V4M7 9l5-5 5 5M4 17v3h16v-3"/>',
+    check: '<path d="M5 12l5 5 9-10"/>'
+  };
+  function svg(n, cls) { return '<svg class="ico ' + (cls || '') + '" viewBox="0 0 24 24" aria-hidden="true">' + ic[n] + '</svg>'; }
+  function tick() { return '<span class="tick-mark"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span>'; }
+
+  var DECKS = [
+    { k: 'character', one: 'Character', pl: 'Characters', bl: 'Your cast', g: 'user', n: 'New character' },
+    { k: 'lorebook', one: 'Lorebook', pl: 'Lorebooks', bl: 'World knowledge', g: 'book', n: 'New lorebook' },
+    { k: 'persona', one: 'Persona', pl: 'Personas', bl: 'Who you play', g: 'circle', n: 'New persona' },
+    { k: 'pack', one: 'Pack', pl: 'Packs', bl: 'Expressions and art', g: 'pack', n: '' },
+    { k: 'preset', one: 'Preset', pl: 'Presets', bl: 'Prompts and samplers', g: 'sliders', n: 'New preset' },
+    { k: 'regex', one: 'Regex set', pl: 'Regex sets', bl: 'Text transformations', g: 'regex', n: 'New regex set' },
+    { k: 'quickreply', one: 'Quick reply', pl: 'Quick replies', bl: 'One-tap lines', g: 'zap', n: 'New quick replies', deck: 'preset' },
+    { k: 'promptformat', one: 'Prompt format', pl: 'Prompt formats', bl: 'Turn markers for text completion', g: 'code', n: '', deck: 'preset' }
+  ];
+  function P(id, kind, name, from, meta, art, o) { var p = { id: id, kind: kind, name: name, from: from, meta: meta, art: art, rec: 99, on: true, open: false, groups: [] }; for (var x in o) p[x] = o[x]; return p; }
+  var DATA = [
+    P('vera', 'character', 'Vera Linquist', 'SillyTavern', 'Seer of the Saltmarsh', true, { rec: 1, open: true, groups: ['salt', 'fav'] }),
+    P('isolde', 'character', 'Captain Isolde Marsh', 'Chub', 'Harbor pilot, 3 greetings', true, { rec: 3, groups: ['salt'] }),
+    P('mordecai', 'character', 'Mordecai Vane', 'SillyTavern', 'Disgraced coroner', true, { rec: 6, groups: ['noir'] }),
+    P('pip', 'character', 'Pip and the Lantern Fox', 'Default', 'Companion pair', false, { rec: 9, groups: ['fav'] }),
+    P('calloway', 'character', 'Sister Calloway', 'Character Card v2', 'Archive keeper', true, { rec: 4, groups: ['salt'] }),
+    P('archivist', 'character', 'The Archivist', 'Default', 'Narrator voice', false, { rec: 12 }),
+    P('juniper', 'character', 'Juniper Holt', 'SillyTavern', 'Courier, six alt greetings', true, { rec: 7, groups: ['noir', 'fav'] }),
+    P('thessaly', 'character', 'Baron Thessaly', 'Chub', 'Absent landlord', false, { rec: 15, groups: ['salt'] }),
+    P('gazetteer', 'lorebook', 'Saltmarsh Gazetteer', 'SillyTavern', '214 entries', false, { rec: 2, groups: ['salt'], n: 214 }),
+    P('accords', 'lorebook', 'The Guildhall Accords', 'Default', '88 entries', false, { rec: 8, groups: ['salt'], n: 88 }),
+    P('lanterns', 'lorebook', 'Court of Lanterns', 'Chub', '143 entries', false, { rec: 10, on: false, n: 143 }),
+    P('wyrm', 'lorebook', 'Wyrm Almanac', 'SillyTavern', '61 entries', false, { rec: 14, groups: ['fav'], n: 61 }),
+    P('rook', 'persona', 'Rook', 'Default', 'Your usual', true, { rec: 5, groups: ['fav'] }),
+    P('ansel', 'persona', 'Detective Ansel Vo', 'SillyTavern', 'Noir lead', true, { rec: 11, groups: ['noir'] }),
+    P('wren', 'persona', 'Wren', 'Default', 'Quiet observer', false, { rec: 18 }),
+    P('slow', 'preset', 'Slow Burn Narrator', 'Default', '18 blocks', false, { rec: 13, open: true }),
+    P('third', 'preset', 'Tight Third Person', 'SillyTavern', '9 blocks', false, { rec: 16 }),
+    P('cine', 'preset', 'Cinematic Pacing', 'Default', '22 blocks', false, { rec: 19, groups: ['fav'] }),
+    P('noirp', 'preset', 'Noir Samplers', 'SillyTavern', '14 blocks', false, { rec: 20, groups: ['noir'] }),
+    P('round', 'preset', 'Roundtable Group Chat', 'Default', '12 blocks', false, { rec: 21 }),
+    P('trim', 'regex', 'Trim stage directions', 'Default', '7 rules', false, { rec: 17, n: 7 }),
+    P('quotes', 'regex', 'Smart quotes', 'SillyTavern', '3 rules', false, { rec: 22, n: 3 }),
+    P('ooc', 'regex', 'Strip OOC', 'Default', '5 rules', false, { rec: 23, on: false, n: 5 }),
+    P('beats', 'quickreply', 'Scene beats', 'Default', '12 lines', false, { rec: 24 }),
+    P('react', 'quickreply', 'Reactions', 'SillyTavern', '8 lines', false, { rec: 25 }),
+    P('chatml', 'promptformat', 'ChatML', 'Default', 'Turn markers', false, { rec: 26 }),
+    P('alpaca', 'promptformat', 'Alpaca', 'Default', 'Turn markers', false, { rec: 27 })
+  ];
+  var GROUPS = [{ id: 'salt', name: 'Saltmarsh campaign' }, { id: 'noir', name: 'Noir mystery' }, { id: 'fav', name: 'Favorites' }];
+  var GRAVES = [
+    { name: 'Old Vera draft', type: 'character', left: '2 days left', scene: false },
+    { name: 'Lighthouse scene, take 3', type: 'Scene', left: '3 days left', scene: true },
+    { name: 'Draft regex', type: 'regex set', left: '1 day left', scene: false },
+    { name: 'Harbor chase', type: 'Scene', left: 'kept until restored', scene: true }
+  ];
+  var DAMAGE = [
+    { f: 'preset/old-noir.json', why: 'is not readable JSON' },
+    { f: 'lorebook/saltmarsh-copy.json', why: 'holds a different piece id than its filename' }
+  ];
+  var IMPORT = [
+    { ok: true, name: 'Marguerite Dray', line: 'Character card, v2', note: 'Already on your shelf as Marguerite Dray. Importing keeps both.', kind: 'character', on: true },
+    { ok: true, name: 'Harbor Politics', line: 'Lorebook', note: '96 entries. Healed: two empty keys filled', kind: 'lorebook', on: true },
+    { ok: true, name: 'Dry Wit Samplers', line: 'Preset', note: '', kind: 'preset', on: true },
+    { dupe: true, name: 'Dry Wit Samplers', note: 'Identical to Dry Wit Samplers in this drop. We keep one.', kind: 'preset' },
+    { bad: true, name: 'notes.txt', note: 'This file is not a character, lorebook, preset or backup we recognise.' },
+    { bad: true, name: '5 files', flag: 'Skipped', note: 'Not readable as JSON or PNG cards.', note2: 'a.dat, b.dat, c.dat, +2 more' }
+  ];
+
+  var SIZES = [150, 180, 210, 250, 290];
+  var S = { mode: 'collection', deck: null, trash: false, views: {}, layout: 'carousel', order: 'all', q: '', size: 2, staged: { isolde: 1, gazetteer: 1 }, damage: true, damageGone: false, graveFilter: 'all', naming: false, spot: {}, sheet: null, imp: IMPORT.map(function (r) { return !!r.on; }), grave: GRAVES.slice(), note: '' };
+
+  function deckOf(k) { return DECKS.filter(function (d) { return d.k === k; })[0]; }
+  function dk(d) { return d.deck || d.k; }
+  function roman(n) { return ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'][n - 1]; }
+  function esc(s) { return String(s); }
+  function plural(n, a, b) { return n + ' ' + (n === 1 ? a : (b || a + 's')); }
+
+  // search: name text plus fields kind: from: has:art collection:
+  function parse(q) {
+    var terms = [], unknown = [];
+    (q.match(/"[^"]*"|\S+/g) || []).forEach(function (t) {
+      var m = /^(-?)(\w+):(.*)$/.exec(t);
+      if (m) {
+        if (['name', 'id', 'kind', 'from', 'has', 'collection'].indexOf(m[2]) < 0) { unknown.push(m[2] + ':'); terms.push({ f: 'name', v: t.toLowerCase(), neg: false }); return; }
+        terms.push({ f: m[2], v: m[3].replace(/"/g, '').toLowerCase(), neg: !!m[1] });
+      } else terms.push({ f: 'name', v: t.replace(/"/g, '').toLowerCase(), neg: false });
+    });
+    return { terms: terms, unknown: unknown, active: terms.length > 0 };
+  }
+  function match(p, pr) {
+    return pr.terms.every(function (t) {
+      var r;
+      if (t.f === 'kind') r = p.kind.indexOf(t.v) === 0 || deckOf(p.kind).one.toLowerCase().indexOf(t.v) === 0;
+      else if (t.f === 'from') r = p.from.toLowerCase().indexOf(t.v) >= 0;
+      else if (t.f === 'has') r = t.v === 'art' ? p.art : false;
+      else if (t.f === 'collection') r = p.groups.indexOf(t.v) >= 0;
+      else if (t.f === 'id') r = p.id.indexOf(t.v) >= 0;
+      else r = (p.name + ' ' + p.meta).toLowerCase().indexOf(t.v) >= 0;
+      return t.neg ? !r : r;
+    });
+  }
+
+  function cardHTML(p, dc) {
+    var d = deckOf(p.kind), staged = !!S.staged[p.id], off = (p.kind === 'lorebook' || p.kind === 'regex') && !p.on;
+    var foot = '';
+    if (p.kind === 'character') foot = '<div class="foot"><span class="btn sm" data-act="scene" data-id="' + p.id + '">Start scene</span></div>';
+    else if (p.kind === 'lorebook' || p.kind === 'regex') foot = '<div class="foot">' + sw(p) + '<span class="dim" style="font-size:12px">' + (p.on ? 'On' : 'Off') + '</span></div>';
+    return '<div class="pc' + (p.open ? ' open' : '') + '" data-deck="' + dk(d) + '" data-pick="' + p.id + '" role="button" tabindex="0" aria-pressed="' + staged + '" style="' + (off ? 'opacity:.75' : '') + '">' +
+      '<div class="art' + (p.art ? ' has' : '') + '"><span class="kind">' + d.one + '</span>' + tick() + '<span class="ini">' + p.name.charAt(0) + '</span>' + (p.open ? '<span class="onbench">On the Workbench</span>' : '') + '</div>' +
+      '<div class="body"><b>' + p.name + '</b><span class="meta">' + p.from + ' &middot; ' + p.meta + '</span></div>' + foot + '</div>';
+  }
+  function sw(p) { return '<span class="switch sw' + (p.on ? ' on' : '') + '" role="switch" aria-checked="' + p.on + '" aria-label="' + (p.on ? 'Book is on' : 'Book is off') + '" tabindex="0" data-act="toggle" data-id="' + p.id + '" title="Off sets skip export and Rehearsal listing"></span>'; }
+  function tileHTML(p) {
+    var d = deckOf(p.kind);
+    return '<div class="tile" data-deck="' + dk(d) + '" data-pick="' + p.id + '" role="button" tabindex="0" aria-pressed="' + !!S.staged[p.id] + '"><div class="art' + (p.art ? ' has' : '') + '"><span class="ini">' + p.name.charAt(0) + '</span></div>' + tick() + '<span class="cap">' + p.name + '</span></div>';
+  }
+  function listHTML(ps) {
+    return '<div class="listing" role="list">' + ps.map(function (p) {
+      var d = deckOf(p.kind), st = !!S.staged[p.id];
+      return '<div class="lrow" role="button" tabindex="0" data-deck="' + dk(d) + '" data-pick="' + p.id + '" aria-pressed="' + st + '"><span class="th">' + p.name.charAt(0) + '</span><span><div class="nm">' + p.name + '</div><div class="sub">' + d.one + ' &middot; ' + p.from + ' &middot; ' + p.meta + '</div></span>' +
+        (p.open ? '<span class="pill">On the Workbench</span>' : st ? '<span class="pill rose">Staged</span>' : '<span></span>') + '</div>';
+    }).join('') + '</div>';
+  }
+  function shelfHTML(ps, kind) {
+    var lore = kind === 'lorebook', rgx = kind === 'regex';
+    var find = lore ? '<div class="shelf-find">' + svg('search') + '<span class="dim">Name, key, or tag...</span></div>' : '';
+    var books = ps.map(function (p) {
+      var d = deckOf(p.kind), st = !!S.staged[p.id];
+      var foot = '';
+      if (lore) foot = '<div class="row2">' + sw(p) + '<span class="dim">' + (p.on ? 'On' : 'Off') + '</span><span class="sp"></span><span class="btn sm" data-act="note" data-msg="Split opens the Lorebook workshop for ' + p.name + '.">Split</span><span class="btn sm" data-act="note" data-msg="Copied ' + p.name + '.">Copy</span></div>';
+      else if (rgx) foot = '<div class="row2">' + sw(p) + '<span class="dim">' + (p.on ? 'On' : 'Off') + '</span><span class="sp"></span><span class="btn sm" data-act="note" data-msg="Copied ' + p.name + '.">Copy</span></div>';
+      return '<div class="book' + (!p.on && (lore || rgx) ? ' off' : '') + '" data-deck="' + dk(d) + '" data-pick="' + p.id + '" role="button" tabindex="0" aria-pressed="' + st + '"' + (lore ? ' draggable="true"' : '') + '><span class="spine"></span><div class="bd"><b>' + p.name + '</b><span class="dim" style="font-size:13px">' + (p.n ? (lore ? plural(p.n, 'entry', 'entries') : plural(p.n, 'rule')) : d.one) + ' &middot; ' + p.from + '</span>' + foot + '</div>' + (p.open ? '<span class="pill">Open</span>' : '') + '</div>';
+    }).join('');
+    return find + '<div class="books">' + books + '</div>' + (lore ? '<div class="mergehint">Drag a book onto another book to merge them.</div>' : '');
+  }
+  function showHTML(ps, kind) {
+    var i = Math.min(S.spot[kind] || 0, ps.length - 1), p = ps[i], d = deckOf(p.kind);
+    return '<div class="spot" data-deck="' + dk(d) + '">' + cardHTML(p).replace('role="button" tabindex="0"', 'tabindex="-1"').replace(/data-pick="[^"]*"/, 'data-pick="' + p.id + '"') +
+      '<div class="info"><div class="kicker left">' + d.one + ' &middot; ' + (i + 1) + ' of ' + ps.length + '</div><h3>' + p.name + '</h3><p>' + p.meta + ', from ' + p.from + '. ' + (p.open ? 'Open on the Workbench right now.' : 'Stage it to send it to the Workbench with anything else you have gathered.') + '</p>' +
+      '<div class="nav"><span class="btn" data-act="spot" data-kind="' + kind + '" data-d="-1" aria-label="Previous">' + svg('plus').replace(/<path[^>]*>/, '<path d="M15 5l-7 7 7 7"/>') + 'Previous</span><span class="btn" data-act="spot" data-kind="' + kind + '" data-d="1" aria-label="Next">Next' + svg('plus').replace(/<path[^>]*>/, '<path d="M9 5l7 7-7 7"/>') + '</span>' +
+      (p.kind === 'character' ? '<span class="btn primary" data-act="scene" data-id="' + p.id + '">Start scene</span>' : '') + '</div>' +
+      '<div class="thumbs">' + ps.map(function (q, j) { return '<span class="t" role="button" tabindex="0" data-act="spotpick" data-kind="' + kind + '" data-i="' + j + '" aria-current="' + (j === i) + '" aria-label="' + q.name + '">' + q.name.charAt(0) + '</span>'; }).join('') + '</div></div></div>';
+  }
+  function viewBody(kind, ps) {
+    var v = S.views[kind] || 'cards', d = deckOf(kind);
+    if (v === 'tiles') return '<div class="flow ' + S.layout + '">' + ps.map(tileHTML).join('') + '</div>';
+    if (v === 'list') return listHTML(ps);
+    if (v === 'show') return showHTML(ps, kind);
+    if (v === 'shelf') return shelfHTML(ps, kind);
+    return '<div class="flow ' + S.layout + '">' + ps.map(cardHTML).join('') + '</div>';
+  }
+  function viewSeg(kind) {
+    var d = deckOf(kind), v = S.views[kind] || 'cards';
+    var shelfLabel = kind === 'regex' ? 'Sets' : kind === 'persona' ? 'Profiles' : 'Shelf';
+    var items = [['cards', 'Cards', 'cards'], ['tiles', 'Tiles', 'tiles'], ['shelf', shelfLabel, 'shelf'], ['show', 'Show', 'show'], ['list', 'List', 'list']];
+    return '<div class="seg" role="group" aria-label="' + d.pl + ' view">' + items.map(function (x) { return '<span role="button" tabindex="0" data-act="view" data-kind="' + kind + '" data-v="' + x[0] + '" aria-pressed="' + (v === x[0]) + '" title="' + x[1] + ' view">' + svg(x[2]) + x[1] + '</span>'; }).join('') + '</div>';
+  }
+
+  function pieces(pr) {
+    var arr = DATA.filter(function (p) { return match(p, pr); });
+    if (S.order === 'recent') arr = arr.slice().sort(function (a, b) { return a.rec - b.rec; });
+    return arr;
+  }
+  function section(d, idx, ps, total, solo, pr) {
+    var h = '<section class="act" data-deck="' + dk(d) + '" aria-label="' + d.pl + '"><div class="act-head"><span class="num-r">' + (solo ? 'I.' : roman(idx) + '.') + '</span><h2><em>' + d.pl + '</em>' + (idx === 1 && !solo ? ' <span class="co">6</span>' : '') + '</h2><span class="tag chip" style="font-size:12px">' + (pr.active ? ps.length + ' of ' + total : plural(total, d.one.toLowerCase())) + '</span><span class="tag">' + d.bl + '</span><span class="sp"></span>' + viewSeg(d.k) + (d.n ? '<span class="btn sm" data-act="new" data-name="' + d.one + '">+ ' + d.n + '</span>' : '') + '</div>';
+    if (solo) h += '<p class="solo-note">Showing only ' + d.pl.toLowerCase() + '. Click the ' + d.pl + ' ticket again to show every deck.</p>';
+    if (ps.length === 0) {
+      h += '<div class="empty-deck">Your first ' + d.one.toLowerCase() + ' lands here. Import one or start fresh.' + (d.n ? '<div style="margin-top:14px"><span class="btn" data-act="new" data-name="' + d.one + '">+ ' + d.n + '</span></div>' : '') + '</div>';
+    } else {
+      h += viewBody(d.k, ps);
+      if (!pr.active && (S.views[d.k] || 'cards') === 'cards' && d.n) { /* ghost new card closes the row */ h = h.replace(/<\/div>$/, '<div class="ghost" data-act="new" data-name="' + d.one + '"><span>+ ' + d.n + '</span><small>Opens on the Workbench</small></div></div>'); }
+    }
+    return h + '</section>';
+  }
+
+  function renderStatus(total, shownN, pr) {
+    var d = S.deck && S.deck !== 'trash' ? deckOf(S.deck) : null;
+    var line;
+    if (S.mode === 'unreachable') line = 'Could not reach the studio. Your pieces are still on disk.';
+    else if (S.mode === 'landing') line = 'Empty studio';
+    else if (S.trash) line = 'Trash. ' + S.grave.length + ' waiting';
+    else line = (d ? d.pl.toLowerCase() : 'Every deck') + ' &middot; <span class="num">' + shownN + '</span> of <span class="num">' + total + '</span> pieces';
+    document.getElementById('status').innerHTML = '<b>' + line + '</b>' + (S.mode === 'collection' && !S.trash ? ' <span class="dim">&middot; C:\\Users\\chi\\Studio</span>' : '');
+  }
+
+  function render() {
+    var body = document.getElementById('body');
+    var pr = parse(S.q);
+    document.getElementById('wfbar').querySelectorAll('[data-wf]').forEach(function (b) {
+      var w = b.getAttribute('data-wf'); b.setAttribute('aria-pressed', w === 'damage' ? S.damage : S.mode === w);
+    });
+    document.querySelector('.hero-actions').style.display = S.mode === 'collection' ? '' : (S.mode === 'landing' ? 'none' : '');
+    if (S.mode === 'landing') {
+      renderStatus(0, 0, pr);
+      body.innerHTML = (S.damage ? damageHTML(false) : '') + '<div class="doors" style="margin-top:28px"><div class="door primary" data-deck="character" data-act="open-import" role="button" tabindex="0"><span>' + svg('drop') + '</span><h2>Drag and drop to import asset</h2><span class="dim">Cards, lorebooks, presets, personas or a whole backup</span></div>' +
+        '<div class="door" data-deck="character" data-act="new" data-name="Character" role="button" tabindex="0"><span>' + svg('plus') + '</span><h2>Click here to start fresh</h2><span class="dim">Opens a new character on the Workbench</span></div></div><p class="voice">Every pack starts with a first card. <span class="co">12</span></p>';
+      return;
+    }
+    if (S.mode === 'unreachable') {
+      renderStatus(0, 0, pr);
+      body.innerHTML = (S.damage ? damageHTML(false) : '') + '<div class="unreach"><p class="soft" style="font-size:17px">Could not reach the studio. Your pieces are still on disk.</p><span class="btn primary big" data-act="reload">Try again</span><p class="dim" style="font-size:13px">There is no start fresh here on purpose. Nothing is lost.</p></div>';
+      return;
+    }
+    var total = DATA.length;
+    var all = pieces(pr), counts = {};
+    DATA.forEach(function (p) { counts[p.kind] = (counts[p.kind] || 0); });
+    var totals = {}; DATA.forEach(function (p) { totals[p.kind] = (totals[p.kind] || 0) + 1; });
+    all.forEach(function (p) { counts[p.kind] = (counts[p.kind] || 0) + 1; });
+    var shownN = S.deck && S.deck !== 'trash' ? (counts[S.deck] || 0) : all.length;
+    renderStatus(total, S.trash ? 0 : shownN, pr);
+
+    var tix = '<div class="tickets" role="group" aria-label="Library decks">' + DECKS.map(function (d) {
+      var n = pr.active ? (counts[d.k] || 0) : (totals[d.k] || 0), on = S.deck === d.k && !S.trash;
+      return '<button class="ticket" data-deck="' + dk(d) + '" data-act="deck" data-kind="' + d.k + '" aria-pressed="' + on + '" title="' + (on ? 'Showing only this deck. Click to show every deck.' : (pr.active ? n + ' of ' + (totals[d.k] || 0) + ' match' : (totals[d.k] || 0) + ' in the studio')) + '"><span class="top">' + svg(d.g) + '<span class="count' + (n === 0 ? ' zero' : '') + '">' + n + '</span></span><span class="nm">' + d.pl + '</span><span class="bl">' + d.bl + '</span></button>';
+    }).join('') + '<button class="ticket trash" data-act="trash" aria-pressed="' + S.trash + '" data-part="library.trash" title="Deleted pieces, kept for 3 days"><span class="top">' + svg('trash') + '<span class="count' + (S.grave.length === 0 ? ' zero' : '') + '">' + S.grave.length + '</span></span><span class="nm">Trash</span><span class="bl">Restore deleted pieces within 3 days</span></button></div>';
+    var head = tix.replace('aria-label="Library decks">', 'aria-label="Library decks"><span class="co" style="position:absolute;left:-12px;top:-12px;z-index:3">2</span>');
+
+    var groups = '<div class="groups"><span class="lbl">Groups <span class="co">3</span></span>' + GROUPS.map(function (g) {
+      var on = S.q.trim() === 'collection:' + g.id, c = DATA.filter(function (p) { return p.groups.indexOf(g.id) >= 0; }).length, stg = Object.keys(S.staged).length;
+      return '<span class="gchip" aria-pressed="' + on + '"><span data-act="group" data-id="' + g.id + '" role="button" tabindex="0" title="' + (on ? 'Showing this group. Click to stop filtering.' : 'Show only what is in ' + g.name) + '">' + g.name + ' <span class="num">' + c + '</span></span>' + (stg ? '<span class="gact" role="button" tabindex="0" data-act="gadd" data-name="' + g.name + '" title="Add ' + stg + ' staged pieces to ' + g.name + '">Add</span>' : '') + '<span class="gact rm" role="button" tabindex="0" data-act="note" data-msg="Removed the group ' + g.name + '. The pieces stay in the studio." title="Delete the group ' + g.name + '. The pieces stay in the studio.">Remove</span></span>';
+    }).join('') + (S.naming ? '<span class="field" style="min-height:32px;padding:4px 12px">name this group<span style="border-left:2px solid var(--premiere-rose);margin-left:2px"></span></span>' : '<button class="gnew" data-act="gnew">+ New group</button>') + (S.note ? '<span class="gnote" role="status">' + S.note + '</span>' : '') + '</div>';
+
+    var dmg = S.damage && !S.damageGone ? damageHTML(true) : '';
+    var bar = '<div class="panel bar" data-deck="fog"><div class="l1"><label class="find">' + svg('search') + '<input id="q" type="text" value="' + S.q.replace(/"/g, '&quot;') + '" spellcheck="false" autocomplete="off" placeholder="Search names, ids, keywords: name, kind:preset, from:sillytavern, has:art" aria-label="Search the library">' + (S.q ? '<span class="clr" data-act="clear" role="button" tabindex="0">Clear</span>' : '') + '</label>' +
+      '<span class="ctl-group"><span class="k">Order</span><span class="seg"><span role="button" tabindex="0" data-act="order" data-v="all" aria-pressed="' + (S.order === 'all') + '" title="Studio order, or best match first while searching">All</span><span role="button" tabindex="0" data-act="order" data-v="recent" aria-pressed="' + (S.order === 'recent') + '" title="Newest first">Recent</span></span></span>' +
+      '<span class="ctl-group"><span class="k">Layout</span><span class="seg"><span role="button" tabindex="0" data-act="layout" data-v="carousel" aria-pressed="' + (S.layout === 'carousel') + '" title="Each deck in one row that scrolls sideways">Carousel</span><span role="button" tabindex="0" data-act="layout" data-v="grid" aria-pressed="' + (S.layout === 'grid') + '" title="Cards wrap onto as many rows as they need">Grid</span></span></span>' +
+      '<span class="ctl-group"><span class="k">Art size</span><span class="dial" role="group" aria-label="Art size">' + [0, 1, 2, 3, 4].map(function (i) { return '<i data-act="size" data-i="' + i + '" class="' + (i <= S.size ? 'on' : '') + '"></i>'; }).join('') + '</span></span>' +
+      (!pr.active && !Object.keys(S.staged).length ? '<span class="btn sm" data-act="selectall" title="Stage everything shown">Select all</span>' : '') + '<span class="co">4</span></div>' +
+      '<div class="l2"><span class="res">' + (pr.active ? all.length + ' of ' + total + ' pieces match' : 'Showing ' + all.length + ' of ' + total + ' pieces') + '</span>' + (pr.unknown.length ? '<span class="hintwarn">Did not understand ' + pr.unknown.join(' ') + ' Searching it as plain text. Fields: name: id: kind: from: has: collection:</span>' : '<span>Fields: name: id: kind: from: has: &middot; quote a phrase &middot; prefix - to exclude</span>') + '<span>Drop files anywhere to import &middot; drag across empty space to sweep-select</span></div></div>';
+
+    var main;
+    if (S.trash) main = trashHTML();
+    else if (pr.active && all.length === 0) {
+      main = '<div class="panel nomatch" data-deck="fog"><h2>No pieces match</h2><p>Nothing in the studio matches <code>' + S.q + '</code>. All ' + total + ' pieces are still here; the shelves are filtered, not bare.</p><div class="row3"><button class="btn quiet sm" data-act="clear">Clear search</button></div></div>';
+    } else if (S.deck) {
+      var d = deckOf(S.deck), ps = all.filter(function (p) { return p.kind === S.deck; });
+      if (pr.active && ps.length === 0) {
+        var jumps = DECKS.filter(function (x) { return counts[x.k]; }).map(function (x) { return '<span class="chip" role="button" tabindex="0" data-act="deck" data-kind="' + x.k + '">' + x.pl + ' ' + counts[x.k] + '</span>'; }).join('');
+        main = '<div class="panel nomatch" data-deck="' + dk(d) + '"><h2>No ' + d.pl.toLowerCase() + ' match</h2><p>Nothing on this shelf matches <code>' + S.q + '</code>. All ' + totals[d.k] + ' ' + d.pl.toLowerCase() + ' are still in the studio; this shelf is filtered, not bare.</p><div class="row3"><span class="dim">also matching</span>' + jumps + '</div><div><button class="btn quiet sm" data-act="clear">Clear search</button></div></div>';
+      } else main = section(d, 1, ps, totals[d.k] || 0, true, pr);
+    } else {
+      var order = DECKS.slice(), n = 0;
+      main = order.map(function (d) {
+        var ps = all.filter(function (p) { return p.kind === d.k; });
+        if (pr.active && ps.length === 0) return '';
+        n++;
+        return section(d, n, ps, totals[d.k] || 0, false, pr);
+      }).join('');
+    }
+    body.innerHTML = head + (S.trash ? "" : groups) + dmg + (S.trash ? "" : bar) + main;
+    document.getElementById('room').style.setProperty('--cw', SIZES[S.size] + 'px');
+    var n = Object.keys(S.staged).length;
+    var sb = document.getElementById('sendbar');
+    if (sb) sb.remove();
+    if (n && !S.trash) {
+      var el = document.createElement('div'); el.id = 'sendbar'; el.className = 'sendbar';
+      var many = n === 1 ? 'it' : 'all ' + n;
+      el.innerHTML = '<span class="co">8</span><span class="cnt">' + plural(n, 'piece') + ' staged</span><button class="btn primary sm" data-act="send">Send ' + many + ' to the Workbench</button><button class="btn danger sm" data-act="del">Delete ' + many + '</button><button class="btn quiet sm" data-act="selectall">Select all</button><button class="btn quiet sm" data-act="unstage">Clear</button>';
+      document.body.appendChild(el);
+    }
+    renderSheets();
+    var q = document.getElementById('q');
+    if (q && S._focus) { q.focus(); var l = q.value.length; q.setSelectionRange(l, l); S._focus = false; }
+  }
+
+  function damageHTML(dismiss) {
+    return '<section class="panel damage" data-deck="fog" role="region" aria-labelledby="dn"><div class="hd"><b id="dn">' + plural(DAMAGE.length, 'file') + ' in your studio folder could not be read</b><span class="co">9</span>' + (dismiss ? '<button class="btn quiet sm" data-act="dismiss" title="Put this away. It comes back if another file stops loading.">Dismiss</button>' : '') + '</div><p>The files are still on disk and Bunraku did not change them.</p><details><summary>Show files and recovery details</summary><ul>' + DAMAGE.map(function (x) { return '<li><code>' + x.f + '</code> ' + x.why + '.</li>'; }).join('') + '</ul><p class="dim" style="margin-top:10px"><code>C:\\Users\\chi\\Studio</code></p><p class="dim">Restore a file from backup, or remove it yourself to clear this notice.</p></details></section>';
+  }
+  function trashHTML() {
+    if (S.grave.length === 0) return '<div class="trash-empty">' + svg('trash').replace('class="ico ', 'style="width:44px;height:44px" class="ico ') + '<h2>Trash is empty</h2><p class="dim">Deleted pieces and scenes remain here for 3 days, ready to restore.</p><button class="btn" data-act="trash">Back to library</button></div>';
+    var sc = S.grave.filter(function (g) { return g.scene; }).length;
+    var shown = S.grave.filter(function (g) { return S.graveFilter === 'all' || (S.graveFilter === 'scenes') === g.scene; });
+    return '<section class="panel trash" data-deck="fog"><div class="head">' + svg('trash') + '<div><h2>Trash <span class="co">10</span></h2><p class="hp">Deleted pieces and scenes stay here for 3 days. They no longer appear in your Library, your Scenes, or selection menus while in Trash. Restoring returns a piece with its history under its own name, and a scene or take with every message.</p></div></div>' +
+      '<div class="tools"><span class="seg" role="group" aria-label="Show">' + [['all', 'All ' + S.grave.length], ['pieces', 'Pieces ' + (S.grave.length - sc)], ['scenes', 'Scenes ' + sc]].map(function (x) { return '<span role="button" tabindex="0" data-act="gfilter" data-v="' + x[0] + '" aria-pressed="' + (S.graveFilter === x[0]) + '">' + x[1] + '</span>'; }).join('') + '</span><span class="sp" style="flex:1"></span><button class="btn quiet sm" data-act="trash">Back to library</button></div>' +
+      shown.map(function (g) { return '<div class="grave"' + (g.scene ? ' data-deck="character"' : '') + '><div class="who"><div class="nm">' + g.name + '</div><div class="sub">' + g.type + ' &middot; ' + g.left + '</div></div><button class="btn sm" data-act="restore" data-name="' + g.name + '">Restore</button></div>'; }).join('') + '</section>';
+  }
+  function renderSheets() {
+    var el = document.getElementById('sheets');
+    if (S.sheet === 'import') {
+      var sel = S.imp.filter(Boolean).length;
+      el.innerHTML = '<div class="scrim" data-act="close-sheet"><div class="panel sheet" data-deck="character" role="dialog" aria-label="Pick what to import" onclick="event.stopPropagation()"><div class="kicker left">The Library &middot; Import <span class="co">11</span></div><b class="imptitle">Here is what we read.</b><p class="impsub">3 readable &middot; 1 already on your shelf &middot; 1 identical copy &middot; 6 skipped. Uncheck anything you do not want. Import only writes the checked ones.</p><div class="improws">' +
+        IMPORT.map(function (r, i) {
+          if (r.bad) return '<div class="improw bad"><div><span class="flag">' + (r.flag || 'Could not read') + '</span><b>' + r.name + '</b><p>' + r.note + '</p>' + (r.note2 ? '<p>' + r.note2 + '</p>' : '') + '</div></div>';
+          if (r.dupe) return '<div class="improw dupe" data-deck="' + dk(deckOf(r.kind)) + '"><div><b>' + r.name + '</b><p>' + r.note + '</p></div></div>';
+          return '<div class="improw' + (S.imp[i] ? ' on' : '') + '" data-deck="' + dk(deckOf(r.kind)) + '" role="checkbox" aria-checked="' + !!S.imp[i] + '" tabindex="0" data-act="imp" data-i="' + i + '"><span class="cb"><svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg></span><div><b>' + r.name + '</b><p>' + r.line + '</p>' + (r.note ? '<p>' + r.note + '</p>' : '') + '</div></div>';
+        }).join('') + '</div><div class="impacts"><button class="btn sm" data-act="imp-all">Select all</button><button class="btn sm" data-act="note" data-msg="The file picker opens here.">Add more files</button><span class="sp"></span><button class="btn quiet" data-act="close-sheet">Not now</button><button class="btn primary" data-act="close-sheet"' + (sel ? '' : ' disabled') + '>Import ' + sel + '</button></div></div></div>';
+    } else if (S.sheet === 'delete') {
+      var ids = Object.keys(S.staged), nm = ids.length === 1 ? 'Move "' + DATA.filter(function (p) { return p.id === ids[0]; })[0].name + '" to Trash?' : 'Move ' + ids.length + ' pieces to Trash?';
+      el.innerHTML = '<div class="scrim" data-act="close-sheet"><div class="panel sheet" style="width:min(480px,100%)" data-deck="fog" role="alertdialog" aria-label="Move to Trash" onclick="event.stopPropagation()"><b class="imptitle" style="font-size:24px">' + nm + '</b><p class="impsub">You can restore ' + (ids.length === 1 ? 'it' : 'them') + ' from Trash for 3 days.</p><div class="impacts"><button class="btn quiet" data-act="close-sheet">Cancel</button><button class="btn danger" data-act="confirm-del">Move to Trash</button></div></div></div>';
+    } else el.innerHTML = '';
+  }
+
+  document.addEventListener('click', function (ev) {
+    var wf = ev.target.closest('[data-wf]');
+    if (wf) { var w = wf.getAttribute('data-wf'); if (w === 'damage') S.damage = !S.damage; else { S.mode = w; S.sheet = null; } render(); return; }
+    var pick = ev.target.closest('[data-pick]'), a = ev.target.closest('[data-act]');
+    if (a) {
+      var act = a.getAttribute('data-act'), id = a.getAttribute('data-id');
+      if (act === 'toggle') { var p = DATA.filter(function (x) { return x.id === id; })[0]; p.on = !p.on; }
+      else if (act === 'deck') { var k = a.getAttribute('data-kind'); S.trash = false; S.deck = S.deck === k ? null : k; }
+      else if (act === 'trash') { S.trash = !S.trash; }
+      else if (act === 'view') { S.views[a.getAttribute('data-kind')] = a.getAttribute('data-v'); }
+      else if (act === 'order') S.order = a.getAttribute('data-v');
+      else if (act === 'layout') S.layout = a.getAttribute('data-v');
+      else if (act === 'size') S.size = +a.getAttribute('data-i');
+      else if (act === 'clear') S.q = '';
+      else if (act === 'group') { var t = 'collection:' + id; S.q = S.q.trim() === t ? '' : t; }
+      else if (act === 'gnew') S.naming = !S.naming;
+      else if (act === 'gadd') S.note = 'Added ' + Object.keys(S.staged).length + ' pieces to ' + a.getAttribute('data-name') + '.';
+      else if (act === 'note') S.note = a.getAttribute('data-msg');
+      else if (act === 'scene') S.note = 'Starting a scene with ' + DATA.filter(function (x) { return x.id === id; })[0].name + ' in Scenes.';
+      else if (act === 'new') { S.note = 'Created a new ' + a.getAttribute('data-name').toLowerCase() + ' and opened it on the Workbench.'; S.mode = S.mode === 'landing' ? 'collection' : S.mode; }
+      else if (act === 'spot') { var kk = a.getAttribute('data-kind'), n = DATA.filter(function (x) { return x.kind === kk; }).length; S.spot[kk] = ((S.spot[kk] || 0) + (+a.getAttribute('data-d')) + n) % n; }
+      else if (act === 'spotpick') S.spot[a.getAttribute('data-kind')] = +a.getAttribute('data-i');
+      else if (act === 'dismiss') S.damageGone = true;
+      else if (act === 'selectall') DATA.forEach(function (x) { if (!x.open && (!S.deck || x.kind === S.deck) && match(x, parse(S.q))) S.staged[x.id] = 1; });
+      else if (act === 'unstage') S.staged = {};
+      else if (act === 'send') { S.note = 'Sent ' + Object.keys(S.staged).length + ' to the Workbench.'; S.staged = {}; }
+      else if (act === 'del') S.sheet = 'delete';
+      else if (act === 'confirm-del') { S.grave = S.grave.concat([{ name: 'Deleted pieces', type: 'Pieces', left: '3 days left', scene: false }]); S.staged = {}; S.sheet = null; }
+      else if (act === 'open-import') S.sheet = 'import';
+      else if (act === 'close-sheet') { if (ev.target === a || a.tagName === 'BUTTON') S.sheet = null; else return; }
+      else if (act === 'imp') { S.imp[+a.getAttribute('data-i')] = !S.imp[+a.getAttribute('data-i')]; }
+      else if (act === 'imp-all') S.imp = IMPORT.map(function (r) { return !!(r.ok); });
+      else if (act === 'gfilter') S.graveFilter = a.getAttribute('data-v');
+      else if (act === 'restore') { S.grave = S.grave.filter(function (g) { return g.name !== a.getAttribute('data-name'); }); S.note = a.getAttribute('data-name') + ' restored to your library.'; }
+      else if (act === 'reload') S.note = 'Studio read again.';
+      render(); return;
+    }
+    if (pick) {
+      var id2 = pick.getAttribute('data-pick'), pp = DATA.filter(function (x) { return x.id === id2; })[0];
+      if (pp.open) S.note = pp.name + ' is already on the Workbench'; else if (S.staged[id2]) delete S.staged[id2]; else S.staged[id2] = 1;
+      render();
+    }
+  });
+  document.addEventListener('input', function (ev) { if (ev.target.id === 'q') { S.q = ev.target.value; S._focus = true; render(); } });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') { if (S.sheet) { S.sheet = null; render(); } else if (ev.target.id === 'q' && S.q) { S.q = ''; S._focus = true; render(); } return; }
+    if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches && ev.target.matches('[tabindex="0"]') && ev.target.tagName !== 'INPUT') { ev.preventDefault(); ev.target.click(); }
+  });
+  render();
+})();
+</script>
+<script type="module">import { startLightRays } from "./rays.bundle.js"; startLightRays(document.getElementById("rays"), true, .35);</script>
+</body></html>

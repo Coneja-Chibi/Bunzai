@@ -9,6 +9,8 @@
  */
 import { Button, ListRow, Segmented } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
+import { Panel, type PanelDeck } from "../../components/panel";
+import { RoomHeader } from "../../components/room-header";
 import { useEffect, useMemo, useState, type JSX } from "react";
 import type { AppContext, CoverageInfo, StudioEntitySummary, BunrakuApp } from "../../app-contract";
 import { SETTING_KEYS } from "../../../studio/settings-shape";
@@ -37,9 +39,17 @@ import styles from "./styles.module.css";
 import "./variant-styles";
 import { asciiSlug } from "../../../core/text";
 import { icSvg } from "../../_shared/ic-svg";
+import { digitRuns } from "../../_shared/digit-runs";
 
 /** the locked press mark (vs-shell-apps) */
 const MARK_SVG = icSvg("lucide:printer", 18);
+
+const DECKS: readonly PanelDeck[] = ["character", "persona", "lorebook", "preset", "regex", "pack"];
+/** a piece kind's deck, fog for kinds the decks do not know */
+const deckOf = (kind: string): PanelDeck => DECKS.find((d) => d === kind) ?? "fog";
+
+/** gold mono numerals inside a summary line */
+const numerals = (text: string): (JSX.Element | string)[] => digitRuns(text, styles.num);
 
 function Press({ ctx }: { ctx: AppContext }): JSX.Element {
   const [queue, setQueue] = useState<StudioEntitySummary[]>(() => ctx.press.queue());
@@ -261,7 +271,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
     const borrowed = platform?.borrowed?.[p.kind];
     const isDropped = rider !== undefined && dropped.has(key);
     return (
-      <div key={key} className={`${styles.kcard}${isDropped ? ` ${styles.kcardDropped}` : ""}`}>
+      <div key={key} data-deck={deckOf(p.kind)} className={`${styles.kcard}${isDropped ? ` ${styles.kcardDropped}` : ""}`}>
         <span
           className={`${styles.dot}${
             row?.status === "ok" ? ` ${styles.dotOk}` : row?.status === "fail" ? ` ${styles.dotFail}` : ready?.tone === "ok" ? ` ${styles.dotOk}` : ready?.tone === "warn" ? ` ${styles.dotWarn}` : ready?.tone === "bad" ? ` ${styles.dotFail}` : ""
@@ -331,22 +341,35 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
 
   return (
     <div className={styles.roomHost}>
+      <RoomHeader
+        data-part="press.header"
+        kicker="Convert files"
+        title="The Press"
+        lede="Stage pieces from the Library, pick a platform, and print them to its file format."
+      />
       <div className={styles.room2} data-part="press.room">
-        <aside className={`${styles.rail} scrollThin`} data-part="press.rail">
+        <Panel as="aside" data-part="press.rail" className={`${styles.rail} scrollThin`}>
           <span className={styles.kick}>from the library · click to stage</span>
-          {loadNote && <p className={styles.empty}>{loadNote}</p>}
+          {loadNote && (
+            <div className={`${styles.notice} ${styles.noticeFail}`}>
+              <span className={styles.kick}>Offline</span>
+              <p>{loadNote}</p>
+            </div>
+          )}
           <div className={styles.offerList} data-part="press.offers">
             {offers.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
-              <ListRow key={pieceKeyOf(s)} data-part="press.offer" onClick={() => ctx.press.stage([s])} label={s.name || s.id} meta={s.kind} />
+              <div key={pieceKeyOf(s)} className={styles.stamp} data-deck={deckOf(s.kind)} data-part={`press.offer.stamp.${s.id}`}>
+                <ListRow data-part="press.offer" onClick={() => ctx.press.stage([s])} label={s.name || s.id} meta={<span className={styles.kindTag}>{s.kind}</span>} />
+              </div>
             ))}
-            {offers.length === 0 && <p className={styles.empty}>everything is staged</p>}
+            {offers.length === 0 && <p className={`${styles.notice} ${styles.empty}`}>everything is staged</p>}
           </div>
-        </aside>
+        </Panel>
 
         <section data-part="press.queue">
           <div className={styles.sheetHead}>
             <span className={styles.kick}>
-              {`the queue · ${queue.length} staged${dropped.size > 0 ? ` · ${dropped.size} dropped` : ""}`}
+              {numerals(`the queue · ${queue.length} staged${dropped.size > 0 ? ` · ${dropped.size} dropped` : ""}`)}
             </span>
             <span className={styles.targets}>
               <Segmented
@@ -363,47 +386,53 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
           </div>
 
           {queue.length === 0 ? (
-            <p className={styles.empty} data-empty>
-              Nothing staged. Stage pieces from the Library - right-click any piece, or use the rail
-              on the left. A staged character brings its linked lorebooks as a bundle.
-            </p>
+            <Panel data-part="press.empty" className={styles.moment} data-empty>
+              <span className={styles.kick}>The press is idle</span>
+              <h2 className={styles.momentTitle}>Nothing staged</h2>
+              <p>
+                Stage pieces from the Library - right-click any piece, or use the rail
+                on the left. A staged character brings its linked lorebooks as a bundle.
+              </p>
+            </Panel>
           ) : (
             <>
               {grouping.bundles.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (bundle) => (
-                <div key={pieceKeyOf(bundle.owner)} className={styles.bundle} data-part="press.bundle">
+                <Panel key={pieceKeyOf(bundle.owner)} data-part="press.bundle" deck={deckOf(bundle.owner.kind)} className={styles.bundle}>
                   <div className={styles.bundleMarq}>
-                    <span>{`bundle · ${bundle.owner.name}`}</span>
-                    <i>{bundle.riders.length > 0 ? `character + ${bundle.riders.length} linked` : "character"}</i>
+                    <span className={styles.kick}>bundle</span>
+                    <h2 className={styles.bundleName}>{bundle.owner.name}</h2>
+                    <span className={styles.bundleCount}>{bundle.riders.length > 0 ? numerals(`character + ${bundle.riders.length} linked`) : "character"}</span>
                     <Button size="sm" variant="quiet" onClick={() => ctx.press.unstage(bundle.owner.id, bundle.owner.kind)}>
                       Unstage ×
                     </Button>
                   </div>
                   {card(bundle.owner)}
                   {bundle.riders.map((r) => card(r, { of: bundle.owner.name }))}
-                </div>
+                </Panel>
               ))}
               {grouping.solos.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
-                <div key={pieceKeyOf(s)} className={styles.bundle} data-part="press.bundle">
+                <Panel key={pieceKeyOf(s)} data-part="press.bundle" deck={deckOf(s.kind)} className={styles.bundle}>
                   <div className={styles.bundleMarq}>
-                    <span>{`solo · ${s.name}`}</span>
-                    <i>{s.kind}</i>
+                    <span className={styles.kick}>solo</span>
+                    <h2 className={styles.bundleName}>{s.name}</h2>
+                    <span className={styles.bundleCount}>{s.kind}</span>
                     <Button size="sm" variant="quiet" onClick={() => ctx.press.unstage(s.id, s.kind)}>
                       Unstage ×
                     </Button>
                   </div>
                   {card(s)}
-                </div>
+                </Panel>
               ))}
             </>
           )}
 
           <div className={styles.foot} data-part="press.foot">
             <span className={styles.sum}>
-              {rows
+              {numerals(rows
                 ? foldSummary(rows)
                 : platform
                   ? foldSummary(planRun(set, platform))
-                  : `${set.length} in the run · pick a platform`}
+                  : `${set.length} in the run · pick a platform`)}
             </span>
             {zip && (
               <Button onClick={() => void saveBlob(zip.blob, zip.filename)}>

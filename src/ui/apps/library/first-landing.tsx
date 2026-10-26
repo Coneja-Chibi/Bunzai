@@ -15,6 +15,7 @@ import { ThemeSlot } from "../../_shared/theme-slot";
 import type { StudioDamagedEntry } from "../../app-contract";
 import { DamageNotice } from "./damage-notice";
 import { Card } from "../../components/button";
+import { Panel } from "../../components/panel";
 
 interface DoorsBase {
   /** the room's injected stylesheet, which these full-screen states render outside of */
@@ -34,10 +35,12 @@ export function StudioUnreachable({
     <div className="lib">
       <style>{css}</style>
       <DamageNotice entries={damaged} studioDir={studioDir} />
-      <div className="stagezone seam">
+      <Panel as="div" data-part="library.unreachable" className="moment">
         <p className="voice">Could not reach the studio. Your pieces are still on disk.</p>
-        <Card kind="entry" onClick={onRetry} heading="Try again" />
-      </div>
+        <div className="stagezone seam">
+          <Card kind="entry" onClick={onRetry} heading="Try again" />
+        </div>
+      </Panel>
     </div>
   );
 }
@@ -62,11 +65,14 @@ export function FirstLanding({
     <div className="lib" onDragOver={(e) => e.preventDefault()} onDrop={onDrop}>
       <style>{css}</style>
       <DamageNotice entries={damaged} studioDir={studioDir} />
-      <div className="stagezone seam">
-        <Card kind="entry" primary onClick={onPickImport} heading="Drag and drop to import asset" />
-        <Card kind="entry" onClick={onStartFresh} heading="Click here to start fresh" />
-      </div>
-      <p className="voice">Every pack starts with a first card.</p>
+      <Panel as="div" data-part="library.landing" className="moment wide">
+        <span className="mkick">The Library</span>
+        <p className="voice">Every pack starts with a first card.</p>
+        <div className="stagezone seam">
+          <Card kind="entry" primary onClick={onPickImport} heading="Drag and drop to import asset" />
+          <Card kind="entry" onClick={onStartFresh} heading="Click here to start fresh" />
+        </div>
+      </Panel>
       <ThemeSlot id="library.empty" />
       {overlay}
     </div>

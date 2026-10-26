@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:34213f3811c958b9fd99de5e5edfa0b1b1c2a357b2e19a7c61e8f3df88f68210",
-  "semanticSummaryHash": "sha256:a811e893d55551025bff00a5e7b1f02266b7310bf84aa2a890fddb2adc454568",
+  "sourceHash": "sha256:708ea7017bca507bf072df2ccb17a03df3375f811e9cd884b6b99b2b1a3d2e22",
+  "semanticSummaryHash": "sha256:36c1cefa00266c6b0b758bc44c84d9f63aa0333e8742b8b0e8fe6006cb340d70",
   "verdict": "APPROVE",
-  "reviewer": "sonnet-docs-reviewer-2",
-  "notes": "Scenes and Settings sections match page; Backups and Memory sections verified in src",
-  "reviewedAt": "2026-10-26T16:11:56.388Z"
+  "reviewer": "sonnet-docs-reviewer-3",
+  "notes": "Summaries match changed ui.md sections; RoomHeader, Settings acts rail, ui.stageLights default/reduce-motion verified in src",
+  "reviewedAt": "2026-10-26T20:30:31.743Z"
 }
