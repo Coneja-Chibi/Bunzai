@@ -4,7 +4,7 @@ import { StudioValidationError } from "./errors";
 import { parseLoadoutInput, parseReceipt, type LoadoutReceipt } from "./loadout-record";
 
 const full = {
-  preset: { id: "p1", toggles: { a: true } },
+  preset: { kind: "preset", id: "p1", toggles: { a: true } },
   samplers: { temperature: 0.7, maxTokens: 400 },
   mainModel: { id: "c1", model: "m" },
   lorebooks: { added: ["b1"], off: ["b2"] },
@@ -50,8 +50,8 @@ describe("parseLoadoutInput", () => {
 
   test("every known panel is checked by the store's own rule, and the refusal names the panel", () => {
     const bad: [string, unknown][] = [
-      ["preset", { id: "", toggles: {} }],
-      ["preset", { id: "p", toggles: {}, samplers: {} }],
+      ["preset", { kind: "preset", id: "", toggles: {} }],
+      ["preset", { kind: "preset", id: "p", toggles: {}, samplers: {} }],
       ["samplers", { temperature: "hot" }],
       ["samplers", { nope: 1 }],
       ["mainModel", { id: "c" }],

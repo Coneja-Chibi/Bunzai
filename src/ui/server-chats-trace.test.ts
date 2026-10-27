@@ -286,7 +286,7 @@ test("presetName comes from the scene's own preset through readPreset; absent wi
   const noPreset = (await (await handleTraceRoute(await traceUrl(chat.id), chats, readLorebook, readPreset)).json()) as SceneTrace;
   expect(noPreset.presetName).toBeUndefined();
 
-  await chats.setPreset(chat.id, { id: "p1", toggles: {}, samplers: {} });
+  await chats.setPreset(chat.id, { kind: "preset", id: "p1", toggles: {}, samplers: {} });
   const withReader = (await (await handleTraceRoute(await traceUrl(chat.id), chats, readLorebook, readPreset)).json()) as SceneTrace;
   expect(withReader.presetName).toBe("Velvet Quill");
 

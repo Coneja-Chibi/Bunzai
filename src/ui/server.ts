@@ -16,8 +16,6 @@ import { saveBundle } from "../studio/bundle";
 import { isImportedScene } from "../core/scene-import";
 import { saveSceneCarrier } from "./server-scene-save";
 import type { CanonicalEntity } from "../core/canonical";
-import type { CanonicalLorebook } from "../entities/lorebook/schema";
-import type { CanonicalRegexSet } from "../entities/regex/schema";
 import { openStudio } from "../foreign-reader";
 import { handleAgentRoutes } from "./agent/routes";
 import { handleCollectionsRoutes } from "./server-collections";
@@ -364,7 +362,7 @@ export function createHandler(
         if (!parsed.ok) return parsed.response;
         const raw = parsed.value as {
           entity?: AnyEntity;
-          related?: { lorebooks?: CanonicalLorebook[]; regexSets?: CanonicalRegexSet[] };
+          related?: unknown[];
           overwrite?: boolean;
         };
         if (!raw.entity || typeof raw.entity !== "object") {
@@ -376,8 +374,7 @@ export function createHandler(
         }
         const result = await saveBundle(store, {
           entity: raw.entity,
-          lorebooks: raw.related?.lorebooks,
-          regexSets: raw.related?.regexSets,
+          ...(raw.related ? { related: raw.related } : {}),
           overwrite: raw.overwrite === true,
         });
         return json(result, result.ok ? 200 : result.partial ? 207 : 422);

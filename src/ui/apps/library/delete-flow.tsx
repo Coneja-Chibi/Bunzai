@@ -4,6 +4,8 @@
  * whole flow so the Library only asks for it and reloads. Open pieces refuse rename/delete
  * (their editor could resurrect or clash on the next save); duplicate is always safe.
  */
+import { kindOf } from "../../../generated/kinds";
+import { withPieceName } from "../../../core/piece-name";
 import { useEffect, useRef, useState } from "react";
 import type { JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
@@ -23,16 +25,9 @@ export interface EntityDelete {
 }
 
 
-/** The piece's name lives on identity.name for characters, body.name for everything else. */
-function withName(entity: Record<string, unknown>, name: string): Record<string, unknown> {
-  const body = isRecord(entity.body) ? { ...entity.body } : {};
-  if (entity.kind === "character") {
-    body.identity = { ...(isRecord(body.identity) ? body.identity : {}), name };
-  } else {
-    body.name = name;
-  }
-  return { ...entity, body };
-}
+/** The entity renamed where its kind keeps the name (core/piece-name.ts). */
+const withName = (entity: Record<string, unknown>, name: string): Record<string, unknown> =>
+  ({ ...entity, body: withPieceName(String(entity.kind), entity.body, name) });
 
 export function useEntityDelete(ctx: AppContext, onDeleted: () => void): EntityDelete {
   const [pending, setPending] = useState<StudioEntitySummary[] | null>(null);
@@ -42,8 +37,8 @@ export function useEntityDelete(ctx: AppContext, onDeleted: () => void): EntityD
 
   const duplicate = async (e: StudioEntitySummary): Promise<void> => {
     try {
-      if (e.kind === "pack") {
-        // Packs hold pictures: the server copies them by reference, never opening the pack whole.
+      if (kindOf(e.kind)?.heavy) {
+        // A heavy kind (a pack of pictures): the server copies it by reference, never opening it whole.
         await ctx.api.duplicateEntity(e.kind, e.id);
         onDeleted();
         ctx.setStatus(`duplicated ${e.name}`);
@@ -66,12 +61,12 @@ export function useEntityDelete(ctx: AppContext, onDeleted: () => void): EntityD
     setRenaming(null);
     if (!e || !name || name === e.name) return;
     try {
-      if (e.kind === "pack") {
+      if (kindOf(e.kind)?.heavy) {
         // Only the name changes, so only the head is sent: the pictures are never read back or rewritten.
-        const light = await ctx.api.getLightEditableEntity(`kind=pack&id=${encodeURIComponent(e.id)}`);
+        const light = await ctx.api.getLightEditableEntity(`kind=${encodeURIComponent(e.kind)}&id=${encodeURIComponent(e.id)}`);
         const before = light.entity as ParsedCanonicalEntity;
         const after = withName(before as unknown as Record<string, unknown>, name) as unknown as ParsedCanonicalEntity;
-        await ctx.api.patchEditedEntity("pack", e.id, light.revision, buildPiecePatch(before, after));
+        await ctx.api.patchEditedEntity(e.kind, e.id, light.revision, buildPiecePatch(before, after));
         onDeleted();
         ctx.setStatus(`renamed to ${name}`);
         return;

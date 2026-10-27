@@ -38,7 +38,8 @@ export interface SceneModels {
   pick(c: ChatConnection): void;
 }
 
-export function useSceneModels(ctx: AppContext, chat: Chat, onPicked: (chat: Chat) => void): SceneModels {
+/** `chat` is the scene a pick is written to; with none (a list of choices for a setting that is not a scene's, such as the summary defaults) `pick` does nothing. */
+export function useSceneModels(ctx: AppContext, chat: Chat | null, onPicked: (chat: Chat) => void): SceneModels {
   const [conns, setConns] = useState<SceneConnectionInfo[] | null>(null);
   const [models, setModels] = useState<Record<string, Models>>({});
   const [favorites, setFavorites] = useState<string[]>(() => strArray(ctx.prefs.get(FAVORITES)));
@@ -61,7 +62,7 @@ export function useSceneModels(ctx: AppContext, chat: Chat, onPicked: (chat: Cha
 
   const picking = useRef(false);
   const pick = (c: ChatConnection): void => {
-    if (picking.current) return;
+    if (picking.current || !chat) return;
     picking.current = true;
     ctx.api.setSceneConnection(chat.id, c)
       .then(onPicked, (e: unknown) => ctx.setStatus(`could not pick that model: ${toErrorMessage(e)}`))

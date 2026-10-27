@@ -12,20 +12,17 @@
  */
 import type { Original, OriginalEntry } from "../core/canonical";
 import { hashHex } from "../core/sha256";
-import { parts as lorebookKindParts } from "./lorebook/parts";
 import type { KindParts } from "./kind-parts";
 import { decodeBlobs, decodeBlobsHolding, decodeLightTextBlobs, encodeBlobs, lightBlobRefs, mayNeedBlobWalk, sentinelBlobRefs, type KnownBlobs, type PartBlob } from "./piece-parts-blob";
-import { parts as presetKindParts } from "./preset/parts";
+import { KIND_PARTS as GENERATED_PARTS } from "../generated/kind-schemas";
 import type { ParsedCanonicalEntity } from "./runtime-schema";
 
 type Kind = ParsedCanonicalEntity["kind"];
 
-/** Static registry: decompose is a synchronous hot path, so this
- * cannot be a filesystem scan. A kind absent here has no item parts. */
-const KIND_PARTS: Partial<Record<Kind, KindParts>> = {
-  preset: presetKindParts as KindParts,
-  lorebook: lorebookKindParts as KindParts,
-};
+/** Each kind's own parts.ts, collected statically by the generated kind seam (decompose is a synchronous hot path,
+ * so it cannot scan folders). A kind without a parts.ts has no item parts. */
+const partsOf = (kind: string): KindParts | undefined =>
+  Object.hasOwn(GENERATED_PARTS, kind) ? (GENERATED_PARTS as Record<string, KindParts>)[kind] : undefined;
 
 /** A value's JSON length of 16,384 UTF-16 code units or more moves `original[fmt].raw` into its own
  * "r/<fmt>" part instead of staying inline in the head (Appendix A section D; strict "exceeds", so
@@ -148,7 +145,7 @@ function splitEscrow(
  * `decompose`/`partNames` use. Exported for the patch path (S5), which needs each item's own schema
  * (`KindParts.itemSchema`) to validate one changed item without decomposing the whole entity. */
 export function kindPartsFor(kind: Kind): KindParts | undefined {
-  return KIND_PARTS[kind];
+  return partsOf(kind);
 }
 
 /** The item part names `decompose` would give `entity`'s own items, in array order: `[]` for a kind
@@ -156,7 +153,7 @@ export function kindPartsFor(kind: Kind): KindParts | undefined {
  * imply and refuse a patch whose own `order` does not match them exactly - the same check this
  * function's inlining into `decompose` already made, now callable without a full decompose. */
 export function partNames(entity: ParsedCanonicalEntity): string[] {
-  const kindParts = KIND_PARTS[entity.kind];
+  const kindParts = partsOf(entity.kind);
   if (!kindParts) return [];
   const body = entity.body as unknown as Record<string, unknown>;
   const items = (body[kindParts.itemsField] as unknown[] | undefined) ?? [];
@@ -174,7 +171,7 @@ export function partNames(entity: ParsedCanonicalEntity): string[] {
  */
 export function decompose(entity: ParsedCanonicalEntity, reuse?: readonly PartRecord[], known?: KnownBlobs): PartRecord[] {
   const reuseByName = new Map((reuse ?? []).map((p) => [p.name, p] as const));
-  const kindParts = KIND_PARTS[entity.kind];
+  const kindParts = partsOf(entity.kind);
   const body = entity.body as unknown as Record<string, unknown>;
   const rawItems: unknown[] = kindParts ? ((body[kindParts.itemsField] as unknown[] | undefined) ?? []) : [];
   const itemNames = kindParts ? computeItemNames(rawItems, kindParts.idOf as (item: unknown) => string) : [];
@@ -239,7 +236,7 @@ export function lightBlobNeeds(parts: readonly LightPartText[]): Map<string, { e
     needs.set(name, { expected, selected: refs });
   };
   add("h", value, [], expectedHead);
-  const kindParts = KIND_PARTS[kind];
+  const kindParts = partsOf(kind);
   if (kindParts) {
     const split = kindParts;
     const order = JSON.parse(byName.get("o")?.text ?? "null") as unknown;
@@ -263,7 +260,7 @@ export function lightBlobNeeds(parts: readonly LightPartText[]): Map<string, { e
 export function holdingBlobNeeds(kind: Kind, parts: readonly LightPartText[]): Map<string, { expected: string[]; media: string[]; selected: string[] }> {
   const byName = new Map(parts.map((part) => [part.name, part] as const));
   const paths = new Map<string, readonly (string | number)[]>();
-  const split = KIND_PARTS[kind];
+  const split = partsOf(kind);
   if (split) {
     const order = JSON.parse(byName.get("o")?.text ?? "null") as unknown;
     if (!Array.isArray(order)) throw new Error("piece-parts.holding: invalid order part");
@@ -305,7 +302,7 @@ export function assemble(parts: readonly PartRecord[], admit?: (bytes: number) =
   if (!headPart) throw new Error('piece-parts.assemble: missing the "h" part');
   const head = decode(headPart, []) as Record<string, unknown>;
 
-  const kindParts = KIND_PARTS[head.kind as Kind];
+  const kindParts = partsOf(head.kind as Kind);
   const orderPart = take("o");
   if (kindParts && !orderPart) throw new Error(`piece-parts.assemble: "${head.kind}" splits items but has no "o" part`);
   if (orderPart) {
@@ -350,7 +347,7 @@ export function assembleLight(parts: readonly LightPartText[], blobsByPart: Read
   const lightHead = lightBlobRefs(rawHead, kind);
   const head = decodeLightTextBlobs(lightHead.value, kind, blobsByPart.get("h") ?? new Map()) as Record<string, unknown>;
   lightHead.assets.forEach((sha) => assetHashes.add(sha));
-  const kindParts = KIND_PARTS[kind];
+  const kindParts = partsOf(kind);
   if (kindParts) {
     const split = kindParts;
     const orderPart = byName.get("o");

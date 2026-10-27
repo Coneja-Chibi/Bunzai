@@ -1,15 +1,20 @@
 /** Vaudeville OGL LightRays and evolving floor fog (fog can be switched off), with reduced-motion CSS fallback. The user's Stage lights choice (Settings > Appearance) sets Moving, Still (one frame) or Off (nothing drawn). */
 import { useEffect, useRef, type JSX } from "react";
-import { SETTING_KEYS } from "../../../studio/settings-shape";
+import { SETTING_KEYS, type StageLights } from "../../../studio/settings-shape";
 import { reduceMotionOf } from "../../_shared/accessibility-prefs";
 import { useShellStore } from "../../shell/store";
 import { startLightRays } from "./renderer";
 import { effectiveStageLights } from "./stage-lights";
 import styles from "./styles.module.css";
 
+/** The Stage lights mode in effect (the user's choice, with Reduce motion turning Moving into Still), for any room that draws lights. */
+export function useStageLights(): StageLights {
+  return useShellStore((s) => effectiveStageLights(s.settings[SETTING_KEYS.uiStageLights], reduceMotionOf(s.settings[SETTING_KEYS.uiReduceMotion])));
+}
+
 export function LightRays({ followMouse = true, mouseInfluence = .35, fog = true }: { followMouse?: boolean; mouseInfluence?: number; fog?: boolean }): JSX.Element | null {
   const canvas = useRef<HTMLCanvasElement>(null);
-  const mode = useShellStore((s) => effectiveStageLights(s.settings[SETTING_KEYS.uiStageLights], reduceMotionOf(s.settings[SETTING_KEYS.uiReduceMotion])));
+  const mode = useStageLights();
   useEffect(() => {
     const node = canvas.current;
     if (!node) return;

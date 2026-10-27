@@ -4,6 +4,7 @@
  * The shelf you can look at, as opposed to /art which answers about one piece. Both read the same
  * seam; this one is the view.
  */
+import { ART_KINDS } from "../../entities/_shared/media-reference";
 import type { KitCommand } from "./command";
 import { PICTURES_UNAVAILABLE } from "./_shared";
 
@@ -14,7 +15,7 @@ const command: KitCommand = {
   group: "session",
   complete: async (prefix) => {
     const wanted = prefix.trim().toLowerCase();
-    return ["character", "pack", "persona"]
+    return ART_KINDS
       .filter((kind) => !wanted || kind.startsWith(wanted))
       .map((kind) => ({ value: kind, note: `${kind} art` }));
   },

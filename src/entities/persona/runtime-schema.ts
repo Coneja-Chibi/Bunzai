@@ -11,7 +11,9 @@ import type {
   PersonaPresentation,
   PersonaPronounSet,
   PersonaSections,
+  CanonicalPersona,
 } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const stringArray = z.array(z.string());
 type PersonaMedia = NonNullable<PersonaBody["media"]>;
@@ -89,3 +91,5 @@ const bodyShape = defineExhaustiveShape<PersonaBody>()({
 
 export const personaBodySchema = z.strictObject(bodyShape);
 export const personaProfileSchema = personaBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalPersona>()(entityShape("persona", personaBodySchema, personaProfileSchema)));

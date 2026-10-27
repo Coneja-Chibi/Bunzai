@@ -10,6 +10,7 @@
  * Renaming the copy is a display-name change, not an id change. `newId` is the storage identity and
  * `name` is what a human reads; supplying neither derives an id from the source id.
  */
+import { pieceName, withPieceName } from "../../core/piece-name";
 import { z } from "zod";
 import type { HarnessTool } from "./tool";
 import { STUDIO_ENTITY_KINDS } from "../../studio/path-policy";
@@ -24,25 +25,11 @@ const input = z.strictObject({
     .describe("display name for the copy; the source name is kept when omitted"),
 });
 
-/** The body's own display name, wherever this kind keeps it. Characters nest it under identity. */
-const readName = (kind: string, body: unknown): string => {
-  const record = (body ?? {}) as Record<string, unknown>;
-  if (kind === "character") {
-    const identity = (record.identity ?? {}) as Record<string, unknown>;
-    return typeof identity.name === "string" ? identity.name : "";
-  }
-  return typeof record.name === "string" ? record.name : "";
-};
+/** The body's own display name, wherever this kind keeps it (core/piece-name.ts). */
+const readName = pieceName;
 
 /** Write the new display name back where this kind keeps it, leaving every other field untouched. */
-const withName = (kind: string, body: unknown, name: string): unknown => {
-  const record = { ...((body ?? {}) as Record<string, unknown>) };
-  if (kind === "character") {
-    const identity = { ...((record.identity ?? {}) as Record<string, unknown>), name };
-    return { ...record, identity };
-  }
-  return { ...record, name };
-};
+const withName = (kind: string, body: unknown, name: string): unknown => withPieceName(kind, body ?? {}, name);
 
 const duplicate: HarnessTool<z.infer<typeof input>> = {
   name: "studio_duplicate",

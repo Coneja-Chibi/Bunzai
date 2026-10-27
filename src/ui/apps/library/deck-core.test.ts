@@ -61,11 +61,11 @@ describe("bundlePayloadFromInspect", () => {
     const r: InspectResult = {
       ok: true,
       entity: { id: "c", kind: "character" },
-      related: { lorebooks: books },
+      related: books,
     };
     expect(bundlePayloadFromInspect(r)).toEqual({
       entity: r.entity,
-      related: { lorebooks: books },
+      related: books,
     });
   });
 });
@@ -130,16 +130,16 @@ describe("orderForCommit", () => {
 
 describe("rewriteKnowledgeRefsFor", () => {
   test("an id present in idMap is rewritten to the real id", () => {
-    const out = rewriteKnowledgeRefsFor({ body: { knowledgeRefs: ["lore"] } }, new Map([["lore", "lore-2"]]));
+    const out = rewriteKnowledgeRefsFor({ kind: "character", body: { knowledgeRefs: ["lore"] } }, new Map([["lore", "lore-2"]]));
     expect((out as { body: { knowledgeRefs: string[] } }).body.knowledgeRefs).toEqual(["lore-2"]);
   });
 
   test("an id absent from idMap is DROPPED, not left dangling", () => {
-    const out = rewriteKnowledgeRefsFor({ body: { knowledgeRefs: ["ghost"] } }, new Map());
+    const out = rewriteKnowledgeRefsFor({ kind: "character", body: { knowledgeRefs: ["ghost"] } }, new Map());
     expect((out as { body: Record<string, unknown> }).body.knowledgeRefs).toBeUndefined();
   });
 
-  test("works the same for a persona body as a character body (saveBundle's own rewrite is character-only)", () => {
+  test("works the same for a persona body as a character body (both link lorebooks in the shared table)", () => {
     const out = rewriteKnowledgeRefsFor(
       { kind: "persona", body: { knowledgeRefs: ["lore"] } },
       new Map([["lore", "lore-3"]]),
@@ -148,7 +148,7 @@ describe("rewriteKnowledgeRefsFor", () => {
   });
 
   test("no knowledgeRefs at all: the entity comes back untouched", () => {
-    const entity = { body: { name: "X" } };
+    const entity = { kind: "character", body: { name: "X" } };
     expect(rewriteKnowledgeRefsFor(entity, new Map([["a", "b"]]))).toBe(entity);
   });
 });
@@ -259,7 +259,7 @@ describe("commitOrderedRows: the ISC-35 collision matrix", () => {
         ok: true,
         kind: "character",
         entity: { id: "char-1", kind: "character", body: { name: "Aria", knowledgeRefs: ["book-1"] } },
-        related: { lorebooks: [embeddedBook] },
+        related: [embeddedBook],
       },
     };
     const picked = orderForCommit([character]);
@@ -267,11 +267,11 @@ describe("commitOrderedRows: the ISC-35 collision matrix", () => {
     const { shelved, errors } = await commitOrderedRows(picked, { bundle: save, staged: rejectStaged });
     expect(errors).toEqual([]);
     expect(shelved).toBe(1);
-    // ONE saveBundle call, still carrying the original related.lorebooks bundle - never split into
+    // ONE saveBundle call, still carrying the original related pieces - never split into
     // two independent saves, and knowledgeRefs is untouched (the SERVER's own idMap handles this
     // path; commitOrderedRows only ever rewrites when archiveKey is set)
     expect(calls).toHaveLength(1);
-    expect(calls[0]!.related?.lorebooks).toEqual([embeddedBook]);
+    expect(calls[0]!.related).toEqual([embeddedBook]);
     expect(refsOf(calls[0]!)).toEqual(["book-1"]);
   });
 });

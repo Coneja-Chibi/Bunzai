@@ -10,6 +10,8 @@ import { ADAPTER_INPUT_MAX_BYTES } from "../../../core/adapter-input";
 import { isRecord } from "../../../core/guards";
 import { extensionOf } from "../../../core/media/mime";
 import { plural } from "../../../core/text";
+import { kindOf } from "../../../generated/kinds";
+import { linksTo } from "../../../core/links";
 
 export interface ReadFile {
   filename: string;
@@ -161,19 +163,12 @@ export interface ArchiveReportEntry {
   report: LvbakImportReport;
 }
 
-const KIND_WORD: Record<LvbakKind, string> = {
-  character: "character card",
-  lorebook: "lorebook",
-  persona: "persona",
-  preset: "preset",
-  regex: "regex set",
-};
 
 /** "3 character cards, 2 lorebooks imported." - only the kinds this archive actually carried. */
 export function summarizeImportedTotals(imported: Record<LvbakKind, ImportedEntity[]>): string {
   const parts = (Object.keys(imported) as LvbakKind[])
     .filter((kind) => imported[kind].length > 0)
-    .map((kind) => plural(imported[kind].length, KIND_WORD[kind]));
+    .map((kind) => plural(imported[kind].length, kindOf(kind)?.receiptWord ?? kind));
   return parts.length > 0 ? `${parts.join(", ")} imported.` : "";
 }
 
@@ -238,8 +233,8 @@ export function annotateRead(filename: string, result: InspectResult): ReadFile 
   const countOf = (v: unknown): number | undefined =>
     isRecord(v) && Array.isArray(v.entries) ? v.entries.length : undefined;
   if (entity.kind !== "lorebook") {
-    // related lorebooks on a character bundle
-    const related = result.related?.lorebooks;
+    // lorebooks extracted with the primary (a character's embedded book)
+    const related = result.related?.filter((p) => isRecord(p) && p.kind === "lorebook");
     if (Array.isArray(related) && related.length > 0) {
       const entries = related.reduce<number>(
         (n, lb) => n + (countOf(isRecord(lb) ? lb.body : undefined) ?? 0),
@@ -251,6 +246,9 @@ export function annotateRead(filename: string, result: InspectResult): ReadFile 
   }
   return { filename, result, entryCount: countOf(entity.body) };
 }
+
+/** The kinds that link lorebooks by id (core/links.ts): an archive row of one of these can name a book. */
+const LINKS_BOOKS = new Set<string>(linksTo("lorebook").map((p) => p.from));
 
 /** A row's lorebook references: the summary row's own list when staged, dug out of the entity
  *  otherwise. One reader for both shapes so the caveat helpers can never disagree. */
@@ -296,7 +294,7 @@ export function unresolvedArchiveRefs(
     if (r.result.kind === "lorebook" && typeof rowId === "string" && checked.has(i)) {
       resolvable.add(rowId);
     }
-    if ((r.result.kind === "character" || r.result.kind === "persona") && checked.has(i)) {
+    if (LINKS_BOOKS.has(r.result.kind ?? "") && checked.has(i)) {
       for (const ref of rowKnowledgeRefs(r.result)) referenced.add(ref);
     }
   });
@@ -315,7 +313,7 @@ export function unresolvedArchiveRefs(
  */
 export function withArchiveLinkCaveat(result: InspectResult, unresolvedRefs: ReadonlySet<string>): InspectResult {
   if (!result.ok || !result.receipt) return result;
-  if (result.kind !== "character" && result.kind !== "persona") return result;
+  if (!LINKS_BOOKS.has(result.kind ?? "")) return result;
   const hasUnresolved = rowKnowledgeRefs(result).some((r) => unresolvedRefs.has(r));
   if (!hasUnresolved) return result;
   return {

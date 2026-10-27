@@ -8,7 +8,7 @@
  */
 import type { StudioEntitySummary } from "../../app-contract";
 import { isRecord, recOr } from "../../../core/guards";
-import { deckMeta, type DeckMeta } from "../../_shared/decks";
+import { deckHead, deckOf, type DeckMeta } from "../../_shared/decks";
 import { rankRecents } from "../workbench/recents-core";
 import { plural } from "../../../core/text";
 
@@ -88,10 +88,10 @@ export function carouselSections(input: {
     : input.counts;
   for (const { kind, count } of counts) {
     if (count === 0) continue;
-    const mine = input.pieces.filter((p) => p.kind === kind);
+    const mine = input.pieces.filter((p) => deckOf(p.kind) === kind);
     if (mine.length === 0) continue;
     sections.push({
-      deck: deckMeta(kind),
+      deck: deckHead(kind),
       numeral: roman(sections.length + 1),
       pieces: orderPieces(mine, input.order, input.lastOpened),
       total: count,

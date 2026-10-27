@@ -17,7 +17,8 @@ import type { CastSnapshot, Chat, ChatLore, ChatStore, JsonObject, Message } fro
 import type { StateStore } from "../stage/contracts/state-store";
 import { bodyOf, isRecord, str } from "../core/guards";
 import { StudioConflictError } from "./atomic-file";
-import type { StudioStoreLike } from "./contracts";
+import { bodyReader, type BodyStore } from "./body-reader";
+import { asPresetBody, isWritingKind, sendProblem } from "../core/writing";
 import { StudioValidationError } from "./errors";
 import { serializer } from "./serial";
 import { withDefaults } from "../core/preset/choices";
@@ -40,17 +41,24 @@ export class PresetGoneError extends StudioConflictError {
   }
 }
 
-/** Reads a preset's body from the library, or null when it has none by that id. */
-export type ReadPreset = (id: string) => Promise<PresetBody | null>;
+/** Reads a writing setup from the library as the preset it sends, or null when the library has none by that kind and id. */
+export type ReadPreset = (id: string, kind: string) => Promise<PresetBody | null>;
 
-/** The library's preset reader: its current body, parsed canonically by the store; a trashed one is gone. */
-export function presetReader(store: Pick<StudioStoreLike, "read"> & Partial<Pick<StudioStoreLike, "readBody">>): ReadPreset {
-  return async (id) => {
-    if (store.readBody) return (await store.readBody("preset", id)) as PresetBody | null;
-    const entity = await store.read("preset", id);
-    return entity?.kind === "preset" ? (entity.body as PresetBody) : null;
-  };
-}
+/** Refused before a turn opens: the scene's writing setup cannot be sent as it is (a Script Sheet that breaks its rules). */
+export class WritingSetupError extends StudioValidationError {}
+
+/**
+ * The library's writing-setup reader (core/writing.ts): its current body, parsed canonically by the store, as the
+ * preset it sends; a trashed one is gone, and one that cannot be sent refuses with its kind's own words.
+ */
+export const presetReader = (store: BodyStore): ReadPreset => async (id, kind) => {
+  if (!isWritingKind(kind)) return null;
+  const body = await bodyReader<unknown>(store, kind)(id);
+  if (body === null) return null;
+  const problem = sendProblem(kind, body);
+  if (problem) throw new WritingSetupError(problem);
+  return asPresetBody(kind, body);
+};
 
 export interface LoadedTurn {
   branchId: string;
@@ -125,7 +133,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   const { chat, snapshot } = cast;
   let preset: PresetBody | undefined;
   if (chat.preset) {
-    const body = await readPreset(chat.preset.id);
+    const body = await readPreset(chat.preset.id, chat.preset.kind);
     if (!body) throw new PresetGoneError();
     preset = { ...body, samplers: { ...body.samplers, ...chat.preset.samplers } };
   }

@@ -30,6 +30,15 @@ tests are ported too; each test file's header names any RoleCall case it leaves 
   Phases (`{{phase::post_render::...}}`, `{{defer::...}}`) are
   orchestrated across a preset's prompts by `processPhasedBlocks`. RoleCall's game, mechanics,
   visual novel, and off-band families are not ported; their names are unknown macros here.
+- **Bunraku's own macros.** One family of Bunraku's (`handlers/chat-watch.ts`), registered last so it never takes a
+  RoleCall name, reads the run's messages and changes nothing: `{{mentions::word::N}}` counts a word or phrase in the
+  last N messages (all without N), `{{lastmention::word}}` says how many messages ago it was last said (1 is the
+  latest, empty when never), `{{tally::a,b,c::N}}` names the one mentioned most (the first listed on a tie, empty when
+  none is), and `{{odds::30}}` is `true` that percent of the time from the run's seed. A word matches whole (accents
+  included) and ignoring case, with word and text in one Unicode form (NFC); its pattern is built from the escaped word,
+  never author regex, so it needs no `allowRegex`. Counts are worked out once per message list and word and kept for
+  the runs that share the list; one run searches for at most 200 words not already counted (`WORDS_PER_RUN`), and a
+  201st is an error in that run only, so a run full of word lookups never empties another's.
 - **Unknown macros** render as their reconstructed text plus an error entry, never silence and never
   a throw. RoleCall's prompt assembler strips whatever is left from the prompt; Bunraku's assembler
   is not ported yet.
@@ -45,8 +54,8 @@ inventing a moment. Numbers and dates format in `context.locale` ("en-US" when a
 one mulberry32 stream from `context.randomSeed`, handed to each handler, so the same seed replays
 the same rolls. A zone-less date given to `{{timediff}}` is read in `context.timezone` too, where
 RoleCall read it in the server's zone. The evaluator caps the length of any string a node, handler,
-variable write, or whole run produces, caps the number of nodes one run evaluates, and nests at most
-100 deep. When a cap trips, the run records one error and stops: no handler is called after it, a
+variable write, or whole run produces, caps the number of nodes one run evaluates (a caller may set a lower cap for
+one run, `maxSteps`, as a formula does; a value that is not a finite number leaves the engine's own cap), and nests at most 100 deep. When a cap trips, the run records one error and stops: no handler is called after it, a
 lazy handler is unwound out of the argument that tripped before it can write, and no cut-off value
 reaches a variable, template, or user macro. A test scans every source file in the package for
 clock, randomness, I/O, and host-locale reads, and checks the scan against a list of those forms.

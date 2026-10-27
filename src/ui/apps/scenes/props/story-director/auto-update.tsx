@@ -43,7 +43,7 @@ export function listedModules(chat: Pick<Chat, "props">): TrackerModule[] {
 const propOf = (m: TrackerModule) => legacyProps.find((p) => p.id === `${TRACKER_PROP_PREFIX}${m}`);
 
 /** The `auto` a tracker keeps after a change: nothing stored when it says nothing. */
-const autoOf = (on: boolean, every: number | undefined): TrackerAuto | null => (on && every === undefined ? null : { ...(on ? {} : { on: false }), ...(every === undefined ? {} : { every }) });
+export const autoOf = (on: boolean, every: number | undefined): TrackerAuto | null => (on && every === undefined ? null : { ...(on ? {} : { on: false }), ...(every === undefined ? {} : { every }) });
 
 export function AutoUpdate({ ctx, chat, panel, save, onChat }: { ctx: AppContext; chat: Chat; panel: DirectorPanel; save: Save; onChat?: (chat: Chat) => void }): JSX.Element {
   const s = panel.settings;

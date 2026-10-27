@@ -42,14 +42,16 @@ const SAMPLERS: readonly SamplerField[] = [
 ];
 
 export interface SettingsBarProps {
-  body: PresetBody;
+  /** The fields it edits; a Script Sheet has the description and samplers and no linked sets. */
+  body: Pick<PresetBody, "description" | "samplers" | "behaviorRefs" | "quickReplyRefs">;
   ctx: AppContext;
   /** false when the active Write-for lens cannot serialize samplers */
   showSamplers: boolean;
   onDescription: (v: string) => void;
   onSampler: (key: keyof PresetSamplers, value: number | undefined) => void;
-  onBehaviorRefs: (ids: string[]) => void;
-  onQuickReplyRefs: (ids: string[]) => void;
+  /** Given, the linked regex and quick-reply sets show; a kind with no links passes neither. */
+  onBehaviorRefs?: (ids: string[]) => void;
+  onQuickReplyRefs?: (ids: string[]) => void;
 }
 
 /** "" and junk both mean absent; a real 0 must survive. */
@@ -111,13 +113,15 @@ export function SettingsBar({
               </label>
           )}
 
-          <LinkedSets
-            ctx={ctx}
-            behaviorRefs={body.behaviorRefs ?? []}
-            quickReplyRefs={body.quickReplyRefs ?? []}
-            onBehaviorRefs={onBehaviorRefs}
-            onQuickReplyRefs={onQuickReplyRefs}
-          />
+          {onBehaviorRefs && onQuickReplyRefs && (
+            <LinkedSets
+              ctx={ctx}
+              behaviorRefs={body.behaviorRefs ?? []}
+              quickReplyRefs={body.quickReplyRefs ?? []}
+              onBehaviorRefs={onBehaviorRefs}
+              onQuickReplyRefs={onQuickReplyRefs}
+            />
+          )}
 
           {showSamplers ? (
             <>

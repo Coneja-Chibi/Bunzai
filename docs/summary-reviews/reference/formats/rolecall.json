@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/formats/rolecall",
   "sourcePath": "docs/reference/formats/rolecall.md",
-  "sourceHash": "sha256:4618d38e949354be7daf29ffd8277b6a0cf84a57a0736b611adc1a72b6764cea",
-  "semanticSummaryHash": "sha256:6d856a523597e9696ca83309cf71bff48d3c8e2128689f603477738d5bdbbead",
+  "sourceHash": "sha256:fae4537160869f7ee0f3ba209f838a234dc8af51472e13b1d8038f8790d1903f",
+  "semanticSummaryHash": "sha256:7408832256eb65f09a85f614a00f26f3d73142ca164ab71bdc6d2360b522988e",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:13.673Z"
+  "notes": "Page line 19 and the summary now both say seven codecs, matching the seven listed adapters including rolecall-script-sheet.",
+  "reviewedAt": "2026-10-27T08:08:31.467Z"
 }

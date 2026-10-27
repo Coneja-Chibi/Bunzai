@@ -173,7 +173,7 @@ async function wing(chat: Chat, ctx: AppContext): Promise<JSX.Element> {
     const { useScenePresetText } = await import("./use-scene-preset-text");
     // One component for every render, so a re-render with a new ctx updates it rather than remounting it.
     Harness = (props) => {
-      text = useScenePresetText(props.ctx, props.chat.preset?.id ?? null, onBody);
+      text = useScenePresetText(props.ctx, props.chat.preset ?? null, onBody);
       return <PresetWing ctx={props.ctx} chat={props.chat} text={text} onChanged={onChanged} />;
     };
   }
@@ -238,13 +238,13 @@ function blurOut(flushSync: FlushSync, el: HTMLElement): void {
 describe("PresetWing", () => {
   test("a 500-preset library mounts fewer than 60 picker rows", async () => {
     listImpl = async () => Array.from({ length: 500 }, (_, i) => ({ id: `lib${String(i)}`, kind: "preset", name: `Preset ${String(i)}` }) as StudioEntitySummary);
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     await press(flushSync, byTitle("Switch preset")!);
     expectWindowed(host, ".picker [data-index]", 500, 60);
     unmountWing(flushSync);
   });
   test("flipping a prompt's switch then unmounting the wing within 300ms still sends one setScenePreset with that switch", async () => {
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     const toggle = byLabel("Turn off main")!;
     expect(toggle).toBeDefined();
 
@@ -255,21 +255,21 @@ describe("PresetWing", () => {
     // Asserted BEFORE the debounce timer's own 300ms would have elapsed on its own: a pass here
     // proves unmount itself forced the write, not a lucky race with the timer firing naturally later.
     expect(setCalls).toHaveLength(1);
-    expect(setCalls[0]).toEqual({ chatId: "chat1", preset: { id: "p1", toggles: { main: false }, samplers: {} } });
+    expect(setCalls[0]).toEqual({ chatId: "chat1", preset: { kind: "preset", id: "p1", toggles: { main: false }, samplers: {} } });
 
     await settle(flushSync, 350); // and nothing doubles up once the original timer's moment passes
     expect(setCalls).toHaveLength(1);
   });
 
   test("switching preset within 300ms of a flip posts only the new preset's empty overrides, with no late write of the old one", async () => {
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     flushSync(() => byLabel("Turn off main")!.click());
 
     await press(flushSync, byTitle("Switch preset")!);
     await press(flushSync, byText("Second Preset")!);
 
     expect(setCalls).toHaveLength(1);
-    expect(setCalls[0]).toEqual({ chatId: "chat1", preset: { id: "p2", toggles: {}, samplers: {} } });
+    expect(setCalls[0]).toEqual({ chatId: "chat1", preset: { kind: "preset", id: "p2", toggles: {}, samplers: {} } });
 
     await settle(flushSync, 400); // well past 300ms since the flip
     expect(setCalls).toHaveLength(1);
@@ -277,7 +277,7 @@ describe("PresetWing", () => {
   });
 
   test("choosing the current preset again from the picker does not post empty toggles, and the switch shown afterwards is unchanged", async () => {
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: { main: false }, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: { main: false }, samplers: {} }), makeCtx());
     expect(byLabel("Turn on main")).toBeDefined(); // off, per the saved override
 
     await press(flushSync, byTitle("Switch preset")!);
@@ -290,7 +290,7 @@ describe("PresetWing", () => {
 
   test("re-rendering with a new ctx object does not reload the preset and keeps the selected prompt", async () => {
     const ctx1 = makeCtx();
-    const chat = chatWith({ id: "p1", toggles: {}, samplers: {} });
+    const chat = chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} });
     const flushSync = await mountWing(chat, ctx1);
     expect(getCalls).toHaveLength(1);
 
@@ -308,12 +308,12 @@ describe("PresetWing", () => {
 
   test("getEditableEntity 404 shows Preset Unavailable; 500 shows Could not load with the reason, not Unavailable", async () => {
     getImpl = async () => { throw new ApiHttpError(404, "not found"); };
-    let flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    let flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     expect(bodyText()).toContain("Preset Unavailable");
     unmountWing(flushSync);
 
     getImpl = async () => { throw new ApiHttpError(500, "disk"); };
-    flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     expect(bodyText()).toContain("Could not load");
     expect(bodyText()).toContain("disk");
     expect(bodyText()).not.toContain("Unavailable");
@@ -321,7 +321,7 @@ describe("PresetWing", () => {
   });
 
   test("a category switch toggles every prompt in it, posting only what differs from the preset's own", async () => {
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     const groupSwitch = byLabel("Turn on everything in Style")!;
     expect(groupSwitch).toBeDefined();
 
@@ -329,7 +329,7 @@ describe("PresetWing", () => {
     await settle(flushSync, 350); // past the 300ms debounce: the flush timer fires on its own
 
     expect(setCalls).toHaveLength(1);
-    expect(setCalls[0]).toEqual({ chatId: "chat1", preset: { id: "p1", toggles: { style2: true }, samplers: {} } });
+    expect(setCalls[0]).toEqual({ chatId: "chat1", preset: { kind: "preset", id: "p1", toggles: { style2: true }, samplers: {} } });
     unmountWing(flushSync);
   });
 
@@ -341,7 +341,7 @@ describe("PresetWing", () => {
     };
     saveImpl = async () => { throw new ApiHttpError(409, "conflict"); };
 
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     const mainRow = [...host.querySelectorAll(".pi")].find((r) => (r.textContent ?? "").includes("main")) as HTMLElement;
     flushSync(() => mainRow.click());
 
@@ -379,7 +379,7 @@ describe("PresetWing", () => {
     };
 
     const ctx = makeCtx();
-    let chat = chatWith({ id: "p1", toggles: {}, samplers: {} });
+    let chat = chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} });
     const flushSync = await mountWing(chat, ctx);
 
     flushSync(() => byLabel("Turn off main")!.click());
@@ -397,11 +397,11 @@ describe("PresetWing", () => {
 
     // The parent applies that switch and re-renders the wing with the new preset, as a real caller
     // would - this is what moves `held` on.
-    chat = chatWith({ id: "p2", toggles: {}, samplers: {} });
+    chat = chatWith({ kind: "preset", id: "p2", toggles: {}, samplers: {} });
     await rerenderWing(flushSync, chat, ctx);
 
     // The stale p1 write's reply finally lands.
-    releaseP1!({ ...chatWith({ id: "p1", toggles: { main: false }, samplers: {} }), id: "chat1" });
+    releaseP1!({ ...chatWith({ kind: "preset", id: "p1", toggles: { main: false }, samplers: {} }), id: "chat1" });
     await settle(flushSync, 40);
     await settle(flushSync, 40);
 
@@ -411,7 +411,7 @@ describe("PresetWing", () => {
 
   test("a failed settings save puts the switch back to its stored state", async () => {
     setImpl = async () => { throw new Error(); }; // no message: falls back to the wing's own wording
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     expect(byLabel("Turn off main")).toBeDefined(); // on, per the stored preset
 
     flushSync(() => byLabel("Turn off main")!.click());
@@ -430,7 +430,7 @@ describe("the preset text writer (use-scene-preset-text.ts), shared by the Prese
   const savedBody = (n: number) => (saveCalls[n]!.entity as { body: PresetBody }).body;
 
   test("a system-prompt save sends the whole preset with the new field, against the revision it loaded", async () => {
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     text.saveSystemPrompt("impersonation", "Write as me.", text.reloads);
     await settle(flushSync, 40);
 
@@ -444,7 +444,7 @@ describe("the preset text writer (use-scene-preset-text.ts), shared by the Prese
   test("saves run one after another, each against the revision the last left, and keep each other's fields", async () => {
     let n = 1;
     saveImpl = async () => ({ revision: `r${String(++n)}` });
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     text.saveSystemPrompt("impersonation", "A", text.reloads);
     text.saveSystemPrompt("continueNudge", "B", text.reloads);
     text.saveText("main", "T", text.reloads);
@@ -458,7 +458,7 @@ describe("the preset text writer (use-scene-preset-text.ts), shared by the Prese
   });
 
   test("a save that changes nothing is not sent, and a blank field already reads as blank", async () => {
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     text.saveSystemPrompt("newChat", "", text.reloads);
     text.saveText("main", "content-main", text.reloads);
     await settle(flushSync, 40);
@@ -470,7 +470,7 @@ describe("the preset text writer (use-scene-preset-text.ts), shared by the Prese
     let getN = 0;
     getImpl = async () => ({ entity, revision: `r${String(++getN)}` });
     saveImpl = async () => { throw new ApiHttpError(409, "conflict"); };
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     text.saveSystemPrompt("impersonation", "Write as me.", text.reloads);
     await settle(flushSync, 40);
     await settle(flushSync, 40);
@@ -485,7 +485,7 @@ describe("the preset text writer (use-scene-preset-text.ts), shared by the Prese
     let getN = 0;
     getImpl = async () => ({ entity, revision: `r${String(++getN)}` });
     saveImpl = async () => { throw new ApiHttpError(409, "conflict"); };
-    const flushSync = await mountWing(chatWith({ id: "p1", toggles: {}, samplers: {} }), makeCtx());
+    const flushSync = await mountWing(chatWith({ kind: "preset", id: "p1", toggles: {}, samplers: {} }), makeCtx());
     const typedAt = text.reloads;
     text.saveSystemPrompt("impersonation", "first", typedAt);
     text.saveSystemPrompt("continueNudge", "second", typedAt);

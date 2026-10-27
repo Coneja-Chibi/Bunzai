@@ -1,36 +1,14 @@
 /**
- * The "New <kind>" button on an empty deck's ghost shelf. ONE data-driven control replacing four
- * near-identical per-kind JSX blocks in index.tsx (the file-size guard forced the extraction, and
- * the duplication was a bug regardless). A kind with no blank-create path renders nothing
- * (packs are imported, not created empty here). `compact` renders the crumb-row variant so
+ * The "New <kind>" button on a deck's shelf, for every kind the Library may create blank (canCreateBlank);
+ * a kind without one renders nothing (packs are imported or made in the Workbench, libraryNew: false). `compact` renders the crumb-row variant so
  * POPULATED decks keep a create door too - create used to exist only on empty shelves.
  */
 import type { JSX } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
-import { createAndOpenCharacter } from "../../_shared/new-character";
 import { toErrorMessage } from "../../_shared/error-message";
-import { createAndOpenLorebook } from "./new-lorebook";
-import { createAndOpenRegexSet } from "./new-regex-set";
-import { createAndOpenPersona } from "./new-persona";
-import { createAndOpenPreset } from "./new-preset";
-import { createAndOpenQuickReplies } from "./new-quickreply";
+import { canCreateBlank, createBlank } from "../../_shared/new-piece";
+import { kindOf } from "../../../generated/kinds";
 import { Button, Tile } from "../../components/button";
-
-interface NewSpec {
-  label: string;
-  /** status-line word ("regex set", "preset"...) */
-  word: string;
-  create: (ctx: AppContext) => Promise<StudioEntitySummary>;
-}
-
-const NEW_BY_KIND: Record<string, NewSpec> = {
-  character: { label: "New character", word: "character", create: createAndOpenCharacter },
-  lorebook: { label: "New lorebook", word: "lorebook", create: createAndOpenLorebook },
-  regex: { label: "New regex set", word: "regex set", create: createAndOpenRegexSet },
-  persona: { label: "New persona", word: "persona", create: createAndOpenPersona },
-  preset: { label: "New preset", word: "preset", create: createAndOpenPreset },
-  quickreply: { label: "New quick replies", word: "quick-reply set", create: createAndOpenQuickReplies },
-};
 
 export interface NewInDeckButtonProps {
   kind: string;
@@ -44,12 +22,14 @@ export interface NewInDeckButtonProps {
 }
 
 export function NewInDeckButton({ kind, ctx, onCreated, compact = false, tile = false }: NewInDeckButtonProps): JSX.Element | null {
-  const spec = NEW_BY_KIND[kind];
-  if (!spec) return null;
+  const k = kindOf(kind);
+  if (!k || !canCreateBlank(kind)) return null;
+  const word = k.singular.toLowerCase();
+  const spec = { label: `New ${word}`, word };
   const create = (): void => {
     void (async () => {
       try {
-        const summary = await spec.create(ctx);
+        const summary = await createBlank(ctx, kind);
         onCreated(summary);
         ctx.workbench.open(summary);
         ctx.setStatus(`opened ${spec.word} · ${summary.name}`);

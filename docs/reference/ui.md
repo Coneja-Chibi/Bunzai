@@ -960,6 +960,28 @@ gathered on `options.html`). Scenes live in the encrypted library's ChatStore.
   like prompt text, searchable with the prompt search. Today a request sends only Assistant Prefill and, for a continue on a model
   that refuses a started reply, the Continue Nudge; the rest are kept for tools that are not built yet. RoleCall's Behavior section
   (wrap in quotes, continue prefill, names) is not drawn: nothing reads it.
+- **Script Sheets** (RoleCall's single-instruction writing setup, its own kind: `entities/scriptsheet`, editor
+  `_shared/script-sheet-editor.tsx`, part `script-sheet.editor`). The Preset tab's picker lists every writing setup the
+  library holds, presets and sheets together, with a sheet marked "(Script Sheet)" (`_shared/writing-setups.ts`; the
+  Messenger's Writing page and a character's starting setup use the same list). Choosing one records its kind with its
+  id. The picker starts with **Write a Script Sheet** ("Your instructions in one prompt"), which opens the sheet editor:
+  - a name ("My Script Sheet" by default) and one instruction box;
+  - **Save & use Script Sheet**, which saves the sheet to your library and then chooses it for the scene. If choosing
+    fails, the sheet stays saved and the button offers **Use saved Script Sheet**. Saving again after an edit updates
+    that same sheet; it never makes a second one (`new-script-sheet.ts`).
+
+  A scene whose setup is a sheet opens the same editor, with the sampler bar, in place of the prompt list. Its save
+  (**Save Script Sheet**) goes through the Preset tab's one writer and its revision, and a conflict keeps the draft and
+  says so. Block and template edits do not apply to a sheet, and the Messenger's block switches say so. Going back with
+  unsaved changes asks first, and Ctrl+S saves. Context macros are refused as you type (`core/preset/script-sheet.ts`).
+  The Booth, Generation and the other readers see a sheet as the preset it sends.
+
+  In the Library a sheet sits in the presets' deck, shown as **Writing** ("Presets and Script Sheets"), whose count
+  reads in pieces and which offers both "New preset" and "New script sheet". On the Workbench a sheet opens in the same
+  sheet editor (`script-sheet-bench.tsx`, the scriptsheet kind's `editor`), as RoleCall opens it from its Library. Its
+  description and samplers sit above it and save in the same revision-checked patch. The Workbench's guards own
+  Ctrl+S, the unsaved mark on the tab and autosave, and a sheet that breaks the rules is not saved. **Open as preset**
+  makes a new preset from the saved sheet (its blocks, samplers and words) and opens it.
 - **The preset tab's layout** *(added 2026-10-24, plan 19, doer 5; unit-proven, not live-checked)*: the list and the editor are RoleCall's split.
   Every group starts folded (Uncategorized included; a search opens what matches and has a clear button), the Templates section scrolls
   with the list rather than sitting above it, and the footer reads "~N tokens (estimate)". The grip between the list and the editor
@@ -1286,7 +1308,7 @@ Nodes share the same open pieces, and every Desk editor stays mounted while Node
 survive the switch. The recent rail stays visible in Nodes view, since it is how more pieces come onto the
 canvas.
 
-- **Links.** Wires come only from stored reference fields (`LINK_PORTS` in `nodes/links.ts`): a character's
+- **Links.** Wires come only from stored reference fields (`LINK_PORTS` in `core/links.ts`, read from each kind's `links` in its kind.ts): a character's
   and a persona's lorebooks, a character's and a preset's regex sets, a preset's quick-reply sets. A piece
   referenced by two others is one node with two wires; a referenced piece that is not open is a faded node
   with Bring up. Dragging a port onto a compatible node links it; selecting a wire and pressing Delete, or

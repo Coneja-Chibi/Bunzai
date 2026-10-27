@@ -34,7 +34,7 @@ import { useCallback, useState, type CSSProperties, type DragEvent, type JSX, ty
 import type { StudioEntitySummary } from "../../app-contract";
 import { BookCover } from "./book-cover";
 import { ContextMenuButton } from "../../_shared/context-menu-button";
-import { deckMeta } from "../../_shared/decks";
+import { deckMeta, deckOf, pieceColor } from "../../_shared/decks";
 import { useArtSrc } from "../../_shared/art-cache";
 import { cardFacts, importedAgo, promptFormatWords, tokenLabel, type ShelfMeta } from "./carousel-core";
 import { Icon } from "./icon";
@@ -76,7 +76,7 @@ function CardShell(props: CardProps & {
   const menuRef = ctx.menus.useContextMenu(() => ({ type: "entity", label: e.name, data: e }));
   const [peekRef, peek] = useCardPeek(peeks, e);
   const [over, setOver] = useState(false);
-  const tone = e.accent ?? deckMeta(e.kind).accent;
+  const tone = pieceColor(e);
 
   const stage = (shift: boolean, meta: boolean): void => ctx.onPiece(e, { shift, meta });
   // One stable ref for both: an inline merge re-attached the menu and the observer on every render.
@@ -259,7 +259,7 @@ export function PresetCard(props: CardProps): JSX.Element {
               <div className="rphead">
                 <div className="rpicon"><Icon svg={deckMeta(e.kind).glyph} /></div>
                 <div className="rphead-tx">
-                  <div className="rplabel">{peek?.samplerSet ? "Sampler set" : "Preset"}</div>
+                  <div className="rplabel">{peek?.samplerSet ? "Sampler set" : deckMeta(e.kind).singular}</div>
                   {name}
                 </div>
               </div>
@@ -441,7 +441,7 @@ export function CharacterCard(props: CardProps): JSX.Element {
 
 /** The card a deck's pieces wear, as RC's library rows choose it. */
 export function cardFor(kind: string): (props: CardProps) => JSX.Element {
-  if (kind === "preset") return PresetCard;
+  if (deckOf(kind) === "preset") return PresetCard;
   if (kind === "character" || kind === "persona") return CharacterCard;
   if (kind === "regex") return RegexCard;
   return AssetCard;

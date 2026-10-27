@@ -450,7 +450,7 @@ describe("reasoning", () => {
     const clock = { t: 0 };
     const s = await scene(thinker(clock, ["[[", "]]"]));
     s.deps.readPreset = async () => ({ name: "P", prompts: [], reasoning: { prefix: "[[", suffix: "]]", separator: "" } }) as never;
-    await s.chats.setPreset(s.chat.id, { id: "p", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "p", toggles: {}, samplers: {} });
     s.deps.now = () => clock.t;
     await s.turn();
     expect((await lastOf(s.chats, s.chat.activeBranchId)).swipes[0]!.generation?.tagThinkingMs).toBe(600);

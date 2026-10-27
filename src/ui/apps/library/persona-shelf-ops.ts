@@ -8,7 +8,7 @@
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import type { PersonaBody } from "../../../entities/persona/schema";
 import type { DeckViewContext } from "./view-contract";
-import { createAndOpenPersona } from "./new-persona";
+import { createBlank } from "../../_shared/new-piece";
 import { isRecord } from "../../../core/guards";
 import { personaFacts, type PersonaFacts } from "../../../studio/piece-facts";
 import { toErrorMessage } from "../../_shared/error-message";
@@ -59,7 +59,7 @@ export function makePersonaShelf(args: {
     onNew: () => {
       void (async () => {
         try {
-          const summary = await createAndOpenPersona(ctx);
+          const summary = await createBlank(ctx, "persona");
           setEntities((prev) =>
             prev.some((e) => e.kind === "persona" && e.id === summary.id) ? prev : [...prev, summary],
           );

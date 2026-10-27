@@ -38,6 +38,17 @@ describe("ScenePage: the Prompt Inspector", () => {
     unmount(flushSync);
   });
 
+  test("a switch flipped elsewhere (the Messenger settings) shows when the menu opens, and the row then flips what is stored", async () => {
+    const flushSync = await mount(endsOnReply());
+    rig.prefs.set(INSPECTOR_KEY, true);
+    click(flushSync, toolsButton()!);
+    expect(menuRow("Prompt Inspector: On")).toBeDefined();
+    rig.prefs.set(INSPECTOR_KEY, false);
+    click(flushSync, menuRow("Prompt Inspector: On")!);
+    expect(rig.prefs.get(INSPECTOR_KEY)).toBe(true);
+    unmount(flushSync);
+  });
+
   test("off means a turn asks for no pause; on means it asks for one, whatever kind of turn it is", async () => {
     const flushSync = await mount(endsOnReply());
     await regenerate(flushSync);

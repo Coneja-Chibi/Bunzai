@@ -1,0 +1,176 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workbench Depth Options</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Ways to give the empty Workbench shadow and depth. Same layout as today (status line, empty card top centre,
+   Recent rail at the bottom, dock floating over it). Only light, shadow and surface change. Tokens only. */
+body { padding-bottom: 40px; }
+.opt { max-width: 1440px; margin: 28px auto 0; padding: 0 24px; }
+.opt > header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.opt > header h2 { font: 700 22px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.opt > header p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); max-width: 900px; }
+.frame { position: relative; height: 640px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: var(--premiere-canvas); display: flex; flex-direction: column; }
+.frame .reload { position: absolute; top: 8px; right: 10px; font: 700 12px var(--font-ui); padding: 5px 10px; border: 2px solid color-mix(in srgb, var(--premiere-text) 40%, transparent); background: var(--premiere-hard); color: var(--premiere-text); z-index: 3; }
+.status { display: flex; align-items: center; gap: 10px; padding: 14px 20px 0; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); position: relative; z-index: 1; }
+.status::before { content: ""; width: 7px; height: 7px; background: var(--premiere-gold); }
+.empty { align-self: center; margin-top: 18px; width: min(640px, 92%); text-align: center; padding: 30px 32px 28px; position: relative; z-index: 1; }
+.empty .kicker { justify-content: center; }
+.empty h1 { margin-top: 12px; font: 700 34px/1.1 var(--font-fancy); letter-spacing: .02em; }
+.empty .lede { margin-top: 12px; font-size: 15px; }
+.empty .acts { margin-top: 20px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.empty .views { margin-top: 14px; display: flex; gap: 10px; justify-content: center; }
+.recents { margin-top: auto; position: relative; z-index: 1; padding: 0 12px 70px; }
+.recents .disc { display: flex; align-items: center; gap: 10px; padding: 0 4px 12px; font-size: 13px; font-weight: 600; }
+.recents .disc::before { content: ""; width: 7px; height: 7px; background: var(--premiere-rose); }
+.recents .disc .line { flex: 1; height: 1px; }
+.recents .disc .hide { color: color-mix(in srgb, var(--premiere-text) 70%, transparent); font-weight: 500; }
+.tiles { display: flex; gap: 12px; overflow: hidden; padding: 6px 4px 10px; }
+/* Today's tile: small pastel card, initial top-left, name under it. Kept as is in every option. */
+.tile { flex: none; width: 68px; color: var(--premiere-text); font: 700 12px/1.25 var(--font-ui); }
+.tile .cov { height: 92px; background: color-mix(in srgb, var(--deck, var(--deck-preset)) 38%, white); color: #111; font: 800 15px var(--font-ui); padding: 4px 6px; position: relative; }
+.tile .nm { margin-top: 8px; display: block; }
+.tile[data-deck="regex"] .cov { background: color-mix(in srgb, var(--deck-regex) 30%, #fff3c4); }
+.dock { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 2; display: flex; gap: 2px; padding: 6px; font: 600 11px var(--font-ui); }
+.dock span { padding: 8px 12px; color: color-mix(in srgb, var(--premiere-text) 82%, transparent); display: grid; justify-items: center; gap: 4px; }
+.dock span::before { content: ""; width: 16px; height: 16px; border: 1.6px solid currentColor; border-radius: 3px; }
+.dock span.on { color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 14%, transparent); }
+
+/* ---------- A. Ambient depth: soft light from above, layered contact + spread shadows, a ledge for the rail ---------- */
+[data-opt="a"] .frame { background:
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--premiere-violet) 9%, var(--premiere-canvas)) 0%, var(--premiere-canvas) 60%),
+    var(--premiere-canvas); }
+[data-opt="a"] .frame::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 140px 30px var(--premiere-hard); }
+[data-opt="a"] .empty { background: linear-gradient(to bottom, color-mix(in srgb, var(--premiere-violet) 16%, var(--premiere-panel)), color-mix(in srgb, var(--premiere-violet) 7%, var(--premiere-panel)));
+  border-top: 2px solid var(--premiere-gold);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--premiere-text) 14%, transparent),
+    0 1px 2px var(--premiere-hard), 0 8px 18px color-mix(in srgb, var(--premiere-hard) 70%, transparent),
+    0 34px 70px -10px var(--premiere-hard); }
+[data-opt="a"] .empty::after { content: ""; position: absolute; left: 8%; right: 8%; bottom: -46px; height: 30px; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--premiere-hard) 90%, transparent), transparent); filter: blur(6px); z-index: -1; }
+[data-opt="a"] .empty h1 { text-shadow: 0 2px 0 var(--premiere-hard), 0 8px 24px color-mix(in srgb, var(--premiere-hard) 80%, transparent); }
+[data-opt="a"] .btn { box-shadow: inset 0 1px 0 color-mix(in srgb, var(--premiere-text) 16%, transparent), 0 2px 0 var(--premiere-hard), 0 8px 16px -4px var(--premiere-hard); }
+[data-opt="a"] .recents::before { content: ""; position: absolute; left: 0; right: 0; top: 30px; bottom: 0; z-index: -1;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--premiere-violet) 6%, var(--premiere-panel)), var(--premiere-canvas) 85%);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--premiere-text) 10%, transparent), inset 0 14px 20px -12px var(--premiere-hard); }
+[data-opt="a"] .recents .disc .line { background: linear-gradient(to right, color-mix(in srgb, var(--premiere-gold) 45%, transparent), transparent 70%); }
+[data-opt="a"] .tile .cov { box-shadow: inset 0 1px 0 rgb(255 255 255 / .6), inset 0 -10px 16px -10px rgb(0 0 0 / .25), 0 1px 1px var(--premiere-hard), 0 10px 18px -6px var(--premiere-hard); }
+[data-opt="a"] .dock { background: color-mix(in srgb, var(--premiere-panel) 88%, transparent); backdrop-filter: blur(10px);
+  border: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--premiere-text) 12%, transparent), 0 18px 40px -8px var(--premiere-hard), 0 4px 10px var(--premiere-hard); }
+
+/* ---------- B. Stacked print: the house hard offset, layered into sheets; halftone that fades into the dark ---------- */
+[data-opt="b"] .frame { background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--premiere-violet) 22%, transparent) 1px, transparent 1.6px) 0 0 / 9px 9px,
+    var(--premiere-canvas); }
+[data-opt="b"] .frame::before { content: ""; position: absolute; inset: 0; background: radial-gradient(80% 60% at 50% 25%, transparent, var(--premiere-canvas) 75%); pointer-events: none; }
+[data-opt="b"] .empty { background: color-mix(in srgb, var(--premiere-violet) 12%, var(--premiere-panel)); border: 3px solid var(--premiere-hard);
+  box-shadow: 6px 6px 0 -1px var(--premiere-rose), 6px 6px 0 2px var(--premiere-hard), 13px 13px 0 -1px var(--bk-role-select-deep, var(--premiere-violet)), 13px 13px 0 2px var(--premiere-hard); }
+[data-opt="b"] .empty .kicker { color: var(--premiere-gold); }
+[data-opt="b"] .empty h1 { text-shadow: 3px 3px 0 var(--premiere-hard), 4px 4px 0 color-mix(in srgb, var(--premiere-rose) 70%, transparent); }
+[data-opt="b"] .btn { border-color: var(--premiere-hard); border-width: 2px; box-shadow: 3px 3px 0 var(--premiere-hard); }
+[data-opt="b"] .btn.primary { box-shadow: 3px 3px 0 var(--premiere-hard), 6px 6px 0 color-mix(in srgb, var(--premiere-rose) 45%, var(--premiere-hard)); }
+[data-opt="b"] .recents .disc .line { background: repeating-linear-gradient(to right, color-mix(in srgb, var(--premiere-gold) 55%, transparent) 0 6px, transparent 6px 10px); height: 2px; }
+[data-opt="b"] .tile .cov { border: 2px solid var(--premiere-hard); box-shadow: 4px 4px 0 color-mix(in srgb, var(--deck, var(--deck-preset)) 55%, var(--premiere-hard)), 4px 4px 0 2px var(--premiere-hard); }
+[data-opt="b"] .tile .nm { text-shadow: 2px 2px 0 var(--premiere-hard); }
+[data-opt="b"] .dock { background: var(--premiere-panel); border: 3px solid var(--premiere-hard); box-shadow: 5px 5px 0 var(--premiere-hard), 0 -1px 0 1px color-mix(in srgb, var(--premiere-rose) 50%, transparent); }
+
+/* ---------- C. Kage-e: the same materials as today; only the light changes. A low lamp sits behind and above the
+   room's back wall glows faintly, and every object throws a soft silhouette onto that wall, larger and further away
+   than a drop shadow, the way a puppet's shadow falls on the screen. ---------- */
+[data-opt="c"] { --lamp: color-mix(in srgb, var(--premiere-gold) 45%, var(--premiere-rose)); }
+/* the wall: today's canvas, with the lamp's glow on it so shadows have something to fall on */
+[data-opt="c"] .frame { background:
+    radial-gradient(65% 75% at 50% 30%, color-mix(in srgb, var(--lamp) 30%, var(--premiere-canvas)), transparent 75%),
+    radial-gradient(90% 55% at 50% 100%, color-mix(in srgb, var(--lamp) 18%, var(--premiere-canvas)), transparent 75%),
+    var(--premiere-canvas); }
+/* today's card (same plum panel, same gold top edge) */
+[data-opt="c"] .frame { isolation: isolate; }
+[data-opt="c"] .empty { z-index: auto; background: color-mix(in srgb, var(--premiere-violet) 14%, var(--premiere-panel)); border-top: 3px solid var(--premiere-gold);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lamp) 30%, transparent), 0 0 0 1px var(--premiere-hard); }
+/* its puppet shadow: the card's own silhouette, scaled up and pushed down onto the wall, soft-edged */
+[data-opt="c"] .empty::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--premiere-hard);
+  transform: translate(34px, 40px) scale(1.07); filter: blur(12px); opacity: .9; }
+/* a second, fainter shadow from the other lamp (two oil lamps, two shadows) */
+[data-opt="c"] .empty::after { content: ""; position: absolute; inset: 0; z-index: -2; background: var(--premiere-hard);
+  transform: translate(-22px, 30px) scale(1.04); filter: blur(22px); opacity: .45; }
+[data-opt="c"] .empty h1 { text-shadow: 10px 12px 10px color-mix(in srgb, var(--premiere-hard) 85%, transparent), -8px 10px 14px color-mix(in srgb, var(--premiere-hard) 45%, transparent); }
+[data-opt="c"] .empty .lede { text-shadow: 4px 5px 6px var(--premiere-hard); }
+[data-opt="c"] .btn { box-shadow: 9px 11px 10px -2px color-mix(in srgb, var(--premiere-hard) 80%, transparent); }
+[data-opt="c"] .btn.primary { box-shadow: 9px 11px 10px -2px color-mix(in srgb, var(--premiere-hard) 85%, transparent), 0 0 0 1px color-mix(in srgb, var(--lamp) 25%, transparent); }
+[data-opt="c"] .recents .disc .line { background: linear-gradient(to right, color-mix(in srgb, var(--lamp) 45%, transparent), transparent 70%); }
+/* today's pastel tiles, each casting its silhouette up and back onto the lit wall behind the rail */
+[data-opt="c"] .tile .cov::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--premiere-hard);
+  transform: translate(12px, 14px) scale(1.1); filter: blur(7px); opacity: .85; }
+[data-opt="c"] .tile .cov { isolation: auto; box-shadow: inset 0 1px 0 rgb(255 255 255 / .5); }
+[data-opt="c"] .tile .nm { text-shadow: 4px 5px 5px var(--premiere-hard); }
+[data-opt="c"] .dock { background: color-mix(in srgb, var(--premiere-panel) 92%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lamp) 28%, transparent), 22px 28px 26px -6px var(--premiere-hard), -16px 24px 30px -10px color-mix(in srgb, var(--premiere-hard) 60%, transparent); }
+/* ---------- D. Hybrid of B and C: B's halftone wall and printed stamps on buttons and words, C's lamp and soft
+   puppet shadows for the card, tiles and dock. Same materials as today. ---------- */
+[data-opt="d"] { --lamp: color-mix(in srgb, var(--premiere-gold) 45%, var(--premiere-rose)); }
+[data-opt="d"] .frame { isolation: isolate; background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--premiere-violet) 24%, transparent) 1px, transparent 1.6px) 0 0 / 9px 9px,
+    radial-gradient(65% 75% at 50% 30%, color-mix(in srgb, var(--lamp) 26%, var(--premiere-canvas)), transparent 75%),
+    radial-gradient(90% 55% at 50% 100%, color-mix(in srgb, var(--lamp) 16%, var(--premiere-canvas)), transparent 75%),
+    var(--premiere-canvas); }
+/* the dots fade toward the edges, as in B, so the halftone reads as light on the wall */
+[data-opt="d"] .frame::before { content: ""; position: absolute; inset: 0; z-index: -3; pointer-events: none; background: radial-gradient(80% 65% at 50% 30%, transparent, var(--premiere-canvas) 80%); }
+[data-opt="d"] .empty { z-index: auto; background: color-mix(in srgb, var(--premiere-violet) 14%, var(--premiere-panel)); border-top: 3px solid var(--premiere-gold);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lamp) 30%, transparent), 0 0 0 1px var(--premiere-hard); }
+[data-opt="d"] .empty::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--premiere-hard);
+  transform: translate(34px, 40px) scale(1.07); filter: blur(12px); opacity: .9; }
+[data-opt="d"] .empty::after { content: ""; position: absolute; inset: 0; z-index: -2; background: var(--premiere-hard);
+  transform: translate(-22px, 30px) scale(1.04); filter: blur(22px); opacity: .45; }
+/* B's stamps: printed double shadow on the words, hard offsets on the buttons */
+[data-opt="d"] .empty h1 { text-shadow: 3px 3px 0 var(--premiere-hard), 4px 4px 0 color-mix(in srgb, var(--premiere-rose) 70%, transparent); }
+[data-opt="d"] .empty .lede, [data-opt="d"] .tile .nm, [data-opt="d"] .recents .disc { text-shadow: 2px 2px 0 var(--premiere-hard); }
+[data-opt="d"] .btn { border-color: var(--premiere-hard); border-width: 2px; box-shadow: 3px 3px 0 var(--premiere-hard); }
+[data-opt="d"] .btn.primary { box-shadow: 3px 3px 0 var(--premiere-hard), 6px 6px 0 color-mix(in srgb, var(--premiere-rose) 45%, var(--premiere-hard)); }
+[data-opt="d"] .seg { box-shadow: 3px 3px 0 var(--premiere-hard); }
+[data-opt="d"] .recents .disc .line { background: repeating-linear-gradient(to right, color-mix(in srgb, var(--premiere-gold) 55%, transparent) 0 6px, transparent 6px 10px); height: 2px; }
+/* C's soft silhouettes behind the tiles */
+[data-opt="d"] .tile .cov::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--premiere-hard);
+  transform: translate(12px, 14px) scale(1.1); filter: blur(7px); opacity: .85; }
+[data-opt="d"] .tile .cov { box-shadow: inset 0 1px 0 rgb(255 255 255 / .5); }
+[data-opt="d"] .dock { background: color-mix(in srgb, var(--premiere-panel) 92%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--lamp) 28%, transparent), 22px 28px 26px -6px var(--premiere-hard), -16px 24px 30px -10px color-mix(in srgb, var(--premiere-hard) 60%, transparent); }
+</style></head>
+<body>
+<div class="wf-note">WIREFRAME. Ways to give the empty Workbench more shadow and depth. Layout, copy and tiles are today's; only light, shadow and surface change. Colours follow the accent picker (kit). <span class="wf-accent"></span></div>
+
+<template id="room">
+  <span class="reload">Reload Studio</span>
+  <div class="status">the workbench is clear</div>
+  <section class="empty">
+    <div class="kicker">The Workbench &middot; Edit pieces</div>
+    <h1>Your workbench is empty</h1>
+    <p class="lede">Open a piece from your Library to start editing. Each piece opens in a tab above.</p>
+    <div class="acts"><span class="btn primary">Open Library</span><span class="btn">New pack folder</span><span class="btn">New lorebook</span></div>
+    <div class="views"><span class="seg"><span aria-pressed="true">Desk</span><span>Nodes</span></span><span class="btn icon">&#8599;</span></div>
+  </section>
+  <div class="recents">
+    <div class="disc">Recent &middot; bring one up <span class="line"></span><span class="hide">hide</span></div>
+    <div class="tiles"></div>
+  </div>
+  <nav class="dock"><span class="on">The Workbench</span><span>The Library</span><span>Scenes</span><span>The Press</span><span>CSS Workshop</span><span>The Agent</span><span>Macro Lab</span><span>Help / Docs</span><span>Apps</span><span>HTML View</span><span>Settings</span><span>Overlay</span></nav>
+</template>
+
+<section class="opt" data-opt="a"><header><h2>A. Ambient depth</h2><p>Soft light from above. The card gets a raised edge (light top highlight), a tight contact shadow plus a wide falloff, and a pool of shadow under it. The Recent rail sits on a ledge recessed into the floor. The dock floats on frosted glass. Quietest of the three; closest to today.</p></header><div class="frame"></div></section>
+<section class="opt" data-opt="b"><header><h2>B. Stacked print</h2><p>Keeps the house hard offset shadow and stacks it: the card is three sheets (accent, select, black), titles carry a printed double shadow, tiles each throw a hard offset in their deck colour. A halftone dot field fades out behind the card. Graphic, poster-like, no blur.</p></header><div class="frame"></div></section>
+<section class="opt" data-opt="c"><header><h2>C. Kage-e (shadow theatre)</h2><p>Same materials as today: the plum card, the gold edge, the pastel tiles, the buttons. Only the light changes: a low lamp glows on the back wall, and every piece throws a soft silhouette onto it, larger and further back than a normal drop shadow, the way a puppet shadow falls on the screen. Two lamps, so the card has a strong shadow and a faint second one. All static.</p></header><div class="frame"></div></section>
+<section class="opt" data-opt="d" id="d"><header><h2>D. Shadow print (B + C)</h2><p>B's halftone dots on the wall, now lit by C's lamp, and B's printed stamps on the title, words and buttons. The card, tiles and dock keep C's soft puppet shadows on the wall. Same materials as today.</p></header><div class="frame"></div></section>
+
+<script>
+var tiles = [["W","Writer - Realistic (system prompt)"],["A","Astrolab ENI Compat regex","regex"],["A","Astrolab ENI Compat"],["T","Think XML (reasoning)"],["O","OpenAI Harmony (reasoning)"],["N","NA (reasoning)"],["G","G (system prompt)"],["D","D (system prompt)"],["B","B (system prompt)"],["W","W (system prompt)"],["T","T (system prompt)"],["S","S (system prompt)"],["R","R (system prompt)"],["R","R (system prompt)"]];
+var tpl = document.getElementById("room");
+document.querySelectorAll(".frame").forEach(function (f) {
+  f.appendChild(tpl.content.cloneNode(true));
+  var box = f.querySelector(".tiles");
+  tiles.forEach(function (t) {
+    var el = document.createElement("div"); el.className = "tile"; if (t[2]) el.dataset.deck = t[2];
+    el.innerHTML = '<div class="cov">' + t[0] + '</div><span class="nm"></span>';
+    el.querySelector(".nm").textContent = t[1]; box.appendChild(el);
+  });
+});
+</script><script src="kit.js"></script>
+</body></html>

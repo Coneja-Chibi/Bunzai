@@ -12,6 +12,7 @@
  * one turn off; the spell waiting to ride the next reply is shown and can be cancelled, where RoleCall holds it in a hidden ref; a blank Mana Cost in the edit form
  * clears the field where RoleCall saves 0; the Wild Magic sub-feature, which does nothing in RoleCall's panel, adds the susceptibility to what Generate writes and to Edit.
  */
+import { readDice, rollDice, rollText } from "../dice";
 import { arr, bool, dflt, num, obj, oneOf, opt, rec, str, type Of } from "./shape";
 import { appendItem, find, hasUniqueIds, liveOf, markRemoved, patchItem, unmarkRemoved } from "./list";
 import type { GenSpec } from "./generate";
@@ -146,17 +147,14 @@ export function applySpellbook(b: Spellbook, a: SpellbookAction): Spellbook {
 
 /** RoleCall's dice formula (lib/utils/dice.ts): "2d6", "d20", "1d20+3", "3d8-2", a count of 1 to 100 and sides of 2 to 1000. */
 export function parseDiceFormula(formula: string): { count: number; sides: number; modifier: number } | null {
-  const m = /^(\d+)?d(\d+)([+-]\d+)?$/i.exec(formula.trim());
-  if (!m) return null;
-  const count = Number.parseInt(m[1] ?? "1", 10), sides = Number.parseInt(m[2]!, 10), modifier = m[3] ? Number.parseInt(m[3], 10) : 0;
-  return count < 1 || count > 100 || sides < 2 || sides > 1000 ? null : { count, sides, modifier };
+  const d = readDice(formula.trim());
+  return !d || d.count < 1 || d.count > 100 || d.sides < 2 || d.sides > 1000 ? null : d;
 }
 function rollFormula(formula: string, rand: () => number): string | undefined {
   const p = parseDiceFormula(formula);
   if (!p) return undefined;
-  const rolls = Array.from({ length: p.count }, () => Math.floor(rand() * p.sides) + 1);
-  const mod = p.modifier !== 0 ? ` ${p.modifier > 0 ? "+" : ""}${p.modifier}` : "";
-  return `Rolled ${rolls.reduce((n, r) => n + r, 0) + p.modifier} (${formula}: [${rolls.join(", ")}]${mod})`;
+  const roll = rollDice(p, rand);
+  return `Rolled ${roll.total} (${formula}: ${rollText(roll)})`;
 }
 
 /** RoleCall's wild magic surges (SpellbookWingPanel.tsx:WILD_MAGIC_EFFECTS). */

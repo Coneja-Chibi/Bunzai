@@ -9,14 +9,14 @@ import { SegmentedRow, SelectRow, ToggleRow } from "../frames/settings-rows";
 import type { WingArgs } from "../wing-props";
 
 export function CharacterDefaultRows({ a }: { a: WingArgs }): JSX.Element {
-  const { d, problems, choices, gone, note, customSamplers, put, keepSamplers, keepBackdrop } = useCharacterDefaults(a.ctx, a.scene.chat);
-  const options = [{ value: "", label: "No preset" }, ...(gone ? [{ value: d.presetId!, label: "No longer in your library" }] : []), ...choices];
+  const { d, problems, choices, presetValue, gone, note, customSamplers, put, choosePreset, keepSamplers, keepBackdrop } = useCharacterDefaults(a.ctx, a.scene.chat);
+  const options = [{ value: "", label: "No preset" }, ...(gone ? [{ value: presetValue, label: "No longer in your library" }] : []), ...choices];
   return (
     <div data-part="scene.messenger.settings.defaults">
       {problems.length > 0 && <p role="alert" className="msn-st-secd">Some saved defaults could not be read and are not used. Choosing a value again replaces them.</p>}
       {gone && <p role="status" className="msn-st-secd">The saved preset is no longer in your library. New scenes start without a preset until you choose another.</p>}
       {note && <p role="status" className="msn-st-secd">{note}</p>}
-      <SelectRow label="Preset" description="New scenes with this character start on this preset." value={d.presetId ?? ""} options={options} onChange={(id) => put({ presetId: id === "" ? null : id })} />
+      <SelectRow label="Preset" description="New scenes with this character start on this preset." value={presetValue} options={options} onChange={choosePreset} />
       {d.presetId !== undefined && (
         <SegmentedRow<"preset" | "custom"> label="Samplers" description="Custom keeps this scene's sampler values for new scenes." value={customSamplers ? "custom" : "preset"}
           options={[{ value: "preset", label: "Use preset" }, { value: "custom", label: "Custom" }]}

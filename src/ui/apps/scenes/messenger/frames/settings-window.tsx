@@ -62,10 +62,11 @@ export function useSettingsNav(): SettingsNav { return useContext(NavContext); }
 
 interface DeepEntry { id: string; from: string }
 
-function Block({ section }: { section: SettingsSection }): JSX.Element {
+/** `untitled`: the page heading already says the section's name (a deeper page whose one section shares it). */
+function Block({ section, untitled = false }: { section: SettingsSection; untitled?: boolean }): JSX.Element {
   return (
     <section className="msn-st-blk" data-section={section.id} data-part="scene.messenger.settings.section">
-      <h2>{section.title}</h2>
+      {untitled ? null : <h2>{section.title}</h2>}
       {section.description ? <p className="msn-st-secd">{section.description}</p> : null}
       <div className="msn-st-rows">{section.body}</div>
     </section>
@@ -208,7 +209,7 @@ export function SettingsWindow({ scope, resolveDeep, initialCategory, onClose, o
             <div ref={scroller} className="msn-st-scroll" tabIndex={-1} onScroll={follow} data-part="scene.messenger.settings.page">
               <div className="msn-st-in">
                 {top ? (
-                  deepPage ? <><h2 className="msn-st-h1">{deepPage.title}</h2>{deepPage.sections.map(/* bounded-ok: fixed registry of panels / settings / props / platforms */ (s) => <Block key={s.id} section={s} />)}</> : <p className="msn-st-secd">This page is not available.</p>
+                  deepPage ? <><h2 className="msn-st-h1">{deepPage.title}</h2>{deepPage.sections.map(/* bounded-ok: fixed registry of panels / settings / props / platforms */ (s) => <Block key={s.id} section={s} untitled={s.title === deepPage.title} />)}</> : <p className="msn-st-secd">This page is not available.</p>
                 ) : cat ? (
                   <>{cat.hero}{cat.sections.map(/* bounded-ok: fixed registry of panels / settings / props / platforms */ (s) => <Block key={s.id} section={s} />)}<div className="msn-st-spacer" /></>
                 ) : <p className="msn-st-secd">Nothing to show here yet.</p>}

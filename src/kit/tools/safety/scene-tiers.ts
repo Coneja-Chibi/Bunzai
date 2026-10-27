@@ -3,7 +3,7 @@
  * (risk.ts), so the scene has no permission vocabulary of its own. A book's level is the highest tier the Compendium may use on it;
  * the extra word is whether it may also read. `canRead` and `canWrite` (core/compendium/defaults.ts) are what the passes call;
  * scene-tiers.test.ts holds them to this table. Every action here is first-party and runs only on the person's own click or
- * the scene's own turn (the Story Director's plan and a person's edits of its story write only the Director's own state); none is a tool a model may call, except narrator lookup, which the tool loop holds to `read`.
+ * the scene's own turn (the Story Director's plan and a person's edits of its story write only the Director's own state); none is a tool a model may call, except narrator lookup and the library tools a scene links (their actions roll or record), which the tool loop holds to `read`.
  */
 import type { CompendiumAccess } from "../../../stage/contracts/chat-settings-types";
 import type { ToolAccess } from "./risk";
@@ -32,6 +32,7 @@ export const SCENE_ACTION_TIERS = {
   "tracker.refresh": "draft",
   "tracker.forecast": "draft",
   "narrator.lookup": "read",
+  "narrator.tool": "read",
   "spotify.control": "egress",
 } as const satisfies Record<string, ToolAccess>;
 

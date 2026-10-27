@@ -1,0 +1,379 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promptbook Steps</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* The friendly face of a Promptbook: a list of steps in plain words, opened from a template, with a "Try a line" panel
+   that lights up what would run. The node board (promptbook-board.html) is the same book shown as nodes, one switch
+   away, for people who want it. Tokens only; signature colors on the step strips. */
+body { padding-bottom: 60px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+.part { margin-top: 34px; }
+.part > h2 { font: 700 13px var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); margin-bottom: 12px; }
+.screen { border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); background: var(--premiere-canvas); }
+.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 18px; background: var(--premiere-panel); border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.top .title { font: 700 22px var(--font-fancy); letter-spacing: .02em; }
+.top .kind { font: 700 10px var(--font-ui); letter-spacing: .16em; text-transform: uppercase; color: var(--premiere-gold); }
+.grow { flex: 1; }
+.btn.sm { min-height: 34px; padding: 5px 14px; font-size: 13px; }
+
+/* ---------- empty: pick a starting point ---------- */
+.hello { padding: 40px 24px 44px; text-align: center; }
+.hello h3 { font: 700 30px/1.15 var(--font-fancy); letter-spacing: .02em; }
+.hello p { margin: 10px auto 26px; max-width: 560px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); }
+.temps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; max-width: 1040px; margin: 0 auto; text-align: left; }
+.temp { background: var(--premiere-panel); border: 2px solid var(--premiere-hard); box-shadow: 4px 4px 0 var(--c); padding: 16px 16px 14px; cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+.temp:hover { transform: translateY(-4px); box-shadow: 6px 8px 0 var(--c); }
+.temp b { display: block; font: 700 17px var(--font-ui); margin-bottom: 6px; }
+.temp p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); margin: 0 0 12px; }
+.mini { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; font: 600 11px var(--font-ui); }
+.mini span { padding: 2px 8px; background: color-mix(in srgb, var(--c) 22%, transparent); border-left: 3px solid var(--c); }
+.mini i { font-style: normal; color: color-mix(in srgb, var(--premiere-text) 45%, transparent); }
+.temp.blank { box-shadow: none; border: 2px dashed color-mix(in srgb, var(--premiere-text) 30%, transparent); display: grid; place-items: center; text-align: center; }
+
+/* ---------- the steps list ---------- */
+.body { display: grid; grid-template-columns: minmax(0, 1fr) 380px; }
+.steps { padding: 22px 28px 30px; }
+.lead { font-size: 15px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); margin-bottom: 18px; }
+.lead b { color: var(--premiere-text); }
+.step { position: relative; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 0 14px; align-items: start; background: var(--premiere-panel);
+  border: 2px solid var(--premiere-hard); box-shadow: 4px 4px 0 var(--premiere-hard); padding: 14px 14px 14px 0; border-left: 8px solid var(--c); transition: transform .18s ease; }
+.step:hover { transform: translateX(3px); }
+.step .num { font: 700 28px/1 var(--font-fancy); text-align: center; color: hsl(from var(--c) h 70% 74%); padding-top: 2px; }
+.step h4 { font: 700 17px/1.2 var(--font-ui); }
+.step .say { font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); margin-top: 3px; }
+.step .bits { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.bit { font: 600 12px var(--font-ui); padding: 3px 9px; border: 1px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); }
+.bit.page { border-left: 3px solid var(--c); }
+.bit.tool { border-color: color-mix(in srgb, var(--premiere-gold) 60%, transparent); color: var(--premiere-gold); }
+.step .acts { display: flex; gap: 6px; }
+.step .acts span { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--premiere-text) 20%, transparent); font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 70%, transparent); cursor: pointer; }
+.step.lit { box-shadow: 4px 4px 0 var(--premiere-hard), 0 0 0 2px color-mix(in srgb, var(--c) 70%, transparent); }
+.step.dim { opacity: .5; }
+.add { display: flex; align-items: center; gap: 10px; margin: 8px 0 8px 22px; height: 26px; color: color-mix(in srgb, var(--premiere-text) 50%, transparent); font-size: 12px; font-weight: 600; }
+.add::before { content: ""; width: 2px; height: 26px; background: color-mix(in srgb, var(--premiere-text) 18%, transparent); }
+.add span { padding: 2px 10px; border: 1px dashed color-mix(in srgb, var(--premiere-text) 30%, transparent); cursor: pointer; }
+.add span:hover { color: var(--premiere-text); border-color: var(--premiere-gold); }
+
+/* a fork: plain sentence, two lanes */
+.fork { border: 2px solid var(--premiere-hard); background: color-mix(in srgb, var(--c) 8%, var(--premiere-panel)); border-left: 8px solid var(--c); padding: 12px 14px 14px; }
+.fork .ask { font: 700 16px var(--font-ui); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.fork .ask .word { padding: 2px 10px; background: color-mix(in srgb, var(--c) 25%, transparent); border-bottom: 2px solid var(--c); font-weight: 700; }
+.lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.lane > small { display: block; font: 700 11px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; margin-bottom: 6px; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.lane .step { grid-template-columns: 40px minmax(0, 1fr) auto; }
+.lane .step .num { font-size: 22px; }
+
+/* a step opened for editing, in place */
+.open { margin-top: 12px; padding-top: 12px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); display: grid; gap: 14px; grid-column: 2 / -1; }
+.q { font: 700 13px var(--font-ui); margin-bottom: 6px; }
+.box { border: 2px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); background: var(--premiere-hard); padding: 10px 12px; font-size: 14px; line-height: 1.5; color: color-mix(in srgb, var(--premiere-text) 85%, transparent); }
+.sentence { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
+.pick { padding: 4px 10px; border: 2px solid color-mix(in srgb, var(--premiere-text) 25%, transparent); background: var(--premiere-hard); font-weight: 600; }
+.pick::after { content: " \25BE"; color: var(--premiere-gold); }
+.tag { padding: 3px 10px; background: color-mix(in srgb, var(--premiere-gold) 18%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-gold) 50%, transparent); font-weight: 600; font-size: 13px; }
+.toolrow { display: flex; gap: 10px; flex-wrap: wrap; }
+.toolcard { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 2px solid color-mix(in srgb, var(--premiere-text) 18%, transparent); font-size: 13px; }
+.toolcard .switch { flex: none; }
+.adv { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); text-decoration: underline; text-underline-offset: 3px; }
+
+/* the after-reply tidy */
+.tidy { display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 10px 14px; border: 1px dashed color-mix(in srgb, var(--premiere-text) 25%, transparent); font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); }
+.tidy b { color: var(--premiere-text); }
+
+/* ---------- try a line ---------- */
+.try { border-left: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); background: var(--premiere-panel); padding: 18px 18px 22px; }
+.try h4 { font: 700 20px var(--font-fancy); letter-spacing: .02em; }
+.try > p { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); margin: 4px 0 14px; }
+.line { display: flex; gap: 8px; }
+.line .box { flex: 1; }
+.trace { margin-top: 18px; display: grid; gap: 0; }
+.tr { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 9px 0; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 8%, transparent); font-size: 13px; }
+.tr .dot { width: 14px; height: 14px; margin-top: 2px; background: var(--c); box-shadow: 0 0 12px var(--c); }
+.tr.skip .dot { background: none; border: 2px solid color-mix(in srgb, var(--premiere-text) 30%, transparent); box-shadow: none; }
+.tr.skip { color: color-mix(in srgb, var(--premiere-text) 50%, transparent); }
+.tr b { display: block; }
+.tr small { color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.cheer { margin-top: 16px; padding: 10px 12px; border-left: 3px solid var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 10%, transparent); font-size: 13px; }
+.legend { margin-top: 30px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 78%, transparent); }
+.legend li { margin: 6px 0 6px 18px; }
+@media (prefers-reduced-motion: reduce) { .temp, .step { transition: none; } .temp:hover, .step:hover { transform: none; } }
+/* ---------- phases: the turn as a short run of phases ---------- */
+.track { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; padding: 18px 28px 6px; }
+.ph { position: relative; padding: 12px 14px 12px 16px; background: var(--premiere-panel); border: 2px solid var(--premiere-hard); border-top: 5px solid var(--c); cursor: pointer; margin-right: 26px; transition: transform .18s ease; }
+.ph:hover { transform: translateY(-3px); }
+.ph:not(:last-child)::after { content: "\2192"; position: absolute; right: -24px; top: 50%; transform: translateY(-50%); color: color-mix(in srgb, var(--premiere-text) 45%, transparent); font-weight: 700; }
+.ph .n { font: 700 11px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: hsl(from var(--c) h 70% 74%); }
+.ph b { display: block; font: 700 18px var(--font-ui); margin: 2px 0; }
+.ph small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.ph.sel { box-shadow: 0 0 0 2px var(--c), 4px 4px 0 var(--premiere-hard); }
+.ph.lit::before { content: ""; position: absolute; right: 8px; top: 8px; width: 9px; height: 9px; background: var(--c); box-shadow: 0 0 10px var(--c); }
+.ph.skip { opacity: .55; }
+.band { margin: 0 28px; background: var(--premiere-panel); border: 2px solid var(--premiere-hard); border-left: 8px solid var(--c); box-shadow: 4px 4px 0 var(--premiere-hard); }
+.band header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 12px 16px 10px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.band header .n { font: 700 26px/1 var(--font-fancy); color: hsl(from var(--c) h 70% 74%); }
+.band header b { font: 700 18px var(--font-ui); }
+.band header .makes { font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); }
+.band.closed header { border-bottom: 0; }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
+.col { padding: 12px 16px 14px; }
+.col + .col { border-left: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.col .q { margin-bottom: 8px; }
+.li { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 7%, transparent); }
+.li::before { content: ""; width: 4px; align-self: stretch; background: var(--lc, var(--c)); flex: none; }
+.li small { margin-left: auto; font-size: 11px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); text-align: right; }
+.li small.when { color: var(--premiere-gold); }
+.li.add { color: color-mix(in srgb, var(--premiere-text) 50%, transparent); font-size: 12px; font-weight: 600; }
+.li.add::before { background: none; border-left: 1px dashed color-mix(in srgb, var(--premiere-text) 30%, transparent); }
+.handoff { display: flex; align-items: center; gap: 10px; margin: 0 28px 0 60px; height: 40px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.handoff::before { content: ""; width: 2px; height: 40px; background: linear-gradient(var(--a1), var(--a2)); }
+.handoff b { color: var(--premiere-text); font-weight: 600; }
+.setrow { display: flex; gap: 16px; flex-wrap: wrap; padding: 0 16px 14px; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 72%, transparent); align-items: center; }
+/* ---------- the card board: phases as columns of prompt cards ---------- */
+.cb { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 620px; }
+.drawer { background: var(--premiere-panel); border-right: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); padding: 16px 14px; }
+.dsec + .dsec { margin-top: 22px; }
+.hint { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); margin: 2px 0 10px; }
+.lanes2 { display: flex; align-items: flex-start; gap: 0; padding: 18px 20px 24px; overflow-x: auto; }
+.pcol { flex: none; width: 232px; background: color-mix(in srgb, var(--c) 7%, var(--premiere-panel)); border: 2px solid var(--premiere-hard); border-top: 6px solid var(--c); box-shadow: 4px 4px 0 var(--premiere-hard); padding: 0 10px 10px; }
+.pcol header { display: flex; align-items: center; gap: 10px; padding: 10px 2px; }
+.pcol header .n { font: 700 26px/1 var(--font-fancy); color: hsl(from var(--c) h 70% 74%); }
+.pcol header b { display: block; font: 700 17px var(--font-ui); }
+.pcol header small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.pcol header .dots { margin-left: auto; color: color-mix(in srgb, var(--premiere-text) 50%, transparent); }
+.pcol footer { margin-top: 8px; font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.slot { display: flex; gap: 8px; position: relative; margin-top: 8px; }
+.slot.together { padding: 16px 8px 8px; border: 2px dashed color-mix(in srgb, var(--premiere-gold) 65%, transparent); }
+.slot.together .tg { position: absolute; top: -9px; left: 8px; background: var(--premiere-hard); padding: 0 6px; font: 700 10px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); }
+.slot.drop { height: 40px; border: 2px dashed color-mix(in srgb, var(--premiere-text) 18%, transparent); display: grid; place-items: center; font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 40%, transparent); }
+.pc { flex: 1; min-width: 0; background: var(--premiere-hard); border: 2px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); border-top: 4px solid var(--c); padding: 8px 10px; cursor: grab; box-shadow: 3px 3px 0 color-mix(in srgb, var(--c) 45%, var(--premiere-hard)); transition: transform .15s ease, box-shadow .15s ease; }
+.pc:hover { transform: translateY(-3px); box-shadow: 4px 6px 0 color-mix(in srgb, var(--c) 60%, var(--premiere-hard)); }
+.pc b { display: block; font: 700 14px/1.25 var(--font-ui); }
+.pc small { font-size: 11px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); }
+.pc small.when { color: var(--premiere-gold); }
+.pc.rx { border-top-style: dashed; }
+.mini-card { margin-bottom: 8px; }
+.mini-card.new { border-style: dashed; box-shadow: none; --c: color-mix(in srgb, var(--premiere-text) 30%, transparent); color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.dropline { position: relative; height: 0; margin: 6px 0; border-top: 3px solid var(--premiere-rose); }
+.dropline span { position: absolute; right: 0; top: -14px; font: 700 11px var(--font-ui); padding: 2px 8px; background: var(--premiere-rose); color: var(--premiere-text); box-shadow: 3px 3px 0 var(--premiere-hard); }
+.tools { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 12px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.tools .q { margin: 0 4px 0 0; font-size: 12px; }
+.tools .none { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 40%, transparent); }
+.tk { display: flex; align-items: center; gap: 8px; padding: 6px 10px; margin-bottom: 6px; border: 2px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent); font: 600 13px var(--font-ui); cursor: grab; }
+.tools .tk { margin: 0; padding: 3px 8px; font-size: 12px; }
+.tk.on { background: color-mix(in srgb, var(--premiere-gold) 14%, transparent); }
+.tk.add { border-style: dashed; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); border-color: color-mix(in srgb, var(--premiere-text) 25%, transparent); cursor: pointer; }
+.tico { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 3px; background: var(--premiere-gold); color: var(--premiere-hard); font: 800 11px var(--font-ui); }
+.tools .tico { min-width: 18px; height: 18px; font-size: 10px; }
+.arrow { flex: none; width: 46px; align-self: center; position: relative; height: 2px; background: color-mix(in srgb, var(--premiere-text) 30%, transparent); margin-top: 60px; }
+.arrow::after { content: ""; position: absolute; right: -1px; top: -5px; border: 6px solid transparent; border-left-color: color-mix(in srgb, var(--premiere-text) 30%, transparent); border-right: 0; }
+.arrow span { position: absolute; left: 50%; top: -22px; transform: translateX(-50%); white-space: nowrap; font-size: 11px; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.newcol { margin-left: 16px; width: 170px; border: 2px dashed color-mix(in srgb, var(--premiere-text) 25%, transparent); background: none; box-shadow: none; display: grid; place-items: center; text-align: center; min-height: 200px; padding: 20px; cursor: pointer; }
+.newcol b { display: block; font: 700 16px var(--font-ui); }
+.newcol small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+@media (prefers-reduced-motion: reduce) { .pc { transition: none; } .pc:hover { transform: none; } }
+/* ---------- card types: told apart by label, glyph and frame, not color alone ---------- */
+.types { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+.pc .tl { display: flex; align-items: center; gap: 6px; font: 700 10px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); margin-bottom: 4px; }
+.pc .gl { display: grid; place-items: center; width: 16px; height: 16px; font: 800 11px var(--font-ui); letter-spacing: 0; background: var(--c); color: var(--premiere-hard); }
+.pc { position: relative; margin-bottom: 8px; }
+.slot .pc, .seat .pc { margin-bottom: 0; }
+/* prompt: a page, colored top edge (the default card) */
+/* agent: a square portrait with an initial, a quote-like line */
+.pc[data-t="agent"] { border-top-width: 2px; border-left: 4px solid var(--c); }
+.who { display: flex; gap: 10px; align-items: center; }
+.av { flex: none; display: grid; place-items: center; width: 34px; height: 34px; background: var(--c); color: var(--premiere-hard); font: 700 18px var(--font-fancy); box-shadow: 2px 2px 0 var(--premiere-hard); }
+.who small { font-style: italic; }
+/* tool: gold, a notched plug edge */
+.pc[data-t="tool"] { --c: var(--premiere-gold); border-color: color-mix(in srgb, var(--premiere-gold) 55%, transparent); border-top: 2px solid color-mix(in srgb, var(--premiere-gold) 55%, transparent); border-right: 8px double var(--premiere-gold); background: color-mix(in srgb, var(--premiere-gold) 8%, var(--premiere-hard)); }
+/* dice: a die in the corner */
+.pc[data-t="dice"] { padding-right: 44px; }
+.die { position: absolute; right: 8px; top: 10px; width: 26px; height: 26px; background: var(--c); box-shadow: 2px 2px 0 var(--premiere-hard); display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 3px; }
+.die i { width: 5px; height: 5px; background: var(--premiere-hard); align-self: center; justify-self: center; }
+.die i:nth-child(1) { grid-area: 1 / 1; } .die i:nth-child(2) { grid-area: 1 / 3; } .die i:nth-child(3) { grid-area: 2 / 2; } .die i:nth-child(4) { grid-area: 3 / 1; } .die i:nth-child(5) { grid-area: 3 / 3; }
+/* regex: dashed frame, the pattern in mono */
+.pc[data-t="regex"] { --c: var(--deck-regex); border-style: dashed; border-top: 4px dashed var(--c); box-shadow: none; }
+.pc code { display: block; margin-top: 4px; font: 12px var(--font-mono); color: hsl(from var(--deck-regex) h 80% 75%); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.newc { border-style: dashed; box-shadow: none; --c: color-mix(in srgb, var(--premiere-text) 30%, transparent); color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.dtabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.dtabs span { font: 600 11px var(--font-ui); padding: 3px 8px; border: 1px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); cursor: pointer; }
+.dtabs span[aria-pressed="true"] { background: color-mix(in srgb, var(--premiere-rose) 22%, transparent); border-color: var(--premiere-rose); }
+.seat { margin-top: 2px; padding: 8px; background: color-mix(in srgb, var(--premiere-hard) 50%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.seat .sl { display: block; font: 700 10px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--premiere-text) 50%, transparent); margin-bottom: 6px; }
+/* skill: text that turns on only when needed; its "when" sits in a band across the bottom */
+.pc[data-t="skill"] { border-top: 4px solid var(--c); padding-bottom: 0; }
+.pc .whenband { display: block; margin: 8px -10px 0; padding: 4px 10px; font: 600 11px var(--font-ui); background: color-mix(in srgb, var(--premiere-gold) 16%, transparent); border-top: 1px solid color-mix(in srgb, var(--premiere-gold) 45%, transparent); color: var(--premiere-gold); }
+.pc .whenband.on { background: color-mix(in srgb, var(--c) 30%, transparent); color: var(--premiere-text); border-top-color: var(--c); }
+</style></head>
+<body>
+<div class="wf-note">WIREFRAME. A friendlier Promptbook: phases in plain words, templates to start from, a "Try a line" panel that lights up what would run. The node board is the same book, one switch away. <span class="wf-accent"></span></div>
+<div class="wrap">
+
+<!-- ================= 1. FIRST OPEN ================= -->
+<section class="part"><h2>1. A new Promptbook</h2>
+<div class="screen">
+  <div class="top"><div><div class="kind">Promptbook</div><div class="title">Untitled book</div></div><span class="grow"></span><span class="seg"><span aria-pressed="true">Phases</span><span>Cards</span><span>Board</span></span></div>
+  <div class="hello">
+    <h3>How should your story think?</h3>
+    <p>A Promptbook is a short run of phases the model goes through each turn. Pick one to start; you can change every phase after.</p>
+    <div class="temps">
+      <div class="temp" style="--c:var(--sig-1)"><b>Think, then write</b><p>The model plans quietly, then writes the reply.</p><div class="mini"><span>Think</span><i>then</i><span>Write</span></div></div>
+      <div class="temp" style="--c:var(--sig-3)"><b>Fights and dice</b><p>Combat rules and dice open whenever a fight starts.</p><div class="mini"><span>Think</span><i>then</i><span>Write</span><i>then</i><span>Tidy up</span></div></div>
+      <div class="temp" style="--c:var(--sig-6)"><b>Mystery with clues</b><p>Keeps a case file of clues and suspects as you play.</p><div class="mini"><span>Notice clues</span><i>then</i><span>Write</span><i>then</i><span>Case file</span></div></div>
+      <div class="temp blank"><div><b>Start blank</b><p>One phase: write the reply.</p></div></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ================= 2. THE PHASES ================= -->
+<section class="part"><h2>2. The phases (what most people ever see)</h2>
+<div class="screen">
+  <div class="top"><div><div class="kind">Promptbook</div><div class="title">Noir Casebook</div></div><span class="grow"></span><span class="btn sm">Pages</span><span class="btn sm">Tools</span><span class="seg"><span aria-pressed="true">Phases</span><span>Cards</span><span>Board</span></span></div>
+  <div class="body">
+    <div>
+      <div class="track">
+        <div class="ph lit" style="--c:var(--sig-2)"><div class="n">Phase 1 &middot; private</div><b>Think</b><small>reads the scene, notices things</small></div>
+        <div class="ph skip" style="--c:var(--sig-5)"><div class="n">Phase 2 &middot; private</div><b>Plan</b><small>skipped for short replies</small></div>
+        <div class="ph lit sel" style="--c:var(--sig-3)"><div class="n">Phase 3 &middot; the reply</div><b>Write</b><small>what you see in chat</small></div>
+        <div class="ph lit" style="--c:var(--sig-7)"><div class="n">Phase 4 &middot; after</div><b>Tidy up</b><small>case file, clean the text</small></div>
+      </div>
+      <p class="lead" style="padding:10px 28px 4px;margin:0">Every turn runs these phases in order. Each one gets its own pages and tools, and hands what it made to the next.</p>
+
+      <div class="band closed" style="--c:var(--sig-2);margin-top:10px"><header><span class="n">1</span><b>Think</b><span class="makes">Makes private notes: who is here, what changed, what the player wants.</span><span class="grow"></span><span class="bit page" style="--c:var(--sig-2)">Scene goals</span><span class="bit">kept private</span><span class="adv">open</span></header></div>
+      <div class="handoff" style="--a1:var(--sig-2);--a2:var(--sig-5)">hands <b>its notes</b> to Plan</div>
+
+      <div class="band closed" style="--c:var(--sig-5)"><header><span class="n">2</span><b>Plan</b><span class="makes">Sketches the next beat in three lines.</span><span class="grow"></span><span class="bit" style="color:var(--premiere-gold);border-color:var(--premiere-gold)">skip when your message is short</span><span class="adv">open</span></header></div>
+      <div class="handoff" style="--a1:var(--sig-5);--a2:var(--sig-3)">hands <b>the plan</b> to Write</div>
+
+      <div class="band" style="--c:var(--sig-3)">
+        <header><span class="n">3</span><b>Write</b><span class="makes">Writes the reply you see, following the plan.</span><span class="grow"></span><span class="adv">close</span></header>
+        <div class="cols">
+          <div class="col"><div class="q">Reads these pages</div>
+            <div class="li" style="--lc:var(--sig-3)">Noir voice<small>always</small></div>
+            <div class="li" style="--lc:var(--sig-4)">City lore<small>always</small></div>
+            <div class="li" style="--lc:var(--sig-6)">Combat rules<small class="when">when the chat mentions a fight</small></div>
+            <div class="li" style="--lc:var(--sig-1)">Romance beats<small class="when">when two characters get close</small></div>
+            <div class="li add">+ add a page</div>
+          </div>
+          <div class="col"><div class="q">Can use</div>
+            <div class="toolrow" style="flex-direction:column;align-items:stretch">
+              <span class="toolcard"><span class="switch on"></span>Roll dice<small style="margin-left:auto;font-size:11px;color:var(--premiere-gold)">in fights</small></span>
+              <span class="toolcard"><span class="switch"></span>Search this Act</span>
+              <span class="toolcard"><span class="switch"></span>Open another page</span>
+            </div>
+          </div>
+          <div class="col"><div class="q">Gets from earlier phases</div>
+            <div class="li" style="--lc:var(--sig-2)">Notes from Think<small>yes</small></div>
+            <div class="li" style="--lc:var(--sig-5)">The plan<small>when Plan ran</small></div>
+            <div class="q" style="margin-top:14px">What it should do</div>
+            <div class="box" style="font-size:13px">Write the next part of the scene in the noir voice. Follow the plan; keep it under 300 words.</div>
+          </div>
+        </div>
+        <div class="setrow"><span>Model</span><span class="pick">Same as the scene</span><span>Length</span><span class="pick">up to 1,200 tokens</span></div>
+      </div>
+      <div class="handoff" style="--a1:var(--sig-3);--a2:var(--sig-7)">hands <b>the reply</b> to Tidy up</div>
+
+      <div class="band closed" style="--c:var(--sig-7);margin-bottom:26px"><header><span class="n">4</span><b>Tidy up</b><span class="makes">Updates the case file and cleans the text with Noir fixes.</span><span class="grow"></span><span class="bit">case file</span><span class="bit">regex set</span><span class="adv">open</span></header></div>
+    </div>
+
+    <aside class="try">
+      <h4>Try a line</h4>
+      <p>Type something you might say. Nothing is sent to the model; it shows which phases and pages would run.</p>
+      <div class="line"><div class="box">I draw my revolver and kick the door in.</div><span class="btn sm primary">Try</span></div>
+      <div class="trace">
+        <div class="tr" style="--c:var(--sig-2)"><span class="dot"></span><div><b>Think</b><small>always runs</small></div></div>
+        <div class="tr skip"><span class="dot"></span><div><b>Plan</b><small>skipped: your line is short</small></div></div>
+        <div class="tr" style="--c:var(--sig-3)"><span class="dot"></span><div><b>Write</b><small>opens Combat rules (matched "draw", "kick"), may roll dice</small></div></div>
+        <div class="tr" style="--c:var(--sig-7)"><span class="dot"></span><div><b>Tidy up</b><small>after the reply</small></div></div>
+      </div>
+      <div class="cheer">Looks good: 3 phases run, about 1,900 tokens.</div>
+    </aside>
+  </div>
+</div></section>
+
+<!-- ================= 3. THE CARD BOARD ================= -->
+<section class="part"><h2>3. The card board (same book, hands-on)</h2>
+<div class="types">
+  <div class="pc" data-t="skill" style="--c:var(--sig-1)"><span class="tl"><span class="gl">&#10022;</span>Skill</span><b>Interrogation</b><small>text that turns on when needed</small><span class="whenband">When: the model picks it</span></div>
+  <div class="pc" data-t="prompt" style="--c:var(--sig-3)"><span class="tl"><span class="gl">&#182;</span>Prompt</span><b>Instructions</b><small>text the phase reads</small></div>
+  <div class="pc" data-t="agent" style="--c:var(--sig-6)"><span class="tl"><span class="gl">&#9786;</span>Agent</span><div class="who"><span class="av">E</span><div><b>The Editor</b><small>who runs a phase</small></div></div></div>
+  <div class="pc" data-t="tool"><span class="tl"><span class="gl">&#9881;</span>Tool</span><b>Search this Act</b><small>an action the model may call</small></div>
+  <div class="pc" data-t="dice" style="--c:var(--sig-4)"><span class="tl"><span class="gl">&#9860;</span>Dice</span><b>Weather tonight</b><small>a roll or random table</small><span class="die"><i></i><i></i><i></i><i></i><i></i></span></div>
+  <div class="pc" data-t="regex"><span class="tl"><span class="gl">.*</span>Regex</span><b>Noir fixes</b><code>/\*\*(.+?)\*\*/ &rarr; $1</code></div>
+</div>
+<div class="screen">
+  <div class="top"><div><div class="kind">Promptbook</div><div class="title">Noir Casebook</div></div><span class="grow"></span><span class="btn sm">Try a line</span><span class="seg"><span>Phases</span><span aria-pressed="true">Cards</span><span>Board</span></span></div>
+  <div class="cb">
+    <aside class="drawer">
+      <div class="dtabs"><span aria-pressed="true">All</span><span>Prompts</span><span>Skills</span><span>Agents</span><span>Tools</span><span>Dice</span><span>Regex</span></div>
+      <p class="hint">Drag any card into a phase.</p>
+      <div class="pc" data-t="skill" style="--c:var(--sig-5)"><span class="tl"><span class="gl">&#10022;</span>Skill</span><b>Car chase</b><small>pursuit beats, near misses</small><span class="whenband">When: the chat mentions a car, a chase</span></div>
+      <div class="pc" data-t="prompt" style="--c:var(--sig-1)"><span class="tl"><span class="gl">&#182;</span>Prompt</span><b>Romance beats</b><small>Script Sheet</small></div>
+      <div class="pc" data-t="agent" style="--c:var(--sig-2)"><span class="tl"><span class="gl">&#9786;</span>Agent</span><div class="who"><span class="av">C</span><div><b>The Critic</b><small>blunt, checks the reply</small></div></div></div>
+      <div class="pc" data-t="dice" style="--c:var(--sig-4)"><span class="tl"><span class="gl">&#9860;</span>Dice</span><b>Weather tonight</b><small>d6 table: rain, fog, neon glare...</small><span class="die"><i></i><i></i><i></i><i></i><i></i></span></div>
+      <div class="pc" data-t="tool"><span class="tl"><span class="gl">&#9881;</span>Tool</span><b>Search this Act</b><small>find what someone knows</small></div>
+      <div class="pc" data-t="regex"><span class="tl"><span class="gl">.*</span>Regex</span><b>Strip stage notes</b><code>/\(OOC:.*?\)/ &rarr; </code></div>
+      <div class="pc newc"><b>+ New card</b></div>
+    </aside>
+
+    <div class="lanes2">
+      <!-- phase 1 -->
+      <div class="pcol" style="--c:var(--sig-2)">
+        <header><span class="n">1</span><div><b>Think</b><small>private notes</small></div><span class="dots">&#8943;</span></header>
+        <div class="seat"><span class="sl">Run by</span><div class="pc" data-t="agent" style="--c:var(--sig-5)"><div class="who"><span class="av">P</span><div><b>The Planner</b><small>calm, notices everything</small></div></div></div></div>
+        <div class="slot"><div class="pc" data-t="prompt" style="--c:var(--sig-2)"><span class="tl"><span class="gl">&#182;</span>Prompt</span><b>Scene goals</b><small>always</small></div></div>
+        <div class="slot"><div class="pc" data-t="dice" style="--c:var(--sig-4)"><span class="tl"><span class="gl">&#9860;</span>Dice</span><b>Twist chance</b><small>d20: 18+ adds a twist</small><span class="die"><i></i><i></i><i></i><i></i><i></i></span></div></div>
+        <div class="slot drop"><span>drop a card</span></div>
+        <footer>Same model &middot; up to 400 tokens</footer>
+      </div>
+      <div class="arrow"><span>notes</span></div>
+
+      <!-- phase 2 -->
+      <div class="pcol" style="--c:var(--sig-3)">
+        <header><span class="n">2</span><div><b>Write</b><small>the reply</small></div><span class="dots">&#8943;</span></header>
+        <div class="seat"><span class="sl">Run by</span><div class="pc" data-t="agent" style="--c:var(--sig-3)"><div class="who"><span class="av">N</span><div><b>Narrator</b><small>the scene's own voice</small></div></div></div></div>
+        <div class="slot"><div class="pc" data-t="prompt" style="--c:var(--sig-3)"><span class="tl"><span class="gl">&#182;</span>Prompt</span><b>Noir voice</b><small>always</small></div></div>
+        <div class="slot together"><span class="tg">together</span>
+          <div class="pc" data-t="prompt" style="--c:var(--sig-8)"><span class="tl"><span class="gl">&#182;</span>Prompt</span><b>City lore</b><small>always</small></div>
+          <div class="pc" data-t="skill" style="--c:var(--sig-6)"><span class="tl"><span class="gl">&#10022;</span>Skill</span><b>Combat rules</b><small>how fights go</small><span class="whenband">When: the chat mentions a fight</span></div>
+        </div>
+        <div class="dropline"><span>Romance beats</span></div>
+        <div class="slot"><div class="pc" data-t="skill" style="--c:var(--sig-1)"><span class="tl"><span class="gl">&#10022;</span>Skill</span><b>Interrogation</b><small>pressing a suspect for the truth</small><span class="whenband on">On now: the model picked it</span></div></div>
+        <div class="slot"><div class="pc" data-t="tool"><span class="tl"><span class="gl">&#9881;</span>Tool</span><b>Roll dice</b><small class="when">in fights</small></div></div>
+        <div class="slot drop"><span>drop a card</span></div>
+        <footer>Same model &middot; up to 1,200 tokens</footer>
+      </div>
+      <div class="arrow"><span>the reply</span></div>
+
+      <!-- phase 3 -->
+      <div class="pcol" style="--c:var(--sig-7)">
+        <header><span class="n">3</span><div><b>Tidy up</b><small>after the reply</small></div><span class="dots">&#8943;</span></header>
+        <div class="seat"><span class="sl">Run by</span><div class="pc" data-t="agent" style="--c:var(--sig-6)"><div class="who"><span class="av">E</span><div><b>The Editor</b><small>terse, keeps the case file</small></div></div></div></div>
+        <div class="slot"><div class="pc" data-t="tool"><span class="tl"><span class="gl">&#9881;</span>Tool</span><b>Write in the case file</b><small class="when">when a clue shows up</small></div></div>
+        <div class="slot"><div class="pc" data-t="regex"><span class="tl"><span class="gl">.*</span>Regex</span><b>Noir fixes</b><code>/\*\*(.+?)\*\*/ &rarr; $1</code></div></div>
+        <div class="slot drop"><span>drop a card</span></div>
+        <footer>Same model &middot; up to 300 tokens</footer>
+      </div>
+
+      <div class="pcol newcol"><b>+ New phase</b><small>Plan, Consult, Check the reply...</small></div>
+    </div>
+  </div>
+</div></section>
+
+<div class="legend">
+  <h2 class="section-title">What makes it friendly <small>and what stays the same underneath</small></h2>
+  <ul>
+    <li><b>Starts from a recipe, never an empty canvas.</b> Templates show their shape as a tiny strip of steps.</li>
+    <li><b>Built on phases.</b> The track up top is the turn: private phases first, then the reply, then the tidy-up. Each phase lists what it reads, what it can use, and what it gets from the phases before it; the hand-off lines say it in words.</li>
+    <li><b>Plain sentences.</b> "when the chat mentions a fight" instead of a pattern. Patterns stay one link away.</li>
+    <li><b>Edit in place.</b> A phase opens right where it is (Write); the others stay folded to one line.</li>
+    <li><b>Try a line.</b> Rehearsal as a playful check: type a line, watch the steps light up. Lit steps glow on the list too.</li>
+    <li><b>Extras appear only when used.</b> No tools, notes or regex until you add one; the tidy line shows up once a regex set is chosen.</li>
+    <li><b>Cards.</b> The same book as a hands-on board: each phase is a column. Cards stacked top to bottom go in that order; cards in one dashed row go in together. "+ New phase" adds a column.</li>
+    <li><b>Six kinds of card.</b> Prompt (text the phase always reads), Skill (text that turns on only when needed: always, when the chat mentions something, or when the model picks it from the skill names and descriptions; it stays on until that ends or the model is done with it), Tool (an action the model can call), Dice (a roll or random table), Regex (find and replace), Agent (who runs the phase, from its "Run by" seat). Each has a label and glyph, so the kind reads without color.</li>
+    <li><b>Board is one switch away.</b> Phases and Board are the same book. The board shows the same phases as nodes, with the wires, for people who want them.</li>
+  </ul>
+</div>
+</div>
+<script src="kit.js"></script>
+</body></html>

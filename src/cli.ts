@@ -4,6 +4,7 @@
  * First heartbeat: it boots, it knows who it is, it tells you what is coming.
  * The engine (canonical model + format adapters) gets poured in next.
  */
+import { pieceName } from "./core/piece-name";
 import { toErrorMessage } from "./error-message";
 
 import { basename, extname, join } from "node:path";
@@ -219,12 +220,7 @@ async function main(argv: string[]): Promise<number> {
     }
     try {
       const ent = validateAdapterOutput(src, input);
-      const name =
-        ent.kind === "character"
-          ? ent.body.identity.name
-          : ent.kind === "lorebook"
-            ? ent.body.name
-            : ent.body.name;
+      const name = pieceName(ent.kind, ent.body);
       if (json) {
         console.log(JSON.stringify({ ok: true, path, format: src.id, kind: ent.kind, name }));
       } else {

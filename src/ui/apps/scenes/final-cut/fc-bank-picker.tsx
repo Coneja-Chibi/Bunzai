@@ -15,7 +15,7 @@ import type { Change } from "./fc-pass-chrome";
 type Edit = (change: (current: FinalCutPass) => Partial<FinalCutPass>) => void;
 
 /** Switches one bank; switching it off also drops its pins. */
-const toggleBank = (bankId: string) => (c: FinalCutPass): Partial<FinalCutPass> => {
+export const toggleBank = (bankId: string) => (c: FinalCutPass): Partial<FinalCutPass> => {
   const on = (c.enabledBanks ?? []).some((b) => resolveBankId(b) === bankId);
   const pins = { ...c.pinnedBankExamples };
   if (on) delete pins[bankId];
@@ -35,7 +35,22 @@ const togglePin = (bankId: string, entry: string) => (c: FinalCutPass): Partial<
   return { pinnedBankExamples: pins, enabledBanks: on ? c.enabledBanks ?? [] : [...(c.enabledBanks ?? []), bankId] };
 };
 
-const swap = (list: readonly string[], a: number, b: number): string[] => { const out = [...list]; [out[a], out[b]] = [out[b]!, out[a]!]; return out; };
+export const swap = (list: readonly string[], a: number, b: number): string[] => { const out = [...list]; [out[a], out[b]] = [out[b]!, out[a]!]; return out; };
+
+/** The pass with every bank of the set switched on. */
+export const enableSetBanks = (ids: readonly string[]) => (c: FinalCutPass): Partial<FinalCutPass> => ({ enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...ids])] });
+
+/** The pass with the set's banks off and their pins dropped. */
+export const disableSetBanks = (ids: readonly string[]) => (c: FinalCutPass): Partial<FinalCutPass> => { const pins = { ...c.pinnedBankExamples }; for (const id of ids) delete pins[id]; return { enabledBanks: (c.enabledBanks ?? []).filter((b) => !ids.includes(resolveBankId(b))), pinnedBankExamples: pins }; };
+
+/** Detaches a set: its banks off, its pins dropped, and it leaves the attached list. */
+export const detachSet = (raw: string, ids: readonly string[]) => (c: FinalCutPass): Partial<FinalCutPass> => ({ ...disableSetBanks(ids)(c), attachedSets: (c.attachedSets ?? []).filter((s) => s !== raw) });
+
+/** Attaches a set at the end and switches its first three banks on. */
+export const attachSet = (id: string) => (c: FinalCutPass): Partial<FinalCutPass> => ({ attachedSets: [...(c.attachedSets ?? []), id], enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...bankIdsInSet(id).slice(0, 3)])] });
+
+/** One bank's own depth, or (null) back to the pass default. */
+export const setBankDepth = (bankId: string, d: BankDepth | null) => (c: FinalCutPass): Partial<FinalCutPass> => { const next = { ...c.bankDepthOverrides }; if (d) next[bankId] = d; else delete next[bankId]; return { bankDepthOverrides: next }; };
 
 function BankRow({ bankId, bank, pass, open, onOpen, edit }: { bankId: string; bank: Bank; pass: FinalCutPass; open: boolean; onOpen(): void; edit: Edit }): JSX.Element {
   const enabled = new Set((pass.enabledBanks ?? []).map(resolveBankId));
@@ -46,7 +61,7 @@ function BankRow({ bankId, bank, pass, open, onOpen, edit }: { bankId: string; b
   const cap = BANK_DEPTH[depth];
   const sent = Math.min(bank.examples.length, cap.examples === Number.POSITIVE_INFINITY ? bank.examples.length : cap.examples);
   const conflicts = on ? (bank.conflictsWith ?? []).filter((c) => enabled.has(c)) : [];
-  const setDepth = (d: BankDepth | null): void => edit((c) => { const next = { ...c.bankDepthOverrides }; if (d) next[bankId] = d; else delete next[bankId]; return { bankDepthOverrides: next }; });
+  const setDepth = (d: BankDepth | null): void => edit(setBankDepth(bankId, d));
   return (
     <div className={`fc-bank${on ? " on" : ""}${open ? " open" : ""}`}>
       <div className="head">
@@ -165,18 +180,17 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
             const ids = bankIdsInSet(raw);
             const on = ids.filter((id) => enabled.has(id)).length;
             const open = openSets.has(raw);
-            const drop = (c: FinalCutPass): Partial<FinalCutPass> => { const pins = { ...c.pinnedBankExamples }; for (const id of ids) delete pins[id]; return { enabledBanks: (c.enabledBanks ?? []).filter((b) => !ids.includes(resolveBankId(b))), pinnedBankExamples: pins }; };
             return (
               <div key={raw} className={`fc-set${open ? " open" : ""}`}>
                 <Disclosure open={open} onClick={() => setOpenSets(flip(openSets, raw))}
                   label={<span className="id"><b>{set.label}</b><small>{set.description}</small></span>}
                   trailing={<span className={`count${on === 0 ? " zero" : on === ids.length ? " full" : ""}`}>{on}/{ids.length} on</span>} />
                 <div className="acts">
-                  <Button size="sm" onClick={() => edit((c) => ({ enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...ids])] }))}>Enable all</Button>
-                  <Button size="sm" onClick={() => edit(drop)}>Disable all</Button>
+                  <Button size="sm" onClick={() => edit(enableSetBanks(ids))}>Enable all</Button>
+                  <Button size="sm" onClick={() => edit(disableSetBanks(ids))}>Disable all</Button>
                   {idx > 0 && <Button size="sm" icon="lucide:chevron-up" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx - 1, idx) }))}>Up</Button>}
                   {idx < attached.length - 1 && <Button size="sm" icon="lucide:chevron-down" onClick={() => edit((c) => ({ attachedSets: swap(c.attachedSets ?? [], idx, idx + 1) }))}>Down</Button>}
-                  <Button variant="danger" size="sm" onClick={() => edit((c) => ({ ...drop(c), attachedSets: (c.attachedSets ?? []).filter((s) => s !== raw) }))}>Detach</Button>
+                  <Button variant="danger" size="sm" onClick={() => edit(detachSet(raw, ids))}>Detach</Button>
                 </div>
                 {open && <div className="banks">{ids.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (id) => <BankRow key={id} bankId={id} bank={BANKS[id]!} pass={pass} open={openBanks.has(id)} onOpen={() => setOpenBanks(flip(openBanks, id))} edit={edit} />)}</div>}
               </div>
@@ -189,7 +203,7 @@ export function BankPicker({ pass, onChange }: { pass: FinalCutPass; onChange: C
           const id = e.target.value;
           if (!id) return;
           setOpenSets((s) => new Set(s).add(id));
-          edit((c) => ({ attachedSets: [...(c.attachedSets ?? []), id], enabledBanks: [...new Set([...(c.enabledBanks ?? []), ...bankIdsInSet(id).slice(0, 3)])] }));
+          edit(attachSet(id));
         }}>
           <option value="">+ Attach another set...</option>
           {unattached.map(/* bounded-ok: pass reports, bank pickers and options: small authored or fixed sets */ (s) => <option key={s.id} value={s.id}>{s.label} ({s.banks.length} banks)</option>)}

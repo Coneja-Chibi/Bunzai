@@ -82,15 +82,32 @@ function SavedAgents({ pass, lib, onChange }: { pass: FinalCutPass; lib: FinalCu
 }
 
 /** The attached preset's entries, each with the switch the agent reads (the person's switch, else the entry's own). */
-function Rulebook({ ctx, pass, onChange }: { ctx: AppContext; pass: FinalCutPass; onChange: Change }): JSX.Element | null {
+/** The attached preset's prompt entries (markers left out); null while they load or when no preset is attached. */
+export function usePresetPrompts(ctx: AppContext, presetId: string | null | undefined): PresetPrompt[] | null {
   const [prompts, setPrompts] = useState<PresetPrompt[] | null>(null);
   useEffect(() => {
     setPrompts(null);
-    if (!pass.customPresetId) return;
+    if (!presetId) return;
     let live = true;
-    ctx.api.getEntity(`kind=preset&id=${encodeURIComponent(pass.customPresetId)}`).then((e) => live && setPrompts(((bodyOf(e)["prompts"] as PresetPrompt[] | undefined) ?? []).filter((p) => !p.marker)), () => live && setPrompts([]));
+    ctx.api.getEntity(`kind=preset&id=${encodeURIComponent(presetId)}`).then((e) => live && setPrompts(((bodyOf(e)["prompts"] as PresetPrompt[] | undefined) ?? []).filter((p) => !p.marker)), () => live && setPrompts([]));
     return () => { live = false; };
-  }, [ctx, pass.customPresetId]);
+  }, [ctx, presetId]);
+  return prompts;
+}
+
+/** The person's presets, for the agent's rulebook picker. */
+export function usePresetList(ctx: AppContext): StudioEntitySummary[] | "loading" | "failed" {
+  const [presets, setPresets] = useState<StudioEntitySummary[] | "loading" | "failed">("loading");
+  useEffect(() => {
+    let live = true;
+    ctx.api.listEntities("preset").then((l) => live && setPresets(l), () => live && setPresets("failed"));
+    return () => { live = false; };
+  }, [ctx]);
+  return presets;
+}
+
+function Rulebook({ ctx, pass, onChange }: { ctx: AppContext; pass: FinalCutPass; onChange: Change }): JSX.Element | null {
+  const prompts = usePresetPrompts(ctx, pass.customPresetId);
   if (!pass.customPresetId) return null;
   if (prompts === null) return <div className="fc-note">Loading your preset library...</div>;
   if (prompts.length === 0) return <div className="fc-note">Selected preset has no prompt entries available.</div>;
@@ -112,12 +129,7 @@ function Rulebook({ ctx, pass, onChange }: { ctx: AppContext; pass: FinalCutPass
 }
 
 export function AgentControls({ ctx, pass, lib, onChange }: { ctx: AppContext; pass: FinalCutPass; lib: FinalCutLibrary; onChange: Change }): JSX.Element {
-  const [presets, setPresets] = useState<StudioEntitySummary[] | "loading" | "failed">("loading");
-  useEffect(() => {
-    let live = true;
-    ctx.api.listEntities("preset").then((l) => live && setPresets(l), () => live && setPresets("failed"));
-    return () => { live = false; };
-  }, [ctx]);
+  const presets = usePresetList(ctx);
   const list = Array.isArray(presets) ? presets : [];
   return (
     <div className="fc-controls">

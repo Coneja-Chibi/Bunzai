@@ -3,9 +3,10 @@
  * Run: bun run scripts/format-matrix.ts
  * Check: bun run scripts/format-matrix.ts --check  (fail if committed doc differs)
  */
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { loadFormats, CANONICAL_SCHEMA_VERSION } from "../src/core";
+import { KIND_IDS, kindOf } from "../src/generated/kinds";
 
 type FormatAdapters = Awaited<ReturnType<typeof loadFormats>>;
 type FormatAdapter = FormatAdapters[number];
@@ -13,19 +14,8 @@ type FormatAdapter = FormatAdapters[number];
 const row = (a: FormatAdapter): string =>
   `| \`${a.id}\` | ${a.kind} | .${a.outputExtensions.join(", .")} | ${a.label.replace(/\|/g, "/")} |`;
 
-/** Display names for known kinds; an unlisted kind still renders (Title-cased) - open by design. */
-const KIND_TITLES: Record<string, string> = {
-  character: "Characters",
-  lorebook: "Lorebooks",
-  persona: "Personas",
-  preset: "Presets",
-  regex: "Regex script sets",
-  pack: "Packs",
-  quickreply: "Quick replies",
-  promptformat: "Prompt formats",
-};
-const KIND_ORDER = ["character", "lorebook", "persona", "preset", "regex", "pack", "htmldoc", "quickreply", "promptformat"];
-const ENTITY_INFRA_FOLDERS = new Set(["capabilities"]);
+/** Kind order and titles come from the kind hub; an unknown kind still renders (Title-cased), open by design. */
+const KIND_ORDER: readonly string[] = KIND_IDS;
 
 /**
  * Every kind this matrix must SHOW = every kind the studio models (src/entities/<kind>/,
@@ -48,7 +38,7 @@ export function renderFormatMatrix(
 ): string {
   const section = (kind: string): string => {
     const rows = adapters.filter((a) => a.kind === kind);
-    const title = KIND_TITLES[kind] ?? kind.charAt(0).toUpperCase() + kind.slice(1) + "s";
+    const title = kindOf(kind)?.plural ?? kind.charAt(0).toUpperCase() + kind.slice(1) + "s";
     const body =
       rows.length > 0
         ? rows.map(row).join("\n")
@@ -105,12 +95,7 @@ export async function runFormatMatrix(args: string[] = process.argv.slice(2)): P
   const outPath = join(import.meta.dir, "../docs/FORMAT-SUPPORT.md");
   const checkOnly = args.includes("--check");
   const found = await loadFormats();
-  const entityKinds = readdirSync(join(import.meta.dir, "../src/entities"), { withFileTypes: true })
-    .filter((d) =>
-      d.isDirectory()
-      && !d.name.startsWith("_")
-      && !ENTITY_INFRA_FOLDERS.has(d.name))
-    .map((d) => d.name);
+  const entityKinds = [...KIND_IDS];
 
   const body = renderFormatMatrix(
     found,

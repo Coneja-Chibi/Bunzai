@@ -4,7 +4,7 @@
  * over, and the assembler does no I/O: same input, same messages, which is what lets RoleCall's
  * recorded fixtures prove the port.
  */
-import type { MacroVariable } from "../macros";
+import type { MacroContext, MacroVariable } from "../macros";
 import type { ReasoningFormat } from "../reasoning-tags";
 import type { CharacterBody } from "../../entities/character/schema";
 import type { PersonaBody } from "../../entities/persona/schema";
@@ -247,9 +247,10 @@ export type AssemblyLoreHit = Pick<LoreHit, "entryKey" | "title" | "reason" | "m
 export interface AssemblyResult {
   /**
    * What a scene's prompt regex needs after its sandbox run (studio/scene-turn-regex.ts): `{{user}}` and `{{char}}` for a rule's find pattern, and
-   * `expand`, the read-only macro pass history gets, for the authored macros in a replacement. It sets no variable.
+   * `expand`, the read-only macro pass history gets, for the authored macros in a replacement. It sets no variable. `context` is the
+   * turn's macro context as the prompt left it, for a formula a tool runs (core/formula.ts runs it on a copy). Runtime only, never stored.
    */
-  expansion: { names: { user: string; char: string }; expand(text: string): string };
+  expansion: { names: { user: string; char: string }; expand(text: string): string; context: MacroContext };
   messages: AssembledMessage[];
   trace: TraceBlock[];
   budget: BudgetDecision;

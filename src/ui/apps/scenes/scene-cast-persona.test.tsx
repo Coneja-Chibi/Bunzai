@@ -40,7 +40,7 @@ const personaEntity = () => ({
   },
 });
 const presetEntity = (content: string) => ({ schemaVersion: "1", kind: "preset", id: "p1", body: { name: "Night", prompts: [{ id: "who", name: "Player reference", content, role: "system", enabled: true, systemPrompt: true, marker: false, placement: "relative", injectionDepth: 4, injectionOrder: 100, forbidOverrides: false }] } });
-const sceneOf = (preset?: { id: string; toggles: Record<string, boolean>; samplers: Record<string, never> }): OpenScene => ({
+const sceneOf = (preset?: { kind: string; id: string; toggles: Record<string, boolean>; samplers: Record<string, never> }): OpenScene => ({
   chat: {
     id: "chat1", title: "Scene", activeBranchId: "b1", createdAt: 0, updatedAt: 0, snapshotVersion: 4,
     cast: { character: { id: "vera", version: 3, name: "Marguerite Vane" }, persona: { id: "nuit", version: 2, name: "Nuit" } },
@@ -185,7 +185,7 @@ describe("the preset scan over the stops", () => {
   });
 
   test("a preset block that already carries {{persona}} is named, locks the stops, and the preview says via {{persona}}", async () => {
-    const flushSync = await mount(sceneOf({ id: "p1", toggles: {}, samplers: {} }));
+    const flushSync = await mount(sceneOf({ kind: "preset", id: "p1", toggles: {}, samplers: {} }));
     expect(body()).toContain("Auto-injecting via Player reference");
     expect(stops()).toHaveLength(4);
     expect(stops().every((b) => b.disabled)).toBe(true);
@@ -195,11 +195,11 @@ describe("the preset scan over the stops", () => {
 
   test("a preset with no such block, or with it switched off, leaves the stops live (the assembler adds its own block)", async () => {
     presetBlock = "Be kind.";
-    let flushSync = await mount(sceneOf({ id: "p1", toggles: {}, samplers: {} }));
+    let flushSync = await mount(sceneOf({ kind: "preset", id: "p1", toggles: {}, samplers: {} }));
     expect(body()).toContain("Choose where your persona appears in the prompt");
     unmount(flushSync);
     presetBlock = "Player: {{persona}}";
-    flushSync = await mount(sceneOf({ id: "p1", toggles: { who: false }, samplers: {} }));
+    flushSync = await mount(sceneOf({ kind: "preset", id: "p1", toggles: { who: false }, samplers: {} }));
     expect(stops().every((b) => !b.disabled)).toBe(true);
     unmount(flushSync);
   });

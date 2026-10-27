@@ -30,7 +30,7 @@ let chat: Chat;
 let writes: ChatRegexPatch[];
 let presetOk: boolean;
 beforeEach(() => {
-  chat = { id: "chat1", title: "t", cast: { character: { id: "v", version: 1 } }, activeBranchId: "b1", createdAt: 1, updatedAt: 1, snapshotVersion: 1, preset: { id: "records", toggles: {}, samplers: {} }, regex: { sets: ["outfits", "dress", "plain"] } } as Chat;
+  chat = { id: "chat1", title: "t", cast: { character: { id: "v", version: 1 } }, activeBranchId: "b1", createdAt: 1, updatedAt: 1, snapshotVersion: 1, preset: { kind: "preset", id: "records", toggles: {}, samplers: {} }, regex: { sets: ["outfits", "dress", "plain"] } } as Chat;
   writes = []; presetOk = true;
 });
 

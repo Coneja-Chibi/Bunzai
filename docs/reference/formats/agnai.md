@@ -216,8 +216,8 @@ so a same-format round-trip with a book preserves its fields and raw-only residu
 normalize whitespace. A foreign lorebook with no Agnai twin full-encodes into a clean MemoryBook
 (`index.ts:291-303`). No book present means no `characterBook` key is
 written, never an empty one. An explicitly resolved empty bundle also deletes a stale `characterBook`
-from the cloned card twin (`index.ts:298-304`). The bundle layer's `inspectBundle` calls this override
-instead of the shared CCv3 extractor used by Tavern-lineage formats (`convert.ts:44-49`).
+from the cloned card twin (`index.ts:298-304`). The bundle layer's `readPieces` calls this override
+instead of the shared CCv3 extractor used by Tavern-lineage formats (`convert.ts`).
 
 ## Quirks
 
@@ -256,7 +256,7 @@ instead of the shared CCv3 extractor used by Tavern-lineage formats (`convert.ts
 | Coverage declaration | `src/formats/agnai/coverage.ts` |
 | Shared CCv3/Chub `character_book` mapper (the `agnai-lorebook` soft-import path) | `src/formats/_shared/character-book.ts` |
 | Shared ST-numeric `selectiveLogic` decoder | `src/formats/_shared/lore-enums.ts` |
-| Bundle extract/re-embed wiring | `src/convert.ts` (`inspectBundle`, `emitBundle`), `src/core/adapter.ts` (`extractLorebook`, `EmitContext`) |
+| Bundle extract/re-embed wiring | `src/convert.ts` (`readPieces`, `emitBundle`), `src/core/adapter.ts` (`extractLorebook`, `EmitContext`) |
 | Canonical character schema | `src/entities/character/schema.ts` |
 | Canonical lorebook schema | `src/entities/lorebook/schema.ts` |
 | Canonical wrapper, escrow (`original`), id policy | `src/core/canonical.ts` |

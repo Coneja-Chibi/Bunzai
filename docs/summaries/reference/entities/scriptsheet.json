@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/scriptsheet",
+  "sourcePath": "docs/reference/entities/scriptsheet.md",
+  "sourceHash": "sha256:e4fb5c2e69d6d9eb1f9f4de7bdc443b75ee2c1bbb94672ddc210143a676d7ee1",
+  "summary": "The Script Sheet entity page covers CanonicalScriptSheet: a name, one instruction, an optional description and optional samplers of the preset kind, ported from RoleCall's single-instruction setup. The writing family section explains that presets and sheets are separate kinds that read one way through each kind.ts asPreset in core/writing.ts: one scene slot recording kind and id, one reading through the family reader presetReader, one Writing deck, export through every platform's preset format via formatsFor except RoleCall's own sheet format that writes script_sheet and reads the older promptbook key, and Open as preset. What a sheet sends lists sheetPrompts' RoleCall order. The rules section covers refused context macros, blank text, the send-time refusal from sendProblem with RoleCall's words, and shape-only reading with the 100,000-character cap. Editing names RoleCall's sheet editor in the Prompting wing and on the Workbench with description and samplers, and the Library's blank New.",
+  "topics": [
+    "CanonicalScriptSheet",
+    "writing family",
+    "asPreset",
+    "rolecall-script-sheet",
+    "sheetPrompts",
+    "sendProblem"
+  ],
+  "sections": [
+    {
+      "slug": "the-writing-family",
+      "title": "The writing family",
+      "level": 2,
+      "sourceHash": "sha256:1ff1d0faf427f3acdb960f6063f3caa26bbeb9d82981f14a7e103bc666ebf8a4",
+      "summary": "Presets and Script Sheets are separate kinds that read one way: each kind.ts gives asPreset, read by src/core/writing.ts, and a promptbook will join the same way. The scene's Writing choice records kind and id in ChatPreset.kind under rule 19, so one picker lists both, and loadouts and a character's starting setup carry the kind. The turn reads a sheet through the family reader presetReader as its blocks, so assembly, Final Cut, the Booth and the trace treat it as a preset. The sheet joins the preset deck, shown as Writing. Every platform's preset format writes a sheet via formatsFor except RoleCall, whose own Script Sheet format writes script_sheet beside the blocks and reads such files back, including the older promptbook key. The Workbench's Open as preset makes a preset from a saved sheet.",
+      "topics": [
+        "asPreset",
+        "ChatPreset.kind",
+        "presetReader",
+        "formatsFor",
+        "rolecall-script-sheet",
+        "Open as preset"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-a-sheet-sends",
+      "title": "What a sheet sends",
+      "level": 2,
+      "sourceHash": "sha256:5104b8c531c6fd794bcde6a6e865532dabfdfc20b71f3762d1ce96d8fe8f33a3",
+      "summary": "sheetPrompts in core/preset/script-sheet.ts lays the instruction out as ordinary blocks in RoleCall's order: the instruction, the card system prompt as charPrompt, the context slots for description, personality, scenario, persona, lore, summary, memories and examples, the chat history, and the card post-history instructions as charInstruction, last.",
+      "topics": [
+        "sheetPrompts",
+        "RoleCall order",
+        "context slots"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-rules",
+      "title": "The rules",
+      "level": 2,
+      "sourceHash": "sha256:482052a84cb7b0904e0ef2f4ffca752b469dcbe9135981cfece399df2fcdb8bb",
+      "summary": "Because context is seated automatically the instruction may not insert it: context macros such as description, lore and message_history in any spelling are refused, while char and user are fine, and blank text is refused. The editors check as you type; a turn with a stored sheet that breaks the rules stops with RoleCall's words through the kind's sendProblem. Reading checks only the shape and the 100,000-character cap, so a later rule change never makes a stored sheet unreadable.",
+      "topics": [
+        "context macros refused",
+        "sendProblem",
+        "100,000-character cap"
+      ],
+      "children": []
+    },
+    {
+      "slug": "editing",
+      "title": "Editing",
+      "level": 2,
+      "sourceHash": "sha256:72ad08987f1e31d2a27a07b2d1926f3bdf61504e1ee40589543fe8b95032c300",
+      "summary": "The kind's one editor is RoleCall's Script Sheet editor in src/ui/_shared/script-sheet-editor.tsx, opened from the Prompting wing and on the Workbench through script-sheet-bench.tsx with the description and samplers above it. The Library's New script sheet saves a blank sheet that the editor will not send until it has an instruction.",
+      "topics": [
+        "script-sheet-editor",
+        "script-sheet-bench",
+        "blank New"
+      ],
+      "children": []
+    }
+  ]
+}

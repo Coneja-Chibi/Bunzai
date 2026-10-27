@@ -52,7 +52,7 @@ export function BoothWing({ ctx, scene, busy, art, onChat, onSettings, onOpen }:
   onOpen(wing: string): void;
 }): JSX.Element {
   const chat = scene.chat;
-  const preset = useBoothPreset(ctx, chat.preset?.id ?? null);
+  const preset = useBoothPreset(ctx, chat.preset ?? null);
   const models = useSceneModels(ctx, chat, onChat);
   const [note, setNote] = useState<string | null>(null);
   const [loreKey, setLoreKey] = useState(0);

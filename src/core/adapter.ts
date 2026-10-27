@@ -1,11 +1,8 @@
 /** Shared format-adapter contracts that connect drop-in codecs to the canonical model. */
+import type { AnyKindEntity, KindId } from "../generated/kinds";
 import type { CanonicalCharacter } from "../entities/character/schema";
 import type { CanonicalLorebook } from "../entities/lorebook/schema";
-import type { CanonicalPack } from "../entities/pack/schema";
-import type { CanonicalPersona } from "../entities/persona/schema";
 import type { CanonicalPreset } from "../entities/preset/schema";
-import type { CanonicalPromptFormat } from "../entities/promptformat/schema";
-import type { CanonicalQuickReplySet } from "../entities/quickreply/schema";
 import type { CanonicalRegexSet } from "../entities/regex/schema";
 import type { CoverageDecl } from "./coverage";
 import type { FormatId } from "./canonical";
@@ -69,13 +66,20 @@ interface AdapterBase {
   lens?: boolean;
 }
 
-/** An adapter that reads and writes character cards. */
-export interface CharacterAdapter extends AdapterBase {
-  kind: "character";
-  /** Read a file into the canonical model, stashing originals + unmapped fields in original. */
-  toCanonical(input: AdapterInput): CanonicalCharacter;
-  /** Write a canonical character out to this format, re-emitting its own original for round-trip. */
-  fromCanonical(entity: CanonicalCharacter, context?: EmitContext): AdapterOutput;
+type EntityFor<K extends KindId> = Extract<AnyKindEntity, { kind: K }>;
+
+/**
+ * The contract a format plugin implements for one kind: read a file into the canonical piece (stashing originals and
+ * unmapped fields in `original`), and write a canonical piece back out, re-emitting its own original for round-trip.
+ */
+export interface KindAdapter<K extends KindId> extends AdapterBase {
+  kind: K;
+  toCanonical(input: AdapterInput): EntityFor<K>;
+  fromCanonical(entity: EntityFor<K>, context?: EmitContext): AdapterOutput;
+}
+
+/** Character cards, which may carry an embedded lorebook in their own dialect. */
+export interface CharacterAdapter extends KindAdapter<"character"> {
   /**
    * Optional: pull an embedded lorebook whose dialect is NOT a CCv2/v3 `character_book` (which the
    * shared extractor handles), e.g. Agnai's native `characterBook` MemoryBook. The bundle layer calls
@@ -85,53 +89,8 @@ export interface CharacterAdapter extends AdapterBase {
   extractLorebook?(entity: CanonicalCharacter): CanonicalLorebook | null;
 }
 
-/** An adapter that reads and writes standalone lorebooks (world info). */
-export interface LorebookAdapter extends AdapterBase {
-  kind: "lorebook";
-  toCanonical(input: AdapterInput): CanonicalLorebook;
-  fromCanonical(entity: CanonicalLorebook): AdapterOutput;
-}
-
-/** An adapter that reads and writes user personas ({{user}}-identity files). */
-export interface PersonaAdapter extends AdapterBase {
-  kind: "persona";
-  toCanonical(input: AdapterInput): CanonicalPersona;
-  fromCanonical(entity: CanonicalPersona): AdapterOutput;
-}
-
-/** An adapter that reads and writes standalone regex-script sets (find/replace rulebooks). */
-export interface RegexAdapter extends AdapterBase {
-  kind: "regex";
-  toCanonical(input: AdapterInput): CanonicalRegexSet;
-  fromCanonical(entity: CanonicalRegexSet): AdapterOutput;
-}
-
-/** An adapter that reads and writes Sprite packs (a named set of pictures). */
-export interface PackAdapter extends AdapterBase {
-  kind: "pack";
-  toCanonical(input: AdapterInput): CanonicalPack;
-  fromCanonical(entity: CanonicalPack): AdapterOutput;
-}
-
-/** An adapter that reads and writes quick-reply sets (pages of prepared-message buttons). */
-export interface QuickReplyAdapter extends AdapterBase {
-  kind: "quickreply";
-  toCanonical(input: AdapterInput): CanonicalQuickReplySet;
-  fromCanonical(entity: CanonicalQuickReplySet): AdapterOutput;
-}
-
-/** An adapter that reads and writes prompt formats (instruct and context templates for text completion). */
-export interface PromptFormatAdapter extends AdapterBase {
-  kind: "promptformat";
-  toCanonical(input: AdapterInput): CanonicalPromptFormat;
-  fromCanonical(entity: CanonicalPromptFormat): AdapterOutput;
-}
-
-/** An adapter that reads and writes standalone chat presets (prompt/sampler configurations). */
-export interface PresetAdapter extends AdapterBase {
-  kind: "preset";
-  toCanonical(input: AdapterInput): CanonicalPreset;
-  fromCanonical(entity: CanonicalPreset): AdapterOutput;
+/** Presets, which may carry regex sets bundled inside the export. */
+export interface PresetAdapter extends KindAdapter<"preset"> {
   /**
    * Optional: pull regex scripts BUNDLED inside the preset export (ST/RC ride them under
    * `extensions.regex_scripts`). The bundle layer surfaces the set as a related entity beside the
@@ -151,19 +110,20 @@ export interface PresetAdapter extends AdapterBase {
   embedRegex?(entity: CanonicalPreset, sets: readonly CanonicalRegexSet[]): AdapterOutput;
 }
 
+export type LorebookAdapter = KindAdapter<"lorebook">;
+export type PersonaAdapter = KindAdapter<"persona">;
+export type RegexAdapter = KindAdapter<"regex">;
+export type PackAdapter = KindAdapter<"pack">;
+export type QuickReplyAdapter = KindAdapter<"quickreply">;
+export type PromptFormatAdapter = KindAdapter<"promptformat">;
+
 /**
- * The contract every format plugin implements, discriminated by `kind`. Adding a format = adding one
- * of these; adding an entity KIND = adding a member here plus a sibling entities/<kind>/ folder. Core
- * NEVER imports adapters directly; a registry wires them to the CLI and app. The registry stores this
- * union heterogeneously; a converter narrows on `kind` (guard src.kind === target.kind) before it
- * hands an entity to fromCanonical, so no unsafe cross-kind call is representable.
+ * The contract every format plugin implements, discriminated by `kind`: one KindAdapter per kind in the generated kind
+ * seam, with the character and preset extras. Adding a format = adding one of these; adding a kind = its
+ * src/entities/<kind>/ folder and `bun run kinds`, nothing here. Core NEVER imports adapters directly; a registry wires
+ * them to the CLI and app. A converter narrows on `kind` (guard src.kind === target.kind) before it hands an entity to
+ * fromCanonical, so no unsafe cross-kind call is representable.
  */
-export type FormatAdapter =
-  | CharacterAdapter
-  | LorebookAdapter
-  | PersonaAdapter
-  | RegexAdapter
-  | PackAdapter
-  | QuickReplyAdapter
-  | PromptFormatAdapter
-  | PresetAdapter;
+export type FormatAdapter = {
+  [K in KindId]: K extends "character" ? CharacterAdapter : K extends "preset" ? PresetAdapter : KindAdapter<K>;
+}[KindId];

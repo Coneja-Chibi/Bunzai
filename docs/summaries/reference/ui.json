@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:708ea7017bca507bf072df2ccb17a03df3375f811e9cd884b6b99b2b1a3d2e22",
-  "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
+  "sourceHash": "sha256:c6fe23fda2e0b8dcb521b305c191c9ba5a9607abe04303dbf2e76d5cb537bd86",
+  "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
   "topics": [
     "Kit conversational terminal",
     "temporary browser Studio",
@@ -254,8 +254,8 @@
       "slug": "scenes-the-librarys-chats",
       "title": "Scenes (the library's chats)",
       "level": 2,
-      "sourceHash": "sha256:522eeb7c67df1595569081cc12319ae3b2ff3dbe266b47f27d66d4b6a5769d04",
-      "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants is the registry, with Reconcile and an Add participant form that refuses names already on the roster.",
+      "sourceHash": "sha256:58129c86ac81d24c12a524e8452237fbc2bae68e9de3f15b2b5dcbad6e81fbdb",
+      "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools, and the Preset picker lists every writing setup, presets and Script Sheets, opening with Write a Script Sheet, whose small editor saves then chooses it; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants is the registry, with Reconcile and an Add participant form that refuses names already on the roster.",
       "topics": [
         "Start Scene from a card",
         "World wing, Compendium and Storyboards",
@@ -317,17 +317,17 @@
       "slug": "the-workbench-room-home-by-default---the-ide",
       "title": "The Workbench room (home by default - the IDE)",
       "level": 2,
-      "sourceHash": "sha256:c253835619e6c08c70d308f4da1c6b58405f1779d590c9ef2e6ea62866d58575",
-      "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light coherent baselines and serialized revision-checked patches with captured occurrence/native/variant changes, conflict choices and bounded history. Lore native folders share undo/save ownership; character native escrow is deferred and named asset changes are captured with accepted submissions. Complete export explicitly reads the full entity. Local inert asset uploads use bounded session grants revoked on lock or close, with a picture limited to 10 MB. Large lists use measured windows preserving focused controls and selection. Timer autosaves retain explicit intent and five-minute grouping; manual saves keep version boundaries. Shared recents consume accepted PieceStore summaries. All new save, media and projection paths are source-reviewed; focused fixture results are recorded in delivery evidence and live proof remains pending. An empty, restoring or failed bench shows a centered room header inside a framed panel.",
+      "sourceHash": "sha256:f1be16d705b7b452929be6e106b78a3a4fbc86eb50b0ab518ba159373c21824e",
+      "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light baselines and serialized revision-checked patches with conflict choices and bounded history. Lore native folders share undo/save ownership; named asset changes are captured with accepted submissions. Complete export reads the full entity. Local asset uploads use session grants revoked on lock or close, with a picture capped at 10 MiB. Large lists use measured windows that keep focus and selection. Timer autosaves group by five minutes; manual saves keep version boundaries. The character editor opens in Grid unless the guided quiz was picked; the preset editor shows groups as a depth-first category tree; in the lorebook editor one entry owns the screen; quick-reply sets open as an ordered list of labeled messages. The dock collapses only through Hide dock, leaving a Show dock pill, for the session. These paths are source-reviewed and live proof remains pending. An empty or failed bench shows a centered room header in a framed panel.",
       "topics": [
         "shell-owned editor tabs",
         "recents ranking rail",
         "revision-checked explicit saves",
         "hierarchical preset categories",
-        "dirty close confirmation",
-        "universal split view",
         "single-entry lorebook editor",
-        "Grid is the default mode"
+        "Grid is the default mode",
+        "quick-reply editor",
+        "Hide dock"
       ],
       "children": [
         {
@@ -347,7 +347,7 @@
           "slug": "nodes-view",
           "title": "Nodes view",
           "level": 3,
-          "sourceHash": "sha256:10989170f52dfe48ba0ae19ff357bd0a28aec6b383f230797b0d443bc7c0bdf5",
+          "sourceHash": "sha256:d89ffc5ea0ded70f91bfa0af928b406dee7d35b51d0016725dfb4f7b739c2ef5",
           "summary": "A remembered Desk and Nodes switch shows the open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk editors stay mounted so drafts survive. Links come only from stored reference fields; dragging a port onto a compatible node links it and Delete or Unlink removes it, each a fresh single-field save, never for a piece with unsaved Desk edits. Pipeline opens a preset into its blocks in build order for toggling and reordering, wires the context character, persona and Lore pass into marker blocks, and a Request node previews the scene forecast or a labeled dry-run estimate. Board notes and frames live in settings, never in exports.",
           "topics": [
             "Nodes view",

@@ -112,7 +112,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const stageRequest = useStageOpen(openWing);
   const [, setPrefTick] = useState(0); // the app prefs are not reactive: a display switch re-renders the page by hand
   const [presetBody, setPresetBody] = useState<PresetBody | null>(null);
-  const reasoning = useSceneReasoning(ctx.api, scene?.chat.preset?.id, scene?.chat.prompting);
+  const reasoning = useSceneReasoning(ctx.api, scene?.chat.preset, scene?.chat.prompting);
   const [loreBooks, setLoreBooks] = useState<SceneLoreBook[] | null>(null);
   const registeredProps = sceneProps(); const propsState = useSceneProps(ctx, chatId);
   const propsOn = propsState.load.state === "ready" ? propsState.load.on : null;
@@ -382,7 +382,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
       onDelete={(take, skip) => { setTakesOpen(false); if (skip) void act("delete-take", { branchId: take.id }); else setDialog({ kind: "delete-take", take }); }} />;
   const update = card && isNewer(card) && <UpdateBadge onClick={() => setDialog({ kind: "card" })} />;
   const wingArgs = scene && { ctx, scene, busy, card, name, charArt, cardPinned: cardBackdrop !== null, presetBody, setPresetBody, loreBooks, setLoreBooks, registeredProps, propsState, propsOn, stageRequest, setScene, replaceScene,
-    repaint: () => setPrefTick((n) => n + 1), onUpdate: () => setDialog({ kind: "card" }), onRevert: () => card && void act("revert-card", { fromVersion: card.version }), openWing };
+    repaint: () => setPrefTick((n) => n + 1), onUpdate: () => setDialog({ kind: "card" }), onRevert: () => card && void act("revert-card", { fromVersion: card.version }), openWing, greeting: { index: greeting, pick: setGreeting } };
   /** One wing's panel: in its slot beside the chat (Full Chat), or bare as a Messenger program opened on `tab`. */
   const wingBody = (id: string, tab?: string, bare = false): JSX.Element => (
     <SamplerHistoryContext.Provider value={scene ? { messages: scene.messages, total: scene.messageCount } : undefined}>

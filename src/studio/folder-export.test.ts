@@ -38,6 +38,10 @@ const bodies: Record<StudioEntityKind, (name: string) => unknown> = {
   htmldoc: (name) => ({ ...emptyHtmlDocBody(), name }),
   quickreply: (name) => emptyQuickReplyBody(name),
   promptformat: (name) => ({ name }),
+  scriptsheet: (name) => ({ name, content: "Be brief." }),
+  tool: (name) => ({ name, description: "Roll for luck.", fields: [], action: { kind: "dice", id: "luck" } }),
+  dice: (name) => ({ name, description: "", type: "table", rows: [{ text: "Sparks", weight: 1 }] }),
+  formula: (name) => ({ name, description: "", text: "{{mentions::storm}}" }),
 };
 const piece = (kind: StudioEntityKind, id: string, name: string) => ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind, id, body: bodies[kind](name) });
 

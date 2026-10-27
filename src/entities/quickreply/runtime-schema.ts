@@ -1,7 +1,8 @@
 /** Strict runtime decoder for canonical quick-reply bodies. */
 import { z } from "zod";
 import { defineExhaustiveShape } from "../_shared/runtime-shape";
-import type { QuickReply, QuickReplyBody } from "./schema";
+import type { QuickReply, QuickReplyBody, CanonicalQuickReplySet } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const replyShape = defineExhaustiveShape<QuickReply>()({
   id: z.string().min(1),
@@ -22,3 +23,5 @@ const bodyShape = defineExhaustiveShape<QuickReplyBody>()({
 
 export const quickReplyBodySchema = z.strictObject(bodyShape);
 export const quickReplyProfileSchema = quickReplyBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalQuickReplySet>()(entityShape("quickreply", quickReplyBodySchema, quickReplyProfileSchema)));

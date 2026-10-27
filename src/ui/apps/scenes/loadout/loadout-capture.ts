@@ -7,7 +7,7 @@ import type { JsonValue } from "../../../../stage/contracts/chat-store";
 import type { SceneSettings } from "../../../app-contract-scenes";
 
 const READ: Partial<Record<LoadoutPanelId, (live: SceneSettings) => unknown>> = {
-  preset: (s) => (s.preset ? { id: s.preset.id, toggles: s.preset.toggles } : null),
+  preset: (s) => (s.preset ? { kind: s.preset.kind, id: s.preset.id, toggles: s.preset.toggles } : null),
   persona: (s) => s.persona,
   mainModel: (s) => s.connection,
   samplers: (s) => s.preset?.samplers,

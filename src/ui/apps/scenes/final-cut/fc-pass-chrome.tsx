@@ -14,16 +14,16 @@ import { Check, Range, Sel } from "./fc-controls";
 
 export type Change = (patch: Partial<FinalCutPass>) => void;
 
-const MODEL_FRAMING: Readonly<Record<string, { label: string; description: string }>> = {
+export const MODEL_FRAMING: Readonly<Record<string, { label: string; description: string }>> = {
   editor: { label: "Editor model", description: "Structural rewrites: POV, tense, voice. A capable mid-tier model handles this well. Falls back to your scene model when unset." },
   translator: { label: "Translator model", description: "Translation pass: terminology stability and natural phrasing. A capable model with strong target-language fluency. Falls back to your scene model when unset." },
   "custom-agent": { label: "Custom Agent model", description: "Whatever your prompt asks. Falls back to your scene model when unset." },
   "anti-slop": { label: "Anti-Slop model", description: "Pattern substitution, not creative rewriting, so a small, cheap model is usually fine. Falls back to your scene model when unset." },
 };
 
-const TYPE_WORD: Readonly<Record<string, string>> = { editor: "editor", "anti-slop": "anti-slop", translator: "translator", "custom-agent": "custom agent" };
+export const TYPE_WORD: Readonly<Record<string, string>> = { editor: "editor", "anti-slop": "anti-slop", translator: "translator", "custom-agent": "custom agent" };
 
-const CONTEXT_FOOTER: Readonly<Record<number, string>> = { 1: "current draft only", 2: "current + last reply", 3: "short continuity (default)", 5: "pattern detection sweet spot", 10: "max: heavy context" };
+export const CONTEXT_FOOTER: Readonly<Record<number, string>> = { 1: "current draft only", 2: "current + last reply", 3: "short continuity (default)", 5: "pattern detection sweet spot", 10: "max: heavy context" };
 
 export function ModelPick({ pass, models, onChange }: { pass: FinalCutPass; models: SceneModels; onChange: Change }): JSX.Element {
   const framing = MODEL_FRAMING[pass.type] ?? MODEL_FRAMING["editor"]!;
@@ -70,7 +70,7 @@ export function OutputModeToggle({ value, onChange }: { value: OutputMode | unde
   );
 }
 
-const FAILURES = { fallback: { label: "Save original reply" }, skip: { label: "Skip failed pass" }, block: { label: "Block generation" } } as const;
+export const FAILURES = { fallback: { label: "Save original reply" }, skip: { label: "Skip failed pass" }, block: { label: "Block generation" } } as const;
 
 export function FailureModeSelect({ value, onChange }: { value: FailureMode; onChange(next: FailureMode): void }): JSX.Element {
   return <Sel label="If this pass fails" value={value} options={FAILURES} onChange={(v) => onChange(v as FailureMode)} />;

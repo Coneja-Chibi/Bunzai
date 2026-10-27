@@ -10,10 +10,6 @@
   flex-wrap: wrap;
 }
 
-.ehead[data-deck="persona"] { --deck-tile: var(--deck-persona); }
-.ehead[data-deck="lorebook"] { --deck-tile: var(--deck-lorebook); }
-.ehead[data-deck="preset"] { --deck-tile: var(--deck-preset); }
-.ehead[data-deck="regex"] { --deck-tile: var(--deck-regex); }
 
 .spine {
   display: flex;

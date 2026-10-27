@@ -22,6 +22,7 @@ import compendiumCodec from "./compendium";
 import personaCodec from "./persona";
 import { regexAdapter } from "./regex";
 import presetCodec from "./preset";
+import scriptSheetCodec from "./script-sheet";
 import { embedCharacterBook } from "../_shared/character-book";
 import { CANONICAL_SCHEMA_VERSION, canonicalId } from "../../core/canonical";
 import { readCardJson } from "../_shared/card-io";
@@ -386,4 +387,4 @@ export { adapter as characterAdapter };
 
 /** Folders-as-schema: this format family exports every codec it provides (character + lorebook +
  * persona + regex scripts + preset exports). */
-export default [adapter, lorebookCodec, compendiumCodec, personaCodec, regexAdapter, presetCodec];
+export default [adapter, lorebookCodec, compendiumCodec, personaCodec, regexAdapter, presetCodec, scriptSheetCodec];

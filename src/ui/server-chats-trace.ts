@@ -45,7 +45,7 @@ export async function handleTraceRoute(url: URL, chats: ChatStore, readLorebook:
   const { message, swipeId, trace } = target;
   const request = await chats.lastRequest(chat.activeBranchId);
   const take = await takeNameOf(chats, chat);
-  const presetName = chat.preset && readPreset ? (await readPreset(chat.preset.id))?.name : undefined;
+  const presetName = chat.preset && readPreset ? (await readPreset(chat.preset.id, chat.preset.kind).catch(() => null))?.name : undefined;
   const scene = await buildTrace(chats, readLorebook, chat, live, message, swipeId, trace, request, take, presetName);
   return json(scene);
 }

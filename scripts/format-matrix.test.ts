@@ -9,11 +9,12 @@ const A = (id: string, kind: string): { id: string; kind: string; outputExtensio
   label: id,
 });
 
-test("matrixKinds unions entity kinds with adapter kinds, known order first", () => {
+test("matrixKinds unions entity kinds with adapter kinds, the kind hub's order first", () => {
+  // the hub (src/entities/<kind>/kind.ts) orders pack before preset, as the Library does; unknown kinds sort after
   expect(matrixKinds(["character", "pack"], [A("x-preset", "preset"), A("y", "widget")])).toEqual([
     "character",
-    "preset",
     "pack",
+    "preset",
     "widget",
   ]);
 });

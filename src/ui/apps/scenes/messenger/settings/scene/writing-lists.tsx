@@ -9,7 +9,9 @@ import { CATEGORY_LABEL, MODE_META, groupGuides } from "../../../guides-core";
 import { useSceneRegexPicks } from "../../../use-scene-regex-picks";
 import { useScenePrompting } from "../../../use-scene-prompting";
 import { ActionRow, DrillRow, ToggleRow } from "../../frames/settings-rows";
+import { useSettingsNav } from "../../frames/settings-window";
 import { chatOf, sayFailed, takeChat, type SceneEnv } from "./env";
+import { FINAL_CUT_PAGES } from "./deep";
 import { SavedToggle } from "./saved";
 
 const NOTE = "msn-st-secd";
@@ -52,15 +54,16 @@ export function RegexBody({ env }: { env: SceneEnv }): JSX.Element {
 }
 
 const PASSES = [
-  { type: "validator", label: "Output safety check", description: "Checks the finished reply for empty output, leaked syntax and unbalanced markup. No model call." },
-  { type: "anti-slop", label: "Anti-slop engine", description: "Replaces worn-out phrases using the banks you attach." },
-  { type: "editor", label: "Scene editor", description: "Rewrites the reply: proofreading, voice, point of view, polish." },
-  { type: "translator", label: "Translator", description: "Translates the final reply and keeps names, macros and markup." },
-  { type: "custom-agent", label: "Your department", description: "A pass with your own instruction." },
+  { type: "validator", page: FINAL_CUT_PAGES.safety, label: "Output safety check", description: "Checks the finished reply for empty output, leaked syntax and unbalanced markup. No model call.", detail: "Failure mode and the checks it runs." },
+  { type: "anti-slop", page: FINAL_CUT_PAGES.antislop, label: "Anti-slop engine", description: "Replaces worn-out phrases using the banks you attach.", detail: "Model, attached sets, banks, depth, watchlist and guidance." },
+  { type: "editor", page: FINAL_CUT_PAGES.editor, label: "Scene editor", description: "Rewrites the reply: proofreading, voice, point of view, polish.", detail: "Model, profile, POV, tense, strength, dialogue, preserve switches and house style." },
+  { type: "translator", page: FINAL_CUT_PAGES.translator, label: "Translator", description: "Translates the final reply and keeps names, macros and markup.", detail: "Model, language, strictness, register, glossary and notes." },
+  { type: "custom-agent", page: FINAL_CUT_PAGES.agent, label: "Your department", description: "A pass with your own instruction.", detail: "Model, name, preset rulebook and instruction." },
 ] as const;
 
 export function FinalCutBody({ env }: { env: SceneEnv }): JSX.Element {
   const fc = useFinalCut(env.a.ctx, chatOf(env), takeChat(env));
+  const nav = useSettingsNav();
   const { passes } = fc.settings;
   const safety = onPass(passes, "validator");
   return (
@@ -70,10 +73,12 @@ export function FinalCutBody({ env }: { env: SceneEnv }): JSX.Element {
         <div key={p.type}>
           <ToggleRow label={p.label} description={p.description} on={onPass(passes, p.type) !== undefined} onChange={() => fc.toggle(p.type)} />
           {p.type === "validator" && safety && <ToggleRow label="Also check my messages before send" on={safety.applyToUserMessages === true} onChange={(applyToUserMessages) => fc.patch("validator", { applyToUserMessages })} />}
+          <DrillRow label={`${p.label} settings`} description={p.detail} onOpen={() => nav.open(p.page)} />
         </div>
       ))}
       {fc.error && <p className={NOTE} role="alert">{fc.error}</p>}
-      <DrillRow label="Passes in detail" description="Each pass's model, strength, banks and the prompt it sends." onOpen={() => env.open("post-production")} />
+      <DrillRow label="On-demand editing tools" description="A model, temperature and reply limit for Rewrite, Expand, Reduce, Custom and Correction." onOpen={() => nav.open(FINAL_CUT_PAGES.tools)} />
+      <DrillRow label="Final Cut workshop" description="The prompt each pass sends, your saved agents and your own banks." onOpen={() => env.open("post-production")} />
     </div>
   );
 }

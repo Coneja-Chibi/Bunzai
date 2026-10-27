@@ -10,7 +10,7 @@ import { Button, Chip } from "../../../../../components/button";
 import { accessOf, canWrite } from "../../../../../../core/compendium/defaults";
 import type { ChatCompendiumPatch, CompendiumAccess } from "../../../../../../stage/contracts/chat-store";
 import type { SceneLoreBook } from "../../../../../app-contract-scenes";
-import { createLorebook } from "../../../../../_shared/create-lorebook";
+import { createBlank } from "../../../../../_shared/new-piece";
 import { toErrorMessage } from "../../../../../_shared/error-message";
 import { SettingsSection, SettingsSegmented, SettingsSwitch } from "./parts";
 import type { SectionProps } from "./deps";
@@ -43,6 +43,13 @@ function BookCard({ book, access, isDefault, set }: { book: SceneLoreBook; acces
   );
 }
 
+/** The one click that makes a library lorebook "<scene> Compendium", adds it to the scene and makes it the default write book. Rejects with the reason the library or the scene gave. */
+export async function makeBook(ctx: SectionProps["ctx"], chat: SectionProps["chat"], lore: SectionProps["lore"], set: SectionProps["set"]): Promise<void> {
+  const made = await createBlank(ctx, "lorebook", `${chat.title} Compendium`);
+  lore.add(made.id);
+  await set({ books: { [made.id]: { access: "read_write" } }, writeBook: made.id });
+}
+
 export function BooksSection({ ctx, chat, compendium, lore, set }: SectionProps): JSX.Element {
   const [making, setMaking] = useState(false);
   const busy = useRef(false);
@@ -52,9 +59,7 @@ export function BooksSection({ ctx, chat, compendium, lore, set }: SectionProps)
     busy.current = true;
     setMaking(true);
     try {
-      const made = await createLorebook(ctx, `${chat.title} Compendium`);
-      lore.add(made.id);
-      await set({ books: { [made.id]: { access: "read_write" } }, writeBook: made.id });
+      await makeBook(ctx, chat, lore, set);
     } catch (e) {
       ctx.setStatus(`could not make a book for this scene: ${toErrorMessage(e, "the library refused it")}`);
     } finally {

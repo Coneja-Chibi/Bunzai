@@ -116,7 +116,7 @@ export function checkConnection(value: unknown): ChatConnection | null {
 const MAX_LORE_IDS = 200;
 
 /** A list of non-empty-string ids, at most `limit`, with no duplicates (rule 20). */
-function checkIdList(value: unknown, what: string, limit: number): string[] {
+export function checkIdList(value: unknown, what: string, limit: number): string[] {
   if (!Array.isArray(value)) fail(`${what} must be an array`);
   const seen = new Set<string>();
   const out: string[] = [];

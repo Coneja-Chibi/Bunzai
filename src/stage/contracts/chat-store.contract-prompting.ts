@@ -63,6 +63,16 @@ export function chatStorePromptingContract(make: (clock: () => number) => ChatSt
       expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
     });
 
+    test("linked library tools are a list of ids kept in order; an empty list or null clears them", async () => {
+      const { store, chat } = await seeded(1);
+      expect((await store.setPrompting(chat.id, { tools: ["luck", "promise"] }))!.prompting).toEqual({ tools: ["luck", "promise"] });
+      await store.setPrompting(chat.id, { tools: [] });
+      expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
+      for (const bad of ["luck", [1], ["a", "a"], [""], Array.from({ length: 21 }, (_, i) => `t${i}`)]) {
+        await expect(store.setPrompting(chat.id, { tools: bad } as never)).rejects.toBeInstanceOf(StudioValidationError);
+      }
+    });
+
     test("Reasoning Effort, Start Reply With, its role and Catch thinking are kept only while set, and clear with null", async () => {
       const { store, chat } = await seeded(1);
       expect((await store.setPrompting(chat.id, { reasoningEffort: "high", prefill: "<think>", prefillRole: "user", capture: { mode: "only", custom: [{ open: "Status:", close: "---" }], builtinTags: ["<plan>"] } }))!.prompting).toEqual({

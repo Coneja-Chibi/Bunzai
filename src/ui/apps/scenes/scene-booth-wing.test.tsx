@@ -103,14 +103,14 @@ describe("Booth shell", () => {
   });
 
   test("the tiles name the scene's preset and model", async () => {
-    await mountBooth(sceneOf(chatWith({ preset: { id: "p1", toggles: {}, samplers: {} } as ChatPreset, connection: { id: "k1", model: "model-x" } })), makeCtx());
+    await mountBooth(sceneOf(chatWith({ preset: { kind: "preset", id: "p1", toggles: {}, samplers: {} } as ChatPreset, connection: { id: "k1", model: "model-x" } })), makeCtx());
     expect(tile("Preset")).toBe("Test Preset");
     expect(tile("Narrator")).toBe("model-x");
   });
 
   test("a preset the library no longer holds says so and does not invent a name", async () => {
     getImpl = async () => { throw new ApiHttpError(404, "not found"); };
-    await mountBooth(sceneOf(chatWith({ preset: { id: "p1", toggles: {}, samplers: {} } as ChatPreset })), makeCtx());
+    await mountBooth(sceneOf(chatWith({ preset: { kind: "preset", id: "p1", toggles: {}, samplers: {} } as ChatPreset })), makeCtx());
     expect(tile("Preset")).toBe("Not in your library");
     expect(bodyText()).toContain("This scene's preset is no longer in your library. Choose another, or restore it from the Trash.");
   });
@@ -343,7 +343,7 @@ describe("Booth Active Preset and Generation", () => {
   };
 
   test("the Active Preset card names the preset with its enabled tokens, and opens Prompting; with none it points there", async () => {
-    let flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: {} }));
+    let flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: {} }));
     expect(bodyText()).toContain("Active Preset");
     expect(bodyText()).toMatch(/~\d+ tokens/);
     flushSync(() => host.querySelector<HTMLElement>('[aria-label="Open Prompting to change the active preset"]')!.click());
@@ -357,15 +357,15 @@ describe("Booth Active Preset and Generation", () => {
   });
 
   test("a slider moved in the Booth is the same write the Prompting wing makes, and the wing shows it", async () => {
-    let flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: {} }));
+    let flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: {} }));
     expect(bodyText()).toContain("Generation (Quick)");
     drag(flushSync, "Temperature", 0.3);
     unmount(flushSync); // inside the 300 ms pause: closing flushes the write
-    expect(sets).toEqual([{ chatId: "chat1", preset: { id: "p1", toggles: {}, samplers: { temperature: 0.3 } } }]);
+    expect(sets).toEqual([{ chatId: "chat1", preset: { kind: "preset", id: "p1", toggles: {}, samplers: { temperature: 0.3 } } }]);
 
     const { createRoot } = await import("react-dom/client");
     const [{ PresetWing }, { useScenePresetText }] = await Promise.all([import("./scene-preset-wing"), import("./use-scene-preset-text")]);
-    const Tab = () => <PresetWing ctx={presetCtx()} chat={chatWith({ preset: stored! })} text={useScenePresetText(presetCtx(), "p1", () => undefined)} onChanged={() => undefined} />;
+    const Tab = () => <PresetWing ctx={presetCtx()} chat={chatWith({ preset: stored! })} text={useScenePresetText(presetCtx(), { kind: "preset", id: "p1" }, () => undefined)} onChanged={() => undefined} />;
     host = dom.window.document.body.appendChild(dom.window.document.createElement("div"));
     root = createRoot(host);
     flushSync = (await import("react-dom")).flushSync;
@@ -376,7 +376,7 @@ describe("Booth Active Preset and Generation", () => {
   });
 
   test("Generation (Quick) keeps Prompt Post-Processing as its last card and reads values as RoleCall's QuickSlider does", async () => {
-    const flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: { maxContext: 200_000, maxTokens: 8_192 } }));
+    const flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: { maxContext: 200_000, maxTokens: 8_192 } }));
     const cards = [...host.querySelectorAll(".sliders.quick > .sl")];
     expect(cards.at(-1)?.querySelector("select")?.getAttribute("aria-label")).toBe("Prompt Post-Processing");
     const readOut = (label: string) => cards.find((c) => c.querySelector(".slh span")?.textContent === label)?.querySelector(".slv, [data-control='inline']")?.textContent;
@@ -386,7 +386,7 @@ describe("Booth Active Preset and Generation", () => {
   });
 
   test("setting a slider back to the preset's own value clears the scene's, and Frequency and Presence penalty are there", async () => {
-    const flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: { temperature: 0.3, frequencyPenalty: 0.5 } }));
+    const flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: { temperature: 0.3, frequencyPenalty: 0.5 } }));
     drag(flushSync, "Temperature", 0.7); // the preset's own value
     drag(flushSync, "Presence Penalty", -1);
     unmount(flushSync);
@@ -394,13 +394,13 @@ describe("Booth Active Preset and Generation", () => {
   });
 
   test("Context maxed warns at a window of 65,536 or more when Context tokens reach it, and stays quiet otherwise", async () => {
-    let flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: {} }));
+    let flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: {} }));
     expect(bodyText()).toContain("Context maxed: every message resends up to 200,000 tokens of history as input");
     unmount(flushSync);
-    flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: { maxContext: 8_192 } }));
+    flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: { maxContext: 8_192 } }));
     expect(bodyText()).not.toContain("Context maxed");
     unmount(flushSync);
-    flushSync = await mountBoothP(chatP({ id: "p1", toggles: {}, samplers: {} }, "small"));
+    flushSync = await mountBoothP(chatP({ kind: "preset", id: "p1", toggles: {}, samplers: {} }, "small"));
     expect(bodyText()).not.toContain("Context maxed"); // a 32k window is below the threshold
     unmount(flushSync);
   });

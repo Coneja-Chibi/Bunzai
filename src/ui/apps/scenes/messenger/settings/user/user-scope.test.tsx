@@ -28,7 +28,7 @@ const rig = (): { env: RowEnv; ctx: AppContext; store: Map<string, unknown>; ope
     prefs: { get: (k: string) => store.get(k), set: (k: string, v: unknown) => { store.set(k, v); } },
     apps: () => [{ id: "scenes", title: "The Scenes" }, { id: "library", title: "The Library" }],
     openApp: (id: string) => { apps.push(id); },
-    api: { formats: async () => [], spotifyGet: async () => { throw new Error("offline"); } },
+    api: { formats: async () => [], listEntities: async () => [], sceneConnections: async () => [], spotifyGet: async () => { throw new Error("offline"); } },
   } as unknown as AppContext;
   return { store, opened, apps, ctx, env: { ctx, repaint: () => undefined } };
 };

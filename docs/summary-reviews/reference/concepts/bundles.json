@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/concepts/bundles",
   "sourcePath": "docs/reference/concepts/bundles.md",
-  "sourceHash": "sha256:b2ee12e4332f3d3cc1e772554d9576e1b1d98e49b7e53a96da2c92c900181c40",
-  "semanticSummaryHash": "sha256:bab7b020de6c8730a8749912a3b292afc035416eb3d0f71bdc9a198a3d88d8d1",
+  "sourceHash": "sha256:d255b3764fa2908be9bf72321cc52d9f09bd239ffbbc74e17ba0e4365af59642",
+  "semanticSummaryHash": "sha256:6a1a1ef76aab3200679a42b4d953da155484aa5a79314850d0772b9a9a380d3c",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:49.851Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Verified the page edits and affected summaries against src/convert.ts: readPieces (card extractLorebook/extractCharacterBook, preset extractRegex, linking) and emitPieces/emitBundle/convertFile/withUnattached exist and behave as described. No stale inspectBundle/inspectPresetBundle/emitPresetBundle left in docs/reference or summaries; no function or file named that the page lacks.",
+  "reviewedAt": "2026-10-27T04:20:52.613Z"
 }

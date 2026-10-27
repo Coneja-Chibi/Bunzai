@@ -12,7 +12,7 @@
  * hold a match.
  */
 import type { JSX } from "react";
-import { deckMeta } from "../../_shared/decks";
+import { deckHead } from "../../_shared/decks";
 import { isEscapeClose } from "../../_shared/use-escape-key";
 import { Button, Chip } from "../../components/button";
 import { Panel } from "../../components/panel";
@@ -99,7 +99,7 @@ export function NoMatchNotice({
           <span className="nmk">also matching</span>
           {elsewhere.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ ({ kind, count }) => (
             <Chip key={kind} onClick={() => onJump(kind)}>
-              {`${deckMeta(kind).plural} ${String(count)}`}
+              {`${deckHead(kind).plural} ${String(count)}`}
             </Chip>
           ))}
         </div>

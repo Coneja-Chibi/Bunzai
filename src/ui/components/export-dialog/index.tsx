@@ -16,6 +16,7 @@ import {
 } from "./honesty";
 import styles from "./styles.module.css";
 import { isRecord } from "../../../core/guards";
+import { formatsFor } from "../../../core/writing";
 
 export interface ExportDialogProps {
   ctx: AppContext;
@@ -60,7 +61,7 @@ export function ExportDialog({
         const [fmts, cov] = await Promise.all([ctx.api.formats(), ctx.api.coverage()]);
         if (cancelled) return;
         const kind = isRecord(entity) && typeof entity.kind === "string" ? entity.kind : "character";
-        const publish = fmts.filter((f) => f.kind === kind && !f.native);
+        const publish = formatsFor(fmts, kind).filter((f) => !f.native);
         setFormats(publish);
         setCoverage(cov);
         const prefer =

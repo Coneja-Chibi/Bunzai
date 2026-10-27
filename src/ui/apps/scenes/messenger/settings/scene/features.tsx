@@ -9,6 +9,7 @@ import { DIRECTOR_PROP_ID } from "../../../../../../core/director/settings";
 import { TRACKER_PROP_PREFIX, type JsonValue } from "../../../../../../stage/contracts/chat-store";
 import { toErrorMessage } from "../../../../../_shared/error-message";
 import type { SceneProp } from "../../../props/prop-contract";
+import { trackHareProp } from "../../../props/trackhare";
 import { ActionRow, DrillRow, ToggleRow } from "../../frames/settings-rows";
 import type { SettingsCategory, SettingsSection } from "../../frames/settings-window";
 import { hasOwnProgram } from "../../panels";
@@ -16,7 +17,9 @@ import { isTrackerProp, trackersOn } from "../../panels/trackers/trackers-core";
 import { onChatOf, type WingArgs } from "../../wing-props";
 import type { OpenProgram } from "../scopes";
 import { directorCategory } from "./director";
+import { HareRows, TooltipRow } from "./prop-pref-rows";
 import { SavedToggle } from "./saved";
+import { TrackerAutoRows, TrackerContextRows } from "./tracker-rows";
 
 const GROUPS: readonly { group: SceneProp["group"]; id: string; title: string; description?: string }[] = [
   { group: undefined, id: "features", title: "Features", description: "Optional systems for this scene. A feature's own page shows in this list while it is on." },
@@ -59,9 +62,11 @@ function TrackerRows({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Eleme
 export function featuresCategories(a: WingArgs, open: OpenProgram): SettingsCategory[] {
   const sections: SettingsSection[] = GROUPS.filter((g) => g.group === undefined || a.registeredProps.some((p) => p.group === g.group))
     .map((g) => ({ id: g.id, title: g.title, ...(g.description ? { description: g.description } : {}), body: <PropRows a={a} group={g.group} /> }));
+  sections.push({ id: "prop-tooltips", title: "Props list", body: <TooltipRow a={a} /> });
   const pages: SettingsCategory[] = a.registeredProps.filter((p) => p.panel && hasOwnProgram(p) && a.propsOn?.includes(p.id)).map((p) => (p.id === DIRECTOR_PROP_ID ? directorCategory(a, open)
-    : { id: `prop-${p.id}`, label: p.name, icon: p.icon, group: "Features", sections: [{ id: `prop-${p.id}`, title: p.name, description: p.blurb, body: <DrillRow label={`Open ${p.name}`} onOpen={() => open(`prop-${p.id}`)} /> }] }));
+    : { id: `prop-${p.id}`, label: p.name, icon: p.icon, group: "Features", sections: [{ id: `prop-${p.id}`, title: p.name, description: p.blurb, body: <><DrillRow label={`Open ${p.name}`} onOpen={() => open(`prop-${p.id}`)} />{p.id === trackHareProp.id && <HareRows a={a} />}</> }] }));
   const trackers: SettingsCategory[] = trackersOn(a.registeredProps, a.propsOn).length > 0
-    ? [{ id: "trackers", label: "Trackers", icon: "lucide:list", group: "Features", sections: [{ id: "trackers", title: "Trackers", description: "The trackers switched on in this scene.", body: <TrackerRows a={a} open={open} /> }] }] : [];
+    ? [{ id: "trackers", label: "Trackers", icon: "lucide:list", group: "Features", sections: [{ id: "trackers", title: "Trackers", description: "The trackers switched on in this scene.", body: <TrackerRows a={a} open={open} /> },
+      { id: "tracker-each", title: "Each tracker", description: "How each tracker reaches the model and whether the Story Director keeps it current.", body: <><TrackerContextRows a={a} /><TrackerAutoRows a={a} /></> }] }] : [];
   return [{ id: "features", label: "Features", icon: "lucide:puzzle", group: "Features", sections }, ...pages, ...trackers];
 }

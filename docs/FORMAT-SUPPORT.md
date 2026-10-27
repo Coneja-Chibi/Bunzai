@@ -2,7 +2,7 @@
 
 Auto-generated from live adapters (`bun run scripts/format-matrix.ts`).
 Canonical schema version: **1**.
-Generated: 2026-10-12.
+Generated: 2026-10-27.
 
 ## How to use
 
@@ -51,6 +51,12 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | `rolecall-persona` | persona | .json | RoleCall persona (rcpersona / RC persona-card export) |
 | `sillytavern-persona` | persona | .json | SillyTavern personas backup (default persona; the rest ride sealed) |
 
+## Packs (1)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| `image-pack` | pack | .zip | Pack (zip of pictures and sounds) |
+
 ## Presets (4)
 
 | id | kind | writes | label |
@@ -60,7 +66,13 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | `rolecall-preset` | preset | .json | RoleCall preset export (ST grammar + macros/choice groups/readme) |
 | `sillytavern-preset` | preset | .json | SillyTavern completion preset (flat json) |
 
-## Regex script sets (5)
+## Script Sheets (1)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| `rolecall-script-sheet` | scriptsheet | .json | RoleCall Script Sheet export (one instruction, with the blocks it sends) |
+
+## Regex sets (5)
 
 | id | kind | writes | label |
 | --- | --- | --- | --- |
@@ -70,29 +82,41 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | `rolecall-regex` | regex | .json | RoleCall regex script (chat-pipeline find/replace set) |
 | `sillytavern-regex` | regex | .json | SillyTavern regex scripts (bare array or card extensions.regex_scripts) |
 
-## Packs (1)
-
-| id | kind | writes | label |
-| --- | --- | --- | --- |
-| `image-pack` | pack | .zip | Pack (zip of pictures and sounds) |
-
-## Htmldocs (0)
-
-| id | kind | writes | label |
-| --- | --- | --- | --- |
-| (none yet) | htmldoc | | The studio edits this kind, but no import/export format exists yet. |
-
 ## Quick replies (1)
 
 | id | kind | writes | label |
 | --- | --- | --- | --- |
 | `sillytavern-quickreply` | quickreply | .json | SillyTavern quick-reply set |
 
+## Tools (0)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| (none yet) | tool | | The studio edits this kind, but no import/export format exists yet. |
+
+## Dice (0)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| (none yet) | dice | | The studio edits this kind, but no import/export format exists yet. |
+
+## Formulas (0)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| (none yet) | formula | | The studio edits this kind, but no import/export format exists yet. |
+
 ## Prompt formats (1)
 
 | id | kind | writes | label |
 | --- | --- | --- | --- |
 | `sillytavern-promptformat` | promptformat | .json | SillyTavern prompt format (instruct and context templates) |
+
+## Drawings (0)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| (none yet) | htmldoc | | The studio edits this kind, but no import/export format exists yet. |
 
 ## Notes
 

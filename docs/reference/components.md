@@ -52,15 +52,19 @@ The answer for the common needs, before searching the table below. For buttons, 
 | AddPopover | src/ui/apps/scenes/scene-lore-books.tsx | ({ library, inScene, onPick, onCreate, onClose }: { library: StudioEntitySummary[] \| null; inScene: ReadonlySet<strin... | The dashed button's popover: "+ New Lorebook" (name it first, then Create) over the library list. |  |
 | AdvancedBody | src/ui/apps/scenes/messenger/settings/scene/memory-rows.tsx | ({ env }: { env: SceneEnv }) | The summary model's own settings: method, reasoning, limits and the prompt template. |  |
 | AgentControls | src/ui/apps/scenes/final-cut/fc-agent.tsx | ({ ctx, pass, lib, onChange }: { ctx: AppContext; pass: FinalCutPass; lib: FinalCutLibrary; onChange: Change }) |  |  |
+| AgentPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-agent.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | AgentRoom | src/ui/apps/agent/room.tsx | ({ ctx, onClose }: { ctx: AppContext; onClose?: () => void }) | Shows the screen the agent can see, and talks to whichever model the vault has. |  |
 | AiPanel | src/ui/apps/scenes/compendium/storyboards/dossier-parts.tsx | ({ ai, included, onOff, onMode, onRadius }: { ai: DossierAiContext; included: boolean; onOff(): void; onMode(mode: Co... |  |  |
 | AiTabs | src/ui/apps/scenes/scene-ai-tabs.tsx | ({ model, generation, initialTab, single }: { model: JSX.Element; generation?: JSX.Element; initialTab?: string; sing... |  |  |
 | AiWing | src/ui/apps/scenes/scene-ai-wing.tsx | ({ ctx, chat, onPicked, onClose }: { ctx: AppContext; chat: Chat; onPicked(chat: Chat): void; onClose?(): void }) |  |  |
+| AllowRows | src/ui/apps/scenes/messenger/settings/scene/compendium-passes.tsx | ({ a }: { a: WingArgs }) | What Compendium may file: one switch per entry type. |  |
 | AllowSection | src/ui/apps/scenes/compendium/tabs/settings/filing.tsx | ({ compendium, set }: SectionProps) |  |  |
 | AltFields | src/ui/components/alt-fields/index.tsx | ({ value, onChange }: AltFieldsProps) |  | .wrap .section .gtitle |
 | AnalysisTab | src/ui/apps/scenes/props/story-director/tab-analysis.tsx | ({ state }: { state: DirectorState }) |  |  |
 | AnimatedThemeToggler | src/ui/components/animated-theme-toggler/index.tsx | ({ theme, onToggle, duration = 400, fromCenter = false, id, }: AnimatedThemeTogglerProps) | Switch between paper and stage with a reveal that grows from the control. | .iconStack .hidden .shown |
 | AntiSlopCard | src/ui/apps/scenes/final-cut/fc-anti-slop.tsx | ({ pass, models, onToggle, onChange }: { pass: FinalCutPass \| undefined; models: SceneModels; onToggle(): void; onCha... |  |  |
+| AntiSlopPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-antislop.tsx | ({ env }: { env: SceneEnv }) |  |  |
+| AntiSlopSetPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-antislop.tsx | ({ env, raw }: { env: SceneEnv; raw: string }) |  |  |
 | App | src/ui/shell/App.tsx | ({ forceSkipTitle = false, testListRetryDelaysMs, pieces: injectedPieces }: AppProps = {}) |  | .shellContainer .shell .appContents .studio-app-surface .studio-app-room .tourHelp .dirty |
 | AppCatalog | src/ui/apps/app-catalog/index.tsx | ({ ctx }: { ctx: AppContext }) | Browse and open every official app packaged in this build. | .room .grid .card .cardHead .mark .name .description .cardFoot ... |
 | AppMark | src/ui/components/app-mark/index.tsx | ({ markSvg, className }: AppMarkProps) | Render one sanitized application mark. |  |
@@ -96,6 +100,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | BlockRow | src/ui/apps/workbench/preset/block-row.tsx | ({ block, focusKey, index, depth, posinset, setsize, active, selected, expanded, onSelectRow, onToggleCheck, onToggle... | Memoized: editing one block must re-render only that block's row, not | .rowWrapOpen .prow .rowIndent .prowActive .prowSel .prowOff .check .checkOn ... |
 | BoardLayer | src/ui/apps/workbench/nodes/Board.tsx | (p: BoardLayerProps) |  | .view .head .grow .addWrap .addMenu .area .canvas .world ... |
 | BondsPanel | src/ui/apps/scenes/props/trackers/bonds/bonds-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
+| BookAccessRows | src/ui/apps/scenes/messenger/settings/scene/compendium-books.tsx | ({ a }: { a: WingArgs }) | One access choice per book, as in the Compendium's access chip. |  |
 | BookBar | src/ui/apps/scenes/compendium/compendium-shell.tsx | ({ books, bookId, onBook, access, chip }: { books: readonly SceneLoreBook[]; bookId: string; onBook(id: string): void... |  |  |
 | BookCover | src/ui/apps/library/book-cover.tsx | ({ title, choice }: { title: string; choice: BookCoverChoice }) |  | .cover .dialog .editor .fields |
 | BookCoverDialog | src/ui/apps/library/book-cover.tsx | ({ title, initial, onSave, onDismiss }: { title: string; initial: BookCoverChoice \| null; onSave(choice: BookCoverCho... |  | .cover .dialog .editor .fields |
@@ -146,11 +151,11 @@ The answer for the common needs, before searching the table below. For buttons, 
 | CharacterLibrary | src/ui/apps/scenes/booth-navigator.tsx | ({ ctx, currentId, onClose, onStarted }: { ctx: AppContext; currentId: string; onClose(): void; onStarted?(): void }) | `onStarted` runs once the new scene exists, just before the page moves to it (the Messenger drops its cached scene list there). |  |
 | ChatLayoutRow | src/ui/apps/settings/sections/chat-layout-row.tsx | ({ prefs }: { prefs: { get(key: string): unknown; set(key: string, value: unknown): void } }) |  |  |
 | Check | src/ui/apps/scenes/final-cut/fc-controls.tsx | ({ label, checked, onChange }: { label: string; checked: boolean; onChange(next: boolean): void }) |  |  |
-| Checkbox | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: Omit<InputHTMLAttributes<HTMLInputElement>, "type">) |  | .field .area .chip .check .tipWrap .tip |
+| Checkbox | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: Omit<InputHTMLAttributes<HTMLInputElement>, "type">) |  | .sr-only .field .area .chip .check .tipWrap .tip |
 | CheckedText | src/ui/apps/scenes/messenger/settings/scene/drafts.tsx | ({ saved, write, check, rows, delay = SAVE_MS, ...copy }: RowCopy & { saved: string; rows?: number; delay?: number; c... | A text area that saves what was typed once it rests, unless `check` names what is wrong with it. |  |
 | Chevron | src/ui/apps/scenes/props/story-director/director-parts.tsx | ({ open }: { open: boolean }) |  |  |
 | Chip | src/ui/components/button/index.tsx | ({ children, pressed, color, count, muted, tone, vars, "data-part": part, type = "button", ...rest }: ChipProps) |  | .btn .seg .tab .chip .primary .danger .quiet .sm ... |
-| Chip | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) |  | .field .area .chip .check .tipWrap .tip |
+| Chip | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) |  | .sr-only .field .area .chip .check .tipWrap .tip |
 | Chips | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ items, bad }: { items: readonly string[]; bad?: boolean }) |  |  |
 | ChoiceList | src/ui/agent/kit-choice.tsx | ({ choices, answered, busy, onSend, }: { choices: AskChoices; answered?: string \| undefined; busy?: boolean; onSend: ... |  |  |
 | ChoicesRow | src/ui/apps/scenes/scene-choices.tsx | ({ ctx, chat, body, choices }: { ctx: AppContext; chat: Chat; body: PresetBody; choices: SceneChoices }) |  |  |
@@ -199,6 +204,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | CssWorkshopRoom | src/ui/apps/css-workshop/room.tsx | ({ ctx }: CssWorkshopRoomProps) | Full app canvas for the CSS Workshop dock tile. | .room .stage .flash .clearSheet .clearTitle .clearBody .clearActs |
 | CueGrid | src/ui/components/stage-dossier/index.tsx | ({ values, onChange, flubbed = [], label = "Your cues", }: { values: readonly string[]; onChange: (next: string[]) =>... | The cue grid: twelve inputs for typing the words back. Pasting all twelve into any cue fills the | .dossier .hero .head .act .marquee .flourish .direction .paren ... |
 | CustomRequestParams | src/ui/apps/scenes/generation-params-custom.tsx | ({ samplers, onSave }: { samplers: SceneGeneration; onSave(key: Field, text: string): void }) |  |  |
+| CustomTagRows | src/ui/apps/scenes/messenger/settings/scene/writing-tags.tsx | ({ prompting }: { prompting: PromptingView }) |  |  |
 | CutFromDialog | src/ui/apps/scenes/scene-cuts.tsx | ({ onCancel, onConfirm }: { onCancel(): void; onConfirm(): void }) |  |  |
 | CutLine | src/ui/apps/scenes/scene-cuts.tsx | ({ count, onRestore }: { count: number; onRestore(): void }) | One line where a cut was: every message of one cut shares it. |  |
 | CutOff | src/ui/apps/scenes/scene-turn-parts.tsx | ({ busy, onRegenerate }: { busy: boolean; onRegenerate(): void }) |  |  |
@@ -209,6 +215,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Dashboard | src/ui/apps/scenes/compendium/tabs/dashboard.tsx | ({ model, bookName, onOpen, onTree, headerActions, banner, recentWrites = [], maintenance }: { model: BookModel; book... |  |  |
 | DataRows | src/ui/apps/scenes/messenger/settings/user/data.tsx | () |  |  |
 | DebugTab | src/ui/apps/scenes/props/story-director/tab-debug.tsx | ({ panel, onEdit, locked }: { panel: DirectorPanel; onEdit: EditFn; locked: boolean }) |  |  |
+| DefaultPersona | src/ui/apps/scenes/messenger/settings/scene/persona-rows.tsx | ({ ctx }: { ctx: AppContext }) | The persona new scenes start with: the pref the Cast wing's "Set as default" writes. The Cast wing cannot clear it, so there is no empty choice once one is set. |  |
 | DefaultsSection | src/ui/apps/scenes/cast/cast-defaults.tsx | ({ ctx, chat }: { ctx: Pick<AppContext, "prefs" \| "api">; chat: Pick<OpenScene["chat"], "backdrop" \| "preset" \| "cast... |  |  |
 | DeleteEntryDialog | src/ui/apps/scenes/scene-lore-entries.tsx | ({ title, onCancel, onConfirm }: { title: string; onCancel(): void; onConfirm(): void }) |  |  |
 | DeleteFolderDialog | src/ui/apps/scenes/scenes-dialogs.tsx | ({ name, onCancel, onDelete }: { name: string; onCancel(): void; onDelete(): void }) |  |  |
@@ -229,6 +236,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | DirectorCommandMode | src/ui/apps/scenes/props/story-director/director-model.tsx | ({ panel, save }: { panel: DirectorPanel; save: Save }) |  |  |
 | DirectorFab | src/ui/apps/scenes/props/story-director/director-fab.tsx | ({ ctx, chat }: { ctx: AppContext; chat: Chat }) |  |  |
 | DirectorModel | src/ui/apps/scenes/props/story-director/director-model.tsx | ({ ctx, chat, panel, save, label, description }: { ctx: AppContext; chat: Chat; panel: DirectorPanel; save: Save; lab... |  |  |
+| DirectorModelRow | src/ui/apps/scenes/messenger/settings/scene/director-model-row.tsx | ({ a, settings, save }: { a: WingArgs; settings: DirectorPanel["settings"]; save(patch: DirectorSettingsPatch): Promi... |  |  |
 | DirectorNotes | src/ui/apps/scenes/props/story-director/director-shared.tsx | ({ viewing, turn, on, live, note, onDismiss }: { viewing: boolean; turn: number; on: boolean; live: DirectorLive; not... | The notes under the toolbar: reading an earlier turn, the Director off, a plan in flight, a plan that failed, and the last edit's refusal. |  |
 | DirectorPanelView | src/ui/apps/scenes/props/story-director/director-panel.tsx | ({ ctx, chat, id, popOut }: PopoutContext) |  |  |
 | DirectorReasoning | src/ui/apps/scenes/props/story-director/director-model.tsx | ({ panel, save }: { panel: DirectorPanel; save: Save }) |  |  |
@@ -262,6 +270,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | EditorLayout | src/ui/apps/workbench/layout/editor-layout.tsx | ({ label, sections, rail, active: activeProp, onActiveChange, railWidth = "narrow" }: EditorLayoutProps) |  | .dim .dot .full .rail .hint |
 | EditorLeftCard | src/ui/apps/workbench/presenters/editor-left.tsx | ({ artUrl, draft, piece, vary, styles, setField, mediaCaps, spriteCount, namedCount, setSpritesOpen, setSpritesFocusL... |  |  |
 | EditorModeBar | src/ui/apps/workbench/presenters/editor-modebar.tsx | (props: EditorModeBarProps) |  |  |
+| EditorPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-editor.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | EditorTabstrip | src/ui/apps/workbench/presenters/editor-chrome.tsx | ({ coverage, targets, platformLabel, toggleTarget, clearTargets, offTarget, pickOffTarget, lensActive, lensVisibleCou... |  |  |
 | EmojiPicker | src/ui/apps/scenes/cast/emoji-picker.tsx | ({ anchor, onPick, onClose }: { anchor: HTMLElement \| null; onPick(emoji: string): void; onClose(): void }) | RoleCall's emoji picker, portaled under its button and loaded when first opened. |  |
 | Empty | src/ui/apps/scenes/compendium/cells/cell.tsx | ({ children }: { children: ReactNode }) |  |  |
@@ -290,11 +299,15 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ExpressionStage | src/ui/components/expression-stage/index.tsx | ({ pack, profile }: ExpressionStageProps) |  | .wrap .seal .row .face .moods .ta .hit |
 | FailCard | src/ui/apps/scenes/scene-turn-parts.tsx | ({ code, message, draft, onDismiss, onRetry }: { code: string; message: string; draft: string; onDismiss(): void; onR... | RoleCall's failure card: the draft shows, and is not saved. Retry asks again for the same message. |  |
 | FailureModeSelect | src/ui/apps/scenes/final-cut/fc-pass-chrome.tsx | ({ value, onChange }: { value: FailureMode; onChange(next: FailureMode): void }) |  |  |
+| FailureRow | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ value, onChange }: { value: FinalCutPass["failureMode"]; onChange(next: FinalCutPass["failureMode"]): void }) |  |  |
+| FavoriteModels | src/ui/apps/scenes/messenger/settings/scene/models-page.tsx | ({ env }: { env: SceneEnv }) |  |  |
+| FavoriteRow | src/ui/apps/scenes/messenger/settings/scene/overview-rows.tsx | ({ a }: { a: WingArgs }) | The star on the scene: shown in the Scenes list's Fan Favorites shelf. |  |
 | FeaturedCast | src/ui/apps/scenes/compendium/cells/cells-featured.tsx | ({ m, onOpen }: { m: BookModel } & Open) |  |  |
 | Field | src/ui/apps/scenes/context/memory-controls.tsx | ({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }) |  |  |
 | Field | src/ui/apps/scenes/stage-controls.tsx | ({ icon, label, help, children }: { icon: IconName; label: string; help?: string; children: ReactNode }) |  |  |
 | FieldBlock | src/ui/apps/scenes/compendium/fields/blocks.tsx | ({ label, children, tile }: { label: string; children: ReactNode; tile?: boolean }) |  |  |
 | FieldForm | src/ui/components/field-form/index.tsx | ({ fields, value, onChange }: FieldFormProps) |  | .grid .field .half .label .text .num .sel .rmax ... |
+| FilingRows | src/ui/apps/scenes/messenger/settings/scene/compendium-passes.tsx | ({ a }: { a: WingArgs }) | After a reply: filing on, what to preserve, the Guide, how often and when. |  |
 | FilingSection | src/ui/apps/scenes/compendium/tabs/settings/filing.tsx | ({ compendium, guides, set }: SectionProps) |  |  |
 | Filters | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ options, value, onChange, icons }: { options: readonly T[]; value: T; onChange(v: T): void; icons?: Partial<Record... |  |  |
 | FinalCutActivity | src/ui/apps/scenes/final-cut/fc-activity.tsx | ({ api, chatId, messageId, enabled, onApply, onApplyRerun, onClose }: { api: Pick<ScenesApi, "getFinalCutRun" \| "reru... |  |  |
@@ -315,6 +328,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | FoldedSay | src/ui/agent/kit-bands.tsx | ({ text, onToggle }: { text: string; onToggle: () => void }) | A long reply, folded to one line. |  |
 | FolderInspector | src/ui/apps/workbench/lore/folder-inspector.tsx | ({ category, categories, edges, collapsed, styles, onRename, onMove, onToggleEnabled, onClone, onToggleCollapse, onDe... |  |  |
 | FolderNameDialog | src/ui/apps/scenes/scenes-dialogs.tsx | ({ mode, initial, onCancel, onSave }: { mode: "new" \| "rename"; initial: string; onCancel(): void; onSave(name: strin... |  |  |
+| FolderRow | src/ui/apps/scenes/messenger/settings/scene/overview-rows.tsx | ({ a }: { a: WingArgs }) | The story folder the scene sits in; "No folder" takes it out. |  |
 | FoldoutTabs | src/ui/apps/scenes/scene-foldout.tsx | ({ area, group, tabs, active, onSelect }: { area: string; group: string; tabs: readonly FoldoutTab<Id>[]; active: Id;... | The tab strip over a wing panel: the breadcrumb and one square tile per panel, the open one marked. |  |
 | FollowDialog | src/ui/shell/FollowDialog.tsx | () |  |  |
 | FontPreview | src/ui/components/sealed-media/font-preview.tsx | ({ sha, name }: { sha: string; name: string }) |  | .box .img .audio .video .none .font |
@@ -341,6 +355,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | HareLogo | src/ui/apps/scenes/props/trackhare/hare-logo.tsx | ({ size = 26 }: { size?: number }) |  |  |
 | HareOptions | src/ui/apps/scenes/props/trackhare/hare-options.tsx | ({ panelRef, group, sort, misses, onSetGroup, onSetSort, onSetMisses, onResetPlace }: { panelRef: RefObject<HTMLDivEl... |  |  |
 | HarePopover | src/ui/apps/scenes/props/trackhare/hare-popover.tsx | ({ panelRef, traceState, density, group, sort, showMisses, pop, onToggleDensity, onPickReply, onOpenTokens, onOpenCha... |  |  |
+| HareRows | src/ui/apps/scenes/messenger/settings/scene/prop-pref-rows.tsx | ({ a }: { a: WingArgs }) |  |  |
 | HareStage | src/ui/apps/scenes/props/trackhare/hare-stage.tsx | ({ ctx, chat }: { ctx: AppContext; chat: Chat }) |  |  |
 | Header | src/ui/apps/scenes/messenger/shell/header.tsx | (p: HeaderProps) |  |  |
 | HealthPane | src/ui/apps/workbench/lore/health-pane.tsx | ({ body, onTransform, onJumpEntry, onClose, extraFindings = [], }: HealthPaneProps) |  | .pane .head .clean .gedge .gfirst .glast .gitem .ghead ... |
@@ -352,6 +367,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | HelperMissingCard | src/ui/apps/settings/sections/helper-card.tsx | ({ detail, h }: { detail?: string; h: HelperControls }) | The `unavailable` card. NOT an error card and it never offers "Try again": the helper is absent from | .wrap .module .css .blurb .card .hero .cardTitle .cardBody ... |
 | Hero | src/ui/apps/scenes/compendium/compendium-shell.tsx | () |  |  |
 | HiddenWorld | src/ui/apps/scenes/props/story-director/debug-hidden.tsx | ({ arcs, notes, onEdit, locked }: { arcs: readonly DirectorInvisibleArc[]; notes: readonly DirectorNote[]; onEdit: Ed... |  |  |
+| HistorianRows | src/ui/apps/scenes/messenger/settings/scene/compendium-tools.tsx | ({ a }: { a: WingArgs }) | Historian summaries: interval, context overlap and summary-aware truncation. |  |
 | HistorianSection | src/ui/apps/scenes/compendium/tabs/settings/historian.tsx | ({ compendium, set }: SectionProps) |  |  |
 | HistoryList | src/ui/apps/scenes/scene-history.tsx | ({ history, onRestore }: { history: HistoryView; onRestore(index: number): void }) | The Edit history popover: the text now, then each earlier text newest first with Restore. |  |
 | HorizonBadge | src/ui/apps/scenes/props/story-director/director-parts.tsx | ({ horizon }: { horizon: DirectorHorizon }) |  |  |
@@ -364,13 +380,14 @@ The answer for the common needs, before searching the table below. For buttons, 
 | IdentityCard | src/ui/apps/workbench/persona/persona-cards.tsx | ({ body, onBody }: { body: PersonaBody; onBody: OnBody }) | Identity: tagline + pronouns/height/age + the BRIEF with its never-injected honesty line. | .root .body .idRow .honest .traits .traitsHead .traitAdd .stops ... |
 | ImagePromptEditor | src/ui/components/image-prompt/index.tsx | ({ value, onChange }: ImagePromptEditorProps) |  | .wrap .section .lbl .input .ta .rows .row .add |
 | ImportOverlay | src/ui/apps/library/import-sheet.tsx | ({ state, onCommit, onCancel, onAddMore, }: { state: ImportState; onCommit: (checkedIndexes: number[]) => void; onCan... |  |  |
+| IngestRows | src/ui/apps/scenes/messenger/settings/scene/compendium-tools.tsx | ({ a, open }: { a: WingArgs; open: OpenProgram }) | Import chat history: the options the run reads, and the way to the run itself. |  |
 | IngestSection | src/ui/apps/scenes/compendium/tabs/settings/ingest.tsx | ({ ctx, chat, compendium, bookId, set }: SectionProps) |  |  |
 | Injection | src/ui/apps/scenes/scene-lore-advanced.tsx | ({ entry, groups, onPatch }: { entry: LorebookEntry; groups: readonly string[]; onPatch: Patch }) |  |  |
 | InjectionCard | src/ui/apps/workbench/persona/injection-card.tsx | ({ body, onBody, stops, labels, showWrapper, locked = false, lens = false }: InjectionCardProps) |  | .root .body .idRow .honest .traits .traitsHead .traitAdd .stops ... |
 | InjectionStatus | src/ui/apps/scenes/cast/cast-injection.tsx | ({ scan }: { scan: PresetScan }) | RoleCall's status over the stops: scanning, "Auto-injecting via <block>", or the plain invitation. |  |
 | InkDialog | src/ui/components/ink-dialog/index.tsx | ({ children, onDismiss, ariaLabel, sheetClassName }: InkDialogProps) | A centered modal sheet over a dark scrim; clicking the scrim or pressing Escape calls onDismiss. | .overlay .sheet |
 | InlineValue | src/ui/components/button/controls.tsx | ({ children, vars, "data-part": part, type = "button", ...rest }: InlineValueProps) | A value read inside prose; clicking it is the caller's cue to swap in an input. Keeps the text's own font. | .toggle .whole .track .knob .on .mixed .sm .inline ... |
-| Input | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) |  | .field .area .chip .check .tipWrap .tip |
+| Input | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) |  | .sr-only .field .area .chip .check .tipWrap .tip |
 | Inspector | src/ui/apps/workbench/nodes/Inspector.tsx | (p: InspectorProps) |  | .view .head .grow .addWrap .addMenu .area .canvas .world ... |
 | InspectorShell | src/ui/apps/scenes/context/inspector-shell.tsx | ({ bodies, tab, onTab, onReview }: { bodies: InspectorBodies; tab: InspectorTab; onTab(tab: InspectorTab): void; onRe... |  |  |
 | InventoryPanel | src/ui/apps/scenes/props/trackers/inventory/inventory-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
@@ -474,7 +491,9 @@ The answer for the common needs, before searching the table below. For buttons, 
 | MobileEditorHead | src/ui/components/mobile-editor-head/index.tsx | ({ name, sub, dirty, saving, onBack, onSave, menu }: MobileEditorHeadProps) | Back / name / save / kebab at 2.2rem touch targets; the kebab holds the long tail. | .head .name .kebabWrap .menu |
 | ModeGuided | src/ui/apps/workbench/regex/mode-guided.tsx | ({ rule, writeFor, styles, onPatch, onEscape }: ModeGuidedProps) |  |  |
 | ModelPick | src/ui/apps/scenes/final-cut/fc-pass-chrome.tsx | ({ pass, models, onChange }: { pass: FinalCutPass; models: SceneModels; onChange: Change }) |  |  |
+| ModelRow | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ label, description, current, models, onPick }: { label: string; description: string; current: FinalCutPass["connec... | A model of the scene's connections, or "the scene's model" (nothing set). The select twin of Full Chat's model picker; the pick is the same `connection` field. |  |
 | ModelSection | src/ui/apps/scenes/compendium/tabs/settings/model.tsx | ({ chat, compendium, models, set }: SectionProps) |  |  |
+| ModelSelect | src/ui/apps/scenes/messenger/settings/scene/model-select.tsx | ({ models, current, none, onPick, ...copy }: RowCopy & { models: SceneModels; current: ChatConnection \| undefined \| n... | `none` is the empty choice's words; `current` is the saved model, if any. A pick of the empty choice calls `onPick(null)`. |  |
 | ModeSelect | src/ui/apps/workbench/lore/entry-toc-mode.tsx | ({ mode, vectorOk, styles, onChange, }: { mode: EntryFireMode; vectorOk: boolean; styles: Readonly<Record<string, str... |  |  |
 | ModeWords | src/ui/apps/workbench/regex/mode-words.tsx | ({ rule, styles, onPatch }: ModeWordsProps) |  |  |
 | MonoTag | src/ui/components/mono-tag/index.tsx | ({ children, dim }: MonoTagProps) | A mono, uppercase, letter-spaced meta label. | .tag .tagDim |
@@ -501,9 +520,11 @@ The answer for the common needs, before searching the table below. For buttons, 
 | NumberRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, value, min, max, step, onChange }: RowCopy & { value: number; min?: number; max?: number; step... | A number box; an empty or half-typed box reports nothing rather than 0. |  |
 | OfNote | src/ui/apps/scenes/compendium/cells/cells-lists.tsx | ({ d, onOpen }: { d: Dashboard } & Open) |  |  |
 | OpeningLines | src/ui/apps/settings/sections/security-flows.tsx | ({ hasPassword, onDone, onCancel }: { hasPassword: boolean; onDone: () => void; onCancel: () => void }) | Act 0 shows the words once; Act 1 is the audition, where they are typed back. | .wrap .module .css .card .cardTitle .cardBody .subtle .actions ... |
+| OpeningRows | src/ui/apps/scenes/messenger/settings/scene/overview-rows.tsx | ({ a }: { a: WingArgs }) | Which greeting opens the scene and what it says. Only before the first send: after it the greeting is the scene's first message and is edited there. |  |
 | OpsPane | src/ui/apps/macro-lab/ops-pane.tsx | ({ onInsert }: { onInsert: (token: string) => void }) |  | .tableWrap .table .opCell .opAction .opFamily .gap .gapWord .room ... |
 | OptionCards | src/ui/apps/workbench/controls/option-cards.tsx | ({ options, value, onSelect, styles }: OptionCardsProps) |  |  |
 | OrderSwitch | src/ui/apps/library/rail.tsx | ({ order, onOrder }: { order: ShelfOrder; onOrder(next: ShelfOrder): void }) | The top bar's All / Recent switch (RC's filter pair). Recent is the Workbench's own recency. |  |
+| OutputModeRow | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ value, onChange }: { value: OutputMode \| undefined; onChange(next: OutputMode): void }) |  |  |
 | OutputModeToggle | src/ui/apps/scenes/final-cut/fc-pass-chrome.tsx | ({ value, onChange }: { value: OutputMode \| undefined; onChange(next: OutputMode): void }) |  |  |
 | OverlayWidget | src/ui/components/overlay-widget/index.tsx | ({ title, children }: { title: string; children: ReactNode }) |  | .overlay-widget .overlay-widget-content .overlay-widget-grid .overlay-widget-tile .overlay-widget-swatch .overlay-widget-page |
 | OverlayWidgets | src/ui/apps/agent/overlay.tsx | ({ ctx, onActivate }: OverlayWidgetProps) |  |  |
@@ -522,7 +543,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | PairRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ a, b }: { a: PairSide<A>; b: PairSide<B> }) | Two labeled dropdowns side by side. |  |
 | PaletteCard | src/ui/apps/workbench/persona/persona-cards.tsx | ({ body, onBody }: { body: PersonaBody; onBody: OnBody }) | Color palette on the SHARED controls (registry-first): SwatchRow is the signature slot (the | .root .body .idRow .honest .traits .traitsHead .traitAdd .stops ... |
 | PaletteControl | src/ui/apps/workbench/controls/color-controls.tsx | ({ value, onChange, styles, twoField }: PaletteControlProps) |  |  |
-| Panel | src/ui/components/panel/index.tsx | ({ children, deck, as: Tag = "section", "data-part": part, className, ...rest }: PanelProps) |  | .panel |
+| Panel | src/ui/components/panel/index.tsx | ({ children, deck, as: Tag = "section", "data-part": part, className, style, ...rest }: PanelProps) |  | .panel |
 | PanelSwitcher | src/ui/apps/scenes/messenger/frames/panel-switcher.tsx | ({ panels, openId, onOpen, onClose, onTogglePin }: PanelSwitcherProps) |  |  |
 | ParamCard | src/ui/apps/scenes/generation-params-card.tsx | ({ def, state, provider, greyed, model, onChange }: Props) |  |  |
 | ParamRows | src/ui/apps/scenes/messenger/settings/scene/writing-params.tsx | ({ env, own, presetSamplers, provider, thinking }: { env: SceneEnv; own: ScenePresetOwn; presetSamplers: PresetSample... |  |  |
@@ -531,7 +552,9 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ParticipantRows | src/ui/apps/scenes/messenger/settings/scene/world.tsx | ({ a, open }: { a: WingArgs; open: OpenProgram }) | One presence choice per participant, as the Participants tab's Scene select, and the way to the Participants program. |  |
 | ParticipantsTab | src/ui/apps/scenes/cast/cast-participants-tab.tsx | ({ ctx, scene }: { ctx: AppContext; scene: OpenScene }) |  |  |
 | PartyPanel | src/ui/apps/scenes/props/trackers/party/party-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
+| PassBody | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ env, type, label, description, part, children }: { env: SceneEnv; type: PassType; label: string; description: stri... | One pass's page: its switch, then (while it is on, as in Full Chat) the rows `children` draws for the stored pass. |  |
 | PassChrome | src/ui/apps/scenes/final-cut/fc-pass-chrome.tsx | ({ pass, models, onChange, strip = true }: { pass: FinalCutPass; models: SceneModels; onChange: Change; strip?: boole... |  |  |
+| PassChromeRows | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ page, type, strip = true }: { page: PassPage; type: PassType; strip?: boolean }) | The rows of Full Chat's PassChrome: model, temperature, cross-message context, then the two input switches (`strip` false for the Anti-Slop pass, which has no thinking to cut). |  |
 | PersonaEditor | src/ui/apps/workbench/PersonaEditor.tsx | (props: PersonaEditorProps) |  | .room .stage .soon .ghostRoom .ghostErr .skel .ghostActions .recents ... |
 | PersonaEditorView | src/ui/apps/workbench/persona/persona-editor.tsx | ({ entity, revision, ctx, piece, topRight }: PersonaEditorViewProps) |  | .root .body .idRow .honest .traits .traitsHead .traitAdd .stops ... |
 | PersonaFace | src/ui/apps/scenes/scene-persona-picker.tsx | ({ persona, className }: { persona: PickerPersona; className?: string }) | A persona's portrait, else its picked emoji, else its initial. |  |
@@ -549,6 +572,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | PlatformTabs | src/ui/components/platform-tabs/index.tsx | ({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: PlatformTabsProps) | Multi-select platform lens tabs + the dim/hide off-target switch (vs-editor-2). | .strip .hint .offt |
 | PlaybackTab | src/ui/apps/workbench/lore/playback-tab.tsx | ({ body, onJumpEntry }: PlaybackTabProps) |  | .pane .head .chat .rowUser .rowBot .user .bot .empty ... |
 | PlaybillView | src/ui/apps/workbench/presenters/playbill-view.tsx | ({ leftCard, sealedCard, acts, actModules, lensHides, lensDims, wideKinds, panelKinds, controlFor, nativeItems, nativ... |  |  |
+| PlayingAs | src/ui/apps/scenes/messenger/settings/scene/persona-rows.tsx | ({ a, open }: { a: WingArgs; open: OpenProgram }) |  |  |
 | Pledge | src/ui/components/stage-dossier/index.tsx | ({ checked, onChange, children }: { checked: boolean; onChange: (v: boolean) => void; children: ReactNode }) | The pledge checkbox. | .dossier .hero .head .act .marquee .flourish .direction .paren ... |
 | PlotsInMotion | src/ui/apps/scenes/compendium/cells/cells-lists.tsx | ({ d, onOpen }: { d: Dashboard } & Open) |  |  |
 | Popout | src/ui/apps/scenes/messenger/frames/popout.tsx | ({ title, onClose, width = 420, initial = { x: 120, y: 96 }, bounds = viewportNow, children }: PopoutProps) |  |  |
@@ -567,6 +591,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | PresetEditorView | src/ui/apps/workbench/preset/preset-editor.tsx | ({ entity, revision, ctx, piece, topRight }: PresetEditorViewProps) |  | .root .workspace .listCol .list .listInner .listRow .autosaveStalled .empty ... |
 | PresetWing | src/ui/apps/scenes/scene-preset-wing.tsx | ({ ctx, chat, text, onChanged }: { ctx: AppContext; chat: Chat; text: PresetText; onChanged(chat: Chat): void }) |  |  |
 | Pressure | src/ui/apps/scenes/context/pressure.tsx | ({ meter, thresholds, target, onThresholds, onTarget }: { meter: Meter; thresholds: Thresholds; target: number \| null... |  |  |
+| PressureRows | src/ui/apps/scenes/messenger/settings/scene/pressure-rows.tsx | ({ a }: { a: WingArgs }) |  |  |
 | PreviewCard | src/ui/apps/workbench/persona/persona-cards.tsx | ({ xml, tokens, stopLabel }: { xml: string; tokens: number; stopLabel: string }) | Live preview: the REAL compiler's output + the shared token convention. | .root .body .idRow .honest .traits .traitsHead .traitAdd .stops ... |
 | Problem | src/ui/apps/scenes/compendium/standardize/standardize-cards.tsx | ({ title, text, log, onDismiss }: { title: string; text: string; log?: readonly RunLine[]; onDismiss(): void }) |  |  |
 | ProfileCard | src/ui/apps/scenes/messenger/panels/cast/profile-card.tsx | ({ chatId, row, colorsOn, onChange, onOpenProgram, onClose }: ProfileCardProps) |  |  |
@@ -574,6 +599,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ProgramPortals | src/ui/apps/scenes/messenger/shell/program-holders.tsx | ({ ids, programs, holderOf, render }: { ids: readonly string[]; programs: readonly P[]; holderOf: HolderOf; render(pr... | Renders each visited program into its holder, wherever the holder currently sits. |  |
 | ProgramSlot | src/ui/apps/scenes/messenger/shell/program-holders.tsx | ({ holder }: { holder: HTMLElement }) | The open surface's slot for one program: the holder sits here while this is mounted. |  |
 | ProgressChecklist | src/ui/components/progress-checklist/index.tsx | ({ items, extraStat }: ProgressChecklistProps) | Bar + count chip; the checklist itself lives in a bottom sheet. | .prog .bar .row .ok .no .pendingLabel |
+| PromptBlocksPage | src/ui/apps/scenes/messenger/settings/scene/prompt-blocks.tsx | ({ env }: { env: SceneEnv }) | The page body: choices, then one switch per block, then the way to the prompt text. |  |
 | PromptEditor | src/ui/apps/scenes/scene-preset-parts.tsx | ({ prompt, loadedAt, presetName, note, prefs, onText, onClose }: { prompt: PresetPrompt \| null; loadedAt: number; pre... | One block's text. Typing saves to the preset after a pause (RoleCall saves after 500 ms). |  |
 | PromptEditPanel | src/ui/apps/workbench/preset/prompt-edit-panel.tsx | ({ block, stops, writeFor, groups, onSetGroup, onClose, onPatch, }: PromptEditPanelProps) |  | .sideHead .sideHeadTitle .sideEmpty .sideEmptyTitle .sideEmptyHint .sideBody .sideRow .sideHintLine ... |
 | PromptingWing | src/ui/apps/scenes/scene-prompting.tsx | ({ ctx, chat, presetBody, onChanged, onBody, initialTab, single }: { ctx: AppContext; single?: boolean; initialTab?: ... |  |  |
@@ -603,6 +629,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | ReadingPane | src/ui/apps/macro-lab/reading-pane.tsx | ({ text, lens, }: { text: string; lens: MacroDialect; }) |  | .room .lenses .inst .boxes .stack .box .boxHead .boxTitle ... |
 | ReasoningBlocks | src/ui/apps/scenes/scene-reasoning-blocks.tsx | (p: ReasoningBlocksProps) | The blocks of one message; nothing at all when it has no thinking. |  |
 | ReasoningGroup | src/ui/apps/scenes/generation/reasoning-group.tsx | ({ env, prompting, params, searching }: { env: GenerationEnv; prompting: PromptingView; params: readonly ParamDef[]; ... |  |  |
+| RecallRows | src/ui/apps/scenes/messenger/settings/scene/compendium-passes.tsx | ({ a }: { a: WingArgs }) | Before a reply: recall on, what to prioritize, and the Guide. |  |
 | RecallSection | src/ui/apps/scenes/compendium/tabs/settings/recall.tsx | ({ compendium, guides, set }: SectionProps) |  |  |
 | Recaps | src/ui/apps/scenes/compendium/cells/cells-lists.tsx | ({ d, onOpen }: { d: Dashboard } & Open) |  |  |
 | Recast | src/ui/apps/settings/sections/security-flows.tsx | ({ label, hasPassword, onForget, onDone, onCancel }: { label: string; hasPassword: boolean; onForget: () => Promise<u... | "Recast": forgetting another computer asks first, then goes through the fresh proof. | .wrap .module .css .card .cardTitle .cardBody .subtle .actions ... |
@@ -645,6 +672,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | RuleToc | src/ui/apps/workbench/regex/rule-toc.tsx | ({ rules, focusedId, styles, onSelect, onAdd, slowIds }: RuleTocProps) |  |  |
 | RuntimeNumbers | src/ui/apps/scenes/props/story-director/director-runtime.tsx | ({ panel, save }: { panel: DirectorPanel; save: Save }) |  |  |
 | SafetyCard | src/ui/apps/scenes/final-cut/fc-anti-slop.tsx | ({ pass, onToggle, onChange }: { pass: FinalCutPass \| undefined; onToggle(): void; onChange: Change }) |  |  |
+| SafetyPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-checks.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | SamplerBar | src/ui/apps/scenes/scene-preset-parts.tsx | ({ preset, own, onSet, booth = false }: { preset: PresetSamplers; own: Samplers; onSet<K extends SamplerKey>(key: K, ... |  |  |
 | SamplerCard | src/ui/apps/scenes/scene-sampler-card.tsx | (p: SamplerCardProps) |  |  |
 | SamplersBody | src/ui/apps/scenes/messenger/settings/scene/writing-samplers.tsx | ({ env }: { env: SceneEnv }) | The body of the Samplers section. |  |
@@ -670,6 +698,8 @@ The answer for the common needs, before searching the table below. For buttons, 
 | SceneTool | src/ui/apps/scenes/messenger/settings/bodies.tsx | ({ a, wing, tab }: { a: WingArgs; wing: string; tab?: string }) | One tab of one wing, drawn alone. `tab` is a Messenger program's tab (messenger/programs.ts); a wing with a single body takes none. |  |
 | SceneWritingTools | src/ui/apps/scenes/scene-writing-tools.tsx | ({ text }: { text: PresetText }) |  |  |
 | Scrim | src/ui/components/button/controls.tsx | ({ label, children, transparent, vars, "data-part": part, type = "button", ...rest }: ScrimProps) | The click-away layer behind a wing, menu or sheet: covers its positioned parent; clicking it dismisses. | .toggle .whole .track .knob .on .mixed .sm .inline ... |
+| ScriptSheetBench | src/ui/apps/workbench/script-sheet-bench.tsx | (props: KindEditorProps) |  | .room .stage .soon .ghostRoom .ghostErr .skel .ghostActions .recents ... |
+| ScriptSheetEditor | src/ui/_shared/script-sheet-editor.tsx | ({ initial, samplers, actions, save, choose, onBack, extraDirty = false, handle, onState }: { initial?: SheetDraft; s... |  | .root .discard .nameRow .foot .name .role .text .problem |
 | SealedHtmlPreview | src/ui/components/sealed-html-preview/index.tsx | ({ html, css = "", title = "Backdrop preview", fill = false, }: SealedHtmlPreviewProps) | Sandboxed iframe preview of card backdrop HTML. | .frame .fill |
 | SealedMedia | src/ui/components/sealed-media/index.tsx | ({ kind, src, name, artRef }: SealedMediaProps) |  | .box .img .audio .video .none .font |
 | SearchBox | src/ui/apps/library/search-bar.tsx | ({ value, onChange, hint, status, onRetry }: SearchBoxProps) |  |  |
@@ -683,7 +713,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Segmented | src/ui/components/button/index.tsx | (props: SegmentedProps<T>) | Pick one (or, with multiple, several) of a few options. | .btn .seg .tab .chip .primary .danger .quiet .sm ... |
 | SegmentedRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, value, options, onChange }: RowCopy & { value: T; options: readonly ChoiceOption<T>[]; onChang... |  |  |
 | Sel | src/ui/apps/scenes/final-cut/fc-controls.tsx | ({ label, value, options, onChange }: { label: string; value: string; options: Options; onChange(next: string): void }) |  |  |
-| Select | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) |  | .field .area .chip .check .tipWrap .tip |
+| Select | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) |  | .sr-only .field .area .chip .check .tipWrap .tip |
 | SelectRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, value, options, onChange }: RowCopy & { value: T; options: readonly ChoiceOption<T>[]; onChang... |  |  |
 | SendBar | src/ui/apps/library/send-bar.tsx | ({ staged, entities, onSend, onDelete, onSelectAll, onClear, }: SendBarProps) |  |  |
 | SettingCard | src/ui/apps/scenes/generation/setting-card.tsx | ({ def, enabled, value, toggle = true, options, indent, parentOn = true, onToggle, onChange }: SettingCardProps) |  |  |
@@ -707,7 +737,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | SidePanel | src/ui/apps/scenes/messenger/frames/side-panel.tsx | ({ title, subtitle, width = "side", pinned = false, onTogglePin, onPopOut, onClose, children }: SidePanelProps) |  |  |
 | SizeDial | src/ui/apps/library/shelves.tsx | ({ ctx, sizeRem, setSizeRem, rootRef, prefKey }: { ctx: AppContext; sizeRem: number; setSizeRem(next: number): void; ... | The art dial, in the top bar: one size for the whole page. It sizes the cards (at its resting |  |
 | SlashMenu | src/ui/agent/slash-menu.tsx | ({ title, choices, active, onPick, }: { title: string; choices: readonly SlashChoice[]; active: number; onPick: (inde... |  |  |
-| Slider | src/ui/components/slider/index.tsx | ({ value, defaultValue, min, max, step = 1, onChange, format, label, help, color, readout = true, style, onInput, ...... |  | .range .wrap .card .head .label .help .value .typed |
+| Slider | src/ui/components/slider/index.tsx | ({ value, defaultValue, min, max, step = 1, onChange, format, label, help, color, readout = true, style, onInput, ...... |  | .sr-only .range .wrap .card .head .label .help .value ... |
 | SliderField | src/ui/apps/scenes/stage-controls.tsx | ({ icon, label, caption, value, limits, format, help, changed, onChange, onReset }: { icon: IconName; label: string; ... |  |  |
 | SliderRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, value, min, max, step = 1, unit = "", onChange }: SliderRowProps) |  |  |
 | SoonPropRow | src/ui/apps/scenes/props/prop-row.tsx | ({ row, tips }: { row: SoonRow; tips: boolean }) | RoleCall's DisabledExtension (:2240): the same row, dimmed, with no switch and a grey gear that does nothing. |  |
@@ -733,6 +763,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | StageNote | src/ui/components/stage-dossier/index.tsx | ({ label, tone, children }: { label: string; tone: "warn" \| "flub"; children: ReactNode }) | STAGE DIRECTION (a warning, gilt) or LINE FLUB (an error). | .dossier .hero .head .act .marquee .flourish .direction .paren ... |
 | StageWing | src/ui/apps/scenes/scene-stage-wing.tsx | ({ host, initialTab, single, ...appearance }: StageProps & { initialTab?: string; single?: boolean }) |  |  |
 | StandardizeBanner | src/ui/apps/scenes/compendium/standardize/standardize-banner.tsx | ({ ctx, chat, onChat, bookId, model, std }: { ctx: AppContext; chat: Chat; onChat(chat: Chat): void; bookId: string; ... |  |  |
+| StandardizeRows | src/ui/apps/scenes/messenger/settings/scene/compendium-tools.tsx | ({ a, open }: { a: WingArgs; open: OpenProgram }) | Standardization defaults: batch size, model source and retry, and the way to the run and its revert. |  |
 | StandardizeSection | src/ui/apps/scenes/compendium/tabs/settings/standardize.tsx | ({ ctx, chat, compendium, bookId, set }: SectionProps) |  |  |
 | Starting | src/ui/apps/scenes/scene-turn-parts.tsx | () |  |  |
 | StateGraphPane | src/ui/apps/workbench/workshop/state-graph/pane.tsx | ({ triggers, defaultVarsText, onApply, }: StateGraphPaneProps) |  | .shell .rail .railhead .icoSealed .editor .ehead .sub .add ... |
@@ -773,7 +804,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | TakesMenu | src/ui/apps/scenes/scene-takes.tsx | ({ takes, activeId, onSwitch, onRename, onDelete, onTree }: TakesMenuProps) |  |  |
 | TemplateItem | src/ui/apps/scenes/scene-preset-templates.tsx | ({ label, content, loadedAt, onSave }: { label: string; content: string; loadedAt: number; onSave(text: string, loade... | One field: its label and size, and when open its text, saved to the preset 500 ms after typing stops, on leaving the field and on closing. |  |
 | TemplatesSection | src/ui/apps/scenes/scene-preset-templates.tsx | ({ body, text, query }: { body: PresetBody; text: PresetText; query: string }) | The Preset tab's Templates section: collapsed, with how many of the eight are set; the tab's prompt search narrows it. |  |
-| Textarea | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) |  | .field .area .chip .check .tipWrap .tip |
+| Textarea | src/ui/components/rc-controls/index.tsx | ({ className, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) |  | .sr-only .field .area .chip .check .tipWrap .tip |
 | TextAreaRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, value, rows = 4, onChange }: RowCopy & { value: string; rows?: number; onChange(value: string)... |  |  |
 | TheKey | src/ui/apps/settings/sections/security-flows.tsx | ({ hasWords, hasPassword, onWriteLines, onDone, onCancel, }: { hasWords: boolean; hasPassword: boolean; onWriteLines:... | Act II, the key: the password, typed twice, and when the door asks for it. Lines come first. | .wrap .module .css .card .cardTitle .cardBody .subtle .actions ... |
 | ThemeManager | src/ui/apps/settings/sections/theme-manager.tsx | ({ ctx }: { ctx: AppContext }) |  | .manager .file .hint .state .review .catalog .strip .neutral ... |
@@ -796,21 +827,28 @@ The answer for the common needs, before searching the table below. For buttons, 
 | TokensSheet | src/ui/apps/scenes/props/trackhare/tokens-sheet.tsx | ({ trace, model, onClose }: { trace: SceneTrace; model: string; onClose(): void }) |  |  |
 | ToolAccessRows | src/ui/apps/scenes/scene-booth-wing.tsx | ({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void }) | Narrator Tool Access and Max tool rounds (RoleCall's Runtime Setup, QuickPlayPanel.tsx:2101-2149; `stageSettings.agentLoopEnabled` and |  |
 | ToolsCard | src/ui/apps/scenes/final-cut/fc-tools-card.tsx | ({ tools, models, onChange }: { tools: FinalCutTools \| undefined; models: SceneModels; onChange(next: FinalCutTools):... |  |  |
-| Tooltip | src/ui/components/rc-controls/index.tsx | ({ text, children }: { text: string; children: ReactNode }) | A hover and focus bubble over its child; the text is also the child's accessible description. | .field .area .chip .check .tipWrap .tip |
+| ToolsPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-checks.tsx | ({ env }: { env: SceneEnv }) | One page for the five tools: the rows of each tool under its own name, all on the page's one Final Cut writer. |  |
+| Tooltip | src/ui/components/rc-controls/index.tsx | ({ text, children }: { text: string; children: ReactNode }) | A hover and focus bubble over its child; the text is also the child's accessible description. | .sr-only .field .area .chip .check .tipWrap .tip |
+| TooltipRow | src/ui/apps/scenes/messenger/settings/scene/prop-pref-rows.tsx | ({ a }: { a: WingArgs }) |  |  |
 | TourGuide | src/ui/components/tour-guide/index.tsx | ({ tour, ctx, onClose }: TourGuideProps) |  | .rail .kick .skip .dots .done .now .count .title ... |
+| TrackerAutoRows | src/ui/apps/scenes/messenger/settings/scene/tracker-rows.tsx | ({ a }: { a: WingArgs }) | Each tracker's own switch and number for the Story Director's automatic updates; the default is the Director's "Every N replies". |  |
 | TrackerCardColors | src/ui/components/tracker-card-colors/index.tsx | ({ value, onChange }: TrackerCardColorsProps) |  | .wrap .help .colorBlock .k .cssIn |
+| TrackerContextRows | src/ui/apps/scenes/messenger/settings/scene/tracker-rows.tsx | ({ a }: { a: WingArgs }) |  |  |
 | TrackerFrame | src/ui/apps/scenes/props/trackers/tracker-frame.tsx | ({ label, title, description, icon, tone, tokens, view, onClear, popOut, badge, actions, children }: FrameProps) |  |  |
 | TrackerSetup | src/ui/components/tracker-setup/index.tsx | ({ value, onChange }: TrackerSetupProps) |  | .wrap .wt .notes .k .sel .ta .mod .on ... |
 | Transcript | src/ui/agent/kit-transcript.tsx | ({ lines, streaming, busy, problem, acts, onFold, onNotice, onAnswer, }: { lines: readonly ChatLine[]; streaming: str... | The whole transcript. |  |
 | TransferBench | src/ui/components/transfer-bench/index.tsx | ({ leftTitle, rightTitle, left, right, name, namePlaceholder = "Name for the new book", applyLabel = "Apply", require... |  | .wrap .nameRow .note .bench .col .colHead .small .list ... |
 | TranslatorControls | src/ui/apps/scenes/final-cut/fc-translator.tsx | ({ pass, onChange }: { pass: FinalCutPass; onChange: Change }) |  |  |
+| TranslatorPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-translator.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | TrashPanel | src/ui/apps/library/trash-panel.tsx | ({ ctx, onBack, onRestored }: { ctx: AppContext; onBack(): void; onRestored(): void }) |  |  |
 | TreeBuildSection | src/ui/apps/scenes/compendium/tabs/settings/tree.tsx | ({ compendium, set }: SectionProps) |  |  |
 | TreeCell | src/ui/apps/scenes/compendium/cells/cells-featured.tsx | ({ m, onOpen, onTree }: { m: BookModel; onTree(): void } & Open) |  |  |
 | TreeMaintenance | src/ui/apps/scenes/compendium/tabs/tree-maintenance.tsx | ({ store }: { store: CompendiumTreeStore }) |  |  |
 | TreeMenu | src/ui/apps/scenes/compendium/browse/tree-menu.tsx | ({ target, flags, bounds, onToggle, onMove, onClose }: { target: MenuTarget; flags: Flags; bounds: { width: number; h... |  |  |
+| TreeRows | src/ui/apps/scenes/messenger/settings/scene/compendium-tools.tsx | ({ a, open }: { a: WingArgs; open: OpenProgram }) | Tree building: granularity, entry detail, placement and refine, and the way to the locks and pins kept on the open book. |  |
 | TriggerBox | src/ui/apps/scenes/scene-lore-keys.tsx | ({ triggers, two = false, advanced, placeholder, onChange }: { triggers: readonly Trigger[]; two?: boolean; advanced:... |  |  |
 | TriggerEditor | src/ui/apps/workbench/lore/trigger-editor.tsx | ({ triggers, onChange, styles, advanced, placeholder, ariaLabel, showSpecials = false, entryProbability = 100, }: Tri... |  |  |
+| TuningRows | src/ui/apps/scenes/messenger/settings/scene/compendium-passes.tsx | ({ a }: { a: WingArgs }) | Retrieval tuning: how many entries, how much of each, how many recent messages, how deep, and how several books are laid out. |  |
 | TuningSection | src/ui/apps/scenes/compendium/tabs/settings/recall.tsx | ({ compendium, set }: SectionProps) |  |  |
 | TurnList | src/ui/apps/scenes/props/trackers/battle/battle-parts.tsx | ({ order, current, round, enemies, onNext }: { order: readonly string[]; current: string \| null; round: number; enemi... |  |  |
 | TypeAct | src/ui/apps/scenes/stage-type-act.tsx | ({ look, set, accent }: StageActProps & { accent: string }) | `accent` is the colour the Dialogue picker starts from: the scene accent (RoleCall started it from a fixed violet, F5). |  |
@@ -847,6 +885,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | WorkshopView | src/ui/apps/workbench/workshop/view.tsx | ({ draft, setField, original, setOriginal, targets = [], ctx, }: WorkshopViewProps) |  | .shell .rail .railhead .icoSealed .editor .ehead .sub .add ... |
 | WorldConcepts | src/ui/apps/scenes/compendium/cells/cells-lists.tsx | ({ d, onOpen }: { d: Dashboard } & Open) |  |  |
 | WorldWing | src/ui/apps/scenes/scene-world-wing.tsx | ({ lore, compendium, linked, initialTab, single }: { lore: JSX.Element; compendium: JSX.Element; linked: string; init... |  |  |
+| WriteBookRows | src/ui/apps/scenes/messenger/settings/scene/compendium-books.tsx | ({ a }: { a: WingArgs }) | The default write book (only a book that allows writes can be it) and "Make a book for this scene". |  |
 | WriteForStrip | src/ui/components/write-for-strip/index.tsx | ({ profiles, labels, value, onChange, }: WriteForStripProps<P>) |  | .strip .stripLabel |
 | ZoomArt | src/ui/apps/scenes/scene-portrait-zoom.tsx | (props: ComponentProps<typeof SceneArt>) |  |  |
 

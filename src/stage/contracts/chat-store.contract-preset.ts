@@ -14,7 +14,7 @@ export function chatStorePresetContract(make: (clock: () => number) => ChatStore
   const version = async (store: ChatStore, branchId: string) => (await store.readMessages(branchId, { limit: 1 })).branchVersion;
 
   describe("the scene's preset (rule 19)", () => {
-    const PICK = { id: "preset-1", toggles: { intro: true, outro: false }, samplers: { temperature: 0.8, maxTokens: 512 } };
+    const PICK = { kind: "preset", id: "preset-1", toggles: { intro: true, outro: false }, samplers: { temperature: 0.8, maxTokens: 512 } };
 
     test("a new chat has none; setPreset sets, replaces, and clears it, bumping no version and moving no updatedAt", async () => {
       const { store, chat, main, setNow } = await seeded(1);
@@ -24,7 +24,7 @@ export function chatStorePresetContract(make: (clock: () => number) => ChatStore
       expect(await store.setPreset(chat.id, PICK)).toEqual({ ...chat, preset: PICK });
       expect((await store.getChat(chat.id))!.preset).toEqual(PICK);
       expect((await store.listChats()).chats.map((c) => c.preset)).toEqual([PICK]);
-      const other = { id: "preset-2", toggles: { epilogue: true }, samplers: {} };
+      const other = { kind: "preset", id: "preset-2", toggles: { epilogue: true }, samplers: {} };
       expect((await store.setPreset(chat.id, other))!.preset).toEqual(other);
       expect(await version(store, main)).toBe(before);
       expect((await store.getChat(chat.id))!.updatedAt).toBe(chat.updatedAt);
@@ -56,14 +56,14 @@ export function chatStorePresetContract(make: (clock: () => number) => ChatStore
     test("switching to a different preset id replaces the toggles and samplers with what the caller passes", async () => {
       const { store, chat } = await seeded(1);
       await store.setPreset(chat.id, PICK);
-      const swapped = { id: "preset-2", toggles: { epilogue: true }, samplers: { topP: 0.5 } };
+      const swapped = { kind: "preset", id: "preset-2", toggles: { epilogue: true }, samplers: { topP: 0.5 } };
       expect((await store.setPreset(chat.id, swapped))!.preset).toEqual(swapped);
     });
 
     test("a name that is also an Object property is a plain toggle name", async () => {
       const { store, chat } = await seeded(1);
       const toggles = JSON.parse('{"__proto__": true, "constructor": false}');
-      const saved = await store.setPreset(chat.id, { id: "p", toggles, samplers: {} });
+      const saved = await store.setPreset(chat.id, { kind: "preset", id: "p", toggles, samplers: {} });
       expect(Object.keys(saved!.preset!.toggles).sort()).toEqual(["__proto__", "constructor"]);
       expect(Object.getPrototypeOf(saved!.preset!.toggles)).toBe(Object.prototype);
       expect(saved!.preset!.toggles["constructor"]).toBe(false);
@@ -74,13 +74,13 @@ export function chatStorePresetContract(make: (clock: () => number) => ChatStore
       const { store, chat } = await seeded(1);
       await store.setPreset(chat.id, PICK);
       const bads = [
-        { id: "", toggles: {}, samplers: {} },
-        { id: "p", toggles: {} }, // samplers is required
+        { kind: "preset", id: "", toggles: {}, samplers: {} },
+        { kind: "preset", id: "p", toggles: {} }, // samplers is required
         { toggles: {}, samplers: {} },
         { id: 1, toggles: {}, samplers: {} },
-        { id: "p", toggles: { "": true }, samplers: {} },
-        { id: "p", toggles: { a: "yes" }, samplers: {} },
-        { id: "p", toggles: [], samplers: {} },
+        { kind: "preset", id: "p", toggles: { "": true }, samplers: {} },
+        { kind: "preset", id: "p", toggles: { a: "yes" }, samplers: {} },
+        { kind: "preset", id: "p", toggles: [], samplers: {} },
         { ...PICK, extra: 1 },
         "preset-1",
         [],
@@ -94,7 +94,7 @@ export function chatStorePresetContract(make: (clock: () => number) => ChatStore
   });
 
   describe("the scene's preset samplers (rule 19)", () => {
-    const numbered = (samplers: Record<string, unknown>) => ({ id: "p", toggles: {}, samplers });
+    const numbered = (samplers: Record<string, unknown>) => ({ kind: "preset", id: "p", toggles: {}, samplers });
 
     test("every named sampler is accepted, each a finite number; maxTokens and maxContext whole and positive", async () => {
       const { store, chat } = await seeded(1);

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/README",
   "sourcePath": "docs/reference/entities/README.md",
-  "sourceHash": "sha256:e0f06ba327937f7fd0ea27c1b072c28a9eb34b4c06352fa0f574c537c2b192e6",
-  "semanticSummaryHash": "sha256:8a69eff380b71a3cebfc35760fb9f01591f671bc81967ca0d014f07fb0bfe31e",
+  "sourceHash": "sha256:353ff6cee148b76c2d1011e78e90873d56af551f48f81ba23824fdae60e9633f",
+  "semanticSummaryHash": "sha256:92c87ef67c62398b80e778862e797dbd4317bf92c4cd77fc021255c12cdea7ab",
   "verdict": "APPROVE",
-  "reviewer": "Coneja-Chibi",
-  "notes": "Product rename to Bunraku; summaries re-stamped. Reviewed and approved by the repository owner.",
-  "reviewedAt": "2026-09-22T12:47:51.645Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Formula row matches formula.md; Tool row lists roll, dice, formula or record; kind lists give thirteen kinds matching KIND_IDS incl. formula.",
+  "reviewedAt": "2026-10-27T10:37:40.540Z"
 }

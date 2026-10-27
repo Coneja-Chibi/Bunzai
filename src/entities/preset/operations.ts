@@ -14,17 +14,17 @@ export const patchPresetBody = (
   patch: Partial<PresetBody>,
 ): PresetBody => ({ ...body, ...structuredClone(patch) });
 
-export function setPresetSampler(
-  body: PresetBody,
+export function setPresetSampler<B extends { samplers?: PresetSamplers }>(
+  body: B,
   key: keyof PresetSamplers,
   value: number | string | undefined,
-): PresetBody {
+): B {
   const samplers: PresetSamplers = { ...(body.samplers ?? {}) };
   if (value === undefined || value === "") delete samplers[key];
   else (samplers as Record<string, unknown>)[key] = value;
   if (Object.keys(samplers).length === 0) {
     const { samplers: _removed, ...rest } = body;
-    return rest;
+    return rest as B;
   }
   return { ...body, samplers };
 }

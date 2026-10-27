@@ -4,7 +4,7 @@
  */
 import { useCallback, useRef, type CSSProperties, type JSX, type KeyboardEvent } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { deckMeta } from "../../../_shared/decks";
+import { deckMeta, pieceColor } from "../../../_shared/decks";
 import { useArtSrc } from "../../../_shared/art-cache";
 import { QueuedPiecePreview } from "../piece-preview";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
@@ -49,7 +49,7 @@ function ListRow({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: Studi
 
   return (
     <RowPart
-      accent={e.accent ?? deckMeta(e.kind).accent}
+      accent={pieceColor(e)}
       ref={menuRef}
       data-part="library.row"
       selected={staged || isOpen}
@@ -66,7 +66,7 @@ function ListRow({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: Studi
       label={e.name}
       subtitle={<>
         {ctx.peeks && <QueuedPiecePreview e={e} queue={ctx.peeks} ctx={ctx} />}
-        <span className="kd">{e.kind}{fmt ? ` · ${fmt}` : ""}</span>
+        <span className="kd">{deckMeta(e.kind).singular}{fmt ? ` · ${fmt}` : ""}</span>
       </>}
       meta={isOpen ? <span className="bench">on the workbench</span> : staged ? <span className="stag">staged</span> : undefined}
     />

@@ -8,15 +8,11 @@
  * instead of read as current. Summaries hold only what lists need, never a full body.
  */
 import { isRecord, type Rec } from "../../core/guards";
-import { slowRuleCount } from "../../core/regex";
-import type { LorebookBody } from "../../entities/lorebook/schema";
-import type { PersonaBody } from "../../entities/persona/schema";
-import type { RegexRule, RegexSetBody } from "../../entities/regex/schema";
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import { roughTokenCount } from "../../core/tokens/estimate";
-import { filledCardFields, loreFacts, personaFacts, presetFacts, promptFormatParts, doesWhatForSet, writtenChars } from "../../studio/piece-facts";
+import { kindFacts, writtenChars } from "../../studio/piece-facts";
 import { summaryOfPiece } from "../../studio/store-listing";
-import type { PieceSummaryContent, RegexShelfFacts, SummaryInput } from "../contracts/content-store";
+import type { PieceSummaryContent, SummaryInput } from "../contracts/content-store";
 
 // Re-exported: this is still where the shape is computed, so existing readers of it (tests included)
 // need not know it now lives in the shared contracts file (step 3.3, so `content-store.ts`'s new
@@ -28,17 +24,6 @@ export const DERIVED_VERSION = "2";
 
 const MAX_DESCRIPTION = 400;
 const truncate = (s: string): string => (s.length > MAX_DESCRIPTION ? `${s.slice(0, MAX_DESCRIPTION)}…` : s);
-
-const regexFacts = (body: RegexSetBody): RegexShelfFacts => {
-  const rules: readonly RegexRule[] = Array.isArray(body.rules) ? body.rules : [];
-  return {
-    enabled: body.enabled !== false,
-    ruleCount: rules.length,
-    enabledRuleCount: rules.filter((r) => r.enabled !== false).length,
-    doesWhat: doesWhatForSet(body),
-    slowCount: slowRuleCount(body),
-  };
-};
 
 /** Every fact the Library and Scenes read from a live entity's body today, computed once at write time. */
 export function summaryContentOf(entity: ParsedCanonicalEntity): PieceSummaryContent {
@@ -66,14 +51,7 @@ export function summaryContentOf(entity: ParsedCanonicalEntity): PieceSummaryCon
     ...(tagline ? { tagline } : {}),
     ...(rawDescription ? { description: truncate(rawDescription) } : {}),
     tokens: roughTokenCount(writtenChars(body)),
-    ...(entity.kind === "character" ? { filled: filledCardFields(body) } : {}),
-    ...(entity.kind === "preset" ? presetFacts(body) : {}),
-    ...(entity.kind === "promptformat" ? { formatParts: promptFormatParts(body) } : {}),
-    ...(entity.kind === "regex" ? { regex: regexFacts(body as unknown as RegexSetBody) } : {}),
-    ...(entity.kind === "lorebook"
-      ? { lore: { enabled: body.enabled !== false, ...loreFacts(body as unknown as LorebookBody) } }
-      : {}),
-    ...(entity.kind === "persona" ? { persona: personaFacts(body as unknown as PersonaBody) } : {}),
+    ...kindFacts(entity.kind, body),
   };
 }
 

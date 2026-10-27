@@ -168,4 +168,5 @@ export const PRESET_STYLE = `
 @container (max-width: 639px){
 .scs .sliders{grid-template-columns:1fr}
 }
+.scs .pp .pk-sheet{margin:0 0 8px}
 `;

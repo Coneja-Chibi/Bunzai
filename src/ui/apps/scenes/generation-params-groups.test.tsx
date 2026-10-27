@@ -47,7 +47,7 @@ async function mount(initial: ChatPreset | null, provider: ProviderInfo | null =
   };
   return { host, saves, click, group, open, type };
 }
-const own = (samplers: ChatPreset["samplers"] = {}): ChatPreset => ({ id: "p", toggles: {}, samplers });
+const own = (samplers: ChatPreset["samplers"] = {}): ChatPreset => ({ kind: "preset", id: "p", toggles: {}, samplers });
 const counts = (host: HTMLElement) => [...host.querySelectorAll(".gp-group:not(.gp-custom) > [data-control='disclosure'] small")].map((e) => e.textContent);
 
 describe("the groups", () => {

@@ -21,7 +21,7 @@ import { ChainsSheet } from "./chains-sheet";
 import { TokensSheet } from "./tokens-sheet";
 import {
   badgeCount, clampButtonRect, DEFAULT_BUTTON_RECT, parseButtonRect, parseDensity, parseSort,
-  type ButtonRect, type Density, type SortMode,
+  HARE_PREFS, type ButtonRect, type Density, type SortMode,
 } from "./hare-core";
 import { boolOr } from "../../../../../core/guards";
 
@@ -30,11 +30,11 @@ const LONG_PRESS_MS = 500;
 type Panel = "popover" | "options" | "chains" | "tokens" | null;
 
 export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.Element {
-  const [rect, setRect] = useState<ButtonRect>(() => parseButtonRect(ctx.prefs.get("trackhare.button")) ?? DEFAULT_BUTTON_RECT);
-  const [density, setDensity] = useState<Density>(() => parseDensity(ctx.prefs.get("trackhare.density")));
-  const [group, setGroup] = useState(() => boolOr(ctx.prefs.get("trackhare.group"), true));
-  const [sort, setSort] = useState<SortMode>(() => parseSort(ctx.prefs.get("trackhare.sort")));
-  const [misses, setMisses] = useState(() => boolOr(ctx.prefs.get("trackhare.misses"), true));
+  const [rect, setRect] = useState<ButtonRect>(() => parseButtonRect(ctx.prefs.get(HARE_PREFS.button)) ?? DEFAULT_BUTTON_RECT);
+  const [density, setDensity] = useState<Density>(() => parseDensity(ctx.prefs.get(HARE_PREFS.density)));
+  const [group, setGroup] = useState(() => boolOr(ctx.prefs.get(HARE_PREFS.group), true));
+  const [sort, setSort] = useState<SortMode>(() => parseSort(ctx.prefs.get(HARE_PREFS.sort)));
+  const [misses, setMisses] = useState(() => boolOr(ctx.prefs.get(HARE_PREFS.misses), true));
   const [panel, setPanel] = useState<Panel>(null);
   const [traceState, setTraceState] = useState<TraceState>({ state: "loading" });
   const [selectedMessageId, setSelectedMessageId] = useState<string | undefined>(undefined);
@@ -115,7 +115,7 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
 
   function persistRect(next: ButtonRect): void {
     setRect(next);
-    ctx.prefs.set("trackhare.button", next);
+    ctx.prefs.set(HARE_PREFS.button, next);
   }
 
   // -- drag and resize (the original extension's tap-vs-drag rule: a move past threshold is a drag,
@@ -155,7 +155,7 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
     drag.current = null;
     if (d.moved) {
       justDragged.current = true;
-      ctx.prefs.set("trackhare.button", rect);
+      ctx.prefs.set(HARE_PREFS.button, rect);
     }
   }
 
@@ -188,7 +188,7 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
     const r = resize.current;
     if (!r || r.pointerId !== e.pointerId) return;
     resize.current = null;
-    ctx.prefs.set("trackhare.button", rect);
+    ctx.prefs.set(HARE_PREFS.button, rect);
   }
 
   const trace = traceState.state === "ready" ? traceState.trace : null;
@@ -210,17 +210,17 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
       )}
       {panel === "popover" && !tracePop.state.open && (
         <HarePopover panelRef={popoverRef} traceState={traceState} density={density} group={group} sort={sort} showMisses={misses} pop={{ id: hareTracePopout.id, open: tracePop.open }}
-          onToggleDensity={(d) => { setDensity(d); ctx.prefs.set("trackhare.density", d); }}
+          onToggleDensity={(d) => { setDensity(d); ctx.prefs.set(HARE_PREFS.density, d); }}
           onPickReply={(messageId) => { setSelectedMessageId(messageId); void fetchTrace(messageId); }}
           onOpenTokens={() => setPanel("tokens")} onOpenChains={() => setPanel("chains")} onClose={close} />
       )}
 
       {panel === "options" && (
         <HareOptions panelRef={optionsRef} group={group} sort={sort} misses={misses}
-          onSetGroup={(v) => { setGroup(v); ctx.prefs.set("trackhare.group", v); }}
-          onSetSort={(v) => { setSort(v); ctx.prefs.set("trackhare.sort", v); }}
-          onSetMisses={(v) => { setMisses(v); ctx.prefs.set("trackhare.misses", v); }}
-          onResetPlace={() => { ctx.prefs.set("trackhare.button", undefined); persistRect(clampButtonRect(DEFAULT_BUTTON_RECT, containerSize())); }} />
+          onSetGroup={(v) => { setGroup(v); ctx.prefs.set(HARE_PREFS.group, v); }}
+          onSetSort={(v) => { setSort(v); ctx.prefs.set(HARE_PREFS.sort, v); }}
+          onSetMisses={(v) => { setMisses(v); ctx.prefs.set(HARE_PREFS.misses, v); }}
+          onResetPlace={() => { ctx.prefs.set(HARE_PREFS.button, undefined); persistRect(clampButtonRect(DEFAULT_BUTTON_RECT, containerSize())); }} />
       )}
 
       {panel === "chains" && trace && (

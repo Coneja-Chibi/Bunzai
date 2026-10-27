@@ -8,7 +8,7 @@
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import type { PiecePeek } from "./view-contract";
 import { roughTokenCount } from "../../../core/tokens/estimate";
-import { filledCardFields, presetFacts, promptFormatParts, writtenChars } from "../../../studio/piece-facts";
+import { kindFacts, writtenChars } from "../../../studio/piece-facts";
 import { isRecord } from "../../../core/guards";
 
 /**
@@ -25,9 +25,11 @@ export async function peekPiece(ctx: AppContext, e: StudioEntitySummary): Promis
       description: f.description,
       tokens: f.tokens ?? 0,
       tags: e.tags,
-      filled: e.kind === "character" ? f.filled : undefined,
-      ...(e.kind === "preset" ? { samplers: f.samplers, blocks: f.blocks, samplerSet: f.samplerSet } : {}),
-      ...(e.kind === "promptformat" ? { formatParts: f.formatParts } : {}),
+      filled: f.filled,
+      samplers: f.samplers,
+      blocks: f.blocks,
+      samplerSet: f.samplerSet,
+      formatParts: f.formatParts,
     };
   }
   try {
@@ -55,9 +57,7 @@ export async function peekPiece(ctx: AppContext, e: StudioEntitySummary): Promis
       description,
       tokens: roughTokenCount(writtenChars(body)),
       tags: tags.length > 0 ? tags : undefined,
-      filled: e.kind === "character" ? filledCardFields(body) : undefined,
-      ...(e.kind === "preset" ? presetFacts(body) : {}),
-      ...(e.kind === "promptformat" ? { formatParts: promptFormatParts(body) } : {}),
+      ...kindFacts(e.kind, body),
     };
   } catch {
     return null;

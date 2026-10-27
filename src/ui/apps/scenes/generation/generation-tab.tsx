@@ -27,7 +27,7 @@ import { ThinkingGroup } from "./thinking-group";
 
 export function GenerationTab({ ctx, chat, onChat }: { ctx: AppContext; chat: Chat; onChat(chat: Chat): void }): JSX.Element {
   const [note, setNote] = useState<string | null>(null);
-  const preset = useBoothPreset(ctx, chat.preset?.id ?? null);
+  const preset = useBoothPreset(ctx, chat.preset ?? null);
   const own = useScenePresetOwn(ctx, chat, onChat, setNote);
   const prompting = usePromptingView(ctx, chat, onChat);
   const level = prompting.view.reasoningEffort;

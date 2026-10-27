@@ -6,18 +6,19 @@ import type { InspectResult, SaveBundleResult, SaveStagedPayload, StudioEntitySu
 import { rewriteKnowledgeRefsFor } from "../../_shared/knowledge-refs";
 import { toErrorMessage } from "../../_shared/error-message";
 import type { ReadFile } from "./import-triage";
+import { deckOf } from "../../_shared/decks";
 
 /** Count entities per kind, preserving the given deck order; unknown kinds appended as found. */
 export function deckCounts(entities: StudioEntitySummary[], kindOrder: string[]): { kind: string; count: number }[] {
   const counts = new Map<string, number>();
   for (const kind of kindOrder) counts.set(kind, 0);
-  for (const e of entities) counts.set(e.kind, (counts.get(e.kind) ?? 0) + 1);
+  for (const e of entities) counts.set(deckOf(e.kind), (counts.get(deckOf(e.kind)) ?? 0) + 1);
   return [...counts.entries()].map(([kind, count]) => ({ kind, count }));
 }
 
 export type ImportBundlePayload = {
   entity: unknown;
-  related?: { lorebooks?: unknown[]; regexSets?: unknown[] };
+  related?: unknown[];
 };
 
 /**
@@ -26,12 +27,7 @@ export type ImportBundlePayload = {
  */
 export function bundlePayloadFromInspect(result: InspectResult): ImportBundlePayload | null {
   if (!result.ok || result.entity === undefined || result.entity === null) return null;
-  const lorebooks = result.related?.lorebooks;
-  const regexSets = result.related?.regexSets;
-  const related: { lorebooks?: unknown[]; regexSets?: unknown[] } = {};
-  if (lorebooks && lorebooks.length > 0) related.lorebooks = lorebooks;
-  if (regexSets && regexSets.length > 0) related.regexSets = regexSets;
-  if (Object.keys(related).length > 0) return { entity: result.entity, related };
+  if (result.related && result.related.length > 0) return { entity: result.entity, related: result.related };
   return { entity: result.entity };
 }
 

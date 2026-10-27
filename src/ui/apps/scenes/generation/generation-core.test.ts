@@ -4,7 +4,7 @@ import type { ChatPreset } from "../../../../stage/contracts/chat-store";
 import { PARAMS } from "../../../../stage/params";
 import { coreChangedCount, coreValue, matchParams, resetCore } from "./generation-core";
 
-const own = (samplers: ChatPreset["samplers"]): ChatPreset => ({ id: "p", toggles: { a: true }, samplers });
+const own = (samplers: ChatPreset["samplers"]): ChatPreset => ({ kind: "preset", id: "p", toggles: { a: true }, samplers });
 
 describe("matchParams", () => {
   test("finds by id, label, description and alias, and returns all of them for a blank query", () => {
@@ -31,6 +31,6 @@ describe("Core values", () => {
 describe("Reset", () => {
   test("clears the Core overrides back to the preset and keeps every other scene setting", () => {
     const next = resetCore(own({ temperature: 1, topP: 0.5, topK: 40, maxTokens: 900, maxContext: 9000, frequencyPenalty: 0.5 }));
-    expect(next).toEqual({ id: "p", toggles: { a: true }, samplers: { maxContext: 9000, frequencyPenalty: 0.5 } });
+    expect(next).toEqual({ kind: "preset", id: "p", toggles: { a: true }, samplers: { maxContext: 9000, frequencyPenalty: 0.5 } });
   });
 });

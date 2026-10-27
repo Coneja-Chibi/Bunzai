@@ -134,7 +134,7 @@ test("nothing written through the stores can be found in the database files", as
   await chats.saveCheckpoint(open!.id, { content: SECRET.checkpoint, trace: { note: SECRET.checkpointTrace }, providerRequestId: SECRET.requestId });
   await chats.changeVariables(take!.id, { set: { [SECRET.variableName]: SECRET.variableValue } });
   await chats.setConnection(chat.id, { id: SECRET.connectionId, model: SECRET.connectionModel });
-  await chats.setPreset(chat.id, { id: SECRET.presetId, toggles: { [SECRET.presetToggleKey]: true }, samplers: { temperature: 0.8 } });
+  await chats.setPreset(chat.id, { kind: "preset", id: SECRET.presetId, toggles: { [SECRET.presetToggleKey]: true }, samplers: { temperature: 0.8 } });
   await chats.setLore(chat.id, { added: [SECRET.loreAddedId], off: [SECRET.loreOffId] });
   await chats.setProps(chat.id, { on: [SECRET.propOnId] });
   const folder = await chats.createFolder(SECRET.folderName);
@@ -193,6 +193,7 @@ test("nothing written through the stores can be found in the database files", as
     expect((await st.variables(take!.id))![SECRET.variableName]!.value).toBe(SECRET.variableValue);
     expect((await st.getChat(chat.id))?.connection).toEqual({ id: SECRET.connectionId, model: SECRET.connectionModel });
     expect((await st.getChat(chat.id))?.preset).toEqual({
+      kind: "preset",
       id: SECRET.presetId,
       toggles: { [SECRET.presetToggleKey]: true },
       samplers: { temperature: 0.8 },

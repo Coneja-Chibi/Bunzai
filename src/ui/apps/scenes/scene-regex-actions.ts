@@ -6,7 +6,7 @@
 import { useState, type DragEvent, type KeyboardEvent } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import { toErrorMessage } from "../../_shared/error-message";
-import { createAndOpenRegexSet } from "../library/new-regex-set";
+import { createBlank } from "../../_shared/new-piece";
 import { REGEX_ORDER_KEY, inSavedOrder, movedTo, selectedInOrder } from "./scene-regex-core";
 import type { SceneRegexPicks } from "./use-scene-regex-picks";
 
@@ -47,7 +47,7 @@ export function useRegexActions(ctx: AppContext, picks: SceneRegexPicks): RegexA
   const edit = (s: StudioEntitySummary): void => { ctx.workbench.open({ id: s.id, kind: "regex", name: s.name }); ctx.openApp("workbench"); };
   const make = (): void => {
     setError(null);
-    createAndOpenRegexSet(ctx).then((made) => { picks.reload(); ctx.workbench.open({ id: made.id, kind: "regex", name: made.name }); ctx.openApp("workbench"); }, (e: unknown) => fail(e, "The regex script could not be made."));
+    createBlank(ctx, "regex").then((made) => { picks.reload(); ctx.workbench.open({ id: made.id, kind: "regex", name: made.name }); ctx.openApp("workbench"); }, (e: unknown) => fail(e, "The regex script could not be made."));
   };
   const remove = async (s: StudioEntitySummary): Promise<void> => {
     setAsk(null);

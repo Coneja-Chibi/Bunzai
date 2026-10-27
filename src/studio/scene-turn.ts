@@ -148,10 +148,10 @@ export async function runTurn(
   /** What the checkpoint and the commit hold: a continue holds only its addition, with any echo cut off. */
   let model = chat.connection.model;
   const stored = (streamed: string): string => (input.kind === "continue" ? continuationAddition(original, streamed, !modelTakesPrefill(model)) : streamed);
+  const toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed());
   const turn = await chats.beginTurn(loaded.branchId, target, { expectedVersion: input.expectedVersion });
   if (!turn) throw new StudioNotFoundError("that scene does not exist");
 
-  const toolsTurn = toolTurn(deps.narratorTools, input.kind, chat, loaded);
   const controller = new AbortController();
   running.set(turn.id, { chatId: chat.id, controller });
   emit({ type: "start", turnId: turn.id, kind: input.kind, messageId: turn.messageId });
@@ -196,6 +196,7 @@ export async function runTurn(
     }
     const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: input.kind, original, guidance, recall, ...(director?.directive ? { director: director.directive } : {}) });
     const { result, asked, guided } = built;
+    toolsTurn.macros.context = result.expansion.context;
     if (result.budget.overflow) {
       await chats.dropTurn(turn.id);
       emit({ type: "failed", category: "invalid_request_error", code: "context_length_exceeded", message: "The card and your message alone are longer than this model's window.", draft: "" });

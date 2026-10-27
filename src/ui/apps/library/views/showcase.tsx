@@ -9,7 +9,7 @@
 import { useCallback, useReducer, useRef } from "react";
 import type { CSSProperties, JSX } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { deckMeta } from "../../../_shared/decks";
+import { pieceColor } from "../../../_shared/decks";
 import { QueuedPiecePreview } from "../piece-preview";
 import { useArtSrc } from "../../../_shared/art-cache";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
@@ -81,7 +81,7 @@ function Rail({ ctx, idx, pick }: { ctx: DeckViewContext; idx: number; pick: (i:
           const m = ctx.entities[v.index]!;
           return (
             <div key={v.key} data-index={v.index} style={{ position: "absolute", top: 0, left: 0, transform: `translateX(${String(v.start)}px)` }}>
-              <Tile kind="thumb" vars={{ "--a": m.accent ?? deckMeta(m.kind).accent }} selected={v.index === idx} aria-current={v.index === idx ? "true" : undefined} label={m.name} onClick={() => pick(v.index)} art={<MiniThumb ctx={ctx} e={m} />} />
+              <Tile kind="thumb" vars={{ "--a": pieceColor(m) }} selected={v.index === idx} aria-current={v.index === idx ? "true" : undefined} label={m.name} onClick={() => pick(v.index)} art={<MiniThumb ctx={ctx} e={m} />} />
             </div>
           );
         })}
@@ -112,7 +112,7 @@ function ShowcaseFocus({ ctx }: { ctx: DeckViewContext }): JSX.Element {
   const [, bump] = useReducer((x: number) => x + 1, 0);
   const idx = clampIndex(focusByKind.get(ctx.deck.kind) ?? 0, ctx.entities.length);
   const e = ctx.entities[idx]!;
-  const accent = e.accent ?? deckMeta(e.kind).accent;
+  const accent = pieceColor(e);
   const isOpen = ctx.open.has(pieceKey(e));
   const staged = ctx.selected.has(pieceKey(e));
   const menuRef = ctx.menus.useContextMenu(() => ({ type: "entity", label: e.name, data: e }));

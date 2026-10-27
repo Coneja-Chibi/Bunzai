@@ -10,16 +10,16 @@ import { FormSection } from "./cast-parts";
 import { useCharacterDefaults } from "./use-character-defaults";
 
 export function DefaultsSection({ ctx, chat }: { ctx: Pick<AppContext, "prefs" | "api">; chat: Pick<OpenScene["chat"], "backdrop" | "preset" | "cast"> }): JSX.Element {
-  const { d, problems, choices, gone, note, customSamplers, put, keepSamplers, keepBackdrop } = useCharacterDefaults(ctx, chat);
+  const { d, problems, choices, presetValue, gone, note, customSamplers, put, choosePreset, keepSamplers, keepBackdrop } = useCharacterDefaults(ctx, chat);
   return (
     <FormSection title="New scene defaults" icon="lucide:sliders-horizontal" tone="var(--deck-preset)" note="(a scene can override each one)" data-part="scene.cast.defaults">
       {problems.length > 0 && <p className="notice gone" role="alert">Some saved defaults could not be read and are not used. Choosing a value again replaces them.</p>}
       {gone && <p className="notice gone" role="status">The saved preset is no longer in your library. New scenes start without a preset until you choose another.</p>}
       {note && <p className="notice" role="status">{note}</p>}
       <label className="cw-line"><span className="lb">Preset</span>
-        <select data-part="scene.cast.defaults.preset" value={d.presetId ?? ""} onChange={(e) => put({ presetId: e.currentTarget.value === "" ? null : e.currentTarget.value })}>
+        <select data-part="scene.cast.defaults.preset" value={presetValue} onChange={(e) => choosePreset(e.currentTarget.value)}>
           <option value="">No preset</option>
-          {gone && <option value={d.presetId}>No longer in your library</option>}
+          {gone && <option value={presetValue}>No longer in your library</option>}
           {/* bounded-ok: options of a native select, which the browser lists in its own scrolling popup */}
           {choices.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
         </select>

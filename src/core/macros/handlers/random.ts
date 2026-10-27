@@ -28,6 +28,7 @@
  * - `{{weighted}}`: a zero-weight first option can still win when the draw is exactly 0
  *   (`roll -= item.weight` leaves `roll` at 0, and `roll <= 0` is true). Not fixed here.
  */
+import { readDice, rollDice } from "../../dice";
 import type { HandlerRun, MacroContext, MacroDefinition, MacroResult } from "../types";
 
 /** SillyTavern compat: split a single comma-bearing arg, honoring `\,` as a literal comma. */
@@ -102,8 +103,6 @@ const pickMacro: MacroDefinition = {
   },
 };
 
-const DICE_RE = /^(\d+)?d(\d+)([+-]\d+)?$/i;
-
 const rollMacro: MacroDefinition = {
   name: "roll",
   aliases: ["dice"],
@@ -113,18 +112,11 @@ const rollMacro: MacroDefinition = {
   handler: (args: string[], _context: MacroContext, run: HandlerRun): MacroResult => {
     const diceStr = args[0];
     if (!diceStr) return { value: "", success: false, error: "No dice notation provided" };
-    const match = DICE_RE.exec(diceStr);
-    if (!match) return { value: "", success: false, error: `Invalid dice notation: ${diceStr}` };
-
-    const numDice = parseInt(match[1] || "1", 10);
-    const sides = parseInt(match[2] ?? "", 10);
-    const modifier = parseInt(match[3] || "0", 10);
-    if (numDice < 1 || numDice > 100) return { value: "", success: false, error: "Number of dice must be between 1 and 100" };
-    if (sides < 1 || sides > 99999) return { value: "", success: false, error: "Dice sides must be between 1 and 99999" };
-
-    let total = modifier;
-    for (let i = 0; i < numDice; i++) total += Math.floor(run.random() * sides) + 1;
-    return { value: total.toString(), success: true };
+    const dice = readDice(diceStr);
+    if (!dice) return { value: "", success: false, error: `Invalid dice notation: ${diceStr}` };
+    if (dice.count < 1 || dice.count > 100) return { value: "", success: false, error: "Number of dice must be between 1 and 100" };
+    if (dice.sides < 1 || dice.sides > 99999) return { value: "", success: false, error: "Dice sides must be between 1 and 99999" };
+    return { value: rollDice(dice, () => run.random()).total.toString(), success: true };
   },
 };
 

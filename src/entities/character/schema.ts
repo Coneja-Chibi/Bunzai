@@ -375,3 +375,8 @@ export interface CharacterVariant {
 }
 
 export type CanonicalCharacter = CanonicalEntity<"character", CharacterBody>;
+
+/** A new, empty character: every section present and empty, the shape the store's own tests pin. */
+export const emptyCharacterBody = (name: string): CharacterBody => ({
+  identity: { name }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {},
+});

@@ -132,7 +132,7 @@ describe("saving a scene as a loadout", () => {
   });
 
   test("All current, Writing only and None move the ticks; Writing only is the six live writing panels", async () => {
-    store.scene.preset = { id: "p", toggles: {}, samplers: { temperature: 0.4 } };
+    store.scene.preset = { kind: "preset", id: "p", toggles: {}, samplers: { temperature: 0.4 } };
     await mountBar({ scene: store.sceneOf() });
     await click(button("Save this scene as a loadout"));
     const d = dialog("Save this scene as a loadout")!;

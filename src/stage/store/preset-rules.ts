@@ -90,15 +90,17 @@ export function checkPresetSamplers(value: unknown): ChatPresetSamplers {
 }
 
 /**
- * Exactly a preset id, a toggles map, and sampler overrides, or null to forget it (rule 19). The
+ * Exactly a writing setup's kind and id, a toggles map, and sampler overrides, or null to forget it (rule 19). The
  * toggles map is built with fromEntries, not assignment, so a "__proto__" key stays a plain own
  * property instead of silently changing the object's prototype.
  */
 export function checkPreset(value: unknown): ChatPreset | null {
   if (value === null) return null;
   if (!isPlainObject(value)) fail("preset must be a plain object or null");
-  const known = new Set(["id", "toggles", "samplers"]);
+  const known = new Set(["kind", "id", "toggles", "samplers"]);
   for (const key of Object.keys(value)) if (!known.has(key)) fail(`preset has an unknown field: ${key}`);
+  const kind = checkText(value.kind, "preset kind");
+  if (!/^[a-z]+$/.test(kind)) fail("preset kind must be a kind id");
   const id = checkText(value.id, "preset id");
   if (id.length === 0) fail("preset id must not be empty");
   if (!isPlainObject(value.toggles)) fail("preset toggles must be a plain object");
@@ -110,5 +112,5 @@ export function checkPreset(value: unknown): ChatPreset | null {
     }),
   );
   const samplers = checkPresetSamplers(value.samplers);
-  return { id, toggles, samplers };
+  return { kind, id, toggles, samplers };
 }

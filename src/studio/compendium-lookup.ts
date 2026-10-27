@@ -14,7 +14,7 @@ import { isRecord } from "../core/guards";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
 import type { NarratorTool } from "../stage/provider/tool-loop";
 import { readable } from "./compendium-recall";
-import type { NarratorToolsFor } from "./scene-turn-tools";
+import type { ToolsContext } from "./scene-turn-tools";
 
 /** The most tokens the tool's description spends on the index. */
 const LOOKUP_INDEX_TOKENS = 6_000;
@@ -47,7 +47,7 @@ function parse(raw: unknown): { args: LookupArgs } | { error: string } {
 
 const hit = (c: RecallCandidate) => ({ bookId: c.bookId, entryId: c.entryId, bookName: c.bookName, title: c.name, tokens: countText(c.content) });
 
-export const compendiumTools: NarratorToolsFor = ({ chat, loaded }) => {
+export const compendiumTools = ({ chat, loaded }: Pick<ToolsContext, "chat" | "loaded">): NarratorTool<never>[] => {
   const c = resolveCompendium(chat.compendium);
   if (!c.on || !c.lookup) return [];
   const open = readable(chat, loaded);

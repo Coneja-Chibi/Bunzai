@@ -15,7 +15,7 @@ const library = (have: string[]): StudioStoreLike => ({
 }) as unknown as StudioStoreLike;
 const settingsWith = (map: unknown): SettingsStoreLike => ({ read: async () => (map === undefined ? {} : { [CHARACTER_DEFAULTS_PREF]: map }) }) as unknown as SettingsStoreLike;
 const ALL = ["character:vera", "preset:cozy", "pack:rooms"];
-const FULL = { presetId: "cozy", samplers: { temperature: 0.7 }, backdrop: { pack: "rooms", item: "attic", dim: 0.4 }, director: true };
+const FULL = { presetId: "cozy", presetKind: "preset", samplers: { temperature: 0.7 }, backdrop: { pack: "rooms", item: "attic", dim: 0.4 }, director: true };
 
 describe("startScene: character defaults", () => {
   test("a new scene picks the preset, samplers, backdrop and Story Director saved for its character", async () => {
@@ -23,7 +23,7 @@ describe("startScene: character defaults", () => {
     const { chat, notes } = await startSceneWithNotes(chats, library(ALL), settingsWith({ vera: FULL }), "vera");
     expect(notes).toEqual([]);
     const stored = await chats.getChat(chat.id);
-    expect(stored?.preset).toEqual({ id: "cozy", toggles: {}, samplers: { temperature: 0.7 } });
+    expect(stored?.preset).toEqual({ kind: "preset", id: "cozy", toggles: {}, samplers: { temperature: 0.7 } });
     expect(stored?.backdrop).toEqual({ pack: "rooms", item: "attic", dim: 0.4 });
     expect(stored?.props).toEqual({ on: [DIRECTOR_PROP_ID] });
   });
@@ -44,7 +44,7 @@ describe("startScene: character defaults", () => {
     expect(stored?.backdrop).toBeUndefined();
     expect(stored?.props).toBeUndefined();
     const second = await startScene(chats, library(ALL), settingsWith({ vera: FULL }), "vera");
-    await startScene(chats, library(ALL), settingsWith({ vera: { presetId: "cozy", samplers: { temperature: 1.1 } } }), "vera");
+    await startScene(chats, library(ALL), settingsWith({ vera: { presetId: "cozy", presetKind: "preset", samplers: { temperature: 1.1 } } }), "vera");
     expect((await chats.getChat(second.id))?.preset?.samplers).toEqual({ temperature: 0.7 });
   });
   test("a default preset that was deleted falls back to none, says so, and still applies the rest", async () => {
@@ -77,7 +77,7 @@ describe("startScene: character defaults", () => {
 describe("characterDefaultsOf and withCharacterDefaults", () => {
   test("reads each valid field and reports each invalid one, keeping the valid ones", () => {
     const read = characterDefaultsOf({ vera: { ...FULL, director: 3 } }, "vera");
-    expect(read.defaults).toEqual({ presetId: "cozy", samplers: { temperature: 0.7 }, backdrop: { pack: "rooms", item: "attic", dim: 0.4 } });
+    expect(read.defaults).toEqual({ presetId: "cozy", presetKind: "preset", samplers: { temperature: 0.7 }, backdrop: { pack: "rooms", item: "attic", dim: 0.4 } });
     expect(read.problems).toEqual(["director"]);
   });
   test("a write changes only that character and keeps every other entry and unknown field as authored", () => {

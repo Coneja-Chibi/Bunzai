@@ -1,0 +1,41 @@
+{
+  "kind": "scriptsheet",
+  "source": "src/entities/scriptsheet/schema.ts",
+  "shapes": [
+    {
+      "name": "ScriptSheetBody",
+      "doc": "A Script Sheet is the small writing setup: one instruction instead of a preset's block list. The card, persona, lore, memory and history are seated around it automatically (core/preset/script-sheet.ts), so a scene can use it where it would use a preset. Samplers are the preset's own kind, so a sheet becomes a preset with nothing lost.",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "content",
+          "optional": false,
+          "type": "string",
+          "meaning": "The instruction. Context macros are refused where it is written and when it is sent, never when it is read.",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": true,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "samplers",
+          "optional": true,
+          "type": "PresetSamplers",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

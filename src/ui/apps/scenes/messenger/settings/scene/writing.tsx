@@ -1,9 +1,9 @@
 /**
  * The scene scope's Writing page (approved wireframe messenger-discord/settings.html, scene > Prompt > Writing): the preset, the samplers, guides, the scene note, the writing helpers, the regex sets and the Final Cut
  * switches, every stored value as a row bound to the writer Full Chat already uses. The tools themselves (the prompt editor, the guide editor, the regex script editor, each pass's controls) are drill rows that open their own
- * Messenger program through the shell's opener. Prompt switches stay in the Preset program: the Samplers section holds the one scene preset writer, and a second one here could overwrite its values.
+ * Messenger program through the shell's opener. The prompt switches and the preset's choices are on the Prompt blocks deeper page (prompt-blocks.tsx): the Samplers section holds the one scene preset writer on this page, and a second one here could overwrite its values.
  */
-import { useEffect, useRef, useState, type JSX } from "react";
+import { useEffect, useReducer, useRef, useState, type JSX } from "react";
 import { NOTE_DEFAULTS, NOTE_DEPTH_MAX, NOTE_MAX } from "../../../../../../core/assembly/note";
 import type { ChatNote } from "../../../../../../stage/contracts/chat-store";
 import type { StudioEntitySummary } from "../../../../../app-contract";
@@ -11,39 +11,46 @@ import { usePromptingView } from "../../../generation/use-prompting-view";
 import { FREQUENCIES, sameNote } from "../../../guides-core";
 import { useBoothPreset } from "../../../use-booth-preset";
 import { WRITING_TOOLS } from "../../../writing-tools-core";
-import { DrillRow, SegmentedRow, SelectRow } from "../../frames/settings-rows";
-import type { SettingsCategory } from "../../frames/settings-window";
+import { INSPECTOR_KEY, readInspector } from "../../../inspector-core";
+import { presetTabMeta } from "../../../scene-preset-wing";
+import { DrillRow, SegmentedRow, SelectRow, ToggleRow } from "../../frames/settings-rows";
+import { useSettingsNav, type SettingsCategory } from "../../frames/settings-window";
 import type { WingArgs } from "../../wing-props";
 import type { OpenProgram } from "../scopes";
 import { CheckedText } from "./drafts";
 import { chatOf, sayFailed, sceneEnv, takeChat, type SceneEnv } from "./env";
+import { PROMPTS_PAGE } from "./pages";
 import { SavedNumber } from "./saved";
 import { FinalCutBody, GuidesBody, RegexBody } from "./writing-lists";
 import { SamplersBody } from "./writing-samplers";
+import { listWritingSetups, setupLabel, setupOf, setupValue } from "../../../../../_shared/writing-setups";
 
 function PresetBody({ env }: { env: SceneEnv }): JSX.Element {
   const chat = chatOf(env);
   const { ctx } = env.a;
-  const preset = useBoothPreset(ctx, chat.preset?.id ?? null);
+  const nav = useSettingsNav();
+  const [, again] = useReducer((n: number) => n + 1, 0);
+  const preset = useBoothPreset(ctx, chat.preset ?? null);
   const [library, setLibrary] = useState<StudioEntitySummary[] | null>(null);
   const api = useRef(ctx.api);
   api.current = ctx.api;
   useEffect(() => {
     let live = true;
-    api.current.listEntities("preset").then((list) => live && setLibrary(list), () => live && setLibrary([]));
+    listWritingSetups(api.current).then((list) => live && setLibrary(list), () => live && setLibrary([]));
     return () => { live = false; };
   }, []);
-  const id = chat.preset?.id ?? "";
+  const id = chat.preset ? setupValue(chat.preset) : "";
   const name = !id ? "None chosen" : preset.state === "ready" ? preset.body.name : preset.state === "loading" ? "Loading..." : preset.state === "gone" ? "No longer in your library" : "Could not be read";
-  const choices = (library ?? []).map((s) => ({ value: s.id, label: s.name }));
+  const choices = (library ?? []).map((s) => ({ value: setupValue(s), label: setupLabel(s) }));
   const options = [{ value: "", label: "Run without a preset" }, ...(id && !choices.some((c) => c.value === id) ? [{ value: id, label: name }] : []), ...choices];
   // A new preset starts from its own switches and samplers, as the Preset tab does when it is switched.
-  const pick = (next: string): void => { void ctx.api.setScenePreset(chat.id, next ? { id: next, toggles: {}, samplers: {} } : null).then(takeChat(env), sayFailed(env, "The preset")); };
+  const pick = (next: string): void => { const setup = setupOf(next); void ctx.api.setScenePreset(chat.id, setup ? { ...setup, toggles: {}, samplers: {} } : null).then(takeChat(env), sayFailed(env, "The preset")); };
   return (
     <div data-part="scene.messenger.settings.writing.preset">
-      <DrillRow label="Preset" description="How the prompt is built: the prompts, their order and their text." value={name} onOpen={() => env.open("prompts")} />
-      <SelectRow label="Switch preset" description="The new preset's own switches and samplers replace this scene's." value={id} options={options} onChange={pick} />
-      <DrillRow label="Prompts" description="Switch each prompt on or off for this scene, and edit what it says." onOpen={() => env.open("prompts")} />
+      <SelectRow label="Preset" description="How the prompt is built. The new preset's own switches and samplers replace this scene's." value={id} options={options} onChange={pick} />
+      <DrillRow label="Prompt blocks" description="Switch each prompt on or off for this scene, and answer the preset's choices." value={id && preset.state === "ready" ? presetTabMeta(chat, preset.body) : undefined} onOpen={() => nav.open(PROMPTS_PAGE)} />
+      <DrillRow label="Prompt editor" description="What each prompt says, its order and the preset's templates." onOpen={() => env.open("prompts")} />
+      <ToggleRow label="Prompt inspector" description="Pause before each send to read and edit the prompt. The composer's Tools menu has the same switch." on={readInspector(ctx.prefs.get(INSPECTOR_KEY))} onChange={(on) => { ctx.prefs.set(INSPECTOR_KEY, on); again(); }} />
     </div>
   );
 }

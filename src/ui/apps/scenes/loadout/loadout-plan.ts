@@ -43,15 +43,15 @@ function target(unit: LoadoutUnit, panels: string[], values: Values, live: Scene
     case "preset": {
       const lp = live.preset ?? null;
       const owned = (panel: string) => panels.includes(panel);
-      const P = v("preset") as { id: string; toggles: Record<string, boolean> } | null | undefined;
+      const P = v("preset") as { kind: string; id: string; toggles: Record<string, boolean> } | null | undefined;
       const S = v("samplers") as ChatPresetSamplers | null | undefined;
-      const same = (id: string) => lp?.id === id;
+      const same = (p: { kind: string; id: string }) => lp?.kind === p.kind && lp.id === p.id;
       const mix = (base: ChatPresetSamplers) => (S === null ? (merge("samplers") ? base : {}) : merge("samplers") ? { ...base, ...S } : S!);
       if (owned("preset") && P === null) return { after: null };
       if (owned("preset") && P) {
-        const toggles = merge("preset") && same(P.id) ? { ...lp!.toggles, ...P.toggles } : P.toggles;
-        const keep = same(P.id) ? lp!.samplers : {};
-        return { after: { id: P.id, toggles, samplers: owned("samplers") ? mix(keep) : keep } };
+        const toggles = merge("preset") && same(P) ? { ...lp!.toggles, ...P.toggles } : P.toggles;
+        const keep = same(P) ? lp!.samplers : {};
+        return { after: { kind: P.kind, id: P.id, toggles, samplers: owned("samplers") ? mix(keep) : keep } };
       }
       if (!lp) return { fail: "Samplers need a preset on this scene. Pick a preset first." };
       return { after: { ...lp, samplers: mix(lp.samplers) } satisfies ChatPreset };

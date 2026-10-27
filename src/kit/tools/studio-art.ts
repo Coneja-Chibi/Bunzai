@@ -16,6 +16,7 @@
  * hundreds of kilobytes, the provider takes text, and paying for it in tokens to render something the
  * model cannot see would be the worst possible trade.
  */
+import { ART_KINDS } from "../../entities/_shared/media-reference";
 import { z } from "zod";
 import type { HarnessTool } from "./tool";
 import { hasPortrait } from "../../studio/portrait";
@@ -23,7 +24,7 @@ import { hasPortrait } from "../../studio/portrait";
 const input = z.strictObject({
   piece: z.string().trim().min(1).max(120)
     .describe("the piece's studio id, or part of its name"),
-  kind: z.enum(["character", "pack", "persona"]).default("character")
+  kind: z.enum(ART_KINDS as [string, ...string[]]).default("character")
     .describe("which deck to look in; characters carry portraits, packs carry faces"),
 });
 

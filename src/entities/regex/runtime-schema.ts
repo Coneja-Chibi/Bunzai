@@ -6,7 +6,9 @@ import type {
   RegexRule,
   RegexRuleCondition,
   RegexSetBody,
+  CanonicalRegexSet,
 } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const stringArray = z.array(z.string());
 const unknownRecord = z.record(z.string(), z.unknown());
@@ -64,3 +66,5 @@ const embeddedShape = defineExhaustiveShape<CharacterRegexScript>()({
 });
 
 export const characterRegexScriptSchema = z.strictObject(embeddedShape);
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalRegexSet>()(entityShape("regex", regexBodySchema, regexProfileSchema)));

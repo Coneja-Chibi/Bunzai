@@ -15,7 +15,7 @@ const WINGS = ["scene.prompting", "scene.prompting.preset", "scene.prompting.gui
 const body = (r: Rig, id: string): ReactNode => bodyOfSection(writingCategory(r.a, r.open), id);
 const mount = (node: ReactNode): ReturnType<typeof mountSingle> => mountSingle(installed, createElement("div", null, node));
 const click = (el: Element): void => (el as HTMLElement).click();
-const withOwn = (): Rig => { const r = rig({ chat: { preset: { id: "p1", toggles: {}, samplers: {} } } as never }); withPreset(r); return r; };
+const withOwn = (): Rig => { const r = rig({ chat: { preset: { kind: "preset", id: "p1", toggles: {}, samplers: {} } } as never }); withPreset(r); return r; };
 const sentSamplers = (r: Rig, at = 0): Record<string, unknown> => (r.calls["setScenePreset"]?.[at]?.[1] as { samplers: Record<string, unknown> }).samplers;
 
 describe("Writing page", () => {
@@ -25,24 +25,24 @@ describe("Writing page", () => {
     expect(writingCategory({ a: r.a, open: r.open }).sections).toHaveLength(7);
   });
 
-  test("the preset row names the preset, opens the prompt editor, and Switch preset starts the new one clean", async () => {
+  test("the preset select names the preset, the blocks drill counts what is on, the editor opens its program, and a new preset starts clean", async () => {
     const r = withOwn();
     stub(r, "listEntities", () => [{ id: "p1", kind: "preset", name: "Narrator bank" }, { id: "p2", kind: "preset", name: "Plain" }]);
     const m = await mountSingle(installed, createElement("div", null, body(r, "preset")));
     await wait(30);
-    expect(rowOf(m.host, "How the prompt is built").textContent).toContain("Narrator bank");
-    click(rowOf(m.host, "How the prompt is built"));
-    click(rowOf(m.host, "Switch each prompt"));
-    expect(r.opened).toEqual(["prompts", "prompts"]);
-    setValue(control<HTMLSelectElement>(m.host, "Switch preset"), "p2");
+    expect(control<HTMLSelectElement>(m.host, "Preset").value).toBe("preset:p1");
+    expect(rowOf(m.host, "Switch each prompt").textContent).toContain("0 of 0 on");
+    click(rowOf(m.host, "What each prompt says"));
+    expect(r.opened).toEqual(["prompts"]);
+    setValue(control<HTMLSelectElement>(m.host, "Preset"), "preset:p2");
     await wait(30);
-    expect(r.calls["setScenePreset"]).toEqual([["c1", { id: "p2", toggles: {}, samplers: {} }]]);
+    expect(r.calls["setScenePreset"]).toEqual([["c1", { kind: "preset", id: "p2", toggles: {}, samplers: {} }]]);
     none(m.host, ...WINGS);
     m.done();
   });
 
   test("a sampler reads the scene's value over the preset's and one write carries the change", async () => {
-    const r = rig({ chat: { preset: { id: "p1", toggles: {}, samplers: { temperature: 0.8 } } } as never });
+    const r = rig({ chat: { preset: { kind: "preset", id: "p1", toggles: {}, samplers: { temperature: 0.8 } } } as never });
     withPreset(r);
     const m = await mount(body(r, "samplers"));
     await wait(60);
@@ -50,7 +50,7 @@ describe("Writing page", () => {
     expect(slider.value).toBe("0.8");
     setValue(slider, "0.9");
     await wait(400);
-    expect(r.calls["setScenePreset"]).toEqual([["c1", { id: "p1", toggles: {}, samplers: { temperature: 0.9 } }]]);
+    expect(r.calls["setScenePreset"]).toEqual([["c1", { kind: "preset", id: "p1", toggles: {}, samplers: { temperature: 0.9 } }]]);
     none(m.host, ...WINGS);
     m.done();
   });
@@ -187,7 +187,7 @@ describe("Writing page", () => {
     m.done();
   });
 
-  test("Final Cut has a master switch and a switch per pass, and the passes in detail are a drill row", async () => {
+  test("Final Cut has a master switch and a switch per pass, and the workshop is a drill row", async () => {
     const r = rig();
     stub(r, "setSceneFinalCut", () => r.a.scene.chat);
     const m = await mount(body(r, "final-cut"));
@@ -199,7 +199,7 @@ describe("Writing page", () => {
     expect(sent.on).toBe(true);
     expect(sent.passes.map((p) => p.type)).toEqual(["validator"]);
     expect(m.host.querySelector('[aria-label="Also check my messages before send"]')).not.toBeNull();
-    click(rowOf(m.host, "Passes in detail"));
+    click(rowOf(m.host, "Final Cut workshop"));
     expect(r.opened).toEqual(["post-production"]);
     none(m.host, ...WINGS);
     m.done();

@@ -60,7 +60,9 @@ export interface ToolLoopResult {
   tokens: { prompt: number; output: number };
 }
 
-const SAFE_NAME = /^[A-Za-z_][A-Za-z0-9_-]{0,63}$/;
+/** The names a call may have; any other is answered as INVALID_TOOL. */
+export const SAFE_NAME = /^[A-Za-z_][A-Za-z0-9_-]{0,63}$/;
+export const INVALID_TOOL = "invalid_tool";
 const ARGS_CAP = 2_000;
 const RESULT_CAP = 12_000;
 
@@ -127,7 +129,7 @@ export async function sendWithTools(
     for (const [i, raw] of asked.entries()) {
       io.signal?.throwIfAborted();
       const started = config.now();
-      const name = SAFE_NAME.test(raw.function.name) ? raw.function.name : "invalid_tool";
+      const name = SAFE_NAME.test(raw.function.name) ? raw.function.name : INVALID_TOOL;
       let id = raw.id.trim();
       if (!id || used.has(id)) id = `call_${rounds}_${i}`;
       while (used.has(id)) id += "_";

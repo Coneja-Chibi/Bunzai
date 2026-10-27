@@ -4,7 +4,7 @@ import { isRecord } from "../core/guards";
 import { mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseCanonicalEntity, type ParsedCanonicalEntity } from "../entities/runtime-schema";
+import { parseCanonicalEntity, safeParseCanonicalEntity, type ParsedCanonicalEntity } from "../entities/runtime-schema";
 import type { BundleSaveInput } from "../studio/bundle";
 import { isImportedScene, type ImportedScene } from "../core/scene-import";
 import { saveSceneCarrier } from "./server-scene-save";
@@ -18,7 +18,7 @@ import { err, json, readJsonObject } from "./server-security";
 
 interface StagedPayload {
   entity: ParsedCanonicalEntity | ImportedScene;
-  related?: Pick<BundleSaveInput, "lorebooks" | "regexSets">;
+  related?: BundleSaveInput["related"];
 }
 
 interface StagedFile { path: string; bytes: number; committing: boolean; }
@@ -203,24 +203,18 @@ export function stageArchiveEntities(entities: readonly ParsedCanonicalEntity[],
 /** Stage a large inspect group (primary plus related rows) before its JSON reaches the browser. */
 export function stageInspectedEntity(
   entity: ParsedCanonicalEntity | ImportedScene,
-  related: { lorebooks?: unknown[]; regexSets?: unknown[] } | undefined,
+  related: unknown[] | undefined,
   session: string,
   signal?: AbortSignal,
   /** The payload's JSON when the caller already made it (`{entity}` with no related pieces): a big pack is not serialized twice. */
   entityText?: string,
 ): Promise<StagedRowRef> {
-  const parsedRelated = related ? {
-    lorebooks: related.lorebooks?.map((raw) => {
-      const parsed = parseCanonicalEntity(raw);
-      if (parsed.kind !== "lorebook") throw new StagingError(422, "expected a related lorebook");
-      return parsed;
-    }),
-    regexSets: related.regexSets?.map((raw) => {
-      const parsed = parseCanonicalEntity(raw);
-      if (parsed.kind !== "regex") throw new StagingError(422, "expected a related regex set");
-      return parsed;
-    }),
-  } : undefined;
+  // each related piece is parsed once here, at the boundary; an unreadable one refuses the whole row
+  const parsedRelated = related?.map((raw) => {
+    const parsed = safeParseCanonicalEntity(raw);
+    if (!parsed.ok) throw new StagingError(422, `a related piece is not readable: ${parsed.issues[0] ?? "invalid"}`);
+    return parsed.entity;
+  });
   return stagePayloads([{ entity, ...(parsedRelated ? { related: parsedRelated } : {}) }], session, signal, entityText !== undefined && !parsedRelated ? [entityText] : undefined).then((rows) => rows[0]!);
 }
 
@@ -312,7 +306,7 @@ export async function handleSaveStaged(req: Request, store: StudioStoreLike, ses
       ? await saveSceneCarrier(store, payload.entity)
       : await saveBundle(store, {
         entity: payload.entity,
-        ...(payload.related ? { lorebooks: payload.related.lorebooks, regexSets: payload.related.regexSets } : {}),
+        ...(payload.related ? { related: payload.related } : {}),
       });
     if (result.ok) await removeCommittedRow(staging, raw.key, file);
     return json(result, result.ok ? 200 : result.partial ? 207 : 422);

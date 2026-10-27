@@ -4,19 +4,10 @@
  */
 import { relative, resolve, sep } from "node:path";
 import { StudioValidationError } from "./errors";
+import { KIND_IDS } from "../generated/kinds";
 
-/** Closed set of on-disk entity folders. Extend with a plan when a new kind ships. */
-export const STUDIO_ENTITY_KINDS = [
-  "character",
-  "lorebook",
-  "persona",
-  "pack",
-  "regex",
-  "preset",
-  "htmldoc",
-  "quickreply",
-  "promptformat",
-] as const;
+/** Closed set of on-disk entity folders: exactly the kinds in src/entities/<kind>/kind.ts, via the generated seam. */
+export const STUDIO_ENTITY_KINDS = KIND_IDS;
 export type StudioEntityKind = (typeof STUDIO_ENTITY_KINDS)[number];
 
 const KIND_SET = new Set<string>(STUDIO_ENTITY_KINDS);

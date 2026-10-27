@@ -26,7 +26,7 @@ import { readVault } from "../kit/providers/vault";
 import { finalCutBanksOf } from "../studio/final-cut-library";
 import { commitAnyway, discardWaiting, runTurn, stopTurn, type Connected, type TurnEvent } from "../studio/scene-turn";
 import type { ReadPreset } from "../studio/scene-turn-load";
-import { compendiumTools } from "../studio/compendium-lookup";
+import { narratorTools } from "../studio/library-tools";
 import { answerReview, type ReviewDecision } from "../studio/scene-turn-review";
 import { answerRegex, regexAnswerOf } from "../studio/scene-turn-regex";
 import type { ReadLorebook } from "../studio/scene-lore";
@@ -172,7 +172,7 @@ async function stream(chats: ChatStore, state: StateStore, readPreset: ReadPrese
     controllerSend(e);
   });
   const turn = runTurn(
-    { chats, state, connect, narratorTools: compendiumTools, finalCutBanks: () => finalCutBanksOf(state), readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...sceneReaders(studio, settings), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) },
+    { chats, state, connect, narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), finalCutBanks: () => finalCutBanksOf(state), readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...sceneReaders(studio, settings), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) },
     { chatId: str(b["chatId"]), kind, expectedVersion, ...(fallback ? { fallback } : {}), ...(typeof b["guidance"] === "string" ? { guidance: b["guidance"] } : {}), ...(b["inspect"] === true ? { inspect: true } : {}) },
     (e) => {
       if (e.type === "start") { opened(); turnId = e.turnId; }

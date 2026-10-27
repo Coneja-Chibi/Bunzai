@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/preset",
   "sourcePath": "docs/reference/entities/preset.md",
-  "sourceHash": "sha256:0010ccd283592a9d329b02c89b8a8b7fcaa0080f5a8ae8fd5b59122bddd1c06a",
-  "semanticSummaryHash": "sha256:9981b9e823f96bd0dea2b5e585e15c702b298dddf1060daa5a5eb6d1c480c762",
+  "sourceHash": "sha256:b2d6c636a57e54f72c840ad79e2c46c22f51662e52644bb91074efc001eafcc8",
+  "semanticSummaryHash": "sha256:4a224ebc89960ad573e61eebdf18daabb7bcbc5b9ee004b5188ea2a25f3bfa77",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Matches the scene-regex source: scene regex runs only in the sandbox worker via batch request.ts, the turn holds its request and fails closed, and the door test, rule 42 storage, choices and rack behave as stated.",
-  "reviewedAt": "2026-10-12T08:35:12.715Z"
+  "notes": "The writing family section and summaries match kind-descriptor asPreset, core/writing.ts, ChatPreset.kind slot, and the Writing deck (deckTitle on preset kind.ts).",
+  "reviewedAt": "2026-10-27T08:08:04.297Z"
 }

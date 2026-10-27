@@ -4,7 +4,7 @@
  */
 import { useEffect, useState, type CSSProperties, type DragEvent, type JSX } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { deckMeta } from "../../../_shared/decks";
+import { pieceColor } from "../../../_shared/decks";
 import { pieceKey, type DeckView, type DeckViewContext } from "../view-contract";
 import { searchAllPages } from "../search-runner";
 import { plural } from "../../../../core/text";
@@ -17,7 +17,7 @@ const CSS = `
 .dv-shelfscroll{flex:1;min-height:0;overflow-y:auto;padding:.375rem .5rem .75rem}
 .dv-shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(15rem,100%),1fr));gap:1.375rem;position:relative}
 /* a book: hard frame, a striped deck-colored spine, lift on hover; staged takes the deck border and shadow */
-.dv-book{display:flex;flex-direction:column;text-align:left;font:inherit;padding:0;cursor:pointer;position:relative;min-height:12rem;
+.dv-book{display:flex;flex-direction:column;text-align:left;font:inherit;padding:0;cursor:pointer;position:relative;min-height:8.5rem;
   background:var(--glass);border:3px solid var(--stage-black);box-shadow:5px 5px 0 var(--stage-black);transition:transform .25s ease,box-shadow .25s ease;--spine:var(--a)}
 .dv-book:hover{transform:translateY(-5px);box-shadow:5px 5px 0 var(--stage-black),var(--glow)}
 .dv-book .spine{position:absolute;left:0;top:0;bottom:0;width:1.125rem;border-right:3px solid var(--stage-black);
@@ -26,6 +26,9 @@ const CSS = `
 .dv-book .nm{display:block;width:100%;text-align:left}
 .dv-book .nm:focus-visible{outline:2px solid var(--a);outline-offset:2px}
 .dv-book .nm{font:700 1.0625rem/1.2 var(--font-fancy);color:var(--text);overflow-wrap:anywhere}
+/* the name is the card's one control, a family link button: dressed as the book's Cinzel title, not a link */
+.dv-book [data-part="library.shelf.name"]{display:block;width:100%;min-height:0;padding:0;border:0;background:none;box-shadow:none;text-align:left;text-decoration:none;font:700 1.0625rem/1.2 var(--font-fancy);letter-spacing:.01em;color:var(--text);overflow-wrap:anywhere}
+.dv-book [data-part="library.shelf.name"]:hover{color:color-mix(in srgb,var(--a) 45%,var(--text))}
 .dv-book .meta{font:var(--text-meta) var(--font-ui);color:var(--text-faint)}
 .dv-book .foot{display:flex;align-items:center;gap:.5rem;padding:0 .875rem .75rem 1.875rem;font-size:.8125rem;color:var(--text-dim)}
 .dv-book.cast{outline:1px solid var(--premiere-gold);outline-offset:3px}
@@ -64,7 +67,7 @@ function BookCard({
     label: e.name,
     data: e,
   }));
-  const accent = e.accent ?? deckMeta(e.kind).accent;
+  const accent = pieceColor(e);
   const fmt = ctx.sourceLabel(e);
 
   const onDragStart = (ev: DragEvent): void => {

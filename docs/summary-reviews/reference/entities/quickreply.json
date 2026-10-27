@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/quickreply",
+  "sourcePath": "docs/reference/entities/quickreply.md",
+  "sourceHash": "sha256:424d68d21f61b4114abe2843765dc40a7b524a87286e345840b728e2a48f10bc",
+  "semanticSummaryHash": "sha256:802934b53c137a46abe74c880e5c25a0b42f0c381841d4b7c9f28aef95867c2e",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Fields and import-and-export now stay within the page; kind.ts, editor and create-tool paths exist. Author check OK.",
+  "reviewedAt": "2026-10-27T02:06:12.581Z"
+}

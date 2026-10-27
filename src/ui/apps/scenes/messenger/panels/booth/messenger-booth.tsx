@@ -27,7 +27,7 @@ export function MessengerBooth({ args, open }: { args: WingArgs; open(programId:
   const { ctx, scene, busy } = args;
   const chat = scene.chat;
   const onChat = onChatOf(args);
-  const preset = useBoothPreset(ctx, chat.preset?.id ?? null);
+  const preset = useBoothPreset(ctx, chat.preset ?? null);
   const models = useSceneModels(ctx, chat, onChat);
   const [note, setNote] = useState<string | null>(null);
   const own = useScenePresetOwn(ctx, chat, onChat, setNote);

@@ -7,6 +7,7 @@ import type { SettingsDeepPage, SettingsScope } from "../frames/settings-window"
 import type { WingArgs } from "../wing-props";
 import { characterScope } from "./character-scope";
 import { sceneScope } from "./scene-scope";
+import { sceneDeep } from "./scene/deep";
 import { userDeep } from "./user/deep";
 import { withSearchWords } from "./search-words";
 import { userScope } from "./user-scope";
@@ -25,6 +26,6 @@ export function useMessengerSettings(a: WingArgs, open: OpenProgram = () => unde
   const env = { ctx: a.ctx, repaint: a.repaint };
   return {
     scopes: { user: withSearchWords(userScope(a, env, open)), character: withSearchWords(characterScope(a, open)), scene: withSearchWords(sceneScope(a, open)) },
-    resolveDeep: (id) => userDeep(a, id),
+    resolveDeep: (id) => userDeep(a, id) ?? sceneDeep({ a, open }, id),
   };
 }

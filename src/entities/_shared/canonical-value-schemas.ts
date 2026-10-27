@@ -17,6 +17,9 @@ const swatchShape = defineExhaustiveShape<Swatch>()({
   hex: z.string(),
 });
 
+/** The name and description a small library piece (dice, formula, tool) carries. */
+export const pieceShape = { name: z.string().min(1).max(100), description: z.string().max(2_000) };
+
 export const runtimeMediaAssetSchema = z.strictObject(mediaAssetShape);
 export const runtimeSwatchSchema = z.strictObject(swatchShape);
 export const capabilityMediaAssetSchema = z.strictObject({ ...mediaAssetShape, ref: z.string().min(1) });

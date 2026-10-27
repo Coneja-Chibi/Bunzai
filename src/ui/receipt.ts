@@ -4,6 +4,7 @@
  * only (never spec tags), "we read / we kept / we saved" voice, every line only when true. This is a
  * RENDERING of what the engine already knows; no format logic lives here.
  */
+import { pieceName } from "../core/piece-name";
 import type { CanonicalEntity } from "../core/canonical";
 import type { CharacterBody } from "../entities/character/schema";
 import type { CanonicalLorebook } from "../entities/lorebook/schema";
@@ -11,6 +12,7 @@ import type { CanonicalRegexSet } from "../entities/regex/schema";
 import { isRecord } from "../core/guards";
 import type { ImportedScene } from "../core/scene-import";
 import { plural } from "../core/text";
+import { kindOf } from "../generated/kinds";
 
 type AnyEntity = CanonicalEntity<string, unknown>;
 
@@ -44,6 +46,7 @@ const FRIENDLY: Record<string, string> = {
   "marinara-preset": "Marinara",
   "sillytavern-preset": "SillyTavern",
   "rolecall-preset": "RoleCall",
+  "rolecall-script-sheet": "RoleCall",
   "lumiverse-preset": "Lumiverse",
   "sillytavern-persona": "SillyTavern",
   "sillytavern-chat": "SillyTavern",
@@ -54,16 +57,6 @@ const FRIENDLY: Record<string, string> = {
 
 export const friendlyFormat = (formatId: string): string => FRIENDLY[formatId] ?? formatId;
 
-const KIND_WORD: Record<string, string> = {
-  character: "character card",
-  lorebook: "lorebook",
-  persona: "persona",
-  regex: "regex set",
-  preset: "preset",
-  quickreply: "quick-reply set",
-  promptformat: "prompt format",
-};
-
 export interface Receipt {
   name: string;
   /** "A character card, made for SillyTavern." */
@@ -73,23 +66,23 @@ export interface Receipt {
 }
 
 /**
- * @param relatedLorebooks - books already extracted by inspectBundle (same pass as the entity).
- *   When provided, the receipt describes those books rather than re-extracting from original.
+ * @param related - the pieces extracted with the entity (convert.ts readPieces, same pass): the receipt describes
+ *   those (a card's book, a preset's regex sets) rather than re-extracting from original.
  */
 export function buildReceipt(
   entity: AnyEntity,
   formatId: string,
-  relatedLorebooks?: CanonicalLorebook[],
-  relatedRegexSets?: CanonicalRegexSet[],
+  related: readonly { kind: string }[] = [],
 ): Receipt {
-  const kindWord = entity.kind === "preset" && (entity.body as { samplerSet?: string }).samplerSet ? "sampler set" : KIND_WORD[entity.kind] ?? entity.kind;
+  const relatedOf = <T>(kind: string): T[] => related.filter((p) => p.kind === kind) as T[];
+  const kindWord = entity.kind === "preset" && (entity.body as { samplerSet?: string }).samplerSet ? "sampler set" : kindOf(entity.kind)?.receiptWord ?? entity.kind;
   const platform = friendlyFormat(formatId);
   const article = /^[aeiou]/i.test(kindWord) ? "An" : "A";
   const extras: string[] = [];
 
   if (entity.kind === "character") {
     const body = entity.body as CharacterBody;
-    const books = relatedLorebooks ?? [];
+    const books = relatedOf<CanonicalLorebook>("lorebook");
     if (books.length > 0) {
       const entries = books[0]!.body.entries.length;
       extras.push(
@@ -109,7 +102,7 @@ export function buildReceipt(
     extras.push("That is you, not a character - we shelve it with your personas.");
   }
   if (entity.kind === "preset") {
-    const sets = relatedRegexSets ?? [];
+    const sets = relatedOf<CanonicalRegexSet>("regex");
     if (sets.length > 0) {
       const rules = sets.reduce((n, s) => n + s.body.rules.length, 0);
       extras.push(
@@ -118,10 +111,7 @@ export function buildReceipt(
     }
   }
 
-  const name =
-    entity.kind === "character"
-      ? ((entity.body as CharacterBody).identity?.name ?? entity.id)
-      : (((entity.body as { name?: string }).name || entity.id) as string);
+  const name = pieceName(entity.kind, entity.body) || entity.id;
 
   return { name, kindLine: `${article} ${kindWord}, made for ${platform}.`, extras };
 }

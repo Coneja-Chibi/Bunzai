@@ -1,7 +1,7 @@
 /**
  * The Story Director's page in the scene scope (wireframe SCOPES.scene, dir), shown while the Director Prop is on. Every row is a Director setting (ChatStore rule 47) written through
  * `useDirectorPanel().settings`, the one writer the Prop's own settings block uses; options, ranges and defaults come from the owners (director-types.ts, personalities, director-model.tsx,
- * director-settings.tsx). The model connection and the Director's panel (story, arcs, trace) are tools, reached by a drill row. The wireframe's Pacing, House-rule switches and chat notes
+ * director-settings.tsx). The model is a select (director-model-row.tsx); the Director's panel (story, arcs, trace) is a tool, reached by a drill row. The wireframe's Pacing, House-rule switches and chat notes
  * have no store and are not drawn.
  */
 import type { JSX, ReactNode } from "react";
@@ -16,6 +16,7 @@ import { ActionRow, DrillRow, RadioCards, SegmentedRow, SelectRow } from "../../
 import type { SettingsCategory } from "../../frames/settings-window";
 import type { WingArgs } from "../../wing-props";
 import type { OpenProgram } from "../scopes";
+import { DirectorModelRow } from "./director-model-row";
 import { SavedNumber, SavedText, SavedToggle } from "./saved";
 
 type Settings = DirectorPanel["settings"];
@@ -44,7 +45,7 @@ export function directorCategory(a: WingArgs, open: OpenProgram): SettingsCatego
     { id: "director-model", title: "Model and commands", body: (
       <Part a={a} render={(s, save) => (
         <>
-          <DrillRow label="Story Director model" description="Unset, the Director uses the narrator's model." value={s.model ? s.model.model : "Narrator's model"} onOpen={panel} />
+          <DirectorModelRow a={a} settings={s} save={save} />
           <SelectRow label="Reasoning" description="Auto follows the model default." value={EFFORTS.find((e) => e.id === (s.reasoning ?? null))?.label ?? "Auto"} options={EFFORTS.map((e) => ({ value: e.label, label: e.label }))}
             onChange={(label) => void save({ reasoning: EFFORTS.find((e) => e.label === label)?.id ?? null })} />
           <RadioCards label="Command mode" value={s.commandMode} options={MODES.map((m) => ({ value: m.id, label: m.label, description: m.description }))} onChange={(commandMode) => void save({ commandMode: commandMode as DirectorCommandMode })} />

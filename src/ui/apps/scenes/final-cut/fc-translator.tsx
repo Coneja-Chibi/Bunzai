@@ -8,7 +8,7 @@ import type { FinalCutPass } from "../../../../core/final-cut/pass";
 import { Area, Line, Sel } from "./fc-controls";
 import { OutputModeToggle, type Change } from "./fc-pass-chrome";
 
-const STRICTNESS = { loose: { label: "Loose - natural phrasing wins" }, balanced: { label: "Balanced - natural but faithful" }, strict: { label: "Strict - preserve source structure" } } as const;
+export const STRICTNESS = { loose: { label: "Loose - natural phrasing wins" }, balanced: { label: "Balanced - natural but faithful" }, strict: { label: "Strict - preserve source structure" } } as const;
 
 export function TranslatorControls({ pass, onChange }: { pass: FinalCutPass; onChange: Change }): JSX.Element {
   return (

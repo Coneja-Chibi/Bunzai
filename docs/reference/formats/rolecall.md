@@ -16,7 +16,7 @@ envelope. Its persona, regex-script, and preset exports are separate JSON shapes
 own product, its source can be read and ported freely, unlike the GPL-licensed formats bunraku treats as
 interop-facts-only.
 
-One folder, `src/formats/rolecall/`, default-exports six codecs:
+One folder, `src/formats/rolecall/`, default-exports seven codecs:
 
 - `rolecall`, kind `character`, reads PNG or JSON, writes `.json`.
 - `rolecall-lorebook`, kind `lorebook`, reads JSON, writes `.json`.
@@ -24,8 +24,9 @@ One folder, `src/formats/rolecall/`, default-exports six codecs:
 - `rolecall-persona`, kind `persona`, reads JSON, writes `.json`.
 - `rolecall-regex`, kind `regex`, reads JSON, writes `.json`.
 - `rolecall-preset`, kind `preset`, reads a RoleCall-flavored flat preset, writes `.json`.
+- `rolecall-script-sheet`, kind `scriptsheet`, reads a RoleCall preset file that carries a Script Sheet, writes `.json`.
 
-This page documents the character and lorebook codecs in full; the persona, regex, and preset codecs are covered
+This page documents the character and lorebook codecs in full; the persona, regex, preset, and Script Sheet codecs are covered
 in summary under [Quirks](#quirks). For canonical field meanings, see
 [entities/character.md](../entities/character.md), [entities/lorebook.md](../entities/lorebook.md), and
 [entities/regex.md](../entities/regex.md), [entities/persona.md](../entities/persona.md), and
@@ -181,6 +182,10 @@ serializer, not this codec, and code wins.
   from-scratch export writes an empty `choice_groups` array when no native choices exist. That array
   is a neutral RoleCall fingerprint, so the emitted file remains distinguishable from a generic
   SillyTavern preset and can be read back by the same adapter (`preset.ts`).
+- `rolecall-script-sheet` reads a RoleCall preset file whose top level carries `script_sheet: { version: 1, content }`
+  (or `promptbook`, the key RoleCall used before its rename) as a Script Sheet, outranking `rolecall-preset` for such
+  files. It writes the sheet as RoleCall exports it: the blocks the sheet sends through the RoleCall preset writer,
+  with `script_sheet` at the top (`script-sheet.ts`; [entities/scriptsheet.md](../entities/scriptsheet.md)).
 - RC's V3 `source` is a nonstandard OBJECT array (`[{name}]`, not the base spec's `string[]`). The shared
   Tavern reader only decodes a `string[]` shape, so RC's object-form `source` reads as canonical
   `undefined`; provenance is carried instead on `attribution.creator`. Because the shared writer's

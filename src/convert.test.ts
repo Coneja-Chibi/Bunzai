@@ -11,12 +11,21 @@ import {
 } from "./core";
 import { emptyLorebookBody } from "./core/lore";
 import type { ParsedCanonicalEntity } from "./entities/runtime-schema";
-import { convertFile, emitBundle, inspectBundle, rewriteKnowledgeRefs } from "./convert";
+import { convertFile, emitBundle, readPieces } from "./convert";
+import { withLinksRenamed } from "./core/links";
 import { characterAdapter as stCharacter } from "./formats/sillytavern/index";
 import { characterAdapter as rcCharacter } from "./formats/rolecall/index";
 import { characterAdapter as risuCharacter } from "./formats/risu/index";
 import stWorldbook from "./formats/sillytavern/lorebook";
 import rcLorebook from "./formats/rolecall/lorebook";
+import type { CanonicalCharacter } from "./entities/character/schema";
+import type { CanonicalLorebook } from "./entities/lorebook/schema";
+
+/** A card file read into its character and extracted lorebooks (convert.ts readPieces). */
+const inspectBundle = (src: Parameters<typeof readPieces>[0], input: Parameters<typeof readPieces>[1]) => {
+  const { entity, related } = readPieces(src, input);
+  return { entity: entity as CanonicalCharacter, lorebooks: related as CanonicalLorebook[] };
+};
 
 /** A CCv3 card carrying an embedded character_book (one entry, raw-only residue). */
 function makeCardWithBook() {
@@ -107,6 +116,16 @@ function minimalEntity(kind: FormatAdapter["kind"]): ParsedCanonicalEntity {
         kind,
         body: { name: "Conversion format", instruct: { input_sequence: "[INST]", output_sequence: "[/INST]" } },
       };
+    case "scriptsheet":
+      return { ...envelope, kind, body: { name: "Conversion sheet", content: "Be brief." } };
+    case "dice":
+      return { ...envelope, kind, body: { name: "Conversion dice", description: "", type: "roll", dice: "1d20" } };
+    case "formula":
+      return { ...envelope, kind, body: { name: "Conversion formula", description: "", text: "{{roll::1d6}}" } };
+    case "tool":
+      return { ...envelope, kind, body: { name: "Conversion tool", description: "", fields: [], action: { kind: "record" } } };
+    case "htmldoc":
+      return { ...envelope, kind, body: { name: "Conversion drawing", html: "<p>drawn</p>" } };
   }
 }
 
@@ -255,12 +274,12 @@ test("inspectBundle with no book leaves knowledgeRefs unset", () => {
   expect(bundle.entity.body.knowledgeRefs).toBeUndefined();
 });
 
-test("rewriteKnowledgeRefs maps keep-both renames", () => {
+test("an imported card's book link follows a keep-both rename (the shared link table)", () => {
   const card = makeCardWithBook();
   const { entity } = inspectBundle(stCharacter, asText(card));
   const oldId = entity.body.knowledgeRefs![0]!;
-  rewriteKnowledgeRefs(entity, new Map([[oldId, `${oldId}-2`]]));
-  expect(entity.body.knowledgeRefs).toEqual([`${oldId}-2`]);
+  const body = withLinksRenamed("character", entity.body, new Map([[`lorebook:${oldId}`, `${oldId}-2`]]));
+  expect(body.knowledgeRefs).toEqual([`${oldId}-2`]);
 });
 
 test("emitBundle re-embeds resolved lorebooks into ST", () => {
@@ -290,4 +309,11 @@ test("emitBundle preserves the twin when lorebook resolution was not supplied", 
 
   expect(omitted.data.character_book).toBeDefined();
   expect(requestedOnly.data.character_book).toBeDefined();
+});
+
+test("a preset's regex sets the target cannot carry are a warning on the convert report, not a silent loss", async () => {
+  await loadFormats();
+  const text = await Bun.file(join(import.meta.dir, "../samples/rolecall/presets/spec-walk.preset.json")).text();
+  const { out } = convertFile(registry.get("sillytavern-preset")!, registry.get("lumiverse-preset")!, { text, filename: "spec-walk.preset.json" });
+  expect(out.report?.warnings).toContain("lumiverse-preset does not carry regex rules inside a preset file; export the set alongside it");
 });

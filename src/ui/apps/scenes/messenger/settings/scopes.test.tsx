@@ -42,7 +42,7 @@ describe("useMessengerSettings", () => {
 
   test("the scene scope places the writing, memory and features tools", () => {
     const { scene } = useMessengerSettings(args()).scopes;
-    expect(ids(scene.categories.slice(0, 6))).toEqual(["overview", "booth", "writing", "memory", "world", "features"]);
+    expect(ids(scene.categories.slice(0, 7))).toEqual(["overview", "booth", "writing", "memory", "world", "compendium", "features"]);
     expect(ids(scene.categories.find((c) => c.id === "writing")!.sections)).toEqual(["preset", "samplers", "guides", "note", "helpers", "regex", "final-cut"]);
     expect(ids(scene.categories.find((c) => c.id === "memory")!.sections)).toEqual(["summary", "summary-controls", "advanced", "inspector"]);
   });

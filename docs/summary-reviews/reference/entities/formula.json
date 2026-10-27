@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/formula",
+  "sourcePath": "docs/reference/entities/formula.md",
+  "sourceHash": "sha256:8a67696bd53156084f332779046cc58a07d94924b3841e68550257a4a8f7bcca",
+  "semanticSummaryHash": "sha256:2225f4d7f7fe2a006e2f962107fae7e887d22ae6a0822a5f4a31d9ad5b613036",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Budget paragraph and safety summary say at most 200 new words in one run, matching WORDS_PER_RUN in chat-watch.ts; other claims unchanged and still hold.",
+  "reviewedAt": "2026-10-27T10:56:03.880Z"
+}

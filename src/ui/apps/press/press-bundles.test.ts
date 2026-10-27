@@ -11,7 +11,6 @@ import { describe, expect, test } from "bun:test";
 import type { StudioEntitySummary } from "../../app-contract";
 import {
   groupBundles,
-  knowledgeRefsOf,
   packageRun,
   pieceKeyOf,
   riderRefsOf,
@@ -56,7 +55,9 @@ describe("groupBundles", () => {
       { "preset:astral": [{ kind: "regex", id: "dice" }] },
     );
     expect(g.bundles[0]!.riders.map((r) => r.id)).toEqual(["dice"]);
-    expect(g.solos.map((s) => s.id)).toEqual(["wren"]);
+    // a persona links lorebooks, so it owns a bundle (with no riders here), as a character does
+    expect(g.bundles.map((b) => b.owner.id)).toEqual(["astral", "wren"]);
+    expect(g.solos).toEqual([]);
   });
 
   test("rider refs resolve by KIND AND ID, so a regex and a lorebook sharing an id cannot cross", () => {
@@ -76,15 +77,17 @@ describe("groupBundles", () => {
 });
 
 describe("riderRefsOf", () => {
-  test("a character links lorebooks; a preset links regex and quick-reply sets", () => {
-    expect(riderRefsOf({ kind: "character" }, { body: { knowledgeRefs: ["a", 2, "b"] } }))
-      .toEqual([{ kind: "lorebook", id: "a" }, { kind: "lorebook", id: "b" }]);
+  test("riders are every link the kind declares: a character's lorebooks and regex sets, a preset's regex and quick-reply sets", () => {
+    expect(riderRefsOf({ kind: "character" }, { body: { knowledgeRefs: ["a", 2, "b"], behaviorRefs: ["r"] } }))
+      .toEqual([{ kind: "lorebook", id: "a" }, { kind: "lorebook", id: "b" }, { kind: "regex", id: "r" }]);
     expect(riderRefsOf({ kind: "preset" }, { body: { behaviorRefs: ["r1"], quickReplyRefs: ["q1"] } }))
       .toEqual([{ kind: "regex", id: "r1" }, { kind: "quickreply", id: "q1" }]);
   });
 
-  test("other kinds and unusable shapes link nothing rather than guessing", () => {
-    expect(riderRefsOf({ kind: "persona" }, { body: { knowledgeRefs: ["a"] } })).toEqual([]);
+  test("a persona brings its lorebooks; kinds without links and unusable shapes link nothing", () => {
+    // a persona's knowledgeRefs used to be ignored here, so a staged persona left its lorebooks behind
+    expect(riderRefsOf({ kind: "persona" }, { body: { knowledgeRefs: ["a"] } })).toEqual([{ kind: "lorebook", id: "a" }]);
+    expect(riderRefsOf({ kind: "lorebook" }, { body: { knowledgeRefs: ["a"] } })).toEqual([]);
     expect(riderRefsOf({ kind: "preset" }, null)).toEqual([]);
   });
 });
@@ -117,13 +120,5 @@ describe("packageRun", () => {
     const packed = packageRun({ "x.json": a, "y.json": b });
     expect(packed?.kind).toBe("zip");
     expect(packageRun({})).toBeNull();
-  });
-});
-
-describe("knowledgeRefsOf", () => {
-  test("reads body.knowledgeRefs tolerantly", () => {
-    expect(knowledgeRefsOf({ body: { knowledgeRefs: ["a", 2, "b"] } })).toEqual(["a", "b"]);
-    expect(knowledgeRefsOf({ body: {} })).toEqual([]);
-    expect(knowledgeRefsOf(null)).toEqual([]);
   });
 });

@@ -8,15 +8,16 @@ import type { CSSProperties, JSX } from "react";
 import { SETTING_KEYS } from "../../../../studio/settings-shape";
 import type { SetupDraft, SetupOption, SetupStep } from "../../step-contract";
 import { strArray } from "../../../../core/guards";
+import { deckHead } from "../../../_shared/decks";
 
-/** Option ids are canonical entity kinds - the same open kind strings the engine uses. */
-const OPTIONS: SetupOption[] = [
-  { id: "character", title: "Characters", sub: "The people you create.", isDefault: true },
-  { id: "lorebook", title: "Lorebooks", sub: "The world facts they remember." },
-  { id: "persona", title: "Personas", sub: "Who you are when you talk to them." },
-  { id: "pack", title: "Packs", sub: "Reusable pictures, faces and backgrounds you open like folders." },
-  { id: "preset", title: "Presets", sub: "Saved settings that shape the writing." },
-];
+/** Option ids are canonical kinds; titles are the kind hub's plurals, the lines are this step's own words. */
+const OPTIONS: SetupOption[] = ([
+  ["character", "The people you create."],
+  ["lorebook", "The world facts they remember."],
+  ["persona", "Who you are when you talk to them."],
+  ["pack", "Reusable pictures, faces and backgrounds you open like folders."],
+  ["preset", "Saved settings that shape the writing."],
+] as const).map(([id, sub], i) => ({ id, title: deckHead(id).plural, sub, ...(i === 0 ? { isDefault: true } : {}) }));
 
 const CSS = `
 .floor{background:var(--stage-floor);border-top:2px solid var(--accent);position:relative;

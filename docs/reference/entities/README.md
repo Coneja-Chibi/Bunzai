@@ -2,7 +2,7 @@
 id: reference/entities/README
 title: Entities
 audience: dev
-summary: Index of the six canonical entity kinds, character, lorebook, pack, persona, preset, and regex, linking each one's field reference and the shapes they share.
+summary: Index of the canonical content kinds (character, lorebook, persona, pack, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, prompt format, drawing), how each is one folder described once in its kind.ts, and links to each one's field reference and the shapes they share.
 tags: [entity, index, canonical]
 related: [reference/architecture, reference/concepts/canonical-model, reference/formats/README]
 ---
@@ -11,15 +11,13 @@ related: [reference/architecture, reference/concepts/canonical-model, reference/
 
 Every canonical shape bunraku converts through. An **entity** is a `CanonicalEntity<Kind, Body>` (see
 [../architecture.md](../architecture.md), "The canonical entity"): a stable wrapper around a `Body`, the
-superset shape for one `kind`. The kind union is closed: `STUDIO_ENTITY_KINDS` in
-`src/studio/path-policy.ts` names exactly six kinds, alphabetically `character`, `lorebook`, `pack`,
-`persona`, `preset`, `regex`, and it grows only by adding a member there plus a sibling
-`src/entities/<kind>/` folder (see [../architecture.md](../architecture.md), "The adapter contract").
-Four of the six also have a format adapter (`src/core/adapter.ts`): `character`, `lorebook`, `persona`,
-`regex` read and write real wire formats. The other two, `pack` and `preset`, are authored only in the
-studio, with no `toCanonical` / `fromCanonical` pair and no row in the formats coverage matrix. Every
-kind stores at `studio/<kind>/<id>.json` under the studio root (`resolveStudioPath` in
-`src/studio/path-policy.ts`), the same rule for all six regardless of adapter status.
+superset shape for one `kind`. The kinds are a closed set: exactly the folders under `src/entities/` that hold a
+`kind.ts` descriptor, collected by `bun run kinds` into `src/generated/kinds.ts` (identity) and
+`src/generated/kind-schemas.ts` (decoders and storage parts). Every list of kinds in the app reads those seams: the
+storage folders (`STUDIO_ENTITY_KINDS`), the parse boundary, the adapter contracts, decks, search, receipts, Kit and
+"New" actions. Adding one is [../extending/new-kind.md](../extending/new-kind.md). Which kinds have format adapters
+is the generated [FORMAT-SUPPORT matrix](../../FORMAT-SUPPORT.md). Every kind stores at `studio/<kind>/<id>.json`
+under the studio root (`resolveStudioPath` in `src/studio/path-policy.ts`).
 
 ## Generated field tables
 
@@ -37,7 +35,14 @@ the live schema JSDoc by `scripts/docs-fields.ts` (`bun run scripts/docs-fields.
 | Pack | [pack.md](pack.md) | a reusable expression/sprite pack, attachable to more than one character (no format adapter, studio-only) |
 | Persona | [persona.md](persona.md) | the user's identity, the counterpart to a character: name, content, sections, chat injection |
 | Preset | [preset.md](preset.md) | a chat-completion prompt-manager preset: ordered prompt blocks, samplers, behavior settings (no format adapter, studio-only) |
+| Script Sheet | [scriptsheet.md](scriptsheet.md) | one writing instruction, RoleCall's small writing setup; a preset's relative in the Writing family |
 | Regex | [regex.md](regex.md) | a named, ordered find/replace rule set: the character-card twin and standalone script files |
+| Quick-reply set | [quickreply.md](quickreply.md) | a named page of buttons that send prepared text, linked from presets |
+| Dice | [dice.md](dice.md) | something a person rolls: a roll, a table or a pool, made once and linked from tools |
+| Formula | [formula.md](formula.md) | a saved macro expression, run read-only on a copy of the scene's macro context; a tool can run one |
+| Tool | [tool.md](tool.md) | a tool a model may call while it writes: typed fields and one roll, dice, formula or record action, as data; a scene links the ones it offers |
+| Prompt format | [promptformat.md](promptformat.md) | SillyTavern instruct and context templates for text completion, kept whole (nothing reads it yet) |
+| Drawing | [htmldoc.md](htmldoc.md) | a sealed HTML page shown in HTML View, not a Library deck |
 
 ## Cross-cutting
 

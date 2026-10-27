@@ -26,8 +26,8 @@ import { basename } from "node:path";
 import { ADAPTER_INPUT_MAX_BYTES, registry, toAdapterInput } from "../../core";
 import type { AdapterInput, FormatAdapter } from "../../core";
 import { ensureFormats } from "../../ensure-formats";
-import { inspectBundle, inspectPresetBundle } from "../../convert";
-import { parseCanonicalEntity, type ParsedCanonicalEntity } from "../../entities/runtime-schema";
+import { readPieces } from "../../convert";
+import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import { entityName } from "../../studio/store";
 import type { ContentKind } from "../../entities/capabilities";
 import { createEntityDraft } from "./_create-common";
@@ -50,22 +50,12 @@ const refuse = (summary: string, output: string): ToolResult =>
 /**
  * Every canonical piece inside one file, primary first.
  *
- * Deliberately the same three-way branch the studio's inspect makes. Shortcutting to `toCanonical`
- * for all kinds would produce a different entity for the same file than the app does, which is the
- * kind of divergence nobody finds until two copies of one card disagree.
+ * The same read path the studio's inspect and the CLI use (convert.ts readPieces), so the same file always becomes
+ * the same pieces.
  */
 function piecesIn(adapter: FormatAdapter, source: AdapterInput): ParsedCanonicalEntity[] {
-  if (adapter.kind === "character") {
-    const { entity, lorebooks } = inspectBundle(adapter, source);
-    return [entity, ...lorebooks];
-  }
-  if (adapter.kind === "preset") {
-    const { entity, regexSets } = inspectPresetBundle(adapter, source);
-    return [entity, ...regexSets];
-  }
-  const entity = parseCanonicalEntity(adapter.toCanonical(source));
-  if (entity.kind !== adapter.kind) throw new Error("adapter returned the wrong entity kind");
-  return [entity];
+  const { entity, related } = readPieces(adapter, source);
+  return [entity, ...related];
 }
 
 const folderImport: HarnessTool<z.infer<typeof input>> = {

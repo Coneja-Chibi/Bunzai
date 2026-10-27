@@ -12,8 +12,8 @@ import { useDebouncedSave } from "../../../../../_shared/use-debounced-value";
 import { SettingsSection, SettingsSegmented, SettingsStepper, SettingsToggle } from "./parts";
 import type { SectionProps } from "./deps";
 
-const DETAIL = [{ value: "names", label: "Names Only" }, { value: "taglines", label: "Names + Taglines" }, { value: "preview", label: "Names + Taglines + Preview" }] as const;
-const DISPLAY = [{ value: "unified", label: "Unified" }, { value: "per_book", label: "Per-Book" }] as const;
+export const RECALL_DETAIL = [{ value: "names", label: "Names Only" }, { value: "taglines", label: "Names + Taglines" }, { value: "preview", label: "Names + Taglines + Preview" }] as const;
+export const RECALL_DISPLAY = [{ value: "unified", label: "Unified" }, { value: "per_book", label: "Per-Book" }] as const;
 
 export interface GuidanceCopy { title: string; hint: string; id: string }
 const RECALL_COPY: GuidanceCopy = { title: "What should it prioritize?", hint: "Optional guidance for retrieval, such as prioritizing relationships, unresolved threats, or a particular setting.", id: "cps-recall-guide" };
@@ -64,10 +64,10 @@ export function TuningSection({ compendium, set }: SectionProps): JSX.Element {
     <SettingsSection id="tuning" title="Retrieval tuning" blurb="Fine-tune how Compendium searches and how much context the retrieval pass receives." dot="var(--bk-role-info)">
       <SettingsStepper label="Max entries to retrieve" value={r.maxEntries} min={RANGES.maxEntries[0]} max={RANGES.maxEntries[1]} onChange={put("maxEntries")} />
       <SettingsStepper label="Minimum entries to retrieve" hint="If it returns fewer, it gets one more call demanding more. 0 = no minimum." value={r.minEntries} min={RANGES.minEntries[0]} max={RANGES.minEntries[1]} onChange={put("minEntries")} />
-      <SettingsSegmented label="Entry detail level" hint="How much info per entry the selector sees in the tree index" value={r.detail} options={DETAIL} onChange={(detail) => void set({ recall: { detail } })} />
+      <SettingsSegmented label="Entry detail level" hint="How much info per entry the selector sees in the tree index" value={r.detail} options={RECALL_DETAIL} onChange={(detail) => void set({ recall: { detail } })} />
       <SettingsStepper label="Context messages" hint="Recent messages the selector sees when picking entries" value={r.contextMessages} min={RANGES.contextMessages[0]} max={RANGES.contextMessages[1]} onChange={put("contextMessages")} />
       <SettingsStepper label="Collapsed depth" hint="How many tree levels the selector sees at once. Higher = more context but more tokens." value={r.depth} min={RANGES.depth[0]} max={RANGES.depth[1]} onChange={put("depth")} />
-      <SettingsSegmented label="Multi-book display" hint="How multiple lorebooks appear in the bucket overview" value={r.bookDisplay} options={DISPLAY} onChange={(bookDisplay) => void set({ recall: { bookDisplay } })} />
+      <SettingsSegmented label="Multi-book display" hint="How multiple lorebooks appear in the bucket overview" value={r.bookDisplay} options={RECALL_DISPLAY} onChange={(bookDisplay) => void set({ recall: { bookDisplay } })} />
     </SettingsSection>
   );
 }

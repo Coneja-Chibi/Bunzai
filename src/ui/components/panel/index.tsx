@@ -4,9 +4,12 @@
  * shadow and keeps only its colored top edge (styles.module.css), so boxes never nest.
  */
 import type { HTMLAttributes, JSX, ReactNode } from "react";
+import type { CSSProperties } from "react";
+import { deckMeta } from "../../_shared/decks";
 import styles from "./styles.module.css";
 
-export type PanelDeck = "character" | "persona" | "lorebook" | "preset" | "regex" | "pack" | "fog";
+/** A kind id from the kind hub, or "fog" for none in particular. */
+export type PanelDeck = string;
 
 export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, "title"> {
   children: ReactNode;
@@ -18,9 +21,10 @@ export interface PanelProps extends Omit<HTMLAttributes<HTMLElement>, "title"> {
   "data-part"?: string;
 }
 
-export function Panel({ children, deck, as: Tag = "section", "data-part": part, className, ...rest }: PanelProps): JSX.Element {
+export function Panel({ children, deck, as: Tag = "section", "data-part": part, className, style, ...rest }: PanelProps): JSX.Element {
+  const edge = deck ? ({ "--deck-edge": deckMeta(deck).accent } as CSSProperties) : undefined;
   return (
-    <Tag {...rest} className={[styles.panel, className].filter(Boolean).join(" ") || undefined} data-control="panel" data-deck={deck} data-part={part}>
+    <Tag {...rest} style={edge ? { ...edge, ...style } : style} className={[styles.panel, className].filter(Boolean).join(" ") || undefined} data-control="panel" data-deck={deck} data-part={part}>
       {children}
     </Tag>
   );

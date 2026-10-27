@@ -1,12 +1,12 @@
 {
-  "generated": "2026-10-26",
+  "generated": "2026-10-27",
   "targetChars": 90000,
-  "totalPages": 119,
-  "totalSourceChars": 1481921,
+  "totalPages": 125,
+  "totalSourceChars": 1518360,
   "batches": [
     {
       "id": "batch-001",
-      "sourceChars": 85520,
+      "sourceChars": 86221,
       "pages": [
         {
           "docId": "01-VISION",
@@ -132,8 +132,8 @@
           "docId": "FORMAT-SUPPORT",
           "sourcePath": "docs/FORMAT-SUPPORT.md",
           "sidecarPath": "docs/summaries/FORMAT-SUPPORT.json",
-          "sectionCount": 12,
-          "sourceChars": 4978,
+          "sectionCount": 16,
+          "sourceChars": 5679,
           "status": "APPROVED"
         },
         {
@@ -282,7 +282,7 @@
     },
     {
       "id": "batch-003",
-      "sourceChars": 87302,
+      "sourceChars": 87535,
       "pages": [
         {
           "docId": "guide/platforms/risu",
@@ -353,7 +353,7 @@
           "sourcePath": "docs/reference/architecture.md",
           "sidecarPath": "docs/summaries/reference/architecture.json",
           "sectionCount": 13,
-          "sourceChars": 31159,
+          "sourceChars": 31392,
           "status": "APPROVED"
         }
       ]
@@ -382,28 +382,28 @@
     },
     {
       "id": "batch-005",
-      "sourceChars": 155274,
+      "sourceChars": 162977,
       "pages": [
         {
           "docId": "reference/components",
           "sourcePath": "docs/reference/components.md",
           "sidecarPath": "docs/summaries/reference/components.json",
           "sectionCount": 3,
-          "sourceChars": 155274,
+          "sourceChars": 162977,
           "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-006",
-      "sourceChars": 83485,
+      "sourceChars": 89404,
       "pages": [
         {
           "docId": "reference/concepts/bundles",
           "sourcePath": "docs/reference/concepts/bundles.md",
           "sidecarPath": "docs/summaries/reference/concepts/bundles.json",
           "sectionCount": 5,
-          "sourceChars": 8491,
+          "sourceChars": 9038,
           "status": "APPROVED"
         },
         {
@@ -419,7 +419,7 @@
           "sourcePath": "docs/reference/concepts/character-book.md",
           "sidecarPath": "docs/summaries/reference/concepts/character-book.json",
           "sectionCount": 8,
-          "sourceChars": 9411,
+          "sourceChars": 9399,
           "status": "APPROVED"
         },
         {
@@ -485,12 +485,28 @@
           "sectionCount": 26,
           "sourceChars": 21870,
           "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/dice",
+          "sourcePath": "docs/reference/entities/dice.md",
+          "sidecarPath": "docs/summaries/reference/entities/dice.json",
+          "sectionCount": 4,
+          "sourceChars": 2084,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/formula",
+          "sourcePath": "docs/reference/entities/formula.md",
+          "sidecarPath": "docs/summaries/reference/entities/formula.json",
+          "sectionCount": 3,
+          "sourceChars": 3300,
+          "status": "APPROVED"
         }
       ]
     },
     {
       "id": "batch-007",
-      "sourceChars": 87793,
+      "sourceChars": 80916,
       "pages": [
         {
           "docId": "reference/entities/htmldoc",
@@ -528,8 +544,8 @@
           "docId": "reference/entities/preset",
           "sourcePath": "docs/reference/entities/preset.md",
           "sidecarPath": "docs/summaries/reference/entities/preset.json",
-          "sectionCount": 17,
-          "sourceChars": 21815,
+          "sectionCount": 18,
+          "sourceChars": 22294,
           "status": "APPROVED"
         },
         {
@@ -541,13 +557,27 @@
           "status": "APPROVED"
         },
         {
+          "docId": "reference/entities/quickreply",
+          "sourcePath": "docs/reference/entities/quickreply.md",
+          "sidecarPath": "docs/summaries/reference/entities/quickreply.json",
+          "sectionCount": 5,
+          "sourceChars": 3341,
+          "status": "APPROVED"
+        },
+        {
           "docId": "reference/entities/README",
           "sourcePath": "docs/reference/entities/README.md",
           "sidecarPath": "docs/summaries/reference/entities/README.json",
           "sectionCount": 3,
-          "sourceChars": 3895,
+          "sourceChars": 4879,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-008",
+      "sourceChars": 85562,
+      "pages": [
         {
           "docId": "reference/entities/regex",
           "sourcePath": "docs/reference/entities/regex.md",
@@ -555,13 +585,23 @@
           "sectionCount": 9,
           "sourceChars": 11681,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-008",
-      "sourceChars": 77552,
-      "pages": [
+        },
+        {
+          "docId": "reference/entities/scriptsheet",
+          "sourcePath": "docs/reference/entities/scriptsheet.md",
+          "sidecarPath": "docs/summaries/reference/entities/scriptsheet.json",
+          "sectionCount": 4,
+          "sourceChars": 3597,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/tool",
+          "sourcePath": "docs/reference/entities/tool.md",
+          "sidecarPath": "docs/summaries/reference/entities/tool.json",
+          "sectionCount": 4,
+          "sourceChars": 3660,
+          "status": "APPROVED"
+        },
         {
           "docId": "reference/extending/add-a-format",
           "sourcePath": "docs/reference/extending/add-a-format.md",
@@ -579,13 +619,27 @@
           "status": "APPROVED"
         },
         {
+          "docId": "reference/extending/new-kind",
+          "sourcePath": "docs/reference/extending/new-kind.md",
+          "sidecarPath": "docs/summaries/reference/extending/new-kind.json",
+          "sectionCount": 2,
+          "sourceChars": 5821,
+          "status": "APPROVED"
+        },
+        {
           "docId": "reference/formats/agnai",
           "sourcePath": "docs/reference/formats/agnai.md",
           "sidecarPath": "docs/summaries/reference/formats/agnai.json",
           "sectionCount": 9,
-          "sourceChars": 19293,
+          "sourceChars": 19281,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-009",
+      "sourceChars": 86698,
+      "pages": [
         {
           "docId": "reference/formats/backyard",
           "sourcePath": "docs/reference/formats/backyard.md",
@@ -593,13 +647,7 @@
           "sectionCount": 9,
           "sourceChars": 16737,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-009",
-      "sourceChars": 69961,
-      "pages": [
+        },
         {
           "docId": "reference/formats/lumiverse",
           "sourcePath": "docs/reference/formats/lumiverse.md",
@@ -644,7 +692,7 @@
     },
     {
       "id": "batch-010",
-      "sourceChars": 88009,
+      "sourceChars": 88608,
       "pages": [
         {
           "docId": "reference/formats/risu",
@@ -667,7 +715,7 @@
           "sourcePath": "docs/reference/formats/rolecall.md",
           "sidecarPath": "docs/summaries/reference/formats/rolecall.json",
           "sectionCount": 9,
-          "sourceChars": 21806,
+          "sourceChars": 22405,
           "status": "APPROVED"
         },
         {
@@ -690,7 +738,7 @@
     },
     {
       "id": "batch-011",
-      "sourceChars": 89071,
+      "sourceChars": 84273,
       "pages": [
         {
           "docId": "reference/glossary",
@@ -721,7 +769,7 @@
           "sourcePath": "docs/reference/macro-engine.md",
           "sidecarPath": "docs/summaries/reference/macro-engine.json",
           "sectionCount": 3,
-          "sourceChars": 6070,
+          "sourceChars": 7239,
           "status": "APPROVED"
         },
         {
@@ -747,7 +795,13 @@
           "sectionCount": 9,
           "sourceChars": 5049,
           "status": "APPROVED"
-        },
+        }
+      ]
+    },
+    {
+      "id": "batch-012",
+      "sourceChars": 86840,
+      "pages": [
         {
           "docId": "reference/platforms/marinara/chats-and-interchange",
           "sourcePath": "docs/reference/platforms/marinara/chats-and-interchange.md",
@@ -755,13 +809,7 @@
           "sectionCount": 12,
           "sourceChars": 5967,
           "status": "APPROVED"
-        }
-      ]
-    },
-    {
-      "id": "batch-012",
-      "sourceChars": 80873,
-      "pages": [
+        },
         {
           "docId": "reference/platforms/marinara/conversation-mode",
           "sourcePath": "docs/reference/platforms/marinara/conversation-mode.md",
@@ -1032,14 +1080,14 @@
     },
     {
       "id": "batch-016",
-      "sourceChars": 257282,
+      "sourceChars": 259527,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 257282,
+          "sourceChars": 259527,
           "status": "APPROVED"
         }
       ]

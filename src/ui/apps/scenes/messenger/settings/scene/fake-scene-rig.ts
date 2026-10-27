@@ -50,6 +50,7 @@ export function rig(o: RigOptions = {}): Rig {
   const panel = { on: true, settings: resolveDirector({ director: undefined } as never), tools: "unknown" };
   const api = {
     renameScene: rec("renameScene", answerChat),
+    listSceneFolders: rec("listSceneFolders", () => []),
     setScenePrompting: rec("setScenePrompting", answerChat),
     setSceneBackdrop: rec("setSceneBackdrop", answerChat),
     setSceneCompendium: rec("setSceneCompendium", answerChat),

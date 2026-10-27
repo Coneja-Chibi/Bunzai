@@ -8,7 +8,6 @@
  */
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type JSX } from "react";
 import type { PresetBody } from "../../../entities/preset/schema";
-import { bodyOf } from "../../../core/guards";
 import { classifyThemeRule, pairWithRoster, type RosterPairing, type WardrobeEntry } from "../../../core/regex/wardrobe";
 import { strArray } from "../../../core/guards";
 import type { ChoiceGroup } from "../../../core/macros/choice-groups";
@@ -16,6 +15,7 @@ import type { StageTab, StageTabProps } from "./stage-tabs";
 import { useSceneChoices } from "./use-scene-choices";
 import { useSceneRegexSets } from "./use-scene-regex";
 import { useSceneRegexPicks } from "./use-scene-regex-picks";
+import { readSetupBody } from "../../_shared/writing-setups";
 import { Chip } from "../../components/button";
 
 interface Dress { entry: WardrobeEntry; setId: string; setName: string }
@@ -26,26 +26,26 @@ function Swatch({ colors }: { colors: string[] }): JSX.Element | null {
 }
 
 /** The scene's preset body, read once per preset; "unreadable" is a state the rack says, never a silent empty roster. */
-function usePresetBody(ctx: StageTabProps["ctx"], presetId: string | null): { body: PresetBody | null; unreadable: boolean } {
+function usePresetBody(ctx: StageTabProps["ctx"], setup: { kind: string; id: string } | null): { body: PresetBody | null; unreadable: boolean } {
   const [state, setState] = useState<{ body: PresetBody | null; unreadable: boolean }>({ body: null, unreadable: false });
   const api = useRef(ctx.api);
   api.current = ctx.api;
   useEffect(() => {
     let live = true;
     setState({ body: null, unreadable: false });
-    if (!presetId) return;
-    api.current.getEntity(`kind=preset&id=${encodeURIComponent(presetId)}`).then(
-      (e) => { const body = bodyOf(e); if (live) setState(Array.isArray(body["prompts"]) ? { body: body as unknown as PresetBody, unreadable: false } : { body: null, unreadable: true }); },
+    if (!setup) return;
+    readSetupBody(api.current, setup).then(
+      (body) => { if (live) setState(Array.isArray(body?.prompts) ? { body, unreadable: false } : { body: null, unreadable: true }); },
       () => { if (live) setState({ body: null, unreadable: true }); },
     );
     return () => { live = false; };
-  }, [presetId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setup ? `${setup.kind}:${setup.id}` : ""]);
   return state;
 }
 
 function Wardrobe({ ctx, chat, onChat }: StageTabProps): JSX.Element {
-  const presetId = chat.preset?.id ?? null;
-  const { body, unreadable } = usePresetBody(ctx, presetId);
+  const { body, unreadable } = usePresetBody(ctx, chat.preset ?? null);
   const picks = useSceneRegexPicks(ctx, chat, onChat);
   // The sets on and the sets hung on this scene's rack: both are read for the rack, only the ones on dress anything.
   const sets = useSceneRegexSets(ctx.api, [...new Set([...(chat.regex?.sets ?? []), ...picks.rack])]);

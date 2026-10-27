@@ -8,7 +8,7 @@
  */
 import { useCallback, useRef, type CSSProperties, type JSX, type KeyboardEvent } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { deckMeta } from "../../../_shared/decks";
+import { pieceColor } from "../../../_shared/decks";
 import { useArtSrc } from "../../../_shared/art-cache";
 import { pieceKey, versionedArtUrl, type DeckView, type DeckViewContext } from "../view-contract";
 import { bridgeTabAcrossVirtualBoundary, FALLBACK_VIEWPORT, keepFocusedInRange, OVERSCAN, rowsOf, useFocusedRangeIndex, useGridColumns, useVirtualRows, type Range } from "../../../_shared/virtual-list";
@@ -59,7 +59,7 @@ function PersonaCard({ ctx, e, posinset, setsize }: { ctx: DeckViewContext; e: S
       role="button"
       tabIndex={0}
       className={`psh-card${isOpen ? " cast" : ""}${staged ? " pick" : ""}`}
-      style={{ "--a": e.accent ?? deckMeta(e.kind).accent } as CSSProperties}
+      style={{ "--a": pieceColor(e) } as CSSProperties}
       title={isOpen ? `${e.name} is open on the Workbench` : `Stage ${e.name}`}
       data-pick={key}
       aria-setsize={setsize}

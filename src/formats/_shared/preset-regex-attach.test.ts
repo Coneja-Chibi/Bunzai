@@ -11,7 +11,7 @@
  * must not start differing from its bare emit just because this seam now exists.
  */
 import { describe, expect, test } from "bun:test";
-import { emitPresetBundle } from "../../convert";
+import { emitPieces } from "../../convert";
 import { CANONICAL_SCHEMA_VERSION } from "../../core/canonical";
 import type { CanonicalPreset } from "../../entities/preset/schema";
 import type { CanonicalRegexSet } from "../../entities/regex/schema";
@@ -65,7 +65,7 @@ describe.each([
 ])("%s carries regex rules inside the preset file", (_id, adapter) => {
   test("an attached set lands in extensions.regex_scripts and reads back out", () => {
     const entity = preset("Mnemosyne V4");
-    const { output, unattached } = emitPresetBundle(adapter, entity, [regexSet("thought bubbles", "\\*(.+?)\\*")]);
+    const { output, unattached } = emitPieces(adapter, entity, [regexSet("thought bubbles", "\\*(.+?)\\*")]);
     expect(unattached).toEqual([]);
     const rows = rowsOf(output.text as string);
     expect(rows).toHaveLength(1);
@@ -79,7 +79,7 @@ describe.each([
   });
 
   test("two sets concatenate in order, and nothing is silently de-duplicated", () => {
-    const { output } = emitPresetBundle(adapter, preset("V4"), [
+    const { output } = emitPieces(adapter, preset("V4"), [
       regexSet("first", "aaa"),
       regexSet("second", "bbb"),
     ]);
@@ -89,11 +89,11 @@ describe.each([
   test("ADDITIVE: attaching nothing emits exactly what the bare adapter emits", () => {
     const entity = preset("Untouched");
     const bare = adapter.fromCanonical(entity);
-    expect(emitPresetBundle(adapter, entity, []).output.text).toBe(bare.text);
+    expect(emitPieces(adapter, entity, []).output.text).toBe(bare.text);
     // An empty SET (a set carrying no rules) must be treated the same as no set at all, or a
     // preset would start differing from its bare form over something that adds no rows.
     const empty = { ...regexSet("empty", "x"), body: { name: "empty", rules: [] } } as CanonicalRegexSet;
-    expect(emitPresetBundle(adapter, entity, [empty]).output.text).toBe(bare.text);
+    expect(emitPieces(adapter, entity, [empty]).output.text).toBe(bare.text);
   });
 });
 
@@ -103,8 +103,8 @@ describe("a platform that cannot carry them says so", () => {
     // (Vaud-Notes/design/REGEX-FORMATS.md). Writing extensions.regex_scripts here would produce a
     // field the engine never reads, which is worse than refusing - it would look like it worked.
     const set = regexSet("thought bubbles", "\\*(.+?)\\*");
-    const { unattached } = emitPresetBundle(marinaraPreset, preset("V4"), [set]);
+    const { unattached } = emitPieces(marinaraPreset, preset("V4"), [set]);
     expect(unattached).toHaveLength(1);
-    expect(unattached[0]?.reason).toContain("does not carry regex rules inside a preset file");
+    expect(unattached[0]).toContain("does not carry regex rules inside a preset file");
   });
 });

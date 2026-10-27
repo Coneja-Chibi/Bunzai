@@ -35,7 +35,7 @@ async function scene(opts: { preset?: boolean; model?: string } = {}) {
   const chats = memoryChatStore(() => now);
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
   await chats.setConnection(chat.id, { id: "conn", model: opts.model ?? "vera-1" });
-  if (opts.preset) await chats.setPreset(chat.id, { id: "quill", toggles: {}, samplers: {} });
+  if (opts.preset) await chats.setPreset(chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
   const [, , reply] = (await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Any storms?" }, { role: "assistant", content: "Maybe." }]))!;
   const sent: ProviderRequest[] = [];
   const provider: Provider = {

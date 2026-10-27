@@ -104,6 +104,14 @@ describe("studio_delete", () => {
     expect(result.output).toContain("dangling reference");
     expect(result.output).toContain("not checked");
   });
+
+  test("a pack a scene can use as its backdrop warns about scenes; a character warns about nothing", async () => {
+    const rec: Recorder = { deleted: [], saved: [] };
+    const pack = await remove.execute({ kind: "pack", id: "faces" }, { bridge: makeBridge(rec, { "pack/faces": { schemaVersion: 1, id: "faces", kind: "pack", body: { name: "Faces", pack: { items: [] } } } as unknown as KitEntity }) });
+    expect(pack.output).toContain("Any scene pointing at this pack now has a dangling reference");
+    const card = await remove.execute({ kind: "character", id: "nyx" }, { bridge: makeBridge(rec, { "character/nyx": NYX }) });
+    expect(card.output).not.toContain("dangling");
+  });
 });
 
 describe("studio_duplicate", () => {

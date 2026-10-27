@@ -17,12 +17,12 @@ import type { Observation } from "../../core/preset/macros/explain";
 import type { HookRendering } from "../../core/preset/macros/hooks-to-regex";
 import type { Promotion } from "../../core/preset/macros/promote-markers";
 import type { ProducerFix, UnfixedCleanup } from "../../core/preset/macros/fix-producer";
-import { strArray } from "../../core/guards";
+import { resolveLinks } from "../../core/links";
+import { forFormatKind, formatsFor } from "../../core/writing";
 
 type ConversionKit = {
   registry: typeof import("../../core").registry;
-  emitBundle: typeof import("../../convert").emitBundle;
-  emitPresetBundle: typeof import("../../convert").emitPresetBundle;
+  emitPieces: typeof import("../../convert").emitPieces;
   buildSerializeReport: typeof import("../../core").buildSerializeReport;
   checkMacroTransfer: typeof import("../../core/preset/macros/transfer-check").checkMacroTransfer;
   profileForAdapter: typeof import("../../core/preset/macros/transfer-check").profileForAdapter;
@@ -55,8 +55,7 @@ export async function loadConversionKit(): Promise<ConversionKit> {
   await formats.ensureFormats();
   return {
     registry: core.registry,
-    emitBundle: convert.emitBundle,
-    emitPresetBundle: convert.emitPresetBundle,
+    emitPieces: convert.emitPieces,
     buildSerializeReport: core.buildSerializeReport,
     checkMacroTransfer: macros.checkMacroTransfer,
     profileForAdapter: macros.profileForAdapter,
@@ -202,8 +201,7 @@ async function lintRegexTravel(entity: KitEntity, to: string): Promise<RuleTrave
 
 /** Adapter ids that can serialize this entity kind, for a failure message worth reading. */
 export function targetsFor(kit: ConversionKit, kind: string): string {
-  return kit.registry.all()
-    .filter((adapter) => adapter.kind === kind)
+  return formatsFor(kit.registry.all().map((adapter) => ({ ...adapter, friendly: adapter.id })), kind)
     .map((adapter) => adapter.id)
     .sort()
     .join(", ");
@@ -228,6 +226,9 @@ export async function convertStoredPiece(
       detail: `No format adapter with id "${to}". Targets for ${kind}: ${targetsFor(kit, kind)}`,
     };
   }
+  // a writing setup is written by a preset format as the preset it sends (core/writing.ts)
+  entity = forFormatKind(entity as unknown as { kind: string; body: unknown }, target.kind) as unknown as KitEntity;
+  kind = entity.kind;
   if (target.kind !== kind) {
     return {
       ok: false,
@@ -285,27 +286,15 @@ export async function convertStoredPiece(
     // A preset's linked regex sets ride the same way a character's lorebooks do. Before this the
     // preset branch fell through to bare fromCanonical, so a linked set was silently dropped on
     // every export - the reason Kit could read bundled rules and never write them back.
-    let unattachedRegex: string[] = [];
-    let missingRegexRefs: string[] = [];
-    const out = kind === "character"
-      ? kit.emitBundle(
-          target as Parameters<ConversionKit["emitBundle"]>[0],
-          subject as unknown as Parameters<ConversionKit["emitBundle"]>[1],
-          (await resolveKnowledge(bridge, entity)) as unknown as Parameters<ConversionKit["emitBundle"]>[2],
-        )
-      : kind === "preset"
-        ? await (async () => {
-          const { sets, missing } = await resolveBehavior(bridge, entity);
-          missingRegexRefs = missing;
-          const bundled = kit.emitPresetBundle(
-            target as Parameters<ConversionKit["emitPresetBundle"]>[0],
-            subject as unknown as Parameters<ConversionKit["emitPresetBundle"]>[1],
-            sets as unknown as Parameters<ConversionKit["emitPresetBundle"]>[2],
-          );
-          unattachedRegex = bundled.unattached.map((u) => u.reason);
-          return bundled.output as ReturnType<ConversionKit["emitBundle"]>;
-        })()
-        : (target.fromCanonical as (e: unknown) => ReturnType<ConversionKit["emitBundle"]>)(subject);
+    const linked = await resolveLinks<KitEntity>(entity.kind, (entity as unknown as { body?: unknown }).body, (k, id) => bridge.read(k, id), "embedded");
+    const emitted = kit.emitPieces(
+      target as Parameters<ConversionKit["emitPieces"]>[0],
+      subject as unknown as Parameters<ConversionKit["emitPieces"]>[1],
+      linked.found.map((f) => f.entity) as unknown as Parameters<ConversionKit["emitPieces"]>[2],
+    );
+    const out = emitted.output;
+    const unattachedRegex = emitted.unattached;
+    const missingRegexRefs = linked.missing.filter((m) => m.kind === "regex").map((m) => m.id);
 
     const loss = out.report ?? kit.buildSerializeReport(subject, target);
     const text = out.text ?? null;
@@ -374,35 +363,6 @@ export async function convertStoredPiece(
   }
 }
 
-/** A character's linked lorebooks, so an adapter that embeds knowledge can re-embed it. */
-async function resolveKnowledge(bridge: KitBridge, entity: KitEntity): Promise<KitEntity[]> {
-  const refs = (entity as unknown as { body?: { knowledgeRefs?: unknown } }).body?.knowledgeRefs;
-  const ids = strArray(refs);
-  const books = await Promise.all(ids.map((ref) => bridge.read("lorebook", ref)));
-  return books.filter((book): book is KitEntity => book !== null);
-}
-
-/**
- * The regex sets a preset links, for embedding on export. The exact sibling of resolveKnowledge, and
- * missing for as long as presets had no `behaviorRefs`: the wire could carry the relationship, the
- * canonical model could not name it, so nothing could ever put a set back into a preset file.
- *
- * A ref that no longer resolves is DROPPED here and reported by the caller rather than failing the
- * export. Losing the whole conversion because one linked set was deleted would be the worse trade;
- * silently pretending it rode would be worse still, which is why the count is surfaced.
- */
-async function resolveBehavior(bridge: KitBridge, entity: KitEntity): Promise<{
-  sets: KitEntity[];
-  missing: string[];
-}> {
-  const refs = (entity as unknown as { body?: { behaviorRefs?: unknown } }).body?.behaviorRefs;
-  const ids = strArray(refs);
-  const found = await Promise.all(ids.map(async (ref) => ({ ref, set: await bridge.read("regex", ref) })));
-  return {
-    sets: found.filter((f) => f.set !== null).map((f) => f.set as KitEntity),
-    missing: found.filter((f) => f.set === null).map((f) => f.ref),
-  };
-}
 
 /**
  * The RoleCall hook machine out of a stored piece's escrow, which is the only place it lives: it is

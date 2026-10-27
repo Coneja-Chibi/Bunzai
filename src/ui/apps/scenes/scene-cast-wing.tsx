@@ -13,7 +13,7 @@ import { emptyPersonaBody } from "../../../entities/persona";
 import { bodyOf, isRecord, str } from "../../../core/guards";
 import { type OpenScene, DEFAULT_PERSONA_PREF } from "../../../studio/scenes";
 import { Button } from "../../components/button";
-import { createAndOpenPiece } from "../library/new-piece";
+import { createAndOpenPiece } from "../../_shared/new-piece";
 import { CardNotice, isNewer, UpdateBadge, type CardState } from "./scene-card";
 import { FoldoutTabs } from "./scene-foldout";
 import { pickerPersonas, PersonaPicker } from "./scene-persona-picker";
@@ -53,7 +53,7 @@ function PersonaSession({ ctx, scene, piece, busy, onScene, onSaved, defaultId, 
   const id = scene.chat.cast.persona!.id;
   const editor = useCastEditor<PersonaBody>({ ctx, chatId: scene.chat.id, entity: piece.entity, revision: piece.revision, busy, onScene, onSaved });
   // RoleCall scans the scene's preset for a block that already carries {{persona}} (PersonaPanel.tsx:582-628), here by the assembler's own test.
-  const preset = useBoothPreset(ctx, scene.chat.preset?.id ?? null);
+  const preset = useBoothPreset(ctx, scene.chat.preset ?? null);
   const scan: PresetScan = preset.state === "loading" ? "loading" : preset.state === "ready" ? personaMacroBlock(preset.body, scene.chat.preset?.toggles) : null;
   return <PersonaForm ctx={ctx} id={id} editor={editor} summary={piece.summary} art={artAccentOf(piece.entity)} stats={stats} defaultId={defaultId} busy={busy}
     character={bodyOf(scene.snapshot.character) as unknown as CharacterBody} scan={scan} onOpenPicker={onOpenPicker} onSetDefault={onSetDefault} />;

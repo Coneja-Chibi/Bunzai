@@ -5,7 +5,7 @@ import { captureLoadout } from "./loadout-capture";
 
 const live: SceneSettings = {
   connection: { id: "c1", model: "m" },
-  preset: { id: "p1", toggles: { a: true }, samplers: { temperature: 0.7 } },
+  preset: { kind: "preset", id: "p1", toggles: { a: true }, samplers: { temperature: 0.7 } },
   lore: { added: ["b1"], off: ["b2"] },
   props: { on: ["dice"] },
   prompting: { guides: ["g1"], note: { text: "Tense.", position: "in_chat", depth: 4, frequency: 2 } },
@@ -16,7 +16,7 @@ const ALL = ["preset", "persona", "mainModel", "samplers", "lorebooks", "stageSe
 
 test("each of the nine live panels reads its own field of the scene", () => {
   expect(captureLoadout(live, ALL)).toEqual({
-    preset: { id: "p1", toggles: { a: true } },
+    preset: { kind: "preset", id: "p1", toggles: { a: true } },
     persona: "persona-1",
     mainModel: { id: "c1", model: "m" },
     samplers: { temperature: 0.7 },

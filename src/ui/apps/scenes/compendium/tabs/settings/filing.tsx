@@ -13,7 +13,7 @@ import { SettingsField, SettingsSection, SettingsStepper, SettingsSwitch, Settin
 import type { SectionProps } from "./deps";
 
 const COPY = { title: "What should it preserve?", hint: "Optional guidance for filing, such as tracking relationships, promises, or injuries. It cannot widen what Compendium may write.", id: "cps-filing-guide" };
-const WHEN = ["Right away", "On your next message", ...[2, 3, 4, 5].map((n) => `After ${n} more messages`)];
+export const WHEN = ["Right away", "On your next message", ...[2, 3, 4, 5].map((n) => `After ${n} more messages`)];
 
 export function FilingSection({ compendium, guides, set }: SectionProps): JSX.Element {
   const f = compendium.resolved.filing;

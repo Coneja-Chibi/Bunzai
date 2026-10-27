@@ -29,12 +29,12 @@ describe("Character tab: New scene defaults", () => {
     await wait(10);
     const select = m.host.querySelector<HTMLSelectElement>('[data-part="scene.cast.defaults.preset"]')!;
     const w = select.ownerDocument.defaultView!;
-    select.value = "p1";
+    select.value = "preset:p1";
     select.dispatchEvent(new w.Event("change", { bubbles: true }));
     await wait(10);
     m.host.querySelector<HTMLElement>('[aria-label="Turn on Story Director for new scenes"]')!.click();
     await wait(10);
-    expect(r.prefs.get(CHARACTER_DEFAULTS_PREF)).toEqual({ other: { presetId: "z" }, ch1: { presetId: "p1", director: true } });
+    expect(r.prefs.get(CHARACTER_DEFAULTS_PREF)).toEqual({ other: { presetId: "z" }, ch1: { presetKind: "preset", presetId: "p1", director: true } });
     m.done();
   });
 
@@ -58,7 +58,7 @@ describe("Character tab: New scene defaults", () => {
   });
 
   test("a saved preset that is gone is named, not hidden", async () => {
-    const r = rig({ ch1: { presetId: "deleted" } });
+    const r = rig({ ch1: { presetKind: "preset", presetId: "deleted" } });
     const m = await mountSingle(installed, createElement(DefaultsSection, { ctx: r.ctx, chat: r.chat }));
     await wait(10);
     expect(m.host.textContent).toContain("no longer in your library");

@@ -11,7 +11,7 @@
  */
 import { useState, type CSSProperties, type DragEvent, type JSX } from "react";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { deckMeta } from "../../../_shared/decks";
+import { pieceColor } from "../../../_shared/decks";
 import { pieceKey, type DeckView, type DeckViewContext } from "../view-contract";
 import { icSvg } from "../../../_shared/ic-svg";
 import { Button, Tile, Toggle } from "../../../components/button";
@@ -77,7 +77,7 @@ function SetCard({
   const slow = rgx?.slowCountOf(e) ?? 0;
   const [over, setOver] = useState(false);
   const menuRef = ctx.menus.useContextMenu(() => ({ type: "entity", label: e.name, data: e }));
-  const accent = e.accent ?? deckMeta(e.kind).accent;
+  const accent = pieceColor(e);
 
   const onDragStart = (ev: DragEvent): void => {
     ev.dataTransfer.setData(DRAG_MIME, e.id);

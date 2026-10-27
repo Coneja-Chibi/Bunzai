@@ -109,8 +109,9 @@ export function evaluateNodes(nodes: ASTNode[], context: MacroContext, state: Ev
   let out = "";
   for (const node of nodes) {
     if (state.overBudget) return out;
-    if (++state.steps > MAX_EVAL_STEPS) {
-      overflow(state, `evaluation step budget of ${MAX_EVAL_STEPS} hit; truncated`);
+    const limit = Number.isFinite(context.maxSteps) ? Math.min(Math.floor(context.maxSteps!), MAX_EVAL_STEPS) : MAX_EVAL_STEPS;
+    if (++state.steps > limit) {
+      overflow(state, `evaluation step budget of ${limit} hit; truncated`);
       return out;
     }
     switch (node.type) {

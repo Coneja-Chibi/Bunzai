@@ -11,7 +11,7 @@ import { runLoadout } from "./loadout-run";
 const note = { text: "Tense.", position: "in_chat", depth: 4, frequency: 2 } as const;
 const loadout = {
   id: "l1", name: "Slow burn", panels: ["preset", "mainModel", "lorebooks", "stagecraftProps", "guides", "authorNote", "stageSettings"],
-  values: { preset: { id: "p", toggles: { a: true } }, mainModel: { id: "c", model: "m" }, lorebooks: { added: ["b"], off: [] }, stagecraftProps: { on: ["dice"] }, guides: ["g"], authorNote: note, stageSettings: { backdrop: { pack: "k", item: "i" } } },
+  values: { preset: { kind: "preset", id: "p", toggles: { a: true } }, mainModel: { id: "c", model: "m" }, lorebooks: { added: ["b"], off: [] }, stagecraftProps: { on: ["dice"] }, guides: ["g"], authorNote: note, stageSettings: { backdrop: { pack: "k", item: "i" } } },
 };
 const input = (fake: ReturnType<typeof fakeLoadoutApi>, over = {}) => ({ api: fake.api, chatId: "c1", loadout, now: 5_000, newCode: () => "LD-1", ...over });
 

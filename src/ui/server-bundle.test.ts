@@ -16,6 +16,9 @@ import { STALE_SESSION } from "./_shared/session-marker";
 import { STALE_SESSION as SERVER_STALE } from "./server-security";
 import { readFileSync } from "node:fs";
 import { dataToBody } from "../formats/_shared/tavern-fields";
+import { emptyPresetBody } from "../entities/preset/schema";
+import { emptyPersonaBody } from "../entities/persona/schema";
+import { emptyRegexSetBody } from "../entities/regex/schema";
 
 describe("bundle inspect/export/save", () => {
   beforeAll(async () => {
@@ -127,12 +130,12 @@ describe("bundle inspect/export/save", () => {
     const body = await res2.json() as {
       ok: boolean;
       entity: { body: { knowledgeRefs?: string[] } };
-      related?: { lorebooks?: { id: string; kind: string }[] };
+      related?: { id: string; kind: string }[];
       receipt?: { extras: string[] };
     };
     expect(body.ok).toBe(true);
-    expect(body.related?.lorebooks?.length).toBe(1);
-    const bookId = body.related!.lorebooks![0]!.id;
+    expect(body.related?.map((p) => p.kind)).toEqual(["lorebook"]);
+    const bookId = body.related![0]!.id;
     expect(body.entity.body.knowledgeRefs).toEqual([bookId]);
     expect(body.receipt?.extras.some((x) => x.includes("lorebook"))).toBe(true);
   });
@@ -165,13 +168,15 @@ describe("bundle inspect/export/save", () => {
     ).json() as {
       ok: boolean;
       kind?: string;
-      entity: unknown;
-      related?: { regexSets?: { kind: string }[] };
+      entity: { body: { behaviorRefs?: string[] } };
+      related?: { kind: string; id: string }[];
       receipt?: { extras: string[] };
     };
     expect(inspected.ok).toBe(true);
     expect(inspected.kind).toBe("preset");
-    expect(inspected.related?.regexSets?.length).toBe(1);
+    expect(inspected.related?.map((p) => p.kind)).toEqual(["regex"]);
+    // the extracted set is LINKED from the preset, as a card's book is (it used to be saved beside it, unlinked)
+    expect(inspected.entity.body.behaviorRefs).toEqual([inspected.related![0]!.id]);
     expect(inspected.receipt?.extras.some((x) => x.includes("regex"))).toBe(true);
 
     const saveRes = await handler(
@@ -188,6 +193,17 @@ describe("bundle inspect/export/save", () => {
     expect(saved.primary.kind).toBe("preset");
     expect(saved.related.map((r) => r.kind)).toEqual(["regex"]);
     expect(await store.read("regex", saved.related[0]!.id)).not.toBeNull();
+    const shelved = await store.read("preset", saved.primary.id);
+    expect((shelved!.body as { behaviorRefs?: string[] }).behaviorRefs).toEqual([saved.related[0]!.id]);
+
+    // export writes the linked set back into the preset file (the app and Kit share convert.ts emitPieces)
+    const exported = await (await handler(apiReq("/api/export", {
+      method: "POST",
+      token: sec.token,
+      contentType: "application/json",
+      body: JSON.stringify({ entity: shelved, targetId: "sillytavern-preset" }),
+    }))).json() as { text?: string };
+    expect(JSON.parse(exported.text!).extensions.regex_scripts).toHaveLength(1);
   });
 
   test("save-bundle then export re-embeds book; missing ref fails", async () => {
@@ -207,7 +223,7 @@ describe("bundle inspect/export/save", () => {
       await handler(new Request("http://127.0.0.1:8321/api/inspect", { method: "POST", headers, body: bytes }))
     ).json() as {
       entity: unknown;
-      related?: { lorebooks?: unknown[] };
+      related?: unknown[];
     };
 
     const saveRes = await handler(
@@ -226,14 +242,13 @@ describe("bundle inspect/export/save", () => {
       ok: boolean;
       primary: { id: string; kind: string };
       related: { id: string; kind: string }[];
-      knowledgeRefs: string[];
     };
     expect(saved.ok).toBe(true);
     expect(saved.related[0]?.kind).toBe("lorebook");
-    expect(saved.knowledgeRefs).toEqual([saved.related[0]!.id]);
 
     const entity = await store.read(saved.primary.kind, saved.primary.id);
     expect(entity).not.toBeNull();
+    expect((entity!.body as { knowledgeRefs?: string[] }).knowledgeRefs).toEqual([saved.related[0]!.id]);
 
     const expRes = await handler(
       apiReq("/api/export", {
@@ -374,6 +389,29 @@ describe("exporting through the route", () => {
     }));
     expect(res.status).toBe(422);
     expect(JSON.stringify(await res.json())).toMatch(/portrait/i);
+    await rm(dir, { recursive: true, force: true });
+  });
+
+  test("only links the file carries inside it can refuse an export; other dangling links do not block it", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "vaude-export-"));
+    const sec = filledSec();
+    const handler = createHandler(new StudioStore(dir), new SettingsStore(dir), undefined, sec);
+    const send = (entity: unknown, targetId: string) => handler(apiReq("/api/export", {
+      method: "POST", token: sec.token, contentType: "application/json", body: JSON.stringify({ entity, targetId }),
+    }));
+    const preset = (refs: object) => ({ schemaVersion: "1", kind: "preset", id: "p", body: { ...emptyPresetBody("P"), ...refs } });
+    expect((await send(preset({ quickReplyRefs: ["gone"] }), "sillytavern-preset")).status).toBe(200);
+    expect((await send({ schemaVersion: "1", kind: "character", id: "c", body: { ...dataToBody({ name: "C" } as never), behaviorRefs: ["gone"] } }, "sillytavern")).status).toBe(200);
+    expect((await send({ schemaVersion: "1", kind: "persona", id: "pe", body: { ...emptyPersonaBody("Pe"), knowledgeRefs: ["gone"] } }, "lumiverse-persona")).status).toBe(200);
+    const refused = await send(preset({ behaviorRefs: ["gone-set"] }), "sillytavern-preset");
+    expect(refused.status).toBe(422);
+    expect((await refused.json() as { error: string }).error).toContain('regex "gone-set"');
+    // a format with no slot for regex sets never carries them, so their broken link cannot block it
+    expect((await send(preset({ behaviorRefs: ["gone-set"] }), "lumiverse-preset")).status).toBe(200);
+    await handler(apiReq("/api/studio/save", { method: "POST", token: sec.token, contentType: "application/json", body: JSON.stringify({ schemaVersion: "1", kind: "regex", id: "kept", body: emptyRegexSetBody("Kept") }) }));
+    const warned = await send(preset({ behaviorRefs: ["kept"] }), "lumiverse-preset");
+    expect(warned.status).toBe(200);
+    expect((await warned.json() as { report: { warnings: string[] } }).report.warnings).toContain("lumiverse-preset does not carry regex rules inside a preset file; export the set alongside it");
     await rm(dir, { recursive: true, force: true });
   });
 });

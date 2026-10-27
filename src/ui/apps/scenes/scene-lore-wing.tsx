@@ -18,7 +18,7 @@ import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import type { LorebookEntry } from "../../../entities/lorebook/schema";
 import type { Chat } from "../../../stage/contracts/chat-store";
 import { emptyLoreEntry } from "../../../core/lore";
-import { createLorebook } from "../../_shared/create-lorebook";
+import { createBlank } from "../../_shared/new-piece";
 import { Ic } from "../../_shared/ic";
 import { newUiId } from "../../_shared/new-id";
 import { toErrorMessage } from "../../_shared/error-message";
@@ -234,7 +234,7 @@ export function useLoreWing(ctx: AppContext, chat: Chat, onLore: (books: SceneLo
   /** "+ New Lorebook": the same empty-book factory and save call as the Library's own "New lorebook", then added and opened here. */
   const createBook = async (name: string): Promise<void> => {
     try {
-      const summary = await createLorebook(ctx, name);
+      const summary = await createBlank(ctx, "lorebook", name);
       add(summary.id);
       setPicking("none");
       setSelectedBookId(summary.id);

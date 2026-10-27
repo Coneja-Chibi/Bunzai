@@ -406,7 +406,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     ...(sink.report() ? { macros: sink.report()! } : {}),
     ...(changes.length > 0 ? { changes } : {}),
     maxTokens: input.preset?.samplers?.maxTokens ?? DEFAULT_MAX_TOKENS,
-    expansion: { names: { user: userName, char: card.name }, expand: (text) => macros.historical(text) },
+    expansion: { names: { user: userName, char: card.name }, expand: (text) => macros.historical(text), context: macros.context },
     ...(prefill ? { prefill } : {}),
     ...(continueNudge ? { continueNudge } : {}),
     ...(loreResult ? { lore: loreResult } : {}),

@@ -2,7 +2,8 @@
 import { z } from "zod";
 import type { SpritePackItem, SpritePackValue } from "../../core/media/pack";
 import { defineExhaustiveShape } from "../_shared/runtime-shape";
-import type { PackBody } from "./schema";
+import type { PackBody, CanonicalPack } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const itemShape = defineExhaustiveShape<SpritePackItem>()({
   id: z.string(),
@@ -30,3 +31,5 @@ const bodyShape = defineExhaustiveShape<PackBody>()({
 
 export const packBodySchema = z.strictObject(bodyShape);
 export const packProfileSchema = packBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalPack>()(entityShape("pack", packBodySchema, packProfileSchema)));

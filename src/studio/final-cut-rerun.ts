@@ -53,7 +53,7 @@ export async function rerunFinalCut(
   if (!message || message.role !== "assistant") throw new StudioNotFoundError("that reply is gone");
   const swipe = message.swipes[message.current]!;
   const history = live.slice(0, at).map((m) => ({ role: m.role, content: m.swipes[m.current]!.content }));
-  const preset = chat.preset ? await deps.readPreset(chat.preset.id).catch(() => null) : null;
+  const preset = chat.preset ? await deps.readPreset(chat.preset.id, chat.preset.kind).catch(() => null) : null;
   const out = await finalCutStage({
     deps, chat: { ...chat, finalCut: { ...chat.finalCut, on: true } }, text: swipe.content, history, format: resolveReasoning(preset?.reasoning, chat.prompting), signal, emit: () => undefined,
     ...(deps.finalCutBanks ? { userBanks: deps.finalCutBanks } : {}),

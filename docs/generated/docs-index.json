@@ -1,6 +1,6 @@
 {
-  "generated": "2026-10-26",
-  "count": 119,
+  "generated": "2026-10-27",
+  "count": 125,
   "docs": [
     {
       "id": "01-VISION",
@@ -1263,10 +1263,10 @@
       "path": "docs/FORMAT-SUPPORT.md",
       "title": "Format support matrix",
       "audience": "dev",
-      "summary": "Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-12.",
+      "summary": "Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-27.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, six lorebook, four persona, four preset, five regex-set, one quick-reply, and one prompt-format adapter. The quick-reply row is SillyTavern's version 2 qrList JSON format and promises semantic JSON preservation, not byte identity. Packs have one adapter, image-pack, a ZIP of pictures; HTML documents remain a canonical studio kind with no foreign format adapters and are intentionally canonical-only drawings. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
+      "semanticSummary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, seven lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
       "topics": [
         "format support matrix",
         "live adapter registry",
@@ -1275,7 +1275,7 @@
         "bunraku formats convert inspect",
         "content sniff detection",
         "round trip lossless",
-        "sprite packs none yet",
+        "image-pack zip",
         "samples fixtures",
         "format matrix auto-generated",
         "prompt formats"
@@ -1341,6 +1341,18 @@
           "children": []
         },
         {
+          "text": "Packs (1)",
+          "slug": "packs-1",
+          "level": 2,
+          "summary": "Packs (1): the live matrix lists one pack adapter, image-pack, kind pack, which writes .zip files and is labeled Pack (zip of pictures and sounds). The row is derived from the registered adapter, so the section count, id, kind, written extension and label change only when the runtime registry changes, as for every section of this generated page.",
+          "topics": [
+            "image-pack adapter",
+            "zip of pictures and sounds",
+            "generated row"
+          ],
+          "children": []
+        },
+        {
           "text": "Presets (4)",
           "slug": "presets-4",
           "level": 2,
@@ -1355,10 +1367,22 @@
           "children": []
         },
         {
-          "text": "Regex script sets (5)",
-          "slug": "regex-script-sets-5",
+          "text": "Script Sheets (1)",
+          "slug": "script-sheets-1",
           "level": 2,
-          "summary": "Five regex script set adapters, all writing .json. lumiverse-regex is a versioned export file. marinara-regex is an API dump array. risu-regex covers .risum module or customscript array. rolecall-regex is a chat-pipeline find and replace set. sillytavern-regex is a bare array or card extensions.regex_scripts. All are kind regex.",
+          "summary": "Script Sheets (1): the live matrix lists one Script Sheet adapter, rolecall-script-sheet, kind scriptsheet, which writes .json files and is labeled RoleCall Script Sheet export (one instruction, with the blocks it sends). It is the only adapter registered for the scriptsheet kind, and its section sits after the presets in the kind hub's order, under the kind hub's plural name. The row is derived from the registered adapter, so the section count, id, kind, written extension and label change only when the runtime registry changes, as for every section of this generated page.",
+          "topics": [
+            "rolecall-script-sheet",
+            "scriptsheet kind",
+            "generated row"
+          ],
+          "children": []
+        },
+        {
+          "text": "Regex sets (5)",
+          "slug": "regex-sets-5",
+          "level": 2,
+          "summary": "Five regex set adapters, all writing .json. lumiverse-regex is a versioned export file. marinara-regex is an API dump array. risu-regex covers .risum module or customscript array. rolecall-regex is a chat-pipeline find and replace set. sillytavern-regex is a bare array or card extensions.regex_scripts. All are kind regex.",
           "topics": [
             "lumiverse regex export",
             "marinara regex dump",
@@ -1370,40 +1394,50 @@
           "children": []
         },
         {
-          "text": "Packs (1)",
-          "slug": "packs-1",
-          "level": 2,
-          "summary": "Packs list one format adapter in the live matrix: image-pack, a ZIP of pictures (png, jpg, gif, webp) and nothing else, read into a pack with one item per picture labeled by file name, so a folder such as SillyTavern backgrounds comes in through the Library import. A ZIP that holds anything else is not claimed. Writing a pack back to a ZIP works only for inline pictures.",
-          "topics": [
-            "image-pack adapter",
-            "zip of pictures",
-            "Library import"
-          ],
-          "children": []
-        },
-        {
-          "text": "Htmldocs (0)",
-          "slug": "htmldocs-0",
-          "level": 2,
-          "summary": "Drawings list zero format adapters, and unlike the other empty kinds that is by design rather than pending work. An htmldoc is an HTML document the agent authors and the studio keeps as a piece so it can be named, grouped, duplicated and deleted like anything else; it is canonical-only and there is no foreign app to import one from or export one to. The kind exists for storage and for the HTML View tab, which draws it with scripts and network access off. If a platform ever ships a comparable saved-page format, an adapter belongs here.",
-          "topics": [
-            "drawings empty by design",
-            "htmldoc canonical only",
-            "no foreign saved-page format",
-            "HTML View draws it sealed"
-          ],
-          "children": []
-        },
-        {
           "text": "Quick replies (1)",
           "slug": "quick-replies-1",
           "level": 2,
-          "summary": "The live matrix lists one quick-reply adapter. sillytavern-quickreply reads and writes JSON files for SillyTavern Quick Reply sets, using the version 2 qrList container. It is a dedicated quickreply adapter rather than a character, preset, or regex reader, and its declared output extension is JSON. The matrix derives this row from the registered adapter, so the section count, id, kind, writable extension, and descriptive label change only when the runtime registry changes.",
+          "summary": "Quick replies (1): the live matrix lists one quick-reply adapter, sillytavern-quickreply, kind quickreply, which writes .json and is labeled SillyTavern quick-reply set. It is the one format through which a quick-reply set is imported from or exported to another app in this registry. The row is derived from the registered adapter, so the section count, id, kind, written extension and label change only when the runtime registry changes, as for every section of this generated page.",
           "topics": [
             "sillytavern-quickreply",
-            "qrList version 2 wire",
-            "escrowed switches",
-            "preset quickReplyRefs"
+            "SillyTavern quick-reply set",
+            "generated row"
+          ],
+          "children": []
+        },
+        {
+          "text": "Tools (0)",
+          "slug": "tools-0",
+          "level": 2,
+          "summary": "Tools (0): the matrix lists no adapter for tools, kind tool. Its section shows the generated placeholder row: none yet, kind tool, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Tools, comes from the kind hub's plural for tool, and it sits after the quick replies in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
+          "topics": [
+            "tool kind",
+            "no adapter",
+            "generated placeholder"
+          ],
+          "children": []
+        },
+        {
+          "text": "Dice (0)",
+          "slug": "dice-0",
+          "level": 2,
+          "summary": "Dice (0): the matrix lists no adapter for dice, kind dice. Its section shows the generated placeholder row: none yet, kind dice, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Dice, comes from the kind hub's plural for dice, and it sits after the tools in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
+          "topics": [
+            "dice kind",
+            "no adapter",
+            "generated placeholder"
+          ],
+          "children": []
+        },
+        {
+          "text": "Formulas (0)",
+          "slug": "formulas-0",
+          "level": 2,
+          "summary": "Formulas (0): the matrix lists no adapter for formulas, kind formula. Its section shows the generated placeholder row: none yet, kind formula, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Formulas, comes from the kind hub's plural for formula, and it sits after the dice in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
+          "topics": [
+            "formula kind",
+            "no adapter",
+            "generated placeholder"
           ],
           "children": []
         },
@@ -1411,11 +1445,23 @@
           "text": "Prompt formats (1)",
           "slug": "prompt-formats-1",
           "level": 2,
-          "summary": "The live matrix lists one prompt-format adapter. sillytavern-promptformat reads and writes JSON for SillyTavern instruct and context templates, and the master wrapper holding both, as one promptformat piece. The row comes from the registered adapter, so it changes only when the registry does.",
+          "summary": "Prompt formats (1): the live matrix lists one prompt-format adapter, sillytavern-promptformat, kind promptformat, which writes .json and is labeled SillyTavern prompt format (instruct and context templates). It is the only format for this kind in the registry. The row is derived from the registered adapter, so the section count, id, kind, written extension and label change only when the runtime registry changes, the same rule as every other section of this generated page.",
           "topics": [
             "sillytavern-promptformat",
             "instruct and context templates",
-            "master wrapper"
+            "generated row"
+          ],
+          "children": []
+        },
+        {
+          "text": "Drawings (0)",
+          "slug": "drawings-0",
+          "level": 2,
+          "summary": "Drawings (0): the matrix lists no adapter for drawings, kind htmldoc. Its section shows the generated placeholder row: none yet, kind htmldoc, nothing written, and the line that the studio edits this kind but no import or export format exists yet. The section title, Drawings, comes from the kind hub's plural for htmldoc. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered.",
+          "topics": [
+            "no adapter yet",
+            "htmldoc kind",
+            "placeholder row"
           ],
           "children": []
         },
@@ -4077,7 +4123,7 @@
         "reference/formats/sillytavern",
         "reference/concepts/canonical-model"
       ],
-      "semanticSummary": "This reference maps Bunraku's implemented engine and tool architecture. Hub and spoke explains why every external format maps through one canonical model. The canonical entity defines the shared wrapper and superset rule; escrow preserves source twins and binary carriers without moving private or executable payloads across formats. The adapter contract uses a kind-discriminated open format system, attaches serialization-loss reports, and routes canonical JSON through strict per-kind decoders. defineExhaustiveShape<T>() demands exact schema input and output parity, rejecting drift escapes such as narrowed unions and coercion while leaving declared record bags open. Detection ranks confident kind-correct adapters, and folder discovery supplies the registry. Bundles extract and re-embed lorebook references. Semantic content capabilities define pure previews, progressive discovery, bounded reads and stored results, independently reviewed semantic docs, and explicit compare-and-save apply with re-read verification. Layering points dependencies inward across CLI, installed Studio, and a static browser Studio that reuses the same adapters and API contract over a memory ContentStore and StateStore. The stage section records the encrypted library: a versioned ContentStore with a 3-day Trash and ids never reused, a StateStore for the Studio's own documents, and plain folders only through the folder import and export; source-of-truth links name the governing modules. Integrated PieceStore, cold-worker, snapshot, asset/search and scale-evidence source paths are independently reviewed; runtime and packaged proof remain pending. The source-of-truth map now names the snapshot and health-check files under src/stage/store/sqlite and the host-only care routes.",
+      "semanticSummary": "This reference maps Bunraku's implemented engine and tool architecture. Hub and spoke explains why every external format maps through one canonical model. The canonical entity defines the shared wrapper and superset rule; escrow preserves source twins and binary carriers without moving private or executable payloads across formats. The adapter contract uses one generic KindAdapter per kind over the closed kind set from the kind hub (src/entities/<kind>/kind.ts, generated by bun run kinds) with open drop-in formats, attaches serialization-loss reports, and routes canonical JSON through strict per-kind decoders. defineExhaustiveShape<T>() demands exact schema input and output parity, rejecting drift escapes such as narrowed unions and coercion while leaving declared record bags open. Detection ranks confident kind-correct adapters, and folder discovery supplies the registry. Bundles extract and re-embed lorebook references. Semantic content capabilities define pure previews, progressive discovery, bounded reads and stored results, independently reviewed semantic docs, and explicit compare-and-save apply with re-read verification. Layering points dependencies inward across CLI, installed Studio, and a static browser Studio that reuses the same adapters and API contract over a memory ContentStore and StateStore. The stage section records the encrypted library: a versioned ContentStore with a 3-day Trash and ids never reused, a StateStore for the Studio's own documents, and plain folders only through the folder import and export; source-of-truth links name the governing modules. Integrated PieceStore, cold-worker, snapshot, asset/search and scale-evidence source paths are independently reviewed; runtime and packaged proof remain pending. The source-of-truth map now names the snapshot and health-check files under src/stage/store/sqlite and the host-only care routes.",
       "topics": [
         "hub and spoke conversion",
         "canonical entity and superset",
@@ -4152,7 +4198,7 @@
           "text": "The adapter contract",
           "slug": "the-adapter-contract",
           "level": 2,
-          "summary": "src/core/adapter.ts defines a kind-discriminated union of open format plugins whose character, lorebook, persona, preset, regex, and quickreply branches convert to and from matching canonical entities. Adapter output carries text or bytes, suggestedExtension, and a SerializeReport naming escrowed, dropped, shadowed, and warning paths. An adapter normally owns the source twin under its own id; escrowFormatIds explicitly declares family-keyed twins when a narrower wire adapter owns one, such as rolecall-preset owning original.rolecall. Loss reporting can therefore exclude genuine same-format escrow without hiding unrelated foreign data. Canonical JSON crosses storage and HTTP through src/entities/runtime-schema.ts, which composes eight strict per-kind decoders. Each adjacent runtime schema uses defineExhaustiveShape<T>() to require exact input and output parity; missing or extra keys, narrowed unions, coercion, any, and never fail typecheck. Unknown same-version keys fail except in declared open bags. Kind-matched profiles are shallow partial bodies whose present fields receive complete validation. Storage, HTTP save, format-corpus verification, and Kit drafts share this ADR-011 boundary.",
+          "summary": "The adapter contract: src/core/adapter.ts defines one generic KindAdapter<K> (kind, toCanonical returning that kind's canonical piece, fromCanonical with an optional EmitContext that carries embedded lorebooks) and FormatAdapter as the union of it over every kind in the generated kind seam; character cards add extractLorebook and presets add extractRegex and embedRegex. Formats are open drop-in folders; kinds are a closed set that grows by adding an entities/<kind>/ folder with its kind.ts and running bun run kinds. Adapter output carries text or bytes, suggestedExtension, and a SerializeReport naming escrowed, dropped, shadowed, and warning paths; escrowFormatIds declares family-keyed twins such as rolecall-preset owning original.rolecall, so loss reporting excludes genuine same-format escrow. Canonical JSON crosses storage and HTTP through src/entities/runtime-schema.ts, which unions every kind's whole-entity entitySchema (the shared envelope in _shared/envelope.ts plus its body) collected by the generated kind seam. Each runtime schema uses defineExhaustiveShape<T>() for exact input and output parity; missing or extra keys, narrowed unions, coercion, any, and never fail typecheck. Storage, HTTP save, format-corpus verification, and Kit drafts share this ADR-011 boundary.",
           "topics": [
             "kind-discriminated union",
             "toCanonical fromCanonical",
@@ -4625,7 +4671,7 @@
           "text": "Components (React, `.tsx`)",
           "slug": "components-react-tsx",
           "level": 2,
-          "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, shared controls, Library, Workbench editors, Scenes, and Settings and documentation surfaces. BookCover composes lorebook presentation, Proscenium frames scene artwork, and LightRays supplies capped premiere beams. Rows are generated discovery metadata, not proof of behavior or a second registry; consult reference/ui and source for the live contract. It also lists the Stage AccentRow, Compendium Settings tab, the Participants rows with the Add participant form, the Storyboards dossier, the Props wing with twelve tracker panels, and the Messenger shell, panels and settings rows and the shared VirtualRows and VirtualShelf lists. It lists the shared RoomHeader and Panel, the Agent room's RoomFrame and DockedHead, EditorEhead with its optional kind and deck props, and the Settings StageLightsRow and ProtectedLine.",
+          "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, shared controls, Library, Workbench editors, Scenes, and Settings and documentation surfaces. BookCover composes lorebook presentation, Proscenium frames scene artwork, and LightRays supplies capped premiere beams. Rows are generated discovery metadata, not proof of behavior or a second registry; consult reference/ui and source for the live contract. It also lists the Stage AccentRow, Compendium Settings tab, the Participants rows with the Add participant form, the Storyboards dossier, the Props wing with its tracker panels, and the Messenger shell, panels and settings rows (including the Compendium, Final Cut, models and prompt rows) and the shared VirtualRows and VirtualShelf lists. It lists the shared RoomHeader and Panel, the Agent room's RoomFrame and DockedHead, EditorEhead with its optional kind and deck props, and the Settings StageLightsRow and ProtectedLine.",
           "topics": [
             "React tsx exports",
             "shell Dock App",
@@ -4678,11 +4724,11 @@
         "reference/formats/sillytavern",
         "reference/formats/agnai"
       ],
-      "semanticSummary": "Bundles explain how a character card that embeds a lorebook becomes two linked canonical entities instead of one blob. On import the embedded book splits into a standalone CanonicalLorebook while the character keeps only body.knowledgeRefs id links; on export the target adapter re-embeds resolved lorebooks into its native slot. The page is the join mechanism and call-site lifetimes, not the CCv2/v3 wire map (see character-book) or the shared wrapper (see canonical-model). knowledgeRefs: the join field is an ordered id list distinct from worldName, which names an external worldbook by title. Import: extract at the boundary runs inspectBundle with shared extractCharacterBook or an adapter extractLorebook override such as Agnai. Export: re-embed at the boundary runs emitBundle with EmitContext lorebooks and multi-book merge when the wire has one slot. Two call sites, two lifetimes contrast the CLI one-shot convertFile path with Studio persist-resolve-export. Source of truth tables convert.ts, adapter contracts, studio bundle, and CLI wiring.",
+      "semanticSummary": "Bundles explain how a character card that embeds a lorebook becomes two linked canonical entities instead of one blob. On import the embedded book splits into a standalone CanonicalLorebook while the character keeps only body.knowledgeRefs id links; on export the target adapter re-embeds resolved lorebooks into its native slot. The page is the join mechanism and call-site lifetimes, not the CCv2/v3 wire map (see character-book) or the shared wrapper (see canonical-model). knowledgeRefs: the join field is an ordered id list distinct from worldName, which names an external worldbook by title. Import: extract at the boundary runs readPieces with shared extractCharacterBook or an adapter extractLorebook override such as Agnai. Export: re-embed at the boundary runs emitBundle with EmitContext lorebooks and multi-book merge when the wire has one slot. Two call sites, two lifetimes contrast the CLI one-shot convertFile path (readPieces, emitPieces) with Studio persist-resolve-export through core/links.ts. Source of truth tables convert.ts, adapter contracts, studio bundle, and CLI wiring.",
       "topics": [
         "bundle character lorebook",
         "knowledgeRefs join field",
-        "inspectBundle emitBundle",
+        "readPieces emitPieces",
         "import extract boundary",
         "export re-embed boundary",
         "CLI vs Studio lifetimes",
@@ -4708,9 +4754,9 @@
           "text": "Import: extract at the boundary",
           "slug": "import-extract-at-the-boundary",
           "level": 2,
-          "summary": "inspectBundle runs once per import. First source.toCanonical leaves any embedded book inside entity.original in the source raw shape. Extraction then chooses: if CharacterAdapter implements extractLorebook for a dialect the shared mapper cannot read, that override runs; otherwise extractCharacterBook on primaryOriginalRaw handles only CCv2/v3 character_book. Finally knowledgeRefs is set to the new lorebook id. Agnai is the concrete override case with native characterBook MemoryBook and its standalone lorebook codec; SillyTavern, RoleCall, and Risu fall through to the shared path. The shared extractor also escrow-stashes the raw book on the lorebook under key character-book, not the host format id, so later standalone export can still overlay that twin. Wire field mapping lives on the character-book concept page.",
+          "summary": "readPieces runs once per import. First source.toCanonical leaves any embedded book inside entity.original in the source raw shape. Extraction then chooses: if CharacterAdapter implements extractLorebook for a dialect the shared mapper cannot read, that override runs; otherwise extractCharacterBook on primaryOriginalRaw handles only CCv2/v3 character_book. Finally knowledgeRefs is set to the new lorebook id. Agnai is the concrete override case with native characterBook MemoryBook and its standalone lorebook codec; SillyTavern, RoleCall, and Risu fall through to the shared path. The shared extractor also escrow-stashes the raw book on the lorebook under key character-book, not the host format id, so later standalone export can still overlay that twin. Wire field mapping lives on the character-book concept page.",
           "topics": [
-            "inspectBundle steps",
+            "readPieces steps",
             "extractLorebook override",
             "extractCharacterBook shared",
             "Agnai MemoryBook",
@@ -4736,7 +4782,7 @@
           "text": "Two call sites, two lifetimes",
           "slug": "two-call-sites-two-lifetimes",
           "level": 2,
-          "summary": "knowledgeRefs is the same field, but resolution differs by caller. The CLI bunraku convert path is one ephemeral convertFile pass: inspectBundle then emitBundle in memory, no lorebook file on disk; if the target embeds knowledge the book rides inside the single output and CLI only reports entry counts. The Studio persists character and lorebook as separate Library entities. handleInspect returns both pieces; save-bundle writes lorebook first, rewrites knowledgeRefs on keep-both rename, then character. Later export resolves refs via resolveLorebooksFromStore and fails closed with 422 naming missing ids rather than exporting a silent book-less card. Disabled books are omitted with knowledgeRefs named as not carried so export is not a false success. App and CLI both re-embed through the same emitBundle primitive after their own resolution steps.",
+          "summary": "knowledgeRefs is the same field, but resolution differs by caller. The CLI bunraku convert path is one ephemeral convertFile pass: readPieces then emitPieces in memory, no lorebook file on disk; if the target embeds knowledge the book rides inside the single output and CLI only reports entry counts. The Studio persists character and lorebook as separate Library entities. inspectBytes returns the piece and its related pieces; save-bundle writes the related pieces first, records keep-both renames and rewrites every link field naming a renamed piece with withLinksRenamed, then writes the character. Later export (exportCanonical) resolves only the embedded links (a card's lorebooks, a preset's regex sets) with resolveLinks and, for a format that carries them, fails closed with 422 naming each missing embedded piece by kind and id rather than exporting a silent book-less card; links the file never carries never block an export, and what a target cannot carry is a report warning in the CLI as in the app. Disabled books are omitted with knowledgeRefs named as not carried so export is not a false success.",
           "topics": [
             "CLI convertFile ephemeral",
             "Studio two Library entities",
@@ -4750,7 +4796,7 @@
           "text": "Source of truth",
           "slug": "source-of-truth",
           "level": 2,
-          "summary": "Ownership map for bundle code. convert.ts owns inspectBundle, emitBundle, convertFile, and rewriteKnowledgeRefs. adapter.ts defines EmitContext and extractLorebook. character-book.ts owns shared CCv2/v3 extract and re-embed. character schema owns knowledgeRefs and worldName. KnowledgeRail session ops attach and reorder refs. studio/bundle.ts persists lorebook then character. server-engine.ts wires Studio inspect export and fail-closed resolution. cli.ts wires convert. book-ops filters enabled books. Agnai index is the non-CCv3 override example.",
+          "summary": "Ownership map for bundle code. convert.ts owns readPieces, emitPieces, emitBundle and convertFile. core/links.ts follows and renames links, read from each kind's links in kind.ts. adapter.ts defines EmitContext and extractLorebook. character-book.ts owns shared CCv2/v3 extract and re-embed. character schema owns knowledgeRefs and worldName. KnowledgeRail session ops attach and reorder refs. studio/bundle.ts persists related pieces then the character. server-engine.ts wires Studio inspect and export. cli.ts wires convert. book-ops filters enabled books. Agnai index is the non-CCv3 override example.",
           "topics": [
             "convert.ts orchestration",
             "adapter EmitContext",
@@ -4886,7 +4932,7 @@
         "reference/formats/sillytavern",
         "reference/formats/agnai"
       ],
-      "semanticSummary": "The embedded character_book concept explains how a card-carried lorebook becomes a linked CanonicalLorebook on import and is re-inlined into the target format book slot on export. Source is formats/_shared/character-book.ts with convert.ts orchestration; this implements architecture bundles for card-plus-book. A different dialect from the worldbook file covers CCv3 field names versus standalone ST world info, including dual-encoded position under extensions. Import: extract at the boundary finds, maps, escrows under character-book, and links knowledgeRefs, with Non-CCv3 dialects override the extractor for Agnai MemoryBook. Export: inline at the boundary uses EmitContext lorebooks and twin overlay, with Quirks preserved faithfully for use_regex and multi-book merge via vaud_source_books. End to end walks convertFile inspectBundle plus emitBundle for CLI and Studio callers. Source of truth lists mapper, adapter, enums, convert, and canonical files that own each concern for implementers reading the wire path end to end.",
+      "semanticSummary": "The embedded character_book concept explains how a card-carried lorebook becomes a linked CanonicalLorebook on import and is re-inlined into the target format book slot on export. Source is formats/_shared/character-book.ts with convert.ts orchestration; this implements architecture bundles for card-plus-book. A different dialect from the worldbook file covers CCv3 field names versus standalone ST world info, including dual-encoded position under extensions. Import: extract at the boundary finds, maps, escrows under character-book, and links knowledgeRefs, with Non-CCv3 dialects override the extractor for Agnai MemoryBook. Export: inline at the boundary uses EmitContext lorebooks and twin overlay, with Quirks preserved faithfully for use_regex and multi-book merge via vaud_source_books. End to end walks convertFile readPieces plus emitPieces for CLI and Studio callers. Source of truth lists mapper, adapter, enums, convert, and canonical files that own each concern for implementers reading the wire path end to end.",
       "topics": [
         "embedded character_book",
         "linked CanonicalLorebook",
@@ -4930,7 +4976,7 @@
           "text": "Import: extract at the boundary",
           "slug": "import-extract-at-the-boundary",
           "level": 2,
-          "summary": "When a character imports, a format-agnostic layer finds an embedded book and extracts it. findCharacterBook checks CCv3 slot, CCv2 extensions.character_book, and flat V1, returning raw so the caller controls escrow. characterBookToLorebook maps to LorebookBody. extractCharacterBook stashes raw under the new lorebook original key character-book, not the host format id, so dialect owns the escrow shape across host formats. inspectBundle sets knowledgeRefs to the lorebook id. Non-CCv3 dialects override the extractor via CharacterAdapter extractLorebook; Agnai embeds native characterBook MemoryBook and reuses its standalone lorebook mapper so embedded and file imports canonicalize identically.",
+          "summary": "When a character imports, a format-agnostic layer finds an embedded book and extracts it. findCharacterBook checks CCv3 slot, CCv2 extensions.character_book, and flat V1, returning raw so the caller controls escrow. characterBookToLorebook maps to LorebookBody. extractCharacterBook stashes raw under the new lorebook original key character-book, not the host format id, so dialect owns the escrow shape across host formats. readPieces sets knowledgeRefs to the lorebook id. Non-CCv3 dialects override the extractor via CharacterAdapter extractLorebook; Agnai embeds native characterBook MemoryBook and reuses its standalone lorebook mapper so embedded and file imports canonicalize identically.",
           "topics": [
             "findCharacterBook slots",
             "characterBookToLorebook",
@@ -4943,7 +4989,7 @@
               "text": "Non-CCv3 dialects override the extractor",
               "slug": "non-ccv3-dialects-override-the-extractor",
               "level": 3,
-              "summary": "Shared extractCharacterBook understands only CCv2/v3 character_book. Formats with another dialect implement extractLorebook on CharacterAdapter; inspectBundle calls that override when present. Agnai is the case today: native characterBook MemoryBook mapped through agnai-lorebook so books read the same embedded or as files.",
+              "summary": "Shared extractCharacterBook understands only CCv2/v3 character_book. Formats with another dialect implement extractLorebook on CharacterAdapter; readPieces calls that override when present. Agnai is the case today: native characterBook MemoryBook mapped through agnai-lorebook so books read the same embedded or as files.",
               "topics": [
                 "extractLorebook override",
                 "Agnai MemoryBook",
@@ -4984,10 +5030,10 @@
           "text": "End to end",
           "slug": "end-to-end",
           "level": 2,
-          "summary": "convertFile runs the same-kind character path: inspectBundle extracts and links books, then emitBundle hands resolved lorebooks to target fromCanonical. CLI calls convertFile; Studio uses the same primitives with store-resolved knowledgeRefs so both re-embed through identical code and lorebooks survive format hops.",
+          "summary": "convertFile runs the same-kind character path: readPieces extracts and links books, then emitPieces through emitBundle hands resolved lorebooks to target fromCanonical. CLI calls convertFile; Studio uses the same primitives with store-resolved knowledgeRefs so both re-embed through identical code and lorebooks survive format hops.",
           "topics": [
             "convertFile path",
-            "inspectBundle emitBundle",
+            "readPieces emitPieces",
             "CLI and Studio callers",
             "lorebook survives convert"
           ],
@@ -4997,7 +5043,7 @@
           "text": "Source of truth",
           "slug": "source-of-truth",
           "level": 2,
-          "summary": "character-book.ts owns mapping extract and re-embed. adapter.ts owns extractLorebook and EmitContext. lore-enums.ts shares selective logic role and filter. convert.ts orchestrates inspectBundle emitBundle and convertFile. canonical.ts owns wrapper escrow and ids. VAUDEVILLE apps/rc notes are interop facts only for this dialect.",
+          "summary": "character-book.ts owns mapping extract and re-embed. adapter.ts owns extractLorebook and EmitContext. lore-enums.ts shares selective logic role and filter. convert.ts orchestrates readPieces, emitPieces, emitBundle and convertFile. canonical.ts owns wrapper escrow and ids. VAUDEVILLE apps/rc notes are interop facts only for this dialect.",
           "topics": [
             "character-book.ts",
             "adapter convert canonical",
@@ -5990,6 +6036,150 @@
       ]
     },
     {
+      "id": "reference/entities/dice",
+      "path": "docs/reference/entities/dice.md",
+      "title": "Dice entity",
+      "audience": "dev",
+      "summary": "The canonical piece for something a person rolls, made once and used anywhere. One kind with three types, a roll, a table or a pool, all rolled by the same dice math with randomness the caller hands in.",
+      "tags": [
+        "entity",
+        "dice",
+        "roll",
+        "table",
+        "pool",
+        "canonical"
+      ],
+      "related": [
+        "reference/entities/tool",
+        "reference/extending/new-kind",
+        "reference/entities/README"
+      ],
+      "semanticSummary": "The dice entity page covers CanonicalDice, something a person rolls, made once and used anywhere. It is one kind with three types, a roll, a table or a pool, and each carries only the field its type rolls. Rolling itself is not a piece but math in src/core/dice.ts, the same module the roll macro, the battle tracker and the spellbook use, while rollDicePiece in src/core/dice-piece.ts says what each type rolls on randomness the caller hands in. The page lists the types with example results, says a tool links a dice piece by id so a model can roll it with the turn's seeded randomness, gives the rules checked when a piece is saved, and notes that the editor waits for its wireframe while New dice saves a blank 1d20 roll.",
+      "topics": [
+        "CanonicalDice",
+        "roll",
+        "table",
+        "pool",
+        "rollDicePiece",
+        "core/dice.ts"
+      ],
+      "anchors": [
+        {
+          "text": "Types",
+          "slug": "types",
+          "level": 2,
+          "summary": "A roll carries dice, notation such as 2d6 or 1d20+3, and totals it, answering with the piece's name, the notation, each die, the modifier and the total. A table carries rows, from one to two hundred, each a text and a whole weight from one to one thousand; it rolls one die the size of all the weights together and lands on the row that number falls in, so a row of weight two is twice as likely as a row of weight one. A pool carries a count of dice from one to one hundred, their sides from two to one thousand, and a target; each die at or over the target counts as a success, and the answer lists the dice and the number of successes.",
+          "topics": [
+            "roll",
+            "table rows and weights",
+            "pool successes"
+          ],
+          "children": []
+        },
+        {
+          "text": "Where dice are used",
+          "slug": "where-dice-are-used",
+          "level": 2,
+          "summary": "A tool links a dice piece by its id through the tool's dice action, described on the tool page, so a model writing a reply can call that tool and roll the piece. The roll is decided by the turn's seeded randomness, which means the same seed rolls the same result. This is the one place the page names where dice pieces are used today: a dice piece is made once in the Library and any number of tools can link it, instead of each tool carrying its own fixed dice notation. The page does not describe any other host, such as a scene or a promptbook, using dice pieces directly yet.",
+          "topics": [
+            "tool dice action",
+            "seeded randomness",
+            "made once, linked anywhere"
+          ],
+          "children": []
+        },
+        {
+          "text": "The rules",
+          "slug": "the-rules",
+          "level": 2,
+          "summary": "A piece carries exactly the field its type rolls and no other field: a roll carries dice, a table carries rows, and a pool carries pool. A roll's dice must be readable notation of one to one hundred dice of two to one thousand sides, and a pool's target may not be greater than its number of sides. All of these rules are checked when the piece is saved, by the dice kind's strict decoder, so a stored piece can always be rolled and never fails at the moment a tool or anything else asks it for a result. Nothing about the rules is deferred to roll time.",
+          "topics": [
+            "one field per type",
+            "dice limits",
+            "checked on save"
+          ],
+          "children": []
+        },
+        {
+          "text": "Editing",
+          "slug": "editing",
+          "level": 2,
+          "summary": "There is no editor for dice pieces yet. The dice editor waits for its approved wireframe, so no screen for editing a roll, a table or a pool exists in this change. The Library's New dice action saves a blank piece, a roll of 1d20, which is a valid stored piece under the rules above and can be linked from a tool as it is. The section records the missing editor as a known gap rather than describing a surface that is not built, and promises nothing about the editor beyond the wireframe that must be approved first, in the same way the tool page treats its own missing editor.",
+          "topics": [
+            "no editor yet",
+            "blank 1d20"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "reference/entities/formula",
+      "path": "docs/reference/entities/formula.md",
+      "title": "Formula entity",
+      "audience": "dev",
+      "summary": "The canonical piece for a saved macro expression, such as a word count over the chat plus a roll, made once and run anywhere. A tool can run one; it runs on a copy of the turn's macro context and is refused when it would change anything.",
+      "tags": [
+        "entity",
+        "formula",
+        "macro",
+        "tool",
+        "canonical"
+      ],
+      "related": [
+        "reference/macro-engine",
+        "reference/entities/tool",
+        "reference/entities/dice"
+      ],
+      "semanticSummary": "The formula entity page covers CanonicalFormula, a saved macro expression of up to twenty thousand characters, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The editor waits for its wireframe.",
+      "topics": [
+        "CanonicalFormula",
+        "macro expression",
+        "runFormulaReadOnly",
+        "tool formula action",
+        "read-only"
+      ],
+      "anchors": [
+        {
+          "text": "Where formulas run",
+          "slug": "where-formulas-run",
+          "level": 2,
+          "summary": "A tool runs a formula through its formula action, described on the tool page, and the model is told what the formula renders. The formula reads the macro context the turn built its prompt from: the card, the persona, the history before the message being answered, and the variables as the prompt left them. That context is handed to the tools through ToolsContext.macros once the prompt is built, because tools are made before the prompt exists but called after it, and a call that somehow arrives before the context is there is refused instead of running against an empty context. Tools are the only place formulas run today.",
+          "topics": [
+            "tool formula action",
+            "ToolsContext.macros",
+            "prompt's macro context"
+          ],
+          "children": []
+        },
+        {
+          "text": "Safety",
+          "slug": "safety",
+          "level": 2,
+          "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula runs on its own budget of 1,000 steps, enough for roughly 100 macro calls, and the word-watching macros search for at most 200 new words in one run, so a model calling formulas again and again cannot tie up the server: the worst cases measured stop in about 55 ms per call, held under 500 ms by a test. Each call takes its own seed.",
+          "topics": [
+            "structuredClone copy",
+            "writes refused out loud",
+            "pick refused",
+            "FORMULA_STEPS budget",
+            "per-call seed"
+          ],
+          "children": []
+        },
+        {
+          "text": "Editing",
+          "slug": "editing",
+          "level": 2,
+          "summary": "There is no editor for formulas yet. The formula editor waits for its approved wireframe, so no screen for writing or testing a formula exists in this change. The Library's New formula action saves a blank formula, and a blank formula is refused whenever it is run, with the words that it is empty, until someone gives it text. The section records the missing editor as a known gap rather than describing a surface that is not built, in the same way the tool and dice pages treat their own missing editors, and it promises nothing about the editor beyond the wireframe that has to be approved first.",
+          "topics": [
+            "no editor yet",
+            "blank formula refused"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
       "id": "reference/entities/htmldoc",
       "path": "docs/reference/entities/htmldoc.md",
       "title": "Drawing entity",
@@ -6764,7 +6954,7 @@
       "related": [
         "reference/architecture"
       ],
-      "semanticSummary": "Preset entity is the field-meaning authority for CanonicalPreset and PresetBody, the canonical prompt-manager model shared by the SillyTavern, RoleCall, Marinara, and Lumiverse adapters. It covers ordered prompt blocks, system, user, assistant, and tool roles, hierarchical groups, sampler and generation settings, templates, behavior, API and media options, and interactive choices. Generic CLI commands, Library, Workbench, and Kit lifecycle tools operate on the same body. LiveBuild preview orders enabled blocks and estimates tokens without resolving macros, groups, or choices. behaviorRefs links standalone regex sets, while quickReplyRefs links standalone quick-reply sets; Press resolves both by kind and id when exporting a preset bundle. Escrow remains reserved for source-wire details that editors do not author. Other SillyTavern preset files land here when Bunraku can use them: KoboldAI, TextGen and NovelAI sampler sets onto samplers with a samplerSet flag, system prompts as the main block, and reasoning templates as a reasoning field the scene transcript uses; each is seeded with ST's stock prompt order. Instruct and context templates are the separate promptformat piece.",
+      "semanticSummary": "Preset entity is the field-meaning authority for CanonicalPreset and PresetBody, the canonical prompt-manager model shared by the SillyTavern, RoleCall, Marinara, and Lumiverse adapters. It covers ordered prompt blocks, system, user, assistant, and tool roles, hierarchical groups, sampler and generation settings, templates, behavior, API and media options, and interactive choices. Generic CLI commands, Library, Workbench, and Kit lifecycle tools operate on the same body. LiveBuild preview orders enabled blocks and estimates tokens without resolving macros, groups, or choices. behaviorRefs links standalone regex sets, while quickReplyRefs links standalone quick-reply sets; Press resolves both by kind and id when exporting a preset bundle. Escrow remains reserved for source-wire details that editors do not author. Other SillyTavern preset files land here when Bunraku can use them: KoboldAI, TextGen and NovelAI sampler sets onto samplers with a samplerSet flag, system prompts as the main block, and reasoning templates as a reasoning field the scene transcript uses; each is seeded with ST's stock prompt order. Instruct and context templates are the separate promptformat piece. A preset is a writing setup with the Script Sheet: separate kinds read one way through asPreset.",
       "topics": [
         "CanonicalPreset prompt manager",
         "PresetPrompt blocks",
@@ -6977,6 +7167,19 @@
           "children": []
         },
         {
+          "text": "The writing family",
+          "slug": "the-writing-family",
+          "level": 2,
+          "summary": "A preset is one of the writing setups a scene can follow, with the Script Sheet: separate kinds that read one way. Each kind.ts gives asPreset, a preset's being its own body, and src/core/writing.ts reads the family from that. The scene's Writing slot records the kind with the id so one picker lists presets and sheets together, and a sheet joins the preset deck in the Library, shown as Writing.",
+          "topics": [
+            "writing family",
+            "asPreset",
+            "core/writing.ts",
+            "Writing deck"
+          ],
+          "children": []
+        },
+        {
           "text": "What rides escrow, not a field",
           "slug": "what-rides-escrow-not-a-field",
           "level": 2,
@@ -7054,11 +7257,101 @@
       ]
     },
     {
+      "id": "reference/entities/quickreply",
+      "path": "docs/reference/entities/quickreply.md",
+      "title": "Quick-reply set entity",
+      "audience": "dev",
+      "summary": "The canonical piece for SillyTavern quick-reply sets, a named page of buttons that send prepared text, kept as label and message per button with every other wire field escrowed, and linked from presets.",
+      "tags": [
+        "entity",
+        "quickreply",
+        "canonical",
+        "sillytavern"
+      ],
+      "related": [
+        "reference/entities/preset",
+        "reference/formats/sillytavern",
+        "reference/extending/new-kind"
+      ],
+      "semanticSummary": "Quick-reply set entity is the canonical piece for SillyTavern quick-reply sets: CanonicalEntity quickreply with a named list of buttons, each a label and the message pressing it sends, usually a slash-command script that nothing in Bunraku executes. It is a kind so a preset can link one through quickReplyRefs and the Press can print them together. The body keeps what a person authors; every other per-button switch rides extras and the source file rides original, so export writes it back. Its descriptor is kind.ts. It shows as the Quick replies deck with a New quick reply action, the Workbench quick-reply editor, and Kit's create tool; Kit has no editing capabilities for it by design. The sillytavern-quickreply codec reads and writes the files.",
+      "topics": [
+        "CanonicalQuickReplySet",
+        "quickReplyRefs",
+        "slash commands are data",
+        "extras escrow",
+        "sillytavern-quickreply"
+      ],
+      "anchors": [
+        {
+          "text": "Fields",
+          "slug": "fields",
+          "level": 2,
+          "summary": "Fields: the two tables on the page are generated from the schema's doc comments by scripts/docs-fields.ts and pasted verbatim from docs/generated/fields.quickreply.md, so a cell is never edited by hand: the page says to improve the schema doc comment and regenerate rather than editing a cell. The first table is one button, QuickReply, with its id, label, message, title, hidden and extras fields, and the second is the set that holds the buttons, QuickReplyBody, with its name, replies, extras and notes. Each row gives the field, its type, the producers named in the comment and its meaning.",
+          "topics": [
+            "generated tables",
+            "docs-fields.ts"
+          ],
+          "children": [
+            {
+              "text": "`QuickReply`",
+              "slug": "quickreply",
+              "level": 3,
+              "summary": "QuickReply is one button: id, minted at import when the wire has none; label, which may be empty for icon-only buttons; message, what pressing it sends, data never executed; optional title as hover text; optional hidden, ST's isHidden kept for round-trips; and extras, unmodelled wire fields re-merged on export.",
+              "topics": [
+                "id label message",
+                "hidden",
+                "extras"
+              ],
+              "children": []
+            },
+            {
+              "text": "`QuickReplyBody`",
+              "slug": "quickreplybody",
+              "level": 3,
+              "summary": "QuickReplyBody is the set: name, which titles it in the Library; replies, the ordered buttons; extras for set-level wire fields such as disableSend and color; and notes, the author's own notes.",
+              "topics": [
+                "name",
+                "replies",
+                "set-level extras",
+                "notes"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "text": "Where it shows",
+          "slug": "where-it-shows",
+          "level": 2,
+          "summary": "Where it shows: the Library's Quick replies deck with a New quick reply action that saves an empty set; the Workbench quick-reply editor; and Kit's quickreply-create tool. Kit has no editing capabilities for a set, which the Workbench owns; the kind completeness test lists that exemption.",
+          "topics": [
+            "Quick replies deck",
+            "QuickReplyEditor",
+            "quickreply-create",
+            "no Kit capabilities"
+          ],
+          "children": []
+        },
+        {
+          "text": "Import and export",
+          "slug": "import-and-export",
+          "level": 2,
+          "summary": "Import and export: the sillytavern-quickreply codec reads and writes SillyTavern quick-reply set files, so a set comes into the studio from SillyTavern and goes back out the same way. The page's earlier sections explain what that round trip keeps: the label and message the canonical body models, every other per-button switch in extras, and the source file in original on the envelope, so export writes it back. For anything about the files themselves, the page points to the SillyTavern format reference, formats/sillytavern.md, and says no more here.",
+          "topics": [
+            "sillytavern-quickreply",
+            "round-trip escrow",
+            "SillyTavern format page"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
       "id": "reference/entities/README",
       "path": "docs/reference/entities/README.md",
       "title": "Entities",
       "audience": "dev",
-      "summary": "Index of the six canonical entity kinds, character, lorebook, pack, persona, preset, and regex, linking each one's field reference and the shapes they share.",
+      "summary": "Index of the canonical content kinds (character, lorebook, persona, pack, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, prompt format, drawing), how each is one folder described once in its kind.ts, and links to each one's field reference and the shapes they share.",
       "tags": [
         "entity",
         "index",
@@ -7069,15 +7362,15 @@
         "reference/concepts/canonical-model",
         "reference/formats/README"
       ],
-      "semanticSummary": "Entities indexes the six closed canonical kinds every Bunraku convert path and studio path uses: CanonicalEntity Kind Body wrappers where body is the superset for one kind. STUDIO_ENTITY_KINDS in path-policy names character lorebook pack persona preset and regex alphabetically and grows only by union member plus src/entities kind folder. Four kinds have format adapters character lorebook persona regex while pack and preset are studio-authored only without toCanonical fromCanonical or formats matrix rows. All six store at studio kind id json via resolveStudioPath. Generated field tables explains each entity page embeds docs generated fields kind md from schema JSDoc via docs-fields.ts never hand-edited cells. Reference pages table links character lorebook pack persona preset and regex with what each covers. Cross-cutting ties sprite pack hub shape RegexScript twin knowledgeRefs behaviorRefs and persona as opposite-voice counterpart.",
+      "semanticSummary": "Entities indexes Bunraku's canonical content kinds: CanonicalEntity Kind Body wrappers where body is the superset for one kind. The kinds are a closed set: exactly the src/entities folders holding a kind.ts descriptor, which bun run kinds collects into src/generated/kinds.ts for identity and src/generated/kind-schemas.ts for decoders and storage parts, and every list of kinds in the app (storage folders, the parse boundary, adapter contracts, decks, search, receipts, Kit and New actions) reads those seams; adding one is extending/new-kind. Which kinds have format adapters is the generated format matrix. Every kind stores at studio/<kind>/<id>.json via resolveStudioPath. Generated field tables explains each page's verbatim tables from docs-fields.ts. Reference pages link character, lorebook, pack, persona, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, prompt format and drawing. Cross-cutting ties the sprite pack hub shape, the RegexScript twin, knowledgeRefs and behaviorRefs, and persona as character's opposite-voice counterpart.",
       "topics": [
-        "six entity kinds",
-        "STUDIO_ENTITY_KINDS",
+        "nine content kinds",
+        "kind.ts and generated seams",
         "CanonicalEntity wrapper",
-        "adapter vs studio-only",
+        "format matrix",
         "generated field tables",
         "character lorebook pack",
-        "persona preset regex",
+        "persona preset regex quickreply",
         "cross-cutting refs"
       ],
       "anchors": [
@@ -7098,7 +7391,7 @@
           "text": "Reference pages",
           "slug": "reference-pages",
           "level": 2,
-          "summary": "Index table of the six entity field references. Character covers identity persona voice prompts injections greetings examples media presentation settings behavior attribution and discovery. Lorebook covers world info entry set triggers position depth and per-entry per-book settings. Pack is a reusable expression sprite pack attachable to multiple characters with no format adapter. Persona is the user identity counterpart with name content sections and chat injection. Preset is a chat-completion prompt-manager preset with ordered blocks samplers and behavior studio-only. Regex is a named ordered find replace rule set covering the character-card twin and standalone script files.",
+          "summary": "Reference pages: index table of the entity field references. Character covers identity, persona and voice, prompts and injections, greetings and examples, media, presentation, settings and behavior, attribution and discovery. Lorebook covers the world info entry set, triggers, position and depth, and per-entry and per-book settings. Pack is a reusable expression sprite pack attachable to several characters. Persona is the user identity counterpart with name, content, sections and chat injection. Preset is a chat-completion prompt-manager preset with ordered blocks, samplers and behavior. Regex is a named ordered find-and-replace rule set, the card twin and standalone files. Quick-reply set is a page of buttons that send prepared text, linked from presets. Prompt format holds SillyTavern instruct and context templates kept whole, read by nothing yet. Drawing is a sealed HTML page shown in HTML View rather than a Library deck.",
           "topics": [
             "character field reference",
             "lorebook world info",
@@ -7281,6 +7574,172 @@
             "regex-engine applyRules",
             "regex-editor Workbench",
             "formats coverage matrix"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "reference/entities/scriptsheet",
+      "path": "docs/reference/entities/scriptsheet.md",
+      "title": "Script Sheet entity",
+      "audience": "dev",
+      "summary": "The canonical piece for a Script Sheet, RoleCall's single-instruction writing setup, kept as a name, one instruction and optional samplers. It is its own kind in the Writing family with presets: a scene uses it in the same slot, it shares the Writing deck, and it reads as the preset it sends.",
+      "tags": [
+        "entity",
+        "scriptsheet",
+        "preset",
+        "writing",
+        "rolecall",
+        "canonical"
+      ],
+      "related": [
+        "reference/entities/preset",
+        "reference/formats/rolecall",
+        "reference/extending/new-kind"
+      ],
+      "semanticSummary": "The Script Sheet entity page covers CanonicalScriptSheet: a name, one instruction, an optional description and optional samplers of the preset kind, ported from RoleCall's single-instruction setup. The writing family section explains that presets and sheets are separate kinds that read one way through each kind.ts asPreset in core/writing.ts: one scene slot recording kind and id, one reading through the family reader presetReader, one Writing deck, export through every platform's preset format via formatsFor except RoleCall's own sheet format that writes script_sheet and reads the older promptbook key, and Open as preset. What a sheet sends lists sheetPrompts' RoleCall order. The rules section covers refused context macros, blank text, the send-time refusal from sendProblem with RoleCall's words, and shape-only reading with the 100,000-character cap. Editing names RoleCall's sheet editor in the Prompting wing and on the Workbench with description and samplers, and the Library's blank New.",
+      "topics": [
+        "CanonicalScriptSheet",
+        "writing family",
+        "asPreset",
+        "rolecall-script-sheet",
+        "sheetPrompts",
+        "sendProblem"
+      ],
+      "anchors": [
+        {
+          "text": "The writing family",
+          "slug": "the-writing-family",
+          "level": 2,
+          "summary": "Presets and Script Sheets are separate kinds that read one way: each kind.ts gives asPreset, read by src/core/writing.ts, and a promptbook will join the same way. The scene's Writing choice records kind and id in ChatPreset.kind under rule 19, so one picker lists both, and loadouts and a character's starting setup carry the kind. The turn reads a sheet through the family reader presetReader as its blocks, so assembly, Final Cut, the Booth and the trace treat it as a preset. The sheet joins the preset deck, shown as Writing. Every platform's preset format writes a sheet via formatsFor except RoleCall, whose own Script Sheet format writes script_sheet beside the blocks and reads such files back, including the older promptbook key. The Workbench's Open as preset makes a preset from a saved sheet.",
+          "topics": [
+            "asPreset",
+            "ChatPreset.kind",
+            "presetReader",
+            "formatsFor",
+            "rolecall-script-sheet",
+            "Open as preset"
+          ],
+          "children": []
+        },
+        {
+          "text": "What a sheet sends",
+          "slug": "what-a-sheet-sends",
+          "level": 2,
+          "summary": "sheetPrompts in core/preset/script-sheet.ts lays the instruction out as ordinary blocks in RoleCall's order: the instruction, the card system prompt as charPrompt, the context slots for description, personality, scenario, persona, lore, summary, memories and examples, the chat history, and the card post-history instructions as charInstruction, last.",
+          "topics": [
+            "sheetPrompts",
+            "RoleCall order",
+            "context slots"
+          ],
+          "children": []
+        },
+        {
+          "text": "The rules",
+          "slug": "the-rules",
+          "level": 2,
+          "summary": "Because context is seated automatically the instruction may not insert it: context macros such as description, lore and message_history in any spelling are refused, while char and user are fine, and blank text is refused. The editors check as you type; a turn with a stored sheet that breaks the rules stops with RoleCall's words through the kind's sendProblem. Reading checks only the shape and the 100,000-character cap, so a later rule change never makes a stored sheet unreadable.",
+          "topics": [
+            "context macros refused",
+            "sendProblem",
+            "100,000-character cap"
+          ],
+          "children": []
+        },
+        {
+          "text": "Editing",
+          "slug": "editing",
+          "level": 2,
+          "summary": "The kind's one editor is RoleCall's Script Sheet editor in src/ui/_shared/script-sheet-editor.tsx, opened from the Prompting wing and on the Workbench through script-sheet-bench.tsx with the description and samplers above it. The Library's New script sheet saves a blank sheet that the editor will not send until it has an instruction.",
+          "topics": [
+            "script-sheet-editor",
+            "script-sheet-bench",
+            "blank New"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "reference/entities/tool",
+      "path": "docs/reference/entities/tool.md",
+      "title": "Tool entity",
+      "audience": "dev",
+      "summary": "The canonical piece for a tool a model may call while it writes, kept as data with no code. A scene links the tools it offers, and each call runs one first-party action, a roll, a linked dice piece, a linked formula or a record, through the scene's existing tool loop.",
+      "tags": [
+        "entity",
+        "tool",
+        "tool-call",
+        "dice",
+        "canonical"
+      ],
+      "related": [
+        "reference/entities/dice",
+        "reference/entities/formula",
+        "reference/extending/new-kind",
+        "reference/entities/README"
+      ],
+      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that no screen links a tool yet. Editing says the editor waits for its approved wireframe.",
+      "topics": [
+        "CanonicalTool",
+        "tool fields",
+        "roll action",
+        "record action",
+        "ChatPrompting.tools",
+        "library-tools"
+      ],
+      "anchors": [
+        {
+          "text": "Fields",
+          "slug": "fields",
+          "level": 2,
+          "summary": "Each field has a name made of a lowercase letter then lowercase letters, digits and underscores, a description, a type of text, number, boolean or choice, and a required flag. Only a choice field carries choices, between one and twenty of them, and it must carry them. A tool holds at most twelve fields and their names must be unique. The function schema sent to the model, toolParameters, and the check of the model's arguments, readToolCall, are both built from this one field list, so the two can never disagree. Unknown arguments, missing required arguments, values of the wrong type and choices outside the list are all refused, and the refusal is told to the model.",
+          "topics": [
+            "field types",
+            "toolParameters",
+            "readToolCall",
+            "refusals"
+          ],
+          "children": []
+        },
+        {
+          "text": "Actions",
+          "slug": "actions",
+          "level": 2,
+          "summary": "There are four first-party actions. Roll rolls the dice the model writes into one of the tool's text fields through the dice module, one to one hundred dice of two to one thousand sides, other dice refused when the arguments are read, and the trace keeps each die and the total. Dice rolls a library dice piece by its id, a roll, a table or a pool, answered as that piece rolls. Formula runs a library formula by its id on a copy of the turn's macro context and answers with what it renders; one that would change a variable, has a macro error or is blank is refused, and the refusal is told to the model. Record changes nothing and answers Recorded. All four are read-only.",
+          "topics": [
+            "roll from a field",
+            "dice action",
+            "formula action",
+            "record",
+            "read-only"
+          ],
+          "children": []
+        },
+        {
+          "text": "In a scene",
+          "slug": "in-a-scene",
+          "level": 2,
+          "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, at most twenty and in order. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. No screen links a tool to a scene yet; that control waits for its wireframe with the editor.",
+          "topics": [
+            "ChatPrompting.tools",
+            "Narrator Tool Access",
+            "library-tools",
+            "callName",
+            "invalid_tool",
+            "no linking screen yet"
+          ],
+          "children": []
+        },
+        {
+          "text": "Editing",
+          "slug": "editing",
+          "level": 2,
+          "summary": "There is no editor for tools yet. The tool editor waits for its approved wireframe, and no screen for editing a tool exists in this change. What does exist is the Library's New tool action, which saves a blank record tool, using the record action the page describes above: it changes nothing, answers Recorded, and leaves only the call's arguments in the trace. The section is short because the page records the missing editor as a known gap rather than describing a surface that is not built, and it promises nothing about the editor beyond the wireframe that must be approved first.",
+          "topics": [
+            "no editor yet",
+            "blank New"
           ],
           "children": []
         }
@@ -7626,6 +8085,66 @@
       ]
     },
     {
+      "id": "reference/extending/new-kind",
+      "path": "docs/reference/extending/new-kind.md",
+      "title": "Add a content kind",
+      "audience": "dev",
+      "summary": "How to add a new kind of piece (like presets or lorebooks): one folder under src/entities with its schema, decoder and kind.ts descriptor, then bun run kinds. Lists of kinds, labels, decks, decoders, storage folders, New actions, links, names and picture paths all read the generated seam. A completeness test names anything still missing, and a guard test fails on a new hand-written kind list.",
+      "tags": [
+        "extending",
+        "entity",
+        "kind",
+        "contribution",
+        "folders-as-schema"
+      ],
+      "related": [
+        "reference/entities/README",
+        "reference/architecture",
+        "reference/extending/add-a-format"
+      ],
+      "semanticSummary": "Add a content kind explains that a kind is one folder: src/entities/<kind>/kind.ts describes it once (id, labels, deck color and glyph, Library deck or not, the blank piece New saves, the inspect lines, and when they apply its links, name path, picture paths, heavy flag, libraryNew switch, scene field, editor, and for a family kind its deck and asPreset), and bun run kinds writes two checked seams, src/generated/kinds.ts for identity (KINDS, KIND_IDS, kindOf, isKindId, AnyKindEntity) and src/generated/kind-schemas.ts for every kind's whole-entity decoder and storage parts, both verified by kinds:check in verify:ci. A table names everything that reads the seam so no hand edits are needed. The steps make the folder's schema, runtime schema and kind.ts, optional parts.ts and capabilities, run bun run kinds, name its editor in kind.ts and add the component to workbench/editors.ts under that id (the completeness test fails on either side missing), write the reference page and scale fixture, and run the kind completeness test, which names every missing part or a stated exemption. Behavior that belongs to one kind stays with the code that owns it; scene fields keep their own shapes in the scene store, and the kind-lists guard test fails on a new hand-written kind list.",
+      "topics": [
+        "kind.ts descriptor",
+        "bun run kinds",
+        "generated kind seams",
+        "kind completeness test",
+        "kind-lists guard",
+        "folders-as-schema"
+      ],
+      "anchors": [
+        {
+          "text": "What reads the seam (so you edit none of it)",
+          "slug": "what-reads-the-seam-so-you-edit-none-of-it",
+          "level": 2,
+          "summary": "What reads the seam: the studio folder set STUDIO_ENTITY_KINDS, the parse boundary, storage item parts, the generic KindAdapter contracts, deck labels, colors, glyphs and Library decks in decks.ts, Panel, editor head and Press deck colors via deckMeta, search kind words, import receipts, Kit deck counts and name lookup, createBlank and canCreateBlank for every New door, core/links.ts for every link follower (Press riders, export embedding, import renames, Kit delete warnings, node ports, archive caveats), core/piece-name.ts for names, media-reference.ts and ART_KINDS for pictures, the heavy flag in the Press and Library rename, bunraku inspect, first-run deck titles, and the format matrix and field docs scripts.",
+          "topics": [
+            "STUDIO_ENTITY_KINDS",
+            "deckMeta",
+            "createBlank",
+            "core/links.ts",
+            "piece-name",
+            "ART_KINDS"
+          ],
+          "children": []
+        },
+        {
+          "text": "Steps",
+          "slug": "steps",
+          "level": 2,
+          "summary": "Steps: make the folder with schema.ts and runtime-schema.ts exporting entitySchema built from entityShape; write kind.ts with defineKind, an existing deck token and glyph; optionally parts.ts and capabilities; run bun run kinds; name the kind's editor in kind.ts (id, label and load) and add the component to workbench/editors.ts under that id, with the completeness test failing on either side missing; write the reference page and the scale fixture; run the kind completeness test, which lists each missing part with the file to create, or a reason in its exemption lists. Behavior unique to one kind stays in its owning code; a scene's fields keep their shapes in the scene store and sceneField only declares that a scene can point at the kind. The kind-lists guard test lists every file with a line naming two or more kinds, with its count and reason.",
+          "topics": [
+            "entitySchema",
+            "defineKind",
+            "editors.ts",
+            "exemption lists",
+            "sceneField",
+            "kind-lists guard"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
       "id": "reference/formats/agnai",
       "path": "docs/reference/formats/agnai.md",
       "title": "Agnai format",
@@ -7732,14 +8251,14 @@
           "text": "Escrow and round-trip",
           "slug": "escrow-and-round-trip",
           "level": 2,
-          "summary": "Escrow is original keyed by format id: original.agnai for character and original agnai-lorebook for books. Export deep-clones parsed raw or baseCard then applies canonical values and pretty-prints JSON; unmapped keys like extensions _id userId survive in the clone. Character set is two-state unconditional write or delete string array without twin decode compare; malformed non-string skipped values stay. Persona always rebuilds so multi-element text attributes collapse to first element even same-format. Lorebook entryToWire is a three-state diff by id Map so untouched entries preserve parsed fields, including selectiveLogic; JSON formatting may normalize. Optional book fields preserve twin presence. Embedded characterBook is Agnai MemoryBook not CCv3: extractLorebook uses memoryBookToCanonical identically to standalone; fromCanonical re-embeds via applyLorebook twin-overlay; no book means no key; empty bundle deletes stale characterBook; inspectBundle uses this override not shared CCv3 extractor.",
+          "summary": "Escrow is original keyed by format id: original.agnai for character and original agnai-lorebook for books. Export deep-clones parsed raw or baseCard then applies canonical values and pretty-prints JSON; unmapped keys like extensions _id userId survive in the clone. Character set is two-state unconditional write or delete string array without twin decode compare; malformed non-string skipped values stay. Persona always rebuilds so multi-element text attributes collapse to first element even same-format. Lorebook entryToWire is a three-state diff by id Map so untouched entries preserve parsed fields, including selectiveLogic; JSON formatting may normalize. Optional book fields preserve twin presence. Embedded characterBook is Agnai MemoryBook not CCv3: extractLorebook uses memoryBookToCanonical identically to standalone; fromCanonical re-embeds via applyLorebook twin-overlay; no book means no key; empty bundle deletes stale characterBook; readPieces uses this override not shared CCv3 extractor.",
           "topics": [
             "original.agnai raw twin",
             "two-state set helper",
             "persona rebuild collapse",
             "three-state entryToWire",
             "extractLorebook MemoryBook",
-            "bundle inspectBundle override"
+            "bundle readPieces override"
           ],
           "children": []
         },
@@ -9016,7 +9535,7 @@
         "reference/entities/regex",
         "reference/formats/sillytavern"
       ],
-      "semanticSummary": "Developer reference for six RoleCall adapters: CCv2/v3 character cards with extensions.rolecall, a v1 lorebook envelope, the flat compendium export, persona and regex JSON exports, and a RoleCall-flavored flat preset. Character detection bids 1.0 only for the RoleCall extension and steps aside for persona exports; lorebook detection recognizes its dedicated wrapper without colliding with SillyTavern world info, and the compendium codec reads and writes RoleCall's flat compendium file (raw entry rows, tree and constraints kept) without the v1 codec claiming it. Character mapping covers identity details, titled greetings, depth injections, presentation, media, and embedded lorebooks. Lorebook mapping flattens RoleCall's nested trigger, matching, injection, timing, grouping, scan-source, and advanced settings into canonical entries. Character export overlays canonical edits onto the sealed source while preserving native fields, including a documented depth-injection write asymmetry. Lorebook export preserves source dates and conditionally writes budget fields. Persona handling keeps brief and content distinct across two supported shapes. Regex handling models the live chat pipeline with open placement values. Preset handling shares the flat SillyTavern grammar but requires RoleCall fingerprint fields and preserves native YAML as sealed data. The source table identifies all six codecs, shared helpers, schemas, design specs, and constructed samples.",
+      "semanticSummary": "Developer reference for seven RoleCall adapters: CCv2/v3 character cards with extensions.rolecall, a v1 lorebook envelope, the flat compendium export, persona and regex JSON exports, a RoleCall-flavored flat preset, and a preset file carrying a Script Sheet. Character detection bids 1.0 only for the RoleCall extension and steps aside for persona exports; lorebook detection recognizes its dedicated wrapper without colliding with SillyTavern world info, and the compendium codec reads and writes RoleCall's flat compendium file (raw entry rows, tree and constraints kept) without the v1 codec claiming it. Character mapping covers identity details, titled greetings, depth injections, presentation, media, and embedded lorebooks. Lorebook mapping flattens RoleCall's nested trigger, matching, injection, timing, grouping, scan-source, and advanced settings into canonical entries. Character export overlays canonical edits onto the sealed source while preserving native fields, including a documented depth-injection write asymmetry. Lorebook export preserves source dates and conditionally writes budget fields. Persona handling keeps brief and content distinct across two supported shapes. Regex handling models the live chat pipeline with open placement values. Preset handling shares the flat SillyTavern grammar but requires RoleCall fingerprint fields and preserves native YAML as sealed data. The source table identifies all seven codecs, shared helpers, schemas, design specs, and constructed samples.",
       "topics": [
         "rolecall character CCv3",
         "extensions.rolecall",
@@ -9132,7 +9651,7 @@
           "text": "Quirks",
           "slug": "quirks",
           "level": 2,
-          "summary": "Quirks pin RC edges and summarize preset persona and regex codecs. rolecall-preset shares SillyTavern's flat grammar but requires native fingerprint keys; a from-scratch export writes a neutral empty choice_groups array so it stays distinguishable and self-readable. V3 source as object array is unread by shared Tavern string[] decoder so object form rides twin; greeting titles omit key when all untitled; background keeps customUrl or backgroundId slot; real sprites use type expression mapped to emotion. Persona codec claims 1.0 on rcpersona envelope and chara_card_v2 lookalike with type persona; brief never swaps with content; sections compile or fold unfold description; after_dark omitted when not mature explicit; no rcpersona PNG keyword path in code despite design specs. Regex codec models live find_pattern pipeline only at 0.9 for single script with rules; placements map to phases open-union; no substituteFind on this wire; unknown keys ride extras. coverage.ts is editor lens only not round-trip.",
+          "summary": "Quirks pin RC edges and summarize preset, Script Sheet, persona and regex codecs. rolecall-script-sheet reads a preset file carrying script_sheet, or the older promptbook key, as a Script Sheet, outranking rolecall-preset, and writes the sheet back with script_sheet beside its blocks. rolecall-preset shares SillyTavern's flat grammar but requires native fingerprint keys; a from-scratch export writes a neutral empty choice_groups array so it stays distinguishable and self-readable. V3 source as object array is unread by shared Tavern string[] decoder so object form rides twin; greeting titles omit key when all untitled; background keeps customUrl or backgroundId slot; real sprites use type expression mapped to emotion. Persona codec claims 1.0 on rcpersona envelope and chara_card_v2 lookalike with type persona; brief never swaps with content; sections compile or fold unfold description; after_dark omitted when not mature explicit; no rcpersona PNG keyword path in code despite design specs. Regex codec models live find_pattern pipeline only at 0.9 for single script with rules; placements map to phases open-union; no substituteFind on this wire; unknown keys ride extras. coverage.ts is editor lens only not round-trip.",
           "topics": [
             "preset neutral fingerprint",
             "object-form source twin",
@@ -9913,7 +10432,7 @@
           "text": "What it does",
           "slug": "what-it-does",
           "level": 2,
-          "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's corpus, recorded by tools/rc-recorder: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, each file naming what it leaves out. Normalization applies RoleCall's rewrites in order through an offset map, and macro output holding macros is normalized and evaluated again. Twenty-five families register in RoleCall's order from one closed table, since order decides which family owns a shared name; lazy macros get unevaluated arguments and phases run across a preset's prompts. Unknown macros render as reconstructed text with an error. ADR-012 differences: clock, randomness, locale and time zone come from the context, timediff included; strings, variable writes, whole runs and node counts are capped, and once a cap trips no handler runs and nothing cut off is stored; a scan checks every source file for ambient reads. Author regex is off unless a caller opts in. The game, mechanics, visual novel and off-band families and RoleCall's interceptors are left out.",
+          "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map, and macro output holding macros is evaluated again. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunraku's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may lower the step cap, and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in. Four RoleCall families and its interceptors are left out.",
           "topics": [
             "corpus parity proof",
             "offset mapped rewrites",
@@ -14774,7 +15293,7 @@
       "summary": "uses. Optional remote listeners are separately enabled and gated. One engine, two shells - no format logic exists in the UI layer.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, sealed scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
+      "semanticSummary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
       "topics": [
         "Kit conversational terminal",
         "temporary browser Studio",
@@ -15011,7 +15530,7 @@
           "text": "Scenes (the library's chats)",
           "slug": "scenes-the-librarys-chats",
           "level": 2,
-          "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants is the registry, with Reconcile and an Add participant form that refuses names already on the roster.",
+          "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools, and the Preset picker lists every writing setup, presets and Script Sheets, opening with Write a Script Sheet, whose small editor saves then chooses it; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants is the registry, with Reconcile and an Add participant form that refuses names already on the roster.",
           "topics": [
             "Start Scene from a card",
             "World wing, Compendium and Storyboards",
@@ -15070,16 +15589,16 @@
           "text": "The Workbench room (home by default - the IDE)",
           "slug": "the-workbench-room-home-by-default---the-ide",
           "level": 2,
-          "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light coherent baselines and serialized revision-checked patches with captured occurrence/native/variant changes, conflict choices and bounded history. Lore native folders share undo/save ownership; character native escrow is deferred and named asset changes are captured with accepted submissions. Complete export explicitly reads the full entity. Local inert asset uploads use bounded session grants revoked on lock or close, with a picture limited to 10 MB. Large lists use measured windows preserving focused controls and selection. Timer autosaves retain explicit intent and five-minute grouping; manual saves keep version boundaries. Shared recents consume accepted PieceStore summaries. All new save, media and projection paths are source-reviewed; focused fixture results are recorded in delivery evidence and live proof remains pending. An empty, restoring or failed bench shows a centered room header inside a framed panel.",
+          "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light baselines and serialized revision-checked patches with conflict choices and bounded history. Lore native folders share undo/save ownership; named asset changes are captured with accepted submissions. Complete export reads the full entity. Local asset uploads use session grants revoked on lock or close, with a picture capped at 10 MiB. Large lists use measured windows that keep focus and selection. Timer autosaves group by five minutes; manual saves keep version boundaries. The character editor opens in Grid unless the guided quiz was picked; the preset editor shows groups as a depth-first category tree; in the lorebook editor one entry owns the screen; quick-reply sets open as an ordered list of labeled messages. The dock collapses only through Hide dock, leaving a Show dock pill, for the session. These paths are source-reviewed and live proof remains pending. An empty or failed bench shows a centered room header in a framed panel.",
           "topics": [
             "shell-owned editor tabs",
             "recents ranking rail",
             "revision-checked explicit saves",
             "hierarchical preset categories",
-            "dirty close confirmation",
-            "universal split view",
             "single-entry lorebook editor",
-            "Grid is the default mode"
+            "Grid is the default mode",
+            "quick-reply editor",
+            "Hide dock"
           ],
           "children": [
             {

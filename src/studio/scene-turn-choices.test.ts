@@ -20,7 +20,7 @@ async function sent(own: Record<string, unknown> | null, defaults: Record<string
   const chats = memoryChatStore(() => now);
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
   await chats.setConnection(chat.id, { id: "conn", model: "m" });
-  await chats.setPreset(chat.id, { id: "pre", toggles: {}, samplers: {} });
+  await chats.setPreset(chat.id, { kind: "preset", id: "pre", toggles: {}, samplers: {} });
   if (own) await chats.setRegex(chat.id, { choices: { pre: own as never } });
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Hi" }]);
   const seen: ProviderRequest[] = [];

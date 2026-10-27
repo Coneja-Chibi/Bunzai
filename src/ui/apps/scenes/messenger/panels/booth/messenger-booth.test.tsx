@@ -30,7 +30,7 @@ afterAll(() => installed.teardown());
 
 const presetBody: PresetBody = { name: "Harbor Noir", prompts: [{ id: "main", name: "main", content: "content", role: "system", enabled: true, systemPrompt: true, marker: false, placement: "relative", injectionDepth: 4, injectionOrder: 100, forbidOverrides: false }], groups: [], samplers: {} };
 const cast = { character: { id: "c1", version: 1, name: "Char" } } as Chat["cast"];
-const chat: Chat = { id: "chat1", title: "Scene", cast, activeBranchId: "b1", createdAt: 0, updatedAt: 0, snapshotVersion: 1, preset: { id: "p1", toggles: {}, samplers: {} } as ChatPreset, connection: { id: "k1", model: "model-x" } };
+const chat: Chat = { id: "chat1", title: "Scene", cast, activeBranchId: "b1", createdAt: 0, updatedAt: 0, snapshotVersion: 1, preset: { kind: "preset", id: "p1", toggles: {}, samplers: {} } as ChatPreset, connection: { id: "k1", model: "model-x" } };
 const sceneOf = (): OpenScene => ({ chat, messages: [], messageCount: 42, snapshot: {} }) as unknown as OpenScene;
 
 let lorePuts: unknown[];

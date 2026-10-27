@@ -43,7 +43,7 @@ const block = (id: string): PresetPrompt => ({
 });
 const bodyWith = (systemPrompts?: PresetBody["systemPrompts"]): PresetBody => ({ name: "Test Preset", prompts: [block("main")], groups: [], samplers: {}, ...(systemPrompts ? { systemPrompts } : {}) });
 const cast = { character: { id: "c1", version: 1, name: "Char" } } as Chat["cast"];
-const withPreset: Chat = { id: "chat1", title: "Scene", cast, activeBranchId: "b1", createdAt: 0, updatedAt: 0, snapshotVersion: 1, preset: { id: "p1", toggles: {}, samplers: {} } };
+const withPreset: Chat = { id: "chat1", title: "Scene", cast, activeBranchId: "b1", createdAt: 0, updatedAt: 0, snapshotVersion: 1, preset: { kind: "preset", id: "p1", toggles: {}, samplers: {} } };
 
 let body: PresetBody;
 let saves: { body: PresetBody; revision: string }[] = [];

@@ -116,11 +116,11 @@ export interface AppContext {
     listTrash(): Promise<GraveSummary[]>;
     /** Brings a piece back from the Trash under its own id, with its history. */
     restoreFromTrash(graveId: string): Promise<StudioEntitySummary>;
-    /** Persist a primary entity plus its bundled relations (a character's lorebooks, a preset's
-     * regex sets); rewrites keep-both knowledgeRefs. */
+    /** Persist a primary entity plus the pieces extracted with it (a character's lorebooks, a preset's regex sets);
+     * keep-both renames rewrite the primary's links to them. */
     saveBundle(payload: {
       entity: unknown;
-      related?: { lorebooks?: unknown[]; regexSets?: unknown[] };
+      related?: unknown[];
       overwrite?: boolean;
     }): Promise<SaveBundleResult>;
     inspectFile(file: File, signal?: AbortSignal): Promise<InspectResult>;
@@ -402,9 +402,9 @@ export interface InspectResult {
   knowledgeRefs?: string[];
   /** Archive lorebook rows only: entry count for the sheet's "N entries" chip. */
   entryCount?: number;
-  /** Related entities extracted with the primary (a character's embedded lorebooks, a preset's
-   * bundled regex sets - the same pass as CLI inspectBundle). */
-  related?: { lorebooks?: unknown[]; regexSets?: unknown[] };
+  /** The pieces extracted with the primary (a character's embedded lorebook, a preset's bundled regex sets), each a
+   * canonical piece naming its own kind, already linked from the primary (convert.ts readPieces). */
+  related?: unknown[];
   formatId?: string;
   kind?: string;
   parseReport?: ParseReport;
@@ -454,7 +454,6 @@ export interface SaveBundleResult {
   alreadyImported?: { sceneId: string; title: string };
   primary?: StudioEntitySummary;
   related: StudioEntitySummary[];
-  knowledgeRefs?: string[];
   partial?: boolean;
   error?: string;
 }

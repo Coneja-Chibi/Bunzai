@@ -2,7 +2,7 @@
  * The drop-in contract a kind's own `parts.ts` declares: which array of its body splits into item parts, and how to read each
  * item's id. A kind with no `parts.ts` has no split items: piece-parts.ts falls back to head and
  * escrow parts only. Imported statically by each kind's own drop-in file and by piece-parts.ts's
- * small registry, the same way src/entities/runtime-schema.ts imports every kind's body schema:
+ * generated kind seam (src/generated/kind-schemas.ts, written by `bun run kinds`), the same way every kind's decoder is:
  * decompose is a synchronous hot path, so the registry cannot scan the filesystem at call time.
  */
 export interface KindParts<Item = unknown> {

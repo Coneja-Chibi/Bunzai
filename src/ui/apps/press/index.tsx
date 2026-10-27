@@ -7,11 +7,13 @@
  * one zip out. Ledger and drag-reorder are follow-up slices, named here so absence reads as
  * not-yet, never as done.
  */
+import { kindOf } from "../../../generated/kinds";
 import { Button, ListRow, Segmented } from "../../components/button";
 import { OverlayWidgets } from "./overlay";
-import { Panel, type PanelDeck } from "../../components/panel";
+import { Panel } from "../../components/panel";
 import { RoomHeader } from "../../components/room-header";
-import { useEffect, useMemo, useState, type JSX } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type JSX } from "react";
+import { deckMeta } from "../../_shared/decks";
 import type { AppContext, CoverageInfo, StudioEntitySummary, BunrakuApp } from "../../app-contract";
 import { SETTING_KEYS } from "../../../studio/settings-shape";
 import { mediaExportSummary } from "../../components/export-dialog/honesty";
@@ -44,9 +46,8 @@ import { digitRuns } from "../../_shared/digit-runs";
 /** the locked press mark (vs-shell-apps) */
 const MARK_SVG = icSvg("lucide:printer", 18);
 
-const DECKS: readonly PanelDeck[] = ["character", "persona", "lorebook", "preset", "regex", "pack"];
-/** a piece kind's deck, fog for kinds the decks do not know */
-const deckOf = (kind: string): PanelDeck => DECKS.find((d) => d === kind) ?? "fog";
+/** a piece kind's deck color for a card or stamp (unknown kinds read as fog), from the kind hub */
+const deckStyle = (kind: string): CSSProperties => ({ "--deck": deckMeta(kind).accent } as CSSProperties);
 
 /** gold mono numerals inside a summary line */
 const numerals = (text: string): (JSX.Element | string)[] => digitRuns(text, styles.num);
@@ -103,7 +104,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
   const refsByOwner = useMemo(() => {
     const out: Record<string, RiderRef[]> = {};
     for (const p of queue) {
-      // Owners by kind: characters link lorebooks; presets link regex and quick-reply sets.
+      // Owners are the kinds that declare links (core/links.ts); their riders are what they link.
       const refs = riderRefsOf(p, entities[pieceKeyOf(p)]);
       if (refs.length > 0) out[pieceKeyOf(p)] = refs;
     }
@@ -122,7 +123,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
       const wanted = [...queue, ...grouping.bundles.flatMap((k) => k.riders)];
       for (const p of wanted) {
         const key = pieceKeyOf(p);
-        if (entities[key] !== undefined || p.kind === "pack") continue; // a pack has no readiness line, and is never read whole
+        if (entities[key] !== undefined || kindOf(p.kind)?.heavy) continue; // a heavy kind (a pack) has no readiness line, and is never read whole
         try {
           const e = await ctx.api.getEntity(
             `kind=${encodeURIComponent(p.kind)}&id=${encodeURIComponent(p.id)}`,
@@ -271,7 +272,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
     const borrowed = platform?.borrowed?.[p.kind];
     const isDropped = rider !== undefined && dropped.has(key);
     return (
-      <div key={key} data-deck={deckOf(p.kind)} className={`${styles.kcard}${isDropped ? ` ${styles.kcardDropped}` : ""}`}>
+      <div key={key} data-deck={p.kind} style={deckStyle(p.kind)} className={`${styles.kcard}${isDropped ? ` ${styles.kcardDropped}` : ""}`}>
         <span
           className={`${styles.dot}${
             row?.status === "ok" ? ` ${styles.dotOk}` : row?.status === "fail" ? ` ${styles.dotFail}` : ready?.tone === "ok" ? ` ${styles.dotOk}` : ready?.tone === "warn" ? ` ${styles.dotWarn}` : ready?.tone === "bad" ? ` ${styles.dotFail}` : ""
@@ -358,7 +359,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
           )}
           <div className={styles.offerList} data-part="press.offers">
             {offers.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
-              <div key={pieceKeyOf(s)} className={styles.stamp} data-deck={deckOf(s.kind)} data-part={`press.offer.stamp.${s.id}`}>
+              <div key={pieceKeyOf(s)} className={styles.stamp} data-deck={s.kind} style={deckStyle(s.kind)} data-part={`press.offer.stamp.${s.id}`}>
                 <ListRow data-part="press.offer" onClick={() => ctx.press.stage([s])} label={s.name || s.id} meta={<span className={styles.kindTag}>{s.kind}</span>} />
               </div>
             ))}
@@ -397,11 +398,11 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
           ) : (
             <>
               {grouping.bundles.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (bundle) => (
-                <Panel key={pieceKeyOf(bundle.owner)} data-part="press.bundle" deck={deckOf(bundle.owner.kind)} className={styles.bundle}>
+                <Panel key={pieceKeyOf(bundle.owner)} data-part="press.bundle" deck={bundle.owner.kind} className={styles.bundle}>
                   <div className={styles.bundleMarq}>
                     <span className={styles.kick}>bundle</span>
                     <h2 className={styles.bundleName}>{bundle.owner.name}</h2>
-                    <span className={styles.bundleCount}>{bundle.riders.length > 0 ? numerals(`character + ${bundle.riders.length} linked`) : "character"}</span>
+                    <span className={styles.bundleCount}>{bundle.riders.length > 0 ? numerals(`${deckMeta(bundle.owner.kind).singular.toLowerCase()} + ${bundle.riders.length} linked`) : deckMeta(bundle.owner.kind).singular.toLowerCase()}</span>
                     <Button size="sm" variant="quiet" onClick={() => ctx.press.unstage(bundle.owner.id, bundle.owner.kind)}>
                       Unstage ×
                     </Button>
@@ -411,7 +412,7 @@ function Press({ ctx }: { ctx: AppContext }): JSX.Element {
                 </Panel>
               ))}
               {grouping.solos.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ (s) => (
-                <Panel key={pieceKeyOf(s)} data-part="press.bundle" deck={deckOf(s.kind)} className={styles.bundle}>
+                <Panel key={pieceKeyOf(s)} data-part="press.bundle" deck={s.kind} className={styles.bundle}>
                   <div className={styles.bundleMarq}>
                     <span className={styles.kick}>solo</span>
                     <h2 className={styles.bundleName}>{s.name}</h2>

@@ -15,7 +15,7 @@ import { openStudio } from "../foreign-reader";
 import { CollectionsStore } from "../studio/collections";
 import { EMPTY_COLLECTIONS, type CollectionsFile } from "../studio/collections-shape";
 import { resolveDefaultStudioDir } from "../studio/resolve-dir";
-import { STUDIO_ENTITY_KINDS, type StudioEntityKind } from "../studio/path-policy";
+import { KINDS, type KindId } from "../generated/kinds";
 import type { ParsedCanonicalEntity } from "../entities/runtime-schema";
 
 export type { EntitySummary } from "../studio/store";
@@ -24,7 +24,7 @@ export type { EntitySummary } from "../studio/store";
 export type KitEntity = ParsedCanonicalEntity;
 
 export interface DeckCount {
-  kind: StudioEntityKind;
+  kind: KindId;
   label: string;
   count: number;
 }
@@ -72,18 +72,6 @@ export interface KitBridge {
   delete(kind: string, id: string): Promise<boolean>;
 }
 
-const DECK_LABELS: Record<StudioEntityKind, string> = {
-  character: "Characters",
-  lorebook: "Lorebooks",
-  persona: "Personas",
-  pack: "Packs",
-  regex: "Regex",
-  preset: "Presets",
-  htmldoc: "Drawings",
-  quickreply: "Quick replies",
-  promptformat: "Prompt formats",
-};
-
 /** Bind a Kit session to a studio directory (defaults to the machine's studio). */
 export function createBridge(
   studioDir: string = resolveDefaultStudioDir(homedir()),
@@ -98,11 +86,7 @@ export function createBridge(
       for (const entity of await store.list()) {
         tallies.set(entity.kind, (tallies.get(entity.kind) ?? 0) + 1);
       }
-      return STUDIO_ENTITY_KINDS.map((kind) => ({
-        kind,
-        label: DECK_LABELS[kind],
-        count: tallies.get(kind) ?? 0,
-      }));
+      return KINDS.map((k) => ({ kind: k.id, label: k.plural, count: tallies.get(k.id) ?? 0 }));
     },
     async list(kind?: string): Promise<EntitySummary[]> {
       try {

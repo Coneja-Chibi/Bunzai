@@ -12,7 +12,7 @@ import { useIngest } from "../../use-ingest";
 import { SettingsField, SettingsRange, SettingsSection, SettingsSegmented, SettingsToggle } from "./parts";
 import type { SectionProps } from "./deps";
 
-const MODELS = [{ value: "compendium", label: "Compendium model" }, { value: "scene", label: "Scene model" }] as const;
+export const INGEST_MODELS_OPTIONS = [{ value: "compendium", label: "Compendium model" }, { value: "scene", label: "Scene model" }] as const;
 
 export function IngestSection({ ctx, chat, compendium, bookId, set }: SectionProps): JSX.Element {
   const i = compendium.resolved.ingest;
@@ -28,7 +28,7 @@ export function IngestSection({ ctx, chat, compendium, bookId, set }: SectionPro
   return (
     <SettingsSection id="ingest" title="Import chat history" blurb="Process existing chat messages into typed compendium entries in batch. Use this to populate the compendium from conversation history. Pick a message range and run." dot="var(--bk-role-warn)">
       <SettingsToggle on={i.continuity} onChange={(continuity) => patch({ continuity })} label="Cross-chunk continuity" hint="Send previous chunk's entries to the next chunk so the LLM doesn't double-write the same characters or locations" />
-      <SettingsSegmented label="Ingest model" hint="Which model processes chat messages into typed entries" value={i.model} options={MODELS} onChange={(model) => patch({ model })} />
+      <SettingsSegmented label="Ingest model" hint="Which model processes chat messages into typed entries" value={i.model} options={INGEST_MODELS_OPTIONS} onChange={(model) => patch({ model })} />
       <SettingsRange label="Tokens per chunk" hint="How much context the ingest model sees per call. Bigger = fewer calls but more cost per call." value={i.chunkTokens} min={RANGES.chunkTokens[0]} max={RANGES.chunkTokens[1]} step={1000} onChange={(chunkTokens) => patch({ chunkTokens })} />
       <div className="cps-phases">
         <span className="cps-lab">Phases</span>

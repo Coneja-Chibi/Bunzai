@@ -17,7 +17,7 @@ import type { TrackerView } from "./use-tracker";
 import { useTrackerUpdate } from "../story-director/use-tracker-update";
 import { AutoUpdateLine, DirectorUpdateLine } from "../story-director/tracker-update-ui";
 
-const CONTEXT_LABELS: Readonly<Record<TrackerContext, string>> = { always: "Always Include", every2: "Every 2 Turns", every5: "Every 5 Turns", never: "Never Include" };
+export const CONTEXT_LABELS: Readonly<Record<TrackerContext, string>> = { always: "Always Include", every2: "Every 2 Turns", every5: "Every 5 Turns", never: "Never Include" };
 
 export interface FrameProps {
   /** The module's short label for the eyebrow ("Stats" reads "Stats module"). */

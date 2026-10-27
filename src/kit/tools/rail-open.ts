@@ -23,6 +23,7 @@
 import { z } from "zod";
 import type { HarnessTool, ToolContext } from "./tool";
 import { findPreset } from "./_shared/find-preset";
+import { KIND_IDS } from "../../generated/kinds";
 
 /**
  * What this app calls the place a preset opens: Kit's rail, or the window's Workbench.
@@ -33,12 +34,12 @@ import { findPreset } from "./_shared/find-preset";
 const surfaceOf = (ctx: ToolContext): string => ctx.surface ?? "the rail";
 
 /**
- * The kinds a name might belong to when it is not a preset, in the order worth checking.
+ * The kinds a name might belong to when it is not a preset, in the order worth checking: every kind in the hub.
  *
  * Drawings first because that is the one somebody reaches for here: the rail and a drawing are both
  * "a thing you look at", and the model that asked for one had just made it.
  */
-const OTHER_KINDS = ["htmldoc", "character", "lorebook", "persona", "regex", "pack"] as const;
+const OTHER_KINDS = ["htmldoc", ...KIND_IDS.filter((kind) => kind !== "htmldoc" && kind !== "preset")];
 
 /** The piece this name really is, if it is a piece of some other kind. */
 async function otherKind(

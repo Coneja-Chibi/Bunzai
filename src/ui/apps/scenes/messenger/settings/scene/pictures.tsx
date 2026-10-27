@@ -1,10 +1,10 @@
 /**
- * The scene scope's Pictures page (wireframe SCOPES.scene, pics): the backdrop's values as rows (overlay darkness and a video's speed, written through `api.setSceneBackdrop` as the backdrop
- * picker writes them) and the gallery and wardrobe tools as drill rows, shown while their Stage tabs are. Picking the picture is the Control Panel layer's picker. Blur has no store and is not drawn.
+ * The scene scope's Pictures page (wireframe SCOPES.scene, pics): the backdrop's values as rows (overlay darkness, blur and a video's speed, written through `api.setSceneBackdrop` as the backdrop
+ * picker writes them) and the gallery and wardrobe tools as drill rows, shown while their Stage tabs are. Picking the picture is the Control Panel layer's picker.
  */
 import type { JSX } from "react";
 import { toErrorMessage } from "../../../../../_shared/error-message";
-import { DEFAULT_DIM, MAX_DIM, MAX_RATE, MIN_RATE, dimOf, isVideoRef, itemOf, rateOf } from "../../../scene-backdrop-core";
+import { DEFAULT_DIM, MAX_BLUR, MAX_DIM, MAX_RATE, MIN_RATE, blurOf, dimOf, isVideoRef, itemOf, rateOf } from "../../../scene-backdrop-core";
 import { STAGE_TABS } from "../../../scene-stage-wing";
 import { useBackdropPack } from "../../../use-backdrop-pack";
 import { DrillRow } from "../../frames/settings-rows";
@@ -27,6 +27,8 @@ function BackdropRows({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Elem
     <>
       <DrillRow label="Backdrop" description="The picture behind this scene's messages." value={b ? item?.label ?? "Picked" : "None"} onOpen={() => open("display")} />
       {b && <SavedSlider label="Overlay darkness" description={`How much the theme's color covers the picture. ${String(Math.round(DEFAULT_DIM * 100))}% is the default.`} saved={Math.round(dimOf(b) * 100)} min={0} max={Math.round(MAX_DIM * 100)} step={5} unit="%" write={(n) => write({ ...b, dim: n / 100 })} />}
+      {b && <SavedSlider label="Blur" description="Soften the picture behind the messages." saved={blurOf(b)} min={0} max={MAX_BLUR} step={1} unit=" px"
+        write={(blur) => { const { blur: _old, ...rest } = b; return write({ ...rest, ...(blur === 0 ? {} : { blur }) }); }} />}
       {b && item && isVideoRef(item.ref, item.mime) && <SavedSlider label="Video speed" saved={rateOf(b)} min={MIN_RATE} max={MAX_RATE} step={0.05} unit="x" write={(rate) => write({ ...b, rate })} />}
     </>
   );

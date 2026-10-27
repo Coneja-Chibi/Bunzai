@@ -66,7 +66,7 @@ async function scene(library: Record<string, PresetBody>, model = "vera-1") {
 describe("a scene with a preset", () => {
   test("sends the preset's prompts, samplers, merging mode, reply cap, and prefill", async () => {
     const s = await scene({ quill });
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.turn();
     const [request] = s.sent;
     expect(request!.messages.map((m) => m.content)).toEqual(["Write as Vera.", "Literary prose.", "Evening.", "Any storms?", "Vera:"]);
@@ -76,7 +76,7 @@ describe("a scene with a preset", () => {
 
   test("the scene's toggles and sampler overrides sit over the preset's own", async () => {
     const s = await scene({ quill });
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: { style: false }, samplers: { temperature: 0.3, maxTokens: 200 } });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: { style: false }, samplers: { temperature: 0.3, maxTokens: 200 } });
     await s.turn();
     const [request] = s.sent;
     expect(request!.messages.map((m) => m.content)).not.toContain("Literary prose.");
@@ -86,7 +86,7 @@ describe("a scene with a preset", () => {
   test("a library edit reaches the scene on its next turn", async () => {
     const library = { quill };
     const s = await scene(library);
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     library.quill = { ...quill, prompts: quill.prompts.map((p) => (p.id === "style" ? { ...p, content: "Plain prose." } : p)) };
     await s.turn();
     expect(s.sent[0]!.messages.map((m) => m.content)).toContain("Plain prose.");
@@ -94,14 +94,14 @@ describe("a scene with a preset", () => {
 
   test("a model that refuses a prefill gets none", async () => {
     const s = await scene({ quill }, "claude-opus-4-6");
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.turn();
     expect(s.sent[0]!.messages.at(-1)).toEqual({ role: "user", content: "Any storms?" });
   });
 
   test("a preset the library no longer has stops the turn before it opens, and nothing is sent", async () => {
     const s = await scene({});
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await expect(s.turn()).rejects.toBeInstanceOf(PresetGoneError);
     expect(s.sent).toHaveLength(0);
     expect(s.events).toHaveLength(0);
@@ -118,7 +118,7 @@ describe("a scene with a preset", () => {
 
 test("a preset block the assembler cannot place fails as the preset's fault, with nothing sent and nothing kept", async () => {
   const s = await scene({ odd: { name: "Odd", prompts: [block("x", "{{message_history}}", { placement: "sideways" })] } });
-  await s.chats.setPreset(s.chat.id, { id: "odd", toggles: {}, samplers: {} });
+  await s.chats.setPreset(s.chat.id, { kind: "preset", id: "odd", toggles: {}, samplers: {} });
   await s.turn();
   expect(s.sent).toHaveLength(0);
   expect(s.events.at(-1)).toMatchObject({ type: "failed", code: "invalid_preset", message: expect.stringContaining("x") });

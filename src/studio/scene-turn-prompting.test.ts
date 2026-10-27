@@ -116,7 +116,7 @@ describe("guides on a live scene", () => {
 
   test("an assistant-role guide replaces the preset's prefill", async () => {
     const s = await scene();
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.turn();
     expect(s.texts(0).at(-1)).toBe("assistant:Preset:");
     const g = await saveGuide(s.state, { title: "Start", content: "Vera:", role: "assistant" }, 1, () => "p1");

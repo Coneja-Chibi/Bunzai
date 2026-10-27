@@ -7,6 +7,7 @@ import { useEffect, useState, type JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import type { PresetBody } from "../../../entities/preset/schema";
 import type { Chat } from "../../../stage/contracts/chat-store";
+import type { ChoiceSelections } from "../../../core/macros/choice-groups";
 import { buildPromptPeekMap, customizedCount } from "../../../core/preset/choice-stepper";
 import { PRESET_CHOICE_DEFAULTS_KEY } from "../../../core/preset/choices";
 import { recOr } from "../../../core/guards";
@@ -15,6 +16,11 @@ import { Ic } from "../../_shared/ic";
 import { InkDialog } from "../../components/ink-dialog";
 import { ChoiceWalkthrough } from "./scene-choice-walkthrough";
 import type { SceneChoices } from "./use-scene-choices";
+
+/** "Save & done": the answers kept as the person's defaults for this preset, over every other preset's (the walkthrough and the Messenger settings page both save them here). */
+export function saveChoiceDefaults(prefs: AppContext["prefs"], presetId: string, selections: ChoiceSelections): void {
+  prefs.set(PRESET_CHOICE_DEFAULTS_KEY, { ...recOr(prefs.get(PRESET_CHOICE_DEFAULTS_KEY)), [presetId]: selections });
+}
 
 const offeredKey = (chatId: string, presetId: string): string => `scenes.choiceOffered.${chatId}.${presetId}`;
 
@@ -59,7 +65,7 @@ export function ChoicesRow({ ctx, chat, body, choices }: { ctx: AppContext; chat
         <ChoiceWalkthrough groups={groups} selections={selections} startAt={step} onStep={setStep} onClose={close} presetName={body.name}
           {...(body.description ? { readme: body.description } : {})} peeks={buildPromptPeekMap(body.prompts.map((p) => ({ id: p.id, name: p.name, content: p.content })))}
           onSelect={(groupId, value) => { void choices.select(groupId, value).catch(() => undefined); }}
-          onSave={() => { const all = ctx.prefs.get(PRESET_CHOICE_DEFAULTS_KEY); ctx.prefs.set(PRESET_CHOICE_DEFAULTS_KEY, { ...recOr(all), [presetId]: selections }); }} />
+          onSave={() => saveChoiceDefaults(ctx.prefs, presetId, selections)} />
       )}
     </div>
   );

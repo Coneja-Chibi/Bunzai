@@ -1,6 +1,6 @@
 /**
- * The scene scope's Control Booth page (wireframe SCOPES.scene, booth): the values the Booth hub keeps, as rows bound to the Booth's own writers. The narrator model, the preset and the
- * loadouts are tools (a model list, the prompt editor, the loadout dialogs), so they are drill rows to their programs; the fallback model is the per-user pref the Booth writes
+ * The scene scope's Control Booth page (wireframe SCOPES.scene, booth): the values the Booth hub keeps, as rows bound to the Booth's own writers. The narrator model is a select (model-select.tsx) with a deeper page of favorites; the preset and the
+ * loadouts are tools (the prompt editor, the loadout dialogs), so they are drill rows to their programs; the fallback model is the per-user pref the Booth writes
  * (fallback-model.ts); the lorebook switches, the summary switches and the runtime setup are the same writers the Booth rows use.
  */
 import { useReducer, useState, type JSX } from "react";
@@ -17,11 +17,13 @@ import { useSummary } from "../../../context/use-summary";
 import { presetTile } from "../../../scene-booth-wing";
 import { setLastAsUser } from "../../../scene-last-as-user-row";
 import { useBoothPreset } from "../../../use-booth-preset";
-import { modelChoices, keyOf, useSceneModels, type SceneModels } from "../../../use-scene-models";
-import { DrillRow, SegmentedRow, SelectRow, ToggleRow } from "../../frames/settings-rows";
-import type { SettingsCategory } from "../../frames/settings-window";
+import { useSceneModels, type SceneModels } from "../../../use-scene-models";
+import { DrillRow, SegmentedRow, ToggleRow } from "../../frames/settings-rows";
+import { useSettingsNav, type SettingsCategory } from "../../frames/settings-window";
 import { onChatOf, type WingArgs } from "../../wing-props";
 import type { OpenProgram } from "../scopes";
+import { ModelSelect } from "./model-select";
+import { MODELS_PAGE } from "./pages";
 import { SavedNumber, SavedToggle } from "./saved";
 import { LorebookRows } from "./world";
 
@@ -36,17 +38,13 @@ function FallbackRows({ ctx, models }: { ctx: AppContext; models: SceneModels })
   const saved = readFallback(ctx.prefs.get(FALLBACK_KEY));
   const mode = saved.mode === "custom" || pending ? "custom" : "off";
   const set = (value: unknown): void => { ctx.prefs.set(FALLBACK_KEY, value); again(); };
-  const choices = modelChoices(models);
-  const current = saved.mode === "custom" ? keyOf(saved.connection) : "";
-  const known = choices.some((c) => c.value === current);
-  const options = [{ value: "", label: "Pick a model" }, ...(current && !known ? [{ value: current, label: current.replace("|", ": ") }] : []), ...choices.map((c) => ({ value: c.value, label: c.label }))];
   return (
     <>
       <SegmentedRow label="Fallback model" description="What answers when the scene's model fails. Applies to all your scenes." value={mode} options={[{ value: "off", label: "Off" }, { value: "custom", label: "Custom" }]}
         onChange={(next) => { if (next === "off") { setPending(false); set({ mode: "off" }); } else if (saved.mode !== "custom") setPending(true); }} />
       {mode === "custom" && (
-        <SelectRow label="Model used as the fallback" value={current} options={options}
-          onChange={(key) => { const hit = choices.find((c) => c.value === key); if (hit) { setPending(false); set({ mode: "custom", connection: hit.conn }); } }} />
+        <ModelSelect label="Model used as the fallback" models={models} current={saved.mode === "custom" ? saved.connection : undefined} none="Pick a model"
+          onPick={(connection) => { if (connection) { setPending(false); set({ mode: "custom", connection }); } }} />
       )}
     </>
   );
@@ -68,13 +66,15 @@ function SummaryRows({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Eleme
 }
 
 function RightNow({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Element {
+  const nav = useSettingsNav();
   const { ctx, scene } = a;
   const chat = scene.chat;
   const models = useSceneModels(ctx, chat, onChatOf(a));
-  const preset = useBoothPreset(ctx, chat.preset?.id ?? null);
+  const preset = useBoothPreset(ctx, chat.preset ?? null);
   return (
     <>
-      <DrillRow label="Narrator model" description="The model this scene writes with." value={chat.connection ? models.nameOf(chat.connection) : "None selected"} onOpen={() => open("model")} />
+      <ModelSelect label="Narrator model" description="The model this scene writes with. Starred models come first." models={models} current={chat.connection} none="Pick a model" onPick={(model) => { if (model) models.pick(model); }} />
+      <DrillRow label="Favorite models" description="Star the models you reach for most." value={models.favorites.length > 0 ? `${String(models.favorites.length)} starred` : undefined} onOpen={() => nav.open(MODELS_PAGE)} />
       <FallbackRows ctx={ctx} models={models} />
       <DrillRow label="Preset" description="How the prompt is built." value={presetTile(chat, preset)} onOpen={() => open("prompts")} />
     </>

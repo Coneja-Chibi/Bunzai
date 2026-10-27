@@ -1,0 +1,104 @@
+{
+  "kind": "dice",
+  "source": "src/entities/dice/schema.ts",
+  "shapes": [
+    {
+      "name": "DiceRow",
+      "doc": "A table row: its text and how many chances it has (a 1 to 1,000 weight).",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "text",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "weight",
+          "optional": false,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    },
+    {
+      "name": "DicePool",
+      "doc": "A pool: `count` dice of `sides`; each die at or over `target` is a success.",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "count",
+          "optional": false,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "sides",
+          "optional": false,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "target",
+          "optional": false,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    },
+    {
+      "name": "DiceBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "type",
+          "optional": false,
+          "type": "DiceType",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "dice",
+          "optional": true,
+          "type": "string",
+          "meaning": "A roll's dice.",
+          "producers": []
+        },
+        {
+          "name": "rows",
+          "optional": true,
+          "type": "DiceRow[]",
+          "meaning": "A table's rows.",
+          "producers": []
+        },
+        {
+          "name": "pool",
+          "optional": true,
+          "type": "DicePool",
+          "meaning": "A pool's dice and target.",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

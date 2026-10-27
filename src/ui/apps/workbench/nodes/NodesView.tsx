@@ -47,7 +47,7 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
   const model = useMemo(
     () => pipelineModel({
       presets: presetPieces.map((piece, i) => ({ piece, body: presetBodies[i] })),
-      scenePresetId: data.scene?.preset?.id,
+      scenePresetId: data.scene?.preset?.kind === "preset" ? data.scene.preset.id : undefined,
       chosenPresetId,
       sources: { texts: data.texts, lore: data.lore },
       hasScene: data.scene !== null,

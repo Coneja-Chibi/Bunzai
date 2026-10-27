@@ -1,22 +1,17 @@
 /**
  * The scene scope's World page (wireframe SCOPES.scene, filed by where each value is stored: lorebook choice, Compendium access and the roster are this scene's). Every row is bound to the
- * writer the Full Chat wing uses: the lorebook switches to `useSceneLore` (use-scene-lore.ts), a book's Compendium access to `useSceneCompendium` through `accessChange`, a participant's
+ * writer the Full Chat wing uses: the lorebook switches to `useSceneLore` (use-scene-lore.ts), a book's Compendium access to `useSceneCompendium` through `accessChange` (compendium-books.tsx), a participant's
  * presence to `useSceneParticipants`. The tools themselves (entries, the Compendium's tabs, colors, Reconcile) are drill rows to their Messenger programs.
  */
 import { useEffect, type JSX } from "react";
-import { accessOf } from "../../../../../../core/compendium/defaults";
-import { toErrorMessage } from "../../../../../_shared/error-message";
-import { protect } from "../../../../../_shared/protected-control";
-import { CHOICES } from "../../../compendium/tabs/settings/access-chip";
-import { accessChange } from "../../../compendium/tabs/settings/books";
 import { sceneRoster } from "../../../participants/scene-roster";
 import { useSceneParticipants } from "../../../participants/use-scene-participants";
-import { useSceneCompendium } from "../../../use-scene-compendium";
 import { useSceneLore } from "../../../use-scene-lore";
 import { ActionRow, DrillRow, SelectRow, ToggleRow } from "../../frames/settings-rows";
 import type { SettingsCategory } from "../../frames/settings-window";
-import { onChatOf, type WingArgs } from "../../wing-props";
+import type { WingArgs } from "../../wing-props";
 import type { OpenProgram } from "../scopes";
+import { BookAccessRows } from "./compendium-books";
 
 const SAY = "msn-st-secd";
 
@@ -40,21 +35,10 @@ export function LorebookRows({ a, open }: { a: WingArgs; open: OpenProgram }): J
 
 /** One access choice per book, as in the Compendium's access chip, and the way to the Compendium. */
 export function CompendiumRows({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Element {
-  const { ctx, scene } = a;
-  const chat = scene.chat;
-  const { lore } = useSceneLore(ctx, chat.id);
-  const compendium = useSceneCompendium(ctx, chat, onChatOf(a));
-  const books = lore.state === "ready" ? lore.books : [];
   return (
     <>
-      {books.map((b) => (
-        <div key={b.id} {...protect("compendium-access")}>
-          <SelectRow label={`Compendium access: ${b.name}`} description={CHOICES.find((c) => c.value === accessOf(chat.compendium, b.id))?.text ?? ""} value={accessOf(chat.compendium, b.id)} options={CHOICES.map((c) => ({ value: c.value, label: c.label }))}
-            onChange={(next) => { compendium.patch(accessChange(b.id, next, chat.compendium?.writeBook === b.id)).catch((e: unknown) => ctx.setStatus(`could not save the Compendium settings: ${toErrorMessage(e, "the scene refused it")}`)); }} />
-        </div>
-      ))}
-      {lore.state === "ready" && books.length === 0 && <p className={SAY}>Attach a lorebook first; the Compendium files notes into a book.</p>}
-      <DrillRow label="Compendium" description="Browse, file and tune filed world notes." onOpen={() => open("compendium")} />
+      <BookAccessRows a={a} />
+      <DrillRow label="Compendium" description="Browse, file and tune filed world notes. Every Compendium setting is on the Compendium page." onOpen={() => open("compendium")} />
     </>
   );
 }

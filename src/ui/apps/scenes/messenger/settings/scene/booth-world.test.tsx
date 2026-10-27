@@ -70,12 +70,11 @@ describe("Control Booth page", () => {
     m.done();
   });
 
-  test("model, preset, summary and loadouts are drill rows to their programs", async () => {
+  test("preset, summary and loadouts are drill rows to their programs; the narrator model is a select", async () => {
     const r = rig();
     const cat = boothCategory(r.a, r.open);
     const right = await mount(bodyOfSection(cat, "right-now"));
     await wait(30);
-    rowOf(right.host, "Narrator model").click();
     rowOf(right.host, "Preset").click();
     right.done();
     const sum = await mount(bodyOfSection(cat, "booth-summary"));
@@ -85,7 +84,7 @@ describe("Control Booth page", () => {
     const loads = await mount(bodyOfSection(cat, "loadouts"));
     rowOf(loads.host, "Loadouts").click();
     loads.done();
-    expect(r.opened).toEqual(["model", "prompts", "memory", "quickplay"]);
+    expect(r.opened).toEqual(["prompts", "memory", "quickplay"]);
   });
 
   test("the lorebook switch writes the scene's choice", async () => {

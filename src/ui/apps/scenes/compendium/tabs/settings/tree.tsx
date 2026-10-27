@@ -15,12 +15,12 @@ import { useCompendiumTree } from "../../use-compendium-tree";
 import { SettingsField, SettingsSection, SettingsToggle } from "./parts";
 import type { SectionProps } from "./deps";
 
-const GRANULARITY = [
+export const GRANULARITY = [
   [0, "Auto - scales with lorebook size"], [1, "Minimal - 3-5 categories, max 20/node"], [2, "Moderate - 5-8 categories, max 12/node"],
   [3, "Detailed - 8-15 categories, max 8/node"], [4, "Extensive - 12-20 categories, max 5/node"],
 ] as const;
-const DETAIL = [["names", "Names only"], ["lite", "Lite - name + keywords (default)"], ["full", "Full - name + keywords + content preview"]] as const;
-const PLACEMENT = [["auto", "Auto (default)"], ["sequential", "Sequential"], ["parallel", "Parallel"]] as const;
+export const TREE_DETAIL = [["names", "Names only"], ["lite", "Lite - name + keywords (default)"], ["full", "Full - name + keywords + content preview"]] as const;
+export const PLACEMENT = [["auto", "Auto (default)"], ["sequential", "Sequential"], ["parallel", "Parallel"]] as const;
 
 export function TreeBuildSection({ compendium, set }: SectionProps): JSX.Element {
   const t = compendium.resolved.treeBuild;
@@ -33,7 +33,7 @@ export function TreeBuildSection({ compendium, set }: SectionProps): JSX.Element
       </SettingsField>
       <SettingsField label="Entry detail level" hint="How much entry info the LLM sees during categorization.">
         <select className="cps-sel" aria-label="Entry detail level" value={t.detail} onChange={(e) => void set({ treeBuild: { detail: e.target.value as typeof t.detail } })}>
-          {DETAIL.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          {TREE_DETAIL.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
       </SettingsField>
       <SettingsToggle label="Refine entries during build" on={t.refine} onChange={(on) => void set({ treeBuild: { refine: on } })}

@@ -6,6 +6,7 @@
 import type { FormatInfo, StudioEntitySummary } from "../../app-contract";
 import { EXTENSION_PLATFORMS } from "../../../formats/_shared/extension-platforms";
 import { sanitizeDownloadBase } from "../../../core/download-name";
+import { WRITING_KINDS, formatsFor } from "../../../core/writing";
 
 /** Narrow to a plain object (not null, not an array); shared by every Press module reading bodies. */
 
@@ -41,6 +42,17 @@ export function groupPlatforms(formats: readonly FormatInfo[]): PressPlatform[] 
       if (!entry || entry.byKind.character !== undefined) continue;
       entry.byKind.character = card;
       entry.borrowed = { ...(entry.borrowed ?? {}), character: "a CCv3 card, its native character file" };
+    }
+  }
+  // a writing setup with no format of its own on a platform prints through that platform's preset format (core/writing.ts)
+  for (const entry of byFriendly.values()) {
+    const live = Object.values(entry.byKind);
+    for (const kind of WRITING_KINDS) {
+      if (entry.byKind[kind] !== undefined) continue;
+      const borrowed = formatsFor(live, kind)[0];
+      if (!borrowed) continue;
+      entry.byKind[kind] = borrowed;
+      entry.borrowed = { ...(entry.borrowed ?? {}), [kind]: "a preset, the blocks it sends" };
     }
   }
   return [...byFriendly.values()].sort((a, b) => a.friendly.localeCompare(b.friendly));

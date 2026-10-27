@@ -19,6 +19,9 @@ async function shapeFiles(): Promise<string[]> {
     "src/entities/runtime-schema.ts",
     // Persisted nested values share schemas that must remain pinned with each kind's top-level decoder.
     "src/entities/_shared/canonical-value-schemas.ts",
+    // The envelope every kind shares, and the generated list of kind decoders the parse boundary unions.
+    "src/entities/_shared/envelope.ts",
+    "src/generated/kind-schemas.ts",
     ...adjacent,
     "src/studio/settings-shape.ts",
     "src/core/canonical.ts",
@@ -350,12 +353,34 @@ async function shapeFiles(): Promise<string[]> {
 // their defaults and an older build keeps them as unknown keys. No migration, no SCHEMA_BUMPS entry. The pin was recomputed.
 // 2026-10-26, Stage lights (Settings > Appearance): settings-shape.ts adds the key name "ui.stageLights" and the value set moving | still | off; parseSettings drops any other value. ADDITIVE and
 // COMPATIBLE: an unset key reads as moving and an older build keeps it as an unknown key. No migration, no SCHEMA_BUMPS entry. The pin was recomputed.
-const PINNED_SHAPE_HASH = "5d29687118ddf57c8ef897fbf356d75773120bf25d1a3283a4524f6a6e001e4f";
+// 2026-10-26, the kind hub: each kind's whole-entity decoder moved from src/entities/runtime-schema.ts into its own runtime-schema.ts
+// (built from the shared envelope, now src/entities/_shared/envelope.ts, pinned here), and the parse boundary unions the generated
+// list src/generated/kind-schemas.ts (pinned here). NO SHAPE CHANGE: the same envelope fields, the same nine kinds, the same body
+// decoders; the canonical round-trip tests pass unchanged. No migration, no SCHEMA_BUMPS entry. The pin was recomputed.
+// 2026-10-27, Script Sheets (RoleCall's single-instruction preset): the preset body gains an optional `scriptSheet: { version: 1, content }`. ADDITIVE: every
+// stored preset without it parses as before. The decoder checks only its shape and the 100,000-character cap; the content rules are checked where a
+// sheet is written and when it is sent (core/preset/script-sheet.ts), so a later rule change never makes a stored sheet unreadable. ONE-WAY: a build
+// from before this change has a strict preset body and refuses a preset that carries `scriptSheet`.
+// 2026-10-27 (later), the writing family: the Script Sheet becomes its own kind (src/entities/scriptsheet/, a new decoder:
+// name, content, description, samplers) and the preset body drops the `scriptSheet` field it briefly carried, so a
+// preset is stored exactly as before that field. A scene's preset choice gains its writing kind (`ChatPreset.kind`, rule
+// 19, required; Bunraku has no stored scenes to carry). No migration: there is no data to keep.
+// 2026-10-27 (later still), tools: a new kind (src/entities/tool/, a new decoder: name, description, typed fields with unique
+// choices, and one action: roll the dice a text field names, roll a linked dice piece by id, or record; no code) and a scene's
+// prompting gains `tools`, the library tools it links (ids, at most 20). ADDITIVE: every
+// stored piece and scene reads as before. ONE-WAY: an older build has no tool kind and refuses prompting that carries `tools`.
+// 2026-10-27 (last), dice: a new kind (src/entities/dice/, a new decoder: one type of roll, table or pool, carrying only that
+// type's field, its dice and pool within the dice limits). ADDITIVE. ONE-WAY: an older build has no dice kind.
+// Formulas: a new kind (src/entities/formula/, a new decoder: name, description, macro text up to 20,000 characters, shape only),
+// and a tool action `formula` linking one by id. ADDITIVE. ONE-WAY: an older build has neither.
+// 2026-10-27, no shape change: the dice, formula and tool decoders share one name and description shape
+// (_shared/canonical-value-schemas.ts pieceShape) and the dice limits from core/dice.ts. Same limits, same messages.
+const PINNED_SHAPE_HASH = "b1f34b42eeeba9083010b833b8c70416e27cbfb25a558332b88fbd7d86e2eca5";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");
   const files = await shapeFiles();
-  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(10);
+  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(14);
   for (const f of files) h.update((await Bun.file(f).text()).replace(/\r\n/g, "\n"));
   expect(h.digest("hex")).toBe(PINNED_SHAPE_HASH);
 });

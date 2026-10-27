@@ -2,7 +2,7 @@
  * The character slice (spec Behavior step 4 for the portrait, step 5 for the character row, step 7
  * for isolation; edge case 7 for the extensions exception). A `characters` row is CCv2 fields
  * flattened plus an `extensions` JSON string, so this synthesizes a CCv2 card and dispatches through
- * the already-shipped Lumiverse character adapter (src/formats/lumiverse/index.ts) via `inspectBundle`
+ * the already-shipped Lumiverse character adapter (src/formats/lumiverse/index.ts) via `readPieces`
  * (src/convert.ts), which also extracts any embedded `character_book` into a standalone lorebook. No
  * card-field mapping or sprite/expression rehydration lives here twice; both already exist in that
  * codec.
@@ -29,12 +29,13 @@
  */
 import { zipSync, strToU8 } from "fflate";
 import type { CanonicalCharacter, MediaAsset } from "../../entities/character/schema";
+import type { CanonicalLorebook } from "../../entities/lorebook/schema";
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import { characterAdapter } from "../lumiverse";
 import type { LumiModules } from "../lumiverse/modules";
 import { wrapV2, type TavernData } from "../_shared/tavern-fields";
 import { toAdapterInput } from "../../core/adapter-input";
-import { inspectBundle } from "../../convert";
+import { readPieces } from "../../convert";
 import type { Binaries } from "./binaries";
 import { addArchiveEscrow } from "./escrow";
 import type { IdMint, LinkMap } from "./links";
@@ -283,7 +284,8 @@ export async function importCharacters(
           )
         : toAdapterInput(strToU8(JSON.stringify(envelope)), "character.json");
 
-      const { entity, lorebooks } = inspectBundle(characterAdapter, input);
+      const pieces = readPieces(characterAdapter, input);
+      const entity = pieces.entity as CanonicalCharacter, lorebooks = pieces.related as CanonicalLorebook[];
       entity.id = idMint.claim("character", entity.id);
       await resolvePortrait(entity, read.row, binaries, images);
       await appendGalleryAssets(entity, rowId(read.row), gallery, images, binaries);

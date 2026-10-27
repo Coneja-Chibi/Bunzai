@@ -65,7 +65,7 @@ describe("set aside: a damaged text cell", () => {
 
   test("an optional setting that will not open is cleared and the original kept", async () => {
     const r = await rig();
-    await r.l.chats.setPreset(r.l.chatId, { id: "p", toggles: {}, samplers: {} });
+    await r.l.chats.setPreset(r.l.chatId, { kind: "preset", id: "p", toggles: {}, samplers: {} });
     const cell = get<{ preset_json: string }>(r.l, "SELECT preset_json FROM chats WHERE id = ?", r.l.chatId).preset_json;
     run(r.l, "UPDATE chats SET preset_json = ? WHERE id = ?", flip(cell), r.l.chatId);
     const finding = await findOne(r, "cell-unreadable", "chats");

@@ -5,7 +5,7 @@ import { ThemeSlot } from "../../_shared/theme-slot";
 import type { CSSProperties, DragEvent, JSX } from "react";
 import type { AppContext, StudioDamagedEntry, StudioEntitySummary, BunrakuApp } from "../../app-contract";
 import { useSurfaceVariant } from "../../_shared/surface-variant";
-import { deckMeta, knownDecks } from "../../_shared/decks";
+import { deckHead, deckOf, knownDecks } from "../../_shared/decks";
 import { toErrorMessage } from "../../_shared/error-message";
 import { deckCounts } from "./deck-core";
 import { ImportOverlay, makeImportRunners, pickFiles, type ImportState } from "./import-flow";
@@ -25,7 +25,7 @@ import {
   type RegexWorkshopState,
 } from "./regex-shelf-ops";
 import { RegexWorkshopDialog } from "./regex-workshop-dialog";
-import { createAndOpenCharacter } from "../../_shared/new-character";
+import { createBlank } from "../../_shared/new-piece";
 import { useEntityDelete } from "./delete-flow";
 import { consumeImportRequests } from "../../_shared/import-signal";
 import { peekPiece, sourceLabelFor } from "./piece-peek";
@@ -184,7 +184,7 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
 
   // No rows (not zero-count rows) until the first load answers.
   const decks = loaded ? deckCounts(entities, knownDecks().map((d) => d.kind)) : [];
-  const deck = deckMeta(soloDeck ?? "character");
+  const deck = deckHead(soloDeck ?? "character");
 
   const debouncedQuery = useDebouncedQuery(query);
   const parsed = useMemo(() => parseQuery(debouncedQuery), [debouncedQuery]);
@@ -200,11 +200,11 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
     : parsed.active ? entities.map((piece) => ({ piece, score: 0 }))
     : entities.map((piece) => ({ piece, score: 0 }));
   const hitTotal = parsed.active && currentSearch && !searchUnavailable ? searchResult.total : 0;
-  const perDeck = matchesByKind(hits);
+  const perDeck = [...matchesByKind(hits).reduce((m, { kind, count }) => m.set(deckOf(kind), (m.get(deckOf(kind)) ?? 0) + count), new Map<string, number>())].map(([kind, count]) => ({ kind, count }));
   const matched = new Map(perDeck.map((m) => [m.kind, m.count]));
   const lastOpened = ctx.workbench.recents();
   const hitPieces = hits.map((h) => h.piece);
-  const inDeck = orderPieces(hitPieces.filter((p) => p.kind === activeKind), order, lastOpened);
+  const inDeck = orderPieces(hitPieces.filter((p) => deckOf(p.kind) === activeKind), order, lastOpened);
   const deckTotal = decks.find((d) => d.kind === activeKind)?.count ?? 0;
   const allSections = carouselSections({
     pieces: hitPieces, counts: decks, order, lastOpened,
@@ -307,7 +307,7 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
         onDrop={onDrop}
         onPickImport={() => pickFiles(runImport)}
         onStartFresh={() => {
-          void createAndOpenCharacter(ctx).then(
+          void createBlank(ctx, "character").then(
             (summary) => {
               addEntity(summary);
               ctx.workbench.open(summary);
@@ -363,7 +363,7 @@ function Library({ ctx }: { ctx: AppContext }): JSX.Element {
   const vctxFor = (kind: string, pieces: StudioEntitySummary[]): DeckViewContext => ({
     ...vctx,
     entities: pieces,
-    deck: deckMeta(kind || "character"),
+    deck: deckHead(kind || "character"),
     loreShelf: kind === "lorebook" ? loreShelf : undefined,
     regexShelf: kind === "regex" ? regexShelf : undefined,
     personaShelf: kind === "persona" ? personaShelf : undefined,

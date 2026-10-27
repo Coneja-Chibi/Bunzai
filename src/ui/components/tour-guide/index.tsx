@@ -15,7 +15,7 @@ import type { JSX } from "react";
 import type { AppContext } from "../../app-contract";
 import type { Tour, TourOpenOutcome } from "../../tours/tour-contract";
 import { nextIndex, planOpenAct, positionAt, prevIndex, stepBody, tourSeenKey } from "../../tours/tour-core";
-import { createAndOpenCharacter } from "../../_shared/new-character";
+import { createBlank } from "../../_shared/new-piece";
 import { MonoTag } from "../mono-tag";
 import styles from "./styles.module.css";
 
@@ -56,7 +56,7 @@ export function TourGuide({ tour, ctx, onClose }: TourGuideProps): JSX.Element {
           ctx.workbench.open(chars[0]!); // a real one, so the editor populates
         } else {
           // empty studio: nothing to open is not nothing to say - start a blank card for them
-          ctx.workbench.open(await createAndOpenCharacter(ctx));
+          ctx.workbench.open(await createBlank(ctx, "character"));
         }
       })();
     }

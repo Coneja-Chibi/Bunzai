@@ -18,7 +18,7 @@ async function turnWith(samplers: Record<string, unknown>) {
   const chat = await chats.createChat({ title: "T", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
   await chats.setConnection(chat.id, { id: "conn", model: "m" });
   await chats.appendMessages(chat.activeBranchId, [{ role: "assistant", content: "Evening." }, { role: "user", content: "Storms?" }]);
-  await chats.setPreset(chat.id, { id: "p", toggles: {}, samplers: samplers as never });
+  await chats.setPreset(chat.id, { kind: "preset", id: "p", toggles: {}, samplers: samplers as never });
   const sent: ProviderRequest[] = [];
   const provider: Provider = {
     id: "fake",

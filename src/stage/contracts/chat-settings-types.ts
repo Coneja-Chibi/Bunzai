@@ -19,7 +19,9 @@ export interface ChatConnection {
  * applied over the library preset's block switches and sampler values.
  */
 export interface ChatPreset {
-  /** A library preset's id. The store never checks it against the library (D18). */
+  /** The writing setup's kind (a preset, a Script Sheet: core/writing.ts). */
+  kind: string;
+  /** Its library id. The store never checks it against the library (D18). */
   id: string;
   /** Preset block id to on/off, overriding the block's own switch. */
   toggles: Record<string, boolean>;
@@ -96,6 +98,8 @@ export interface ChatPrompting {
   toolAccess?: boolean;
   /** RoleCall's Max tool rounds (agentLoopMaxTurns): a whole number 1 to 20; absent means 8. */
   toolRounds?: number;
+  /** The library tools (entities/tool) the writing model may also call while Tool Access is on, in order. No duplicates, at most 20 ids. */
+  tools?: string[];
   /** RoleCall's Reasoning Effort (sampler reasoning_effort): how hard the model thinks before writing. Absent means Auto, which sends nothing. */
   reasoningEffort?: ChatReasoningEffort;
   /** RoleCall's Start Reply With (chat-level prefill): text every reply starts with, over the preset's own prefill. At most 2,000 characters; blank is cleared. */

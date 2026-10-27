@@ -18,7 +18,7 @@ export function LiveSwitch({ on, onToggle }: { on: boolean; onToggle(): void }):
   return <span className="fc-live"><Chip pressed={on} onClick={onToggle}>{on ? "Live" : "Off"}</Chip></span>;
 }
 
-const DEPTHS = Object.fromEntries(Object.entries(BANK_DEPTH).map(([id, d]) => [id, { label: `${d.label}: ${d.hint}` }]));
+export const DEPTHS = Object.fromEntries(Object.entries(BANK_DEPTH).map(([id, d]) => [id, { label: `${d.label}: ${d.hint}` }]));
 
 export function AntiSlopCard({ pass, models, onToggle, onChange }: { pass: FinalCutPass | undefined; models: SceneModels; onToggle(): void; onChange: Change }): JSX.Element {
   const live = pass !== undefined && pass.enabled !== false;

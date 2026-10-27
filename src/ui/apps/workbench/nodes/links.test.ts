@@ -1,7 +1,8 @@
 /** The link table and graph derivation: shared targets stay one node, unopened targets become ghosts. */
 import { expect, test } from "bun:test";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { LINK_PORTS, canLink, deriveGraph, refsOf, withRef } from "./links";
+import { canLink, deriveGraph, refsOf, withRef } from "./links";
+import { LINK_PORTS } from "../../../../core/links";
 
 const piece = (kind: string, id: string, name = id): StudioEntitySummary => ({ kind, id, name });
 

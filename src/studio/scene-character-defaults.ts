@@ -16,8 +16,10 @@ import type { StudioStoreLike } from "./contracts";
 export const CHARACTER_DEFAULTS_PREF = SETTING_KEYS.sceneCharacterDefaults;
 
 export interface CharacterDefaults {
-  /** A library preset's id; the scene starts following it. */
+  /** A writing setup's id (a preset, a Script Sheet); the scene starts following it. */
   presetId?: string;
+  /** That setup's kind; absent is a preset. */
+  presetKind?: string;
   /** Sampler overrides laid over that preset; they ride on the preset, so they apply only with `presetId`. */
   samplers?: ChatPresetSamplers;
   backdrop?: ChatBackdrop;
@@ -25,7 +27,7 @@ export interface CharacterDefaults {
   director?: boolean;
 }
 
-export const DEFAULT_FIELDS = ["presetId", "samplers", "backdrop", "director"] as const;
+export const DEFAULT_FIELDS = ["presetId", "presetKind", "samplers", "backdrop", "director"] as const;
 export type DefaultField = (typeof DEFAULT_FIELDS)[number];
 
 const attempt = <T>(read: () => T): T | undefined => { try { return read(); } catch { return undefined; } };
@@ -41,6 +43,7 @@ export function characterDefaultsOf(raw: unknown, characterId: string): { defaul
     const v = entry[field];
     if (v === undefined) continue;
     const ok = field === "presetId" ? attempt(() => (checkText(v, "preset id").trim() === "" ? undefined : (v as string)))
+      : field === "presetKind" ? (typeof v === "string" && /^[a-z]+$/.test(v) ? v : undefined)
       : field === "samplers" ? attempt(() => checkPresetSamplers(v))
       : field === "backdrop" ? attempt(() => checkBackdrop(v) ?? undefined)
       : typeof v === "boolean" ? v : undefined;
@@ -62,7 +65,7 @@ export function withCharacterDefaults(raw: unknown, characterId: string, patch: 
   return map;
 }
 
-const FIELD_NAME: Record<DefaultField, string> = { presetId: "preset", samplers: "sampler choices", backdrop: "backdrop", director: "Story Director choice" };
+const FIELD_NAME: Record<DefaultField, string> = { presetId: "preset", presetKind: "preset", samplers: "sampler choices", backdrop: "backdrop", director: "Story Director choice" };
 
 /**
  * Lays a character's saved defaults onto the scene just started. Each part is its own write through the store's own setter; a part that cannot be applied (unreadable, its preset or backdrop pack deleted,
@@ -78,7 +81,8 @@ export async function applyCharacterDefaults(chats: ChatStore, studio: StudioSto
   };
   const there = async (kind: string, id: string): Promise<boolean> => (await studio.readVersioned(kind, id)) !== null;
   if (defaults.presetId !== undefined) {
-    if (await there("preset", defaults.presetId)) await run("preset", () => chats.setPreset(chat.id, { id: defaults.presetId!, toggles: {}, samplers: defaults.samplers ?? {} }));
+    const kind = defaults.presetKind;
+    if (kind && await there(kind, defaults.presetId)) await run("preset", () => chats.setPreset(chat.id, { kind, id: defaults.presetId!, toggles: {}, samplers: defaults.samplers ?? {} }));
     else notes.push(`${name}'s starting preset is no longer in the library, so this scene started without a preset.`);
   }
   if (defaults.backdrop) {

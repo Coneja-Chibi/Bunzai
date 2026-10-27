@@ -165,6 +165,9 @@ export interface MacroContext {
   /** Side-effect macros become no-ops (historical messages); reads are unaffected. */
   readOnly?: boolean;
 
+  /** A lower evaluation step budget for one run (a formula a model may call again and again); never above MAX_EVAL_STEPS. */
+  maxSteps?: number;
+
   /**
    * Run author regex ({{regex}}, compare's `matches`). Off unless a caller opts in: a backtracking
    * pattern hangs a browser's regex engine, and ADR-012 keeps regex under ADR-009's isolation, which

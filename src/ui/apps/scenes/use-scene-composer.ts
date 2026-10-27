@@ -96,7 +96,7 @@ export function useSceneComposer(p: {
   };
   const pick = (id: ComposerRow["id"]): void => {
     // A toggle: the menu stays open to show the new state (RoleCall's Debug row).
-    if (id === "inspector") { p.prefs.set(INSPECTOR_KEY, !inspector); setInspector(!inspector); return; }
+    if (id === "inspector") { const next = !readInspector(p.prefs.get(INSPECTOR_KEY)); p.prefs.set(INSPECTOR_KEY, next); setInspector(next); return; }
     if (id === "guided") return startGuided(undefined);
     setToolsOpen(false);
     if (id === "correct") corrector.openLast();
@@ -106,5 +106,5 @@ export function useSceneComposer(p: {
       else p.setStatus(NO_REPLY);
     }
   };
-  return { expandTick, beginExpand, correct: corrector.open, correctModal: corrector.modal, continuable, continueLast, askAgain, editLast, steering, startGuided, steer, cancelSteer: () => setSteering(null), tools: { open: toolsOpen, rows: composerRows({ busy, connected, continuable, inspector }), onToggle: () => setToolsOpen(!toolsOpen), onPick: pick } };
+  return { expandTick, beginExpand, correct: corrector.open, correctModal: corrector.modal, continuable, continueLast, askAgain, editLast, steering, startGuided, steer, cancelSteer: () => setSteering(null), tools: { open: toolsOpen, rows: composerRows({ busy, connected, continuable, inspector }), onToggle: () => { if (!toolsOpen) setInspector(readInspector(p.prefs.get(INSPECTOR_KEY))); setToolsOpen(!toolsOpen); }, onPick: pick } };
 }

@@ -1,7 +1,8 @@
 /** Strict runtime decoder for canonical HTML-document bodies. */
 import { z } from "zod";
 import { defineExhaustiveShape } from "../_shared/runtime-shape";
-import type { HtmlDocBody } from "./schema";
+import type { HtmlDocBody, CanonicalHtmlDoc } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 /**
  * A ceiling, matching what the surface that draws it will accept.
@@ -22,3 +23,5 @@ const bodyShape = defineExhaustiveShape<HtmlDocBody>()({
 
 export const htmlDocBodySchema = z.strictObject(bodyShape);
 export const htmlDocProfileSchema = htmlDocBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalHtmlDoc>()(entityShape("htmldoc", htmlDocBodySchema, htmlDocProfileSchema)));

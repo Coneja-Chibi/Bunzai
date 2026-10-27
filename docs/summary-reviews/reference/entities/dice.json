@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/dice",
+  "sourcePath": "docs/reference/entities/dice.md",
+  "sourceHash": "sha256:db3f7efc03badc90a1f3fa51c1d7efb534f744a1782cfd68d8c776f45a09c405",
+  "semanticSummaryHash": "sha256:1d533c9d05355099fd1b19006ff02ac296f28509020237b2b7fbdacba3c18947",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Page and summaries match src/entities/dice (three types, own-field rule, rows 1-200 weight 1-1000, pool 1-100 dice of 2-1000 sides with target<=sides, boundedDice on roll), rollDicePiece outputs and wording, tool dice action linking, core/dice.ts users (roll macro, battle, spellbook), blank 1d20 roll.",
+  "reviewedAt": "2026-10-27T10:08:11.798Z"
+}

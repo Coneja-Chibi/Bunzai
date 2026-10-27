@@ -36,7 +36,7 @@ export function PromptingWing({ ctx, chat, presetBody, onChanged, onBody, initia
   const [tab, setTab] = useState<TabId>(() => tabOr<TabId>(["preset", "guides", "note", "tools"], initialTab, "preset"));
   const prompting = useScenePrompting(ctx, chat, onChanged);
   /** The scene preset's one text writer, shared by the tabs that edit its text. */
-  const presetText = useScenePresetText(ctx, chat.preset?.id ?? null, onBody);
+  const presetText = useScenePresetText(ctx, chat.preset ? { kind: chat.preset.kind, id: chat.preset.id } : null, onBody);
   const on = chat.prompting?.guides ?? [];
   /** A failed note save is also said on the status line: the tab may be closed by the time it fails (a save waiting when it closes is sent then). */
   const saveNote = (note: ChatNote): Promise<void> => prompting.patch({ note }).catch((e: unknown) => {

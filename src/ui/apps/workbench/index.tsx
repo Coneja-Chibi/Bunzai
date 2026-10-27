@@ -17,29 +17,22 @@ import { useCallback, useContext, useEffect, useState, useSyncExternalStore } fr
 import { ThemeSlot } from "../../_shared/theme-slot";
 import type { CSSProperties, JSX, ReactNode } from "react";
 import type { AppContext, StudioEntitySummary, BunrakuApp } from "../../app-contract";
-import { deckMeta } from "../../_shared/decks";
+import { deckMeta, pieceColor } from "../../_shared/decks";
 import { useAccentVars } from "../../_shared/use-scoped-accents";
 import { toErrorMessage } from "../../_shared/error-message";
 import { useReopenOnStudioChange } from "../../agent/use-studio-changes";
 import { useFocusMode, FocusToggle } from "../../components/focus-toggle";
 import { rankRecents } from "./recents-core";
-import { CharacterEditor } from "./Editor";
-import { PackEditor } from "./PackEditor";
-import { LorebookEditor } from "./LorebookEditor";
-import { RegexSetEditor } from "./RegexSetEditor";
-import { PersonaEditor } from "./PersonaEditor";
-import { HtmlDocEditor } from "./htmldoc-editor";
-import { PresetEditor } from "./PresetEditor";
-import { QuickReplyEditor } from "./QuickReplyEditor";
+import { editorFor } from "./editors";
+import type { KindId } from "../../../generated/kinds";
+import { createBlank } from "../../_shared/new-piece";
 import { readLoreLight } from "./lore/light-read";
-import { emptyPackBody } from "../../../entities/pack/schema";
-import { emptyLorebookBody } from "../../../core/lore";
-import { CANONICAL_SCHEMA_VERSION } from "../../../core/canonical";
 import { keyOf, paneKeyOf } from "../../_shared/piece-key";
 import { WORKBENCH_AGENT_SURFACE, usePublishWorkbenchSurface } from "./agent-surface";
 import { portraitUrl as storedPortraitUrl } from "../../_shared/asset-url";
 import { EDITOR_VARIANTS_STYLE } from "./variants-style";
 import styles from "./styles.module.css";
+import { useStageLights } from "../../components/light-rays";
 import { icSvg } from "../../_shared/ic-svg";
 import { NodesView } from "./nodes/NodesView";
 import { ViewSwitch } from "./nodes/ViewSwitch";
@@ -78,9 +71,10 @@ function EditablePane({
   const load = useCallback((): (() => void) => {
     let cancelled = false;
     const address = `kind=${encodeURIComponent(piece.kind)}&id=${encodeURIComponent(piece.id)}`;
-    const loadEntity = piece.kind === "lorebook"
+    const mode = editorFor(piece.kind)?.load ?? "full";
+    const loadEntity = mode === "lore"
       ? readLoreLight(ctx, piece.id)
-      : piece.kind === "preset" || piece.kind === "quickreply" || piece.kind === "regex" || piece.kind === "htmldoc" || piece.kind === "pack"
+      : mode === "light"
       ? ctx.api.getLightEditableEntity(address)
       : ctx.api.getEditableEntity(address).then((loaded) => ({ ...loaded, assets: {} }));
     void loadEntity
@@ -113,30 +107,16 @@ function EditablePane({
     () => { load(); },
   );
 
+  const Editor = editorFor(piece.kind)?.Editor;
   const editor =
     source == null ? null
-    : piece.kind === "pack" ? (
-      <PackEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "lorebook" ? (
-      <LorebookEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "regex" ? (
-      <RegexSetEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "persona" ? (
-      <PersonaEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "htmldoc" ? (
-      <HtmlDocEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "preset" ? (
-      <PresetEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "quickreply" ? (
-      <QuickReplyEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
-    ) : piece.kind === "promptformat" ? (
-      // no editor yet (wireframe: design/wireframes/features/prompt-format): say so and show the fields, read-only
+    : Editor ? <Editor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
+    : (
+      // a kind with no editor yet: say so and show its fields, read-only
       <div className={`${styles.room} scrollThin`} data-part="editor.root">
-        <p>This prompt format has no editor yet. It is used by text-completion connections, which Bunraku does not have yet.</p>
+        <p>This {deckMeta(piece.kind).singular.toLowerCase()} has no editor yet.</p>
         <pre>{JSON.stringify((source.entity as { body?: unknown } | null)?.body ?? {}, null, 2)}</pre>
       </div>
-    ) : (
-      <CharacterEditor entity={source.entity} revision={source.revision} ctx={ctx} piece={piece} topRight={topRight} />
     );
 
   return (
@@ -166,7 +146,7 @@ function RecentCard({ ctx, entity }: { ctx: AppContext; entity: StudioEntitySumm
     <Card
       ref={menuRef}
       kind="art"
-      vars={{ ...accentVars(entity.accent ?? deckMeta(entity.kind).accent), "--card-aspect": "2 / 3" } as Record<`--${string}`, string>}
+      vars={{ ...accentVars(pieceColor(entity)), "--card-aspect": "2 / 3" } as Record<`--${string}`, string>}
       title={`Bring ${entity.name} up`}
       onClick={() => ctx.workbench.send(entity)}
       art={
@@ -175,7 +155,6 @@ function RecentCard({ ctx, entity }: { ctx: AppContext; entity: StudioEntitySumm
         </div>
       }
       heading={entity.name}
-      subtitle={deckMeta(entity.kind).singular}
     />
   );
 }
@@ -224,6 +203,13 @@ function RecentsRail({ ctx, entities, foldOnEdit = true }: { ctx: AppContext; en
   );
 }
 
+/** The empty bench's backlight: soft accent-colored lights roaming the wall behind the card, following the Stage lights choice
+ * (Moving roams, Still holds them in place, Off draws none). */
+function WallLights(): JSX.Element {
+  const mode = useStageLights();
+  return <div className={styles.lights} data-lights={mode} aria-hidden="true" />;
+}
+
 /** Subscribes to the shell's workbench-change signal (open pieces / active tab) and forces a
  * re-render so `ctx.workbench.pieces()/.active()` (plain getters, not reactive on their own) stay
  * live in this component. */
@@ -255,18 +241,8 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
   // paneKey includes focusEntry so one lorebook can sit beside itself on two entries
   const activeKey = active ? paneKeyOf(active) : "";
   const besideKey = beside ? paneKeyOf(beside) : "";
-  const editablePieces = pieces.filter(
-    (p) =>
-      p.kind === "character" ||
-      p.kind === "pack" ||
-      p.kind === "lorebook" ||
-      p.kind === "regex" ||
-      p.kind === "persona" ||
-      p.kind === "preset" ||
-      p.kind === "quickreply" ||
-      p.kind === "htmldoc" ||
-      p.kind === "promptformat",
-  );
+  // every open piece gets a pane: a kind with no editor (or one this build does not know) opens read-only
+  const editablePieces = pieces;
   // the split is real only when the beside piece can actually render an editor here
   const splitOn =
     besideKey !== "" && editablePieces.some((p) => paneKeyOf(p) === besideKey);
@@ -284,17 +260,11 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
   const focusNode = <FocusToggle focused={focused} onToggle={toggle} />;
 
   const newPack = async (): Promise<void> => {
-    const body = emptyPackBody("New pack");
     // guarded like EditablePane's save: these two buttons are the empty workbench's only CTAs, and a
     // failed save must say so instead of visibly doing nothing
-    let saved: Awaited<ReturnType<typeof ctx.api.saveEntity>>;
+    let saved: StudioEntitySummary;
     try {
-      saved = await ctx.api.saveEntity({
-        schemaVersion: CANONICAL_SCHEMA_VERSION,
-        kind: "pack",
-        id: "pack",
-        body,
-      });
+      saved = await createBlank(ctx, "pack");
     } catch (e) {
       ctx.setStatus(`could not create the pack · ${toErrorMessage(e)}`);
       return;
@@ -305,15 +275,9 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
   };
 
   const newLorebook = async (): Promise<void> => {
-    const body = emptyLorebookBody("Untitled lorebook");
-    let saved: Awaited<ReturnType<typeof ctx.api.saveEntity>>;
+    let saved: StudioEntitySummary;
     try {
-      saved = await ctx.api.saveEntity({
-        schemaVersion: CANONICAL_SCHEMA_VERSION,
-        kind: "lorebook",
-        id: "lorebook",
-        body,
-      });
+      saved = await createBlank(ctx, "lorebook");
     } catch (e) {
       ctx.setStatus(`could not create the lorebook · ${toErrorMessage(e)}`);
       return;
@@ -324,33 +288,36 @@ function WorkbenchRoom({ ctx }: { ctx: AppContext }): JSX.Element {
   };
 
   return (
-    <div className={`${styles.room} scrollThin${focused ? ` ${styles.focused}` : ""}`} data-part="editor.root">
+    <div className={`${styles.room} scrollThin${focused ? ` ${styles.focused}` : ""}${!active && !nodesOn ? ` ${styles.wall}` : ""}`} data-part="editor.root">
       <style>{EDITOR_VARIANTS_STYLE}</style>
       <div className={styles.stage} style={accentVars(active?.accent) as CSSProperties | undefined}>
         {nodesOn && <NodesView ctx={ctx} pieces={pieces} onView={setView} />}
         {!active && !nodesOn && (
-          <Panel as="section" data-part="editor.empty" className={styles.ghostRoom} aria-live="polite" data-empty="editor">
-            <RoomHeader
-              align="center"
-              data-part="editor.empty.header"
-              kicker="The Workbench · Edit pieces"
-              title={restoreFailure ? "We couldn't restore the workbench" : restoring ? "Restoring your workbench…" : "Your workbench is empty"}
-              lede={restoreFailure ? undefined : restoring ? "Your open pieces will appear here when they are ready." : "Open a piece from your Library to start editing. Each piece opens in a tab above."}
-            />
-            {restoreFailure && <p className={styles.ghostErr}>{restoreFailure}</p>}
-            {restoring && !restoreFailure && <div className={styles.skel} aria-hidden="true"><i /><i /><i /></div>}
-            <div className={styles.ghostActions}>
-              {!restoring && (
-                <>
-                  <Button variant="primary" onClick={() => ctx.openApp("library")}>Open Library</Button>
-                  <Button onClick={() => void newPack()}>New pack folder</Button>
-                  <Button onClick={() => void newLorebook()}>New lorebook</Button>
-                </>
-              )}
-              <ViewSwitch view={view} onChange={setView} />
-              {focusNode}
-            </div>
-          </Panel>
+          <>
+            <WallLights />
+            <Panel as="section" data-part="editor.empty" className={styles.ghostRoom} aria-live="polite" data-empty="editor">
+              <RoomHeader
+                align="center"
+                data-part="editor.empty.header"
+                kicker="The Workbench · Edit pieces"
+                title={restoreFailure ? "We couldn't restore the workbench" : restoring ? "Restoring your workbench…" : "Your workbench is empty"}
+                lede={restoreFailure ? undefined : restoring ? "Your open pieces will appear here when they are ready." : "Open a piece from your Library to start editing. Each piece opens in a tab above."}
+              />
+              {restoreFailure && <p className={styles.ghostErr}>{restoreFailure}</p>}
+              {restoring && !restoreFailure && <div className={styles.skel} aria-hidden="true"><i /><i /><i /></div>}
+              <div className={styles.ghostActions}>
+                {!restoring && (
+                  <>
+                    <Button variant="primary" onClick={() => ctx.openApp("library")}>Open Library</Button>
+                    <Button onClick={() => void newPack()}>New pack folder</Button>
+                    <Button onClick={() => void newLorebook()}>New lorebook</Button>
+                  </>
+                )}
+                <ViewSwitch view={view} onChange={setView} />
+                {focusNode}
+              </div>
+            </Panel>
+          </>
         )}
         {/* in Nodes view the row takes no room, but every pane stays mounted so unsaved drafts survive */}
         <div className={splitOn ? `${styles.paneRow} ${styles.paneRowSplit}` : styles.paneRow} style={nodesOn ? { display: "none" } : undefined}>

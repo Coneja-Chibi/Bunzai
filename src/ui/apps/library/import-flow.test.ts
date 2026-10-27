@@ -49,9 +49,9 @@ describe("annotateRead", () => {
       ok: true,
       entity: { kind: "character", body: {} },
       kind: "character",
-      related: { lorebooks: [entity] },
+      related: [entity],
     });
-    const kept = (out.result.related?.lorebooks?.[0] as CanonicalLorebook).body;
+    const kept = (out.result.related?.[0] as CanonicalLorebook).body;
     expect(kept).toEqual(entity.body);
     expect(out.entryCount).toBe(4);
   });

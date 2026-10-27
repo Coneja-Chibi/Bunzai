@@ -32,12 +32,6 @@
 
 /* deck colors for anything marked data-deck (offers, cards); unknown kinds read as fog */
 .stamp, .kcard { --deck: var(--deck-fog); }
-:is(.stamp, .kcard)[data-deck="character"] { --deck: var(--deck-character); }
-:is(.stamp, .kcard)[data-deck="persona"] { --deck: var(--deck-persona); }
-:is(.stamp, .kcard)[data-deck="lorebook"] { --deck: var(--deck-lorebook); }
-:is(.stamp, .kcard)[data-deck="preset"] { --deck: var(--deck-preset); }
-:is(.stamp, .kcard)[data-deck="regex"] { --deck: var(--deck-regex); }
-:is(.stamp, .kcard)[data-deck="pack"] { --deck: var(--deck-pack); }
 
 .kick {
   font-family: var(--font-ui);

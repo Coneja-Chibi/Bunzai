@@ -8,6 +8,7 @@ import { resolveReasoning } from "../core/reasoning-capture";
 import type { StudioStoreLike } from "./contracts";
 import { contextAround, isThinkingAt, searchTerms } from "../core/scene-search";
 import type { ChatStore, MessageRole } from "../stage/contracts/chat-store";
+import { presetReader } from "./scene-turn-load";
 
 export interface SceneSearchHit {
   messageId: string;
@@ -39,8 +40,8 @@ export async function searchScene(chats: ChatStore, store: StudioStoreLike, inpu
   const branchId = chat.activeBranchId;
   const words = searchTerms(input.query);
   if (words.length === 0) return { branchId, branchVersion: null, totalCount: 0, truncated: false, hits: [] };
-  const presetId = chat.preset?.id;
-  const format = resolveReasoning(presetId ? reasoningFormatOf((await store.read("preset", presetId))?.body) : undefined, chat.prompting);
+  const preset = chat.preset ? await presetReader(store)(chat.preset.id, chat.preset.kind).catch(() => null) : null;
+  const format = resolveReasoning(preset ? reasoningFormatOf(preset) : undefined, chat.prompting);
   const page = await chats.searchMessages(branchId, { words, limit: MAX_SEARCH_HITS });
   return {
     branchId,

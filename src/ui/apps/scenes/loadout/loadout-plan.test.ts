@@ -11,7 +11,7 @@ const after = (p: Plan, unit: string) => p.units.find((u) => u.unit === unit)?.a
 const state = (p: Plan, panel: string) => p.rows.find((r) => r.panel === panel)?.state;
 
 test("units come in the fixed order whatever order the loadout lists its panels", () => {
-  const p = plan({ postProduction: { on: true }, stageSettings: { backdrop: { pack: "k", item: "i" } }, authorNote: note, guides: ["g"], regex: ["s"], stagecraftProps: { on: ["dice"] }, lorebooks: { added: ["b"], off: [] }, preset: { id: "p", toggles: {} }, mainModel: { id: "c", model: "m" }, persona: "x" }, scene(), { persona: "replace" });
+  const p = plan({ postProduction: { on: true }, stageSettings: { backdrop: { pack: "k", item: "i" } }, authorNote: note, guides: ["g"], regex: ["s"], stagecraftProps: { on: ["dice"] }, lorebooks: { added: ["b"], off: [] }, preset: { kind: "preset", id: "p", toggles: {} }, mainModel: { id: "c", model: "m" }, persona: "x" }, scene(), { persona: "replace" });
   expect(p.units.map((u) => u.unit)).toEqual(["connection", "preset", "lore", "props", "guides", "note", "regex", "finalCut", "backdrop", "persona"]);
 });
 
@@ -67,17 +67,17 @@ test("props and guides: merge puts the scene's first then the new ones without d
 });
 
 test("preset and samplers share one unit; the five cases", () => {
-  const live = scene({ preset: { id: "p1", toggles: { a: true, b: false }, samplers: { temperature: 0.5, topP: 0.9 } } });
+  const live = scene({ preset: { kind: "preset", id: "p1", toggles: { a: true, b: false }, samplers: { temperature: 0.5, topP: 0.9 } } });
   // 1. both owned, replace
-  expect(after(plan({ preset: { id: "p2", toggles: { c: true } }, samplers: { temperature: 1 } }, live), "preset")).toEqual({ id: "p2", toggles: { c: true }, samplers: { temperature: 1 } });
-  expect(plan({ preset: { id: "p2", toggles: {} }, samplers: {} }, live).units[0]?.panels).toEqual(["preset", "samplers"]);
+  expect(after(plan({ preset: { kind: "preset", id: "p2", toggles: { c: true } }, samplers: { temperature: 1 } }, live), "preset")).toEqual({ kind: "preset", id: "p2", toggles: { c: true }, samplers: { temperature: 1 } });
+  expect(plan({ preset: { kind: "preset", id: "p2", toggles: {} }, samplers: {} }, live).units[0]?.panels).toEqual(["preset", "samplers"]);
   // 2. preset only, same id: the scene's samplers stay
-  expect(after(plan({ preset: { id: "p1", toggles: { a: false } } }, live), "preset")).toEqual({ id: "p1", toggles: { a: false }, samplers: { temperature: 0.5, topP: 0.9 } });
+  expect(after(plan({ preset: { kind: "preset", id: "p1", toggles: { a: false } } }, live), "preset")).toEqual({ kind: "preset", id: "p1", toggles: { a: false }, samplers: { temperature: 0.5, topP: 0.9 } });
   // 3. preset only, a different id: the old preset's samplers go with it
-  expect(after(plan({ preset: { id: "p2", toggles: {} } }, live), "preset")).toEqual({ id: "p2", toggles: {}, samplers: {} });
+  expect(after(plan({ preset: { kind: "preset", id: "p2", toggles: {} } }, live), "preset")).toEqual({ kind: "preset", id: "p2", toggles: {}, samplers: {} });
   // 4. samplers only: the scene's preset stays; replace swaps them, merge adds
-  expect(after(plan({ samplers: { temperature: 1 } }, live), "preset")).toEqual({ id: "p1", toggles: { a: true, b: false }, samplers: { temperature: 1 } });
-  expect(after(plan({ samplers: { temperature: 1 } }, live, { samplers: "merge" }), "preset")).toEqual({ id: "p1", toggles: { a: true, b: false }, samplers: { temperature: 1, topP: 0.9 } });
+  expect(after(plan({ samplers: { temperature: 1 } }, live), "preset")).toEqual({ kind: "preset", id: "p1", toggles: { a: true, b: false }, samplers: { temperature: 1 } });
+  expect(after(plan({ samplers: { temperature: 1 } }, live, { samplers: "merge" }), "preset")).toEqual({ kind: "preset", id: "p1", toggles: { a: true, b: false }, samplers: { temperature: 1, topP: 0.9 } });
   // 5. samplers only and no preset on the scene: a failed row, no unit, nothing to write
   const none = plan({ samplers: { temperature: 1 } });
   expect(none.units).toEqual([]);
@@ -85,10 +85,10 @@ test("preset and samplers share one unit; the five cases", () => {
 });
 
 test("preset: null clears it, and merge keeps the scene's switches when the preset is the same", () => {
-  const live = scene({ preset: { id: "p1", toggles: { a: true, b: false }, samplers: {} } });
+  const live = scene({ preset: { kind: "preset", id: "p1", toggles: { a: true, b: false }, samplers: {} } });
   expect(after(plan({ preset: null }, live), "preset")).toBeNull();
-  expect(after(plan({ preset: { id: "p1", toggles: { b: true, c: true } } }, live, { preset: "merge" }), "preset")).toEqual({ id: "p1", toggles: { a: true, b: true, c: true }, samplers: {} });
-  expect(after(plan({ preset: { id: "p2", toggles: { c: true } } }, live, { preset: "merge" }), "preset")).toEqual({ id: "p2", toggles: { c: true }, samplers: {} });
+  expect(after(plan({ preset: { kind: "preset", id: "p1", toggles: { b: true, c: true } } }, live, { preset: "merge" }), "preset")).toEqual({ kind: "preset", id: "p1", toggles: { a: true, b: true, c: true }, samplers: {} });
+  expect(after(plan({ preset: { kind: "preset", id: "p2", toggles: { c: true } } }, live, { preset: "merge" }), "preset")).toEqual({ kind: "preset", id: "p2", toggles: { c: true }, samplers: {} });
 });
 
 test("backdrop, note and connection are written whole", () => {
@@ -104,8 +104,8 @@ test("panels this build cannot write are unavailable, never a unit", () => {
 });
 
 test("a setting that already matches is unchanged and writes nothing, even with keys in another order and empty against absent", () => {
-  const live = scene({ connection: { model: "m", id: "c" }, lore: { added: [], off: [] }, props: { on: [] }, prompting: { note }, backdrop: { item: "i", pack: "k" }, preset: { id: "p", toggles: { b: true, a: false }, samplers: {} } });
-  const p = plan({ mainModel: { id: "c", model: "m" }, lorebooks: null, stagecraftProps: { on: [] }, guides: null, authorNote: { frequency: 2, depth: 4, position: "in_chat", text: "Tense." }, stageSettings: { backdrop: { pack: "k", item: "i" } }, preset: { id: "p", toggles: { a: false, b: true } } }, live, { lorebooks: "replace", guides: "replace" });
+  const live = scene({ connection: { model: "m", id: "c" }, lore: { added: [], off: [] }, props: { on: [] }, prompting: { note }, backdrop: { item: "i", pack: "k" }, preset: { kind: "preset", id: "p", toggles: { b: true, a: false }, samplers: {} } });
+  const p = plan({ mainModel: { id: "c", model: "m" }, lorebooks: null, stagecraftProps: { on: [] }, guides: null, authorNote: { frequency: 2, depth: 4, position: "in_chat", text: "Tense." }, stageSettings: { backdrop: { pack: "k", item: "i" } }, preset: { kind: "preset", id: "p", toggles: { a: false, b: true } } }, live, { lorebooks: "replace", guides: "replace" });
   expect(p.units).toEqual([]);
   expect(p.rows.every((r) => r.state === "unchanged")).toBe(true);
 });

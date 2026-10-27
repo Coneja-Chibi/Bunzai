@@ -32,7 +32,7 @@ afterAll(() => installed.teardown());
 const presetBody: PresetBody = { name: "Test Preset", prompts: [], groups: [], samplers: { temperature: 0.7, topP: 0.9 } };
 const cast = { character: { id: "c1", version: 1, name: "Char" } } as Chat["cast"];
 const chatWith = (over: Partial<Chat> = {}): Chat => ({ id: "chat1", title: "Scene", cast, activeBranchId: "b1", createdAt: 0, updatedAt: 0, snapshotVersion: 1, connection: { id: "k1", model: "m" }, ...over });
-const withOwn = (samplers: ChatPreset["samplers"]): Chat => chatWith({ preset: { id: "p1", toggles: {}, samplers } });
+const withOwn = (samplers: ChatPreset["samplers"]): Chat => chatWith({ preset: { kind: "preset", id: "p1", toggles: {}, samplers } });
 
 let sets: ChatPreset[];
 let patches: Record<string, unknown>[];
@@ -144,11 +144,11 @@ describe("Core is the scene's one sampler store", () => {
   });
 
   test("Reset clears the Core overrides and every switched-on parameter back to the preset and keeps the scene's other settings and the toggles", async () => {
-    const chat = chatWith({ preset: { id: "p1", toggles: { a: true }, samplers: { temperature: 1.3, topP: 0.5, topK: 40, maxTokens: 900, maxContext: 9000, frequencyPenalty: 0.5 } } });
+    const chat = chatWith({ preset: { kind: "preset", id: "p1", toggles: { a: true }, samplers: { temperature: 1.3, topP: 0.5, topK: 40, maxTokens: 900, maxContext: 9000, frequencyPenalty: 0.5 } } });
     const flushSync = await mountTab(chat);
     flushSync(() => (byText("button", "Reset") as HTMLButtonElement).click());
     await settle(flushSync, 400);
-    expect(sets.at(-1)).toEqual({ id: "p1", toggles: { a: true }, samplers: { maxContext: 9000 } });
+    expect(sets.at(-1)).toEqual({ kind: "preset", id: "p1", toggles: { a: true }, samplers: { maxContext: 9000 } });
     unmount(flushSync);
   });
 });
@@ -168,7 +168,7 @@ describe("Search", () => {
   });
 });
 
-const withPrompting = (prompting: NonNullable<Chat["prompting"]>, model = "m"): Chat => chatWith({ preset: { id: "p1", toggles: {}, samplers: {} }, prompting, connection: { id: "k1", model } });
+const withPrompting = (prompting: NonNullable<Chat["prompting"]>, model = "m"): Chat => chatWith({ preset: { kind: "preset", id: "p1", toggles: {}, samplers: {} }, prompting, connection: { id: "k1", model } });
 const select = (): HTMLSelectElement => host.querySelector("[data-param=reasoning_effort] select") as HTMLSelectElement;
 const button = (label: string): HTMLButtonElement => byText("button", label) as HTMLButtonElement;
 
@@ -351,7 +351,7 @@ describe("the AI wing mounts it", () => {
 });
 
 describe("the parameter catalogue is mounted on the tab", () => {
-  const withParams = (params: NonNullable<ChatPreset["samplers"]["params"]>, prompting?: NonNullable<Chat["prompting"]>): Chat => chatWith({ preset: { id: "p1", toggles: {}, samplers: { params } }, ...(prompting ? { prompting } : {}) });
+  const withParams = (params: NonNullable<ChatPreset["samplers"]["params"]>, prompting?: NonNullable<Chat["prompting"]>): Chat => chatWith({ preset: { kind: "preset", id: "p1", toggles: {}, samplers: { params } }, ...(prompting ? { prompting } : {}) });
 
   test("its groups follow Thinking in Replies, with Custom Request Parameters and the note, and their count is the tab's", async () => {
     const flushSync = await mountTab(withParams({ min_p: { on: true, value: 0.1 }, seed: { on: true, value: 1 } }));

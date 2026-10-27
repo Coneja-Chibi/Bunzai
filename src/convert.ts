@@ -20,7 +20,6 @@ import { primaryOriginalRaw, type CanonicalEntity } from "./core/canonical";
 import { buildSerializeReport, serializeReport } from "./core/reports";
 import type { CanonicalCharacter } from "./entities/character/schema";
 import type { CanonicalLorebook } from "./entities/lorebook/schema";
-import type { CanonicalPreset } from "./entities/preset/schema";
 import type { CanonicalRegexSet } from "./entities/regex/schema";
 import {
   parseCanonicalEntity,
@@ -28,109 +27,13 @@ import {
 } from "./entities/runtime-schema";
 
 import { extractCharacterBook } from "./formats/_shared/character-book";
+import { filterEnabledBooks } from "./core/lore";
+import { forFormatKind } from "./core/writing";
 
 export interface ConvertResult {
   out: AdapterOutput;
   /** lorebooks extracted from the source card and linked to the character (0 or 1 for now) */
   lorebooks: CanonicalLorebook[];
-}
-
-/** Primary character + related lorebooks produced by one extract pass. */
-export interface InspectBundleResult {
-  entity: CanonicalCharacter;
-  lorebooks: CanonicalLorebook[];
-}
-
-/**
- * Read a character file into canonical form and extract any embedded book once. Sets
- * `entity.body.knowledgeRefs` when a book is present. Shared by CLI convert and Studio inspect.
- */
-export function inspectBundle(
-  source: CharacterAdapter,
-  input: AdapterInput,
-): InspectBundleResult {
-  const parsed = parseCanonicalEntity(source.toCanonical(input));
-  if (parsed.kind !== "character") throw new Error("convert: character adapter returned the wrong entity kind");
-  const entity = parsed as CanonicalCharacter;
-  // A format whose embedded book is not a CCv2/v3 character_book (Agnai's native MemoryBook) extracts
-  // via its own adapter override; every CCv3-lineage card uses the shared extractor.
-  const lorebook = source.extractLorebook
-    ? source.extractLorebook(entity)
-    : extractCharacterBook(primaryOriginalRaw(entity.original));
-  const lorebooks = lorebook ? [lorebook] : [];
-  /**
-   * THE EMBEDDED COPY STAYS, and it is not redundant.
-   *
-   * It looks like a duplicate of the standalone lorebook and it was removed here once. It is the
-   * FALLBACK TWIN: emitBundle called without resolved lorebooks has nothing else to re-embed from,
-   * so stripping it turned "the caller did not resolve the refs" into a card that silently goes out
-   * with no lore at all. See convert.test.ts, "preserves the twin when lorebook resolution was not
-   * supplied".
-   *
-   * What must never happen is somebody READING this copy as though it were current. It is a
-   * snapshot from import; the standalone book behind knowledgeRefs is the live one.
-   */
-  if (lorebook) entity.body.knowledgeRefs = [lorebook.id];
-  return { entity, lorebooks };
-}
-
-/** Primary preset + regex sets bundled inside its export (the preset counterpart of inspectBundle). */
-export interface InspectPresetBundleResult {
-  entity: CanonicalPreset;
-  regexSets: CanonicalRegexSet[];
-}
-
-/**
- * Read a preset file into canonical form and pull any bundled regex scripts once (ST/RC exports
- * ride them under extensions.regex_scripts). Shared by Studio inspect and any future CLI bundle path.
- */
-export function inspectPresetBundle(
-  source: PresetAdapter,
-  input: AdapterInput,
-): InspectPresetBundleResult {
-  const parsed = parseCanonicalEntity(source.toCanonical(input));
-  if (parsed.kind !== "preset") throw new Error("convert: preset adapter returned the wrong entity kind");
-  const entity = parsed as CanonicalPreset;
-  const regex = source.extractRegex ? source.extractRegex(entity) : null;
-  return { entity, regexSets: regex ? [regex] : [] };
-}
-
-/**
- * Write a preset through a target adapter, attaching standalone regex sets where the platform can
- * carry them. The mirror of inspectPresetBundle, and the half that was missing: Bunraku could read
- * a preset's embedded rules and had no way to put a set back, so a person was told the Studio "does
- * not expose a way to attach a standalone regex set" - true of the operations, and easily misread as
- * a limit of the format.
- *
- * NOT EVERY PLATFORM CAN DO THIS, and refusing is the honest answer rather than writing a field the
- * host will ignore. SillyTavern and RoleCall carry rows inside the preset file. Lumiverse attaches by
- * `preset_id` ON THE SCRIPT, so its link belongs to the regex entity, not to a preset emit. Marinara
- * has no preset attachment at all. An adapter without `embedRegex` reports that plainly instead of
- * silently dropping the sets, because a save that quietly loses the thing you asked for is worse than
- * one that refuses.
- */
-export interface EmitPresetBundleResult {
-  readonly output: AdapterOutput;
-  /** Sets that could not ride along, with the reason. Empty when everything attached. */
-  readonly unattached: readonly { set: CanonicalRegexSet; reason: string }[];
-}
-
-export function emitPresetBundle(
-  target: PresetAdapter,
-  entity: CanonicalPreset,
-  regexSets: readonly CanonicalRegexSet[] = [],
-): EmitPresetBundleResult {
-  if (regexSets.length === 0) return { output: target.fromCanonical(entity), unattached: [] };
-  if (!target.embedRegex) {
-    return {
-      output: target.fromCanonical(entity),
-      unattached: regexSets.map((set) => ({
-        set,
-        reason: `${target.id} does not carry regex rules inside a preset file; export the set alongside it`,
-      })),
-    };
-  }
-  return { output: target.embedRegex(entity, regexSets), unattached: [] };
 }
 
 /**
@@ -178,23 +81,74 @@ function reportedOutput(
 }
 
 /**
- * Rewrite knowledgeRefs after keep-both renames. `idMap` maps requested id -> actual saved id.
- * Unknown keys pass through unchanged (fail-closed callers should only map known renames).
+ * Every canonical piece one file holds: the primary, then the pieces embedded in it (a card's lorebook, a preset's
+ * regex sets), each linked from the primary. The one read path for the CLI, Kit, archive and folder imports and the
+ * Studio's inspect, so the same file always becomes the same pieces.
  */
-export function rewriteKnowledgeRefs(
-  entity: CanonicalCharacter,
-  idMap: ReadonlyMap<string, string>,
-): CanonicalCharacter {
-  const refs = entity.body.knowledgeRefs;
-  if (!refs?.length || idMap.size === 0) return entity;
-  entity.body.knowledgeRefs = refs.map((id) => idMap.get(id) ?? id);
-  return entity;
+export function readPieces(src: FormatAdapter, input: AdapterInput): { entity: ParsedCanonicalEntity; related: ParsedCanonicalEntity[] } {
+  const entity = parseCanonicalEntity(src.toCanonical(input));
+  if (entity.kind !== src.kind) throw new Error(`convert: ${src.kind} adapter returned the wrong entity kind`);
+  if (entity.kind === "character") {
+    // Agnai's native MemoryBook extracts through its own override; every CCv3-lineage card uses the shared extractor.
+    // The card's embedded copy STAYS: it is the fallback twin emitBundle re-embeds when links were not resolved
+    // (convert.test.ts, "preserves the twin"). Never read it as current; the linked book is the live one.
+    const book = (src as CharacterAdapter).extractLorebook?.(entity) ?? extractCharacterBook(primaryOriginalRaw(entity.original));
+    if (book) entity.body.knowledgeRefs = [book.id];
+    return { entity, related: book ? [book] : [] };
+  }
+  if (entity.kind === "preset") {
+    // ST/RC exports ride regex scripts under extensions.regex_scripts; linked like a card's book (behaviorRefs).
+    const regex = (src as PresetAdapter).extractRegex?.(entity) ?? null;
+    if (regex) entity.body.behaviorRefs = [regex.id];
+    return { entity, related: regex ? [regex] : [] };
+  }
+  return { entity, related: [] };
 }
 
 /**
- * Convert one file to another format of the SAME entity kind. Character conversions also carry any
- * embedded lorebook across the boundary (extract on import, re-embed on export). Every other
- * same-kind adapter uses the generic canonical path. Cross-kind conversion fails closed.
+ * Write a piece through a target, embedding the linked pieces its kind carries inside its own file: a card's enabled
+ * lorebooks, a preset's regex sets. `linked` undefined means the links were not resolved (a card keeps its embedded
+ * twin); an array is authoritative. Returns what could not ride, in words. The one write path for the CLI, Kit's
+ * export and the Studio's export.
+ */
+export function emitPieces(
+  target: FormatAdapter,
+  entity: ParsedCanonicalEntity,
+  linked: readonly ParsedCanonicalEntity[] | undefined,
+  requestedExtension?: string,
+): { output: AdapterOutput; unattached: string[] } {
+  const of = <K extends string>(kind: K) => linked?.filter((p) => p.kind === kind);
+  if (target.kind === "character" && entity.kind === "character") {
+    const books = of("lorebook") as CanonicalLorebook[] | undefined;
+    return { output: emitBundle(target, entity, books && filterEnabledBooks(books), requestedExtension), unattached: [] };
+  }
+  if (target.kind === "preset" && entity.kind === "preset") {
+    // ST and RoleCall carry rows inside the preset file; Lumiverse attaches by preset_id on the script and Marinara not
+    // at all, so a target without embedRegex says so rather than writing a field the host ignores.
+    const sets = (of("regex") ?? []) as CanonicalRegexSet[];
+    const preset = target as PresetAdapter;
+    if (sets.length > 0 && preset.embedRegex) return { output: reportedOutput(target, entity, preset.embedRegex(entity, sets)), unattached: [] };
+    const reason = `${target.id} does not carry regex rules inside a preset file; export the set alongside it`;
+    return { output: reportedOutput(target, entity, preset.fromCanonical(entity)), unattached: sets.map(() => reason) };
+  }
+  if (entity.kind !== target.kind) throw new Error(`convert: cannot write a ${entity.kind} as ${target.id} (a ${target.kind} format)`);
+  return { output: reportedOutput(target, entity, (target.fromCanonical as (e: ParsedCanonicalEntity) => AdapterOutput)(entity)), unattached: [] };
+}
+
+/** Whether a target writes a piece's embedded links into its file: every card format takes its lorebooks; a preset format only when it can embed regex sets. */
+export const carriesEmbedded = (target: FormatAdapter): boolean =>
+  target.kind !== "preset" || typeof (target as PresetAdapter).embedRegex === "function";
+
+/** The output with what could not ride added to its report's warnings, so no caller loses a linked piece silently. */
+export function withUnattached(output: AdapterOutput, unattached: readonly string[]): AdapterOutput {
+  if (unattached.length === 0 || !output.report) return output;
+  const r = output.report;
+  return { ...output, report: serializeReport({ escrowed: r.escrowed, dropped: r.dropped, escrowShadowed: r.escrowShadowed, warnings: [...r.warnings, ...unattached] }, r.coverage) };
+}
+
+/**
+ * Convert one file to another format of the SAME entity kind, carrying embedded pieces across the boundary (a card's
+ * lorebook, a preset's regex sets: extract on import, re-embed on export). Cross-kind conversion fails closed.
  */
 export function convertFile(
   src: FormatAdapter,
@@ -203,20 +157,13 @@ export function convertFile(
   opts?: { requestedExtension?: string },
 ): ConvertResult {
   const req = opts?.requestedExtension;
-  if (src.kind !== target.kind) {
+  const read = readPieces(src, input);
+  // a writing setup converts to a preset format as the preset it sends (core/writing.ts); any other crossing fails closed
+  const entity = forFormatKind(read.entity, target.kind) as ParsedCanonicalEntity;
+  const related = read.related;
+  if (entity.kind !== target.kind) {
     throw new Error(`convert: cannot convert a ${src.kind} to a ${target.kind} (different entity kinds)`);
   }
-  if (src.kind === "character" && target.kind === "character") {
-    const { entity, lorebooks } = inspectBundle(src, input);
-    const out = emitBundle(target, entity, lorebooks, req);
-    return { out, lorebooks };
-  }
-  const parsed = parseCanonicalEntity(src.toCanonical(input));
-  if (parsed.kind !== src.kind) {
-    throw new Error(`convert: ${src.kind} adapter returned the wrong entity kind`);
-  }
-  const out = (
-    target.fromCanonical as (entity: ParsedCanonicalEntity) => AdapterOutput
-  )(parsed);
-  return { out: reportedOutput(target, parsed, out), lorebooks: [] };
+  const { output, unattached } = emitPieces(target, entity, related, req);
+  return { out: withUnattached(output, unattached), lorebooks: related.filter((p): p is CanonicalLorebook => p.kind === "lorebook") };
 }

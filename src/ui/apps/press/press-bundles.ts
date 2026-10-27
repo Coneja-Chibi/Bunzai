@@ -1,6 +1,6 @@
 /**
  * Bundle grouping for the Press queue (the locked vs-press-room-1 wire): a staged piece with LINKS
- * is a bundle - its linked pieces ride with it automatically, droppable per run. A character's
+ * is a bundle - its linked pieces (whatever its kind declares, core/links.ts) ride with it, droppable per run. A character's
  * lorebooks (body.knowledgeRefs) ride him; a preset's regex sets (body.behaviorRefs) and
  * quick-reply sets (body.quickReplyRefs) ride it, which is what the preset schema has promised
  * since behaviorRefs landed ("export decides whether to embed, and reports a set that could not
@@ -9,7 +9,8 @@
  * over summaries + fetched bodies; the room owns fetching.
  */
 import type { StudioEntitySummary } from "../../app-contract";
-import { isRecord, strArray } from "../../../core/guards";
+import { isRecord } from "../../../core/guards";
+import { LINK_PORTS, linkedRefs } from "../../../core/links";
 
 export const pieceKeyOf = (p: { id: string; kind: string }): string => `${p.kind}:${p.id}`;
 
@@ -19,32 +20,14 @@ export interface RiderRef {
   id: string;
 }
 
-const stringRefs = (raw: unknown): string[] =>
-  strArray(raw);
-
-/** The linked lorebook ids on a fetched character entity (body.knowledgeRefs), tolerant. */
-export function knowledgeRefsOf(entity: unknown): string[] {
-  if (!isRecord(entity) || !isRecord(entity.body)) return [];
-  return stringRefs(entity.body.knowledgeRefs);
-}
-
 /**
- * Every rider a fetched OWNER entity links, kind included. The owner's kind decides which fields
- * are read: characters link lorebooks; presets link regex and quick-reply sets. Anything else
- * links nothing (today), and an unknown shape links nothing rather than guessing.
+ * Every rider a fetched OWNER entity links, kind included: whatever its kind declares as links (core/links.ts), so a
+ * character brings its lorebooks and regex sets, a persona its lorebooks, a preset its regex and quick-reply sets. An
+ * unknown shape links nothing rather than guessing.
  */
 export function riderRefsOf(owner: { kind: string }, entity: unknown): RiderRef[] {
-  if (!isRecord(entity) || !isRecord(entity.body)) return [];
-  if (owner.kind === "character") {
-    return stringRefs(entity.body.knowledgeRefs).map((id) => ({ kind: "lorebook", id }));
-  }
-  if (owner.kind === "preset") {
-    return [
-      ...stringRefs(entity.body.behaviorRefs).map((id) => ({ kind: "regex", id })),
-      ...stringRefs(entity.body.quickReplyRefs).map((id) => ({ kind: "quickreply", id })),
-    ];
-  }
-  return [];
+  if (!isRecord(entity)) return [];
+  return linkedRefs(owner.kind, entity.body).map(({ kind, id }) => ({ kind, id }));
 }
 
 export interface PressBundle {
@@ -58,8 +41,8 @@ export interface BundleGrouping {
   solos: StudioEntitySummary[];
 }
 
-/** The kinds that can OWN a bundle; everything else is only ever a solo or a rider. */
-const OWNER_KINDS = new Set(["character", "preset"]);
+/** The kinds that can OWN a bundle (the ones that link pieces); everything else is only ever a solo or a rider. */
+const OWNER_KINDS = new Set(LINK_PORTS.map((p) => p.from));
 
 /**
  * Group the staged queue into bundles and solos. Riders resolve from the WHOLE studio's summaries (a

@@ -8,16 +8,14 @@
  * Run:   bun run scripts/docs-fields.ts
  * Check: bun run scripts/docs-fields.ts --check   (fail if committed JSON differs)
  */
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import ts from "typescript";
+import { KIND_IDS } from "../src/generated/kinds";
 
-// Derived from the entity folders (folders-as-schema), never a hand-list: a new
-// src/entities/<kind>/ appears here automatically instead of silently dropping from the docs.
-const ENTITIES = readdirSync(join(import.meta.dir, "../src/entities"), { withFileTypes: true })
-  .filter((d) => d.isDirectory())
-  .map((d) => d.name)
-  .sort();
+// Every kind in the kind hub (src/entities/<kind>/kind.ts via the generated seam), never a hand-list: a new kind
+// appears here automatically instead of silently dropping from the docs.
+const ENTITIES = [...KIND_IDS].sort();
 type Kind = string;
 
 // Producer tokens as they actually appear in the schema JSDoc (parenthetical provenance hints).

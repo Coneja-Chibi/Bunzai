@@ -132,7 +132,7 @@ test("every store method refuses while locked, and nothing in the database chang
     ["variables", () => chats.variables(chat.activeBranchId)],
     ["changeVariables", () => chats.changeVariables(chat.activeBranchId, { set: { a: 1 } })],
     ["setConnection", () => chats.setConnection(chat.id, { id: "c", model: "m" })],
-    ["setPreset", () => chats.setPreset(chat.id, { id: "p", toggles: {}, samplers: {} })],
+    ["setPreset", () => chats.setPreset(chat.id, { kind: "preset", id: "p", toggles: {}, samplers: {} })],
     ["setLore", () => chats.setLore(chat.id, { added: [], off: [] })],
     ["setProps", () => chats.setProps(chat.id, { on: [] })],
     ["setOpening", () => chats.setOpening(chat.id, { edits: [{ index: 0, text: "x" }] })],

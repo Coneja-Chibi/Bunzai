@@ -1,38 +1,21 @@
 /**
- * The Nodes view's link table and graph (pure): which stored reference fields become ports and wires,
+ * The Nodes view's graph (pure): the links the kinds declare (core/links.ts) become ports and wires,
  * the graph derived from the open pieces' bodies, and the one body edit that adds or removes a link.
  */
-import { strArray } from "../../../../core/guards";
+import { LINK_PORTS, portsOf, refsIn } from "../../../../core/links";
 import { keyOf } from "../../../_shared/piece-key";
 import type { StudioEntitySummary } from "../../../app-contract";
 import { attachKnowledgeRef, detachKnowledgeRef } from "../lore/knowledge-refs";
 
-export type RefField = "knowledgeRefs" | "behaviorRefs" | "quickReplyRefs";
+/** A link field name, as the kinds declare them (src/entities/<kind>/kind.ts, read through core/links.ts). */
+export type RefField = string;
 
-export interface LinkPort {
-  from: string;
-  field: RefField;
-  to: string;
-  label: string;
-}
-
-/** The only wires the Links layer draws: a stored reference field and the kind it points at. */
-export const LINK_PORTS: readonly LinkPort[] = [
-  { from: "character", field: "knowledgeRefs", to: "lorebook", label: "Lorebooks" },
-  { from: "character", field: "behaviorRefs", to: "regex", label: "Behavior" },
-  { from: "persona", field: "knowledgeRefs", to: "lorebook", label: "Lorebooks" },
-  { from: "preset", field: "behaviorRefs", to: "regex", label: "Behavior" },
-  { from: "preset", field: "quickReplyRefs", to: "quickreply", label: "Quick replies" },
-];
-
-export const portsOf = (kind: string): LinkPort[] => LINK_PORTS.filter((p) => p.from === kind);
+export { portsOf };
 export const isTargetKind = (kind: string): boolean => LINK_PORTS.some((p) => p.to === kind);
 export const canLink = (fromKind: string, field: RefField, toKind: string): boolean =>
   LINK_PORTS.some((p) => p.from === fromKind && p.field === field && p.to === toKind);
 
-export function refsOf(body: unknown, field: RefField): string[] {
-  return strArray((body as Record<string, unknown> | null | undefined)?.[field]);
-}
+export const refsOf = refsIn;
 
 /** The body with one id attached or detached; an emptied field is removed, as the editors do. */
 export function withRef<B extends object>(body: B, field: RefField, id: string, on: boolean): B {

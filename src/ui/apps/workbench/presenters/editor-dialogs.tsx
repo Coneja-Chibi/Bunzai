@@ -14,7 +14,7 @@ import {
   normalizePack,
 } from "../../../../core/media";
 import { emptyPackBody } from "../../../../entities/pack/schema";
-import { CANONICAL_SCHEMA_VERSION } from "../../../../core/canonical";
+import { createBlank } from "../../../_shared/new-piece";
 import { groupsFromLumiOriginal, packFromBodyDraft } from "../media/session";
 import { readWorkshopModule } from "../workshop/module";
 import type { AssetBatchUpload, AssetTransfer, AssetUpload } from "../../../_shared/asset-upload";
@@ -163,7 +163,7 @@ export function EditorDialogs({
             let created: StudioEntitySummary | null = null;
             try {
               if (signal?.aborted) throw new Error("Pack copy canceled before creation.");
-              created = await ctx.api.saveEntity({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind: "pack", id: packName.toLowerCase().replace(/\s+/g, "-").slice(0, 48) || "pack", body: emptyPackBody(packName) });
+              created = await createBlank(ctx, "pack", packName, packName.toLowerCase().replace(/\s+/g, "-").slice(0, 48) || undefined);
               const light = await ctx.api.getLightEditableEntity(`kind=pack&id=${encodeURIComponent(created.id)}`);
               if (signal?.aborted) throw new Error("Pack copy canceled before media was attached.");
               const next = { ...recOr(light.entity), body } as ParsedCanonicalEntity;

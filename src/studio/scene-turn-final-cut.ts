@@ -92,4 +92,4 @@ export async function finalCutStage(a: {
 
 const RERUN_REFUSAL = "A rerun cannot run this scene's regex scripts, which run only in the page. Turn off \"Apply your AI-output regex scripts to input\" on the passes, then rerun.";
 
-const readPreset = (read: ReadPreset, id: string) => read(id).catch(() => null);
+const readPreset = (read: ReadPreset, id: string) => read(id, "preset").catch(() => null);

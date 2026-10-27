@@ -129,6 +129,17 @@
   --deck-preset-deep: #495973;
   --deck-regex-deep: #645632;
   --deck-fog-deep: #645967;
+  /* signature colors (approved wireframe premiere/piece-colors.html, "deeper cool"): a piece with no color of its own
+     (none authored, no art) wears one of these, picked from its id by pieceColor in _shared/decks.ts. Deep companions
+     as above. */
+  --sig-1: #9fb8f5; --sig-1-deep: #44567f;  /* cornflower */
+  --sig-2: #b9a4f2; --sig-2-deep: #5f4f86;  /* iris */
+  --sig-3: #8fd3cf; --sig-3-deep: #3a6562;  /* teal */
+  --sig-4: #93d0ec; --sig-4-deep: #386172;  /* cyan */
+  --sig-5: #a9aef0; --sig-5-deep: #535885;  /* indigo */
+  --sig-6: #d3a9e6; --sig-6-deep: #6c4e78;  /* orchid */
+  --sig-7: #b2d8c0; --sig-7-deep: #496253;  /* sage */
+  --sig-8: #a9bfd6; --sig-8-deep: #4a5968;  /* steel */
 }
 
 /* Aliases and derived plates: ONE declaration list for the page and the protected layer, so each resolves against its own --bk-* values. */

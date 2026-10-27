@@ -20,11 +20,11 @@ describe("Character defaults page", () => {
     (r.a.ctx.api as unknown as { listEntities: () => unknown }).listEntities = () => Promise.resolve([{ id: "p1", kind: "preset", name: "Narrator bank" }]);
     const m = await mount(body(r));
     await wait(10);
-    setValue(control<HTMLSelectElement>(m.host, "Preset"), "p1");
+    setValue(control<HTMLSelectElement>(m.host, "Preset"), "preset:p1");
     await wait(10);
     control<HTMLElement>(m.host, "Turn on Story Director").click();
     await wait(10);
-    expect(r.prefs.get(CHARACTER_DEFAULTS_PREF)).toEqual({ other: { presetId: "z" }, ch1: { presetId: "p1", director: true } });
+    expect(r.prefs.get(CHARACTER_DEFAULTS_PREF)).toEqual({ other: { presetId: "z" }, ch1: { presetKind: "preset", presetId: "p1", director: true } });
     expect(r.calls["setScenePreset"]).toBeUndefined();
     expect(r.calls["setScenePrompting"]).toBeUndefined();
     m.done();
@@ -48,7 +48,7 @@ describe("Character defaults page", () => {
     m.done();
   });
   test("a saved preset that is gone is named, not hidden", async () => {
-    const r = rig({ prefs: [[CHARACTER_DEFAULTS_PREF, { ch1: { presetId: "deleted" } }]] });
+    const r = rig({ prefs: [[CHARACTER_DEFAULTS_PREF, { ch1: { presetKind: "preset", presetId: "deleted" } }]] });
     const m = await mount(body(r));
     await wait(10);
     expect(m.host.textContent).toContain("no longer in your library");

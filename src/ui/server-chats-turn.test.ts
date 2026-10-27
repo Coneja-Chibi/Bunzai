@@ -173,8 +173,8 @@ test("a scene follows its library preset: the pick is kept, the turn sends it, a
   const prompt = (id: string, content: string) => ({ id, name: id, content, role: "system", enabled: true, systemPrompt: true, marker: false, placement: "relative", injectionDepth: 4, injectionOrder: 100, forbidOverrides: false });
   await store.save({ schemaVersion: vera.schemaVersion, kind: "preset", id: "quill", body: { name: "Velvet Quill", prompts: [prompt("main", "Write as {{char}}."), prompt("history", "{{message_history}}")], samplers: { temperature: 0.4 } } });
   expect((await post("/api/chats/preset", { chatId, preset: { id: "quill" } })).status).toBe(400);
-  const picked = (await (await post("/api/chats/preset", { chatId, preset: { id: "quill", toggles: {}, samplers: { temperature: 0.9 } } })).json()) as { preset: unknown };
-  expect(picked.preset).toEqual({ id: "quill", toggles: {}, samplers: { temperature: 0.9 } });
+  const picked = (await (await post("/api/chats/preset", { chatId, preset: { kind: "preset", id: "quill", toggles: {}, samplers: { temperature: 0.9 } } })).json()) as { preset: unknown };
+  expect(picked.preset).toEqual({ kind: "preset", id: "quill", toggles: {}, samplers: { temperature: 0.9 } });
   await post("/api/chats/connection", { chatId, connection: { id: localId, model: "qwen3" } });
   const seen = await events(await post("/api/chats/turn", { chatId, kind: "reply", expectedVersion: version }));
   expect(seen.at(-1)!.type).toBe("done");

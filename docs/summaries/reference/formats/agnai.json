@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/formats/agnai",
   "sourcePath": "docs/reference/formats/agnai.md",
-  "sourceHash": "sha256:272cee1ce269b9a61c0bdc7fdd46d2c0e511f6e5789cf5250ae9bc1032dc077b",
+  "sourceHash": "sha256:70022381f5c288cc092bbf0f455a370dbc1c7f4e28bb27faad706d3119da4f78",
   "summary": "Developer reference for the Agnai Agnaistic adapter family: native JSON character shape and memory-book lorebooks, not Tavern-lineage. Persona is structured kind plus attribute map, preserved in canonical persona.structured. Folder src/formats/agnai default-exports agnai character and agnai-lorebook codecs, both .json; schema facts come from Agnai source under AGPL as interop only with no code copied. Detection covers character score 1.0 when kind character persona object greeting string and schemaVersion body both absent to firewall vaud-json; lorebook scores 1.0 kind memory, 0.9 kind-less native entry keywords array, 0.7 standalone CCv3 character_book soft import, else 0. Field map covers character and lorebook canonical mappings. Escrow retains the parsed source card and unknown keys as a twin; export overlays canonical fields and regenerates JSON, so fidelity is semantic/field-level rather than byte-identical. The character persona is always rebuilt, and multi-element text attributes collapse to the first element. Lorebook entries overlay by id and preserve parsed fields and raw-only residue, while JSON formatting may normalize. Embedded characterBook uses Agnai MemoryBook mapping, not the CCv3 mapper. Quirks include overlay behavior, firewall, imageSettings per-key merge, single insert, embedded book handling, and selectiveLogic ST residue.",
   "topics": [
     "Agnai character JSON",
@@ -110,15 +110,15 @@
       "slug": "escrow-and-round-trip",
       "title": "Escrow and round-trip",
       "level": 2,
-      "sourceHash": "sha256:1ee01e38b567d890082ff67a4865dad3c63e1f4e9bc76a49a12028fefd69b666",
-      "summary": "Escrow is original keyed by format id: original.agnai for character and original agnai-lorebook for books. Export deep-clones parsed raw or baseCard then applies canonical values and pretty-prints JSON; unmapped keys like extensions _id userId survive in the clone. Character set is two-state unconditional write or delete string array without twin decode compare; malformed non-string skipped values stay. Persona always rebuilds so multi-element text attributes collapse to first element even same-format. Lorebook entryToWire is a three-state diff by id Map so untouched entries preserve parsed fields, including selectiveLogic; JSON formatting may normalize. Optional book fields preserve twin presence. Embedded characterBook is Agnai MemoryBook not CCv3: extractLorebook uses memoryBookToCanonical identically to standalone; fromCanonical re-embeds via applyLorebook twin-overlay; no book means no key; empty bundle deletes stale characterBook; inspectBundle uses this override not shared CCv3 extractor.",
+      "sourceHash": "sha256:f761bb8b9bfc90b0a394e14381c96b89a6258a662082cde2861f50a9b2665e53",
+      "summary": "Escrow is original keyed by format id: original.agnai for character and original agnai-lorebook for books. Export deep-clones parsed raw or baseCard then applies canonical values and pretty-prints JSON; unmapped keys like extensions _id userId survive in the clone. Character set is two-state unconditional write or delete string array without twin decode compare; malformed non-string skipped values stay. Persona always rebuilds so multi-element text attributes collapse to first element even same-format. Lorebook entryToWire is a three-state diff by id Map so untouched entries preserve parsed fields, including selectiveLogic; JSON formatting may normalize. Optional book fields preserve twin presence. Embedded characterBook is Agnai MemoryBook not CCv3: extractLorebook uses memoryBookToCanonical identically to standalone; fromCanonical re-embeds via applyLorebook twin-overlay; no book means no key; empty bundle deletes stale characterBook; readPieces uses this override not shared CCv3 extractor.",
       "topics": [
         "original.agnai raw twin",
         "two-state set helper",
         "persona rebuild collapse",
         "three-state entryToWire",
         "extractLorebook MemoryBook",
-        "bundle inspectBundle override"
+        "bundle readPieces override"
       ],
       "children": []
     },
@@ -142,7 +142,7 @@
       "slug": "source-of-truth",
       "title": "Source of truth",
       "level": 2,
-      "sourceHash": "sha256:c9a217fa0bbdff8931511e67935710643db609871efcb8276d17d9308156f4b0",
+      "sourceHash": "sha256:50867ca990e5ff375a49e46068d5d47a67952be73caf1e303683086b55a774c2",
       "summary": "Authoritative files: character adapter index.ts for detect toCanonical fromCanonical extractLorebook; memory book lorebook.ts and shared mappers; coverage.ts; shared character-book soft-import path and lore-enums selectiveLogic; convert and adapter extractLorebook EmitContext for bundles; character and lorebook entity schemas; canonical escrow; samples/agnai and samples/lorebooks/agnai; Agnai common types paths cited as AGPL interop facts only with no code copied.",
       "topics": [
         "index lorebook coverage",

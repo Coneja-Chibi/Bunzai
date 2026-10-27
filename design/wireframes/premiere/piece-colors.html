@@ -1,0 +1,47 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piece Signature Colors</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Signature colors for pieces that never got one (no authored color, no art). Picked from the piece's id, so a piece
+   keeps its color everywhere and always; display only, never saved. Two cool palettes that sit with the default blue.
+   Stamp = the same hue, vivid. Wireframe palette values are proposals for new tokens. */
+body { padding-bottom: 40px; }
+.opt { max-width: 1440px; margin: 28px auto 0; padding: 0 24px; }
+.opt h2 { font: 700 22px/1.2 var(--font-fancy); letter-spacing: .02em; }
+.opt p { font-size: 13px; margin: 4px 0 12px; color: color-mix(in srgb, var(--premiere-text) 68%, transparent); }
+.rail { background: var(--premiere-hard); padding: 14px 12px 18px; border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); }
+.disc { display: flex; gap: 10px; align-items: center; font-size: 13px; font-weight: 600; margin-bottom: 12px; text-shadow: 2px 2px 0 var(--premiere-hard); }
+.disc::before { content: ""; width: 7px; height: 7px; background: var(--premiere-rose); }
+.tiles { display: flex; gap: 14px; flex-wrap: wrap; }
+.tile { width: 68px; font: 700 12px/1.25 var(--font-ui); color: var(--premiere-text); }
+.cov { height: 96px; background: var(--c); color: #111; font: 800 15px var(--font-ui); padding: 4px 6px;
+  border: 2px solid hsl(from var(--c) h 80% 58%); box-shadow: 4px 4px 0 hsl(from var(--c) h 80% 58%); }
+.nm { display: block; margin-top: 8px; }
+.sw { display: flex; gap: 6px; margin: 0 0 10px; flex-wrap: wrap; }
+.sw i { width: 34px; height: 22px; background: var(--c); border: 2px solid hsl(from var(--c) h 80% 58%); }
+</style></head><body>
+<div class="wf-note">WIREFRAME. Automatic signature colors for pieces with none of their own, on the black Recent rail. Today's default blue is the first tile in each row for comparison.</div>
+<section class="opt" data-pal="a"><h2>A. Cool pastels</h2><p>Soft and airy: periwinkle, lavender, sky, aqua, mint, lilac, ice, sea glass. Closest to the default blue's softness.</p><div class="sw"></div><div class="rail"><div class="disc">Recent &middot; bring one up</div><div class="tiles"></div></div></section>
+<section class="opt" data-pal="b"><h2>B. Deeper cool</h2><p>A little richer: cornflower, iris, teal, cyan, indigo, orchid, sage, steel. More separation between neighbours.</p><div class="sw"></div><div class="rail"><div class="disc">Recent &middot; bring one up</div><div class="tiles"></div></div></section>
+<script>
+var BLUE = "#bfd4fb";
+var PAL = {
+  a: ["#c7cdfd", "#dccbfb", "#bfe3fb", "#b9ece6", "#c4f0d6", "#ecc8f2", "#d5e2f0", "#b7d9e8"],
+  b: ["#9fb8f5", "#b9a4f2", "#8fd3cf", "#93d0ec", "#a9aef0", "#d3a9e6", "#b2d8c0", "#a9bfd6"]
+};
+var NAMES = ["Writer - Realistic (system prompt)", "Astrolab ENI Compat", "Think XML (reasoning)", "OpenAI Harmony (reasoning)", "NA (reasoning)", "Gemma 4 (reasoning)", "DeepSeek (reasoning)", "Blank (reasoning)", "Writer - Creative (system prompt)", "Text Adventure (system prompt)", "Severian's prompt 2", "Roleplay - Simple", "Roleplay - Immersive"];
+function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+document.querySelectorAll(".opt").forEach(function (sec) {
+  var pal = PAL[sec.dataset.pal];
+  var sw = sec.querySelector(".sw");
+  pal.forEach(function (c) { var i = document.createElement("i"); i.style.setProperty("--c", c); sw.appendChild(i); });
+  var box = sec.querySelector(".tiles");
+  [["Default blue (today)", BLUE]].concat(NAMES.map(function (n) { return [n, pal[hash(n) % pal.length]]; })).forEach(function (t) {
+    var el = document.createElement("div"); el.className = "tile"; el.style.setProperty("--c", t[1]);
+    var cov = document.createElement("div"); cov.className = "cov"; cov.textContent = t[0].charAt(0);
+    var nm = document.createElement("span"); nm.className = "nm"; nm.textContent = t[0];
+    el.appendChild(cov); el.appendChild(nm); box.appendChild(el);
+  });
+});
+</script></body></html>

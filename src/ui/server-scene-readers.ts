@@ -6,12 +6,13 @@
 import type { RegexSetBody } from "../entities/regex/schema";
 import { PRESET_CHOICE_DEFAULTS_KEY, defaultsFor } from "../core/preset/choices";
 import type { SettingsStoreLike, StudioStoreLike } from "../studio/contracts";
+import { bodyReader } from "../studio/body-reader";
 
 export const choiceDefaultsOf = (settings: SettingsStoreLike | undefined): ((presetId: string) => Promise<Record<string, unknown> | undefined>) | undefined =>
   settings ? async (presetId) => defaultsFor((await settings.read() as unknown as Record<string, unknown>)[PRESET_CHOICE_DEFAULTS_KEY], presetId) : undefined;
 
 export const regexReaderOf = (studio: StudioStoreLike | undefined): ((id: string) => Promise<RegexSetBody | null>) | undefined =>
-  studio ? async (id) => { const e = await studio.read("regex", id); return e?.kind === "regex" ? (e.body as RegexSetBody) : null; } : undefined;
+  studio ? bodyReader<RegexSetBody>(studio, "regex") : undefined;
 
 /** The optional turn dependencies, present only when their source is. */
 export const sceneReaders = (studio: StudioStoreLike | undefined, settings: SettingsStoreLike | undefined) => {

@@ -12,7 +12,7 @@ import { BoothModelPicker } from "../booth-model-picker";
 import type { SceneModels } from "../use-scene-models";
 import { Check } from "./fc-controls";
 
-const HINTS: Readonly<Record<ToolId, string>> = {
+export const HINTS: Readonly<Record<ToolId, string>> = {
   rewrite: "Line-edit the highlighted passage for flow and prose quality.",
   expand: "Add implied detail or rhythm the highlight already gestures at.",
   reduce: "Tighten the highlight into leaner prose.",

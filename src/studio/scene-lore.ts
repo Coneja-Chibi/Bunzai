@@ -10,6 +10,7 @@ import type { LorebookBody } from "../entities/lorebook/schema";
 import type { PersonaBody } from "../entities/persona/schema";
 import type { ChatLore } from "../stage/contracts/chat-store";
 import type { StudioStoreLike } from "./contracts";
+import { bodyReader } from "./body-reader";
 import { createStoredLoreInput } from "../core/lore/engine/stored-input";
 
 export type ReadLorebook = (id: string) => Promise<{ id: string; name: string; body: LorebookBody } | null>;
@@ -21,12 +22,8 @@ export function lorebookReader(store: Pick<StudioStoreLike, "read"> & Partial<Pi
       const stored = await store.readBodyVersioned("lorebook", id);
       return stored ? createStoredLoreInput(id, stored.body as LorebookBody, stored.revision) : null;
     }
-    if (store.readBody) {
-      const body = await store.readBody("lorebook", id) as LorebookBody | null;
-      return body ? { id, name: body.name, body } : null;
-    }
-    const entity = await store.read("lorebook", id);
-    return entity?.kind === "lorebook" ? { id, name: entity.body.name, body: entity.body } : null;
+    const body = await bodyReader<LorebookBody>(store, "lorebook")(id);
+    return body ? { id, name: body.name, body } : null;
   };
 }
 

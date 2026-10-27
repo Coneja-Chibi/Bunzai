@@ -70,6 +70,13 @@ describe("preflightBundle", () => {
   test("rejects missing id/kind", () => {
     expect(() => preflightBundle({ entity: { kind: "character" } as never })).toThrow(/id/);
   });
+
+  test("a related piece must be a kind the primary links, and related must be a list", () => {
+    const aria = testCharacter("aria", [], { original: {} });
+    expect(preflightBundle({ entity: aria, related: [book("valid")] }).map((p) => p.kind)).toEqual(["lorebook"]);
+    expect(() => preflightBundle({ entity: aria, related: [testCharacter("other", [], { original: {} })] })).toThrow("bundle: a character does not link character pieces");
+    expect(() => preflightBundle({ entity: aria, related: { lorebooks: [] } as never })).toThrow("bundle: related must be a list of pieces");
+  });
 });
 
 describe("saveBundle", () => {
@@ -85,8 +92,8 @@ describe("saveBundle", () => {
 
     await expect(saveBundle(store, {
       entity: testCharacter("aria", [], { original: {} }),
-      lorebooks: [book("valid"), malformed],
-    })).rejects.toThrow("bundle: invalid lorebook");
+      related: [book("valid"), malformed],
+    })).rejects.toThrow("bundle: invalid related piece");
     expect(await store.list()).toEqual([]);
   });
 
@@ -95,11 +102,10 @@ describe("saveBundle", () => {
     const store = new StudioStore(dir);
     const lb = book("aetheria-lore", "Aetheria");
     const c = testCharacter("aria", ["aetheria-lore"], { original: {} });
-    const result = await saveBundle(store, { entity: c, lorebooks: [lb] });
+    const result = await saveBundle(store, { entity: c, related: [lb] });
     expect(result.ok).toBe(true);
     expect(result.related).toHaveLength(1);
     expect(result.primary?.kind).toBe("character");
-    expect(result.knowledgeRefs).toEqual([result.related[0]!.id]);
 
     const savedChar = await store.read("character", result.primary!.id);
     expect((savedChar!.body as { knowledgeRefs?: string[] }).knowledgeRefs).toEqual([
@@ -116,7 +122,7 @@ describe("saveBundle", () => {
 
     const first = await saveBundle(store, {
       entity: testCharacter("aria", ["shared-book"], { original: {} }),
-      lorebooks: [book("shared-book", "First")],
+      related: [book("shared-book", "First")],
     });
     expect(first.ok).toBe(true);
     const firstBookId = first.related[0]!.id;
@@ -124,13 +130,12 @@ describe("saveBundle", () => {
 
     const second = await saveBundle(store, {
       entity: testCharacter("aria", ["shared-book"], { original: {} }),
-      lorebooks: [book("shared-book", "Second")],
+      related: [book("shared-book", "Second")],
     });
     expect(second.ok).toBe(true);
     // keep-both: second book and character get -2 suffix
     expect(second.related[0]!.id).toBe("shared-book-2");
     expect(second.primary!.id).toBe("aria-2");
-    expect(second.knowledgeRefs).toEqual(["shared-book-2"]);
 
     const c1 = await store.read("character", first.primary!.id);
     const c2 = await store.read("character", second.primary!.id);

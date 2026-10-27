@@ -50,7 +50,7 @@ async function scene(over: { preset?: PresetBody; reply?: string; fail?: Error; 
   const state = memoryStateStore();
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 }, ...(over.persona === false ? {} : { persona: { id: "mira", version: 1 } }) }, snapshot: { character: vera, ...(over.persona === false ? {} : { persona: mira }) } });
   if (over.connected !== false) await chats.setConnection(chat.id, { id: "conn", model: "scene-model" });
-  if (over.preset) await chats.setPreset(chat.id, { id: "quill", toggles: {}, samplers: {} });
+  if (over.preset) await chats.setPreset(chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
   await chats.appendMessages(chat.activeBranchId, [
     { role: "assistant", content: "Evening." },
     { role: "user", content: "{{setvar::asked::yes}}Any storms?" },

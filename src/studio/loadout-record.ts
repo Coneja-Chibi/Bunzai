@@ -68,9 +68,9 @@ function exactly(value: unknown, keys: readonly string[], what: string): Record<
 /** Each live panel's rule: the store's own check, so the two can never disagree. */
 const CHECKS: Record<string, (v: unknown) => unknown> = {
   preset: (v) => {
-    const o = exactly(v, ["id", "toggles"], "preset");
-    const p = checkPreset({ id: o["id"], toggles: o["toggles"], samplers: {} });
-    return { id: p!.id, toggles: p!.toggles };
+    const o = exactly(v, ["kind", "id", "toggles"], "preset");
+    const p = checkPreset({ kind: o["kind"], id: o["id"], toggles: o["toggles"], samplers: {} });
+    return { kind: p!.kind, id: p!.id, toggles: p!.toggles };
   },
   samplers: checkPresetSamplers,
   mainModel: checkConnection,

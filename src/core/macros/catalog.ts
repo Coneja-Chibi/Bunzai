@@ -30,6 +30,7 @@ import { IN_REPLY_MACROS } from "./handlers/in-reply";
 import { COMPOSITION_MACROS } from "./handlers/composition";
 import { PHASE_MACROS_MACROS } from "./handlers/phase-macros";
 import { MATH_MACROS } from "./handlers/math";
+import { CHAT_WATCH_MACROS } from "./handlers/chat-watch";
 
 export const CATALOG: readonly MacroDefinition[] = [
   ...IDENTITY_MACROS,
@@ -57,4 +58,6 @@ export const CATALOG: readonly MacroDefinition[] = [
   ...COMPOSITION_MACROS,
   ...PHASE_MACROS_MACROS,
   ...MATH_MACROS,
+  // Bunraku's own, last so they never take a RoleCall name
+  ...CHAT_WATCH_MACROS,
 ];

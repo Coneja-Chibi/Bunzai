@@ -26,7 +26,7 @@ const body: PresetBody = {
     { id: "cast", label: "Cast", type: "many", min: 2, default: ["x", "y"], options: [{ id: "x", label: "X" }, { id: "y", label: "Y" }, { id: "z", label: "Z" }] },
   ],
 };
-const chat = { id: "chat1", title: "t", cast: { character: { id: "v", version: 1 } }, activeBranchId: "b1", createdAt: 1, updatedAt: 1, snapshotVersion: 1, preset: { id: "preset1", toggles: {}, samplers: {} } } as Chat;
+const chat = { id: "chat1", title: "t", cast: { character: { id: "v", version: 1 } }, activeBranchId: "b1", createdAt: 1, updatedAt: 1, snapshotVersion: 1, preset: { kind: "preset", id: "preset1", toggles: {}, samplers: {} } } as Chat;
 
 let prefs: Map<string, unknown>;
 let picks: Record<string, ChoicePick>;

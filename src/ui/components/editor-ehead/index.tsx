@@ -10,11 +10,12 @@
  */
 import { Button } from "../button";
 import { Children, Fragment, isValidElement } from "react";
-import type { JSX, ReactNode } from "react";
+import type { CSSProperties, JSX, ReactNode } from "react";
+import { deckMeta } from "../../_shared/decks";
 import s from "./styles.module.css";
 
-/** the piece kinds that own a deck color (a subset of the Panel deck edge). */
-export type EditorEheadDeck = "persona" | "lorebook" | "preset" | "regex";
+/** a kind id from the kind hub; its deck color fills the monogram tile. */
+export type EditorEheadDeck = string;
 
 /** Set digit runs in the mono face (numbers are mono, words are not); elements pass through untouched. */
 function monoNumbers(node: ReactNode): ReactNode {
@@ -70,7 +71,7 @@ export function EditorEhead({
   topRight,
 }: EditorEheadProps): JSX.Element {
   return (
-    <header className={s.ehead} data-editor="head" data-deck={deck}>
+    <header className={s.ehead} data-editor="head" data-deck={deck} style={deck ? ({ "--deck-tile": deckMeta(deck).accent } as CSSProperties) : undefined}>
       <div className={s.spine}>
         <span className={s.spineMark}>{mark}</span>
         <div className={s.spineText}>

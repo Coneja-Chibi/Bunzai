@@ -54,6 +54,8 @@ export interface WingArgs {
   onRevert(): void;
   /** A panel asking for another wing (or null to close this one). */
   openWing(id: string | null): void;
+  /** Which of the card's greetings the first send will use, while the scene is unsent: the page's own state, not stored until that send. */
+  greeting?: { index: number; pick(index: number): void };
 }
 
 export type WingPanels = Omit<ComponentProps<typeof WingPanel>, "id" | "tab" | "bare" | "single" | "resize">;

@@ -8,7 +8,7 @@ import { LIVE_PANELS, allPanels, defaultTicks, panelSummary, writingOnly } from 
 
 const empty: SceneSettings = { persona: null };
 const full: SceneSettings = {
-  persona: "p1", connection: { id: "k", model: "m" }, preset: { id: "pre", toggles: {}, samplers: { temperature: 0.5 } },
+  persona: "p1", connection: { id: "k", model: "m" }, preset: { kind: "preset", id: "pre", toggles: {}, samplers: { temperature: 0.5 } },
   lore: { added: ["b"], off: [] }, props: { on: ["dice"] }, prompting: { guides: ["g"], note: { text: "Tense.", position: "in_chat", depth: 4, frequency: 1 } },
   backdrop: { pack: "p", item: "i" },
   regex: { sets: ["r"] },

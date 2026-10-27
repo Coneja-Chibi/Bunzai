@@ -104,7 +104,8 @@ than 1,000 committed pieces. Maintenance failure does not change an import-sheet
 
 ## The adapter contract
 
-`src/core/adapter.ts` defines what every format plugin implements. It is a `kind`-discriminated union:
+`src/core/adapter.ts` defines what every format plugin implements: one generic contract per kind, and the
+`kind`-discriminated union of them over every kind in the generated kind seam:
 
 ```ts
 interface AdapterBase {
@@ -115,11 +116,13 @@ interface AdapterBase {
   detect(input): number;             // 0..1 confidence it can read this input
 }
 
-interface CharacterAdapter extends AdapterBase {
-  kind: "character";
-  toCanonical(input): CanonicalCharacter;
+interface KindAdapter<K extends KindId> extends AdapterBase {
+  kind: K;
+  toCanonical(input): EntityFor<K>;                // the kind's canonical piece
   fromCanonical(entity, context?): AdapterOutput;   // context carries embedded lorebooks to re-embed
 }
+
+// Character cards and presets add optional extras (extractLorebook; extractRegex and embedRegex).
 
 interface AdapterOutput {
   text?: string;
@@ -128,27 +131,14 @@ interface AdapterOutput {
   report?: SerializeReport;
 }
 
-interface LorebookAdapter extends AdapterBase {
-  kind: "lorebook";
-  toCanonical(input): CanonicalLorebook;
-  fromCanonical(entity): AdapterOutput;
-}
-
-// PersonaAdapter, PresetAdapter, RegexAdapter, and QuickReplyAdapter follow the same shape.
-type FormatAdapter =
-  | CharacterAdapter
-  | LorebookAdapter
-  | PersonaAdapter
-  | PresetAdapter
-  | RegexAdapter
-  | QuickReplyAdapter;
+type FormatAdapter = { [K in KindId]: /* CharacterAdapter, PresetAdapter, or */ KindAdapter<K> }[KindId];
 ```
 
 The registry stores the union heterogeneously. A converter narrows on `kind` before it ever hands an
 entity to `fromCanonical`, so a cross-kind call (handing a lorebook to a character writer) is not even
-representable. **Formats are open (drop in any folder); entity kinds are a small closed union** that
-grows only by adding a member here plus a sibling `entities/<kind>/` folder. That trade buys
-compile-time safety across the whole engine.
+representable. **Formats are open (drop in any folder); entity kinds are a closed set** that grows by adding an
+`entities/<kind>/` folder with its `kind.ts` and running `bun run kinds` ([extending/new-kind.md](extending/new-kind.md)).
+The set is closed at compile time, which buys type safety across the whole engine.
 
 Adapter-local reports are optional while the codecs migrate, but every orchestration boundary attaches
 a `SerializeReport` before output reaches the CLI, HTTP API, export dialog, or Press. Reports name
@@ -160,10 +150,11 @@ report every genuinely foreign escrow entry.
 
 Canonical JSON is parsed through `src/entities/runtime-schema.ts` at storage and HTTP boundaries, so TypeScript
 interfaces are not the runtime check. Each `src/entities/<kind>/runtime-schema.ts` module strictly
-decodes its complete handwritten domain type. `defineExhaustiveShape<T>()` infers each concrete schema
+decodes its complete handwritten domain type and exports its whole-entity `entitySchema` (the shared envelope from
+`src/entities/_shared/envelope.ts` plus its body); the generated seam collects them into the boundary's union. `defineExhaustiveShape<T>()` infers each concrete schema
 before requiring exact input and output parity, so missing or extra keys, narrowed unions, coercion,
 `any` at any nesting depth, and `never` fail typecheck.
-`src/entities/runtime-schema.ts` composes those bodies into the eight-kind discriminated union used by
+`src/entities/runtime-schema.ts` composes every kind's decoder (from the generated kind seam) into the discriminated union used by
 storage, HTTP save, format-corpus verification, and Kit draft validation.
 
 Unknown same-version keys fail instead of being stripped or carried silently. Openness is local and

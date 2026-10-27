@@ -84,7 +84,7 @@ test("a hit inside the scene preset's own reasoning markers reports as thinking"
   const { store, chats, branchId, post, id, search } = await scene();
   const prompt = (pid: string, content: string) => ({ id: pid, name: pid, content, role: "system", enabled: true, systemPrompt: true, marker: false, placement: "relative", injectionDepth: 4, injectionOrder: 100, forbidOverrides: false });
   await store.save({ schemaVersion: vera.schemaVersion, kind: "preset", id: "quill", body: { name: "Quill", prompts: [prompt("main", "Write.")], samplers: {}, reasoning: { prefix: "[[", suffix: "]]", separator: "" } } });
-  expect((await post("/api/chats/preset", { chatId: id, preset: { id: "quill", toggles: {}, samplers: {} } })).status).toBe(200);
+  expect((await post("/api/chats/preset", { chatId: id, preset: { kind: "preset", id: "quill", toggles: {}, samplers: {} } })).status).toBe(200);
   await chats.appendMessages(branchId, [{ role: "assistant", content: "Out [[hidden zephyr]] in" }, { role: "assistant", content: "Out zephyr in" }]);
   const { body } = await search("zephyr");
   expect(body.hits.map((h) => h.thinking)).toEqual([false, true]);

@@ -21,9 +21,8 @@
 import { z } from "zod";
 import type { HarnessTool } from "./tool";
 import { STUDIO_ENTITY_KINDS } from "../../studio/path-policy";
+import { referencedBy } from "../../core/links";
 
-/** Kinds whose ids other pieces can point at, so the receipt only warns where a dangle is possible. */
-const REFERENCEABLE = new Set(["lorebook", "pack", "regex"]);
 
 const input = z.strictObject({
   kind: z.enum(STUDIO_ENTITY_KINDS).describe("the deck the piece lives in"),
@@ -56,8 +55,10 @@ const remove: HarnessTool<z.infer<typeof input>> = {
         outcome: "failed",
       };
     }
-    const dangleNote = REFERENCEABLE.has(kind)
-      ? ` Any character linking to this ${kind} now has a dangling reference; references were not checked.`
+    // who can point at a piece of this kind (core/links.ts), so the receipt only warns where a dangle is possible
+    const pointers = referencedBy(kind);
+    const dangleNote = pointers.length > 0
+      ? ` Any ${pointers.join(" or ")} pointing at this ${kind} now has a dangling reference; references were not checked.`
       : "";
     return {
       summary: `delete ${kind}/${id}: removed`,

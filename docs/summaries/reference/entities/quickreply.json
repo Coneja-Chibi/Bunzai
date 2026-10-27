@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/quickreply",
+  "sourcePath": "docs/reference/entities/quickreply.md",
+  "sourceHash": "sha256:424d68d21f61b4114abe2843765dc40a7b524a87286e345840b728e2a48f10bc",
+  "summary": "Quick-reply set entity is the canonical piece for SillyTavern quick-reply sets: CanonicalEntity quickreply with a named list of buttons, each a label and the message pressing it sends, usually a slash-command script that nothing in Bunraku executes. It is a kind so a preset can link one through quickReplyRefs and the Press can print them together. The body keeps what a person authors; every other per-button switch rides extras and the source file rides original, so export writes it back. Its descriptor is kind.ts. It shows as the Quick replies deck with a New quick reply action, the Workbench quick-reply editor, and Kit's create tool; Kit has no editing capabilities for it by design. The sillytavern-quickreply codec reads and writes the files.",
+  "topics": [
+    "CanonicalQuickReplySet",
+    "quickReplyRefs",
+    "slash commands are data",
+    "extras escrow",
+    "sillytavern-quickreply"
+  ],
+  "sections": [
+    {
+      "slug": "fields",
+      "title": "Fields",
+      "level": 2,
+      "sourceHash": "sha256:b557948e24a53e109dbb9ed4ac05baff6abecc8de068c379ec63502caaf7d86d",
+      "summary": "Fields: the two tables on the page are generated from the schema's doc comments by scripts/docs-fields.ts and pasted verbatim from docs/generated/fields.quickreply.md, so a cell is never edited by hand: the page says to improve the schema doc comment and regenerate rather than editing a cell. The first table is one button, QuickReply, with its id, label, message, title, hidden and extras fields, and the second is the set that holds the buttons, QuickReplyBody, with its name, replies, extras and notes. Each row gives the field, its type, the producers named in the comment and its meaning.",
+      "topics": [
+        "generated tables",
+        "docs-fields.ts"
+      ],
+      "children": [
+        {
+          "slug": "quickreply",
+          "title": "`QuickReply`",
+          "level": 3,
+          "sourceHash": "sha256:ace1abf806da40a964ac53720e73735658c9b777dff23c452159c839f5ee6ac4",
+          "summary": "QuickReply is one button: id, minted at import when the wire has none; label, which may be empty for icon-only buttons; message, what pressing it sends, data never executed; optional title as hover text; optional hidden, ST's isHidden kept for round-trips; and extras, unmodelled wire fields re-merged on export.",
+          "topics": [
+            "id label message",
+            "hidden",
+            "extras"
+          ],
+          "children": []
+        },
+        {
+          "slug": "quickreplybody",
+          "title": "`QuickReplyBody`",
+          "level": 3,
+          "sourceHash": "sha256:279950235abe5cc1d7a1210884a9d6e139de502ec07af6d0e9f07ba96049c01a",
+          "summary": "QuickReplyBody is the set: name, which titles it in the Library; replies, the ordered buttons; extras for set-level wire fields such as disableSend and color; and notes, the author's own notes.",
+          "topics": [
+            "name",
+            "replies",
+            "set-level extras",
+            "notes"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "where-it-shows",
+      "title": "Where it shows",
+      "level": 2,
+      "sourceHash": "sha256:6876ed804605115f80feacbc4dc377f8bef0fe886bded461f54d1e125df40c6c",
+      "summary": "Where it shows: the Library's Quick replies deck with a New quick reply action that saves an empty set; the Workbench quick-reply editor; and Kit's quickreply-create tool. Kit has no editing capabilities for a set, which the Workbench owns; the kind completeness test lists that exemption.",
+      "topics": [
+        "Quick replies deck",
+        "QuickReplyEditor",
+        "quickreply-create",
+        "no Kit capabilities"
+      ],
+      "children": []
+    },
+    {
+      "slug": "import-and-export",
+      "title": "Import and export",
+      "level": 2,
+      "sourceHash": "sha256:96652fa5642872c0db06c81a5916edba5a351003f74449a9fb69727f1652c540",
+      "summary": "Import and export: the sillytavern-quickreply codec reads and writes SillyTavern quick-reply set files, so a set comes into the studio from SillyTavern and goes back out the same way. The page's earlier sections explain what that round trip keeps: the label and message the canonical body models, every other per-button switch in extras, and the source file in original on the envelope, so export writes it back. For anything about the files themselves, the page points to the SillyTavern format reference, formats/sillytavern.md, and says no more here.",
+      "topics": [
+        "sillytavern-quickreply",
+        "round-trip escrow",
+        "SillyTavern format page"
+      ],
+      "children": []
+    }
+  ]
+}

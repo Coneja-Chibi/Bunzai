@@ -25,7 +25,9 @@ import type {
   Sprite,
   TriggerScript,
   Voice,
+  CanonicalCharacter,
 } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const stringArray = z.array(z.string());
 const unknownRecord = z.record(z.string(), z.unknown());
@@ -327,3 +329,5 @@ const bodyShape = defineExhaustiveShape<CharacterBody>()({
 
 export const characterBodySchema = z.strictObject(bodyShape);
 export const characterProfileSchema = characterBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalCharacter>()(entityShape("character", characterBodySchema, characterProfileSchema)));

@@ -1,0 +1,83 @@
+{
+  "kind": "tool",
+  "source": "src/entities/tool/schema.ts",
+  "shapes": [
+    {
+      "name": "ToolField",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "The argument name the model fills in: a lowercase letter, then lowercase letters, digits and _.",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "type",
+          "optional": false,
+          "type": "ToolFieldType",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "choices",
+          "optional": true,
+          "type": "string[]",
+          "meaning": "The allowed values of a choice field; only a choice field has them.",
+          "producers": []
+        },
+        {
+          "name": "required",
+          "optional": false,
+          "type": "boolean",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    },
+    {
+      "name": "ToolBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "What the model is told the tool is for and when to call it.",
+          "producers": []
+        },
+        {
+          "name": "fields",
+          "optional": false,
+          "type": "ToolField[]",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "action",
+          "optional": false,
+          "type": "ToolAction",
+          "meaning": "",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

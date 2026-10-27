@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/formula",
+  "sourcePath": "docs/reference/entities/formula.md",
+  "sourceHash": "sha256:8a67696bd53156084f332779046cc58a07d94924b3841e68550257a4a8f7bcca",
+  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression of up to twenty thousand characters, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The editor waits for its wireframe.",
+  "topics": [
+    "CanonicalFormula",
+    "macro expression",
+    "runFormulaReadOnly",
+    "tool formula action",
+    "read-only"
+  ],
+  "sections": [
+    {
+      "slug": "where-formulas-run",
+      "title": "Where formulas run",
+      "level": 2,
+      "sourceHash": "sha256:37e856f93603db442a27cab4a57f72f9ab17281e6f4962c9fdf597e88f4bc234",
+      "summary": "A tool runs a formula through its formula action, described on the tool page, and the model is told what the formula renders. The formula reads the macro context the turn built its prompt from: the card, the persona, the history before the message being answered, and the variables as the prompt left them. That context is handed to the tools through ToolsContext.macros once the prompt is built, because tools are made before the prompt exists but called after it, and a call that somehow arrives before the context is there is refused instead of running against an empty context. Tools are the only place formulas run today.",
+      "topics": [
+        "tool formula action",
+        "ToolsContext.macros",
+        "prompt's macro context"
+      ],
+      "children": []
+    },
+    {
+      "slug": "safety",
+      "title": "Safety",
+      "level": 2,
+      "sourceHash": "sha256:921c70ef960b4ecbc45d563c2b37bf5ab188e0c9c3c24219a8176d1e9f0f2924",
+      "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula runs on its own budget of 1,000 steps, enough for roughly 100 macro calls, and the word-watching macros search for at most 200 new words in one run, so a model calling formulas again and again cannot tie up the server: the worst cases measured stop in about 55 ms per call, held under 500 ms by a test. Each call takes its own seed.",
+      "topics": [
+        "structuredClone copy",
+        "writes refused out loud",
+        "pick refused",
+        "FORMULA_STEPS budget",
+        "per-call seed"
+      ],
+      "children": []
+    },
+    {
+      "slug": "editing",
+      "title": "Editing",
+      "level": 2,
+      "sourceHash": "sha256:ceaf7f8cdd5388a866f643e5198eedef30e74389e3c44413842138ad3c7f9129",
+      "summary": "There is no editor for formulas yet. The formula editor waits for its approved wireframe, so no screen for writing or testing a formula exists in this change. The Library's New formula action saves a blank formula, and a blank formula is refused whenever it is run, with the words that it is empty, until someone gives it text. The section records the missing editor as a known gap rather than describing a surface that is not built, in the same way the tool and dice pages treat their own missing editors, and it promises nothing about the editor beyond the wireframe that has to be approved first.",
+      "topics": [
+        "no editor yet",
+        "blank formula refused"
+      ],
+      "children": []
+    }
+  ]
+}

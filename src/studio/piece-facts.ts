@@ -7,7 +7,8 @@
  * the store ever importing UI code. No src/ui imports here, ever.
  */
 import { isRecord, presentNum } from "../core/guards";
-import { explainPattern } from "../core/regex";
+import { explainPattern, slowRuleCount } from "../core/regex";
+import type { PieceSummaryContent, RegexShelfFacts } from "../stage/contracts/content-store-summary";
 import type { LorebookBody } from "../entities/lorebook/schema";
 import type { PersonaBody } from "../entities/persona/schema";
 import type { RegexRule, RegexSetBody } from "../entities/regex/schema";
@@ -153,3 +154,36 @@ export function personaFacts(body: PersonaBody): PersonaFacts {
     hasLorebook: (body.knowledgeRefs ?? []).length > 0,
   };
 }
+
+// -- the per-kind facts table ---------------------------------------------------------------------
+
+/** A regex set's shelf facts. */
+function regexFacts(body: RegexSetBody): RegexShelfFacts {
+  const rules: readonly RegexRule[] = Array.isArray(body.rules) ? body.rules : [];
+  return {
+    enabled: body.enabled !== false,
+    ruleCount: rules.length,
+    enabledRuleCount: rules.filter((r) => r.enabled !== false).length,
+    doesWhat: doesWhatForSet(body),
+    slowCount: slowRuleCount(body),
+  };
+}
+
+/** The facts only one kind has. */
+export type KindFacts = Pick<PieceSummaryContent, "filled" | "samplers" | "blocks" | "samplerSet" | "formatParts" | "regex" | "lore" | "persona">;
+
+const KIND_FACTS: Record<string, (body: Record<string, unknown>) => KindFacts> = {
+  character: (b) => ({ filled: filledCardFields(b) }),
+  preset: presetFacts,
+  promptformat: (b) => ({ formatParts: promptFormatParts(b) }),
+  regex: (b) => ({ regex: regexFacts(b as unknown as RegexSetBody) }),
+  lorebook: (b) => ({ lore: { enabled: b.enabled !== false, ...loreFacts(b as unknown as LorebookBody) } }),
+  persona: (b) => ({ persona: personaFacts(b as unknown as PersonaBody) }),
+};
+
+/**
+ * The facts only one kind has, from its body: what a piece's sealed summary stores (stage/store/summary-content.ts)
+ * and what the Library's peek computes when a summary is not there yet (ui/apps/library/piece-peek.ts). One table, so
+ * the two can never disagree; a kind with no special facts has none.
+ */
+export const kindFacts = (kind: string, body: Record<string, unknown>): KindFacts => (Object.hasOwn(KIND_FACTS, kind) ? KIND_FACTS[kind]!(body) : {});

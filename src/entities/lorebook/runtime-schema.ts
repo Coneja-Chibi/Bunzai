@@ -12,7 +12,9 @@ import type {
   LorebookCategory,
   LorebookEntry,
   Trigger,
+  CanonicalLorebook,
 } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const stringArray = z.array(z.string());
 const unknownRecord = z.record(z.string(), z.unknown());
@@ -173,3 +175,5 @@ const bodyShape = defineExhaustiveShape<LorebookBody>()({
 
 export const lorebookBodySchema = z.strictObject(bodyShape);
 export const lorebookProfileSchema = lorebookBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalLorebook>()(entityShape("lorebook", lorebookBodySchema, lorebookProfileSchema)));

@@ -13,7 +13,7 @@
  * hand. The rail names no second way to filter.
  */
 import type { CSSProperties, JSX } from "react";
-import { deckMeta } from "../../_shared/decks";
+import { deckHead } from "../../_shared/decks";
 import type { Collection } from "../../../studio/collections-shape";
 import { collectionQuery } from "./collections-ops";
 import type { ShelfLayout, ShelfOrder } from "./carousel-core";
@@ -70,7 +70,7 @@ export function LibraryRail(props: LibraryRailProps): JSX.Element {
         <div className="lrail-div">Decks</div>
         <div className="lrail-rows" data-tour="decks">
           {decks.map(/* bounded-ok: fixed app / doc / deck-kind / store sets, or short per-import summaries */ ({ kind, count }) => {
-            const meta = deckMeta(kind);
+            const meta = deckHead(kind);
             // While a search runs the count is MATCHES; the title keeps the real total so no count
             // ever reads as a loss.
             const shown = matched ? (matched.get(kind) ?? 0) : count;

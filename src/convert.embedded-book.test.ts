@@ -17,10 +17,18 @@
  * kit/tools/read-stale-book.test.ts, where the stale copy was being handed to a model.
  */
 import { describe, expect, test } from "bun:test";
-import { inspectBundle } from "./convert";
+import { readPieces } from "./convert";
 import type { AdapterInput, CharacterAdapter } from "./core";
 import { toAdapterInput } from "./core/adapter-input";
 import sillytavern from "./formats/sillytavern";
+import type { CanonicalCharacter } from "./entities/character/schema";
+import type { CanonicalLorebook } from "./entities/lorebook/schema";
+
+/** A card file read into its character and extracted lorebooks (convert.ts readPieces). */
+const inspectBundle = (src: Parameters<typeof readPieces>[0], input: Parameters<typeof readPieces>[1]) => {
+  const { entity, related } = readPieces(src, input);
+  return { entity: entity as CanonicalCharacter, lorebooks: related as CanonicalLorebook[] };
+};
 
 const CARD = {
   spec: "chara_card_v2",

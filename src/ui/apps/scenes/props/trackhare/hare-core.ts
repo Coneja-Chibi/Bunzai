@@ -10,6 +10,9 @@ import { boolOr } from "../../../../../core/guards";
 export type SortMode = "placement" | "az" | "size";
 export type Density = "detailed" | "compact";
 
+/** The per-viewer prefs TrackHare keeps: the options card in the stage and the Messenger settings write the same keys. */
+export const HARE_PREFS = { group: "trackhare.group", sort: "trackhare.sort", misses: "trackhare.misses", density: "trackhare.density", button: "trackhare.button" } as const;
+
 export interface BookGroup {
   bookName: string;
   hits: TraceLoreHit[];

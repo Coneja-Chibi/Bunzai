@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/tool",
+  "sourcePath": "docs/reference/entities/tool.md",
+  "sourceHash": "sha256:af4a8eb9bcda436c380e8329c172366c6d7d583a9e80282f899ef2cbc9c22594",
+  "summary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that no screen links a tool yet. Editing says the editor waits for its approved wireframe.",
+  "topics": [
+    "CanonicalTool",
+    "tool fields",
+    "roll action",
+    "record action",
+    "ChatPrompting.tools",
+    "library-tools"
+  ],
+  "sections": [
+    {
+      "slug": "fields",
+      "title": "Fields",
+      "level": 2,
+      "sourceHash": "sha256:a7f53bd440478e287dbeaabb48114377e72e433609e4615839dc351f2c16b234",
+      "summary": "Each field has a name made of a lowercase letter then lowercase letters, digits and underscores, a description, a type of text, number, boolean or choice, and a required flag. Only a choice field carries choices, between one and twenty of them, and it must carry them. A tool holds at most twelve fields and their names must be unique. The function schema sent to the model, toolParameters, and the check of the model's arguments, readToolCall, are both built from this one field list, so the two can never disagree. Unknown arguments, missing required arguments, values of the wrong type and choices outside the list are all refused, and the refusal is told to the model.",
+      "topics": [
+        "field types",
+        "toolParameters",
+        "readToolCall",
+        "refusals"
+      ],
+      "children": []
+    },
+    {
+      "slug": "actions",
+      "title": "Actions",
+      "level": 2,
+      "sourceHash": "sha256:63bb4c8dd75acb8455d8a56ac58eb2047579afd553ec6029eea3fa41c87bcb51",
+      "summary": "There are four first-party actions. Roll rolls the dice the model writes into one of the tool's text fields through the dice module, one to one hundred dice of two to one thousand sides, other dice refused when the arguments are read, and the trace keeps each die and the total. Dice rolls a library dice piece by its id, a roll, a table or a pool, answered as that piece rolls. Formula runs a library formula by its id on a copy of the turn's macro context and answers with what it renders; one that would change a variable, has a macro error or is blank is refused, and the refusal is told to the model. Record changes nothing and answers Recorded. All four are read-only.",
+      "topics": [
+        "roll from a field",
+        "dice action",
+        "formula action",
+        "record",
+        "read-only"
+      ],
+      "children": []
+    },
+    {
+      "slug": "in-a-scene",
+      "title": "In a scene",
+      "level": 2,
+      "sourceHash": "sha256:bec2070c3b95a481f18d2e207f0f566036ce77cf161d08f2bff3fa3e20f1e19e",
+      "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, at most twenty and in order. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. No screen links a tool to a scene yet; that control waits for its wireframe with the editor.",
+      "topics": [
+        "ChatPrompting.tools",
+        "Narrator Tool Access",
+        "library-tools",
+        "callName",
+        "invalid_tool",
+        "no linking screen yet"
+      ],
+      "children": []
+    },
+    {
+      "slug": "editing",
+      "title": "Editing",
+      "level": 2,
+      "sourceHash": "sha256:9767b5c364cedf11ed4fde413bac745863b83787870319a92d67ea6a8f7a8732",
+      "summary": "There is no editor for tools yet. The tool editor waits for its approved wireframe, and no screen for editing a tool exists in this change. What does exist is the Library's New tool action, which saves a blank record tool, using the record action the page describes above: it changes nothing, answers Recorded, and leaves only the call's arguments in the trace. The section is short because the page records the missing editor as a known gap rather than describing a surface that is not built, and it promises nothing about the editor beyond the wireframe that must be approved first.",
+      "topics": [
+        "no editor yet",
+        "blank New"
+      ],
+      "children": []
+    }
+  ]
+}

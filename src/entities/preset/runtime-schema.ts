@@ -15,7 +15,9 @@ import type {
   PresetSamplers,
   PresetSystemPrompts,
   PresetTemplates,
+  CanonicalPreset,
 } from "./schema";
+import { entityShape } from "../_shared/envelope";
 
 const stringArray = z.array(z.string());
 const unknownRecord = z.record(z.string(), z.unknown());
@@ -181,3 +183,5 @@ const bodyShape = defineExhaustiveShape<PresetBody>()({
 
 export const presetBodySchema = z.strictObject(bodyShape);
 export const presetProfileSchema = presetBodySchema.partial();
+
+export const entitySchema = z.strictObject(defineExhaustiveShape<CanonicalPreset>()(entityShape("preset", presetBodySchema, presetProfileSchema)));

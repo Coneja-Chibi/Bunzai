@@ -15,7 +15,7 @@ import type { AppContext, StudioEntitySummary } from "../../app-contract";
 import { CANONICAL_SCHEMA_VERSION } from "../../../core/canonical";
 import { slowRuleCount } from "../../../core/regex";
 import type { CanonicalRegexSet, RegexRule, RegexSetBody } from "../../../entities/regex/schema";
-import { createAndOpenRegexSet } from "./new-regex-set";
+import { createBlank } from "../../_shared/new-piece";
 import type { DeckViewContext } from "./view-contract";
 import { isRecord } from "../../../core/guards";
 import { toErrorMessage } from "../../_shared/error-message";
@@ -231,7 +231,7 @@ export function makeRegexShelf(args: {
     onNew: () => {
       void (async () => {
         try {
-          const summary = await createAndOpenRegexSet(ctx);
+          const summary = await createBlank(ctx, "regex");
           reload();
           ctx.workbench.open(summary);
           ctx.setStatus(`opened regex set · ${summary.name}`);

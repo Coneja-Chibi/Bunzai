@@ -6,18 +6,27 @@
  */
 import { TOOL_ROUNDS_DEFAULT } from "../core/assembly/tool-rounds";
 import { countText } from "../core/tokens";
+import { mulberry32 } from "../core/lore/rng";
+import type { MacroContext } from "../core/macros";
 import type { Chat, JsonObject } from "../stage/contracts/chat-store";
 import type { ProviderCompletion, ProviderEvent, ProviderMessage, ProviderRequest } from "../stage/contracts/provider";
 import { sendWithTools, type NarratorTool, type ToolCallRecord } from "../stage/provider/tool-loop";
 import type { Connected } from "./scene-turn";
 import type { LoadedTurn, TurnKind } from "./scene-turn-load";
 
-/** The first-party tools a scene's reply may call; the server supplies the real list. */
-export type NarratorToolsFor = (ctx: { chat: Chat; loaded: LoadedTurn }) => NarratorTool<never>[];
+/**
+ * What a turn's tools are made from: the scene, what the turn loaded, the turn's seeded randomness (the same seed rolls the same),
+ * and the turn's macro context, which the turn fills once the prompt is built (tools are made before then and called after).
+ */
+export interface ToolsContext { chat: Chat; loaded: LoadedTurn; rand: () => number; macros: { context?: MacroContext } }
+/** The tools a scene's reply may call; the server supplies the real list. */
+export type NarratorToolsFor = (ctx: ToolsContext) => NarratorTool<never>[] | Promise<NarratorTool<never>[]>;
 
 /** What one turn collects as its tool rounds run; read by the trace, the meter and the fallback rule. */
 export interface ToolTurn {
   tools: NarratorTool<never>[];
+  /** Filled by the turn with the assembled macro context, before any tool is called. */
+  macros: { context?: MacroContext };
   maxRounds: number;
   calls: ToolCallRecord[];
   extra: ProviderMessage[];
@@ -25,9 +34,10 @@ export interface ToolTurn {
   tokens: { prompt: number; output: number };
 }
 
-export function toolTurn(find: NarratorToolsFor | undefined, kind: TurnKind, chat: Chat, loaded: LoadedTurn): ToolTurn {
+export async function toolTurn(find: NarratorToolsFor | undefined, kind: TurnKind, chat: Chat, loaded: LoadedTurn, seed: number): Promise<ToolTurn> {
   const on = chat.prompting?.toolAccess === true && kind !== "continue";
-  return { tools: on && find ? find({ chat, loaded }) : [], maxRounds: chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT, calls: [], extra: [], rounds: 0, tokens: { prompt: 0, output: 0 } };
+  const macros: { context?: MacroContext } = {};
+  return { macros, tools: on && find ? await find({ chat, loaded, rand: mulberry32(seed), macros }) : [], maxRounds: chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT, calls: [], extra: [], rounds: 0, tokens: { prompt: 0, output: 0 } };
 }
 
 /** The definitions the Prompt Inspector shows: only when this connection will actually be sent them. */

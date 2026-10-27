@@ -104,7 +104,7 @@
 | `library.card.name` | `Button` | `src/ui/apps/library/rc-cards.tsx` |
 | `library.damage` | `Panel` | `src/ui/apps/library/damage-notice.tsx` |
 | `library.decks` | `Panel` | `src/ui/apps/library/rail.tsx` |
-| `library.gcard` | `Card` | `src/ui/apps/library/views/grid.tsx` |
+| `library.gcard` | `Card`, `img` | `src/ui/apps/library/views/grid.tsx` |
 | `library.grid` | `div` | `src/ui/apps/library/card-row.tsx` |
 | `library.landing` | `Panel` | `src/ui/apps/library/first-landing.tsx` |
 | `library.main` | `div` | `src/ui/apps/library/index.tsx` |
@@ -119,7 +119,7 @@
 | `library.row` | `RowPart` | `src/ui/apps/library/views/list.tsx` |
 | `library.section` | `section` | `src/ui/apps/library/shelves.tsx` |
 | `library.section.header` | `div` | `src/ui/apps/library/shelves.tsx` |
-| `library.shelf.name` | `Button` | `src/ui/apps/library/views/shelf.tsx` |
+| `library.shelf.name` | `?`, `Button` | `src/ui/apps/library/views/shelf.tsx` |
 | `library.toolbar` | `div` | `src/ui/apps/library/index.tsx` |
 | `library.trash` | `ListRow` | `src/ui/apps/library/rail.tsx` |
 | `library.trash.empty` | `Panel` | `src/ui/apps/library/trash-panel.tsx` |
@@ -513,16 +513,22 @@
 | `scene.messenger.settings.back` | `IconButton` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.category` | `Ic` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.chip` | `Chip` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
+| `scene.messenger.settings.compendium.books` | `div` | `src/ui/apps/scenes/messenger/settings/scene/compendium.tsx` |
 | `scene.messenger.settings.defaults` | `div` | `src/ui/apps/scenes/messenger/settings/character-defaults.tsx` |
 | `scene.messenger.settings.edit` | `Button` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
+| `scene.messenger.settings.finalcut.pass` | `div` | `src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx` |
+| `scene.messenger.settings.finalcut.tools` | `div` | `src/ui/apps/scenes/messenger/settings/scene/finalcut-checks.tsx` |
+| `scene.messenger.settings.finalcut.tools.<id>` | `div` | `src/ui/apps/scenes/messenger/settings/scene/finalcut-checks.tsx` |
 | `scene.messenger.settings.hero.counts` | `p` | `src/ui/apps/scenes/messenger/settings/character-stats.tsx` |
 | `scene.messenger.settings.list-back` | `IconButton` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.memory.advanced` | `div` | `src/ui/apps/scenes/messenger/settings/scene/memory-rows.tsx` |
 | `scene.messenger.settings.memory.controls` | `div` | `src/ui/apps/scenes/messenger/settings/scene/memory-rows.tsx` |
 | `scene.messenger.settings.memory.summary` | `div` | `src/ui/apps/scenes/messenger/settings/scene/memory-rows.tsx` |
+| `scene.messenger.settings.models.favorites` | `div` | `src/ui/apps/scenes/messenger/settings/scene/models-page.tsx` |
 | `scene.messenger.settings.nav` | `aside` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.nav-section` | `ListRow` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.page` | `div` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
+| `scene.messenger.settings.prompts` | `div` | `src/ui/apps/scenes/messenger/settings/scene/prompt-blocks.tsx` |
 | `scene.messenger.settings.result` | `ListRow` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.row.action` | `div` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
 | `scene.messenger.settings.row.action.button` | `Button` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
@@ -548,6 +554,7 @@
 | `scene.messenger.settings.studio` | `div` | `src/ui/apps/scenes/messenger/settings/bodies.tsx` |
 | `scene.messenger.settings.tool` | `div` | `src/ui/apps/scenes/messenger/settings/bodies.tsx` |
 | `scene.messenger.settings.top` | `header` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
+| `scene.messenger.settings.tracker.auto` | `div` | `src/ui/apps/scenes/messenger/settings/scene/tracker-rows.tsx` |
 | `scene.messenger.settings.writing.finalcut` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing-lists.tsx` |
 | `scene.messenger.settings.writing.guides` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing-lists.tsx` |
 | `scene.messenger.settings.writing.helpers` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing.tsx` |
@@ -558,6 +565,7 @@
 | `scene.messenger.settings.writing.preset` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing.tsx` |
 | `scene.messenger.settings.writing.regex` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing-lists.tsx` |
 | `scene.messenger.settings.writing.samplers` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing-samplers.tsx` |
+| `scene.messenger.settings.writing.tag` | `div` | `src/ui/apps/scenes/messenger/settings/scene/writing-tags.tsx` |
 | `scene.messenger.sidebar` | `aside` | `src/ui/apps/scenes/messenger/shell/sidebar.tsx` |
 | `scene.messenger.sidebar.add-feature` | `IconButton` | `src/ui/apps/scenes/messenger/shell/sidebar.tsx` |
 | `scene.messenger.sidebar.character` | `Button` | `src/ui/apps/scenes/messenger/shell/sidebar.tsx` |
@@ -692,6 +700,12 @@
 | `scenes.rail.longest` | `ListRow` | `src/ui/apps/scenes/scenes-side.tsx` |
 | `scenes.root` | `div` | `src/ui/apps/scenes/scenes-list.tsx` |
 | `scenes.side` | `div` | `src/ui/apps/scenes/scenes-side.tsx` |
+
+### script-sheet
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `script-sheet.editor` | `div` | `src/ui/_shared/script-sheet-editor.tsx` |
 
 ### settings
 

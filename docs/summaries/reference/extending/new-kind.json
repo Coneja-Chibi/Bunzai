@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/extending/new-kind",
+  "sourcePath": "docs/reference/extending/new-kind.md",
+  "sourceHash": "sha256:fb01b2250a71869648920fa0f9e2dec6fd0da5b089eb148e0b3cde927dbbf076",
+  "summary": "Add a content kind explains that a kind is one folder: src/entities/<kind>/kind.ts describes it once (id, labels, deck color and glyph, Library deck or not, the blank piece New saves, the inspect lines, and when they apply its links, name path, picture paths, heavy flag, libraryNew switch, scene field, editor, and for a family kind its deck and asPreset), and bun run kinds writes two checked seams, src/generated/kinds.ts for identity (KINDS, KIND_IDS, kindOf, isKindId, AnyKindEntity) and src/generated/kind-schemas.ts for every kind's whole-entity decoder and storage parts, both verified by kinds:check in verify:ci. A table names everything that reads the seam so no hand edits are needed. The steps make the folder's schema, runtime schema and kind.ts, optional parts.ts and capabilities, run bun run kinds, name its editor in kind.ts and add the component to workbench/editors.ts under that id (the completeness test fails on either side missing), write the reference page and scale fixture, and run the kind completeness test, which names every missing part or a stated exemption. Behavior that belongs to one kind stays with the code that owns it; scene fields keep their own shapes in the scene store, and the kind-lists guard test fails on a new hand-written kind list.",
+  "topics": [
+    "kind.ts descriptor",
+    "bun run kinds",
+    "generated kind seams",
+    "kind completeness test",
+    "kind-lists guard",
+    "folders-as-schema"
+  ],
+  "sections": [
+    {
+      "slug": "what-reads-the-seam-so-you-edit-none-of-it",
+      "title": "What reads the seam (so you edit none of it)",
+      "level": 2,
+      "sourceHash": "sha256:4e06ce7d23440370351478788a94fda7d158f62b9c820024e90e9ddbec29225f",
+      "summary": "What reads the seam: the studio folder set STUDIO_ENTITY_KINDS, the parse boundary, storage item parts, the generic KindAdapter contracts, deck labels, colors, glyphs and Library decks in decks.ts, Panel, editor head and Press deck colors via deckMeta, search kind words, import receipts, Kit deck counts and name lookup, createBlank and canCreateBlank for every New door, core/links.ts for every link follower (Press riders, export embedding, import renames, Kit delete warnings, node ports, archive caveats), core/piece-name.ts for names, media-reference.ts and ART_KINDS for pictures, the heavy flag in the Press and Library rename, bunraku inspect, first-run deck titles, and the format matrix and field docs scripts.",
+      "topics": [
+        "STUDIO_ENTITY_KINDS",
+        "deckMeta",
+        "createBlank",
+        "core/links.ts",
+        "piece-name",
+        "ART_KINDS"
+      ],
+      "children": []
+    },
+    {
+      "slug": "steps",
+      "title": "Steps",
+      "level": 2,
+      "sourceHash": "sha256:204eb77b2b07328c52a50d4c3d9a57a31cfb8d5c8eca481494a94cad010f7013",
+      "summary": "Steps: make the folder with schema.ts and runtime-schema.ts exporting entitySchema built from entityShape; write kind.ts with defineKind, an existing deck token and glyph; optionally parts.ts and capabilities; run bun run kinds; name the kind's editor in kind.ts (id, label and load) and add the component to workbench/editors.ts under that id, with the completeness test failing on either side missing; write the reference page and the scale fixture; run the kind completeness test, which lists each missing part with the file to create, or a reason in its exemption lists. Behavior unique to one kind stays in its owning code; a scene's fields keep their shapes in the scene store and sceneField only declares that a scene can point at the kind. The kind-lists guard test lists every file with a line naming two or more kinds, with its count and reason.",
+      "topics": [
+        "entitySchema",
+        "defineKind",
+        "editors.ts",
+        "exemption lists",
+        "sceneField",
+        "kind-lists guard"
+      ],
+      "children": []
+    }
+  ]
+}

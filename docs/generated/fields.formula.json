@@ -1,0 +1,34 @@
+{
+  "kind": "formula",
+  "source": "src/entities/formula/schema.ts",
+  "shapes": [
+    {
+      "name": "FormulaBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "text",
+          "optional": false,
+          "type": "string",
+          "meaning": "The macro expression, such as {{calc::{{mentions::storm::20}} + 1}}.",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

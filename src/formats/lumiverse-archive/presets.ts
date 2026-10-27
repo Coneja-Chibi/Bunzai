@@ -4,7 +4,7 @@
  * `{type: "lumiverse_preset", preset: {...}}` file the codec parses is rebuilt FROM this row, so
  * `presetRowToWrapper` reconstructs that shape mechanically.
  * Once synthesized, dispatch goes through the already-shipped Lumiverse preset codec
- * (src/formats/lumiverse/preset.ts) via `inspectPresetBundle` (src/convert.ts); no field mapping
+ * (src/formats/lumiverse/preset.ts) via `readPieces` (src/convert.ts); no field mapping
  * lives here twice.
  *
  * `prompts` (object, keyed by identifier: name/content/enabled/role) and `prompt_order` (array of
@@ -24,7 +24,8 @@
  */
 import type { ParsedCanonicalEntity } from "../../entities/runtime-schema";
 import presetCodec from "../lumiverse/preset";
-import { inspectPresetBundle } from "../../convert";
+import { readPieces } from "../../convert";
+import type { CanonicalPreset } from "../../entities/preset/schema";
 import { addArchiveEscrow } from "./escrow";
 import type { IdMint, LinkMap } from "./links";
 import {
@@ -158,10 +159,10 @@ export async function importPresets(
     await runRowImport(async () => {
       const wrapper = presetRowToWrapper(read.row, read.inner);
       const name = str(read.row.name) || "preset";
-      const { entity } = inspectPresetBundle(presetCodec, {
+      const entity = readPieces(presetCodec, {
         text: JSON.stringify(wrapper),
         filename: `${name}.json`,
-      });
+      }).entity as CanonicalPreset;
       entity.id = idMint.claim("preset", entity.id);
 
       const escrowed = addArchiveEscrow(entity, "presets", read.row);

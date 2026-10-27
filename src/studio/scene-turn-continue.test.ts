@@ -229,7 +229,7 @@ describe("a continue (turn-loop rule 13)", () => {
   async function nudged(s: Awaited<ReturnType<typeof scene>>, nudge: string, model: string) {
     const body = { name: "Quill", prompts: [{ id: "main", name: "main", content: "Write as {{char}}.", role: "system", enabled: true, systemPrompt: true, marker: false, placement: "relative", injectionDepth: 4, injectionOrder: 100, forbidOverrides: false }, { id: "history", name: "history", content: "{{message_history}}", role: "system", enabled: true, systemPrompt: true, marker: false, placement: "relative", injectionDepth: 4, injectionOrder: 100, forbidOverrides: false }], samplers: {}, systemPrompts: { continueNudge: nudge } };
     s.deps.readPreset = async () => body as never;
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.chats.setConnection(s.chat.id, { id: "conn", model });
   }
 

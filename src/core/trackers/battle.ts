@@ -6,6 +6,7 @@
  * Differences from RoleCall, each a repaired flaw: a removed enemy is kept with `removedAt` and can be brought back, where RoleCall's
  * remove deletes it; and the prompt names whose turn it is, where RoleCall's line prints the turn holder's internal id (`enemy_<name>_<time>`).
  */
+import { readDice, rollDice, rollText } from "../dice";
 import { isPlainObject } from "../guards";
 import { bool, num as numShape, obj, oneOf, opt, refine, str } from "./shape";
 import { byName, entry, listOf, single, sync, type RefreshSpec } from "./refresh";
@@ -68,9 +69,8 @@ export const hpBand = (percent: number): "good" | "low" | "critical" => (percent
 
 /** "2d6+3", "d20", "3d8-2" (battle-tracker.ts:parseDiceExpression); anything else is one d20, as RoleCall reads it. */
 export function parseDice20(expression: string): { count: number; sides: number; modifier: number } {
-  const m = /^(\d*)d(\d+)([+-]\d+)?$/i.exec(expression.trim());
-  if (!m) return { count: 1, sides: 20, modifier: 0 };
-  return { count: Math.min(m[1] ? Number.parseInt(m[1], 10) : 1, 100), sides: Math.max(1, Number.parseInt(m[2]!, 10)), modifier: m[3] ? Number.parseInt(m[3], 10) : 0 };
+  const d = readDice(expression.trim());
+  return d ? { count: Math.min(d.count, 100), sides: Math.max(1, d.sides), modifier: d.modifier } : { count: 1, sides: 20, modifier: 0 };
 }
 
 export type BattleAction =
@@ -123,10 +123,9 @@ export function applyBattle(b: Battle, a: BattleAction): Battle {
     }
     case "clearLog": return { ...b, log: [] };
     case "roll": {
-      const { count, sides, modifier } = parseDice20(a.expression);
-      const rolls = Array.from({ length: count }, () => Math.floor(a.rand() * sides) + 1);
-      const roll: DiceRoll = { expression: a.expression.trim().slice(0, 20), rolls, modifier, total: rolls.reduce((n, r) => n + r, 0) + modifier, at: a.at };
-      return { ...b, dice: [...b.dice, roll].slice(-DICE_MAX), log: log(b, `Roll ${roll.expression}: [${rolls.join(", ")}]${modifier !== 0 ? ` ${modifier > 0 ? "+" : ""}${modifier}` : ""} = ${roll.total}`) };
+      const rolled = rollDice(parseDice20(a.expression), a.rand);
+      const roll: DiceRoll = { expression: a.expression.trim().slice(0, 20), ...rolled, at: a.at };
+      return { ...b, dice: [...b.dice, roll].slice(-DICE_MAX), log: log(b, `Roll ${roll.expression}: ${rollText(rolled)} = ${roll.total}`) };
     }
     case "clearDice": return { ...b, dice: [] };
   }

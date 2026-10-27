@@ -1,20 +1,21 @@
-/** Canonical media slots shared by part encoding and light-read projection. */
+/**
+ * Canonical media slots shared by part encoding and light-read projection. Each kind declares where it keeps pictures
+ * in its kind.ts (`media`, dotted paths with `#` for an array index and `*` for any key); every kind's escrowed source
+ * picture (original.<format>.sourceMedia.b64) is one too. A hot path, so the patterns are split once, here.
+ */
+import { KINDS } from "../../generated/kinds";
+
+const SOURCE_MEDIA = ["original", "*", "sourceMedia", "b64"];
+const PATTERNS = new Map<string, string[][]>(KINDS.map((k) => [k.id, [SOURCE_MEDIA, ...(k.media ?? []).map((p) => p.split("."))]]));
+const DIGITS = /^\d+$/;
+
+const matches = (pattern: readonly string[], path: readonly string[]): boolean =>
+  pattern.length === path.length && pattern.every((seg, i) => seg === "*" || (seg === "#" ? DIGITS.test(path[i]!) : seg === path[i]));
+
 export function isCanonicalMediaReference(kind: string, path: readonly (string | number)[]): boolean {
   const p = path.map(String);
-  if (p.length === 4 && p[0] === "original" && p[2] === "sourceMedia" && p[3] === "b64") return true;
-  if (kind === "character") {
-    return (p.length === 4 && p[0] === "body" && p[1] === "media" && p[2] === "portrait" && p[3] === "ref") ||
-      (p.length === 5 && p[0] === "body" && p[1] === "media" && p[2] === "assets" && /^\d+$/.test(p[3]!) && p[4] === "ref") ||
-      (p.length === 4 && p[0] === "body" && p[1] === "presentation" && p[2] === "background" && p[3] === "ref") ||
-      (p.length === 7 && p[0] === "body" && p[1] === "variants" && /^\d+$/.test(p[2]!) && p[3] === "overrides" && p[4] === "media" && p[5] === "portrait" && p[6] === "ref") ||
-      (p.length === 8 && p[0] === "body" && p[1] === "variants" && /^\d+$/.test(p[2]!) && p[3] === "overrides" && p[4] === "media" && p[5] === "assets" && /^\d+$/.test(p[6]!) && p[7] === "ref") ||
-      (p.length === 7 && p[0] === "body" && p[1] === "variants" && /^\d+$/.test(p[2]!) && p[3] === "overrides" && p[4] === "presentation" && p[5] === "background" && p[6] === "ref");
-  }
-  if (kind === "persona") return (p.length === 4 && p[0] === "body" && p[1] === "media" && p[2] === "portrait" && p[3] === "ref") ||
-    (p.length === 3 && p[0] === "body" && p[1] === "presentation" && p[2] === "imageUrl");
-  if (kind === "pack") {
-    return (p.length === 5 && p[0] === "body" && p[1] === "pack" && p[2] === "items" && /^\d+$/.test(p[3]!) && p[4] === "ref") ||
-      (p.length === 6 && p[0] === "body" && p[1] === "groups" && p[3] === "items" && /^\d+$/.test(p[4]!) && p[5] === "ref");
-  }
-  return false;
+  return (PATTERNS.get(kind) ?? [SOURCE_MEDIA]).some((pattern) => matches(pattern, p));
 }
+
+/** The kinds that carry pictures (Kit's gallery and art tools offer exactly these). */
+export const ART_KINDS = KINDS.filter((k) => (k.media?.length ?? 0) > 0).map((k) => k.id);

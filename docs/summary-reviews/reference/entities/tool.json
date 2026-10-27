@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/tool",
+  "sourcePath": "docs/reference/entities/tool.md",
+  "sourceHash": "sha256:af4a8eb9bcda436c380e8329c172366c6d7d583a9e80282f899ef2cbc9c22594",
+  "semanticSummaryHash": "sha256:c66ddabd032966016cbd2980760441c5e6299ae767036ddb4c255ddfca336d97",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Four actions (roll, dice, formula, record) match ToolAction and runTool; library-tools skips a tool whose dice piece or formula is gone; counts say four consistently.",
+  "reviewedAt": "2026-10-27T10:37:40.386Z"
+}

@@ -42,31 +42,31 @@ async function scene(library: PresetBody = quill(), answer?: (request: ProviderR
 describe("Max Messages on a live scene", () => {
   test("messages mode sends exactly N prior messages and the one being answered, keeping the greeting", async () => {
     const s = await scene();
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: { contextMode: "messages", maxMessages: 2 } });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: { contextMode: "messages", maxMessages: 2 } });
     await s.turn();
     expect(s.texts()).toEqual(["assistant:Evening.", "user:five", "assistant:six", "user:seven"]);
   });
 
   test("zero prior messages leaves the greeting and the message being answered", async () => {
     const s = await scene();
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: { contextMode: "messages", maxMessages: 0 } });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: { contextMode: "messages", maxMessages: 0 } });
     await s.turn();
     expect(s.texts()).toEqual(["assistant:Evening.", "user:seven"]);
   });
 
   test("tokens mode sends everything", async () => {
     const s = await scene();
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: { contextMode: "tokens", maxMessages: 2 } });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: { contextMode: "tokens", maxMessages: 2 } });
     await s.turn();
     expect(s.texts()).toEqual(ALL);
   });
 
   test("a library preset that carries messages mode now takes effect, and the scene can override it back to tokens", async () => {
     const s = await scene(quill({ samplers: { contextMode: "messages", maxMessages: 1 } }));
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.turn();
     expect(s.texts()).toEqual(["assistant:Evening.", "assistant:six", "user:seven"]);
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: { contextMode: "tokens" } });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: { contextMode: "tokens" } });
     await s.say("user", "eight");
     await s.turn();
     expect(s.texts(1)).toHaveLength(ALL.length + 2);
@@ -76,7 +76,7 @@ describe("Max Messages on a live scene", () => {
 describe("Last Message as User on a live scene", () => {
   test("a request ending on the preset's prefill is re-tagged as the person's; off, it stays an assistant turn", async () => {
     const s = await scene(quill({ systemPrompts: { assistantPrefill: "Vera:" } }));
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.turn();
     expect(s.texts().at(-1)).toBe("assistant:Vera:");
     await s.chats.setPrompting(s.chat.id, { lastAsUser: true });
@@ -106,7 +106,7 @@ describe("Reasoning Effort and Start Reply With on a live scene (ChatStore rule 
 
   test("the scene's Start Reply With replaces the preset's, and as a user hint it is its own trailing message", async () => {
     const s = await scene(quill({ systemPrompts: { assistantPrefill: "Vera:" } }));
-    await s.chats.setPreset(s.chat.id, { id: "quill", toggles: {}, samplers: {} });
+    await s.chats.setPreset(s.chat.id, { kind: "preset", id: "quill", toggles: {}, samplers: {} });
     await s.chats.setPrompting(s.chat.id, { prefill: "<think>" });
     await s.turn();
     expect(s.texts().at(-1)).toBe("assistant:<think>");

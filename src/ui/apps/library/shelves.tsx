@@ -16,7 +16,7 @@
  */
 import { useEffect, useMemo, useRef, type CSSProperties, type JSX, type RefObject } from "react";
 import type { AppContext, StudioEntitySummary } from "../../app-contract";
-import { deckMeta } from "../../_shared/decks";
+import { deckHead, deckKinds } from "../../_shared/decks";
 import { Slider } from "../../components/slider";
 import { CardRow } from "./card-row";
 import { cardFacts, CARDS_VIEW, sectionView, type CarouselSection, type ShelfLayout, type ShelfMeta } from "./carousel-core";
@@ -99,7 +99,7 @@ export function Shelves(props: ShelvesProps): JSX.Element {
   const now = clock.current.now;
 
   if (single) {
-    const deck = deckMeta(single);
+    const deck = deckHead(single);
     const section = sections[0] ?? { deck, numeral: "I", pieces: [], total: props.singleTotal };
     return (
       <div className="lcar">
@@ -145,12 +145,12 @@ function Section(props: ShelvesProps & { section: CarouselSection; total: number
       ) : (
         <div className="ghost-shelf">
           {`your first ${deck.singular.toLowerCase()} lands here · import or start fresh`}
-          <NewInDeckButton kind={kind} ctx={ctx} onCreated={props.onCreated} />
+          {deckKinds(kind).map(/* bounded-ok: the kinds of one deck, at most a few */ (k) => <NewInDeckButton key={k} kind={k} ctx={ctx} onCreated={props.onCreated} />)}
         </div>
       )
     ) : !view ? (
       <CardRow pieces={pieces} layout={layout} vctx={vctx} peeks={props.peeks} meta={props.meta} now={props.now}
-        newTile={<NewInDeckButton tile kind={kind} ctx={ctx} onCreated={props.onCreated} />} />
+        newTile={<>{deckKinds(kind).map(/* bounded-ok: the kinds of one deck, at most a few */ (k) => <NewInDeckButton key={k} tile kind={k} ctx={ctx} onCreated={props.onCreated} />)}</>} />
     ) : (
       // A drop-in view in a section: its own scroller, bounded so the page keeps flowing past it.
       <div className="lview libstage" style={{ "--a": deck.accent } as CSSProperties}>
@@ -171,7 +171,7 @@ function Section(props: ShelvesProps & { section: CarouselSection; total: number
         <div className="sside">
           <div className="scount" title={parsed.active ? `${String(pieces.length)} of ${String(total)} match` : undefined}>
             <b>{parsed.active ? `${String(pieces.length)} of ${String(total)}` : total}</b>
-            <em>{(total === 1 ? deck.singular : deck.plural).toLowerCase()}</em>
+            <em>{total === 1 ? deck.countWords[0] : deck.countWords[1]}</em>
           </div>
           <div className="sviews">
             <div className="viewseg" data-tour="views">
@@ -186,7 +186,7 @@ function Section(props: ShelvesProps & { section: CarouselSection; total: number
                 ]}
               />
             </div>
-            {pieces.length > 0 && <NewInDeckButton compact kind={kind} ctx={ctx} onCreated={props.onCreated} />}
+            {pieces.length > 0 && deckKinds(kind).map(/* bounded-ok: the kinds of one deck, at most a few */ (k) => <NewInDeckButton key={k} compact kind={k} ctx={ctx} onCreated={props.onCreated} />)}
           </div>
         </div>
       </div>

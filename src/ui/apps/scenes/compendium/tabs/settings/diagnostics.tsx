@@ -9,8 +9,8 @@ import { TOOL_ROUNDS_DEFAULT } from "../../../../../../core/assembly/tool-rounds
 import { accessOf, runDiagnostics, type Diagnostic, type DiagnosticBook } from "../../../../../../core/compendium";
 import { presetWindow, turnWindow } from "../../../../../../core/assembly/request";
 import type { LorebookBody } from "../../../../../../entities/lorebook/schema";
-import type { PresetBody } from "../../../../../../entities/preset/schema";
 import { toErrorMessage } from "../../../../../_shared/error-message";
+import { readSetupBody } from "../../../../../_shared/writing-setups";
 import { SettingsSection } from "./parts";
 import type { SectionProps } from "./deps";
 
@@ -28,8 +28,8 @@ export function DiagnosticsSection({ ctx, chat, compendium, lore }: SectionProps
       // The window a turn fits into, worked out by the turn's own functions: the model's stated one (else RoleCall's 32,768), shrunk by the preset's Context tokens under the scene's own.
       const listed = chat.connection ? await ctx.api.connectionModels(chat.connection.id).catch(() => null) : null;
       const stated = listed?.models?.find((m) => m.id === chat.connection?.model)?.context;
-      const found = chat.preset ? await ctx.api.getLightEditableEntity(`kind=preset&id=${encodeURIComponent(chat.preset.id)}`).catch(() => null) : null;
-      const body = found && chat.preset ? { ...(found.entity as { body: PresetBody }).body, samplers: { ...(found.entity as { body: PresetBody }).body.samplers, ...chat.preset.samplers } } : undefined;
+      const found = chat.preset ? await readSetupBody(ctx.api, chat.preset).catch(() => null) : null;
+      const body = found && chat.preset ? { ...found, samplers: { ...found.samplers, ...chat.preset.samplers } } : undefined;
       setResults(runDiagnostics(read, compendium.resolved, presetWindow(turnWindow(stated), body).context, { access: chat.prompting?.toolAccess === true, rounds: chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT }));
     } catch (e) {
       ctx.setStatus(`Could not run diagnostics: ${toErrorMessage(e, "a book could not be read")}`);

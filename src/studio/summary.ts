@@ -5,6 +5,7 @@
  * needs to recognise their own work. Kept apart from the store so the rules for picking a display
  * name or an accent are read in one place rather than inline in a filesystem walk.
  */
+import { pieceName } from "../core/piece-name";
 import type { ParsedCanonicalEntity } from "../entities/runtime-schema";
 import { isRecord } from "../core/guards";
 import { studioStampOf } from "./studio-stamp";
@@ -74,13 +75,8 @@ export function tagsField(entity: { kind: string; body?: unknown }): { tags?: st
   return tags.length > 0 ? { tags } : {};
 }
 
-/** The display name for a piece: identity.name, then body.name, then its id. One rule, so a piece is
- *  called the same thing on the shelf and everywhere that names one before it is stored. */
+/** The display name for a piece: its name where its kind keeps it (core/piece-name.ts), then its id. One rule, so a
+ *  piece is called the same thing on the shelf and everywhere that names one before it is stored. */
 export function entityName(entity: AnyEntity): string {
-  const body = isRecord(entity.body) ? entity.body : undefined;
-  if (!body) return entity.id;
-  const identity = body.identity as { name?: string } | undefined;
-  if (typeof identity?.name === "string" && identity.name) return identity.name;
-  if (typeof body.name === "string" && body.name) return body.name;
-  return entity.id;
+  return pieceName(entity.kind, entity.body) || entity.id;
 }

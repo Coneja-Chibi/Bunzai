@@ -67,14 +67,14 @@ When a character imports, a format-agnostic layer looks for an embedded book and
    stores its own twin under `original.<formatId>` (`architecture.md`, "Escrow"): the dialect, not the
    host format, owns the key, so a lorebook extracted from a SillyTavern card and one extracted from a
    RoleCall card carry the identical escrow shape.
-4. links it: `inspectBundle` sets `entity.body.knowledgeRefs = [lorebook.id]` (`convert.ts:40-53`).
+4. links it: `readPieces` sets `entity.body.knowledgeRefs = [lorebook.id]` (`convert.ts`).
 
 ### Non-CCv3 dialects override the extractor
 
 The shared extractor above understands the CCv2/v3 `character_book` shape only. A format whose embedded
 book is a different dialect provides its own `extractLorebook(entity)` on its `CharacterAdapter`
-(`src/core/adapter.ts:69-76`); `inspectBundle` calls that override when present and falls back to
-`extractCharacterBook` otherwise (`convert.ts:44-49`). Agnai is the one such case today: it embeds a
+(`src/core/adapter.ts:69-76`); `readPieces` calls that override when present and falls back to
+`extractCharacterBook` otherwise (`convert.ts`). Agnai is the one such case today: it embeds a
 native `characterBook` MemoryBook, not a CCv3 book, and reuses its own standalone `agnai-lorebook`
 mapper rather than this file (`src/formats/agnai/index.ts:346-351`). The dialect-specific mapper stays in
 the format's own folder, layers point inward, and it canonicalizes through the format's standalone
@@ -120,10 +120,10 @@ entries keep distinct unknown fields through reorder and export (`character-book
 ## End to end
 
 `convertFile(src, target, input)` in `src/convert.ts` runs the whole path for a same-kind character
-conversion: `inspectBundle` extracts any embedded book and links it via `knowledgeRefs`, then
+conversion: `readPieces` extracts any embedded book and links it via `knowledgeRefs`, then
 `emitBundle` hands the resolved lorebooks to the target adapter's `fromCanonical` to re-embed
-(`convert.ts:96-107`). The CLI's `bunraku convert` calls `convertFile` directly. The two halves also exist
-as standalone primitives, `inspectBundle` and `emitBundle`, because the app layer that owns the whole
+(through `emitPieces`). The CLI's `bunraku convert` calls `convertFile` directly. The two halves also exist
+as standalone primitives, `readPieces` and `emitPieces`, because the app layer that owns the whole
 entity store needs to inspect a card and re-embed its lorebooks as separate steps (a book can be edited
 between the two); that layer resolves `knowledgeRefs` against its own store and calls the same
 `emitBundle` primitive, so both callers re-embed through identical code (see [../ui.md](../ui.md) for
@@ -137,6 +137,6 @@ intact either way.
 | character_book <-> canonical mapper, extract, re-embed | `src/formats/_shared/character-book.ts` |
 | Non-CCv3 dialect extractor override (`extractLorebook`), `EmitContext` | `src/core/adapter.ts` |
 | Shared lore decoders (selective logic, role, filter) | `src/formats/_shared/lore-enums.ts` |
-| Bundle orchestration (`inspectBundle`, `emitBundle`, `convertFile`) | `src/convert.ts` |
+| Bundle orchestration (`readPieces`, `emitPieces`, `emitBundle`, `convertFile`) | `src/convert.ts` |
 | Canonical wrapper, escrow (`original`), id policy | `src/core/canonical.ts` |
 | Interop reference | VAUDEVILLE `apps/rc` character-book mapping (facts only, see `character-book.ts:10-11`) |

@@ -6,6 +6,8 @@ import { loadLoreMeta, type LoreMeta } from "./lore-shelf-ops";
 import { loadRegexMeta, type RegexMeta } from "./regex-shelf-ops";
 import { loadPersonaMeta, type PersonaMeta } from "./persona-shelf-ops";
 
+/** The kinds whose shelves keep their own tools and projection (lore, regex and persona shelf ops); one-kind behavior, not a kind list to extend. */
+const SHELF_KINDS = new Set(["lorebook", "regex", "persona"]);
 type Projection = { lore: Record<string, LoreMeta>; regex: Record<string, RegexMeta>; persona: Record<string, PersonaMeta> };
 type Replace<T> = (update: (prior: Record<string, T>) => Record<string, T>) => void;
 type Input = {
@@ -42,7 +44,7 @@ export function useLibraryPieceUpdates(input: Input): void {
     for (const key of projected.current.keys()) if (!present.has(key)) projected.current.delete(key);
     for (const key of pending.current.keys()) if (!present.has(key)) pending.current.delete(key);
 
-    const snapshots = rows.filter((row) => row.kind === "lorebook" || row.kind === "regex" || row.kind === "persona").map((row) => pieces.snapshot(row.kind, row.id)).filter((row): row is PieceSnapshot => !!row);
+    const snapshots = rows.filter((row) => SHELF_KINDS.has(row.kind)).map((row) => pieces.snapshot(row.kind, row.id)).filter((row): row is PieceSnapshot => !!row);
     const lifetime = pieces.captureLifetime();
     for (const snapshot of snapshots) {
       const row = snapshot.summary;

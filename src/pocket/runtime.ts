@@ -7,8 +7,6 @@ import { readStreamCapped } from "../core/stream-bytes";
 import * as registry from "../core/registry";
 import { EXTENSION_PLATFORMS } from "../formats/_shared/extension-platforms";
 import { registerPackagedFormats } from "../generated/packaged-formats";
-import type { CanonicalLorebook } from "../entities/lorebook/schema";
-import type { CanonicalRegexSet } from "../entities/regex/schema";
 import { StudioStore } from "../studio/store";
 import { createContentStore } from "../stage/store/content-store";
 import { memoryChatStore } from "../stage/store/chat-store";
@@ -391,7 +389,7 @@ export function installPocketRuntime(): () => void {
       if (path === "/api/studio/save-bundle" && request.method === "POST") {
         const raw = await readJson(request) as {
           entity?: unknown;
-          related?: { lorebooks?: CanonicalLorebook[]; regexSets?: CanonicalRegexSet[] };
+          related?: unknown[];
           overwrite?: boolean;
         };
         if (!raw.entity || typeof raw.entity !== "object") return error("expected { entity, related? }");
@@ -399,8 +397,7 @@ export function installPocketRuntime(): () => void {
         if (unavailable) return unavailable;
         const result = await saveBundle(store, {
           entity: raw.entity as never,
-          lorebooks: raw.related?.lorebooks,
-          regexSets: raw.related?.regexSets,
+          ...(raw.related ? { related: raw.related } : {}),
           overwrite: raw.overwrite === true,
         });
         if (result.related.length || result.primary) await afterMutation();

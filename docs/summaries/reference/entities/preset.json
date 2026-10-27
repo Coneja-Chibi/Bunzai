@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/preset",
   "sourcePath": "docs/reference/entities/preset.md",
-  "sourceHash": "sha256:0010ccd283592a9d329b02c89b8a8b7fcaa0080f5a8ae8fd5b59122bddd1c06a",
-  "summary": "Preset entity is the field-meaning authority for CanonicalPreset and PresetBody, the canonical prompt-manager model shared by the SillyTavern, RoleCall, Marinara, and Lumiverse adapters. It covers ordered prompt blocks, system, user, assistant, and tool roles, hierarchical groups, sampler and generation settings, templates, behavior, API and media options, and interactive choices. Generic CLI commands, Library, Workbench, and Kit lifecycle tools operate on the same body. LiveBuild preview orders enabled blocks and estimates tokens without resolving macros, groups, or choices. behaviorRefs links standalone regex sets, while quickReplyRefs links standalone quick-reply sets; Press resolves both by kind and id when exporting a preset bundle. Escrow remains reserved for source-wire details that editors do not author. Other SillyTavern preset files land here when Bunraku can use them: KoboldAI, TextGen and NovelAI sampler sets onto samplers with a samplerSet flag, system prompts as the main block, and reasoning templates as a reasoning field the scene transcript uses; each is seeded with ST's stock prompt order. Instruct and context templates are the separate promptformat piece.",
+  "sourceHash": "sha256:b2d6c636a57e54f72c840ad79e2c46c22f51662e52644bb91074efc001eafcc8",
+  "summary": "Preset entity is the field-meaning authority for CanonicalPreset and PresetBody, the canonical prompt-manager model shared by the SillyTavern, RoleCall, Marinara, and Lumiverse adapters. It covers ordered prompt blocks, system, user, assistant, and tool roles, hierarchical groups, sampler and generation settings, templates, behavior, API and media options, and interactive choices. Generic CLI commands, Library, Workbench, and Kit lifecycle tools operate on the same body. LiveBuild preview orders enabled blocks and estimates tokens without resolving macros, groups, or choices. behaviorRefs links standalone regex sets, while quickReplyRefs links standalone quick-reply sets; Press resolves both by kind and id when exporting a preset bundle. Escrow remains reserved for source-wire details that editors do not author. Other SillyTavern preset files land here when Bunraku can use them: KoboldAI, TextGen and NovelAI sampler sets onto samplers with a samplerSet flag, system prompts as the main block, and reasoning templates as a reasoning field the scene transcript uses; each is seeded with ST's stock prompt order. Instruct and context templates are the separate promptformat piece. A preset is a writing setup with the Script Sheet: separate kinds read one way through asPreset.",
   "topics": [
     "CanonicalPreset prompt manager",
     "PresetPrompt blocks",
@@ -225,7 +225,7 @@
       "slug": "linked-regex-sets",
       "title": "Linked regex sets",
       "level": 2,
-      "sourceHash": "sha256:a1de6f723012e9debe2b149fae22f08fc245ec76826c582d72f206ed04e1808d",
+      "sourceHash": "sha256:38bf67c742804c6870cf0bc9b6ac5579257096f89d25cfc58e1f794991409fcd",
       "summary": "behaviorRefs names standalone regex pieces by canonical id, keeping each set independently editable. SillyTavern and RoleCall can embed linked regex rows under extensions.regex_scripts; Lumiverse attaches scripts by preset_id; Marinara has no preset-level regex attachment. Each adapter owns that decision, and Press reports links that cannot ride instead of dropping them silently. quickReplyRefs applies the same canonical link model to quick-reply sets. Workbench exposes both link collections as checkboxes, and Press resolves every rider by kind and id so identical ids across different content kinds cannot collide.",
       "topics": [
         "link not copy",
@@ -233,6 +233,20 @@
         "Lumiverse preset_id",
         "Marinara no attachment",
         "unattached reported"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-writing-family",
+      "title": "The writing family",
+      "level": 2,
+      "sourceHash": "sha256:bd0425f4d7e4c05f74833ca499de19fd3bac3381f8f199f28e7087cf421c9c5f",
+      "summary": "A preset is one of the writing setups a scene can follow, with the Script Sheet: separate kinds that read one way. Each kind.ts gives asPreset, a preset's being its own body, and src/core/writing.ts reads the family from that. The scene's Writing slot records the kind with the id so one picker lists presets and sheets together, and a sheet joins the preset deck in the Library, shown as Writing.",
+      "topics": [
+        "writing family",
+        "asPreset",
+        "core/writing.ts",
+        "Writing deck"
       ],
       "children": []
     },

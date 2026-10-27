@@ -8,11 +8,10 @@ import { buildParseReport, buildSerializeReport } from "../core/reports";
 import * as registry from "../core/registry";
 import { toAdapterInput } from "../core/adapter-input";
 import { isArchiveLimitError } from "../core/archive";
-import type { AdapterInput, AdapterOutput, CharacterAdapter, FormatAdapter } from "../core/adapter";
-import { emitBundle, inspectBundle, inspectPresetBundle } from "../convert";
+import type { AdapterInput, AdapterOutput, FormatAdapter } from "../core/adapter";
+import { carriesEmbedded, emitPieces, readPieces, withUnattached } from "../convert";
+import { resolveLinks } from "../core/links";
 import type { CanonicalCharacter } from "../entities/character/schema";
-import type { CanonicalLorebook } from "../entities/lorebook/schema";
-import { filterEnabledBooks } from "../core/lore";
 import {
   parseCanonicalEntity,
   safeParseCanonicalEntity,
@@ -24,6 +23,7 @@ import type { ExportResult, InspectResult } from "./app-contract";
 import { CHAT_FORMAT_ID, looksLikeChat, readChat } from "../formats/sillytavern/chat";
 import { SceneRefusal } from "../core/scene-import";
 import { buildReceipt, buildSceneReceipt, friendlyFormat, UNKNOWN_FILE_MESSAGE, unsupportedShapeLine } from "./receipt";
+import { forFormatKind } from "../core/writing";
 
 type AnyEntity = ParsedCanonicalEntity;
 
@@ -66,36 +66,12 @@ export function inspectBytes(bytes: Uint8Array, filename: string): InspectResult
   const adapter = registry.detect(input);
   if (!adapter) return { ok: false, error: unsupportedShapeLine(input.text) ?? UNKNOWN_FILE_MESSAGE };
   try {
-    if (adapter.kind === "character") {
-      const { entity, lorebooks } = inspectBundle(adapter, input);
-      return {
-        ok: true,
-        receipt: buildReceipt(entity, adapter.id, lorebooks),
-        entity,
-        related: lorebooks.length > 0 ? { lorebooks } : undefined,
-        formatId: adapter.id,
-        kind: entity.kind,
-        parseReport: buildParseReport(entity, adapter.id),
-      };
-    }
-    if (adapter.kind === "preset") {
-      const { entity, regexSets } = inspectPresetBundle(adapter, input);
-      return {
-        ok: true,
-        receipt: buildReceipt(entity, adapter.id, undefined, regexSets),
-        entity,
-        related: regexSets.length > 0 ? { regexSets } : undefined,
-        formatId: adapter.id,
-        kind: entity.kind,
-        parseReport: buildParseReport(entity, adapter.id),
-      };
-    }
-    const entity = parseCanonicalEntity(adapter.toCanonical(input));
-    if (entity.kind !== adapter.kind) throw new Error("adapter returned the wrong entity kind");
+    const { entity, related } = readPieces(adapter, input);
     return {
       ok: true,
-      receipt: buildReceipt(entity, adapter.id),
+      receipt: buildReceipt(entity, adapter.id, related),
       entity,
+      ...(related.length > 0 ? { related } : {}),
       formatId: adapter.id,
       kind: entity.kind,
       parseReport: buildParseReport(entity, adapter.id),
@@ -112,26 +88,31 @@ export function inspectBytes(bytes: Uint8Array, filename: string): InspectResult
   }
 }
 
-async function resolveLorebooks(store: StudioStoreLike, entity: AnyEntity): Promise<CanonicalLorebook[]> {
-  if (entity.kind !== "character") return [];
-  const refs = Array.isArray((entity.body as { knowledgeRefs?: unknown }).knowledgeRefs)
-    ? (entity.body as { knowledgeRefs: unknown[] }).knowledgeRefs
-        .filter((ref): ref is string => typeof ref === "string" && ref.length > 0)
-    : [];
-  const lorebooks: CanonicalLorebook[] = [];
-  const missing: string[] = [];
-  for (const id of refs) {
+/** The pieces an entity's file carries inside it (its embedded links), read from the studio; a read that fails counts as gone. */
+function linkedPieces(store: StudioStoreLike, entity: AnyEntity): ReturnType<typeof resolveLinks<ParsedCanonicalEntity>> {
+  return resolveLinks<ParsedCanonicalEntity>(entity.kind, entity.body, async (kind, id) => {
     try {
-      const found = await store.read("lorebook", id);
-      if (!found || found.kind !== "lorebook") missing.push(id);
-      else lorebooks.push(found as CanonicalLorebook);
+      const found = await store.read(kind, id);
+      return found && found.kind === kind ? (found as ParsedCanonicalEntity) : null;
     } catch (error) {
       if (!isStudioReadError(error)) throw error;
-      missing.push(id);
+      return null;
     }
-  }
-  if (missing.length > 0) throw new EngineActionError(`missing lorebook refs: ${missing.join(", ")}`, 422);
-  return filterEnabledBooks(lorebooks);
+  }, "embedded");
+}
+
+/**
+ * Write a piece with the linked pieces its own file carries (embedded links: a card's lorebooks, a preset's regex sets;
+ * convert.ts emitPieces). A person exporting here can fix a broken link, so an embedded link that points at a piece no
+ * longer in the library refuses the export by name (fail closed; Kit's export reports and carries on instead, its own
+ * choice). Links the file never carries are not read. What the target cannot carry is a warning.
+ */
+async function writeLinked(store: StudioStoreLike, target: FormatAdapter, entity: ParsedCanonicalEntity, extension?: string): Promise<AdapterOutput> {
+  const { found, missing } = await linkedPieces(store, entity);
+  // a target that never carries the embedded pieces cannot lose a missing one; the found ones still warn below
+  if (missing.length > 0 && carriesEmbedded(target)) throw new EngineActionError(`missing linked pieces: ${missing.map((m) => `${m.kind} "${m.id}"`).join(", ")}`, 422);
+  const { output, unattached } = emitPieces(target, entity, found.map((f) => f.entity), extension);
+  return withUnattached(output, unattached);
 }
 
 const bytesToBase64 = (bytes: Uint8Array): string => {
@@ -151,9 +132,10 @@ export async function exportCanonical(store: StudioStoreLike, body: unknown): Pr
   if (!parsed.ok) {
     throw new EngineActionError(`invalid canonical entity: ${parsed.issues[0] ?? "invalid shape"}`);
   }
-  const entity = parsed.entity;
   const target = registry.get(request.targetId);
   if (!target) throw new EngineActionError(`unknown format "${request.targetId}"`);
+  // a writing setup is written by a preset format as the preset it sends (core/writing.ts)
+  const entity = forFormatKind(parsed.entity, target.kind) as ParsedCanonicalEntity;
   if (entity.kind !== target.kind) {
     throw new EngineActionError(`cannot write a ${entity.kind} as ${target.id} (a ${target.kind} format)`);
   }
@@ -172,10 +154,10 @@ export async function exportCanonical(store: StudioStoreLike, body: unknown): Pr
           report: buildSerializeReport(entity, target),
         };
       } else {
-        out = emitBundle(target as CharacterAdapter, character, await resolveLorebooks(store, entity), wanted);
+        out = await writeLinked(store, target, entity, wanted);
       }
     } else {
-      out = (target.fromCanonical as (value: AnyEntity) => AdapterOutput)(entity);
+      out = await writeLinked(store, target, entity);
     }
     return {
       suggestedExtension: out.suggestedExtension,

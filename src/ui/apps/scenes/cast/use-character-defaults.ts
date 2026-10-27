@@ -7,14 +7,19 @@ import { useEffect, useRef, useState } from "react";
 import { CHARACTER_DEFAULTS_PREF, characterDefaultsOf, withCharacterDefaults, type CharacterDefaults, type DefaultField } from "../../../../studio/scene-character-defaults";
 import type { AppContext } from "../../../app-contract";
 import type { OpenScene } from "../../../../studio/scenes";
+import { listWritingSetups, setupLabel, setupOf, setupValue } from "../../../_shared/writing-setups";
 
 export interface CharacterDefaultsState {
   d: CharacterDefaults;
   problems: DefaultField[];
-  /** the Library's presets once listed, else null */
+  /** the Library's writing setups once listed (presets, Script Sheets), each valued "kind:id" */
   choices: { value: string; label: string }[];
-  /** the saved preset id is no longer in the Library */
+  /** the saved setup as a choice value, "" for none */
+  presetValue: string;
+  /** the saved setup is no longer in the Library */
   gone: boolean;
+  /** chooses a setup by its choice value ("" clears it) */
+  choosePreset(value: string): void;
   note: string | undefined;
   customSamplers: boolean;
   put(patch: Parameters<typeof withCharacterDefaults>[2]): void;
@@ -27,13 +32,13 @@ export interface CharacterDefaultsState {
 export function useCharacterDefaults(ctx: Pick<AppContext, "prefs" | "api">, chat: Pick<OpenScene["chat"], "backdrop" | "preset" | "cast">): CharacterDefaultsState {
   const characterId = chat.cast.character.id;
   const [raw, setRaw] = useState<unknown>(() => ctx.prefs.get(CHARACTER_DEFAULTS_PREF));
-  const [library, setLibrary] = useState<{ id: string; name: string }[] | null>(null);
+  const [library, setLibrary] = useState<{ kind: string; id: string; name: string }[] | null>(null);
   const [note, setNote] = useState<string | undefined>(undefined);
   const api = useRef(ctx.api);
   api.current = ctx.api;
   useEffect(() => {
     let live = true;
-    api.current.listEntities("preset").then((list) => live && setLibrary(list), () => live && setLibrary([]));
+    listWritingSetups(api.current).then((list) => live && setLibrary(list), () => live && setLibrary([]));
     return () => { live = false; };
   }, []);
   const { defaults, problems } = characterDefaultsOf(raw, characterId);
@@ -44,11 +49,16 @@ export function useCharacterDefaults(ctx: Pick<AppContext, "prefs" | "api">, cha
     setRaw(Object.keys(next).length > 0 ? next : undefined);
     setNote(undefined);
   };
-  const choices = (library ?? []).map((s) => ({ value: s.id, label: s.name }));
-  const gone = d.presetId !== undefined && library !== null && !choices.some((c) => c.value === d.presetId);
+  const choices = (library ?? []).map((s) => ({ value: setupValue(s), label: setupLabel(s) }));
+  const presetValue = d.presetId === undefined || !d.presetKind ? "" : setupValue({ kind: d.presetKind, id: d.presetId });
+  const gone = presetValue !== "" && library !== null && !choices.some((c) => c.value === presetValue);
   const sceneSamplers = chat.preset?.samplers;
   return {
-    d, problems, choices, gone, note, customSamplers: d.samplers !== undefined && Object.keys(d.samplers).length > 0, put,
+    d, problems, choices, presetValue, gone, note,
+    choosePreset: (value) => {
+      const setup = setupOf(value);
+      put(setup ? { presetKind: setup.kind, presetId: setup.id } : { presetId: null, presetKind: null });
+    }, customSamplers: d.samplers !== undefined && Object.keys(d.samplers).length > 0, put,
     keepSamplers: () => {
       if (sceneSamplers && Object.keys(sceneSamplers).length > 0) put({ samplers: sceneSamplers });
       else setNote("This scene has no sampler changes of its own to keep. Change them in the Control Panel first.");

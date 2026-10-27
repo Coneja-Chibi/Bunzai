@@ -326,9 +326,17 @@ not agree on whether a preset can carry regex at all. SillyTavern and RoleCall c
 the preset file itself (`extensions.regex_scripts`), so their adapters embed a linked set on the way
 out. Lumiverse stores the association on the script instead, by `preset_id`, so nothing rides inside
 the preset. Marinara has no preset-level attachment, so a linked set cannot travel with a Marinara
-export. Each adapter's `embedRegex` owns its own answer, and `emitPresetBundle` in
+export. Each adapter's `embedRegex` owns its own answer, and `emitPieces` in
 [src/convert.ts](../../../src/convert.ts) reports a set that could not ride rather than dropping it
 silently.
+
+## The writing family
+
+A preset is one of the writing setups a scene can follow, with the Script Sheet
+([scriptsheet.md](scriptsheet.md)): separate kinds that read one way. Each kind's `kind.ts` gives `asPreset`, the
+preset it sends (a preset's own body), and `src/core/writing.ts` reads the family from that. The scene's Writing slot
+records the kind with the id, so one picker lists presets and sheets together, and a sheet joins the preset deck in
+the Library, shown as "Writing".
 
 ## What rides escrow, not a field
 

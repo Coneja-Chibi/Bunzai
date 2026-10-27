@@ -30,11 +30,12 @@ export interface PresetWeight {
 
 /** The manuscript's live weight: enabled count, in-chat count, total tokens, heaviest block. */
 export function presetWeight(body: PresetBody): PresetWeight {
+  const prompts = body.prompts;
   let enabledCount = 0;
   let inChatCount = 0;
   let tokens = 0;
   let largest: { id: string; name: string; tokens: number } | null = null;
-  for (const b of body.prompts) {
+  for (const b of prompts) {
     if (!b.enabled) continue;
     enabledCount++;
     if (b.placement === "in_chat" || b.placement === "append") inChatCount++;
@@ -42,7 +43,7 @@ export function presetWeight(body: PresetBody): PresetWeight {
     tokens += t;
     if (!largest || t > largest.tokens) largest = { id: b.id, name: b.name, tokens: t };
   }
-  return { totalCount: body.prompts.length, enabledCount, inChatCount, tokens, largest };
+  return { totalCount: prompts.length, enabledCount, inChatCount, tokens, largest };
 }
 
 /** Plain-language labels for the ST-compatible marker slots (where content splices at runtime). */

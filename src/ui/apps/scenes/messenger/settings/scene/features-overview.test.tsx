@@ -31,8 +31,8 @@ describe("Overview page", () => {
     setValue(title, "   ");
     await wait(550);
     expect(r.calls["renameScene"]).toHaveLength(1);
-    expect(rowOf(m.host, "Playing as").textContent).toContain("Mina Okafor");
-    rowOf(m.host, "Playing as").click();
+    expect(rowOf(m.host, "Persona details").textContent).toContain("Mina Okafor");
+    rowOf(m.host, "Persona details").click();
     rowOf(m.host, "Backdrop").click();
     expect(r.opened).toEqual(["persona", "display"]);
     none(m.host, ...NO_PANELS);
@@ -88,7 +88,7 @@ describe("Story Director page", () => {
     rules.done();
   });
 
-  test("personality and creativity are choices that write; the model and the panel are drills", async () => {
+  test("personality and creativity are choices that write; the model is a select", async () => {
     const r = rig();
     const cat = directorCategory(r.a, r.open);
     const style = await mount(bodyOfSection(cat, "director-style"));
@@ -100,8 +100,8 @@ describe("Story Director page", () => {
     style.done();
     const model = await mount(bodyOfSection(cat, "director-model"));
     await wait(40);
-    rowOf(model.host, "Story Director model").click();
-    expect(r.opened).toEqual(["prop-story-director"]);
+    expect(control<HTMLSelectElement>(model.host, "Story Director model").value).toBe("");
+    expect(r.opened).toEqual([]);
     model.done();
   });
 });
