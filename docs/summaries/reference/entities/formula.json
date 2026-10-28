@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:3db9b7f7a965996b15b05b3a66c766028e19c66bd8f0353f2acbe56a5453d587",
+  "sourceHash": "sha256:231bd799c30b55e8abf5d65c4a0118cb6f3977f72c6f87e2361a646372305c27",
   "summary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The Editing section describes the formula editor and its Try rail, which runs the text on a copy of a scene through the formula-try route.",
   "topics": [
     "CanonicalFormula",
@@ -29,8 +29,8 @@
       "slug": "safety",
       "title": "Safety",
       "level": 2,
-      "sourceHash": "sha256:3a68f73c7b6bf943a7ae9a9a90276fa01505ba372ed6ef4e241a97506d9ed2d7",
-      "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula has no step number of its own: the tool loop owns a time budget for all of a reply's tool calls, a setting with a default, hands each run what is left as a deadline, and the macro engine checks that clock between nodes, after every handler and inside the word macros' loops, so a run that passes it answers with the error, never as finished. A formula shares the chat's messages, so the positional word index is built once and a phrase costs what its rarest word costs. Each call takes its own seed.",
+      "sourceHash": "sha256:4f0eb4e5b9f830792f45b2f4114239483b606f7a460e0c6d615a92978e73e015",
+      "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula has no step number of its own: the tool loop owns a time budget for all of a reply's tool calls, a setting with a default (shown in seconds in Settings), hands each run what is left as a deadline, and the macro engine checks that clock between nodes, after every handler and inside the word macros' loops, so a run that passes it answers with the error, never as finished. A formula shares the chat's messages, so the positional word index is built once and a phrase costs what its rarest word costs. Each call takes its own seed.",
       "topics": [
         "structuredClone copy",
         "writes refused out loud",

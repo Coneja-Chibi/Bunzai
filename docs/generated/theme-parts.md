@@ -283,6 +283,13 @@
 | `scene.booth.status` | `div` | `src/ui/apps/scenes/messenger/panels/booth/messenger-booth.tsx`, `src/ui/apps/scenes/scene-booth-wing.tsx` |
 | `scene.booth.summary` | `section` | `src/ui/apps/scenes/booth-summary-row.tsx` |
 | `scene.booth.summary.tiles` | `div` | `src/ui/apps/scenes/booth-summary-row.tsx` |
+| `scene.booth.tool.<id>` | `div` | `src/ui/apps/scenes/booth-tools.tsx` |
+| `scene.booth.tools` | `div` | `src/ui/apps/scenes/booth-tools.tsx` |
+| `scene.booth.tools.cost` | `div` | `src/ui/apps/scenes/booth-tools.tsx` |
+| `scene.booth.tools.link` | `Button` | `src/ui/apps/scenes/booth-tools.tsx` |
+| `scene.booth.tools.new` | `Button` | `src/ui/apps/scenes/booth-tools.tsx` |
+| `scene.booth.tools.pick` | `div` | `src/ui/apps/scenes/booth-tools.tsx` |
+| `scene.booth.tools.pick.<id>` | `ListRow` | `src/ui/apps/scenes/booth-tools.tsx` |
 | `scene.cast.add` | `div`, `form` | `src/ui/apps/scenes/cast/add-participant.tsx` |
 | `scene.cast.advanced` | `FormSection` | `src/ui/apps/scenes/cast/cast-character-tab.tsx` |
 | `scene.cast.appearance` | `FormSection` | `src/ui/apps/scenes/cast/cast-persona-tab.tsx` |
@@ -465,6 +472,10 @@
 | `scene.messenger.cast.search` | `input` | `src/ui/apps/scenes/messenger/panels/cast/members-panel.tsx` |
 | `scene.messenger.cast.tab.character` | `item` | `src/ui/apps/scenes/messenger/panels/cast/cast-inspector.tsx` |
 | `scene.messenger.cast.tab.persona` | `item` | `src/ui/apps/scenes/messenger/panels/cast/cast-inspector.tsx` |
+| `scene.messenger.change` | `div` | `src/ui/apps/scenes/messenger/transcript/reply-changes.tsx` |
+| `scene.messenger.change.card` | `section` | `src/ui/apps/scenes/messenger/transcript/reply-changes.tsx` |
+| `scene.messenger.change.chip` | `Chip` | `src/ui/apps/scenes/messenger/transcript/reply-changes.tsx` |
+| `scene.messenger.change.marker` | `Chip` | `src/ui/apps/scenes/messenger/transcript/reply-changes.tsx` |
 | `scene.messenger.director` | `div` | `src/ui/apps/scenes/messenger/panels/director/director-view.tsx` |
 | `scene.messenger.director.error` | `p` | `src/ui/apps/scenes/messenger/panels/director/director-view.tsx` |
 | `scene.messenger.director.history` | `div` | `src/ui/apps/scenes/messenger/panels/director/director-view.tsx` |
@@ -517,6 +528,7 @@
 | `scene.messenger.menu.list` | `div` | `src/ui/apps/scenes/messenger/frames/context-menu.tsx`, `src/ui/apps/scenes/messenger/frames/panel-switcher.tsx` |
 | `scene.messenger.menu.separator` | `div` | `src/ui/apps/scenes/messenger/frames/context-menu.tsx` |
 | `scene.messenger.menu.submenu` | `div` | `src/ui/apps/scenes/messenger/frames/context-menu.tsx` |
+| `scene.messenger.out-of-time` | `p` | `src/ui/apps/scenes/messenger/transcript/reply-changes.tsx` |
 | `scene.messenger.panel.all` | `HTMLElement`, `IconButton` | `src/ui/apps/scenes/messenger/frames/panel-switcher.tsx` |
 | `scene.messenger.panel.all-menu` | `div` | `src/ui/apps/scenes/messenger/frames/panel-switcher.tsx` |
 | `scene.messenger.panel.body` | `div` | `src/ui/apps/scenes/messenger/frames/side-panel.tsx` |
@@ -564,6 +576,7 @@
 | `scene.messenger.settings.result` | `ListRow` | `src/ui/apps/scenes/messenger/frames/settings-window.tsx` |
 | `scene.messenger.settings.row.action` | `div` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
 | `scene.messenger.settings.row.action.button` | `Button` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
+| `scene.messenger.settings.row.budget` | `div` | `src/ui/apps/scenes/messenger/settings/user/budget-rows.tsx` |
 | `scene.messenger.settings.row.drill` | `ListRow` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
 | `scene.messenger.settings.row.number` | `div` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
 | `scene.messenger.settings.row.pair` | `div` | `src/ui/apps/scenes/messenger/frames/settings-rows.tsx` |
@@ -609,16 +622,36 @@
 | `scene.messenger.sidebar.scene.<id>` | `div` | `src/ui/apps/scenes/messenger/shell/sidebar.tsx` |
 | `scene.messenger.sidebar.unread.<id>` | `span` | `src/ui/apps/scenes/messenger/shell/sidebar.tsx` |
 | `scene.messenger.trackers` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
-| `scene.messenger.trackers.back` | `IconButton` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
+| `scene.messenger.trackers.back` | `IconButton` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx`, `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx`, `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.card.<id>` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.card.arrow.<id>` | `IconButton` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.card.open.<id>` | `ListRow` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.card.popout.<id>` | `IconButton` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.card.summary.<id>` | `p` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.detail.<id>` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
+| `scene.messenger.trackers.edit` | `fieldset` | `src/ui/apps/scenes/messenger/panels/trackers/library-edit.tsx` |
+| `scene.messenger.trackers.field` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx` |
 | `scene.messenger.trackers.footer` | `footer` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
+| `scene.messenger.trackers.item` | `ListRow` | `src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx` |
+| `scene.messenger.trackers.items` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx` |
+| `scene.messenger.trackers.library.<id>` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx` |
+| `scene.messenger.trackers.library.changed` | `p` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
+| `scene.messenger.trackers.library.detail.<id>` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
+| `scene.messenger.trackers.library.edit-piece` | `Button` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
+| `scene.messenger.trackers.library.hint` | `p` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
+| `scene.messenger.trackers.library.open.<id>` | `ListRow` | `src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx` |
+| `scene.messenger.trackers.library.problem` | `p` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
+| `scene.messenger.trackers.library.waiting` | `p` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
 | `scene.messenger.trackers.list` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.manage` | `Button` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
+| `scene.messenger.trackers.pick` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx` |
+| `scene.messenger.trackers.pick.<id>` | `ListRow` | `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx` |
+| `scene.messenger.trackers.pick.builtin` | `ListRow` | `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx` |
+| `scene.messenger.trackers.pick.builtin-all` | `Button` | `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx` |
+| `scene.messenger.trackers.pick.cost` | `p` | `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx` |
+| `scene.messenger.trackers.pick.new` | `Button` | `src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx` |
+| `scene.messenger.trackers.pick.open` | `Button` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
+| `scene.messenger.trackers.row` | `section` | `src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx` |
 | `scene.messenger.trackers.settings` | `IconButton` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.settings.view` | `div` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |
 | `scene.messenger.trackers.subs` | `section` | `src/ui/apps/scenes/messenger/panels/trackers/trackers-panel.tsx` |

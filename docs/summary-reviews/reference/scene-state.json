@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/scene-state",
   "sourcePath": "docs/reference/scene-state.md",
-  "sourceHash": "sha256:788464617772d6205134bd199ddc0dc3b11178b69439d0d703c0cb3e5c6cdaa4",
-  "semanticSummaryHash": "sha256:fc103109ccfff7055670e53a31ce299e1280e702c0264f6ecbbff6d3d1dcd4fd",
+  "sourceHash": "sha256:531b45ebd85415296fa1d6288deabeb69ea57937d8e736ca4a6684c5b4fdac67",
+  "semanticSummaryHash": "sha256:18c499b909abc487057331b9468dc0ab30c2be2d292ed3d98b333be2c1f08e76",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "New clause matches code: sceneDeltas(branchId, from, to?, slotPrefixes?) loads only the given slots' deltas in both stores (sqlite deltasOf with prefixes, memory filter) and the state before stays whole; ChatStore contract signature agrees. Rest unchanged; sections 105-180 words.",
-  "reviewedAt": "2026-10-28T04:58:37.352Z"
+  "notes": "Not built yet now says hand edits of slots other than a library tracker's are not built and that recordMessageDeltas' one caller is the person's tracker edit (tracker-edit.ts; scene-import uses setBranchBase), in both page and summary. Rest unchanged; bands ok.",
+  "reviewedAt": "2026-10-28T16:06:03.031Z"
 }

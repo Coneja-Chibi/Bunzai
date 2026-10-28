@@ -2,7 +2,7 @@
   "generated": "2026-10-28",
   "targetChars": 90000,
   "totalPages": 127,
-  "totalSourceChars": 1567471,
+  "totalSourceChars": 1587402,
   "batches": [
     {
       "id": "batch-001",
@@ -382,14 +382,14 @@
     },
     {
       "id": "batch-005",
-      "sourceChars": 167381,
+      "sourceChars": 170482,
       "pages": [
         {
           "docId": "reference/components",
           "sourcePath": "docs/reference/components.md",
           "sidecarPath": "docs/summaries/reference/components.json",
           "sectionCount": 3,
-          "sourceChars": 167381,
+          "sourceChars": 170482,
           "status": "APPROVED"
         }
       ]
@@ -498,14 +498,14 @@
     },
     {
       "id": "batch-007",
-      "sourceChars": 86863,
+      "sourceChars": 86871,
       "pages": [
         {
           "docId": "reference/entities/formula",
           "sourcePath": "docs/reference/entities/formula.md",
           "sidecarPath": "docs/summaries/reference/entities/formula.json",
           "sectionCount": 3,
-          "sourceChars": 5743,
+          "sourceChars": 5751,
           "status": "APPROVED"
         },
         {
@@ -576,7 +576,7 @@
     },
     {
       "id": "batch-008",
-      "sourceChars": 87739,
+      "sourceChars": 89023,
       "pages": [
         {
           "docId": "reference/entities/regex",
@@ -599,7 +599,7 @@
           "sourcePath": "docs/reference/entities/tool.md",
           "sidecarPath": "docs/summaries/reference/entities/tool.json",
           "sectionCount": 4,
-          "sourceChars": 6198,
+          "sourceChars": 6373,
           "status": "APPROVED"
         },
         {
@@ -607,7 +607,7 @@
           "sourcePath": "docs/reference/entities/tracker.md",
           "sidecarPath": "docs/summaries/reference/entities/tracker.json",
           "sectionCount": 7,
-          "sourceChars": 18858,
+          "sourceChars": 19967,
           "status": "APPROVED"
         },
         {
@@ -776,14 +776,14 @@
     },
     {
       "id": "batch-012",
-      "sourceChars": 89575,
+      "sourceChars": 89680,
       "pages": [
         {
           "docId": "reference/macro-engine",
           "sourcePath": "docs/reference/macro-engine.md",
           "sidecarPath": "docs/summaries/reference/macro-engine.json",
           "sectionCount": 3,
-          "sourceChars": 9208,
+          "sourceChars": 9313,
           "status": "APPROVED"
         },
         {
@@ -1004,14 +1004,14 @@
     },
     {
       "id": "batch-014",
-      "sourceChars": 79607,
+      "sourceChars": 80397,
       "pages": [
         {
           "docId": "reference/scene-state",
           "sourcePath": "docs/reference/scene-state.md",
           "sidecarPath": "docs/summaries/reference/scene-state.json",
           "sectionCount": 8,
-          "sourceChars": 12625,
+          "sourceChars": 13415,
           "status": "APPROVED"
         },
         {
@@ -1096,14 +1096,14 @@
     },
     {
       "id": "batch-016",
-      "sourceChars": 262677,
+      "sourceChars": 277320,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 262677,
+          "sourceChars": 277320,
           "status": "APPROVED"
         }
       ]

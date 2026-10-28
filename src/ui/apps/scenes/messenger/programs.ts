@@ -6,6 +6,8 @@
  * trackers) gets a program while it is on, drawn through the Prop's own panel, as RoleCall's activities are (programs.ts:89-97).
  */
 import { useRef } from "react";
+import type { PieceStore } from "../../../_shared/piece-store";
+import { useLibraryHasTrackers } from "./panels/trackers/use-library-has-trackers";
 import type { IconName } from "../../../_shared/ic";
 import type { AppContext } from "../../../app-contract";
 import type { OpenScene } from "../../../../studio/scenes";
@@ -59,11 +61,20 @@ const AFTER_STAGE: readonly Program[] = [
 ];
 
 /** Every program the open scene has right now; none until the scene is read. */
-export function buildPrograms(scene: OpenScene | undefined, propsOn: readonly string[] | null, props: readonly SceneProp[], prefs: AppContext["prefs"]): Program[] {
+export { useLibraryHasTrackers } from "./panels/trackers/use-library-has-trackers";
+
+/** The programs the Messenger shows for this scene (none outside the Messenger), the same list while nothing about it changed. */
+export function useScenePrograms(messenger: boolean, scene: OpenScene | undefined, propsOn: readonly string[] | null, props: readonly SceneProp[], prefs: AppContext["prefs"], pieces: PieceStore | undefined): Program[] {
+  const libraryHasTrackers = useLibraryHasTrackers(pieces);
+  return useStablePrograms(messenger ? buildPrograms(scene, propsOn, props, prefs, libraryHasTrackers) : []);
+}
+
+/** `libraryHasTrackers`: the library holds a tracker, so the Trackers program is reachable even with none linked and no built-in on. */
+export function buildPrograms(scene: OpenScene | undefined, propsOn: readonly string[] | null, props: readonly SceneProp[], prefs: AppContext["prefs"], libraryHasTrackers = false): Program[] {
   if (!scene) return [];
   const stage = STAGE_TABS.filter((t) => t.visible({ scene, propsOn, prefs })).flatMap((t) => STAGE[t.id] ?? []);
   const panels = props.flatMap((p) => (p.panel && hasOwnProgram(p) && propsOn?.includes(p.id) ? [{ id: `prop-${p.id}`, wing: "props", title: p.name, icon: p.icon, panel: messengerKind(p.panel) }] : []));
-  return [...BEFORE_STAGE, ...stage, ...AFTER_STAGE, ...panels, ...trackersProgram(props, propsOn)];
+  return [...BEFORE_STAGE, ...stage, ...AFTER_STAGE, ...panels, ...trackersProgram(props, propsOn, scene.chat.prompting?.trackers, libraryHasTrackers)];
 }
 
 /** The same list while nothing about it changed, so the shell's effects do not run again on every message. */

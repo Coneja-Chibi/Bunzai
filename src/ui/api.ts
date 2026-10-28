@@ -179,6 +179,9 @@ export const api: AppContext["api"] = {
   proposeTrackerRefresh: async (input, signal) =>
     apiFetchJson("/api/chats/tracker-refresh", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input), ...(signal ? { signal } : {}) }),
   getLinkedScenes: async (kind, id) => apiFetchJson(`/api/chats/linked?kind=${encodeURIComponent(kind)}&id=${encodeURIComponent(id)}`, { requireToken: false }),
+  getSceneTrackers: async (chatId) => apiFetchJson(`/api/chats/library-trackers?chatId=${encodeURIComponent(chatId)}`, { requireToken: false }),
+  editSceneTracker: async (input) => postJson("/api/chats/tracker-edit", input),
+  getTrackerChanges: async (branchId, from, to) => apiFetchJson(`/api/chats/tracker-changes?branchId=${encodeURIComponent(branchId)}&from=${encodeURIComponent(from)}${to === undefined ? "" : `&to=${encodeURIComponent(to)}`}`, { requireToken: false }),
   getSceneForecast: async (chatId, draft, signal) =>
     apiFetchJson("/api/chats/forecast", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId, draft }), ...(signal ? { signal } : {}) }),
   tryFormula: async (chatId, text, signal) =>

@@ -7,13 +7,15 @@
  */
 import type { Delta, SceneState } from "../../../core/scene-state/types";
 import type { ChatStore } from "../../contracts/chat-store";
-import { baseState, changed, checkImportedDeltas, rebuildState, sliceShown } from "../scene-state-rules";
+import { baseState, changed, checkImportedDeltas, rebuildState, requireHeld, sliceShown } from "../scene-state-rules";
+import { checkGuard } from "../chat-rules";
 import type { ChatRecord, MessageRecord } from "./chat-records";
 
 export interface StateDeps {
   messages: Map<string, MessageRecord>;
   branchOrder: Map<string, string[]>;
   liveChatOfBranch(branchId: string): ChatRecord | null;
+  requireVersion(branchId: string, expected: number | undefined): void;
 }
 
 export interface MemoryState {
@@ -53,6 +55,9 @@ export function stateMethods(d: StateDeps): MemoryState {
     });
   /** The state a message builds from: everything shown before it, and its own message-level deltas. */
   const stateBefore = (branchId: string, m: MessageRecord): SceneState => build(branchId, [...shownPath(branchId, m.seq), { messageId: m.id, swipeId: null }]).state;
+
+  /** The state the message shows: everything shown before it, then its shown version's deltas and its own. */
+  const stateThrough = (branchId: string, m: MessageRecord): SceneState => build(branchId, shownPath(branchId, m.seq + 1)).state;
 
   const refresh = (branchId: string, fromSeq = 0): void => {
     const kept = keyframes.get(branchId) ?? new Map();
@@ -110,12 +115,16 @@ export function stateMethods(d: StateDeps): MemoryState {
         return true;
       },
 
-      async recordMessageDeltas(branchId, messageId, raw) {
+      async recordMessageDeltas(branchId, messageId, raw, guard) {
         checkImportedDeltas(raw);
+        const expected = checkGuard(guard);
         const m = d.messages.get(messageId);
         if (!m || m.branchId !== branchId || m.cut || !d.liveChatOfBranch(branchId)) return false;
+        d.requireVersion(branchId, expected);
         const own = messageDeltas.get(messageId) ?? [];
-        const added = changed(stateBefore(branchId, m), checkImportedDeltas(raw));
+        const shown = stateThrough(branchId, m);
+        requireHeld(shown, guard?.expect);
+        const added = changed(shown, checkImportedDeltas(raw));
         if (added.length > 0) {
           messageDeltas.set(messageId, [...own, ...added]);
           refresh(branchId, m.seq);

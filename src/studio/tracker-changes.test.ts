@@ -48,7 +48,7 @@ describe("what a reply changed in the trackers", () => {
     const { first, reply, range } = await rig();
     const r = await reply("health", { set: { hp: 12, mood: "tense" } });
     expect(await range(first.id)).toEqual([{ messageId: r.id, trackers: [{
-      trackerId: "health", name: "Health", style: "card", icon: "lucide:gauge", fieldIcons: { hp: "lucide:activity" },
+      trackerId: "health", name: "Health", style: "card", icon: "lucide:gauge", fieldIcons: { hp: "lucide:activity" }, bars: { hp: { min: 0, top: 20 } },
       changes: [{ field: "hp", before: 20, after: 12 }, { field: "mood", before: "calm", after: "tense" }],
     }] }]);
   });
@@ -179,5 +179,23 @@ describe("what a reply changed in the trackers", () => {
     const out = await trackerChangesBetween(spy, read, branch, first.id);
     expect(asked).toEqual(["tracker-record:", "tracker-list:"]);
     expect(out!.map((m) => m.trackers[0]!.changes[0])).toEqual([{ field: "hp", before: 20, after: 15 }, { field: "hp", before: 15, after: 11 }, { field: "hp", before: 11, after: 7 }]);
+  });
+
+  test("a number's bar is drawn between its bottom and the top it had when the message left it: its own max, or the value of the field it names", async () => {
+    const { first, reply, range } = await rig();
+    await reply("health", { set: { hp: 10 } });
+    await reply("health", { set: { hp_max: 30, hp: 25 } });
+    const out = (await range(first.id))!;
+    expect(only(out, 0).bars).toEqual({ hp: { min: 0, top: 20 } });
+    expect(only(out, 1).bars).toEqual({ hp: { min: 0, top: 30 } });
+  });
+
+  test("no bar for a number without a top, a field that is not a number, a number that did not change, or a list", async () => {
+    const { first, reply, range } = await rig();
+    await reply("health", { set: { mood: "tense" } });
+    await reply("party", { row: "Vera", set: { hp: 4 } });
+    const out = (await range(first.id))!;
+    expect(only(out, 0).bars).toBeUndefined();
+    expect(only(out, 1).bars).toBeUndefined();
   });
 });

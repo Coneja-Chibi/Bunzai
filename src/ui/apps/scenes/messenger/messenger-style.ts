@@ -12,6 +12,8 @@ import { SETTINGS_STYLE } from "./frames/settings-style";
 import { MESSENGER_SKIN_STYLE } from "./messenger-skin-style";
 import { MSN_DIRECTOR_STYLE } from "./panels/director/director-style";
 import { MSN_TRACKERS_STYLE } from "./panels/trackers/trackers-style";
+import { MSN_LIBRARY_STYLE } from "./panels/trackers/library-style";
+import { MSN_CHANGES_STYLE } from "./transcript/reply-changes-style";
 import { CAST_PANELS_STYLE } from "./panels/cast/cast-panels-style";
 
 import { BOOTH_PANEL_STYLE } from "./panels/booth/booth-panel-style";
@@ -119,4 +121,4 @@ ${M} [data-msn-close] svg{width:30px;height:30px}
 }
 ${MESSENGER_CHAT_STYLE}
 ${PANELS_STYLE}
-${SETTINGS_STYLE}${MESSENGER_SKIN_STYLE}${MSN_DIRECTOR_STYLE}${MSN_TRACKERS_STYLE}${CAST_PANELS_STYLE}${BOOTH_PANEL_STYLE}${WORKSHOP_STYLE}${LORE_PANEL_STYLE}${SHELL_STYLE}${HEADER_NARROW_STYLE}`;
+${SETTINGS_STYLE}${MESSENGER_SKIN_STYLE}${MSN_DIRECTOR_STYLE}${MSN_TRACKERS_STYLE}${MSN_LIBRARY_STYLE}${MSN_CHANGES_STYLE}${CAST_PANELS_STYLE}${BOOTH_PANEL_STYLE}${WORKSHOP_STYLE}${LORE_PANEL_STYLE}${SHELL_STYLE}${HEADER_NARROW_STYLE}`;

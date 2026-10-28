@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tool",
   "sourcePath": "docs/reference/entities/tool.md",
-  "sourceHash": "sha256:b189b1f7325fc5c5ecf6c68b05346ce9002cd9e8ec96e0817c53cfd41c238b1a",
-  "semanticSummaryHash": "sha256:e4618fbdaf561eabdc917d0169c3cf3d5bfdff0266f6e0056129e9c7770f2e38",
+  "sourceHash": "sha256:631fe687907dfa503c1eb3e4446e9f40e964dc67e4ea745180e5f0fc66569dcc",
+  "semanticSummaryHash": "sha256:18856f1e1fe6d4f7c26a4c1bc50901cf64a7c570479736e9a360fb36ba21f344",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Header reads the kind hub's promptingList (tools) through scenesLinking, matching piece-links.ts and the linked route (400 for a kind that has none); Try on a formula tool opens the formula and the page now says Try there runs on the whole scene with no window, matching tryFormula. Bands ok.",
-  "reviewedAt": "2026-10-28T06:50:12.474Z"
+  "notes": "Booth sentence matches booth-tools.tsx and booth-tools-core.ts (icon per action, plain words, tool-cost token count shared with the editor rail, switch through setScenePrompting, Per reply sum, Link a tool, New tool in the Workbench). Page summary and in-a-scene summary updated accordingly; bands ok.",
+  "reviewedAt": "2026-10-28T15:31:26.550Z"
 }

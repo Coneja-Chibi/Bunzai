@@ -109,7 +109,7 @@ export function memoryChatStoreBackend(
   };
 
   const stats = statsCounters(clock);
-  const scene = stateMethods({ messages, branchOrder, liveChatOfBranch });
+  const scene = stateMethods({ messages, branchOrder, liveChatOfBranch, requireVersion });
   const { turnOpen, ...turns } = turnMethods({
     clock, newId, messages, branchVersion: (id) => branches.get(id)!.version, liveChatOfBranch, writableMessage, requireVersion, bump, appendMany, state: scene,
   });

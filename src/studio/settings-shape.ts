@@ -32,9 +32,9 @@ export const SETTING_KEYS = {
   uiHighContrast: "ui.highContrast",
   /** the title screen and scene chooser rays: "moving" (default), "still" or "off" (see STAGE_LIGHTS) */
   uiStageLights: "ui.stageLights",
-  /** the time (ms) all of one reply's tool calls may take together (a positive number; no screen yet, so it is set in the settings file); absent means the default (core/assembly/tool-rounds.ts) */
+  /** the time (ms) all of one reply's tool calls may take together (a positive number; Settings > Studio > Time budgets in the Messenger shows it in seconds); absent means the default (core/assembly/tool-rounds.ts) */
   toolBudgetMs: "scenes.toolBudgetMs",
-  /** the time (ms) all the macros of one prompt build may take together (a positive number; no screen yet, so it is set in the settings file); absent means the default (core/assembly/tool-rounds.ts) */
+  /** the time (ms) all the macros of one prompt build may take together (a positive number; Settings > Studio > Time budgets in the Messenger shows it in seconds); absent means the default (core/assembly/tool-rounds.ts) */
   promptBudgetMs: "scenes.promptBudgetMs",
 } as const;
 
@@ -100,3 +100,9 @@ export function parseSettings(raw: unknown): StudioSettings {
   if (!isStageLights(rec[SETTING_KEYS.uiStageLights])) delete out[SETTING_KEYS.uiStageLights];
   return out;
 }
+
+/** A saved time budget is usable only as a positive finite number of milliseconds; anything else reads as unset (the default applies). The one rule the turn's readers and the budget boxes share. */
+export const budgetMsOf = (value: unknown): number | undefined => (typeof value === "number" && Number.isFinite(value) && value > 0 ? value : undefined);
+
+/** Milliseconds in a second: the time budgets are stored in milliseconds and shown in seconds. */
+export const MS_PER_SECOND = 1_000;

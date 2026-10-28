@@ -3,6 +3,7 @@
  * and the per-tool model overrides a scene keeps. chatStoreContract runs it on every backend.
  */
 import { describe, expect, test } from "bun:test";
+import { SANITY_LIST, SANITY_TEXT } from "../../entities/_shared/sanity";
 import { createPass, type FinalCutPass } from "../../core/final-cut/pass";
 import type { PassTrace } from "../../core/final-cut/trace";
 import { StudioValidationError } from "../../studio/errors";
@@ -115,6 +116,19 @@ export function chatStoreFinalCutContract(make: (clock: () => number) => ChatSto
       expect(m!.swipes.at(-1)!.generation).toEqual({ model: "m", finalCut: summary });
       for (const bad of [{ passes: 1.5, changed: true, failed: 0 }, { passes: 1, changed: "yes", failed: 0 }, { passes: 1, changed: true }, { passes: 1, changed: true, failed: 0, extra: 1 }, "x"]) {
         await expect(store.addSwipe(ids[1]!, { content: "x", generation: { finalCut: bad } as never })).rejects.toBeInstanceOf(StudioValidationError);
+      }
+    });
+
+    test("a reply's generation can name the macros the prompt build ran out of time on, and anything else in that field is refused", async () => {
+      const { store, ids } = await seeded(2);
+      const outOfTime = [{ macro: "tally" }, { macro: "" }];
+      const m = await store.addSwipe(ids[1]!, { content: "late", generation: { model: "m", outOfTime } });
+      expect(m!.swipes.at(-1)!.generation).toEqual({ model: "m", outOfTime });
+      // a hostile list or name is refused as unusually large, never cut: a reply names a handful of macros
+      const huge = [Array.from({ length: SANITY_LIST + 1 }, (_, i) => ({ macro: `m${i}` })), [{ macro: "x".repeat(SANITY_TEXT + 1) }]];
+      for (const bad of huge) await expect(store.addSwipe(ids[1]!, { content: "x", generation: { outOfTime: bad } as never })).rejects.toThrow("unusually large");
+      for (const bad of [[], [{ macro: 1 }], [{ macro: "a", where: "card" }], [{}], "tally", { macro: "tally" }, [null]]) {
+        await expect(store.addSwipe(ids[1]!, { content: "x", generation: { outOfTime: bad } as never })).rejects.toBeInstanceOf(StudioValidationError);
       }
     });
 

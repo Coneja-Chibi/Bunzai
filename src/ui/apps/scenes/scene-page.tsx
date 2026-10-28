@@ -72,7 +72,6 @@ import { useSceneFinalCut } from "./use-scene-final-cut";
 import { SHOW_TIMESTAMPS_KEY, replyFacts, showTimestamps } from "./scene-meta-core";
 import { lookRoot, readLook } from "./stage-look-core";
 import { useStageSignals } from "./use-stage-signals";
-import { useStageOpen } from "./use-stage-open";
 import { useDisplayContext, useStampOf } from "./scene-display-context";
 import { useSceneTurn } from "./use-scene-turn";
 import { useTrackersHeard } from "./use-trackers-heard";
@@ -90,10 +89,11 @@ import { SceneCompare } from "./scene-compare";
 import { useSceneFind } from "./use-scene-find";
 import { chatLayoutOf } from "./chat-layout";
 import { Messenger } from "./messenger/messenger";
-import { buildPrograms, useStablePrograms } from "./messenger/programs";
+import { useScenePrograms } from "./messenger/programs";
+import { useMessengerOpen } from "./messenger/use-messenger-open";
+import { usePublishSceneSignals } from "./scene-signals";
 import { wingPanels } from "./messenger/wing-props";
-import { authorOf, useTranscriptDecor } from "./messenger/transcript/use-transcript-decor";
-import type { MessengerRequest } from "./messenger/use-messenger-nav";
+import { authorOf, useReplyNotes, useTranscriptDecor } from "./messenger/transcript/use-transcript-decor";
 import { Button, IconButton, Tile } from "../../components/button";
 const stale = (e: unknown): boolean => /\bversion\b|409/i.test(toErrorMessage(e));
 export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; chatId: string; onBack(): void; /** Opens the Branching Tree (RoleCall's "View Full Branching Tree"). */ onTree?(chatId: string): void }): JSX.Element {
@@ -105,11 +105,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const [wing, setWing] = useState<string | null>(null);
   const { root, widthOf, resizeOf } = useWingShell(ctx.prefs, wing, setWing);
   const messenger = chatLayoutOf(ctx.prefs) === "messenger";
-  const [msnRequest, setMsnRequest] = useState<MessengerRequest | null>(null);
-  const [msnOpen, setMsnOpen] = useState(false);
-  /** A panel asking for a wing (null closes): the wing in Full Chat, its first program in the Messenger. */ const openWing = useCallback((id: string | null) => (messenger ? setMsnRequest((r) => ({ n: (r?.n ?? 0) + 1, wing: id })) : setWing(id)), [messenger]);
-  const away = wing !== null || msnOpen;
-  const stageRequest = useStageOpen(openWing);
+  const { msnRequest, msnOpen, setMsnOpen, openWing, away, stageRequest } = useMessengerOpen(messenger, wing, setWing);
   const [, setPrefTick] = useState(0); // the app prefs are not reactive: a display switch re-renders the page by hand
   const [presetBody, setPresetBody] = useState<PresetBody | null>(null);
   const reasoning = useSceneReasoning(ctx.api, scene?.chat.preset, scene?.chat.prompting);
@@ -117,7 +113,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const registeredProps = sceneProps(); const propsState = useSceneProps(ctx, chatId);
   const propsOn = propsState.load.state === "ready" ? propsState.load.on : null;
   const speakers = useDialogueSpeakers(ctx, scene, propsOn);
-  const programs = useStablePrograms(messenger ? buildPrograms(scene ?? undefined, propsOn, registeredProps, ctx.prefs) : []);
+  const programs = useScenePrograms(messenger, scene ?? undefined, propsOn, registeredProps, ctx.prefs, ctx.pieces);
   const [menu, setMenu] = useState<{ id: string; which: "more" | "delete" | "history" } | null>(null);
   const [takesOpen, setTakesOpen] = useState(false);   const hud = useSurfaceVariant("scene.hud");
   const [dialog, setDialog] = useState<Dialog | null>(null);
@@ -154,6 +150,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const turn = useSceneTurn(ctx, chatId, load, replyFrom);
   useTrackersHeard(ctx.pieces, chatId, load);
   const busy = turn.live !== null;
+  usePublishSceneSignals(chatId, scene?.branchVersion, busy);
   /** A version looked at while one is being written, or after it landed: local, never saved. */
   const scroller = useRef<HTMLDivElement | null>(null);
   const following = useRef(true);
@@ -360,6 +357,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
   const timestamps = showTimestamps(ctx.prefs.get(SHOW_TIMESTAMPS_KEY)); const stampOf = useStampOf(displayContext);
   const userInitial = (personaName || "You").charAt(0).toUpperCase(); const accents = useSceneAccents(scene, ctx.prefs); const userArtFor = useUserArt();
   const decor = useTranscriptDecor({ on: messenger, rows, prefs: ctx.prefs, chatId, personaName, characterName: name, shown: shown.byId, regexed });
+  const notes = useReplyNotes({ ctx, chatId, chat: scene?.chat, committed: turn.committed, rows, on: messenger, onInspect: () => openWing("context") });
   const charArt = useMemo<JSX.Element>(
     () => (
       <div className="por">
@@ -422,7 +420,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
             const raw = onLive ? think.reply : (swipe?.content ?? (isPeek ? "Loading swipe..." : ""));
             const whole = onLive ? raw : shown.missing.length ? raw : isPeek ? shown.peek ?? raw : regexed.get(m.id) ?? shown.byId.get(m.id) ?? raw;
             const text = continuing ? whole + (turn.live?.text ?? "") : whole;
-            const footer = isLast && gen?.finishReason === "interrupted" && !writing ? <CutOff busy={busy} onRegenerate={regenerate} /> : null;
+            const footer = notes.foot(m.id, gen, !user && !onLive && !isPeek, isLast && gen?.finishReason === "interrupted" && !writing ? <CutOff busy={busy} onRegenerate={regenerate} /> : null);
             // The meta row: a reply with several versions browses them wherever it sits; only the last reply regenerates.
             const showVersions = m.role === "assistant" && n > 1 && (isLast || count > 1);
             const stamp = !onLive && timestamps && swipe ? stampOf(swipe.createdAt) : undefined;
@@ -486,6 +484,7 @@ export function ScenePage({ ctx, chatId, onBack, onTree }: { ctx: AppContext; ch
       </>}
       {scene && <PopoutHost ctx={ctx} chat={scene.chat} kinds={popoutKindsFor(WING_POPOUTS, registeredProps, propsOn ?? [])} onChat={(chat) => setScene((s) => (s ? { ...s, chat } : s))} />}
       {versions.toast && <Toast message={versions.toast.message} actionLabel="Undo" onAction={versions.undo} />}
+      {notes.toast}
       {history.toast && <Toast message={history.toast.message} actionLabel="Redo" onAction={() => void history.redo()} onDismiss={history.dismiss} />}
       {dialog?.kind === "cut-from" && <CutFromDialog onCancel={() => setDialog(null)} onConfirm={() => void act("cut", versioned({ messageId: dialog.m.id, scope: "from" }))} />}
       {dialog?.kind === "fork" && scene && (

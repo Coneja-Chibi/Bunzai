@@ -16,6 +16,7 @@ import { hasOwnProgram } from "../../panels";
 import { isTrackerProp, trackersOn } from "../../panels/trackers/trackers-core";
 import { onChatOf, type WingArgs } from "../../wing-props";
 import type { OpenProgram } from "../scopes";
+import { ChangesRow } from "./changes-row";
 import { directorCategory } from "./director";
 import { HareRows, TooltipRow } from "./prop-pref-rows";
 import { SavedToggle } from "./saved";
@@ -62,7 +63,7 @@ function TrackerRows({ a, open }: { a: WingArgs; open: OpenProgram }): JSX.Eleme
 export function featuresCategories(a: WingArgs, open: OpenProgram): SettingsCategory[] {
   const sections: SettingsSection[] = GROUPS.filter((g) => g.group === undefined || a.registeredProps.some((p) => p.group === g.group))
     .map((g) => ({ id: g.id, title: g.title, ...(g.description ? { description: g.description } : {}), body: <PropRows a={a} group={g.group} /> }));
-  sections.push({ id: "prop-tooltips", title: "Props list", body: <TooltipRow a={a} /> });
+  sections.push({ id: "tracker-changes", title: "What each reply changed", body: <ChangesRow a={a} /> }, { id: "prop-tooltips", title: "Props list", body: <TooltipRow a={a} /> });
   const pages: SettingsCategory[] = a.registeredProps.filter((p) => p.panel && hasOwnProgram(p) && a.propsOn?.includes(p.id)).map((p) => (p.id === DIRECTOR_PROP_ID ? directorCategory(a, open)
     : { id: `prop-${p.id}`, label: p.name, icon: p.icon, group: "Features", sections: [{ id: `prop-${p.id}`, title: p.name, description: p.blurb, body: <><DrillRow label={`Open ${p.name}`} onOpen={() => open(`prop-${p.id}`)} />{p.id === trackHareProp.id && <HareRows a={a} />}</> }] }));
   const trackers: SettingsCategory[] = trackersOn(a.registeredProps, a.propsOn).length > 0

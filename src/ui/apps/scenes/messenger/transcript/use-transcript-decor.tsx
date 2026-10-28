@@ -12,6 +12,9 @@ import { selectedSwipe } from "../../use-scene-swipe-preview";
 import { readMarks } from "../shell/read-marks";
 import { transcriptDecor } from "./model";
 
+/** What goes under a reply (the tracker changes and the out-of-time line) is one more thing the Messenger adds around a message; use-reply-notes.tsx owns it. */
+export { useReplyNotes } from "./use-reply-notes";
+
 export type MessageDecor = { props: Pick<BubbleProps, "grouped" | "runMore" | "clock" | "badge" | "replyWho" | "replyText">; lead: JSX.Element | null };
 const NONE: ReadonlyMap<string, MessageDecor> = new Map();
 

@@ -3,6 +3,7 @@
  * is kept, and the rebuild bound to the declared slots. Shared so the memory and SQLite stores cannot drift.
  */
 import { dropUnchanged, fold } from "../../core/scene-state/fold";
+import { StudioConflictError } from "../../studio/atomic-file";
 import { rebuild, type RebuildInput } from "../../core/scene-state/rebuild";
 import { deltaBytes } from "../../core/scene-state/size";
 import type { Delta, SceneState } from "../../core/scene-state/types";
@@ -46,6 +47,12 @@ export function checkImportedDeltas(value: unknown): Delta[] {
 
 /** What of `added` changes `base` (the state a message builds from), so a write of a value already there adds nothing. */
 export const changed = (base: SceneState, added: readonly Delta[]): Delta[] => dropUnchanged(base, added, slotOf);
+
+/** A guarded write's expectation (what the caller read at each slot and path) against the state the message shows: refused, with nothing written, when any of it no longer holds. Not stored. */
+export function requireHeld(shown: SceneState, expect: unknown): void {
+  if (expect === undefined) return;
+  if (changed(shown, checkDeltas(expect)).length > 0) throw new StudioConflictError("the message changed since it was read");
+}
 
 /** A take's shown path split for a range read: what comes before `from`, and `from` through `to` (the tip when omitted; empty when `to` is earlier). Null when either is not on the path. */
 export function sliceShown<T extends { messageId: string }>(path: readonly T[], from: string, to?: string): { before: T[]; range: T[] } | null {

@@ -12,6 +12,7 @@ import { toErrorMessage } from "../error-message";
 import { running } from "./scene-turn-running";
 export { stopTurn } from "./scene-turn-running";
 export { commitAnyway, discardWaiting, resumeScene } from "./scene-turn-resume";
+import { outOfTimeOf } from "../core/assembly/macro-report";
 import { rebaseDiff } from "../core/assembly/lore-effects";
 import { varsDeltas } from "../core/scene-state/vars-bridge";
 import { PresetPlanError } from "../core/assembly/preset";
@@ -129,7 +130,22 @@ export class NoConnectionError extends StudioConflictError {
 const SAVE_EVERY_CHARS = 400;
 const SAVE_EVERY_MS = 1_000;
 
-export async function runTurn(
+/**
+ * One turn. The scene counts as having a turn running from the moment this is called, not from the checkpoint: the state is read for the prompt before the checkpoint opens, so a write
+ * to the scene's state that lands in between (a person's tracker edit) would be overwritten by the turn's own whole-row update. The early claim has its own key, so Stop (which finds a turn by
+ * its id) and the resume sweep are unchanged, and it is released however the turn ends, a refusal before the checkpoint included.
+ */
+export async function runTurn(deps: TurnDeps, input: Parameters<typeof runTurnBody>[1], emit: (event: TurnEvent) => void): Promise<void> {
+  const claim = `starting:${crypto.randomUUID()}`;
+  running.set(claim, { chatId: input.chatId, controller: new AbortController() });
+  try {
+    await runTurnBody(deps, input, emit);
+  } finally {
+    running.delete(claim);
+  }
+}
+
+async function runTurnBody(
   deps: TurnDeps,
   /** `fallback`: the person's Fallback Model (Control Booth), tried once if the scene's model fails before writing anything. `guidance`: a guided re-roll's instruction, a swipe's alone. */
   input: { chatId: string; kind: TurnKind; expectedVersion: number; fallback?: ChatConnection; guidance?: string; /** Prompt Inspector on: stop with the exact request before anything is written or sent. */ inspect?: boolean },
@@ -207,6 +223,7 @@ export async function runTurn(
     }
     const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: input.kind, original, guidance, recall, ...(director?.directive ? { director: director.directive } : {}), reserved: sentTools(toolsTurn, connected).map((t) => JSON.stringify(t)) });
     const { result, asked, guided } = built;
+    const outOfTime = outOfTimeOf(result.macros);
     toolsTurn.macros.context = result.expansion.context;
     if (result.budget.overflow) {
       await chats.dropTurn(turn.id);
@@ -330,7 +347,7 @@ export async function runTurn(
           return;
         }
         answered = true;
-        await commit({ content: stored(text), generation: { model, finishReason: "stopped", presetName, generationMs: deps.now() - started, ...(guidance ? { guidance } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "stopped") }, request)) }, "stopped");
+        await commit({ content: stored(text), generation: { model, finishReason: "stopped", presetName, generationMs: deps.now() - started, ...(guidance ? { guidance } : {}), ...(outOfTime ? { outOfTime } : {}) }, ...(input.kind === "continue" ? {} : withToolCalls(toolsTurn, { ...trace, route: routeOf(route, "stopped") }, request)) }, "stopped");
         return;
       }
       await putBackEffects();
@@ -378,6 +395,7 @@ export async function runTurn(
       ...(tagMs > 0 ? { tagThinkingMs: tagMs } : {}),
       presetName,
       ...(guidance ? { guidance } : {}),
+      ...(outOfTime ? { outOfTime } : {}),
       ...(thinkingEnd ? { thinkingEnd } : {}),
       ...(opened(model) ? { prefill: opened(model)! } : {}),
       // Kept for the same model only to be sent back (pipeline-hooks behavior 7, step 2f).

@@ -85,3 +85,19 @@ describe("a prompt build that spends its macro budget", () => {
     expect(hostile.sent).toHaveLength(0);
   });
 });
+
+describe("the reply says which macros ran out of time", () => {
+  const generationOf = async (s: Awaited<ReturnType<typeof scene>>) => {
+    const m = (await s.chats.readMessages(s.chat.activeBranchId, { limit: 400 })).messages.at(-1)!;
+    return m.swipes[m.current]!.generation;
+  };
+
+  test("a hostile card's macro is named in the reply's generation; a calm build leaves the field out", async () => {
+    const hostile = await scene(`Keeps the light. ${tally}`, { clock: ticking(1), promptBudgetMs: async () => 20 });
+    await hostile.turn();
+    expect((await generationOf(hostile))!.outOfTime).toEqual([{ macro: "tally" }]);
+    const calm = await scene("Keeps the light. {{mentions::the}} times.", { clock: ticking(1), promptBudgetMs: async () => 5_000 });
+    await calm.turn();
+    expect("outOfTime" in (await generationOf(calm))!).toBe(false);
+  });
+});

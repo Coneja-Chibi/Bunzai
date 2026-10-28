@@ -64,6 +64,7 @@ import { handleSummaryRoute } from "./server-chats-summary";
 import { handleDirectorRoute } from "./server-chats-director";
 import { handleDraftRoute } from "./server-chats-draft";
 import { regexReaderOf, trackerReaderOf } from "./server-scene-readers";
+import { handleLibraryTrackersRoute } from "./server-chats-library-trackers";
 import { handleTrackerChangesRoute } from "./server-chats-tracker-changes";
 import { handleCompareRoute } from "./server-chats-compare";
 import { handleFinalCutRoute } from "./server-chats-final-cut";
@@ -390,6 +391,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       if (p === "/api/chats/variables") return await handleVariablesRoute(url, chats, state);
       if (p === "/api/chats/variable-history") return await handleVariableHistoryRoute(url, chats);
       if (p === "/api/chats/tracker-changes") return await handleTrackerChangesRoute(url, chats, trackerReaderOf(store));
+      const libraryTrackers = await handleLibraryTrackersRoute(req, url, chats, trackerReaderOf(store), Date.now, null);
+      if (libraryTrackers) return libraryTrackers;
       if (p === "/api/chats/props") {
         const chat = await chats.getChat(url.searchParams.get("chatId") ?? "");
         return chat ? json(propsOf(chat)) : err("that scene is gone", 404);
@@ -422,6 +425,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
     if (roster) return roster;
     const draft = await handleDraftRoute(req, p, chats, state, readPreset, readLorebook, b, store, settings);
     if (draft) return draft;
+    const libraryTrackers = await handleLibraryTrackersRoute(req, url, chats, trackerReaderOf(store), Date.now, b);
+    if (libraryTrackers) return libraryTrackers;
     const trackerItem = await handleTrackerItemRoute(req, p, chats, b, store);
     if (trackerItem) return trackerItem;
     const trackerRefresh = await handleTrackerRefreshRoute(req, p, chats, b, store);

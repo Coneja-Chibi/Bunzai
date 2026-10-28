@@ -11,3 +11,6 @@ export function stopTurn(chatId: string, turnId: string): boolean {
   turn.controller.abort(new DOMException("stopped", "AbortError"));
   return true;
 }
+
+/** Whether any turn is answering in this scene right now (any take): the one question a write to the scene's state asks before it lands beside the turn. */
+export const turnRunning = (chatId: string): boolean => [...running.values()].some((t) => t.chatId === chatId);

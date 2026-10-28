@@ -48,8 +48,7 @@ strict decoders, and leaves out a tool that is gone or unreadable or whose dice 
 otherwise), at most 60 characters. A name already taken, by the lookup, an earlier tool or the loop's `invalid_tool`
 (what a call with a malformed name is answered as), gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice.
 
-No screen links a tool to a scene yet: the scene's prompting holds the list, and the linking control waits for its
-wireframe with the editor.
+The Control Booth links them: under Narrator Tool Access each linked tool is a tile with its icon, what it does, its token cost (the editor rail's own count) and a switch that links or unlinks it, with a Per reply line summing them, "Link a tool" over the library and "New tool in the Workbench" ([ui.md](../ui.md)).
 
 ## Editing
 

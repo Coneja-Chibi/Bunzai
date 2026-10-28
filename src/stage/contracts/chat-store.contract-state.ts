@@ -119,6 +119,47 @@ export function chatStoreStateContract(make: (clock: () => number) => ChatStore)
       expect(before).toEqual({ vars: { mood: { value: "calm", createdAt: 2_000, updatedAt: 2_000 } } });
     });
 
+    test("an edit back to what the take held before a reply is kept over that reply's own change, and a swipe leaves it standing", async () => {
+      const { store, main } = await seeded(1);
+      await turn(store, main, { kind: "reply" }, [set("hp", 12)]);
+      const reply = await turn(store, main, { kind: "reply" }, [set("hp", 7)]);
+      await store.recordMessageDeltas(main, reply.id, [set("hp", 12)]);
+      expect(await vars(store, main)).toEqual({ hp: 12 });
+      await turn(store, main, { kind: "swipe", messageId: reply.id }, [set("hp", 3)]);
+      expect(await vars(store, main)).toEqual({ hp: 12 });
+      const before = await store.sceneState(main);
+      await store.recordMessageDeltas(main, reply.id, [set("hp", 12)]); // what the message now shows: nothing to add
+      expect(await store.sceneState(main)).toEqual(before);
+    });
+
+    test("a guarded edit on a stale branch version is refused and writes nothing, and one on the current version lands", async () => {
+      const { store, main } = await seeded(1);
+      const reply = await turn(store, main, { kind: "reply" }, [set("hp", 7)]);
+      const read = (await store.readMessagesBefore(main, { limit: 1, liveOnly: true })).branchVersion!;
+      await turn(store, main, { kind: "reply" }, [set("hp", 3)]); // a reply lands: the version moves
+      const before = await store.sceneState(main);
+      await expect(store.recordMessageDeltas(main, reply.id, [set("hp", 12)], { expectedVersion: read })).rejects.toThrow("branch is at version");
+      expect(await store.sceneState(main)).toEqual(before);
+      const now = (await store.readMessagesBefore(main, { limit: 1, liveOnly: true })).branchVersion!;
+      const tip = (await store.readMessagesBefore(main, { limit: 1, liveOnly: true })).messages[0]!;
+      expect(await store.recordMessageDeltas(main, tip.id, [set("hp", 12)], { expectedVersion: now })).toBe(true);
+      expect(await vars(store, main)).toEqual({ hp: 12 });
+      expect(await store.recordMessageDeltas(main, "nope", [set("hp", 1)], { expectedVersion: 1 })).toBe(false); // an absent message is null, not a conflict
+    });
+
+    test("two edits built from the same read: the first lands, the second is refused and writes nothing; an expected absence holds only while it is absent", async () => {
+      const { store, main } = await seeded(1);
+      const reply = await turn(store, main, { kind: "reply" }, [set("hp", 7)]);
+      const read = [set("hp", 7), unset("mood")]; // what both editors saw: hp is 7, mood is not there
+      expect(await store.recordMessageDeltas(main, reply.id, [set("hp", 12)], { expect: read })).toBe(true);
+      const before = await store.sceneState(main);
+      await expect(store.recordMessageDeltas(main, reply.id, [set("hp", 9), set("mood", "calm")], { expect: read })).rejects.toThrow("changed since it was read");
+      expect(await store.sceneState(main)).toEqual(before);
+      expect(await vars(store, main)).toEqual({ hp: 12 });
+      await expect(store.recordMessageDeltas(main, reply.id, [set("mood", "calm")], { expect: [unset("mood"), set("hp", 12)] })).resolves.toBe(true); // the second editor, reading again, lands
+      await expect(store.recordMessageDeltas(main, reply.id, [set("mood", "tense")], { expect: [unset("mood")] })).rejects.toThrow("changed since it was read"); // the mood is there now
+    });
+
     test("cutting a middle message takes back only what it set, and restoring it puts that back", async () => {
       const { store, main, ids } = await seeded(5);
       await record(store, main, 2, set("a", "from 3"), set("only3", true));

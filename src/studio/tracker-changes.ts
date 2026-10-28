@@ -25,6 +25,8 @@ export interface TrackerChanged {
   icon?: string;
   /** The icon of each field that has one. */
   fieldIcons?: Record<string, string>;
+  /** For each changed number field that has a top (its own `max`, or the value of the field its `maxField` names, as the message left it): the bottom and the top its bar is drawn between. */
+  bars?: Record<string, { min: number; top: number }>;
   changes: TrackerChangeLine[];
 }
 
@@ -86,9 +88,13 @@ export async function trackerChangesBetween(chats: Pick<ChatStore, "sceneDeltas"
       left.set(slot, after);
       if (changes.length === 0) continue;
       const icons = (body?.fields ?? []).flatMap((f): [string, string][] => (f.icon ? [[f.name, f.icon]] : []));
+      const bars = Object.fromEntries((known?.fields ?? []).flatMap((f): [string, { min: number; top: number }][] => {
+        const top = f.maxField !== undefined ? after.get(f.maxField) : f.max;
+        return f.type === "number" && typeof top === "number" && Number.isFinite(top) && changes.some((c) => c.field === f.name) ? [[f.name, { min: f.min ?? 0, top }]] : [];
+      }));
       trackers.push({
         trackerId: id, name: body?.name ?? id, style: body?.changes ?? DEFAULT_CHANGE_STYLE,
-        ...(body?.icon ? { icon: body.icon } : {}), ...(icons.length > 0 ? { fieldIcons: Object.fromEntries(icons) } : {}), changes,
+        ...(body?.icon ? { icon: body.icon } : {}), ...(icons.length > 0 ? { fieldIcons: Object.fromEntries(icons) } : {}), ...(Object.keys(bars).length > 0 ? { bars } : {}), changes,
       });
     }
     state = next;

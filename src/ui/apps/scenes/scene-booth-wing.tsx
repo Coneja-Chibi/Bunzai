@@ -16,6 +16,7 @@ import { protect } from "../../_shared/protected-control";
 import { toErrorMessage } from "../../_shared/error-message";
 import { TOOL_ROUNDS_DEFAULT, TOOL_ROUNDS_MAX, TOOL_ROUNDS_MIN } from "../../../core/assembly/tool-rounds";
 import { LoreNum } from "./lore-fields";
+import { ToolTiles } from "./booth-tools";
 import type { LoadoutUnit } from "../../../core/loadout-panels";
 import { LoadoutBar } from "./loadout/loadout-bar";
 import { BoothLoreRow } from "./booth-lore-row";
@@ -85,7 +86,7 @@ export function BoothWing({ ctx, scene, busy, art, onChat, onSettings, onOpen }:
       <BoothSummaryRow ctx={ctx} chat={chat} onOpen={() => onOpen("context")} />
       <section className="bth-sec" data-part="scene.booth.runtime">
         <h3>Runtime Setup</h3>
-        <ToolAccessRows ctx={ctx} chat={chat} onChanged={onChat} />
+        <ToolAccessRows ctx={ctx} chat={chat} onChanged={onChat} windowTokens={chat.connection ? models.windowOf(chat.connection) : undefined} />
         <LastAsUserRow ctx={ctx} chat={chat} onChanged={onChat} />
       </section>
       <DirectorBooth ctx={ctx} chat={chat} busy={busy} onProps={() => { setPropsTick((n) => n + 1); onSettings(scene, ["props"]); }} />
@@ -98,7 +99,7 @@ export function BoothWing({ ctx, scene, busy, art, onChat, onSettings, onOpen }:
  * `agentLoopMaxTurns`, clamped 1 to 20): the scene's own prompting settings (ChatStore rule 37), read by the turn (turn-loop rule 18). Off means the
  * writing model receives no tools. The rounds box shows only while access is on, as in RoleCall, and is clamped on the way in.
  */
-export function ToolAccessRows({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void }): JSX.Element {
+export function ToolAccessRows({ ctx, chat, onChanged, windowTokens }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void; windowTokens?: number | undefined }): JSX.Element {
   const saved = chat.prompting?.toolAccess === true;
   const [asked, setAsked] = useState<boolean | null>(null);
   const on = asked ?? saved;
@@ -128,6 +129,7 @@ export function ToolAccessRows({ ctx, chat, onChanged }: { ctx: AppContext; chat
           <span><LoreNum label="Max tool rounds" className="bth-num" value={chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT} fallback={TOOL_ROUNDS_DEFAULT} min={TOOL_ROUNDS_MIN} max={TOOL_ROUNDS_MAX} onChange={(n) => void write({ toolRounds: Math.min(TOOL_ROUNDS_MAX, Math.max(TOOL_ROUNDS_MIN, n)) }, "Max tool rounds")} /> rounds</span>
         </div>
       )}
+      <ToolTiles ctx={ctx} chat={chat} onChanged={onChanged} windowTokens={windowTokens} accessOn={on} />
     </>
   );
 }

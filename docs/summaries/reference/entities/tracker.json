@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:8c2ab30b7d79fbd71b3d8b3b8514a6476bce3783c0ded4433eb3701fb487b8a6",
-  "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style, only stored. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the linking screen and the change visuals are not built yet.",
+  "sourceHash": "sha256:e344a80a4a674d47a3fed296037f0a82eb6a5a63cf06a984a120f221ac963540",
+  "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style the Messenger draws. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the Messenger's Trackers panel links, shows and edits them and that each reply shows what it changed in the style the tracker chose.",
   "topics": [
     "CanonicalTracker",
     "record and list layouts",
@@ -23,8 +23,8 @@
       "slug": "fields",
       "title": "Fields",
       "level": 2,
-      "sourceHash": "sha256:ea077fe94a5cf55e13b291eefae60db5df45c844cc86ac2825b1ed28eca4b6d1",
-      "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices. A number field may have a min and a max, or instead take its top from another number field of the same tracker through maxField, which the decoder refuses when it names no field, a non-number, itself, a loop, or comes with max. A value above such a top is brought down to it, never refused, the top settled first, and a write that moves a top stores the clamped dependents in the same batch, so stored equals read; a top below min leaves the min. A field may have a well-formed icon id, not checked against the glyph table, a tracker an icon and a change style, all only stored; and any field a default that must fit. There are no product limits beyond the hostile-input ceilings.",
+      "sourceHash": "sha256:04eb68d64f6ad4ad888d84d876fee97f7f078df93f1f4ca3e31a1340979f5afd",
+      "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices. A number field may have a min and a max, or instead take its top from another number field of the same tracker through maxField, which the decoder refuses when it names no field, a non-number, itself, a loop, or comes with max. A value above such a top is brought down to it, never refused, the top settled first, and a write that moves a top stores the clamped dependents in the same batch, so stored equals read; a top below min leaves the min. A field may have a well-formed icon id, not checked against the glyph table, a tracker an icon and a change style the Messenger draws; and any field a default that must fit. There are no product limits beyond the hostile-input ceilings.",
       "topics": [
         "field types",
         "shared field basics",
@@ -69,16 +69,17 @@
       "slug": "in-a-scene",
       "title": "In a scene",
       "level": 2,
-      "sourceHash": "sha256:9a0a8e64081e24715a8bd9e2b5775d7ad8afe33b46dfa004b854e8f2ff864838",
-      "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow. The scene's trackerChanges switch turns the change visuals on replies off; it is on unless the scene says otherwise, so only an off switch is stored.",
+      "sourceHash": "sha256:c242198493e12a1bf4994328b1f483539992ed0f1e0d671a9a8a4c266fcf13ea",
+      "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order, and the tracker macro reads the same state. The scene's trackerChanges switch turns the change visuals under each reply off, which the Messenger reads; only an off switch is stored. The Messenger's Trackers panel links and unlinks trackers, draws each value at the take's tip and edits it as the tool's own update, written as message-level deltas on the tip message.",
       "topics": [
         "ChatPrompting.trackers",
         "Trackers block",
         "template",
         "macro report",
-        "one-line values",
         "tracker macro",
-        "trackerChanges switch"
+        "trackerChanges switch",
+        "Trackers panel",
+        "person's edit"
       ],
       "children": []
     },
@@ -118,15 +119,15 @@
       "slug": "editing",
       "title": "Editing",
       "level": 2,
-      "sourceHash": "sha256:0fd59248b558f54b5f9762d8feb8da32eaf3279f0312456ccd3d5f130a7390d3",
-      "summary": "A tracker opens in the Workbench's tracker editor: the shared header, which says in how many scenes it is linked and lists them on a click, an Identity and settings disclosure (what it tracks, how the AI should update it, shape, icon, how a reply shows changes, and an optional prompt line in macros), and the fields in the field editor a tool shares. A number's To can be a number, another number field, or none. The rail shows the Trackers block as prompt assembly renders it at the starting values, its plain line, its token cost, and the tracker's update tool line. A rename is followed a keystroke at a time from the name it began with, in other fields' tops and in the prompt line's macros, so a name typed through on the way takes nothing; renaming the tracker rewrites its macros. A draft the decoder refuses, or a prompt line whose macros fail, is not saved and is explained in plain words. The scene linking control and change visuals still wait for wireframes.",
+      "sourceHash": "sha256:6ca35643329b7e1833486f7126987f99f2c7be4d837b178b158665f55b9c5b5d",
+      "summary": "A tracker opens in the Workbench's tracker editor: the shared header, which says in how many scenes it is linked and lists them on a click, an Identity and settings disclosure (what it tracks, how the AI should update it, shape, icon, how a reply shows changes, and an optional prompt line in macros), and the fields in the field editor a tool shares. A number's To can be a number, another number field, or none. The rail shows the Trackers block as prompt assembly renders it at the starting values, its plain line, its token cost, and the tracker's update tool line. A rename is followed a keystroke at a time from the name it began with, in other fields' tops and in the prompt line's macros, so a name typed through on the way takes nothing; renaming the tracker rewrites its macros. A draft the decoder refuses, or a prompt line whose macros fail, is not saved and is explained in plain words. Linking is the Trackers panel's; replies show changes as set here.",
       "topics": [
         "tracker editor",
         "field editor",
         "prompt rail",
         "update tool line",
         "decoder-gated save",
-        "no linking screen"
+        "change style"
       ],
       "children": []
     }

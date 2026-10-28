@@ -12,7 +12,8 @@ import type { Delta, SceneState } from "../../../core/scene-state/types";
 import type { ChatStore } from "../../contracts/chat-store";
 import type { CellCipher } from "../../crypto/cell-cipher";
 import { DamagedDataError } from "../../damaged-data-error";
-import { baseState, changed, checkImportedDeltas, rebuildState, sliceShown } from "../scene-state-rules";
+import { baseState, changed, checkImportedDeltas, rebuildState, requireHeld, sliceShown } from "../scene-state-rules";
+import { checkGuard } from "../chat-rules";
 import type { BranchSql, MessageSql } from "./chat-store-rows";
 import type { StageDatabase } from "./database";
 
@@ -26,6 +27,7 @@ export interface StateSqlDeps {
   run(sql: string, ...params: Param[]): number;
   writableBranch(id: string): BranchSql | null;
   writableMessage(id: string): MessageSql | null;
+  requireVersion(branch: BranchSql, expected: number | undefined): void;
   write<T>(work: () => T, limitMs?: number): Promise<T>;
 }
 
@@ -113,6 +115,9 @@ export function stateMethods(k: StateSqlDeps): StateSql {
   const stateBefore = (branchId: string, m: { id: string; seq: number }): SceneState =>
     build(branchId, [], [...shown(shownPath(branchId, m.seq)), { messageId: m.id, swipeId: null }], m.seq).state;
 
+  /** The state the message shows: everything shown before it, then its shown version's deltas and its own. */
+  const stateThrough = (branchId: string, m: { id: string; seq: number }): SceneState => build(branchId, [], shown(shownPath(branchId, m.seq + 1)), m.seq).state;
+
   const refresh = (branchId: string, fromSeq = 0): void => {
     // Keep only the keyframes on messages this branch still shows, before the change.
     k.run(
@@ -197,13 +202,17 @@ export function stateMethods(k: StateSqlDeps): StateSql {
         });
       },
 
-      async recordMessageDeltas(branchId, messageId, raw) {
+      async recordMessageDeltas(branchId, messageId, raw, guard) {
         checkImportedDeltas(raw);
+        const expected = checkGuard(guard);
         return k.write(() => {
           const m = k.writableMessage(messageId);
           if (!m || m.branch_id !== branchId) return false;
-          // A write of what the message already builds on adds nothing.
-          const added = changed(stateBefore(branchId, m), checkImportedDeltas(raw));
+          k.requireVersion(k.writableBranch(branchId)!, expected);
+          // A write of what the message already shows adds nothing.
+          const shown = stateThrough(branchId, m);
+          requireHeld(shown, guard?.expect);
+          const added = changed(shown, checkImportedDeltas(raw));
           if (added.length > 0) {
             stamp("message_deltas", "message_id", messageId, added);
             refresh(branchId, m.seq);

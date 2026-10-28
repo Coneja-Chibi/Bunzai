@@ -33,8 +33,7 @@ cannot write through a formula either; a message holding a write macro makes a f
 as `{{lastmessage}}`) fail. A blank formula and a macro error are refused, so a half run is never the answer.
 
 A formula has no step number of its own. The tool loop owns a time budget for all of one reply's tool calls
-(`TOOL_BUDGET_MS_DEFAULT`, 5 seconds, overridden by the setting `scenes.toolBudgetMs`, which has no screen yet and is
-for the wireframe pass): every tool run is handed what is left as a deadline, a call made after the budget is spent is
+(`TOOL_BUDGET_MS_DEFAULT`, 5 seconds, overridden by the setting `scenes.toolBudgetMs`, which Settings > You > Studio > Time budgets shows in seconds): every tool run is handed what is left as a deadline, a call made after the budget is spent is
 answered with an error and not run (a state-scoped write, the trackers' update, is cheap and keeps the narration and the
 state in step, so it still runs, whole and with no deadline), and the macro engine checks the deadline's clock
 every 64 nodes (`DEADLINE_CHECK_EVERY`, internal tuning), after every handler, and inside every loop of the word-watching

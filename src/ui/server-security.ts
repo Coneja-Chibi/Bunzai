@@ -56,6 +56,9 @@ export const json = (v: unknown, status = 200): Response =>
       "x-content-type-options": "nosniff",
     },
   });
+/** The shape of an id in a body or query: letters, digits, underscores and hyphens. */
+export const ROUTE_ID = /^[\w-]+$/;
+
 export const err = (message: string, status = 400): Response => json({ error: message }, status);
 /** Retryable refusal: 503, a stable code the client recognises, and how soon to ask again. */
 const busy = (message: string): Response => {

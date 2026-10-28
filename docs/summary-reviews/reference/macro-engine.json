@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/macro-engine",
   "sourcePath": "docs/reference/macro-engine.md",
-  "sourceHash": "sha256:709a415604b4747919dd92333e754fe93153ad2c6a5b72b518a1cea20a7ae6ce",
-  "semanticSummaryHash": "sha256:a5d691b8afaccf0f64471f1ca0eacdc2eecce290765f428748ac35ce424af47a",
+  "sourceHash": "sha256:030bce50eec1ed40b40741541f8b69184a565ef415466be3f823b4fb0ea45aef",
+  "semanticSummaryHash": "sha256:c835b6ced5de9974dc75ccefdeca93228975b7c10978e1f6b27e0d12bb0b4745",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Positional word index (rarest word first), deadline checks in loops, soft deadline for the prompt build (PROMPT_BUDGET_MS_DEFAULT 3 s, scenes.promptBudgetMs, only the failing handler errors and the rest builds) and hard deadline after every handler all match chat-watch.ts, deadline.ts, evaluate.ts, scene-turn-build.ts. What-it-does summary is 170 words; to fit the band it dropped 'macro output holding macros is evaluated again' (the page-level summary still carries the omitted-families fact), an acceptable trim.",
-  "reviewedAt": "2026-10-28T01:31:11.939Z"
+  "notes": "promptBudgetMs is shown in seconds under Settings > You > Studio > Time budgets, and a stopped macro is named under the reply via Generation.outOfTime (generation-rules.ts, outOfTimeOf, reply-changes.tsx). Summary matches; who-may-call-it remains the existing 59-word warning.",
+  "reviewedAt": "2026-10-28T15:31:26.862Z"
 }

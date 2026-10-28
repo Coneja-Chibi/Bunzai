@@ -4,11 +4,11 @@
  */
 import { useMemo, useState, type JSX } from "react";
 import type { AppContext } from "../../../app-contract";
-import { countText } from "../../../../core/tokens";
-import { callName, toolDefinition, toolParameters } from "../../../../core/tools";
+import { callName, toolParameters } from "../../../../core/tools";
 import type { ToolBody } from "../../../../entities/tool/schema";
 import { Tabs } from "../../../components/button";
 import { toolTakes } from "./tool-takes";
+import { toolTokens } from "./tool-cost";
 import { ToolTry } from "./tool-try";
 import s from "./piece.module.css";
 
@@ -19,8 +19,8 @@ export function ToolRail({ body, ctx, problem, rand }: { body: ToolBody; ctx: Ap
   const name = callName(body.name);
   const seen = useMemo(() => ({
     takes: toolTakes(toolParameters(body.fields)),
-    tokens: countText(JSON.stringify(toolDefinition(body, name))),
-  }), [body, name]);
+    tokens: toolTokens(body),
+  }), [body]);
   return (
     <aside className={s.rail} aria-label="The tool as the AI meets it" data-part="piece.tool.rail">
       <Tabs label="The tool as the AI meets it" value={view} onChange={setView} items={[{ value: "sees", label: "The AI sees" }, { value: "try", label: "Try" }]} />

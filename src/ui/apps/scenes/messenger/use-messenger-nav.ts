@@ -5,6 +5,7 @@
  * (Side, Wide, Popout or Layer) is shell/surfaces.ts; this hook does not know.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { PROGRAM_OPEN_EVENT, type ProgramOpenDetail } from "./program-open";
 import type { Program } from "./programs";
 
 /** A numbered ask from the page to open a wing (null: back to the chat); each number is honoured once. */
@@ -28,6 +29,11 @@ export function useMessengerNav(programs: readonly Program[], request: Messenger
     setVisited((v) => v.filter(has));
     setOpenId((id) => (has(id) ? id : null));
   }, [has]);
+  useEffect(() => {
+    const asked = (e: Event): void => open((e as CustomEvent<ProgramOpenDetail>).detail.program);
+    window.addEventListener(PROGRAM_OPEN_EVENT, asked);
+    return () => window.removeEventListener(PROGRAM_OPEN_EVENT, asked);
+  }, [open]);
   useEffect(() => {
     if (!request || request.n <= handled.current) return;
     handled.current = request.n;

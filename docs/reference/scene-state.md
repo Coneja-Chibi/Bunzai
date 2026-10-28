@@ -69,7 +69,7 @@ dropped first.
 | messages are cut or restored (`cutMessages`, `restoreCut`) | the first message cut or restored; a restore as a new take also builds the new take |
 | a take is forked (`fork`) | the new take, from its own path (the source is untouched) |
 | a take is deleted or restored | dropped, or rebuilt |
-| `recordMessageDeltas` | that message, in that take only |
+| `recordMessageDeltas` (optionally guarded by the branch version the caller read and by `expect`, the values it read at each slot and path, never stored: a stale version or an expectation the message no longer shows refuses and writes nothing) | that message, in that take only |
 | a continue is committed | nothing: it stamps no delta |
 
 A turn that fails, stops with nothing or is cancelled has stamped nothing: its deltas wait on the checkpoint and go
@@ -87,14 +87,14 @@ The library's global variables are untouched by this: they are still written bef
 by `putBackEffects` when a turn does not commit. A tool's writes join that pending set while the reply streams: the trackers' `update_trackers` tool ([tracker.md](entities/tracker.md)) adds its deltas through the turn's one door (`src/studio/scene-turn-writes.ts`), which takes tracker slots only, has no size cap, and saves the set on the checkpoint, awaited (a save that did not happen, such as a checkpoint that is gone, is a failure the model is told of, with nothing kept); the tool loop runs it as the one non-read tool (`access: "write"` with `stateScoped: true`, tier `narrator.tracker`). A swipe, regenerate or cut takes those writes back with the version, and a turn that fails or is dropped has stamped nothing. Other readers: the Context wing's variables route reads the `vars`
 slot, and a chat import writes its variables as the take's base with `setBranchBase`, with or without messages, so no greeting, cut or
 fork changes what the chat started with; the first reply's prompt sees them. A write of a value the
-message already builds on adds nothing. The variable history route reads the recorded changes of the newest 400 replies (`HISTORY_SCAN`).
+message already shows adds nothing: it is judged against the state through that message, its shown version's deltas included, so a person's edit back to the value the take held before a reply's own change is kept, and one equal to what the message shows is not recorded. The person's edit of a linked library tracker is the one caller that writes a tracker slot this way: `POST /api/chats/tracker-edit` builds the deltas with `applyTrackerUpdates` and records them on the take's tip message ([tracker.md](entities/tracker.md)). The variable history route reads the recorded changes of the newest 400 replies (`HISTORY_SCAN`).
 
 ## Not built yet
 
 Planned, in `.claude/plans/scene-state.md`, and absent from the code: more slots (the Spellbook, the summary, the Props
 trackers and the Director's rounds), global variables as a derived log, the Compendium's shared lane, writer
-classes and permissions, the Story Director updating library trackers, and any UI for hand edits or a state inspector. `recordMessageDeltas` is the
-store's door for a write that is not a turn's; nothing calls it yet outside tests, and nothing in the UI does.
+classes and permissions, the Story Director updating library trackers, hand edits of any slot other than a library tracker's, and a state inspector. `recordMessageDeltas` is the
+store's door for a write that is not a turn's; its one caller is the person's tracker edit (`POST /api/chats/tracker-edit`, from the Messenger's Trackers panel).
 
 ## What is tested
 

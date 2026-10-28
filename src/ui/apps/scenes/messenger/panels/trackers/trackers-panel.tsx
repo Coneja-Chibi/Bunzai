@@ -3,9 +3,9 @@
  * place of sixteen programs. Each is a card with its name and kind and a hover bar (Open, Pop out); Open drills into that tracker's OWN panel inside this one with a back arrow, so Refresh from
  * chat history, Clear all data with its Undo, AI Context, the item controls and the Story Director's update line are the module's, unchanged. The gear is the Story Director's automatic
  * update setting (`AutoUpdate`, written through the Director's own settings writer); "Change in Story Director" and "Manage features" use the page's existing door to the Props program. A
- * Storyboard has no panel of its own, so its Open is the Prop's gear (the Compendium's Storyboards). Each card also shows its module's one-line summary (props/trackers/summary.ts). Not drawn because nothing backs them yet (map-panels.md section 5): the last-update turn on each card, the tracker generation model (the scene's model is used, Chi's decision), and the in-list Refresh and Clear on a card (each lives in its module's panel).
+ * Storyboard has no panel of its own, so its Open is the Prop's gear (the Compendium's Storyboards). Each card also shows its module's one-line summary (props/trackers/summary.ts). The library trackers the scene links (ChatPrompting.trackers) lead the list as cards with a Library tag and the reply that last changed them, drawn and edited in library-draw.tsx, library-detail.tsx and library-pick.tsx (wireframe premiere/scene-pieces.html). Not drawn because nothing backs them yet (map-panels.md section 5): the last-update turn on each card, the tracker generation model (the scene's model is used, Chi's decision), and the in-list Refresh and Clear on a card (each lives in its module's panel).
  */
-import { useState, type CSSProperties, type JSX } from "react";
+import { useEffect, useState, type CSSProperties, type JSX } from "react";
 import { Button, IconButton, ListRow } from "../../../../../components/button";
 import { Ic } from "../../../../../_shared/ic";
 import { sceneProps } from "../../../props/registry";
@@ -18,7 +18,15 @@ import { SubFeatureList } from "../../../props/trackers/sub-features";
 import type { PopoutContext } from "../../../popout/popout-kind";
 import { PopoutSlot } from "../../../popout/popout-host";
 import { usePopout } from "../../../popout/popout-store";
+import { VirtualRows } from "../../../../../_shared/virtual-list";
+import { LibraryCard } from "./library-draw";
+import { LibraryDetail } from "./library-detail";
+import { LibraryPick } from "./library-pick";
+import { takeTrackerOpen, useRequestedTracker } from "./open-tracker";
 import { isOpenable, isTrackerProp, moduleOf, trackersSummary } from "./trackers-core";
+import { useLibraryTrackers } from "./use-library-trackers";
+
+const LIBRARY_CARD_PX = 150;
 
 
 function PopOutButton({ prop, ctx }: { prop: SceneProp; ctx: PopoutContext["ctx"] }): JSX.Element {
@@ -64,17 +72,28 @@ export function MessengerTrackersPanel({ ctx, chat, onChat, ids }: PopoutContext
   const shown = ids.flatMap((id) => all.find((p) => p.id === id && isOpenable(p)) ?? []);
   const [openId, setOpenId] = useState<string | null>(null);
   const [gear, setGear] = useState(false);
+  const [openLib, setOpenLib] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
+  const linked = chat.prompting?.trackers ?? [];
+  const lib = useLibraryTrackers(ctx, chat, linked);
+  const requested = useRequestedTracker(chat.id);
+  // A chip under a reply asked for this tracker (open-tracker.ts): open it, whatever the panel was showing.
+  useEffect(() => { if (requested === null) return; setOpenLib(requested); setPicking(false); setOpenId(null); takeTrackerOpen(chat.id); }, [requested, chat.id]);
   const dm = useDirectorPanel(ctx, chat);
   const opened = openId === null ? undefined : shown.find((p) => p.id === openId && p.panel);
   const more = all.filter((p) => isTrackerProp(p) && isOpenable(p)).length - shown.length;
   const director = dm.load.state === "ready" ? dm.load.panel : null;
   const open = (p: SceneProp): void => { if (p.panel) setOpenId(p.id); else p.gear?.(); };
 
+  const libOpened = openLib !== null && lib.load.state === "ready" ? lib.load.data.trackers.find((t) => t.id === openLib) : undefined;
+
+  if (picking) return <div className="msn-trk" data-part="scene.messenger.trackers"><LibraryPick ctx={ctx} chat={chat} linked={linked} bodies={lib.load.state === "ready" ? lib.load.data.trackers.map((t) => t.body) : null} builtIn={all.filter((p) => isTrackerProp(p) && isOpenable(p))} builtInOn={ids} {...(onChat ? { onChat } : {})} onBack={() => setPicking(false)} /></div>;
+  if (libOpened && lib.load.state === "ready") return <div className="msn-trk" data-part="scene.messenger.trackers"><LibraryDetail ctx={ctx} data={lib.load.data} tracker={libOpened} edit={lib.edit} running={lib.running} onBack={() => setOpenLib(null)} /></div>;
   if (opened) return <div className="msn-trk" data-part="scene.messenger.trackers"><Detail prop={opened} ctx={ctx} chat={chat} {...(onChat ? { onChat } : {})} onBack={() => setOpenId(null)} /></div>;
   return (
     <div className="msn-trk" data-part="scene.messenger.trackers">
       <div className="msn-trk-top">
-        <span className="msn-trk-sum" data-part="scene.messenger.trackers.summary">{trackersSummary(shown.length, director && { on: director.on, autoUpdate: director.settings.autoUpdate, every: director.settings.every })}</span>
+        <span className="msn-trk-sum" data-part="scene.messenger.trackers.summary">{trackersSummary(shown.length + (linked.length > 0 && lib.load.state === "ready" ? lib.load.data.trackers.length : linked.length), director && { on: director.on, autoUpdate: director.settings.autoUpdate, every: director.settings.every })}</span>
         <IconButton data-part="scene.messenger.trackers.settings" variant="quiet" size="sm" icon="lucide:settings" label="Panel AI settings" aria-pressed={gear} onClick={() => setGear(!gear)} />
       </div>
       {gear ? (
@@ -85,7 +104,7 @@ export function MessengerTrackersPanel({ ctx, chat, onChat, ids }: PopoutContext
         </div>
       ) : (
         <>
-          {director && (
+          {director && shown.length > 0 && (
             <p className="dr-note-line" role="status" data-part="scene.messenger.trackers.update-line">
               <Ic name="lucide:refresh-cw" size={14} />
               <span>{director.on && director.settings.autoUpdate ? "Updated by the Story Director after your replies." : "Trackers change only when you edit or Refresh them."}</span>
@@ -93,9 +112,13 @@ export function MessengerTrackersPanel({ ctx, chat, onChat, ids }: PopoutContext
             </p>
           )}
           <div className="msn-trk-list" data-part="scene.messenger.trackers.list">
-            {shown.length === 0 && <p className="msn-trk-empty">No tracker is switched on in this scene.</p>}
+            {shown.length === 0 && linked.length === 0 && <p className="msn-trk-empty">No tracker is switched on in this scene.</p>}
+            {linked.length > 0 && lib.load.state === "loading" && <p className="msn-trk-empty" role="status">Loading the trackers...</p>}
+            {lib.load.state === "failed" && linked.length > 0 && <p className="dr-note-line bad" role="alert">{lib.load.why}<span className="dr-note-x"><Button size="sm" onClick={lib.reload}>Try again</Button></span></p>}
+            {linked.length > 0 && lib.load.state === "ready" && <VirtualRows items={lib.load.data.trackers} keyOf={(t) => t.id} estimate={LIBRARY_CARD_PX} gap={8} render={(t) => <LibraryCard tracker={t} onOpen={() => setOpenLib(t.id)} />} />}
             {shown.map(/* bounded-ok: fixed registry of panels / settings / props / platforms */ (p) => <Card key={p.id} prop={p} ctx={ctx} chat={chat} onOpen={() => open(p)} />)}
           </div>
+          <Button data-part="scene.messenger.trackers.pick.open" size="sm" icon="lucide:plus" onClick={() => setPicking(true)}>Add or remove trackers</Button>
         </>
       )}
       <footer className="msn-trk-foot" data-part="scene.messenger.trackers.footer">

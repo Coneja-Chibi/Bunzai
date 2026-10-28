@@ -5,7 +5,7 @@
  */
 import { useMemo, useRef, useState, type JSX } from "react";
 import glyphs from "../../../generated/ic-glyphs.json";
-import { Ic, type IconName } from "../../_shared/ic";
+import { Ic, knownIcon, type IconName } from "../../_shared/ic";
 import { VirtualRows } from "../../_shared/virtual-list";
 import { Button, Chip, ListRow } from "../button";
 import { Input } from "../rc-controls";
@@ -17,14 +17,12 @@ export const QUICK_ICONS: readonly IconName[] = ["lucide:heart", "lucide:sword",
 const ALL = Object.keys(glyphs) as IconName[];
 const ROW_ESTIMATE = 36;
 
-const known = (id: string | undefined): id is IconName => id !== undefined && Object.hasOwn(glyphs, id);
-
 export function IconPicker({ value, onChange, label = "Icon" }: { value: string | undefined; onChange(next: string | undefined): void; label?: string }): JSX.Element {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const scroller = useRef<HTMLDivElement>(null);
   const shown = useMemo(() => ALL.filter((id) => id.includes(query.trim().toLowerCase())), [query]);
-  const chosen = known(value) ? value : undefined;
+  const chosen = knownIcon(value) ? value : undefined;
   const shortRow = chosen && !QUICK_ICONS.includes(chosen) ? [...QUICK_ICONS, chosen] : QUICK_ICONS;
   const pick = (id: IconName | undefined): void => { onChange(id); setOpen(false); };
   return (

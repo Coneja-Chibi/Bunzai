@@ -6,10 +6,7 @@
 import type { ChatStore } from "../stage/contracts/chat-store";
 import type { ReadTracker } from "../studio/library-trackers";
 import { trackerChangesBetween } from "../studio/tracker-changes";
-import { err, json } from "./server-security";
-
-/** The shape of an id in a query: letters, digits, underscores and hyphens. */
-const ID = /^[\w-]+$/;
+import { err, json, ROUTE_ID as ID } from "./server-security";
 
 export async function handleTrackerChangesRoute(url: URL, chats: ChatStore, read: ReadTracker | undefined): Promise<Response> {
   const branchId = url.searchParams.get("branchId") ?? "";

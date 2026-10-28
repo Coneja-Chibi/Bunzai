@@ -70,7 +70,7 @@ variable write, or whole run produces, caps the number of nodes one run evaluate
 stops with an error, as the tool loop does for a formula; the word-watching macros also check it inside their loops. A `soft` deadline,
 which a prompt build uses, is watched only by those handlers: the one that runs out of time fails with the error in the macro report, and
 the rest of the prompt still builds, so a hostile card cannot empty it. The prompt build's budget is `PROMPT_BUDGET_MS_DEFAULT`, 3 seconds,
-overridden by the setting `scenes.promptBudgetMs`, which has no screen yet), and nests at most 100 deep. When a cap trips, the run records one error and stops: no handler is called after it, a
+overridden by the setting `scenes.promptBudgetMs`, which Settings > You > Studio > Time budgets shows in seconds; a macro it stops is named under the reply, `Generation.outOfTime`), and nests at most 100 deep. When a cap trips, the run records one error and stops: no handler is called after it, a
 lazy handler is unwound out of the argument that tripped before it can write, and no cut-off value
 reaches a variable, template, or user macro. A test scans every source file in the package for
 clock, randomness, I/O, and host-locale reads, and checks the scan against a list of those forms.

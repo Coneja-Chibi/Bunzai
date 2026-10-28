@@ -4,6 +4,7 @@
  * the whole text. Pure.
  */
 import type { MacroProcessResult, MacroVariable } from "../macros";
+import { DEADLINE_MESSAGE } from "../macros/deadline";
 import type { MacroChange, MacroMutation, MacroReport, MacroUse, VariableDiff } from "./types";
 
 /** The longest value (in characters) a report keeps, and how many rows of each kind. */
@@ -87,4 +88,16 @@ export function variableChanges(
     }
   }
   return out;
+}
+
+/** A report error's macro is the macro's whole source text (`{{tally::...}}`, as long as the card made it); its name is what follows the braces. A text that is not a macro keeps its first characters. */
+const macroName = (source: string): string => clip(/^\{\{\s*([^\s:}]+)/.exec(source)?.[1] ?? source);
+
+/**
+ * The macros a prompt build's time budget stopped, for the reply's generation (`Generation.outOfTime`): one entry per macro name, in the order they ran out, read off the errors the report
+ * already holds. The report does not say which block of the prompt a macro sat in, so only the name is kept; a run stopped before a macro was named keeps a blank name. Undefined when none ran out.
+ */
+export function outOfTimeOf(report: MacroReport | undefined): { macro: string }[] | undefined {
+  const names = [...new Set((report?.errors ?? []).filter((e) => e.message === DEADLINE_MESSAGE).map((e) => macroName(e.macro)))];
+  return names.length > 0 ? names.map((macro) => ({ macro })) : undefined;
 }

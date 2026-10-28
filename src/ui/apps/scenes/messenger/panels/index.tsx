@@ -2,7 +2,7 @@
  * Where the Messenger's own presentations of a Prop's panel are attached to the programs (messenger/programs.ts). A program's `panel` is a pop-out kind; the page draws it through
  * PopoutSlot, so giving the program a kind with the SAME id and a different `render` changes how it looks in the Messenger and nothing else: the floating copy, its saved place and
  * its "is floating" placeholder still belong to the original kind. Kinds are held so a program list that did not change keeps the same kind (programs.ts `useStablePrograms`).
- * The Trackers program is new here: the tracker Props that are on collapse into one program whose panel lists them (trackers/trackers-panel.tsx).
+ * The Trackers program is new here: the tracker Props that are on, and the library trackers the scene links, collapse into one program whose panel lists them (trackers/trackers-panel.tsx).
  */
 import type { IconName } from "../../../../_shared/ic";
 import type { PopoutKind } from "../../popout/popout-kind";
@@ -39,8 +39,8 @@ function trackersKind(ids: readonly string[]): PopoutKind {
 /** Props with a panel of their own program, minus the trackers, which share one. */
 export const hasOwnProgram = (p: SceneProp): boolean => p.panel !== undefined && !isTrackerProp(p);
 
-/** The Trackers program while any tracker is on, else none. */
-export function trackersProgram(props: readonly SceneProp[], on: readonly string[] | null): { id: string; wing: string; title: string; icon: IconName; panel: PopoutKind }[] {
+/** The Trackers program while any tracker is on, any library tracker is linked or the library holds one (so the first can be added), else none. */
+export function trackersProgram(props: readonly SceneProp[], on: readonly string[] | null, linked: readonly string[] = [], libraryHasTrackers = false): { id: string; wing: string; title: string; icon: IconName; panel: PopoutKind }[] {
   const ids = trackersOn(props, on);
-  return ids.length === 0 ? [] : [{ id: "trackers", wing: "props", title: "Trackers", icon: TRACKERS_ICON, panel: trackersKind(ids) }];
+  return ids.length === 0 && linked.length === 0 && !libraryHasTrackers ? [] : [{ id: "trackers", wing: "props", title: "Trackers", icon: TRACKERS_ICON, panel: trackersKind(ids) }];
 }

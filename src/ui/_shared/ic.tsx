@@ -5,6 +5,9 @@ import "./icon-variant-styles";
 
 export type IconName = keyof typeof glyphs;
 
+/** Whether an icon id is one the build draws; a piece may carry an id the build does not ship, which draws nothing rather than failing. */
+export const knownIcon = (id: string | undefined): id is IconName => id !== undefined && Object.hasOwn(glyphs, id);
+
 /** `fill` draws a lucide glyph solid, as RoleCall does for the Booth bolt and the stop square; mdi glyphs are always solid. */
 export function Ic({ name, size = 16, fill = false, className }: { name: IconName; size?: number; fill?: boolean; className?: string }): JSX.Element {
   const solid = fill || name.startsWith("mdi:");

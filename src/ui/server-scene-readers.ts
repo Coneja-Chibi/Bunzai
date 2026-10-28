@@ -10,7 +10,7 @@ import { bodyReader } from "../studio/body-reader";
 import type { ReadTracker } from "../studio/library-trackers";
 import { readPiece } from "../studio/library-tools";
 import type { TrackerBody } from "../entities/tracker/schema";
-import { SETTING_KEYS } from "../studio/settings-shape";
+import { SETTING_KEYS, budgetMsOf } from "../studio/settings-shape";
 
 export const choiceDefaultsOf = (settings: SettingsStoreLike | undefined): ((presetId: string) => Promise<Record<string, unknown> | undefined>) | undefined =>
   settings ? async (presetId) => defaultsFor((await settings.read() as unknown as Record<string, unknown>)[PRESET_CHOICE_DEFAULTS_KEY], presetId) : undefined;
@@ -21,15 +21,13 @@ export const regexReaderOf = (studio: StudioStoreLike | undefined): ((id: string
 /** The reply's tool time budget from the settings (SETTING_KEYS.toolBudgetMs): a positive finite number of ms, else nothing (the turn then uses its default). */
 export const toolBudgetOf = (settings: SettingsStoreLike | undefined): (() => Promise<number | undefined>) | undefined =>
   settings ? async () => {
-    const value = ((await settings.read()) as unknown as Record<string, unknown>)[SETTING_KEYS.toolBudgetMs];
-    return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : undefined;
+    return budgetMsOf(((await settings.read()) as unknown as Record<string, unknown>)[SETTING_KEYS.toolBudgetMs]);
   } : undefined;
 
 /** The prompt build's macro time budget from the settings (SETTING_KEYS.promptBudgetMs), read the same way. */
 export const promptBudgetOf = (settings: SettingsStoreLike | undefined): (() => Promise<number | undefined>) | undefined =>
   settings ? async () => {
-    const value = ((await settings.read()) as unknown as Record<string, unknown>)[SETTING_KEYS.promptBudgetMs];
-    return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : undefined;
+    return budgetMsOf(((await settings.read()) as unknown as Record<string, unknown>)[SETTING_KEYS.promptBudgetMs]);
   } : undefined;
 
 /** The library's tracker pieces a scene links, each read through the tracker kind's strict decoder (library-trackers.ts). */

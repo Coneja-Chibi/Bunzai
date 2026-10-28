@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/scene-state",
   "sourcePath": "docs/reference/scene-state.md",
-  "sourceHash": "sha256:788464617772d6205134bd199ddc0dc3b11178b69439d0d703c0cb3e5c6cdaa4",
+  "sourceHash": "sha256:531b45ebd85415296fa1d6288deabeb69ea57937d8e736ca4a6684c5b4fdac67",
   "summary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet. A range read of the same data shows what each message changed.",
   "topics": [
     "slots",
@@ -79,7 +79,7 @@
       "slug": "rebuild",
       "title": "Rebuild",
       "level": 2,
-      "sourceHash": "sha256:b92afa510e1d11330d8708d631ddb0d4c464bc4799498f3f99e0d57327c0ca75",
+      "sourceHash": "sha256:75dec3cd61f6cfc203df4fb60d9ff8611fa087c7eb8ad1fddbceee1bc417703c",
       "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else the take's base, else nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Committing a reply, adding or choosing a version, and cutting or restoring each rebuild from the message they changed; a fork rebuilds the new take, and deleting a take drops its cache. A continue stamps no delta, and a failed turn has stamped nothing. sceneStateBefore answers what a new version of a message builds from. sceneDeltas is a range read of the same data: the state before the first message without its own deltas, and each live message's deltas in fold order, changing nothing.",
       "topics": [
         "transactional rebuild",
@@ -94,8 +94,8 @@
       "slug": "how-a-turn-uses-it",
       "title": "How a turn uses it",
       "level": 2,
-      "sourceHash": "sha256:1a173772788d427460f7df738560384aa921701649b37aeea2152f01f918d76b",
-      "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes as before, and scene-turn turns them into vars deltas and saves them on the checkpoint with the trace. commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited and waits up to 30 seconds for the write lock, so a lost save cannot commit a reply without its variables. A turn's deltas are always saved, never refused for size. Global variables are untouched. The variables route reads the vars slot, and a chat import records its variables as the take's base, with or without messages, so no greeting, cut or fork changes them. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write.",
+      "sourceHash": "sha256:280655ca9e149e777aa6dc37b26c83957258d107ef67f0efa288f2b201fd2530",
+      "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited and waits up to 30 seconds for the write lock, so a lost save cannot commit a reply without its variables, and a turn's deltas are never refused for size. Global variables are untouched. The variables route reads the vars slot, and a chat import records its variables as the take's base. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
       "topics": [
         "load before the reply",
         "deltas on the checkpoint",
@@ -111,8 +111,8 @@
       "slug": "not-built-yet",
       "title": "Not built yet",
       "level": 2,
-      "sourceHash": "sha256:87e719bc948b5c07b0b0b7bc8b5ccde82e509bb40a3170ed2aba00f151012b15",
-      "summary": "Everything past the first slot is planned in the scene-state plan and absent from the code. That covers more slots such as the Spellbook, the summary, the Props trackers and the Director's rounds, global variables as a derived log, the Compendium's shared lane, writer classes and permissions, the Story Director updating library trackers, and any interface for hand edits or a state inspector. recordMessageDeltas is the store's door for a write that is not a turn's, and nothing calls it yet outside tests. Nothing in the interface does. This section exists so that no reader takes a planned part of the design for current behavior.",
+      "sourceHash": "sha256:b0537939ad85f86f061f9e85c409bd17ce043fb0392e6c3ffec4a6d5fc4b8517",
+      "summary": "Everything past the first slot is planned in the scene-state plan and absent from the code. That covers more slots such as the Spellbook, the summary, the Props trackers and the Director's rounds, global variables as a derived log, the Compendium's shared lane, writer classes and permissions, the Story Director updating library trackers, hand edits of any slot other than a library tracker's, and a state inspector. recordMessageDeltas is the store's door for a write that is not a turn's; its one caller is the person's tracker edit from the Messenger's Trackers panel. This section exists so that no reader takes a planned part of the design for current behavior.",
       "topics": [
         "planned slots",
         "global variables later",

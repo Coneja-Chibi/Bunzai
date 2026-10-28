@@ -27,7 +27,7 @@ describe("Writing page", () => {
 
   test("the preset select names the preset, the blocks drill counts what is on, the editor opens its program, and a new preset starts clean", async () => {
     const r = withOwn();
-    stub(r, "listEntities", () => [{ id: "p1", kind: "preset", name: "Narrator bank" }, { id: "p2", kind: "preset", name: "Plain" }]);
+    stub(r, "listEntities", (kind) => (kind === "preset" ? [{ id: "p1", kind: "preset", name: "Narrator bank" }, { id: "p2", kind: "preset", name: "Plain" }] : []));
     const m = await mountSingle(installed, createElement("div", null, body(r, "preset")));
     await wait(30);
     expect(control<HTMLSelectElement>(m.host, "Preset").value).toBe("preset:p1");

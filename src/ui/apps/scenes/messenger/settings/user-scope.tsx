@@ -17,6 +17,7 @@ import { DesktopNoticeRow } from "./user/desktop-notice";
 import { MusicDrills, SpotifyRows } from "./user/music";
 import { ACCESS_ROWS, MUSIC_ROWS } from "./user/pref-rows";
 import { ProfileRows } from "./user/profile";
+import { BudgetRows } from "./user/budget-rows";
 import { MachineRows, PublishRows, StudioRows, SummaryRows, WorkbenchRows } from "./user/studio";
 
 const rows = (env: RowEnv, ...defs: RowDef[]): JSX.Element => <RowList rows={defs} env={env} />;
@@ -57,6 +58,7 @@ export function userScope(a: WingArgs, env: RowEnv, open: OpenProgram): Settings
       { id: "publish", title: "You publish to", description: "Pick any that fit. Every format stays ready either way.", body: <PublishRows ctx={a.ctx} /> },
       { id: "workbench", title: "Workbench", body: <WorkbenchRows env={env} /> },
       { id: "memory", title: "Memory and summaries", description: "The summary settings new scenes start with.", body: <SummaryRows ctx={a.ctx} /> },
+      { id: "budgets", title: "Time budgets", description: "How long a reply's tools and a prompt build's macros may take.", body: <BudgetRows ctx={a.ctx} /> },
       { id: "machine", title: "This computer", description: "Opens in the Settings app.", body: <MachineRows ctx={a.ctx} /> },
     ] },
   ];

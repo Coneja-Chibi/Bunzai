@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:8c2ab30b7d79fbd71b3d8b3b8514a6476bce3783c0ded4433eb3701fb487b8a6",
-  "semanticSummaryHash": "sha256:5316819dfb7313fd2cf51f81c371b624e2ce36cc082b6d39cd34d74ca32413a1",
+  "sourceHash": "sha256:e344a80a4a674d47a3fed296037f0a82eb6a5a63cf06a984a120f221ac963540",
+  "semanticSummaryHash": "sha256:07a06349433adfef97fd1b9766b2731ce712c168af2d7efb6a9d1c33f9c4923b",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Sentence now matches promptLineProblem: a macro naming another tracker passes only when that name is a library tracker other than this one (own piece id filtered from the set), otherwise it is held back with the 'no tracker with that name' message; engine problems still block. Sidecar's 'a prompt line whose macros fail is not saved' remains true.",
-  "reviewedAt": "2026-10-28T06:56:13.161Z"
+  "notes": "The stale 'nothing reads' sentence is fixed: the page now says the Messenger reads the style, icons and changes read, matching use-reply-notes.tsx, reply-changes-core.ts and the panel. Remaining claims unchanged and verified. Minor omission only: the changes-read answer shape in the page lists { trackerId, name, style, icon?, fieldIcons?, changes } but the code also returns bars (tracker-changes.ts, described in ui.md); add it when next edited. Bands ok.",
+  "reviewedAt": "2026-10-28T16:06:02.858Z"
 }

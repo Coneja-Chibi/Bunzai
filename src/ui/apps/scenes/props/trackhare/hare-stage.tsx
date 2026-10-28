@@ -19,6 +19,7 @@ import { PopoutPlaceholder } from "../../popout/popout-panel";
 import { usePopout } from "../../popout/popout-store";
 import { ChainsSheet } from "./chains-sheet";
 import { TokensSheet } from "./tokens-sheet";
+import { useSceneSignals } from "../../scene-signals";
 import {
   badgeCount, clampButtonRect, DEFAULT_BUTTON_RECT, parseButtonRect, parseDensity, parseSort,
   HARE_PREFS, type ButtonRect, type Density, type SortMode,
@@ -30,6 +31,7 @@ const LONG_PRESS_MS = 500;
 type Panel = "popover" | "options" | "chains" | "tokens" | null;
 
 export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.Element {
+  const { version } = useSceneSignals(chat.id); // a swipe or a regenerate moves the take's version, not the chat's updatedAt
   const [rect, setRect] = useState<ButtonRect>(() => parseButtonRect(ctx.prefs.get(HARE_PREFS.button)) ?? DEFAULT_BUTTON_RECT);
   const [density, setDensity] = useState<Density>(() => parseDensity(ctx.prefs.get(HARE_PREFS.density)));
   const [group, setGroup] = useState(() => boolOr(ctx.prefs.get(HARE_PREFS.group), true));
@@ -70,7 +72,7 @@ export function HareStage({ ctx, chat }: { ctx: AppContext; chat: Chat }): JSX.E
     setSelectedMessageId(undefined);
     void fetchTrace(undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chat.id, chat.updatedAt, chat.activeBranchId]);
+  }, [chat.id, chat.updatedAt, chat.activeBranchId, version]);
 
   useEffect(() => {
     setRect((r) => clampButtonRect(r, containerSize()));

@@ -32,6 +32,8 @@ async function shapeFiles(): Promise<string[]> {
     "src/generated/kind-schemas.ts",
     ...adjacent,
     "src/studio/settings-shape.ts",
+    // What a stored reply's generation may hold (a swipe's cell): the one check every store applies.
+    "src/stage/store/generation-rules.ts",
     "src/core/canonical.ts",
     // Where the library lives: the database's migrations, and the pieces, the Studio's own documents,
     // and Kit's transcripts inside it.
@@ -420,7 +422,12 @@ async function shapeFiles(): Promise<string[]> {
 // lowercase letters, digits and hyphens, at most SANITY_TEXT long) and imports no UI table; the schema type is a string. A piece naming a glyph this build lacks therefore still decodes (it is the UI that draws
 // only known ids), which removes the risk that dropping a glyph makes stored trackers undecodable. field-value.ts (pinned): a number's min now wins over a top that sits below it. ADDITIVE and
 // COMPATIBLE (a previously accepted piece is still accepted). The pin was recomputed.
-const PINNED_SHAPE_HASH = "eef1e351be2b17842a7ca98578bebe1b88837570d587f342ee3f09a4053a3bb9";
+// 2026-10-28, piece UI step 3 (scene side): a stored reply's generation gains optional `outOfTime`, a list of `{ macro }` naming the macros a prompt build's time budget stopped while the reply was built
+// (core/assembly/macro-report.ts outOfTimeOf; absent when none did, an empty list or any other key is refused), checked in src/stage/store/generation-rules.ts, which is pinned here from now on because it decides
+// what a swipe's generation may hold. ADDITIVE: no key is removed or reshaped, absent means none ran out, and a reply without it reads as before (an older build refuses a reply that has it, so ONE-WAY in that
+// sense only). src/studio/settings-shape.ts (pinned) only had two comments reworded (the budget keys now have a screen); no key changed. The pin was recomputed.
+// 2026-10-28 (review fixes): generation-rules.ts (pinned) now refuses an outOfTime list past SANITY_LIST entries or a name past SANITY_TEXT characters as unusually large (a hostile-input ceiling, same family as the entity decoders); no stored key or shape changed, and a value that was accepted and is not past a ceiling is still accepted. settings-shape.ts (pinned) gains the shared reader budgetMsOf and MS_PER_SECOND (no key changed). The pin was recomputed.
+const PINNED_SHAPE_HASH = "8bf4b74da36c856490f161f590e9de71d4cc4f0980d327f77e9911fb0e8b6a9b";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

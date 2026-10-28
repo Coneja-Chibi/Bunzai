@@ -18,6 +18,9 @@ import type { TrackerRefresh, TrackerRefreshInput } from "../studio/scene-tracke
 import type { TurnEvent } from "../studio/scene-turn";
 import type { FormulaTry } from "../studio/scene-forecast";
 import type { LinkedScene } from "../studio/piece-links";
+import type { SceneTrackers } from "../studio/scene-trackers";
+import type { TrackerEditInput } from "../studio/tracker-edit";
+import type { MessageTrackerChanges } from "../studio/tracker-changes";
 import type { SceneSearchResult } from "../studio/scene-search";
 import type { OpenScene, SceneAction, SceneGrave, SceneMessagePage, SceneSummary, SceneTailMessage } from "../studio/scenes";
 
@@ -170,6 +173,12 @@ export interface ScenesApi {
   getSceneTrace(chatId: string, messageId?: string): Promise<SceneTrace | null>;
   /** The live scenes whose prompting links this library tracker or tool (read only; settings alone, no message is read). */
   getLinkedScenes(kind: string, id: string): Promise<LinkedScene[]>;
+  /** The Trackers panel's library trackers: each the scene links with its value at the take's tip and the reply that last changed it, one read for all (read only). */
+  getSceneTrackers(chatId: string): Promise<SceneTrackers>;
+  /** The person's own edit of one linked tracker, written on the tip message (the update is the narrator tool's own shape); answers the trackers as they now stand, rejects with the sentence that says why when it is refused. */
+  editSceneTracker(input: TrackerEditInput): Promise<SceneTrackers>;
+  /** What each live message from `from` through `to` (the tip when left out) changed in the library trackers, with each tracker's change style and icons (read only). */
+  getTrackerChanges(branchId: string, from: string, to?: string): Promise<{ messages: MessageTrackerChanges[] }>;
   /** The Context wing's Next send: the request a send of `draft` would build now (read only; asks no model). */
   getSceneForecast(chatId: string, draft: string, signal?: AbortSignal): Promise<SceneForecast>;
   /** The formula editor's Try: the formula text run read-only on a copy of the scene's macro context, with how long it took (read only; asks no model). */

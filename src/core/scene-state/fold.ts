@@ -82,6 +82,27 @@ export function dropUnchanged(base: SceneState, deltas: readonly Delta[], slotOf
   });
 }
 
+/**
+ * What `state` holds at each delta's slot and path, written as deltas: a value it has, or a removal where it has none. The caller keeps these as its expectation of the state, and a later write
+ * checks it with `dropUnchanged` (an expectation the state no longer meets would change it). Times are the deltas' own.
+ */
+export function heldAs(state: SceneState, deltas: readonly Delta[], slotOf: (id: string) => SlotDef | undefined): Delta[] {
+  return deltas.flatMap((d): Delta[] => {
+    const def = slotOf(d.slot);
+    if (!def) return [];
+    const current = state[d.slot] ?? def.default;
+    const base = { slot: d.slot, path: d.path, at: d.at };
+    if (def.diff === "value") return [{ ...base, value: current }];
+    const name = d.path[0]!;
+    if (def.diff === "fields") {
+      const fields = fieldsOf(current);
+      return [Object.hasOwn(fields, name) ? { ...base, value: fields[name]!.value } : { ...base, removed: true }];
+    }
+    const row = (Array.isArray(current) ? current : []).find((r) => isRecord(r) && String(r[def.key!]) === name);
+    return [row === undefined ? { ...base, removed: true } : { ...base, value: row }];
+  });
+}
+
 export function fold(base: SceneState, deltas: readonly Delta[], slotOf: (id: string) => SlotDef | undefined): SceneState {
   const out: SceneState = { ...base };
   foldInto(out, deltas, slotOf, new Set());

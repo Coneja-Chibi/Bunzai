@@ -131,6 +131,7 @@ test("every store method refuses while locked, and nothing in the database chang
     ["resumeIncomplete", () => chats.resumeIncomplete()],
     ["sceneState", () => chats.sceneState(chat.activeBranchId)],
     ["sceneStateBefore", () => chats.sceneStateBefore(chat.activeBranchId, m!.id)],
+    ["sceneDeltas", () => chats.sceneDeltas(chat.activeBranchId, m!.id)],
     ["setBranchBase", () => chats.setBranchBase(chat.activeBranchId, [{ slot: "vars", path: ["a"], value: 1, at: 1 }])],
     ["recordMessageDeltas", () => chats.recordMessageDeltas(chat.activeBranchId, m!.id, [{ slot: "vars", path: ["a"], value: 1, at: 1 }])],
     ["setConnection", () => chats.setConnection(chat.id, { id: "c", model: "m" })],

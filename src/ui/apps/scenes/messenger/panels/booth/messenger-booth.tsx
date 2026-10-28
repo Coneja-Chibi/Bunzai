@@ -44,7 +44,7 @@ export function MessengerBooth({ args, open }: { args: WingArgs; open(programId:
       <BoothLoreRow key={loreKey} ctx={ctx} chatId={chat.id} />
       <div className="msn-bth-open" data-part="scene.messenger.booth.lore-open"><Button variant="quiet" size="sm" icon="lucide:chevron-right" onClick={() => open("lorebook")}>Open lorebooks</Button></div>
       <DirectorBooth ctx={ctx} chat={chat} busy={busy} onProps={() => { setPropsTick((n) => n + 1); args.propsState.reload(); }} />
-      <section className="bth-sec" data-part="scene.messenger.booth.tools"><ToolAccessRows ctx={ctx} chat={chat} onChanged={onChat} /></section>
+      <section className="bth-sec" data-part="scene.messenger.booth.tools"><ToolAccessRows ctx={ctx} chat={chat} onChanged={onChat} windowTokens={chat.connection ? models.windowOf(chat.connection) : undefined} /></section>
       <BoothSummaryRow ctx={ctx} chat={chat} onOpen={() => open("memory")} />
       <BoothNavigator ctx={ctx} scene={scene} art={args.charArt} />
       {busy && <p className="bth-note" role="status" data-part="scene.messenger.booth.busy">A reply is being written. Changes apply from the next reply.</p>}

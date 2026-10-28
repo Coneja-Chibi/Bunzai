@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:3db9b7f7a965996b15b05b3a66c766028e19c66bd8f0353f2acbe56a5453d587",
-  "semanticSummaryHash": "sha256:c63083df4a78121469659a65582eeab0d2106eaa50af3874460d2abc3d5b1b36",
+  "sourceHash": "sha256:231bd799c30b55e8abf5d65c4a0118cb6f3977f72c6f87e2361a646372305c27",
+  "semanticSummaryHash": "sha256:2ff3cd5b81108d5ab8a7fed307d2e3a1a4b5b42dc848e91197edc937dad7eceb",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Sentence that Try builds the whole scene with no window to fit, so entries a send would trim can still feed the macro context, matches tryFormula (assembleRequest with unbudgeted: true, readScene, no connection); summary carries it. Bands ok.",
-  "reviewedAt": "2026-10-28T06:50:12.666Z"
+  "notes": "Settings > You > Studio > Time budgets shows scenes.toolBudgetMs in seconds (user-scope.tsx, budget-core.ts). Summary matches; bands ok.",
+  "reviewedAt": "2026-10-28T15:31:26.704Z"
 }

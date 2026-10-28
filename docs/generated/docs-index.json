@@ -4683,7 +4683,7 @@
           "text": "Components (React, `.tsx`)",
           "slug": "components-react-tsx",
           "level": 2,
-          "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, shared controls, Library, Workbench editors, Scenes, and Settings and documentation surfaces. BookCover composes lorebook presentation, Proscenium frames scene artwork, and LightRays supplies capped premiere beams. Rows are generated discovery metadata, not proof of behavior or a second registry; consult reference/ui and source for the live contract. It also lists the Stage AccentRow, Compendium Settings tab, the Participants rows with the Add participant form, the Storyboards dossier, the Props wing with its tracker panels, and the Messenger shell, panels and settings rows (including the Compendium, Final Cut, models and prompt rows) and the shared VirtualRows and VirtualShelf lists. It lists the shared RoomHeader and Panel, the IconPicker and NumberInput controls and the field editor a tracker and a tool share, the Agent room's RoomFrame and DockedHead, EditorEhead with its optional kind and deck props, and the Settings StageLightsRow and ProtectedLine.",
+          "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, shared controls, Library, Workbench editors, Scenes, and Settings and documentation surfaces. BookCover composes lorebook presentation, Proscenium frames scene artwork, and LightRays supplies capped premiere beams. Rows are generated discovery metadata, not proof of behavior or a second registry; consult reference/ui and source for the live contract. It also lists the Stage AccentRow, Compendium Settings tab, the Participants rows with the Add participant form, the Storyboards dossier, the Props wing with its tracker panels, and the Messenger shell, panels, reply change visuals and settings rows (including the Compendium, Final Cut, models and prompt rows) and the shared VirtualRows and VirtualShelf lists. It lists the shared RoomHeader and Panel, the IconPicker and NumberInput controls and the field editor a tracker and a tool share, the Agent room's RoomFrame and DockedHead, EditorEhead with its optional kind and deck props, and the Settings StageLightsRow and ProtectedLine.",
           "topics": [
             "React tsx exports",
             "shell Dock App",
@@ -6172,7 +6172,7 @@
           "text": "Safety",
           "slug": "safety",
           "level": 2,
-          "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula has no step number of its own: the tool loop owns a time budget for all of a reply's tool calls, a setting with a default, hands each run what is left as a deadline, and the macro engine checks that clock between nodes, after every handler and inside the word macros' loops, so a run that passes it answers with the error, never as finished. A formula shares the chat's messages, so the positional word index is built once and a phrase costs what its rarest word costs. Each call takes its own seed.",
+          "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula has no step number of its own: the tool loop owns a time budget for all of a reply's tool calls, a setting with a default (shown in seconds in Settings), hands each run what is left as a deadline, and the macro engine checks that clock between nodes, after every handler and inside the word macros' loops, so a run that passes it answers with the error, never as finished. A formula shares the chat's messages, so the positional word index is built once and a phrase costs what its rarest word costs. Each call takes its own seed.",
           "topics": [
             "structuredClone copy",
             "writes refused out loud",
@@ -7702,7 +7702,7 @@
         "reference/extending/new-kind",
         "reference/entities/README"
       ],
-      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that no screen links a tool yet. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it.",
+      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that the Control Booth links them, each as a tile with its icon, cost and a switch. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it.",
       "topics": [
         "CanonicalTool",
         "tool fields",
@@ -7743,14 +7743,14 @@
           "text": "In a scene",
           "slug": "in-a-scene",
           "level": 2,
-          "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, in order and without duplicates. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. No screen links a tool to a scene yet; that control waits for its wireframe with the editor.",
+          "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, in order and without duplicates. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. The Control Booth links them as tiles with icon, token cost and a switch, with a per-reply sum, a Link a tool picker and New tool in the Workbench.",
           "topics": [
             "ChatPrompting.tools",
             "Narrator Tool Access",
             "library-tools",
             "callName",
             "invalid_tool",
-            "no linking screen yet"
+            "Booth tool tiles"
           ],
           "children": []
         },
@@ -7776,7 +7776,7 @@
       "path": "docs/reference/entities/tracker.md",
       "title": "Tracker entity",
       "audience": "dev",
-      "summary": "The canonical piece for state a scene keeps, such as a character's health or a party's roster: named typed fields, kept as swipe-safe scene state, shown to the model every turn, readable by macros, and updated by the model through one tool. A scene links the trackers it keeps. Fields may carry icons and take a number's top from another field, a tracker has a change style, and a read answers what each reply changed; the backend and the Workbench editor are built, the linking screen and the change visuals are not.",
+      "summary": "The canonical piece for state a scene keeps, such as a character's health or a party's roster: named typed fields, kept as swipe-safe scene state, shown to the model every turn, readable by macros, and updated by the model through one tool. A scene links the trackers it keeps. Fields may carry icons and take a number's top from another field, a tracker has a change style, and a read answers what each reply changed; the backend, the Workbench editor, the Messenger's Trackers panel (linking, values and the person's own edits) and the change visuals under each reply are built.",
       "tags": [
         "entity",
         "tracker",
@@ -7791,7 +7791,7 @@
         "reference/macro-engine",
         "reference/entities/README"
       ],
-      "semanticSummary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style, only stored. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the linking screen and the change visuals are not built yet.",
+      "semanticSummary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style the Messenger draws. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the Messenger's Trackers panel links, shows and edits them and that each reply shows what it changed in the style the tracker chose.",
       "topics": [
         "CanonicalTracker",
         "record and list layouts",
@@ -7811,7 +7811,7 @@
           "text": "Fields",
           "slug": "fields",
           "level": 2,
-          "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices. A number field may have a min and a max, or instead take its top from another number field of the same tracker through maxField, which the decoder refuses when it names no field, a non-number, itself, a loop, or comes with max. A value above such a top is brought down to it, never refused, the top settled first, and a write that moves a top stores the clamped dependents in the same batch, so stored equals read; a top below min leaves the min. A field may have a well-formed icon id, not checked against the glyph table, a tracker an icon and a change style, all only stored; and any field a default that must fit. There are no product limits beyond the hostile-input ceilings.",
+          "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices. A number field may have a min and a max, or instead take its top from another number field of the same tracker through maxField, which the decoder refuses when it names no field, a non-number, itself, a loop, or comes with max. A value above such a top is brought down to it, never refused, the top settled first, and a write that moves a top stores the clamped dependents in the same batch, so stored equals read; a top below min leaves the min. A field may have a well-formed icon id, not checked against the glyph table, a tracker an icon and a change style the Messenger draws; and any field a default that must fit. There are no product limits beyond the hostile-input ceilings.",
           "topics": [
             "field types",
             "shared field basics",
@@ -7854,15 +7854,16 @@
           "text": "In a scene",
           "slug": "in-a-scene",
           "level": 2,
-          "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow. The scene's trackerChanges switch turns the change visuals on replies off; it is on unless the scene says otherwise, so only an off switch is stored.",
+          "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order, and the tracker macro reads the same state. The scene's trackerChanges switch turns the change visuals under each reply off, which the Messenger reads; only an off switch is stored. The Messenger's Trackers panel links and unlinks trackers, draws each value at the take's tip and edits it as the tool's own update, written as message-level deltas on the tip message.",
           "topics": [
             "ChatPrompting.trackers",
             "Trackers block",
             "template",
             "macro report",
-            "one-line values",
             "tracker macro",
-            "trackerChanges switch"
+            "trackerChanges switch",
+            "Trackers panel",
+            "person's edit"
           ],
           "children": []
         },
@@ -7900,14 +7901,14 @@
           "text": "Editing",
           "slug": "editing",
           "level": 2,
-          "summary": "A tracker opens in the Workbench's tracker editor: the shared header, which says in how many scenes it is linked and lists them on a click, an Identity and settings disclosure (what it tracks, how the AI should update it, shape, icon, how a reply shows changes, and an optional prompt line in macros), and the fields in the field editor a tool shares. A number's To can be a number, another number field, or none. The rail shows the Trackers block as prompt assembly renders it at the starting values, its plain line, its token cost, and the tracker's update tool line. A rename is followed a keystroke at a time from the name it began with, in other fields' tops and in the prompt line's macros, so a name typed through on the way takes nothing; renaming the tracker rewrites its macros. A draft the decoder refuses, or a prompt line whose macros fail, is not saved and is explained in plain words. The scene linking control and change visuals still wait for wireframes.",
+          "summary": "A tracker opens in the Workbench's tracker editor: the shared header, which says in how many scenes it is linked and lists them on a click, an Identity and settings disclosure (what it tracks, how the AI should update it, shape, icon, how a reply shows changes, and an optional prompt line in macros), and the fields in the field editor a tool shares. A number's To can be a number, another number field, or none. The rail shows the Trackers block as prompt assembly renders it at the starting values, its plain line, its token cost, and the tracker's update tool line. A rename is followed a keystroke at a time from the name it began with, in other fields' tops and in the prompt line's macros, so a name typed through on the way takes nothing; renaming the tracker rewrites its macros. A draft the decoder refuses, or a prompt line whose macros fail, is not saved and is explained in plain words. Linking is the Trackers panel's; replies show changes as set here.",
           "topics": [
             "tracker editor",
             "field editor",
             "prompt rail",
             "update tool line",
             "decoder-gated save",
-            "no linking screen"
+            "change style"
           ],
           "children": []
         }
@@ -10600,7 +10601,7 @@
           "text": "What it does",
           "slug": "what-it-does",
           "level": 2,
-          "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunraku's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex, plus tracker for linked trackers. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may hand in a deadline (soft for a prompt build), and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in.",
+          "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunraku's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex, plus tracker for linked trackers. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may hand in a deadline (soft for a prompt build, with a Settings box), and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in.",
           "topics": [
             "corpus parity proof",
             "offset mapped rewrites",
@@ -14081,7 +14082,7 @@
           "text": "How a turn uses it",
           "slug": "how-a-turn-uses-it",
           "level": 2,
-          "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes as before, and scene-turn turns them into vars deltas and saves them on the checkpoint with the trace. commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited and waits up to 30 seconds for the write lock, so a lost save cannot commit a reply without its variables. A turn's deltas are always saved, never refused for size. Global variables are untouched. The variables route reads the vars slot, and a chat import records its variables as the take's base, with or without messages, so no greeting, cut or fork changes them. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write.",
+          "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes, and scene-turn turns them into vars deltas saved on the checkpoint with the trace; commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited and waits up to 30 seconds for the write lock, so a lost save cannot commit a reply without its variables, and a turn's deltas are never refused for size. Global variables are untouched. The variables route reads the vars slot, and a chat import records its variables as the take's base. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write. A write of a value the message already shows, its version's deltas included, adds nothing, so a person's tracker edit back to the value before a reply is kept on the tip message.",
           "topics": [
             "load before the reply",
             "deltas on the checkpoint",
@@ -14097,7 +14098,7 @@
           "text": "Not built yet",
           "slug": "not-built-yet",
           "level": 2,
-          "summary": "Everything past the first slot is planned in the scene-state plan and absent from the code. That covers more slots such as the Spellbook, the summary, the Props trackers and the Director's rounds, global variables as a derived log, the Compendium's shared lane, writer classes and permissions, the Story Director updating library trackers, and any interface for hand edits or a state inspector. recordMessageDeltas is the store's door for a write that is not a turn's, and nothing calls it yet outside tests. Nothing in the interface does. This section exists so that no reader takes a planned part of the design for current behavior.",
+          "summary": "Everything past the first slot is planned in the scene-state plan and absent from the code. That covers more slots such as the Spellbook, the summary, the Props trackers and the Director's rounds, global variables as a derived log, the Compendium's shared lane, writer classes and permissions, the Story Director updating library trackers, hand edits of any slot other than a library tracker's, and a state inspector. recordMessageDeltas is the store's door for a write that is not a turn's; its one caller is the person's tracker edit from the Messenger's Trackers panel. This section exists so that no reader takes a planned part of the design for current behavior.",
           "topics": [
             "planned slots",
             "global variables later",
@@ -15835,16 +15836,16 @@
           "text": "Scenes (the library's chats)",
           "slug": "scenes-the-librarys-chats",
           "level": 2,
-          "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools, and the Preset picker lists every writing setup, presets and Script Sheets, opening with Write a Script Sheet, whose small editor saves then chooses it; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants is the registry, with Reconcile and an Add participant form that refuses names already on the roster.",
+          "summary": "Scenes lists and opens encrypted ChatStore scenes with casts, takes, cuts and swipes. A first-open chooser sets Full Chat or Messenger once; Messenger draws the same chat in a Discord-style shell whose programs open the wings' tabs; its Trackers program lists a scene's library trackers as editable cards. The take pill follows Scene Takes and links to the Branching Tree. Prompting has Preset, Guides, Scene Note and Writing Tools, and its Preset picker lists presets and Script Sheets; Final Cut has passes, Anti-Slop banks, Activity with Undo, and Regex; Stage has Appearance (with a backdrop blur slider), Music, Spotify and a Wardrobe. The Control Booth applies loadouts with a receipt and Undo and shows linked tools as tiles. Under each Messenger reply tracker changes draw as each tracker chose, a line names a macro that ran out of time, and Settings has two time-budget boxes. The AI wing has Model and Generation, World has Lorebook, Compendium and Storyboards, and Props holds twelve tracker Props. Participants has Reconcile and an Add participant form.",
           "topics": [
             "Start Scene from a card",
             "World wing, Compendium and Storyboards",
             "Stage wing tabs, backdrop blur, Music and Spotify Props",
             "Prompting presets, guides, note and writing tools",
-            "Booth loadouts",
+            "Booth loadouts and tool tiles",
             "Final Cut passes, Activity and Regex",
             "Props wing and tracker Props",
-            "Take pill, Branching Tree, Messenger and Add participant"
+            "Take pill, Branching Tree, Messenger, reply changes and Add participant"
           ],
           "children": [
             {

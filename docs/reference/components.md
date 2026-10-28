@@ -121,6 +121,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | BranchTree | src/ui/apps/scenes/scene-tree.tsx | ({ ctx, chatId, onBack, onOpen }: { ctx: AppContext; chatId: string; onBack(): void; onOpen(): void }) |  |  |
 | Browse | src/ui/apps/scenes/compendium/tabs/browse.tsx | ({ model, bookName, state, onState, tree }: { model: BookModel; bookName: string; state: BrowseState; onState(next: P... |  |  |
 | Bubble | src/ui/apps/scenes/scene-bubble.tsx | (p: BubbleProps) |  |  |
+| BudgetRows | src/ui/apps/scenes/messenger/settings/user/budget-rows.tsx | ({ ctx }: { ctx: AppContext }) |  |  |
 | BulkBar | src/ui/apps/workbench/preset/bulk-bar.tsx | ({ count, onClear, onEnable, onDisable, onDuplicate, onDelete }: BulkBarProps) |  | .toolbar .topRow .searchWrap .searchIcon .search .stats .statNum .actions ... |
 | Button | src/ui/components/button/index.tsx | ({ children, variant = "secondary", size = "md", icon, block, menu, tone, vars, "data-part": part, type = "button", .... |  | .btn .seg .tab .chip .primary .danger .quiet .sm ... |
 | CallDetail | src/ui/apps/scenes/context/this-turn-call.tsx | ({ row, trace }: { row: CallRow; trace: SceneTrace }) |  |  |
@@ -139,7 +140,9 @@ The answer for the common needs, before searching the table below. For buttons, 
 | CatchThinking | src/ui/apps/scenes/generation/catch-thinking.tsx | ({ value, prefill, onChange }: { value: ReasoningCapture \| undefined; prefill: string \| undefined; onChange(next: Rea... |  |  |
 | Cell | src/ui/apps/scenes/compendium/cells/cell.tsx | ({ title, dot, wide, children }: { title?: string; dot?: string; wide?: boolean; children: ReactNode }) |  |  |
 | ChainsSheet | src/ui/apps/scenes/props/trackhare/chains-sheet.tsx | ({ sheetRef, lore, replyNumber, onClose }: { sheetRef: RefObject<HTMLElement \| null>; lore: SceneTrace["lore"]; reply... |  |  |
+| ChangeBlock | src/ui/apps/scenes/messenger/transcript/reply-changes.tsx | ({ trackers, onOpen, onMarker }: { trackers: readonly TrackerChanged[]; onOpen(trackerId: string): void; onMarker(): ... | The trackers one reply changed, each in its own style. Nothing at all when none of them draws anything. |  |
 | ChangesPane | src/ui/apps/workbench/lore/changes-pane.tsx | ({ baseline, body, onRevertField, onRestoreEntry, onUndoSwap, onJumpEntry, onClose, }: ChangesPaneProps) |  | .pane .head .clean .block .field .fieldK .diffCols .dFrom ... |
+| ChangesRow | src/ui/apps/scenes/messenger/settings/scene/changes-row.tsx | ({ a }: { a: WingArgs }) |  |  |
 | CharacterCard | src/ui/apps/library/rc-cards.tsx | (props: CardProps) | ContentCharacterCard (RC's DiscoveryCharacterCardV3 in library mode), for characters and |  |
 | CharacterDefaultRows | src/ui/apps/scenes/messenger/settings/character-defaults.tsx | ({ a }: { a: WingArgs }) |  |  |
 | CharacterEditor | src/ui/apps/workbench/Editor.tsx | ({ entity, revision, ctx, piece, topRight }: CharacterEditorProps) |  | .room .stage .soon .ghostRoom .ghostErr .skel .ghostActions .recents ... |
@@ -309,8 +312,11 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Field | src/ui/apps/scenes/context/memory-controls.tsx | ({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }) |  |  |
 | Field | src/ui/apps/scenes/stage-controls.tsx | ({ icon, label, help, children }: { icon: IconName; label: string; help?: string; children: ReactNode }) |  |  |
 | FieldBlock | src/ui/apps/scenes/compendium/fields/blocks.tsx | ({ label, children, tile }: { label: string; children: ReactNode; tile?: boolean }) |  |  |
+| FieldEdit | src/ui/apps/scenes/messenger/panels/trackers/library-edit.tsx | ({ field, record, set, disabled }: { field: TrackerField; record: TrackerRecord; set: SetField; disabled?: boolean }) | One field's editor, with its icon and name; `disabled` while there is nothing to attach a change to. |  |
 | FieldEditor | src/ui/_shared/field-editor.tsx | ({ tool = false, fields, make, onChange, above }: { tool?: boolean; fields: readonly F[]; make(name: string): F; onCh... |  | .toc .module .css .title .rows .add .page .pager ... |
 | FieldForm | src/ui/components/field-form/index.tsx | ({ fields, value, onChange }: FieldFormProps) |  | .grid .field .half .label .text .num .sel .rmax ... |
+| FieldIcon | src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx | ({ icon }: { icon?: string \| undefined }) | A field's icon, or nothing when the id is not one the build draws. |  |
+| FieldRead | src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx | ({ view }: { view: FieldView }) | One field as the card draws it: a bar with "7/20", the number, pips with the current one lit, one pip, or the quoted text. |  |
 | FilingRows | src/ui/apps/scenes/messenger/settings/scene/compendium-passes.tsx | ({ a }: { a: WingArgs }) | After a reply: filing on, what to preserve, the Guide, how often and when. |  |
 | FilingSection | src/ui/apps/scenes/compendium/tabs/settings/filing.tsx | ({ compendium, guides, set }: SectionProps) |  |  |
 | Filters | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ options, value, onChange, icons }: { options: readonly T[]; value: T; onChange(v: T): void; icons?: Partial<Record... |  |  |
@@ -399,6 +405,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | InventoryPanel | src/ui/apps/scenes/props/trackers/inventory/inventory-panel.tsx | ({ ctx, chat, onChat, popOut }: PopoutContext) |  |  |
 | ItemCard | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ color, icon, title, meta, right, preview, under, foot, chip, veil, mod, badge, open, onToggle, removed, children }... |  |  |
 | ItemList | src/ui/apps/scenes/props/trackers/items/item-parts.tsx | ({ items, render }: { items: readonly T[]; render: (item: T) => ReactNode }) | The cards of one tracker, windowed: a tracker holds up to 300 expandable cards. The cards keep their own open state in the panel. |  |
+| ItemTiles | src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx | ({ tiles, onPick, tail }: { tiles: readonly ItemTile[]; onPick(name: string): void; tail?: JSX.Element }) | The tiles of a list tracker's rows: a windowed grid in its own scroll box, so a list of any length stays light. Every tile is a button: it picks the row. |  |
 | KeyHints | src/ui/agent/kit-widgets.tsx | ({ hints }: { hints: readonly { key: string; label?: string }[] }) | A row of keyboard hints: a bright key, then a muted label. Kit's CLI signature. |  |
 | KeyValues | src/ui/apps/scenes/props/story-director/director-parts.tsx | ({ data }: { data: Record<string, unknown> }) | RoleCall's generic key and value block (Turn Analysis, Pacing Analysis): a string, a list, or a field set, under a small heading each. |  |
 | KeywordChips | src/ui/apps/workbench/lore/keyword-chips.tsx | ({ triggers, onChange, styles, placeholder, ariaLabel, advanced = false, pickedIndex, onPick, entryProbability = 100,... |  |  |
@@ -416,7 +423,10 @@ The answer for the common needs, before searching the table below. For buttons, 
 | LayoutGate | src/ui/apps/scenes/layout-chooser/layout-gate.tsx | ({ ctx, children }: { ctx: AppContext; children: ReactNode }) |  |  |
 | LeavingGate | src/ui/components/leaving-gate/index.tsx | () |  | .scrim .card .kicker .lede .badge .tile .globe .pname ... |
 | LensRail | src/ui/components/lens-rail/index.tsx | ({ platforms, selected, onToggle, onClear, offTarget, onOffTarget }: LensRailProps) | One-line sideways-scrolling lens chips; Bunraku (full card) first, off-target mode at the tail. | .rail .scroll .offt .fade |
+| LibraryCard | src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx | ({ tracker, onOpen }: { tracker: SceneTracker; onOpen(): void }) | The card of one linked tracker: its name, the Library tag, the reply that last changed it, and its fields or items. Clicking the head opens it. |  |
+| LibraryDetail | src/ui/apps/scenes/messenger/panels/trackers/library-detail.tsx | ({ ctx, data, tracker, edit, running, onBack }: { ctx: AppContext; data: SceneTrackers; tracker: SceneTracker; edit: ... |  |  |
 | LibraryGate | src/ui/shell/library-gate.tsx | ({ children, pieces: injectedPieces }: { children: ReactNode; pieces?: PieceStore }) |  | .stage .inner .row .rowText .rowLabel .rowHint .proof .count ... |
+| LibraryPick | src/ui/apps/scenes/messenger/panels/trackers/library-pick.tsx | ({ ctx, chat, linked, bodies, builtIn, builtInOn, onChat, onBack }: { ctx: AppContext; chat: Chat; linked: readonly s... |  |  |
 | LibraryPicker | src/ui/apps/scenes/scene-lore-books.tsx | ({ library, inScene, onPick }: { library: StudioEntitySummary[] \| null; inScene: ReadonlySet<string>; onPick(id: stri... | My Library, searchable. A book the scene already reads is listed but cannot be added twice. |  |
 | LibraryRail | src/ui/apps/library/rail.tsx | (props: LibraryRailProps) |  |  |
 | LightRays | src/ui/components/light-rays/index.tsx | ({ followMouse = true, mouseInfluence = .35, fog = true }: { followMouse?: boolean; mouseInfluence?: number; fog?: bo... |  | .rays .canvas .fallback |
@@ -534,6 +544,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | OpsPane | src/ui/apps/macro-lab/ops-pane.tsx | ({ onInsert }: { onInsert: (token: string) => void }) |  | .tableWrap .table .opCell .opAction .opFamily .gap .gapWord .room ... |
 | OptionCards | src/ui/apps/workbench/controls/option-cards.tsx | ({ options, value, onSelect, styles }: OptionCardsProps) |  |  |
 | OrderSwitch | src/ui/apps/library/rail.tsx | ({ order, onOrder }: { order: ShelfOrder; onOrder(next: ShelfOrder): void }) | The top bar's All / Recent switch (RC's filter pair). Recent is the Workbench's own recency. |  |
+| OutOfTimeLine | src/ui/apps/scenes/messenger/transcript/reply-changes.tsx | ({ macros, onInspect }: { macros: readonly { macro: string }[]; onInspect(): void }) | "1 macro ran out of time building this prompt ({{tally}}). Prompt Inspector". |  |
 | OutputModeRow | src/ui/apps/scenes/messenger/settings/scene/finalcut-kit.tsx | ({ value, onChange }: { value: OutputMode \| undefined; onChange(next: OutputMode): void }) |  |  |
 | OutputModeToggle | src/ui/apps/scenes/final-cut/fc-pass-chrome.tsx | ({ value, onChange }: { value: OutputMode \| undefined; onChange(next: OutputMode): void }) |  |  |
 | OverlayWidget | src/ui/components/overlay-widget/index.tsx | ({ title, children }: { title: string; children: ReactNode }) |  | .overlay-widget .overlay-widget-content .overlay-widget-grid .overlay-widget-tile .overlay-widget-swatch .overlay-widget-page |
@@ -837,12 +848,13 @@ The answer for the common needs, before searching the table below. For buttons, 
 | Toggle | src/ui/components/button/controls.tsx | ({ on, onChange, label, children, size = "md", mixed, isolate, tone, card, vars, onClick, "data-part": part, type = "... |  | .toggle .whole .track .knob .on .mixed .sm .inline ... |
 | ToggleRow | src/ui/apps/scenes/messenger/frames/settings-rows.tsx | ({ label, description, on, onChange }: RowCopy & { on: boolean; onChange(on: boolean): void }) |  |  |
 | TokensSheet | src/ui/apps/scenes/props/trackhare/tokens-sheet.tsx | ({ trace, model, onClose }: { trace: SceneTrace; model: string; onClose(): void }) |  |  |
-| ToolAccessRows | src/ui/apps/scenes/scene-booth-wing.tsx | ({ ctx, chat, onChanged }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void }) | Narrator Tool Access and Max tool rounds (RoleCall's Runtime Setup, QuickPlayPanel.tsx:2101-2149; `stageSettings.agentLoopEnabled` and |  |
+| ToolAccessRows | src/ui/apps/scenes/scene-booth-wing.tsx | ({ ctx, chat, onChanged, windowTokens }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void; windowTokens?: n... | Narrator Tool Access and Max tool rounds (RoleCall's Runtime Setup, QuickPlayPanel.tsx:2101-2149; `stageSettings.agentLoopEnabled` and |  |
 | ToolAction | src/ui/apps/workbench/pieces/tool-action.tsx | ({ body, ctx, setAction }: { body: ToolBody; ctx: AppContext; setAction(action: Action): void }) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
 | ToolEditor | src/ui/apps/workbench/pieces/tool-editor.tsx | ({ entity, revision, ctx, piece, topRight, rand = Math.random }: KindEditorProps & { rand?: () => number }) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
 | ToolRail | src/ui/apps/workbench/pieces/tool-rail.tsx | ({ body, ctx, problem, rand }: { body: ToolBody; ctx: AppContext; problem: string \| null; rand: () => number }) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
 | ToolsCard | src/ui/apps/scenes/final-cut/fc-tools-card.tsx | ({ tools, models, onChange }: { tools: FinalCutTools \| undefined; models: SceneModels; onChange(next: FinalCutTools):... |  |  |
 | ToolsPage | src/ui/apps/scenes/messenger/settings/scene/finalcut-checks.tsx | ({ env }: { env: SceneEnv }) | One page for the five tools: the rows of each tool under its own name, all on the page's one Final Cut writer. |  |
+| ToolTiles | src/ui/apps/scenes/booth-tools.tsx | ({ ctx, chat, onChanged, windowTokens, accessOn }: { ctx: AppContext; chat: Chat; onChanged(chat: Chat): void; access... |  |  |
 | Tooltip | src/ui/components/rc-controls/index.tsx | ({ text, children }: { text: string; children: ReactNode }) | A hover and focus bubble over its child; the text is also the child's accessible description. | .sr-only .field .area .chip .check .tipWrap .tip |
 | TooltipRow | src/ui/apps/scenes/messenger/settings/scene/prop-pref-rows.tsx | ({ a }: { a: WingArgs }) |  |  |
 | ToolTry | src/ui/apps/workbench/pieces/tool-try.tsx | ({ body, ctx, problem, rand }: { body: ToolBody; ctx: AppContext; problem: string \| null; rand: () => number }) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
@@ -851,6 +863,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | TrackerCardColors | src/ui/components/tracker-card-colors/index.tsx | ({ value, onChange }: TrackerCardColorsProps) |  | .wrap .help .colorBlock .k .cssIn |
 | TrackerContextRows | src/ui/apps/scenes/messenger/settings/scene/tracker-rows.tsx | ({ a }: { a: WingArgs }) |  |  |
 | TrackerEditor | src/ui/apps/workbench/pieces/tracker-editor.tsx | ({ entity, revision, ctx, piece, topRight }: KindEditorProps) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
+| TrackerFace | src/ui/apps/scenes/messenger/panels/trackers/library-draw.tsx | ({ body, value, onPick }: { body: TrackerBody; value: TrackerValue; onPick(row: string): void }) | A record's fields (the card leaves out a number that is another field's top: its bar shows it) or a list's rows as tiles. |  |
 | TrackerFrame | src/ui/apps/scenes/props/trackers/tracker-frame.tsx | ({ label, title, description, icon, tone, tokens, view, onClear, popOut, badge, actions, children }: FrameProps) |  |  |
 | TrackerRail | src/ui/apps/workbench/pieces/tracker-rail.tsx | ({ body }: { body: TrackerBody }) |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |
 | TrackerSettings | src/ui/apps/workbench/pieces/tracker-settings.tsx | ({ body, edit, onTemplate }: { body: TrackerBody; edit(update: (body: TrackerBody) => TrackerBody): void; onTemplate(... |  | .root .problem .cols .flush .colsPair .rail .railTitle .section ... |

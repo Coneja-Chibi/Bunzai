@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tool",
   "sourcePath": "docs/reference/entities/tool.md",
-  "sourceHash": "sha256:b189b1f7325fc5c5ecf6c68b05346ce9002cd9e8ec96e0817c53cfd41c238b1a",
-  "summary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that no screen links a tool yet. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it.",
+  "sourceHash": "sha256:631fe687907dfa503c1eb3e4446e9f40e964dc67e4ea745180e5f0fc66569dcc",
+  "summary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that the Control Booth links them, each as a tile with its icon, cost and a switch. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it.",
   "topics": [
     "CanonicalTool",
     "tool fields",
@@ -46,15 +46,15 @@
       "slug": "in-a-scene",
       "title": "In a scene",
       "level": 2,
-      "sourceHash": "sha256:02435daa69ca12b41c9d328a05c696cbe51004b9e305ead3487c1095a8bd1635",
-      "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, in order and without duplicates. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. No screen links a tool to a scene yet; that control waits for its wireframe with the editor.",
+      "sourceHash": "sha256:9895d2460e4ca2b36a6b58b35e4ec2144c1ad19d7f22ca555cac47b830faf2c7",
+      "summary": "A scene links tools by id in its prompting settings, ChatPrompting.tools, in order and without duplicates. They are offered only when Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates the lorebook lookup uses. src/studio/library-tools.ts reads each linked tool, and the dice piece or formula its action links, through their kinds' strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A call name comes from the tool's name through callName: lowercase, starting with a letter with tool_ put in front otherwise, at most sixty characters, and a name already taken by the lookup, an earlier tool or the loop's invalid_tool gets a number. Rolls draw from randomness seeded for the turn, so the same seed rolls the same dice. The Control Booth links them as tiles with icon, token cost and a switch, with a per-reply sum, a Link a tool picker and New tool in the Workbench.",
       "topics": [
         "ChatPrompting.tools",
         "Narrator Tool Access",
         "library-tools",
         "callName",
         "invalid_tool",
-        "no linking screen yet"
+        "Booth tool tiles"
       ],
       "children": []
     },

@@ -224,7 +224,7 @@ export function sqliteChatStoreBackend(
   };
 
   const snapshotDoc = (id: string) => cipher.index(id);
-  const state = stateMethods({ database, cipher, one, run, writableBranch, writableMessage, write });
+  const state = stateMethods({ database, cipher, one, run, writableBranch, writableMessage, requireVersion, write });
   const kit = {
     database, cipher, clock, newId, one, run, chatRow, liveChat, branchRow, writableBranch, writableMessage,
     requireVersion, bump, touch, toChat, toBranch, messageById, copyMessage, insertBranch, write,

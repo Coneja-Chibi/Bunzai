@@ -79,3 +79,9 @@ export interface SceneDeltaRange {
   /** The live messages from the first through the last asked for, oldest first; a message that changed nothing has an empty list. */
   messages: { messageId: string; deltas: Delta[] }[];
 }
+
+/** A message-delta write's guard: the branch version, and `expect`, what the caller read at each slot and path (deltas of the values it saw, or removals where there were none); a write whose expectation the message no longer shows is refused. Not stored. */
+export interface MessageDeltaGuard {
+  expectedVersion?: number;
+  expect?: Delta[];
+}

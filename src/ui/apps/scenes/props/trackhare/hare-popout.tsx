@@ -6,11 +6,13 @@
 import { useEffect, useState, type JSX } from "react";
 import { boolOr } from "../../../../../core/guards";
 import type { PopoutContext, PopoutKind } from "../../popout/popout-kind";
+import { useSceneSignals } from "../../scene-signals";
 import { HareHits } from "./hare-hits";
 import { parseDensity, parseSort } from "./hare-core";
 import type { TraceState } from "./hare-popover";
 
 function HareTracePane({ ctx, chat }: PopoutContext): JSX.Element {
+  const { version } = useSceneSignals(chat.id); // a swipe or a regenerate moves the take's version, not the chat's updatedAt
   const [got, setGot] = useState<TraceState>({ state: "loading" });
   useEffect(() => {
     let live = true;
@@ -19,7 +21,7 @@ function HareTracePane({ ctx, chat }: PopoutContext): JSX.Element {
       (e: unknown) => { if (live) setGot({ state: "failed", why: e instanceof Error && e.message ? e.message : "TrackHare couldn't read this reply." }); },
     );
     return () => { live = false; };
-  }, [ctx.api, chat.id, chat.updatedAt, chat.activeBranchId]);
+  }, [ctx.api, chat.id, chat.updatedAt, chat.activeBranchId, version]);
   const density = parseDensity(ctx.prefs.get("trackhare.density"));
   return (
     <div className={`hare-trace${density === "compact" ? " compact" : ""}`} data-part="props.trackhare.trace">

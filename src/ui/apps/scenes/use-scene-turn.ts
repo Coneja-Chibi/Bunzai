@@ -44,12 +44,16 @@ export type HeldTurn =
   | { kind: "conflict"; turnId: string; draft: string };
 
 /** `who` is the character the open scene is with (the page keeps it current); the optional desktop notice for a finished reply names them (reply-notice.ts). */
+/** What a finished turn committed, from its own done or stopped event: the message and the version (swipe) that now shows, and the kind of turn. Null from the start of a turn until it commits one; a turn that saves nothing leaves it null. */
+export interface CommittedTurn { kind: "reply" | "swipe" | "continue"; messageId: string; swipeId: string }
+
 export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void, who?: { current: { characterId: string; name: string } | null }) {
   const [live, setLive] = useState<LiveTurn | null>(null);
   const [held, setHeld] = useState<HeldTurn | null>(null);
   const [review, setReview] = useState<Review | null>(null);
   /** The message whose newest version landed while another was showing: its counter says NEW. */
   const [landed, setLanded] = useState<string | null>(null);
+  const [committed, setCommitted] = useState<CommittedTurn | null>(null);
   const turnRef = useRef<LiveTurn | null>(null);
   /** Stop pressed before the turn had an id: it stops the moment the start event names one. */
   const stopWanted = useRef(false);
@@ -73,6 +77,7 @@ export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void
     turnRef.current = turn;
     stopWanted.current = false;
     setHeld(null);
+    setCommitted(null);
     setLive({ ...turn });
     const flush = (): void => {
       frameRef.current = null;
@@ -107,6 +112,7 @@ export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void
       else if (e.type === "done" && kind === "swipe" && e.message) setLanded(e.message.id);
       // The live turn becomes the saved version: a block closed by hand stays closed.
       if ((e.type === "done" || e.type === "stopped") && e.message && turn.turnId) carryOpenChoices(`turn:${turn.turnId}`, e.message.swipes[e.message.current]?.id ?? "");
+      if ((e.type === "done" || e.type === "stopped") && e.message) setCommitted({ kind, messageId: e.message.id, swipeId: e.message.swipes[e.message.current]?.id ?? "" });
       if (e.type === "done" && kind === "reply") replyNotice(ctx.prefs, chatId, who?.current ?? null);
       // A non-text event never waits behind a batched token: flush whatever text already arrived,
       // then this event's own state, in the same tick.
@@ -158,5 +164,5 @@ export function useSceneTurn(ctx: AppContext, chatId: string, reload: () => void
     reload();
   }, [ctx, chatId, held, reload]);
 
-  return { live, held, review, answer, landed, start, stop, dismiss: () => setHeld(null), keep: () => void settle(true), discard: () => void settle(false), seen: () => setLanded(null) };
+  return { live, held, review, answer, landed, committed, start, stop, dismiss: () => setHeld(null), keep: () => void settle(true), discard: () => void settle(false), seen: () => setLanded(null) };
 }

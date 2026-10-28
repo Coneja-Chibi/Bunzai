@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:b79c75ff3c6e035725720bdd729e8ecf401ac09e00b83378d2bac0734f0b599e",
-  "semanticSummaryHash": "sha256:28d92d3b8bfad2dc59d70130e0ee8f424a23b6ae793ef0e15bd30f59498d2930",
+  "sourceHash": "sha256:b3a123e18c52adc76abadbf3392f7907985b4140c1d74cfea35baa4b98900143",
+  "semanticSummaryHash": "sha256:55be0808809b889a806278546dd60ae7f2ee07aaef32e209b9fbe694b6c49641",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Both earlier problems fixed: the Workbench opening now lists the thirteen kinds with an editor (incl. Script Sheet) and says prompt formats open read-only (no editor in their kind.ts); saves are described as a patch of the edits. New Header bullet matches linked-scenes.tsx and GET /api/chats/linked (studio/piece-links.ts, settings only). Tool and formula bullets match tool-takes (plain list) and tryFormula without connection or window.",
-  "reviewedAt": "2026-10-28T06:37:41.147Z"
+  "notes": "New toast/booth text checked against code: use-reply-notes.tsx (CommittedTurn from use-scene-turn.ts, settling on the first read at a newer version including failed reads and no-read turns, tip message and swipe match, continue fires only when toast changes differ via deepEq, blocks kept until the new read lands) and booth-tools.tsx (per-tool read states with only a 404 saying Not in your library, re-read on piece-store change, latest read wins, 'not sent' with no bar while Tool Access is off, tiles kept). outOfTime ceilings match generation-rules.ts; bars exists in tracker-changes.ts. Scenes summary accurate. Short unflagged sections elsewhere are pre-existing.",
+  "reviewedAt": "2026-10-28T16:06:03.384Z"
 }

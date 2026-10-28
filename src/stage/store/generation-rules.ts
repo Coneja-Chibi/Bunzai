@@ -3,6 +3,7 @@
  * data only, every field its own type, an unknown field refused. Split from chat-rules.ts for the file-size cap.
  */
 import { isPlainObject } from "../../core/guards";
+import { SANITY_LIST, SANITY_REFUSAL, SANITY_TEXT } from "../../entities/_shared/sanity";
 import type { Generation } from "../contracts/chat-store";
 import { checkWhole, fail, isWhole } from "./scalar-rules";
 
@@ -10,7 +11,7 @@ export function checkGeneration(value: unknown): Generation | undefined {
   if (value === undefined) return undefined;
   if (!isPlainObject(value)) fail("generation must be a plain object");
   const out: Record<string, unknown> = {};
-  const known = new Set(["model", "finishReason", "promptTokens", "completionTokens", "generationMs", "reasoningMs", "tagThinkingMs", "presetName", "guidance", "samplers", "reasoning", "prefill", "thinkingEnd", "finalCut"]);
+  const known = new Set(["model", "finishReason", "promptTokens", "completionTokens", "generationMs", "reasoningMs", "tagThinkingMs", "presetName", "guidance", "samplers", "reasoning", "prefill", "thinkingEnd", "finalCut", "outOfTime"]);
   for (const key of Object.keys(value)) if (!known.has(key)) fail(`generation has an unknown field: ${key}`);
   const text = (key: string, from: Record<string, unknown>, into: Record<string, unknown>) => {
     const v = from[key];
@@ -40,6 +41,12 @@ export function checkGeneration(value: unknown): Generation | undefined {
     const whole = (n: unknown): boolean => isWhole(n, 0, 1_000);
     if (!isPlainObject(f) || Object.keys(f).some((k) => k !== "passes" && k !== "changed" && k !== "failed") || !whole(f.passes) || !whole(f.failed) || typeof f.changed !== "boolean") fail("generation finalCut must be { passes, changed, failed }");
     out.finalCut = { passes: f.passes, changed: f.changed, failed: f.failed };
+  }
+  if (value.outOfTime !== undefined) {
+    const o = value.outOfTime;
+    if (Array.isArray(o) && (o.length > SANITY_LIST || o.some((e) => isPlainObject(e) && typeof e.macro === "string" && e.macro.length > SANITY_TEXT))) fail(`generation outOfTime is ${SANITY_REFUSAL}`);
+    if (!Array.isArray(o) || o.length === 0 || o.some((e) => !isPlainObject(e) || Object.keys(e).some((k) => k !== "macro") || typeof e.macro !== "string")) fail("generation outOfTime must be a list of { macro }");
+    out.outOfTime = o.map((e) => ({ macro: (e as { macro: string }).macro }));
   }
   if (value.samplers !== undefined) {
     if (!isPlainObject(value.samplers)) fail("generation samplers must be a plain object");

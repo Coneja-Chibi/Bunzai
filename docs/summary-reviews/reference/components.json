@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:677d901541b666b4bf327e8907d19df38fe1ec9f3e4bdeef44f2765e9ac6aefa",
-  "semanticSummaryHash": "sha256:bbe31f8b36f264bf4238586b35b29e5eb86042aaeeb4549f64ecc256ee938c0d",
+  "sourceHash": "sha256:a58ac1000a7363ec6254e4120c7f0a87662df62cce77d66494b945733de35c11",
+  "semanticSummaryHash": "sha256:53c5361e13a0df33fe1468828ba7e49a35e00d20602de004dd96a0591ea13aa2",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Staged diff adds 22 rows (field bodies, IconPicker, NumberInput, LinkedScenes, MacroChips, PieceFrame, Dice/Formula/Tool/Tracker editors and their rails/settings); signatures match source (PieceFrame onName, TrackerSettings onTemplate, LinkedScenes kind: string); no unstaged changes. Summaries still accurate (they name IconPicker, NumberInput and the shared field editor) and make no claim these rows contradict. Catalog quirk, not a summary error: composes-from lines in CSS modules make the generator list '.module .css' as classes (17 rows before, 22 now); worth fixing in component-catalog.ts.",
-  "reviewedAt": "2026-10-28T13:43:06.234Z"
+  "notes": "Regenerated rows (BudgetRows, ChangeBlock, ChangesRow, FieldEdit, FieldIcon, FieldRead, ItemTiles, LibraryCard/Detail/Pick, OutOfTimeLine, ToolTiles now with accessOn, ToolAccessRows with windowTokens, TrackerFace) match source; summary unchanged and accurate; bands ok.",
+  "reviewedAt": "2026-10-28T16:06:03.202Z"
 }
