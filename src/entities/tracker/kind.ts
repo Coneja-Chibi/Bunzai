@@ -4,8 +4,9 @@ import { emptyTrackerBody, type TrackerBody } from "./schema";
 
 export default defineKind<"tracker", TrackerBody>({
   id: "tracker", order: 78, singular: "Tracker", plural: "Trackers", short: "trk", receiptWord: "tracker",
-  blurb: "State the story keeps", icon: "lucide:gauge", accent: "var(--deck-persona)", libraryDeck: true,
+  blurb: "State the story keeps", icon: "lucide:gauge", accent: "var(--deck-persona)", libraryDeck: true, promptingList: "trackers",
   blank: () => emptyTrackerBody("My tracker"), blankId: "tracker",
+  editor: { id: "tracker", label: "Tracker editor", load: "light" },
   describe: (b) => [
     `name     ${b.name || "(unnamed)"}`,
     `layout   ${b.layout}`,

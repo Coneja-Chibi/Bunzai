@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:a5bf3a097c1810041f6fd1c9cec6562e77359fa3e301773263dcad596fd89fd5",
-  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The editor waits for its wireframe.",
+  "sourceHash": "sha256:3db9b7f7a965996b15b05b3a66c766028e19c66bd8f0353f2acbe56a5453d587",
+  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The Editing section describes the formula editor and its Try rail, which runs the text on a copy of a scene through the formula-try route.",
   "topics": [
     "CanonicalFormula",
     "macro expression",
@@ -44,10 +44,14 @@
       "slug": "editing",
       "title": "Editing",
       "level": 2,
-      "sourceHash": "sha256:ceaf7f8cdd5388a866f643e5198eedef30e74389e3c44413842138ad3c7f9129",
-      "summary": "There is no editor for formulas yet. The formula editor waits for its approved wireframe, so no screen for writing or testing a formula exists in this change. The Library's New formula action saves a blank formula, and a blank formula is refused whenever it is run, with the words that it is empty, until someone gives it text. The section records the missing editor as a known gap rather than describing a surface that is not built, in the same way the tool and dice pages treat their own missing editors, and it promises nothing about the editor beyond the wireframe that has to be approved first.",
+      "sourceHash": "sha256:5ed12e98667e74bbfaa2c76efc0f4cae5d3771e61fb0253867f1c0ab6b7fa7e4",
+      "summary": "A formula opens in the Workbench's formula editor: what it is for, the formula text in the app's code editor with macro chips under it, covering the chat-watching macros, odds and tracker plus an All macros reference, and a Try it rail. Try runs the text as it stands, saved or not, on a copy of the scene you pick through the formula-try route, which reads the scene as it stands with the assembler a send runs, then runs the text through the read-only formula path inside the tool time budget. It answers the result, or the words for why it stopped, such as a variable it would change, a macro error or the spent budget, with how long it took. It needs no connection and builds the whole scene with no window to fit, so entries a send would trim can still feed the macros. Nothing in the scene changes and no model is asked. A save with nothing edited sends nothing. New formula saves a blank one, refused when run until it has text.",
       "topics": [
-        "no editor yet",
+        "formula editor",
+        "macro chips",
+        "Try it rail",
+        "formula-try route",
+        "read-only run",
         "blank formula refused"
       ],
       "children": []

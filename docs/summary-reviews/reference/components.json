@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:44cd99c257334243cf04cd0ba826cebbf2f0a99a72fe62507ee8051c94687279",
-  "semanticSummaryHash": "sha256:052f95c6d65592cda2b5ef8dfd1cc8a7d614bacde2e5640b369ac97117f1113e",
+  "sourceHash": "sha256:677d901541b666b4bf327e8907d19df38fe1ec9f3e4bdeef44f2765e9ac6aefa",
+  "semanticSummaryHash": "sha256:bbe31f8b36f264bf4238586b35b29e5eb86042aaeeb4549f64ecc256ee938c0d",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Rows 701-702 checked: ScriptSheetBench shows the catalog folder-fallback class list and ScriptSheetEditor lists .root .discard .nameRow .foot .name .role .text .problem (no .bench), matching the described change. Summaries only say each row records a Styles class list and name no ScriptSheet row or class, so they remain accurate.",
-  "reviewedAt": "2026-10-27T16:50:22.368Z"
+  "notes": "Staged diff adds 22 rows (field bodies, IconPicker, NumberInput, LinkedScenes, MacroChips, PieceFrame, Dice/Formula/Tool/Tracker editors and their rails/settings); signatures match source (PieceFrame onName, TrackerSettings onTemplate, LinkedScenes kind: string); no unstaged changes. Summaries still accurate (they name IconPicker, NumberInput and the shared field editor) and make no claim these rows contradict. Catalog quirk, not a summary error: composes-from lines in CSS modules make the generator list '.module .css' as classes (17 rows before, 22 now); worth fixing in component-catalog.ts.",
+  "reviewedAt": "2026-10-28T13:43:06.234Z"
 }

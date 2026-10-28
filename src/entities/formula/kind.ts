@@ -6,6 +6,7 @@ export default defineKind<"formula", FormulaBody>({
   id: "formula", order: 77, singular: "Formula", plural: "Formulas", short: "fx", receiptWord: "formula",
   blurb: "Saved macro math", icon: "lucide:variable", accent: "var(--deck-lorebook)", libraryDeck: true,
   blank: () => emptyFormulaBody("My formula"), blankId: "formula",
+  editor: { id: "formula", label: "Formula editor", load: "light" },
   describe: (b) => [
     `name     ${b.name || "(unnamed)"}`,
     `text     ${b.text.replace(/\s+/g, " ").slice(0, 80) || "(empty)"}`,

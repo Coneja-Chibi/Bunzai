@@ -55,5 +55,11 @@ Writing from a formula, as a preset's macros do while a prompt is built, is not 
 
 ## Editing
 
-There is no editor yet: the formula editor waits for its approved wireframe. The Library's "New formula" saves a
-blank one, which is refused when run until it has text.
+A formula opens in the Workbench's formula editor (`src/ui/apps/workbench/pieces/formula-editor.tsx`): what it is for, the formula text in the app's
+code editor with macro chips under it (the chat-watching macros, `odds`, `tracker`, and "All macros..." for the engine's whole reference), and the
+Try it rail. Try runs the text as it stands, saved or not, on a copy of the scene you pick, through `POST /api/chats/formula-try`: the route
+reads the scene as it stands (`src/studio/scene-forecast.ts`: the same assembler a send runs, with the whole take as history and nothing being answered), then runs the text through `runFormulaReadOnly` on that
+macro context, inside the tool time budget. It needs no connection and no window the scene fits in. Try builds the whole scene with no window to fit, so entries a real send would trim to fit can still feed the macro context the formula reads. It answers the result, or the words for why it stopped (a variable it would change, a macro
+error, the budget), with how long it took; It writes nothing and asks no model. A save sends a
+patch of the edits; with nothing edited nothing is sent. The Library's "New formula" saves a blank one, which is refused when run until it
+has text.

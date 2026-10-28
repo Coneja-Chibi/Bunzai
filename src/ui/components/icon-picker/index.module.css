@@ -1,0 +1,27 @@
+/* IconPicker: the favourites row and the searchable list under it; tokens only. */
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.row {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.5rem 0 0;
+}
+
+.scroll {
+  max-height: 14rem;
+  overflow-y: auto;
+}

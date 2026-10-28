@@ -2,14 +2,14 @@
 import { describe, expect, test } from "bun:test";
 import type { Delta } from "../core/scene-state/types";
 import { createDefaultContext } from "../core/macros";
-import { trackerValue, trackerViews, type LinkedTracker } from "../core/tracker";
+import { trackerState, trackerViews, type LinkedTracker } from "../core/tracker";
 import type { TrackerBody } from "../entities/tracker/schema";
 import { trackerTool } from "./library-trackers";
 import { turnWrites } from "./scene-turn-writes";
 import type { ToolsContext } from "./scene-turn-tools";
 
 const inv: TrackerBody = { name: "Inv", description: "", layout: "list", note: "", fields: [{ name: "qty", description: "", type: "number" }] };
-const linked: LinkedTracker[] = [{ id: "t1", body: inv, value: trackerValue({}, "t1", inv) }];
+const linked: LinkedTracker[] = [{ id: "t1", body: inv, ...trackerState({}, "t1", inv) }];
 
 function rig() {
   const saved: Delta[][] = [];
@@ -63,7 +63,7 @@ describe("trackerTool", () => {
     const writes = turnWrites(() => 5);
     writes.open([], async (all) => (saved.push(all), {}));
     const templated: TrackerBody = { ...inv, template: "Dragons: {{mentions::dragon}} Inv: {{tracker::Inv::r1::qty}}" };
-    const link: LinkedTracker[] = [{ id: "t1", body: templated, value: trackerValue({}, "t1", templated) }];
+    const link: LinkedTracker[] = [{ id: "t1", body: templated, ...trackerState({}, "t1", templated) }];
     const messages = Array.from({ length: 200 }, (_, i) => ({ role: i % 2 ? ("assistant" as const) : ("user" as const), content: "the dragon sleeps near the old tower" }));
     const spent = { at: 0, now: () => 1_000, soft: true as const };
     const context = { ...createDefaultContext({ messages, messageCount: 200 }), deadline: spent, trackers: trackerViews(link) };

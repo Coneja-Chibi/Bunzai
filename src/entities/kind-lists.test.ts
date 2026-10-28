@@ -68,6 +68,7 @@ const ALLOWED: Record<string, { lines: number; reason: string }> = {
   "src/ui/apps/scenes/stage-gallery-core.ts": { lines: 1, reason: "where a gallery picture comes from (the card, the persona, a pack)" },
   "src/ui/apps/workbench/nodes/pipeline.ts": { lines: 2, reason: TRACE },
   "src/ui/apps/workbench/nodes/use-pipeline.ts": { lines: 1, reason: CAST },
+  "src/ui/apps/workbench/pieces/tool-action.tsx": { lines: 1, reason: "a tool's actions: its dice and formula actions are named for the kind of piece each links" },
   "src/ui/apps/workbench/script-sheet-bench.tsx": { lines: 1, reason: "Open as preset: the one step from a Script Sheet to a new preset" },
   "src/ui/apps/workbench/use-character-pack-catalog.ts": { lines: 1, reason: "the sprite copy dialog's two sources: a character's pictures or a pack's" },
   "src/ui/server-chats.ts": { lines: 1, reason: CAST },

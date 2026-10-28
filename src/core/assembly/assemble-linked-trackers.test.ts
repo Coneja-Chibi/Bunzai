@@ -6,7 +6,7 @@
 import { describe, expect, test } from "bun:test";
 import type { CharacterBody } from "../../entities/character/schema";
 import type { TrackerBody } from "../../entities/tracker/schema";
-import { trackerValue, type LinkedTracker } from "../tracker";
+import { trackerState, type LinkedTracker } from "../tracker";
 import { assemble } from "./assemble";
 import { appBudgeter } from "./budget-app";
 import { TRACKERS_HEADER } from "./trackers";
@@ -23,7 +23,7 @@ const input = (over: Partial<AssemblyInput> = {}): AssemblyInput => ({
 });
 const health: TrackerBody = { name: "Health", description: "", layout: "record", note: "", fields: [{ name: "hp", description: "", type: "number", default: 100 }, { name: "mood", description: "", type: "choice", choices: ["calm", "tense"], default: "calm" }] };
 const party: TrackerBody = { name: "Party", description: "", layout: "list", note: "", fields: [{ name: "hp", description: "", type: "number", default: 10 }] };
-const link = (id: string, body: TrackerBody, state = {}): LinkedTracker => ({ id, body, value: trackerValue(state, id, body) });
+const link = (id: string, body: TrackerBody, state = {}): LinkedTracker => ({ id, body, ...trackerState(state, id, body) });
 const lines = (over: Partial<AssemblyInput> = {}) => assemble(input(over)).messages.map((m) => `${m.role}:${m.content}`);
 
 describe("the Trackers block", () => {
@@ -81,7 +81,7 @@ describe("owner rule (limits rework): the block is never cut, and the prompt bud
 
   test("a long tracker is sent whole, however many rows", () => {
     const rows = Array.from({ length: 3_000 }, (_, i) => ({ name: `row${i}`, hp: 1 }));
-    const r = assemble(input({ linkedTrackers: [{ id: "p", body: party, value: rows }] }));
+    const r = assemble(input({ linkedTrackers: [{ id: "p", body: party, shown: rows, stored: rows }] }));
     const block = r.messages.find((m) => m.content.startsWith("### Trackers"))!.content;
     expect(block.split("\n")).toHaveLength(3_003);
     expect(block.endsWith("- row2999: hp=1")).toBe(true);

@@ -88,6 +88,13 @@
 | `editor.section` | `section` | `src/ui/apps/workbench/layout/editor-layout.tsx` |
 | `editor.section.header` | `header` | `src/ui/apps/workbench/layout/editor-layout.tsx` |
 
+### field-editor
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `field-editor.list` | `aside` | `src/ui/_shared/field-editor.tsx` |
+| `field-editor.page` | `div` | `src/ui/_shared/field-editor.tsx` |
+
 ### html-view
 
 | Part | Element | Source |
@@ -95,6 +102,12 @@
 | `html-view.frame` | `div` | `src/ui/apps/html-view/index.tsx` |
 | `html-view.header` | `RoomHeader` | `src/ui/apps/html-view/index.tsx` |
 | `html-view.note` | `p` | `src/ui/apps/html-view/index.tsx` |
+
+### icon-picker
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `icon-picker.root` | `div` | `src/ui/components/icon-picker/index.tsx` |
 
 ### library
 
@@ -152,6 +165,25 @@
 | `nodes.pipeline-wires` | `svg` | `src/ui/apps/workbench/nodes/PipelineLayer.tsx` |
 | `nodes.preview` | `div` | `src/ui/apps/workbench/nodes/EngineNodes.tsx` |
 | `nodes.root` | `div` | `src/ui/apps/workbench/nodes/NodesView.tsx` |
+
+### piece
+
+| Part | Element | Source |
+| --- | --- | --- |
+| `piece.dice.chance` | `span` | `src/ui/apps/workbench/pieces/dice-table.tsx` |
+| `piece.dice.page` | `Panel` | `src/ui/apps/workbench/pieces/dice-editor.tsx` |
+| `piece.dice.table` | `div` | `src/ui/apps/workbench/pieces/dice-table.tsx` |
+| `piece.formula.page` | `Panel` | `src/ui/apps/workbench/pieces/formula-editor.tsx` |
+| `piece.formula.try` | `aside` | `src/ui/apps/workbench/pieces/formula-editor.tsx` |
+| `piece.linked` | `span` | `src/ui/apps/workbench/pieces/linked-scenes.tsx` |
+| `piece.tool.action` | `div` | `src/ui/apps/workbench/pieces/tool-action.tsx` |
+| `piece.tool.fields` | `Panel` | `src/ui/apps/workbench/pieces/tool-editor.tsx` |
+| `piece.tool.rail` | `aside` | `src/ui/apps/workbench/pieces/tool-rail.tsx` |
+| `piece.tool.use` | `Panel` | `src/ui/apps/workbench/pieces/tool-editor.tsx` |
+| `piece.tracker.fields` | `Panel` | `src/ui/apps/workbench/pieces/tracker-editor.tsx` |
+| `piece.tracker.identity` | `Panel` | `src/ui/apps/workbench/pieces/tracker-editor.tsx` |
+| `piece.tracker.rail` | `aside` | `src/ui/apps/workbench/pieces/tracker-rail.tsx` |
+| `piece.tracker.settings` | `div` | `src/ui/apps/workbench/pieces/tracker-settings.tsx` |
 
 ### preset
 

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/scene-state",
   "sourcePath": "docs/reference/scene-state.md",
-  "sourceHash": "sha256:203d4a5baa563f8cbf296285d867178cc8bf7c03cb46bb147afd64434fce714a",
-  "summary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet.",
+  "sourceHash": "sha256:788464617772d6205134bd199ddc0dc3b11178b69439d0d703c0cb3e5c6cdaa4",
+  "summary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet. A range read of the same data shows what each message changed.",
   "topics": [
     "slots",
     "per-version deltas",
@@ -79,13 +79,14 @@
       "slug": "rebuild",
       "title": "Rebuild",
       "level": 2,
-      "sourceHash": "sha256:97f288b558b1dd1ee978e6ca77cc2d9f3466283ce29a3b2a43c4c13af0b22142",
-      "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else from the take's base, else from nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Keyframes at or after the first changed message are dropped first. Committing a reply, adding or choosing a version, and cutting or restoring a version or messages each rebuild from the message they changed, and recordMessageDeltas rebuilds its own take from that message. A fork rebuilds the new take from its own path, restoring a take rebuilds it whole, and deleting a take drops its cache. A continue stamps no delta, and a turn that fails or stops with nothing has stamped nothing, because its deltas wait on the checkpoint. sceneStateBefore answers what a new version of a message builds from.",
+      "sourceHash": "sha256:b92afa510e1d11330d8708d631ddb0d4c464bc4799498f3f99e0d57327c0ca75",
+      "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else the take's base, else nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Committing a reply, adding or choosing a version, and cutting or restoring each rebuild from the message they changed; a fork rebuilds the new take, and deleting a take drops its cache. A continue stamps no delta, and a failed turn has stamped nothing. sceneStateBefore answers what a new version of a message builds from. sceneDeltas is a range read of the same data: the state before the first message without its own deltas, and each live message's deltas in fold order, changing nothing.",
       "topics": [
         "transactional rebuild",
         "nearest keyframe",
         "events that rebuild",
-        "state before a message"
+        "state before a message",
+        "range read"
       ],
       "children": []
     },
@@ -124,11 +125,12 @@
       "slug": "what-is-tested",
       "title": "What is tested",
       "level": 2,
-      "sourceHash": "sha256:feebff7944c0bebdd8f5bca092ed1be0ef3ec600c833f77bcec53836d9d7d277",
-      "summary": "Unit tests prove each strategy's diff, fold with removal markers, and a rebuild from a keyframe equal to one from nothing. The ChatStore contract suite runs for both stores and covers choosing, cutting and restoring versions, cutting a middle message and restoring it, a restore as a new take, a fork, dropped, committed and continued turns, refusals, and a two thousand message rebuild. A SQLite test adds the file-only facts: shared delta rows, the keyframes a mid-path cut leaves, sealing, a refused commit, and a dense rebuild of six thousand deltas held to a two hundred millisecond budget. A busy-library test runs a real turn with the lock held. The turn tests prove a prompt's increment counts once however often a reply is made again. A guard test fails when code outside the SQLite chat store names the tables or calls the removed methods.",
+      "sourceHash": "sha256:3b8eb081b12d44c540bffcb48fe6244b01721d08c000b06e73a0213cba3ca53e",
+      "summary": "Unit tests prove each strategy's diff, fold with removal markers, and a rebuild from a keyframe equal to one from nothing. The ChatStore contract suite runs for both stores and covers choosing, cutting and restoring versions, a restore as a new take, a fork, dropped, committed and continued turns, refusals, and a two thousand message rebuild. A separate contract file holds the range read to both stores, including a person's edit on the first message of a range. A SQLite test adds the file-only facts: shared delta rows, keyframes, sealing, and a dense rebuild held to a two hundred millisecond budget. A busy-library test runs a real turn with the lock held, the turn tests prove a prompt's increment counts once, and a guard test fails when code outside the SQLite chat store names the tables.",
       "topics": [
         "unit proofs",
         "contract suite for both stores",
+        "range read contract",
         "sqlite file tests",
         "turn tests",
         "one-door guard"

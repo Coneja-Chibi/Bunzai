@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:a5bf3a097c1810041f6fd1c9cec6562e77359fa3e301773263dcad596fd89fd5",
-  "semanticSummaryHash": "sha256:530dd16b0a3c455a7a1f0d12895ed8e97a076ab70e2e3af7f974612f329de81b",
+  "sourceHash": "sha256:3db9b7f7a965996b15b05b3a66c766028e19c66bd8f0353f2acbe56a5453d587",
+  "semanticSummaryHash": "sha256:c63083df4a78121469659a65582eeab0d2106eaa50af3874460d2abc3d5b1b36",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Safety sentence now says the state-scoped write still runs whole and with no deadline, matching tool-loop.ts (run gets no deadline and no budget refusal when tool.stateScoped). Rest unchanged and verified; sidecar author-valid.",
-  "reviewedAt": "2026-10-28T01:51:23.821Z"
+  "notes": "Sentence that Try builds the whole scene with no window to fit, so entries a send would trim can still feed the macro context, matches tryFormula (assembleRequest with unbudgeted: true, readScene, no connection); summary carries it. Bands ok.",
+  "reviewedAt": "2026-10-28T06:50:12.666Z"
 }

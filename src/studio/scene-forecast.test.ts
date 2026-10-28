@@ -7,7 +7,7 @@ import { describe, expect, test } from "bun:test";
 import type { Provider, ProviderCompletion, ProviderRequest } from "../stage/contracts/provider";
 import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
-import { forecastRequest } from "./scene-forecast";
+import { forecastRequest, tryFormula } from "./scene-forecast";
 import { NoConnectionError, runTurn, type Connected, type TurnEvent } from "./scene-turn";
 import { answerReview } from "./scene-turn-review";
 
@@ -104,5 +104,38 @@ describe("forecastRequest", () => {
     await s.chats.setCompendium(s.chat.id, { on: true, recall: { on: true } });
     const on = await forecastRequest(s.deps, { chatId: s.chat.id, draft: "Hi" });
     expect(on.notes).toEqual(["The Compendium's recall is not run for a forecast; its entries are added when you send."]);
+  });
+});
+
+describe("tryFormula", () => {
+  test("runs on a scene with no connection at all: the formula asks no model", async () => {
+    const s = await scene({ connection: false });
+    const out = await tryFormula({ ...s.deps, connect: async () => null }, { chatId: s.chat.id, text: "{{char}}: {{calc::1 + 2}}" });
+    expect(out).toMatchObject({ ok: true, text: "Vera: 3" });
+    expect(s.sent).toHaveLength(0);
+  });
+
+  test("does not need the scene to fit a window: a window far too small for the card still answers, where the forecast refuses", async () => {
+    const s = await scene();
+    const deps = { ...s.deps, connect: async (): Promise<Connected | null> => ({ ...(await s.deps.connect())!, context: 1 }) };
+    await expect(forecastRequest(deps, { chatId: s.chat.id, draft: "Any storms?" })).rejects.toThrow();
+    expect(await tryFormula(deps, { chatId: s.chat.id, text: "{{calc::2 * 3}}" })).toMatchObject({ ok: true, text: "6" });
+  });
+
+  test("reads the take as it stands: the last message a word macro sees is the take's own, never an empty draft", async () => {
+    const s = await scene();
+    await s.chats.appendMessage(s.chat.activeBranchId, { role: "user", content: "Any storms?" });
+    await s.chats.appendMessage(s.chat.activeBranchId, { role: "assistant", content: "Cold air breaks over the pier." });
+    const run = (text: string) => tryFormula(s.deps, { chatId: s.chat.id, text });
+    expect(await run("{{mentions::breaks::1}}")).toMatchObject({ ok: true, text: "1" });
+    expect(await run("{{mentions::storms::1}}")).toMatchObject({ ok: true, text: "0" });
+    expect(await run("{{mentions::storms::2}}")).toMatchObject({ ok: true, text: "1" });
+  });
+
+  test("writes nothing, and stops in words when the formula would change a variable", async () => {
+    const s = await scene();
+    const out = await tryFormula(s.deps, { chatId: s.chat.id, text: "{{setvar::mood::grim}}" });
+    expect(out).toMatchObject({ ok: false });
+    expect(await tryFormula(s.deps, { chatId: s.chat.id, text: "[{{getvar::mood}}]" })).toMatchObject({ ok: true, text: "[]" });
   });
 });

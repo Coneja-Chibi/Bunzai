@@ -6,6 +6,7 @@ export default defineKind<"dice", DiceBody>({
   id: "dice", order: 76, singular: "Dice", plural: "Dice", short: "dice", receiptWord: "dice",
   blurb: "Rolls, tables and pools", icon: "lucide:dices", accent: "var(--deck-persona)", libraryDeck: true,
   blank: () => emptyDiceBody("My dice"), blankId: "dice",
+  editor: { id: "dice", label: "Dice editor", load: "light" },
   describe: (b) => [
     `name     ${b.name || "(unnamed)"}`,
     `type     ${b.type}`,

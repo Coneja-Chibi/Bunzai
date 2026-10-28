@@ -4683,7 +4683,7 @@
           "text": "Components (React, `.tsx`)",
           "slug": "components-react-tsx",
           "level": 2,
-          "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, shared controls, Library, Workbench editors, Scenes, and Settings and documentation surfaces. BookCover composes lorebook presentation, Proscenium frames scene artwork, and LightRays supplies capped premiere beams. Rows are generated discovery metadata, not proof of behavior or a second registry; consult reference/ui and source for the live contract. It also lists the Stage AccentRow, Compendium Settings tab, the Participants rows with the Add participant form, the Storyboards dossier, the Props wing with its tracker panels, and the Messenger shell, panels and settings rows (including the Compendium, Final Cut, models and prompt rows) and the shared VirtualRows and VirtualShelf lists. It lists the shared RoomHeader and Panel, the Agent room's RoomFrame and DockedHead, EditorEhead with its optional kind and deck props, and the Settings StageLightsRow and ProtectedLine.",
+          "summary": "The React table lists exported UI components by name, source file, TypeScript signature and optional documentation and styles links. It covers the shell, Dock, shared controls, Library, Workbench editors, Scenes, and Settings and documentation surfaces. BookCover composes lorebook presentation, Proscenium frames scene artwork, and LightRays supplies capped premiere beams. Rows are generated discovery metadata, not proof of behavior or a second registry; consult reference/ui and source for the live contract. It also lists the Stage AccentRow, Compendium Settings tab, the Participants rows with the Add participant form, the Storyboards dossier, the Props wing with its tracker panels, and the Messenger shell, panels and settings rows (including the Compendium, Final Cut, models and prompt rows) and the shared VirtualRows and VirtualShelf lists. It lists the shared RoomHeader and Panel, the IconPicker and NumberInput controls and the field editor a tracker and a tool share, the Agent room's RoomFrame and DockedHead, EditorEhead with its optional kind and deck props, and the Settings StageLightsRow and ProtectedLine.",
           "topics": [
             "React tsx exports",
             "shell Dock App",
@@ -6066,7 +6066,7 @@
         "reference/extending/new-kind",
         "reference/entities/README"
       ],
-      "semanticSummary": "The dice entity page covers CanonicalDice, something a person rolls, made once and used anywhere. It is one kind with three types, a roll, a table or a pool, and each carries only the field its type rolls. Rolling itself is not a piece but math in src/core/dice.ts, the same module the roll macro, the battle tracker and the spellbook use, while rollDicePiece in src/core/dice-piece.ts says what each type rolls on randomness the caller hands in. The page lists the types with example results, says a tool links a dice piece by id so a model can roll it with the turn's seeded randomness, gives the rules checked when a piece is saved, and notes that the editor waits for its wireframe while New dice saves a blank 1d20 roll.",
+      "semanticSummary": "The dice entity page covers CanonicalDice, something a person rolls, made once and used anywhere. It is one kind with three types, a roll, a table or a pool, and each carries only the field its type rolls. Rolling itself is not a piece but math in src/core/dice.ts, the same module the roll macro, the battle tracker and the spellbook use, while rollDicePiece in src/core/dice-piece.ts says what each type rolls on randomness the caller hands in. The page lists the types with example results, says a tool links a dice piece by id so a model can roll it with the turn's seeded randomness, gives the rules checked when a piece is saved, and describes the dice editor, while New dice saves a blank 1d20 roll.",
       "topics": [
         "CanonicalDice",
         "roll",
@@ -6116,9 +6116,13 @@
           "text": "Editing",
           "slug": "editing",
           "level": 2,
-          "summary": "There is no editor for dice pieces yet. The dice editor waits for its approved wireframe, so no screen for editing a roll, a table or a pool exists in this change. The Library's New dice action saves a blank piece, a roll of 1d20, which is a valid stored piece under the rules above and can be linked from a tool as it is. The section records the missing editor as a known gap rather than describing a surface that is not built, and promises nothing about the editor beyond the wireframe that must be approved first, in the same way the tool page treats its own missing editor.",
+          "summary": "A dice piece opens in the Workbench's dice editor, one small page with Roll, Table and Pool, each with a one-line roll card. A roll has its dice, a table has rows with a weight, a result and a chance equal to the weight over the total, plus add-a-row and paste-a-list, which makes one row per line at weight 1, and a pool has its dice, sides and the number it counts at. Roll uses the real piece roll that a tool's action also uses, shows the result on the card, and lights the table row it picked until the piece is edited; it is off while the draft cannot be saved and never changes the piece. A piece keeps exactly the field its type rolls, and switching type sets the others aside and brings them back if the type is switched back. A save with nothing edited sends nothing. New dice saves a blank roll of 1d20.",
           "topics": [
-            "no editor yet",
+            "dice editor",
+            "roll card",
+            "table chances",
+            "paste a list",
+            "one field per type",
             "blank 1d20"
           ],
           "children": []
@@ -6143,7 +6147,7 @@
         "reference/entities/tool",
         "reference/entities/dice"
       ],
-      "semanticSummary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The editor waits for its wireframe.",
+      "semanticSummary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The Editing section describes the formula editor and its Try rail, which runs the text on a copy of a scene through the formula-try route.",
       "topics": [
         "CanonicalFormula",
         "macro expression",
@@ -6182,9 +6186,13 @@
           "text": "Editing",
           "slug": "editing",
           "level": 2,
-          "summary": "There is no editor for formulas yet. The formula editor waits for its approved wireframe, so no screen for writing or testing a formula exists in this change. The Library's New formula action saves a blank formula, and a blank formula is refused whenever it is run, with the words that it is empty, until someone gives it text. The section records the missing editor as a known gap rather than describing a surface that is not built, in the same way the tool and dice pages treat their own missing editors, and it promises nothing about the editor beyond the wireframe that has to be approved first.",
+          "summary": "A formula opens in the Workbench's formula editor: what it is for, the formula text in the app's code editor with macro chips under it, covering the chat-watching macros, odds and tracker plus an All macros reference, and a Try it rail. Try runs the text as it stands, saved or not, on a copy of the scene you pick through the formula-try route, which reads the scene as it stands with the assembler a send runs, then runs the text through the read-only formula path inside the tool time budget. It answers the result, or the words for why it stopped, such as a variable it would change, a macro error or the spent budget, with how long it took. It needs no connection and builds the whole scene with no window to fit, so entries a send would trim can still feed the macros. Nothing in the scene changes and no model is asked. A save with nothing edited sends nothing. New formula saves a blank one, refused when run until it has text.",
           "topics": [
-            "no editor yet",
+            "formula editor",
+            "macro chips",
+            "Try it rail",
+            "formula-try route",
+            "read-only run",
             "blank formula refused"
           ],
           "children": []
@@ -7694,7 +7702,7 @@
         "reference/extending/new-kind",
         "reference/entities/README"
       ],
-      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that no screen links a tool yet. Editing says the editor waits for its approved wireframe.",
+      "semanticSummary": "The tool entity page covers CanonicalTool, a tool a model may call while it writes, kept as data and never code: a name, a description the model reads, a list of typed fields the model fills in, and one action from a fixed first-party set in src/core/tools.ts. The fields section explains field names, the four types, choices and required flags, and how the function schema and the strict argument check are both made from the one field list so they cannot disagree. The actions section covers roll, which rolls the dice the model writes into a text field, dice, which rolls a linked library dice piece, formula, which runs a linked formula on a copy of the turn's macro context, and record, which only records the call; all four are read-only. The scene section explains how a scene links tools by id in its prompting, the gates they share with the lorebook lookup, how linked tools are read and checked, how call names are made safe and unique, why the same seed rolls the same dice, and that no screen links a tool yet. Editing describes the tool editor, with its action choice, the shared field editor, and a rail that shows the tool as the AI meets it and tries it.",
       "topics": [
         "CanonicalTool",
         "tool fields",
@@ -7750,9 +7758,13 @@
           "text": "Editing",
           "slug": "editing",
           "level": 2,
-          "summary": "There is no editor for tools yet. The tool editor waits for its approved wireframe, and no screen for editing a tool exists in this change. What does exist is the Library's New tool action, which saves a blank record tool, using the record action the page describes above: it changes nothing, answers Recorded, and leaves only the call's arguments in the trace. The section is short because the page records the missing editor as a known gap rather than describing a surface that is not built, and it promises nothing about the editor beyond the wireframe that must be approved first.",
+          "summary": "A tool opens in the Workbench's tool editor: the shared header, which says in how many scenes it is linked and lists them on a click, when the AI should use it, a choice of what the tool does (roll a field's dice, roll a dice piece, run a formula, or only note the call), and the fields in the field editor a tracker shares, where a field also says whether the AI must fill it. A piece choice starts with none picked. Renaming the field a roll reads carries the roll from the name the field began with, and deleting it leaves the roll with no field picked. The rail's first tab shows the call name, what it takes as plain lines read off the provider's parameters, and the token cost; its Try tab calls the tool through the real reader and runner and shows exactly the answer the AI would get. A draft the decoder refuses cannot be saved or tried. New tool saves a blank record tool.",
           "topics": [
-            "no editor yet",
+            "tool editor",
+            "action choice",
+            "AI sees tab",
+            "Try tab",
+            "decoder-gated save",
             "blank New"
           ],
           "children": []
@@ -7764,7 +7776,7 @@
       "path": "docs/reference/entities/tracker.md",
       "title": "Tracker entity",
       "audience": "dev",
-      "summary": "The canonical piece for state a scene keeps, such as a character's health or a party's roster: named typed fields, kept as swipe-safe scene state, shown to the model every turn, readable by macros, and updated by the model through one tool. A scene links the trackers it keeps; the backend is built, the editor and the linking screen are not.",
+      "summary": "The canonical piece for state a scene keeps, such as a character's health or a party's roster: named typed fields, kept as swipe-safe scene state, shown to the model every turn, readable by macros, and updated by the model through one tool. A scene links the trackers it keeps. Fields may carry icons and take a number's top from another field, a tracker has a change style, and a read answers what each reply changed; the backend and the Workbench editor are built, the linking screen and the change visuals are not.",
       "tags": [
         "entity",
         "tracker",
@@ -7779,7 +7791,7 @@
         "reference/macro-engine",
         "reference/entities/README"
       ],
-      "semanticSummary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, and an optional macro template for its prompt line. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers and gets a Trackers block the budget measures and never cuts, the tracker macro, and the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written. It says plainly that the editor and the linking screen are not built yet.",
+      "semanticSummary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style, only stored. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the linking screen and the change visuals are not built yet.",
       "topics": [
         "CanonicalTracker",
         "record and list layouts",
@@ -7788,20 +7800,24 @@
         "Trackers prompt block",
         "tracker macro",
         "update_trackers tool",
-        "stateScoped write"
+        "stateScoped write",
+        "maxField",
+        "icons",
+        "change style",
+        "what a reply changed"
       ],
       "anchors": [
         {
           "text": "Fields",
           "slug": "fields",
           "level": 2,
-          "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices, a number field may have a min and a max with either end optional, and any field may have a default that must fit. What a field accepts and what a new record or row holds for it, zero held inside whatever ends of the range exist, is one small module the decoder and the core share, pinned with the decoder. A tracker has at least one field with unique names, a note and an optional template. There are no product limits; the decoder refuses only a hostile file past the sanity ceilings of ten thousand items, a million characters or the largest safe integer.",
+          "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices. A number field may have a min and a max, or instead take its top from another number field of the same tracker through maxField, which the decoder refuses when it names no field, a non-number, itself, a loop, or comes with max. A value above such a top is brought down to it, never refused, the top settled first, and a write that moves a top stores the clamped dependents in the same batch, so stored equals read; a top below min leaves the min. A field may have a well-formed icon id, not checked against the glyph table, a tracker an icon and a change style, all only stored; and any field a default that must fit. There are no product limits beyond the hostile-input ceilings.",
           "topics": [
             "field types",
             "shared field basics",
             "field-value module",
-            "number range ends",
-            "default",
+            "maxField",
+            "icon and change style",
             "sanity ceilings"
           ],
           "children": []
@@ -7838,14 +7854,15 @@
           "text": "In a scene",
           "slug": "in-a-scene",
           "level": 2,
-          "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow.",
+          "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow. The scene's trackerChanges switch turns the change visuals on replies off; it is on unless the scene says otherwise, so only an off switch is stored.",
           "topics": [
             "ChatPrompting.trackers",
             "Trackers block",
             "template",
             "macro report",
             "one-line values",
-            "tracker macro"
+            "tracker macro",
+            "trackerChanges switch"
           ],
           "children": []
         },
@@ -7853,7 +7870,7 @@
           "text": "The update tool",
           "slug": "the-update-tool",
           "level": 2,
-          "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut; about 280 tokens for three typical trackers, smaller than the 430 of a per-tracker schema. Items apply in order and the batch is all or nothing. The call's shape is checked when read and its items checked and applied once when run, with no deadline, and the model is shown its own call again; the model is answered with only what changed, and the loop exempts this tool from its answer shortening and from a spent budget. The deltas join the turn's pending set through a door for tracker slots only with no size cap; a save that did not happen is a failure. The loop runs it as the one stateScoped write.",
+          "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through a door for tracker slots only with no size cap, and the loop runs the tool as the one stateScoped write, exempt from answer shortening and a spent budget.",
           "topics": [
             "update_trackers",
             "all or nothing batch",
@@ -7866,15 +7883,31 @@
           "children": []
         },
         {
+          "text": "What a reply changed",
+          "slug": "what-a-reply-changed",
+          "level": 2,
+          "summary": "A read route answers, for a take and a range of its live messages, what each message changed in the library trackers on the version it shows, with each tracker's name, style and icons. A record's change is a field with its value before and after, and a list's is a row, added, changed or removed, with the whole row. Values are exact, never cut. It is one forward pass: the store's range read gives the state before the first message and each message's deltas in fold order, and the state is folded forward, so a person's edit shows as a change on its message, choosing another version shows that version's changes, and a cut message drops out. Only an unreadable piece is reported by its id with the stored values, a changed layout keeps the name and style, past lines are read through the current piece, only tracker slots are loaded, a missing branch or message is a 404, a malformed to a 400, an empty to the tip.",
+          "topics": [
+            "tracker-changes route",
+            "sceneDeltas",
+            "one forward pass",
+            "net change per message",
+            "unreadable piece by id"
+          ],
+          "children": []
+        },
+        {
           "text": "Editing",
           "slug": "editing",
           "level": 2,
-          "summary": "There is no tracker editor yet and no control that links a tracker to a scene; both wait for approved wireframes. The Library's New tracker saves the blank record. The Story Director does not update library trackers. The section is short because it records the missing surfaces as known gaps rather than describing anything that is not built. Nothing in it promises more than the wireframes that have to be approved before any editor or linking control is written.",
+          "summary": "A tracker opens in the Workbench's tracker editor: the shared header, which says in how many scenes it is linked and lists them on a click, an Identity and settings disclosure (what it tracks, how the AI should update it, shape, icon, how a reply shows changes, and an optional prompt line in macros), and the fields in the field editor a tool shares. A number's To can be a number, another number field, or none. The rail shows the Trackers block as prompt assembly renders it at the starting values, its plain line, its token cost, and the tracker's update tool line. A rename is followed a keystroke at a time from the name it began with, in other fields' tops and in the prompt line's macros, so a name typed through on the way takes nothing; renaming the tracker rewrites its macros. A draft the decoder refuses, or a prompt line whose macros fail, is not saved and is explained in plain words. The scene linking control and change visuals still wait for wireframes.",
           "topics": [
-            "no editor yet",
-            "no linking screen",
-            "blank New",
-            "Story Director not involved"
+            "tracker editor",
+            "field editor",
+            "prompt rail",
+            "update tool line",
+            "decoder-gated save",
+            "no linking screen"
           ],
           "children": []
         }
@@ -8266,7 +8299,7 @@
           "text": "Steps",
           "slug": "steps",
           "level": 2,
-          "summary": "Steps: make the folder with schema.ts and runtime-schema.ts exporting entitySchema built from entityShape; write kind.ts with defineKind, an existing deck token and glyph; optionally parts.ts and capabilities; run bun run kinds; name the kind's editor in kind.ts (id, label and load) and add the component to workbench/editors.ts under that id, with the completeness test failing on either side missing; write the reference page and the scale fixture; run the kind completeness test, which lists each missing part with the file to create, or a reason in its exemption lists. Behavior unique to one kind stays in its owning code; a scene's fields keep their shapes in the scene store and sceneField only declares that a scene can point at the kind. The kind-lists guard test lists every file with a line naming two or more kinds, with its count and reason.",
+          "summary": "Steps: make the folder with schema.ts and runtime-schema.ts exporting entitySchema built from entityShape; write kind.ts with defineKind, an existing deck token and glyph; optionally parts.ts and capabilities; run bun run kinds; name the kind's editor in kind.ts (id, label and load) and add the component to workbench/editors.ts under that id, with the completeness test failing on either side missing; write the reference page and the scale fixture; run the kind completeness test, which lists each missing part with the file to create, or a reason in its exemption lists. Behavior unique to one kind stays in its owning code; a scene's fields keep their shapes in the scene store, sceneField only declares that a scene can point at the kind, and promptingList names the prompting list that links it. The kind-lists guard test lists every file with a line naming two or more kinds, with its count and reason.",
           "topics": [
             "entitySchema",
             "defineKind",
@@ -13962,7 +13995,7 @@
       "summary": "What a scene remembers beyond its text, kept so that every way of changing the shown history (a new version of a reply, choosing a version, cutting, restoring, forking) leaves it where the history says. A piece of state is a",
       "tags": [],
       "related": [],
-      "semanticSummary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet.",
+      "semanticSummary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet. A range read of the same data shows what each message changed.",
       "topics": [
         "slots",
         "per-version deltas",
@@ -14034,12 +14067,13 @@
           "text": "Rebuild",
           "slug": "rebuild",
           "level": 2,
-          "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else from the take's base, else from nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Keyframes at or after the first changed message are dropped first. Committing a reply, adding or choosing a version, and cutting or restoring a version or messages each rebuild from the message they changed, and recordMessageDeltas rebuilds its own take from that message. A fork rebuilds the new take from its own path, restoring a take rebuilds it whole, and deleting a take drops its cache. A continue stamps no delta, and a turn that fails or stops with nothing has stamped nothing, because its deltas wait on the checkpoint. sceneStateBefore answers what a new version of a message builds from.",
+          "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else the take's base, else nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Committing a reply, adding or choosing a version, and cutting or restoring each rebuild from the message they changed; a fork rebuilds the new take, and deleting a take drops its cache. A continue stamps no delta, and a failed turn has stamped nothing. sceneStateBefore answers what a new version of a message builds from. sceneDeltas is a range read of the same data: the state before the first message without its own deltas, and each live message's deltas in fold order, changing nothing.",
           "topics": [
             "transactional rebuild",
             "nearest keyframe",
             "events that rebuild",
-            "state before a message"
+            "state before a message",
+            "range read"
           ],
           "children": []
         },
@@ -14076,10 +14110,11 @@
           "text": "What is tested",
           "slug": "what-is-tested",
           "level": 2,
-          "summary": "Unit tests prove each strategy's diff, fold with removal markers, and a rebuild from a keyframe equal to one from nothing. The ChatStore contract suite runs for both stores and covers choosing, cutting and restoring versions, cutting a middle message and restoring it, a restore as a new take, a fork, dropped, committed and continued turns, refusals, and a two thousand message rebuild. A SQLite test adds the file-only facts: shared delta rows, the keyframes a mid-path cut leaves, sealing, a refused commit, and a dense rebuild of six thousand deltas held to a two hundred millisecond budget. A busy-library test runs a real turn with the lock held. The turn tests prove a prompt's increment counts once however often a reply is made again. A guard test fails when code outside the SQLite chat store names the tables or calls the removed methods.",
+          "summary": "Unit tests prove each strategy's diff, fold with removal markers, and a rebuild from a keyframe equal to one from nothing. The ChatStore contract suite runs for both stores and covers choosing, cutting and restoring versions, a restore as a new take, a fork, dropped, committed and continued turns, refusals, and a two thousand message rebuild. A separate contract file holds the range read to both stores, including a person's edit on the first message of a range. A SQLite test adds the file-only facts: shared delta rows, keyframes, sealing, and a dense rebuild held to a two hundred millisecond budget. A busy-library test runs a real turn with the lock held, the turn tests prove a prompt's increment counts once, and a guard test fails when code outside the SQLite chat store names the tables.",
           "topics": [
             "unit proofs",
             "contract suite for both stores",
+            "range read contract",
             "sqlite file tests",
             "turn tests",
             "one-door guard"
@@ -15563,7 +15598,7 @@
       "summary": "uses. Optional remote listeners are separately enabled and gated. One engine, two shells - no format logic exists in the UI layer.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for eight canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
+      "semanticSummary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for the canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
       "topics": [
         "Kit conversational terminal",
         "temporary browser Studio",
@@ -15859,7 +15894,7 @@
           "text": "The Workbench room (home by default - the IDE)",
           "slug": "the-workbench-room-home-by-default---the-ide",
           "level": 2,
-          "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light baselines and serialized revision-checked patches with conflict choices and bounded history. Lore native folders share undo/save ownership; named asset changes are captured with accepted submissions. Complete export reads the full entity. Local asset uploads use session grants revoked on lock or close, with a picture capped at 10 MiB. Large lists use measured windows that keep focus and selection. Timer autosaves group by five minutes; manual saves keep version boundaries. The character editor opens in Grid unless the guided quiz was picked; the preset editor shows groups as a depth-first category tree; in the lorebook editor one entry owns the screen; quick-reply sets open as an ordered list of labeled messages. The dock collapses only through Hide dock, leaving a Show dock pill, for the session. These paths are source-reviewed and live proof remains pending. An empty or failed bench shows a centered room header in a framed panel.",
+          "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light baselines and serialized revision-checked patches with conflict choices and bounded history. Lore native folders share undo/save ownership; named asset changes are captured with accepted submissions. Complete export reads the full entity. Local asset uploads use session grants revoked on lock or close, with a picture capped at 10 MiB. Large lists use measured windows that keep focus and selection. Timer autosaves group by five minutes; manual saves keep version boundaries. The character editor opens in Grid unless the guided quiz was picked; the preset editor shows groups as a depth-first category tree; in the lorebook editor one entry owns the screen; quick-reply sets open as an ordered list of labeled messages; tracker, tool, dice and formula editors share one decoder-gated save. The dock collapses only through Hide dock, leaving a Show dock pill, for the session. These paths are source-reviewed and live proof remains pending. An empty or failed bench shows a centered room header in a framed panel.",
           "topics": [
             "shell-owned editor tabs",
             "recents ranking rail",
@@ -15867,7 +15902,7 @@
             "hierarchical preset categories",
             "single-entry lorebook editor",
             "Grid is the default mode",
-            "quick-reply editor",
+            "quick-reply and small piece editors",
             "Hide dock"
           ],
           "children": [

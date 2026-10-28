@@ -1,5 +1,6 @@
 /** The page shapes of ChatStore's bounded transcript reads and its transcript search. Re-exported by chat-store.ts. */
 import type { Message, MessageRole, Swipe } from "./chat-store";
+import type { Delta, SceneState } from "../../core/scene-state/types";
 
 export interface MessagePage {
   messages: Message[];
@@ -69,4 +70,12 @@ export interface TranscriptSearchPage {
   totalCount: number;
   /** The take's version at the time of this read, or null when the take does not exist. */
   branchVersion: number | null;
+}
+
+/** The range read of scene state (ChatStore.sceneDeltas): the state before the first message, then each live message's deltas in fold order. */
+export interface SceneDeltaRange {
+  /** Every slot's value after the shown messages before the first one, without its own deltas. */
+  before: SceneState;
+  /** The live messages from the first through the last asked for, oldest first; a message that changed nothing has an empty list. */
+  messages: { messageId: string; deltas: Delta[] }[];
 }

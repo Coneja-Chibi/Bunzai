@@ -2,12 +2,13 @@
  * A library tracker (entities/tracker) as the scene meets it, pure: the scene-state slot it lives in, its current value read from the
  * state (defaults filled, a value that does not fit its field read as the default), one update checked and cut into deltas, the single
  * `update_trackers` tool a model calls to change any linked tracker, and the text the prompt and macros show. What a field accepts is one
- * rule (entities/_shared/field-value.ts), the same the decoder holds a default to. The slot families `tracker-record:*` and
+ * rule (entities/_shared/field-value.ts), the same the decoder holds a default to; a number whose top is another field (`maxField`) is judged
+ * against that field's current value, settled first, wherever a value is read, defaulted or written. The slot families `tracker-record:*` and
  * `tracker-list:*` (scene-state/slots/) hold the state; the store only folds it, and every shape check is here, where the piece is known.
  * Nothing here cuts or caps text: a tracker's text is as long as its state, and the prompt budget measures it (assembly/assemble.ts).
  */
 import type { TrackerBody, TrackerField } from "../entities/tracker/schema";
-import { clampToField, fieldAccepts, fieldDefault, type FieldScalar } from "../entities/_shared/field-value";
+import { clampToField, fieldAccepts, fieldDefault, fieldIndex, settler, type FieldScalar } from "../entities/_shared/field-value";
 import { SANITY_LIST } from "../entities/_shared/sanity";
 import { deepEq, isRecord } from "./guards";
 import type { TrackerView } from "./macros";
@@ -17,23 +18,45 @@ export type Scalar = FieldScalar;
 /** A record's fields, or one list row (which also holds its `name`). */
 export type TrackerRecord = Record<string, Scalar>;
 export type TrackerValue = TrackerRecord | TrackerRecord[];
-/** A tracker the turn linked: its piece id, its body, and its value as the turn stands. */
-export interface LinkedTracker { id: string; body: TrackerBody; value: TrackerValue }
+/**
+ * A tracker's value as the turn stands, in the two forms that must never be confused: `stored` is what the scene state holds (each field judged alone), and
+ * `shown` is what is read from it (a number past a top taken from another field reads inside it). Writes are judged against `stored`; the prompt, the
+ * macros, the tool line and the change read use `shown`. `shown` is always computed from `stored` by one function (`shownOf`).
+ */
+export interface TrackerState { shown: TrackerValue; stored: TrackerValue }
+/** A tracker the turn linked: its piece id, its body, and its value as the turn stands, both forms. */
+export interface LinkedTracker extends TrackerState { id: string; body: TrackerBody }
 
 export const TRACKER_TOOL = "update_trackers";
 
+/** The two slot families a tracker's state lives in, as the prefixes a slot id starts with. */
+export const TRACKER_SLOT_PREFIXES = ["tracker-record:", "tracker-list:"] as const;
+
 /** The slot a tracker keeps its state in: one family per layout, then the piece id. */
-export const trackerSlot = (id: string, body: TrackerBody): string => `${body.layout === "record" ? "tracker-record" : "tracker-list"}:${id}`;
+export const trackerSlot = (id: string, body: TrackerBody): string => `${TRACKER_SLOT_PREFIXES[body.layout === "record" ? 0 : 1]}${id}`;
+
+/** The piece id a tracker slot belongs to, or null for any other slot (the inverse of `trackerSlot`). */
+export const trackerOfSlot = (slot: string): string | null => {
+  const prefix = TRACKER_SLOT_PREFIXES.find((p) => slot.startsWith(p));
+  return prefix !== undefined && slot.length > prefix.length ? slot.slice(prefix.length) : null;
+};
 
 const own = (o: object, k: string): unknown => (Object.hasOwn(o, k) ? (o as Record<string, unknown>)[k] : undefined);
 
-/** One stored value read through its field's rule; the default when it is missing or does not fit. */
-const read = (f: TrackerField, v: unknown): Scalar => (fieldAccepts(f, v) ? v : fieldDefault(f));
+/** One stored value read through its field: the value when it fits; a number that is past a top taken from another field is brought inside it (its top moves in play); else the default. */
+const read = (f: TrackerField, v: unknown): Scalar =>
+  fieldAccepts(f, v) ? v : f.maxField !== undefined && typeof v === "number" && Number.isFinite(v) ? clampToField(f, v) : fieldDefault(f);
+
+/** Every field of one record or row settled once, a top first; `make` judges a field against the rules it is handed. */
+const settleAll = (body: TrackerBody, index: ReadonlyMap<string, TrackerField>, make: (rules: TrackerField) => Scalar): TrackerRecord => {
+  const get = settler(index, make);
+  return Object.fromEntries(body.fields.map((f) => [f.name, get(f.name)]));
+};
 
 /** The linked trackers as the macro reads them, by lowercased name; a name another tracker already has is left out, so a name means one tracker. */
 export function trackerViews(linked: readonly LinkedTracker[] | undefined): Map<string, TrackerView> {
   const views = new Map<string, TrackerView>();
-  for (const t of linked ?? []) if (!views.has(t.body.name.toLowerCase())) views.set(t.body.name.toLowerCase(), { body: t.body, value: t.value, text: renderTracker(t.body, t.value) });
+  for (const t of linked ?? []) if (!views.has(t.body.name.toLowerCase())) views.set(t.body.name.toLowerCase(), { body: t.body, value: t.shown, text: renderTracker(t.body, t.shown) });
   return views;
 }
 
@@ -47,19 +70,30 @@ export function refreshTrackerTexts(views: ReadonlyMap<string, TrackerView>, ren
   for (const [v, text] of made) v.text = text;
 }
 
-/** The tracker's current value in the scene state: a record, or the list's rows (a row that cannot be read is left out). */
-export function trackerValue(state: SceneState, id: string, body: TrackerBody): TrackerValue {
-  const stored: unknown = state[trackerSlot(id, body)];
+/** A record or row read from what is stored under it: a number past a top taken from another field (settled first) reads inside it. The one place `shown` is made. */
+const shownOf = (body: TrackerBody, index: ReadonlyMap<string, TrackerField>, stored: TrackerRecord, dependent: boolean): TrackerRecord => {
+  if (!dependent) return stored;
+  const { name, ...fields } = stored;
+  return { ...(name === undefined ? {} : { name }), ...settleAll(body, index, (f) => read(f, fields[f.name])) };
+};
+
+/** The tracker's value in the scene state, both forms: a record, or the list's rows (a row that cannot be read is left out). */
+export function trackerState(state: SceneState, id: string, body: TrackerBody): TrackerState {
+  const raw: unknown = state[trackerSlot(id, body)];
+  const index = fieldIndex(body.fields);
+  const dependent = body.fields.some((f) => f.maxField !== undefined);
+  const alone = (get: (f: TrackerField) => unknown, name?: string): TrackerRecord => ({ ...(name === undefined ? {} : { name }), ...Object.fromEntries(body.fields.map((f) => [f.name, read(f, get(f))])) });
   if (body.layout === "record") {
-    const cells = isRecord(stored) ? stored : {};
-    return Object.fromEntries(body.fields.map((f) => {
-      const cell = own(cells, f.name);
-      return [f.name, read(f, isRecord(cell) ? cell["value"] : undefined)];
-    }));
+    const cells = isRecord(raw) ? raw : {};
+    const stored = alone((f) => { const cell = own(cells, f.name); return isRecord(cell) ? cell["value"] : undefined; });
+    return { stored, shown: shownOf(body, index, stored, dependent) };
   }
-  return (Array.isArray(stored) ? stored : []).flatMap((r): TrackerRecord[] =>
-    isRecord(r) && typeof r["name"] === "string" && r["name"].trim() !== "" ? [{ name: r["name"], ...Object.fromEntries(body.fields.map((f) => [f.name, read(f, own(r, f.name))])) }] : []);
+  const rows = (Array.isArray(raw) ? raw : []).flatMap((r): TrackerRecord[] => (isRecord(r) && typeof r["name"] === "string" && r["name"].trim() !== "" ? [alone((f) => own(r, f.name), r["name"])] : []));
+  return { stored: rows, shown: rows.map((r) => shownOf(body, index, r, dependent)) };
 }
+
+/** The tracker's current value as it is read (see `TrackerState`). */
+export const trackerValue = (state: SceneState, id: string, body: TrackerBody): TrackerValue => trackerState(state, id, body).shown;
 
 /**
  * A value on one line: a model-written row name or text cannot start a line, so it cannot forge a heading or another tracker. The one rule
@@ -91,24 +125,32 @@ export interface TrackerChange { row?: unknown; remove?: unknown; set?: unknown 
 interface Work {
   id: string;
   body: TrackerBody;
+  index: ReadonlyMap<string, TrackerField>;
+  /** Whether any field takes its top from another, so a value read after a change must be settled again. */
+  dependent: boolean;
   record?: TrackerRecord;
   rows?: (TrackerRecord | null)[];
   places?: Map<string, number>;
   live: number;
 }
 
-function workOf(id: string, body: TrackerBody, current: TrackerValue): Work {
-  if (!Array.isArray(current)) return { id, body, record: { ...current }, live: 0 };
+function workOf(id: string, body: TrackerBody, current: TrackerValue): Work { // `current` is what is stored
+  const base = { id, body, index: fieldIndex(body.fields), dependent: body.fields.some((f) => f.maxField !== undefined) };
+  if (!Array.isArray(current)) return { ...base, record: { ...current }, live: 0 };
   const rows: (TrackerRecord | null)[] = [...current];
   const places = new Map<string, number>();
   rows.forEach((r, i) => {
     const lower = String(r!["name"]).toLowerCase();
     if (!places.has(lower)) places.set(lower, i);
   });
-  return { id, body, rows, places, live: rows.length };
+  return { ...base, rows, places, live: rows.length };
 }
 
-const valueOf = (w: Work): TrackerValue => (w.rows ? w.rows.filter((r): r is TrackerRecord => r !== null) : w.record!);
+/** The working value as the state it leaves: what is stored, and what is read from it. */
+const stateOf = (w: Work): TrackerState => {
+  const stored: TrackerValue = w.rows ? w.rows.filter((r): r is TrackerRecord => r !== null) : { ...w.record! };
+  return { stored, shown: Array.isArray(stored) ? stored.map((r) => shownOf(w.body, w.index, r, w.dependent)) : shownOf(w.body, w.index, stored, w.dependent) };
+};
 
 /** Applies one item to the tracker's working value and returns its deltas; an error in words for the model, with the working value untouched. */
 function applyItem(w: Work, args: TrackerChange, at: number): { deltas: Delta[] } | { error: string } {
@@ -136,21 +178,32 @@ function applyItem(w: Work, args: TrackerChange, at: number): { deltas: Delta[] 
   if (!isRecord(args.set)) return { error: "set must be an object." };
   const unknown = Object.keys(args.set).filter((k) => !body.fields.some((f) => f.name === k));
   if (unknown.length > 0) return { error: `Unknown fields: ${unknown.join(", ")}.` };
+  // A field not in `set` keeps what it holds (a new row, its defaults); one with a top from another field is judged against that field as the item leaves it, so `set` may name the top and the value in any order.
+  const { set } = args;
+  const held = existing ?? (list ? settleAll(body, w.index, fieldDefault) : w.record!);
+  // What the model was shown: a stored value a moved top leaves over it reads inside the top, and it is that value a new top is applied to.
+  const shown = w.dependent ? settleAll(body, w.index, (f) => read(f, held[f.name])) : held;
+  let failure: string | undefined;
+  const settled = settler(w.index, (f) => {
+    if (!Object.hasOwn(set, f.name)) return read(f, shown[f.name]);
+    const got = readField(f, set[f.name]);
+    if ("error" in got) failure ??= got.error;
+    return "error" in got ? fieldDefault(f) : got.value;
+  });
   const made: TrackerRecord = {};
-  for (const f of body.fields) {
-    if (!Object.hasOwn(args.set, f.name)) continue;
-    const got = readField(f, args.set[f.name]);
-    if ("error" in got) return got;
-    made[f.name] = got.value;
-  }
+  for (const f of body.fields) if (Object.hasOwn(set, f.name)) made[f.name] = settled(f.name);
+  if (failure !== undefined) return { error: failure };
+  // What is stored equals what is read: when an item names a top, each dependent it did not name is written clamped (from what was shown, under the new top) wherever that differs from what is stored, in the same batch, after the fields the item named.
+  const namesTop = w.dependent && body.fields.some((f) => f.maxField !== undefined && Object.hasOwn(set, f.maxField));
+  if (namesTop) for (const f of body.fields) if (f.maxField !== undefined && !Object.hasOwn(set, f.name) && settled(f.name) !== held[f.name]) made[f.name] = settled(f.name);
   if (!list) {
     const before = w.record!;
-    const changed = body.fields.filter((f) => Object.hasOwn(made, f.name) && made[f.name] !== before[f.name]);
+    const changed = Object.keys(made).filter((k) => made[k] !== before[k]); // against what is stored, so a write of the stored value is no change
     Object.assign(before, made);
-    return { deltas: changed.map((f): Delta => ({ slot, path: [f.name], value: made[f.name]!, at })) };
+    return { deltas: changed.map((k): Delta => ({ slot, path: [k], value: made[k]!, at })) };
   }
   if (!existing && w.live >= SANITY_LIST) return { error: `${body.name} already has too many rows; remove one first.` };
-  const row: TrackerRecord = { name, ...(existing ?? Object.fromEntries(body.fields.map((f) => [f.name, fieldDefault(f)]))), ...made };
+  const row: TrackerRecord = { name, ...held, ...made };
   if (existing) w.rows![at0!] = row;
   else {
     w.rows!.push(row);
@@ -161,17 +214,18 @@ function applyItem(w: Work, args: TrackerChange, at: number): { deltas: Delta[] 
 }
 
 /** One update checked against the tracker and cut into deltas (none for a value that does not change), with the value it leaves and its text; an error in words for the model otherwise. */
-export function trackerUpdate(id: string, body: TrackerBody, current: TrackerValue, args: TrackerChange, at: number): { deltas: Delta[]; value: TrackerValue; text: string } | { error: string } {
-  const work = workOf(id, body, current);
+export function trackerUpdate(id: string, body: TrackerBody, current: TrackerState, args: TrackerChange, at: number): { deltas: Delta[]; state: TrackerState; value: TrackerValue; text: string } | { error: string } {
+  const work = workOf(id, body, current.stored);
   const out = applyItem(work, args, at);
   if ("error" in out) return out;
-  const value = valueOf(work);
-  return { deltas: out.deltas, value, text: renderTracker(body, value) };
+  const state = stateOf(work);
+  return { deltas: out.deltas, state, value: state.shown, text: renderTracker(body, state.shown) };
 }
 
 /** A field as the tool description names it: its name, its type with its range or choices, and what it means. */
 function fieldWord(f: TrackerField): string {
-  const range = f.min !== undefined && f.max !== undefined ? ` ${f.min}-${f.max}` : f.min !== undefined ? ` ${f.min} or more` : f.max !== undefined ? ` up to ${f.max}` : "";
+  const range = f.maxField !== undefined ? (f.min !== undefined ? ` ${f.min} to ${f.maxField}` : ` up to ${f.maxField}`)
+    : f.min !== undefined && f.max !== undefined ? ` ${f.min}-${f.max}` : f.min !== undefined ? ` ${f.min} or more` : f.max !== undefined ? ` up to ${f.max}` : "";
   const meaning = f.description.replace(/\s+/g, " ").trim();
   return `${f.name} (${f.type === "choice" ? f.choices!.join("|") : `${f.type}${range}`}${meaning ? `: ${meaning}` : ""})`;
 }
@@ -265,7 +319,7 @@ function changeText(body: TrackerBody, deltas: readonly Delta[]): string {
  * returns every item's error and no delta. Linear in the call: each tracker's value is set up once and each item costs its own fields. On success,
  * the deltas, each touched tracker's value after the call, and the text the model is answered with: only what the call changed, per tracker.
  */
-export function applyTrackerUpdates(linked: readonly LinkedTracker[], raw: unknown, at: number): { deltas: Delta[]; values: Map<string, TrackerValue>; text: string } | { errors: string[] } {
+export function applyTrackerUpdates(linked: readonly LinkedTracker[], raw: unknown, at: number): { deltas: Delta[]; values: Map<string, TrackerState>; text: string } | { errors: string[] } {
   const shape = shapeProblems(linked, raw);
   if ("top" in shape) return { errors: [shape.top] };
   const items = (raw as UpdatesCall).updates;
@@ -284,7 +338,7 @@ export function applyTrackerUpdates(linked: readonly LinkedTracker[], raw: unkno
     const target = byName.get((item["tracker"] as string).trim().toLowerCase())!;
     let work = works.get(target.id);
     if (!work) {
-      works.set(target.id, (work = workOf(target.id, target.body, target.value)));
+      works.set(target.id, (work = workOf(target.id, target.body, target.stored)));
       changes.set(target.id, []);
     }
     const out = applyItem(work, { row: item["row"], remove: item["remove"], set: item["set"] }, at);
@@ -294,6 +348,6 @@ export function applyTrackerUpdates(linked: readonly LinkedTracker[], raw: unkno
     }
   }
   if (errors.length > 0) return { errors };
-  const values = new Map([...works].map(([id, w]) => [id, valueOf(w)]));
+  const values = new Map([...works].map(([id, w]) => [id, stateOf(w)]));
   return { deltas, values, text: [...works.values()].map((w) => changeText(w.body, changes.get(w.id)!)).join("\n") };
 }

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:7d3749fcba5879d63315277d2cebd50aafe3bc5ecc9d33c0519890f55d696418",
-  "semanticSummaryHash": "sha256:63400520b8344eca05a7aebbed642a9b5e3a9e6d5ea5f262736830d83b1f24b3",
+  "sourceHash": "sha256:8c2ab30b7d79fbd71b3d8b3b8514a6476bce3783c0ded4433eb3701fb487b8a6",
+  "semanticSummaryHash": "sha256:5316819dfb7313fd2cf51f81c371b624e2ce36cc082b6d39cd34d74ca32413a1",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Verified: only the shape is checked when read (checkUpdatesShape) and each item when run; applyTrackerUpdates takes no deadline; the answer is changeText per tracker (changed record fields, rows set and removed); tool-loop exempts stateScoped tools from RESULT_CAP, the spent-budget refusal and the deadline; page and update-tool summary (179 words) agree; editing is shortSource.",
-  "reviewedAt": "2026-10-28T01:51:01.734Z"
+  "notes": "Sentence now matches promptLineProblem: a macro naming another tracker passes only when that name is a library tracker other than this one (own piece id filtered from the set), otherwise it is held back with the 'no tracker with that name' message; engine problems still block. Sidecar's 'a prompt line whose macros fail is not saved' remains true.",
+  "reviewedAt": "2026-10-28T06:56:13.161Z"
 }

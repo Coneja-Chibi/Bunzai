@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:4168ab641ebcd67aa01555ad3c2b5a35e931d61cbb905601b4fb70ea1c5321ea",
-  "semanticSummaryHash": "sha256:0c198f674813d3434fd4cce3df55aa817e2bb716445e9c1c36cb62ca750a2499",
+  "sourceHash": "sha256:b79c75ff3c6e035725720bdd729e8ecf401ac09e00b83378d2bac0734f0b599e",
+  "semanticSummaryHash": "sha256:28d92d3b8bfad2dc59d70130e0ee8f424a23b6ae793ef0e15bd30f59498d2930",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Only change is one clause in the World wing Side Effects bullet: local variables rebuilt from the shown history, globals put back from the replaced reply's trace. Matches loadTurn sceneStateBefore, putBackEffects and the lore.undo kept in the trace. Section summaries unchanged, in the 80-180 band for the touched section (154 words), and make no contrary claim.",
-  "reviewedAt": "2026-10-27T18:08:49.438Z"
+  "notes": "Both earlier problems fixed: the Workbench opening now lists the thirteen kinds with an editor (incl. Script Sheet) and says prompt formats open read-only (no editor in their kind.ts); saves are described as a patch of the edits. New Header bullet matches linked-scenes.tsx and GET /api/chats/linked (studio/piece-links.ts, settings only). Tool and formula bullets match tool-takes (plain list) and tryFormula without connection or window.",
+  "reviewedAt": "2026-10-28T06:37:41.147Z"
 }

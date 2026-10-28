@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/dice",
   "sourcePath": "docs/reference/entities/dice.md",
-  "sourceHash": "sha256:c82e907b23cb33856c84240b676c46674020293a599cbb6c1acd9f421af78976",
-  "semanticSummaryHash": "sha256:33054894d1b4a2d40d03fffd2aa38ed47ca4985f2d1eccfb5e0067bf9abcddb9",
+  "sourceHash": "sha256:8b90da72a1bdf39be5db18c287df364200dab93f631789eff4ccfee088ee7ca3",
+  "semanticSummaryHash": "sha256:fc446a0bc2653f940d6bb7d3b31fddd861dd347054a9317a0c40598396105add",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Caps removed correctly: sanity ceilings only (10,000 / 1,000,000 / MAX_SAFE_INTEGER), rolls never refused, DICE_LIST_SHOWN 20 presentation with count/lowest/highest/total past it and every die in the trace; decoder and boundedDice match. No removed number remains.",
-  "reviewedAt": "2026-10-27T21:14:11.922Z"
+  "notes": "Only the save wording changed (a patch of the edits, nothing sent when nothing is edited), which matches use-piece-editor; rest of the Editing section re-confirmed against dice-editor, dice-table, dice-roll.",
+  "reviewedAt": "2026-10-28T06:37:41.978Z"
 }

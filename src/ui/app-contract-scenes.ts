@@ -16,6 +16,8 @@ import type { DirectorSettingsPatch } from "../stage/contracts/director-types";
 import type { TrackerItemInput } from "../studio/scene-tracker-item";
 import type { TrackerRefresh, TrackerRefreshInput } from "../studio/scene-tracker-refresh";
 import type { TurnEvent } from "../studio/scene-turn";
+import type { FormulaTry } from "../studio/scene-forecast";
+import type { LinkedScene } from "../studio/piece-links";
 import type { SceneSearchResult } from "../studio/scene-search";
 import type { OpenScene, SceneAction, SceneGrave, SceneMessagePage, SceneSummary, SceneTailMessage } from "../studio/scenes";
 
@@ -166,8 +168,12 @@ export interface ScenesApi {
   setSceneProps(chatId: string, on: string[]): Promise<SceneProps>;
   /** A reply's trace for TrackHare's views (the take's latest without a messageId); null when the take has no reply. */
   getSceneTrace(chatId: string, messageId?: string): Promise<SceneTrace | null>;
+  /** The live scenes whose prompting links this library tracker or tool (read only; settings alone, no message is read). */
+  getLinkedScenes(kind: string, id: string): Promise<LinkedScene[]>;
   /** The Context wing's Next send: the request a send of `draft` would build now (read only; asks no model). */
   getSceneForecast(chatId: string, draft: string, signal?: AbortSignal): Promise<SceneForecast>;
+  /** The formula editor's Try: the formula text run read-only on a copy of the scene's macro context, with how long it took (read only; asks no model). */
+  tryFormula(chatId: string, text: string, signal?: AbortSignal): Promise<FormulaTry>;
   /** The Context wing's Memory tab: the saved summary settings, the active take's text and how far it reaches, and whether a run is going. */
   getSceneSummary(chatId: string): Promise<ChatSummaryState>;
   /** Changes the summary settings (ChatStore rule 45; a key given as null goes back to its default) and answers the new state. */

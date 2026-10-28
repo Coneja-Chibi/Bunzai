@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tracker",
   "sourcePath": "docs/reference/entities/tracker.md",
-  "sourceHash": "sha256:7d3749fcba5879d63315277d2cebd50aafe3bc5ecc9d33c0519890f55d696418",
-  "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, and an optional macro template for its prompt line. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers and gets a Trackers block the budget measures and never cuts, the tracker macro, and the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written. It says plainly that the editor and the linking screen are not built yet.",
+  "sourceHash": "sha256:8c2ab30b7d79fbd71b3d8b3b8514a6476bce3783c0ded4433eb3701fb487b8a6",
+  "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, an optional macro template for its prompt line, an optional icon and a change style, only stored. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, including a number's top taken from another field and field icons from the shipped glyph set, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers, gets a Trackers block the budget measures and never cuts, and can switch change visuals off, the tracker macro, the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written, and the read that answers what each reply changed. The Editing section describes the tracker editor, with its settings, the field editor a tool shares, and a rail showing what the AI gets, and says the linking screen and the change visuals are not built yet.",
   "topics": [
     "CanonicalTracker",
     "record and list layouts",
@@ -12,21 +12,25 @@
     "Trackers prompt block",
     "tracker macro",
     "update_trackers tool",
-    "stateScoped write"
+    "stateScoped write",
+    "maxField",
+    "icons",
+    "change style",
+    "what a reply changed"
   ],
   "sections": [
     {
       "slug": "fields",
       "title": "Fields",
       "level": 2,
-      "sourceHash": "sha256:aabcf1de150027c0e3f2c77a7f1a28971c2d29eef3b644053367732b2a18b5c6",
-      "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices, a number field may have a min and a max with either end optional, and any field may have a default that must fit. What a field accepts and what a new record or row holds for it, zero held inside whatever ends of the range exist, is one small module the decoder and the core share, pinned with the decoder. A tracker has at least one field with unique names, a note and an optional template. There are no product limits; the decoder refuses only a hostile file past the sanity ceilings of ten thousand items, a million characters or the largest safe integer.",
+      "sourceHash": "sha256:ea077fe94a5cf55e13b291eefae60db5df45c844cc86ac2825b1ed28eca4b6d1",
+      "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices. A number field may have a min and a max, or instead take its top from another number field of the same tracker through maxField, which the decoder refuses when it names no field, a non-number, itself, a loop, or comes with max. A value above such a top is brought down to it, never refused, the top settled first, and a write that moves a top stores the clamped dependents in the same batch, so stored equals read; a top below min leaves the min. A field may have a well-formed icon id, not checked against the glyph table, a tracker an icon and a change style, all only stored; and any field a default that must fit. There are no product limits beyond the hostile-input ceilings.",
       "topics": [
         "field types",
         "shared field basics",
         "field-value module",
-        "number range ends",
-        "default",
+        "maxField",
+        "icon and change style",
         "sanity ceilings"
       ],
       "children": []
@@ -65,15 +69,16 @@
       "slug": "in-a-scene",
       "title": "In a scene",
       "level": 2,
-      "sourceHash": "sha256:316951271b1b4293236abce63558c58cc3f24bbc6dfe56f30572c354b3d8306e",
-      "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow.",
+      "sourceHash": "sha256:9a0a8e64081e24715a8bd9e2b5775d7ad8afe33b46dfa004b854e8f2ff864838",
+      "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow. The scene's trackerChanges switch turns the change visuals on replies off; it is on unless the scene says otherwise, so only an off switch is stored.",
       "topics": [
         "ChatPrompting.trackers",
         "Trackers block",
         "template",
         "macro report",
         "one-line values",
-        "tracker macro"
+        "tracker macro",
+        "trackerChanges switch"
       ],
       "children": []
     },
@@ -81,8 +86,8 @@
       "slug": "the-update-tool",
       "title": "The update tool",
       "level": 2,
-      "sourceHash": "sha256:9c865314763d22e2dd24f25ba567068dd5669f414ac26f298a55f478e6049634",
-      "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut; about 280 tokens for three typical trackers, smaller than the 430 of a per-tracker schema. Items apply in order and the batch is all or nothing. The call's shape is checked when read and its items checked and applied once when run, with no deadline, and the model is shown its own call again; the model is answered with only what changed, and the loop exempts this tool from its answer shortening and from a spent budget. The deltas join the turn's pending set through a door for tracker slots only with no size cap; a save that did not happen is a failure. The loop runs it as the one stateScoped write.",
+      "sourceHash": "sha256:6aa4a491efff2c84d8c813a4d974bec591e1c6b006733bfee9b7f8eabe71072c",
+      "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut, naming a top taken from another field as in hp from zero to hp_max. Items apply in order and the batch is all or nothing; a number past its range or such a top is clamped. The model is answered with only what changed. The deltas join the turn's pending set through a door for tracker slots only with no size cap, and the loop runs the tool as the one stateScoped write, exempt from answer shortening and a spent budget.",
       "topics": [
         "update_trackers",
         "all or nothing batch",
@@ -95,19 +100,35 @@
       "children": []
     },
     {
+      "slug": "what-a-reply-changed",
+      "title": "What a reply changed",
+      "level": 2,
+      "sourceHash": "sha256:ccd7ce8050470ad25d8141b2e5e1426fe1af107da0bda69f22ef42d09d1bb005",
+      "children": [],
+      "summary": "A read route answers, for a take and a range of its live messages, what each message changed in the library trackers on the version it shows, with each tracker's name, style and icons. A record's change is a field with its value before and after, and a list's is a row, added, changed or removed, with the whole row. Values are exact, never cut. It is one forward pass: the store's range read gives the state before the first message and each message's deltas in fold order, and the state is folded forward, so a person's edit shows as a change on its message, choosing another version shows that version's changes, and a cut message drops out. Only an unreadable piece is reported by its id with the stored values, a changed layout keeps the name and style, past lines are read through the current piece, only tracker slots are loaded, a missing branch or message is a 404, a malformed to a 400, an empty to the tip.",
+      "topics": [
+        "tracker-changes route",
+        "sceneDeltas",
+        "one forward pass",
+        "net change per message",
+        "unreadable piece by id"
+      ]
+    },
+    {
       "slug": "editing",
       "title": "Editing",
       "level": 2,
-      "sourceHash": "sha256:0df7674b23c378cfbfc64fff941c0b5a0bbf31b8502d6b5011a71a1acc42218b",
-      "summary": "There is no tracker editor yet and no control that links a tracker to a scene; both wait for approved wireframes. The Library's New tracker saves the blank record. The Story Director does not update library trackers. The section is short because it records the missing surfaces as known gaps rather than describing anything that is not built. Nothing in it promises more than the wireframes that have to be approved before any editor or linking control is written.",
+      "sourceHash": "sha256:0fd59248b558f54b5f9762d8feb8da32eaf3279f0312456ccd3d5f130a7390d3",
+      "summary": "A tracker opens in the Workbench's tracker editor: the shared header, which says in how many scenes it is linked and lists them on a click, an Identity and settings disclosure (what it tracks, how the AI should update it, shape, icon, how a reply shows changes, and an optional prompt line in macros), and the fields in the field editor a tool shares. A number's To can be a number, another number field, or none. The rail shows the Trackers block as prompt assembly renders it at the starting values, its plain line, its token cost, and the tracker's update tool line. A rename is followed a keystroke at a time from the name it began with, in other fields' tops and in the prompt line's macros, so a name typed through on the way takes nothing; renaming the tracker rewrites its macros. A draft the decoder refuses, or a prompt line whose macros fail, is not saved and is explained in plain words. The scene linking control and change visuals still wait for wireframes.",
       "topics": [
-        "no editor yet",
-        "no linking screen",
-        "blank New",
-        "Story Director not involved"
+        "tracker editor",
+        "field editor",
+        "prompt rail",
+        "update tool line",
+        "decoder-gated save",
+        "no linking screen"
       ],
-      "children": [],
-      "shortSource": true
+      "children": []
     }
   ]
 }

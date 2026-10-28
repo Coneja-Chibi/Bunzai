@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/dice",
   "sourcePath": "docs/reference/entities/dice.md",
-  "sourceHash": "sha256:c82e907b23cb33856c84240b676c46674020293a599cbb6c1acd9f421af78976",
-  "summary": "The dice entity page covers CanonicalDice, something a person rolls, made once and used anywhere. It is one kind with three types, a roll, a table or a pool, and each carries only the field its type rolls. Rolling itself is not a piece but math in src/core/dice.ts, the same module the roll macro, the battle tracker and the spellbook use, while rollDicePiece in src/core/dice-piece.ts says what each type rolls on randomness the caller hands in. The page lists the types with example results, says a tool links a dice piece by id so a model can roll it with the turn's seeded randomness, gives the rules checked when a piece is saved, and notes that the editor waits for its wireframe while New dice saves a blank 1d20 roll.",
+  "sourceHash": "sha256:8b90da72a1bdf39be5db18c287df364200dab93f631789eff4ccfee088ee7ca3",
+  "summary": "The dice entity page covers CanonicalDice, something a person rolls, made once and used anywhere. It is one kind with three types, a roll, a table or a pool, and each carries only the field its type rolls. Rolling itself is not a piece but math in src/core/dice.ts, the same module the roll macro, the battle tracker and the spellbook use, while rollDicePiece in src/core/dice-piece.ts says what each type rolls on randomness the caller hands in. The page lists the types with example results, says a tool links a dice piece by id so a model can roll it with the turn's seeded randomness, gives the rules checked when a piece is saved, and describes the dice editor, while New dice saves a blank 1d20 roll.",
   "topics": [
     "CanonicalDice",
     "roll",
@@ -56,10 +56,14 @@
       "slug": "editing",
       "title": "Editing",
       "level": 2,
-      "sourceHash": "sha256:d2b21ee56a71eeb00dd6856d0fce67af2111c53ca11a7d017d95bb9a35d3a56c",
-      "summary": "There is no editor for dice pieces yet. The dice editor waits for its approved wireframe, so no screen for editing a roll, a table or a pool exists in this change. The Library's New dice action saves a blank piece, a roll of 1d20, which is a valid stored piece under the rules above and can be linked from a tool as it is. The section records the missing editor as a known gap rather than describing a surface that is not built, and promises nothing about the editor beyond the wireframe that must be approved first, in the same way the tool page treats its own missing editor.",
+      "sourceHash": "sha256:87fff0a0cf5af63e69a4b89b2c0f5eba39772857443dc0431ccd428fe5d2ae20",
+      "summary": "A dice piece opens in the Workbench's dice editor, one small page with Roll, Table and Pool, each with a one-line roll card. A roll has its dice, a table has rows with a weight, a result and a chance equal to the weight over the total, plus add-a-row and paste-a-list, which makes one row per line at weight 1, and a pool has its dice, sides and the number it counts at. Roll uses the real piece roll that a tool's action also uses, shows the result on the card, and lights the table row it picked until the piece is edited; it is off while the draft cannot be saved and never changes the piece. A piece keeps exactly the field its type rolls, and switching type sets the others aside and brings them back if the type is switched back. A save with nothing edited sends nothing. New dice saves a blank roll of 1d20.",
       "topics": [
-        "no editor yet",
+        "dice editor",
+        "roll card",
+        "table chances",
+        "paste a list",
+        "one field per type",
         "blank 1d20"
       ],
       "children": []

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tool",
   "sourcePath": "docs/reference/entities/tool.md",
-  "sourceHash": "sha256:8d0ea2c382af5f0e239bd6cd61def0935c1dd30d6cc40b496d0f016cce762f31",
-  "semanticSummaryHash": "sha256:914422694f724808ff14658ad154b715f9032761948b22386bdb3d20785a068f",
+  "sourceHash": "sha256:b189b1f7325fc5c5ecf6c68b05346ce9002cd9e8ec96e0817c53cfd41c238b1a",
+  "semanticSummaryHash": "sha256:e4618fbdaf561eabdc917d0169c3cf3d5bfdff0266f6e0056129e9c7770f2e38",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "No product caps remain (field names keep the 64-character provider rule, call names 60); roll accepts any dice with one die of two sides, summarised past 20; dice and formula actions as in tools.ts and runtime-schema (SANITY ceilings); no stale number in page or summaries.",
-  "reviewedAt": "2026-10-27T21:14:13.233Z"
+  "notes": "Header reads the kind hub's promptingList (tools) through scenesLinking, matching piece-links.ts and the linked route (400 for a kind that has none); Try on a formula tool opens the formula and the page now says Try there runs on the whole scene with no window, matching tryFormula. Bands ok.",
+  "reviewedAt": "2026-10-28T06:50:12.474Z"
 }

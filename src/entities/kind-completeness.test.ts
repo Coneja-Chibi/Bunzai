@@ -16,10 +16,6 @@ const at = (...parts: string[]): string => join(ROOT, ...parts);
 /** Kinds without a Workbench editor, and why. */
 const NO_EDITOR: Record<string, string> = {
   promptformat: "nothing reads prompt formats until text-completion connections exist; it opens read-only",
-  tool: "the tool editor waits for its approved wireframe; until then a tool opens read-only",
-  dice: "the dice editor waits for its approved wireframe; until then a dice piece opens read-only",
-  formula: "the formula editor waits for its approved wireframe; until then a formula opens read-only",
-  tracker: "the tracker editor and the scene linking control wait for their approved wireframes; until then a tracker opens read-only",
 };
 /** Kinds without Kit capabilities, and why. */
 const NO_CAPABILITIES: Record<string, string> = {

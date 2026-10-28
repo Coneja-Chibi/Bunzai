@@ -52,8 +52,9 @@ async function effectsOf(chats: Pick<ChatStore, "swipeTrace">, target: Message):
   return Array.isArray(undo) ? (undo as LoreUndo[]) : [];
 }
 
-export async function prepareRequest(deps: { chats: Pick<ChatStore, "swipeTrace" | "summaryOf">; state: Pick<StateStore, "read"> }, chat: Chat, loaded: LoadedTurn, connected: Connected, model: string, started: number): Promise<Prep> {
-  const base = turnWindow(connected.context);
+export async function prepareRequest(deps: { chats: Pick<ChatStore, "swipeTrace" | "summaryOf">; state: Pick<StateStore, "read"> }, chat: Chat, loaded: LoadedTurn, connected: Connected | undefined, model: string, started: number): Promise<Prep> {
+  // With no connection (a formula's Try reads the scene without asking a model) the window is the unstated default; assembly is then run unbudgeted.
+  const base = turnWindow(connected?.context);
   const window = { ...presetWindow(base, loaded.preset), stated: base.stated };
   const options = { ...sceneOptions(loaded.preset, loaded.generation ?? {}, chat.prompting), stream: true, max_tokens: window.reply };
   const meter = await readMeter(deps.state);
@@ -69,7 +70,7 @@ export async function prepareRequest(deps: { chats: Pick<ChatStore, "swipeTrace"
     window, options, meter, storedGlobals, undo, ...(summary ? { summary } : {}),
     presetName: loaded.preset?.name ?? NO_PRESET,
     reasoningFormat: resolveReasoning(loaded.preset?.reasoning, chat.prompting),
-    key: readKey(meter, connected.kind, model),
+    key: readKey(meter, connected?.kind ?? "", model),
     startGlobal: revertEffects(storedGlobals, undo, "global", started),
   };
 }
@@ -99,7 +100,7 @@ export const overflowMessage = (result: AssemblyResult): string =>
 
 export async function assembleRequest(
   deps: { state: Pick<StateStore, "read">; randomSeed(): number; clock?(): number; promptBudgetMs?(): Promise<number | undefined> },
-  a: { chat: Chat; loaded: LoadedTurn; prep: Prep; started: number; kind: TurnKind; original: string; guidance: string; recall?: RecallRun | null; director?: NarratorDirective; reserved?: readonly string[] },
+  a: { chat: Chat; loaded: LoadedTurn; prep: Prep; started: number; kind: TurnKind; original: string; guidance: string; recall?: RecallRun | null; director?: NarratorDirective; reserved?: readonly string[]; /** Build the macro context and the scene's text without fitting a window: nothing is sent, so nothing has to fit. */ unbudgeted?: boolean },
 ): Promise<Built> {
   const { chat, loaded, prep, kind, recall } = a;
   const loreInput: AssemblyInput["lore"] = loaded.lore ? { ...loaded.lore, budgetShare: DEFAULT_LORE_SHARE } : undefined;
@@ -117,8 +118,7 @@ export async function assembleRequest(
     globalVariables: prep.startGlobal,
     now: a.started,
     randomSeed: deps.randomSeed(),
-    window: prep.window,
-    budgeter: appBudgeter(measureFor(prep.meter, prep.key, a.started)),
+    ...(a.unbudgeted ? {} : { window: prep.window, budgeter: appBudgeter(measureFor(prep.meter, prep.key, a.started)) }),
     lore: loreInput,
     // The Prompting wing's switched-on guides and scene note (ChatStore rule 37).
     guides,

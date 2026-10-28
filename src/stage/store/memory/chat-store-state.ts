@@ -7,7 +7,7 @@
  */
 import type { Delta, SceneState } from "../../../core/scene-state/types";
 import type { ChatStore } from "../../contracts/chat-store";
-import { baseState, changed, checkImportedDeltas, rebuildState } from "../scene-state-rules";
+import { baseState, changed, checkImportedDeltas, rebuildState, sliceShown } from "../scene-state-rules";
 import type { ChatRecord, MessageRecord } from "./chat-records";
 
 export interface StateDeps {
@@ -17,7 +17,7 @@ export interface StateDeps {
 }
 
 export interface MemoryState {
-  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "recordMessageDeltas" | "setBranchBase">;
+  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "sceneDeltas" | "recordMessageDeltas" | "setBranchBase">;
   /** Rebuilds the branch's tip cache; keyframes at or after `fromSeq` are dropped first. */
   refresh(branchId: string, fromSeq?: number): void;
   /** Forgets a branch's cache and keyframes. */
@@ -41,12 +41,15 @@ export function stateMethods(d: StateDeps): MemoryState {
   /** The versions a branch shows, oldest first: live messages only, each with the version it points at. */
   const shownPath = (branchId: string, beforeSeq = Number.POSITIVE_INFINITY): Shown[] =>
     (d.branchOrder.get(branchId) ?? []).map((id) => d.messages.get(id)!).filter((m) => !m.cut && m.seq < beforeSeq).map((m) => ({ messageId: m.id, swipeId: m.swipes[m.current]!.id }));
+  /** Each message's deltas for a path: its shown version's, then its own (they win). */
+  const deltasOf = (shown: readonly Shown[]): Map<string, Delta[]> =>
+    new Map(shown.map((p) => [p.messageId, [...(p.swipeId === null ? [] : (swipeDeltas.get(p.swipeId) ?? [])), ...(messageDeltas.get(p.messageId) ?? [])]]));
   const build = (branchId: string, path: Shown[]) =>
     rebuildState({
       path,
       ...(bases.has(branchId) ? { base: bases.get(branchId)! } : {}),
       keyframes: new Map([...(keyframes.get(branchId) ?? [])].map(([id, k]) => [id, k.state])),
-      deltasOf: (shown) => new Map(shown.map((p) => [p.messageId, [...(p.swipeId === null ? [] : (swipeDeltas.get(p.swipeId) ?? [])), ...(messageDeltas.get(p.messageId) ?? [])]])),
+      deltasOf,
     });
   /** The state a message builds from: everything shown before it, and its own message-level deltas. */
   const stateBefore = (branchId: string, m: MessageRecord): SceneState => build(branchId, [...shownPath(branchId, m.seq), { messageId: m.id, swipeId: null }]).state;
@@ -88,6 +91,14 @@ export function stateMethods(d: StateDeps): MemoryState {
         const m = d.messages.get(messageId);
         if (!m || m.branchId !== branchId || m.cut || !d.liveChatOfBranch(branchId)) return null;
         return structuredClone(stateBefore(branchId, m));
+      },
+
+      async sceneDeltas(branchId, fromMessageId, toMessageId, slotPrefixes) {
+        if (!d.liveChatOfBranch(branchId)) return null;
+        const split = sliceShown(shownPath(branchId), fromMessageId, toMessageId);
+        if (!split) return null;
+        const deltas = deltasOf(split.range);
+        return structuredClone({ before: build(branchId, split.before).state, messages: split.range.map((p) => ({ messageId: p.messageId, deltas: (deltas.get(p.messageId) ?? []).filter((x) => slotPrefixes === undefined || slotPrefixes.some((s) => x.slot.startsWith(s))) })) });
       },
 
       async setBranchBase(branchId, raw) {

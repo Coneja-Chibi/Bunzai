@@ -4,8 +4,9 @@ import { emptyToolBody, type ToolBody } from "./schema";
 
 export default defineKind<"tool", ToolBody>({
   id: "tool", order: 75, singular: "Tool", plural: "Tools", short: "tool", receiptWord: "tool",
-  blurb: "Things the model can do", icon: "lucide:wrench", accent: "var(--deck-regex)", libraryDeck: true,
+  blurb: "Things the model can do", icon: "lucide:wrench", accent: "var(--deck-regex)", libraryDeck: true, promptingList: "tools",
   blank: () => emptyToolBody("My tool"), blankId: "tool",
+  editor: { id: "tool", label: "Tool editor", load: "light" },
   describe: (b) => [
     `name     ${b.name || "(unnamed)"}`,
     `fields   ${b.fields.map((f) => f.name).join(", ") || "(none)"}`,

@@ -59,3 +59,59 @@ describe("a tracker body", () => {
     expect(reads({ ...body(), extra: 1 })).toBe(false);
   });
 });
+
+describe("a tracker's icons", () => {
+  test("a tracker and a field take a well-formed icon id, known to the build or not; a malformed one is refused", () => {
+    for (const ok of ["lucide:gauge", "mdi:drama-masks", "lucide:a-glyph-this-build-lacks"]) {
+      expect(reads(body({ icon: ok })), ok).toBe(true);
+      expect(reads(field({ icon: ok })), ok).toBe(true);
+    }
+    for (const bad of ["gauge", "", "other:gauge", "lucide:", "lucide:Gauge", "lucide:a b", " lucide:gauge", "lucide:gauge\n", "constructor", "__proto__", "x".repeat(SANITY_TEXT + 1), 7, null]) {
+      expect(reads(body({ icon: bad as never })), String(bad)).toBe(false);
+      expect(reads(field({ icon: bad as never })), String(bad)).toBe(false);
+    }
+  });
+
+  test("no icon is the same as none, and a tool's field takes no icon", () => {
+    expect(reads(body())).toBe(true);
+    const tool = { schemaVersion: "1", kind: "tool", id: "t", body: { name: "luck", description: "", action: { type: "dice", dice: "d6" }, fields: [{ name: "x", description: "", type: "text", icon: "lucide:gauge" }] } };
+    expect(safeParseCanonicalEntity(tool).ok).toBe(false);
+  });
+});
+
+describe("a number's top from another field", () => {
+  const hp = { name: "hp", description: "", type: "number" as const };
+  const hpMax = { name: "hp_max", description: "", type: "number" as const };
+  const two = (a: Record<string, unknown>, b: Record<string, unknown> = {}) => body({ fields: [{ ...hp, ...a }, { ...hpMax, ...b }] as never });
+
+  test("a number field may name another number field of the same tracker as its top", () => {
+    expect(reads(two({ maxField: "hp_max" }))).toBe(true);
+    expect(reads(two({ maxField: "hp_max", min: 0, default: 5 }))).toBe(true);
+    expect(reads(body({ layout: "list", fields: [{ ...hp, maxField: "hp_max" }, hpMax] as never }))).toBe(true);
+    // the default is not judged against the other field's default: it is brought inside the top when read
+    expect(reads(two({ maxField: "hp_max", default: 50 }, { default: 20 }))).toBe(true);
+  });
+
+  test("each refusal", () => {
+    expect(reads(two({ maxField: "nope" })), "missing").toBe(false);
+    expect(reads(body({ fields: [{ ...hp, maxField: "mood" }, { name: "mood", description: "", type: "text" }] as never })), "text field").toBe(false);
+    expect(reads(body({ fields: [{ ...hp, maxField: "mood" }, { name: "mood", description: "", type: "choice", choices: ["a"] }] as never })), "choice field").toBe(false);
+    expect(reads(body({ fields: [{ ...hp, maxField: "flag" }, { name: "flag", description: "", type: "boolean" }] as never })), "boolean field").toBe(false);
+    expect(reads(two({ maxField: "hp" })), "itself").toBe(false);
+    expect(reads(two({ maxField: "hp_max" }, { maxField: "hp" })), "two in a loop").toBe(false);
+    expect(reads(body({ fields: [{ ...hp, maxField: "b" }, { ...hpMax, name: "b", maxField: "c" }, { ...hpMax, name: "c", maxField: "a" }, { ...hpMax, name: "a", maxField: "hp" }] as never })), "a longer loop").toBe(false);
+    expect(reads(body({ fields: [{ ...hp, maxField: "b" }, { ...hpMax, name: "b", maxField: "c" }, { ...hpMax, name: "c" }] as never })), "a chain is fine").toBe(true);
+    expect(reads(two({ maxField: "hp_max", max: 10 })), "with a fixed top").toBe(false);
+    expect(reads(body({ fields: [{ name: "wound", description: "", type: "text", maxField: "hp_max" }, hpMax] as never })), "on a text field").toBe(false);
+    expect(reads(two({ maxField: "Hp_Max" })), "not a field name").toBe(false);
+    expect(reads(two({ maxField: 3 })), "not text").toBe(false);
+  });
+});
+
+describe("how a tracker shows changes", () => {
+  test("chips, card, toast or hidden; absent is chips", () => {
+    for (const changes of ["chips", "card", "toast", "hidden"]) expect(reads(body({ changes: changes as never })), changes).toBe(true);
+    for (const bad of ["chip", "", "Card", 1, null, true]) expect(reads(body({ changes: bad as never })), String(bad)).toBe(false);
+    expect(reads(body())).toBe(true);
+  });
+});

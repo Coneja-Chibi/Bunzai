@@ -4,11 +4,14 @@
  * the browser bundle and the server both load it.
  */
 import type glyphs from "../../generated/ic-glyphs.json";
-import type { Chat } from "../../stage/contracts/chat-store";
+import type { Chat, ChatPrompting } from "../../stage/contracts/chat-store";
 import type { PresetBody } from "../preset/schema";
 
 /** A glyph id from src/generated/ic-glyphs.json ("lucide:regex"). */
 export type GlyphName = keyof typeof glyphs;
+
+/** The scene prompting lists of piece ids (guides, tools, trackers): the names a kind can say links it. */
+export type PromptingList = { [K in keyof ChatPrompting]-?: ChatPrompting[K] extends string[] | undefined ? K : never }[keyof ChatPrompting];
 
 /** A body field holding ids of another kind's pieces. `embedded`: export writes those pieces inside this kind's file. */
 export interface KindLink { field: string; to: string; label: string; embedded?: boolean }
@@ -61,6 +64,8 @@ export interface KindDescriptor<Id extends string = string, Body = unknown> {
   media?: readonly string[];
   /** The scene field pointing at pieces of this kind; the scene store owns its shape. */
   sceneField?: keyof Chat;
+  /** The list in a scene's prompting that links pieces of this kind by id (a tracker's `trackers`, a tool's `tools`); where a piece is linked is read from it. */
+  promptingList?: PromptingList;
   /**
    * A writing setup (a kind the scene's Writing slot holds, core/writing.ts): what it sends, as a preset, so the turn,
    * Final Cut and export read every writing kind the one way.

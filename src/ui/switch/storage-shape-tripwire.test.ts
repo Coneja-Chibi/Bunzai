@@ -24,6 +24,8 @@ async function shapeFiles(): Promise<string[]> {
     // What a field accepts as a value (a tracker default must fit it), the hostile-input ceilings every decoder bounds itself by, and the dice reading that decides a dice piece.
     "src/entities/_shared/field-value.ts",
     "src/entities/_shared/sanity.ts",
+    // The one check for an icon id a tracker and its fields carry (a key of the generated glyph table).
+    "src/entities/_shared/icon-id.ts",
     "src/core/dice.ts",
     // The envelope every kind shares, and the generated list of kind decoders the parse boundary unions.
     "src/entities/_shared/envelope.ts",
@@ -408,7 +410,17 @@ async function shapeFiles(): Promise<string[]> {
 // are an open record, absent means the default, so no stored value changes meaning). ADDITIVE; an older build ignores the keys. The pin was recomputed.
 // 2026-10-27 (third fix round): a dice table's weights must add up to at most SANITY_NUMBER (src/entities/dice/runtime-schema.ts, pinned here), so the pick is an exact whole-number draw; core/dice.ts (pinned here) holds a die at its sides. A table whose weights add up past
 // the largest safe integer is no longer read (such a piece could not roll exactly); no stored shape changes. The pin was recomputed.
-const PINNED_SHAPE_HASH = "d590d0b352389257f9a86b0fe03030723a8a35defbc2cb98be8c37035d7dac7b";
+// 2026-10-28, piece UI step 1 (tracker backend): the tracker body gains optional `icon` and `changes` ("chips" | "card" | "toast" | "hidden", absent means chips) and a tracker field gains optional
+// `icon` and `maxField` (the name of another number field of the same tracker whose current value is its top; refused when missing, not a number, itself, in a loop, or together with `max`), all in
+// src/entities/tracker/runtime-schema.ts. An icon is accepted only when it is a key of the generated glyph table, so src/entities/_shared/icon-id.ts (new, the one check) is pinned. The table itself (src/generated/ic-glyphs.json) is NOT pinned, because every
+// new glyph in the UI changes it: adding one is safe, but DROPPING one later makes a stored tracker that uses it fail the decoder, so a removal needs a review of what stored pieces name. field-value.ts (pinned) gains the settling of a top taken from another field and clamps a number default to its range. ADDITIVE: no key is removed or reshaped, absent means
+// the old meaning, and a piece without the new keys decodes as before (an older build refuses a piece that has them, so ONE-WAY in that sense only). The scene's `trackerChanges` switch lives in the
+// prompting cell (not pinned here, an open record: absent means on, only false is kept). The pin was recomputed.
+// 2026-10-28 (fix round): the icon id is no longer checked against the glyph table. src/entities/_shared/icon-id.ts (pinned) now accepts any well-formed id (the generator's own shape, lucide: or mdi: then
+// lowercase letters, digits and hyphens, at most SANITY_TEXT long) and imports no UI table; the schema type is a string. A piece naming a glyph this build lacks therefore still decodes (it is the UI that draws
+// only known ids), which removes the risk that dropping a glyph makes stored trackers undecodable. field-value.ts (pinned): a number's min now wins over a top that sits below it. ADDITIVE and
+// COMPATIBLE (a previously accepted piece is still accepted). The pin was recomputed.
+const PINNED_SHAPE_HASH = "eef1e351be2b17842a7ca98578bebe1b88837570d587f342ee3f09a4053a3bb9";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");

@@ -1122,8 +1122,8 @@ rule spliced into the core style and the column-rail variants), so every wing st
 
 ## The Workbench room (home by default - the IDE)
 Pieces are sent from the Library and open as tabs. The Workbench mounts a writable editor for every
-canonical kind: character, lorebook, persona, preset, regex set, sprite pack, quick-reply set, and
-HTML document. The shell owns tabs,
+canonical kind that has one: character, lorebook, persona, preset, Script Sheet, regex set, sprite pack, quick-reply set,
+HTML document, tracker, tool, dice and formula (prompt formats open read-only). The shell owns tabs,
 split view, recents, and focus; each editor owns its unsaved local draft and explicit save flow.
 With no open pieces, the room distinguishes a restoring bench, a settled empty bench, and a failed
 restore, each a centered `RoomHeader` inside a Panel (kicker "The Workbench · Edit pieces"). A settled empty bench offers Open Library, New pack folder, and New lorebook. When the studio
@@ -1225,6 +1225,32 @@ after responsive reflow, and Tab traversal continues through each measured windo
   a measured window of rows while keeping the focused row mounted.
   Canonical path writes and variant lifecycle/override writes now delegate to the same entity-layer
   operations used by Kit's typed character capabilities, so base and variant semantics cannot drift.
+- **Tracker, tool, dice and formula editors.** The four small library kinds open in editors built alike
+  (`src/ui/apps/workbench/pieces/`): the shared editor header (the piece's monogram, name, one meta line, save
+  state), framed panels, and columns of fields | page | rail that fold by the pane's width. Their save is one
+  lifecycle (`use-piece-editor.ts`): the body is a draft over the saved one, a save sends a patch of the edits on the revision
+  opened and sends nothing when nothing changed, the conflict bar and the Workbench's save keys, unsaved mark and
+  autosave apply, and a draft the kind's strict decoder refuses is not saved and is explained in a sentence under
+  the header. Long lists (fields, table rows, glyphs, a tool's arguments) are windowed.
+  - **Header.** The tracker and tool headers say where the piece is linked ("linked in 2 scenes", or "not linked to a scene"), from
+    `GET /api/chats/linked?kind=...&id=...` (the live scenes whose prompting names it, settings only); a click lists the scene names.
+  - **Tracker.** The Identity & settings disclosure (what it tracks, how the AI should update it, shape, icon,
+    how a reply shows changes, an optional prompt line with macro chips), then the fields in the **field editor**
+    (`src/ui/_shared/field-editor.tsx`, shared with the tool editor): the field list with add, reorder and delete,
+    and one field's page with name, meaning, type, icon, and by type a number's From, To (a number, another number
+    field, or none) and Starts at, a choice's chips and start, a yes-or-no or text start. The rail's Prompt tab is
+    the exact `### Trackers` block at the tracker's starting values with the plain-line fallback and its token
+    cost per reply; its Update tool tab is the tracker's line in `update_trackers`.
+  - **Tool.** When the AI should use it; what the tool does (roll the dice a field holds, roll a dice piece, run a
+    formula, or just note the call); the fields in the same field editor, each with "The AI must fill it". The rail's
+    The AI sees tab shows the call name, what it takes as plain lines read off the provider's parameters and the token cost; its Try tab
+    fills the arguments and shows exactly the answer the AI would get from the real tool reader and runner. A
+    formula tool says it needs a scene and opens the formula.
+  - **Dice.** Roll, Table or Pool, each with a one-line roll card using the real piece roll. A table shows each
+    row's chance and lights the row the last roll picked; "+ Row" and "Paste a list..." add rows.
+  - **Formula.** The formula text in the code editor with macro chips, and a Try it rail: pick a scene, Run shows
+    the result, how long it took, or why it stopped, through `POST /api/chats/formula-try` (the scene as it stands, built
+    without a connection or a window to fit, then the read-only formula path; nothing in the scene changes).
 - Preset, lorebook, quick-reply, regex, and HTML drawing saves use one shared editor lifecycle for
   serialized revision-checked patches and conflict choices. Captured touched occurrence deltas avoid
   rebuilding every sibling item on ordinary edits; structural changes use complete deltas. Lorebook

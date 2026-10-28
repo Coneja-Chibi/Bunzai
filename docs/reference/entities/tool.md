@@ -53,5 +53,14 @@ wireframe with the editor.
 
 ## Editing
 
-There is no editor yet: the tool editor waits for its approved wireframe. The Library's "New tool" saves a blank
-record tool.
+A tool opens in the Workbench's tool editor (`src/ui/apps/workbench/pieces/tool-editor.tsx`). The header says where the tool is linked, "linked in 2 scenes" or "not linked to a scene", read from the scenes' settings alone by `GET /api/chats/linked?kind=tool&id=...` (`src/studio/piece-links.ts`: the live scenes whose prompting list the kind hub names, `promptingList` in `kind.ts` (for a tool `tools`), holds it, as `[{ chatId, title }]`; a deleted scene is left out, no message is read and there is no cap). Clicking the words lists the scenes by name. The count is information; nothing warns about it. The editor has the shared editor header, when the AI should use it,
+the choice of what the tool does (roll the dice it gives in a field, roll a dice piece, run a formula, or just note the call, each showing only its
+own picker), and the fields in the field editor a tracker shares: a tool field has a name, what it means, a type with its choices, and whether the AI
+must fill it. Renaming the field a roll reads carries the roll with it, from the name the field began with, so a name typed through on the way takes nothing; deleting it leaves the roll with no field picked, which the editor says. Choosing a dice or formula action starts with no piece picked, and switching away and back finds the earlier pick again.
+
+The rail has two tabs. The AI sees gives the call name a provider is handed, what it takes as one plain line per argument, `name (type, needed|optional) meaning`, read off the `toolParameters` the provider gets,
+and what the definition (`toolDefinition`, the same object the loop sends) costs in tokens on every reply. Try fills the arguments and calls the
+tool through the real `readToolCall` and `runTool`, and shows exactly the answer the AI would get, a refusal included; a dice-piece tool rolls the
+piece it links, and a formula tool says it needs a scene and opens the formula, where Try runs it on the whole scene with no window to fit (see the formula page). A draft the strict decoder refuses (a roll whose
+field is not text, a linked piece not picked) is not saved and cannot be tried. A yes-or-no argument can be left out, said yes or said no. A save sends a patch of the edits; with nothing edited
+nothing is sent. The Library's "New tool" saves a blank record tool.

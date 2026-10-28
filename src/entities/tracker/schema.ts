@@ -18,11 +18,20 @@ export interface TrackerField {
   /** Number only; at most `max`. */
   min?: number;
   max?: number;
+  /** Number only, and not with `max`: the name of another number field of this tracker whose current value is this field's top (hp out of hp_max). A value above it is brought down to it, never refused. */
+  maxField?: string;
+  /** A well-formed icon id (`lucide:name` or `mdi:name`); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows. */
+  icon?: string;
   /** Must fit the type, the choices and the range. */
   default?: string | number | boolean;
 }
 
 export type TrackerLayout = "record" | "list";
+
+/** How a reply's changes to a tracker are drawn under it: small chips, a card, a toast, or not at all. */
+export type TrackerChangeStyle = "chips" | "card" | "toast" | "hidden";
+/** The style a tracker has when it names none. */
+export const DEFAULT_CHANGE_STYLE: TrackerChangeStyle = "chips";
 
 export interface TrackerBody {
   name: string;
@@ -34,6 +43,10 @@ export interface TrackerBody {
   note: string;
   /** Macro text for the tracker's prompt line; absent means the default rendering. */
   template?: string;
+  /** An icon id for the tracker itself, or for each row of a list; absent means no icon. */
+  icon?: string;
+  /** How a reply's changes to this tracker are drawn; absent means chips. Stored only: the Messenger reads it. */
+  changes?: TrackerChangeStyle;
 }
 
 export type CanonicalTracker = CanonicalEntity<"tracker", TrackerBody>;

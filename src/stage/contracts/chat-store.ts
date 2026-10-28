@@ -16,7 +16,7 @@ import type { ChatTrackerPatch, ChatTrackers, TrackerModule } from "./chat-track
 import type { ChatSummary, SummarySettingsPatch, TakeSummary, TakeSummaryInput } from "./chat-summary-types";
 import type { Delta, SceneState } from "../../core/scene-state/types";
 import type { PartText } from "./content-store";
-import type { MessageAtPage, MessagePage, MessageSwipePage, MessageTailPage, TranscriptSearchPage, TranscriptSearchQuery, TranscriptSwipeSelection } from "./chat-store-pages";
+import type { MessageAtPage, SceneDeltaRange, MessagePage, MessageSwipePage, MessageTailPage, TranscriptSearchPage, TranscriptSearchQuery, TranscriptSwipeSelection } from "./chat-store-pages";
 export type * from "./chat-store-pages";
 
 /** RoleCall's stored message roles. */
@@ -408,6 +408,8 @@ export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector {
   sceneState(branchId: string): Promise<SceneState | null>;
   /** The state after every shown message before `messageId`, and that message's own deltas: what a new version of it, or a continue, builds from. Null when the branch or the message is absent, deleted or cut. */
   sceneStateBefore(branchId: string, messageId: string): Promise<SceneState | null>;
+  /** The live messages from `fromMessageId` through `toMessageId` (the tip when omitted) with the state before the first (everything shown before it, not its own deltas) and each message's deltas, its shown version's then its own: one forward pass shows what each message changed. Given `slotPrefixes`, only the deltas of slots starting with one are loaded (the state before is still whole). A range that ends before it starts is empty. Null when the branch is absent or deleted, or either message is absent or cut. */
+  sceneDeltas(branchId: string, fromMessageId: string, toMessageId?: string, slotPrefixes?: readonly string[]): Promise<SceneDeltaRange | null>;
   /** Replaces what the take starts with, before any message (an import's variables): these deltas folded over nothing. It shows with no message, is what the first message builds from, survives a cut of every message, and a fork or a restored take gets its own copy. Refused whole when malformed or one write is past the hostile-input ceiling (unusually large); empty clears it; false when the branch is absent or deleted. */
   setBranchBase(branchId: string, deltas: Delta[]): Promise<boolean>;
   /** Appends deltas to a live message of this take, what it carries whichever version shows (a person's edit on a reply). They fold after the version's own and win on that message, `sceneStateBefore` includes them, a fork copies them, and a write of what is already there adds nothing. Refused whole when malformed or when one write is past the hostile-input ceiling (unusually large; there is no per-message cap); false when the branch or message is absent or cut. */

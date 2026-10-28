@@ -61,3 +61,52 @@ test("an unknown scene is 404, and the route is POST only", async () => {
   expect((await post("/api/chats/forecast", { chatId: "nope", draft: "Hi" })).status).toBe(404);
   expect((await handler(apiReq(`/api/chats/forecast?chatId=${chat.id}`))).status).toBe(404);
 });
+
+type FormulaTry = import("../studio/scene-forecast").FormulaTry;
+const tryFormula = async (post: (path: string, body: unknown) => Promise<Response>, chatId: string, text: unknown) => post("/api/chats/formula-try", { chatId, text });
+
+test("formula-try runs the text read-only on the scene's own macro context, how long it took, and asks no model", async () => {
+  const { post, chat } = await started();
+  await post("/api/chats/connection", { chatId: chat.id, connection: { id: localId, model: "qwen3" } });
+  const res = await tryFormula(post, chat.id, "{{char}} says {{calc::1 + 2}}");
+  expect(res.status).toBe(200);
+  const out = (await res.json()) as FormulaTry;
+  expect(out).toMatchObject({ ok: true, text: "Vera says 3" });
+  expect(out.ms).toBeGreaterThanOrEqual(0);
+  expect(calls).toBe(0);
+});
+
+test("formula-try refuses a formula that would change a variable, says which, and changes nothing in the scene", async () => {
+  const { post, chat } = await started();
+  await post("/api/chats/connection", { chatId: chat.id, connection: { id: localId, model: "qwen3" } });
+  const stopped = (await (await tryFormula(post, chat.id, "{{setvar::mood::grim}}")).json()) as FormulaTry;
+  expect(stopped).toMatchObject({ ok: false });
+  expect("error" in stopped && stopped.error).toContain("changes variables");
+  const after = (await (await tryFormula(post, chat.id, "[{{getvar::mood}}]")).json()) as FormulaTry;
+  expect(after).toMatchObject({ ok: true, text: "[]" });
+  const blank = (await (await tryFormula(post, chat.id, "  ")).json()) as FormulaTry;
+  expect(blank).toMatchObject({ ok: false, error: "This formula is empty." });
+});
+
+test("formula-try needs no connection: it asks no model, so a scene with none is read as it stands", async () => {
+  const { post, chat } = await started();
+  expect((await post("/api/chats/forecast", { chatId: chat.id, draft: "Hi" })).status).toBe(409);
+  const out = (await (await tryFormula(post, chat.id, "{{char}} / {{mentions::Evening::1}}")).json()) as FormulaTry;
+  expect(out).toMatchObject({ ok: true });
+  expect(calls).toBe(0);
+});
+
+test("formula-try does not need a window the scene fits in: a connection with a tiny stated window still answers", async () => {
+  const { post, chat } = await started();
+  await post("/api/chats/connection", { chatId: chat.id, connection: { id: localId, model: "qwen3" } });
+  const out = (await (await tryFormula(post, chat.id, "{{calc::2 * 3}}")).json()) as FormulaTry;
+  expect(out).toMatchObject({ ok: true, text: "6" });
+});
+
+test("formula-try answers an unknown scene 404 and a malformed body 400", async () => {
+  const { post, handler, chat } = await started();
+  expect((await tryFormula(post, "nope", "{{char}}")).status).toBe(404);
+  expect((await tryFormula(post, chat.id, 7)).status).toBe(400);
+  expect((await post("/api/chats/formula-try", { text: "{{char}}" })).status).toBe(400);
+  expect((await handler(apiReq(`/api/chats/formula-try?chatId=${chat.id}`))).status).toBe(404);
+});

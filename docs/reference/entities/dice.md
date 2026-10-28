@@ -44,5 +44,10 @@ design limits; a file past one is refused as unusually large.
 
 ## Editing
 
-There is no editor yet: the dice editor waits for its approved wireframe. The Library's "New dice" saves a blank
-roll of `1d20`.
+A dice piece opens in the Workbench's dice editor (`src/ui/apps/workbench/pieces/dice-editor.tsx`): one small page with Roll, Table and Pool, each
+with its one-line roll card. A roll has its dice; a table has its rows, each with a weight, its result and its chance (its weight over the total),
+and "+ Row" and "Paste a list..." (one row per line, weight 1); a pool has its dice, sides and the number it counts at. Roll uses the real piece roll
+(`rollDicePiece`, the call a tool's action makes), shows the result on the card, and lights the table row the roll picked until the piece is edited.
+Rolling changes nothing and is off while the draft cannot be saved. A piece keeps exactly the field its type rolls; switching type sets the others
+aside and brings them back if the type is switched back before the editor is closed. A save sends a patch of the edits; with nothing edited
+nothing is sent. The Library's "New dice" saves a blank roll of `1d20`.

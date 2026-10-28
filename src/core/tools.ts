@@ -48,6 +48,11 @@ export function toolParameters(fields: readonly ToolField[]): Record<string, unk
   };
 }
 
+/** The function a provider is handed for a tool under its call name: what the model reads about it, and what a reply carries of it. */
+export function toolDefinition(body: ToolBody, name: string): { type: "function"; function: { name: string; description: string; parameters: Record<string, unknown> } } {
+  return { type: "function", function: { name, description: body.description || body.name, parameters: toolParameters(body.fields) } };
+}
+
 /** The model's arguments checked against the fields once, and a roll's dice with them; an error is told to the model. */
 export function readToolCall(body: ToolBody, raw: unknown): { args: ToolArgs } | { error: string } {
   const read = readToolArgs(body.fields, raw);

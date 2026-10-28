@@ -15,6 +15,10 @@ import { HtmlDocEditor } from "./htmldoc-editor";
 import { PresetEditor } from "./PresetEditor";
 import { QuickReplyEditor } from "./QuickReplyEditor";
 import { ScriptSheetBench } from "./script-sheet-bench";
+import { TrackerEditor } from "./pieces/tracker-editor";
+import { ToolEditor } from "./pieces/tool-editor";
+import { DiceEditor } from "./pieces/dice-editor";
+import { FormulaEditor } from "./pieces/formula-editor";
 
 /** What every editor is handed: the fetched entity and its revision, the app, the open piece, the hoisted chrome. */
 export interface KindEditorProps {
@@ -36,6 +40,10 @@ export const EDITOR_VIEWS: Readonly<Record<string, ComponentType<KindEditorProps
   regex: RegexSetEditor,
   quickreply: QuickReplyEditor,
   htmldoc: HtmlDocEditor,
+  tracker: TrackerEditor,
+  tool: ToolEditor,
+  dice: DiceEditor,
+  formula: FormulaEditor,
 };
 
 /** The editor a kind's pieces open in, with how it reads them, or undefined for a kind that opens read-only. */

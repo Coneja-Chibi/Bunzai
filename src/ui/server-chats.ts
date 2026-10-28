@@ -63,12 +63,14 @@ import { searchSummaries } from "../studio/scene-summary-list";
 import { handleSummaryRoute } from "./server-chats-summary";
 import { handleDirectorRoute } from "./server-chats-director";
 import { handleDraftRoute } from "./server-chats-draft";
-import { regexReaderOf } from "./server-scene-readers";
+import { regexReaderOf, trackerReaderOf } from "./server-scene-readers";
+import { handleTrackerChangesRoute } from "./server-chats-tracker-changes";
 import { handleCompareRoute } from "./server-chats-compare";
 import { handleFinalCutRoute } from "./server-chats-final-cut";
 import { handleTrackerItemRoute } from "./server-chats-tracker-item";
 import { handleTrackerRefreshRoute } from "./server-chats-tracker-refresh";
 import { handleForecastRoute } from "./server-chats-forecast";
+import { handleLinkedRoute } from "./server-chats-links";
 import { handleTurnRoute } from "./server-chats-turn";
 import { compendiumDepsFor, compendiumDepsOf, handleCompendiumRoute } from "./server-chats-compendium";
 import { filingsOfVersion, filingsUnderCut, undoWithCut } from "../studio/compendium-hooks";
@@ -387,6 +389,7 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       if (p === "/api/chats/trace") return await handleTraceRoute(url, chats, readLorebook, readPreset);
       if (p === "/api/chats/variables") return await handleVariablesRoute(url, chats, state);
       if (p === "/api/chats/variable-history") return await handleVariableHistoryRoute(url, chats);
+      if (p === "/api/chats/tracker-changes") return await handleTrackerChangesRoute(url, chats, trackerReaderOf(store));
       if (p === "/api/chats/props") {
         const chat = await chats.getChat(url.searchParams.get("chatId") ?? "");
         return chat ? json(propsOf(chat)) : err("that scene is gone", 404);
@@ -399,6 +402,8 @@ export async function handleChatRoute(req: Request, url: URL, store: StudioStore
       if (summary) return summary;
       const director = await handleDirectorRoute(req, url, chats, Date.now, null);
       if (director) return director;
+      const linked = await handleLinkedRoute(req, url, chats);
+      if (linked) return linked;
       if (p === "/api/chats/tail") {
         const n = url.searchParams.has("n") ? Number(url.searchParams.get("n")) : 3;
         const tail = await sceneTail(chats, url.searchParams.get("id") ?? "", n, store);

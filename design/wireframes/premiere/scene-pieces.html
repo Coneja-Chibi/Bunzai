@@ -1,0 +1,322 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene Pieces</title>
+<link rel="stylesheet" href="../../../src/ui/theme/tokens.css">
+<link rel="stylesheet" href="kit.css">
+<style>
+/* Page-only rules, tokens only. Library trackers, tools and the time budgets in a scene, in the Premiere house style,
+   drawn as game UI (bars, icons, tiles) instead of rows of text. Part 3 is an option book: four ways to show what a reply
+   changed, on the same reply, plus the setting that picks one. */
+.wrap { display: grid; gap: 28px; }
+.muted { color: color-mix(in srgb, var(--premiere-text) 62%, transparent); }
+.lead { max-width: 900px; font-size: 14px; color: color-mix(in srgb, var(--premiere-text) 75%, transparent); margin-bottom: 14px; }
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px; align-items: start; }
+.cap { font: 600 12px var(--font-ui); letter-spacing: .14em; text-transform: uppercase; color: var(--premiere-gold); margin-bottom: 10px; }
+
+/* the side panel (one frame) */
+.side { width: 100%; max-width: 420px; padding: 0; }
+.side > header { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid color-mix(in srgb, var(--premiere-text) 12%, transparent); }
+.side > header b { font: 700 18px var(--font-fancy); letter-spacing: .02em; }
+.side > header .grow { flex: 1; }
+.side .body { padding: 14px 16px 18px; display: grid; gap: 14px; }
+.pane { display: none; } .pane.on { display: grid; gap: 14px; }
+.ib { width: 32px; height: 32px; display: inline-grid; place-items: center; background: none; border: 1px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); color: var(--premiere-text); cursor: pointer; }
+.ico { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.btn.sm { min-height: 32px; padding: 5px 12px; font-size: 13px; }
+
+/* tracker tile: name, a library mark, a bar or icons, last change */
+.tile { padding: 12px 0 12px 12px; border-left: 3px solid var(--deck-persona); cursor: pointer; display: grid; gap: 8px; }
+.tile + .tile { border-top: 1px solid color-mix(in srgb, var(--premiere-text) 10%, transparent); }
+.tile.built { border-left-color: color-mix(in srgb, var(--premiere-text) 25%, transparent); }
+.tile .hd { display: flex; align-items: baseline; gap: 8px; }
+.tile .hd b { font: 700 15px var(--font-ui); }
+.tile .hd .grow { flex: 1; }
+.tile .hd small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.lib { font: 600 11px var(--font-ui); padding: 1px 7px; color: var(--deck-persona); border: 1px solid color-mix(in srgb, var(--deck-persona) 55%, transparent); }
+.stat { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
+.stat .k { color: color-mix(in srgb, var(--premiere-text) 70%, transparent); }
+.stat .v { font: 600 13px var(--font-mono); }
+.bar { height: 10px; background: color-mix(in srgb, var(--premiere-text) 12%, transparent); position: relative; overflow: hidden; }
+.bar i { position: absolute; inset: 0 auto 0 0; background: var(--c, var(--premiere-rose)); }
+.bar s { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--premiere-rose) 55%, transparent) 0 3px, transparent 3px 6px); }
+.pips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; font: 600 12px var(--font-ui); border: 1px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); }
+.pip svg, .cchip svg, .marker svg { stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pip svg { width: 14px; height: 14px; }
+.showas .r > .pip { justify-self: start; }
+.pip.on { border-color: var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 16%, transparent); }
+.items { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.item { display: grid; justify-items: center; gap: 4px; padding: 10px 4px 8px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 1px solid color-mix(in srgb, var(--premiere-text) 14%, transparent); font-size: 12px; position: relative; }
+.item svg { width: 22px; height: 22px; }
+.item .n { position: absolute; top: 3px; right: 5px; font: 600 11px var(--font-mono); color: var(--premiere-gold); }
+.item.new { border-color: var(--premiere-rose); }
+.item.add { border-style: dashed; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); cursor: pointer; }
+
+/* opened tracker */
+.big { display: grid; gap: 12px; }
+.edit { display: grid; grid-template-columns: 64px minmax(0, 1fr) 70px; gap: 10px; align-items: center; }
+.edit .field { min-height: 34px; padding: 5px 8px; text-align: center; font-family: var(--font-mono); }
+.delta { font-size: 13px; padding: 8px 10px; border-left: 3px solid var(--premiere-rose); background: color-mix(in srgb, var(--premiere-rose) 9%, transparent); }
+.delta b { font-weight: 700; }
+.hint { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); }
+
+/* picker tiles */
+.picks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pick { padding: 12px; background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); display: grid; gap: 6px; cursor: pointer; position: relative; }
+.pick b { font: 700 14px var(--font-ui); }
+.pick small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); }
+.pick svg.big-i { width: 26px; height: 26px; color: var(--deck-persona); }
+.pick[aria-pressed="true"] { border-color: var(--premiere-rose); box-shadow: 3px 3px 0 var(--premiere-rose); }
+.pick[aria-pressed="true"]::after { content: "Linked"; position: absolute; top: 8px; right: 8px; font: 700 11px var(--font-ui); color: var(--premiere-rose); }
+.pick.new { border-style: dashed; place-items: center; text-align: center; color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.group { font: 700 12px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--premiere-gold); }
+.cost { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
+.cost .bar { height: 6px; }
+.cost b { font: 600 13px var(--font-mono); }
+
+/* tools on the booth */
+.tools { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tool { padding: 12px; border: 2px solid color-mix(in srgb, var(--premiere-text) 16%, transparent); background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); display: grid; gap: 6px; }
+.tool .ti { display: flex; align-items: center; gap: 8px; }
+.tool .ti svg { width: 20px; height: 20px; color: var(--deck-regex); }
+.tool b { font: 700 14px var(--font-ui); }
+.tool small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 58%, transparent); }
+.tool .ft { display: flex; align-items: center; justify-content: space-between; font: 600 12px var(--font-mono); color: color-mix(in srgb, var(--premiere-text) 60%, transparent); }
+.tool.off { opacity: .5; }
+
+/* the chat reply used in part 3 */
+.msg { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding: 16px 18px; position: relative; }
+.av { width: 44px; height: 44px; display: grid; place-items: center; font: 700 16px var(--font-fancy); color: var(--premiere-hard); background: var(--deck-character); }
+.who { display: flex; gap: 10px; align-items: baseline; } .who b { font-weight: 700; } .who small { font-size: 12px; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+.msg p { margin-top: 4px; line-height: 1.6; }
+
+/* option A: chips */
+.chips2 { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.cchip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; font: 600 12px var(--font-ui); border: 1px solid color-mix(in srgb, var(--premiere-text) 22%, transparent); background: color-mix(in srgb, var(--premiere-hard) 55%, transparent); cursor: pointer; }
+.cchip svg { width: 14px; height: 14px; }
+.cchip .mbar { width: 56px; height: 6px; background: color-mix(in srgb, var(--premiere-text) 14%, transparent); position: relative; }
+.cchip .mbar i { position: absolute; inset: 0 auto 0 0; background: var(--premiere-rose); }
+.cchip .d { font-family: var(--font-mono); color: color-mix(in srgb, var(--premiere-rose) 55%, white); }
+.cchip .d.up { color: color-mix(in srgb, var(--deck-persona) 80%, white); }
+
+/* option B: mini card */
+.mcard { margin-top: 12px; max-width: 360px; padding: 12px 14px; border-left: 3px solid var(--deck-persona); background: color-mix(in srgb, var(--premiere-hard) 60%, transparent); display: grid; gap: 8px; }
+.mcard .t { display: flex; justify-content: space-between; font: 700 13px var(--font-ui); }
+.mcard .t small { font-weight: 400; color: color-mix(in srgb, var(--premiere-text) 55%, transparent); }
+
+/* option C: toast and marker */
+.toast { position: absolute; top: 14px; right: 18px; width: 220px; padding: 10px 12px; background: color-mix(in srgb, var(--premiere-violet) 14%, var(--premiere-hard)); border: 2px solid var(--premiere-hard); box-shadow: 4px 4px 0 var(--premiere-rose); display: grid; gap: 6px; font-size: 13px; animation: fade 4s ease-in 1s forwards; }
+.toast b { font: 700 12px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; color: var(--premiere-gold); }
+@keyframes fade { to { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .toast { animation: none; } }
+.marker { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font: 600 12px var(--font-ui); padding: 2px 8px; border: 1px solid color-mix(in srgb, var(--premiere-rose) 55%, transparent); color: color-mix(in srgb, var(--premiere-rose) 55%, white); cursor: pointer; }
+.marker svg { width: 13px; height: 13px; }
+
+/* option D: per tracker */
+.showas { display: grid; gap: 10px; }
+.showas .r { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 12px; align-items: center; font-size: 13px; }
+.mixed { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 10px; }
+
+.opt { padding: 0; }
+.opt > h3 { font: 700 18px var(--font-fancy); letter-spacing: .02em; padding: 14px 18px 0; }
+.opt > .note { padding: 4px 18px 0; font-size: 13px; color: color-mix(in srgb, var(--premiere-text) 65%, transparent); }
+.warnline { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 10px; font-size: 12px; color: color-mix(in srgb, var(--premiere-gold) 80%, white); }
+.warnline a { text-decoration: underline; cursor: pointer; }
+.setrows { padding: 4px 20px 8px; }
+.setrows .field { width: 96px; text-align: right; font-family: var(--font-mono); }
+@media (max-width: 720px) { .figs { grid-template-columns: 1fr; } .items { grid-template-columns: repeat(3, 1fr); } .tools, .picks { grid-template-columns: 1fr; } .toast { position: static; width: auto; margin-top: 10px; } }
+</style></head>
+<body><div class="wf-note">WIREFRAME. Library trackers, tools and the time budgets in a scene, in the Premiere house style and drawn like game UI. Part 3 is an option book: four ways to show what a reply changed, all on the same reply. Tiles, tabs and segments are live; numbered callouts are explained below. <span class="wf-accent"></span></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
+  <symbol id="bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12H6zM9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="rope" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="lamp" viewBox="0 0 24 24"><path d="M9 3h6M10 3v3h4V3M7 9h10l-1 9H8zM10 21h4"/></symbol>
+  <symbol id="salt" viewBox="0 0 24 24"><path d="M8 8h8l-1 12H9zM9 4h6v4H9z"/></symbol>
+  <symbol id="letter" viewBox="0 0 24 24"><path d="M3 6h18v12H3zM3 6l9 7 9-7"/></symbol>
+  <symbol id="mood" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M9 15c1.5-1.2 4.5-1.2 6 0M9 10h.01M15 10h.01"/></symbol>
+  <symbol id="ship" viewBox="0 0 24 24"><path d="M3 15h18l-3 5H6zM12 3v12M12 4l6 8h-6"/></symbol>
+  <symbol id="dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01"/></symbol>
+  <symbol id="table" viewBox="0 0 24 24"><path d="M4 5h16v14H4zM4 10h16M4 15h16"/></symbol>
+  <symbol id="fx" viewBox="0 0 24 24"><path d="M8 20c2 0 2-2 3-8s1-8 3-8M7 11h7M15 14l5 6M20 14l-5 6"/></symbol>
+  <symbol id="note" viewBox="0 0 24 24"><path d="M5 4h14v12l-4 4H5z"/><path d="M15 20v-4h4"/></symbol>
+  <symbol id="back" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="pop" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-8 8M18 14v6H4V6h6"/></symbol>
+  <symbol id="spark" viewBox="0 0 24 24"><path d="M12 3v5M12 16v5M3 12h5M16 12h5M6 6l3 3M15 15l3 3M18 6l-3 3M9 15l-3 3"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></symbol>
+</svg>
+<div class="stage"><main class="room">
+
+<header class="playbill"><div><div class="kicker left">Scene</div><h1>Library pieces in play</h1></div>
+  <p class="lede">Trackers you made, tools the narrator can call, what each reply changed, and the two time budgets.</p></header>
+
+<div class="wrap">
+
+<!-- ======================= 1. TRACKERS ======================= -->
+<section>
+  <div class="section-title">1. Trackers panel <small>library trackers join the built-in ones, drawn as stats, icons and item tiles</small></div>
+  <div class="figs">
+    <div><div class="cap">1a. The panel (click a tracker, or Add or remove)</div>
+    <div class="panel side" data-deck="persona" id="tpanel">
+      <header><svg class="ico"><use href="#heart"/></svg><b>Trackers</b><span class="grow"></span><button class="ib" title="Pop out"><svg class="ico"><use href="#pop"/></svg></button><button class="ib" title="Close"><svg class="ico"><use href="#x"/></svg></button></header>
+      <div class="body">
+        <div class="pane on" data-pane="list">
+          <div>
+          <div class="tile" data-go="health"><div class="hd"><b>Health</b><span class="lib">Library</span><span class="grow"></span><small>reply 42</small></div>
+            <div class="stat"><span class="k">HP</span><div class="bar"><i style="width:35%"></i><s style="left:35%;width:15%"></s></div><span class="v">7/20</span></div>
+            <div class="pips"><span class="pip"><svg><use href="#mood"/></svg>calm</span><span class="pip">tense</span><span class="pip on"><svg><use href="#mood"/></svg>hurt</span></div></div>
+          <div class="tile" data-go="satchel"><div class="hd"><b>Satchel</b><span class="lib">Library</span><span class="grow"></span><small>reply 41</small></div>
+            <div class="items"><div class="item new"><svg class="ico"><use href="#rope"/></svg>rope</div><div class="item"><span class="n">1</span><svg class="ico"><use href="#lamp"/></svg>lantern</div><div class="item"><span class="n">3</span><svg class="ico"><use href="#salt"/></svg>salt</div><div class="item"><svg class="ico"><use href="#letter"/></svg>letter</div></div></div>
+          <div class="tile built"><div class="hd"><b>Party</b><span class="grow"></span><small>turn 41</small></div><div class="hint">Vera Lindqvist, Mara Okafor &middot; lead Mara</div></div>
+          </div>
+          <button class="btn sm" data-go="pick" style="justify-self:start">Add or remove trackers</button>
+        </div>
+
+        <div class="pane" data-pane="health">
+          <div style="display:flex;align-items:center;gap:10px"><button class="ib" data-go="list" title="Back"><svg class="ico"><use href="#back"/></svg></button><b style="font:700 18px var(--font-fancy)">Health</b><span class="lib">Library</span><span style="flex:1"></span><button class="btn sm quiet">Edit tracker</button></div>
+          <div class="delta">Reply 42 changed <b>HP 10 &rarr; 7</b> and <b>mood calm &rarr; hurt</b>.</div>
+          <div class="big">
+            <div class="edit"><span class="k">HP</span><div class="bar"><i style="width:35%"></i></div><div class="field">7</div></div>
+            <div class="edit"><span class="k">Max HP</span><div class="bar"><i style="width:100%;--c:color-mix(in srgb,var(--premiere-text) 35%,transparent)"></i></div><div class="field">20</div></div>
+            <div><div class="hint" style="margin-bottom:6px">Mood</div><div class="pips"><span class="pip"><svg><use href="#mood"/></svg>calm</span><span class="pip">tense</span><span class="pip on"><svg><use href="#mood"/></svg>hurt</span></div></div>
+          </div>
+          <p class="hint">Drag a bar or type a number. Your change stays with this reply: swiping or regenerating keeps it.</p>
+        </div>
+
+        <div class="pane" data-pane="satchel">
+          <div style="display:flex;align-items:center;gap:10px"><button class="ib" data-go="list" title="Back"><svg class="ico"><use href="#back"/></svg></button><b style="font:700 18px var(--font-fancy)">Satchel</b><span class="lib">Library</span><span style="flex:1"></span><button class="btn sm quiet">Edit tracker</button></div>
+          <div class="items"><div class="item new"><svg class="ico"><use href="#rope"/></svg>rope</div><div class="item"><span class="n">1</span><svg class="ico"><use href="#lamp"/></svg>lantern</div><div class="item"><span class="n">3</span><svg class="ico"><use href="#salt"/></svg>salt</div><div class="item"><svg class="ico"><use href="#letter"/></svg>letter</div><div class="item add">+ add</div></div>
+          <div class="delta">rope: <b>qty 1</b>, <b>knotted</b> &middot; added by reply 41</div>
+          <p class="hint">Click an item to edit its fields or remove it.</p>
+        </div>
+
+        <div class="pane" data-pane="pick">
+          <div style="display:flex;align-items:center;gap:10px"><button class="ib" data-go="list" title="Back"><svg class="ico"><use href="#back"/></svg></button><b style="font:700 18px var(--font-fancy)">Add or remove trackers</b></div>
+          <div class="group">Your library</div>
+          <div class="picks">
+            <div class="pick" aria-pressed="true"><svg class="big-i ico"><use href="#heart"/></svg><b>Health</b><small>record &middot; 3 fields</small></div>
+            <div class="pick" aria-pressed="true"><svg class="big-i ico"><use href="#bag"/></svg><b>Satchel</b><small>list &middot; 2 fields</small></div>
+            <div class="pick" aria-pressed="false"><svg class="big-i ico"><use href="#ship"/></svg><b>Ship's hull</b><small>record &middot; 2 fields</small></div>
+            <div class="pick new"><b>+ New tracker</b><small>opens the Workbench</small></div>
+          </div>
+          <div class="cost"><span>Per reply</span><div class="bar"><i style="width:28%"></i></div><b>~140 tokens</b></div>
+          <div class="group">Built in</div>
+          <div class="picks">
+            <div class="pick" aria-pressed="true"><b>Party</b><small>members and lead</small></div>
+            <div class="pick" aria-pressed="false"><b>Inventory</b><small>items, currency</small></div>
+          </div>
+          <button class="btn sm quiet" style="justify-self:start">All 16 built-in trackers</button>
+        </div>
+      </div>
+    </div></div>
+
+    <div><div class="cap">1b. How a field shows <span class="co">1</span></div>
+    <div class="panel">
+      <div class="showas">
+        <div class="r"><b>Number with a top</b><div class="stat"><span class="k">HP</span><div class="bar"><i style="width:35%"></i></div><span class="v">7/20</span></div></div>
+        <div class="r"><b>Number, open</b><span class="mono" style="font-size:15px">Gold 212</span></div>
+        <div class="r"><b>Choice</b><div class="pips"><span class="pip">calm</span><span class="pip on"><svg><use href="#mood"/></svg>hurt</span></div></div>
+        <div class="r"><b>Yes or no</b><span class="pip on">Lantern lit</span></div>
+        <div class="r"><b>Text</b><span>"Owes Mara a favour"</span></div>
+        <div class="r"><b>List</b><div class="items" style="grid-template-columns:repeat(3,1fr)"><div class="item"><svg class="ico"><use href="#rope"/></svg>rope</div><div class="item"><span class="n">3</span><svg class="ico"><use href="#salt"/></svg>salt</div><div class="item"><svg class="ico"><use href="#letter"/></svg>letter</div></div></div>
+      </div>
+      <p class="hint" style="margin-top:12px">A number gets a bar when it has a top: its own To, or another field named as its top (HP out of Max HP). Each field and each list picks an icon in the tracker editor.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- ======================= 2. TOOLS ======================= -->
+<section>
+  <div class="section-title">2. Tools on the Booth <small>next to Narrator tool access, where tool settings already live</small></div>
+  <div class="figs">
+    <div><div class="cap">2a. Narrator card, tools as tiles <span class="co">2</span></div>
+    <div class="panel side" data-deck="regex">
+      <header><svg class="ico"><use href="#spark"/></svg><b>Narrator</b><span class="grow"></span><span class="pip on">Tool access on</span></header>
+      <div class="body">
+        <div class="tools">
+          <div class="tool"><div class="ti"><svg class="ico"><use href="#dice"/></svg><b>Attack roll</b></div><small>Rolls the dice it is given</small><div class="ft"><span>64 tok</span><span class="switch on"></span></div></div>
+          <div class="tool"><div class="ti"><svg class="ico"><use href="#table"/></svg><b>Weather</b></div><small>Rolls the Weather table</small><div class="ft"><span>41 tok</span><span class="switch on"></span></div></div>
+          <div class="tool"><div class="ti"><svg class="ico"><use href="#fx"/></svg><b>Storm pressure</b></div><small>Runs a formula</small><div class="ft"><span>85 tok</span><span class="switch on"></span></div></div>
+          <div class="tool off"><div class="ti"><svg class="ico"><use href="#note"/></svg><b>Note a clue</b></div><small>Just notes it</small><div class="ft"><span>52 tok</span><span class="switch"></span></div></div>
+        </div>
+        <div class="cost"><span>Per reply</span><div class="bar"><i style="width:38%"></i></div><b>~190 tokens</b></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn sm">+ Link a tool</button><button class="btn sm quiet">New tool in the Workbench</button><span class="muted" style="font-size:12px;align-self:center">Max tool rounds 4</span></div>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- ======================= 3. CHANGE VISUALS (option book) ======================= -->
+<section>
+  <div class="section-title">3. What a reply changed <small>option book: the same reply four ways <span class="co">3</span></small></div>
+  <div class="figs" style="grid-template-columns:repeat(auto-fit,minmax(560px,1fr))">
+
+    <div class="panel opt"><h3>A. Chips</h3><p class="note">One line of game-style badges under the reply. A bar shows where a number landed, the delta in color. Click a chip to open the tracker.</p>
+      <div class="msg"><div class="av">V</div><div><div class="who"><b>Vera</b><small>reply 42</small></div>
+        <p>The wight's claw catches her shoulder. She stumbles back against the railing, and the lantern swings wild above the black water.</p>
+        <div class="chips2"><span class="cchip"><svg class="ico"><use href="#heart"/></svg>HP<span class="mbar"><i style="width:35%"></i></span>7/20 <span class="d">-3</span></span><span class="cchip"><svg class="ico"><use href="#mood"/></svg>hurt</span><span class="cchip"><svg class="ico"><use href="#rope"/></svg>rope <span class="d up">+1</span></span></div></div></div></div>
+
+    <div class="panel opt"><h3>B. Mini card</h3><p class="note">A small card under the reply, one per tracker that changed, with the old value shown under the new one.</p>
+      <div class="msg"><div class="av">V</div><div><div class="who"><b>Vera</b><small>reply 42</small></div>
+        <p>The wight's claw catches her shoulder. She stumbles back against the railing, and the lantern swings wild above the black water.</p>
+        <div class="mcard"><div class="t">Health<small>changed by this reply</small></div>
+          <div class="stat"><span class="k">HP</span><div class="bar"><i style="width:35%"></i><s style="left:35%;width:15%"></s></div><span class="v">7/20</span></div>
+          <div class="hint">was 10 &middot; mood calm &rarr; <b style="color:var(--premiere-text)">hurt</b></div></div>
+        <div class="mcard" style="border-left-color:var(--deck-persona)"><div class="t">Satchel<small>changed by this reply</small></div><div class="items" style="grid-template-columns:repeat(4,1fr)"><div class="item new"><svg class="ico"><use href="#rope"/></svg>rope</div></div></div></div></div></div>
+
+    <div class="panel opt"><h3>C. Toast, then a marker</h3><p class="note">A brief notice slides in when the change happens and fades; the reply keeps a small marker that reopens it. Reduce motion shows it still.</p>
+      <div class="msg"><div class="av">V</div><div><div class="who"><b>Vera</b><small>reply 42</small></div>
+        <p>The wight's claw catches her shoulder. She stumbles back against the railing, and the lantern swings wild above the black water.</p>
+        <span class="marker"><svg class="ico"><use href="#spark"/></svg>2 changes</span></div>
+        <div class="toast"><b>Reply 42</b><div class="stat" style="grid-template-columns:auto 1fr auto"><svg class="ico" style="color:var(--premiere-rose)"><use href="#heart"/></svg><div class="bar"><i style="width:35%"></i></div><span class="v">-3 HP</span></div><div>+ rope &middot; mood hurt</div></div></div></div>
+
+    <div class="panel opt"><h3>D. Each tracker chooses</h3><p class="note">The tracker editor gets one more setting, "Show changes on replies as": chips, a card, a toast, or not at all. A reply shows each tracker its own way.</p>
+      <div style="padding:12px 18px 0"><div class="hint" style="margin-bottom:6px">In the tracker editor</div>
+        <div class="showas"><div class="r"><b>Health</b><span class="seg"><span>Chips</span><span aria-pressed="true">Card</span><span>Toast</span><span>Hidden</span></span></div>
+          <div class="r"><b>Satchel</b><span class="seg"><span aria-pressed="true">Chips</span><span>Card</span><span>Toast</span><span>Hidden</span></span></div></div></div>
+      <div class="msg"><div class="av">V</div><div><div class="who"><b>Vera</b><small>reply 42</small></div>
+        <p>The wight's claw catches her shoulder...</p>
+        <div class="mcard"><div class="t">Health<small>changed by this reply</small></div><div class="stat"><span class="k">HP</span><div class="bar"><i style="width:35%"></i><s style="left:35%;width:15%"></s></div><span class="v">7/20</span></div></div>
+        <div class="chips2"><span class="cchip"><svg class="ico"><use href="#rope"/></svg>rope <span class="d up">+1</span></span></div></div></div></div>
+  </div>
+
+  <div class="figs" style="margin-top:24px">
+    <div><div class="cap">3e. The setting <span class="co">4</span></div>
+    <div class="panel setrows">
+      <div class="row"><b>Show what each reply changed</b><p>Tracker changes appear under the reply that made them.</p><span class="ctl switch on"></span></div>
+      <div class="row"><b>Style</b><p>How changes look. "Each tracker's own" uses what the tracker editor picked.</p><span class="ctl seg"><span>Chips</span><span>Card</span><span>Toast</span><span aria-pressed="true">Each tracker's own</span></span></div>
+    </div></div>
+    <div><div class="cap">3f. When the prompt ran out of time <span class="co">5</span></div>
+    <div class="panel opt"><div class="msg"><div class="av" style="background:var(--deck-lorebook)">V</div><div><div class="who"><b>Vera</b><small>reply 43</small></div>
+      <p>"Hold the light steady," she says, binding the cut with salt-stiff cloth.</p>
+      <div class="warnline"><svg class="ico"><use href="#clock"/></svg>1 macro ran out of time building this prompt (<span class="mono">{{tally}}</span> in the card). <a>Prompt Inspector</a></div></div></div></div></div>
+  </div>
+</section>
+
+<!-- ======================= 4. BUDGETS ======================= -->
+<section>
+  <div class="section-title">4. Time budgets <small>Settings, Scenes</small></div>
+  <div class="figs"><div class="panel setrows">
+    <div class="row"><b>Tools, per reply</b><p>How long the narrator's tools may run in one reply. When it runs out, slow tools are told to stop and the reply goes on; tracker updates always land.</p><span class="ctl field">5 s</span></div>
+    <div class="row"><b>Building the prompt</b><p>How long macros may take while a request is built. A macro that runs out is left out and named under the reply; the rest is sent.</p><span class="ctl field">3 s</span></div>
+  </div></div>
+</section>
+
+</div></main></div>
+<ol class="legend">
+  <li><b>Fields draw by type.</b> A number with a top is a bar (its own To, or another field named as its top, like HP out of Max HP: one new setting on a number field). Choices are pips with the picked one lit, yes or no is one pip, a list is item tiles with a count. Each field and list picks an icon in the tracker editor. Library trackers carry a Library mark and the deck color; built-in ones keep their own panels.</li>
+  <li><b>Tools are tiles</b> with an icon for what they do (dice, table, formula, note), their cost in tokens, and a switch. A cost bar sums them per reply; there is no count limit.</li>
+  <li><b>Four ways to show what a reply changed,</b> on the same reply. Pick one, or keep D (each tracker chooses) with a scene-wide on and off. Swiping to another version shows that version's changes.</li>
+  <li><b>The setting:</b> on or off, and a style. If you pick D, "Each tracker's own" becomes the default and the tracker editor gains its "Show changes on replies as" control.</li>
+  <li><b>The out-of-time line</b> appears only when a macro ran out while the prompt was built, names it, and links to the Prompt Inspector where the error already shows.</li>
+</ol>
+<script src="kit.js"></script>
+<script>
+document.addEventListener("click", function (e) {
+  var go = e.target.closest("[data-go]");
+  if (go) { var panel = go.closest(".panel"); panel.querySelectorAll(".pane").forEach(function (p) { p.classList.toggle("on", p.dataset.pane === go.dataset.go); }); return; }
+  var pick = e.target.closest(".pick:not(.new)"); if (pick) { pick.setAttribute("aria-pressed", pick.getAttribute("aria-pressed") === "true" ? "false" : "true"); return; }
+  var seg = e.target.closest(".seg span"); if (seg) { seg.parentNode.querySelectorAll("span").forEach(function (s) { s.setAttribute("aria-pressed", String(s === seg)); }); return; }
+  var sw = e.target.closest(".switch"); if (sw) sw.classList.toggle("on");
+});
+</script></body></html>

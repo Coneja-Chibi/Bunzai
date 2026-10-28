@@ -87,6 +87,28 @@ describe("a linked tracker in a turn", () => {
     expect(s.sent[2]!.messages[0]!.content).toBe("Vera is at 7 hp.");
   });
 
+  test("a top named in the second tool round of a reply writes the dependent clamped, and an explicit write of the shown value is a change (stored kept across rounds)", async () => {
+    const hero: TrackerBody = { name: "Hero", description: "", layout: "record", note: "", fields: [
+      { name: "hp", description: "", type: "number", min: 0, maxField: "hp_max" }, { name: "hp_max", description: "", type: "number" }, { name: "gold", description: "", type: "number" }] };
+    const stale = async (s: Awaited<ReturnType<typeof scene>>) => {
+      const first = (await s.messages())[0]!;
+      const at = (name: string, value: number) => ({ slot: "tracker-record:hero", path: [name], value, at: 1 });
+      await s.chats.recordMessageDeltas(s.branch, first.id, [at("hp", 25), at("hp_max", 10), at("gold", 0)]); // stored 25 over a top of 10 reads 10
+    };
+    const call = (id: string, set: object) => update(id, { tracker: "Hero", set });
+    const raw = async (s: Awaited<ReturnType<typeof scene>>) => Object.fromEntries(Object.entries((await s.state())["tracker-record:hero"] as Record<string, { value: number }>).map(([k, v]) => [k, v.value]));
+    const raise = await scene([call("a", { gold: 5 }), call("b", { hp_max: 40 }), say("ok")], { library: { hero }, prompting: { trackers: ["hero"] } });
+    await stale(raise);
+    await raise.turn();
+    expect(raise.sent[2]!.messages.at(-1)).toMatchObject({ role: "tool", content: "Hero: hp_max=40, hp=10" });
+    expect(await raw(raise)).toEqual({ hp: 10, hp_max: 40, gold: 5 });
+    const explicit = await scene([call("a", { gold: 5 }), call("b", { hp: 10 }), say("ok")], { library: { hero }, prompting: { trackers: ["hero"] } });
+    await stale(explicit);
+    await explicit.turn();
+    expect(explicit.sent[2]!.messages.at(-1)).toMatchObject({ role: "tool", content: "Hero: hp=10" });
+    expect(await raw(explicit)).toEqual({ hp: 10, hp_max: 10, gold: 5 });
+  });
+
   test("B1: the call echoed back to the model is the model's own arguments, not the checked internals", async () => {
     const s = await scene([hp(7), say("ok")]);
     await s.turn();

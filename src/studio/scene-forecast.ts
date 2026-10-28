@@ -4,7 +4,9 @@
  * it cannot drift from a send the way RoleCall's second assembly path does. It writes nothing (no checkpoint, no variable, no meter lesson), asks no model, and says what it leaves
  * out: the Compendium's recall is a model call that only a real send makes, and a scene's prompt regex runs in the page's sandbox worker during a send.
  */
+import { TOOL_BUDGET_MS_DEFAULT } from "../core/assembly/tool-rounds";
 import { resolveCompendium } from "../core/compendium/defaults";
+import { runFormulaReadOnly } from "../core/formula";
 import { countPrompt, countText, estimateFor } from "../core/tokens";
 import type { ProviderRole } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
@@ -32,23 +34,34 @@ export interface Forecast {
   notes: string[];
 }
 
-export async function forecastRequest(deps: ForecastDeps, input: { chatId: string; draft: string }): Promise<Forecast> {
-  const chat = await deps.chats.getChat(input.chatId);
+/** The scene read for a request build: the scene and its whole take as history, with nothing yet being answered. */
+async function readScene(deps: ForecastDeps, chatId: string) {
+  const chat = await deps.chats.getChat(chatId);
   if (!chat) throw new StudioNotFoundError("that scene does not exist");
+  const read = await loadTurn(deps.chats, chat.id, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
+  if (!read) throw new StudioNotFoundError("that scene does not exist");
+  return { chat, read, started: deps.now() };
+}
+
+/** The turn a send of the draft would build, up to its assembled request: what the forecast reads, so it cannot drift from a send. */
+async function draftedTurn(deps: ForecastDeps, input: { chatId: string; draft: string }) {
+  const { chat, read, started } = await readScene(deps, input.chatId);
   if (!chat.connection) throw new NoConnectionError();
   const connected = await deps.connect(chat.connection);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
   const model = chat.connection.model;
-  const read = await loadTurn(deps.chats, chat.id, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
-  if (!read) throw new StudioNotFoundError("that scene does not exist");
   // The take so far is the history and the draft is the message being answered, as it will be once sent.
   const loaded = { ...read, current: { id: "forecast", role: "user" as const, content: input.draft, at: deps.now() } };
-  const started = deps.now();
   const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
   // The tool definitions a send would carry are reserved by the budget the same way (the tools are made, never called).
   const tools = await toolTurn(deps.narratorTools, "reply", chat, loaded, deps.randomSeed(), turnWrites(deps.now), await deps.toolBudgetMs?.());
   const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: "reply", original: "", guidance: "", reserved: sentTools(tools, connected).map((t) => JSON.stringify(t)) });
   if (built.result.budget.overflow) throw new StudioConflictError(overflowMessage(built.result));
+  return { chat, loaded, prep, built, connected, model, started };
+}
+
+export async function forecastRequest(deps: ForecastDeps, input: { chatId: string; draft: string }): Promise<Forecast> {
+  const { chat, loaded, prep, built, connected, model, started } = await draftedTurn(deps, input);
   const sent = shapeRequest({ chat, loaded, kind: "reply", original: "", built, connected }, model, {});
   const trace = built.result.trace;
   const messages = sent.map((m, i) => ({ role: m.role, content: m.content, tokens: i < trace.length && built.asked[i]?.content === m.content ? trace[i]!.tokens : countText(m.content) }));
@@ -64,4 +77,24 @@ export async function forecastRequest(deps: ForecastDeps, input: { chatId: strin
     model,
     notes,
   };
+}
+
+/** A formula's run on a scene: its text, or why it stopped, and how long it took. */
+export type FormulaTry = ({ ok: true; text: string } | { ok: false; error: string }) & { ms: number };
+
+/**
+ * Runs formula text on a copy of the scene's macro context as the scene stands (readScene, the same assembler a send runs), through the read-only formula path and inside the
+ * tool time budget, so Try says what a tool call would. It writes nothing and asks no model; it needs no connection and no window to fit.
+ */
+export async function tryFormula(deps: ForecastDeps, input: { chatId: string; text: string }): Promise<FormulaTry> {
+  // The formula asks no model, so the scene is built as it stands (its whole take is history, nothing is being answered) without a connection or a window to fit.
+  const { chat, read, started } = await readScene(deps, input.chatId);
+  const prep = await prepareRequest(deps, chat, read, undefined, "", started);
+  const built = await assembleRequest(deps, { chat, loaded: read, prep, started, kind: "reply", original: "", guidance: "", unbudgeted: true });
+  const clock = deps.clock ?? (() => performance.now());
+  const began = clock();
+  const budget = (await deps.toolBudgetMs?.()) ?? TOOL_BUDGET_MS_DEFAULT;
+  const out = runFormulaReadOnly(input.text, built.result.expansion.context, deps.randomSeed() + 1, { at: began + budget, now: clock });
+  const ms = Math.max(0, Math.round(clock() - began));
+  return "error" in out ? { ok: false, error: out.error, ms } : { ok: true, text: out.text, ms };
 }

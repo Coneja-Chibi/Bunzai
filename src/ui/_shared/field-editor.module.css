@@ -1,0 +1,132 @@
+/**
+ * The field editor's two cells (the list and one field's page) and the small parts its type bodies share. They sit in the owning editor's
+ * column grid; the list takes the Workbench editors' contents column (the regex rule TOC), the type row is this file's. Tokens only.
+ */
+.toc {
+  composes: toc from "../apps/workbench/regex/rule-toc.module.css";
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  padding: 0 0.35rem;
+  font: 700 1rem/1.2 var(--font-ui);
+  color: var(--text);
+}
+
+.rows {
+  flex: 1;
+  min-height: 0;
+  max-height: 28rem;
+  overflow-y: auto;
+}
+
+.add {
+  padding-top: 0.75rem;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+  padding: 1rem 1.2rem;
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.pager .title {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-fancy);
+  font-size: 1.125rem;
+}
+
+.grow {
+  flex: 1;
+}
+
+.two {
+  display: grid;
+  grid-template-columns: minmax(9rem, 15rem) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.typeRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.1rem;
+}
+
+.three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.label {
+  margin: 0 0 0.3rem;
+  font: 600 var(--text-meta) var(--font-ui);
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.hint {
+  margin: 0.35rem 0 0;
+  font: 400 var(--text-meta) var(--font-body);
+  color: var(--text-dim);
+}
+
+.line {
+  /* clone-ok: short structural flex idiom; sharing would couple unrelated components */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inline {
+  width: auto;
+  min-width: 11rem;
+}
+
+.after {
+  margin-top: 0.75rem;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+@container (max-width: 60rem) {
+  .toc {
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  }
+  .two,
+  .three {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.choices {
+  max-height: 12rem;
+  overflow-y: auto;
+}
+
+.choiceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.1rem 0.35rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 10%, transparent);
+  font: 500 var(--text-control) var(--font-ui);
+  color: var(--text);
+}

@@ -6,7 +6,7 @@
 import { describe, expect, test } from "bun:test";
 import { StudioValidationError } from "../../studio/errors";
 import type { ChatNote, ChatStore } from "./chat-store";
-import { chatRig } from "./chat-store.contract-rig";
+import { CAST, SNAP, chatRig } from "./chat-store.contract-rig";
 import { SANITY_LIST } from "../../entities/_shared/sanity";
 
 export function chatStorePromptingContract(make: (clock: () => number) => ChatStore): void {
@@ -78,6 +78,19 @@ export function chatStorePromptingContract(make: (clock: () => number) => ChatSt
       await store.setPrompting(chat.id, { tools: null });
     });
 
+    test("listChats answers each live scene's links from its settings alone: a linked scene, an unlinked one, and neither a deleted scene", async () => {
+      const { store, chat } = await seeded(1);
+      const unlinked = await store.createChat({ title: "Quiet", cast: CAST, snapshot: SNAP });
+      const gone = await store.createChat({ title: "Gone", cast: CAST, snapshot: SNAP });
+      await store.setPrompting(chat.id, { trackers: ["health"], tools: ["luck"] });
+      await store.setPrompting(gone.id, { trackers: ["health"], tools: ["luck"] });
+      expect(await store.deleteChat(gone.id)).toBe(true);
+      const live = (await store.listChats()).chats;
+      expect(live.map((c) => [c.id, c.prompting?.trackers, c.prompting?.tools])).toEqual([[chat.id, ["health"], ["luck"]], [unlinked.id, undefined, undefined]]);
+      // a deleted scene waits in the graveyard, apart from the live list
+      expect((await store.chatGraveyard()).chats.map((c) => c.id)).toEqual([gone.id]);
+    });
+
     test("linked library trackers are a list of ids kept in order, apart from the tools; an empty list or null clears them", async () => {
       const { store, chat } = await seeded(1);
       expect((await store.setPrompting(chat.id, { trackers: ["health", "party"], tools: ["luck"] }))!.prompting).toEqual({ trackers: ["health", "party"], tools: ["luck"] });
@@ -93,6 +106,19 @@ export function chatStorePromptingContract(make: (clock: () => number) => ChatSt
       const many = Array.from({ length: 300 }, (_, i) => `t${i}`);
       expect((await store.setPrompting(chat.id, { trackers: many }))!.prompting).toEqual({ trackers: many });
       await store.setPrompting(chat.id, { trackers: null });
+    });
+
+    test("change visuals on replies are on unless the scene turns them off: only false is kept, and true or null clears it", async () => {
+      const { store, chat } = await seeded(1);
+      expect((await store.setPrompting(chat.id, { trackerChanges: false }))!.prompting).toEqual({ trackerChanges: false });
+      expect((await store.setPrompting(chat.id, { trackers: ["health"] }))!.prompting).toEqual({ trackers: ["health"], trackerChanges: false });
+      expect((await store.setPrompting(chat.id, { trackerChanges: true }))!.prompting).toEqual({ trackers: ["health"] });
+      await store.setPrompting(chat.id, { trackerChanges: false });
+      expect((await store.setPrompting(chat.id, { trackerChanges: null }))!.prompting).toEqual({ trackers: ["health"] });
+      await store.setPrompting(chat.id, { trackers: null, trackerChanges: true });
+      expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
+      for (const bad of ["no", 0, 1, {}]) await expect(store.setPrompting(chat.id, { trackerChanges: bad } as never)).rejects.toBeInstanceOf(StudioValidationError);
+      expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
     });
 
     test("Reasoning Effort, Start Reply With, its role and Catch thinking are kept only while set, and clear with null", async () => {

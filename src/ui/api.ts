@@ -178,8 +178,11 @@ export const api: AppContext["api"] = {
     apiFetchJson("/api/chats/tracker-item", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input), ...(signal ? { signal } : {}) }),
   proposeTrackerRefresh: async (input, signal) =>
     apiFetchJson("/api/chats/tracker-refresh", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(input), ...(signal ? { signal } : {}) }),
+  getLinkedScenes: async (kind, id) => apiFetchJson(`/api/chats/linked?kind=${encodeURIComponent(kind)}&id=${encodeURIComponent(id)}`, { requireToken: false }),
   getSceneForecast: async (chatId, draft, signal) =>
     apiFetchJson("/api/chats/forecast", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId, draft }), ...(signal ? { signal } : {}) }),
+  tryFormula: async (chatId, text, signal) =>
+    apiFetchJson("/api/chats/formula-try", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ chatId, text }), ...(signal ? { signal } : {}) }),
   stopSceneTurn: async (chatId, turnId) => postJson("/api/chats/stop", { chatId, turnId }),
   answerSceneReview: async (chatId, turnId, answer) => postJson("/api/chats/review", { chatId, turnId, ...answer }),
   answerSceneRegex: async (chatId, turnId, answer) => postJson("/api/chats/regex-answer", { chatId, turnId, ...answer }),

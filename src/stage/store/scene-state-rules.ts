@@ -47,6 +47,13 @@ export function checkImportedDeltas(value: unknown): Delta[] {
 /** What of `added` changes `base` (the state a message builds from), so a write of a value already there adds nothing. */
 export const changed = (base: SceneState, added: readonly Delta[]): Delta[] => dropUnchanged(base, added, slotOf);
 
+/** A take's shown path split for a range read: what comes before `from`, and `from` through `to` (the tip when omitted; empty when `to` is earlier). Null when either is not on the path. */
+export function sliceShown<T extends { messageId: string }>(path: readonly T[], from: string, to?: string): { before: T[]; range: T[] } | null {
+  const first = path.findIndex((p) => p.messageId === from);
+  const last = to === undefined ? path.length - 1 : path.findIndex((p) => p.messageId === to);
+  return first < 0 || last < 0 ? null : { before: path.slice(0, first), range: path.slice(first, last + 1) };
+}
+
 /** A take's base: the state these deltas fold to over nothing. */
 export const baseState = (deltas: readonly Delta[]): SceneState => fold({}, deltas, slotOf);
 

@@ -10,6 +10,8 @@
 | `choices?` | `string[]` | - | The allowed values of a choice field; only a choice field has them. |
 | `min?` | `number` | - | Number only; at most `max`. |
 | `max?` | `number` | - |  |
+| `maxField?` | `string` | - | Number only, and not with `max`: the name of another number field of this tracker whose current value is this field's top (hp out of hp_max). A value above it is brought down to it, never refused. |
+| `icon?` | `string` | - | A well-formed icon id (`lucide:name` or `mdi:name`); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows. |
 | `default?` | `string \| number \| boolean` | - | Must fit the type, the choices and the range. |
 
 ### `TrackerBody`
@@ -22,4 +24,6 @@
 | `fields` | `TrackerField[]` | - |  |
 | `note` | `string` | - | How the model should update it; goes into the update tool's description. |
 | `template?` | `string` | - | Macro text for the tracker's prompt line; absent means the default rendering. |
+| `icon?` | `string` | - | An icon id for the tracker itself, or for each row of a list; absent means no icon. |
+| `changes?` | `TrackerChangeStyle` | - | How a reply's changes to this tracker are drawn; absent means chips. Stored only: the Messenger reads it. |
 

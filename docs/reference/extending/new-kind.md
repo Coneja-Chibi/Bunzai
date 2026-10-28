@@ -13,7 +13,7 @@ A kind is one folder. `src/entities/<kind>/kind.ts` describes it once (its id, l
 is a Library deck, the blank piece "New" saves, the lines `bunraku inspect` prints), plus, when they apply, the
 pieces it links by id (`links`), where its name lives (`namePath`), where it keeps pictures (`media`), whether it is
 too heavy to read whole (`heavy`), whether the Library offers "New" for it (`libraryNew`), which scene field
-points at it (`sceneField`), the Workbench `editor` it opens in, and, for a kind in a family, the deck it joins (`deck`,
+points at it (`sceneField`), which list in a scene's prompting links it (`promptingList`), the Workbench `editor` it opens in, and, for a kind in a family, the deck it joins (`deck`,
 with the owning kind's `deckTitle` and `deckBlurb`) and how it reads as its family's base (`asPreset` and
 `sendProblem` for a writing setup, `src/core/writing.ts`). Then `bun run kinds`
 (`scripts/kind-manifest.ts`) writes two static seams from every kind folder:

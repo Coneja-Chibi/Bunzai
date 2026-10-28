@@ -4,7 +4,7 @@
  * one whose linked dice piece or formula is (it could only fail). Call
  * names come from the tool's name; one already taken (the lookup's, or an earlier tool's) gets a number, so no call is ambiguous.
  */
-import { callName, freeName, readToolCall, runTool, toolParameters, type ToolArgs, type ToolLinks } from "../core/tools";
+import { callName, freeName, readToolCall, runTool, toolDefinition, type ToolArgs, type ToolLinks } from "../core/tools";
 import { safeParseCanonicalEntity } from "../entities/runtime-schema";
 import type { DiceBody } from "../entities/dice/schema";
 import type { FormulaBody } from "../entities/formula/schema";
@@ -44,7 +44,7 @@ export async function libraryTools(ctx: ToolsContext, read: ReadPiece, before: r
     const name = freeName(callName(body.name), taken);
     const tool: NarratorTool<ToolArgs> = {
       access: SCENE_ACTION_TIERS["narrator.tool"],
-      definition: { type: "function", function: { name, description: body.description || body.name, parameters: toolParameters(body.fields) } },
+      definition: toolDefinition(body, name),
       parse: (raw) => readToolCall(body, raw),
       run: async (args, _signal, deadline) => runTool(body, args, ctx.rand, links, deadline),
     };

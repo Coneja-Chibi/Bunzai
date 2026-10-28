@@ -12,7 +12,7 @@ import type { Delta, SceneState } from "../../../core/scene-state/types";
 import type { ChatStore } from "../../contracts/chat-store";
 import type { CellCipher } from "../../crypto/cell-cipher";
 import { DamagedDataError } from "../../damaged-data-error";
-import { baseState, changed, checkImportedDeltas, rebuildState } from "../scene-state-rules";
+import { baseState, changed, checkImportedDeltas, rebuildState, sliceShown } from "../scene-state-rules";
 import type { BranchSql, MessageSql } from "./chat-store-rows";
 import type { StageDatabase } from "./database";
 
@@ -30,7 +30,7 @@ export interface StateSqlDeps {
 }
 
 export interface StateSql {
-  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "recordMessageDeltas" | "setBranchBase">;
+  api: Pick<ChatStore, "sceneState" | "sceneStateBefore" | "sceneDeltas" | "recordMessageDeltas" | "setBranchBase">;
   /** Rebuilds the branch's tip cache and rewrites its keyframes; the ones at or after message seq `fromSeq` are dropped first. Inside the caller's transaction. */
   refresh(branchId: string, fromSeq?: number): void;
   /** Gives a new take its own copy of another's base and builds its state. Inside the caller's transaction. */
@@ -78,10 +78,11 @@ export function stateMethods(k: StateSqlDeps): StateSql {
   };
 
   /** The deltas of one table's owners, in the order written (`table` and `owner` are this file's own names, never input). */
-  const load = (table: "swipe_deltas" | "message_deltas", owner: "swipe_id" | "message_id", ids: string[]): Map<string, Delta[]> => {
+  const load = (table: "swipe_deltas" | "message_deltas", owner: "swipe_id" | "message_id", ids: string[], prefixes?: readonly string[]): Map<string, Delta[]> => {
     const out = new Map<string, Delta[]>();
     if (ids.length === 0) return out;
-    const rows = statement(`SELECT ${owner} AS owner, slot, path_json, value_json, removed, at FROM ${table} WHERE ${owner} IN (SELECT value FROM json_each(?)) ORDER BY ${owner}, seq`).all(JSON.stringify(ids)) as DeltaSql[];
+    const only = prefixes === undefined ? "" : " AND EXISTS (SELECT 1 FROM json_each(?) p WHERE substr(slot, 1, length(p.value)) = p.value)";
+    const rows = statement(`SELECT ${owner} AS owner, slot, path_json, value_json, removed, at FROM ${table} WHERE ${owner} IN (SELECT value FROM json_each(?))${only} ORDER BY ${owner}, seq`).all(JSON.stringify(ids), ...(prefixes === undefined ? [] : [JSON.stringify(prefixes)])) as DeltaSql[];
     for (const r of rows) {
       const path = JSON.parse(cipher.open(`${table}.path_json`, r.path_json)) as string[];
       const delta: Delta = r.removed === 1 ? { slot: r.slot, path, removed: true, at: r.at } : { slot: r.slot, path, value: JSON.parse(cipher.open(`${table}.value_json`, r.value_json!)), at: r.at };
@@ -91,9 +92,9 @@ export function stateMethods(k: StateSqlDeps): StateSql {
   };
 
   /** Each message's deltas for a path: its shown version's, then its own (they win). */
-  const deltasOf = (path: readonly Shown[]): Map<string, Delta[]> => {
-    const own = load("message_deltas", "message_id", path.map((p) => p.messageId));
-    const versions = load("swipe_deltas", "swipe_id", path.flatMap((p) => (p.swipeId === null ? [] : [p.swipeId])));
+  const deltasOf = (path: readonly Shown[], prefixes?: readonly string[]): Map<string, Delta[]> => {
+    const own = load("message_deltas", "message_id", path.map((p) => p.messageId), prefixes);
+    const versions = load("swipe_deltas", "swipe_id", path.flatMap((p) => (p.swipeId === null ? [] : [p.swipeId])), prefixes);
     return new Map(path.map((p) => [p.messageId, [...(p.swipeId === null ? [] : (versions.get(p.swipeId) ?? [])), ...(own.get(p.messageId) ?? [])]]));
   };
 
@@ -174,6 +175,15 @@ export function stateMethods(k: StateSqlDeps): StateSql {
         const m = k.one<MessageSql>("SELECT id, branch_id, seq, cut_id FROM messages WHERE id = ?", messageId);
         if (!m || m.branch_id !== branchId || m.cut_id !== null || !k.writableBranch(branchId)) return null;
         return stateBefore(branchId, m);
+      },
+
+      async sceneDeltas(branchId, fromMessageId, toMessageId, slotPrefixes) {
+        if (!k.writableBranch(branchId)) return null;
+        const rows = shownPath(branchId);
+        const split = sliceShown(shown(rows), fromMessageId, toMessageId);
+        if (!split) return null;
+        const deltas = deltasOf(split.range, slotPrefixes);
+        return { before: build(branchId, [], split.before, rows[split.before.length]!.seq).state, messages: split.range.map((p) => ({ messageId: p.messageId, deltas: deltas.get(p.messageId) ?? [] })) };
       },
 
       async setBranchBase(branchId, raw) {

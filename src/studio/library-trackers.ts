@@ -9,7 +9,7 @@
 import { processMacros } from "../core/macros";
 import { withoutDeadline } from "../core/macros/deadline";
 import { freeName } from "../core/tools";
-import { TRACKER_TOOL, applyTrackerUpdates, checkUpdatesShape, refreshTrackerTexts, trackerValue, updateTrackersTool, type LinkedTracker, type TrackerValue, type UpdatesCall } from "../core/tracker";
+import { TRACKER_TOOL, applyTrackerUpdates, checkUpdatesShape, refreshTrackerTexts, trackerState, updateTrackersTool, type LinkedTracker, type TrackerState, type UpdatesCall } from "../core/tracker";
 import type { SceneState } from "../core/scene-state/types";
 import type { TrackerBody } from "../entities/tracker/schema";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
@@ -26,7 +26,7 @@ export async function linkedTrackers(read: ReadTracker | undefined, ids: readonl
   if (!read) return out;
   for (const id of ids ?? []) {
     const body = await read(id);
-    if (body && !out.some((t) => t.body.name.toLowerCase() === body.name.toLowerCase())) out.push({ id, body, value: trackerValue(state, id, body) });
+    if (body && !out.some((t) => t.body.name.toLowerCase() === body.name.toLowerCase())) out.push({ id, body, ...trackerState(state, id, body) });
   }
   return out;
 }
@@ -35,9 +35,9 @@ export async function linkedTrackers(read: ReadTracker | undefined, ids: readonl
 export function trackerTool(ctx: ToolsContext, taken: readonly string[], writes: TurnWrites): NarratorTool<never> | null {
   const linked = ctx.loaded.linkedTrackers ?? [];
   if (linked.length === 0) return null;
-  /** Each tracker's value as the reply stands: where the prompt left it, then every call this reply has made. */
-  const standing = new Map<string, TrackerValue>(linked.map((t) => [t.id, t.value]));
-  const now = (): LinkedTracker[] => linked.map((t) => ({ ...t, value: standing.get(t.id)! }));
+  /** Each tracker's value as the reply stands, stored and shown: where the prompt left it, then every call this reply has made. */
+  const standing = new Map<string, TrackerState>(linked.map((t) => [t.id, { shown: t.shown, stored: t.stored }]));
+  const now = (): LinkedTracker[] => linked.map((t) => ({ ...t, ...standing.get(t.id)! }));
   const { description, parameters } = updateTrackersTool(linked.map((t) => t.body));
   const tool: NarratorTool<UpdatesCall> = {
     access: SCENE_ACTION_TIERS["narrator.tracker"],
@@ -63,12 +63,12 @@ export function trackerTool(ctx: ToolsContext, taken: readonly string[], writes:
 }
 
 /** The turn's macro context reads the tracker views the prompt was built with; after a write they take the new values and their texts are rendered again (templates read-only). */
-function followViews(ctx: ToolsContext, linked: readonly LinkedTracker[], standing: ReadonlyMap<string, TrackerValue>): void {
+function followViews(ctx: ToolsContext, linked: readonly LinkedTracker[], standing: ReadonlyMap<string, TrackerState>): void {
   const context = ctx.macros.context;
   if (!context?.trackers) return;
   for (const t of linked) {
     const view = context.trackers.get(t.body.name.toLowerCase());
-    if (view?.body === t.body) view.value = standing.get(t.id)!;
+    if (view?.body === t.body) view.value = standing.get(t.id)!.shown;
   }
   refreshTrackerTexts(context.trackers, (template) => processMacros(template, { ...withoutDeadline(context), readOnly: true, randomSeed: 1 }).text);
 }

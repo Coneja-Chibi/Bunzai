@@ -2,7 +2,7 @@
 import { describe, expect, test } from "bun:test";
 import { safeParseCanonicalEntity } from "../entities/runtime-schema";
 import type { ToolBody } from "../entities/tool/schema";
-import { callName, readToolCall, runTool, toolParameters } from "./tools";
+import { callName, readToolCall, runTool, toolDefinition, toolParameters } from "./tools";
 
 const check: ToolBody = {
   name: "Skill check!", description: "Roll when an outcome is uncertain.",
@@ -15,6 +15,11 @@ const check: ToolBody = {
 };
 
 describe("the model's side", () => {
+  test("the definition a provider is handed is the call name, the description (the name when there is none) and the parameters", () => {
+    expect(toolDefinition(check, "skill_check")).toEqual({ type: "function", function: { name: "skill_check", description: "Roll when an outcome is uncertain.", parameters: toolParameters(check.fields) } });
+    expect(toolDefinition({ ...check, description: "" }, "skill_check").function.description).toBe("Skill check!");
+  });
+
   test("the schema and the call name come from the tool", () => {
     expect(callName(check.name)).toBe("skill_check");
     // always a name the tool loop takes: a letter first

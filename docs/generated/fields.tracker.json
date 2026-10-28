@@ -50,6 +50,20 @@
           "producers": []
         },
         {
+          "name": "maxField",
+          "optional": true,
+          "type": "string",
+          "meaning": "Number only, and not with `max`: the name of another number field of this tracker whose current value is this field's top (hp out of hp_max). A value above it is brought down to it, never refused.",
+          "producers": []
+        },
+        {
+          "name": "icon",
+          "optional": true,
+          "type": "string",
+          "meaning": "A well-formed icon id (`lucide:name` or `mdi:name`); absent means no icon. Not checked against the glyph table: the UI draws only ids it knows.",
+          "producers": []
+        },
+        {
           "name": "default",
           "optional": true,
           "type": "string | number | boolean",
@@ -103,6 +117,20 @@
           "optional": true,
           "type": "string",
           "meaning": "Macro text for the tracker's prompt line; absent means the default rendering.",
+          "producers": []
+        },
+        {
+          "name": "icon",
+          "optional": true,
+          "type": "string",
+          "meaning": "An icon id for the tracker itself, or for each row of a list; absent means no icon.",
+          "producers": []
+        },
+        {
+          "name": "changes",
+          "optional": true,
+          "type": "TrackerChangeStyle",
+          "meaning": "How a reply's changes to this tracker are drawn; absent means chips. Stored only: the Messenger reads it.",
           "producers": []
         }
       ]

@@ -73,7 +73,7 @@ dropped first.
 | a continue is committed | nothing: it stamps no delta |
 
 A turn that fails, stops with nothing or is cancelled has stamped nothing: its deltas wait on the checkpoint and go
-with it. `sceneStateBefore(branchId, messageId)` answers the state a new version of that message, or a continue of it, builds from: everything shown before it, and its own message deltas.
+with it. `sceneStateBefore(branchId, messageId)` answers the state a new version of that message, or a continue of it, builds from: everything shown before it, and its own message deltas. `sceneDeltas(branchId, fromMessageId, toMessageId?, slotPrefixes?)` is the range read for a reader that wants to see what each message changed: the state before `from` (everything shown before it, without its own deltas, so a person's edit on it is still a change) and each live message from `from` through `to` (the tip when omitted) with its deltas in fold order, its shown version's then its own. Given slot prefixes, only those slots' deltas are loaded (the state before is still whole). It builds the state with the same rebuild and reads the deltas with the same read as the rebuild does, and it changes nothing. A range that ends before it starts is empty; a branch that is absent or deleted, or a message that is absent, cut or on another take, answers null. The tracker changes read ([tracker.md](entities/tracker.md)) is its one caller.
 
 ## How a turn uses it
 
@@ -109,4 +109,4 @@ rebuild measured at 110 to 150 ms and held to a 200 ms budget. A busy-library te
 with the write lock held as its first save goes out. `scene-turn-lore-effects.test.ts` runs the turn:
 a prompt's `{{incvar}}` counts once however often it is made again, and a continue, a failure and a Stop leave the
 variables alone. `scene-state-guard.test.ts` fails when code outside the SQLite chat store names the tables or calls
-the removed `variables` and `changeVariables` methods. The slot families are held by `slots.test.ts` (exact beats family, overlap refused, the generated lookup) and one contract test that runs a tracker's record fields and list rows through versions, a regenerate, a cut and a restore on both stores; the turn-level proofs are `scene-turn-linked-trackers.test.ts`.
+the removed `variables` and `changeVariables` methods. `chat-store.contract-scene-deltas.ts` holds the range read to both stores: the state before and the deltas in fold order, a person's edit on the first message of the range, another version shown, a cut message, an empty range, a message of another take, and a copy. The slot families are held by `slots.test.ts` (exact beats family, overlap refused, the generated lookup) and one contract test that runs a tracker's record fields and list rows through versions, a regenerate, a cut and a restore on both stores; the turn-level proofs are `scene-turn-linked-trackers.test.ts`.
