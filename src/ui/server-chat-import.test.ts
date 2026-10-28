@@ -12,6 +12,7 @@ import { chatRouteRig, cleanupChatRouteRigs, vera } from "./fake-server-chats-ri
 import { apiReq } from "./server-test-rig";
 import { libraryChatsFor } from "../studio/library-content";
 import { freezeCast } from "../studio/scenes";
+import { varsOf } from "../core/scene-state/vars-bridge";
 
 afterEach(cleanupChatRouteRigs);
 
@@ -246,7 +247,11 @@ describe("a chat with hidden lines, persona avatars and variables", () => {
     await r.store.save(vera);
     const saved = await r.save(await r.inspect(chatLines().replace('"integrity":"x"', '"integrity":"x","variables":{"mood":"calm","turn":"3"}')));
     const chats = libraryChatsFor(r.store.studioPath())!;
-    const vars = await chats.variables((await r.open(saved.body.scene!.sceneId)).chat.activeBranchId);
-    expect(Object.fromEntries(Object.entries(vars!).map(([k, v]) => [k, v.value]))).toEqual({ mood: "calm", turn: "3" });
+    const vars = varsOf(await chats.sceneState((await r.open(saved.body.scene!.sceneId)).chat.activeBranchId));
+    expect(Object.fromEntries([...vars].map(([k, v]) => [k, v.value]))).toEqual({ mood: "calm", turn: "3" });
+    // They ride on the first message, not on the greeting it shows, so choosing the other greeting keeps them.
+    const opened = await r.open(saved.body.scene!.sceneId);
+    await chats.selectSwipe(opened.messages[0]!.id, 0);
+    expect(Object.fromEntries([...varsOf(await chats.sceneState(opened.chat.activeBranchId))].map(([k, v]) => [k, v.value]))).toEqual({ mood: "calm", turn: "3" });
   });
 });

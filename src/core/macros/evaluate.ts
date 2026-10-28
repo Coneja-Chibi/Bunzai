@@ -22,7 +22,8 @@ import { toErrorMessage } from "../../error-message";
 import { evaluateConditionExpression, resolveConditionShorthands } from "./conditions";
 import { normalizeMacroText } from "./normalize";
 import { splitMacroArgs, parseMacroNodes, type ASTNode, type BlockIfNode, type MacroCallNode } from "./parse";
-import { MAX_EVAL_DEPTH, MAX_EVAL_STEPS, MAX_OUTPUT_CHARS } from "./limits";
+import { DEADLINE_MESSAGE, stopsRun } from "./deadline";
+import { DEADLINE_CHECK_EVERY, MAX_EVAL_DEPTH, MAX_EVAL_STEPS, MAX_OUTPUT_CHARS } from "./limits";
 import { getMacro, isVolatileMacro } from "./registry";
 import type {
   HandlerRun,
@@ -109,9 +110,12 @@ export function evaluateNodes(nodes: ASTNode[], context: MacroContext, state: Ev
   let out = "";
   for (const node of nodes) {
     if (state.overBudget) return out;
-    const limit = Number.isFinite(context.maxSteps) ? Math.min(Math.floor(context.maxSteps!), MAX_EVAL_STEPS) : MAX_EVAL_STEPS;
-    if (++state.steps > limit) {
-      overflow(state, `evaluation step budget of ${limit} hit; truncated`);
+    if (++state.steps > MAX_EVAL_STEPS) {
+      overflow(state, `evaluation step budget of ${MAX_EVAL_STEPS} hit; truncated`);
+      return out;
+    }
+    if (context.deadline && state.steps % DEADLINE_CHECK_EVERY === 1 && stopsRun(context)) {
+      overflow(state, DEADLINE_MESSAGE);
       return out;
     }
     switch (node.type) {
@@ -201,6 +205,8 @@ function evaluateMacro(node: MacroCallNode, context: MacroContext, state: EvalSt
     original = failed = args.length === 0 ? `{{${node.name}}}` : `{{${node.name}::${args.join("::")}}}`;
     if (def?.choices && result.success) state.chosen.set(node, { options: def.choices(args), value: result.value });
   }
+  // A handler that ran past the run's deadline (the work it did is not trusted to have been small): stop the run, whatever it answered.
+  if (stopsRun(context)) overflow(state, DEADLINE_MESSAGE);
   // A bound that tripped while a lazy handler ran its args: drop the result and its side effects.
   if (state.overBudget) return "";
   const order = state.expansionCounter++;

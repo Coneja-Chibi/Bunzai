@@ -1,6 +1,6 @@
 /** A formula run where nothing may change: on a copy, every kind of write refused in words, the real context untouched. */
 import { describe, expect, test } from "bun:test";
-import { FORMULA_STEPS, runFormulaReadOnly } from "./formula";
+import { runFormulaReadOnly } from "./formula";
 import { createDefaultContext, type MacroContext } from "./macros";
 
 const scene = (): MacroContext => createDefaultContext({
@@ -55,23 +55,50 @@ describe("writing is refused out loud and reaches nothing", () => {
   });
 });
 
-test("a runaway formula stops at its own small step budget, fast, even over a long chat", () => {
+// Owner rule (limits rework): no fixed step number for formulas. A formula stops when the reply's tool time budget is spent, a clock the
+// caller hands in (the engine reads no ambient time, ADR-012). The old FORMULA_STEPS tests are rewritten for that rule.
+const clock = (step: number) => { let t = 0; return { now: () => (t += step) }; };
+
+describe("the tool time budget", () => {
   const long = createDefaultContext({ messages: Array.from({ length: 200 }, (_, i) => ({ role: i % 2 ? "assistant" as const : "user" as const, content: "storm guild rain ".repeat(130) })), messageCount: 200 });
-  const words = Array.from({ length: 20 }, (_, i) => `w${i}`).join(",");
-  // the same words again and again (their scans are reused), new words every time (scans are capped per chat), and the whole recent history
-  const same = `{{foreach::a in {{repeat::1,::1000}}::{{foreach::b in {{repeat::1,::1000}}::{{tally::${words}}}}}}}}`;
-  const fresh = `{{foreach::a in ${Array.from({ length: 2000 }, (_, i) => i).join(",")}::{{tally::${Array.from({ length: 20 }, (_, i) => `x${i}q$a`).join(",")}}}}}`;
-  expect(run(same, long)).toEqual({ error: `This formula has a problem: evaluation step budget of ${FORMULA_STEPS} hit; truncated` });
-  const history = "{{foreach::a in {{repeat::1,::1000}}::{{foreach::b in {{repeat::1,::1000}}::{{length::{{recentmessages::200}}}}}}}}}";
-  for (const runaway of [same, fresh, history]) {
+  const runaway = "{{foreach::a in {{repeat::1,::1000}}::{{foreach::b in {{repeat::1,::1000}}::{{length::{{recentmessages::200}}}}}}}}}";
+
+  test("a runaway formula stops when the budget is spent, with an error the model reads, and fast", () => {
     const started = performance.now();
-    expect("error" in run(runaway, long)).toBe(true);
-    expect(performance.now() - started).toBeLessThan(500);
-  }
+    const out = runFormulaReadOnly(runaway, long, 7, { at: 50, ...clock(1) });
+    expect(out).toEqual({ error: "This formula has a problem: the time budget for this run is spent; stopped" });
+    expect(performance.now() - started).toBeLessThan(2_000);
+  });
+
+  test("a formula inside its budget is untouched, and a budget already spent stops it at the first check", () => {
+    expect(runFormulaReadOnly("{{calc::2+3}}", scene(), 7, { at: 1_000_000, ...clock(1) })).toEqual({ text: "5" });
+    const many = `{{foreach::a in ${Array.from({ length: 500 }, (_, i) => i).join(",")}::{{calc::1+1}}}}`;
+    expect("error" in runFormulaReadOnly(many, scene(), 7, { at: -1, ...clock(1) })).toBe(true);
+  });
+
+  test("a formula with no deadline runs on the engine's own caps only", () => {
+    expect(runFormulaReadOnly("{{repeat::x::1000}}", scene(), 7)).toEqual({ text: "x".repeat(1_000) });
+  });
 });
 
-test("a step budget that is not a number is no budget at all: the engine's own cap holds", async () => {
-  const { processMacros } = await import("./macros");
-  expect(processMacros("{{repeat::x::1000}}", { ...scene(), maxSteps: Number.NaN }).text).toBe("x".repeat(1000));
-  expect(processMacros("{{foreach::a in {{repeat::1,::50}}::a}}", { ...scene(), maxSteps: 3 }).errors[0]?.message).toContain("step budget of 3 hit");
+describe("second fix round: the deadline reaches inside the work", () => {
+  const chat = () => createDefaultContext({ messages: Array.from({ length: 300 }, (_, i) => ({ role: i % 2 ? "assistant" as const : "user" as const, content: Array.from({ length: 200 }, (_, j) => `the w${(i * 13 + j * 7) % 2_000}`).join(" ") })), messageCount: 300 });
+
+  test("a long tally is stopped by the deadline and the formula answers with the error, never 'ok' (it ran 13.7 s and returned ok at 2,000 messages)", () => {
+    const phrases = Array.from({ length: 60_000 }, (_, i) => `the w${i % 2_000}`).join(",");
+    const out = runFormulaReadOnly(`{{tally::${phrases}}}`, chat(), 1, { at: 50, ...clock(1) });
+    expect(out).toEqual({ error: "This formula has a problem: the time budget for this run is spent; stopped" });
+  });
+
+  test("a formula's calls do not copy the chat: the messages are shared, everything that can be written is not", () => {
+    const context = chat();
+    let seen: unknown;
+    const spy = { ...context, get messages() { seen = context.messages; return context.messages; } };
+    runFormulaReadOnly("{{mentions::the}}", spy as never, 1);
+    expect(seen).toBe(context.messages);
+    const written = scene();
+    const before = structuredClone(written.localVariables);
+    runFormulaReadOnly("{{getvar::luck}}", written, 1);
+    expect(written.localVariables).toEqual(before);
+  });
 });

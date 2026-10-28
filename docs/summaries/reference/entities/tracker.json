@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/tracker",
+  "sourcePath": "docs/reference/entities/tracker.md",
+  "sourceHash": "sha256:7d3749fcba5879d63315277d2cebd50aafe3bc5ecc9d33c0519890f55d696418",
+  "summary": "The tracker entity page covers CanonicalTracker, a library piece for state a scene keeps, such as a character's health or a party's roster, kept as data and never code. A tracker has a name, a description, a layout of record or list, typed fields, a note telling the model how to update it, and an optional macro template for its prompt line. The page explains the field rules shared with tools and held in one small module the decoder and the core both use, the absence of product limits beyond hostile-input ceilings, the two layouts, how the state lives in two scene-state slot families, how a scene links trackers and gets a Trackers block the budget measures and never cuts, the tracker macro, and the single update_trackers tool, which applies a batch all or nothing and writes only deltas on the reply being written. It says plainly that the editor and the linking screen are not built yet.",
+  "topics": [
+    "CanonicalTracker",
+    "record and list layouts",
+    "tracker fields",
+    "scene-state slot families",
+    "Trackers prompt block",
+    "tracker macro",
+    "update_trackers tool",
+    "stateScoped write"
+  ],
+  "sections": [
+    {
+      "slug": "fields",
+      "title": "Fields",
+      "level": 2,
+      "sourceHash": "sha256:aabcf1de150027c0e3f2c77a7f1a28971c2d29eef3b644053367732b2a18b5c6",
+      "summary": "A field has a name of a lowercase letter then lowercase letters, digits and underscores up to the providers' sixty-four character rule, a description, and a type of text, number, boolean or choice. The name rule, types and choices rule are shared with a tool's fields. A choice field has unique choices, a number field may have a min and a max with either end optional, and any field may have a default that must fit. What a field accepts and what a new record or row holds for it, zero held inside whatever ends of the range exist, is one small module the decoder and the core share, pinned with the decoder. A tracker has at least one field with unique names, a note and an optional template. There are no product limits; the decoder refuses only a hostile file past the sanity ceilings of ten thousand items, a million characters or the largest safe integer.",
+      "topics": [
+        "field types",
+        "shared field basics",
+        "field-value module",
+        "number range ends",
+        "default",
+        "sanity ceilings"
+      ],
+      "children": []
+    },
+    {
+      "slug": "layouts",
+      "title": "Layouts",
+      "level": 2,
+      "sourceHash": "sha256:114495411650beacd89b13cf04b88501a97a2aca21b6fdd6daa9aebbc0433d23",
+      "summary": "A record is one set of fields. A list is rows, each keyed by a text name that is not blank and any length, holding every field; the name key is reserved on a list, so no list field is called name. A new row starts from the fields' defaults. The model finds a row whatever the case of the name it gives, and a row keeps the name it was made with, because the state folds by the exact name. The layout decides which slot family holds the tracker's state, so a record and a list never share one.",
+      "topics": [
+        "record",
+        "list",
+        "row name",
+        "case-insensitive row lookup",
+        "defaults"
+      ],
+      "children": []
+    },
+    {
+      "slug": "state",
+      "title": "State",
+      "level": 2,
+      "sourceHash": "sha256:870e1901c18a1b01a839f6cf77755e241bf2059fa21cf1fbdb563bc26f1b9c0f",
+      "summary": "A linked tracker keeps its state in a scene-state slot: tracker-record followed by the piece id uses the fields strategy with one delta per field, and tracker-list followed by the piece id uses the keyed-list strategy with one delta per row. These are two slot families declared once, and the store only folds them. Every shape check lives in the core tracker module, which knows the piece: trackerValue reads the current value with defaults filled, and a value that does not fit its field reads as the field's default. Because a write is a delta on the reply version being written, a regenerate, swipe, cut and fork all leave the tracker where the shown history says.",
+      "topics": [
+        "slot families",
+        "tracker-record",
+        "tracker-list",
+        "trackerValue",
+        "swipe-safe"
+      ],
+      "children": []
+    },
+    {
+      "slug": "in-a-scene",
+      "title": "In a scene",
+      "level": 2,
+      "sourceHash": "sha256:316951271b1b4293236abce63558c58cc3f24bbc6dfe56f30572c354b3d8306e",
+      "summary": "A scene links trackers by id in its prompting, in order without duplicates. A turn reads each through the tracker kind's strict decoder and leaves out one that is gone, fails the decoder, or whose name another linked tracker has. The prompt carries one system block headed Trackers right after the Props block, every turn, with each tracker's text: its template run read-only in the turn's macro pass, with its errors in the macro report, or the default rendering. Values the model wrote sit on one line, nothing is cut, and the budget measures the block so a tight window drops history. Templates read each other whatever the order. The tracker macro reads the same state, and after the update tool runs its views follow.",
+      "topics": [
+        "ChatPrompting.trackers",
+        "Trackers block",
+        "template",
+        "macro report",
+        "one-line values",
+        "tracker macro"
+      ],
+      "children": []
+    },
+    {
+      "slug": "the-update-tool",
+      "title": "The update tool",
+      "level": 2,
+      "sourceHash": "sha256:9c865314763d22e2dd24f25ba567068dd5669f414ac26f298a55f478e6049634",
+      "summary": "When Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, a scene with linked trackers offers one tool, update_trackers, taking updates each naming a tracker with an optional row, remove flag and set object. Its description is one fixed sentence plus one line per tracker with every field's type, range or choices and meaning, and the note, never cut; about 280 tokens for three typical trackers, smaller than the 430 of a per-tracker schema. Items apply in order and the batch is all or nothing. The call's shape is checked when read and its items checked and applied once when run, with no deadline, and the model is shown its own call again; the model is answered with only what changed, and the loop exempts this tool from its answer shortening and from a spent budget. The deltas join the turn's pending set through a door for tracker slots only with no size cap; a save that did not happen is a failure. The loop runs it as the one stateScoped write.",
+      "topics": [
+        "update_trackers",
+        "all or nothing batch",
+        "description measured",
+        "pending deltas",
+        "tracker slots only",
+        "stateScoped",
+        "narrator.tracker"
+      ],
+      "children": []
+    },
+    {
+      "slug": "editing",
+      "title": "Editing",
+      "level": 2,
+      "sourceHash": "sha256:0df7674b23c378cfbfc64fff941c0b5a0bbf31b8502d6b5011a71a1acc42218b",
+      "summary": "There is no tracker editor yet and no control that links a tracker to a scene; both wait for approved wireframes. The Library's New tracker saves the blank record. The Story Director does not update library trackers. The section is short because it records the missing surfaces as known gaps rather than describing anything that is not built. Nothing in it promises more than the wireframes that have to be approved before any editor or linking control is written.",
+      "topics": [
+        "no editor yet",
+        "no linking screen",
+        "blank New",
+        "Story Director not involved"
+      ],
+      "children": [],
+      "shortSource": true
+    }
+  ]
+}

@@ -1,19 +1,20 @@
 /**
  * The SQLite ChatStore's turn half ('s lorebook
  * choices, rule 21's Props switch, and rule 22's request text): checkpoints, the commit that stores a
- * reply with its trace and the take's latest request text, a branch's macro variables, and the scene's
+ * reply with its trace, the take's latest request text and the scene-state deltas the turn made (rule 17), and the scene's
  * connection, preset, lorebook choices, and switched-on Props. Split from chat-store.ts for the
  * file-size cap; each write is one transaction taking the write lock first, waiting for another
  * connection's lock up to its limit. Migration 10 holds the checkpoint tables, migration 11 the
  * connection, migration 12 the preset, migration 13 the lorebook choices, migration 14 the Props
  * switch, and migration 15 the branch's last request text; checkpoint text, traces, the request id,
- * variables, the connection, the preset, the lorebook choices, the Props switch, and the last request
+ * the pending deltas (migration 43), the connection, the preset, the lorebook choices, the Props switch, and the last request
  * text are sealed.
  */
 import { checkVariantId, turnOpenConflict } from "../cast-rules";
 import { StudioConflictError } from "../../../studio/atomic-file";
-import type { ChatPrompting, ChatStore, Generation, JsonObject, Message, StoredVariable, TurnCheckpoint, WriteGuard } from "../../contracts/chat-store";
-import { checkConnection, checkGuard, checkLore, checkProgress, checkProps, checkTurnResult, checkTurnTarget, checkVariableDiff, variableAfterSet } from "../chat-rules";
+import type { Delta } from "../../../core/scene-state/types";
+import type { ChatPrompting, ChatStore, Generation, JsonObject, Message, TurnCheckpoint, WriteGuard } from "../../contracts/chat-store";
+import { checkConnection, checkGuard, checkLore, checkProgress, checkProps, checkTurnResult, checkTurnTarget } from "../chat-rules";
 import { checkPreset } from "../preset-rules";
 import { checkOpening } from "../opening-rules";
 import { checkBackdrop } from "../backdrop-rules";
@@ -32,6 +33,7 @@ interface CheckpointSql {
   content: string;
   trace_json: string | null;
   provider_request_id: string | null;
+  deltas_json: string | null;
   base_version: number;
   started_at: number;
   saved_at: number;
@@ -51,8 +53,6 @@ type TurnMethods = Pick<
   | "commitTurn"
   | "dropTurn"
   | "resumeIncomplete"
-  | "variables"
-  | "changeVariables"
   | "setConnection"
   | "setPreset"
   | "setLore"
@@ -65,14 +65,14 @@ type TurnMethods = Pick<
 >;
 
 /** Checkpoints joined to their branch and chat; `live` keeps only those a caller may see (rule 16). */
-const CHECKPOINTS = `SELECT c.id, b.chat_id, c.branch_id, c.kind, c.message_id, c.content, c.trace_json, c.provider_request_id, c.base_version, c.started_at, c.saved_at
+const CHECKPOINTS = `SELECT c.id, b.chat_id, c.branch_id, c.kind, c.message_id, c.content, c.trace_json, c.provider_request_id, c.deltas_json, c.base_version, c.started_at, c.saved_at
   FROM turn_checkpoints c JOIN branches b ON b.id = c.branch_id JOIN chats h ON h.id = b.chat_id`;
 const LIVE = "b.deleted_at IS NULL AND h.deleted_at IS NULL";
 
 export function turnMethods(k: TurnSqlKit): TurnMethods {
   const { statement } = k.database;
   // How long a write waits for another connection's lock (turn-loop spec, "Before the turn loop" item 3):
-  // a save that gives up is skipped, since the next supersedes it; a reply or its variables are worth 30 s.
+  // a save that gives up is skipped, since the next supersedes it; a reply, or a save carrying the turn's scene-state deltas (nothing supersedes those), is worth 30 s.
   const saveWrite = <T>(work: () => T) => k.write(work, 250);
   const longWrite = <T>(work: () => T) => k.write(work, 30_000);
   const { cipher } = k;
@@ -85,16 +85,13 @@ export function turnMethods(k: TurnSqlKit): TurnMethods {
     content: cipher.open("turn_checkpoints.content", r.content),
     ...(r.trace_json === null ? {} : { trace: JSON.parse(cipher.open("turn_checkpoints.trace_json", r.trace_json)) as JsonObject }),
     ...(r.provider_request_id === null ? {} : { providerRequestId: cipher.open("turn_checkpoints.provider_request_id", r.provider_request_id) }),
+    ...(r.deltas_json === null ? {} : { deltas: JSON.parse(cipher.open("turn_checkpoints.deltas_json", r.deltas_json)) as Delta[] }),
     baseVersion: r.base_version,
     startedAt: r.started_at,
     savedAt: r.saved_at,
   });
   const open = (turnId: string) => k.one<CheckpointSql>(`${CHECKPOINTS} WHERE c.id = ? AND ${LIVE}`, turnId);
   const sealTrace = (where: string, trace: JsonObject) => cipher.seal(where, JSON.stringify(trace));
-  const readVariables = (branchId: string): Record<string, StoredVariable> => {
-    const r = k.one<{ variables_json: string }>("SELECT variables_json FROM branch_variables WHERE branch_id = ?", branchId);
-    return r ? (JSON.parse(cipher.open("branch_variables.variables_json", r.variables_json)) as Record<string, StoredVariable>) : {};
-  };
 
   return {
     async appendFinalCutRerun(messageId, swipeId, entryRaw) {
@@ -145,16 +142,17 @@ export function turnMethods(k: TurnSqlKit): TurnMethods {
     },
 
     async saveCheckpoint(turnId, progressRaw) {
-      const { content, trace, providerRequestId } = checkProgress(progressRaw);
-      return saveWrite(() => {
+      const { content, trace, providerRequestId, deltas } = checkProgress(progressRaw);
+      return (deltas === undefined ? saveWrite : longWrite)(() => {
         if (!open(turnId)) return null;
         // Omitted fields keep what an earlier save recorded: the request id arrives once, early.
         k.run(
           `UPDATE turn_checkpoints SET content = ?, trace_json = coalesce(?, trace_json),
-             provider_request_id = coalesce(?, provider_request_id), saved_at = ? WHERE id = ?`,
+             provider_request_id = coalesce(?, provider_request_id), deltas_json = coalesce(?, deltas_json), saved_at = ? WHERE id = ?`,
           cipher.seal("turn_checkpoints.content", content),
           trace === undefined ? null : sealTrace("turn_checkpoints.trace_json", trace),
           providerRequestId === undefined ? null : cipher.seal("turn_checkpoints.provider_request_id", providerRequestId),
+          deltas === undefined ? null : cipher.seal("turn_checkpoints.deltas_json", JSON.stringify(deltas)),
           k.clock(), turnId,
         );
         return toCheckpoint(open(turnId)!);
@@ -212,9 +210,12 @@ export function turnMethods(k: TurnSqlKit): TurnMethods {
         if (trace && c.kind !== "continue") {
           k.run("INSERT INTO swipe_traces (message_id, position, trace_json) VALUES (?, ?, ?)", messageId, position, sealTrace("swipe_traces.trace_json", trace));
         }
-        if (request && c.kind !== "continue") {
+        if (c.kind !== "continue") {
           const swipeId = k.one<{ swipe_id: string }>("SELECT swipe_id FROM swipes WHERE message_id = ? AND position = ?", messageId, position)!.swipe_id;
-          k.run(
+          // The turn's scene-state deltas belong to the version it stored (a continue extends one that has its own), and the take's state is rebuilt with them (rule 17).
+          k.state.stampSwipe(swipeId, c.deltas_json === null ? [] : (JSON.parse(cipher.open("turn_checkpoints.deltas_json", c.deltas_json)) as Delta[]));
+          k.state.refresh(c.branch_id, k.one<{ seq: number }>("SELECT seq FROM messages WHERE id = ?", messageId)!.seq);
+          if (request) k.run(
             "UPDATE branches SET last_request_json = ? WHERE id = ?",
             cipher.seal("branches.last_request_json", JSON.stringify({ messageId, swipeId, texts: request.texts })),
             c.branch_id,
@@ -231,32 +232,6 @@ export function turnMethods(k: TurnSqlKit): TurnMethods {
 
     async resumeIncomplete() {
       return (statement(`${CHECKPOINTS} WHERE ${LIVE} ORDER BY c.started_at, c.rowid`).all() as CheckpointSql[]).map(toCheckpoint);
-    },
-
-    async variables(branchId) {
-      return k.writableBranch(branchId) ? readVariables(branchId) : null;
-    },
-
-    async changeVariables(branchId, diffRaw) {
-      const { set, remove } = checkVariableDiff(diffRaw);
-      return longWrite(() => {
-        if (!k.writableBranch(branchId)) return null;
-        // A Map, not the parsed object: a variable may be named "__proto__".
-        const vars = new Map(Object.entries(readVariables(branchId)));
-        const t = k.clock();
-        for (const [name, value] of set) {
-          const before = vars.get(name);
-          const next = variableAfterSet(before, value, t);
-          if (next) vars.set(name, next);
-        }
-        for (const name of remove) vars.delete(name);
-        const out = Object.fromEntries(vars);
-        k.run(
-          "INSERT INTO branch_variables (branch_id, variables_json) VALUES (?, ?) ON CONFLICT (branch_id) DO UPDATE SET variables_json = excluded.variables_json",
-          branchId, cipher.seal("branch_variables.variables_json", JSON.stringify(out)),
-        );
-        return out;
-      });
     },
 
     async setConnection(chatId, connectionRaw) {

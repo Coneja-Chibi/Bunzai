@@ -288,6 +288,29 @@ describe("a continue (turn-loop rule 13)", () => {
     expect(s.events.at(-1)).toMatchObject({ type: "done" });
   });
 
+  test("what the take starts with (an import's variables) is seen by a continue of the greeting, and stays when another greeting is chosen", async () => {
+    const { provider, sent } = scripted({ pieces: [" Come in."] });
+    const s = await opening(provider, "vera-1");
+    await s.chats.setPrompting(s.chat.id, { note: { text: "Mood is {{getvar::mood}}.", position: "after_scenario", depth: 4, frequency: 1 } });
+    await s.chats.setBranchBase(s.chat.activeBranchId, [{ slot: "vars", path: ["mood"], value: "calm", at: 1 }]);
+    await s.chats.addSwipe(s.greeting.id, { content: "Another greeting." });
+    await s.chats.selectSwipe(s.greeting.id, 0);
+    await s.turn("continue");
+    expect(sent[0]!.messages.some((m) => m.content.includes("Mood is calm."))).toBe(true);
+    await s.chats.selectSwipe(s.greeting.id, 1);
+    expect((await s.chats.sceneState(s.chat.activeBranchId)) as object).toMatchObject({ vars: { mood: { value: "calm" } } });
+  });
+
+  test("the first reply of a take that starts with variables builds its prompt from them", async () => {
+    const { provider, sent } = scripted({ pieces: ["Yes."] });
+    const s = await scene(provider);
+    await s.chats.setPrompting(s.chat.id, { note: { text: "Mood is {{getvar::mood}}.", position: "after_scenario", depth: 4, frequency: 1 } });
+    await s.chats.setBranchBase(s.chat.activeBranchId, [{ slot: "vars", path: ["mood"], value: "calm", at: 1 }]);
+    await s.turn("reply");
+    expect(sent[0]!.messages.some((m) => m.content.includes("Mood is calm."))).toBe(true);
+    expect(await s.chats.sceneState(s.chat.activeBranchId)).toMatchObject({ vars: { mood: { value: "calm" } } });
+  });
+
   test("the opening greeting on a model that refuses a started reply: the greeting stays a message the AI wrote and a plain cue asks for more", async () => {
     const { provider, sent } = strict({ pieces: [" Come in."] });
     const s = await opening(provider, "claude-opus-4-6");

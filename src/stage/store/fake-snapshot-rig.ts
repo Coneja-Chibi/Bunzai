@@ -77,7 +77,7 @@ export async function makeRig(opts: { words?: boolean; password?: string; vault?
   return rig;
 }
 
-/** Makes a snapshot file look like one written before the health check's migration 24 (no fingerprints, no triggers, no set-aside), and so before the persona stamp, scene look and counters of 25 and 26, the hidden flag of 27 the removed-version time of 29, the chat source of 30, the edited opening of 31, the guides and scene note of 32, the backdrop of 33, the Compendium choices and receipts of 34 and 35, the tree layouts of 36, and the Story Director of 42. */
+/** Makes a snapshot file look like one written before the health check's migration 24 (no fingerprints, no triggers, no set-aside), and so before the persona stamp, scene look and counters of 25 and 26, the hidden flag of 27 the removed-version time of 29, the chat source of 30, the edited opening of 31, the guides and scene note of 32, the backdrop of 33, the Compendium choices and receipts of 34 and 35, the tree layouts of 36, the Story Director of 42, and the scene state of 43. */
 export function asBeforeHealthCheck(file: string): void {
   const db = new Database(file);
   try {
@@ -86,6 +86,8 @@ export function asBeforeHealthCheck(file: string): void {
     db.run("DROP TABLE compendium_receipts");
     db.run("DROP TABLE compendium_trees");
     db.run("DROP TABLE director_states");
+    for (const table of ["swipe_deltas", "message_deltas", "state_keyframes", "branch_state", "branch_base"]) db.run(`DROP TABLE ${table}`);
+    db.run("ALTER TABLE turn_checkpoints DROP COLUMN deltas_json");
     db.run("DROP TABLE persona_stats");
     db.run("ALTER TABLE swipes DROP COLUMN cut_at");
     db.run("ALTER TABLE messages DROP COLUMN hidden");

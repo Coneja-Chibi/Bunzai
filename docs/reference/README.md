@@ -26,6 +26,7 @@ is right and the doc is a bug; file it as one.
 | [entities/lorebook.md](entities/lorebook.md) | The canonical lorebook superset: every entry and book field, and the fields that ride escrow instead of a canonical slot. |
 | [concepts/character-book.md](concepts/character-book.md) | The embedded CCv2/v3 `character_book` dialect and how a card's lorebook is extracted and re-embedded. |
 | [macro-engine.md](macro-engine.md) | The closed-world macro interpreter (ADR-012): span-carrying parser, bounded evaluator, and the segment contract behind the editable preview. |
+| [scene-state.md](scene-state.md) | Scene state: slots, per-version deltas, keyframes and the rebuild every store change runs, with the macro variables as the first slot. |
 | [token-meter.md](token-meter.md) | The token counter that learns each model from its reported usage: base counts, per-model fits, cache planning, and cache-friendly trimming. |
 | [formats/README.md](formats/README.md) | The coverage matrix: every format, its entity kinds, container, and detection. |
 | formats/*.md | One reference per format family: detection, field map, escrow, quirks, source of truth. |

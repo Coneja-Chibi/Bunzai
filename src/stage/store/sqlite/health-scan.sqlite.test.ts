@@ -290,3 +290,58 @@ describe("health scan: the Story Director's state", () => {
     expect(found[0]!.cause).toBe("it belongs to a reply that is not there");
   });
 });
+
+describe("health scan: scene state", () => {
+  /** A message that carries a delta and a new reply whose version carries one, so the take has its tip cache and each delta its row. */
+  const withDelta = async (l: Awaited<ReturnType<typeof library>>) => {
+    await l.chats.recordMessageDeltas(l.branchId, l.messageIds[2]!, [{ slot: "vars", path: ["mood"], value: "calm", at: 1 }]);
+    const turn = await l.chats.beginTurn(l.branchId, { kind: "reply" });
+    await l.chats.saveCheckpoint(turn!.id, { content: "r", deltas: [{ slot: "vars", path: ["swell"], value: 1, at: 1 }] });
+    return (await l.chats.commitTurn(turn!.id, { content: "reply" }))!;
+  };
+
+  test("healthy deltas and the take's cache are checked and report nothing; a flipped byte in a delta, or in the cache, is named in plain words", async () => {
+    const l = await library();
+    await withDelta(l);
+    const clean = await scan(l);
+    expect(clean.findings).toEqual([]);
+    expect([clean.checked["swipe_deltas"], clean.checked["message_deltas"], clean.checked["branch_state"]]).toEqual([1, 1, 2]); // the library's two takes each keep a cache
+    const delta = get<{ value_json: string }>(l, "SELECT value_json FROM swipe_deltas");
+    run(l, "UPDATE swipe_deltas SET value_json = ?", flip(delta.value_json));
+    const found = only(await scan(l), "cell-unreadable", "swipe_deltas");
+    expect(found).toHaveLength(1);
+    expect(found[0]!.cause).toBe("what this reply changed in the scene would not open, or does not belong to this row");
+    const carried = get<{ value_json: string }>(l, "SELECT value_json FROM message_deltas");
+    run(l, "UPDATE message_deltas SET value_json = ?", flip(carried.value_json));
+    expect(only(await scan(l), "cell-unreadable", "message_deltas")).toHaveLength(1);
+    run(l, "UPDATE branch_state SET state_json = ? WHERE branch_id = ?", flip(get<{ state_json: string }>(l, "SELECT state_json FROM branch_state WHERE branch_id = ?", l.branchId).state_json), l.branchId);
+    expect(only(await scan(l), "cell-unreadable", "branch_state")).toHaveLength(1);
+  });
+
+  test("a flipped byte in a take's starting state is named, and a base whose take is gone is an orphan", async () => {
+    const l = await library();
+    await l.chats.setBranchBase(l.branchId, [{ slot: "vars", path: ["start"], value: 1, at: 1 }]);
+    const clean = await scan(l);
+    expect(clean.findings).toEqual([]);
+    expect(clean.checked["branch_base"]).toBe(1);
+    run(l, "UPDATE branch_base SET state_json = ?", flip(get<{ state_json: string }>(l, "SELECT state_json FROM branch_base").state_json));
+    expect(only(await scan(l), "cell-unreadable", "branch_base")).toHaveLength(1);
+    run(l, "PRAGMA foreign_keys = OFF");
+    run(l, "DELETE FROM branches WHERE id = ?", l.branchId);
+    expect(only(await scan(l), "dangling", "branch_base")).toHaveLength(1);
+  });
+
+  test("a delta whose reply is gone, and a cache whose take is gone, are orphans", async () => {
+    const l = await library();
+    const reply = await withDelta(l);
+    run(l, "PRAGMA foreign_keys = OFF");
+    run(l, "DELETE FROM swipes WHERE message_id = ?", reply.id);
+    run(l, "DELETE FROM messages WHERE id = ?", l.messageIds[2]!);
+    run(l, "DELETE FROM branches WHERE id = ?", l.branchId);
+    run(l, "DELETE FROM state_keyframes");
+    const report = await scan(l);
+    expect(only(report, "dangling", "swipe_deltas")).toHaveLength(1);
+    expect(only(report, "dangling", "message_deltas")).toHaveLength(1);
+    expect(only(report, "dangling", "branch_state")).toHaveLength(1);
+  });
+});

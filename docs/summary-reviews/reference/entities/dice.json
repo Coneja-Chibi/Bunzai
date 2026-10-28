@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/dice",
   "sourcePath": "docs/reference/entities/dice.md",
-  "sourceHash": "sha256:db3f7efc03badc90a1f3fa51c1d7efb534f744a1782cfd68d8c776f45a09c405",
-  "semanticSummaryHash": "sha256:1d533c9d05355099fd1b19006ff02ac296f28509020237b2b7fbdacba3c18947",
+  "sourceHash": "sha256:c82e907b23cb33856c84240b676c46674020293a599cbb6c1acd9f421af78976",
+  "semanticSummaryHash": "sha256:33054894d1b4a2d40d03fffd2aa38ed47ca4985f2d1eccfb5e0067bf9abcddb9",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page and summaries match src/entities/dice (three types, own-field rule, rows 1-200 weight 1-1000, pool 1-100 dice of 2-1000 sides with target<=sides, boundedDice on roll), rollDicePiece outputs and wording, tool dice action linking, core/dice.ts users (roll macro, battle, spellbook), blank 1d20 roll.",
-  "reviewedAt": "2026-10-27T10:08:11.798Z"
+  "notes": "Caps removed correctly: sanity ceilings only (10,000 / 1,000,000 / MAX_SAFE_INTEGER), rolls never refused, DICE_LIST_SHOWN 20 presentation with count/lowest/highest/total past it and every die in the trace; decoder and boundedDice match. No removed number remains.",
+  "reviewedAt": "2026-10-27T21:14:11.922Z"
 }

@@ -14,6 +14,7 @@
  */
 
 import type { ChoiceGroup, ChoiceSelections } from "./choice-groups";
+import type { TrackerBody } from "../../entities/tracker/schema";
 
 // ---- Variables --------------------------------------------------------------------------------
 
@@ -74,6 +75,17 @@ export interface LorebookReference {
   entryCount: number;
 }
 
+/** One linked tracker as a macro reads it; the value is core/tracker.ts's TrackerValue. */
+export interface TrackerView { body: TrackerBody; value: unknown; text: string }
+
+/** A point in time and the caller's clock; the engine reads no ambient time (ADR-012), so the clock is handed in. Not cloneable: set it after any structuredClone. */
+export interface MacroDeadline {
+  at: number;
+  now(): number;
+  /** Soft: only the handlers that watch the deadline (the ones whose work scales with their input) fail when it is spent; the run goes on. For a prompt build, where stopping every macro would empty the prompt. Absent: the run itself stops. */
+  soft?: true;
+}
+
 export interface MacroContext {
   // Identity
   characterName: string;
@@ -123,6 +135,9 @@ export interface MacroContext {
   localVariables: Map<string, MacroVariable>;
   globalVariables: Map<string, MacroVariable>;
 
+  /** The scene's linked library trackers by lowercased name, for {{tracker::...}} (handlers/tracker.ts): the piece's body, its current value (a record, or a list's rows) and its text. */
+  trackers?: ReadonlyMap<string, TrackerView>;
+
   // The active preset
   presetPrompts?: PresetPromptInfo[];
   choiceGroups?: ChoiceGroup[];
@@ -165,8 +180,8 @@ export interface MacroContext {
   /** Side-effect macros become no-ops (historical messages); reads are unaffected. */
   readOnly?: boolean;
 
-  /** A lower evaluation step budget for one run (a formula a model may call again and again); never above MAX_EVAL_STEPS. */
-  maxSteps?: number;
+  /** A time budget for one run (the tool calls of a reply, owned by the tool loop): the run stops once the caller's clock passes it. Absent: the engine's own caps only. */
+  deadline?: MacroDeadline;
 
   /**
    * Run author regex ({{regex}}, compare's `matches`). Off unless a caller opts in: a backtracking

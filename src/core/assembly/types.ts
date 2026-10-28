@@ -4,7 +4,7 @@
  * over, and the assembler does no I/O: same input, same messages, which is what lets RoleCall's
  * recorded fixtures prove the port.
  */
-import type { MacroContext, MacroVariable } from "../macros";
+import type { MacroContext, MacroDeadline, MacroVariable } from "../macros";
 import type { ReasoningFormat } from "../reasoning-tags";
 import type { CharacterBody } from "../../entities/character/schema";
 import type { PersonaBody } from "../../entities/persona/schema";
@@ -18,6 +18,7 @@ import type { RecallEntry, RecallHit } from "./recall-place";
 import type { SummaryRecap } from "./summary-cut";
 import type { TrackersInput } from "./trackers";
 import type { StoryboardsInput } from "./storyboards";
+import type { LinkedTracker } from "../tracker";
 import type { NarratorDirective } from "../../stage/contracts/director-types";
 
 /**
@@ -105,6 +106,8 @@ export interface BudgetDecision {
    * never sets it.
    */
   overflow?: true;
+  /** Set when the request carries fixed parts beside the card (the library trackers' block, the tool definitions), so an overflow can say they are among what does not fit. */
+  fixed?: true;
 }
 
 /** A variable diff for one scope, in ChatStore rule 17's shape: set some names, delete others. */
@@ -225,6 +228,12 @@ export interface AssemblyInput {
   note?: ChatNote;
   /** The tracker Props that are on and what they kept (trackers.ts); absent adds nothing. */
   trackers?: TrackersInput;
+  /** The library trackers the scene links, each with its current value (core/tracker.ts): the Trackers block and the tracker macro; absent adds nothing. */
+  linkedTrackers?: readonly LinkedTracker[];
+  /** Texts that ride in the request beside the messages (the tool definitions): measured by the budget like a fixed block, so history gives way to them. */
+  reserved?: readonly string[];
+  /** The time all the macros of this build may take together, as a point in time and the caller's clock (the assembler reads no ambient time); absent: the engine's own caps only. */
+  deadline?: MacroDeadline;
   /** The Storyboard Props that are on and the books they read (storyboards.ts); absent adds nothing. */
   storyboards?: StoryboardsInput;
   /** This turn's Story Director directive (director.ts), planned for this turn only; absent places nothing. */

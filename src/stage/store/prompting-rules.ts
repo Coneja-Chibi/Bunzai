@@ -4,6 +4,7 @@
  */
 import type { ChatNote, ChatPrompting, ChatPromptingPatch, ChatReasoningEffort } from "../contracts/chat-store";
 import { checkIdList, checkText, fail } from "./chat-rules";
+import { SANITY_LIST } from "../../entities/_shared/sanity";
 import { isWhole } from "./scalar-rules";
 import { isPlainObject } from "../../core/guards";
 import { BUILTIN_CAPTURE_OPTIONS, CAPTURE_MAX_CUSTOM, CAPTURE_MAX_LENGTH, type ReasoningCapture } from "../../core/reasoning-capture";
@@ -11,7 +12,6 @@ import { NOTE_DEPTH_MAX, NOTE_FREQUENCY_MAX, NOTE_MAX } from "../../core/assembl
 import { TOOL_ROUNDS_MAX, TOOL_ROUNDS_MIN } from "../../core/assembly/tool-rounds";
 
 const MAX_GUIDES = 50;
-const MAX_TOOLS = 20;
 export const GUIDE_ID = /^[A-Za-z0-9_-]{1,64}$/;
 
 function checkNote(value: unknown): ChatNote {
@@ -80,7 +80,7 @@ function checkCapture(value: unknown): ReasoningCapture {
   return { mode: value.mode, custom, builtinTags: [...new Set(value.builtinTags as string[])] };
 }
 
-const KEYS = ["guides", "tools", "note", "lastAsUser", "toolAccess", "toolRounds", "reasoningEffort", "prefill", "prefillRole", "capture", "keepThinking", "continuity", "showPrefill"];
+const KEYS = ["guides", "tools", "trackers", "note", "lastAsUser", "toolAccess", "toolRounds", "reasoningEffort", "prefill", "prefillRole", "capture", "keepThinking", "continuity", "showPrefill"];
 
 /** A patch whose keys are `guides`, `note`, `lastAsUser` and `toolAccess` (booleans) and `toolRounds`, each a valid value or null (rule 37). An empty patch is allowed and changes nothing. */
 export function checkPrompting(value: unknown): ChatPromptingPatch {
@@ -88,7 +88,8 @@ export function checkPrompting(value: unknown): ChatPromptingPatch {
   for (const key of Object.keys(value)) if (!KEYS.includes(key)) fail(`prompting has an unknown field: ${key}`);
   return {
     ...(value.guides === undefined ? {} : { guides: value.guides === null ? null : checkGuides(value.guides) }),
-    ...(value.tools === undefined ? {} : { tools: value.tools === null ? null : checkIdList(value.tools, "tools", MAX_TOOLS) }),
+    ...(value.tools === undefined ? {} : { tools: value.tools === null ? null : checkIdList(value.tools, "tools", SANITY_LIST) }),
+    ...(value.trackers === undefined ? {} : { trackers: value.trackers === null ? null : checkIdList(value.trackers, "trackers", SANITY_LIST) }),
     ...(value.note === undefined ? {} : { note: value.note === null ? null : checkNote(value.note) }),
     ...(value.lastAsUser === undefined ? {} : { lastAsUser: value.lastAsUser === null ? null : checkSwitch(value.lastAsUser, "lastAsUser") }),
     ...(value.toolAccess === undefined ? {} : { toolAccess: value.toolAccess === null ? null : checkSwitch(value.toolAccess, "toolAccess") }),
@@ -108,6 +109,8 @@ export function mergePrompting(old: ChatPrompting | undefined, patch: ChatPrompt
   const guides = patch.guides === undefined ? old?.guides : patch.guides ?? undefined;
   const toolsIn = patch.tools === undefined ? old?.tools : patch.tools ?? undefined;
   const tools = toolsIn?.length ? toolsIn : undefined;
+  const trackersIn = patch.trackers === undefined ? old?.trackers : patch.trackers ?? undefined;
+  const trackers = trackersIn?.length ? trackersIn : undefined;
   const note = patch.note === undefined ? old?.note : patch.note ?? undefined;
   const lastAsUser = patch.lastAsUser === undefined ? old?.lastAsUser : patch.lastAsUser ?? undefined;
   const toolAccess = patch.toolAccess === undefined ? old?.toolAccess : patch.toolAccess ?? undefined;
@@ -122,7 +125,7 @@ export function mergePrompting(old: ChatPrompting | undefined, patch: ChatPrompt
   const flag = (key: "keepThinking" | "continuity" | "showPrefill") => ((patch[key] === undefined ? old?.[key] : patch[key] ?? undefined) ? { [key]: true } : {});
   const next: ChatPrompting = {
     ...flag("keepThinking"), ...flag("continuity"), ...flag("showPrefill"),
-    ...(guides ? { guides } : {}), ...(tools ? { tools } : {}), ...(note ? { note } : {}), ...(lastAsUser ? { lastAsUser } : {}), ...(toolAccess ? { toolAccess } : {}), ...(toolRounds !== undefined ? { toolRounds } : {}),
+    ...(guides ? { guides } : {}), ...(tools ? { tools } : {}), ...(trackers ? { trackers } : {}), ...(note ? { note } : {}), ...(lastAsUser ? { lastAsUser } : {}), ...(toolAccess ? { toolAccess } : {}), ...(toolRounds !== undefined ? { toolRounds } : {}),
     ...(reasoningEffort ? { reasoningEffort } : {}), ...(prefill ? { prefill } : {}), ...(prefillRole ? { prefillRole } : {}), ...(capture ? { capture } : {}),
   };
   return Object.keys(next).length > 0 ? next : null;

@@ -50,9 +50,13 @@ export function closureOf(statement: Stmt, cipher: CellCipher, start: RowRef): R
         for (const m of statement("SELECT id FROM messages WHERE branch_id = ?").all(v[0]!) as { id: string }[]) walk(refOf("messages", m.id));
         out.push(...keyRows("SELECT json_array(id) AS rk FROM turn_checkpoints WHERE branch_id = ?", "turn_checkpoints", v[0]!));
         out.push(...keyRows("SELECT json_array(branch_id) AS rk FROM branch_variables WHERE branch_id = ?", "branch_variables", v[0]!));
+        out.push(...keyRows("SELECT json_array(branch_id) AS rk FROM branch_state WHERE branch_id = ?", "branch_state", v[0]!));
+        out.push(...keyRows("SELECT json_array(branch_id) AS rk FROM branch_base WHERE branch_id = ?", "branch_base", v[0]!));
+        out.push(...keyRows("SELECT json_array(branch_id, message_id) AS rk FROM state_keyframes WHERE branch_id = ?", "state_keyframes", v[0]!));
         break;
       }
       case "messages":
+        out.push(...keyRows("SELECT json_array(message_id, seq) AS rk FROM message_deltas WHERE message_id = ?", "message_deltas", v[0]!));
         for (const s of statement("SELECT position FROM swipes WHERE message_id = ?").all(v[0]!) as { position: number }[]) walk(refOf("swipes", v[0]!, s.position));
         break;
       case "swipes": {
@@ -86,6 +90,12 @@ export function closureOf(statement: Stmt, cipher: CellCipher, start: RowRef): R
     out.push(ref);
   };
   walk(start);
+  // A fork keeps swipe ids, so a delta row belongs to every reply that holds its id: it goes only when all of them do.
+  const inside = new Set(out.filter((r) => r.table === "swipes").map((r) => r.key));
+  for (const id of new Set(out.filter((r) => r.table === "swipes").flatMap((r) => (statement("SELECT swipe_id FROM swipes WHERE message_id = ? AND position = ?").all(...valuesOf(r)) as { swipe_id: string }[]).map((x) => x.swipe_id)))) {
+    const holders = statement("SELECT message_id, position FROM swipes WHERE swipe_id = ?").all(id) as { message_id: string; position: number }[];
+    if (holders.every((h) => inside.has(JSON.stringify([h.message_id, h.position])))) out.push(...keyRows("SELECT json_array(swipe_id, seq) AS rk FROM swipe_deltas WHERE swipe_id = ?", "swipe_deltas", id));
+  }
   return [...new Map(out.map((r) => [`${r.table}|${r.key}`, r])).values()];
 }
 
@@ -113,6 +123,7 @@ export function describeMoves(refs: readonly RowRef[]): { rows: Record<string, n
     chats: ["chat", "chats"], branches: ["take", "takes"], messages: ["message", "messages"], swipes: ["reply", "replies"],
     swipe_history: ["earlier reply text", "earlier reply texts"], swipe_traces: ["build record", "build records"], director_states: ["story state", "story states"],
     turn_checkpoints: ["unfinished reply", "unfinished replies"], branch_variables: ["variable set", "variable sets"],
+    swipe_deltas: ["scene change", "scene changes"], message_deltas: ["message scene change", "message scene changes"], state_keyframes: ["saved scene point", "saved scene points"], branch_state: ["scene state", "scene states"], branch_base: ["starting state", "starting states"],
     documents: ["piece", "pieces"], document_versions: ["saved version", "saved versions"], document_graves: ["deleted piece", "deleted pieces"],
     grave_versions: ["saved version of a deleted piece", "saved versions of deleted pieces"], document_summaries: ["shelf summary", "shelf summaries"],
     grave_summaries: ["shelf summary", "shelf summaries"], piece_parts: ["content part", "content parts"], blobs: ["image or file", "images and files"],

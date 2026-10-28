@@ -52,7 +52,10 @@ describe("row fingerprints", () => {
       ["swipe", () => l.chats.addSwipe(l.messageIds[2]!, { content: "another" })],
       ["select swipe", () => l.chats.selectSwipe(l.messageIds[2]!, 0)],
       ["rename", () => l.chats.renameChat(l.chatId, "Renamed")],
-      ["variables", () => l.chats.changeVariables(l.branchId, { set: { a: 1 } })],
+      ["scene state", async () => {
+        const m = (await l.chats.readMessages(l.branchId, { limit: 5 })).messages[1]!;
+        return l.chats.recordMessageDeltas(l.branchId, m.id, [{ slot: "vars", path: ["a"], value: 1, at: 1 }]);
+      }],
       ["cut", () => l.chats.cutMessages(l.branchId, l.messageIds[1]!, "one")],
       ["delete chat", () => l.chats.deleteChat(l.chatId)],
       ["restore chat", () => l.chats.restoreChat(l.chatId)],

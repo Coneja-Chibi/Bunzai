@@ -4,7 +4,7 @@
  * one whose linked dice piece or formula is (it could only fail). Call
  * names come from the tool's name; one already taken (the lookup's, or an earlier tool's) gets a number, so no call is ambiguous.
  */
-import { callName, readToolCall, runTool, toolParameters, type ToolArgs, type ToolLinks } from "../core/tools";
+import { callName, freeName, readToolCall, runTool, toolParameters, type ToolArgs, type ToolLinks } from "../core/tools";
 import { safeParseCanonicalEntity } from "../entities/runtime-schema";
 import type { DiceBody } from "../entities/dice/schema";
 import type { FormulaBody } from "../entities/formula/schema";
@@ -12,18 +12,21 @@ import type { ToolBody } from "../entities/tool/schema";
 import { SCENE_ACTION_TIERS } from "../kit/tools/safety/scene-tiers";
 import { INVALID_TOOL, type NarratorTool } from "../stage/provider/tool-loop";
 import { compendiumTools } from "./compendium-lookup";
+import { trackerTool } from "./library-trackers";
 import type { NarratorToolsFor, ToolsContext } from "./scene-turn-tools";
 
 export type ReadPiece = (kind: string, id: string) => Promise<unknown | null>;
 
-/** A scene's tools: the lorebook lookup first, then the library tools it links (none without a library). */
-export const narratorTools = (read: ReadPiece | undefined): NarratorToolsFor => async (ctx) => {
+/** A scene's tools: the lorebook lookup first, then the library tools it links (none without a library), then the one update tool for its linked trackers. */
+export const narratorTools = (read: ReadPiece | undefined): NarratorToolsFor => async (ctx, writes) => {
   const lookup = compendiumTools(ctx);
-  return read ? [...lookup, ...(await libraryTools(ctx, read, lookup))] : lookup;
+  const library = read ? await libraryTools(ctx, read, lookup) : [];
+  const trackers = trackerTool(ctx, [...lookup, ...library].map((t) => t.definition.function.name), writes);
+  return [...lookup, ...library, ...(trackers ? [trackers] : [])];
 };
 
 /** One stored piece of the given kind, checked by its strict decoder; null when it is gone, unreadable or another kind. */
-async function readPiece(read: ReadPiece, kind: string, id: string): Promise<unknown | null> {
+export async function readPiece(read: ReadPiece, kind: string, id: string): Promise<unknown | null> {
   const parsed = safeParseCanonicalEntity(await read(kind, id).catch(() => null));
   return parsed.ok && parsed.entity.kind === kind ? parsed.entity.body : null;
 }
@@ -38,15 +41,12 @@ export async function libraryTools(ctx: ToolsContext, read: ReadPiece, before: r
     const formula = body.action.kind === "formula" ? ((await readPiece(read, "formula", body.action.id)) as FormulaBody | null) : undefined;
     if (dice === null || formula === null) continue;
     const links: ToolLinks = { ...(dice ? { dice } : {}), ...(formula ? { formula: { text: formula.text, context: () => ctx.macros.context } } : {}) };
-    const base = callName(body.name);
-    let name = base;
-    for (let n = 2; taken.has(name); n++) name = `${base}_${n}`;
-    taken.add(name);
+    const name = freeName(callName(body.name), taken);
     const tool: NarratorTool<ToolArgs> = {
       access: SCENE_ACTION_TIERS["narrator.tool"],
       definition: { type: "function", function: { name, description: body.description || body.name, parameters: toolParameters(body.fields) } },
       parse: (raw) => readToolCall(body, raw),
-      run: async (args) => runTool(body, args, ctx.rand, links),
+      run: async (args, _signal, deadline) => runTool(body, args, ctx.rand, links, deadline),
     };
     out.push(tool as NarratorTool<never>);
   }

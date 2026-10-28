@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/scene-state",
+  "sourcePath": "docs/reference/scene-state.md",
+  "sourceHash": "sha256:203d4a5baa563f8cbf296285d867178cc8bf7c03cb46bb147afd64434fce714a",
+  "summary": "Scene state is what a scene remembers beyond its text, kept so that regenerating, choosing a version, cutting, restoring and forking all leave it where the shown history says. A piece of state is a slot declared in one file and listed by a generator. What one reply version changed in a slot is a delta, a value at a path rather than an operation, stored on that version by swipe id so a fork shares its prefix's deltas without copying them. The state is rebuilt from the shown versions, from the nearest keyframe, inside the transaction of whatever changed the history. Phase 1 has one slot, the macro variables, and two slot families for the library trackers a scene links, whose state a tracker's update tool writes as pending deltas on the reply being written. Its sections cover slots, deltas and the three strategies, storage, rebuild, how a turn uses it (with the variables route and the chat import), what is tested, and what is not built yet.",
+  "topics": [
+    "slots",
+    "per-version deltas",
+    "keyframes and tip cache",
+    "rebuild on every change",
+    "macro variables as the first slot",
+    "no per-version size cap",
+    "what is not built yet",
+    "slot families",
+    "tool writes"
+  ],
+  "sections": [
+    {
+      "slug": "slots",
+      "title": "Slots",
+      "level": 2,
+      "sourceHash": "sha256:dd7d4039b4d8dff9ecfb1aae3f4a25419e028140e641d594a97a1341cb8a488b",
+      "summary": "A slot is one file under src/core/scene-state/slots that exports defineSlot with an id, a scope, a diff strategy and a default. defineSlot refuses an id outside the allowed pattern and a keyed-list without a key. The command bun run slots writes the generated list from the folder, slots:check fails when it is stale, and a completeness test fails when a slot file is missing from the list or an id repeats. The only scope is scene, meaning rebuilt from history. The one slot so far, vars, uses the fields strategy, so each variable keeps the time it was first written and the time it was last written, which is exactly what the macro engine's variable record holds. Its family form, for state made by library pieces, is the child section below.",
+      "topics": [
+        "defineSlot",
+        "generated slot list",
+        "completeness test",
+        "vars slot"
+      ],
+      "children": [
+        {
+          "slug": "slot-families",
+          "title": "Slot families",
+          "level": 3,
+          "sourceHash": "sha256:4c4319512ecc2c781f0331b6864e9f77f98fe8aa03d2d91a629abc552571cc61",
+          "summary": "A slot id ending in a colon and a star is a family covering every id with that prefix, so state made by a library piece at run time needs no file of its own and the store never sees library pieces. The slot lookup gives the exact slot if there is one, else the family whose prefix the id has. A family id is one lowercase word, a colon and a star; its file is named without them, and overlapping or repeated families fail the generator. Two exist, tracker-record with the fields strategy and tracker-list with the keyed-list strategy keyed by name; a tracker's own value shape is checked in the core tracker module.",
+          "topics": [
+            "slot families",
+            "slot lookup",
+            "tracker-record",
+            "tracker-list",
+            "overlap refused"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "slug": "deltas-and-the-three-strategies",
+      "title": "Deltas and the three strategies",
+      "level": 2,
+      "sourceHash": "sha256:ef8c3546deabc53b20090ab7fee1b7904ac37ef9478ec1cd0a4d9361267d29a2",
+      "summary": "A delta names a slot, a path inside it, a value or a removal marker, and the time of the write. It is always a value, never an operation, so cutting a middle message takes back exactly what that message set and nothing a later message set again. Three strategies cut and fold deltas: value keeps the whole value, fields keeps one delta per named field, and keyed-list keeps one delta per row found by a key field. Only fields is used so far, though all three are implemented and tested. Fold skips a delta for an unknown slot or with a path its strategy cannot read, and the stores refuse such a delta outright. A variable named like an Object property is an ordinary own property.",
+      "topics": [
+        "delta shape",
+        "value fields keyed-list",
+        "removal markers",
+        "unreadable deltas skipped"
+      ],
+      "children": []
+    },
+    {
+      "slug": "storage",
+      "title": "Storage",
+      "level": 2,
+      "sourceHash": "sha256:4e6e0526c0924deaa6c9c4bc77b15221dc20bdac1aa12f34f4f946ffea40dca0",
+      "summary": "Migration 43 adds five tables and an index. swipe_deltas holds one row per delta keyed by swipe id and sequence and is never changed once written, so a fork that keeps swipe ids shares its prefix's deltas. message_deltas holds what a message carries whichever version shows, such as a person's edit on a reply, and a fork copies it with the new message id. branch_base is what a take starts with before any message, an import's variables, and is real data that refuses when damaged. branch_state is each take's tip cache, and state_keyframes keeps the whole state after every fiftieth shown message. Both are caches that every change rewrites, and a cache cell that will not open is rebuilt, never fatal. Paths, values, the base, keyframe and tip states and pending deltas are sealed like other chat payloads; slot, removal flag and time stay readable. The tables join the row fingerprints, the health check and the snapshot lists. A version has no size cap on its deltas; only what an import or a person's edit brings meets a hostile-input ceiling.",
+      "topics": [
+        "swipe_deltas",
+        "branch_state and keyframes",
+        "sealed cells",
+        "no size cap",
+        "health and snapshot coverage"
+      ],
+      "children": []
+    },
+    {
+      "slug": "rebuild",
+      "title": "Rebuild",
+      "level": 2,
+      "sourceHash": "sha256:97f288b558b1dd1ee978e6ca77cc2d9f3466283ce29a3b2a43c4c13af0b22142",
+      "summary": "The store owns the rebuild and runs it inside the transaction of the change, so no caller can forget it. It starts from the nearest kept keyframe on the shown path, else from the take's base, else from nothing, folds the deltas of the shown versions after it in order, rewrites the keyframes it passes and writes the tip cache. Keyframes at or after the first changed message are dropped first. Committing a reply, adding or choosing a version, and cutting or restoring a version or messages each rebuild from the message they changed, and recordMessageDeltas rebuilds its own take from that message. A fork rebuilds the new take from its own path, restoring a take rebuilds it whole, and deleting a take drops its cache. A continue stamps no delta, and a turn that fails or stops with nothing has stamped nothing, because its deltas wait on the checkpoint. sceneStateBefore answers what a new version of a message builds from.",
+      "topics": [
+        "transactional rebuild",
+        "nearest keyframe",
+        "events that rebuild",
+        "state before a message"
+      ],
+      "children": []
+    },
+    {
+      "slug": "how-a-turn-uses-it",
+      "title": "How a turn uses it",
+      "level": 2,
+      "sourceHash": "sha256:1a173772788d427460f7df738560384aa921701649b37aeea2152f01f918d76b",
+      "summary": "loadTurn reads the variables from sceneState for a new reply and from sceneStateBefore for a new version or a continue, so a regenerate never counts its own earlier writes twice. Assembly returns the local variable changes as before, and scene-turn turns them into vars deltas and saves them on the checkpoint with the trace. commitTurn stamps them on the version it stores and rebuilds the take. A continue makes no deltas. That save is awaited and waits up to 30 seconds for the write lock, so a lost save cannot commit a reply without its variables. A turn's deltas are always saved, never refused for size. Global variables are untouched. The variables route reads the vars slot, and a chat import records its variables as the take's base, with or without messages, so no greeting, cut or fork changes them. The trackers' update tool adds deltas mid-reply through the turn's one door, for tracker slots only, as the one stateScoped write.",
+      "topics": [
+        "load before the reply",
+        "deltas on the checkpoint",
+        "continue and failure",
+        "too-large refusal",
+        "globals unchanged",
+        "tool writes",
+        "stateScoped"
+      ],
+      "children": []
+    },
+    {
+      "slug": "not-built-yet",
+      "title": "Not built yet",
+      "level": 2,
+      "sourceHash": "sha256:87e719bc948b5c07b0b0b7bc8b5ccde82e509bb40a3170ed2aba00f151012b15",
+      "summary": "Everything past the first slot is planned in the scene-state plan and absent from the code. That covers more slots such as the Spellbook, the summary, the Props trackers and the Director's rounds, global variables as a derived log, the Compendium's shared lane, writer classes and permissions, the Story Director updating library trackers, and any interface for hand edits or a state inspector. recordMessageDeltas is the store's door for a write that is not a turn's, and nothing calls it yet outside tests. Nothing in the interface does. This section exists so that no reader takes a planned part of the design for current behavior.",
+      "topics": [
+        "planned slots",
+        "global variables later",
+        "permissions later",
+        "no interface yet"
+      ],
+      "children": []
+    },
+    {
+      "slug": "what-is-tested",
+      "title": "What is tested",
+      "level": 2,
+      "sourceHash": "sha256:feebff7944c0bebdd8f5bca092ed1be0ef3ec600c833f77bcec53836d9d7d277",
+      "summary": "Unit tests prove each strategy's diff, fold with removal markers, and a rebuild from a keyframe equal to one from nothing. The ChatStore contract suite runs for both stores and covers choosing, cutting and restoring versions, cutting a middle message and restoring it, a restore as a new take, a fork, dropped, committed and continued turns, refusals, and a two thousand message rebuild. A SQLite test adds the file-only facts: shared delta rows, the keyframes a mid-path cut leaves, sealing, a refused commit, and a dense rebuild of six thousand deltas held to a two hundred millisecond budget. A busy-library test runs a real turn with the lock held. The turn tests prove a prompt's increment counts once however often a reply is made again. A guard test fails when code outside the SQLite chat store names the tables or calls the removed methods.",
+      "topics": [
+        "unit proofs",
+        "contract suite for both stores",
+        "sqlite file tests",
+        "turn tests",
+        "one-door guard"
+      ],
+      "children": []
+    }
+  ]
+}

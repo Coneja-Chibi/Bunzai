@@ -333,7 +333,7 @@ takes, moving to the latest card) through `src/studio/scenes.ts`, and cut scenes
 messages wait before the library's open purges them: 3 days for scenes, takes, and pieces, 1 day for a cut message (`src/core/trash-window.ts`). Messages show through the display macro pass in `src/core/chat-display.ts`
 (ADR-012 amendment). The chat store also keeps what a reply needs (ChatStore rules 15 to 19): a
 checkpoint per take while a reply streams, the prompt trace stored with each generated swipe, each
-take's macro variables, the Kit connection and model each scene last used, and the scene's preset
+take's scene state (its macro variables are the `vars` slot, kept as per-version deltas and rebuilt from the shown history; [scene-state.md](scene-state.md)), the Kit connection and model each scene last used, and the scene's preset
 with its own switches and sampler values. A scene follows its library preset: the turn loop reads
 the preset's current version at every turn, so a library edit reaches the next reply. A turn writes a reply, a new version of the
 last reply, or more text on the end of it (Continue; ChatStore rule 31). The turn loop

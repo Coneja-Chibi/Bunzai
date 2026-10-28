@@ -9,6 +9,7 @@ import { memoryChatStore } from "../stage/store/chat-store";
 import { memoryStateStore } from "../stage/store/memory/state-store";
 import { deleteGuide, saveGuide } from "./guides";
 import { runTurn, type Connected, type TurnEvent } from "./scene-turn";
+import { varsOf } from "../core/scene-state/vars-bridge";
 
 const vera = {
   kind: "character",
@@ -131,10 +132,12 @@ describe("guides on a live scene", () => {
     await s.chats.setPrompting(s.chat.id, { guides: [g.id] });
     await s.turn();
     const branch = (await s.chats.getChat(s.chat.id))!.activeBranchId;
-    expect(Object.keys((await s.chats.variables(branch))!).sort()).toEqual(["__rc_chat_start_fired::s1", "mood"]);
+    expect([...varsOf(await s.chats.sceneState(branch)).keys()].sort()).toEqual(["__rc_chat_start_fired::s1", "mood"]);
     expect(s.texts(0)).toEqual(["system:Keeps the light.", "assistant:Evening.", "user:Any storms?"]);
-    await s.chats.changeVariables(branch, { set: { mood: "stormy" } });
+    // The person's own edit of mood, made on the message whose version set it, wins on that message, and the next reply builds from it.
+    const tip = (await s.chats.readMessages(branch, { limit: 50 })).messages.at(-1)!;
+    await s.chats.recordMessageDeltas(branch, tip.id, [{ slot: "vars", path: ["mood"], value: "stormy", at: 5 }]);
     await s.next("More");
-    expect((await s.chats.variables(branch))!["mood"]!.value).toBe("stormy");
+    expect(varsOf(await s.chats.sceneState(branch)).get("mood")!.value).toBe("stormy");
   });
 });

@@ -2,7 +2,7 @@
 id: reference/entities/README
 title: Entities
 audience: dev
-summary: Index of the canonical content kinds (character, lorebook, persona, pack, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, prompt format, drawing), how each is one folder described once in its kind.ts, and links to each one's field reference and the shapes they share.
+summary: Index of the canonical content kinds (character, lorebook, persona, pack, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, tracker, prompt format, drawing), how each is one folder described once in its kind.ts, and links to each one's field reference and the shapes they share.
 tags: [entity, index, canonical]
 related: [reference/architecture, reference/concepts/canonical-model, reference/formats/README]
 ---
@@ -41,6 +41,7 @@ the live schema JSDoc by `scripts/docs-fields.ts` (`bun run scripts/docs-fields.
 | Dice | [dice.md](dice.md) | something a person rolls: a roll, a table or a pool, made once and linked from tools |
 | Formula | [formula.md](formula.md) | a saved macro expression, run read-only on a copy of the scene's macro context; a tool can run one |
 | Tool | [tool.md](tool.md) | a tool a model may call while it writes: typed fields and one roll, dice, formula or record action, as data; a scene links the ones it offers |
+| Tracker | [tracker.md](tracker.md) | state a scene keeps: named typed fields as a record or a list of rows, swipe-safe, shown to the model every turn, readable by macros, updated by one tool |
 | Prompt format | [promptformat.md](promptformat.md) | SillyTavern instruct and context templates for text completion, kept whole (nothing reads it yet) |
 | Drawing | [htmldoc.md](htmldoc.md) | a sealed HTML page shown in HTML View, not a Library deck |
 

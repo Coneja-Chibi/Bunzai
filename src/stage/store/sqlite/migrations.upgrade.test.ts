@@ -35,7 +35,7 @@ test("the list is numbered 1 to n and holds the real health check at 24, never a
   expect(MIGRATIONS.some((m) => /reserved|placeholder/i.test(m.name))).toBe(false);
   expect(MIGRATIONS[24]!.id).toBe(25);
   expect(MIGRATIONS[25]!.id).toBe(26);
-  expect(MIGRATIONS.at(-1)!.id).toBe(42);
+  expect(MIGRATIONS.at(-1)!.id).toBe(43);
 });
 
 test("a database from before migration 24 upgrades cleanly through 24, 25 and 26", () => {
@@ -262,4 +262,28 @@ test("migration 42 adds chats.director_json and director_states: existing scenes
   d.statement("INSERT INTO director_states (message_id, position, version, cell) VALUES ('m1', 0, 1, 'x')").run();
   d.statement("DELETE FROM chats WHERE id = 'c1'").run();
   expect(d.statement("SELECT count(*) AS n FROM director_states").get()).toEqual({ n: 0 });
+});
+
+test("migration 43 adds the scene-state tables and turn_checkpoints.deltas_json, moves nothing out of branch_variables, and a purged take takes its cache and keyframes with it", () => {
+  const path = file();
+  const before = reopen(path, 42);
+  before.statement("INSERT INTO chats (id, title, character_id, cast_json, cast_snapshot_json, active_branch_id, created_at, updated_at, snapshot_version) VALUES ('c1', 't', 'k', 'j', '', 'b1', 1, 1, 1)").run();
+  before.statement("INSERT INTO branches (id, chat_id, name, created_at, version) VALUES ('b1', 'c1', 'n', 1, 1)").run();
+  before.statement("INSERT INTO messages (id, branch_id, seq, role, current_swipe, created_at) VALUES ('m1', 'b1', 1, 'user', 0, 1)").run();
+  before.statement("INSERT INTO swipes (message_id, position, swipe_id, content, created_at, pinned) VALUES ('m1', 0, 's1', 'x', 1, 0)").run();
+  before.statement("INSERT INTO branch_variables (branch_id, variables_json) VALUES ('b1', 'old')").run();
+  before.close();
+  open.pop();
+  const d = reopen(path);
+  expect(columns(d, "swipe_deltas")).toEqual(["swipe_id", "seq", "slot", "path_json", "value_json", "removed", "at"]);
+  expect(columns(d, "state_keyframes")).toEqual(["branch_id", "message_id", "state_json"]);
+  expect(columns(d, "branch_state")).toEqual(["branch_id", "state_json", "tip_message_id", "tip_swipe_id"]);
+  expect(columns(d, "turn_checkpoints")).toContain("deltas_json");
+  // Schema only: the old variables stay where they were and nothing was made from them.
+  expect(d.statement("SELECT variables_json FROM branch_variables").get()).toEqual({ variables_json: "old" });
+  expect(d.statement("SELECT count(*) AS n FROM swipe_deltas").get()).toEqual({ n: 0 });
+  d.statement("INSERT INTO branch_state (branch_id, state_json, tip_message_id, tip_swipe_id) VALUES ('b1', 'x', 'm1', 's1')").run();
+  d.statement("INSERT INTO state_keyframes (branch_id, message_id, state_json) VALUES ('b1', 'm1', 'x')").run();
+  d.statement("DELETE FROM chats WHERE id = 'c1'").run();
+  expect([d.statement("SELECT count(*) AS n FROM branch_state").get(), d.statement("SELECT count(*) AS n FROM state_keyframes").get()]).toEqual([{ n: 0 }, { n: 0 }]);
 });

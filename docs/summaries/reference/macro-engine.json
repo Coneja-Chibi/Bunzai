@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/macro-engine",
   "sourcePath": "docs/reference/macro-engine.md",
-  "sourceHash": "sha256:b417e76bc3a8ec6231befbc809220b9c3134aa367e19be8686b6f7e28b36b83c",
+  "sourceHash": "sha256:709a415604b4747919dd92333e754fe93153ad2c6a5b72b518a1cea20a7ae6ce",
   "summary": "RoleCall's macro engine, ported under src/core/macros/ inside the closed world ADR-012 allows. It parses macro templates and evaluates them against a value-only context, producing expanded text plus segments that trace each rendered span back to the authored characters behind it, the contract the editable preview stands on. It behaves as RoleCall's engine does at the pinned commit, proven by a parity test over all 179 entries of RoleCall's own characterization corpus, recorded from RoleCall, plus RoleCall's ported processor and handler tests. Where ADR-012 requires, it differs: the clock, randomness, locale and time zone come from the context, and evaluation is bounded so no cut-off value is stored; four RoleCall families and its interceptors are left out. Callers are the ADR-012 list, now including chat display; codecs and adapters never evaluate, and macro text stays opaque payload at every import and conversion boundary.",
   "topics": [
     "rolecall engine port",
@@ -19,8 +19,8 @@
       "slug": "what-it-does",
       "title": "What it does",
       "level": 2,
-      "sourceHash": "sha256:e1daeae07b280617d0843a96502ba98697ba1a0f49b072bc722358b05280f4fd",
-      "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map, and macro output holding macros is evaluated again. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunraku's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may lower the step cap, and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in. Four RoleCall families and its interceptors are left out.",
+      "sourceHash": "sha256:fc8e42ec64c85efdaa24db30e6b5f5ed1dbe9cf58ed0e7f18a6ae4e915b6eeca",
+      "summary": "It behaves as RoleCall's engine at VAUDEVILLE 68afe385, and rc-parity.test.ts proves it on all 179 entries of RoleCall's recorded corpus: same parse tree, text, errors, variable changes, reads and expansions. RoleCall's processor and handler tests are ported, and unknown macros render as text with an error. Normalization applies RoleCall's rewrites through an offset map. Twenty-five RoleCall families register in RoleCall's order from one closed table, since order decides who owns a shared name; one family of Bunraku's own, registered last, adds read-only mentions, lastmention, tally and seeded odds, matched from escaped words, never author regex, plus tracker for linked trackers. Lazy macros take unevaluated arguments; phases span a preset's prompts. ADR-012 differences: clock, randomness, locale and time zone come from the context; strings, writes, runs and node counts are capped, callers may hand in a deadline (soft for a prompt build), and after a cap trips nothing runs or is stored cut off; a scan checks every file for ambient reads. Author regex is off unless a caller opts in.",
       "topics": [
         "corpus parity proof",
         "offset mapped rewrites",
@@ -28,7 +28,8 @@
         "lazy macros and phases",
         "stripped families unknown",
         "adr-012 differences",
-        "regex off by default"
+        "regex off by default",
+        "tracker macro"
       ],
       "children": []
     },

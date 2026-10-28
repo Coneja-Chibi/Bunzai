@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:539353f81776a9c0eef7c6e87319b8b877ae78c10565c615ec61638d88971fef",
-  "semanticSummaryHash": "sha256:3d416e1336645ef8f62e5477212c107102a5f75b8314c3089c03820ab40d8b9e",
+  "sourceHash": "sha256:4385a57a3947da172c0404628340b2a28c826a78ea4edad6d753f426ca8eb6d1",
+  "semanticSummaryHash": "sha256:a67e5d1ddfe92f043e38da87f89557a96d1ab37d473585e0d82a0e6db5078298",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Formulas (0) placeholder section exists after Dice and before Prompt formats as formulas-0 says; page-summary sentence names tools, dice, formulas and drawings; counts unchanged.",
-  "reviewedAt": "2026-10-27T10:37:40.695Z"
+  "notes": "Read the page in full: only the generated date changed; all counts (9,7,4,1,4,1,5,1,0,0,0,0,1,0), rows, section order, notes and samples still match the sidecar. Page summary names tools, dice, formulas, trackers and drawings as having no format. Short generated sections (quick-replies 76, drawings 75 and the shortSource ones) are the pre-existing validator warnings; all other sections 91-93 words.",
+  "reviewedAt": "2026-10-28T01:52:42.447Z"
 }

@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/macro-engine",
   "sourcePath": "docs/reference/macro-engine.md",
-  "sourceHash": "sha256:b417e76bc3a8ec6231befbc809220b9c3134aa367e19be8686b6f7e28b36b83c",
-  "semanticSummaryHash": "sha256:3bd9df8841c5caa2ba32ad2de5de52d8d4f48bd5a62b6ebf0e31b60abfe00bf0",
+  "sourceHash": "sha256:709a415604b4747919dd92333e754fe93153ad2c6a5b72b518a1cea20a7ae6ce",
+  "semanticSummaryHash": "sha256:a5d691b8afaccf0f64471f1ca0eacdc2eecce290765f428748ac35ce424af47a",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page's WORDS_PER_RUN bullet (200 uncounted words per run, 201st errors in that run only, counts kept for runs sharing the list) matches chat-watch.ts countsOf with per-HandlerRun WeakMap; no stale WORDS_PER_CHAT remains. Summary still accurate.",
-  "reviewedAt": "2026-10-27T10:56:03.702Z"
+  "notes": "Positional word index (rarest word first), deadline checks in loops, soft deadline for the prompt build (PROMPT_BUDGET_MS_DEFAULT 3 s, scenes.promptBudgetMs, only the failing handler errors and the rest builds) and hard deadline after every handler all match chat-watch.ts, deadline.ts, evaluate.ts, scene-turn-build.ts. What-it-does summary is 170 words; to fit the band it dropped 'macro output holding macros is evaluated again' (the page-level summary still carries the omitted-families fact), an acceptable trim.",
+  "reviewedAt": "2026-10-28T01:31:11.939Z"
 }

@@ -15,9 +15,10 @@ of first-party actions in `src/core/tools.ts`.
 
 ## Fields
 
-Each field has a `name` (a lowercase letter, then lowercase letters, digits and `_`), a `description`, a `type`
-(`text`, `number`, `boolean` or `choice`) and whether it is `required`. Only a `choice` field has `choices`, 1 to 20
-of them, and it must have them. A tool has at most 12 fields, with unique names. The function schema the model is sent
+Each field has a `name` (a lowercase letter, then lowercase letters, digits and `_`, up to 64 characters, the providers' function-name rule), a `description`, a `type`
+(`text`, `number`, `boolean` or `choice`) and whether it is `required`. Only a `choice` field has `choices` (at least
+one, unique), and it must have them. A tool's fields have unique names, and there is no product limit on how many (the decoder
+only refuses a hostile list; see `src/entities/_shared/sanity.ts`). The decoder's field basics are shared with a tracker's fields. The function schema the model is sent
 (`toolParameters`) and the check of its arguments (`readToolCall`) are both made from this one list, so they cannot
 disagree. Unknown arguments, missing required ones, wrong types and choices not in the list are refused, and the
 refusal is told to the model.
@@ -25,9 +26,9 @@ refusal is told to the model.
 ## Actions
 
 - **roll** rolls the dice the model writes into one of the tool's text fields (`field`), through the dice module
-  (`src/core/dice.ts`): 1 to 100 dice of 2 to 1,000 sides, other dice refused when its arguments are read. The model
-  is told the result, such as `Rolled 1d20+3: [14] +3 = 17`, and the trace keeps the dice, each die, the modifier and the
-  total.
+  (`src/core/dice.ts`): any dice with at least one die of at least two sides (the sanity ceilings aside), other text refused when its
+  arguments are read. The model is told the result, such as `Rolled 1d20+3: [14] +3 = 17` (past 20 dice, the count, lowest, highest and
+  total, see [dice.md](dice.md)), and the trace keeps the dice, each die, the modifier and the total.
 - **dice** rolls a library dice piece by its id (`id`; [dice.md](dice.md)): a roll, a table or a pool, answered as that
   piece rolls it, such as `Wild magic (rolled 2 of 3): Sparks`. Fixed dice live in a dice piece, made once and linked
   from any tool.
@@ -40,7 +41,7 @@ All four are read-only: none changes the scene or the library.
 
 ## In a scene
 
-A scene links tools by id in its prompting (`ChatPrompting.tools`, at most 20, in order). They are offered only when
+A scene links tools by id in its prompting (`ChatPrompting.tools`, in order, no duplicates). They are offered only when
 Narrator Tool Access is on, the connection takes tools and the turn is not a Continue, the same gates as the lorebook
 lookup. `src/studio/library-tools.ts` reads each linked tool, and the dice piece or formula its action links, through their kinds'
 strict decoders, and leaves out a tool that is gone or unreadable or whose dice piece or formula is. A tool's call name comes from its name (`callName`): lowercase, starting with a letter (`tool_` goes in front

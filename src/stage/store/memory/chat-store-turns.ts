@@ -1,15 +1,16 @@
 /**
  * The memory ChatStore's turn half ('s request
- * text): checkpoints, the commit that stores a reply with its trace and the take's latest request
- * text, and a branch's macro variables. Nothing here awaits, so each method is atomic like the rest of
+ * text): checkpoints, and the commit that stores a reply with its trace, the take's latest request
+ * text and the scene-state deltas the turn made (rule 17). Nothing here awaits, so each method is atomic like the rest of
  * the memory store.
  */
-import type { ChatStore, Message, StoredVariable, TurnCheckpoint, WriteGuard } from "../../contracts/chat-store";
+import type { ChatStore, Message, TurnCheckpoint, WriteGuard } from "../../contracts/chat-store";
 import { StudioConflictError } from "../../../studio/atomic-file";
-import { checkGuard, checkProgress, checkTurnResult, checkTurnTarget, checkVariableDiff, variableAfterSet } from "../chat-rules";
+import { checkGuard, checkProgress, checkTurnResult, checkTurnTarget } from "../chat-rules";
 import { continuedGeneration } from "../continue-rules";
 import { checkRerun, traceWithRerun } from "../final-cut-rules";
 import { publicMessage, type ChatRecord, type MessageRecord } from "./chat-records";
+import type { MemoryState } from "./chat-store-state";
 
 export interface TurnDeps {
   clock: () => number;
@@ -21,16 +22,16 @@ export interface TurnDeps {
   requireVersion: (branchId: string, expected: number | undefined) => void;
   bump: (branchId: string) => void;
   appendMany: (branchId: string, inputs: unknown, guard: WriteGuard | undefined) => Message[] | null;
+  state: Pick<MemoryState, "stamp" | "refresh">;
 }
 
 type TurnMethods = Pick<
   ChatStore,
-  "swipeTrace" | "appendFinalCutRerun" | "beginTurn" | "saveCheckpoint" | "commitTurn" | "dropTurn" | "resumeIncomplete" | "variables" | "changeVariables" | "lastRequest"
+  "swipeTrace" | "appendFinalCutRerun" | "beginTurn" | "saveCheckpoint" | "commitTurn" | "dropTurn" | "resumeIncomplete" | "lastRequest"
 >;
 
 export function turnMethods(d: TurnDeps): TurnMethods & { turnOpen(chatId: string): boolean } {
   const checkpoints = new Map<string, TurnCheckpoint>();
-  const variablesOf = new Map<string, Map<string, StoredVariable>>();
   /** The branch's latest committed reply's request text (rule 22); replaced whole on each commit. */
   const lastRequestOf = new Map<string, { messageId: string; swipeId: string; texts: string[] }>();
   /** A checkpoint a caller may see or touch: its branch and chat are live (rule 16). */
@@ -38,8 +39,6 @@ export function turnMethods(d: TurnDeps): TurnMethods & { turnOpen(chatId: strin
     const c = checkpoints.get(turnId);
     return c && d.liveChatOfBranch(c.branchId) ? c : null;
   };
-  const asRecord = (vars: Map<string, StoredVariable> | undefined): Record<string, StoredVariable> =>
-    structuredClone(Object.fromEntries(vars ?? []));
 
   return {
     /** Whether a live take of the chat has an open checkpoint (rule 26). */
@@ -99,6 +98,7 @@ export function turnMethods(d: TurnDeps): TurnMethods & { turnOpen(chatId: strin
         content: progress.content,
         ...(progress.trace ? { trace: progress.trace } : {}),
         ...(progress.providerRequestId === undefined ? {} : { providerRequestId: progress.providerRequestId }),
+        ...(progress.deltas ? { deltas: progress.deltas } : {}),
         savedAt: d.clock(),
       };
       checkpoints.set(turnId, next);
@@ -139,6 +139,11 @@ export function turnMethods(d: TurnDeps): TurnMethods & { turnOpen(chatId: strin
         d.bump(m.branchId);
         message = m;
       }
+      // The turn's scene-state deltas belong to the version it stored; a continue extends a version that already has its own (rule 17).
+      if (c.kind !== "continue") {
+        d.state.stamp(message.swipes[message.current]!.id, c.deltas ?? []);
+        d.state.refresh(c.branchId, message.seq);
+      }
       if (request && c.kind !== "continue") lastRequestOf.set(c.branchId, { messageId: message.id, swipeId: message.swipes[message.current]!.id, texts: request.texts });
       checkpoints.delete(turnId);
       return publicMessage(message);
@@ -155,30 +160,10 @@ export function turnMethods(d: TurnDeps): TurnMethods & { turnOpen(chatId: strin
         .map((c) => structuredClone(c));
     },
 
-    async variables(branchId) {
-      return d.liveChatOfBranch(branchId) ? asRecord(variablesOf.get(branchId)) : null;
-    },
-
     async lastRequest(branchId) {
       if (!d.liveChatOfBranch(branchId)) return null;
       const r = lastRequestOf.get(branchId);
       return r ? structuredClone(r) : null;
     },
-
-    async changeVariables(branchId, diffRaw) {
-      const { set, remove } = checkVariableDiff(diffRaw);
-      if (!d.liveChatOfBranch(branchId)) return null;
-      const vars = variablesOf.get(branchId) ?? new Map<string, StoredVariable>();
-      const t = d.clock();
-      for (const [name, value] of set) {
-        const before = vars.get(name);
-        const next = variableAfterSet(before, value, t);
-        if (next) vars.set(name, next);
-      }
-      for (const name of remove) vars.delete(name);
-      variablesOf.set(branchId, vars);
-      return asRecord(vars);
-    },
-
   };
 }

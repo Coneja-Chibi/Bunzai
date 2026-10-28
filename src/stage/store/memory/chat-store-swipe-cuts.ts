@@ -16,6 +16,7 @@ export function swipeCutMethods(k: {
   bump(branchId: string): void;
   touch(record: ChatRecord): void;
   liveChatOfBranch(branchId: string): ChatRecord | null;
+  refresh(branchId: string, fromSeq: number): void;
 }): Pick<ChatStore, "cutSwipe" | "restoreSwipe" | "swipeGraveyard"> {
   return {
     async cutSwipe(messageId, swipeId, guard) {
@@ -30,6 +31,7 @@ export function swipeCutMethods(k: {
       if (m.current === at) m.current = nearestLive(live, at);
       m.swipes[at]!.cutAt = k.clock();
       k.bump(m.branchId);
+      k.refresh(m.branchId, m.seq);
       k.touch(k.liveChatOfBranch(m.branchId)!);
       return publicMessage(m);
     },
@@ -43,6 +45,7 @@ export function swipeCutMethods(k: {
       if (swipe.cutAt !== undefined) {
         delete swipe.cutAt;
         k.bump(m.branchId);
+        k.refresh(m.branchId, m.seq);
         k.touch(k.liveChatOfBranch(m.branchId)!);
       }
       return publicMessage(m);

@@ -42,7 +42,7 @@ function spied(chats: ChatStore): { chats: ChatStore; calls: string[] } {
   const proxy = new Proxy(chats, { get: (target, key) => { calls.push(String(key)); return Reflect.get(target, key); } });
   return { chats: proxy, calls };
 }
-const READS = new Set(["getChat", "lightCastSnapshot", "readMessages", "variables", "swipeTrace", "then"]);
+const READS = new Set(["getChat", "lightCastSnapshot", "readMessages", "sceneState", "sceneStateBefore", "swipeTrace", "then"]);
 
 async function scene(over: { preset?: PresetBody; reply?: string; fail?: Error; connected?: boolean; persona?: boolean } = {}) {
   let now = 1_000;
@@ -79,7 +79,7 @@ async function scene(over: { preset?: PresetBody; reply?: string; fail?: Error; 
   };
   const branch = chat.activeBranchId;
   /** Everything the take holds that a draft must leave alone. */
-  const snapshot = async () => JSON.stringify({ page: await chats.readMessages(branch, { limit: 50 }), vars: await chats.variables(branch), resume: await chats.resumeIncomplete(), meter: await state.read("meter"), globals: await state.read("variables") });
+  const snapshot = async () => JSON.stringify({ page: await chats.readMessages(branch, { limit: 50 }), vars: await chats.sceneState(branch), resume: await chats.resumeIncomplete(), meter: await state.read("meter"), globals: await state.read("variables") });
   const draft = (input: DraftBody, signal?: AbortSignal) => runDraft(deps, { chatId: chat.id, ...input } as DraftInput, signal);
   return { chats, state, chat, sent, signals, draft, snapshot, calls: watch.calls, deps };
 }

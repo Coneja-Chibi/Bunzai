@@ -111,6 +111,12 @@ export function moveRowsSql(db: Database, plan: MovePlan): number {
       const there = use(db, "SELECT 1 AS n FROM blobs WHERE key = ?", (st) => st.get(key));
       if (!used && there) moveOne({ table: "blobs", key: JSON.stringify([key]) });
     }
+    // Scene state is a cache of the deltas and of what each take shows (rule 17), and rows set aside may be some of them: drop it,
+    // and a read builds it from what is left until the next change to a take writes it again.
+    if (moved > 0) {
+      use(db, "DELETE FROM state_keyframes", (st) => st.run());
+      use(db, "DELETE FROM branch_state", (st) => st.run());
+    }
     return moved;
   });
 }

@@ -18,6 +18,8 @@ export interface MacroPass {
   write(text: string): string;
   /** Stored history: read-only, with a seed of its own. */
   historical(text: string): string;
+  /** A text this turn builds from state it reads (a tracker's template): read-only like history, but its macro errors and uses go to the turn's macro report like any other. */
+  reported(text: string): string;
   /** RoleCall's own macro names, filled in as assembly learns them. */
   legacy: Record<string, string>;
   context: MacroContext;
@@ -65,6 +67,11 @@ export function macroPass(overrides: Partial<MacroContext>, legacy: Record<strin
       sink?.add({ ...done, errors: done.errors.filter((e) => !isLegacy(e.macro)) });
       return done.text;
     }),
+    reported: (text) => {
+      const done = processMacros(text, { ...context, readOnly: true, randomSeed: seedOf(text), localVariables: new Map(context.localVariables) });
+      sink?.add({ ...done, errors: done.errors.filter((e) => !isLegacy(e.macro)) });
+      return secondPass(done.text);
+    },
     historical: (text) =>
       run(text, readOnlyCache, (t) =>
         processMacros(t, { ...context, readOnly: true, randomSeed: seedOf(t), localVariables: new Map(context.localVariables) }).text,

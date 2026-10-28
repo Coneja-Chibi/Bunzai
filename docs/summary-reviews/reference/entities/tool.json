@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/tool",
   "sourcePath": "docs/reference/entities/tool.md",
-  "sourceHash": "sha256:af4a8eb9bcda436c380e8329c172366c6d7d583a9e80282f899ef2cbc9c22594",
-  "semanticSummaryHash": "sha256:c66ddabd032966016cbd2980760441c5e6299ae767036ddb4c255ddfca336d97",
+  "sourceHash": "sha256:8d0ea2c382af5f0e239bd6cd61def0935c1dd30d6cc40b496d0f016cce762f31",
+  "semanticSummaryHash": "sha256:914422694f724808ff14658ad154b715f9032761948b22386bdb3d20785a068f",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Four actions (roll, dice, formula, record) match ToolAction and runTool; library-tools skips a tool whose dice piece or formula is gone; counts say four consistently.",
-  "reviewedAt": "2026-10-27T10:37:40.386Z"
+  "notes": "No product caps remain (field names keep the 64-character provider rule, call names 60); roll accepts any dice with one die of two sides, summarised past 20; dice and formula actions as in tools.ts and runtime-schema (SANITY ceilings); no stale number in page or summaries.",
+  "reviewedAt": "2026-10-27T21:14:13.233Z"
 }

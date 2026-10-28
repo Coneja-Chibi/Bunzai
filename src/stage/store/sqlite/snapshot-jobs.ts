@@ -18,11 +18,11 @@ export const CLEARED_TABLES = ["derived_rows"] as const;
 export const JOURNAL_TABLE = "piece_changes";
 /** Everything a person wrote or collected: replaced whole by a restore. */
 export const CONTENT_TABLES = [
-  "blob_refs", "blobs", "branch_variables", "branches", "chats", "compendium_receipts", "compendium_trees", "director_states", "document_graves", "document_summaries", "document_versions",
+  "blob_refs", "blobs", "branch_base", "branch_state", "branch_variables", "branches", "chats", "compendium_receipts", "compendium_trees", "director_states", "document_graves", "document_summaries", "document_versions",
   "documents", "grave_summaries", "grave_versions", "kit_sessions", "legacy_document_graves_v17", "legacy_document_summaries_v17",
-  "legacy_document_versions_v17", "legacy_documents_v17", "legacy_grave_summaries_v17", "legacy_grave_versions_v17", "messages",
+  "legacy_document_versions_v17", "legacy_documents_v17", "legacy_grave_summaries_v17", "legacy_grave_versions_v17", "message_deltas", "messages",
   "persona_stats",
-  "piece_parts", "retired_ids", "scene_folders", "set_aside", "studio_state", "swipe_history", "swipe_traces", "swipes", "turn_checkpoints",
+  "piece_parts", "retired_ids", "scene_folders", "set_aside", "state_keyframes", "studio_state", "swipe_deltas", "swipe_history", "swipe_traces", "swipes", "turn_checkpoints",
 ] as const;
 
 /**

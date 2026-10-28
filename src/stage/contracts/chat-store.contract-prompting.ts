@@ -7,6 +7,7 @@ import { describe, expect, test } from "bun:test";
 import { StudioValidationError } from "../../studio/errors";
 import type { ChatNote, ChatStore } from "./chat-store";
 import { chatRig } from "./chat-store.contract-rig";
+import { SANITY_LIST } from "../../entities/_shared/sanity";
 
 export function chatStorePromptingContract(make: (clock: () => number) => ChatStore): void {
   const { seeded } = chatRig(make);
@@ -68,9 +69,30 @@ export function chatStorePromptingContract(make: (clock: () => number) => ChatSt
       expect((await store.setPrompting(chat.id, { tools: ["luck", "promise"] }))!.prompting).toEqual({ tools: ["luck", "promise"] });
       await store.setPrompting(chat.id, { tools: [] });
       expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
-      for (const bad of ["luck", [1], ["a", "a"], [""], Array.from({ length: 21 }, (_, i) => `t${i}`)]) {
+      for (const bad of ["luck", [1], ["a", "a"], [""], Array.from({ length: SANITY_LIST + 1 }, (_, i) => `t${i}`)]) {
         await expect(store.setPrompting(chat.id, { tools: bad } as never)).rejects.toBeInstanceOf(StudioValidationError);
       }
+      // owner rule (limits rework): 20 was a product limit; a scene links as many tools as it likes, and only a hostile list is refused
+      const many = Array.from({ length: 300 }, (_, i) => `t${i}`);
+      expect((await store.setPrompting(chat.id, { tools: many }))!.prompting).toEqual({ tools: many });
+      await store.setPrompting(chat.id, { tools: null });
+    });
+
+    test("linked library trackers are a list of ids kept in order, apart from the tools; an empty list or null clears them", async () => {
+      const { store, chat } = await seeded(1);
+      expect((await store.setPrompting(chat.id, { trackers: ["health", "party"], tools: ["luck"] }))!.prompting).toEqual({ trackers: ["health", "party"], tools: ["luck"] });
+      expect((await store.setPrompting(chat.id, { tools: null }))!.prompting).toEqual({ trackers: ["health", "party"] });
+      await store.setPrompting(chat.id, { trackers: [] });
+      expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
+      await store.setPrompting(chat.id, { trackers: ["health"] });
+      await store.setPrompting(chat.id, { trackers: null });
+      expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
+      for (const bad of ["health", [1], ["a", "a"], [""], Array.from({ length: SANITY_LIST + 1 }, (_, i) => `t${i}`)]) {
+        await expect(store.setPrompting(chat.id, { trackers: bad } as never)).rejects.toBeInstanceOf(StudioValidationError);
+      }
+      const many = Array.from({ length: 300 }, (_, i) => `t${i}`);
+      expect((await store.setPrompting(chat.id, { trackers: many }))!.prompting).toEqual({ trackers: many });
+      await store.setPrompting(chat.id, { trackers: null });
     });
 
     test("Reasoning Effort, Start Reply With, its role and Catch thinking are kept only while set, and clear with null", async () => {

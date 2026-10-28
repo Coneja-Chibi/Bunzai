@@ -2,7 +2,7 @@
  * A second writer ("Before the turn loop" item 3): another connection
  * holding the write lock never stalls the app or surfaces a raw SQLite error. Each chat store write
  * tries the lock without waiting, again and again off the main thread, up to its limit: 250 ms for a
- * checkpoint save, 30 s for a commit or a variable write, 10 s for the rest. Reads never wait.
+ * checkpoint save, 30 s for a commit or a save that carries a turn's scene-state deltas (nothing supersedes those), 10 s for the rest. Reads never wait.
  */
 import { Database } from "bun:sqlite";
 import { afterEach, expect, test } from "bun:test";
@@ -102,6 +102,19 @@ test("a checkpoint save gives up after about 250 ms with the busy error, and the
   expect((await store.getChat(chat.id))!.title).toBe("Night market");
 });
 
+test("a checkpoint save that carries the turn's scene-state deltas waits for the lock and lands once it frees, so the variables a reply wrote are never lost", async () => {
+  const { store, chat, lock, unlock, other } = await twoWriters();
+  const turn = await store.beginTurn(chat.activeBranchId, { kind: "reply" });
+  const { tries } = recordTries(other);
+  lock();
+  setTimeout(unlock, 600);
+  const { result, ms } = await timed(() => store.saveCheckpoint(turn!.id, { content: "", deltas: [{ slot: "vars", path: ["n"], value: 1, at: 1 }] }));
+  expect(result.status).toBe("fulfilled");
+  expect(ms).toBeGreaterThanOrEqual(550);
+  expect(tries.length).toBeGreaterThan(1);
+  expect((await store.resumeIncomplete())[0]!.deltas).toEqual([{ slot: "vars", path: ["n"], value: 1, at: 1 }]);
+});
+
 test("a commit waits for the lock and lands once it frees", async () => {
   const { store, chat, lock, unlock, other } = await twoWriters();
   const turn = await store.beginTurn(chat.activeBranchId, { kind: "reply" });
@@ -117,11 +130,12 @@ test("a commit waits for the lock and lands once it frees", async () => {
   expect(parked).toEqual([]);
 });
 
-test("variable writes and ordinary writes outlast a short hold, unlike a checkpoint save", async () => {
+test("scene-state writes and ordinary writes outlast a short hold, unlike a checkpoint save", async () => {
   const { store, chat, lock, unlock } = await twoWriters();
   const branch = chat.activeBranchId;
+  const seed = await store.appendMessage(branch, { role: "user", content: "seed" });
   for (const write of <(() => Promise<unknown>)[]>[
-    () => store.changeVariables(branch, { set: { a: 1 } }),
+    () => store.recordMessageDeltas(branch, seed!.id, [{ slot: "vars", path: ["a"], value: 1, at: 1 }]),
     () => store.renameChat(chat.id, "Renamed"),
     () => store.appendMessage(branch, { role: "user", content: "hi" }),
     () => store.setConnection(chat.id, { id: "c", model: "m" }),

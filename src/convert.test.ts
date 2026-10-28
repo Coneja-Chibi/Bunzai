@@ -122,6 +122,8 @@ function minimalEntity(kind: FormatAdapter["kind"]): ParsedCanonicalEntity {
       return { ...envelope, kind, body: { name: "Conversion dice", description: "", type: "roll", dice: "1d20" } };
     case "formula":
       return { ...envelope, kind, body: { name: "Conversion formula", description: "", text: "{{roll::1d6}}" } };
+    case "tracker":
+      return { ...envelope, kind, body: { name: "Conversion tracker", description: "", layout: "record", note: "", fields: [{ name: "value", description: "", type: "number", default: 0 }] } };
     case "tool":
       return { ...envelope, kind, body: { name: "Conversion tool", description: "", fields: [], action: { kind: "record" } } };
     case "htmldoc":

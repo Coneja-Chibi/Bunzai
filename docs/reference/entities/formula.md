@@ -10,7 +10,7 @@ related: [reference/macro-engine, reference/entities/tool, reference/entities/di
 # Formula entity
 
 A `CanonicalFormula` is `CanonicalEntity<"formula", FormulaBody>`: a `name`, a `description`, and `text`, one macro
-expression of up to 20,000 characters, such as `{{calc::{{mentions::storm::20}} + {{roll::1d6}}}}`. A formula is
+expression (bounded only by the hostile-input text ceiling, 1,000,000 characters), such as `{{calc::{{mentions::storm::20}} + {{roll::1d6}}}}`. A formula is
 macro text and nothing else: what it can do is what the macro engine gives it ([macro-engine.md](../macro-engine.md)),
 including Bunraku's own `{{mentions}}`, `{{lastmention}}`, `{{tally}}` and `{{odds}}`. The decoder checks only the
 shape and the size; an unknown macro or a bad argument is reported when the formula runs.
@@ -32,13 +32,24 @@ choice in a variable, so a formula cannot use it. A message that holds macro tex
 cannot write through a formula either; a message holding a write macro makes a formula that reads message text (such
 as `{{lastmessage}}`) fail. A blank formula and a macro error are refused, so a half run is never the answer.
 
-A formula runs on its own step budget, `FORMULA_STEPS` (1,000), far below the engine's 1,000,000, so a model calling
-one round after round cannot tie up the server. That fits a formula of roughly 100 macro calls; a longer one stops at
-the budget, well before the 20,000-character size limit. The word-watching macros search for at most 200 new words
-in one run, so asking for new words on every step cannot make a run slow either. The worst cases measured over
-a 200-message chat of about 400 KB (loops over the same words, over new words every step, and over the whole recent
-history) stop in about 55 ms per call; `formula.test.ts` holds them under 500 ms. Each call takes its own seed from the
-turn's seeded randomness, so the same seed rolls the same.
+A formula has no step number of its own. The tool loop owns a time budget for all of one reply's tool calls
+(`TOOL_BUDGET_MS_DEFAULT`, 5 seconds, overridden by the setting `scenes.toolBudgetMs`, which has no screen yet and is
+for the wireframe pass): every tool run is handed what is left as a deadline, a call made after the budget is spent is
+answered with an error and not run (a state-scoped write, the trackers' update, is cheap and keeps the narration and the
+state in step, so it still runs, whole and with no deadline), and the macro engine checks the deadline's clock
+every 64 nodes (`DEADLINE_CHECK_EVERY`, internal tuning), after every handler, and inside every loop of the word-watching
+macros that scales with its input (the index build, phrase matching, a tally's words). A run that passes it stops with the error
+the model reads ("the time budget for this run is spent; stopped") and the formula answers with that error, never as if it
+had finished. The engine reads no ambient time (ADR-012), so the loop's clock is handed in. The engine's own caps still hold.
+A formula's run copies everything it could write and shares the chat's messages, which it only reads, so the word index the
+chat-watch macros keep for that message list is built once and reused by every later call over the same chat. The index is
+positional (each word with its message and place in it): a single word is a read, and a phrase starts from its rarest word's
+places and checks the rest only there, so what it costs follows how often that word occurs, not the size of the chat. What the
+tests hold (`chat-watch.test.ts`): 10,000 different single lookups and 1,000 phrase lookups over a 200-message chat of about
+400 KB finish under 5 s; 3,000 different phrases on the common first word "the" over 1,500 messages finish under 2 s; a
+tally of thousands of phrases stops at a spent deadline with the error in the report. Measured once on the development
+machine, not pinned: the first case took about 80 to 280 ms. Each call takes its
+own seed from the turn's seeded randomness, so the same seed rolls the same.
 
 Writing from a formula, as a preset's macros do while a prompt is built, is not offered yet.
 

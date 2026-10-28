@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/scene-state",
+  "sourcePath": "docs/reference/scene-state.md",
+  "sourceHash": "sha256:203d4a5baa563f8cbf296285d867178cc8bf7c03cb46bb147afd64434fce714a",
+  "semanticSummaryHash": "sha256:5289f6676f7212a6d041ba7c67ba3795a9b582efbc5e7f32b11007e03627ffa8",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Variable history sentence now reads the newest 400 replies (HISTORY_SCAN), matching the route. Import ceiling counts only the incoming write (checkImportedDeltas), no per-version cap, tracker door tracker-slots-only; rest unchanged and verified. Sections 105-180 words.",
+  "reviewedAt": "2026-10-28T01:31:11.677Z"
+}

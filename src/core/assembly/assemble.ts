@@ -30,7 +30,8 @@ import { DEFAULT_IMPERSONATION_PROMPT, impersonationText } from "../draft-prompt
 import { cardView } from "./card";
 import { applyGuides, decorateMacroValue, prependUserGuides, resolveGuides, startLatchKey } from "./guides";
 import { noteDue, placeNote } from "./note";
-import { injectionTexts, placeBlock, trackersText } from "./trackers";
+import { injectionTexts, linkedTrackersText, placeBlock, trackersText } from "./trackers";
+import { refreshTrackerTexts, trackerViews } from "../tracker";
 import { storyboardsBlock } from "./storyboards";
 import { placeDirector } from "./director";
 import { DEFAULT_LORE_SHARE, type AssemblyInput, type HistoryMessage, type AssemblyResult, type AssembledMessage, type AssemblyLoreHit, type VariableDiff } from "./types";
@@ -104,7 +105,11 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     ...(input.preset ? { presetPrompts: plan.info } : {}),
     ...(choiceGroups.length > 0 ? { choiceGroups, choiceSelections } : {}),
     ...(input.persona?.presentation?.signatureColor ? { personaAccentColor: input.persona.presentation.signatureColor } : {}),
+    ...(input.deadline ? { deadline: input.deadline } : {}),
   };
+  // The library trackers the scene links, for {{tracker::...}} (core/tracker.ts); each one's template renders below, once the pass exists.
+  const linked = trackerViews(input.linkedTrackers);
+  if (linked.size > 0) context.trackers = linked;
   const sink = macroSink(countText);
   const macros = macroPass(context as Partial<MacroContext>, {
     world: "",
@@ -123,6 +128,9 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     message_history: HISTORY_MARKER,
     last_message: "",
   }, input.randomSeed, sink);
+
+  refreshTrackerTexts(linked, macros.reported);
+  const linkedText = linkedTrackersText(linked.values());
 
   // Section 4.6: a chat-start guide runs once per scene for its side effects and its text is dropped; the latch keeps a regenerate from rolling it again.
   for (const g of guides.chatStart) {
@@ -251,6 +259,9 @@ export function assemble(input: AssemblyInput): AssemblyResult {
         ...(loreImportant.length > 0 ? [loreImportant.join("\n")] : []),
         ...(recallPlaced?.text ? [recallPlaced.text] : []),
         ...(recapBlocks.length > 0 ? [recapBlocks.map((b) => b.content).join("\n")] : []),
+        // The trackers' block and the texts that ride beside the messages (the tool definitions) are fixed, like the card: history gives way to them, never they to history.
+        ...(linkedText ? [linkedText] : []),
+        ...(input.reserved ?? []),
       ],
       raw: shown.map((m) => m.content),
       history: kept,
@@ -356,7 +367,9 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   let overflow = false;
   if (input.window && input.window.context > 0 && input.budgeter) {
     const cap = Math.max(1, input.window.context - (input.window.reply || FALLBACK_REPLY));
-    const { keep, dropped, overflow: over } = input.budgeter.finalPass(blocks.map(toMessage), cap, blocks.map((b) => b.source.kind === "history"));
+    // The fixed texts are measured as messages at the end, so the pass counts them; their entries in `keep` are never read (blocks has none).
+    const fixed: AssembledMessage[] = [...(linkedText ? [linkedText] : []), ...(input.reserved ?? [])].map((content) => ({ role: "system", content }));
+    const { keep, dropped, overflow: over } = input.budgeter.finalPass([...blocks.map(toMessage), ...fixed], cap, [...blocks.map((b) => b.source.kind === "history"), ...fixed.map(() => false)]);
     for (const [i, b] of blocks.entries()) if (!keep[i] && b.source.kind === "history") trimmed.push(b.source.messageId);
     blocks = blocks.filter((_, i) => keep[i]);
     finalPassDropped = dropped;
@@ -370,6 +383,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   const tracked = trackersText(input.trackers, history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1));
   if (tracked) blocks = placeBlock(blocks, tracked, "trackers");
   for (const note of injectionTexts(input.trackers, history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1))) blocks = placeBlock(blocks, note, "trackers");
+  if (linkedText) blocks = placeBlock(blocks, linkedText, "trackers");
   const boards = storyboardsBlock(input.storyboards, history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1));
   if (boards) blocks = placeBlock(blocks, boards, "storyboards");
   // The Story Director (director.ts): this turn's directive at depth 1 and its contract at the top, after the budget so neither is ever dropped.
@@ -400,7 +414,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   return {
     messages: blocks.map(toMessage),
     trace: blocks.map((b) => ({ source: b.source, role: b.role, tokens: countText(b.content) })),
-    budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}) },
+    budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}), ...(linkedText || (input.reserved?.length ?? 0) > 0 ? { fixed: true as const } : {}) },
     local,
     global,
     ...(sink.report() ? { macros: sink.report()! } : {}),

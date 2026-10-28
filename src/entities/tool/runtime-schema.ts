@@ -3,30 +3,22 @@ import { z } from "zod";
 import { defineExhaustiveShape } from "../_shared/runtime-shape";
 import { entityShape } from "../_shared/envelope";
 import { pieceShape } from "../_shared/canonical-value-schemas";
+import { SANITY_LIST, SANITY_TEXT } from "../_shared/sanity";
+import { CHOICES_RULE, choicesFit, fieldBasicsShape } from "../_shared/field-schema";
 import type { CanonicalTool, ToolBody, ToolField } from "./schema";
 
-export const TOOL_FIELDS_MAX = 12;
-export const TOOL_CHOICES_MAX = 20;
-const FIELD_NAME = /^[a-z][a-z0-9_]{0,39}$/;
-
-const fieldSchema = z.strictObject(defineExhaustiveShape<ToolField>()({
-  name: z.string().regex(FIELD_NAME),
-  description: z.string().max(500),
-  type: z.enum(["text", "number", "boolean", "choice"]),
-  choices: z.array(z.string().min(1).max(100)).min(1).max(TOOL_CHOICES_MAX).refine((c) => new Set(c).size === c.length, "choices must be unique").optional(),
-  required: z.boolean(),
-})).refine((f) => (f.type === "choice") === (f.choices !== undefined), "only a choice field has choices, and it needs them");
+const fieldSchema = z.strictObject(defineExhaustiveShape<ToolField>()({ ...fieldBasicsShape, required: z.boolean() })).refine(choicesFit, CHOICES_RULE);
 
 const actionSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("roll"), field: z.string() }),
-  z.strictObject({ kind: z.literal("dice"), id: z.string().min(1).max(120) }),
-  z.strictObject({ kind: z.literal("formula"), id: z.string().min(1).max(120) }),
+  z.strictObject({ kind: z.literal("dice"), id: z.string().min(1).max(SANITY_TEXT) }),
+  z.strictObject({ kind: z.literal("formula"), id: z.string().min(1).max(SANITY_TEXT) }),
   z.strictObject({ kind: z.literal("record") }),
 ]);
 
 const bodyShape = defineExhaustiveShape<ToolBody>()({
   ...pieceShape,
-  fields: z.array(fieldSchema).max(TOOL_FIELDS_MAX),
+  fields: z.array(fieldSchema).max(SANITY_LIST),
   action: actionSchema,
 });
 

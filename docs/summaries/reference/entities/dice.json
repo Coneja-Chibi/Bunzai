@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/entities/dice",
   "sourcePath": "docs/reference/entities/dice.md",
-  "sourceHash": "sha256:db3f7efc03badc90a1f3fa51c1d7efb534f744a1782cfd68d8c776f45a09c405",
+  "sourceHash": "sha256:c82e907b23cb33856c84240b676c46674020293a599cbb6c1acd9f421af78976",
   "summary": "The dice entity page covers CanonicalDice, something a person rolls, made once and used anywhere. It is one kind with three types, a roll, a table or a pool, and each carries only the field its type rolls. Rolling itself is not a piece but math in src/core/dice.ts, the same module the roll macro, the battle tracker and the spellbook use, while rollDicePiece in src/core/dice-piece.ts says what each type rolls on randomness the caller hands in. The page lists the types with example results, says a tool links a dice piece by id so a model can roll it with the turn's seeded randomness, gives the rules checked when a piece is saved, and notes that the editor waits for its wireframe while New dice saves a blank 1d20 roll.",
   "topics": [
     "CanonicalDice",
@@ -17,8 +17,8 @@
       "slug": "types",
       "title": "Types",
       "level": 2,
-      "sourceHash": "sha256:8788e72057fc0b57bd8e730ca371f278c918985cb183454182b8508dc5bafb5b",
-      "summary": "A roll carries dice, notation such as 2d6 or 1d20+3, and totals it, answering with the piece's name, the notation, each die, the modifier and the total. A table carries rows, from one to two hundred, each a text and a whole weight from one to one thousand; it rolls one die the size of all the weights together and lands on the row that number falls in, so a row of weight two is twice as likely as a row of weight one. A pool carries a count of dice from one to one hundred, their sides from two to one thousand, and a target; each die at or over the target counts as a success, and the answer lists the dice and the number of successes.",
+      "sourceHash": "sha256:8ec14864e6d475ef5b23f2cfcf12ed411393261024170801e91c0e893f32373d",
+      "summary": "A roll carries dice, notation such as 2d6 or 1d20+3, and totals it, answering with the piece's name, the notation, each die, the modifier and the total. A table carries rows, of at least one, each a text and a whole weight of one or more; it rolls one die the size of all the weights together and lands on the row that number falls in, so a row of weight two is twice as likely as a row of weight one. A pool carries a count of dice, their sides of two or more, and a target; each die at or over the target counts as a success, and the answer lists the dice and the number of successes. A roll is never refused or shortened for being big: the answer lists each die up to twenty dice, then gives the count, lowest, highest and total, and the trace keeps every die.",
       "topics": [
         "roll",
         "table rows and weights",
@@ -43,8 +43,8 @@
       "slug": "the-rules",
       "title": "The rules",
       "level": 2,
-      "sourceHash": "sha256:97b3892767560aab38c2f575abb96946edaa25895546042a292f891cdfa60c8c",
-      "summary": "A piece carries exactly the field its type rolls and no other field: a roll carries dice, a table carries rows, and a pool carries pool. A roll's dice must be readable notation of one to one hundred dice of two to one thousand sides, and a pool's target may not be greater than its number of sides. All of these rules are checked when the piece is saved, by the dice kind's strict decoder, so a stored piece can always be rolled and never fails at the moment a tool or anything else asks it for a result. Nothing about the rules is deferred to roll time.",
+      "sourceHash": "sha256:627506d9b7ced674791473ee1a1bc40168bc82e2763597a842925839f7af7e6b",
+      "summary": "A piece carries exactly the field its type rolls and no other field: a roll carries dice, a table carries rows, and a pool carries pool. A roll's dice must be readable notation with at least one die of at least two sides, and a pool's target may not be greater than its number of sides. All of these rules are checked when the piece is saved, by the dice kind's strict decoder, so a stored piece can always be rolled and never fails at the moment a tool or anything else asks it for a result. The only other bounds are hostile-input ceilings, set about a hundred times past real use and refused as unusually large, not design limits.",
       "topics": [
         "one field per type",
         "dice limits",

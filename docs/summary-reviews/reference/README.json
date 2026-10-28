@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/README",
   "sourcePath": "docs/reference/README.md",
-  "sourceHash": "sha256:88120e5bc1b8be3d9c94ac84238f55a15c060bbee6379aa778ef3567f455a140",
-  "semanticSummaryHash": "sha256:aaef231b190a12f5dd877898a3fbf2f4568a1841aef6d2ff51db771f402aba8a",
+  "sourceHash": "sha256:1b3e83628ba441f9864a91acb2f6b5751189393f99278f3881713777afd08f57",
+  "semanticSummaryHash": "sha256:0120861e7c081ce22646bb20317ba38493ea025009f1b4b75c5ff72ccbc2a168",
   "verdict": "APPROVE",
-  "reviewer": "independent-opus-meter-reviewer",
-  "notes": "Reviewed the changed Map row and sidecar Map section: token-meter.md exists and the row's description (base counts, per-model fits, cache planning, cache-friendly trimming) matches src/core/tokens. scan:links clean. Unchanged text relies on the prior approval.",
-  "reviewedAt": "2026-09-27T21:14:40.633Z"
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "New map row for scene-state.md matches the page. Sidecar summaries make no claim the row contradicts.",
+  "reviewedAt": "2026-10-27T18:08:50.743Z"
 }

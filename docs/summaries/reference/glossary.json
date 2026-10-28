@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/glossary",
   "sourcePath": "docs/reference/glossary.md",
-  "sourceHash": "sha256:2845bdcbdb3c18569b4a13273be5eaec4e3d5d84454d53524efe029c3b81b6d8",
+  "sourceHash": "sha256:3f4c120524fd141aad15224a0fd04951fca57a13236b18b4add6c9c7bdb87773",
   "summary": "The glossary answers two questions an agent or new contributor meets first: what does this word mean here, and which folder owns it. It opens with a table explaining every top-level folder, including the ones whose names mislead: src/studio is the Studio's disk storage while its screens live in src/ui, and src/docs is code that checks documentation rather than the documentation itself. Five word tables follow, grouped as the engine and formats, the Studio and Kit, the Stage chat runtime, encryption, and process and docs. Each row gives the word, its meaning in plain language as used in this repository, the owning file or folder, and the trap to avoid, since several words carry two meanings: spoke (a format hub versus a Stage provider), gate (Kit's apply-or-discard pause versus the commit checks), doctor (Kit's self-check versus the planned card health check), keyring (Bunraku's key store versus the Linux Secret Service), and sidecar (a docs summary file versus the Go companion). For finding a single file, the page points to the generated code map at docs/generated/CODE-MAP.md, which lists every source file with the first sentence of its opening comment. The page is kept true by bun run glossary:check, part of verify:ci, which fails when a path the page names no longer exists or when a folder directly under src/ is missing from the folder table. New piece-part, derived-result, PieceStore, search, cold-fill and performance-evidence terms identify the current owner and proof traps. Snapshot, health check, row fingerprint, set aside and Compendium terms name their owners and traps.",
   "topics": [
     "glossary",
@@ -69,17 +69,17 @@
       "slug": "the-stage-the-chat-runtime",
       "title": "The Stage (the chat runtime)",
       "level": 2,
-      "sourceHash": "sha256:7ce79b03497852c2b3c37aa99a694309fdcd907e6517240a64f316e7bde2de1f",
-      "summary": "Stage is the encrypted chat/library runtime behind contracts and provider/pipeline owners. Cast is the frozen roster, branch/swipe are forks and alternate replies, and turn is a full generation. PieceStore shares accepted summaries without becoming body authority; portable search contracts differ from native worker/persistence owners. Cold fill is bounded reconstruction with logical admission rather than measured RSS. Performance evidence is revision/artifact-bound observations, currently source definitions without measured results. Background lanes and breathers keep expensive work off the UI path. The health check opens every sealed cell on the lane and sets damaged rows aside, never deleting; freeze gate adds perf-gate-health.ts. A loadout is a saved bundle of a scene's own settings kept as one sealed library document rather than a piece, and a loadout receipt is the record of an apply that lets Undo restore the changed settings for 15 minutes; it is not the delete or import receipt. The Compendium is a scene's typed-entry view of its lorebooks, with filing receipts that are not loadout or delete receipts.",
+      "sourceHash": "sha256:6d9509e693b6bbf0217ba9512ca8b1e89e0681d3acf0a09b74ef1413769d9f11",
+      "summary": "Stage is the encrypted chat/library runtime behind contracts and provider/pipeline owners. Cast is the frozen roster, branch/swipe are forks and alternate replies, and turn is a full generation. PieceStore shares accepted summaries without becoming body authority; portable search contracts differ from native worker/persistence owners. Cold fill is bounded reconstruction with logical admission rather than measured RSS. Performance evidence is revision/artifact-bound observations, currently source definitions without measured results. Background lanes and breathers keep expensive work off the UI path. The health check opens every sealed cell on the lane and sets damaged rows aside, never deleting; freeze gate adds perf-gate-health.ts. A loadout is a saved bundle of a scene's own settings kept as one sealed library document rather than a piece, and a loadout receipt is the record of an apply that lets Undo restore the changed settings for 15 minutes; it is not the delete or import receipt. The Compendium is a scene's typed-entry view of its lorebooks, with filing receipts that are not loadout or delete receipts. Tracker is Props or library.",
       "topics": [
         "Stage",
         "contracts",
         "spoke",
         "cast",
         "background lane",
-        "breather",
         "freeze gate",
-        "Compendium"
+        "Compendium",
+        "tracker"
       ],
       "children": []
     },

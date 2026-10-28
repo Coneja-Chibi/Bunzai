@@ -12,6 +12,7 @@ import type { ChatHistory, ChatStore, ImportedMessage, JsonObject } from "../sta
 import type { StudioStoreLike } from "./contracts";
 import { ChatAlreadyImportedError, StudioValidationError } from "./errors";
 import { toErrorMessage } from "../error-message";
+import { varsDeltas } from "../core/scene-state/vars-bridge";
 import type { BundleSaveResult } from "./bundle";
 import { libraryChatsFor } from "./library-content";
 import { freezeCast, requireChats } from "./scenes";
@@ -148,7 +149,8 @@ export async function importScene(chats: ChatStore, studio: StudioStoreLike, raw
   const chat = await chats.createChat({ ...frozen, history });
   if (body.variables && Object.keys(body.variables).length > 0) {
     try {
-      await chats.changeVariables(chat.activeBranchId, { set: body.variables as JsonObject });
+      // What the chat started with: the take's base, before any message, so no greeting, cut or take changes it (ChatStore rule 17).
+      await chats.setBranchBase(chat.activeBranchId, varsDeltas({ set: body.variables as JsonObject, delete: [] }, body.createdAt));
     } catch (error) {
       await chats.deleteChat(chat.id); // a scene that lost its variables is not the chat that was imported
       throw new StudioValidationError(`its chat variables could not be saved, so the chat was not imported (${toErrorMessage(error, "unknown error")}).`);

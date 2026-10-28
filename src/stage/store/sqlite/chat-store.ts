@@ -12,8 +12,8 @@
 import { StudioConflictError } from "../../../studio/atomic-file";
 import type { Branch, CastSnapshotCodec, Chat, ChatStore, Generation, Message, WriteGuard } from "../../contracts/chat-store";
 import {
-  checkCast, checkCutoff, checkGeneration, checkGuard, checkMessageInputs,
-  checkPage, checkPinned, checkSnapshot, checkSwipeIndex, checkText, checkTitle, requireVersion as checkVersion,
+  checkCast, checkCutoff, checkGuard, checkMessageInputs,
+  checkPage, checkPinned, checkSnapshot, checkText, checkTitle, requireVersion as checkVersion,
 } from "../chat-rules";
 import { refuseWhileLocked, type CellCipher } from "../../crypto/cell-cipher";
 import { personaStamp } from "../cast-rules";
@@ -26,12 +26,14 @@ import { folderMethods } from "./chat-store-folders";
 import { compendiumMethods } from "./chat-store-compendium";
 import { splitQuarantine } from "./chat-store-quarantine";
 import { turnMethods } from "./chat-store-turns";
+import { stateMethods } from "./chat-store-state";
+import { versionMethods } from "./chat-store-versions";
 import { transcriptMethods } from "./chat-store-transcript";
 import type { StageDatabase } from "./database";
 import { applyPartChange, deletePartsForOwner } from "./piece-parts-sql";
 import { attachRowFingerprints } from "./row-fingerprints";
 import { snapshotMethods } from "./chat-store-snapshots";
-import { appendSwipe, LIVE, LIVE_COUNT_SQL, liveBefore, liveOf, setCurrentSwipe } from "./swipe-sql";
+import { LIVE, LIVE_COUNT_SQL, liveBefore, liveOf } from "./swipe-sql";
 import { CHAT_COLUMNS, BRANCH_COLUMNS, FORK_POSITION, MESSAGE_COLUMNS, sceneCells, type ChatSql, type BranchSql, type MessageSql, type SwipeSql } from "./chat-store-rows";
 export type { ChatSql, BranchSql, MessageSql, SwipeSql } from "./chat-store-rows";
 export { BRANCH_COLUMNS, MESSAGE_COLUMNS } from "./chat-store-rows";
@@ -137,9 +139,6 @@ export function sqliteChatStoreBackend(
     openSwipeContent: (content) => cipher.open("swipes.content", content),
     openGenerationJson: (content) => cipher.open("swipes.generation_json", content),
   });
-  /** The position of a message's `index`th live version (rule 32), or null when it has fewer. */
-  const livePosition = (messageId: string, index: number): number | null =>
-    one<{ position: number }>(`SELECT position FROM swipes WHERE message_id = ? AND ${LIVE} ORDER BY position LIMIT 1 OFFSET ?`, messageId, index)?.position ?? null;
   const messageById = (id: string): Message => {
     const m = one<MessageSql>(`SELECT ${MESSAGE_COLUMNS} FROM messages WHERE id = ?`, id)!;
     return toMessage(m, swipesOf([id]).get(id)!);
@@ -177,6 +176,8 @@ export function sqliteChatStoreBackend(
           WHERE h.message_id = ? AND ${liveOf("s")}`,
       copyId, m.id,
     );
+    // What the message carries is per take, so its copy gets its own rows (a version's deltas are shared by swipe id and are not copied).
+    run("INSERT INTO message_deltas (message_id, seq, slot, path_json, value_json, removed, at) SELECT ?, seq, slot, path_json, value_json, removed, at FROM message_deltas WHERE message_id = ?", copyId, m.id);
     run(`INSERT INTO director_states (message_id, position, version, cell) SELECT ?, ${liveBefore("d", "d.position")}, d.version, d.cell FROM director_states d JOIN swipes s ON s.message_id = d.message_id AND s.position = d.position WHERE d.message_id = ? AND ${liveOf("s")}`, copyId, m.id);
     run(
       `INSERT INTO swipe_traces (message_id, position, trace_json)
@@ -223,10 +224,11 @@ export function sqliteChatStoreBackend(
   };
 
   const snapshotDoc = (id: string) => cipher.index(id);
+  const state = stateMethods({ database, cipher, one, run, writableBranch, writableMessage, write });
   const kit = {
     database, cipher, clock, newId, one, run, chatRow, liveChat, branchRow, writableBranch, writableMessage,
     requireVersion, bump, touch, toChat, toBranch, messageById, copyMessage, insertBranch, write,
-    snapshotCodec,
+    snapshotCodec, state,
   };
   const stats = statsCounters(kit);
   return refuseWhileLocked(cipher, {
@@ -307,6 +309,7 @@ export function sqliteChatStoreBackend(
         );
         run("DELETE FROM branches WHERE deleted_at < ?", before);
         run("DELETE FROM messages WHERE cut_at < ?", cutBefore);
+        run("DELETE FROM swipe_deltas WHERE swipe_id NOT IN (SELECT swipe_id FROM swipes)");
         return n;
       });
     },
@@ -346,6 +349,7 @@ export function sqliteChatStoreBackend(
         const copies = statement(`SELECT ${MESSAGE_COLUMNS} FROM messages WHERE branch_id = ? AND seq <= ? AND cut_id IS NULL ORDER BY seq`)
           .all(branchId, at.seq) as MessageSql[];
         for (const m of copies) copyMessage(m, id, m.id === atMessageId ? kept : m.current_swipe);
+        state.copyBase(branchId, id);
         run("UPDATE chats SET active_branch_id = ?, updated_at = ? WHERE id = ?", id, clock(), source.chat_id);
         return toBranch(branchRow(id)!);
       });
@@ -376,65 +380,6 @@ export function sqliteChatStoreBackend(
         nextSeq: rows.length > limit ? rows[limit]!.seq : null,
         branchVersion: branch.version,
       };
-    },
-
-    async addSwipe(messageId, input, guard) {
-      const content = checkText(input?.content, "content");
-      const generation = checkGeneration(input?.generation);
-      const expected = checkGuard(guard);
-      return write(() => {
-        const m = writableMessage(messageId);
-        if (!m) return null;
-        requireVersion(branchRow(m.branch_id)!, expected);
-        appendSwipe({ one, run, insertSwipe }, messageId, content, generation, clock());
-        bump(m.branch_id);
-        return messageById(messageId);
-      });
-    },
-
-    async selectSwipe(messageId, indexRaw, guard) {
-      const index = checkSwipeIndex(indexRaw);
-      const expected = checkGuard(guard);
-      return write(() => {
-        const m = writableMessage(messageId);
-        if (!m) return null;
-        const position = livePosition(messageId, index);
-        if (position === null) return null; // spec edge case 5: refused, not clamped; rule 32: live versions only
-        requireVersion(branchRow(m.branch_id)!, expected);
-        if (m.current_swipe !== position) {
-          setCurrentSwipe({ run }, messageId, position);
-          bump(m.branch_id);
-        }
-        return messageById(messageId);
-      });
-    },
-
-    async selectTranscriptSwipe(chatId, branchId, messageId, indexRaw, guard) {
-      const index = checkSwipeIndex(indexRaw);
-      const expected = checkGuard(guard);
-      return write(() => {
-        const m = writableMessage(messageId);
-        const owner = liveChat(chatId);
-        const branch = writableBranch(branchId);
-        const position = m ? livePosition(messageId, index) : null;
-        if (!owner || owner.active_branch_id !== branchId || !branch || branch.chat_id !== chatId || !m || m.branch_id !== branchId || position === null) return null;
-        requireVersion(branch, expected);
-        if (m.current_swipe !== position) {
-          setCurrentSwipe({ run }, messageId, position);
-          bump(m.branch_id);
-        }
-        const row = one<{ version: number; swipe_count: number }>(`
-          SELECT b.version, (SELECT count(*) FROM swipes WHERE message_id = ? AND ${LIVE}) AS swipe_count
-          FROM branches b JOIN messages m ON m.branch_id = b.id JOIN swipes s ON s.message_id = m.id AND s.position = ?
-          WHERE b.id = ? AND m.id = ?
-        `, messageId, position, m.branch_id, messageId);
-        if (!row) return null;
-        return {
-          branchId: m.branch_id,
-          branchVersion: row.version,
-          swipeCount: row.swipe_count,
-        };
-      });
     },
 
     async editSwipe(messageId, swipeId, contentRaw, guard) {
@@ -487,6 +432,8 @@ export function sqliteChatStoreBackend(
     },
 
     ...transcript,
+    ...state.api,
+    ...versionMethods({ ...kit, insertSwipe }),
     ...stats.api,
     ...cutMethods(kit),
     ...turnMethods({ ...kit, insertSwipe, appendMany }),

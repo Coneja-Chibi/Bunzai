@@ -36,15 +36,27 @@ tests are ported too; each test file's header names any RoleCall case it leaves 
   latest, empty when never), `{{tally::a,b,c::N}}` names the one mentioned most (the first listed on a tie, empty when
   none is), and `{{odds::30}}` is `true` that percent of the time from the run's seed. A word matches whole (accents
   included) and ignoring case, with word and text in one Unicode form (NFC); its pattern is built from the escaped word,
-  never author regex, so it needs no `allowRegex`. Counts are worked out once per message list and word and kept for
-  the runs that share the list; one run searches for at most 200 words not already counted (`WORDS_PER_RUN`), and a
-  201st is an error in that run only, so a run full of word lookups never empties another's.
+  never author regex, so it needs no `allowRegex`. The messages are indexed once per list, on first use, in one pass
+  (every whole word with the message and the place in it of each occurrence), kept in a WeakMap so the index dies with the list. A
+  single word is a read; a phrase, or a query with punctuation in it, starts from its rarest word's places and checks its other
+  words and the text between them only there (so a phrase on a very common first word costs what its rarest word costs), and
+  its answer is kept with the list. Matches do not overlap, as a global pattern's do not. Every loop that scales with the input
+  (the build, the matching, a tally's words) checks the run's deadline. There is no limit on how many words a run looks up, on a word's
+  length (the hostile-input text ceiling aside) or on how many words a tally takes.
+- **The tracker macro.** `handlers/tracker.ts` reads the library trackers a scene links ([tracker.md](entities/tracker.md)) and
+  changes nothing: `{{tracker::Name}}` is the tracker's text (its template run read-only, else the default rendering),
+  `{{tracker::Name::field}}` a record's field, `{{tracker::Name::row::field}}` a list row's field. The turn hands the linked
+  trackers to the context (`MacroContext.trackers`, by lowercased name); a tracker that is not linked, or an unknown field or
+  row, is a macro error that names it.
 - **Unknown macros** render as their reconstructed text plus an error entry, never silence and never
   a throw. RoleCall's prompt assembler strips whatever is left from the prompt; Bunraku's assembler
   is not ported yet.
 - **Variables.** Local and global maps with RoleCall's scopes (`session:`, `char:`, `arc:`, `scene:`,
   `global:`); changes apply at once and are listed as side effects. `readOnly` turns writes into
-  no-ops, for historical messages.
+  no-ops, for historical messages. In a scene the local map is the `vars` slot of the scene state
+  ([scene-state.md](scene-state.md)): a turn starts it from the variables as the shown history left them (or, for a new
+  version of a reply or a continue, as they were before that reply), and the changes its prompt made are kept as deltas on the
+  version it stores, so a regenerate never counts a write twice. The global map is still one library document.
 
 What differs from RoleCall because ADR-012 requires it: no handler reads the clock, randomness, or
 the host's locale or time zone. Time is `context.now`, a plain epoch value the caller supplies, read
@@ -54,8 +66,11 @@ inventing a moment. Numbers and dates format in `context.locale` ("en-US" when a
 one mulberry32 stream from `context.randomSeed`, handed to each handler, so the same seed replays
 the same rolls. A zone-less date given to `{{timediff}}` is read in `context.timezone` too, where
 RoleCall read it in the server's zone. The evaluator caps the length of any string a node, handler,
-variable write, or whole run produces, caps the number of nodes one run evaluates (a caller may set a lower cap for
-one run, `maxSteps`, as a formula does; a value that is not a finite number leaves the engine's own cap), and nests at most 100 deep. When a cap trips, the run records one error and stops: no handler is called after it, a
+variable write, or whole run produces, caps the number of nodes one run evaluates (a caller may also hand in a `deadline`, a point in time and its own clock: the run checks it every 64 nodes and after every handler and
+stops with an error, as the tool loop does for a formula; the word-watching macros also check it inside their loops. A `soft` deadline,
+which a prompt build uses, is watched only by those handlers: the one that runs out of time fails with the error in the macro report, and
+the rest of the prompt still builds, so a hostile card cannot empty it. The prompt build's budget is `PROMPT_BUDGET_MS_DEFAULT`, 3 seconds,
+overridden by the setting `scenes.promptBudgetMs`, which has no screen yet), and nests at most 100 deep. When a cap trips, the run records one error and stops: no handler is called after it, a
 lazy handler is unwound out of the argument that tripped before it can write, and no cut-off value
 reaches a variable, template, or user macro. A test scans every source file in the package for
 clock, randomness, I/O, and host-locale reads, and checks the scan against a list of those forms.

@@ -1,0 +1,111 @@
+{
+  "kind": "tracker",
+  "source": "src/entities/tracker/schema.ts",
+  "shapes": [
+    {
+      "name": "TrackerField",
+      "doc": "One value a tracker keeps. The first four are the field basics a tool's argument shares (entities/_shared/field-schema.ts).",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "A lowercase letter, then lowercase letters, digits and _.",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "type",
+          "optional": false,
+          "type": "TrackerFieldType",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "choices",
+          "optional": true,
+          "type": "string[]",
+          "meaning": "The allowed values of a choice field; only a choice field has them.",
+          "producers": []
+        },
+        {
+          "name": "min",
+          "optional": true,
+          "type": "number",
+          "meaning": "Number only; at most `max`.",
+          "producers": []
+        },
+        {
+          "name": "max",
+          "optional": true,
+          "type": "number",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "default",
+          "optional": true,
+          "type": "string | number | boolean",
+          "meaning": "Must fit the type, the choices and the range.",
+          "producers": []
+        }
+      ]
+    },
+    {
+      "name": "TrackerBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "layout",
+          "optional": false,
+          "type": "TrackerLayout",
+          "meaning": "record: one set of fields; list: rows, each keyed by a text `name` and holding every field.",
+          "producers": []
+        },
+        {
+          "name": "fields",
+          "optional": false,
+          "type": "TrackerField[]",
+          "meaning": "",
+          "producers": []
+        },
+        {
+          "name": "note",
+          "optional": false,
+          "type": "string",
+          "meaning": "How the model should update it; goes into the update tool's description.",
+          "producers": []
+        },
+        {
+          "name": "template",
+          "optional": true,
+          "type": "string",
+          "meaning": "Macro text for the tracker's prompt line; absent means the default rendering.",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

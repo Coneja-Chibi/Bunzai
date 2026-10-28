@@ -9,9 +9,12 @@
  */
 import { TRACKER_PROP_PREFIX, type ChatTrackers } from "../../stage/contracts/chat-tracker-types";
 import { PROMPT_ORDER, contextDue, injectionsOf, trackerLines } from "../trackers";
+import type { TrackerView } from "../macros";
 import type { Block } from "./conversation";
 
 export const TRACKERS_HEADER = "### Current Game State (Immersion Trackers)";
+/** The head of the library trackers' block (entities/tracker), which follows the Props block. */
+export const LINKED_TRACKERS_HEADER = "### Trackers";
 
 export interface TrackersInput {
   /** What the scene kept, per module (ChatStore rule 43). */
@@ -39,4 +42,10 @@ export function placeBlock(blocks: readonly Block[], text: string, kind: "tracke
   let at = 0;
   while (at < blocks.length && blocks[at]!.role === "system") at++;
   return [...blocks.slice(0, at), { role: "system", content: text, source: { kind } }, ...blocks.slice(at)];
+}
+
+/** The library trackers' block (the Trackers a scene links, core/tracker.ts): each one's text, or "" when none has any. */
+export function linkedTrackersText(views: Iterable<TrackerView>): string {
+  const texts = [...views].map((v) => v.text.trim()).filter(Boolean);
+  return texts.length === 0 ? "" : [LINKED_TRACKERS_HEADER, "", ...texts].join("\n");
 }

@@ -32,6 +32,10 @@ export const SETTING_KEYS = {
   uiHighContrast: "ui.highContrast",
   /** the title screen and scene chooser rays: "moving" (default), "still" or "off" (see STAGE_LIGHTS) */
   uiStageLights: "ui.stageLights",
+  /** the time (ms) all of one reply's tool calls may take together (a positive number; no screen yet, so it is set in the settings file); absent means the default (core/assembly/tool-rounds.ts) */
+  toolBudgetMs: "scenes.toolBudgetMs",
+  /** the time (ms) all the macros of one prompt build may take together (a positive number; no screen yet, so it is set in the settings file); absent means the default (core/assembly/tool-rounds.ts) */
+  promptBudgetMs: "scenes.promptBudgetMs",
 } as const;
 
 /** The stage-lights choices, in the order Settings shows them; the first is the default when nothing is saved. */

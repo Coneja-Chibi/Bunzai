@@ -49,3 +49,14 @@ test("a bad scope or key is refused, an unknown scene is 404, and nothing is wri
   expect((await ask(chats, chat.id, "local", "")).status).toBe(400);
   expect((await ask(chats, "nope", "local", "x")).status).toBe(404);
 });
+
+test("owner rule (limits rework): a large local change is saved like any other, so it is history; there is no refused marker to leave it out", async () => {
+  const chats = memoryChatStore();
+  const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: CHAR } });
+  await chats.appendMessage(chat.activeBranchId, { role: "user", content: "go" });
+  const t = await chats.beginTurn(chat.activeBranchId, { kind: "reply" });
+  const changes = [{ scope: "local", key: "mood", after: "calm" }, { scope: "global", key: "gold", after: 2 }];
+  await chats.commitTurn(t!.id, { content: "reply", trace: trace(changes) });
+  expect(((await (await ask(chats, chat.id, "local", "mood")).json()) as VariableHistory).entries).toHaveLength(1);
+  expect(((await (await ask(chats, chat.id, "global", "gold")).json()) as VariableHistory).entries).toHaveLength(1);
+});

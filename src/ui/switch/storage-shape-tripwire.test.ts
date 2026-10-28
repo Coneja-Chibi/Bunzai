@@ -19,6 +19,12 @@ async function shapeFiles(): Promise<string[]> {
     "src/entities/runtime-schema.ts",
     // Persisted nested values share schemas that must remain pinned with each kind's top-level decoder.
     "src/entities/_shared/canonical-value-schemas.ts",
+    // The field basics (name, type, choices) a tool's argument and a tracker's field both build on.
+    "src/entities/_shared/field-schema.ts",
+    // What a field accepts as a value (a tracker default must fit it), the hostile-input ceilings every decoder bounds itself by, and the dice reading that decides a dice piece.
+    "src/entities/_shared/field-value.ts",
+    "src/entities/_shared/sanity.ts",
+    "src/core/dice.ts",
     // The envelope every kind shares, and the generated list of kind decoders the parse boundary unions.
     "src/entities/_shared/envelope.ts",
     "src/generated/kind-schemas.ts",
@@ -54,6 +60,9 @@ async function shapeFiles(): Promise<string[]> {
     "src/stage/store/sqlite/migration-40-final-cut.ts",
     "src/stage/store/sqlite/migration-41-scene-summary.ts",
     "src/stage/store/sqlite/migration-42-director.ts",
+    "src/stage/store/sqlite/migration-43-scene-state.ts",
+    // The shape of a stored delta and of the state rebuilt from them.
+    "src/core/scene-state/types.ts",
     "src/stage/store/sqlite/document-backend.ts",
     "src/stage/store/sqlite/piece-parts-sql.ts",
     "src/stage/store/sqlite/blob-sql.ts",
@@ -375,12 +384,36 @@ async function shapeFiles(): Promise<string[]> {
 // and a tool action `formula` linking one by id. ADDITIVE. ONE-WAY: an older build has neither.
 // 2026-10-27, no shape change: the dice, formula and tool decoders share one name and description shape
 // (_shared/canonical-value-schemas.ts pieceShape) and the dice limits from core/dice.ts. Same limits, same messages.
-const PINNED_SHAPE_HASH = "b1f34b42eeeba9083010b833b8c70416e27cbfb25a558332b88fbd7d86e2eca5";
+// 2026-10-27, scene state (ChatStore rule 17, phase 1 of the scene-state plan): migration 43 (migration-43-scene-state.ts, new, pinned here) adds the sealed tables swipe_deltas (what each reply
+// version changed, keyed by swipe id, never changed once written), message_deltas (what a message carries whichever version shows, keyed by message id and copied by a fork), branch_base (what a take starts with, an import's variables: data, copied by a fork), state_keyframes and branch_state (caches: the state after every 50th shown message and after the tip), and the sealed nullable
+// turn_checkpoints.deltas_json (a turn's pending deltas). row-fingerprints.ts covers them (turn_checkpoints spec v2, so a v1 fingerprint is adopted, not flagged); the health check and the snapshot lists carry them.
+// src/core/scene-state/types.ts (new, pinned here) is the stored delta and state shape. The ChatStore contract drops `variables` and `changeVariables` for `sceneState`, `sceneStateBefore` and `recordDeltas`, and the
+// macro variables become the `vars` slot. ADDITIVE for the schema: no table or column an older build uses changes. ONE-WAY for the file: a build from before migration 43 refuses a database that has it (database.ts, "which this
+// version does not know"), as for any new migration. The variables themselves are not carried over: branch_variables stays in the schema, no longer read or written, and nothing is moved out of
+// it (Bunraku has no stored scenes to carry). No SCHEMA_BUMPS entry. The pin was recomputed.
+// 2026-10-27, trackers (section I of the scene-state plan, backend only): a new kind (src/entities/tracker/, a new decoder: name, description, a record or list layout, one to twelve typed fields with
+// an optional range and default that must fit, a note, an optional macro template; shape only, no code), and a scene's prompting gains `trackers`, the library trackers it links (ids, at most 20). Scene state gains
+// two slot FAMILIES, tracker-record:<pieceId> and tracker-list:<pieceId> (src/core/scene-state/slots/, new; types.ts, pinned here, only documents that a slot id may end in :*): the stored delta shape is unchanged,
+// its slot is now any id a family covers. ADDITIVE: every stored piece, delta and scene reads as before. ONE-WAY: an older build has no tracker kind, refuses prompting that carries `trackers`, and drops
+// the deltas of a family slot it does not know. The tool decoder's text moved into src/entities/_shared/field-schema.ts (new, pinned here: the name rule, type list and choices rule a tool's argument and a
+// tracker's field share); the tool's stored shape is UNCHANGED (same keys, limits, messages, order; the tool tests and the field docs are untouched by it). The pin was recomputed for these files.
+// 2026-10-27, limits rework (owner rule: no arbitrary limits people cannot control): every product limit of this session's decoders became a hostile-input ceiling from
+// src/entities/_shared/sanity.ts (new, pinned here: SANITY_LIST 10,000 items, SANITY_TEXT 1,000,000 characters, SANITY_NUMBER the largest safe integer). Dice (rows, row text, weight, notation, count and
+// sides), tool (fields, choices, descriptions, ids), formula (text), tracker (fields, note, template, range) and the shared piece name and description (_shared/canonical-value-schemas.ts) are
+// bounded only by them; a field name keeps the providers' 64-character function-name rule. The stored SHAPE is unchanged (same keys, same optionality); values the old limits refused are now accepted
+// (ADDITIVE; an older build refuses such a piece, so ONE-WAY in that sense only). Trackers also moved what a default must fit into src/entities/_shared/field-value.ts (new, pinned here; the decoder no
+// longer imports the core), and src/core/dice.ts is pinned because it decides which dice notation a dice piece may hold. The delta size cap (DELTA_MAX_BYTES) is gone from the scene-state types
+// (src/core/scene-state/types.ts, pinned here); the stored delta shape is unchanged. The pin was recomputed.
+// 2026-10-27 (second fix round): src/studio/settings-shape.ts (pinned here) gains two known setting KEYS, scenes.toolBudgetMs and scenes.promptBudgetMs (the time budgets of a reply's tool calls and of a prompt build's macros; settings
+// are an open record, absent means the default, so no stored value changes meaning). ADDITIVE; an older build ignores the keys. The pin was recomputed.
+// 2026-10-27 (third fix round): a dice table's weights must add up to at most SANITY_NUMBER (src/entities/dice/runtime-schema.ts, pinned here), so the pick is an exact whole-number draw; core/dice.ts (pinned here) holds a die at its sides. A table whose weights add up past
+// the largest safe integer is no longer read (such a piece could not roll exactly); no stored shape changes. The pin was recomputed.
+const PINNED_SHAPE_HASH = "d590d0b352389257f9a86b0fe03030723a8a35defbc2cb98be8c37035d7dac7b";
 
 test("storage-shape tripwire: an on-disk shape change must be a deliberate, version-aware act", async () => {
   const h = createHash("sha256");
   const files = await shapeFiles();
-  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(14);
+  expect(files.filter((path) => path.includes("/runtime-schema.ts"))).toHaveLength(15);
   for (const f of files) h.update((await Bun.file(f).text()).replace(/\r\n/g, "\n"));
   expect(h.digest("hex")).toBe(PINNED_SHAPE_HASH);
 });

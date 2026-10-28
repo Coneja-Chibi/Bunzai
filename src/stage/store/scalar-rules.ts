@@ -42,3 +42,27 @@ export function checkHidden(value: unknown): boolean {
 export function fail(message: string): never {
   throw new StudioValidationError(message);
 }
+
+/** True for JSON exactly, so what a store keeps as text is what it hands back. */
+export function isJson(value: unknown, seen: Set<object> = new Set()): boolean {
+  if (value === null || typeof value === "string" || typeof value === "boolean") return true;
+  // -0 is not JSON: it comes back as 0.
+  if (typeof value === "number") return Number.isFinite(value) && !Object.is(value, -0);
+  if (typeof value !== "object") return false;
+  // A cycle has no JSON form; refuse it instead of overflowing the stack.
+  if (seen.has(value)) return false;
+  seen.add(value);
+  const ok = isJsonContainer(value, seen);
+  seen.delete(value);
+  return ok;
+}
+
+function isJsonContainer(value: object, seen: Set<object>): boolean {
+  if (Array.isArray(value)) {
+    // A plain loop, not every(): every() skips holes, which JSON would turn into null. A hole reads
+    // as undefined here, which is not JSON.
+    for (let i = 0; i < value.length; i++) if (!isJson(value[i], seen)) return false;
+    return true;
+  }
+  return isPlainObject(value) && Object.values(value).every((v) => isJson(v, seen));
+}

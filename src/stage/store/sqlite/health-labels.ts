@@ -46,6 +46,14 @@ export const COLUMN_WORDS: Readonly<Record<string, string>> = {
   "turn_checkpoints.content": "a reply that was still being written",
   "turn_checkpoints.trace_json": "the record of a reply that was still being written",
   "turn_checkpoints.provider_request_id": "a reply that was still being written",
+  "turn_checkpoints.deltas_json": "what a reply that was still being written changed in the scene",
+  "swipe_deltas.path_json": "what this reply changed in the scene",
+  "swipe_deltas.value_json": "what this reply changed in the scene",
+  "message_deltas.path_json": "what this message carries into the scene",
+  "message_deltas.value_json": "what this message carries into the scene",
+  "state_keyframes.state_json": "a saved point of this take's scene state",
+  "branch_state.state_json": "this take's scene state",
+  "branch_base.state_json": "what this take starts with",
   "branch_variables.variables_json": "this take's variables",
   "scene_folders.name": "the name of this story folder",
 };
@@ -68,6 +76,11 @@ const TABLE_WORDS: Readonly<Record<string, string>> = {
   swipe_traces: "a reply's build record",
   director_states: "a reply's Story Director state",
   turn_checkpoints: "an unfinished reply",
+  swipe_deltas: "what a reply changed in the scene",
+  message_deltas: "what a message carries into the scene",
+  state_keyframes: "a saved point of a take's scene state",
+  branch_state: "a take's scene state",
+  branch_base: "what a take starts with",
   branch_variables: "a take's variables",
   scene_folders: "a story folder",
 };
@@ -176,6 +189,9 @@ export function createLabels(statement: Stmt, cipher: CellCipher): Labels {
         }
         case "turn_checkpoints":
         case "branch_variables":
+        case "state_keyframes":
+        case "branch_state":
+        case "branch_base":
           return `${tableWords(table)} in ${chatOfBranch(row.branch_id ?? row.id)}`;
         case "scene_folders": {
           const name = open("scene_folders.name", row.name);

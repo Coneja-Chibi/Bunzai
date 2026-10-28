@@ -24,7 +24,8 @@ export async function handleVariableHistoryRoute(url: URL, chats: ChatStore): Pr
   const entries: VariableHistory["entries"] = [];
   for (const m of replies.slice(0, HISTORY_SCAN)) {
     const swipe = m.swipes[m.current]!;
-    const change = variablesOf((await chats.swipeTrace(m.id, swipe.id))?.["variables"])?.find((c) => c.scope === scope && c.key === key);
+    const trace = await chats.swipeTrace(m.id, swipe.id);
+    const change = variablesOf(trace?.["variables"])?.find((c) => c.scope === scope && c.key === key);
     if (change) entries.push({ number: number.get(m.id)!, messageId: m.id, at: swipe.createdAt, ...(change.before !== undefined ? { before: change.before } : {}), ...(change.after !== undefined ? { after: change.after } : {}), ...(change.deleted ? { deleted: true as const } : {}) });
   }
   return json({ entries, truncated: replies.length > HISTORY_SCAN } satisfies VariableHistory);

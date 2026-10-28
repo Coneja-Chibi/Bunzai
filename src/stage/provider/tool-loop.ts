@@ -1,6 +1,6 @@
 /**
  * The narrator's tool loop, at the provider boundary: the writing model may call first-party,
- * read-only tools while it writes. Each round is one `provider.send`; the calls it asks for are run and answered, and the next round
+ * read-only tools while it writes (and the one state-scoped write, the trackers' update, NarratorTool.stateScoped). Each round is one `provider.send`; the calls it asks for are run and answered, and the next round
  * carries them. RoleCall's NarratorEngine is the model (narrator-engine.ts:165 rounds, :324-342 the closing text-only call).
  * Differences by design: arguments are parsed once here against the tool's own strict schema and a refusal is told to the model
  * (RoleCall F13: no forced tool choice that 502s, no salvage of calls written as text); the calls echoed to the provider are rebuilt
@@ -18,13 +18,21 @@ export interface ToolOutcome {
   detail?: Record<string, unknown>;
 }
 
+/** What is left of the reply's tool time budget, as a point in time and the loop's clock; a tool that can run long (a formula) stops when it passes. */
+export interface ToolDeadline { at: number; now(): number }
+
 /** A first-party tool. `parse` is the one place the model's arguments are read; `run` only ever sees a parsed value. */
 export interface NarratorTool<A = unknown> {
-  /** The Kit tier (kit/tools/safety/risk.ts). The loop runs read tools only until a write tier is designed. */
+  /** The Kit tier (kit/tools/safety/risk.ts). The loop runs read tools, and the one write exception below. */
   access: ToolAccess;
+  /**
+   * With a write tier: the tool's only effect is pending scene-state deltas on the reply being written (the turn stamps them on the version it
+   * stores, and a regenerate, swipe or cut takes them back), so the loop may run it. Every other non-read tool is still refused.
+   */
+  stateScoped?: true;
   definition: ProviderToolDefinition;
   parse(raw: unknown): { args: A } | { error: string };
-  run(args: A, signal: AbortSignal | undefined): Promise<ToolOutcome>;
+  run(args: A, signal: AbortSignal | undefined, deadline?: ToolDeadline): Promise<ToolOutcome>;
 }
 
 export interface ToolCallRecord {
@@ -47,6 +55,8 @@ export interface ToolLoopConfig {
   /** Tool rounds allowed; after them one more send asks for the answer (tool choice `none`). */
   maxRounds: number;
   now(): number;
+  /** The time the reply's tool calls may take in all (ms); absent means no budget. Each run is handed what is left, and a call made after it is spent is answered with an error and not run. */
+  toolBudgetMs?: number;
   /** Called once per call, in order, as soon as it is answered. */
   onCall(record: ToolCallRecord): void;
 }
@@ -87,8 +97,8 @@ export async function sendWithTools(
   config: ToolLoopConfig,
 ): Promise<ToolLoopResult> {
   const { tools, maxRounds } = config;
-  const notRead = tools.find((t) => t.access !== "read");
-  if (notRead) throw new Error(`The narrator tool loop runs read-only tools; ${notRead.definition.function.name} is declared ${String(notRead.access)}.`);
+  const notRead = tools.find((t) => t.access !== "read" && !(t.access === "write" && t.stateScoped === true));
+  if (notRead) throw new Error(`The narrator tool loop runs read-only tools, and write tools that only change the reply's scene state; ${notRead.definition.function.name} is declared ${String(notRead.access)}.`);
   const definitions = tools.map((t) => t.definition);
   const extra: ProviderMessage[] = [];
   const used = new Set<string>();
@@ -97,6 +107,7 @@ export async function sendWithTools(
   let shown = "";
   let rounds = 0;
   let roundStart = 0;
+  let spent = 0;
 
   const forward = (event: ProviderEvent): void => {
     if (event.channel === "reasoning") return io.onEvent?.(event);
@@ -145,9 +156,13 @@ export async function sendWithTools(
       } else {
         try {
           const tool = tools.find((t) => t.definition.function.name === name)!;
-          const outcome = await tool.run(checked.args as never, io.signal);
+          const left = config.toolBudgetMs === undefined ? undefined : config.toolBudgetMs - spent;
+          // A state-scoped write is cheap and keeps the narration and the state in step, so a spent budget neither refuses it nor gives it a deadline.
+          if (left !== undefined && left <= 0 && !tool.stateScoped) throw new Error("The tool time budget for this reply is spent.");
+          const began = config.now();
+          const outcome = await tool.run(checked.args as never, io.signal, left === undefined || tool.stateScoped ? undefined : { at: began + left, now: config.now }).finally(() => { spent += config.now() - began; });
           ok = true;
-          text = outcome.text.length > RESULT_CAP ? `${outcome.text.slice(0, RESULT_CAP)}\n[cut: the result was longer than ${RESULT_CAP} characters]` : outcome.text;
+          text = outcome.text.length > RESULT_CAP && !tool.stateScoped ? `${outcome.text.slice(0, RESULT_CAP)}\n[cut: the result was longer than ${RESULT_CAP} characters]` : outcome.text;
           detail = outcome.detail;
         } catch (e) {
           io.signal?.throwIfAborted();

@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/README",
   "sourcePath": "docs/reference/entities/README.md",
-  "sourceHash": "sha256:353ff6cee148b76c2d1011e78e90873d56af551f48f81ba23824fdae60e9633f",
-  "summary": "Entities indexes Bunraku's canonical content kinds: CanonicalEntity Kind Body wrappers where body is the superset for one kind. The kinds are a closed set: exactly the src/entities folders holding a kind.ts descriptor, which bun run kinds collects into src/generated/kinds.ts for identity and src/generated/kind-schemas.ts for decoders and storage parts, and every list of kinds in the app (storage folders, the parse boundary, adapter contracts, decks, search, receipts, Kit and New actions) reads those seams; adding one is extending/new-kind. Which kinds have format adapters is the generated format matrix. Every kind stores at studio/<kind>/<id>.json via resolveStudioPath. Generated field tables explains each page's verbatim tables from docs-fields.ts. Reference pages link character, lorebook, pack, persona, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, prompt format and drawing. Cross-cutting ties the sprite pack hub shape, the RegexScript twin, knowledgeRefs and behaviorRefs, and persona as character's opposite-voice counterpart.",
+  "sourceHash": "sha256:6595bd0cde23ca8557c4db59f29ccf497d11716b21e2d5585a9947f55e753566",
+  "summary": "Entities indexes Bunraku's canonical content kinds: CanonicalEntity Kind Body wrappers where body is the superset for one kind. The kinds are a closed set: exactly the src/entities folders holding a kind.ts descriptor, which bun run kinds collects into src/generated/kinds.ts for identity and src/generated/kind-schemas.ts for decoders and storage parts, and every list of kinds in the app (storage folders, the parse boundary, adapter contracts, decks, search, receipts, Kit and New actions) reads those seams; adding one is extending/new-kind. Which kinds have format adapters is the generated format matrix. Every kind stores at studio/<kind>/<id>.json via resolveStudioPath. Generated field tables explains each page's verbatim tables from docs-fields.ts. Reference pages link character, lorebook, pack, persona, preset, Script Sheet, regex, quick-reply set, tool, dice, formula, tracker, prompt format and drawing. Cross-cutting ties the sprite pack hub shape, the RegexScript twin, knowledgeRefs and behaviorRefs, and persona as character's opposite-voice counterpart.",
   "topics": [
     "nine content kinds",
     "kind.ts and generated seams",
@@ -34,15 +34,17 @@
       "slug": "reference-pages",
       "title": "Reference pages",
       "level": 2,
-      "sourceHash": "sha256:a5a3ad29f7a58bc07c0822f01ce21713ee9563e0c44eab3928031eaad02583cf",
-      "summary": "Reference pages: index table of the entity field references. Character covers identity, persona and voice, prompts and injections, greetings and examples, media, presentation, settings and behavior, attribution and discovery. Lorebook covers the world info entry set, triggers, position and depth, and per-entry and per-book settings. Pack is a reusable expression sprite pack attachable to several characters. Persona is the user identity counterpart with name, content, sections and chat injection. Preset is a chat-completion prompt-manager preset with ordered blocks, samplers and behavior. Regex is a named ordered find-and-replace rule set, the card twin and standalone files. Quick-reply set is a page of buttons that send prepared text, linked from presets. Prompt format holds SillyTavern instruct and context templates kept whole, read by nothing yet. Drawing is a sealed HTML page shown in HTML View rather than a Library deck.",
+      "sourceHash": "sha256:f27f22464a7efe602125706d688ac866de1cef4ecacc284856686189236ca0be",
+      "summary": "Reference pages: index table of the entity field references. Character covers identity, persona and voice, prompts and injections, greetings and examples, media, presentation, settings and behavior, attribution and discovery. Lorebook covers the world info entry set, triggers, position and depth, and per-entry and per-book settings. Pack is a reusable expression sprite pack attachable to several characters. Persona is the user identity counterpart with name, content, sections and chat injection. Preset is a chat-completion prompt-manager preset with ordered blocks, samplers and behavior. Regex is a named ordered find-and-replace rule set, the card twin and standalone files. Quick-reply set is a page of buttons that send prepared text, linked from presets. Tool, dice and formula are small pieces a model may call, roll or run, and Tracker is state a scene keeps: named typed fields as a record or a list, shown to the model every turn and updated by one tool. Prompt format holds SillyTavern instruct and context templates kept whole, read by nothing yet. Drawing is a sealed HTML page shown in HTML View rather than a Library deck.",
       "topics": [
         "character field reference",
         "lorebook world info",
         "pack sprite pack",
         "persona user identity",
         "preset prompt manager",
-        "regex script set"
+        "regex script set",
+        "tool dice formula",
+        "tracker state"
       ],
       "children": []
     },

@@ -29,7 +29,7 @@ describe("studio path-policy", () => {
   // The storage floor: the folders the app may write. They come from the kind hub (src/entities/<kind>/kind.ts), so a new
   // kind folder changes them; this pin makes that a deliberate, reviewed act. Update it in the same change as the new kind.
   test("the storage kinds are exactly these, pinned", () => {
-    expect([...STUDIO_ENTITY_KINDS].sort()).toEqual(["character", "dice", "formula", "htmldoc", "lorebook", "pack", "persona", "preset", "promptformat", "quickreply", "regex", "scriptsheet", "tool"]);
+    expect([...STUDIO_ENTITY_KINDS].sort()).toEqual(["character", "dice", "formula", "htmldoc", "lorebook", "pack", "persona", "preset", "promptformat", "quickreply", "regex", "scriptsheet", "tool", "tracker"]);
   });
 
   test("safe ids accept unicode and separators", () => {

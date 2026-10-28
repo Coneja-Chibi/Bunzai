@@ -56,7 +56,7 @@ test("a tool linking a dice piece is offered, called, answered from the seeded r
 
 test("bad arguments are refused to the model, and tools stay off without Tool Access", async () => {
   const bad = await turn({ toolAccess: true, tools: ["promise"] }, [call("roll", '{"what":7}'), say("ok")]);
-  expect(bad.trace["tools"].calls[0]).toMatchObject({ ok: false, error: "what must be a text up to 2,000 characters." });
+  expect(bad.trace["tools"].calls[0]).toMatchObject({ ok: false, error: "what must be a text." });
   const off = await turn({ tools: ["luck"] }, [say("ok")]);
   expect(off.sent[0]!.options.tools).toBeUndefined();
 });

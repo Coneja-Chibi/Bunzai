@@ -34,11 +34,12 @@ import { listGuides, selectedGuides } from "./guides";
 import { NoConnectionError, type Connected, type TurnDeps } from "./scene-turn";
 import { loadCast, loadTurn, readGlobals, type TurnReader } from "./scene-turn-load";
 import { measureFor, readMeter } from "./scene-turn-meter";
+import { promptBudget, promptDeadline } from "./scene-turn-build";
 
 /** A draft's reply is at most this long (RoleCall's impersonate cap), whatever the preset allows a reply. */
 export const DRAFT_MAX_TOKENS = 2000;
 
-export interface DraftDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readCastMember" | "choiceDefaults" | "now" | "randomSeed"> {
+export interface DraftDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readCastMember" | "choiceDefaults" | "readTracker" | "promptBudgetMs" | "clock" | "now" | "randomSeed"> {
   chats: TurnReader;
   state: Pick<StateStore, "read">;
 }
@@ -64,7 +65,7 @@ const overflow = () => new StudioConflictError("The card and the history alone a
 
 /** Expand as character: the reply's own assembly, ending on the impersonation message. */
 async function impersonate(deps: DraftDeps, input: Extract<DraftInput, { kind: "impersonate" }>, connected: Connected, model: string): Promise<Request> {
-  const loaded = await loadTurn(deps.chats, input.chatId, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults);
+  const loaded = await loadTurn(deps.chats, input.chatId, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
   if (!loaded) throw new StudioNotFoundError("that scene does not exist");
   const chat = (await deps.chats.getChat(input.chatId))!;
   const started = deps.now();
@@ -73,15 +74,19 @@ async function impersonate(deps: DraftDeps, input: Extract<DraftInput, { kind: "
   const reply = Math.min(full.reply, DRAFT_MAX_TOKENS);
   const meter = await readMeter(deps.state);
   const key = readKey(meter, connected.kind, model);
+  const budgetMs = await promptBudget(deps);
+  const globalVariables = await readGlobals(deps.state);
+  const guides = await selectedGuides(deps.state, chat.prompting?.guides);
   const result = assemble({
     ...loaded,
-    globalVariables: await readGlobals(deps.state),
+    globalVariables,
     now: started,
     randomSeed: deps.randomSeed(),
+    deadline: promptDeadline(deps, budgetMs),
     window: { context: full.context, reply },
     budgeter: appBudgeter(measureFor(meter, key, started)),
     lore: loaded.lore ? { ...loaded.lore, budgetShare: DEFAULT_LORE_SHARE } : undefined,
-    guides: await selectedGuides(deps.state, chat.prompting?.guides),
+    guides,
     ...(chat.prompting?.note ? { note: chat.prompting.note } : {}),
     generationType: "impersonate",
     reasoning: resolveReasoning(loaded.preset?.reasoning, chat.prompting),

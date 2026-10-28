@@ -1,12 +1,12 @@
 /**
  * Tool fixtures for the scale matrix: a seeded, synthetic generator for ONE tool with `n` fields (a tool's size is its field list,
- * capped at 12 by the decoder).
+ * a representative size; the decoder has no product limit).
  */
 import { CANONICAL_SCHEMA_VERSION } from "../../../src/core/canonical";
 import type { CanonicalTool } from "../../../src/entities/tool/schema";
 import { mulberry32, sentence } from "./_shared";
 
-/** The decoder's cap. */
+/** A representative size, not a limit. */
 export const TOOL_SCALE_N = 12;
 
 /** One record tool with `n` text fields and a seeded description. */

@@ -11,6 +11,7 @@ import { memoryStateStore } from "../stage/store/memory/state-store";
 import { emptyLoreEntry, emptyLorebookBody } from "../core/lore";
 import { commitAnyway, discardWaiting, NoConnectionError, resumeScene, runTurn, stopTurn, type Connected, type TurnEvent } from "./scene-turn";
 import { StudioConflictError } from "./atomic-file";
+import { varsOf } from "../core/scene-state/vars-bridge";
 
 const vera = {
   kind: "character",
@@ -96,7 +97,7 @@ describe("a reply", () => {
     expect(trace).toMatchObject({ estimate: { samples: 0 }, budget: { budgeter: "app" }, request: { model: "vera-1", stream: true }, usage: { promptTotal: 120 } });
     expect(sent[0]!.messages.map((m) => m.content)).toEqual(["Keeps the light.", "Evening.", "Any storms?"]);
     expect(sent[0]!.max_tokens).toBe(8192);
-    expect((await s.chats.variables(s.chat.activeBranchId))!["asked"]!.value).toBe("yes");
+    expect(varsOf(await s.chats.sceneState(s.chat.activeBranchId)).get("asked")!.value).toBe("yes");
     expect(await s.state.read("meter")).toContain("openrouter|vera-1|vera-1-routed");
     expect(await s.chats.resumeIncomplete()).toEqual([]);
   });

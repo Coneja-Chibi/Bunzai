@@ -14,12 +14,13 @@ import { memoryStateStore } from "../stage/store/memory/state-store";
 import { compendiumTools } from "./compendium-lookup";
 import { runTurn, stopTurn, type Connected, type TurnEvent } from "./scene-turn";
 import { answerReview } from "./scene-turn-review";
+import { TOOL_BUDGET_MS_DEFAULT } from "../core/assembly/tool-rounds";
 
 const vera = { kind: "character", id: "vera", body: { identity: { name: "Vera", description: "Keeps the light." }, persona: {}, prompts: {}, greetings: {}, examples: {}, media: {}, attribution: {}, discovery: {}, knowledgeRefs: [] } };
 const ask = (id: string): ProviderCompletion => ({ content: "", tool_calls: [{ id, type: "function", function: { name: "peek", arguments: '{"what":"sky"}' } }], finish_reason: "tool_calls", raw: {} });
 const say = (content: string): ProviderCompletion => ({ content, finish_reason: "stop", raw: {} });
 
-async function scene(script: ProviderCompletion[], prompting: ChatPromptingPatch | null, opts: { tools?: boolean; run?: NarratorTool<{ what: string }>["run"] } = {}) {
+async function scene(script: ProviderCompletion[], prompting: ChatPromptingPatch | null, opts: { tools?: boolean; run?: NarratorTool<{ what: string }>["run"]; budget?: () => Promise<number | undefined> } = {}) {
   let now = 1_000;
   const chats = memoryChatStore(() => now);
   const chat = await chats.createChat({ title: "Night", cast: { character: { id: "vera", version: 1 } }, snapshot: { character: vera } });
@@ -48,6 +49,7 @@ async function scene(script: ProviderCompletion[], prompting: ChatPromptingPatch
     chats, state: memoryStateStore(),
     connect: async (): Promise<Connected | null> => ({ provider, kind: "openrouter", context: 32_000, ...(opts.tools === false ? {} : { tools: true }) }),
     narratorTools: () => [peek as NarratorTool<never>],
+    ...(opts.budget ? { toolBudgetMs: opts.budget } : {}),
     readPreset: async () => null, readLorebook: async () => null, now: () => (now += 10), randomSeed: () => 7,
   };
   const turn = async (kind: "reply" | "swipe" | "continue" = "reply", extra: { inspect?: boolean } = {}) => {
@@ -133,6 +135,22 @@ describe("a reply with Narrator Tool Access on", () => {
     expect(review.tools).toEqual([{ name: "peek", description: "Look at the sky.", parameters: { type: "object", properties: { what: { type: "string" } } } }]);
     answerReview(s.chat.id, review.turnId, { kind: "send", edits: {} });
     await run;
+  });
+});
+
+describe("the reply's tool time budget", () => {
+  test("every tool run is handed the reply's budget as a deadline: the setting when there is one, else the default", async () => {
+    const seen: ({ at: number } | undefined)[] = [];
+    const run: NarratorTool<{ what: string }>["run"] = async (_a, _s, deadline) => (seen.push(deadline), { text: "ok" });
+    const fallback = await scene([ask("a"), say("done")], { toolAccess: true }, { run });
+    await fallback.turn();
+    const custom = await scene([ask("a"), say("done")], { toolAccess: true }, { run, budget: async () => 1_234 });
+    await custom.turn();
+    expect(seen).toHaveLength(2);
+    // the clock moves 10 ms per read in these scenes, so the deadline is the run's start plus what was left
+    expect(seen[0]!.at - 1_000).toBeGreaterThan(TOOL_BUDGET_MS_DEFAULT - 200);
+    expect(seen[1]!.at - 1_000).toBeLessThan(1_234 + 200);
+    expect(seen[1]!.at - 1_000).toBeGreaterThan(1_234 - 200);
   });
 });
 

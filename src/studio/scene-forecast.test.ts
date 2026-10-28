@@ -86,7 +86,7 @@ describe("forecastRequest", () => {
     const before = JSON.stringify(await s.chats.readMessages(s.chat.activeBranchId, { limit: 50 }));
     await forecastRequest(s.deps, { chatId: s.chat.id, draft: "{{setvar::seen::yes}}Any storms?" });
     expect(JSON.stringify(await s.chats.readMessages(s.chat.activeBranchId, { limit: 50 }))).toBe(before);
-    expect(await s.chats.variables(s.chat.activeBranchId)).toEqual({});
+    expect(await s.chats.sceneState(s.chat.activeBranchId)).toEqual({});
     expect(await s.chats.resumeIncomplete()).toEqual([]);
     expect(await s.state.read("meter")).toBeNull();
     expect(await s.state.read("variables")).toBeNull();

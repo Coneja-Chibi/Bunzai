@@ -20,6 +20,7 @@ import { openStageDatabase } from "./sqlite/database";
 import { sqliteChatStore } from "./sqlite-chat-store";
 import { sqliteDocumentBackend } from "./sqlite/document-backend";
 import { MIGRATIONS } from "./sqlite/migrations";
+import { varsOf } from "../../core/scene-state/vars-bridge";
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -132,7 +133,7 @@ test("nothing written through the stores can be found in the database files", as
   const committed = await chats.commitTurn(reply!.id, { content: "reply", trace: { note: SECRET.trace }, request: { texts: [SECRET.requestText] } });
   const open = await chats.beginTurn(take!.id, { kind: "reply" });
   await chats.saveCheckpoint(open!.id, { content: SECRET.checkpoint, trace: { note: SECRET.checkpointTrace }, providerRequestId: SECRET.requestId });
-  await chats.changeVariables(take!.id, { set: { [SECRET.variableName]: SECRET.variableValue } });
+  await chats.recordMessageDeltas(take!.id, committed!.id, [{ slot: "vars", path: [SECRET.variableName], value: SECRET.variableValue, at: 1 }]);
   await chats.setConnection(chat.id, { id: SECRET.connectionId, model: SECRET.connectionModel });
   await chats.setPreset(chat.id, { kind: "preset", id: SECRET.presetId, toggles: { [SECRET.presetToggleKey]: true }, samplers: { temperature: 0.8 } });
   await chats.setLore(chat.id, { added: [SECRET.loreAddedId], off: [SECRET.loreOffId] });
@@ -190,7 +191,7 @@ test("nothing written through the stores can be found in the database files", as
     expect((await st.resumeIncomplete()).map((c) => [c.content, c.trace, c.providerRequestId])).toEqual([
       [SECRET.checkpoint, { note: SECRET.checkpointTrace }, SECRET.requestId],
     ]);
-    expect((await st.variables(take!.id))![SECRET.variableName]!.value).toBe(SECRET.variableValue);
+    expect(varsOf(await st.sceneState(take!.id)).get(SECRET.variableName)!.value).toBe(SECRET.variableValue);
     expect((await st.getChat(chat.id))?.connection).toEqual({ id: SECRET.connectionId, model: SECRET.connectionModel });
     expect((await st.getChat(chat.id))?.preset).toEqual({
       kind: "preset",

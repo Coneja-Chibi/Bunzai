@@ -1,7 +1,7 @@
 /**
  * The ChatStore contract suite's turn half: checkpoints
  * that stream without bumping anything, the one-transaction commit that stores a reply with its trace,
- * a branch's macro variables, and the connection and model a scene remembers. chatStoreContract runs it, so every implementation gets it.
+ * and the connection and model a scene remembers. chatStoreContract runs it, so every implementation gets it.
  */
 import { describe, expect, test } from "bun:test";
 import { StudioConflictError } from "../../studio/atomic-file";
@@ -317,87 +317,6 @@ export function chatStoreTurnContract(make: (clock: () => number) => ChatStore):
       const back = await store.restoreCut(main, cut!.cutId);
       expect(back!.branchId).not.toBe(main);
       expect(await store.swipeTrace((await lastOf(store, back!.branchId)).id, swipeId)).toEqual(TRACE);
-    });
-  });
-
-  describe("macro variables (rule 17)", () => {
-    test("a diff sets and deletes names, keeping each name's first time; the same value changes nothing", async () => {
-      const { store, main, setNow } = await seeded(0);
-      expect(await store.variables(main)).toEqual({});
-      setNow(2_000);
-      expect(await store.changeVariables(main, { set: { mood: "calm", hp: 10, bag: { coins: [1, 2] }, config: { alpha: 1, beta: 2 } } })).toEqual({
-        mood: { value: "calm", createdAt: 2_000, updatedAt: 2_000 },
-        hp: { value: 10, createdAt: 2_000, updatedAt: 2_000 },
-        bag: { value: { coins: [1, 2] }, createdAt: 2_000, updatedAt: 2_000 },
-        config: { value: { alpha: 1, beta: 2 }, createdAt: 2_000, updatedAt: 2_000 },
-      });
-      setNow(3_000);
-      const after = await store.changeVariables(main, {
-        set: { mood: "tense", hp: 10, config: { beta: 2, alpha: 1 } },
-        delete: ["bag", "never-set"],
-      });
-      expect(after).toEqual({
-        mood: { value: "tense", createdAt: 2_000, updatedAt: 3_000 },
-        hp: { value: 10, createdAt: 2_000, updatedAt: 2_000 },
-        config: { value: { alpha: 1, beta: 2 }, createdAt: 2_000, updatedAt: 2_000 },
-      });
-      expect(await store.variables(main)).toEqual(after);
-    });
-
-    test("a deleted chat's live branch takes no turn and no variables, and shows none", async () => {
-      const { store, chat, main } = await seeded(1);
-      await store.changeVariables(main, { set: { a: 1 } });
-      await store.deleteChat(chat.id);
-      expect(await store.beginTurn(main, { kind: "reply" })).toBeNull();
-      expect(await store.changeVariables(main, { set: { b: 2 } })).toBeNull();
-      expect(await store.variables(main)).toBeNull();
-      await store.restoreChat(chat.id);
-      expect(await store.variables(main)).toEqual({ a: { value: 1, createdAt: expect.any(Number), updatedAt: expect.any(Number) } });
-    });
-
-    test("a name that is also an Object property is a plain name", async () => {
-      const { store, main } = await seeded(0);
-      await store.changeVariables(main, { set: JSON.parse('{"__proto__": 1, "constructor": 2}') });
-      const vars = (await store.variables(main))!;
-      expect(Object.keys(vars).sort()).toEqual(["__proto__", "constructor"]);
-      expect(Object.getPrototypeOf(vars)).toBe(Object.prototype);
-      expect([vars["constructor"]!.value, Object.getOwnPropertyDescriptor(vars, "__proto__")!.value.value]).toEqual([2, 1]);
-    });
-
-    test("variable writes bump no version and move no updatedAt", async () => {
-      const { store, chat, main, setNow } = await seeded(1);
-      const before = await version(store, main);
-      setNow(8_000);
-      await store.changeVariables(main, { set: { a: 1 } });
-      expect(await version(store, main)).toBe(before);
-      expect((await store.getChat(chat.id))!.updatedAt).toBe(chat.updatedAt);
-    });
-
-    test("a fork and a cut restored as a new take start with none, and never share them", async () => {
-      const { store, main, ids } = await seeded(3);
-      await store.changeVariables(main, { set: { a: 1 } });
-      const take = await store.fork(main, ids[1]!);
-      expect(await store.variables(take!.id)).toEqual({});
-      await store.changeVariables(take!.id, { set: { b: 2 } });
-      expect(Object.keys((await store.variables(main))!)).toEqual(["a"]);
-      const cut = await store.cutMessages(main, ids[1]!, "from");
-      await store.appendMessage(main, { role: "user", content: "after" });
-      const back = await store.restoreCut(main, cut!.cutId);
-      expect(await store.variables(back!.branchId)).toEqual({});
-    });
-
-    test("absent or deleted branches have none and take none; bad diffs are refused whole", async () => {
-      const { store, main, ids } = await seeded(2);
-      const take = await store.fork(main, ids[1]!);
-      await store.deleteBranch(take!.id);
-      expect(await store.variables("nope")).toBeNull();
-      expect(await store.variables(take!.id)).toBeNull();
-      expect(await store.changeVariables(take!.id, { set: { a: 1 } })).toBeNull();
-      const bads = [{ set: { a: 1 }, delete: ["a"] }, { set: { "": 1 } }, { delete: [""] }, { set: { a: 1, b: Number.NaN } }, { delete: [3] }, { sets: { a: 1 } }, { set: null }];
-      for (const bad of bads) {
-        expect(store.changeVariables(main, bad as never)).rejects.toBeInstanceOf(StudioValidationError);
-      }
-      expect(await store.variables(main)).toEqual({});
     });
   });
 

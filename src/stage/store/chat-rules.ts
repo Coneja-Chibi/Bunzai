@@ -7,10 +7,13 @@
 import { StudioConflictError } from "../../studio/atomic-file";
 import { StudioValidationError } from "../../studio/errors";
 import { deepEq, isPlainObject } from "../../core/guards";
-import { checkWhole, fail, isWhole, onlyKeys } from "./scalar-rules";
+import { checkWhole, fail, isJson, isWhole, onlyKeys } from "./scalar-rules";
 import { checkGeneration } from "./generation-rules";
+import { SANITY_LIST } from "../../entities/_shared/sanity";
+import { checkDeltas } from "./scene-state-rules";
+import type { Delta } from "../../core/scene-state/types";
 
-export { checkGeneration, fail };
+export { checkGeneration, fail, isJson };
 import type {
   Cast,
   CastSnapshot,
@@ -20,9 +23,8 @@ import type {
   ChatProps,
   Generation,
   JsonObject,
-  JsonValue,
   MessageRole,
-  StoredVariable, TurnTarget,
+  TurnTarget,
   WriteGuard,
 } from "../contracts/chat-store";
 
@@ -126,7 +128,8 @@ export function checkIdList(value: unknown, what: string, limit: number): string
     seen.add(v);
     out.push(v);
   }
-  if (out.length > limit) fail(`${what} must hold at most ${limit}`);
+  // The hostile-input ceiling is not a product limit, and says so; the older lists keep their own words.
+  if (out.length > limit) fail(limit === SANITY_LIST ? `${what} is unusually large` : `${what} must hold at most ${limit}`);
   return out;
 }
 
@@ -176,30 +179,6 @@ export function checkFolderId(value: unknown): string | null {
 export function checkCutoff(before: unknown): number {
   if (typeof before !== "number" || !Number.isFinite(before)) fail("before must be a finite time");
   return before;
-}
-
-/** True for JSON exactly, so what a store keeps as text is what it hands back. */
-export function isJson(value: unknown, seen: Set<object> = new Set()): boolean {
-  if (value === null || typeof value === "string" || typeof value === "boolean") return true;
-  // -0 is not JSON: it comes back as 0.
-  if (typeof value === "number") return Number.isFinite(value) && !Object.is(value, -0);
-  if (typeof value !== "object") return false;
-  // A cycle has no JSON form; refuse it instead of overflowing the stack.
-  if (seen.has(value)) return false;
-  seen.add(value);
-  const ok = isJsonContainer(value, seen);
-  seen.delete(value);
-  return ok;
-}
-
-function isJsonContainer(value: object, seen: Set<object>): boolean {
-  if (Array.isArray(value)) {
-    // A plain loop, not every(): every() skips holes, which JSON would turn into null. A hole reads
-    // as undefined here, which is not JSON.
-    for (let i = 0; i < value.length; i++) if (!isJson(value[i], seen)) return false;
-    return true;
-  }
-  return isPlainObject(value) && Object.values(value).every((v) => isJson(v, seen));
 }
 
 /** A snapshot whose members match the cast's exactly, each a JSON object. Returns a private copy. */
@@ -304,10 +283,10 @@ export function checkTurnTarget(value: unknown): TurnTarget {
 }
 
 /** A checkpoint's progress (rule 16). */
-export function checkProgress(value: unknown): { content: string; trace: JsonObject | undefined; providerRequestId: string | undefined } {
-  const p = onlyKeys(value, ["content", "trace", "providerRequestId"], "progress");
+export function checkProgress(value: unknown): { content: string; trace: JsonObject | undefined; providerRequestId: string | undefined; deltas: Delta[] | undefined } {
+  const p = onlyKeys(value, ["content", "trace", "providerRequestId", "deltas"], "progress");
   const providerRequestId = p.providerRequestId === undefined ? undefined : checkText(p.providerRequestId, "providerRequestId");
-  return { content: checkText(p.content, "content"), trace: checkTrace(p.trace), providerRequestId };
+  return { content: checkText(p.content, "content"), trace: checkTrace(p.trace), providerRequestId, deltas: p.deltas === undefined ? undefined : checkDeltas(p.deltas) };
 }
 
 /** The take's latest request text (rule 22): absent, or exactly a list of texts, one per stored
@@ -323,27 +302,4 @@ export function checkTurnRequest(value: unknown): { texts: string[] } | undefine
 export function checkTurnResult(value: unknown): { content: string; generation: Generation | undefined; trace: JsonObject | undefined; request: { texts: string[] } | undefined } {
   const r = onlyKeys(value, ["content", "generation", "trace", "request"], "turn result");
   return { content: checkText(r.content, "content"), generation: checkGeneration(r.generation), trace: checkTrace(r.trace), request: checkTurnRequest(r.request) };
-}
-
-/** A variable diff (rule 17): names are non-empty text, none both set and deleted, values JSON exactly. */
-export function checkVariableDiff(value: unknown): { set: [string, JsonValue][]; remove: string[] } {
-  const diff = onlyKeys(value, ["set", "delete"], "variable diff");
-  const setRaw = diff.set === undefined ? {} : diff.set;
-  const removeRaw = diff.delete === undefined ? [] : diff.delete;
-  if (!isPlainObject(setRaw)) fail("variable set must be an object");
-  if (!Array.isArray(removeRaw)) fail("variable delete must be a list");
-  const remove = removeRaw.map((name) => checkText(name, "variable name"));
-  const set = Object.entries(setRaw);
-  for (const name of [...set.map(([n]) => n), ...remove]) if (name === "") fail("a variable name must not be empty");
-  for (const [name, v] of set) {
-    if (!isJson(v)) fail(`variable ${name} must be JSON`);
-    if (remove.includes(name)) fail(`variable ${name} is both set and deleted`);
-  }
-  return { set: set.map(([n, v]) => [n, structuredClone(v) as JsonValue]), remove };
-}
-
-/** Variable writes preserve timestamps when a key-order-safe comparison says the value is unchanged. */
-export function variableAfterSet(before: StoredVariable | undefined, value: JsonValue, at: number): StoredVariable | null {
-  if (before && deepEq(before.value, value)) return null;
-  return { value, createdAt: before?.createdAt ?? at, updatedAt: at };
 }

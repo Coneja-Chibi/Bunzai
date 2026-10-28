@@ -7,7 +7,7 @@ import type { CanonicalEntity } from "../../core/canonical";
 
 export type DiceType = "roll" | "table" | "pool";
 
-/** A table row: its text and how many chances it has (a 1 to 1,000 weight). */
+/** A table row: its text and how many chances it has (a whole number weight of 1 or more). */
 export interface DiceRow { text: string; weight: number }
 
 /** A pool: `count` dice of `sides`; each die at or over `target` is a success. */

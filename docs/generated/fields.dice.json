@@ -4,7 +4,7 @@
   "shapes": [
     {
       "name": "DiceRow",
-      "doc": "A table row: its text and how many chances it has (a 1 to 1,000 weight).",
+      "doc": "A table row: its text and how many chances it has (a whole number weight of 1 or more).",
       "kind": "interface",
       "fields": [
         {

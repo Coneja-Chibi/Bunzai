@@ -14,12 +14,13 @@ import { entitySchema as schema7 } from "../entities/quickreply/runtime-schema";
 import { entitySchema as schema8 } from "../entities/tool/runtime-schema";
 import { entitySchema as schema9 } from "../entities/dice/runtime-schema";
 import { entitySchema as schema10 } from "../entities/formula/runtime-schema";
-import { entitySchema as schema11 } from "../entities/promptformat/runtime-schema";
-import { entitySchema as schema12 } from "../entities/htmldoc/runtime-schema";
+import { entitySchema as schema11 } from "../entities/tracker/runtime-schema";
+import { entitySchema as schema12 } from "../entities/promptformat/runtime-schema";
+import { entitySchema as schema13 } from "../entities/htmldoc/runtime-schema";
 import { parts as parts0 } from "../entities/lorebook/parts";
 import { parts as parts1 } from "../entities/preset/parts";
 
 /** Each kind's whole-entity decoder, in display order (the parse boundary's discriminated union). */
-export const ENTITY_SCHEMAS = [schema0, schema1, schema2, schema3, schema4, schema5, schema6, schema7, schema8, schema9, schema10, schema11, schema12] as const;
+export const ENTITY_SCHEMAS = [schema0, schema1, schema2, schema3, schema4, schema5, schema6, schema7, schema8, schema9, schema10, schema11, schema12, schema13] as const;
 /** The kinds whose bodies split into item parts in storage (src/entities/kind-parts.ts). */
 export const KIND_PARTS = { lorebook: parts0, preset: parts1 } as const;

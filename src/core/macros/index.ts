@@ -11,6 +11,7 @@ export type {
   LazyMacroArg,
   LiteralSegment,
   MacroContext,
+  MacroDeadline,
   MacroDefinition,
   MacroError,
   MacroExpansion,
@@ -23,6 +24,7 @@ export type {
   MacroVariableValue,
   PresetPromptInfo,
   RenderSegment,
+  TrackerView,
 } from "./types";
 export type { ChoiceGroup, ChoiceSelections } from "./choice-groups";
 export { parseMacroNodes, splitMacroArgs, type ASTNode } from "./parse";

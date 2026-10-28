@@ -4,7 +4,7 @@
  * are none), and what the stored trace and request keep of the calls: a `tools` section, plus one trace block and one request text per
  * tool answer, so the Tokens sheet and the raw request show what the model was told. Split out of scene-turn.ts for the file-size cap.
  */
-import { TOOL_ROUNDS_DEFAULT } from "../core/assembly/tool-rounds";
+import { TOOL_BUDGET_MS_DEFAULT, TOOL_ROUNDS_DEFAULT } from "../core/assembly/tool-rounds";
 import { countText } from "../core/tokens";
 import { mulberry32 } from "../core/lore/rng";
 import type { MacroContext } from "../core/macros";
@@ -13,14 +13,16 @@ import type { ProviderCompletion, ProviderEvent, ProviderMessage, ProviderReques
 import { sendWithTools, type NarratorTool, type ToolCallRecord } from "../stage/provider/tool-loop";
 import type { Connected } from "./scene-turn";
 import type { LoadedTurn, TurnKind } from "./scene-turn-load";
+import type { TurnWrites } from "./scene-turn-writes";
 
 /**
  * What a turn's tools are made from: the scene, what the turn loaded, the turn's seeded randomness (the same seed rolls the same),
- * and the turn's macro context, which the turn fills once the prompt is built (tools are made before then and called after).
+ * and the turn's macro context, which the turn fills once the prompt is built (tools are made before then and called after). No tool is handed the
+ * turn's write door through it: that goes, as a second argument, to the one tool that writes (library-trackers.ts).
  */
 export interface ToolsContext { chat: Chat; loaded: LoadedTurn; rand: () => number; macros: { context?: MacroContext } }
-/** The tools a scene's reply may call; the server supplies the real list. */
-export type NarratorToolsFor = (ctx: ToolsContext) => NarratorTool<never>[] | Promise<NarratorTool<never>[]>;
+/** The tools a scene's reply may call; the server supplies the real list. `writes` is the turn's scene-state door (scene-turn-writes.ts), for the trackers' tool only. */
+export type NarratorToolsFor = (ctx: ToolsContext, writes: TurnWrites) => NarratorTool<never>[] | Promise<NarratorTool<never>[]>;
 
 /** What one turn collects as its tool rounds run; read by the trace, the meter and the fallback rule. */
 export interface ToolTurn {
@@ -28,16 +30,18 @@ export interface ToolTurn {
   /** Filled by the turn with the assembled macro context, before any tool is called. */
   macros: { context?: MacroContext };
   maxRounds: number;
+  /** The time all of the reply's tool calls may take (ms): the setting, else the default. */
+  budgetMs: number;
   calls: ToolCallRecord[];
   extra: ProviderMessage[];
   rounds: number;
   tokens: { prompt: number; output: number };
 }
 
-export async function toolTurn(find: NarratorToolsFor | undefined, kind: TurnKind, chat: Chat, loaded: LoadedTurn, seed: number): Promise<ToolTurn> {
+export async function toolTurn(find: NarratorToolsFor | undefined, kind: TurnKind, chat: Chat, loaded: LoadedTurn, seed: number, writes: TurnWrites, budgetMs: number | undefined): Promise<ToolTurn> {
   const on = chat.prompting?.toolAccess === true && kind !== "continue";
   const macros: { context?: MacroContext } = {};
-  return { macros, tools: on && find ? await find({ chat, loaded, rand: mulberry32(seed), macros }) : [], maxRounds: chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT, calls: [], extra: [], rounds: 0, tokens: { prompt: 0, output: 0 } };
+  return { macros, tools: on && find ? await find({ chat, loaded, rand: mulberry32(seed), macros }, writes) : [], maxRounds: chat.prompting?.toolRounds ?? TOOL_ROUNDS_DEFAULT, budgetMs: budgetMs ?? TOOL_BUDGET_MS_DEFAULT, calls: [], extra: [], rounds: 0, tokens: { prompt: 0, output: 0 } };
 }
 
 /** The definitions the Prompt Inspector shows: only when this connection will actually be sent them. */
@@ -53,7 +57,7 @@ export async function sendReply(
   now: () => number,
 ): Promise<ProviderCompletion> {
   if (connected.tools !== true || turn.tools.length === 0) return connected.provider.send(request, io);
-  const done = await sendWithTools(connected.provider, request, io, { tools: turn.tools, maxRounds: turn.maxRounds, now, onCall: (r) => void turn.calls.push(r) });
+  const done = await sendWithTools(connected.provider, request, io, { tools: turn.tools, maxRounds: turn.maxRounds, toolBudgetMs: turn.budgetMs, now, onCall: (r) => void turn.calls.push(r) });
   turn.extra = done.extra;
   turn.rounds = done.rounds;
   turn.tokens = done.tokens;

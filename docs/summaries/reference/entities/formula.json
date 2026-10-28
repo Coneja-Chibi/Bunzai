@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:8a67696bd53156084f332779046cc58a07d94924b3841e68550257a4a8f7bcca",
-  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression of up to twenty thousand characters, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The editor waits for its wireframe.",
+  "sourceHash": "sha256:a5bf3a097c1810041f6fd1c9cec6562e77359fa3e301773263dcad596fd89fd5",
+  "summary": "The formula entity page covers CanonicalFormula, a saved macro expression, bounded only by a hostile-input ceiling, such as a word count over the chat plus a roll, made once and run anywhere. A formula is macro text and nothing else, so what it can do is what the macro engine gives it, including Bunraku's own mentions, lastmention, tally and odds macros, and its decoder checks only shape and size. The page explains that a tool runs a formula through its formula action on the macro context the turn built its prompt from, handed to the tools once the prompt is built, and that the run happens on a copy, with any variable write refused out loud and blank or failing formulas refused too. The editor waits for its wireframe.",
   "topics": [
     "CanonicalFormula",
     "macro expression",
@@ -29,13 +29,13 @@
       "slug": "safety",
       "title": "Safety",
       "level": 2,
-      "sourceHash": "sha256:921c70ef960b4ecbc45d563c2b37bf5ab188e0c9c3c24219a8176d1e9f0f2924",
-      "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula runs on its own budget of 1,000 steps, enough for roughly 100 macro calls, and the word-watching macros search for at most 200 new words in one run, so a model calling formulas again and again cannot tie up the server: the worst cases measured stop in about 55 ms per call, held under 500 ms by a test. Each call takes its own seed.",
+      "sourceHash": "sha256:3a68f73c7b6bf943a7ae9a9a90276fa01505ba372ed6ef4e241a97506d9ed2d7",
+      "summary": "runFormulaReadOnly runs the formula on a structuredClone of the macro context, so nothing it touches reaches the scene. A run that would change a variable, through setvar, state.set, once, ask_in_reply, pick and the like, is refused in words naming the macros, and a message holding a write macro makes formulas that read message text fail. Blank formulas and macro errors are refused. A formula has no step number of its own: the tool loop owns a time budget for all of a reply's tool calls, a setting with a default, hands each run what is left as a deadline, and the macro engine checks that clock between nodes, after every handler and inside the word macros' loops, so a run that passes it answers with the error, never as finished. A formula shares the chat's messages, so the positional word index is built once and a phrase costs what its rarest word costs. Each call takes its own seed.",
       "topics": [
         "structuredClone copy",
         "writes refused out loud",
         "pick refused",
-        "FORMULA_STEPS budget",
+        "tool time budget",
         "per-call seed"
       ],
       "children": []

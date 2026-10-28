@@ -176,22 +176,27 @@ describe("SQLite ChatStore: the turn commit is one transaction (rules 15 and 16)
     expect(await store.resumeIncomplete()).not.toEqual([]);
   });
 
-  test("purge leaves no checkpoint, trace, or variable of a purged chat, take, or cut", async () => {
+  test("purge leaves no checkpoint, trace, or scene-state change of a purged chat, take, or cut", async () => {
     let now = 1_000;
     const d = fresh();
     const store = sqliteChatStore(d, testCipher(), () => now);
     const make = async () => {
       const chat = await store.createChat({ title: "T", cast: CAST, snapshot: SNAP });
       const turn = await store.beginTurn(chat.activeBranchId, { kind: "reply" });
+      await store.saveCheckpoint(turn!.id, { content: "r", deltas: [{ slot: "vars", path: ["a"], value: 1, at: 1 }] });
       const reply = await store.commitTurn(turn!.id, { content: "r", trace: { n: 1 } });
-      await store.changeVariables(chat.activeBranchId, { set: { a: 1 } });
       return { chat, reply: reply! };
     };
     const gone = await make();
     await store.beginTurn(gone.chat.activeBranchId, { kind: "reply" });
     const kept = await make();
+    await store.setBranchBase(kept.chat.activeBranchId, [{ slot: "vars", path: ["start"], value: 1, at: 1 }]);
+    await store.setBranchBase(gone.chat.activeBranchId, [{ slot: "vars", path: ["start"], value: 1, at: 1 }]);
     const take = await store.fork(kept.chat.activeBranchId, kept.reply.id);
-    await store.changeVariables(take!.id, { set: { b: 2 } });
+    const copy = (await store.readMessages(take!.id, { limit: 10 })).messages.at(-1)!;
+    await store.recordMessageDeltas(take!.id, copy.id, [{ slot: "vars", path: ["b"], value: 2, at: 1 }]);
+    const stay = await store.appendMessage(kept.chat.activeBranchId, { role: "user", content: "stay" });
+    await store.recordMessageDeltas(kept.chat.activeBranchId, stay!.id, [{ slot: "vars", path: ["c"], value: 3, at: 1 }]);
     await store.beginTurn(take!.id, { kind: "reply" });
     await store.setActiveBranch(kept.chat.id, kept.chat.activeBranchId);
     await store.cutMessages(kept.chat.activeBranchId, kept.reply.id, "one");
@@ -200,6 +205,7 @@ describe("SQLite ChatStore: the turn commit is one transaction (rules 15 and 16)
     await store.deleteBranch(take!.id);
     await store.purgeChats(3_000);
     const count = (table: string) => (d.db.query(`SELECT count(*) AS n FROM ${table}`).get() as { n: number }).n;
-    expect([count("turn_checkpoints"), count("swipe_traces"), count("branch_variables")]).toEqual([0, 0, 1]);
+    // The deltas of the cut reply (its version's, and the purged take's copy of its message) went with it; the surviving message keeps its own, and its take its cache.
+    expect([count("turn_checkpoints"), count("swipe_traces"), count("swipe_deltas"), count("message_deltas"), count("branch_state"), count("branch_base")]).toEqual([0, 0, 0, 1, 1, 1]);
   });
 });

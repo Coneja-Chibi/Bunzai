@@ -1,7 +1,7 @@
 /**
  * The in-memory ChatStore, for tests and the contract suite. Records live
- * in chat-records.ts; bounded transcript reads in chat-store-transcript.ts; checkpoints, traces,
- * and variables in chat-store-turns.ts; the connection,
+ * in chat-records.ts; bounded transcript reads in chat-store-transcript.ts; checkpoints and traces
+ * in chat-store-turns.ts; scene state (the macro variables) in chat-store-state.ts; versions and cuts in chat-store-versions.ts and chat-store-cuts.ts; the connection,
  * preset, lore, Props, and Compendium settings in chat-store-settings.ts; Compendium receipts (rule 39) in
  * chat-store-receipts.ts; Fan Favorites and story folders (rules 23, 24) in chat-store-folders.ts. No method awaits between reading state and changing it, so each is
  * atomic the way one SQLite transaction is: every value handed out is a deep copy, so a caller can
@@ -10,20 +10,23 @@
 import { StudioConflictError } from "../../../studio/atomic-file";
 import { ChatAlreadyImportedError } from "../../../studio/errors";
 import type { Branch, CastSnapshotCodec, Chat, ChatStore, Message, SceneFolder, WriteGuard } from "../../contracts/chat-store";
-import { copyRecord, forkPositionOf, livePositions, publicMessage, type ChatRecord, type MessageRecord } from "./chat-records";
+import { copyRecord, forkPositionOf, publicMessage, type ChatRecord, type MessageRecord } from "./chat-records";
 import { folderMethods } from "./chat-store-folders";
 import { receiptMethods } from "./chat-store-receipts";
 import { settingsMethods } from "./chat-store-settings";
 import { summaryMethods } from "./chat-store-summary";
 import { directorMethods } from "./chat-store-director";
 import { turnMethods } from "./chat-store-turns";
+import { stateMethods } from "./chat-store-state";
+import { versionMethods } from "./chat-store-versions";
+import { cutMethods } from "./chat-store-cuts";
 import { hiddenMethods } from "./chat-store-hidden";
 import { swipeCutMethods } from "./chat-store-swipe-cuts";
 import { transcriptMethods } from "./chat-store-transcript";
 import { snapshotMethods } from "./chat-store-snapshots";
 import {
-  checkCast, checkCutoff, checkScope, checkGeneration, checkGuard, checkMessageInputs,
-  checkPage, checkPinned, checkSnapshot, checkSwipeIndex, checkText, checkTitle, fail, MAIN_UNDELETABLE, requireCastVersion,
+  checkCast, checkCutoff, checkGuard, checkMessageInputs,
+  checkPage, checkPinned, checkSnapshot, checkText, checkTitle, fail, MAIN_UNDELETABLE, requireCastVersion,
   requireVersion as checkVersion,
 } from "../chat-rules";
 import { castMethods } from "./chat-store-cast";
@@ -106,8 +109,9 @@ export function memoryChatStoreBackend(
   };
 
   const stats = statsCounters(clock);
+  const scene = stateMethods({ messages, branchOrder, liveChatOfBranch });
   const { turnOpen, ...turns } = turnMethods({
-    clock, newId, messages, branchVersion: (id) => branches.get(id)!.version, liveChatOfBranch, writableMessage, requireVersion, bump, appendMany,
+    clock, newId, messages, branchVersion: (id) => branches.get(id)!.version, liveChatOfBranch, writableMessage, requireVersion, bump, appendMany, state: scene,
   });
   const { drop: dropReceipts, ...receiptApi } = receiptMethods({ chats, branches, clock, newId });
   const castApi = castMethods({ chats, snapshotCodec, clock, turnOpen, stats });
@@ -115,8 +119,11 @@ export function memoryChatStoreBackend(
 
   const store: ChatStore = {
     ...turns,
+    ...scene.api,
+    ...versionMethods({ chats, branches, clock, newId, writableMessage, requireVersion, bump, refresh: scene.refresh }),
+    ...cutMethods({ branches, messages, branchOrder, clock, newId, writableMessage, liveMessages, liveChatOfBranch, requireVersion, bump, touch, refresh: scene.refresh, copyMessageDeltas: scene.copyMessageDeltas, copyBase: scene.copyBase }),
     ...hiddenMethods({ writableMessage, requireVersion, bump }),
-    ...swipeCutMethods({ messages, branchOrder, deletedBranches, chats, branches, clock, writableMessage, requireVersion, bump, touch, liveChatOfBranch }),
+    ...swipeCutMethods({ messages, branchOrder, deletedBranches, chats, branches, clock, writableMessage, requireVersion, bump, touch, liveChatOfBranch, refresh: scene.refresh }),
     ...castApi,
     ...stats.api,
     ...transcript,
@@ -217,6 +224,7 @@ export function memoryChatStoreBackend(
           for (const messageId of branchOrder.get(branchId) ?? []) messages.delete(messageId);
           branchOrder.delete(branchId);
           branches.delete(branchId);
+          scene.drop(branchId);
           deletedBranches.delete(branchId);
         }
         chats.delete(chatId);
@@ -231,6 +239,7 @@ export function memoryChatStoreBackend(
         for (const messageId of branchOrder.get(branchId) ?? []) messages.delete(messageId);
         branchOrder.delete(branchId);
         branches.delete(branchId);
+        scene.drop(branchId);
         deletedBranches.delete(branchId);
         removed += 1;
       }
@@ -292,10 +301,12 @@ export function memoryChatStoreBackend(
         // Live versions only (rule 32); the fork message shows the version the fork names.
         const copy = copyRecord(original, newId(), branch.id, original.id === atMessageId ? keptSwipe : original.current);
         messages.set(copy.id, copy);
+        scene.copyMessageDeltas(original.id, copy.id);
         copiedIds.push(copy.id);
       }
       branches.set(branch.id, branch);
       branchOrder.set(branch.id, copiedIds);
+      scene.copyBase(branchId, branch.id);
       record.chat = { ...record.chat, activeBranchId: branch.id, updatedAt: t };
       return structuredClone(branch);
     },
@@ -322,50 +333,6 @@ export function memoryChatStoreBackend(
         messages: pageOf.map(publicMessage),
         nextSeq: from.length > limit ? from[limit]!.seq : null,
         branchVersion: branches.get(branchId)!.version,
-      };
-    },
-
-    async addSwipe(messageId, input, guard) {
-      const content = checkText(input?.content, "content");
-      const generation = checkGeneration(input?.generation);
-      const expected = checkGuard(guard);
-      const m = writableMessage(messageId);
-      if (!m) return null;
-      requireVersion(m.branchId, expected);
-      m.swipes.push({ id: newId(), content, createdAt: clock(), pinned: false, history: [], ...(generation ? { generation } : {}) });
-      m.current = m.swipes.length - 1;
-      bump(m.branchId);
-      return publicMessage(m);
-    },
-
-    async selectSwipe(messageId, index, guard) {
-      checkSwipeIndex(index);
-      const expected = checkGuard(guard);
-      const m = writableMessage(messageId);
-      const position = m ? livePositions(m)[index] : undefined;
-      if (!m || position === undefined) return null; // spec edge case 5: refused, not clamped; rule 32: live versions only
-      requireVersion(m.branchId, expected);
-      if (m.current !== position) {
-        m.current = position;
-        bump(m.branchId);
-      }
-      return publicMessage(m);
-    },
-
-    async selectTranscriptSwipe(chatId, branchId, messageId, indexRaw, guard) {
-      const index = checkSwipeIndex(indexRaw);
-      const expected = checkGuard(guard);
-      const m = writableMessage(messageId);
-      const branch = branches.get(branchId);
-      const owner = chats.get(chatId);
-      const position = m ? livePositions(m)[index] : undefined;
-      if (!m || !branch || !owner || owner.deletedAt !== null || branch.chatId !== chatId || owner.chat.activeBranchId !== branchId || m.branchId !== branchId || position === undefined) return null;
-      requireVersion(branchId, expected);
-      if (m.current !== position) { m.current = position; bump(branchId); }
-      return {
-        branchId,
-        branchVersion: branches.get(branchId)!.version,
-        swipeCount: livePositions(m).length,
       };
     },
 
@@ -404,59 +371,6 @@ export function memoryChatStoreBackend(
       return publicMessage(m);
     },
 
-    async cutMessages(branchId, messageId, scopeRaw, guard) {
-      const scope = checkScope(scopeRaw);
-      const expected = checkGuard(guard);
-      const m = writableMessage(messageId);
-      if (!m || m.branchId !== branchId) return null;
-      requireVersion(branchId, expected);
-      const order = branchOrder.get(branchId)!;
-      const cut = { id: newId(), at: clock(), scope, tail: messages.get(order[order.length - 1]!)!.seq };
-      const targets = scope === "one" ? [m] : liveMessages(branchId).filter((x) => x.seq >= m.seq);
-      for (const x of targets) x.cut = cut;
-      bump(branchId);
-      touch(liveChatOfBranch(branchId)!);
-      return { cutId: cut.id, count: targets.length };
-    },
-
-    async restoreCut(branchId, cutId, guard) {
-      const expected = checkGuard(guard);
-      const record = liveChatOfBranch(branchId);
-      const order = branchOrder.get(branchId) ?? [];
-      const cut = order.map((id) => messages.get(id)!).filter((m) => m.cut?.id === cutId);
-      if (!record || cut.length === 0) return null;
-      requireVersion(branchId, expected);
-      const first = cut[0]!;
-      // A "from here" cut with anything written after it, cut since or not, comes back as a new take
-      // (spec rule 11): restoring it in place would put it before messages that answered what replaced it.
-      const { scope, tail } = first.cut!;
-      const asTake = scope === "from" && order.some((id) => messages.get(id)!.seq > tail);
-      for (const m of cut) delete m.cut;
-      bump(branchId);
-      touch(record);
-      if (!asTake) return { branchId, count: cut.length };
-      const before = liveMessages(branchId).filter((m) => m.seq < first.seq);
-      const at = before[before.length - 1];
-      const take: Branch = {
-        id: newId(),
-        chatId: record.chat.id,
-        name: "Restored take",
-        parentBranchId: branchId,
-        forkMessageId: at?.id ?? null,
-        forkSwipeId: at ? at.swipes[at.current]!.id : null,
-        createdAt: clock(),
-        version: 1,
-      };
-      const copies = before.map((m) => copyRecord(m, newId(), take.id, m.current));
-      for (const m of cut) m.branchId = take.id;
-      for (const m of copies) messages.set(m.id, m);
-      branches.set(take.id, take);
-      branchOrder.set(take.id, [...copies, ...cut].map((m) => m.id));
-      branchOrder.set(branchId, order.filter((id) => !cut.includes(messages.get(id)!)));
-      record.chat = { ...record.chat, activeBranchId: take.id, updatedAt: clock() };
-      return { branchId: take.id, count: cut.length };
-    },
-
     async renameBranch(branchId, nameRaw) {
       const name = checkTitle(nameRaw);
       const branch = branches.get(branchId);
@@ -471,6 +385,7 @@ export function memoryChatStoreBackend(
       if (!branch || !record) return false;
       if (branch.parentBranchId === null) fail(MAIN_UNDELETABLE);
       deletedBranches.set(branchId, clock());
+      scene.drop(branchId);
       if (record.chat.activeBranchId === branchId) {
         const parent = branch.parentBranchId;
         const main = [...branches.values()].find((b) => b.chatId === branch.chatId && b.parentBranchId === null)!;
@@ -490,6 +405,7 @@ export function memoryChatStoreBackend(
     async restoreBranch(branchId) {
       const record = chatOfBranch(branchId);
       if (!record || record.deletedAt !== null || !deletedBranches.delete(branchId)) return null;
+      scene.refresh(branchId);
       return structuredClone(branches.get(branchId)!);
     },
 

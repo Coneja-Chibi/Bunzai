@@ -1,7 +1,7 @@
 /**
  * The ChatStore contract: chats, branches, forking, messages, swipes,
  * edits, bounded transcript reads, and selected-only swipe reads; then checkpoints, stored traces,
- * macro variables, the scene's connection, the scene's preset, its lorebook choices, its switched-on
+ * scene state (macro variables are its first slot), the scene's connection, the scene's preset, its lorebook choices, its switched-on
  * Props, and the take's latest request text (rules 15 to 22). Shapes follow RoleCall's stored ChatMessage and SwipeData, because prompts are built from
  * these records and prompt construction matches RoleCall. Types only.
  */
@@ -14,6 +14,7 @@ import type { ChatRegex, ChatRegexPatch } from "./chat-regex-types";
 import type { ChatFinalCut, ChatFinalCutPatch } from "./chat-final-cut-types";
 import type { ChatTrackerPatch, ChatTrackers, TrackerModule } from "./chat-tracker-types";
 import type { ChatSummary, SummarySettingsPatch, TakeSummary, TakeSummaryInput } from "./chat-summary-types";
+import type { Delta, SceneState } from "../../core/scene-state/types";
 import type { PartText } from "./content-store";
 import type { MessageAtPage, MessagePage, MessageSwipePage, MessageTailPage, TranscriptSearchPage, TranscriptSearchQuery, TranscriptSwipeSelection } from "./chat-store-pages";
 export type * from "./chat-store-pages";
@@ -259,6 +260,8 @@ export interface TurnCheckpoint {
   /** The prompt trace so far: opaque JSON whose shape prompt assembly owns (rule 15). */
   trace?: JsonObject;
   providerRequestId?: string;
+  /** The scene-state changes this turn made, pending: `commitTurn` stamps them onto the version it stores, and a dropped turn takes them with it (rule 17). */
+  deltas?: Delta[];
   /**
    * The branch's version when the turn began. A reply resumed after a crash commits guarded by it, so
    * anything written to the branch since the turn began is a conflict, not silently overtaken.
@@ -268,15 +271,6 @@ export interface TurnCheckpoint {
   startedAt: number;
   /** Epoch ms of the last save. */
   savedAt: number;
-}
-
-/** One macro variable on a branch (spec rule 17): the value, and the store's times. */
-export interface StoredVariable {
-  value: JsonValue;
-  /** Epoch ms. */
-  createdAt: number;
-  /** Epoch ms. */
-  updatedAt: number;
 }
 
 /**
@@ -397,7 +391,7 @@ export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector {
    */
   beginTurn(branchId: string, target: TurnTarget, guard?: WriteGuard): Promise<TurnCheckpoint | null>;
   /** Records progress. Bumps no version and moves no updatedAt. */
-  saveCheckpoint(turnId: string, progress: { content: string; trace?: JsonObject; providerRequestId?: string }): Promise<TurnCheckpoint | null>;
+  saveCheckpoint(turnId: string, progress: { content: string; trace?: JsonObject; providerRequestId?: string; deltas?: Delta[] }): Promise<TurnCheckpoint | null>;
   /**
    * Stores the reply or swipe with its trace and removes the checkpoint, as one transaction. A stale
    * guard throws StudioConflictError and leaves the checkpoint as it was.
@@ -410,10 +404,14 @@ export interface ChatStore extends ChatStoreSummaries, ChatStoreDirector {
    * branch is absent or deleted. */
   lastRequest(branchId: string): Promise<{ messageId: string; swipeId: string; texts: string[] } | null>;
 
-  /** A branch's macro variables (rule 17); null when the branch is absent or deleted. */
-  variables(branchId: string): Promise<Record<string, StoredVariable> | null>;
-  /** Sets and deletes names as one transaction and returns the result; bumps no version. */
-  changeVariables(branchId: string, diff: { set?: JsonObject; delete?: string[] }): Promise<Record<string, StoredVariable> | null>;
+  /** Scene state (rule 17): every slot's value after the versions the branch shows, rebuilt from their deltas; the macro variables are the `vars` slot. Every method that changes what is shown rebuilds it in its own transaction. Null when the branch is absent or deleted. */
+  sceneState(branchId: string): Promise<SceneState | null>;
+  /** The state after every shown message before `messageId`, and that message's own deltas: what a new version of it, or a continue, builds from. Null when the branch or the message is absent, deleted or cut. */
+  sceneStateBefore(branchId: string, messageId: string): Promise<SceneState | null>;
+  /** Replaces what the take starts with, before any message (an import's variables): these deltas folded over nothing. It shows with no message, is what the first message builds from, survives a cut of every message, and a fork or a restored take gets its own copy. Refused whole when malformed or one write is past the hostile-input ceiling (unusually large); empty clears it; false when the branch is absent or deleted. */
+  setBranchBase(branchId: string, deltas: Delta[]): Promise<boolean>;
+  /** Appends deltas to a live message of this take, what it carries whichever version shows (a person's edit on a reply). They fold after the version's own and win on that message, `sceneStateBefore` includes them, a fork copies them, and a write of what is already there adds nothing. Refused whole when malformed or when one write is past the hostile-input ceiling (unusually large; there is no per-message cap); false when the branch or message is absent or cut. */
+  recordMessageDeltas(branchId: string, messageId: string, deltas: Delta[]): Promise<boolean>;
 
   /** A persona's running counters (rule 28); zeros for a persona nothing has played. */
   personaStats(personaId: string): Promise<PersonaStats>;

@@ -13,6 +13,7 @@ import { running } from "./scene-turn-running";
 export { stopTurn } from "./scene-turn-running";
 export { commitAnyway, discardWaiting, resumeScene } from "./scene-turn-resume";
 import { rebaseDiff } from "../core/assembly/lore-effects";
+import { varsDeltas } from "../core/scene-state/vars-bridge";
 import { PresetPlanError } from "../core/assembly/preset";
 import { GUIDANCE_MAX } from "../core/assembly/guided-swipe";
 import { continuationAddition } from "../core/assembly/continuation";
@@ -22,12 +23,11 @@ import { thinkingSignature } from "./scene-turn-reasoning";
 import { modelTakesPrefill } from "../core/assembly/request";
 import { countPrompt, estimateFor, modelKey } from "../core/tokens";
 import type { ChatConnection, ChatStore, Generation, JsonObject, Message } from "../stage/contracts/chat-store";
-import type { MacroVariable } from "../core/macros";
 import { ProviderError, type Provider, type ProviderEvent, type ProviderRole } from "../stage/contracts/provider";
 import type { StateStore } from "../stage/contracts/state-store";
 import { StudioConflictError } from "./atomic-file";
 import { StudioNotFoundError, StudioValidationError } from "./errors";
-import { assembleRequest, openedWith, prepareRequest, shapeRequest } from "./scene-turn-build";
+import { assembleRequest, openedWith, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
 import { carriedBy, trackersAfterReply } from "./scene-turn-after-trackers";
 import { loadTurn, writeGlobals, type ReadPreset, type TurnKind } from "./scene-turn-load";
 import { isFallbackWorthy } from "./scene-turn-fallback";
@@ -44,6 +44,8 @@ import { summaryOf } from "../core/director/tracker-round";
 import { cancelTrackerRound, startTrackerRound } from "./scene-director-trackers";
 import { reconcileTrackers } from "./scene-tracker-undo";
 import { commitDirector, runDirector, type DirectorDeps, type DirectorRun } from "./scene-director";
+import type { ReadTracker } from "./library-trackers";
+import { turnWrites } from "./scene-turn-writes";
 import { sendReply, sentTools, toolTurn, withToolCalls, type NarratorToolsFor } from "./scene-turn-tools";
 import { failedAttempt, requestParams, routeOf, splitEntryKey, traceOf, traceOptions, type RequestParams, type RouteAttempt } from "./scene-turn-trace";
 
@@ -102,6 +104,14 @@ export interface TurnDeps {
   finalCutBanks?(): Promise<Record<string, import("../core/final-cut/banks").Bank>>;
   /** The first-party tools a reply may call when the scene's Narrator Tool Access is on (scene-turn-tools.ts). */
   narratorTools?: NarratorToolsFor;
+  /** The library's tracker piece by id, decoded; absent: a scene's linked trackers are not read (library-trackers.ts). */
+  readTracker?: ReadTracker;
+  /** The time all of a reply's tool calls may take (ms), from the setting `scenes.toolBudgetMs`; absent or unset: the default (tool-rounds.ts). */
+  toolBudgetMs?(): Promise<number | undefined>;
+  /** The time all the macros of one prompt build may take (ms), from the setting `scenes.promptBudgetMs`; absent or unset: the default (tool-rounds.ts). */
+  promptBudgetMs?(): Promise<number | undefined>;
+  /** The clock the budgets read (real monotonic time when absent); a test hands in its own. */
+  clock?(): number;
   now(): number;
   randomSeed(): number;
   /** The Story Director's pause, jitter and call limit, so a test need not wait; absent: the real ones (scene-director-call.ts). */
@@ -136,7 +146,7 @@ export async function runTurn(
   if (!chat.connection) throw new NoConnectionError();
   let connected = await deps.connect(chat.connection);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
-  const loaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults);
+  const loaded = await loadTurn(chats, chat.id, input.kind, deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
   if (!loaded) throw new StudioNotFoundError("that scene does not exist");
   const replacedId = loaded.target?.id;
   /** Who spoke, for the Director's tracker request after the reply. */
@@ -148,7 +158,8 @@ export async function runTurn(
   /** What the checkpoint and the commit hold: a continue holds only its addition, with any echo cut off. */
   let model = chat.connection.model;
   const stored = (streamed: string): string => (input.kind === "continue" ? continuationAddition(original, streamed, !modelTakesPrefill(model)) : streamed);
-  const toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed());
+  const writes = turnWrites(deps.now);
+  const toolsTurn = await toolTurn(deps.narratorTools, input.kind, chat, loaded, deps.randomSeed(), writes, await deps.toolBudgetMs?.());
   const turn = await chats.beginTurn(loaded.branchId, target, { expectedVersion: input.expectedVersion });
   if (!turn) throw new StudioNotFoundError("that scene does not exist");
 
@@ -171,7 +182,7 @@ export async function runTurn(
   try {
     const started = deps.now();
     const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
-    const { window, options, presetName, reasoningFormat, meter, key, storedGlobals, undo, startLocal, startGlobal } = prep;
+    const { window, options, presetName, reasoningFormat, meter, key, storedGlobals, undo, startGlobal } = prep;
     // Recall (compendium-recall.ts) runs once, here: the Inspector's pause, the fallback model and a draft never ask it again.
     // The Director plans beside the Compendium's recall; both finish before anything is assembled. A Director that fails never fails the reply.
     if (directorOn(chat) && input.kind !== "continue") emit({ type: "director", status: "planning" });
@@ -194,12 +205,12 @@ export async function runTurn(
       const fresh = putBackTrackers ? await chats.getChat(chat.id) : null;
       if (fresh?.trackers && fresh.props) loaded.trackers = { entries: fresh.trackers, on: fresh.props.on };
     }
-    const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: input.kind, original, guidance, recall, ...(director?.directive ? { director: director.directive } : {}) });
+    const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: input.kind, original, guidance, recall, ...(director?.directive ? { director: director.directive } : {}), reserved: sentTools(toolsTurn, connected).map((t) => JSON.stringify(t)) });
     const { result, asked, guided } = built;
     toolsTurn.macros.context = result.expansion.context;
     if (result.budget.overflow) {
       await chats.dropTurn(turn.id);
-      emit({ type: "failed", category: "invalid_request_error", code: "context_length_exceeded", message: "The card and your message alone are longer than this model's window.", draft: "" });
+      emit({ type: "failed", category: "invalid_request_error", code: "context_length_exceeded", message: overflowMessage(result), draft: "" });
       return;
     }
     let edits: Readonly<Record<number, string>> = {};
@@ -215,7 +226,9 @@ export async function runTurn(
     const estimate = estimateFor(meter, key, countPrompt(messages.map((m) => m.content)), started);
     const recalled = recall ? recallSection(recall, result.recall) : undefined;
     let route: RouteAttempt[] = [{ connectionId: chat.connection.id, kind: connected.kind, model }];
-    let trace = traceOf(recounted(result, regexEdits), model, window, estimate, traceOptions(options, connected.provider.params, model), guided, recalled);
+    // The turn's local variable changes, as scene-state deltas (rule 17): a continue makes none of its own. Their size is bounded by their source (the macro engine's output cap), so nothing is refused here.
+    const deltas = input.kind === "continue" ? [] : varsDeltas(result.local, started);
+    let trace = (traceOf(recounted(result, regexEdits), model, window, estimate, traceOptions(options, connected.provider.params, model), guided, recalled));
     if (input.inspect) {
       // F16: the one pause gate. Cancel and Stop drop the checkpoint, so nothing was written, saved or sent.
       emit({ type: "review", turnId: turn.id, messages: messages.map((m) => ({ role: m.role, content: m.content })), tokens: estimate.mid, params: requestParams(traceOptions(options, connected.provider.params, model)), ...(sentTools(toolsTurn, connected).length > 0 ? { tools: sentTools(toolsTurn, connected) } : {}) });
@@ -228,25 +241,23 @@ export async function runTurn(
       edits = { ...regexEdits, ...decision.edits };
       messages = shape(model);
     }
-    // Step 4: RoleCall writes the variables before the request goes out; a regenerate keeps them.
-    await chats.changeVariables(loaded.branchId, rebaseDiff(loaded.localVariables, startLocal, result.local));
+    // Step 4: RoleCall writes the variables before the request goes out. The library's global ones are written now; the scene's own wait on the checkpoint below and reach the version only when the turn commits, so a turn that does not commit has written none (rule 17).
     await writeGlobals(state, rebaseDiff(storedGlobals, startGlobal, result.global), started);
-    /** A turn that does not commit (failure, Stop with nothing, nothing added) puts back every variable the lore effects of this attempt or of the reply it replaces touched, to what the library held before the turn; the others stay as RoleCall keeps them. */
+    /** A turn that does not commit (failure, Stop with nothing, nothing added) puts back every global variable the lore effects of this attempt or of the reply it replaces touched, to what the library held before the turn; the others stay as RoleCall keeps them. */
     putBackEffects = async (): Promise<void> => {
-      const names = (scope: "local" | "global") => new Set([...undo, ...(result.lore?.undo ?? [])].filter((u) => u.scope === scope).map((u) => u.name));
-      const back = (stored: ReadonlyMap<string, MacroVariable>, scope: "local" | "global") => {
-        const touched = [...names(scope)];
-        return { set: Object.fromEntries(touched.filter((n) => stored.has(n)).map((n) => [n, stored.get(n)!.value])), delete: touched.filter((n) => !stored.has(n)) };
-      };
-      await chats.changeVariables(loaded.branchId, back(loaded.localVariables, "local")).catch(() => undefined);
-      await writeGlobals(state, back(storedGlobals, "global"), started).catch(() => undefined);
+      const touched = [...new Set([...undo, ...(result.lore?.undo ?? [])].filter((u) => u.scope === "global").map((u) => u.name))];
+      const back = { set: Object.fromEntries(touched.filter((n) => storedGlobals.has(n)).map((n) => [n, storedGlobals.get(n)!.value])), delete: touched.filter((n) => !storedGlobals.has(n)) };
+      await writeGlobals(state, back, started).catch(() => undefined);
     };
     // ChatStore rule 22: the take's latest request text, aligned with the stored trace's blocks
     // (result.messages and result.trace share the same order and length, section 9's own build).
     const request = { texts: applyEdits(asked, edits).map((m) => m.content) };
     let savedChars = 0;
     let savedAt = deps.now();
-    let saving: Promise<unknown> = chats.saveCheckpoint(turn.id, { content: "", trace });
+    // The save that carries the turn's deltas is awaited, not left to the best-effort chain: a lost one would commit the reply without the variables it wrote. A failure takes the catch below, as the old variable write did.
+    let saving: Promise<unknown> = deltas.length > 0 ? Promise.resolve(await chats.saveCheckpoint(turn.id, { content: "", trace, deltas })) : chats.saveCheckpoint(turn.id, { content: "", trace });
+    // A tool's state writes join the same pending set and are saved with the reply's text so far, awaited: the model is told if one could not be kept.
+    writes.open(deltas, (all) => chats.saveCheckpoint(turn.id, { content: stored(text), deltas: all }));
     const save = () => {
       savedChars = text.length;
       savedAt = deps.now();

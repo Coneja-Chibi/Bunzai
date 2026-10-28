@@ -42,6 +42,7 @@ const bodies: Record<StudioEntityKind, (name: string) => unknown> = {
   tool: (name) => ({ name, description: "Roll for luck.", fields: [], action: { kind: "dice", id: "luck" } }),
   dice: (name) => ({ name, description: "", type: "table", rows: [{ text: "Sparks", weight: 1 }] }),
   formula: (name) => ({ name, description: "", text: "{{mentions::storm}}" }),
+  tracker: (name) => ({ name, description: "", layout: "record", note: "", fields: [{ name: "value", description: "", type: "number", default: 0 }] }),
 };
 const piece = (kind: StudioEntityKind, id: string, name: string) => ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind, id, body: bodies[kind](name) });
 

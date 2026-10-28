@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/README",
   "sourcePath": "docs/reference/entities/README.md",
-  "sourceHash": "sha256:353ff6cee148b76c2d1011e78e90873d56af551f48f81ba23824fdae60e9633f",
-  "semanticSummaryHash": "sha256:92c87ef67c62398b80e778862e797dbd4317bf92c4cd77fc021255c12cdea7ab",
+  "sourceHash": "sha256:6595bd0cde23ca8557c4db59f29ccf497d11716b21e2d5585a9947f55e753566",
+  "semanticSummaryHash": "sha256:21d4b531187074f24d87743d6b482d97419e3753e698981ad1adfc7f8fb0dcf3",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Formula row matches formula.md; Tool row lists roll, dice, formula or record; kind lists give thirteen kinds matching KIND_IDS incl. formula.",
-  "reviewedAt": "2026-10-27T10:37:40.540Z"
+  "notes": "Tracker row and kind lists match KIND_IDS and tracker.md; non-short sections in band.",
+  "reviewedAt": "2026-10-27T21:14:18.536Z"
 }

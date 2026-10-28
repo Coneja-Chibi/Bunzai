@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/architecture",
   "sourcePath": "docs/reference/architecture.md",
-  "sourceHash": "sha256:f27e030c9cfe3f6d7f59e40014c141b69e690c944c2add93e7985115c350b1bd",
-  "semanticSummaryHash": "sha256:4c9932840648d76f2b9ea006a05525b6356087651989fa230f903ea5ffac3ae1",
+  "sourceHash": "sha256:356872d64df5a5a91c635282b7c0459a7d7d92f5b12936258cb1364d0e8f564f",
+  "semanticSummaryHash": "sha256:ec1d6fe12dac49f44b07e4a282f4d5cbc1b6da4542a473a1837453397b44c51d",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Adapter-contract section and summary match the revised page (decoders from the generated kind seam) and src/core/adapter.ts; no eight-kind claim remains. Author check OK.",
-  "reviewedAt": "2026-10-27T02:06:12.272Z"
+  "notes": "Changed clause (each take's scene state; macro variables are the vars slot kept as per-version deltas rebuilt from shown history) matches the code and scene-state.md. The stage section summary does not mention macro variables, so nothing in it is stale.",
+  "reviewedAt": "2026-10-27T18:08:49.781Z"
 }

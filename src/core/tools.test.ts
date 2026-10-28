@@ -39,7 +39,7 @@ describe("the model's side", () => {
     expect(readToolCall(check, {})).toEqual({ error: "dice is required." });
     expect(readToolCall(check, { dice: "1d20", skill: "magic" })).toEqual({ error: "skill must be one of: stealth, charm." });
     expect(readToolCall(check, { dice: "1d20", hard: "yes" })).toEqual({ error: "hard must be a boolean." });
-    expect(readToolCall(check, { dice: "fireball" })).toEqual({ error: '"fireball" is not dice this tool can roll (like 2d6 or 1d20+3, 1 to 100 dice of 2 to 1,000 sides).' });
+    expect(readToolCall(check, { dice: "fireball" })).toEqual({ error: '"fireball" is not dice this tool can roll (like 2d6 or 1d20+3, with at least 1 die of at least 2 sides).' });
     expect(readToolCall(check, "1d20")).toEqual({ error: "Arguments must be an object." });
     // a field named like an inherited property is only ever the model's own argument
     const own = { ...check, fields: [{ name: "constructor", description: "", type: "text" as const, required: false }], action: { kind: "record" as const } };
@@ -74,5 +74,30 @@ describe("the stored piece", () => {
     expect(entity({ ...check, fields: [{ ...f[0], name: "Dice" }] })).toBe(false);
     expect(entity({ ...check, action: { kind: "run", code: "x" } })).toBe(false);
     expect(entity({ ...check, fields: [{ ...f[1], choices: ["a", "a"] }] })).toBe(false);
+  });
+});
+
+describe("owner rule (limits rework): no product limits on a tool, only hostile-input ceilings", () => {
+  const entity = (body: unknown) => safeParseCanonicalEntity({ schemaVersion: "1", kind: "tool", id: "t", body }).ok;
+  test("a model's long text argument is taken whole", () => {
+    const note = { ...check, action: { kind: "record" as const }, fields: [{ name: "what", description: "", type: "text" as const, required: true }] };
+    const long = "x".repeat(50_000);
+    expect(readToolCall(note, { what: long })).toEqual({ args: { what: long } });
+  });
+  test("more than 12 fields, 20 choices, long choices and long descriptions read", () => {
+    const fields = Array.from({ length: 40 }, (_, i) => ({ name: `f${i}`, description: "d".repeat(5_000), type: "text" as const, required: false }));
+    expect(entity({ name: "Wide", description: "", fields, action: { kind: "record" } })).toBe(true);
+    const choices = Array.from({ length: 300 }, (_, i) => `choice ${i} ${"c".repeat(400)}`);
+    expect(entity({ name: "Pick", description: "", fields: [{ name: "pick", description: "", type: "choice", choices, required: true }], action: { kind: "record" } })).toBe(true);
+    expect(entity({ name: "Id", description: "", fields: [], action: { kind: "dice", id: "i".repeat(500) } })).toBe(true);
+  });
+  test("a hostile file is refused: past the list and text ceilings", () => {
+    expect(entity({ name: "x", description: "", fields: Array.from({ length: 10_001 }, (_, i) => ({ name: `f${i}`, description: "", type: "text", required: false })), action: { kind: "record" } })).toBe(false);
+    expect(entity({ name: "x", description: "", fields: [{ name: "a", description: "d".repeat(1_000_001), type: "text", required: false }], action: { kind: "record" } })).toBe(false);
+  });
+  test("a field name keeps the provider's 64-character function rule", () => {
+    const named = (name: string) => entity({ name: "x", description: "", fields: [{ name, description: "", type: "text", required: false }], action: { kind: "record" } });
+    expect(named("a".repeat(64))).toBe(true);
+    expect(named("a".repeat(65))).toBe(false);
   });
 });

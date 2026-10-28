@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/README",
   "sourcePath": "docs/reference/README.md",
-  "sourceHash": "sha256:88120e5bc1b8be3d9c94ac84238f55a15c060bbee6379aa778ef3567f455a140",
+  "sourceHash": "sha256:1b3e83628ba441f9864a91acb2f6b5751189393f99278f3881713777afd08f57",
   "summary": "Reference documentation index for bunraku, the Vaudeville Studios converter for AI-roleplay content. Docs-as-code: lives in the repo, versioned with the code, updated in the same change that adds or alters a feature. If a doc and the code disagree the code is right and the doc is a bug to file. The contract: based in truth with claims checked against source field tables detect scores and mapping quirks, planned-but-not-built labeled, updated per feature in the same commit, one concept per file mirroring house code rules. Map routes to architecture engine start page, entities character and lorebook supersets, concepts character-book embed extract, formats README coverage matrix and per-format family pages. How to read the field tables: Field is canonical name in vaud-json output, Type is TypeScript from entities schema, Meaning is roleplay client use, Formats lists producers and consumers; a field with no producer would not exist as a canonical slot per escrow rule in architecture. Schema file is type truth; this doc is meaning truth.",
   "topics": [
     "docs-as-code truth",
@@ -32,7 +32,7 @@
       "slug": "map",
       "title": "Map",
       "level": 2,
-      "sourceHash": "sha256:c29892d8bc4ea866c7dcd59b291f75c0c7ebd816b7090ed0259dd3a7867c59b3",
+      "sourceHash": "sha256:30e7537d6f0cec526a795191f5657115e80efe35917a58b08e1acb25f46e7c6a",
       "summary": "Start at architecture for the engine: canonical escrow adapters kinds registry folders bundles CLI. glossary gives project words, traps, owning folders, and the code map. entities character and lorebook document supersets. concepts character-book covers embed extract re-embed. macro-engine covers the ADR-012 closed-world interpreter: parser, bounded evaluator, segment contract. token-meter covers the counter that learns each model from reported usage. formats README is the coverage matrix; formats star pages cover detection maps escrow quirks and sources of truth.",
       "topics": [
         "architecture start here",

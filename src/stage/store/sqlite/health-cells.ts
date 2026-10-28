@@ -56,7 +56,12 @@ export const CELL_COLUMNS: Readonly<Record<string, readonly CellColumn[]>> = {
   swipe_history: [{ column: "content" }],
   swipe_traces: [{ column: "trace_json", json: true }],
   director_states: [{ column: "cell", json: true }],
-  turn_checkpoints: [{ column: "content" }, { column: "trace_json", json: true }, { column: "provider_request_id" }],
+  turn_checkpoints: [{ column: "content" }, { column: "trace_json", json: true }, { column: "provider_request_id" }, { column: "deltas_json", json: true }],
+  swipe_deltas: [{ column: "path_json", json: true }, { column: "value_json", json: true }],
+  message_deltas: [{ column: "path_json", json: true }, { column: "value_json", json: true }],
+  state_keyframes: [{ column: "state_json", json: true }],
+  branch_state: [{ column: "state_json", json: true }],
+  branch_base: [{ column: "state_json", json: true }],
   branch_variables: [{ column: "variables_json", json: true }],
   scene_folders: [{ column: "name" }],
 };

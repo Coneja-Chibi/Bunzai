@@ -11,6 +11,7 @@ import { handleVariablesRoute } from "./server-chats-variables";
 import { chatRouteRig, cleanupChatRouteRigs } from "./fake-server-chats-rig";
 import { apiReq } from "./server-test-rig";
 import type { SceneVariables } from "./app-contract-scenes";
+import { varsDeltas } from "../core/scene-state/vars-bridge";
 
 const CHAR = { kind: "character", id: "vera", body: { identity: { name: "Vera" } } };
 async function rig() {
@@ -23,7 +24,8 @@ const url = (chatId: string): URL => new URL(`http://local/api/chats/variables?c
 
 test("the take's variables and the library's globals come back with their times, sorted by name", async () => {
   const { chats, state, chat } = await rig();
-  await chats.changeVariables(chat.activeBranchId, { set: { mood: "calm", _arc_chapter: 2 } });
+  const first = await chats.appendMessage(chat.activeBranchId, { role: "assistant", content: "Evening." });
+  await chats.recordMessageDeltas(chat.activeBranchId, first!.id, varsDeltas({ set: { mood: "calm", _arc_chapter: 2 }, delete: [] }, 1));
   await state.write("variables", JSON.stringify({ gold: { value: 40, createdAt: 1, updatedAt: 2 } }));
   const res = await handleVariablesRoute(url(chat.id), chats, state);
   expect(res.status).toBe(200);

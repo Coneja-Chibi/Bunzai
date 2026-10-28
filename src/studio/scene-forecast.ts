@@ -11,10 +11,12 @@ import type { StateStore } from "../stage/contracts/state-store";
 import { StudioConflictError } from "./atomic-file";
 import { StudioNotFoundError } from "./errors";
 import { NoConnectionError, type TurnDeps } from "./scene-turn";
-import { assembleRequest, prepareRequest, shapeRequest } from "./scene-turn-build";
+import { assembleRequest, overflowMessage, prepareRequest, shapeRequest } from "./scene-turn-build";
+import { sentTools, toolTurn } from "./scene-turn-tools";
+import { turnWrites } from "./scene-turn-writes";
 import { loadTurn, type TurnReader } from "./scene-turn-load";
 
-export interface ForecastDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readCastMember" | "choiceDefaults" | "now" | "randomSeed"> {
+export interface ForecastDeps extends Pick<TurnDeps, "connect" | "readPreset" | "readLorebook" | "readCastMember" | "choiceDefaults" | "readTracker" | "promptBudgetMs" | "clock" | "narratorTools" | "toolBudgetMs" | "now" | "randomSeed"> {
   chats: TurnReader;
   state: Pick<StateStore, "read">;
 }
@@ -37,14 +39,16 @@ export async function forecastRequest(deps: ForecastDeps, input: { chatId: strin
   const connected = await deps.connect(chat.connection);
   if (!connected) throw new NoConnectionError("this scene's connection is gone from Kit; pick another in the AI wing");
   const model = chat.connection.model;
-  const read = await loadTurn(deps.chats, chat.id, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults);
+  const read = await loadTurn(deps.chats, chat.id, "draft", deps.readPreset, deps.readLorebook, deps.readCastMember, deps.choiceDefaults, deps.readTracker);
   if (!read) throw new StudioNotFoundError("that scene does not exist");
   // The take so far is the history and the draft is the message being answered, as it will be once sent.
   const loaded = { ...read, current: { id: "forecast", role: "user" as const, content: input.draft, at: deps.now() } };
   const started = deps.now();
   const prep = await prepareRequest(deps, chat, loaded, connected, model, started);
-  const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: "reply", original: "", guidance: "" });
-  if (built.result.budget.overflow) throw new StudioConflictError("The card and your message alone are longer than this model's window.");
+  // The tool definitions a send would carry are reserved by the budget the same way (the tools are made, never called).
+  const tools = await toolTurn(deps.narratorTools, "reply", chat, loaded, deps.randomSeed(), turnWrites(deps.now), await deps.toolBudgetMs?.());
+  const built = await assembleRequest(deps, { chat, loaded, prep, started, kind: "reply", original: "", guidance: "", reserved: sentTools(tools, connected).map((t) => JSON.stringify(t)) });
+  if (built.result.budget.overflow) throw new StudioConflictError(overflowMessage(built.result));
   const sent = shapeRequest({ chat, loaded, kind: "reply", original: "", built, connected }, model, {});
   const trace = built.result.trace;
   const messages = sent.map((m, i) => ({ role: m.role, content: m.content, tokens: i < trace.length && built.asked[i]?.content === m.content ? trace[i]!.tokens : countText(m.content) }));

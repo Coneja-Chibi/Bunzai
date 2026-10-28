@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:c6fe23fda2e0b8dcb521b305c191c9ba5a9607abe04303dbf2e76d5cb537bd86",
-  "semanticSummaryHash": "sha256:3630662169e7eb58fc00ca82c2cac4f043d5cc8b166e75bec1763dfe3e3ea57b",
+  "sourceHash": "sha256:4168ab641ebcd67aa01555ad3c2b5a35e931d61cbb905601b4fb70ea1c5321ea",
+  "semanticSummaryHash": "sha256:0c198f674813d3434fd4cce3df55aa817e2bb716445e9c1c36cb62ca750a2499",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Script Sheets bullet and scenes summary verified: writing-setups.ts list and (Script Sheet) label, kind:id value, Writing deck via deckHead with Presets and Script Sheets blurb, bench host, Open as preset, ChatPreset.kind.",
-  "reviewedAt": "2026-10-27T08:08:05.481Z"
+  "notes": "Only change is one clause in the World wing Side Effects bullet: local variables rebuilt from the shown history, globals put back from the replaced reply's trace. Matches loadTurn sceneStateBefore, putBackEffects and the lore.undo kept in the trace. Section summaries unchanged, in the 80-180 band for the touched section (154 words), and make no contrary claim.",
+  "reviewedAt": "2026-10-27T18:08:49.438Z"
 }

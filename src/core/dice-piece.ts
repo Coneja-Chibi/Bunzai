@@ -4,7 +4,7 @@
  * was stored, so its fields are there.
  */
 import type { DiceBody } from "../entities/dice/schema";
-import { boundedDice, rollDice, rollText } from "./dice";
+import { boundedDice, rollDice, rollSummary } from "./dice";
 
 export interface DiceOutcome { text: string; detail: Record<string, unknown> }
 
@@ -21,9 +21,9 @@ export function rollDicePiece(body: DiceBody, rand: () => number): DiceOutcome {
     const { count, sides, target } = body.pool!;
     const { rolls } = rollDice({ count, sides, modifier: 0 }, rand);
     const successes = rolls.filter((r) => r >= target).length;
-    return { text: `${body.name}, ${count}d${sides}, ${target} or more: [${rolls.join(", ")}] = ${successes} ${successes === 1 ? "success" : "successes"}`, detail: { type: "pool", rolls, target, successes } };
+    return { text: `${body.name}, ${count}d${sides}, ${target} or more: ${rollSummary({ rolls, modifier: 0, total: 0 })} = ${successes} ${successes === 1 ? "success" : "successes"}`, detail: { type: "pool", rolls, target, successes } };
   }
   const notation = body.dice!.trim();
   const roll = rollDice(boundedDice(notation)!, rand);
-  return { text: `${body.name}, ${notation}: ${rollText(roll)} = ${roll.total}`, detail: { type: "roll", dice: notation, ...roll } };
+  return { text: `${body.name}, ${notation}: ${rollSummary(roll)} = ${roll.total}`, detail: { type: "roll", dice: notation, ...roll } };
 }

@@ -47,6 +47,28 @@ describe("sendWithTools", () => {
     }
   });
 
+  test("one exception: a write tool declared stateScoped (its only effect is pending scene-state writes a swipe takes back) runs, and nothing else that is not read-only does", async () => {
+    const wrote: string[] = [];
+    const scoped: NarratorTool<{ q: string }> = { ...lookup, access: "write", stateScoped: true, run: async (a) => (wrote.push(a.q), { text: "saved" }) };
+    const { provider, requests } = scripted([reply("", [call("lookup", '{"q":"hp"}')]), reply("Done.")]);
+    const records: ToolCallRecord[] = [];
+    const done = await sendWithTools(provider, base(), {}, cfg(records, 8, [scoped as NarratorTool<never>]));
+    expect(wrote).toEqual(["hp"]);
+    expect(done.completion.content).toBe("Done.");
+    expect(requests).toHaveLength(2);
+    expect(records[0]).toMatchObject({ ok: true, text: "saved" });
+    // the flag alone is not enough, and neither is another tier with it
+    for (const odd of [{ access: "write" }, { access: "write", stateScoped: false }, { access: "write", stateScoped: "yes" }, { access: "draft", stateScoped: true }, { access: "delete", stateScoped: true }, { access: "exec", stateScoped: true }, { access: "egress", stateScoped: true }]) {
+      const again = scripted([reply("hi")]);
+      const error = await sendWithTools(again.provider, base(), {}, cfg([], 8, [{ ...lookup, ...odd } as unknown as NarratorTool<never>])).then(() => null, (e: unknown) => e);
+      expect(String(error)).toMatch(/read-only/);
+      expect(again.requests).toHaveLength(0);
+    }
+    // one tool that is not allowed refuses the loop, even beside one that is
+    const mixed = scripted([reply("hi")]);
+    expect(String(await sendWithTools(mixed.provider, base(), {}, cfg([], 8, [scoped, { ...lookup, access: "write" }] as unknown as NarratorTool<never>[])).then(() => null, (e: unknown) => e))).toMatch(/read-only/);
+  });
+
   test("a tool asked for mid-stream gets its result, the reply finishes, and the streamed text is the committed text", async () => {
     const { provider, requests } = scripted([reply("Let me check.", [call("lookup", '{"q":"door"}')]), reply("The door is red.")]);
     const events: ProviderEvent[] = [];
@@ -152,5 +174,67 @@ describe("sendWithTools", () => {
     const echoed = requests[1]!.messages.find((m: ProviderMessage) => m.tool_calls)!;
     expect(echoed.reasoning).toEqual({ text: "thinking", provider: "fake" });
     expect(echoed.reasoning_details).toEqual([{ type: "reasoning.text", text: "t" }]);
+  });
+});
+
+describe("the tool time budget (owner rule: a mechanism, not a fixed step count)", () => {
+  // a clock that moves 10 ms every time the loop or a tool reads it
+  const ticking = () => { let t = 0; return () => (t += 10); };
+  const seen: (ToolDeadlineSeen | undefined)[] = [];
+  type ToolDeadlineSeen = { at: number; now(): number };
+  const timed: NarratorTool<{ q: string }> = { ...lookup, run: async (args, _signal, deadline) => (seen.push(deadline), { text: `found ${args.q}` }) };
+
+  test("every run is handed what is left of the budget as a deadline, and a spent budget answers the call with an error and runs nothing", async () => {
+    seen.length = 0;
+    const now = ticking();
+    const { provider } = scripted([reply("", [call("lookup", '{"q":"a"}', "c1"), call("lookup", '{"q":"b"}', "c2"), call("lookup", '{"q":"c"}', "c3")]), reply("Done.")]);
+    const records: ToolCallRecord[] = [];
+    await sendWithTools(provider, base(), {}, { tools: [timed as NarratorTool<never>], maxRounds: 4, now, onCall: (r) => void records.push(r), toolBudgetMs: 15 });
+    expect(seen.filter(Boolean).length).toBe(records.filter((r) => r.ok).length);
+    expect(seen[0]!.at).toBeGreaterThan(0);
+    // the second and third calls come after the budget has run down
+    const failed = records.filter((r) => !r.ok);
+    expect(failed.length).toBeGreaterThan(0);
+    expect(failed[0]!.error).toBe("The tool time budget for this reply is spent.");
+    expect(records[0]!.ok).toBe(true);
+  });
+
+  test("with no budget a tool gets no deadline", async () => {
+    seen.length = 0;
+    const { provider } = scripted([reply("", [call("lookup", '{"q":"a"}')]), reply("Done.")]);
+    await sendWithTools(provider, base(), {}, cfg([], 8, [timed as NarratorTool<never>]));
+    expect(seen).toEqual([undefined]);
+  });
+});
+
+describe("second fix round: a spent tool budget and a state-scoped write", () => {
+  const ticking = () => { let t = 0; return () => (t += 10); };
+  const seen: (number | undefined)[] = [];
+  const scopedTool = (text: string): NarratorTool<{ q: string }> => ({ ...lookup, access: "write", stateScoped: true, run: async (args, _s, deadline) => (seen.push(deadline?.at), { text: text + args.q }) });
+
+  test("6: once the budget is spent a plain tool is refused and a state-scoped write still runs (it keeps the narration and the state in step)", async () => {
+    seen.length = 0;
+    const plain: NarratorTool<{ q: string }> = { ...lookup, definition: { ...lookup.definition, function: { ...lookup.definition.function, name: "plain" } } };
+    const scoped = scopedTool("saved ") as never as NarratorTool<never>;
+    const { provider } = scripted([reply("", [call("plain", '{"q":"a"}', "c1"), call("plain", '{"q":"b"}', "c2"), call("lookup", '{"q":"c"}', "c3")]), reply("Done.")]);
+    const records: ToolCallRecord[] = [];
+    await sendWithTools(provider, base(), {}, { tools: [plain as never, scoped], maxRounds: 4, now: ticking(), onCall: (r) => void records.push(r), toolBudgetMs: 1 });
+    expect(records.map((r) => [r.name, r.ok])).toEqual([["plain", true], ["plain", false], ["lookup", true]]);
+    expect(records[1]!.error).toBe("The tool time budget for this reply is spent.");
+    expect(records[2]!.text).toBe("saved c");
+    // it is given no deadline: a big call must not fail after the budget is gone
+    expect(seen).toEqual([undefined]);
+  });
+
+  test("8: the loop shortens a very large answer, except a state-scoped tool's (a tracker's text is never cut)", async () => {
+    const big = "y".repeat(30_000);
+    const plain: NarratorTool<{ q: string }> = { ...lookup, run: async () => ({ text: big }) };
+    const scoped: NarratorTool<{ q: string }> = { ...scopedTool(""), definition: { ...lookup.definition, function: { ...lookup.definition.function, name: "scoped" } }, run: async () => ({ text: big }) };
+    for (const [tool, name, whole] of [[plain, "lookup", false], [scoped, "scoped", true]] as const) {
+      const { provider } = scripted([reply("", [call(name, '{"q":"a"}')]), reply("Done.")]);
+      const records: ToolCallRecord[] = [];
+      await sendWithTools(provider, base(), {}, { tools: [tool as never], maxRounds: 3, now: () => 1, onCall: (r) => void records.push(r) });
+      expect(records[0]!.text.length === big.length, name).toBe(whole);
+    }
   });
 });

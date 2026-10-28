@@ -19,6 +19,7 @@ const NO_EDITOR: Record<string, string> = {
   tool: "the tool editor waits for its approved wireframe; until then a tool opens read-only",
   dice: "the dice editor waits for its approved wireframe; until then a dice piece opens read-only",
   formula: "the formula editor waits for its approved wireframe; until then a formula opens read-only",
+  tracker: "the tracker editor and the scene linking control wait for their approved wireframes; until then a tracker opens read-only",
 };
 /** Kinds without Kit capabilities, and why. */
 const NO_CAPABILITIES: Record<string, string> = {
@@ -28,6 +29,7 @@ const NO_CAPABILITIES: Record<string, string> = {
   tool: "a tool is a short piece; Kit reads and writes it through its piece tools",
   dice: "a dice piece is a short piece; Kit reads and writes it through its piece tools",
   formula: "a formula is one macro expression; Kit reads and writes it through its piece tools",
+  tracker: "a tracker is a short piece; Kit reads and writes it through its piece tools",
 };
 
 describe("every kind is wired everywhere", () => {

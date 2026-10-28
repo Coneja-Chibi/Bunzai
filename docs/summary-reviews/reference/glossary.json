@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/glossary",
   "sourcePath": "docs/reference/glossary.md",
-  "sourceHash": "sha256:2845bdcbdb3c18569b4a13273be5eaec4e3d5d84454d53524efe029c3b81b6d8",
-  "semanticSummaryHash": "sha256:5d194b5ed33127a4836b696d7badd0a2cca5bd06a4f45ddd0296d3af707a494a",
+  "sourceHash": "sha256:3f4c120524fd141aad15224a0fd04951fca57a13236b18b4add6c9c7bdb87773",
+  "semanticSummaryHash": "sha256:264ef73aa3e7d73060f45d5223d8b2f5a8be7573e6eb9cbf83fb15e4c21d97b9",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Page text checked against the current sources; links and paths resolve; sidecar fresh, scans clean.",
-  "reviewedAt": "2026-10-25T01:23:13.988Z"
+  "notes": "Scene state and tracker rows match code; no removed number; sections within band.",
+  "reviewedAt": "2026-10-27T21:14:17.330Z"
 }

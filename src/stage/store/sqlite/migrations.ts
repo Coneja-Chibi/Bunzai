@@ -32,6 +32,7 @@ import { MIGRATION_39_TRACKERS } from "./migration-39-trackers";
 import { MIGRATION_40_FINAL_CUT } from "./migration-40-final-cut";
 import { MIGRATION_41_SCENE_SUMMARY } from "./migration-41-scene-summary";
 import { MIGRATION_42_DIRECTOR } from "./migration-42-director";
+import { MIGRATION_43_SCENE_STATE } from "./migration-43-scene-state";
 
 export const MIGRATIONS: readonly Migration[] = [
   {
@@ -449,4 +450,5 @@ export const MIGRATIONS: readonly Migration[] = [
   MIGRATION_40_FINAL_CUT,
   MIGRATION_41_SCENE_SUMMARY,
   MIGRATION_42_DIRECTOR,
+  MIGRATION_43_SCENE_STATE,
 ];

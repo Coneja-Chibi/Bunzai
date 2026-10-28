@@ -47,7 +47,12 @@ export const FP_SPECS: readonly FpSpec[] = [
   s("swipe_history", ["message_id", "swipe_id", "n"], ["content"], []),
   s("swipe_traces", ["message_id", "position"], ["trace_json"], []),
   s("director_states", ["message_id", "position"], ["cell"], ["version"]),
-  s("turn_checkpoints", ["id"], ["content", "trace_json", "provider_request_id"], ["branch_id", "kind", "message_id", "base_version", "started_at", "saved_at"]),
+  s("turn_checkpoints", ["id"], ["content", "trace_json", "provider_request_id", "deltas_json"], ["branch_id", "kind", "message_id", "base_version", "started_at", "saved_at"], 2), // v2: deltas_json (migration 43)
+  s("swipe_deltas", ["swipe_id", "seq"], ["path_json", "value_json"], ["slot", "removed", "at"]),
+  s("message_deltas", ["message_id", "seq"], ["path_json", "value_json"], ["slot", "removed", "at"]),
+  s("state_keyframes", ["branch_id", "message_id"], ["state_json"], []),
+  s("branch_base", ["branch_id"], ["state_json"], []),
+  s("branch_state", ["branch_id"], ["state_json"], ["tip_message_id", "tip_swipe_id"]),
   s("branch_variables", ["branch_id"], ["variables_json"], []),
   s("scene_folders", ["id"], ["name"], ["created_at"]),
 ];

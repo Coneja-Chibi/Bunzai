@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/formula",
   "sourcePath": "docs/reference/entities/formula.md",
-  "sourceHash": "sha256:8a67696bd53156084f332779046cc58a07d94924b3841e68550257a4a8f7bcca",
-  "semanticSummaryHash": "sha256:2225f4d7f7fe2a006e2f962107fae7e887d22ae6a0822a5f4a31d9ad5b613036",
+  "sourceHash": "sha256:a5bf3a097c1810041f6fd1c9cec6562e77359fa3e301773263dcad596fd89fd5",
+  "semanticSummaryHash": "sha256:530dd16b0a3c455a7a1f0d12895ed8e97a076ab70e2e3af7f974612f329de81b",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Budget paragraph and safety summary say at most 200 new words in one run, matching WORDS_PER_RUN in chat-watch.ts; other claims unchanged and still hold.",
-  "reviewedAt": "2026-10-27T10:56:03.880Z"
+  "notes": "Safety sentence now says the state-scoped write still runs whole and with no deadline, matching tool-loop.ts (run gets no deadline and no budget refusal when tool.stateScoped). Rest unchanged and verified; sidecar author-valid.",
+  "reviewedAt": "2026-10-28T01:51:23.821Z"
 }

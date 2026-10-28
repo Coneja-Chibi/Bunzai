@@ -11,7 +11,8 @@ import { appendGuidedSwipe, guidedBlocks } from "../core/assembly/guided-swipe";
 import { CONTINUE_CUE, continuationPrefill } from "../core/assembly/continuation";
 import { lastAsUser, modelTakesPrefill, presetWindow, sceneOptions, turnWindow, withPrefill } from "../core/assembly/request";
 import { DEFAULT_LORE_SHARE, type AssemblyInput, type AssemblyResult } from "../core/assembly/types";
-import type { MacroVariable } from "../core/macros";
+import type { MacroDeadline, MacroVariable } from "../core/macros";
+import { PROMPT_BUDGET_MS_DEFAULT } from "../core/assembly/tool-rounds";
 import { SUMMARY_DEFAULTS, contextWindow, resolveSummary } from "../core/summary/settings";
 import { resolveReasoning } from "../core/reasoning-capture";
 import { readKey, type Meter } from "../core/tokens";
@@ -37,7 +38,6 @@ export interface Prep {
   key: string;
   storedGlobals: Map<string, MacroVariable>;
   undo: LoreUndo[];
-  startLocal: Map<string, MacroVariable>;
   startGlobal: Map<string, MacroVariable>;
   /** The take's saved chat summary as the assembler takes it; absent when the take has none or Include in AI context is off. */
   summary?: AssemblyInput["chatSummary"];
@@ -57,8 +57,8 @@ export async function prepareRequest(deps: { chats: Pick<ChatStore, "swipeTrace"
   const window = { ...presetWindow(base, loaded.preset), stated: base.stated };
   const options = { ...sceneOptions(loaded.preset, loaded.generation ?? {}, chat.prompting), stream: true, max_tokens: window.reply };
   const meter = await readMeter(deps.state);
-  // A new version of a reply starts from the variables as they were before the reply it replaces ran its
-  // lore Side Effects (kept in that reply's trace), so they are never counted twice (lore-effects.ts).
+  // A new version of a reply starts its local variables from the state before the reply it replaces (scene-turn-load.ts); the
+  // library's global ones are put back from what that reply's lore Side Effects recorded in its trace, so they are never counted twice (lore-effects.ts).
   const storedGlobals = await readGlobals(deps.state);
   const undo = loaded.target ? await effectsOf(deps.chats, loaded.target) : [];
   // The take's own summary (ChatStore rule 45), sent only while Include in AI context is on; hiding what it covers keeps Keep recent messages (RoleCall resolveSummaryContextWindowSize).
@@ -70,7 +70,6 @@ export async function prepareRequest(deps: { chats: Pick<ChatStore, "swipeTrace"
     presetName: loaded.preset?.name ?? NO_PRESET,
     reasoningFormat: resolveReasoning(loaded.preset?.reasoning, chat.prompting),
     key: readKey(meter, connected.kind, model),
-    startLocal: revertEffects(loaded.localVariables, undo, "local", started),
     startGlobal: revertEffects(storedGlobals, undo, "global", started),
   };
 }
@@ -83,20 +82,38 @@ export interface Built {
 }
 
 /** Runs the assembler over the loaded scene. `recall` is the Compendium's pass when it ran; a forecast passes none. */
+/** The deadline for one prompt build's macros: the setting, else the default, from now on the build's clock (real monotonic time unless a test hands one in). */
+export async function promptBudget(deps: { promptBudgetMs?(): Promise<number | undefined> }): Promise<number> {
+  return (await deps.promptBudgetMs?.()) ?? PROMPT_BUDGET_MS_DEFAULT;
+}
+
+/** The deadline itself, started now: call it right before the macro passes, after every read that comes first, so those reads do not spend the budget. */
+export function promptDeadline(deps: { clock?(): number }, budgetMs: number): MacroDeadline {
+  const clock = deps.clock ?? (() => performance.now());
+  return { at: clock() + budgetMs, now: clock, soft: true };
+}
+
+/** What to tell the person when the request does not fit: the card and the message alone, or, when there are fixed parts too, them as well. */
+export const overflowMessage = (result: AssemblyResult): string =>
+  result.budget.fixed ? "The card, your message and the fixed parts of the request (the trackers' block and the tool definitions) alone are longer than this model's window." : "The card and your message alone are longer than this model's window.";
+
 export async function assembleRequest(
-  deps: { state: Pick<StateStore, "read">; randomSeed(): number },
-  a: { chat: Chat; loaded: LoadedTurn; prep: Prep; started: number; kind: TurnKind; original: string; guidance: string; recall?: RecallRun | null; director?: NarratorDirective },
+  deps: { state: Pick<StateStore, "read">; randomSeed(): number; clock?(): number; promptBudgetMs?(): Promise<number | undefined> },
+  a: { chat: Chat; loaded: LoadedTurn; prep: Prep; started: number; kind: TurnKind; original: string; guidance: string; recall?: RecallRun | null; director?: NarratorDirective; reserved?: readonly string[] },
 ): Promise<Built> {
   const { chat, loaded, prep, kind, recall } = a;
   const loreInput: AssemblyInput["lore"] = loaded.lore ? { ...loaded.lore, budgetShare: DEFAULT_LORE_SHARE } : undefined;
   const recaps = recapsOf(chat, loaded);
+  const budgetMs = await promptBudget(deps);
+  const guides = await selectedGuides(deps.state, chat.prompting?.guides);
   const result = assemble({
     ...loaded,
+    deadline: promptDeadline(deps, budgetMs),
     ...(recall ? { recall: { entries: recall.entries } } : {}),
     ...(a.director ? { director: a.director } : {}),
+    ...(a.reserved && a.reserved.length > 0 ? { reserved: a.reserved } : {}),
     ...(recaps ? { summaries: { recaps } } : {}),
     ...(prep.summary ? { chatSummary: prep.summary } : {}),
-    localVariables: prep.startLocal,
     globalVariables: prep.startGlobal,
     now: a.started,
     randomSeed: deps.randomSeed(),
@@ -104,7 +121,7 @@ export async function assembleRequest(
     budgeter: appBudgeter(measureFor(prep.meter, prep.key, a.started)),
     lore: loreInput,
     // The Prompting wing's switched-on guides and scene note (ChatStore rule 37).
-    guides: await selectedGuides(deps.state, chat.prompting?.guides),
+    guides,
     ...(chat.prompting?.note ? { note: chat.prompting.note } : {}),
     ...(chat.prompting?.prefill ? { prefill: chat.prompting.prefill } : {}),
     reasoning: prep.reasoningFormat,

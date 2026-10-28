@@ -28,6 +28,7 @@ export function swipeCutMethods(k: ChatSqlKit): Pick<ChatStore, "cutSwipe" | "re
         if (m.current_swipe === swipe.position) setCurrentSwipe(k, messageId, nearestLive(live, swipe.position));
         k.run("UPDATE swipes SET cut_at = ? WHERE message_id = ? AND swipe_id = ?", k.clock(), messageId, swipeId);
         k.bump(m.branch_id);
+        k.state.refresh(m.branch_id, m.seq);
         k.touch(k.branchRow(m.branch_id)!.chat_id);
         return k.messageById(messageId);
       });
@@ -43,6 +44,7 @@ export function swipeCutMethods(k: ChatSqlKit): Pick<ChatStore, "cutSwipe" | "re
         if (swipe.cut_at !== null) {
           k.run("UPDATE swipes SET cut_at = NULL WHERE message_id = ? AND swipe_id = ?", messageId, swipeId);
           k.bump(m.branch_id);
+          k.state.refresh(m.branch_id, m.seq);
           k.touch(k.branchRow(m.branch_id)!.chat_id);
         }
         return k.messageById(messageId);

@@ -35,6 +35,7 @@ import { chatStoreBackdropContract } from "./chat-store.contract-backdrop";
 import { chatStoreRequestContract } from "./chat-store.contract-request";
 import { chatStoreWriteContract } from "./chat-store.contract-writes";
 import { chatStoreTurnContract } from "./chat-store.contract-turns";
+import { chatStoreStateContract } from "./chat-store.contract-state";
 
 export function chatStoreContract(label: string, make: (clock: () => number) => ChatStore): void {
   const { rig, seeded, texts } = chatRig(make);
@@ -394,6 +395,7 @@ export function chatStoreContract(label: string, make: (clock: () => number) => 
     chatStoreVariantContract(make);
     chatStoreStatsContract(make);
     chatStoreTurnContract(make);
+    chatStoreStateContract(make);
     chatStorePresetContract(make);
     chatStoreLoreContract(make);
     chatStorePropsContract(make);

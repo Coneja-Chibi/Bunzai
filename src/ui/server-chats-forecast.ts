@@ -9,9 +9,10 @@ import type { StateStore } from "../stage/contracts/state-store";
 import { StudioValidationError } from "../studio/errors";
 import type { SettingsStoreLike, StudioStoreLike } from "../studio/contracts";
 import { forecastRequest, type ForecastDeps } from "../studio/scene-forecast";
+import { narratorTools } from "../studio/library-tools";
 import type { ReadPreset } from "../studio/scene-turn-load";
 import type { ReadLorebook } from "../studio/scene-lore";
-import { choiceDefaultsOf } from "./server-scene-readers";
+import { choiceDefaultsOf, promptBudgetOf, toolBudgetOf, trackerReaderOf } from "./server-scene-readers";
 import { connect } from "./server-chats-turn";
 import { json } from "./server-security";
 
@@ -27,6 +28,6 @@ export async function handleForecastRoute(req: Request, p: string, chats: ChatSt
   if (!chatId) throw new StudioValidationError("chatId is required");
   const draft = b["draft"];
   if (typeof draft !== "string" || draft.length > DRAFT_MAX) throw new StudioValidationError(`draft must be text of at most ${DRAFT_MAX} characters`);
-  const deps: ForecastDeps = { chats, state, connect, readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
+  const deps: ForecastDeps = { chats, state, connect, readPreset, readLorebook, readCastMember: studio ? (kind, id) => studio.read(kind, id) : undefined, ...(choiceDefaultsOf(settings) ? { choiceDefaults: choiceDefaultsOf(settings)! } : {}), ...(trackerReaderOf(studio) ? { readTracker: trackerReaderOf(studio)! } : {}), ...(promptBudgetOf(settings) ? { promptBudgetMs: promptBudgetOf(settings)! } : {}), ...(toolBudgetOf(settings) ? { toolBudgetMs: toolBudgetOf(settings)! } : {}), narratorTools: narratorTools(studio ? (kind, id) => studio.read(kind, id) : undefined), now: Date.now, randomSeed: () => Math.floor(Math.random() * 2 ** 31) };
   return json(await forecastRequest(deps, { chatId, draft }));
 }

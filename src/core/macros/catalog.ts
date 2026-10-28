@@ -31,6 +31,7 @@ import { COMPOSITION_MACROS } from "./handlers/composition";
 import { PHASE_MACROS_MACROS } from "./handlers/phase-macros";
 import { MATH_MACROS } from "./handlers/math";
 import { CHAT_WATCH_MACROS } from "./handlers/chat-watch";
+import { TRACKER_MACROS } from "./handlers/tracker";
 
 export const CATALOG: readonly MacroDefinition[] = [
   ...IDENTITY_MACROS,
@@ -60,4 +61,5 @@ export const CATALOG: readonly MacroDefinition[] = [
   ...MATH_MACROS,
   // Bunraku's own, last so they never take a RoleCall name
   ...CHAT_WATCH_MACROS,
+  ...TRACKER_MACROS,
 ];

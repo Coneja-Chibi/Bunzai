@@ -2,9 +2,12 @@
  * The turn loop's loader: reads everything assembly needs through
  * the stores, so assembly never touches one. The frozen cast, the scene's preset as the library holds
  * it now (ChatStore rule 19) under the scene's own toggles and samplers, the take's live history, its
- * variables, the library's global variables, and the window the scene's connection gives it.
+ * variables (the `vars` slot of the scene state: after the shown history, or before the reply a new version replaces), the library's global variables, and the window the scene's connection gives it.
  */
 import type { MacroVariable } from "../core/macros";
+import { varsOf } from "../core/scene-state/vars-bridge";
+import type { LinkedTracker } from "../core/tracker";
+import { linkedTrackers, type ReadTracker } from "./library-trackers";
 import type { HistoryMessage } from "../core/assembly/types";
 import { windowPrior } from "../core/assembly/message-window";
 import type { LoreFire } from "../core/lore/engine";
@@ -32,7 +35,7 @@ import { sceneGeneration, type SceneGeneration } from "../stage/params/scene";
 export type TurnKind = "reply" | "swipe" | "continue";
 
 /** What a turn or a draft reads of a scene: nothing it could write with. */
-export type TurnReader = Pick<ChatStore, "getChat" | "lightCastSnapshot" | "readMessages" | "variables" | "swipeTrace" | "summaryOf">;
+export type TurnReader = Pick<ChatStore, "getChat" | "lightCastSnapshot" | "readMessages" | "sceneState" | "sceneStateBefore" | "swipeTrace" | "summaryOf">;
 
 /** Refused before a turn opens: the scene names a preset the library no longer has. */
 export class PresetGoneError extends StudioConflictError {
@@ -77,6 +80,8 @@ export interface LoadedTurn {
   /** The assistant message a swipe adds a version to, or a continue adds text to. */
   target?: Message;
   localVariables: Map<string, MacroVariable>;
+  /** The library trackers the scene links that could be read, each with its value in the scene state (library-trackers.ts); absent when none. */
+  linkedTrackers?: LinkedTracker[];
   branchVersion: number;
   /** The tracker Props that are on and what they kept (ChatStore rules 21 and 43); absent when the scene keeps none. */
   trackers?: { entries: NonNullable<Chat["trackers"]>; on: string[] };
@@ -127,7 +132,7 @@ export async function loadCast(chats: TurnReader, chatId: string, readCastMember
  * a hidden or blank reply is refused: its text would go into the prompt as the prefill. A draft (scene-draft.ts)
  * answers nothing: the whole take is history and the current message is empty, as an opening's is.
  */
-export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind | "draft", readPreset: ReadPreset, readLorebook: ReadLorebook, readCastMember?: (kind: "character" | "persona", id: string) => Promise<unknown | null>, choiceDefaults?: (presetId: string) => Promise<Record<string, unknown> | undefined>): Promise<LoadedTurn | null> {
+export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind | "draft", readPreset: ReadPreset, readLorebook: ReadLorebook, readCastMember?: (kind: "character" | "persona", id: string) => Promise<unknown | null>, choiceDefaults?: (presetId: string) => Promise<Record<string, unknown> | undefined>, readTracker?: ReadTracker): Promise<LoadedTurn | null> {
   const cast = await loadCast(chats, chatId, readCastMember);
   if (!cast) return null;
   const { chat, snapshot } = cast;
@@ -139,8 +144,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   }
   const branchId = chat.activeBranchId;
   const page = await chats.readMessages(branchId, { limit: WHOLE_BRANCH });
-  const vars = await chats.variables(branchId);
-  if (page.branchVersion === null || !vars) return null;
+  if (page.branchVersion === null) return null;
   const live = page.messages.filter((m) => !m.cut);
   const last = live.at(-1);
   let target: Message | undefined;
@@ -153,6 +157,9 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
     target = last;
     live.pop();
   }
+  // A new version, or more of a reply, builds from the variables as they were before that reply (rule 17): its own earlier writes are not counted twice.
+  const sceneState = target ? await chats.sceneStateBefore(branchId, target.id) : await chats.sceneState(branchId);
+  if (!sceneState) return null;
   // The opening greeting alone has nothing to answer: its turn answers an empty message (rule 13).
   const opening = (kind === "continue" && live.length === 0) || kind === "draft";
   const answered = opening ? undefined : live.pop();
@@ -169,6 +176,8 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   const lore = await loadLore(chats, character, persona, chat.lore, readLorebook, prior);
   /** The scene's own answers over the person's saved defaults for this preset (core/preset/choices.ts). */
   const storyboards = storyboardsOf(chat, lore?.books);
+  // The trackers show the state as it stands: a continue extends a reply whose own tool writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
+  const linked = await linkedTrackers(readTracker, chat.prompting?.trackers, kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState);
   const choices = chat.preset ? withDefaults(await choiceDefaults?.(chat.preset.id), chat.regex?.choices?.[chat.preset.id]) : undefined;
 
   return {
@@ -179,7 +188,8 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
     history: prior.map((m) => ({ ...toHistory(m), index: liveIndex.get(m.id)! })),
     current: answered ? toHistory(answered) : { id: target?.id ?? "", role: "user", content: "", at: (target ?? last)?.createdAt ?? 0 },
     ...(target ? { target } : {}),
-    localVariables: new Map(Object.entries(vars)),
+    localVariables: varsOf(sceneState),
+    ...(linked.length > 0 ? { linkedTrackers: linked } : {}),
     branchVersion: page.branchVersion,
     ...(lore ? { lore } : {}),
     ...(chat.trackers && chat.props ? { trackers: { entries: chat.trackers, on: chat.props.on } } : {}),

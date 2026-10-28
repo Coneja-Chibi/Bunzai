@@ -3,9 +3,10 @@
  * a reply applies them to the scene's own variables (local to the take, global to the library) before
  * the macros resolve, a paused turn cancelled at the Prompt Inspector and a draft write nothing, and a
  * new version of the reply never counts them twice. RoleCall re-runs assembly on a regenerate over the
- * variables the first attempt already changed, so an Increment counts twice there; here each reply's
- * trace keeps what the effects replaced (`lore.undo`), and the next attempt at that reply starts from
- * the variables as they were before them.
+ * variables the first attempt already changed, so an Increment counts twice there; here the variables
+ * are the `vars` slot of the scene state (docs/reference/scene-state.md), each reply version carries
+ * the deltas it made, and the next attempt at that reply starts from the state before it. A prompt's own
+ * `{{incvar}}` is held to the same rule, and a turn that does not commit, or a continue, writes none.
  */
 import { describe, expect, test } from "bun:test";
 import { ProviderError, type Provider, type ProviderCompletion } from "../stage/contracts/provider";
@@ -14,6 +15,7 @@ import { memoryStateStore } from "../stage/store/memory/state-store";
 import { emptyLoreEntry, emptyLorebookBody } from "../core/lore";
 import type { EntrySideEffect, LorebookEntry } from "../entities/lorebook/schema";
 import { runDraft } from "./scene-draft";
+import { varsOf } from "../core/scene-state/vars-bridge";
 import { runTurn, stopTurn, type Connected, type TurnEvent } from "./scene-turn";
 import { answerReview } from "./scene-turn-review";
 
@@ -52,13 +54,22 @@ async function scene(entries: LorebookEntry[]) {
     readPreset: async () => null, readLorebook: async (id: string) => (id === "b1" ? book : null), now: () => (now += 10), randomSeed: () => 7,
   };
   const events: TurnEvent[] = [];
-  const turn = async (kind: "reply" | "swipe", extra: { inspect?: boolean; fallback?: { id: string; model: string } } = {}) => {
+  const turn = async (kind: "reply" | "swipe" | "continue", extra: { inspect?: boolean; fallback?: { id: string; model: string } } = {}) => {
     const version = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).branchVersion!;
     await runTurn(deps, { chatId: chat.id, kind, expectedVersion: version, ...extra }, (e) => events.push(e));
   };
-  const local = async (): Promise<Record<string, unknown>> => Object.fromEntries(Object.entries((await chats.variables(chat.activeBranchId))!).map(([k, v]) => [k, v.value]));
+  const local = async (): Promise<Record<string, unknown>> => Object.fromEntries([...varsOf(await chats.sceneState(chat.activeBranchId))].map(([k, v]) => [k, v.value]));
+  /** A variable the scene already holds, set by its first message. */
+  const preset = async (name: string, value: string) => {
+    const first = (await chats.readMessages(chat.activeBranchId, { limit: 1 })).messages[0]!;
+    await chats.recordMessageDeltas(chat.activeBranchId, first.id, [{ slot: "vars", path: [name], value, at: 1 }]);
+  };
+  const lastTrace = async () => {
+    const last = (await chats.readMessages(chat.activeBranchId, { limit: 50 })).messages.at(-1)!;
+    return chats.swipeTrace(last.id, last.swipes[last.current]!.id);
+  };
   const globals = async (): Promise<Record<string, { value: unknown }>> => JSON.parse((await state.read("variables")) ?? "{}");
-  return { chats, chat, state, deps, sent, events, turn, local, globals, behave };
+  return { chats, chat, state, deps, sent, events, turn, local, globals, behave, preset, lastTrace };
 }
 
 const counter = (over: Partial<LorebookEntry> = {}) => entry("count", { sideEffects: fx([{ type: "incvar", variable: "storms", amount: 1, scope: "local" }]), ...over });
@@ -74,7 +85,7 @@ describe("a reply applies the effects of the entries that fired", () => {
       { type: "setvar", variable: "season", value: "autumn", scope: "global" },
       { type: "delvar", variable: "gone", scope: "local" },
     ]) })]);
-    await s.chats.changeVariables(s.chat.activeBranchId, { set: { gone: "x" }, delete: [] });
+    await s.preset("gone", "x");
     await s.turn("reply");
     expect(await s.local()).toEqual({ mood: "wary", log: "AB", storms: 2, calm: -1 });
     expect((await s.globals())["season"]!.value).toBe("autumn");
@@ -215,5 +226,64 @@ describe("a turn that does not commit leaves no trace of its effects", () => {
     s.behave.fallbackMode = "answer";
     await s.turn("reply", { fallback });
     expect(await s.local()).toEqual({ storms: 1 });
+  });
+});
+
+describe("scene state: variables follow the versions that are shown", () => {
+  const macro = () => entry("macro", { content: "n is {{incvar::n}}" });
+
+  test("a prompt's own {{incvar}} counts once however many times the reply is made again", async () => {
+    const s = await scene([macro()]);
+    await s.turn("reply");
+    expect(await s.local()).toEqual({ n: 1 });
+    for (let i = 0; i < 3; i++) await s.turn("swipe");
+    expect(await s.local()).toEqual({ n: 1 });
+    expect(s.sent.at(-1)!.some((m) => m.content.includes("n is 1"))).toBe(true);
+  });
+
+  test("a continue does not run the prompt's writes a second time, and builds the prompt from the state the reply started from", async () => {
+    const s = await scene([macro()]);
+    await s.turn("reply");
+    await s.turn("continue");
+    expect(await s.local()).toEqual({ n: 1 });
+    expect(s.sent.at(-1)!.some((m) => m.content.includes("n is 1"))).toBe(true);
+  });
+
+  test("a failed turn, a Stop with nothing and a cancelled review leave the variables as they were", async () => {
+    const s = await scene([macro()]);
+    await s.preset("kept", "yes");
+    s.behave.mode = "fail";
+    await s.turn("reply");
+    expect(await s.local()).toEqual({ kept: "yes" });
+    const run = s.turn("reply", { inspect: true });
+    for (let i = 0; i < 200 && !s.events.some((e) => e.type === "review"); i++) await Bun.sleep(5);
+    answerReview(s.chat.id, (s.events.find((e) => e.type === "review") as Extract<TurnEvent, { type: "review" }>).turnId, { kind: "cancel" });
+    await run;
+    expect(await s.local()).toEqual({ kept: "yes" });
+    s.behave.mode = "hang";
+    const started = s.events.filter((e) => e.type === "start").length;
+    const stopped = s.turn("reply");
+    for (let i = 0; i < 200 && s.events.filter((e) => e.type === "start").length === started; i++) await Bun.sleep(5);
+    await Bun.sleep(20);
+    stopTurn(s.chat.id, (s.events.filter((e) => e.type === "start").at(-1) as Extract<TurnEvent, { type: "start" }>).turnId);
+    await stopped;
+    expect(await s.local()).toEqual({ kept: "yes" });
+    s.behave.mode = "answer";
+    await s.turn("reply");
+    expect(await s.local()).toEqual({ kept: "yes", n: 1 });
+  });
+
+  test("owner rule (limits rework): a large change is stored whole, with no refusal and no state note in the trace", async () => {
+    const s = await scene([entry("big", { sideEffects: fx([{ type: "setvar", variable: "big", value: "x".repeat(70_000), scope: "local" }]) })]);
+    await s.turn("reply");
+    expect(s.events.some((e) => e.type === "done")).toBe(true);
+    expect(Object.keys(await s.local())).toEqual(["big"]);
+    expect((await s.lastTrace())!["state"]).toBeUndefined();
+  });
+
+  test("a reply whose variables fit carries no state note", async () => {
+    const s = await scene([macro()]);
+    await s.turn("reply");
+    expect((await s.lastTrace())!["state"]).toBeUndefined();
   });
 });

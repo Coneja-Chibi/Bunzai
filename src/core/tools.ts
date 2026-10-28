@@ -7,10 +7,10 @@
 import type { ToolBody, ToolField } from "../entities/tool/schema";
 import { isRecord } from "./guards";
 import type { DiceBody } from "../entities/dice/schema";
-import { boundedDice, DICE_RULE, rollDice, rollText } from "./dice";
+import { boundedDice, DICE_RULE, rollDice, rollSummary } from "./dice";
 import { rollDicePiece } from "./dice-piece";
 import { runFormulaReadOnly } from "./formula";
-import type { MacroContext } from "./macros";
+import type { MacroContext, MacroDeadline } from "./macros";
 
 /** What a tool's action links, read by the caller: the dice piece, or the formula's text and the turn's macro context once it exists. */
 export interface ToolLinks { dice?: DiceBody; formula?: { text: string; context(): MacroContext | undefined } }
@@ -19,12 +19,19 @@ export interface ToolLinks { dice?: DiceBody; formula?: { text: string; context(
 export interface ToolAnswer { text: string; detail: Record<string, unknown> }
 export type ToolArgs = Record<string, string | number | boolean>;
 
-const TEXT_MAX = 2_000;
 
 /** A name a provider takes for a function: a lowercase letter, then lowercase letters, digits and _, at most 60 (room for a number). */
 export function callName(name: string): string {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
   return (/^[a-z]/.test(slug) ? slug : `tool_${slug}`).replace(/_+$/, "").slice(0, 60);
+}
+
+/** The name, or the name with the first free number after it (_2, _3, ...) when `taken` has it; the result joins `taken`. */
+export function freeName(base: string, taken: Set<string>): string {
+  let name = base;
+  for (let n = 2; taken.has(name); n++) name = `${base}_${n}`;
+  taken.add(name);
+  return name;
 }
 
 export function toolParameters(fields: readonly ToolField[]): Record<string, unknown> {
@@ -62,8 +69,8 @@ function readToolArgs(fields: readonly ToolField[], raw: unknown): { args: ToolA
     }
     const ok = f.type === "number" ? typeof v === "number" && Number.isFinite(v)
       : f.type === "boolean" ? typeof v === "boolean"
-      : typeof v === "string" && v.length <= TEXT_MAX && (f.type === "text" || f.choices!.includes(v));
-    if (!ok) return { error: f.type === "choice" ? `${f.name} must be one of: ${f.choices!.join(", ")}.` : `${f.name} must be a ${f.type === "text" ? "text up to 2,000 characters" : f.type}.` };
+      : typeof v === "string" && (f.type === "text" || f.choices!.includes(v));
+    if (!ok) return { error: f.type === "choice" ? `${f.name} must be one of: ${f.choices!.join(", ")}.` : `${f.name} must be a ${f.type}.` };
     args[f.name] = v as string | number | boolean;
   }
   return { args };
@@ -73,17 +80,17 @@ const rollNotation = (body: ToolBody, args: ToolArgs): string =>
   (body.action.kind === "roll" ? String(args[body.action.field] ?? "") : "").trim();
 
 /** Runs the tool's action on arguments readToolCall accepted, with what its action links; throws, in words for the model, when a formula cannot run. */
-export function runTool(body: ToolBody, args: ToolArgs, rand: () => number, links: ToolLinks = {}): ToolAnswer {
+export function runTool(body: ToolBody, args: ToolArgs, rand: () => number, links: ToolLinks = {}, deadline?: MacroDeadline): ToolAnswer {
   if (body.action.kind === "record") return { text: "Recorded.", detail: {} };
   if (body.action.kind === "dice") return rollDicePiece(links.dice!, rand);
   if (body.action.kind === "formula") {
     const context = links.formula!.context();
     if (!context) throw new Error("The scene is not ready to run formulas yet.");
-    const out = runFormulaReadOnly(links.formula!.text, context, Math.floor(rand() * 2 ** 31) + 1);
+    const out = runFormulaReadOnly(links.formula!.text, context, Math.floor(rand() * 2 ** 31) + 1, deadline);
     if ("error" in out) throw new Error(out.error);
     return { text: out.text, detail: { chars: out.text.length } };
   }
   const notation = rollNotation(body, args);
   const roll = rollDice(boundedDice(notation)!, rand);
-  return { text: `Rolled ${notation}: ${rollText(roll)} = ${roll.total}`, detail: { dice: notation, ...roll } };
+  return { text: `Rolled ${notation}: ${rollSummary(roll)} = ${roll.total}`, detail: { dice: notation, ...roll } };
 }

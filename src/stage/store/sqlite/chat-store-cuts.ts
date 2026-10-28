@@ -12,6 +12,7 @@ import type { CellCipher } from "../../crypto/cell-cipher";
 import { BRANCH_COLUMNS, MESSAGE_COLUMNS, type BranchSql, type ChatSql, type MessageSql } from "./chat-store";
 import type { StageDatabase } from "./database";
 import { statsCounters } from "./chat-store-stats";
+import type { StateSql } from "./chat-store-state";
 import { applyPartChange, openPartSnapshot, snapshotPartsAt } from "./piece-parts-sql";
 
 type Param = string | number | null;
@@ -38,6 +39,8 @@ export interface ChatSqlKit {
   messageById(id: string): Message;
   copyMessage(m: MessageSql, toBranchId: string, current: number): void;
   insertBranch(chatId: string, name: string, parent: string | null, forkMessageId: string | null, forkSwipeId: string | null): string;
+  /** Scene state (rule 17): each method that changes what a take shows rebuilds it from the first message it changed. */
+  state: StateSql;
   /** One transaction that waits for another connection's lock, up to `limitMs` (chat-store.ts). */
   write<T>(work: () => T, limitMs?: number): Promise<T>;
 }
@@ -107,6 +110,7 @@ export function cutMethods(k: ChatSqlKit): CutMethods {
           cutId, k.clock(), scope, tail, branchId, scope === "one" ? messageId : m.seq,
         );
         k.bump(branchId);
+        k.state.refresh(branchId, m.seq);
         k.touch(branch.chat_id);
         return { cutId, count };
       });
@@ -126,12 +130,17 @@ export function cutMethods(k: ChatSqlKit): CutMethods {
         k.run("UPDATE messages SET cut_id = NULL, cut_at = NULL, cut_scope = NULL, cut_tail = NULL WHERE branch_id = ? AND cut_id = ?", branchId, cutId);
         k.bump(branchId);
         k.touch(branch.chat_id);
-        if (!asTake) return { branchId, count: cut.length };
+        if (!asTake) {
+          k.state.refresh(branchId, first.seq);
+          return { branchId, count: cut.length };
+        }
         const before = messagesOf(branchId, "seq < ? AND cut_id IS NULL", first.seq);
         const at = before[before.length - 1];
         const take = k.insertBranch(branch.chat_id, "Restored take", branchId, at?.id ?? null, at ? swipeIdAt(at) : null);
         for (const m of before) k.copyMessage(m, take, m.current_swipe);
         for (const m of cut) k.run("UPDATE messages SET branch_id = ? WHERE id = ?", take, m.id);
+        k.state.refresh(branchId, first.seq);
+        k.state.copyBase(branchId, take);
         k.run("UPDATE chats SET active_branch_id = ?, updated_at = ? WHERE id = ?", take, k.clock(), branch.chat_id);
         return { branchId: take, count: cut.length };
       });
@@ -155,6 +164,7 @@ export function cutMethods(k: ChatSqlKit): CutMethods {
         if (!branch) return false;
         if (branch.parent_branch_id === null) fail(MAIN_UNDELETABLE);
         k.run("UPDATE branches SET deleted_at = ? WHERE id = ?", k.clock(), branchId);
+        k.state.drop(branchId);
         const chat = k.liveChat(branch.chat_id)!;
         if (chat.active_branch_id === branchId) {
           const parent = k.writableBranch(branch.parent_branch_id);
@@ -178,6 +188,7 @@ export function cutMethods(k: ChatSqlKit): CutMethods {
         const branch = k.branchRow(branchId);
         if (!branch || branch.deleted_at === null || !k.liveChat(branch.chat_id)) return null;
         k.run("UPDATE branches SET deleted_at = NULL WHERE id = ?", branchId);
+        k.state.refresh(branchId);
         return k.toBranch(k.branchRow(branchId)!);
       });
     },
