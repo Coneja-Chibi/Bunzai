@@ -17,7 +17,7 @@ import { keyOf } from "../../../_shared/piece-key";
 import { boundsOf, fitView, nodeRect, type Pt, type Rect } from "./geometry";
 import { writeLink } from "./link-write";
 import type { GraphEdge, GraphNode, RefField } from "./links";
-import { ENGINE_W, FEATURE_H, LORE_H, LORE_KEY, PIPE_W, REQUEST_H, REQUEST_KEY, featureKey, pipeHeight, pipeKey, pipelineModel, type PipelineModel } from "./pipeline";
+import { ENGINE_W, FEATURE_H, LORE_H, LORE_KEY, PIPE_W, REQUEST_H, REQUEST_KEY, featureKey, featureWire, pipeHeight, pipeKey, pipelineModel, type PipelineModel } from "./pipeline";
 import { FEATURE_MARKER_SLOTS } from "../../../../core/preset";
 import { writePreset, type BlockEdit } from "./preset-write";
 import { usePipeline } from "./use-pipeline";
@@ -90,6 +90,14 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
   const openPiece = (piece: StudioEntitySummary): void => { ctx.workbench.focus(piece.id, piece.kind); onView("desk"); };
   const layerRects = pipelineRects(model, at);
   const unlink = (edge: GraphEdge): void => { select(null); void write(edge.from, edge.field, edge.to, false); };
+  /** Delete on a selected feature wire: the feature leaves that preset's marker for its own spot (the marker is switched off). */
+  const ownSpot = (id: string): void => {
+    const wire = featureWire(id);
+    const preset = wire?.presetKey ? model.presets.find((m) => m.key === wire.presetKey) : undefined;
+    if (!wire || !preset) return;
+    select(null);
+    void writeBlock(preset.piece, { t: "unplace", slot: wire.slot, seen: preset.summary.rows.map((r) => r.id) });
+  };
 
   const fit = (): void => {
     const rects: Rect[] = [
@@ -160,8 +168,10 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
           onLink={(from, field, to) => void write(from.key, field, to.key, true)}
           onUnlink={unlink}
           layerRects={layerRects}
-          layer={(drag) => (
+          onDeleteWire={ownSpot}
+          layer={(tools) => (
             <PipelineLayer
+              tools={tools}
               onPreset={setChosenPresetId}
               model={model}
               data={data}
@@ -170,11 +180,9 @@ export function NodesView({ ctx, pieces, onView }: { ctx: AppContext; pieces: re
               at={at}
               dirty={dirty}
               readOnly={readOnly}
-              drag={drag}
               onToggle={(piece, id, enabled) => void writeBlock(piece, { t: "set", id, enabled })}
               onMove={(piece, from, to, seen) => void writeBlock(piece, { t: "move", from, to, seen })}
               onPlace={(piece, slot, to, seen) => void writeBlock(piece, { t: "place", slot, to, seen })}
-              onOwnSpot={(piece, slot, seen) => void writeBlock(piece, { t: "unplace", slot, seen })}
               onOpen={openPiece}
             />
           )}

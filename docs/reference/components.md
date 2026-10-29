@@ -309,7 +309,7 @@ The answer for the common needs, before searching the table below. For buttons, 
 | FavoriteModels | src/ui/apps/scenes/messenger/settings/scene/models-page.tsx | ({ env }: { env: SceneEnv }) |  |  |
 | FavoriteRow | src/ui/apps/scenes/messenger/settings/scene/overview-rows.tsx | ({ a }: { a: WingArgs }) | The star on the scene: shown in the Scenes list's Fan Favorites shelf. |  |
 | FeaturedCast | src/ui/apps/scenes/compendium/cells/cells-featured.tsx | ({ m, onOpen }: { m: BookModel } & Open) |  |  |
-| FeatureNode | src/ui/apps/workbench/nodes/EngineNodes.tsx | (p: FeatureNodeProps) | A feature that splices into the request (trackers, library trackers, storyboards): drag it onto a block to put its marker there. | .view .head .grow .addWrap .addMenu .area .canvas .world ... |
+| FeatureNode | src/ui/apps/workbench/nodes/EngineNodes.tsx | (p: FeatureNodeProps) | A feature that splices into the request (trackers, library trackers, storyboards). Its port is a piece node's port: drag a wire to a block to put its marker there. | .view .head .grow .addWrap .addMenu .area .canvas .world ... |
 | Field | src/ui/apps/scenes/context/memory-controls.tsx | ({ label, hint, children }: { label: string; hint?: ReactNode; children: ReactNode }) |  |  |
 | Field | src/ui/apps/scenes/stage-controls.tsx | ({ icon, label, help, children }: { icon: IconName; label: string; help?: string; children: ReactNode }) |  |  |
 | FieldBlock | src/ui/apps/scenes/compendium/fields/blocks.tsx | ({ label, children, tile }: { label: string; children: ReactNode; tile?: boolean }) |  |  |

@@ -1362,10 +1362,12 @@ canvas.
   (Trackers, Library trackers, Storyboards) under the Lore pass: it wires to its marker's block in every preset that has
   one, and dashed to the Request when the request's preset has none ("Own spot", where the feature goes without a
   marker). It reads the marker the assembler fills (the slot's first switched-on marker in the preset's order) by the
-  preset's own switches, not a picked scene's. Dragging its "Drag to place" handle onto a block puts the marker at
-  that block's place in the list, as dragging a block there does, taking its placement, depth and order and switched on
-  (added when the preset has none), and Own spot switches the marker off, kept for the next place; each is one preset save through `nodes/preset-write.ts`,
-  refused when the blocks changed since they were drawn or the preset has unsaved Desk edits.
+  preset's own switches, not a picked scene's. Its Marker port is a piece node's port and draws a wire with the
+  same drag as a link: released on a block of any preset, it puts the marker at that block's place in the list, as
+  dragging a block there does, taking its placement, depth and order and switched on (added when the preset has none).
+  Its wire to a marker selects like a link's, and Delete gives the feature its own spot by switching the marker off,
+  kept for the next place. Each is one preset save through `nodes/preset-write.ts`, refused when the blocks changed
+  since they were drawn or the preset has unsaved Desk edits.
 - **Board.** Notes and frames anywhere on the canvas; a frame moves what is inside it and a note can be
   pinned to a node. Board items belong to the workbench (settings), not to pieces, so exports never carry
   them. Pictures are not offered yet: an upload is only kept when a piece saves it.

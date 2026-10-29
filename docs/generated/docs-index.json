@@ -16005,7 +16005,7 @@
               "text": "Nodes view",
               "slug": "nodes-view",
               "level": 3,
-              "summary": "A remembered Desk and Nodes switch shows open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk drafts survive. Links come from stored reference fields; dragging a port links and Delete or Unlink removes, each a single-field save, never over unsaved Desk edits. Pipeline opens a preset into its blocks for toggling and reordering, wires the cast and Lore pass into markers, and draws a Feature node per feature marker, wired to its marker or dashed to the Request for its own spot; dropping its handle on a block places the marker there with that block's placement, Own spot switches it off. A Request node previews the forecast or a dry run; board items never export.",
+              "summary": "A remembered Desk and Nodes switch shows open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk drafts survive. Links come from stored reference fields; dragging a port links and Delete or Unlink removes, each a single-field save, never over unsaved Desk edits. Pipeline opens a preset into its blocks for toggling and reordering, wires the cast and Lore pass into markers, and draws a Feature node per feature marker, wired to its marker or dashed to the Request for its own spot; its port's wire, released on a block, places the marker there; Delete on its wire switches it off. A Request node previews the forecast or a dry run; board items never export.",
               "topics": [
                 "Nodes view",
                 "workbench canvas",

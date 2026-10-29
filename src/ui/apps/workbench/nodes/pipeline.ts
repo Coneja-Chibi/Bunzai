@@ -323,6 +323,24 @@ export function pipelineModel(input: {
 /* ---------- feature markers (.claude/plans/prompt-placement.md section 2: Nodes edits the preset's markers) ---------- */
 
 export const FEATURE_H = 112;
+/** A feature node's port row: the last row, the height of a piece node's port row (geometry.ts ROW_H). */
+export const FEATURE_PORT_H = 26;
+/** Where a feature's wire leaves its port. */
+export const featureOut = (at: Pt): Pt => [at[0] + ENGINE_W, at[1] + FEATURE_H - FEATURE_PORT_H / 2];
+/** A feature's wire: to the marker's block in a preset, or to the Request when it keeps its own spot. */
+export const featureWireId = (slot: FeatureMarkerSlot, to: string): string => `feature:${slot}>${to}`;
+/** The feature and the preset key a feature wire names, or null for any other wire (the Request's has no preset). */
+export function featureWire(id: string): { slot: FeatureMarkerSlot; presetKey: string | null } | null {
+  const m = /^feature:([^>]+)>(.+)$/.exec(id);
+  if (!m || !isFeatureMarkerSlot(m[1])) return null;
+  return { slot: m[1], presetKey: m[2] === "request" ? null : m[2]! };
+}
+/** The block row of an expanded preset under a world point, or null when the point is not on one. */
+export function blockAt(at: Pt, blocks: number, pt: Pt): number | null {
+  if (pt[0] < at[0] || pt[0] > at[0] + PIPE_W) return null;
+  const row = Math.floor((pt[1] - at[1] - PIPE_HEAD_H) / BLOCK_H);
+  return row >= 0 && row < blocks ? row : null;
+}
 export const featureKey = (slot: FeatureMarkerSlot): string => `feature:${slot}`;
 const FEATURE_COLOR: Readonly<Record<FeatureMarkerSlot, string>> = {
   trackers: "var(--deck-persona)",

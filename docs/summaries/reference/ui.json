@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:b65faa0a9351ef749a0971ccb0ab774f2ff246a80b279bf6d5ce7c08a5042bc9",
+  "sourceHash": "sha256:4501f694cc54745141b18b304e2ecda87f892d10d9e55390cf550a68e24624a5",
   "summary": "Contributor map of installed Studio, temporary Browser Studio, opt-in remote listeners and Kit. GitHub Pages reuses the React shell, adapters, shared engine and documentation with memory-only state and explicit refusal of host-owned operations. Kit owns conversational composition, sessions, providers, capability tools and staged review. Folder-derived apps, setup, menus and documentation define extension points. Infrastructure covers reload, provenance, storage, receipts and revision-checked writes. Library owns import, staging, damaged-file reporting and restorable Trash. Workbench provides editors for the canonical kinds, split panes, linked sets and explicit saves. Scenes owns character-started chats, display macros and streamed replies. Press owns staged export, linked riders, file/zip delivery and unknown-loss reporting. Settings derives its sections from folders. One button family owns every clickable control. Security distinguishes loopback, browser and remote boundaries with fail-closed parsing, inert entity scripts and sanitized marks. The approved velvet landing supplies real Now Playing data, Dock navigation, a reusable proscenium and capped live lights and fog. Jewel Library covers compose 60 ornaments with ten painterly papers and editable presentation titles, preserving canonical content and imported art. Scenes persists picture/list layouts with shared virtualization and real favorites, and adds participants by form. Prior storage delivery keeps its focused-fixture evidence and live-proof limits. The Context wing is a resizable right wing with a Prompt Inspector (This turn with Route and Time, Next send, Lore and state with Macros and variable history) and Memory on ChatStore rule 45; the Scenes list, Control Booth and Settings use its summaries. Rooms share a Premiere header and panel; Settings is a four-act rail with a Stage lights choice.",
   "topics": [
     "Kit conversational terminal",
@@ -317,7 +317,7 @@
       "slug": "the-workbench-room-home-by-default---the-ide",
       "title": "The Workbench room (home by default - the IDE)",
       "level": 2,
-      "sourceHash": "sha256:eefb7b4e586270eb7151fa55009ba7117209f5c77920349b926b1570f18a825a",
+      "sourceHash": "sha256:71767fc3fae1636eaf2864ffa411b44e803874fff73cc8febb8c101cb8896301",
       "summary": "Workbench owns persistent open tabs, follow policy, split view, recents, dirty-close confirmation and editor drafts. Editors use light baselines and serialized revision-checked patches with conflict choices and bounded history. Lore native folders share undo/save ownership; named asset changes are captured with accepted submissions. Complete export reads the full entity. Local asset uploads use session grants revoked on lock or close, with a picture capped at 10 MiB. Large lists use measured windows that keep focus and selection. Timer autosaves group by five minutes; manual saves keep version boundaries. The character editor opens in Grid unless the guided quiz was picked; the preset editor shows groups as a depth-first category tree; in the lorebook editor one entry owns the screen; quick-reply sets open as an ordered list of labeled messages; tracker, tool, dice and formula editors share one decoder-gated save. The dock collapses only through Hide dock, leaving a Show dock pill, for the session. These paths are source-reviewed and live proof remains pending. An empty or failed bench shows a centered room header in a framed panel.",
       "topics": [
         "shell-owned editor tabs",
@@ -347,8 +347,8 @@
           "slug": "nodes-view",
           "title": "Nodes view",
           "level": 3,
-          "sourceHash": "sha256:e5794c3b58162aedc8b472cff244d274f81207856816a27291b16a71dbb247ab",
-          "summary": "A remembered Desk and Nodes switch shows open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk drafts survive. Links come from stored reference fields; dragging a port links and Delete or Unlink removes, each a single-field save, never over unsaved Desk edits. Pipeline opens a preset into its blocks for toggling and reordering, wires the cast and Lore pass into markers, and draws a Feature node per feature marker, wired to its marker or dashed to the Request for its own spot; dropping its handle on a block places the marker there with that block's placement, Own spot switches it off. A Request node previews the forecast or a dry run; board items never export.",
+          "sourceHash": "sha256:793707979f25e2b164e28d5bee23ffce7e2955944dc8e60ab2f72a267b99c9e3",
+          "summary": "A remembered Desk and Nodes switch shows open pieces on a pannable, zoomable canvas with Links, Pipeline and Board layers; Desk drafts survive. Links come from stored reference fields; dragging a port links and Delete or Unlink removes, each a single-field save, never over unsaved Desk edits. Pipeline opens a preset into its blocks for toggling and reordering, wires the cast and Lore pass into markers, and draws a Feature node per feature marker, wired to its marker or dashed to the Request for its own spot; its port's wire, released on a block, places the marker there; Delete on its wire switches it off. A Request node previews the forecast or a dry run; board items never export.",
           "topics": [
             "Nodes view",
             "workbench canvas",

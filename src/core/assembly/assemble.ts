@@ -34,7 +34,7 @@ import { noteDue, placeNote } from "./note";
 import { injectionTexts, linkedTrackersText, placeBlock, trackersText } from "./trackers";
 import { refreshTrackerTexts, trackerViews } from "../tracker";
 import { storyboardsBlock } from "./storyboards";
-import { fillSlot, leftPlaceholder } from "./feature-slots";
+import { fillSlot, leftPlaceholder, withoutPlaceholders } from "./feature-slots";
 import type { FeatureMarkerSlot } from "../preset/build";
 import { placeDirector } from "./director";
 import { DEFAULT_LORE_SHARE, type AssemblyInput, type HistoryMessage, type AssemblyResult, type AssembledMessage, type AssemblyLoreHit, type VariableDiff } from "./types";
@@ -375,7 +375,9 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     const cap = Math.max(1, input.window.context - (input.window.reply || FALLBACK_REPLY));
     // The fixed texts are measured as messages at the end, so the pass counts them; their entries in `keep` are never read (blocks has none).
     const fixed: AssembledMessage[] = [...(linkedText ? [linkedText] : []), ...(input.reserved ?? [])].map((content) => ({ role: "system", content }));
-    const { keep, dropped, overflow: over } = input.budgeter.finalPass([...blocks.map(toMessage), ...fixed], cap, [...blocks.map((b) => b.source.kind === "history"), ...fixed.map(() => false)]);
+    // A feature marker's placeholder is measured as nothing: its content is fixed and added after this pass.
+    const measured = blocks.map((b) => ({ role: b.role, content: withoutPlaceholders(b.content, plan.slotNonce) }));
+    const { keep, dropped, overflow: over } = input.budgeter.finalPass([...measured, ...fixed], cap, [...blocks.map((b) => b.source.kind === "history"), ...fixed.map(() => false)]);
     for (const [i, b] of blocks.entries()) if (!keep[i] && b.source.kind === "history") trimmed.push(b.source.messageId);
     blocks = blocks.filter((_, i) => keep[i]);
     finalPassDropped = dropped;
@@ -392,8 +394,8 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     ["linkedTrackers", linkedText ? [linkedText] : [], "trackers"],
     ["storyboards", boards ? [boards] : [], "storyboards"],
   ];
-  for (const [slot, texts, kind] of features) if (plan.slots.has(slot)) blocks = fillSlot(blocks, slot, texts, { kind });
-  if (plan.slots.size > 0 && leftPlaceholder(blocks)) throw new PresetPlanError("A feature marker in the preset could not be filled, so the turn was stopped rather than send its placeholder.");
+  for (const [slot, texts, kind] of features) if (plan.slots.has(slot)) blocks = fillSlot(blocks, slot, plan.slotNonce, texts, { kind });
+  if (plan.slots.size > 0 && leftPlaceholder(blocks, plan.slotNonce)) throw new PresetPlanError("A feature marker in the preset could not be filled, so the turn was stopped rather than send its placeholder.");
 
   // The worker's steps after assembly (guides.ts): the system guide block and the depth and append guides.
   blocks = applyGuides(blocks, guides, macros.write);

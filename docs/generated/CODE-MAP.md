@@ -3467,7 +3467,7 @@ Tests are left out. For what a project word means, see [the glossary](../referen
 
 - `Board.tsx`: The Board layer: free notes and frames on the canvas.
 - `canvas-state.ts`: The Nodes view's persisted canvas (pure): parse the prefs record once at the boundary, serialize it back, the drag edits (nodes, board items, pinned notes) and the deterministic tidy layout.
-- `EngineNodes.tsx`: The engine steps on the canvas (dashed, not pieces): the Lore pass, and the Request with its scene picker and Preview, which only report; and the feature nodes, whose drag places a feature's marker (the caller writes...
+- `EngineNodes.tsx`: The engine steps on the canvas (dashed, not pieces): the Lore pass, and the Request with its scene picker and Preview, which only report; and the feature nodes, whose port draws a wire that places a feature's marker (...
 - `geometry.ts`: Canvas geometry (pure): node sizes and port anchors derived from fixed row heights, rectangle hit tests, and fit-to-view.
 - `Inspector.tsx`: The canvas inspector: facts and actions for the selected node, wire or board item.
 - `link-write.ts`: The Nodes view's one write: add or remove a stored reference on a piece.

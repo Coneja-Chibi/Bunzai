@@ -243,10 +243,9 @@
   background: var(--stage-black); border: 1px solid var(--stage-line);
 }
 .engAct { margin-top: 8px; display: flex; gap: 6px; }
-/* a feature node: its color edge, and the handle dragged onto a block to place its marker */
-.eng[data-feature] { border-left: 4px solid var(--k); }
-.featurePort { display: inline-flex; align-items: center; padding: 3px 8px; cursor: grab; font: 600 10px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--k); border: 1px solid var(--k); }
-.featurePort[draggable="false"] { cursor: not-allowed; opacity: 0.5; }
+/* a feature node: its color edge, and a piece node's port row along its foot (the dot sits past the edge, so no clipping) */
+.eng[data-feature] { border-left: 4px solid var(--k); overflow: visible; }
+.featurePort { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 10px; }
 .preview { max-width: min(640px, 90vw); max-height: 80vh; overflow: auto; color: var(--stage-card); }
 .preview h3 { font: 800 16px var(--font-big); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 8px; }
 .previewNote { font: 400 11.5px/1.5 var(--font-mono); color: var(--stage-soft); margin: 0 0 6px; }

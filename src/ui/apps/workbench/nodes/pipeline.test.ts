@@ -3,7 +3,7 @@ import { expect, test } from "bun:test";
 import type { PresetPrompt } from "../../../../entities/preset";
 import { emptyPresetBody } from "../../../../entities/preset/schema";
 import type { StudioEntitySummary } from "../../../app-contract";
-import { contextOf, dryRequest, featureRows, loreIdsOf, markerWires, pipelineModel, pipelineRows, requestView, slotTexts } from "./pipeline";
+import { blockAt, contextOf, dryRequest, featureRows, featureWire, featureWireId, loreIdsOf, markerWires, pipelineModel, pipelineRows, requestView, slotTexts } from "./pipeline";
 
 export const block = (id: string, over: Partial<PresetPrompt> = {}): PresetPrompt => ({
   id, name: id, content: `text of ${id}`, role: "system", enabled: true, systemPrompt: false, marker: false,
@@ -104,4 +104,18 @@ test("the request builds from the picked scene's preset when it is on the canvas
 test("each feature lands at the row of its first switched-on marker, or keeps its own spot (the assembler's own rule)", () => {
   const { rows } = pipelineRows(presetOf(block("main"), marker("t1", "trackers", { enabled: false }), marker("t2", "trackers"), marker("t3", "trackers"), marker("sb", "storyboards")), none);
   expect(featureRows(rows)).toEqual({ trackers: 2, linkedTrackers: null, storyboards: 4 });
+});
+
+test("a world point finds the block row under it, and a point off the preset finds none", () => {
+  expect(blockAt([100, 100], 3, [150, 100 + 55 + 28 + 5])).toBe(1);
+  expect(blockAt([100, 100], 3, [150, 100 + 10])).toBeNull();
+  expect(blockAt([100, 100], 3, [150, 100 + 55 + 3 * 28 + 1])).toBeNull();
+  expect(blockAt([100, 100], 3, [50, 100 + 60])).toBeNull();
+});
+
+test("feature wire ids name the feature and the preset, and nothing else parses as one", () => {
+  expect(featureWire(featureWireId("trackers", "preset:s1"))).toEqual({ slot: "trackers", presetKey: "preset:s1" });
+  expect(featureWire(featureWireId("storyboards", "request"))).toEqual({ slot: "storyboards", presetKey: null });
+  expect(featureWire("character:c1>pipe:preset:s1>cd")).toBeNull();
+  expect(featureWire("feature:nope>preset:s1")).toBeNull();
 });

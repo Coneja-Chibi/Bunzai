@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/components",
   "sourcePath": "docs/reference/components.md",
-  "sourceHash": "sha256:535b794c14e889087038e6daf686fd32f833a659292ff429361363d4bd117415",
-  "semanticSummaryHash": "sha256:e4eb7f0d232b0dffb941895685c54dfcbf374474b823f8a7b34884295aa2d6b7",
+  "sourceHash": "sha256:03ce741a8278217d8d880d727fad2e5c951ae6625ebb45c94b5e567c8165462a",
+  "semanticSummaryHash": "sha256:c141806029bf21ea0b45d1e657d3b354419467745f1ebb12d73f5f56fdb117e1",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "New rows match source: FeatureNode (p: FeatureNodeProps) in nodes/EngineNodes.tsx with its doc comment, MarkerMenu ({ placed, onAdd }) in preset/marker-menu.tsx, and ListToolbar's destructured props now end with placedSlots and onAddMarker as in list-toolbar.tsx. The sidecar summary names none of these rows and makes no contradicting claim; bands ok. Catalog quirk, not a summary error: the Styles column for FeatureNode and MarkerMenu lists classes from other CSS modules (.view .head .addWrap ... and .toolbar .topRow ...), the same generator artefact noted before for composed or shared stylesheets.",
-  "reviewedAt": "2026-10-29T09:07:47.214Z"
+  "notes": "FeatureNode's row description now matches the doc comment on the component: 'A feature that splices into the request (trackers, library trackers, storyboards). Its port is a piece node's port: drag a wire to a block to put its marker there.' Signature (p: FeatureNodeProps) unchanged; summary names no such row and stays accurate; sidecar fresh.",
+  "reviewedAt": "2026-10-29T09:15:13.356Z"
 }

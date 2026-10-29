@@ -210,13 +210,24 @@ test("the pipeline's node positions persist with the rest of the canvas", async 
   expect(saved.pos["engine:lore"]).toEqual([940 + 30, 60 + 20]);
 });
 
-test("a feature node keeps its own spot until dropped on a block, which places its marker there in one patch", async () => {
+/** A wire from a feature's port, released over block `row` of the preset (the canvas starts at pan 0, zoom 1). */
+const wireTo = (slot: string, row: number): void => {
+  const pipe = q<HTMLElement>("[data-pipe]")!;
+  const x = parseFloat(pipe.style.left) + 40;
+  const y = parseFloat(pipe.style.top) + 55 + row * 28 + 14;
+  const dot = q<HTMLButtonElement>(`[data-feature="${slot}"] button`)!;
+  fire(dot, "pointerdown", { button: 0, clientX: 0, clientY: 0 });
+  fire(dom.window as unknown as EventTarget, "pointermove", { clientX: x, clientY: y });
+  fire(dom.window as unknown as EventTarget, "pointerup", { clientX: x, clientY: y });
+};
+
+test("a feature keeps its own spot until its port's wire is released on a block, which places its marker there in one patch", async () => {
   const h = harness([cut]);
   await mountView(h);
   const node = q<HTMLElement>('[data-feature="trackers"]')!;
   expect(node.textContent).toContain("Own spot");
-  fire(node.querySelector<HTMLElement>("[draggable]")!, "dragstart");
-  fire(blockEl("cd"), "drop");
+  expect(q('[data-pipe-wire="feature:trackers>request"]')).not.toBeNull();
+  wireTo("trackers", 1);
   await flush();
   expect(h.patches).toHaveLength(1);
   const sent = h.patches[0]![3] as { order: string[]; items: Record<string, PresetPrompt> };
@@ -225,14 +236,26 @@ test("a feature node keeps its own spot until dropped on a block, which places i
   root.unmount();
 });
 
-test("a placed feature's node names its block and Own spot takes the marker out", async () => {
+test("a wire released on empty canvas places nothing", async () => {
+  const h = harness([cut]);
+  await mountView(h);
+  const dot = q<HTMLButtonElement>('[data-feature="trackers"] button')!;
+  fire(dot, "pointerdown", { button: 0, clientX: 0, clientY: 0 });
+  fire(dom.window as unknown as EventTarget, "pointermove", { clientX: 5000, clientY: 5000 });
+  fire(dom.window as unknown as EventTarget, "pointerup", { clientX: 5000, clientY: 5000 });
+  await flush();
+  expect(h.patches).toHaveLength(0);
+  root.unmount();
+});
+
+test("a placed feature's wire selects and Delete gives it its own spot, switching its marker off", async () => {
   const h = harness([cut]);
   h.prompts = [...PROMPTS, slot("tk", "storyboards")];
   await mountView(h);
-  const node = q<HTMLElement>('[data-feature="storyboards"]')!;
-  expect(node.textContent).toContain("Marker: tk in Cut");
-  const own = [...node.querySelectorAll("button")].find((b) => b.textContent === "Own spot")!;
-  fire(own, "click");
+  expect(q<HTMLElement>('[data-feature="storyboards"]')!.textContent).toContain("Marker: tk in Cut");
+  fire(q('[data-pipe-wire^="feature:storyboards>"] path')!, "pointerdown", { button: 0 });
+  await flush();
+  fire(q("[data-nodes-canvas]")!, "keydown", { key: "Delete" });
   await flush();
   expect(h.patches).toHaveLength(1);
   expect((h.patches[0]![3] as { items: Record<string, PresetPrompt> }).items["i/tk"]).toMatchObject({ enabled: false });

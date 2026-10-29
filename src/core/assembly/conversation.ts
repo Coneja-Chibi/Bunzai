@@ -33,6 +33,7 @@ export function defaultPrompts(): PresetPlan {
     bottom: [],
     info: [],
     slots: new Set(),
+    slotNonce: "",
     relative: [
       prompt("charDescription", "{{description}}"),
       prompt("charPersonality", "{{personality}}"),

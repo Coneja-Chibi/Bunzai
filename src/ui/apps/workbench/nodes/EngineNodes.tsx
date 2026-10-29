@@ -1,15 +1,15 @@
 /**
  * The engine steps on the canvas (dashed, not pieces): the Lore pass, and the Request with its scene picker and
- * Preview, which only report; and the feature nodes, whose drag places a feature's marker (the caller writes it).
+ * Preview, which only report; and the feature nodes, whose port draws a wire that places a feature's marker (the caller writes it).
  */
 import { useState } from "react";
 import type { CSSProperties, JSX, PointerEvent } from "react";
 import type { SceneSummary } from "../../../../studio/scenes";
 import { InkDialog } from "../../../components/ink-dialog";
-import { Button } from "../../../components/button";
+import { Button, Dot } from "../../../components/button";
 import type { FeatureMarkerSlot } from "../../../../core/preset";
 import { markerSlotName } from "../preset/session";
-import { ENGINE_W, FEATURE_H, LORE_H, REQUEST_H, featureColor, tokLabel, type LoreStats, type RequestView } from "./pipeline";
+import { ENGINE_W, FEATURE_H, FEATURE_PORT_H, LORE_H, REQUEST_H, featureColor, tokLabel, type LoreStats, type RequestView } from "./pipeline";
 import css from "./nodes.module.css";
 
 export interface LoreNodeProps {
@@ -102,15 +102,16 @@ export interface FeatureNodeProps {
   slot: FeatureMarkerSlot;
   /** where its marker stands in the request's preset, or null for its own spot */
   placedAt: string | null;
-  locked: boolean;
+  /** why its port cannot be dragged (unsaved Desk edits, a narrow window), or null */
+  locked: string | null;
   onDown(e: PointerEvent): void;
-  /** the feature is being dragged toward a block (null when the drag ends) */
-  onDrag(slot: FeatureMarkerSlot | null): void;
-  onOwnSpot(): void;
+  /** the port pressed: the canvas draws the wire (NodeCanvas LayerTools.wire) */
+  onPortDown(e: PointerEvent): void;
 }
 
-/** A feature that splices into the request (trackers, library trackers, storyboards): drag it onto a block to put its marker there. */
+/** A feature that splices into the request (trackers, library trackers, storyboards). Its port is a piece node's port: drag a wire to a block to put its marker there. */
 export function FeatureNode(p: FeatureNodeProps): JSX.Element {
+  const name = markerSlotName(p.slot);
   return (
     <div
       className={css.eng}
@@ -119,20 +120,18 @@ export function FeatureNode(p: FeatureNodeProps): JSX.Element {
       onPointerDown={p.onDown}
     >
       <div className={css.engKind}>Feature</div>
-      <div className={css.engName}>{markerSlotName(p.slot)}</div>
+      <div className={css.engName}>{name}</div>
       <div className={css.engMeta}>{p.placedAt ? `Marker: ${p.placedAt}` : "Own spot: after the leading system messages"}</div>
-      <div className={css.engAct} onPointerDown={(e) => e.stopPropagation()}>
-        <span
-          className={css.featurePort}
-          role="button"
-          tabIndex={-1}
-          aria-label={`Drag ${markerSlotName(p.slot)} onto a block`}
-          title={p.locked ? "Save or discard the preset's Desk edits first" : "Drag onto a block to put its marker there"}
-          draggable={!p.locked}
-          onDragStart={(e) => { e.dataTransfer?.setData("text/plain", p.slot); p.onDrag(p.slot); }}
-          onDragEnd={() => p.onDrag(null)}
-        >Drag to place</span>
-        {p.placedAt && <Button size="sm" variant="quiet" disabled={p.locked} onClick={p.onOwnSpot}>Own spot</Button>}
+      <div className={`${css.port} ${css.featurePort} ${p.placedAt ? css.full : ""}`} style={{ height: FEATURE_PORT_H, "--pc": featureColor(p.slot) } as CSSProperties}>
+        <span>Marker</span>
+        <Dot
+          kind="port"
+          color={featureColor(p.slot)}
+          label={`Place ${name}'s marker`}
+          disabled={p.locked !== null}
+          title={p.locked ?? "Drag onto a block to put its marker there; select its wire and press Delete for its own spot"}
+          onPointerDown={(e) => { e.stopPropagation(); p.onPortDown(e); }}
+        />
       </div>
     </div>
   );

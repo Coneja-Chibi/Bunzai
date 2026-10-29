@@ -12,7 +12,7 @@ import type { PresetBody, PresetPrompt, PromptPlacement } from "../../entities/p
 import type { PresetPromptInfo } from "../macros";
 import { isFeatureMarkerSlot, type FeatureMarkerSlot } from "../preset/build";
 import type { Block } from "./conversation";
-import { slotPlaceholder } from "./feature-slots";
+import { slotNonce, slotPlaceholder } from "./feature-slots";
 import type { AssembledRole } from "./types";
 
 /** Where a preset's blocks go (RoleCall's ProcessedPrompts buckets). */
@@ -33,6 +33,8 @@ export interface PresetPlan {
   info: PresetPromptInfo[];
   /** The feature markers this preset places (feature-slots.ts); a feature not here keeps its own spot. */
   slots: Set<FeatureMarkerSlot>;
+  /** This plan's placeholder nonce (feature-slots.ts), so no text from outside the plan can stand for a marker. */
+  slotNonce: string;
 }
 
 /** A block the assembler cannot place. The turn stops and names it rather than dropping it. */
@@ -73,15 +75,16 @@ export function presetPlan(body: PresetBody, toggles: Readonly<Record<string, bo
   // A feature marker's block carries its placeholder (a marker of the same slot placed twice keeps the first, as one id does).
   // Appended at a depth it is its own message there instead: glued on, the feature would ride a history message the budget may drop.
   const slots = new Set<FeatureMarkerSlot>();
+  const nonce = slotNonce();
   for (const b of blocks) {
     if (!b.slot || slots.has(b.slot)) continue;
     slots.add(b.slot);
-    b.content = slotPlaceholder(b.slot);
+    b.content = slotPlaceholder(b.slot, nonce);
     if (b.placement === "append") b.placement = "in_chat";
   }
   fillSlots(blocks);
   const info = body.prompts.map((p) => ({ id: p.id, identifier: p.id, name: p.name, enabled: isOn(p, toggles), content: p.content }));
-  return { ...layOut(blocks), info, slots };
+  return { ...layOut(blocks), info, slots, slotNonce: nonce };
 }
 
 /** The one test for "this block already seats the persona": fillSlots adds its own block when none does, and the Cast wing's scan asks the same. */
@@ -191,10 +194,10 @@ function fillSlots(blocks: Working[]): void {
 const toBlock = (w: Working): Block => ({ role: w.role, content: w.content, source: { kind: "prompt", name: w.name, id: w.id } });
 const byOrder = (a: Working, b: Working): number => a.order - b.order;
 
-function layOut(blocks: readonly Working[]): Omit<PresetPlan, "info" | "slots"> {
+function layOut(blocks: readonly Working[]): Omit<PresetPlan, "info" | "slots" | "slotNonce"> {
   const inChat = new Map<number, Working[]>();
   const append = new Map<number, Block[]>();
-  const plan: Omit<PresetPlan, "info" | "slots"> = { relative: [], inChat: new Map(), append, top: [], bottom: [] };
+  const plan: Omit<PresetPlan, "info" | "slots" | "slotNonce"> = { relative: [], inChat: new Map(), append, top: [], bottom: [] };
   const top: Working[] = [];
   const bottom: Working[] = [];
   for (const w of blocks) {

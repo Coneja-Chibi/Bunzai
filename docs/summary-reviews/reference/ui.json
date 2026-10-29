@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:b65faa0a9351ef749a0971ccb0ab774f2ff246a80b279bf6d5ce7c08a5042bc9",
-  "semanticSummaryHash": "sha256:0d7e4f1a72fa98e27dc3893a6b76e5cdc615dee7a410c8742ab0be7347e53b72",
+  "sourceHash": "sha256:4501f694cc54745141b18b304e2ecda87f892d10d9e55390cf550a68e24624a5",
+  "semanticSummaryHash": "sha256:d5281de00fb16bbada2397e5fde53db86cfd9f37063f175b57b50f1f84f34418",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "The page now says the marker takes the dropped-on block's place in the list, as dragging a block there does, which is exactly what applyPlace does through reorderBlock; the applyPlace comment says the same and no 'just before' wording remains. Remainder of the Feature node paragraph and the nodes-view summary were already verified (assembler's first switched-on marker, target's placement, depth and order, switched on, Own spot switches off and is kept, stale and unsaved-edit refusals). Sidecar fresh.",
-  "reviewedAt": "2026-10-29T07:58:17.723Z"
+  "notes": "Feature node paragraph and nodes-view summary (119 words) match code: FeatureNode has a 'Marker' port (Dot kind port) whose onPortDown calls tools.wire, the canvas's own wire drag (PipelineLayer onPortDown); releasing calls dropFeature, which finds the block under the pointer in any expanded preset (blockAt) and calls onPlace (place semantics verified earlier: block's list place, placement, depth and order, switched on, marker added when absent); feature-to-marker wires are selectable (featureWireId) and Delete on one runs NodesView ownSpot which writes unplace (marker switched off, kept); the handle and Own spot button are gone from FeatureNode; refusals are those of preset-write.ts (stale build order, unsaved Desk edits, locked preset).",
+  "reviewedAt": "2026-10-29T09:15:13.198Z"
 }

@@ -1,7 +1,8 @@
 /**
  * The pan/zoom canvas: draws nodes, wires and the board, and owns every pointer gesture (pan, zoom,
  * node and board drags, wire drags from a port, Delete on a selected wire). It writes nothing itself;
- * linking and unlinking are handed to the caller.
+ * linking and unlinking are handed to the caller. The Pipeline layer draws its own nodes and wires with the same
+ * gestures (LayerTools), so a feature's port drags and its wire deletes the way a link's does.
  */
 import { Button, IconButton } from "../../../components/button";
 import { useEffect, useRef, useState } from "react";
@@ -39,10 +40,21 @@ export interface NodeCanvasProps {
   onBringUp(node: GraphNode): void;
   onLink(from: GraphNode, field: RefField, to: GraphNode): void;
   onUnlink(edge: GraphEdge): void;
-  /** extra nodes drawn in the world (the Pipeline layer); `drag` moves one by its canvas key */
-  layer?(drag: (e: PointerEvent, key: string) => void): ReactNode;
+  /** extra nodes drawn in the world (the Pipeline layer), with the canvas's own gestures */
+  layer?(tools: LayerTools): ReactNode;
+  /** Delete on a selected wire that is not a link (one the layer drew) */
+  onDeleteWire?(id: string): void;
   /** the layer's rectangles, for the minimap */
   layerRects?: readonly Rect[];
+}
+
+/** The canvas gestures a layer reuses: move a node, draw a wire from a port, select one of its wires. */
+export interface LayerTools {
+  drag(e: PointerEvent, key: string): void;
+  /** a wire from `from` that follows the pointer; released after moving, `drop` gets the world point */
+  wire(e: PointerEvent, from: Pt, drop: (pt: Pt) => void): void;
+  selectWire(id: string): void;
+  selectedWire: string | null;
 }
 
 const MINI = { w: 170, h: 104 };
@@ -53,7 +65,8 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
   const { canvas, edit } = p;
   const root = useRef<HTMLDivElement>(null);
   const stop = useRef<(() => void) | null>(null);
-  const [wire, setWire] = useState<{ from: GraphNode; field: RefField; to: Pt } | null>(null);
+  /** the wire being drawn; `link` when it comes from a piece's port (so nodes that accept it light up) */
+  const [wire, setWire] = useState<{ from: Pt; to: Pt; link?: { node: GraphNode; field: RefField } } | null>(null);
   const showNodes = canvas.layers.links;
   const nodes = showNodes ? p.nodes : [];
   const byKey = new Map(p.nodes.map((n) => [n.key, n] as const));
@@ -168,21 +181,28 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
     })));
   };
 
-  const onPortDown = (e: PointerEvent, node: GraphNode, field: RefField): void => {
+  /** One wire drag from a port, for links and the layer alike: the draft follows the pointer and a release after moving drops it. */
+  function drawWire(e: PointerEvent, from: Pt, drop: (pt: Pt) => void, link?: { node: GraphNode; field: RefField }): void {
     if (e.button !== 0) return;
-    p.select({ t: "node", key: node.key });
-    setWire({ from: node, field, to: toWorld(e.clientX, e.clientY) });
+    root.current?.focus();
+    setWire({ from, to: toWorld(e.clientX, e.clientY), ...(link ? { link } : {}) });
     track(
       e,
       (_dx, _dy, ev) => setWire((w) => (w ? { ...w, to: toWorld(ev.clientX, ev.clientY) } : w)),
       (ev, moved) => {
         setWire(null);
-        if (!moved) return;
-        const pt = toWorld(ev.clientX, ev.clientY);
-        const hit = [...nodes].reverse().find((n) => n.key !== node.key && within(nodeRect(n.kind, p.at(n.key)), pt));
-        if (hit && canLink(node.kind, field, hit.kind) && !p.edges.some((x) => x.from === node.key && x.field === field && x.to === hit.key)) p.onLink(node, field, hit);
+        if (moved) drop(toWorld(ev.clientX, ev.clientY));
       },
     );
+  }
+
+  const onPortDown = (e: PointerEvent, node: GraphNode, field: RefField): void => {
+    if (e.button !== 0) return;
+    p.select({ t: "node", key: node.key });
+    drawWire(e, outAnchor(p.at(node.key), portRow(node, field)), (pt) => {
+      const hit = [...nodes].reverse().find((n) => n.key !== node.key && within(nodeRect(n.kind, p.at(n.key)), pt));
+      if (hit && canLink(node.kind, field, hit.kind) && !p.edges.some((x) => x.from === node.key && x.field === field && x.to === hit.key)) p.onLink(node, field, hit);
+    }, { node, field });
   };
 
   const onKeyDown = (e: KeyboardEvent): void => {
@@ -198,6 +218,7 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
     if ((e.key === "Delete" || e.key === "Backspace") && sel?.t === "wire" && !p.readOnly) {
       const edge = p.edges.find((x) => x.id === sel.id);
       if (edge) { e.preventDefault(); p.onUnlink(edge); }
+      else if (p.onDeleteWire) { e.preventDefault(); p.onDeleteWire(sel.id); }
     }
   };
 
@@ -218,7 +239,13 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
   };
 
   const sel = p.selection;
-  const accepting = (n: GraphNode): boolean => wire !== null && n.key !== wire.from.key && canLink(wire.from.kind, wire.field, n.kind);
+  const accepting = (n: GraphNode): boolean => wire?.link !== undefined && n.key !== wire.link.node.key && canLink(wire.link.node.kind, wire.link.field, n.kind);
+  const tools: LayerTools = {
+    drag: onLayerDown,
+    wire: (e, from, drop) => drawWire(e, from, drop),
+    selectWire: (id) => { p.select({ t: "wire", id }); root.current?.focus(); },
+    selectedWire: sel?.t === "wire" ? sel.id : null,
+  };
 
   return (
     <div ref={root} className={css.canvas} tabIndex={0} data-nodes-canvas="" data-read-only={p.readOnly || undefined} onPointerDown={onBackgroundDown} onKeyDown={onKeyDown}>
@@ -250,7 +277,7 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
               </g>
             );
           })}
-          {wire && <path className={`${css.wire} ${css.wireDraft}`} d={pathOf(outAnchor(p.at(wire.from.key), portRow(wire.from, wire.field)), wire.to)} />}
+          {wire && <path className={`${css.wire} ${css.wireDraft}`} d={pathOf(wire.from, wire.to)} />}
         </svg>
         {nodes.map((n) => (
           <PieceNode
@@ -269,7 +296,7 @@ export function NodeCanvas(p: NodeCanvasProps): JSX.Element {
             onBringUp={() => p.onBringUp(n)}
           />
         ))}
-        {canvas.layers.pipeline && p.layer?.(onLayerDown)}
+        {canvas.layers.pipeline && p.layer?.(tools)}
       </div>
       <div className={css.zoom} onPointerDown={(e) => e.stopPropagation()}>
         <IconButton label="Zoom in" size="sm" icon="lucide:plus" disabled={canvas.zoom >= MAX_ZOOM} onClick={() => zoomCentre(1.25)} />

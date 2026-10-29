@@ -5,24 +5,33 @@
  * placed, `fillSlot` swaps the placeholder for the feature's messages with the marker block's role. The placeholder never
  * reaches the model: the assembler checks every message for it.
  *
- * The placeholder is private-use characters, which no macro, regex or chat text produces.
+ * The placeholder carries a random nonce made per plan (`slotNonce`), so no chat message, card or lore text can hold one:
+ * matching it by text only ever finds the plan's own marker blocks.
  */
 import type { FeatureMarkerSlot } from "../preset/build";
 import type { Block } from "./conversation";
 import type { BlockSource } from "./types";
 
-export const slotPlaceholder = (slot: FeatureMarkerSlot): string => `bunraku-slot:${slot}`;
-const ANY_PLACEHOLDER = "bunraku-slot:";
+export const slotPlaceholder = (slot: FeatureMarkerSlot, nonce: string): string => `\uE000bunraku-slot:${nonce}:${slot}\uE001`;
+/** A fresh nonce for one plan, from the platform's random source. */
+export function slotNonce(): string {
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+/** A text with this plan's placeholders taken out: what the budget measures, so a random nonce never changes what is cut. */
+export const withoutPlaceholders = (text: string, nonce: string): string =>
+  nonce === "" ? text : text.replace(new RegExp(`\uE000bunraku-slot:${nonce}:[^\uE001]*\uE001`, "g"), "");
 /** Whether a placeholder is still in the request, which the assembler refuses to send. */
-export const leftPlaceholder = (blocks: readonly Block[]): boolean => blocks.some((b) => b.content.includes(ANY_PLACEHOLDER));
+export const leftPlaceholder = (blocks: readonly Block[], nonce: string): boolean => blocks.some((b) => b.content.includes(`\uE000bunraku-slot:${nonce}:`));
 
 /**
  * The request with `slot`'s placeholder block swapped for one message per text; with no texts it leaves nothing. A user or
  * assistant marker can have a preset append block glued onto it (conversation.ts appendAtDepth), as any block of that role can:
  * then the texts take the placeholder's place in that one message, ahead of what was glued.
  */
-export function fillSlot(blocks: readonly Block[], slot: FeatureMarkerSlot, texts: readonly string[], source: BlockSource): Block[] {
-  const mark = slotPlaceholder(slot);
+export function fillSlot(blocks: readonly Block[], slot: FeatureMarkerSlot, nonce: string, texts: readonly string[], source: BlockSource): Block[] {
+  const mark = slotPlaceholder(slot, nonce);
   return blocks.flatMap((b): Block[] => {
     if (b.content === mark) return texts.map((content) => ({ role: b.role, content, source }));
     if (!b.content.includes(mark)) return [b];
