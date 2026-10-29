@@ -16,6 +16,7 @@ const at = (...parts: string[]): string => join(ROOT, ...parts);
 /** Kinds without a Workbench editor, and why. */
 const NO_EDITOR: Record<string, string> = {
   promptformat: "nothing reads prompt formats until text-completion connections exist; it opens read-only",
+  skill: "its editor is the next step of the skill build (wireframe design/wireframes/premiere/skill-pieces.html, approved); until then a skill opens read-only",
 };
 /** Kinds without Kit capabilities, and why. */
 const NO_CAPABILITIES: Record<string, string> = {
@@ -26,6 +27,7 @@ const NO_CAPABILITIES: Record<string, string> = {
   dice: "a dice piece is a short piece; Kit reads and writes it through its piece tools",
   formula: "a formula is one macro expression; Kit reads and writes it through its piece tools",
   tracker: "a tracker is a short piece; Kit reads and writes it through its piece tools",
+  skill: "Kit lists, reads, duplicates, exports and deletes skills through its generic piece tools; making and editing them comes with the skill editor",
 };
 
 describe("every kind is wired everywhere", () => {

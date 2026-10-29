@@ -232,6 +232,7 @@ function labelOf(source: Record<string, unknown>, numberOf: ReadonlyMap<string, 
   if (kind === "trackers") return "Trackers";
   if (kind === "director") return "Story Director";
   if (kind === "storyboards") return "Storyboards";
+  if (kind === "skills") return "Skills";
   if (kind === "summary") return `Summary: ${recapTitle.get(str(source["entryKey"])) ?? str(source["entryKey"])}`;
   if (kind === "tool") return `Tool answer: ${str(source["id"]) || "tool"}`;
   if (kind === "lore") {

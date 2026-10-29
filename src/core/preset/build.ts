@@ -63,7 +63,7 @@ export const MARKER_LABELS: Record<string, string> = {
  * without one keeps the feature's own spot (core/assembly/feature-slots.ts). The block id is the slot, as SillyTavern's
  * own markers are, so the marker survives a SillyTavern export and import when its id is the slot (the import reads the slot from the id).
  */
-export const FEATURE_MARKER_SLOTS = ["trackers", "linkedTrackers", "storyboards"] as const;
+export const FEATURE_MARKER_SLOTS = ["trackers", "linkedTrackers", "storyboards", "skills"] as const;
 export type FeatureMarkerSlot = (typeof FEATURE_MARKER_SLOTS)[number];
 export const isFeatureMarkerSlot = (slot: string | undefined): slot is FeatureMarkerSlot =>
   (FEATURE_MARKER_SLOTS as readonly string[]).includes(slot ?? "");
@@ -72,6 +72,7 @@ export const FEATURE_MARKER_LABELS: Readonly<Record<FeatureMarkerSlot, string>> 
   trackers: "the trackers",
   linkedTrackers: "the library trackers",
   storyboards: "the storyboards",
+  skills: "the skills",
 };
 /** A marker slot's plain name, either family. */
 export const slotLabel = (slot: string): string | undefined =>

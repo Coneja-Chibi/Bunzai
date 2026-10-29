@@ -1,0 +1,90 @@
+{
+  "kind": "skill",
+  "source": "src/entities/skill/schema.ts",
+  "shapes": [
+    {
+      "name": "SkillBody",
+      "doc": "",
+      "kind": "interface",
+      "fields": [
+        {
+          "name": "name",
+          "optional": false,
+          "type": "string",
+          "meaning": "What the person and the model call it; the block heads its text with it.",
+          "producers": []
+        },
+        {
+          "name": "description",
+          "optional": false,
+          "type": "string",
+          "meaning": "One line: what it is for. The model reads it when it may pick the skill, and the Library and the scene show it.",
+          "producers": []
+        },
+        {
+          "name": "text",
+          "optional": false,
+          "type": "string",
+          "meaning": "The instructions; macros render as in any prompt text.",
+          "producers": []
+        },
+        {
+          "name": "when",
+          "optional": false,
+          "type": "SkillWhen",
+          "meaning": "\"always\": every turn while linked; \"mentioned\": when its triggers match; \"picked\": while the model has it open.",
+          "producers": []
+        },
+        {
+          "name": "triggers",
+          "optional": false,
+          "type": "Trigger[]",
+          "meaning": "\"mentioned\": a lorebook entry's primary triggers, matched as a lore entry's are (any one of them).",
+          "producers": []
+        },
+        {
+          "name": "secondaryTriggers",
+          "optional": false,
+          "type": "Trigger[]",
+          "meaning": "With the primary ones, combined by `selectiveLogic`, as a lore entry's secondary triggers.",
+          "producers": []
+        },
+        {
+          "name": "selectiveLogic",
+          "optional": false,
+          "type": "SelectiveLogic",
+          "meaning": "How the secondary triggers combine with the primary ones (the lorebook's and_any, and_all, not_any, not_all).",
+          "producers": []
+        },
+        {
+          "name": "caseSensitive",
+          "optional": false,
+          "type": "boolean",
+          "meaning": "The triggers match case as written.",
+          "producers": []
+        },
+        {
+          "name": "matchWholeWords",
+          "optional": false,
+          "type": "boolean",
+          "meaning": "A plain trigger matches only as a whole word.",
+          "producers": []
+        },
+        {
+          "name": "scanDepth",
+          "optional": false,
+          "type": "number",
+          "meaning": "How many of the newest messages the triggers read, the one being answered included.",
+          "producers": []
+        },
+        {
+          "name": "closeWhenUnmentioned",
+          "optional": false,
+          "type": "boolean",
+          "meaning": "\"picked\": it also closes on a turn its triggers no longer match.",
+          "producers": []
+        }
+      ]
+    }
+  ]
+}

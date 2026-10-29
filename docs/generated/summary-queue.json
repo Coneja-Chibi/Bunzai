@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-29",
   "targetChars": 90000,
-  "totalPages": 127,
-  "totalSourceChars": 1616792,
+  "totalPages": 128,
+  "totalSourceChars": 1621057,
   "batches": [
     {
       "id": "batch-001",
-      "sourceChars": 86393,
+      "sourceChars": 86561,
       "pages": [
         {
           "docId": "01-VISION",
@@ -132,8 +132,8 @@
           "docId": "FORMAT-SUPPORT",
           "sourcePath": "docs/FORMAT-SUPPORT.md",
           "sidecarPath": "docs/summaries/FORMAT-SUPPORT.json",
-          "sectionCount": 17,
-          "sourceChars": 5851,
+          "sectionCount": 18,
+          "sourceChars": 6019,
           "status": "APPROVED"
         },
         {
@@ -498,7 +498,7 @@
     },
     {
       "id": "batch-007",
-      "sourceChars": 87752,
+      "sourceChars": 87770,
       "pages": [
         {
           "docId": "reference/entities/formula",
@@ -545,7 +545,7 @@
           "sourcePath": "docs/reference/entities/preset.md",
           "sidecarPath": "docs/summaries/reference/entities/preset.json",
           "sectionCount": 18,
-          "sourceChars": 23175,
+          "sourceChars": 23193,
           "status": "APPROVED"
         },
         {
@@ -576,7 +576,7 @@
     },
     {
       "id": "batch-008",
-      "sourceChars": 84788,
+      "sourceChars": 88851,
       "pages": [
         {
           "docId": "reference/entities/regex",
@@ -592,6 +592,14 @@
           "sidecarPath": "docs/summaries/reference/entities/scriptsheet.json",
           "sectionCount": 4,
           "sourceChars": 3597,
+          "status": "APPROVED"
+        },
+        {
+          "docId": "reference/entities/skill",
+          "sourcePath": "docs/reference/entities/skill.md",
+          "sidecarPath": "docs/summaries/reference/entities/skill.json",
+          "sectionCount": 3,
+          "sourceChars": 4063,
           "status": "APPROVED"
         },
         {
@@ -1102,14 +1110,14 @@
     },
     {
       "id": "batch-017",
-      "sourceChars": 280868,
+      "sourceChars": 280884,
       "pages": [
         {
           "docId": "reference/ui",
           "sourcePath": "docs/reference/ui.md",
           "sidecarPath": "docs/summaries/reference/ui.json",
           "sectionCount": 34,
-          "sourceChars": 280868,
+          "sourceChars": 280884,
           "status": "APPROVED"
         }
       ]

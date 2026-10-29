@@ -26,7 +26,9 @@ const triggerShape = defineExhaustiveShape<Trigger>()({
   frequency: z.number().optional(),
   probability: z.number().optional(),
 });
-const triggerSchema = z.strictObject(triggerShape);
+export const selectiveLogicSchema = z.enum(["and_any", "and_all", "not_any", "not_all"]);
+/** One trigger, as a lore entry and a skill (entities/skill) both keep them. */
+export const triggerSchema = z.strictObject(triggerShape);
 
 const filterShape = defineExhaustiveShape<CharacterFilter>()({
   names: stringArray,
@@ -90,7 +92,7 @@ const entryShape = defineExhaustiveShape<LorebookEntry>()({
   triggerMode: z.enum(["simple", "advanced"]),
   triggers: z.array(triggerSchema),
   secondaryTriggers: z.array(triggerSchema),
-  selectiveLogic: z.enum(["and_any", "and_all", "not_any", "not_all"]),
+  selectiveLogic: selectiveLogicSchema,
   caseSensitive: z.boolean().nullable(),
   matchWholeWords: z.boolean().nullable(),
   scanDepth: z.number().nullable(),

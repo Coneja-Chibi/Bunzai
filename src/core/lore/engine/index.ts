@@ -19,6 +19,7 @@ export type {
   LoreVerdict,
 } from "./types";
 export { runLore } from "./engine";
+export { matchTrigger, recentScanParts, selectiveLogicMatches } from "./scan";
 export { expandLoreOutlets } from "./outlet";
 export { loreWakeGraph } from "./wake";
 export {

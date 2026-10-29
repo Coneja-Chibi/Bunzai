@@ -356,6 +356,7 @@ const FEATURE_COLOR: Readonly<Record<FeatureMarkerSlot, string>> = {
   trackers: "var(--deck-persona)",
   linkedTrackers: "var(--deck-persona)",
   storyboards: "var(--deck-lorebook)",
+  skills: "var(--deck-lorebook)",
 };
 export const featureColor = (slot: FeatureMarkerSlot): string => FEATURE_COLOR[slot];
 

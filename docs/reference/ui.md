@@ -1222,7 +1222,7 @@ after responsive reflow, and Tab traversal continues through each measured windo
   redoes recent edits through a bounded delta history. In a narrow editor pane, the prompt list and
   settings stack while the remembered desktop split remains available when the pane widens.
   The list's toolbar has "+ Marker" (`preset/marker-menu.tsx`): every marker slot, SillyTavern's and the feature
-  markers (Trackers, Library trackers, Storyboards, [entities/preset.md](entities/preset.md)), the placed ones greyed
+  markers (Trackers, Library trackers, Storyboards, Skills, [entities/preset.md](entities/preset.md)), the placed ones greyed
   since a slot is placed once. The new marker lands at the end of the list with its slot as its id when that id is free;
   drag it into place and set its placement in its row like any block.
   Preset settings also list regex and quick-reply pieces from the current studio. Checking a row
@@ -1359,7 +1359,7 @@ canvas.
   and, with several presets on the canvas and no scene, which preset to build from; with a scene its totals
   and Preview come from the scene forecast, otherwise from a dry run of the canvas pieces that is labeled an
   estimate (empty slots show their placeholder and count as nothing). Each feature marker slot has a Feature node
-  (Trackers, Library trackers, Storyboards) under the Lore pass: it wires to its marker's block in every preset that has
+  (Trackers, Library trackers, Storyboards, Skills) under the Lore pass: it wires to its marker's block in every preset that has
   one, and dashed to the Request when the request's preset has none ("Own spot", where the feature goes without a
   marker). It reads the marker the assembler fills (the slot's first switched-on marker in the preset's order) by the
   preset's own switches, not a picked scene's. Its Marker port is a piece node's port and draws a wire with the

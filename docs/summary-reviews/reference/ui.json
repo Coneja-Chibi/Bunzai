@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/ui",
   "sourcePath": "docs/reference/ui.md",
-  "sourceHash": "sha256:5aa9bc17373f11f8bfc44ee9af7f483e437ddae6d665803c3291dd9dbfe03583",
-  "semanticSummaryHash": "sha256:1012fdb992de123b3aaf38ac1ae3bfddd3cd9933ff48109e0f25526716b2d974",
+  "sourceHash": "sha256:eb4eba8d3b1056093d38311bd10c2566d05690f980fd4830fb83a4ac5886c187",
+  "semanticSummaryHash": "sha256:f95fb9020df3e4ed349e11d3b830027f0835c2c6bfd91c622bc2e2111c4ed8aa",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "New sentence matches code: while a non-link wire is drawn (NodeCanvas wireAt = wire.to, only for wires that are not links), PipelineLayer computes lit = blockUnder(targets, wireAt), and PipelineNode lights that row (dropRow, css nodeDrop dashed outline) only on the preset whose key matches; blockUnder walks the presets in reverse order, so the last drawn (topmost) preset under the pointer wins, and dropFeature uses the same blockUnder, so the lit block is the one the marker lands on. Sidecar fresh.",
-  "reviewedAt": "2026-10-29T09:29:24.029Z"
+  "notes": "Skills in the + Marker menu and the Feature node lines are right: MarkerMenu builds its slots from MARKER_LABELS plus FEATURE_MARKER_SLOTS and PipelineLayer draws a Feature node per FEATURE_MARKER_SLOTS entry, so Skills appears in both, named by markerSlotName ('Skills'). nodes-view summary needs no change; sidecar fresh.",
+  "reviewedAt": "2026-10-29T09:52:28.247Z"
 }

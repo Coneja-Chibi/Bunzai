@@ -38,7 +38,7 @@ export function trackersText(input: TrackersInput | undefined, turn: number): st
 export const injectionTexts = (input: TrackersInput | undefined, turn: number): string[] => (input ? injectionsOf(input.entries, input.on, turn).map((i) => i.text) : []);
 
 /** The request with a prop's block placed: after the leading system messages and the guides' block (and any block placed before it), in front of the conversation. */
-export function placeBlock(blocks: readonly Block[], text: string, kind: "trackers" | "storyboards"): Block[] {
+export function placeBlock(blocks: readonly Block[], text: string, kind: "trackers" | "storyboards" | "skills"): Block[] {
   let at = 0;
   while (at < blocks.length && blocks[at]!.role === "system") at++;
   return [...blocks.slice(0, at), { role: "system", content: text, source: { kind } }, ...blocks.slice(at)];

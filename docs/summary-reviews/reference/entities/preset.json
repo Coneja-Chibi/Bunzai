@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "docId": "reference/entities/preset",
   "sourcePath": "docs/reference/entities/preset.md",
-  "sourceHash": "sha256:9ea1fc2c4a01c26603ae6b522176389a15f05aa7327a419ee2a24f9509074b71",
-  "semanticSummaryHash": "sha256:1c0975638711a1200c63bf7218fbfd936a35230105fb65952eae2670d058c271",
+  "sourceHash": "sha256:49a11652196356f6f0fdfd7d5b7bfa7a1d077607146e3ba5d8f07f221eb4a3d4",
+  "semanticSummaryHash": "sha256:757578aaa62944327d5559b39fad5a40c30baa2014aa2ea872b4d4c7c29f96c1",
   "verdict": "APPROVE",
   "reviewer": "sonnet-docs-reviewer",
-  "notes": "Feature-markers paragraph matches code: assemble.ts fills marked slots (fillSlot) before applyGuides and places unmarked features after the guides in order trackers, linkedTrackers, storyboards; presetPlan keeps the first marker of a slot (a second sends nothing), gives it the placeholder so its own text is not sent, and turns an append placement into in_chat so the feature is its own message at that depth; role is the block's; st-preset-wire.ts reads a feature marker's slot from its id on import (ST stores no slot). FEATURE_MARKER_LABELS split from MARKER_LABELS is code-only. Field-table row and prompt-blocks-and-groups summary (166 words) match.",
-  "reviewedAt": "2026-10-29T07:31:45.403Z"
+  "notes": "skills added to the feature markers list and the markerSlot field-table row matches FEATURE_MARKER_SLOTS = trackers, linkedTrackers, storyboards, skills (build.ts) with a label in FEATURE_MARKER_LABELS; assemble.ts has the skills entry in the feature loop (fillSlot at the marker, else placeBlock after the others). The prompt-blocks-and-groups summary (167 words) names skills.",
+  "reviewedAt": "2026-10-29T09:52:28.090Z"
 }

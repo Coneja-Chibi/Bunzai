@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-29",
-  "count": 127,
+  "count": 128,
   "docs": [
     {
       "id": "01-VISION",
@@ -1263,10 +1263,10 @@
       "path": "docs/FORMAT-SUPPORT.md",
       "title": "Format support matrix",
       "audience": "dev",
-      "summary": "Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-28.",
+      "summary": "Auto-generated from live adapters (`bun run scripts/format-matrix.ts`). Canonical schema version: **1**. Generated: 2026-10-29.",
       "tags": [],
       "related": [],
-      "semanticSummary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, seven lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
+      "semanticSummary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, seven lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
       "topics": [
         "format support matrix",
         "live adapter registry",
@@ -1448,6 +1448,18 @@
           "summary": "Trackers (0): the matrix lists no adapter for trackers, kind tracker. Its section shows the generated placeholder row: none yet, kind tracker, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Trackers, comes from the kind hub's plural for tracker, and it sits after the formulas in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
           "topics": [
             "tracker kind",
+            "no adapter",
+            "generated placeholder"
+          ],
+          "children": []
+        },
+        {
+          "text": "Skills (0)",
+          "slug": "skills-0",
+          "level": 2,
+          "summary": "Skills (0): the matrix lists no adapter for skills, kind skill. Its section shows the generated placeholder row: none yet, kind skill, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Skills, comes from the kind hub's plural for skill, and it sits after the trackers in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
+          "topics": [
+            "skill kind",
             "no adapter",
             "generated placeholder"
           ],
@@ -7018,7 +7030,7 @@
           "text": "Prompt blocks and groups",
           "slug": "prompt-blocks-and-groups",
           "level": 2,
-          "summary": "PresetPrompt is one manuscript row mapping directly to SillyTavern, RoleCall, or Marinara sections. id remains the verbatim source identifier because ordering, references, markers, and isDefault depend on it. role accepts system, user, assistant, or tool; adapters must preserve a supported tool role or report its loss instead of silently coercing it. Per-block systemPrompt differs from preset-level systemPrompts. placement uses the shared position-picker union, while marker blocks use markerSlot; the feature markers trackers, linkedTrackers and storyboards put that feature's messages where the block stands with its role (an append marker becomes its own message at that depth, the block's own text is not sent), and a preset without one keeps the feature's own spot. SillyTavern import reads the slot from the id, so only a marker whose id is its slot survives that round trip. Injection, grouping, XML wrapping, trigger, default, and extras fields complete the block. PresetGroup first-classes authored folders; SillyTavern derives divider ids for native drafts and escrows original divider ids only for imported groups.",
+          "summary": "PresetPrompt is one manuscript row mapping directly to SillyTavern, RoleCall, or Marinara sections. id remains the verbatim source identifier because ordering, references, markers, and isDefault depend on it. role accepts system, user, assistant, or tool; adapters must preserve a supported tool role or report its loss instead of silently coercing it. Per-block systemPrompt differs from preset-level systemPrompts. placement uses the shared position-picker union, while marker blocks use markerSlot; the feature markers trackers, linkedTrackers, storyboards and skills put that feature's messages where the block stands with its role (an append marker becomes its own message at that depth, the block's own text is not sent), and a preset without one keeps the feature's own spot. SillyTavern import reads the slot from the id, so only a marker whose id is its slot survives that round trip. Injection, grouping, XML wrapping, trigger, default, and extras fields complete the block. PresetGroup first-classes authored folders; SillyTavern derives divider ids for native drafts and escrows original divider ids only for imported groups.",
           "topics": [
             "verbatim prompt id",
             "PromptPlacement stops",
@@ -7678,6 +7690,80 @@
             "script-sheet-editor",
             "script-sheet-bench",
             "blank New"
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": "reference/entities/skill",
+      "path": "docs/reference/entities/skill.md",
+      "title": "Skill entity",
+      "audience": "dev",
+      "summary": "The canonical piece for instructions the model gets only when they matter, such as how to run a sword fight. A skill is a prompt that fires like a lore entry, on the lorebook's own trigger fields and matcher, or always, or while the model has it open. A scene links skills; the ones on in a turn ride as one Skills block at the preset's skills marker, never dropped by the budget.",
+      "tags": [
+        "entity",
+        "skill",
+        "prompt",
+        "lore",
+        "trigger",
+        "canonical"
+      ],
+      "related": [
+        "reference/entities/lorebook",
+        "reference/entities/preset",
+        "reference/entities/tracker",
+        "reference/entities/tool"
+      ],
+      "semanticSummary": "The skill entity page covers CanonicalSkill: instructions the model gets only when they matter, with a name, a one-line description the model reads when it may pick the skill, and macro-rendered text. A skill turns on always, when its triggers match, or while the model has it open, and its triggers are a lorebook entry's own fields matched by the lore engine's own matcher. A scene links skills by id in its prompting like tools and trackers, a turn reads them through its one library reader, and the ones on ride as one Skills block at the preset's skills marker, reserved by the budget so they are never dropped. The editor, the scene panel, opening skills and Kit editing them are not built yet.",
+      "topics": [
+        "CanonicalSkill",
+        "skillVerdict",
+        "lorebook triggers",
+        "ChatPrompting.skills",
+        "Skills block",
+        "skills marker"
+      ],
+      "anchors": [
+        {
+          "text": "When it is on",
+          "slug": "when-it-is-on",
+          "level": 2,
+          "summary": "A skill's when is always, mentioned or picked. Always puts it in the prompt every turn while linked. Mentioned uses a lorebook entry's own trigger fields, decoded by the lorebook's trigger decoder and matched by the lore engine's matchTrigger and selectiveLogicMatches over the newest scanDepth messages, the one being answered included, newest first, with regex triggers vetted; no triggers or a scan depth of 0 never match. Picked is on while the model has it open, and with closeWhenUnmentioned it closes when its triggers stop matching; opening and closing are not built yet, so a picked skill is never open today. Each verdict carries a plain sentence of why, returned on the assembly result.",
+          "topics": [
+            "skillVerdict",
+            "mentioned",
+            "picked",
+            "matchTrigger",
+            "closeWhenUnmentioned"
+          ],
+          "children": []
+        },
+        {
+          "text": "In a scene and in the prompt",
+          "slug": "in-a-scene-and-in-the-prompt",
+          "level": 2,
+          "summary": "A scene links skills by id in ChatPrompting.skills, in order with no duplicates, by the same rule as tools and trackers. A turn reads them through its one library reader, leaving out gone, unreadable and same-named skills. The skills that are on ride as one system message headed Skills, each name a heading over its rendered text, in the scene's order, and a blank one adds nothing. The block goes where the preset's skills marker stands with that block's role, otherwise after the leading system messages after the trackers' and storyboards' blocks. The budget reserves it like the library trackers' block, so history gives way and it is never dropped. The Tokens sheet labels it Skills.",
+          "topics": [
+            "ChatPrompting.skills",
+            "readLibrary",
+            "Skills block",
+            "skills marker",
+            "fixed budget"
+          ],
+          "children": []
+        },
+        {
+          "text": "Not built yet",
+          "slug": "not-built-yet",
+          "level": 2,
+          "summary": "Not built yet: the Workbench editor from the approved skill wireframe, so a skill opens read-only in the Workbench for now; the scene's Skills panel and linking a skill from the scene; the picked skills' list that the model reads, with the open_skill and close_skill tools and the scene-state slot that keeps which skills are open, so a picked skill is never on today; a skill's own spot in the chat apart from the skills marker; and Kit making or editing a skill, since the kind has no Kit capabilities yet. Kit can already list, read, duplicate, export and delete skills through its generic piece tools, as for any kind.",
+          "topics": [
+            "skill editor",
+            "open_skill",
+            "close_skill",
+            "read-only",
+            "Kit capabilities"
           ],
           "children": []
         }

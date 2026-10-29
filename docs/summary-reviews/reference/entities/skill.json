@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "docId": "reference/entities/skill",
+  "sourcePath": "docs/reference/entities/skill.md",
+  "sourceHash": "sha256:60c635631315ef86829eaa8412c57579f75c9c442b99bd2cbabb460f44e50048",
+  "semanticSummaryHash": "sha256:441a67608831601accc673aa68e35c686c8118e4901e01bc9fc1d64be167eb6f",
+  "verdict": "APPROVE",
+  "reviewer": "sonnet-docs-reviewer",
+  "notes": "Picked line verified: skillVerdict closes only when closeWhenUnmentioned, triggers.length above 0, scanDepth above 0 and no match; otherwise a picked open skill stays open. Page sentence matches.",
+  "reviewedAt": "2026-10-29T09:58:55.337Z"
+}

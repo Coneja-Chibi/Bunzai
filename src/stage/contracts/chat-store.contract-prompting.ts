@@ -91,6 +91,17 @@ export function chatStorePromptingContract(make: (clock: () => number) => ChatSt
       expect((await store.chatGraveyard()).chats.map((c) => c.id)).toEqual([gone.id]);
     });
 
+    test("linked library skills are a list of ids kept in order, beside the tools and trackers, by the same rule", async () => {
+      const { store, chat } = await seeded(1);
+      expect((await store.setPrompting(chat.id, { skills: ["sword", "lies"], trackers: ["health"] }))!.prompting).toEqual({ skills: ["sword", "lies"], trackers: ["health"] });
+      expect((await store.setPrompting(chat.id, { trackers: null }))!.prompting).toEqual({ skills: ["sword", "lies"] });
+      for (const bad of ["sword", [1], ["a", "a"], [""]]) {
+        await expect(store.setPrompting(chat.id, { skills: bad } as never)).rejects.toBeInstanceOf(StudioValidationError);
+      }
+      await store.setPrompting(chat.id, { skills: [] });
+      expect("prompting" in (await store.getChat(chat.id))!).toBe(false);
+    });
+
     test("linked library trackers are a list of ids kept in order, apart from the tools; an empty list or null clears them", async () => {
       const { store, chat } = await seeded(1);
       expect((await store.setPrompting(chat.id, { trackers: ["health", "party"], tools: ["luck"] }))!.prompting).toEqual({ trackers: ["health", "party"], tools: ["luck"] });

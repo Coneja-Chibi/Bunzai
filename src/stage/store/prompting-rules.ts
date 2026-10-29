@@ -80,7 +80,10 @@ function checkCapture(value: unknown): ReasoningCapture {
   return { mode: value.mode, custom, builtinTags: [...new Set(value.builtinTags as string[])] };
 }
 
-const KEYS = ["guides", "tools", "trackers", "trackerChanges", "note", "lastAsUser", "toolAccess", "toolRounds", "reasoningEffort", "prefill", "prefillRole", "capture", "keepThinking", "continuity", "showPrefill"];
+/** The library pieces a scene links, each an ordered id list kept only while it is not empty (the kind hub's `promptingList`). */
+const LINKED = ["tools", "trackers", "skills"] as const;
+
+const KEYS = ["guides", ...LINKED, "trackerChanges", "note", "lastAsUser", "toolAccess", "toolRounds", "reasoningEffort", "prefill", "prefillRole", "capture", "keepThinking", "continuity", "showPrefill"];
 
 /** A patch whose keys are `guides`, `note`, `lastAsUser` and `toolAccess` (booleans) and `toolRounds`, each a valid value or null (rule 37). An empty patch is allowed and changes nothing. */
 export function checkPrompting(value: unknown): ChatPromptingPatch {
@@ -88,8 +91,7 @@ export function checkPrompting(value: unknown): ChatPromptingPatch {
   for (const key of Object.keys(value)) if (!KEYS.includes(key)) fail(`prompting has an unknown field: ${key}`);
   return {
     ...(value.guides === undefined ? {} : { guides: value.guides === null ? null : checkGuides(value.guides) }),
-    ...(value.tools === undefined ? {} : { tools: value.tools === null ? null : checkIdList(value.tools, "tools", SANITY_LIST) }),
-    ...(value.trackers === undefined ? {} : { trackers: value.trackers === null ? null : checkIdList(value.trackers, "trackers", SANITY_LIST) }),
+    ...Object.fromEntries(LINKED.flatMap((key) => (value[key] === undefined ? [] : [[key, value[key] === null ? null : checkIdList(value[key], key, SANITY_LIST)]]))),
     ...(value.trackerChanges === undefined ? {} : { trackerChanges: value.trackerChanges === null ? null : checkSwitch(value.trackerChanges, "trackerChanges") }),
     ...(value.note === undefined ? {} : { note: value.note === null ? null : checkNote(value.note) }),
     ...(value.lastAsUser === undefined ? {} : { lastAsUser: value.lastAsUser === null ? null : checkSwitch(value.lastAsUser, "lastAsUser") }),
@@ -108,10 +110,10 @@ export function checkPrompting(value: unknown): ChatPromptingPatch {
 /** The scene's prompting after a checked patch; null when nothing is left to keep. */
 export function mergePrompting(old: ChatPrompting | undefined, patch: ChatPromptingPatch): ChatPrompting | null {
   const guides = patch.guides === undefined ? old?.guides : patch.guides ?? undefined;
-  const toolsIn = patch.tools === undefined ? old?.tools : patch.tools ?? undefined;
-  const tools = toolsIn?.length ? toolsIn : undefined;
-  const trackersIn = patch.trackers === undefined ? old?.trackers : patch.trackers ?? undefined;
-  const trackers = trackersIn?.length ? trackersIn : undefined;
+  const linked = Object.fromEntries(LINKED.flatMap((key) => {
+    const list = patch[key] === undefined ? old?.[key] : patch[key] ?? undefined;
+    return list?.length ? [[key, list]] : [];
+  }));
   // On by default, so only an off switch is kept.
   const changesOff = (patch.trackerChanges === undefined ? old?.trackerChanges : patch.trackerChanges ?? undefined) === false;
   const note = patch.note === undefined ? old?.note : patch.note ?? undefined;
@@ -128,7 +130,7 @@ export function mergePrompting(old: ChatPrompting | undefined, patch: ChatPrompt
   const flag = (key: "keepThinking" | "continuity" | "showPrefill") => ((patch[key] === undefined ? old?.[key] : patch[key] ?? undefined) ? { [key]: true } : {});
   const next: ChatPrompting = {
     ...flag("keepThinking"), ...flag("continuity"), ...flag("showPrefill"),
-    ...(guides ? { guides } : {}), ...(tools ? { tools } : {}), ...(trackers ? { trackers } : {}), ...(changesOff ? { trackerChanges: false } : {}), ...(note ? { note } : {}), ...(lastAsUser ? { lastAsUser } : {}), ...(toolAccess ? { toolAccess } : {}), ...(toolRounds !== undefined ? { toolRounds } : {}),
+    ...(guides ? { guides } : {}), ...linked, ...(changesOff ? { trackerChanges: false } : {}), ...(note ? { note } : {}), ...(lastAsUser ? { lastAsUser } : {}), ...(toolAccess ? { toolAccess } : {}), ...(toolRounds !== undefined ? { toolRounds } : {}),
     ...(reasoningEffort ? { reasoningEffort } : {}), ...(prefill ? { prefill } : {}), ...(prefillRole ? { prefillRole } : {}), ...(capture ? { capture } : {}),
   };
   return Object.keys(next).length > 0 ? next : null;

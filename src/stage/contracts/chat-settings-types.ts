@@ -102,6 +102,8 @@ export interface ChatPrompting {
   tools?: string[];
   /** The library trackers (entities/tracker) the scene keeps as state, shown to the model every turn and updated by its tool while Tool Access is on, in order. No duplicates; only a hostile list (past the sanity ceiling) is refused. */
   trackers?: string[];
+  /** The library skills (entities/skill) the scene links, in order: each is in the prompt when it is on (core/skill.ts). No duplicates; only a hostile list (past the sanity ceiling) is refused. */
+  skills?: string[];
   /** Whether a reply draws what it changed in its linked trackers (chips, a card or a toast, per tracker). On unless the scene turns it off: only `false` is kept, and `true` or null clears it. */
   trackerChanges?: boolean;
   /** RoleCall's Reasoning Effort (sampler reasoning_effort): how hard the model thinks before writing. Absent means Auto, which sends nothing. */

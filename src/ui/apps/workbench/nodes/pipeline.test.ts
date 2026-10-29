@@ -103,7 +103,7 @@ test("the request builds from the picked scene's preset when it is on the canvas
 
 test("each feature lands at the row of its first switched-on marker, or keeps its own spot (the assembler's own rule)", () => {
   const { rows } = pipelineRows(presetOf(block("main"), marker("t1", "trackers", { enabled: false }), marker("t2", "trackers"), marker("t3", "trackers"), marker("sb", "storyboards")), none);
-  expect(featureRows(rows)).toEqual({ trackers: 2, linkedTrackers: null, storyboards: 4 });
+  expect(featureRows(rows)).toEqual({ trackers: 2, linkedTrackers: null, storyboards: 4, skills: null });
 });
 
 test("a world point finds the block row under it, and a point off the preset finds none", () => {

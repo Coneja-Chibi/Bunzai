@@ -19,6 +19,7 @@ import type { RecallEntry, RecallHit } from "./recall-place";
 import type { SummaryRecap } from "./summary-cut";
 import type { TrackersInput } from "./trackers";
 import type { StoryboardsInput } from "./storyboards";
+import type { AssemblySkill, SkillRun } from "./skills";
 import type { LinkedTracker } from "../tracker";
 import type { NarratorDirective } from "../../stage/contracts/director-types";
 
@@ -70,6 +71,8 @@ export type BlockSource =
   | { kind: "trackers" }
   /** The Storyboards' digest of the book (storyboards.ts): one system message. */
   | { kind: "storyboards" }
+  /** The skills that are on this turn (skills.ts): one system message. */
+  | { kind: "skills" }
   /** The Story Director's two blocks (director.ts): the authority contract at the top and this turn's directive just above the last user message. */
   | { kind: "director" }
   /** A guided re-roll's two added messages (guided-swipe.ts): not assembled blocks, but sent, so traced. */
@@ -237,6 +240,8 @@ export interface AssemblyInput {
   deadline?: MacroDeadline;
   /** The Storyboard Props that are on and the books they read (storyboards.ts); absent adds nothing. */
   storyboards?: StoryboardsInput;
+  /** The library skills the scene links, in order, each with whether the model has it open (skills.ts); absent adds nothing. */
+  skills?: readonly AssemblySkill[];
   /** This turn's Story Director directive (director.ts), planned for this turn only; absent places nothing. */
   director?: NarratorDirective;
   /** What the Compendium's recall picked for this reply, in the selector's order (recall-place.ts); absent runs none. */
@@ -293,6 +298,8 @@ export interface AssemblyResult {
   summaries?: { dropped: string[]; injected: { entryKey: string; title: string; tokens: number }[] };
   /** The messages the chat summary stood in for (Hide messages already covered), by id. Absent when none were hidden. */
   chatSummary?: { hidden: string[] };
+  /** Each linked skill's verdict this turn (on or off, and why; a picked one whose triggers stopped matching closes). Absent without `input.skills`. */
+  skills?: SkillRun[];
   lore?: {
     fires: LoreRun["fires"];
     injected: AssemblyLoreHit[];

@@ -10,6 +10,8 @@ import { foldGlobals } from "../core/scene-state/globals";
 import { takeOf } from "../core/summary/rows";
 import type { LinkedTracker } from "../core/tracker";
 import { linkedTrackers } from "./library-trackers";
+import { linkedSkills } from "./library-skills";
+import type { AssemblySkill } from "../core/assembly/skills";
 import { readPiece } from "./library-tools";
 import type { TrackerBody } from "../entities/tracker/schema";
 import { trackerOverlay } from "../core/trackers";
@@ -88,6 +90,8 @@ export interface LoadedTurn {
   savedSummary?: TakeSummary;
   /** The library trackers the scene links that could be read, each with its value in the scene state (library-trackers.ts); absent when none. */
   linkedTrackers?: LinkedTracker[];
+  /** The library skills the scene links (library-skills.ts); the assembler decides which are on. */
+  skills?: AssemblySkill[];
   branchVersion: number;
   /** The tracker Props that are on and what they kept (ChatStore rules 21 and 43); absent when the scene keeps none. */
   trackers?: { entries: NonNullable<Chat["trackers"]>; on: string[] };
@@ -184,6 +188,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
   const storyboards = storyboardsOf(chat, lore?.books);
   // The trackers show the state as it stands: a continue extends a reply whose own writes are part of it (a swipe builds from before the reply it replaces, as the variables do).
   const trackerState = kind === "continue" ? (await chats.sceneState(branchId)) ?? sceneState : sceneState;
+  const skills = await linkedSkills(readLibrary, chat.prompting?.skills);
   const linked = await linkedTrackers(readLibrary && ((id) => readPiece(readLibrary, "tracker", id) as Promise<TrackerBody | null>), chat.prompting?.trackers, trackerState);
   // A cast the person recorded on the reply being replaced or continued is for the reply after it (scene-turn-ticks.ts).
   const onTarget = target && chat.props ? (await chats.sceneDeltas(branchId, target.id, target.id, ["tracker.spellbook"]))?.messages[0] : undefined;
@@ -202,6 +207,7 @@ export async function loadTurn(chats: TurnReader, chatId: string, kind: TurnKind
     localVariables: varsOf(sceneState),
     ...(takeOf(sceneState) ? { savedSummary: takeOf(sceneState)! } : {}),
     ...(linked.length > 0 ? { linkedTrackers: linked } : {}),
+    ...(skills.length > 0 ? { skills } : {}),
     branchVersion: page.branchVersion,
     ...(lore ? { lore } : {}),
     ...(entries && chat.props && Object.keys(entries).length > 0 ? { trackers: { entries, on: chat.props.on } } : {}),

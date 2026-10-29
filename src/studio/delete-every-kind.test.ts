@@ -17,6 +17,7 @@ import { StudioNotFoundError } from "./errors";
 import { libraryContentFor } from "./library-content";
 import { STUDIO_ENTITY_KINDS, type StudioEntityKind } from "./path-policy";
 import { StudioStore } from "./store";
+import { emptySkillBody } from "../entities/skill/schema";
 import { tempDirSync } from "./test-temp-dir";
 
 const bodies: Record<StudioEntityKind, (name: string) => unknown> = {
@@ -34,6 +35,7 @@ const bodies: Record<StudioEntityKind, (name: string) => unknown> = {
   dice: (name) => ({ name, description: "", type: "table", rows: [{ text: "Sparks", weight: 1 }] }),
   formula: (name) => ({ name, description: "", text: "{{mentions::storm}}" }),
   tracker: (name) => ({ name, description: "", layout: "record", note: "", fields: [{ name: "value", description: "", type: "number", default: 0 }] }),
+  skill: (name) => emptySkillBody(name),
 };
 const piece = (kind: StudioEntityKind, id: string, name: string) => ({ schemaVersion: CANONICAL_SCHEMA_VERSION, kind, id, body: bodies[kind](name) });
 

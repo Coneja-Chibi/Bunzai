@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "docId": "FORMAT-SUPPORT",
   "sourcePath": "docs/FORMAT-SUPPORT.md",
-  "sourceHash": "sha256:4385a57a3947da172c0404628340b2a28c826a78ea4edad6d753f426ca8eb6d1",
-  "summary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, seven lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
+  "sourceHash": "sha256:6a41a4b12d4b720f444425870a2bae876dd19d23e833d6a6ef7cbe5e0195e845",
+  "summary": "Auto-generated format support matrix from the live adapter registry, grouped by canonical content kind, in the kind hub's order and names, with adapter id, output extensions, and human label. It documents CLI listing, inspection, conversion, and validation, with SillyTavern CCv3 as the default portable character shape for thin hosts. The current registry has nine character, seven lorebook, four persona, one pack, four preset, one Script Sheet, five regex-set, one quick-reply and one prompt-format adapter. The pack adapter, image-pack, writes a zip of pictures and sounds. Tools (kind tool), dice (kind dice), formulas (kind formula), trackers (kind tracker), skills (kind skill) and drawings (kind htmldoc) have no import or export format yet, and their sections say so. Notes explain content-sniff detection, fixture-proven same-format round trips, honest cross-format loss reporting, and sample locations. Because the page is generated, counts and rows change only with the registry.",
   "topics": [
     "format support matrix",
     "live adapter registry",
@@ -205,6 +205,19 @@
       "summary": "Trackers (0): the matrix lists no adapter for trackers, kind tracker. Its section shows the generated placeholder row: none yet, kind tracker, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Trackers, comes from the kind hub's plural for tracker, and it sits after the formulas in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
       "topics": [
         "tracker kind",
+        "no adapter",
+        "generated placeholder"
+      ],
+      "children": []
+    },
+    {
+      "slug": "skills-0",
+      "title": "Skills (0)",
+      "level": 2,
+      "sourceHash": "sha256:2b1e49fc6edb01573a47e7f846a31ea511a9bed2c3b9af12b7d14b7c9ebfbbd9",
+      "summary": "Skills (0): the matrix lists no adapter for skills, kind skill. Its section shows the generated placeholder row: none yet, kind skill, nothing written, and the generated line that the studio edits this kind but no import or export format exists yet. The section title, Skills, comes from the kind hub's plural for skill, and it sits after the trackers in the kind hub's order. Like every section of this generated page, the count and the row change only when an adapter for the kind is registered in the runtime registry.",
+      "topics": [
+        "skill kind",
         "no adapter",
         "generated placeholder"
       ],

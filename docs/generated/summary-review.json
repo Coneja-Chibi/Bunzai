@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-29",
-  "count": 127,
+  "count": 128,
   "pages": [
     {
       "docId": "01-VISION",
@@ -127,8 +127,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:4385a57a3947da172c0404628340b2a28c826a78ea4edad6d753f426ca8eb6d1",
-      "semanticSummaryHash": "sha256:a67e5d1ddfe92f043e38da87f89557a96d1ab37d473585e0d82a0e6db5078298"
+      "sourceHash": "sha256:6a41a4b12d4b720f444425870a2bae876dd19d23e833d6a6ef7cbe5e0195e845",
+      "semanticSummaryHash": "sha256:8d06b619402edf6226188b465a3f023c67242d2f757bae458d6b01f8ecde3697"
     },
     {
       "docId": "guide/converting",
@@ -503,8 +503,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:9ea1fc2c4a01c26603ae6b522176389a15f05aa7327a419ee2a24f9509074b71",
-      "semanticSummaryHash": "sha256:1c0975638711a1200c63bf7218fbfd936a35230105fb65952eae2670d058c271"
+      "sourceHash": "sha256:49a11652196356f6f0fdfd7d5b7bfa7a1d077607146e3ba5d8f07f221eb4a3d4",
+      "semanticSummaryHash": "sha256:757578aaa62944327d5559b39fad5a40c30baa2014aa2ea872b4d4c7c29f96c1"
     },
     {
       "docId": "reference/entities/promptformat",
@@ -545,6 +545,14 @@
       "reviewer": "sonnet-docs-reviewer",
       "sourceHash": "sha256:e4fb5c2e69d6d9eb1f9f4de7bdc443b75ee2c1bbb94672ddc210143a676d7ee1",
       "semanticSummaryHash": "sha256:7abd03af78a73589687ed5ffa3b35afedd26c60e845ffd2ddbad585fdba08761"
+    },
+    {
+      "docId": "reference/entities/skill",
+      "status": "APPROVED",
+      "verdict": "APPROVE",
+      "reviewer": "sonnet-docs-reviewer",
+      "sourceHash": "sha256:60c635631315ef86829eaa8412c57579f75c9c442b99bd2cbabb460f44e50048",
+      "semanticSummaryHash": "sha256:441a67608831601accc673aa68e35c686c8118e4901e01bc9fc1d64be167eb6f"
     },
     {
       "docId": "reference/entities/tool",
@@ -1007,8 +1015,8 @@
       "status": "APPROVED",
       "verdict": "APPROVE",
       "reviewer": "sonnet-docs-reviewer",
-      "sourceHash": "sha256:5aa9bc17373f11f8bfc44ee9af7f483e437ddae6d665803c3291dd9dbfe03583",
-      "semanticSummaryHash": "sha256:1012fdb992de123b3aaf38ac1ae3bfddd3cd9933ff48109e0f25526716b2d974"
+      "sourceHash": "sha256:eb4eba8d3b1056093d38311bd10c2566d05690f980fd4830fb83a4ac5886c187",
+      "semanticSummaryHash": "sha256:f95fb9020df3e4ed349e11d3b830027f0835c2c6bfd91c622bc2e2111c4ed8aa"
     },
     {
       "docId": "reference/updates",

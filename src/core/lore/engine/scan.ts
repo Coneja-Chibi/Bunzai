@@ -30,14 +30,17 @@ export interface ScanSources {
  * depth 0, then walks history backward); a plain string join has no order sensitivity except for
  * anchored ^/$ or multiline patterns, so this keeps that order rather than the more natural
  * oldest-first for byte-for-byte parity there. */
-export function buildScanText(entry: LorebookEntry, book: LorebookBody, sources: ScanSources): string {
-  const scanDepth = entry.scanDepth ?? book.globalScanDepth;
+/** The newest `scanDepth` messages' text, newest first: the chat half of a lore entry's scan text, and a skill's whole one (core/skill.ts). */
+export function recentScanParts(messages: readonly LoreScanMessage[], scanDepth: number): string[] {
+  if (scanDepth <= 0) return [];
+  const recent = messages.slice(Math.max(0, messages.length - scanDepth));
   const parts: string[] = [];
+  for (let i = recent.length - 1; i >= 0; i--) parts.push(recent[i]?.content ?? "");
+  return parts;
+}
 
-  if (scanDepth > 0) {
-    const recent = sources.messages.slice(Math.max(0, sources.messages.length - scanDepth));
-    for (let i = recent.length - 1; i >= 0; i--) parts.push(recent[i]?.content ?? "");
-  }
+export function buildScanText(entry: LorebookEntry, book: LorebookBody, sources: ScanSources): string {
+  const parts = recentScanParts(sources.messages, entry.scanDepth ?? book.globalScanDepth);
 
   if (entry.scanCharacterDescription && sources.characterDescription) parts.push(sources.characterDescription);
   if (entry.scanCharacterPersonality && sources.characterPersonality) parts.push(sources.characterPersonality);

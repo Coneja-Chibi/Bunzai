@@ -9,7 +9,7 @@
 import { countText } from "../tokens";
 import { injectPersonaXml } from "../persona/inject";
 import { personaMoves, placePersona } from "./persona-place";
-import { runLore, type LoreHit, type LoreScanMessage, type LoreVerdict } from "../lore/engine";
+import { runLore, type LoreHit, type LoreScan, type LoreScanMessage, type LoreVerdict } from "../lore/engine";
 import { mulberry32 } from "../lore/rng";
 import type { MacroContext, MacroVariable } from "../macros";
 import type { GlobalWrite } from "../macros/types";
@@ -35,6 +35,7 @@ import { injectionTexts, linkedTrackersText, placeBlock, trackersText } from "./
 import { refreshTrackerTexts, trackerViews } from "../tracker";
 import { storyboardsBlock } from "./storyboards";
 import { fillSlot, leftPlaceholder, withoutPlaceholders } from "./feature-slots";
+import { skillRuns, skillsText } from "./skills";
 import type { FeatureMarkerSlot } from "../preset/build";
 import { placeDirector } from "./director";
 import { DEFAULT_LORE_SHARE, type AssemblyInput, type HistoryMessage, type AssemblyResult, type AssembledMessage, type AssemblyLoreHit, type VariableDiff } from "./types";
@@ -163,23 +164,24 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   let loreResult: AssemblyResult["lore"];
   let loreImportant: string[] = [];
   let loreUndo: LoreUndo[] = [];
-  if (input.lore) {
-    const scanMessages: LoreScanMessage[] = [
-      ...input.history.map((m) => ({ role: m.role, content: m.content, ...(m.at === undefined ? {} : { at: m.at }) })),
+  /** What the lore engine and the skills' triggers read: the chat with the message being answered, the card, and the variables as they stand. */
+  const loreScan = (): LoreScan => ({
+    messages: [
+      ...input.history.map((m): LoreScanMessage => ({ role: m.role, content: m.content, ...(m.at === undefined ? {} : { at: m.at }) })),
       { role: input.current.role, content: currentText, ...(input.current.at === undefined ? {} : { at: input.current.at }) },
-    ];
+    ],
+    messageCount: input.history.length + 1,
+    character: { name: card.name, tags: card.macroFields.charTags ?? [], description: card.description, personality: card.personality, scenario: card.scenario },
+    persona: personaXml ?? "",
+    generationType: input.generationType ?? "normal",
+    currentSpeaker: card.name,
+    variables: scanVariables(localVariables, globalVariables),
+    now: input.now,
+  });
+  if (input.lore) {
     const run = runLore(
       input.lore.books,
-      {
-        messages: scanMessages,
-        messageCount: input.history.length + 1,
-        character: { name: card.name, tags: card.macroFields.charTags ?? [], description: card.description, personality: card.personality, scenario: card.scenario },
-        persona: personaXml ?? "",
-        generationType: input.generationType ?? "normal",
-        currentSpeaker: card.name,
-        variables: scanVariables(localVariables, globalVariables),
-        now: input.now,
-      },
+      loreScan(),
       {
         rng: mulberry32(input.randomSeed ^ 0x9e3779b9),
         countTokens: countText,
@@ -208,6 +210,11 @@ export function assemble(input: AssemblyInput): AssemblyResult {
       ...truncateVerdicts(run.verdicts ?? []),
     };
   }
+
+  // The skills that are on this turn (skills.ts), decided once the lore's side effects are in the variables, their text rendered here so the budget reserves it.
+  const skillsRun = input.skills ? skillRuns(input.skills, loreScan(), mulberry32(input.randomSeed ^ 0x5bd1e995)) : undefined;
+  // Rendered like any prompt text: the macros run, and what no macro answers is stripped (section 12's own rule).
+  const skillsBlock = input.skills && skillsRun ? skillsText(input.skills, skillsRun, (text) => stripUnresolvedMacros(macros.write(text), HISTORY_MARKER)) : "";
 
   // Summary-aware truncation (summary-cut.ts): recaps replace the oldest messages they cover, and a recap lore already placed is not sent twice.
   const loreKeys = new Set(loreResult?.injected.map((h) => h.entryKey));
@@ -267,6 +274,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
         ...(recapBlocks.length > 0 ? [recapBlocks.map((b) => b.content).join("\n")] : []),
         // The trackers' block and the texts that ride beside the messages (the tool definitions) are fixed, like the card: history gives way to them, never they to history.
         ...(linkedText ? [linkedText] : []),
+        ...(skillsBlock ? [skillsBlock] : []),
         ...(input.reserved ?? []),
       ],
       raw: shown.map((m) => m.content),
@@ -374,7 +382,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   if (input.window && input.window.context > 0 && input.budgeter) {
     const cap = Math.max(1, input.window.context - (input.window.reply || FALLBACK_REPLY));
     // The fixed texts are measured as messages at the end, so the pass counts them; their entries in `keep` are never read (blocks has none).
-    const fixed: AssembledMessage[] = [...(linkedText ? [linkedText] : []), ...(input.reserved ?? [])].map((content) => ({ role: "system", content }));
+    const fixed: AssembledMessage[] = [...(linkedText ? [linkedText] : []), ...(skillsBlock ? [skillsBlock] : []), ...(input.reserved ?? [])].map((content) => ({ role: "system", content }));
     // A feature marker's placeholder is measured as nothing: its content is fixed and added after this pass.
     const measured = blocks.map((b) => ({ role: b.role, content: withoutPlaceholders(b.content, plan.slotNonce) }));
     const { keep, dropped, overflow: over } = input.budgeter.finalPass([...measured, ...fixed], cap, [...blocks.map((b) => b.source.kind === "history"), ...fixed.map(() => false)]);
@@ -389,10 +397,11 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   const turn = history.filter((m) => m.role === "user").length + (currentText === "" ? 0 : 1);
   const tracked = trackersText(input.trackers, turn);
   const boards = storyboardsBlock(input.storyboards, turn);
-  const features: [FeatureMarkerSlot, string[], "trackers" | "storyboards"][] = [
+  const features: [FeatureMarkerSlot, string[], "trackers" | "storyboards" | "skills"][] = [
     ["trackers", [...(tracked ? [tracked] : []), ...injectionTexts(input.trackers, turn)], "trackers"],
     ["linkedTrackers", linkedText ? [linkedText] : [], "trackers"],
     ["storyboards", boards ? [boards] : [], "storyboards"],
+    ["skills", skillsBlock ? [skillsBlock] : [], "skills"],
   ];
   for (const [slot, texts, kind] of features) if (plan.slots.has(slot)) blocks = fillSlot(blocks, slot, plan.slotNonce, texts, { kind });
   if (plan.slots.size > 0 && leftPlaceholder(blocks, plan.slotNonce)) throw new PresetPlanError("A feature marker in the preset could not be filled, so the turn was stopped rather than send its placeholder.");
@@ -429,7 +438,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
   return {
     messages: blocks.map(toMessage),
     trace: blocks.map((b) => ({ source: b.source, role: b.role, tokens: countText(b.content) })),
-    budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}), ...(linkedText || (input.reserved?.length ?? 0) > 0 ? { fixed: true as const } : {}) },
+    budget: { budgeter: input.budgeter && input.window ? input.budgeter.name : "none", trimmed, finalPassDropped, ...(overflow ? { overflow: true as const } : {}), ...(linkedText || skillsBlock || (input.reserved?.length ?? 0) > 0 ? { fixed: true as const } : {}) },
     local,
     global,
     globalWrites,
@@ -442,6 +451,7 @@ export function assemble(input: AssemblyInput): AssemblyResult {
     ...(loreResult ? { lore: loreResult } : {}),
     ...(hide > 0 ? { chatSummary: { hidden: afterRecaps.slice(0, hide).map((m) => m.id) } } : {}),
     ...(cut.drop > 0 ? { summaries: { dropped: history.slice(0, cut.drop).map((m) => m.id), injected: placedRecaps.map((r) => ({ entryKey: r.entryKey, title: r.title, tokens: countText(summaryText(r)) })) } } : {}),
+    ...(skillsRun ? { skills: skillsRun } : {}),
     ...(recallPlaced ? { recall: { injected: recallPlaced.injected, cut: recallPlaced.cut, repeated: recallPlaced.repeated, totalTokens: recallPlaced.injected.reduce((n, h) => n + h.tokens, 0) } } : {}),
   };
 }

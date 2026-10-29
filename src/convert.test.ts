@@ -19,6 +19,7 @@ import { characterAdapter as risuCharacter } from "./formats/risu/index";
 import stWorldbook from "./formats/sillytavern/lorebook";
 import rcLorebook from "./formats/rolecall/lorebook";
 import type { CanonicalCharacter } from "./entities/character/schema";
+import { emptySkillBody } from "./entities/skill/schema";
 import type { CanonicalLorebook } from "./entities/lorebook/schema";
 
 /** A card file read into its character and extracted lorebooks (convert.ts readPieces). */
@@ -124,6 +125,8 @@ function minimalEntity(kind: FormatAdapter["kind"]): ParsedCanonicalEntity {
       return { ...envelope, kind, body: { name: "Conversion formula", description: "", text: "{{roll::1d6}}" } };
     case "tracker":
       return { ...envelope, kind, body: { name: "Conversion tracker", description: "", layout: "record", note: "", fields: [{ name: "value", description: "", type: "number", default: 0 }] } };
+    case "skill":
+      return { ...envelope, kind, body: emptySkillBody("Conversion skill") };
     case "tool":
       return { ...envelope, kind, body: { name: "Conversion tool", description: "", fields: [], action: { kind: "record" } } };
     case "htmldoc":

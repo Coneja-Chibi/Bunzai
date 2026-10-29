@@ -2,7 +2,7 @@
 
 Auto-generated from live adapters (`bun run scripts/format-matrix.ts`).
 Canonical schema version: **1**.
-Generated: 2026-10-28.
+Generated: 2026-10-29.
 
 ## How to use
 
@@ -111,6 +111,12 @@ Default portable character shape for thin hosts (C.AI Tools dumps, Crushon impor
 | id | kind | writes | label |
 | --- | --- | --- | --- |
 | (none yet) | tracker | | The studio edits this kind, but no import/export format exists yet. |
+
+## Skills (0)
+
+| id | kind | writes | label |
+| --- | --- | --- | --- |
+| (none yet) | skill | | The studio edits this kind, but no import/export format exists yet. |
 
 ## Prompt formats (1)
 
