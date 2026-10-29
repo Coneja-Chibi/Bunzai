@@ -138,3 +138,14 @@ export function expectWindowed(host: ParentNode, selector: string, total: number
   expect(drawn, `${selector} drawn out of ${String(total)}`).toBeLessThan(Math.min(ceiling, total));
   return drawn;
 }
+
+/** Waits for what a test step needs (an element, a call recorded) rather than a guessed number of milliseconds, flushing React between looks; fails naming `what` after 5 s. */
+export async function waitFor<T>(flushSync: (fn: () => void) => void, find: () => T | null | undefined | false, what: string): Promise<T> {
+  for (let waited = 0; waited < 5000; waited += 10) {
+    const found = find();
+    if (found) return found;
+    await new Promise((r) => setTimeout(r, 10));
+    flushSync(() => undefined);
+  }
+  throw new Error(`timed out waiting for ${what}`);
+}

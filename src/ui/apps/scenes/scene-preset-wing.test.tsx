@@ -21,6 +21,7 @@ import type { Chat, ChatPreset } from "../../../stage/contracts/chat-store";
 import type { JSX } from "react";
 import type { PresetText } from "./use-scene-preset-text";
 import { ApiHttpError } from "../../_shared/api-fetch";
+import { waitFor } from "../../_shared/test-dom";
 import { expectWindowed, installDom, type InstalledDom } from "../../_shared/test-dom";
 
 /** PromptList virtualizes now: `@tanstack/react-virtual` unconditionally
@@ -417,8 +418,7 @@ describe("PresetWing", () => {
     flushSync(() => byLabel("Turn off main")!.click());
     expect(byLabel("Turn on main")).toBeDefined(); // optimistic: off at once, before the write settles
 
-    await settle(flushSync, 350); // past the 300ms debounce, and the rejection settles
-
+    await waitFor(flushSync, () => setCalls.length === 1 && byLabel("Turn off main"), "the save past its debounce to fail and put the switch back");
     expect(setCalls).toHaveLength(1);
     expect(byLabel("Turn off main")).toBeDefined(); // back on: the failed save did not stick
     expect(bodyText()).toContain("could not be saved");

@@ -137,15 +137,9 @@ export function loreCtx(): AppContext {
 
 export const settle = async (flushSync: FlushSync, ms = 20): Promise<void> => { await new Promise((r) => setTimeout(r, ms)); flushSync(() => undefined); };
 
-/** Waits for what a step needs rather than a guessed number of milliseconds. */
-export async function waitFor<T>(flushSync: FlushSync, find: () => T | null | undefined | false, what: string): Promise<T> {
-  for (let waited = 0; waited < 5000; waited += 10) {
-    const found = find();
-    if (found) return found;
-    await settle(flushSync, 10);
-  }
-  throw new Error(`timed out waiting for ${what}`);
-}
+/** Waits for what a step needs rather than a guessed number of milliseconds (the shared test helper). */
+import { waitFor } from "../../_shared/test-dom";
+export { waitFor };
 
 export async function mountWing(ctx: AppContext = loreCtx(), tab: (props: { ctx: AppContext }) => JSX.Element | null = () => null): Promise<FlushSync> {
   const { flushSync } = await import("react-dom");

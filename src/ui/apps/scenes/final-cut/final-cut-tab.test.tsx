@@ -11,6 +11,7 @@ import type { ChatFinalCutPatch, Chat } from "../../../../stage/contracts/chat-s
 import type { AgentRecord, BankRecord } from "../../../../studio/final-cut-library";
 import { click, installRigDom, props, rig, settle, type FlushSync } from "../fake-scene-page-rig";
 import { FinalCutTab } from "./final-cut-tab";
+import { waitFor } from "../../../_shared/test-dom";
 import { FINAL_CUT_STYLE } from "./fc-style";
 
 beforeAll(installRigDom);
@@ -135,8 +136,8 @@ describe("the switches", () => {
     const { flushSync: f2 } = await import("react-dom");
     f2(() => rig.root.render(createElement(FinalCutTab, { ctx: bad, chat, onChanged: () => undefined })));
     click(f2, live("Output Safety Check"));
-    await saveSoon(f2);
-    expect(rig.host.querySelector('[role="alert"]')!.textContent).toBe("the disk is full");
+    const alert = await waitFor(f2, () => rig.host.querySelector('[role="alert"]'), "the failed save's message");
+    expect(alert.textContent).toBe("the disk is full");
     expect(live("Output Safety Check").textContent).toBe("Off");
     unmount(flushSync);
   });
